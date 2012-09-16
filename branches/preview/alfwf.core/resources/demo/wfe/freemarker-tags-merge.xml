@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml">
+
+	<ftltag name="GetMyDocStatus" class="ru.runa.bp.demo.ShowDocStatusTag" />
+	<ftltag name="AlfDownloadContent" class="ru.runa.bp.web.AlfDownloadContentTag" />
+
+</configuration>

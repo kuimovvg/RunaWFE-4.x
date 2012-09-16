@@ -1,0 +1,14 @@
+   RunaWFE + Alfresco
+
+) Install alfresco (tested with 3.x version)
+
+--- Extend Alfresco
+copy to ${Alfresco}/tomcat/shared/classes/alfresco/extension files from resources/demo/alfresco/extension 
+
+--- Configure WFE to connect Alfresco
+) merge contents from resources/demo/wfe/freemarker-tags-merge.xml to ${Jboss}/server/default/conf/freemarker-tags.xml
+) copy resources/demo/alfwf.settings.xml to ${Jboss}/server/default/conf and edit it
+- configure endpoint address
+- change folder UUID to persist documents of that type
+) copy lib/runtime/*.jar to ${Jboss}/server/default/lib
+) copy dist/alfwf.core.jar (build it if not exist) to ${Jboss}/server/default/deploy

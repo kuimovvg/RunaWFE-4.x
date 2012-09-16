@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-access="field" >
+
+  <class name="ru.runa.bpm.module.def.ModuleDefinition" 
+         table="JBPM_MODULEDEFINITION"
+         abstract="true" 
+         discriminator-value="M">
+    <cache usage="read-write" />
+    <id name="id" column="ID_">
+	   	<generator class="native">
+	        <param name="sequence">SEQ_JBPM_MODULEDEFINITION</param>
+	    </generator>
+    </id>
+    <discriminator type="char" column="CLASS_"/>
+    <!-- M : ru.runa.bpm.module.def.ModuleDefinition -->
+    <!-- C : ru.runa.bpm.context.def.ContextDefinition -->
+    <!-- F : ru.runa.bpm.file.def.FileDefinition -->
+    <!-- L : ru.runa.bpm.logging.def.LoggingDefinition -->
+    <!-- I : ru.runa.bpm.scheduler.def.SchedulerDefinition -->
+    <!-- T : ru.runa.bpm.taskmgmt.def.TaskMgmtDefinition -->
+    <!--  :  -->
+    <!--  :  -->
+    
+    <property name="name" column="NAME_"/>
+    <many-to-one name="processDefinition" 
+                 column="PROCESSDEFINITION_"
+                 foreign-key="FK_MODDEF_PROCDEF"
+                 index="IDX_MODDEF_PROCDF"/>
+  </class>
+</hibernate-mapping>

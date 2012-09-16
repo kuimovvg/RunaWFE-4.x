@@ -1,0 +1,5 @@
+usr/share/runawfe-jboss/server/runawfe-botstation/conf/*
+usr/share/runawfe-jboss/server/runawfe-botstation/deploy/*
+usr/share/runawfe-jboss/server/runawfe-botstation/data/*
+etc/init.d/*
+usr/sbin/runawfe-start-botstation.sh

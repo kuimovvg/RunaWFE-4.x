@@ -1,0 +1,93 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          runawfe
+# Required-Start:    $all
+# Required-Stop:     
+# X-Stop-After:      
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: runawfe server
+# Description:       runawfe server
+### END INIT INFO
+
+# Source function library.
+. /lib/lsb/init-functions
+
+PATH=$PATH:/usr/sbin:/sbin:/usr/bin
+PIDFILE=/var/run/runawfe.pid
+LOCKFILE=/var/lock/subsys/runawfe
+RETVAL=0
+
+start()
+{
+	echo "Starting " > ~/runawfe.srv
+	if [ -f $PIDFILE ]; then
+	    return 0;
+	fi
+	echo "Starting 1" >> ~/runawfe.srv
+	start-stop-daemon --start --pidfile "$PIDFILE" --make-pidfile --exec /usr/sbin/runawfe-start.sh --background
+	echo "Starting 2" >> ~/runawfe.srv
+	RETVAL=$?
+	return $RETVAL
+}
+
+stop()
+{
+	start-stop-daemon --stop --pidfile "$PIDFILE" --name run.sh /usr/sbin/runawfe-start.sh
+	RETVAL=$?
+	if [ "$RETVAL" == "0" ]; then
+	    /usr/sbin/runawfe-stop.sh >/dev/null 2>/dev/null
+	    rm -Rf $PIDFILE
+	fi
+	return $RETVAL
+}
+
+restart()
+{
+	stop
+	sleep 5
+	start
+}
+
+echo "$1" >> /var/runawfe.str
+# See how we were called.
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	reload)
+		reload
+		;;
+	restart)
+		restart
+		;;
+	condstop)
+		if [ -e "$LOCKFILE" ]; then
+			stop
+		fi
+		;;
+	condrestart)
+		if [ -e "$LOCKFILE" ]; then
+			restart
+		fi
+		;;
+	condreload)
+		if [ -e "$LOCKFILE" ]; then
+			reload
+		fi
+		;;
+	status)
+		status --pidfile "$PIDFILE" --name run.sh --expect-user root --displayname runawfe /usr/share/runawfe-jboss/bin/run.sh
+		RETVAL=$?
+		;;
+	*)
+		msg_usage "${0##*/} {start|stop|reload|restart|condstop|condrestart|condreload|status}"
+		RETVAL=1
+esac
+
+exit $RETVAL
+

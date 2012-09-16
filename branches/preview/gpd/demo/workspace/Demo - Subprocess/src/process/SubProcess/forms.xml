@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form file="state1.ftl" jsValidation="false" state="state1" type="ftl" validationFile="state1.validation.xml"/>
+  <form file="state2.ftl" jsValidation="false" state="state2" type="ftl" validationFile="state2.validation.xml"/>
+</forms>

@@ -1,0 +1,14 @@
+<validators>
+
+<field name="evaluateResult">
+
+<field-validator type="required">
+	<message>Field is required</message>
+</field-validator>
+</field>
+
+<field name="comment2">
+
+</field>
+
+</validators>

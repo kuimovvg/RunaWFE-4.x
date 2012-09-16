@@ -1,0 +1,5 @@
+%JBOSS_ROOT_TARGET/server/%jboss_cfg_botstation/conf/*
+%JBOSS_ROOT_TARGET/server/%jboss_cfg_botstation/deploy/*
+%JBOSS_ROOT_TARGET/server/%jboss_cfg_botstation/data/*
+%_sysconfdir_init_d/*
+%_sbindir/runawfe-start-%botstation_id.sh

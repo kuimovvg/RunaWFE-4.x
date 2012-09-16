@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<validators>
+    <validator name="required" class="ru.runa.validators.RequiredFieldValidator"/>
+    <validator name="requiredstring" class="ru.runa.validators.RequiredFieldValidator"/>
+    <validator name="number" class="ru.runa.validators.NumberRangeFieldValidator"/>
+    <validator name="date" class="ru.runa.validators.DateRangeFieldValidator"/>
+    <validator name="expression" class="ru.runa.validators.BSFExpressionValidator"/>
+    <validator name="email" class="ru.runa.validators.EmailValidator"/>
+    <validator name="url" class="ru.runa.validators.URLValidator"/>
+    <validator name="stringlength" class="ru.runa.validators.StringLengthFieldValidator"/>
+    <validator name="regex" class="ru.runa.validators.RegexFieldValidator"/>
+</validators>

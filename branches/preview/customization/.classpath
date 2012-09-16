@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/ActionHandlers"/>
+	<classpathentry kind="src" path="src/Validators"/>
+	<classpathentry kind="src" path="src/DecisionHandlers"/>
+	<classpathentry kind="src" path="src/Formatters"/>
+	<classpathentry kind="src" path="src/OrgFunction"/>
+	<classpathentry kind="src" path="src/varTag"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/workflow"/>
+	<classpathentry kind="lib" path="lib/bsf.jar"/>
+	<classpathentry kind="lib" path="lib/ecs-1.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/struts.jar"/>
+	<classpathentry kind="lib" path="lib/trove.jar"/>
+	<classpathentry kind="lib" path="lib/mail.jar"/>
+	<classpathentry kind="lib" path="lib/jcifs.jar"/>
+	<classpathentry kind="lib" path="lib/portlet/portals-bridges-common.jar"/>
+	<classpathentry kind="lib" path="lib/portlet/portals-bridges-struts-1.2.7-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/portlet/portlet.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/bsh.jar"/>
+	<classpathentry kind="lib" path="lib/wfe/jbpm.core.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-logging-1.1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/xwork2.jar"/>
+	<classpathentry kind="lib" path="lib/freemarker.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate_annotations/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate_annotations/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate_annotations/hibernate-commons-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-beanutils-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-digester-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-fileupload-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-io-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-lang-2.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-validator-1.4.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

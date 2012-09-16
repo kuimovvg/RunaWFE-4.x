@@ -1,0 +1,131 @@
+<chapter id="completing">
+    <title>Actions : The JBoss jBPM Integration Mechanism</title>
+    <para> In this chapter we will show how to do software integration with JBoss jBPM.
+    	The standard mechanism to realize this is to wrap the functionality you want 
+    	to integrate in a class that implements the ActionHandler interface. </para>
+    <section>
+    	<title>Creating a Hello World Action</title>
+    	<para> Each Hello World process should integrate one or more Hello World actions,
+    		so this is what we will be doing. We can integrate custom code at different
+    		points in the process definition. To do this we have to specify an action handler,
+    		represented by an implementation of the ActionHandler interface, and attach this
+    		piece of code to a particular event. These events are amongst others, going over
+    		a transition, leaving or enterning nodes, after and before signalling.
+    		</para>
+        <figure id="create_hello_action">
+            <title>A Simple Hello Action </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata align="center" fileref="images/integration/create_hello_action.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    	<para> To make things a little bit more concrete, we will implement an action handler.
+    		To do this, create a new class called HelloActionHandler, which implements the 
+    		ActionHandler interface and implement the execute method as shown in 
+    		<xref linkend="create_hello_action" /> and <xref linkend="hello_action" />. 
+    		This test will add a variable named 'greeting' to the collection of process variables 
+    		and puts a message in it : "Hello from ActionHandler". </para>
+        <figure id="hello_action">
+            <title>A Simple Hello Action </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata align="center" fileref="images/integration/hello_action.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>
+    <section>
+    	<title>Integrating the Hello World Action</title>
+    	<para>As good Testcity citizens we will first create a unit test that proves the behaviour
+    		we want to achieve by adding the action handler to the process. So we implement another
+    		test. Creating the process instance is code we already saw in the previous chapter.
+    		We assert that no variable called greeting exist. Then we give the process a signal to move
+    		it to the first state. We want to associate the execution of the action with the event of
+    		going over the transition from the start state to the first state. So after the signal, the
+    		process should be in the first state as in the previous scenario. But moreover, the 
+    		'greeting' variable should exist and contain the string "Hello from ActionHandler". That's 
+    		what we assert in the last lines of the test method shown in <xref linkend="action_test"/>
+    		</para>
+        <figure id="action_test">
+            <title>Create the Hello Action Test </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata align="center" fileref="images/integration/action_test.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para> Running the tests now results in a failure. This is shown in <xref linkend="test_run_before" />
+        	As a matter of fact, we did not associate the
+        	action with any particular event in the process definition, so the process variable did not
+        	get set. </para>
+        <figure id="test_run_before">
+            <title>Test Results Before Integration</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata align="center" fileref="images/integration/test_run_before.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para> Let's do something about it and add an action to the first transition of our sample
+        	process. This is done by bringing up the context menu of the transition in the tree page of the
+        	outline view, as shown in <xref linkend="add_transition_action" />.</para>
+        <figure id="add_transition_action">
+            <title>Adding an Action to a Transition </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata align="center" fileref="images/integration/add_transition_action.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para> Right-clicking the action brings up a popupmenu with an entry to edit the properties of the
+         	selected action. Clicking on this menu entry opens a configuration dialog for actions. For now
+         	we will only configure the name and class properties of this action. The rest will be treated 
+         	later. We enter 'hello' as the name of the action and click on the 'Browse...' button to open
+         	a choose class dialog where we can look for the classes implementing the ActionHandler interface
+         	in our project's classpath (<xref linkend="choose_action_handler" />). </para> 
+        <figure id="choose_action_handler">
+            <title>The Choose Action Handler Dialog </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata align="center" fileref="images/integration/choose_action_handler.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <figure id="action_configuration">
+            <title>The Action Configuration Dialog </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata align="center" fileref="images/integration/action_configuration.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>         	
+        <para> We choose our previously created 'HelloActionHandler' class and push the 'OK' button
+        	(<xref linkend="action_configuration" />). After the selection of the action handler for the action, 
+        	we can run the test and observe it gives us a green light (<xref linkend="test_run_after" />). </para>  
+        <figure id="test_run_after">
+            <title>The Action Configuration Dialog </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata align="center" fileref="images/integration/test_run_after.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>         	
+    </section>
+    <section>
+    	<title> Integration Points</title>
+    	<para>The different integration points in a process definition are thoroughly documented in the JBoss jBPM
+    		User Guide. As you see on <xref linkend="add_event_action"/> different kinds of actions can be added to 
+    		for instance nodes. Adding such an action will create an event object in the outline view and add an 
+    		action as a child of this newly created event. In the same way, actions can be added to the process 
+    		definition object. Moreover, actions can directly be added to events. </para>
+        <figure id="add_event_action">
+            <title>Adding an Event Action </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata align="center" fileref="images/integration/add_event_action.jpg"/>
+                </imageobject>
+            </mediaobject>
+        </figure>        
+    </section>
+</chapter>

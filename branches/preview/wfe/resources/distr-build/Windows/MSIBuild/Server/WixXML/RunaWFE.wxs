@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'>
+  <Product Name='$(loc.RunaWFE_ProductName)' Id='F61A26B0-81C7-4E2C-8DEC-D853FEB4C021'
+    Language="$(loc.RunaWFE_InstallerLang)" Version='1.0.0' Manufacturer='Runa' Codepage="__CODEPAGE__">
+
+    <Package Id='????????-????-????-????-????????????' Keywords='Installer'
+      Description="$(loc.RunaWFE_ServerPackageDescription)"
+      Manufacturer='Runa'
+      InstallerVersion='100' Languages="$(loc.RunaWFE_InstallerLang)" Compressed='yes' SummaryCodepage="__CODEPAGE__"/>
+
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' />
+
+    <Directory Id='ProgramFilesFolder' Name='PFiles'>
+      <Directory Id='TARGETDIR' Name='RunaWFE'>
+        <Directory Id="jboss_native_bin" Name="bin">
+          <Component Id="jboss_native_component1" DiskId="1" Guid="1D47609B-1541-4050-B858-BD0D7794E7A7">
+            <File Id="jboss_native_file1" LongName="jbosssch.dll" Name="jbosssch.dll" Source="jboss-native/jbosssch.dll"/>
+            <File Id="jboss_native_file2" LongName="jbosssvc.exe" Name="jbosssvc.exe" Source="jboss-native/jbosssvc.exe"/>
+            <File Id="jboss_native_file3" LongName="openssl.exe" Name="openssl.exe" Source="jboss-native/openssl.exe"/>
+            <File Id="jboss_native_file4" LongName="service.bat" Name="service.bat" Source="jboss-native/service.bat"/>
+          </Component>
+          <Component Id="BotstationBotStartBatComponent" DiskId="1" Guid="79EA296E-1767-454B-8659-B3764E57107E">
+            <File Id="fileBotstationBotStartBat" LongName="runbot.bat" Name="runbot.bat" Source="Server/runbot.bat"/>
+          </Component>
+          <Directory Id="jboss_native_native" Name="native"> 
+            <Component Id="jboss_native_component2" DiskId="1" Guid="1B2357C7-60BB-464D-92DC-D0D1DDBAC513">
+              <File Id="jboss_native_file5" LongName="libapr-1.dll" Name="libapr-1.dll" Source="jboss-native/native/libapr-1.dll"/>
+              <File Id="jboss_native_file6" LongName="libaprutil-1.dll" Name="libaprut.dll" Source="jboss-native/native/libaprutil-1.dll"/>
+              <File Id="jboss_native_file7" LongName="libtcnative-1.dll" Name="libtcnat.dll" Source="jboss-native/native/libtcnative-1.dll"/>
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Directory Id="ProgramMenuFolder" Name="PMenu" LongName="Programs">
+      <Directory Id="ProgramMenuDir" Name='RunaWFE'>
+        <Component Id="UninstallComponent" DiskId="1" Guid="A3193CC4-26A9-470B-8D70-008E73C9AA83">
+          <Shortcut Id="UninstallProduct" Name="$(loc.RunaWFE_UninstallShortcutName)" Target="[System64Folder]msiexec.exe" Arguments="/x {F61A26B0-81C7-4E2C-8DEC-D853FEB4C021}" Directory="ProgramMenuDir" Description='$(loc.RunaWFE_UninstallShortcutDescription)' /> 
+        </Component>
+      </Directory>
+    </Directory>
+
+    <Directory Id="DesktopFolder" Name="Desktop" />
+
+    <Feature Id='WFEServerFeature' Title='RunaWFE Server' Description='RunaWFE main server'
+      Display='hidden' Level='1' ConfigurableDirectory='TARGETDIR' AllowAdvertise='no' >
+      <ComponentGroupRef Id="JBOSS_ComponentsGroup"/>
+      <ComponentGroupRef Id="SERVCONF_ComponentsGroup"/>
+      <ComponentRef Id="UninstallComponent"/>
+      <ComponentRef Id="jboss_native_component1"/>
+      <ComponentRef Id="jboss_native_component2"/>
+    </Feature>
+
+    <Feature Id='BOTSServerFeature' Title='RunaWFE Botstation' Description='RunaWFE botstation server'
+      Display='hidden' Level='1' ConfigurableDirectory='TARGETDIR' AllowAdvertise='no' >
+      <ComponentGroupRef Id="JBOSS_ComponentsGroup"/>
+      <ComponentGroupRef Id="BOTCONF_ComponentsGroup"/>
+      <ComponentRef Id="UninstallComponent"/>
+      <ComponentRef Id="jboss_native_component1"/>
+      <ComponentRef Id="jboss_native_component2"/>
+      <ComponentRef Id="BotstationBotStartBatComponent"/>
+    </Feature>
+
+    <UIRef Id="WixUI_Mondo" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <InstallExecuteSequence>
+       <Custom Action="InstallJbossAsService" After='InstallFinalize'>NOT Installed</Custom>
+       <Custom Action="UnInstallJbossAsService" Before='RemoveFiles'>Installed</Custom>
+       <Custom Action="BotstationTuning" After='InstallFinalize'><![CDATA[&BOTSServerFeature=3 AND $WixUI_InstallMode<>"Remove"]]></Custom>
+       <Custom Action="ServerTuning" After='InstallFinalize'><![CDATA[&WFEServerFeature=3 AND $WixUI_InstallMode<>"Remove"]]></Custom>
+    </InstallExecuteSequence>
+
+    <Binary Id='runaScripts.vbs' src='Server/runaScripts.vbs'/>
+
+    <CustomAction Id='InstallJbossAsService' FileKey='jboss_native_file4' ExeCommand='install' />
+    <CustomAction Id='UnInstallJbossAsService' FileKey='jboss_native_file4' ExeCommand='uninstall' />
+    <CustomAction Id='BotstationTuning' BinaryKey='runaScripts.vbs' VBScriptCall='BotstationTune'/>
+    <CustomAction Id='ServerTuning' BinaryKey='runaScripts.vbs' VBScriptCall='ServerTune'/>
+    <Property Id="ALLUSERS"><![CDATA[2]]></Property>
+  </Product>
+</Wix>

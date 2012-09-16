@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project basedir="." name="Runa WFE specific targets for common Linux">
+
+	<property name="jboss.timeout" value="240"/>
+	<property name="mozilla.home" value="firefox"/>
+	<property name="shortcut.categories" value=""/>
+
+	<target name="sync.jboss.libs">
+	</target>
+
+	<target name="start.jboss-server" depends="stop.jboss-server">
+		<echo message="starting jboss AS"/>
+	
+		<exec executable="sh" dir="${jboss.home.dir}/bin" spawn="true">
+			<arg line="-c 'java -Xmx512M -jar run.jar --configuration=default --host=localhost >server.log 2>&amp;1 &amp;'" />
+		</exec>
+		<sleep seconds="${jboss.timeout}"/>
+	
+		<fail message="couldn't get jboss AS running">
+			<condition>
+				<not>
+					<http url="http://localhost:${web.port}"/>
+				</not>
+			</condition> 			
+		</fail>
+	
+		<echo message="jboss AS is started"/>
+	
+	</target>
+	
+	<target name="stop.jboss-server" depends="check.jboss.running" if="is.jboss.running">
+
+		<echo message="stopping jboss AS"/>
+		<exec executable="sh" dir="${jboss.home.dir}/bin" spawn="true">
+			<arg line="${jboss.home.dir}/bin/shutdown.sh -S" />
+		</exec>
+		
+		<sleep seconds="${jboss.timeout}"/>
+	
+		<fail message="jboss AS is still running">
+			<condition>
+				<http url="http://localhost:${web.port}"/>
+			</condition>
+		</fail>
+	
+	</target>
+						
+        <target name="deploy-demo.wfe">                 
+		<delete dir="${jboss.home.dir}/server/default/data"/>
+                <antcall target="start.jboss-server"/>
+                <exec executable="sh" dir="${jboss.home.dir}/adminkit" failonerror="true">
+                        <arg line="script-runner.sh" />                        
+                </exec>                                                         
+                <antcall target="stop.jboss-server"/>
+                <delete dir="${jboss.home.dir}/server/default/log"/>            
+                <delete dir="${jboss.home.dir}/server/default/tmp"/>            
+                <delete dir="${jboss.home.dir}/server/default/work"/>           
+        </target>                                                               
+
+        <property name="rpm.build.source.dir" value="${rpm.build.root}/SOURCES"/>                                                                               
+        <property name="rpm.build.spec.dir" value="${rpm.build.root}/SPECS"/>   
+        
+        <property name="rpm.doc.dir" value="docs/guides"/>   
+	
+	<target name="set.skip.webservices" unless="skip.webservices">
+            <echo file="runawfe-${project.version}/build.properties" append="true">skip.webservice
+            </echo>                                                         
+	</target>
+
+	<target name="tune.runawfe.spec">
+            <copy todir="wfe/resources/distr-build/rpm/common" overwrite="true">
+        	    <fileset dir="wfe/resources/distr-build/rpm/${operation.system}">
+        		    <include name="*"/>
+        		    <include name="menus/*"/>
+        		    <include name="sbin/*"/>
+        		    <include name="descriptions/*"/>
+        	    </fileset>
+            </copy>
+	    
+	    <exec executable="sh" failonerror="true" dir="wfe/resources/distr-build/rpm/common">
+		    <arg line="make_spec.sh"/>
+	    </exec>
+	
+            <copy file="wfe/resources/distr-build/rpm/common/runawfe.spec" toDir="${rpm.build.spec.dir}/" overwrite="true"/>
+
+            <replace file="${rpm.build.spec.dir}/runawfe.spec" token="ReplaceablePackageVersion" value="${project.version}"/>
+            <replace file="${rpm.build.spec.dir}/runawfe.spec" token="ReplaceableReleaseVersion" value="${release.id}"/>
+            <replace file="${rpm.build.spec.dir}/runawfe.spec" token="ReplaceableDocPath" value="${rpm.doc.dir}"/>
+            <replace file="${rpm.build.spec.dir}/runawfe.spec" token="ReplaceableWebPort" value="${web.port}"/>
+            <replace file="${rpm.build.spec.dir}/runawfe.spec" token="ReplaceableJbossHome" value="${jboss.home.dir}"/>
+            <replace file="${rpm.build.spec.dir}/runawfe.spec" token="ReplaceableMozillaHome" value="${mozilla.home}"/>
+            <replace file="${rpm.build.spec.dir}/runawfe.spec" token="ReplaceableCategories" value="${shortcut.categories}"/>
+	    
+	    <antcall target="add.changelog">
+		    <param name="spec.file" value="${rpm.build.spec.dir}/runawfe.spec"/>
+	    </antcall>
+	</target>
+
+        <target name="makeInstaller" depends="linux.common.makeInstaller"/>
+	
+	<property name="rpm.build.params" value=""/>
+	<property name="rpm.build.root.wfe" value=""/>
+	<property name="rpm.build.root.gpd" value=""/>
+	
+	<property name="url.handler" value="/usr/bin/url_handler.sh"/>
+	<property name="doc.open" value="xdg-open"/>
+	
+	
+        <target name="linux.common.makeInstaller">
+	    <echo message="Root is ${rpm.build.root} "/>
+	    <antcall target="deploy-demo.wfe"/>
+            <delete dir="runawfe-${project.version}"/>
+            <mkdir dir="runawfe-${project.version}"/>
+	    <unzip src="${abs.src.archive}" dest="."/>
+	    <move todir="runawfe-${project.version}">
+		    <fileset dir="${abs.src.name}/">
+			    <include name="**/*"/>
+		    </fileset>
+		    <fileset dir="${jboss.home.dir}/server/default">
+			    <include name="data"/>
+			    <include name="data/**/*"/>
+		    </fileset>
+	    </move>
+            <ant target="copy.libs" dir="runawfe-${project.version}/rtn" inheritall="true">
+		<property name="jboss.home.dir" value="${jboss.home.dir}"/>
+            </ant>
+            <copy todir="runawfe-${project.version}/wfe/resources/distr-build/rpm/common" overwrite="true">
+        	    <fileset dir="runawfe-${project.version}/wfe/resources/distr-build/rpm/${operation.system}">
+        		    <include name="*"/>
+        		    <include name="menus/*"/>
+        		    <include name="sbin/*"/>
+        		    <include name="descriptions/*"/>
+        	    </fileset>
+            </copy>
+            <replace dir="runawfe-${project.version}/wfe/resources/distr-build/rpm/common" token="ReplaceablePackageVersion" value="${project.version}"><include name="*"/><include name="**/*"/></replace>
+            <replace dir="runawfe-${project.version}/wfe/resources/distr-build/rpm/common" token="ReplaceableReleaseVersion" value="${release.id}"><include name="*"/><include name="**/*"/></replace>
+            <replace dir="runawfe-${project.version}/wfe/resources/distr-build/rpm/common" token="ReplaceableJbossHome" value="${jboss.home.dir}"><include name="*"/><include name="**/*"/></replace>
+            <replace dir="runawfe-${project.version}/wfe/resources/distr-build/rpm/common" token="ReplaceableWebPort" value="${web.port}"><include name="*"/><include name="**/*"/></replace>
+            <replace dir="runawfe-${project.version}/wfe/resources/distr-build/rpm/common" token="ReplaceableURLHandler" value="${url.handler}"><include name="*"/><include name="**/*"/></replace>
+            <replace dir="runawfe-${project.version}/wfe/resources/distr-build/rpm/common" token="ReplaceableDocOpen" value="${doc.open}"><include name="*"/><include name="**/*"/></replace>
+            <replace dir="runawfe-${project.version}/wfe/resources/distr-build/rpm/common" token="ReplaceableMozillaHome" value="${mozilla.home}"><include name="*"/><include name="**/*"/></replace>
+            <replace dir="runawfe-${project.version}/wfe/resources/distr-build/rpm/common" token="ReplaceableCategories" value="${shortcut.categories}"><include name="*"/><include name="**/*"/></replace>
+            <replace dir="runawfe-${project.version}" token="operation.system=windows" value="operation.system=${operation.system}"><include name="build.properties"/></replace>
+            <replace dir="runawfe-${project.version}" token="jboss.home.dir=/path/to/jboss" value=""><include name="build.properties"/></replace>
+            <replace dir="runawfe-${project.version}" token="eclipse.home.dir=D:/path/to/eclipse/with/delta-pack" value=""><include name="build.properties"/></replace>
+            <!--antcall target="set.skip.webservices"/-->
+            <echo file="runawfe-${project.version}/gpd/build.properties">operation.system=${operation.system}
+eclipse.home.dir=$</echo>
+            <echo file="runawfe-${project.version}/gpd/build.properties" append="true">{basedir}/../eclipse</echo>
+            <delete dir="${abs.src.name}"/>
+            <copy todir="runawfe-${project.version}/eclipse">
+        	    <fileset dir="${eclipse.home.dir}"/>
+            </copy>
+            <ant target="copy.libs" dir="runawfe-${project.version}/gpd" inheritall="true"/>
+            
+            <exec executable="tar" dir=".">
+                <arg line="-cf runawfe-${project.version}.tar runawfe-${project.version}"/>
+            </exec>
+            <delete dir="runawfe-${project.version}"/>
+            <gzip destfile="runawfe-${project.version}.tar.gz" src="runawfe-${project.version}.tar"/>
+            <delete file="runawfe-${project.version}.tar"/>
+            
+            <move file="runawfe-${project.version}.tar.gz" toDir="${rpm.build.source.dir}/" overwrite="true"/>
+
+	    <delete dir="${jboss.dir}"/>
+	    <unzip dest="${jboss.dir}" src="${jboss.zip}"/>
+	    <antcall target="tune.runawfe.spec"/>
+
+            <delete dir="${artifacts.dir}"/>
+            <mkdir dir="${artifacts.dir}"/>
+
+            <exec executable="rpmbuild" failonerror="true">
+                <arg line="-bb -v ${rpm.build.spec.dir}/runawfe.spec ${rpm.build.root.wfe} ${rpm.build.params}"/>
+            </exec>
+
+	    <antcall target="tune.runawfe.spec">
+		    <param name="jboss.home.dir" value="${jboss.system.root}"/>
+	    </antcall>
+            <exec executable="rpmbuild" failonerror="true">
+                <arg line="-bs -v ${rpm.build.spec.dir}/runawfe.spec ${rpm.build.root.wfe} ${rpm.build.params}"/>
+            </exec>
+
+            <move todir="${artifacts.dir}/RPM">
+	        <fileset dir="${rpm.build.root}" includes="SRPMS/runawfe-*src.rpm, RPMS/*/runawfe-*.rpm"/>                      
+            </move>
+        </target>
+</project>

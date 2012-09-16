@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=sh /usr/sbin/runawfe-stop.sh
+Icon=/usr/share/pixmaps/RunaWFE-Simulation.gif
+Name=Stop simulator for RunaWFE
+Name[ru]=Остановить симулятор RunaWFE
+Path=/usr/sbin
+Terminal=false
+Type=Application
+ReplaceableCategories

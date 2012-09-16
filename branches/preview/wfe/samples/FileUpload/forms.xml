@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<forms xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form state="upload"  file="forms/upload.form" type="html">
+	  <variable name="file" />
+  </form>
+   <form state="download"  file="forms/download.form" type="html" />
+</forms>

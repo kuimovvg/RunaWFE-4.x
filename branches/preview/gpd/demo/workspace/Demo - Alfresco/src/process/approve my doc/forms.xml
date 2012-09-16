@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form file="Upload document.ftl" jsValidation="false"
+    state="Upload document" type="ftl" validationFile="Upload document.validation.xml"/>
+  <form file="Approve document.ftl" jsValidation="false"
+    state="Approve document" type="ftl" validationFile="Approve document.validation.xml"/>
+  <form file="Result.ftl" jsValidation="false" state="Result" type="ftl" validationFile="Result.validation.xml"/>
+</forms>

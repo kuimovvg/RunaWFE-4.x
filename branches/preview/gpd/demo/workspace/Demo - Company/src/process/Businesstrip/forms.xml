@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form file="Send an employee to a business trip.ftl"
+    jsValidation="false" state="Send an employee to a business trip"
+    type="ftl" validationFile="Send an employee to a business trip.validation.xml"/>
+  <form file="Confirm business trip notification.ftl"
+    jsValidation="false" state="Confirm business trip notification"
+    type="ftl" validationFile="Confirm business trip notification.validation.xml"/>
+  <form file="Make an order.ftl" jsValidation="false"
+    state="Make an order" type="ftl" validationFile="Make an order.validation.xml"/>
+  <form file="Receive a signature on the order.ftl" jsValidation="false"
+    state="Receive a signature on the order" type="ftl" validationFile="Receive a signature on the order.validation.xml"/>
+  <form file="Sign the order.ftl" jsValidation="false"
+    state="Sign the order" type="ftl" validationFile="Sign the order.validation.xml"/>
+  <form file="Give a business trip warrant.ftl" jsValidation="false"
+    state="Give a business trip warrant" type="ftl" validationFile="Give a business trip warrant.validation.xml"/>
+  <form file="Take a business trip warrant.ftl" jsValidation="false"
+    state="Take a business trip warrant" type="ftl" validationFile="Take a business trip warrant.validation.xml"/>
+  <form file="Give business trip money.ftl" jsValidation="false"
+    state="Give business trip money" type="ftl" validationFile="Give business trip money.validation.xml"/>
+  <form file="Take business trip money.ftl" jsValidation="false"
+    state="Take business trip money" type="ftl" validationFile="Take business trip money.validation.xml"/>
+  <form file="Take a business trip financial report.ftl"
+    jsValidation="false" state="Take a business trip financial report"
+    type="ftl" validationFile="Take a business trip financial report.validation.xml"/>
+  <form file="Give a business trip financial report.ftl"
+    jsValidation="false" state="Give a business trip financial report"
+    type="ftl" validationFile="Give a business trip financial report.validation.xml"/>
+</forms>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="MultiInstanceSubProcess" xmlns="urn:jbpm.org:jpdl-3.2">
+  <description><![CDATA[A demo subprocess for Multi instance node]]></description>
+  <swimlane name="operator">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state name="Start">
+    <task name="Start" swimlane="operator"/>
+    <transition name="tr1" to="form suborder"/>
+  </start-state>
+  <task-node name="form suborder">
+    <description><![CDATA[form suborder]]></description>
+    <task name="form suborder" swimlane="operator"/>
+    <transition name="tr1" to="End"/>
+  </task-node>
+  <end-state name="End"/>
+</process-definition>

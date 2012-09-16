@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ru.runa.bpm.ui.delegablePropertyDescriprors">
+      <delegable
+            cellEditorProvider="ru.runa.bpm.ui.custom.ConfigBasedProvider"
+            className="ru.runa.bp.AlfSetContent"
+            name="Alfresco: upload file data"
+            type="actionHandler">
+      </delegable>
+      <delegable
+            cellEditorProvider="ru.runa.bpm.ui.custom.ConfigBasedProvider"
+            className="ru.runa.bp.demo.ApproveMyDoc"
+            name="alfdemo: approve document"
+            type="actionHandler">
+      </delegable>
+      <delegable
+            cellEditorProvider="ru.runa.bpm.ui.custom.ConfigBasedProvider"
+            className="ru.runa.bp.demo.CreateMyDoc"
+            name="alfdemo: create document"
+            type="actionHandler">
+      </delegable>
+      <delegable
+            cellEditorProvider="ru.runa.bpm.ui.custom.ConfigBasedProvider"
+            className="ru.runa.bp.demo.RejectMyDoc"
+            name="alfdemo: reject document"
+            type="actionHandler">
+      </delegable>
+   </extension>
+   <extension
+         point="tk.eclipse.plugin.wysiwyg.ftl_tags">
+      <tag
+            id="GetMyDocStatus"
+            name="Show status of document">
+      </tag>
+   </extension>
+
+</plugin>

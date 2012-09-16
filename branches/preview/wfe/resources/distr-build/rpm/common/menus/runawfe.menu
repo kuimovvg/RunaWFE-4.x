@@ -1,0 +1,22 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+    "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
+<Menu>
+    <Name>Applications</Name>
+    <Menu>
+        <Name>Office</Name>
+        <Menu>
+            <Name>Runa WFE</Name>
+            <Directory>runawfe.directory</Directory>
+            <Include>
+                <Filename>runagpd.desktop</Filename>
+                <Filename>runawfe-client.desktop</Filename>
+                <Filename>runawfe-conf-client.desktop</Filename>
+                <Filename>runawfe-documentation.desktop</Filename>
+                <Filename>runawfe-notifier.desktop</Filename>
+                <Filename>runawfe-simulator-start.desktop</Filename>
+                <Filename>runawfe-simulator-stop.desktop</Filename>
+                <Filename>runawfe-simulator-web.desktop</Filename>
+            </Include>
+        </Menu>
+    </Menu>
+</Menu>

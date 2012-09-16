@@ -1,0 +1,7 @@
+<my:myFields xmlns:my="http://schemas.microsoft.com/office/infopath/2003/myXSD/2008-01-19T14:43:23" xmlns:xd="http://schemas.microsoft.com/office/infopath/2003">
+	<xd:SchemaInfo LocalName="myFields" NamespaceURI="http://schemas.microsoft.com/office/infopath/2003/myXSD/2008-01-19T14:43:23">
+		<xd:Namespaces>
+			<xd:Namespace LocalName="myFields" NamespaceURI="http://schemas.microsoft.com/office/infopath/2003/myXSD/2008-01-19T14:43:23"/>
+		</xd:Namespaces>
+	</xd:SchemaInfo>
+</my:myFields>

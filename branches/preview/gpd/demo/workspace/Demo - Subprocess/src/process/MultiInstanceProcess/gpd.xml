@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-diagram height="457" name="MultiInstanceProcess"
+  notation="bpmn" showActions="true" showGrid="false" width="769">
+  <node height="48" name="Start" width="48" x="72" y="36">
+    <transition name="tr1"/>
+  </node>
+  <node height="84" minimizedView="false" name="confirm order"
+    width="132" x="24" y="132">
+    <transition name="tr1"/>
+  </node>
+  <node height="84" name="start suborders routine " width="144" x="24" y="240">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" name="End" width="48" x="72" y="360"/>
+</process-diagram>

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-access="field" > 
+  <class name="ru.runa.bpm.graph.def.Event" 
+         table="JBPM_EVENT">
+    <cache usage="read-write" />
+    <id name="id" column="ID_">
+	   	<generator class="native">
+	        <param name="sequence">SEQ_JBPM_EVENT</param>
+	    </generator>
+    </id>
+
+    <property name="eventType" column="EVENTTYPE_"/>
+    
+    <any name="graphElement" id-type="long" meta-type="char">
+      <meta-value value="A" class="ru.runa.bpm.taskmgmt.def.Task"/>
+      <meta-value value="C" class="ru.runa.bpm.graph.node.ProcessState" />
+      <meta-value value="D" class="ru.runa.bpm.graph.node.Decision" />
+      <meta-value value="E" class="ru.runa.bpm.graph.node.EndState" />
+      <meta-value value="F" class="ru.runa.bpm.graph.node.Fork" />
+      <meta-value value="J" class="ru.runa.bpm.graph.node.Join" />
+      <meta-value value="K" class="ru.runa.bpm.graph.node.TaskNode" />
+      <meta-value value="N" class="ru.runa.bpm.graph.def.Node" />
+      <meta-value value="P" class="ru.runa.bpm.graph.def.ProcessDefinition"/>
+      <meta-value value="R" class="ru.runa.bpm.graph.node.StartState" />
+      <meta-value value="S" class="ru.runa.bpm.graph.node.State" />
+      <meta-value value="T" class="ru.runa.bpm.graph.def.Transition"/>
+      <meta-value value="U" class="ru.runa.bpm.graph.def.SuperState" />
+      <meta-value value="W" class="ru.runa.bpm.graph.node.MultiInstanceState" />
+      <meta-value value="X" class="ru.runa.bpm.graph.node.SendMessage" />
+      <meta-value value="Y" class="ru.runa.bpm.graph.node.ReceiveMessage" />
+      <column name="TYPE_"/>
+      <column name="GRAPHELEMENT_"/>
+    </any>
+
+    <list name="actions" cascade="all">
+    	<cache usage="read-write" />
+      <key column="EVENT_" />
+      <list-index column="EVENTINDEX_" />
+      <one-to-many class="ru.runa.bpm.graph.def.Action" />
+    </list>
+    
+  </class>
+</hibernate-mapping>

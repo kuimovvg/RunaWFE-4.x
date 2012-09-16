@@ -1,0 +1,101 @@
+package ru.runa.office.word;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Observable;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+public class DocxTableModel extends Observable {
+
+    private static int tableID = 0;
+    protected String name = "table";
+
+    public static DocxTableModel createTable() {
+        DocxTableModel m = new DocxTableModel();
+        m.name += ++tableID;
+        return m;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getStyleName() {
+        return styleName;
+    }
+
+    public void setStyleName(String styleName) {
+        this.styleName = styleName;
+    }
+
+    public boolean isAddBreak() {
+        return addBreak;
+    }
+
+    public void setAddBreak(boolean addBreak) {
+        this.addBreak = addBreak;
+    }
+
+    protected String styleName = "";
+    protected boolean addBreak = true;
+
+    public List<DocxColumnModel> columns = new ArrayList<DocxColumnModel>();
+
+    public void serialize(Document document, Element parent) throws Exception {
+        Element el = document.createElement("table");
+        parent.appendChild(el);
+        el.setAttribute("name", name);
+        if (styleName.length() > 0) {
+            el.setAttribute("styleName", styleName);
+        }
+        el.setAttribute("addBreak", Boolean.toString(addBreak));
+        for (DocxColumnModel model : columns) {
+            model.serialize(document, el);
+        }
+    }
+
+    public static DocxTableModel deserialize(Element element) throws Exception {
+        DocxTableModel model = new DocxTableModel();
+        model.name = element.getAttribute("name");
+        model.styleName = element.getAttribute("styleName");
+        if (model.styleName == null) {
+            model.styleName = "";
+        }
+        model.addBreak = Boolean.parseBoolean(element.getAttribute("addBreak"));
+        NodeList queryElements = element.getElementsByTagName("column");
+        for (int i = 0; i < queryElements.getLength(); i++) {
+            DocxColumnModel cModel = DocxColumnModel.deserialize((Element) queryElements.item(i));
+            model.columns.add(cModel);
+        }
+        return model;
+    }
+
+    @Override
+    public void notifyObservers() {
+        setChanged();
+        super.notifyObservers();
+    }
+
+    public void deleteColumn(int index) {
+        columns.remove(index);
+        notifyObservers();
+    }
+
+    public void addColumn() {
+        columns.add(new DocxColumnModel());
+        notifyObservers();
+    }
+
+    public void moveUpColumn(int index) {
+        Collections.swap(columns, index - 1, index);
+    }
+
+}

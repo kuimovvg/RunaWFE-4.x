@@ -1,0 +1,5 @@
+if [ "%{_arch}" = "x86_64" ]; then
+  mv eclipse eclipse86
+  mv eclipse64 eclipse
+fi
+

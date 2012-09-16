@@ -1,0 +1,9 @@
+<config>
+  <input>
+    <param name="sickListProcessId" formatFilter="long" label="ID процесса" help="Номер больничного процесса" />
+  </input>
+  <output>
+    <param name="intersectionResult" formatFilter="string" label="БольничныйОтпускПериод" />
+    <param name="intersectionPeriod" formatFilter="long" label="Кол-во дней пересечения с отпуском" />
+  </output>
+</config>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-diagram height="349" name="TimerDemo" notation="uml"
+  showActions="true" showGrid="false" width="730">
+  <node height="48" name="start" width="72" x="240" y="24">
+    <transition name="tr1"/>
+  </node>
+  <node height="72" minimizedView="false" name="Before timer triggered"
+    width="108" x="216" y="132">
+    <transition name="tr1"/>
+    <transition name="time-out-transition">
+      <bendpoint x="120" y="192"/>
+    </transition>
+  </node>
+  <node height="72" minimizedView="false" name="After timer triggered"
+    width="108" x="60" y="216">
+    <transition name="tr1">
+      <bendpoint x="120" y="324"/>
+    </transition>
+  </node>
+  <node height="36" name="end" width="72" x="240" y="312"/>
+</process-diagram>

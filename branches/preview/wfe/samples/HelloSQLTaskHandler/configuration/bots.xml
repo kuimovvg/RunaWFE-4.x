@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bots xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml bots.xsd">
+	<bot login="bot" password="123" >
+		<task name = "store data" handler="ru.runa.wf.logic.bot.DatabaseTaskHandler" configuration="/bot/handler/sqltask.xml" />	
+	</bot>
+</bots>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-diagram height="853" name="Businesstrip" notation="bpmn"
+  showActions="true" showGrid="false" width="784">
+  <node height="48" name="Send an employee to a business trip"
+    width="48" x="72" y="60">
+    <transition name="tr1"/>
+  </node>
+  <node height="84" minimizedView="false"
+    name="Confirm business trip notification" width="132" x="24" y="156">
+    <transition name="tr1"/>
+  </node>
+  <node height="72" minimizedView="false" name="Make an order"
+    width="108" x="156" y="48">
+    <transition name="tr1">
+      <bendpoint x="216" y="12"/>
+      <bendpoint x="240" y="12"/>
+      <bendpoint x="579" y="12"/>
+      <bendpoint x="588" y="12"/>
+    </transition>
+  </node>
+  <node height="60" minimizedView="false"
+    name="Receive a signature on the order" width="156" x="408" y="60">
+    <transition name="tr1">
+      <bendpoint x="492" y="144"/>
+    </transition>
+  </node>
+  <node height="60" minimizedView="false" name="Sign the order"
+    width="156" x="600" y="60">
+    <transition name="tr1">
+      <bendpoint x="684" y="144"/>
+    </transition>
+  </node>
+  <node height="96" minimizedView="false"
+    name="Give a business trip warrant" width="156" x="408" y="228">
+    <transition name="tr1">
+      <bendpoint x="492" y="348"/>
+    </transition>
+  </node>
+  <node height="96" minimizedView="false"
+    name="Take a business trip warrant" width="156" x="600" y="228">
+    <transition name="tr1">
+      <bendpoint x="684" y="348"/>
+    </transition>
+  </node>
+  <node height="72" minimizedView="false"
+    name="Give business trip money" width="156" x="600" y="432">
+    <transition name="tr1">
+      <bendpoint x="684" y="528"/>
+    </transition>
+  </node>
+  <node height="72" minimizedView="false"
+    name="Take business trip money" width="156" x="408" y="432">
+    <transition name="tr1">
+      <bendpoint x="492" y="528"/>
+    </transition>
+  </node>
+  <node height="72" minimizedView="false"
+    name="Take a business trip financial report" width="156" x="600" y="624">
+    <transition name="tr1">
+      <bendpoint x="684" y="732"/>
+    </transition>
+  </node>
+  <node height="72" minimizedView="false"
+    name="Give a business trip financial report" width="156" x="408" y="624">
+    <transition name="tr1">
+      <bendpoint x="492" y="732"/>
+    </transition>
+  </node>
+  <node height="48" name="first fork" width="48" x="564" y="12">
+    <transition name="tr2">
+      <bendpoint x="672" y="36"/>
+      <bendpoint x="672" y="36"/>
+      <bendpoint x="684" y="36"/>
+    </transition>
+    <transition name="tr1">
+      <bendpoint x="492" y="36"/>
+    </transition>
+  </node>
+  <node height="48" name="second fork" width="48" x="564" y="180">
+    <transition name="tr02">
+      <bendpoint x="684" y="204"/>
+    </transition>
+    <transition name="tr1">
+      <bendpoint x="492" y="204"/>
+    </transition>
+  </node>
+  <node height="48" name="third fork" width="48" x="564" y="384">
+    <transition name="tr21">
+      <bendpoint x="492" y="408"/>
+    </transition>
+    <transition name="tr22">
+      <bendpoint x="672" y="408"/>
+      <bendpoint x="684" y="408"/>
+    </transition>
+  </node>
+  <node height="48" name="fourth fork" width="48" x="564" y="564">
+    <transition name="tr31">
+      <bendpoint x="684" y="588"/>
+    </transition>
+    <transition name="tr32">
+      <bendpoint x="492" y="588"/>
+    </transition>
+  </node>
+  <node height="48" name="join for the second fork" width="48" x="564" y="324">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" name="join for the first fork" width="48" x="564" y="120">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" name="join for the third fork" width="48" x="564" y="504">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" name="join for the fourth fork" width="48" x="564" y="708">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" name="Trip type" width="48" x="192" y="168">
+    <transition name="local">
+      <bendpoint x="216" y="720"/>
+      <bendpoint x="216" y="828"/>
+    </transition>
+    <transition name="to another region"/>
+  </node>
+  <node height="48" name="end" width="48" x="564" y="804"/>
+</process-diagram>

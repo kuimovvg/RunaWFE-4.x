@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project basedir="." default="build" name="Runa WFE Automated Build System">
+
+	<property file="build.properties" />
+
+	<buildnumber/>
+
+	<property name="project.major.version" value="3"/>
+	<property name="project.minor.version" value="0"/>
+	<property name="project.patch.version" value=".x" />
+	
+	<property name="builds.dir" value="${basedir}/builds"/>
+	
+	<tstamp>
+		<format pattern="yyyy.MM.dd" property="build.date"/>
+	</tstamp>
+	<property name="build.name" value="${build.date}-b${build.number}"/>
+	
+	<target name="build" depends="init">
+		<record name="${builds.dir}/${build.name}/build.log" action="start"/>
+		<ant antfile="abs.build.xml"/>
+		<record name="${builds.dir}/${build.name}/build.log" action="stop"/>
+	</target>
+	
+	<target name="init">
+		<mkdir dir="${builds.dir}/${build.name}"/>
+	</target>
+	
+</project>

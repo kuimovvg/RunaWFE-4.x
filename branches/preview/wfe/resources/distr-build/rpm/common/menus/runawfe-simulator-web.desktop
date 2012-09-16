@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=ReplaceableURLHandler http://localhost:ReplaceableWebPort/wfe
+Icon=/usr/share/pixmaps/RunaWFE-SimClient.gif
+Name=Web interface of RunaWFE simulation
+Name[ru]=Web интерфейс симулятора RunaWFE
+Path=/usr/bin
+Terminal=false
+Type=Application
+ReplaceableCategories

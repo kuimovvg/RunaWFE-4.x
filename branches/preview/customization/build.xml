@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="Customization part of WFE" default="dist" basedir=".">
+	<dirname property="Customization part of WFE.basedir" file="${ant.file.Customization part of WFE}"/>
+	<import file="${Customization part of WFE.basedir}/../common.build.xml"/>
+
+	<property name="src.dir" location="src" />
+	<property name="build.classes.dir" location="build" />
+	<property name="resources.dir" location="resources" />
+
+	<property name="jar.file" location="${dist.dir}/wfe-custom.jar"/>
+
+	<target name="clean">
+		<delete dir="${build.classes.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="dist" depends="compile">
+		<copy todir="${build.classes.dir}" overwrite="true">
+			<fileset dir="${src.dir}/varTag">
+				<include name="**/*.js" />
+			</fileset>
+		</copy>
+		<jar destfile="${jar.file}">
+			<zipfileset dir="${build.classes.dir}"  />
+			<zipfileset dir="${resources.dir}">
+				<include name="*.xsd"/>
+			</zipfileset>
+		</jar>
+	</target>
+
+	<target name="init">
+		<mkdir dir="${build.classes.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source of application">
+		<javac destdir="${build.classes.dir}" debug="${javac.debug}" encoding="UTF-8" target="${javac.target}" source="${javac.source}">
+			<src path="${src.dir}" />
+			<classpath refid="lib.classpath" />
+		</javac>
+	</target>
+
+	<target name="deploy" depends="dist">
+		<copy file="${jar.file}" todir="${deployment.dir}" overwrite="true"/>
+		<copy file="${resources.dir}/emailTaskNotifier.properties" todir="${config.dir}" overwrite="true"/>
+		<copy file="${resources.dir}/autoShowForm.properties" todir="${config.dir}" overwrite="true"/>
+		<copy file="${resources.dir}/confirmationPopup.properties" todir="${config.dir}" overwrite="true"/>
+		<copy file="${resources.dir}/freemarker-tags.xml" todir="${config.dir}" overwrite="true"/>
+		<copy file="${resources.dir}/validators.xml" todir="${config.dir}" overwrite="true"/>
+		<copy file="${resources.dir}/emailTemplates/emailTemplate.xml" todir="${config.dir}/emailTemplates/" overwrite="true"/>
+
+		<native2ascii encoding="UTF-8" src="${resources.dir}/ActionHandlers" dest="${jboss.home.dir}/server/${jboss.config}/conf/ActionHandlers" includes="*" />
+	</target>
+
+	<target name="undeploy">
+		<delete file="${deployment.dir}/${jar.file}"/>
+	</target>
+
+	<target name="test">
+	</target>
+	
+	<target name="copy.libs">
+		<property name="jboss.deploy.dir" value="${jboss.home.dir}/server/default/deploy/"/>
+		<property name="jboss.lib.dir" value="${jboss.home.dir}/server/default/lib/"/>
+		<property name="jboss.client.dir" value="${jboss.home.dir}/client/"/>
+
+		<copy file="${jboss.deploy.dir}/wfe.core.jar" todir="${lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/wfe.logic.jar" todir="${lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/wfe.service.jar" todir="${lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/wfe-botstation.jar" todir="${lib.dir}/wfe" overwrite="true"/>
+	</target>
+
+	<target name="abs-build" depends="copy.libs,deploy" />
+	<target name="abs-test" />
+		
+</project>

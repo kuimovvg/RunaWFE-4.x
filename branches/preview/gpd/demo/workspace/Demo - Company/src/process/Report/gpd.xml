@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-diagram height="453" name="Report" notation="bpmn"
+  showActions="false" showGrid="false" width="801">
+  <node height="48" name="start" width="48" x="300" y="108">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" minimizedView="false" name="make report" width="156"
+    x="240" y="192">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" minimizedView="false" name="read report" width="156"
+    x="240" y="264">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" name="end" width="48" x="300" y="324"/>
+</process-diagram>

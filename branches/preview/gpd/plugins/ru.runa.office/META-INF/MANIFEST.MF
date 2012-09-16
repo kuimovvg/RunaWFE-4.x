@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Office plugin
+Bundle-SymbolicName: ru.runa.office;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: ru.runa.office.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ru.runa.bpm.ui,
+ tk.eclipse.plugin.wysiwyg,
+ org.eclipse.ui.forms;bundle-version="3.3.103"
+Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin

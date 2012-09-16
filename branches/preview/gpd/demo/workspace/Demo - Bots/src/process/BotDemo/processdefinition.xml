@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="BotDemo" xmlns="urn:jbpm.org:jpdl-3.2">
+  <description><![CDATA[Bot demo process  (no start form provided)]]></description>
+  <swimlane name="bot">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[ru.runa.af.organizationfunction.ExecutorByNameFunction(UniversalBot)]]></assignment>
+  </swimlane>
+  <swimlane name="user">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state name="start">
+    <task name="start" swimlane="user"/>
+    <transition name="tr1" to="before bot activity"/>
+  </start-state>
+  <task-node name="DoNothing">
+    <description><![CDATA[Bot executes a task]]></description>
+    <task name="DoNothing" swimlane="bot"/>
+    <transition name="tr1" to="after bot activity"/>
+  </task-node>
+  <task-node name="after bot activity">
+    <description><![CDATA[after bot activity]]></description>
+    <task name="after bot activity" swimlane="user"/>
+    <transition name="tr1" to="end"/>
+  </task-node>
+  <task-node name="before bot activity">
+    <description><![CDATA[before bot activity]]></description>
+    <task name="before bot activity" swimlane="user"/>
+    <transition name="tr1" to="DoNothing">
+      <action
+        class="ru.runa.wf.jbpm.delegation.action.BotInvokerActionHandler" config-type="configuration-property"><![CDATA[]]></action>
+    </transition>
+  </task-node>
+  <end-state name="end"/>
+</process-definition>

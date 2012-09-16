@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-diagram height="448" name="Hello World" notation="uml"
+  showActions="false" showGrid="false" width="747">
+  <node height="48" name="start" width="60" x="300" y="144">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" name="end" width="60" x="300" y="276"/>
+</process-diagram>

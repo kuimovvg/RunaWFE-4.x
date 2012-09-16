@@ -1,0 +1,14 @@
+<validators>
+
+<field name="file">
+
+<field-validator type="fileSize">
+	<message>file is too lage</message>
+	<param name="maxLength">1000000</param>
+</field-validator>
+<field-validator type="required">
+	<message>Value is required</message>
+</field-validator>
+</field>
+
+</validators>

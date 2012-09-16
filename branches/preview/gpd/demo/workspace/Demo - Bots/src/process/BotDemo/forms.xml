@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form file="after bot activity.ftl" jsValidation="false"
+    state="after bot activity" type="ftl" validationFile="after bot activity.validation.xml"/>
+  <form file="before bot activity.ftl" jsValidation="false"
+    state="before bot activity" type="ftl" validationFile="before bot activity.validation.xml"/>
+</forms>

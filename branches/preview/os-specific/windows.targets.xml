@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="Custom targets for windows build">
+
+	<dirname property="Custom targets for windows build.basedir" file="${ant.file.Custom targets for windows build}"/>
+	<property name="jboss.timeout" value="120"/>
+	<property name="IsWindows" value="true"/>
+
+	<target name="start.jboss-server" depends="stop.jboss-server">
+		<echo message="starting jboss AS"/>
+
+		<exec executable="cmd" dir="${jboss.home.dir}/bin" spawn="true">
+			<arg line="/C java -Xmx512M -jar run.jar --configuration=default --host=localhost" />
+			<env key="NOPAUSE" value="yes"/>
+		</exec>
+
+		<sleep seconds="${jboss.timeout}"/>
+	
+		<fail message="couldn't get jboss AS running">
+			<condition>
+				<not>
+					<http url="http://localhost:8080"/>
+				</not>
+			</condition>
+		</fail>
+	
+		<echo message="jboss AS is started"/>
+	</target>
+
+	<target name="stop.jboss-server" depends="check.jboss.running" if="is.jboss.running">
+		<echo message="stopping jboss AS"/>
+
+		<exec executable="cmd" dir="${jboss.home.dir}/bin" spawn="true">
+			<arg line="/C shutdown.bat -S " />
+			<env key="NOPAUSE" value="yes"/>
+		</exec>
+		
+		<sleep seconds="${jboss.timeout}"/>
+	
+		<fail message="jboss AS is still running">
+			<condition>
+				<http url="http://localhost:8080"/>
+			</condition>
+		</fail>
+	</target>
+
+	<target name="stop.jboss-server.force">
+		<echo message="stopping jboss AS"/>
+
+		<exec executable="cmd" dir="${jboss.home.dir}/bin" spawn="true">
+			<arg line="/C shutdown.bat -S " />
+			<env key="NOPAUSE" value="yes"/>
+		</exec>
+		
+		<sleep seconds="${jboss.timeout}"/>
+	</target>
+
+        <target name="deploy-demo.wfe">            
+                <antcall target="start.jboss-server"/> 
+                <exec executable="cmd" dir="${jboss.home.dir}/adminkit" spawn="true">
+	                <arg line="/C script-runner.bat" />                     
+                </exec>                                                         
+		<sleep seconds="10"/>
+                <antcall target="stop.jboss-server"/>
+                <delete dir="${jboss.home.dir}/server/default/log"/>            
+                <delete dir="${jboss.home.dir}/server/default/tmp"/>            
+                <delete dir="${jboss.home.dir}/server/default/work"/>           
+        </target>   
+
+	<target name="sync.jboss.libs" if="get.jboss.libs"> 
+                <exec executable="cmd" dir="${Custom targets for windows build.basedir}" spawn="true">
+	                <arg line="/C windows.sync.lib.bat ../wfe/lib &quot;${jboss.home.dir}/server/default/lib/&quot;" />
+                </exec>                                                         
+                <exec executable="cmd" dir="${Custom targets for windows build.basedir}" spawn="true">
+	                <arg line="/C windows.sync.lib.bat ../web/lib &quot;${jboss.home.dir}/server/default/lib/&quot;" />
+                </exec>                                                         
+                <exec executable="cmd" dir="${Custom targets for windows build.basedir}" spawn="true">
+	                <arg line="/C windows.sync.lib.bat ../bots/lib &quot;${jboss.home.dir}/server/default/lib/&quot;" />
+                </exec>                                                         
+                <exec executable="cmd" dir="${Custom targets for windows build.basedir}" spawn="true">
+	                <arg line="/C windows.sync.lib.bat ../customization/lib &quot;${jboss.home.dir}/server/default/lib/&quot;" />
+                </exec>                                                         
+	</target>
+	                                                                                                                                                                                                                                        
+    	<property name="work.dir" value="${basedir}"/>
+	<property name="distr.root.dir" value="${basedir}/wfe/resources/distr-build"/>
+	<property name="nsis.settings" value="${distr.root.dir}/Windows/NSIS"/>
+	<property name="nsis.dir" value="${work.dir}/NSIS"/>
+	<property name="nsis.src.dir" value="${nsis.dir}/src"/>
+	<property name="nsis.work.dir" value="${nsis.dir}/work"/>
+
+	<property name="nsis.docs" value="${basedir}/docs/guides"/>
+
+	<target name="prepare.nsis" unless="skip.installer">
+		<delete dir="${nsis.dir}"/>
+		<mkdir dir="${nsis.work.dir}"/>
+		<unzip dest="${nsis.src.dir}" overwrite="true">
+			<fileset dir="${artifacts.dir}/wfe"/>
+		</unzip>
+		<copy todir="${nsis.src.dir}/wfe-server-jboss" overwrite="true">
+			<fileset dir="${nsis.src.dir}/wfe-${project.version}"/>
+		</copy>
+                <mkdir dir="${nsis.src.dir}/wfe-simulator/server/default"/>
+		<move file="${nsis.src.dir}/wfe-${project.version}/server/default/data" tofile="${nsis.src.dir}/wfe-simulator/server/default/demo-db"/>
+		<copy todir="${nsis.src.dir}/wfe-server-config/server/default" overwrite="true">
+			<fileset dir="${nsis.src.dir}/wfe-server-jboss/server/default">
+				<include name="conf/"/>
+				<include name="deploy/"/>
+			</fileset>
+		</copy>
+		<delete dir="${nsis.src.dir}/wfe-server-jboss/server/default/conf"/>
+		<delete dir="${nsis.src.dir}/wfe-server-jboss/server/default/deploy"/>
+		<delete dir="${nsis.src.dir}/wfe-server-jboss/server/default/data"/>
+
+		<antcall target="install.remote.bots" inheritRefs="true"/>
+		<copy todir="${nsis.src.dir}/wfe-botstation-config/server/default" overwrite="true">
+			<fileset dir="${jboss.home.dir}/server/default">
+				<include name="conf/"/>
+				<include name="deploy/"/>
+			</fileset>
+		</copy>
+		<!-- Durty hack to tune af_dlegate.properties for botstation (we need replace server address) -->
+		<unjar src="${nsis.src.dir}/wfe-botstation-config/server/default/deploy/af.delegate.jar" dest="${nsis.src.dir}/wfe-botstation-config/server/default/deploy/af.delegate"/>
+		<copy file="${nsis.src.dir}/wfe-botstation-config/server/default/deploy/af.delegate/af_delegate.properties" todir="${nsis.src.dir}/wfe-botstation-config/server/default/conf"/>
+		<delete file="${nsis.src.dir}/wfe-botstation-config/server/default/deploy/af.delegate/af_delegate.properties"/>
+		<delete file="${nsis.src.dir}/wfe-botstation-config/server/default/deploy/af.delegate.jar"/>
+		<jar destfile="${nsis.src.dir}/wfe-botstation-config/server/default/deploy/af.delegate.jar" basedir="${nsis.src.dir}/wfe-botstation-config/server/default/deploy/af.delegate"/>
+		<delete dir="${nsis.src.dir}/wfe-botstation-config/server/default/deploy/af.delegate"/>
+		<!-- End of durty hack -->
+		<antcall target="install.simulation"/>
+		<copy todir="${nsis.src.dir}/wfe-simulator/server/default/deploy" overwrite="true">
+			<fileset dir="${jboss.home.dir}/server/default/deploy"/>
+		</copy>
+		<copy todir="${nsis.src.dir}/wfe-simulator/server/default/conf" overwrite="true">
+			<fileset dir="${jboss.home.dir}/server/default/conf"/>
+		</copy>
+		<copy file="${nsis.settings}/nircmd.exe" tofile="${nsis.src.dir}/wfe-simulator/bin/nircmd.exe"/>
+		<copy file="${nsis.settings}/sleep.exe" tofile="${nsis.src.dir}/wfe-simulator/bin/sleep.exe"/>
+		<unzip dest="${nsis.src.dir}" overwrite="true">
+			<fileset dir="${artifacts.dir}/gpd" includes="*win32*"/>
+		</unzip>
+		<move file="${nsis.src.dir}/gpd-${project.version}/workspace" tofile="${nsis.src.dir}/gpd-${project.version}/demo-workspace"/>
+		<unzip dest="${nsis.src.dir}" overwrite="true">
+			<fileset dir="${artifacts.dir}/rtn"/>
+		</unzip>
+		<unzip dest="${nsis.dir}" overwrite="true">
+			<fileset dir="${nsis.settings}" includes="nsis-2.46.zip"/>
+		</unzip>
+		<copy toDir="${nsis.src.dir}/Documentation" overwrite="true">
+			<fileset dir="${nsis.docs}"/>
+		</copy>
+		<copy toDir="${nsis.src.dir}/jboss-native" overwrite="true">
+			<fileset dir="${nsis.settings}/jboss-native/bin"/>
+		</copy>
+		<copy toDir="${nsis.src.dir}/jboss-native/native" overwrite="true">
+			<fileset dir="${nsis.src.dir}/wfe-server-jboss/bin" includes="*.dll"/>
+		</copy>
+		<copy toDir="${nsis.src.dir}/Icons" overwrite="true">
+			<fileset dir="${distr.root.dir}/Icons" includes="*.ico"/>
+			<fileset dir="${distr.root.dir}/Icons" includes="*.bmp"/>
+		</copy>
+	</target>
+
+	<target name="build.nsis">	
+		<delete dir="${nsis.work.dir}/${nsis.name}"/>
+		<mkdir dir="${nsis.work.dir}/${nsis.name}"/>
+		<copy todir="${nsis.work.dir}/${nsis.name}" overwrite="true">
+			<fileset dir="${nsis.settings}">
+				<include name="*"/>
+				<exclude name="*.zip"/>
+				<exclude name="jboss-native"/>
+			</fileset>
+		</copy>
+		<replace dir="${nsis.work.dir}/${nsis.name}" token="%VERSION%" value="${project.version}"/>
+		<replace dir="${nsis.work.dir}/${nsis.name}" token="%BUILD_ROOT%" value="${nsis.src.dir}"/>
+		<exec executable="${nsis.dir}/nsis-2.46/makensis.exe" dir="${nsis.work.dir}/${nsis.name}" failonerror="true">
+			<arg value="${nsis.work.dir}/${nsis.name}/${nsis.name}.nsi"/>
+		</exec>
+		<copy file="${nsis.work.dir}/${nsis.name}/setup.exe" tofile="${artifacts.dir}/Installer/RunaWFE-${nsis.name}.exe" overwrite="true"/>
+	</target>
+
+	<target name="makeInstaller" depends="makeInstaller.nsis"/>
+
+	<target name="makeInstaller.nsis" depends="prepare.nsis" unless="skip.installer">
+		<antcall target="build.nsis">
+			<param name="nsis.name" value="Installer"/>
+		</antcall>
+		<copy todir="${artifacts.dir}/Installer">
+			<fileset dir="${distr.root.dir}/Windows/CDStartup">
+				<include name="*"/>
+			</fileset>
+		</copy>
+	</target>
+
+</project>

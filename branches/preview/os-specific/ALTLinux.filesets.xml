@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project basedir="." name="Runa WFE filesets for ALTLinux">
+
+	<!-- Third party lib, which stored in repository (in lib from build.properties) -->
+	<fileset id="local.lib.fileset" dir="${lib.dir}">
+		<include name="**/jcr*.jar" />
+		<include name="jackrabbit/*.jar" />
+		<include name="xdoclet/*.jar" />
+		<include name="**/xwork2.jar" />
+		<include name="wfe/*.jar" />
+		<include name="wfe-custom.jar" />
+		<include name="**/ecs*.jar" />
+		<include name="portlet/*.jar" />
+		<include name="**/jcifs*.jar" />
+		<include name="nekohtml/*.jar" />
+		<include name="**/freemarker.jar" />
+		<include name="com/*.jar" />
+		<include name="jboss/*.jar" />
+		<include name="jboss/**/*.jar" />
+		<include name="selenium/*.jar" />
+		<include name="hibernate/**/*.jar" />
+		<include name="hibernate_annotations/*.jar" />
+		<!--exclude name="ant/*"/>
+		<exclude name="**/aspectj*.jar"/>
+		<exclude name="**/junit*.jar"/>
+		<exclude name="cactus/*"/-->
+		<!--exclude name="struts/antlr*"/>
+		<exclude name="struts/struts*"/>
+		<exclude name="struts/jakarta*"/-->
+	</fileset>
+
+	<fileset id="system.lib.fileset" dir="/usr/share/java">
+		<include name="ant-*.jar" />
+		<include name="ant/*.jar" />
+		<include name="commons-*.jar" />
+		<include name="dom4j.jar" />
+		<include name="struts.jar" />
+		<include name="struts*.jar" />
+		<include name="bsh.jar" />
+		<include name="bsf.jar" />
+		<include name="servlet.jar" />
+		<include name="trove.jar" />
+		<include name="xjavadoc.jar" />
+		<include name="jsp.jar" />
+		<include name="junit.jar" />
+		<include name="cactus*/*.jar" />
+		<include name="cargo/*.jar" />
+		<include name="aspectj*.jar" />
+		<include name="javamail.jar" />
+		<include name="jdoc.jar" />
+		<include name="jdom.jar" />
+		<!--include name="*.jar" />
+		<include name="**/*.jar" /-->
+	</fileset>
+
+        <fileset id="cactustests.lib.fileset" dir=".">
+                <!--include name="lib/cactus/*.jar" /-->
+                <include name="lib/commons/*.jar" />
+                <include name="lib/nekohtml/*.jar" />
+                <include name="lib/jboss/*.jar" />
+		<exclude name="**/aspectj*.jar"/>
+		<exclude name="**/junit*.jar"/>
+	</fileset>										
+</project>

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<forms xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form state="evaluating"  file="forms/evaluating.form" type="html" >
+    <variable name="requester" />
+	<variable name="reason" />
+	<variable name="amount.asked"   format="ru.runa.bpm.web.formgen.format.DoubleFormat" />
+    <variable name="amount.granted" format="ru.runa.bpm.web.formgen.format.DoubleFormat" />
+	<variable name="approved" />
+  </form>
+
+  <form state="evaluating_decision" type="html" file="forms/treat.form">
+  	<variable name="approved" />
+  </form>
+
+  <form state="treating collegues on cake and pie" file="forms/treat.form" type="html" >
+  </form>
+
+ <form state="updating erp asynchronously" file="forms/update.erp.form" type="html" >
+ 	<variable name="amount.granted" format="ru.runa.bpm.web.formgen.format.DoubleFormat" />
+  </form>
+
+	<form state="notify" file="forms/notify.erp.form" type="html" />
+</forms>

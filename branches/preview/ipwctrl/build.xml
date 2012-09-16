@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project basedir="." name="Runa WFE Info Path Support Project" default="build">
+
+	<property file="build.properties" />
+
+	<property environment="env"/>
+
+	<property name="env.DOT.NET.DIR" value="${default.dot.net.dir}"/>
+	<property name="env.DOT.NETSDK.DIR" value="${default.dot.net.sdk.dir}"/>
+	<property name="env.DOT.NETGAC.DIR" value="${default.dot.net.gac.dir}"/>
+	<property name="env.KEY.FILE" value="${default.key.file}"/>
+
+	<property name="dot.net.dir" value="${env.DOT.NET.DIR}"/>
+	<property name="dot.net.sdk.dir" value="${env.DOT.NETSDK.DIR}"/>
+	<property name="dot.net.gac.dir" value="${env.DOT.NETGAC.DIR}"/>
+	<property name="key.file" value="${env.KEY.FILE}"/>
+
+	<property name="csc.exe" value="${dot.net.dir}/csc.exe"/>
+	<property name="resgen.exe" value="${dot.net.sdk.dir}/bin/ResGen.exe"/>
+
+	<property name="bin.dir" value="bin/Release"/>
+	<property name="tmp.dir" value="tmp/Release"/>
+
+	<property name="csc.debug" value="false"/>
+
+
+	<condition property="ipwctrl.skip.build">
+		<not>
+			<and>
+				<available file="${csc.exe}"/>
+				<available file="${resgen.exe}"/>
+			</and>
+		</not>
+	</condition>
+
+	<target name="check-build" if="ipwctrl.skip.build">
+		<echo>ipwctrl build skipped</echo>
+	</target>
+
+	<target name="build" depends="check-build" unless="ipwctrl.skip.build">
+		<mkdir dir="${bin.dir}" />
+		<mkdir dir="${tmp.dir}" />
+		<exec executable="${resgen.exe}" failonerror="true">
+			<arg value="InfoPathWrapper.resx"/>
+			<arg value="${tmp.dir}/ru.runa.ipwctrl.InfoPathWrapperControl.resources"/>
+		</exec>
+		<csc
+			executable="${csc.exe}"
+			destfile="${bin.dir}/ru.runa.ipwctrl.dll"
+			debug="${csc.debug}"
+			warnLevel="4"
+			includedefaultreferences="true"
+			unsafe="false"
+			targetType="library"
+			extraoptions="/keyfile:${key.file}">
+				<src dir="." includes="*.cs"/>
+				<reference dir="${dot.net.gac.dir}" casesensitive="false">
+					<include name="**/Microsoft.Office.Infopath.dll"/>
+					<include name="**/Microsoft.Office.Infopath.FormControl.dll"/>
+					<include name="**/Microsoft.Office.Interop.Infopath.dll"/>
+				</reference>
+				<resource file="${tmp.dir}/ru.runa.ipwctrl.InfoPathWrapperControl.resources" />
+		</csc>
+	</target>
+
+	<target name="abs-build" depends="build"/>
+	
+</project>

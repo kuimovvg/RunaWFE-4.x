@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=sh /usr/sbin/runawfe-start.sh
+Icon=/usr/share/pixmaps/RunaWFE-Simulation.gif
+Name=Start simulator for RunaWFE
+Name[ru]=Запустить симулятор RunaWFE
+Path=/usr/sbin
+Terminal=true
+Type=Application
+ReplaceableCategories

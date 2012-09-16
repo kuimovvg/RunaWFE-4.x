@@ -1,0 +1,5 @@
+<P><SPAN style="color: #000080"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">Enter parameters:</SPAN></SPAN></SPAN><SPAN style="font-size: medium"/></P>
+<P><SPAN style="font-size: x-small"><SPAN style="color: #000080"><SPAN><SPAN style="font-family: Arial">Date:        ${InputDateTime("date", "date")}</SPAN></SPAN></SPAN></SPAN><SPAN style="color: #000080"><SPAN style="font-size: medium"/></SPAN></P>
+<P><SPAN style="font-size: x-small"><SPAN style="color: #000080"><SPAN><SPAN style="font-family: Arial">Number:    <INPUT maxlength="5" name="number" type="text" value="3"/></SPAN></SPAN></SPAN></SPAN><SPAN style="color: #000080"><SPAN style="font-size: medium"/></SPAN></P>
+<P><SPAN style="font-size: x-small"><SPAN style="color: #000080"><SPAN><SPAN style="font-family: Arial">Header:     <INPUT maxlength="20" name="header" type="text" value="Test"/></SPAN></SPAN></SPAN></SPAN></P>
+<P><SPAN style="font-size: x-small"><SPAN style="color: #000080"><SPAN><SPAN style="font-family: Arial">Main text:  <TEXTAREA cols="50" name="mainText" rows="10"/></SPAN></SPAN></SPAN></SPAN></P>

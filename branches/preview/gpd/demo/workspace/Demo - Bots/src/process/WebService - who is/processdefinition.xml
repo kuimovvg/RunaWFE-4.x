@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="WebService - who is" xmlns="urn:jbpm.org:jpdl-3.2">
+  <description><![CDATA[Enter domain name and WebService bot resolve this name using whois service.]]></description>
+  <swimlane name="requester">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <swimlane name="WebServiceBot">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[ru.runa.af.organizationfunction.ExecutorByNameFunction(WebServiceBot)]]></assignment>
+  </swimlane>
+  <start-state name="Start">
+    <task name="Start" swimlane="requester"/>
+    <transition name="tr1" to="Load whois information"/>
+  </start-state>
+  <task-node name="Load whois information">
+    <task name="Load whois information" swimlane="WebServiceBot">
+      <event type="task-create">
+        <action
+          class="ru.runa.wf.jbpm.delegation.action.BotInvokerActionHandler" config-type="configuration-property"><![CDATA[]]></action>
+      </event>
+    </task>
+    <transition name="tr1" to="Read DNS address information"/>
+  </task-node>
+  <task-node name="Read DNS address information">
+    <task name="Read DNS address information" swimlane="requester"/>
+    <transition name="tr1" to="End"/>
+  </task-node>
+  <end-state name="End"/>
+</process-definition>

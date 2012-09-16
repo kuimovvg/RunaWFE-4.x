@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project basedir="." name="Runa WFE filesets for mandriva">
+
+	<!-- Third party lib, which stored in repository (in lib from build.properties) -->
+	<fileset id="local.lib.fileset" dir="${lib.dir}">
+		<include name="**/*.jar" />
+		<include name="*.jar" />
+	</fileset>
+
+	<fileset id="system.lib.fileset" dir="/usr/share/java">
+		<include name="No matching pattern.jar" />
+	</fileset>
+
+        <fileset id="cactustests.lib.fileset" dir=".">
+                <include name="lib/cactus/*.jar" />
+                <include name="lib/commons/*.jar" />
+                <include name="lib/nekohtml/*.jar" />
+                <include name="lib/jboss/*.jar" />
+		<exclude name="**/junit*.jar"/>
+	</fileset>										
+</project>

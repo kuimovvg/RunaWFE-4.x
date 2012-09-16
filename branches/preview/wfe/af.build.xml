@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="WFE.Authorization Framework" default="dist.app" basedir=".">
+	<!-- set global properties for this build -->
+	<dirname property="WFE.Authorization Framework.basedir" file="${ant.file.WFE.Authorization Framework}"/>
+	<import file="${WFE.Authorization Framework.basedir}/wfe.common.xml"/>
+	<property file="hibernate_build.properties" />
+
+	<property name="src.dir" location="${WFE.Authorization Framework.basedir}/src/af" />
+	<property name="src.core.dir" location="${src.dir}/core" />
+	<property name="src.logic.dir" location="${src.dir}/logic" />
+	<property name="src.service.dir" location="${src.dir}/service" />
+	<property name="src.webservice.dir" location="${src.dir}/webservice" />
+
+	<property name="src.test.dir" location="${src.dir}/test" />
+
+	<property name="build.app.classes.dir" location="${build.dir}/app/af/classes" />
+	<property name="build.core.app.classes.dir" location="${build.app.classes.dir}/core" />
+	<property name="build.logic.app.classes.dir" location="${build.app.classes.dir}/logic" />
+	<property name="build.service.app.classes.dir" location="${build.app.classes.dir}/service" />
+	<property name="build.webservice.app.classes.dir" location="${build.app.classes.dir}/webservice" />
+	<property name="build.test.classes.dir" location="${build.dir}/test/af/classes" />
+
+	<property name="af.core.jar.file" location="${dist.deploy.dir}/wfe.core.jar" />
+	<property name="af.logic.jar.file" location="${dist.deploy.dir}/wfe.logic.jar" />
+	<property name="af.service.jar.file" location="${dist.deploy.dir}/wfe.service.jar" />
+	<property name="af.webservice.jar.file" location="${dist.deploy.dir}/wfe.webservice.jar" />
+	<property name="tests.war.file" location="${dist.deploy.dir}/cactus.war" />
+	<property name="tests.jar.file" location="${dist.deploy.dir}/wfe.test.jar" />
+	
+	<property name="hibernate.xml.file" location="${WFE.Authorization Framework.basedir}/hibernate.cfg.xml"/>
+
+	<target name="clean" description="clean up">
+		<delete dir="${build.app.classes.dir}" />
+		<delete dir="${build.test.classes.dir}" />
+		<delete file="${af.core.jar.file}" failonerror="false" />
+		<delete file="${af.logic.jar.file}" failonerror="false" />
+		<delete file="${af.service.jar.file}" failonerror="false" />
+		<delete file="${af.webservice.jar.file}" failonerror="false" />
+		<delete file="${tests.war.file}" failonerror="false" />
+		<delete file="${tests.jar.file}" failonerror="false" />
+		<delete dir="${dist.deploy.dir}" failonerror="false" />
+	</target>
+
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.app.classes.dir}" />
+		<mkdir dir="${build.core.app.classes.dir}" />
+		<mkdir dir="${build.logic.app.classes.dir}" />
+		<mkdir dir="${build.service.app.classes.dir}" />
+		<mkdir dir="${build.webservice.app.classes.dir}" />
+		<mkdir dir="${build.test.classes.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dist.deploy.dir}" />
+	</target>
+
+	<target name="compile.core.app" depends="init" description="compile the source of application">
+		<javac destdir="${build.core.app.classes.dir}" debug="${javac.debug}"  encoding="UTF-8" target="${javac.target}" source="${javac.source}">
+			<src path="${src.core.dir}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="app.class.path" />
+		</javac>
+		<copy todir="${build.core.app.classes.dir}">
+			<fileset dir="${src.core.dir}" excludes="**/*.java" />
+		</copy>
+	</target>
+
+	<target name="compile.logic.app" depends="dist.core.app">
+		<javac destdir="${build.logic.app.classes.dir}" debug="${javac.debug}"  encoding="UTF-8" target="${javac.target}" source="${javac.source}">
+			<src path="${src.logic.dir}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="app.class.path" />
+		</javac>
+		<copy todir="${build.logic.app.classes.dir}">
+			<fileset dir="${src.logic.dir}" excludes="**/*.java" />
+		</copy>
+	</target>
+
+	<!-- todo make compile.service.app depends on compile.logic.app instead of dist.logic.app -->
+	<target name="compile.service.app" depends="dist.logic.app">
+		<javac destdir="${build.service.app.classes.dir}" debug="${javac.debug}"  encoding="UTF-8" target="${javac.target}" source="${javac.source}">
+			<src path="${src.service.dir}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="app.class.path" />
+		</javac>
+	</target>
+	<target name="compile.webservice.app" depends="dist.logic.app" unless="skip.webservices">
+		<javac destdir="${build.webservice.app.classes.dir}" debug="${javac.debug}"  encoding="UTF-8" target="${javac.target}" source="${javac.source}">
+			<src path="${src.webservice.dir}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="app.class.path" />
+		</javac>
+	</target>
+
+	<target name="compile.test" depends="dist.service.app">
+		<javac destdir="${build.test.classes.dir}" debug="${javac.debug}"  encoding="UTF-8" target="${javac.target}" source="${javac.source}">
+			<src path="${src.test.dir}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="app.class.path" />
+		</javac>
+	</target>
+
+	<target name="dist.core.app" depends="compile.core.app">
+		<jar destfile="${af.core.jar.file}">
+			<zipfileset dir="${build.core.app.classes.dir}" />
+			<zipfileset dir="${resources.dir}/af">
+				<include name="af_core.properties" />
+			</zipfileset>
+		</jar>
+	</target>
+
+	<target name="dist.logic.app" depends="compile.logic.app">
+		<jar destfile="${af.logic.jar.file}">
+			<zipfileset dir="${build.logic.app.classes.dir}" />
+			<zipfileset dir="${resources.dir}/af">
+				<include name="af_logic.properties" />
+			</zipfileset>
+		</jar>
+	</target>
+
+	<target name="dist.service.app" depends="compile.service.app">
+		<jar destfile="${af.service.jar.file}">
+			<zipfileset dir="${build.service.app.classes.dir}" />
+		</jar>
+	</target>
+	<target name="dist.webservice.app" depends="compile.webservice.app" unless="skip.webservices">
+		<jar destfile="${af.webservice.jar.file}">
+			<zipfileset dir="${build.webservice.app.classes.dir}" />
+		</jar>
+	</target>
+
+	<target name="dist.app" depends="dist.core.app,dist.logic.app,dist.service.app,dist.webservice.app"/>
+
+	<target name="dist.test" depends="compile.test">
+		<jar destfile="${tests.jar.file}">
+			<zipfileset dir="${build.test.classes.dir}" />
+		</jar>
+		<cactifywar destfile="${tests.war.file}" version="2.3">
+			<lib file="${tests.jar.file}" />
+		</cactifywar>
+		<copy file="${resources.dir}/cactus.properties" todir="${build.test.classes.dir}" overwrite="true" />
+	</target>
+
+	<target name="dist.all" depends="dist.app,dist.test" />
+
+	<target name="deploy.core.app" depends="dist.core.app">
+		<copy file="${af.core.jar.file}" todir="${deployment.dir}" overwrite="true" />
+	</target>
+
+	<target name="undeploy.core.app">
+		<basename property="file" file="${af.core.jar.file}" />
+		<delete>
+			<fileset dir="${deployment.dir}" includes="${file}" />
+		</delete>
+	</target>
+
+	<target name="deploy.logic.app" depends="dist.logic.app">
+		<copy file="${af.logic.jar.file}" todir="${deployment.dir}" overwrite="true" />
+		<copy todir="${config.dir}" overwrite="true">
+			<fileset dir="${resources.dir}/af">
+				<include name="ehcache.xml" />
+				<include name="orgfunction.properties" />
+				<include name="login_module.properties" />
+				<include name="kerberos_module.properties" />
+				<include name="ad_password_login_module.properties" />
+				<include name="ldap-importer.properties" />
+				<include name="wfe_settings.properties" />
+				<include name="presentationFields.properties" />
+			</fileset>
+		</copy>
+		<copy file="${hibernate.xml.file}" todir="${config.dir}" overwrite="true" />
+		<copy file="${hibernate.xml.file}" tofile="${config.dir}/hibernate.archive.cfg.xml" overwrite="true" />
+		<replace file="${config.dir}/hibernate.archive.cfg.xml" token="runawfe-ds" value="runawfe-archive-ds"/>
+	</target>
+
+	<target name="undeploy.logic.app">
+		<basename property="file" file="${af.logic.jar.file}" />
+		<delete>
+			<fileset dir="${deployment.dir}" includes="${file}" />
+			<fileset dir="${config.dir}">
+				<include name="ehcache.xml" />
+				<include name="orgfunction.properties" />
+				<include name="login_module.properties" />
+				<include name="kerberos_module.properties" />
+				<include name="ad_password_login_module.properties" />
+				<include name="hibernate.cfg.xml" />
+				<include name="hibernate.archive.cfg.xml" />
+				<include name="presentationFields.properties" />
+			</fileset>
+		</delete>
+	</target>
+
+
+	<target name="deploy.service.app" depends="dist.service.app">
+		<copy file="${af.service.jar.file}" todir="${deployment.dir}" overwrite="true" />
+	</target>
+	<target name="deploy.webservice.app" depends="dist.webservice.app"  unless="skip.webservices">
+		<copy file="${af.webservice.jar.file}" todir="${deployment.dir}" overwrite="true" />
+	</target>
+
+	<target name="undeploy.service.app">
+		<basename property="file" file="${af.service.jar.file}" />
+		<delete>
+			<fileset dir="${deployment.dir}" includes="${file}" />
+		</delete>
+	</target>
+	<target name="undeploy.webservice.app"  unless="skip.webservices">
+		<basename property="file" file="${af.webservice.jar.file}" />
+		<delete>
+			<fileset dir="${deployment.dir}" includes="${file}" />
+		</delete>
+	</target>
+
+	<target name="deploy.test" depends="dist.test">
+		<copy file="${tests.war.file}" todir="${deployment.dir}" overwrite="true" />
+	</target>
+
+	<target name="undeploy.test">
+		<basename property="file" file="${tests.war.file}" />
+		<delete>
+			<fileset dir="${deployment.dir}" includes="${file}" />
+		</delete>
+	</target>
+
+	<target name="deploy.app" depends="deploy.core.app,deploy.logic.app,deploy.service.app,deploy.webservice.app" />
+
+	<target name="undeploy.app">
+		<antcall target="undeploy.webservice.app" />
+		<antcall target="undeploy.service.app" />
+		<antcall target="undeploy.logic.app" />
+		<antcall target="undeploy.core.app" />
+	</target>
+
+	<target name="deploy.all" depends="deploy.app,deploy.test" />
+
+	<target name="undeploy.all">
+		<antcall target="undeploy.test" />
+		<antcall target="undeploy.app" />
+	</target>
+
+	<target name="test" depends="deploy.test,init.db">
+		<mkdir dir="${report.dir}" />
+		<sleep seconds="10" />
+		<cactus warfile="${tests.war.file}" printsummary="yes" forkmode="once" fork="true"
+			errorProperty="test.failed" failureProperty="test.failed">
+			<cactusproperty server="true" propertiesFile="${build.test.classes.dir}/cactus.properties" />
+			<containerset>
+				<generic todir="${report.dir}" port="${web.port}">
+					<startup>
+						<fail>Start container!</fail>
+					</startup>
+					<shutdown>
+						<echo>Container shutdown not supported</echo>
+					</shutdown>
+				</generic>
+			</containerset>
+			<formatter type="xml" />
+			<batchtest>
+				<fileset dir="${src.test.dir}">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+			<classpath>
+				<path refid="app.class.path" />
+				<path location="${build.test.classes.dir}" />
+			</classpath>
+		</cactus>
+		<antcall target="undeploy.test" />
+		<fail if="test.failed">Unit tests failed.</fail>
+	</target>
+
+	<target name="init.db">
+		<java classname="ru.runa.af.delegate.impl.InitializerServiceDelegateRemoteImpl" failonerror="true" fork="true">
+			<classpath refid="app.class.path" />
+		</java>
+	</target>
+</project>

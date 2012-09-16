@@ -1,0 +1,15 @@
+<config>
+  <input>
+    <param name="employee" formatFilter="string" label="Сотрудник" />
+    <param name="requester" formatFilter="string" label="Подавший заявку" />
+    <param name="from" formatFilter="date" label="Дата с" />
+    <param name="to" formatFilter="date" label="Дата по" />
+    <param name="cause" formatFilter="string" label="Причина" />
+    <param name="comment" formatFilter="string" label="Комментарий" />
+    <param name="applyHolidays" formatFilter="boolean" label="Учитывать праздничные дни" />
+    <param name="confirmation" formatFilter="date" label="Дата подтверждения" />
+  </input>
+  <output>
+    <param name="uuid" formatFilter="string" label="Название переменной" help="Переменная, в которую будет записан ID объекта Alfresco" />
+  </output>
+</config>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="WFE.Bot Part" default="dist.app" basedir=".">
+	<!-- set global properties for this build -->
+	<dirname property="WFE.Bot Part.basedir" file="${ant.file.WFE.Bot Part}"/>
+	<import file="${WFE.Bot Part.basedir}/wfe.common.xml"/>
+
+	<property name="src.dir" location="src/bot" />
+
+	<property name="build.app.classes.dir" location="${build.dir}/app/bot/classes" />
+
+	<property name="bot.jar.file" location="${dist.deploy.dir}/wfe-botstation.jar" />
+
+	<target name="clean" description="clean up">
+		<delete dir="${build.app.classes.dir}" />
+		<delete file="${bot.jar.file}" failonerror="false" />
+		<delete file="${bot.war.file}" failonerror="false" />
+	</target>
+
+	<target name="init">
+		<tstamp />
+		<mkdir dir="${build.app.classes.dir}" />
+		<mkdir dir="${dist.deploy.dir}" />
+	</target>
+
+	<target name="compile.app" depends="init" description="compile the source of application">
+		<javac destdir="${build.app.classes.dir}" debug="${javac.debug}" encoding="UTF-8" target="${javac.target}" source="${javac.source}">
+			<src path="${src.dir}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="app.class.path" />
+		</javac>
+	</target>
+
+	<target name="dist.app" depends="compile.app">
+		<jar destfile="${bot.jar.file}">
+			<zipfileset dir="${build.app.classes.dir}" excludes="**/MonitorServletContextListener*.class" />
+
+			<zipfileset dir="${resources.dir}/bot">
+				<exclude name="bot_invoker.properties" />
+				<exclude name="bot_delegate.properties" />
+			</zipfileset>
+
+		</jar>
+	</target>
+
+	<target name="deploy.app" depends="dist.app">
+		<copy file="${bot.jar.file}" todir="${deployment.dir}" overwrite="true" />
+		<copy todir="${config.dir}" overwrite="true">
+			<!--todo optimize file sets -->
+			<fileset dir="${resources.dir}/bot">
+				<include name="bot_invoker.properties" />
+				<include name="bot_delegate.properties" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="undeploy.app">
+		<basename property="file" file="${bot.jar.file}" />
+		<delete>
+			<fileset dir="${deployment.dir}" includes="${file}" />
+		</delete>
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${config.dir}">
+				<include name="bot_invoker.properties" />
+				<include name="bot_delegate.properties" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="start.bots">
+		<java classname="ru.runa.af.delegate.bot.impl.BotInvokerServiceDelegateRemoteImpl" fork="true">
+			<arg value="start" />
+			<classpath refid="app.class.path" />
+		</java>
+	</target>
+
+	<target name="stop.bots">
+		<java classname="ru.runa.af.delegate.bot.impl.BotInvokerServiceDelegateRemoteImpl" fork="true">
+			<arg value="stop" />
+			<classpath refid="app.class.path" />
+		</java>
+	</target>
+</project>

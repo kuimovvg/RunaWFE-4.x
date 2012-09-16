@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typesMapping xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml mapping.xsd">
+  <mapping format="ru.runa.bp.timings.AlfDeleteUnconfirmedAbsence"
+    hidden="0" name="Alf: удалить неподтвержденную запись учета времени"/>
+  <mapping
+    format="ru.runa.bpm.delegation.assignment.ActorAssignmentHandler"
+    hidden="0" name="ActorAssignmentHandler"/>
+  <mapping
+    format="ru.runa.bpm.delegation.action.ClearMilestoneActionHandler"
+    hidden="0" name="ClearMilestoneActionHandler"/>
+  <mapping format="ru.runa.bp.timings.AlfCreatePaidVacation" hidden="0" name="Alf: создать ежегодный отпуск"/>
+  <mapping format="ru.runa.bp.demo.CreateMyDoc" hidden="0" name="alfdemo: create document"/>
+  <mapping format="ru.runa.bp.demo.RejectMyDoc" hidden="0" name="alfdemo: reject document"/>
+  <mapping
+    format="ru.runa.af.organizationfunction.ExecutorByCodeFunction"
+    hidden="0" name="ExecutorByCodeFunction"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.AddEmployeeAndChiefEmailActionHandler"
+    hidden="0" name="AddEmployeeAndChiefEmailActionHandler"/>
+  <mapping format="ru.runa.wf.web.forms.format.BooleanFormat" hidden="0" name="BooleanFormat"/>
+  <mapping format="ru.runa.bpm.delegation.action.ScheduleJobActionHandler"
+    hidden="0" name="ScheduleJobActionHandler"/>
+  <mapping format="ru.runa.bp.timings.AlfConfirmateAbsence" hidden="0" name="Alf: подтвердить запись учета времени"/>
+  <mapping format="ru.runa.bp.timings.AlfCreateAbsence" hidden="0" name="Alf: создать отсутствие"/>
+  <mapping format="ru.runa.wf.web.forms.format.DateFormat" hidden="0" name="DateFormat"/>
+  <mapping format="ru.runa.wf.InternalGetActorsByGroupActionHandler"
+    hidden="0" name="InternalGetActorsByGroupActionHandler"/>
+  <mapping format="ru.runa.wf.var.RemoveObjectFromListActionHandler"
+    hidden="0" name="RemoveObjectFromListActionHandler"/>
+  <mapping format="ru.runa.bp.timings.AlfCheckOvertimeHasNoConflicts"
+    hidden="0" name="Alf: проверить сверхурочные на конфликты"/>
+  <mapping format="ru.runa.bp.timings.AlfCreateAbsenceInterruption"
+    hidden="0" name="Alf: создать преждевременный выход из отпуска"/>
+  <mapping format="ru.runa.bpm.mail.Mail" hidden="0" name="Mail"/>
+  <mapping format="ru.runa.bpm.scheduler.def.CreateTimerAction" hidden="0" name="CreateTimerAction"/>
+  <mapping format="ru.runa.bp.timings.AlfSyncEmployeePresences"
+    hidden="0" name="Alf: обновить данные прихода-ухода"/>
+  <mapping format="ru.runa.bp.org.AlfLoadDataForOrderGeneration"
+    hidden="0" name="Alf: загрузить данные юридического договора"/>
+  <mapping
+    format="ru.runa.bpm.delegation.assignment.PreviousAssignmentHandler"
+    hidden="0" name="PreviousAssignmentHandler"/>
+  <mapping format="ru.runa.bp.timings.AlfCancelProcess" hidden="0" name="Alf: отменить запись учета времени"/>
+  <mapping format="ru.runa.bp.org.AlfDepartmentChiefOrgFunction"
+    hidden="0" name="AlfDepartmentChiefOrgFunction"/>
+  <mapping format="ru.runa.bp.timings.AlfrescoUpdateSicklistData"
+    hidden="0" name="AlfrescoUpdateSicklistData"/>
+  <mapping format="ru.runa.bpm.delegation.action.CreateTimerActionHandler"
+    hidden="0" name="CreateTimerActionHandler"/>
+  <mapping
+    format="ru.runa.bp.timings.AlfCheckConditionsForStimulatingLeave"
+    hidden="0" name="Alf: проверить условия предоставления отгула"/>
+  <mapping format="ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler"
+    hidden="0" name="ExecuteFormulaActionHandler"/>
+  <mapping format="ru.runa.wf.swimlane.AssignSwimlaneActionHandler"
+    hidden="0" name="AssignSwimlaneActionHandler"/>
+  <mapping format="ru.runa.af.organizationfunction.DemoChiefFunction"
+    hidden="0" name="DemoChiefFunction"/>
+  <mapping format="ru.runa.wfe.bp.commons.DepartamentChiefFunction"
+    hidden="0" name="DepartamentChiefFunction"/>
+  <mapping
+    format="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler"
+    hidden="0" name="AssignmentHandler"/>
+  <mapping format="ru.runa.bp.org.AlfLoadJurAgreementData" hidden="0" name="Alf: определить данные юридического договора"/>
+  <mapping
+    format="ru.runa.wf.jbpm.delegation.decision.BSFDecisionHandler"
+    hidden="0" name="BSFDecisionHandler"/>
+  <mapping format="ru.runa.bp.timings.AlfUpdateSicklistData" hidden="0" name="Alf: обновить данные больничного"/>
+  <mapping format="ru.runa.bpm.scheduler.def.CancelTimerAction" hidden="0" name="CancelTimerAction"/>
+  <mapping format="ru.runa.wf.SQLActionHandler" hidden="0" name="SQLActionHandler"/>
+  <mapping format="ru.runa.bp.org.AlfChiefOrgFunction" hidden="0" name="AlfChiefOrgFunction"/>
+  <mapping format="ru.runa.bpm.graph.def.Action" hidden="0" name="Action"/>
+  <mapping format="ru.runa.bp.demo.ApproveMyDoc" hidden="0" name="alfdemo: approve document"/>
+  <mapping format="ru.runa.wf.web.forms.format.DateTimeFormat"
+    hidden="0" name="DateTimeFormat"/>
+  <mapping format="ru.runa.wf.BSHActionHandler" hidden="0" name="BSHActionHandler"/>
+  <mapping format="ru.runa.bp.timings.AlfrescoDeleteUnconfirmedAbsence"
+    hidden="0" name="AlfrescoDeleteUnconfirmedAbsence"/>
+  <mapping format="ru.runa.af.organizationfunction.DirectorFunction"
+    hidden="0" name="DirectorFunction"/>
+  <mapping format="ru.runa.wf.web.forms.format.StringArrayFormat"
+    hidden="0" name="StringArrayFormat"/>
+  <mapping format="ru.runa.bp.org.AlfDirectorOrgFunction" hidden="0" name="AlfDirectorOrgFunction"/>
+  <mapping format="ru.runa.bp.timings.AlfAverageShiftTimeCount"
+    hidden="0" name="AlfAverageShiftTimeCount"/>
+  <mapping format="ru.runa.bpm.web.formgen.format.DoubleFormat" hidden="0" name="DoubleFormat"/>
+  <mapping format="ru.runa.bpm.graph.action.SeamedAction" hidden="0" name="SeamedAction"/>
+  <mapping format="ru.runa.bp.timings.AlfCreateExcuseRequestAndExcuses"
+    hidden="0" name="Alf: создать отчет по объяснительным"/>
+  <mapping format="ru.runa.wf.var.AddObjectToListActionHandler"
+    hidden="0" name="AddObjectToListActionHandler"/>
+  <mapping format="ru.runa.bpm.graph.node.MilestoneEvent" hidden="0" name="MilestoneEvent"/>
+  <mapping format="ru.runa.wf.web.forms.format.StringFormat" hidden="0" name="StringFormat"/>
+  <mapping format="ru.runa.bp.timings.AlfLoadAbsenceData" hidden="0" name="Alf: загрузить данные отпуска"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.EmailTaskNotifierActionHandler"
+    hidden="0" name="EmailTaskNotifierActionHandler"/>
+  <mapping format="ru.runa.bpm.delegation.action.CancelTimerActionHandler"
+    hidden="0" name="CancelTimerActionHandler"/>
+  <mapping
+    format="ru.runa.bpm.identity.assignment.ExpressionAssignmentHandler"
+    hidden="0" name="ExpressionAssignmentHandler"/>
+  <mapping
+    format="ru.runa.wf.jbpm.delegation.action.SetSubProcessPermissionsActionHandler"
+    hidden="0" name="SetSubProcessPermissionsActionHandler"/>
+  <mapping format="ru.runa.af.organizationfunction.SQLFunction"
+    hidden="0" name="SQLFunction"/>
+  <mapping format="ru.runa.bp.org.AlfEmployeeOrRequestorOrgFunction"
+    hidden="0" name="AlfEmployeeOrRequestorOrgFunction"/>
+  <mapping format="ru.runa.bp.timings.AlfCreateShift" hidden="0" name="Alf: создать график работы"/>
+  <mapping format="ru.runa.bp.timings.AlfrescoCreateAbsenceOrder"
+    hidden="0" name="AlfrescoCreateAbsenceOrder"/>
+  <mapping format="ru.runa.bp.timings.AlfCreateOvertime" hidden="0" name="Alf: создать сверхурочные"/>
+  <mapping format="ru.runa.wf.web.forms.format.TimeWithSecondsFormat"
+    hidden="0" name="TimeWithSecondsFormat"/>
+  <mapping format="ru.runa.wf.web.forms.format.ArrayListFormat"
+    hidden="0" name="ArrayListFormat"/>
+  <mapping format="ru.runa.bp.AlfSetContent" hidden="0" name="Alfresco: upload file data"/>
+  <mapping
+    format="ru.runa.bp.timings.AlfCheckSicklistWithVacationIntersection"
+    hidden="0" name="Alf: найти пересечение больничного с отпуском"/>
+  <mapping format="ru.runa.af.organizationfunction.ChiefFunction"
+    hidden="0" name="ChiefFunction"/>
+  <mapping format="ru.runa.wf.InternalGetActorsByRelationActionHandler"
+    hidden="0" name="InternalGetActorsByRelationActionHandler"/>
+  <mapping format="ru.runa.bp.timings.AlfConfirmateHourVacation"
+    hidden="0" name="Alf: подтвердить отпуск на часы"/>
+  <mapping format="ru.runa.bpm.graph.action.Script" hidden="0" name="Script"/>
+  <mapping
+    format="ru.runa.bpm.delegation.decision.ExpressionDecisionHandler"
+    hidden="0" name="ExpressionDecisionHandler"/>
+  <mapping format="ru.runa.wf.web.forms.format.LongFormat" hidden="0" name="LongFormat"/>
+  <mapping format="ru.runa.bp.timings.AlfCreateMandatoryPresence"
+    hidden="0" name="Alf: создать обязательное присутствие"/>
+  <mapping format="ru.runa.bp.timings.AlfCloseUnknownReason" hidden="0" name="Alf: закрыть незапланированное отсутствие"/>
+  <mapping format="ru.runa.bpm.delegation.action.TimerTriggerActionHandler"
+    hidden="0" name="TimerTriggerActionHandler"/>
+  <mapping format="ru.runa.wfe.bp.commons.EmployeeOrRequestorFunction"
+    hidden="0" name="EmployeeOrRequestorFunction"/>
+  <mapping
+    format="ru.runa.bpm.delegation.assignment.VariableAssignmentHandler"
+    hidden="0" name="VariableAssignmentHandler"/>
+  <mapping format="ru.runa.wf.users.ActorNameActionHandler" hidden="0" name="ActorNameActionHandler"/>
+  <mapping format="ru.runa.bp.timings.AlfrescoCreateAbsence" hidden="0" name="AlfrescoCreateAbsence"/>
+  <mapping format="ru.runa.bp.org.AlfCheckNeedTwiceConfirmation"
+    hidden="0" name="Alf: двойное подтверждение"/>
+  <mapping
+    format="ru.runa.af.organizationfunction.ExecutorByNameFunction"
+    hidden="0" name="ExecutorByNameFunction"/>
+  <mapping format="ru.runa.bpm.delegation.action.CancelJobActionHandler"
+    hidden="0" name="CancelJobActionHandler"/>
+  <mapping format="ru.runa.bpm.graph.action.MailAction" hidden="0" name="MailAction"/>
+  <mapping format="ru.runa.wf.web.forms.format.TimeFormat" hidden="0" name="TimeFormat"/>
+  <mapping format="ru.runa.bp.timings.AlfCreateAbsenceOrder" hidden="0" name="Alf: создать приказ"/>
+  <mapping format="ru.runa.wf.CreateOptionActionHandler" hidden="0" name="CreateOptionActionHandler"/>
+  <mapping format="ru.runa.bpm.web.formgen.format.DefaultFormat" hidden="0" name="DefaultFormat"/>
+  <mapping format="ru.runa.wf.EscalationActionHandler" hidden="0" name="EscalationActionHandler"/>
+  <mapping format="ru.runa.wf.web.forms.format.FileFormat" hidden="0" name="FileFormat"/>
+  <mapping
+    format="ru.runa.wf.jbpm.delegation.action.BotInvokerActionHandler"
+    hidden="0" name="BotInvokerActionHandler"/>
+  <mapping
+    format="ru.runa.bpm.delegation.action.MilestoneReachedActionHandler"
+    hidden="0" name="MilestoneReachedActionHandler"/>
+  <mapping format="ru.runa.bp.timings.AlfCheckShiftHasNoConflicts"
+    hidden="0" name="Alf: проверить график работы на конфликты"/>
+  <mapping format="ru.runa.bp.timings.AlfrescoCreateShift" hidden="0" name="AlfrescoCreateShift"/>
+  <mapping format="ru.runa.wf.SendEmailActionHandler" hidden="0" name="SendEmailActionHandler"/>
+</typesMapping>

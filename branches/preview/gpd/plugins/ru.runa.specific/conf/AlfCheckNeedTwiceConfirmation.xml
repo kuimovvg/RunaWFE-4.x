@@ -1,0 +1,9 @@
+<config>
+  <input>
+    <param name="employee" formatFilter="string" label="Сотрудник" />
+    <param name="chief" formatFilter="string" label="Руководитель" />
+  </input>
+  <output>
+    <param name="doubleChiefApproval" formatFilter="string" label="Название переменной" help="Выберите переменную, в которую будет записан результат" />
+  </output>
+</config>

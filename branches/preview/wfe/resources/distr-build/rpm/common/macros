@@ -1,0 +1,62 @@
+%define requires_ant               ant >= 1.6.5 ant-junit >= 1.6.5 ant-trax >= 1.6.5 ant-nodeps >= 1.6.5 ant-optional >= 1.6.5
+%define requires_antlr             antlr
+%define requires_apache_commons    jakarta-commons-validator jakarta-commons-logging jakarta-commons-collections  jakarta-commons-digester jakarta-commons-beanutils jakarta-commons-lang jakarta-commons-fileupload jakarta-commons-io
+%define requires_aspectj           aspectj
+%define requires_asm               asm
+%define requires_bsh               bsh
+%define requires_cactus            jakarta-cactus 
+%define requires_cargo             cargo          
+%define requires_cglib             cglib
+%define requires_dom4j             dom4j
+%define requires_ecs               sh
+%define requires_ehcache           ehcache
+%define requires_freemarker        freemarker
+%define requires_hibernate         hibernate3 hibernate3-annotations
+%define requires_java              java >= 1.5
+%define requires_java_devel        java-devel >= 1.5
+%define requires_javamail          ant-javamail
+%define requires_jboss             runawfe-jboss = 4.2.3.GA
+%define requires_jcifs             jcifs
+%define requires_jta               jta
+%define requires_libgtk            libgtk+2
+%define requires_mozilla           firefox
+%define requires_nekohtml          nekohtml
+%define requires_openoffice        openoffice.org
+%define requires_odmg              odmg
+%define requires_portal_bridges    portals-bridges-struts
+%define requires_perlcgi           perl-CGI
+%define requires_struts            struts struts-taglib
+%define requires_struts_test       strutstestcase
+%define requires_swt               eclipse-swt
+%define requires_trove             gnu-trove
+%define requires_xdgutils          xdg-utils
+%define requires_xjavadoc          xjavadoc
+
+
+%define runawfe_update_menus echo "" >/dev/null
+%define runawfe_clean_menus echo "" >/dev/null
+
+%define JBOSS_ROOT_ORIG ReplaceableJbossHome
+%define JBOSS_ROOT_TARGET /usr/share/runawfe-jboss
+%define JBOSS_ROOT_RPM %buildroot/%JBOSS_ROOT_TARGET
+
+%define runawfe_jboss_libs /usr/share/java/runawfe-libs
+
+# ID for different servers
+%define server_id server
+%define botstation_id botstation
+%define simulation_id simulation
+# Prefix, used in jboss configuration (i. e. jboss/server/prefix+name)
+%define jboss_cfg_prefix runawfe-
+# Jboss configuration names
+%define jboss_cfg_server %jboss_cfg_prefix%server_id
+%define jboss_cfg_simulation %jboss_cfg_prefix%simulation_id
+%define jboss_cfg_botstation %jboss_cfg_prefix%botstation_id
+
+%define DOC_ROOT ReplaceableDocPath
+%define DOC_WORKFLOW wfe/docs/Workflow
+
+%define runawfe_web_port ReplaceableWebPort
+
+%define make_jboss_libs_links() for fileName in `ls %1`; do linkName=`echo $fileName | awk -F - '/.*-[0-9]*(\\.[0-9]*)*.jar/ {for(i=1; i<NF; i=i+1) {if (i != 1)printf "%s", "-" >>"/dev/stdout"; printf "%s", $i >>"/dev/stdout"}; printf "%s", ".jar" >>"/dev/stdout";}' ` ; if [ "$linkName" = "" ]; then linkName=`echo $fileName`; fi ; ln -sf "%1/$fileName" "%2/$linkName"; done
+

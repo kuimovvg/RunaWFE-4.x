@@ -1,0 +1,17 @@
+preface:
+Woody's default samba (samba-2.2.3a-13) does autenticate Windows clients
+that are members of NT(Windows 2000) domain. Nevertheless Windows client
+which is not domain member authenticates fine. The problem seems to be in diffenent
+password verification methods: domain client checked agains pam db (but can't be
+verified even if password is correct Unix password), non-domain client checked against
+smbpasswd db.
+Cause is still missing.
+
+Walkaround:
+install unofficial samba3 package from samba.org.
+smb.conf configuration: 
+encrypt passwords = true
+passwd backend = smbpasswd
+
+also you must add every valid user in smbpasswd file (parameter 'smb passwd' file in smb.conf)
+and (optionaly) provide correct samba-to-unix users map (parameter 'username map' in smb.conf).

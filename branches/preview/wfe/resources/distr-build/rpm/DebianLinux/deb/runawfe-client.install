@@ -1,0 +1,3 @@
+usr/share/applications/runawfe-client.desktop
+etc/xdg/menus/applications-merged/runawfe-client.menu
+usr/sbin/runawfe-webclient.sh

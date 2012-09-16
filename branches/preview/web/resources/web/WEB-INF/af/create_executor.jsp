@@ -1,0 +1,22 @@
+<%@ page language="java" pageEncoding="UTF-8" %>
+<%@ page import="ru.runa.af.web.form.CreateExecutorForm" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/wf.tld" prefix="wf" %>
+<tiles:insert page="/WEB-INF/af/main_layout.jsp" flush="true">
+
+<tiles:put name="body" type="string" >
+<% 
+	String executorType = request.getParameter(CreateExecutorForm.EXECUTOR_TYPE_INPUT_NAME);
+	String title;
+	if("actor".equals(executorType)) {
+		title = ru.runa.common.web.Commons.getMessage("title.create_actor", pageContext);
+	} else {
+		title = ru.runa.common.web.Commons.getMessage("title.create_group", pageContext);
+	}
+%>
+	<wf:box title='<%= title %>'>
+		<wf:createExecutorForm type="<%= executorType %>"  />
+	</wf:box>
+</tiles:put>
+<tiles:put name="messages" value="../common/messages.jsp" />
+</tiles:insert>

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=sh /usr/sbin/runawfe-webclient.sh
+Icon=/usr/share/pixmaps/RunaWFE-Client.gif
+Name=Web interface for RunaWFE (main)
+Name[ru]=Web интерфейс для RunaWFE (основной)
+Path=/usr/lib/RunaGPD
+Terminal=false
+Type=Application
+ReplaceableCategories

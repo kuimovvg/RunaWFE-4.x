@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-diagram height="457" name="MultiInstanceSubProcess"
+  notation="bpmn" showActions="false" showGrid="false" width="769">
+  <node height="48" name="Start" width="48" x="72" y="24">
+    <transition name="tr1"/>
+  </node>
+  <node height="84" minimizedView="false" name="form suborder"
+    width="132" x="24" y="156">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" name="End" width="48" x="72" y="300"/>
+</process-diagram>

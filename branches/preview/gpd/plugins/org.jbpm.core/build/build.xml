@@ -1,0 +1,41 @@
+<project name="Import the core jbpm project" default="copyJbpmCoreFiles" basedir="." >
+
+	<property file="${user.home}/jbpm/build/build.properties" />
+	<property name="jbpm-cvs-root" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/jbpm" />
+	<property name="jbpm-core-version-tag" value="jbpm_3_0" />
+	<property name="quiet" value="false" />
+	<property name="jbpm-core-module" value="jbpm.3" />
+	<property name="jbpm-core-dir" value="../../${jbpm-core-module}.${jbpm-core-version-tag}" />
+
+	<target name="fetch-condition">
+		<available file="${jbpm-core-dir}" property="jbpm-core-available" />
+	</target>
+	
+	<target name="getJbpmCoreFiles" depends="fetch-condition" unless="jbpm-core-available" >
+		<cvs 
+			cvsRoot="${jbpm-cvs-root}" 
+			command="export -d ${jbpm-core-dir} -r ${jbpm-core-version-tag} ${jbpm-core-module}" 
+			quiet="${quiet}" />
+	</target>
+	
+	<target name="buildJbpmCore" depends="getJbpmCoreFiles">
+		<ant antfile="build.xml" dir="${jbpm-core-dir}" />
+	</target>
+	
+	<target name="copyJbpmCoreFiles" depends="buildJbpmCore">
+		<copy todir=".." includeEmptyDirs="false" >
+			<fileset dir="${jbpm-core-dir}" >
+			  <exclude name="build/**/*.*" />
+			  <exclude name=".*" />
+			  <exclude name="build.*" />
+			</fileset>
+		</copy>	
+		<copy todir="../lib/jbpm">
+			<fileset dir="${jbpm-core-dir}/build" >
+				<include name="jbpm-3.0*.jar" />
+				<include name="jbpm-identity-3.0*.jar" />
+			</fileset>
+		</copy>
+	</target>
+	
+</project>

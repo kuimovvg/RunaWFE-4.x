@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WixLocalization>
+  <String Id="RunaWFE_InstallerLang">1033</String>
+  <String Id="RunaWFE_Codepage">1252</String>
+
+  <String Id="RunaWFE_ProductName">RunaWFE 2.1</String>
+
+  <String Id="RunaWFE_ClientPackageDescription">[ProductName] client components Installer</String>
+  <String Id="RunaWFE_ServerPackageDescription">[ProductName] server components Installer</String>
+                                                
+  <String Id="RunaWFE_UninstallShortcutName">Uninstall RunaWFE 2.1</String>
+  <String Id="RunaWFE_UninstallShortcutDescription">Uninstall all RunaWFE components and shortcuts.</String>
+
+  <String Id="RunaWFE_IPAdressPrompt">Address of main RunaWFE server (in form server_name or ip):</String>
+  <String Id="RunaWFE_IPAdressPort">port:</String>
+  <String Id="RunaWFE_ServerPort">Port for RunaWFE web interface:</String>
+
+  <String Id="RunaWFE_Client_ComponentRTNName">Task notifier</String>
+  <String Id="RunaWFE_Client_ComponentRTNDescription">Task notifier is a component for bla bla bla</String>
+  <String Id="RunaWFE_Client_ComponentGPDName">GPD</String>
+  <String Id="RunaWFE_Client_ComponentGPDDescription">Graphic process designer is a component for bla bla bla</String>
+  <String Id="RunaWFE_Client_ComponentSimulatorName">WFE Simulator</String>
+  <String Id="RunaWFE_Client_ComponentSimulatorDescription">WFE Simulator is a component for bla bla bla</String>
+  <String Id="RunaWFE_Client_ComponentDocumentationName">Documentation</String>
+  <String Id="RunaWFE_Client_ComponentDocumentationDescription">Documentation is a component for bla bla bla</String>
+  <String Id="RunaWFE_Client_ComponentMainWFEWebLinkName">WFE web interface</String>
+  <String Id="RunaWFE_Client_ComponentMainWFEWebLinkDescription">WFE web interface is a component for bla bla bla</String>
+
+  <String Id="RunaWFE_Client_MenuDocumentationLinkName">Documentation</String>
+  <String Id="RunaWFE_Client_NenuDocumentationLinkDescription">Documentation for RunaWFE (process development and so on)</String>
+  <String Id="RunaWFE_Client_MenuMainServerWebLinkName">Web interface for WFE</String>
+  <String Id="RunaWFE_Client_MenuMainServerWebLinkDescription">Open browser with link to main WFE server web interface</String>
+  <String Id="RunaWFE_Client_MenuRTNLinkName">Task notifier</String>
+  <String Id="RunaWFE_Client_MenuRTNLinkLongName">Task notifier</String>
+  <String Id="RunaWFE_Client_MenuRTNLinkDescription">Runa Task Notifier</String>
+  <String Id="RunaWFE_Client_MenuGPDName">Graphic process designer</String>
+  <String Id="RunaWFE_Client_MenuGPDDescription">Graphic Process Designer is a graphic tool for developing WFE processes</String>
+  <String Id="RunaWFE_Client_MenuSimulationWebLinkName">Web interface for local WFE simulator (not for main WFE server)</String>
+  <String Id="RunaWFE_Client_MenuSimulationWebLinkDescription">Open browser with link to simulator web interface</String>
+
+  <String Id="RunaWFE_Client_MenuStartSimulatorLinkName">Start simulator</String>
+  <String Id="RunaWFE_Client_MenuStartSimulatorLinkDescription">Start WFE simulator in local machine</String>
+  <String Id="RunaWFE_Client_MenuStopSimulatorLinkName">Stop simulator</String>
+  <String Id="RunaWFE_Client_MenuStopSimulatorLinkDescription">Stop WFE simulator in local machine</String>
+  <String Id="RunaWFE_Client_MenuBotStopLinkName">Stop bots</String>
+  <String Id="RunaWFE_Client_MenuBotStopLinkDescription">Stop bots in WFE simulator</String>
+  <String Id="RunaWFE_Client_MenuBotStartLinkName">Start bots</String>
+  <String Id="RunaWFE_Client_MenuBotStartLinkDescription">Start bots in WFE simulator</String>
+  <String Id="RunaWFE_Client_AddressDescription">For correct working of some components (such as rtn, web links) you must provide WFE server address (dns name or ip) and port, which used for web interface.</String>
+
+  <String Id="RunaWFE_Server_ComponentServerDescription">Install main RunaWFE server and install services to start server automatically.</String>
+  <String Id="RunaWFE_Server_ComponentBotstationDescription">Install RunaWFE remote botstation server and install services to start botstation server automatically.</String>
+  <String Id="RunaWFE_Server_ComponentServerName">Main Server</String>
+  <String Id="RunaWFE_Server_ComponentBotstationName">Botstation</String>
+  <String Id="RunaWFE_Server_BotstationAddressDescription">Remote botstation using data from main WFE server, so you must provide address (dns name or ip) of WFE server. Remember, what bots can be launched also in WFE server, so use remote botstation only if it is actually needed (in reason of stability, load balancing e. t. c.).</String>
+  <String Id="RunaWFE_Server_ServerAddressDescription">It is possible to use RunaWFE server functions via web interface using different browsers. By default web interface is working on port 8080, but you can choose another port. If you changing port number from default, do not forget to change server port for clients components.</String>
+
+</WixLocalization>

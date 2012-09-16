@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="approve my doc" xmlns="urn:jbpm.org:jpdl-3.2">
+  <description><![CDATA[Simple interoperability with ECM Alfresco]]></description>
+  <swimlane name="initiator">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <swimlane name="manager">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[ru.runa.af.organizationfunction.ExecutorByNameFunction(manager)]]></assignment>
+  </swimlane>
+  <start-state name="Upload document">
+    <task name="Upload document" swimlane="initiator"/>
+    <transition name="tr1" to="Approve document">
+      <action class="ru.runa.bp.demo.CreateMyDoc" config-type="configuration-property"><![CDATA[<config>
+  <input>
+    <param name="file" variable="file" />
+  </input>
+  <output>
+    <param name="uuid" variable="uuid" />
+  </output>
+</config>]]></action>
+    </transition>
+  </start-state>
+  <task-node name="Approve document">
+    <task name="Approve document" swimlane="manager"/>
+    <transition name="Approve" to="Result">
+      <action class="ru.runa.bp.demo.ApproveMyDoc" config-type="configuration-property"><![CDATA[<config>
+  <input>
+    <param name="uuid" variable="uuid" />
+  </input>
+</config>]]></action>
+    </transition>
+    <transition name="Reject" to="Result">
+      <action class="ru.runa.bp.demo.RejectMyDoc" config-type="configuration-property"><![CDATA[<config>
+  <input>
+    <param name="uuid" variable="uuid" />
+  </input>
+</config>]]></action>
+    </transition>
+  </task-node>
+  <task-node name="Result">
+    <task name="Result" swimlane="initiator"/>
+    <transition name="tr1" to="End"/>
+  </task-node>
+  <end-state name="End"/>
+</process-definition>

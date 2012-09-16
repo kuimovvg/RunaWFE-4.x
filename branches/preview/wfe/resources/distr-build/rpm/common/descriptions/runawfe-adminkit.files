@@ -1,0 +1,3 @@
+%JBOSS_ROOT_TARGET/adminkit
+%JBOSS_ROOT_TARGET/samples
+%_sbindir/runawfe-stop.sh

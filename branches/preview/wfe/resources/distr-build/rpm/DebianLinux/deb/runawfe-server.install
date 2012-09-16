@@ -1,0 +1,5 @@
+usr/share/runawfe-jboss/server/runawfe-server/conf/*
+usr/share/runawfe-jboss/server/runawfe-server/deploy/*
+usr/share/runawfe-jboss/server/runawfe-server/data/*
+etc/init.d/*
+usr/sbin/runawfe-start-server.sh

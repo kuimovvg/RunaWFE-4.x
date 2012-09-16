@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="AjaxFormDemo" xmlns="urn:jbpm.org:jpdl-3.2">
+  <description><![CDATA[AJAX support demo]]></description>
+  <swimlane name="Swimlane">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state name="Start">
+    <task name="Start" swimlane="Swimlane"/>
+    <transition name="tr1" to="Display user input"/>
+  </start-state>
+  <task-node name="Display user input">
+    <task name="Display user input" swimlane="Swimlane"/>
+    <transition name="tr1" to="End"/>
+  </task-node>
+  <end-state name="End"/>
+</process-definition>

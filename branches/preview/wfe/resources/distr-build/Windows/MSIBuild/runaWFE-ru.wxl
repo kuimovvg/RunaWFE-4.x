@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<WixLocalization>
+  <String Id="RunaWFE_InstallerLang">1049</String>
+
+  <String Id="RunaWFE_ProductName">RunaWFE 2.1</String>
+
+  <String Id="RunaWFE_ClientPackageDescription">Клиентские компоненты для [ProductName]</String>
+  <String Id="RunaWFE_ServerPackageDescription">Серверные компоненты для [ProductName]</String>
+                                                
+  <String Id="RunaWFE_UninstallShortcutName">Удалить RunaWFE 2.1</String>
+  <String Id="RunaWFE_UninstallShortcutDescription">Удаляет все установленные компоненты RunaWFE и ссылки.</String>
+
+  <String Id="RunaWFE_IPAdressPrompt">Адрес основного сервера RunaWFE:</String>
+  <String Id="RunaWFE_IPAdressPort">порт:</String>
+  <String Id="RunaWFE_ServerPort">Порт web интерфейса RunaWFE:</String> 
+
+  <String Id="RunaWFE_Client_ComponentRTNName">Оповещатель задач</String>
+  <String Id="RunaWFE_Client_ComponentRTNDescription">Оповещатель задач - приложение, предназначенное для автоматического получения задач с WFE сервера и оповещения пользователя о поступлении новых заданий</String>
+  <String Id="RunaWFE_Client_ComponentGPDName">GPD</String>
+  <String Id="RunaWFE_Client_ComponentGPDDescription">Графический редактор процессов предназначен для создания и редактирования бизнес процессов системы Runa WFE</String>
+  <String Id="RunaWFE_Client_ComponentSimulatorName">Симулятор WFE сервера</String>
+  <String Id="RunaWFE_Client_ComponentSimulatorDescription">Симулятор WFE сервера  предназначен для предварительного тестирования бизнес процессов перед их загрузкой на основной сервер WFE</String>
+  <String Id="RunaWFE_Client_ComponentDocumentationName">Документация</String>
+  <String Id="RunaWFE_Client_ComponentDocumentationDescription">Устанавливает документацию для всех компонентов Runa WFE</String>
+  <String Id="RunaWFE_Client_ComponentMainWFEWebLinkName">Web интерфейс WFE</String>
+  <String Id="RunaWFE_Client_ComponentMainWFEWebLinkDescription">Web интерфейс позволяет использовать функциональность Runa WFE через web броузер.</String>
+
+  <String Id="RunaWFE_Client_MenuDocumentationLinkName">Документация</String>
+  <String Id="RunaWFE_Client_NenuDocumentationLinkDescription">Документация на все компонеты Runa WFE</String>
+  <String Id="RunaWFE_Client_MenuMainServerWebLinkName">Web интерфейс WFE</String>
+  <String Id="RunaWFE_Client_MenuMainServerWebLinkDescription">Открывает браузер со ссылкой на интерфейс WFE</String>
+  <String Id="RunaWFE_Client_MenuRTNLinkName">Оповещатель задач</String>
+  <String Id="RunaWFE_Client_MenuRTNLinkLongName">Оповещатель задач</String>
+  <String Id="RunaWFE_Client_MenuRTNLinkDescription">Оповещает пользователя о новых невыполненых задачах в WFE</String>
+  <String Id="RunaWFE_Client_MenuGPDName">Графический редактор процессов</String>
+  <String Id="RunaWFE_Client_MenuGPDDescription">Графический редактор процессов предназначен для разработки или изменения бизнес процессов для WFE</String>
+  <String Id="RunaWFE_Client_MenuSimulationWebLinkName">Web интерфейс симулятора WFE</String>
+  <String Id="RunaWFE_Client_MenuSimulationWebLinkDescription">Открывает браузер со ссылкой на интерфейс локального симулятора WFE</String>
+
+  <String Id="RunaWFE_Client_MenuStartSimulatorLinkName">Запустить симулятор</String>
+  <String Id="RunaWFE_Client_MenuStartSimulatorLinkDescription">Запускает симулятор WFE на локальной машине и стартует в нем ботов</String>
+  <String Id="RunaWFE_Client_MenuStopSimulatorLinkName">Остановить симулятор</String>
+  <String Id="RunaWFE_Client_MenuStopSimulatorLinkDescription">Омтанавливает локальный симулятор WFE</String>
+  <String Id="RunaWFE_Client_MenuBotStopLinkName">Остановить ботов</String>
+  <String Id="RunaWFE_Client_MenuBotStopLinkDescription">Остановить ботов в симуляторе</String>
+  <String Id="RunaWFE_Client_MenuBotStartLinkName">Запустить ботов</String>
+  <String Id="RunaWFE_Client_MenuBotStartLinkDescription">Запустить ботов в симуляторе</String>
+  <String Id="RunaWFE_Client_AddressDescription">Для корректной работы некоторых компонентов RunaWFE (таких как rtn и ссылка на web интерфейс) необходим адрес основного сервера RunaWFE (имя dns или ip адрес) и порт, на котором доступен web интерфейс RunaWFE.</String> 
+
+  <String Id="RunaWFE_Server_ComponentServerDescription">Устанавливает основной сервер WFE и сервисы для автоматического запуска WFE сервера</String>
+  <String Id="RunaWFE_Server_ComponentBotstationDescription">Устанавливает удаленную ботстанцию WFE и сервисы для автоматического запуска ботстанции</String>
+  <String Id="RunaWFE_Server_ComponentServerName">Сервер</String>
+  <String Id="RunaWFE_Server_ComponentBotstationName">Ботстанция</String>
+  <String Id="RunaWFE_Server_BotstationAddressDescription">Удаленная ботстнция ипользует данные с основного сервера RunaWFE, поэтому необходим адрес основного сервера RunaWFE (имя dns или ip адрес). Помните, что боты могут быть запущены и внутри основного сервера RunaWFE, используйте удаленную ботстанцию только если это действительно необходимо (по соображениям надежности, распределения нагрузки и т. п.).</String> 
+  <String Id="RunaWFE_Server_ServerAddressDescription">Доступ к функциональности RunaWFE может быть осуществлен при помощи web браузера. По умолчанию web интерфейс RunaWFE доступен на порту 8080, но вы можете выбрать другой. Если вы измените порт web интерфейса с 8080, то не забудьте так же поменять порт в клиентских компонентах.</String>
+
+
+</WixLocalization>

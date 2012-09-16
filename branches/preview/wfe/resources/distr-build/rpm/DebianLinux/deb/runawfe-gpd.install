@@ -1,0 +1,5 @@
+usr/lib/RunaGPD
+usr/share/applications/*gpd*
+etc/xdg/menus/applications-merged/*gpd*
+usr/share/pixmaps/*GPD*
+usr/sbin/*gpd*.sh

@@ -1,0 +1,40 @@
+<validators>
+
+<validator type="expression">
+	<message>Till date should be more or equals since date</message>
+	<param name="expression">till.getTime() &gt;= since.getTime()</param>
+</validator>
+<field name="reason">
+
+<field-validator type="stringlength">
+	<message>Length cannot be more than 100 symbols</message>
+	<param name="maxLength">100</param>
+</field-validator>
+<field-validator type="required">
+	<message>Value is required</message>
+</field-validator>
+</field>
+
+<field name="since">
+
+<field-validator type="required">
+	<message>Value is required</message>
+</field-validator>
+</field>
+
+<field name="comment">
+
+<field-validator type="stringlength">
+	<message>Length cannot be more than 255 symbols</message>
+	<param name="maxLength">255</param>
+</field-validator>
+</field>
+
+<field name="till">
+
+<field-validator type="required">
+	<message>Value is required</message>
+</field-validator>
+</field>
+
+</validators>

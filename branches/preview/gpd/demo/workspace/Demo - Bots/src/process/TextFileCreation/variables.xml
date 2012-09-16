@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<variables>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.FileFormat" name="resultTextFile"/>
+  <variable description=""
+    format="ru.runa.bpm.web.formgen.format.DefaultFormat" name="header"/>
+  <variable description=""
+    format="ru.runa.bpm.web.formgen.format.DefaultFormat" name="mainText"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.DateFormat" name="date"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.LongFormat" name="number"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.StringFormat" name="bot" swimlane="true"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.StringFormat" name="user" swimlane="true"/>
+</variables>

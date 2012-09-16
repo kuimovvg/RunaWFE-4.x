@@ -1,0 +1,1 @@
+%requires_antlr %requires_apache_commons %requires_asm %requires_cglib %requires_dom4j %requires_ehcache %requires_hibernate %requires_jcifs %requires_jta %requires_nekohtml %requires_odmg %requires_struts %requires_trove %requires_portal_bridges %requires_ecs %requires_freemarker

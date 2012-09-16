@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P STYLE="margin-bottom: 0cm"><I>Description:</I></P>
+<P STYLE="margin-bottom: 0cm">Manager asks the employee for overtime
+work. The employee accepts or declines the proposal. After that the
+manager receives the notification of acceptance or rejection.</P>
+<P LANG="ru-RU" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><I>How to play the business process:</I></P>
+<OL>
+	<LI><P STYLE="margin-bottom: 0cm">Log in as member of manager group
+	(e.g. julius)</P>
+	<LI><P STYLE="margin-bottom: 0cm">Click menu item &ldquo;Process
+	Definitions&rdquo; 
+	</P>
+	<LI><P STYLE="margin-bottom: 0cm">Click &ldquo;Start&rdquo; for 
+	&ldquo;over time work demo&rdquo; button</P>
+	<LI><P STYLE="margin-bottom: 0cm"><FONT SIZE=3>Start form will
+	appear. </FONT>
+	</P>
+</OL>
+<UL>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm">Choose an employee,
+	which will receive proposal for an overtime work (e.g. Gaiua)</P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><SPAN LANG="en-US"><FONT SIZE=3>Enter
+	the time interval for the overtime work (e.g. 14.03.2006 22:30 -
+	20</FONT></SPAN>.12.2005 23:30)</P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Fill the
+	fields  &laquo;reason&raquo; and &laquo;comment&raquo;</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Click &ldquo;OK&rdquo;</FONT></P>
+</UL>
+<P STYLE="margin-left: 2.5cm; margin-bottom: 0cm">The new instance of
+&ldquo;over time work demo&rdquo; business process will be created
+and the employee (gaiua) will receive task.</P>
+<OL START=5>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Click
+	&ldquo;Logout&rdquo;</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"> <FONT SIZE=3>Log in as
+	employee, selected on the start form (gaiua). </FONT>
+	</P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Click the
+	&ldquo;make a decision&rdquo; task.</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Choose
+	&ldquo;accept&rdquo; or  &ldquo;decline&rdquo; (e.g. &ldquo;accept&rdquo;),
+	fill the &laquo;comment&raquo; field and click &laquo;OK&raquo;.</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Logout </FONT>
+	</P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Log in as
+	the actor, which started the process (<FONT FACE="Arial CYR, sans-serif">julius</FONT>)</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Click on
+	task &ldquo;Notify for acceptance&rdquo;.</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>By
+	clicking &ldquo;OK&rdquo; you&rsquo;ll finish the process.</FONT></P>
+</OL>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-left: 1.91cm; text-indent: -1.91cm; margin-bottom: 0cm">
+<I>Note</I>. To monitor process click on &ldquo;Process Instances&rdquo;
+menu item and then click on instance.</P>
+<P STYLE="margin-bottom: 0cm"><I>Note</I>. To see the business
+process graph click on &ldquo;Process Definitions&rdquo; menu item
+and click on process properties.</P>
+</BODY>
+</HTML>

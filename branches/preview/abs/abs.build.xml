@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project basedir="." default="build" name="Runa WFE Automated Build System">
+
+	<property file="build.properties" />
+
+	<property name="work.dir" value="${basedir}/work"/>
+	<property name="artifacts.dir" value="${work.dir}/artifacts"/>
+	<property name="report.dir" value="${work.dir}/reports"/>
+	<property name="abs.src.dir" value="${work.dir}/src" />
+	
+	<property name="abs.svn.cmd" value="export" />
+	<property name="abs.svn.url" value="https://runawfe.svn.sourceforge.net/svnroot/runawfe/RunaWFE-3.x/trunk" />
+	
+	<property name="jboss.version" value="jboss-4.2.3.GA" />
+	<property name="jboss.zip" value="${basedir}/${jboss.version}-jdk6.zip" />
+	<property name="jboss.dir" value="${work.dir}/jboss" />
+	<property name="jboss.home.dir" value="${jboss.dir}/${jboss.version}"/>
+	
+	<property name="eclipse.dir" value="${work.dir}/eclipse"/>
+	<property name="eclipse.home.dir" value="${eclipse.dir}/eclipse"/>
+	<property name="eclipse.wtp.zip" value="eclipse-rcp-galileo-SR1-win32.zip"/>
+	<property name="eclipse.delta-pack.zip" value="eclipse-3.5.1-delta-pack.zip"/>
+	
+
+	<target name="build" depends="init,publish.start,prepare.jboss,prepare.eclipse,prepare.src,package.src">
+		<antcall target="publish.build"/>
+		<property name="svn.rev" value="dev" />
+		<property name="project.version" value="${project.major.version}.${project.minor.version}${project.patch.version}" />
+		<property name="project.build.id" value="${project.version}-b${build.number}.r${svn.rev}" />
+		<ant dir="${abs.src.dir}" inheritall="true" target="build"/>
+		<ant dir="${abs.src.dir}" inheritall="true" target="makeInstaller"/>
+		<mkdir dir="${builds.dir}/${build.name}"/>
+		<move todir="${builds.dir}/${build.name}/artifacts">
+			<fileset dir="${artifacts.dir}"/>
+		</move>
+		<move todir="${builds.dir}/${build.name}/reports">
+			<fileset dir="${report.dir}"/>
+		</move>
+		<antcall target="publish.finish"/>
+	</target>
+	
+	
+	<target name="update.build.system" if="abs.update.build.system">
+		<exec executable="svn">
+			<arg value="${abs.svn.cmd}"/>
+			<arg value="${abs.svn.url}"/>
+			<arg value="${abs.src.dir}.update"/>
+		</exec>
+		<copy todir="${abs.src.dir}" overwrite="true">
+			<fileset dir="${abs.src.dir}.update">
+				<include name="*.xml"/>
+				<include name="*/*.xml"/>
+				<include name="*.properties"/>
+				<include name="gpd/**/*.product"/>
+				<include name="*/*.properties"/>
+				<include name="*/resources/**/*"/>
+				<exclude name="wfe/resources/adminkit/**/*"/>
+			</fileset>
+		</copy>
+		<delete dir="${abs.src.dir}.update" />
+	</target>
+	
+	<target name="abs.replace.web.port" if="web.port">
+		<replace dir="${abs.src.dir}" token="8080" value="${web.port}">
+			<include name="**/*.properties"/>
+			<!--include name="/*.xml"/-->
+			<include name="**/*.java"/>
+			<include name="web/build.xml"/>
+		</replace>
+		<replace dir="${abs.src.dir}/wfe/resources/jboss-configuration" token="&gt;8080&lt;" value="&gt;${web.port}&lt;">
+			<include name="**/*.xslt"/>
+		</replace>
+	</target>
+
+	<target name="abs.turn.on.linux" if="turn.on.linux">
+		<replace dir="${abs.src.dir}" token="// TURN ON LINUX:" value="">
+			<include name="**/*.java"/>
+		</replace>
+	</target>
+
+	<target name="abs.run.complex.tests" if="complex.tests">
+		<replace dir="${abs.src.dir}" token="boolean abs__runComplexTests = false;" value="boolean abs__runComplexTests = true;">
+			<include name="**/*Test.java"/>
+		</replace>
+	</target>
+
+	<target name="remove.runaspecific.plugin" if="sourceforge.build">
+		<replace file="${abs.src.dir}/gpd/plugins/ru.runa.bpm.ui/gpd.product" token="&lt;plugin id=&quot;ru.runa.specific&quot;/&gt;" value="">
+		</replace>
+	</target>
+	
+	<target name="prepare.src" unless="skip.svn.checkout">
+		<delete dir="${abs.src.dir}" />
+		<echo>determining HEAD svn revision number...</echo>
+		<exec executable="svn" output="${report.dir}/svn.info.xml">
+			<arg value="info"/>
+			<arg value="--xml"/>
+			<arg value="${abs.svn.url}"/>
+		</exec>
+		<xmlproperty file="${report.dir}/svn.info.xml" collapseAttributes="true"/>
+		<property name="svn.rev" value="${info.entry.commit.revision}" />
+		<echo>checking out sources (-r ${svn.rev} ${abs.svn.url})</echo>
+		<antcall target="publish.svn"/>
+		<exec executable="svn">
+			<arg value="-r${svn.rev}"/>
+			<arg value="${abs.svn.cmd}"/>
+			<arg value="${abs.svn.url}"/>
+			<arg value="${abs.src.dir}"/>
+		</exec>
+		<antcall target="update.build.system"/>
+		<antcall target="abs.replace.web.port"/>
+		<antcall target="abs.turn.on.linux"/>
+		<antcall target="remove.runaspecific.plugin"/>
+		<antcall target="abs.run.complex.tests"/>
+		<fixcrlf srcdir="${abs.src.dir}" excludes="**/*.jar,**/*.so,**/*.ico,**/*.bmp,**/*.gif,**/*.zip,**/*.dll,**/*.lib,**/*.odt,**/*.ott,**/*.doc,**/*.pdf,**/*.par,**/*.png,**/*.exe,**/*.form,**/*.snk,**/*.nsi,**/*.nsh,**/gpd/demo/workspace/**/*"/>
+	</target>
+
+	<target name="package.src">
+		<mkdir dir="${artifacts.dir}/src" />
+		<property name="svn.rev" value="dev" />
+		<property name="project.version" value="${project.major.version}.${project.minor.version}${project.patch.version}" />
+		<property name="project.build.id" value="${project.version}-b${build.number}.r${svn.rev}" />
+		<property name="abs.src.archive"  value="${artifacts.dir}/src/runa-wfe-${project.build.id}-src.zip"/>
+		<property name="abs.src.name" value="wfe-${project.version}-r${svn.rev}"/>
+		<zip destfile="${abs.src.archive}">
+			<zipfileset dir="${abs.src.dir}" prefix="${abs.src.name}"/>
+		</zip>
+	</target>
+	
+	<target name="prepare.jboss" unless="skip.jboss.unzip">
+		<delete dir="${jboss.dir}" />
+		<unzip dest="${jboss.dir}" src="${jboss.zip}" />
+	</target>
+	
+	<target name="prepare.eclipse" unless="skip.eclipse.unzip">
+		<delete dir="${eclipse.dir}"/>
+		<mkdir dir="${eclipse.dir}"/>
+		<antcall target="unpack.archive">
+			<param name="src.file" value="${eclipse.wtp.zip}"/>
+			<param name="dest.dir" value="${eclipse.dir}"/>
+		</antcall>
+		<antcall target="unpack.archive">
+			<param name="src.file" value="${eclipse.delta-pack.zip}"/>
+			<param name="dest.dir" value="${eclipse.dir}"/>
+		</antcall>
+	</target>
+	
+	<target name="init">
+		<mkdir dir="${builds.dir}"/>
+		<copy file="${basedir}/res/index.html" todir="${builds.dir}" overwrite="false"/>
+		<mkdir dir="${work.dir}"/>
+		<delete dir="${artifacts.dir}"/>
+		<mkdir dir="${artifacts.dir}" />
+		<delete dir="${report.dir}"/>
+		<mkdir dir="${report.dir}" />
+	</target>
+	
+	<target name="publish.start">
+		<tstamp>
+			<format pattern="yyyy.MM.dd HH:mm:ss" property="build.start"/>
+		</tstamp>
+		<xslt style="${basedir}/res/start.xslt" in="${builds.dir}/index.html" out="${builds.dir}/index.html.tmp" >
+			<param name="build.number" expression="${build.number}"/>
+			<param name="build.dir" expression="${build.name}"/>
+			<param name="start.time" expression="${build.start}"/>
+		</xslt>
+		<delete file="${builds.dir}/index.html"/>
+		<move file="${builds.dir}/index.html.tmp" tofile="${builds.dir}/index.html"/>
+	</target>
+	
+	<target name="publish.svn">
+		<xslt style="${basedir}/res/svn.xslt" in="${builds.dir}/index.html" out="${builds.dir}/index.html.tmp" >
+			<param name="build.number" expression="${build.number}"/>
+			<param name="svn.rev" expression="${svn.rev}"/>
+		</xslt>
+		<delete file="${builds.dir}/index.html"/>
+		<move file="${builds.dir}/index.html.tmp" tofile="${builds.dir}/index.html"/>
+	</target>
+	
+	<target name="publish.build">
+		<xslt style="${basedir}/res/build.xslt" in="${builds.dir}/index.html" out="${builds.dir}/index.html.tmp" >
+			<param name="build.number" expression="${build.number}"/>
+		</xslt>
+		<delete file="${builds.dir}/index.html"/>
+		<move file="${builds.dir}/index.html.tmp" tofile="${builds.dir}/index.html"/>
+	</target>
+	
+	<target name="publish.finish">
+		<tstamp>
+			<format pattern="yyyy.MM.dd HH:mm:ss" property="build.finish"/>
+		</tstamp>
+		<xslt style="${basedir}/res/finish.xslt" in="${builds.dir}/index.html" out="${builds.dir}/index.html.tmp" >
+			<param name="build.number" expression="${build.number}"/>
+			<param name="build.dir" expression="${build.name}"/>
+			<param name="finish.time" expression="${build.finish}"/>
+		</xslt>
+		<delete file="${builds.dir}/index.html"/>
+		<move file="${builds.dir}/index.html.tmp" tofile="${builds.dir}/index.html"/>
+	</target>
+	
+	<target name="unpack.archive" depends="unzip.archive, untar.archive">
+	</target>
+	
+	<target name="unzip.archive" depends="check.zip.file" if="is.zip.file">
+	    <unzip dest="${dest.dir}" src="${src.file}" overwrite="true"/>
+	</target>
+	
+	<target name="untar.archive" depends="check.tar.file" if="is.tar.file">
+		<gunzip dest="${dest.dir}" src="${src.file}"/>
+		<untar dest="${dest.dir}" overwrite="true">
+			<fileset dir="${dest.dir}">
+			    <include name="*.tar"/>
+			</fileset>
+		</untar>
+		<delete>
+			<fileset dir="${dest.dir}">
+			    <include name="*.tar"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="check.zip.file">
+		<condition property="is.zip.file">
+			<contains string="${src.file}" substring=".zip"/>
+		</condition>
+	</target>
+
+	<target name="check.tar.file">
+		<condition property="is.tar.file">
+			<contains string="${src.file}" substring=".tar.gz"/>
+		</condition>
+	</target>
+
+</project>

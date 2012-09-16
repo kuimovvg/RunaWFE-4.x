@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+       http://www.springframework.org/schema/jee 
+       http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/task 
+       http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<tx:jta-transaction-manager />
+	<tx:annotation-driven proxy-target-class="true" />
+	<context:annotation-config />
+
+	<!-- jee:jndi-lookup id="dataSource" jndi-name="java:/runawfe-ds" / -->
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<!-- property name="dataSource" ref="dataSource" / -->
+		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JBossTransactionManagerLookup</prop>
+				<prop key="hibernate.connection.autocommit">false</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">  
+		<property name="sessionFactory" ref="sessionFactory" />  
+	</bean>  
+
+	<bean id="processDefinitionDAO" class="ru.runa.bpm.db.ProcessDefinitionDAO">  
+		<property name="hibernateTemplate" ref="hibernateTemplate" />  
+	</bean>
+
+	<bean id="processExecutionDAO" class="ru.runa.bpm.db.ProcessExecutionDAO">  
+		<property name="hibernateTemplate" ref="hibernateTemplate" />  
+	</bean>
+
+	<bean id="jobExecutor" class="ru.runa.bpm.job.executor.JobExecutor">  
+		<property name="size" value="1" />
+		<property name="historyMaxSize" value="20" />
+		<property name="idleInterval" value="5000" /> <!-- 5 seconds -->
+		<property name="maxIdleInterval" value="3600000" /> <!-- 1 hour -->
+		<property name="maxLockTime" value="600000" /> <!-- 10 minutes -->
+		<property name="lockMonitorInterval" value="60000" /> <!-- 1 minute -->
+		<property name="lockBufferTime" value="5000" /> <!-- 5 seconds -->
+	</bean>
+
+	<bean id="jobDAO" class="ru.runa.bpm.db.JobDAO">  
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+		<property name="jobExecutor" ref="jobExecutor" />
+	</bean>
+		
+	<bean id="loggingDAO" class="ru.runa.bpm.db.LoggingDAO" >  
+		<property name="hibernateTemplate" ref="hibernateTemplate" />  
+	</bean>
+
+	<bean id="taskDAO" class="ru.runa.bpm.db.TaskDAO" >  
+		<property name="hibernateTemplate" ref="hibernateTemplate" />  
+	</bean>
+
+	<bean id="businessCalendar" class="ru.runa.bpm.calendar.impl.BusinessCalendarImpl">  
+		<!-- property name="" value="" / -->
+	</bean>
+
+	<bean id="subProcessResolver" class="ru.runa.bpm.DbSubProcessResolver">  
+		<!-- property name="" value="" / -->
+	</bean>
+	
+	<!-- converters -->
+	<bean id="stringToByteArrayConverter" class="ru.runa.bpm.context.exe.converter.StringToByteArrayConverter" />
+	<bean id="booleanToStringConverter" class="ru.runa.bpm.context.exe.converter.BooleanToStringConverter" />
+	<bean id="charToStringConverter" class="ru.runa.bpm.context.exe.converter.CharacterToStringConverter" />
+	<bean id="byteToLongConverter" class="ru.runa.bpm.context.exe.converter.ByteToLongConverter" />
+	<!-- bean id="shortToLongConverter" class="ru.runa.bpm.context.exe.converter.ShortToLongConverter" /-->
+	<bean id="intToLongConverter" class="ru.runa.bpm.context.exe.converter.IntegerToLongConverter" />
+	<bean id="floatToDoubleConverter" class="ru.runa.bpm.context.exe.converter.FloatToDoubleConverter" />
+	<bean id="bytesToByteArrayConverter" class="ru.runa.bpm.context.exe.converter.BytesToByteArrayConverter" />
+	<bean id="serializableToByteArrayConverter" class="ru.runa.bpm.context.exe.converter.SerializableToByteArrayConverter" />
+
+	<bean id="converters" class="ru.runa.bpm.db.hibernate.Converters">
+		<property name="mappings">
+			<map>
+				<entry key="B" value-ref="booleanToStringConverter" />
+				<entry key="Y" value-ref="bytesToByteArrayConverter" />
+				<entry key="E" value-ref="byteToLongConverter" />
+				<entry key="C" value-ref="charToStringConverter" />
+				<!-- entry key="A" value-ref="dateToLongConverter">
+					<bean class="ru.runa.bpm.context.exe.converter.DateToLongConverter" />
+				</entry -->
+				<!-- entry key="D" value-ref="dateToLongConverter">
+					<bean class="ru.runa.bpm.context.exe.converter.DoubleToStringConverter" />
+				</entry -->
+				<!-- entry key="F" value-ref="dateToLongConverter">
+					<bean class="ru.runa.bpm.context.exe.converter.FloatToStringConverter" />
+				</entry -->
+				<entry key="G" value-ref="floatToDoubleConverter" />
+				<entry key="I" value-ref="intToLongConverter" />
+				<entry key="R" value-ref="serializableToByteArrayConverter" />
+				<!-- entry key="H" value-ref="shortToLongConverter" /-->
+				<entry key="S" value-ref="stringToByteArrayConverter" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="variableCreator" class="ru.runa.bpm.context.VariableInstanceCreator">  
+		<property name="types">
+			<list>
+				<!-- short java.lang.String -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.StringMatcher">
+							<property name="large" value="false" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.StringInstance" />
+				</bean>
+				<!-- long(> 1024 symbols) java.lang.String -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.StringMatcher">
+							<property name="large" value="true" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.ByteArrayInstance" />
+					<property name="converter" ref="stringToByteArrayConverter" />
+				</bean>
+				<!-- java.lang.Boolean -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.ClassNameMatcher">
+							<property name="className" value="java.lang.Boolean" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.StringInstance" />
+					<property name="converter" ref="booleanToStringConverter" />
+				</bean>
+    			<!-- java.lang.Character -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.ClassNameMatcher">
+							<property name="className" value="java.lang.Character" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.StringInstance" />
+					<property name="converter" ref="charToStringConverter" />
+				</bean>
+    			<!-- java.lang.Long -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.ClassNameMatcher">
+							<property name="className" value="java.lang.Long" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.LongInstance" />
+				</bean>
+			    <!-- java.lang.Byte -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.ClassNameMatcher">
+							<property name="className" value="java.lang.Byte" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.LongInstance" />
+					<property name="converter" ref="byteToLongConverter" />
+				</bean>
+			    <!-- java.lang.Short -->
+				<!-- bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.ClassNameMatcher">
+							<property name="className" value="java.lang.Short" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.LongInstance" />
+					<property name="converter" ref="shortToLongConverter" />
+				</bean -->
+    			<!-- java.lang.Integer -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.ClassNameMatcher">
+							<property name="className" value="java.lang.Integer" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.LongInstance" />
+					<property name="converter" ref="intToLongConverter" />
+				</bean>
+			    <!-- java.lang.Double -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.ClassNameMatcher">
+							<property name="className" value="java.lang.Double" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.DoubleInstance" />
+				</bean>
+			    <!-- java.lang.Float -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.ClassNameMatcher">
+							<property name="className" value="java.lang.Float" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.DoubleInstance" />
+					<property name="converter" ref="floatToDoubleConverter" />
+				</bean>
+			    <!-- java.util.Date -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.ClassNameMatcher">
+							<property name="className" value="java.util.Date" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.DateInstance" />
+				</bean>
+			    <!-- byte[] -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.ClassNameMatcher">
+							<property name="className" value="[B" />
+						</bean>
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.ByteArrayInstance" />
+					<property name="converter" ref="bytesToByteArrayConverter" />
+				</bean>
+			    <!-- java.io.Serializable -->
+				<bean class="ru.runa.bpm.context.exe.JbpmType">
+					<property name="matcher">
+						<bean class="ru.runa.bpm.context.exe.matcher.SerializableMatcher" />
+					</property>
+					<property name="variableInstanceClass" value="ru.runa.bpm.context.exe.variableinstance.ByteArrayInstance" />
+					<property name="converter" ref="serializableToByteArrayConverter" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	
+	<bean id="jobExecutorTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+	  <property name="delay" value="60000"/>
+	  <property name="period" value="300000"/>
+	  <property name="timerTask">
+      <bean id="jobFinder" class="ru.runa.bpm.scheduler.JobFinder">
+      </bean>
+	  </property>
+	</bean>
+	
+</beans>
