@@ -1,0 +1,353 @@
+package tk.eclipse.plugin.wysiwyg;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import ru.runa.bpm.ui.common.model.Variable;
+import ru.runa.bpm.ui.util.IOUtils;
+
+import tk.eclipse.plugin.ftl.FormatTag;
+import tk.eclipse.plugin.ftl.MethodTag;
+import tk.eclipse.plugin.ftl.FormatTag.FtlFormat;
+import tk.eclipse.plugin.ftl.FreemarkerUtil.TagParser;
+import tk.eclipse.plugin.ftl.MethodTag.MethodTagComparator;
+import tk.eclipse.plugin.ftl.MethodTag.OptionalValue;
+import tk.eclipse.plugin.ftl.MethodTag.Param;
+import tk.eclipse.plugin.vartag.VarTagInfo;
+import tk.eclipse.plugin.vartag.VarTagUtil;
+
+public class CKEditorDialogCreatorHelper {
+
+    private interface CKElement {
+
+        public void write(StringBuilder writer, int prefix);
+    }
+
+    @SuppressWarnings("unchecked")
+    private abstract static class CKElementBase<T extends CKElementBase> implements CKElement {
+
+        public abstract void write(StringBuilder writer, int prefix);
+
+        String id = null, label = null;
+
+        public T setId(String id) {
+            this.id = id;
+            return (T) this;
+        }
+
+        public T setLabel(String label) {
+            this.label = label;
+            return (T) this;
+        }
+
+        protected StringBuilder writePrefix(StringBuilder writer, int prefix) {
+            while (prefix > 0) {
+                writer.append("    ");
+                --prefix;
+            }
+            return writer;
+        }
+    }
+
+    private static class CKTextElement extends CKElementBase<CKTextElement> {
+
+        @Override
+        public void write(StringBuilder writer, int prefix) {
+            if (id == null || label == null) {
+                throw new RuntimeException();
+            }
+            writePrefix(writer, prefix).append("{\n");
+            prefix++;
+            writePrefix(writer, prefix).append("id : ").append(id).append(",\n");
+            writePrefix(writer, prefix).append("label : ").append(label).append(",\n");
+            writePrefix(writer, prefix).append("type : 'text',\n");
+            prefix--;
+            writePrefix(writer, prefix).append("}");
+        }
+    }
+
+    private static class CKSelectElement extends CKElementBase<CKSelectElement> {
+
+        String defaultValue = null;
+        List<String> selectItems = new ArrayList<String>();
+        List<String> elementCallbacks = new ArrayList<String>();
+
+        public CKSelectElement setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
+            return this;
+        }
+
+        public CKSelectElement addItem(String displayName, String itemId) {
+            selectItems.add("[" + displayName + ", " + itemId + "]");
+            if (this.defaultValue == null) {
+                defaultValue = itemId;
+            }
+            return this;
+        }
+
+        public CKSelectElement addCallback(String function) {
+            elementCallbacks.add(function);
+            return this;
+        }
+
+        @Override
+        public void write(StringBuilder writer, int prefix) {
+            if (id == null || label == null) {
+                throw new RuntimeException();
+            }
+            writePrefix(writer, prefix).append("{\n");
+            prefix++;
+            writePrefix(writer, prefix).append("id : ").append(id).append(",\n");
+            writePrefix(writer, prefix).append("label : ").append(label).append(",\n");
+            writePrefix(writer, prefix).append("type : 'select',\n");
+            writePrefix(writer, prefix).append("style : 'width : 100%;',\n");
+            if (defaultValue != null) {
+                writePrefix(writer, prefix).append("'default' : ").append(defaultValue).append(",\n");
+            }
+            writePrefix(writer, prefix).append("items :\n");
+            writePrefix(writer, prefix).append("[\n");
+            prefix++;
+            for (int i = 0; i < selectItems.size(); ++i) {
+                writePrefix(writer, prefix).append(selectItems.get(i)).append(i < selectItems.size() - 1 ? ",\n" : "\n");
+            }
+            prefix--;
+            writePrefix(writer, prefix).append("]").append(elementCallbacks.isEmpty() ? "\n" : ",\n");
+            for (int i = 0; i < elementCallbacks.size(); ++i) {
+                writePrefix(writer, prefix).append(elementCallbacks.get(i)).append(i < elementCallbacks.size() - 1 ? ",\n" : "\n");
+            }
+            prefix--;
+            writePrefix(writer, prefix).append("}");
+        }
+    }
+
+    private static class CKVboxElement extends CKElementBase<CKVboxElement> {
+
+        List<CKElement> childrens = new ArrayList<CKElement>();
+
+        public CKVboxElement addChildren(CKElement element) {
+            this.childrens.add(element);
+            return this;
+        }
+
+        @Override
+        public void write(StringBuilder writer, int prefix) {
+            writePrefix(writer, prefix).append("{\n");
+            ++prefix;
+            writePrefix(writer, prefix).append("id : " + id + ",\n");
+            writePrefix(writer, prefix).append("type : 'vbox',\n");
+            writePrefix(writer, prefix).append("children : \n");
+            writePrefix(writer, prefix).append("[\n");
+            ++prefix;
+            for (int i = 0; i < childrens.size(); ++i) {
+                childrens.get(i).write(writer, prefix);
+                writer.append(i < childrens.size() - 1 ? ",\n" : "\n");
+            }
+            --prefix;
+            writePrefix(writer, prefix).append("]\n");
+            --prefix;
+            writePrefix(writer, prefix).append("}");
+        }
+    }
+
+    public static String createFtlMethodDialog() throws IOException {
+        StringBuilder result = new StringBuilder();
+        result.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ckeditor.ftl.method.dialog.start")));
+        List<MethodTag> tagsList = new ArrayList<MethodTag>(MethodTag.getAll().values());
+        Collections.sort(tagsList, new MethodTagComparator());
+
+        {
+            CKSelectElement selectElement = new CKSelectElement();
+            selectElement.setId("ELEMENT_TAG_TYPE").setLabel("editor.lang.FreemarkerTags.MethodTitle").setDefaultValue(
+                    tagsList.isEmpty() ? null : "'" + tagsList.get(0).id + "'");
+            for (MethodTag tagInfo : tagsList) {
+                selectElement.addItem("'" + tagInfo.name + "'", "'" + tagInfo.id + "'");
+            }
+            selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
+            "setup : function( element ){	\n" + "	this.setValue( element.getAttribute( 'ftltagname' ) || '' );\n" + "}\n");
+            selectElement.addCallback(/*
+                                       * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
+                                       * element)
+                                       */
+            "commit : function( data ){\n" + "	if( this.getValue() )\n" + "		data.element.setAttribute( 'ftltagname', this.getValue() );\n"
+                    + "	else\n" + "		data.element.removeAttribute( 'ftltagname' );\n" + "}\n");
+            selectElement
+                    .addCallback(/*
+                                  * onChange is called if selection is changed. We need to show appriciate parameters for currently selected
+                                  * freemarker function
+                                  */
+                    "onChange : function(){\n"
+                            + "    var test = function(e){\n"
+                            + "        if(e.id.indexOf('FtlTagVBox') == e.id.length-10){\n"
+                            + "            e.getElement().getParent().getParent().hide();\n"
+                            + "        };\n"
+                            + "    };\n"
+                            + "    this.getDialog().foreach(test);\n"
+                            + "    this.getDialog().getContentElement( 'mainTab', this.getValue() + 'FtlTagVBox' ).getElement().getParent().getParent().show();\n"
+                            + "}\n");
+
+            selectElement.write(result, 4);
+        }
+
+        for (MethodTag tagInfo : tagsList) {
+            CKVboxElement box = new CKVboxElement().setId("'" + tagInfo.id + "FtlTagVBox'");
+            int paramCounter = 0;
+            for (Param param : tagInfo.params) {
+                if (param.isCombo() || param.isRichCombo() || param.isVarCombo() /* TODO */) {
+                    CKSelectElement selectElement = new CKSelectElement();
+                    selectElement.setId("'" + tagInfo.id + "_FtlTagParam_" + paramCounter + "'").setLabel("'" + param.displayName + "'");
+                    for (OptionalValue option : param.optionalValues) {
+                        if (option.container) {
+                            for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
+                                String formatAlias = TagParser.getFormatMapping(variable.getFormat()).getName();
+                                if (option.useFilter && !option.filterType.equals(formatAlias)) {
+                                    continue;
+                                }
+                                selectElement.addItem("'" + variable.getName() + "'", "'" + variable.getName() + "'");
+                            }
+                        } else {
+                            selectElement.addItem("'" + option.value + "'", "'" + option.name + "'");
+                        }
+                    }
+                    selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
+                    "setup : function( element ){	\n" + "	if (this.id.indexOf(element.getAttribute( 'ftltagname' )) == 0){\n"
+                            + "		var paramCount = this.id.charAt(this.id.length - 1);\n" + "		var start = 0; var end = -1;\n"
+                            + "		while(paramCount >= 0) {\n" + "			if(end != -1){start = end + 1;}\n"
+                            + "			end = element.getAttribute( 'ftltagparams' ).indexOf('|', start);\n" + "			paramCount--;\n" + "		}\n"
+                            + "		if(end == -1) end = element.getAttribute( 'ftltagparams' ).length;\n"
+                            + "		this.setValue( element.getAttribute( 'ftltagparams' ).substring(start, end) );\n" + "	}\n" + "}\n");
+                    selectElement.addCallback(/*
+                                               * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
+                                               * element)
+                                               */
+                    "commit : function( data ){\n" + "	if(!this.isVisible()) return;" + "	if(data.element.getAttribute('ftltagparams') != null)"
+                            + "		data.element.setAttribute( 'ftltagparams', data.element.getAttribute('ftltagparams') + '|' + this.getValue() );\n"
+                            + "	else\n" + "		data.element.setAttribute( 'ftltagparams', this.getValue() );\n" + "}\n");
+
+                    box.addChildren(selectElement);
+                } else {
+                    CKTextElement text = new CKTextElement().setId("'" + tagInfo.id + "_FtlTagParam_" + paramCounter + "'").setLabel(
+                            "'" + param.displayName + "'");
+                    box.addChildren(text);
+                }
+
+                paramCounter++;
+            }
+            result.append(",\n");
+            box.write(result, 4);
+
+        }
+        result.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ckeditor.ftl.method.dialog.end")));
+        return result.toString();
+    }
+
+    public static String createFtlOutputDialog() throws IOException {
+        StringBuilder result = new StringBuilder();
+        result.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ckeditor.ftl.format.dialog.start")));
+
+        {
+            CKSelectElement selectElement = new CKSelectElement();
+            List<Variable> variables = WYSIWYGHTMLEditor.getCurrent().getVariablesList(false);
+            selectElement.setId("ELEMENT_TAG_TYPE").setLabel("editor.lang.FreemarkerTags.FtlVariable").setDefaultValue(
+                    variables.isEmpty() ? null : "'" + variables.get(0).getName() + "'");
+            for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(false)) {
+                selectElement.addItem("'" + variable.getName() + "'", "'" + variable.getName() + "'");
+            }
+
+            selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
+            "setup : function( element ){	\n" + "	this.setValue( element.getAttribute( 'ftltagname' ) || '' );\n" + "}\n");
+            selectElement.addCallback(/*
+                                       * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
+                                       * element)
+                                       */
+            "commit : function( data ){\n" + "	if( this.getValue() )\n" + "		data.element.setAttribute( 'ftltagname', this.getValue() );\n"
+                    + "	else\n" + "		data.element.removeAttribute( 'ftltagname' );\n" + "}\n");
+            selectElement
+                    .addCallback(/*
+                                  * onChange is called if selection is changed. We need to show appriciate parameters for currently selected
+                                  * freemarker function
+                                  */
+                    "onChange : function(){\n"
+                            + "    var test = function(e){\n"
+                            + "        if(e.id.indexOf('FtlTagVBox') == e.id.length-10){\n"
+                            + "            e.getElement().getParent().getParent().hide();\n"
+                            + "        };\n"
+                            + "    };\n"
+                            + "    this.getDialog().foreach(test);\n"
+                            + "    this.getDialog().getContentElement( 'mainTab', this.getValue() + 'FtlTagVBox' ).getElement().getParent().getParent().show();\n"
+                            + "}\n");
+
+            selectElement.write(result, 4);
+        }
+
+        for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(false)) {
+            CKVboxElement box = new CKVboxElement().setId("'" + variable.getName() + "FtlTagVBox'");
+            CKSelectElement selectElement = new CKSelectElement().setId("'" + variable.getName() + "tagFormat'").setLabel(
+                    "editor.lang.FreemarkerTags.FtlFormat");
+            String format = TagParser.getFormatMapping(variable.getFormat()).getName();
+            // It may not exist variables at all.
+            FormatTag formatTag = FormatTag.getTag(format);
+            for (String f : formatTag.formats.keySet()) {
+                selectElement.addItem("'" + formatTag.formats.get(f).name + "'", "'" + f + "'");
+            }
+            selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
+            "setup : function( element ){	\n" + "	if (this.id.indexOf(element.getAttribute( 'ftltagname' )) == 0){\n"
+                    + "		this.setValue( element.getAttribute( 'ftltagformat' ));\n" + "	}\n" + "}\n");
+            selectElement.addCallback(/*
+                                       * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
+                                       * element)
+                                       */
+            "commit : function( data ){\n" + "	if(!this.isVisible()) return;" + "	data.element.setAttribute( 'ftltagformat', this.getValue() );\n"
+                    + "}\n");
+            box.addChildren(selectElement);
+            result.append(",\n");
+            box.write(result, 4);
+
+        }
+        result.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ckeditor.ftl.format.dialog.end")));
+        return result.toString();
+    }
+
+    public static String createVarTagDialog() throws IOException {
+        StringBuilder result = new StringBuilder();
+        result.append(IOUtils.readStream(VarTagUtil.class.getResourceAsStream("ckeditor.dialog.start")));
+        {
+            CKSelectElement selectElement = new CKSelectElement();
+            selectElement.setId("NAME_ATTR").setLabel("editor.lang.RunaVarTags.VarTagDlgName");
+            for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(false)) {
+                selectElement.addItem("'" + variable.getName() + "'", "'" + variable.getName() + "'");
+            }
+
+            selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
+            "setup : function( element )\n" + "{\n" + "	this.setValue( element.getAttribute( NAME_ATTR ) || '');\n" + "}\n");
+            selectElement.addCallback(/*
+                                       * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
+                                       * element)
+                                       */
+            "commit : function( data )\n" + "{\n" + "	if ( this.getValue() )\n" + "		data.element.setAttribute( NAME_ATTR, this.getValue() );\n"
+                    + "	else\n" + "		data.element.removeAttribute( NAME_ATTR );\n" + "}");
+            selectElement.write(result, 4);
+        }
+        result.append(",\n");
+        {
+            CKSelectElement selectElement = new CKSelectElement();
+            selectElement.setId("TYPE_ATTR").setLabel("editor.lang.RunaVarTags.VarTagDlgType");
+            for (VarTagInfo varTag : VarTagUtil.getVarTagsInfo().values()) {
+                selectElement.addItem("'" + varTag.displayName + "'", "'" + varTag.javaType + "'");
+            }
+
+            selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
+            "setup : function( element )\n" + "{\n" + "	this.setValue( element.getAttribute( TYPE_ATTR ) || '');\n" + "}\n");
+            selectElement.addCallback(/*
+                                       * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
+                                       * element)
+                                       */
+            "commit : function( data )\n" + "{\n" + "	if ( this.getValue() )\n" + "		data.element.setAttribute( TYPE_ATTR, this.getValue() );\n"
+                    + "	else\n" + "		data.element.removeAttribute( TYPE_ATTR );\n" + "}");
+            selectElement.write(result, 4);
+        }
+        result.append(IOUtils.readStream(VarTagUtil.class.getResourceAsStream("ckeditor.dialog.end")));
+        return result.toString();
+    }
+}

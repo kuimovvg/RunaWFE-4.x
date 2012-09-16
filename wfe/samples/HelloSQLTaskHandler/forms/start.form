@@ -1,0 +1,22 @@
+
+<table cellspacing="0">
+  <tr>
+    <td valign="top">
+
+      <table cellspacing="0" bgcolor="#eeeeee" style="border-style:solid;border-width:1px;border-color:black;">
+
+        <tr title="reason why you think you earn this payraise">
+          <td align="right">
+            Reason :
+          </td>
+          <td>
+            <textarea name="reason"></textarea>
+          </td>
+        </tr>
+     </table>
+
+    </td>
+
+  </tr>
+</table>
+

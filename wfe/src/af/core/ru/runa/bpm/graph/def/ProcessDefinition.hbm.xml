@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-access="property" >
+  <class name="ru.runa.bpm.graph.def.ProcessDefinition" 
+         table="JBPM_PROCESSDEFINITION"
+         discriminator-value="P">
+    <cache usage="read-write" />
+    <id name="id" column="ID_">
+	   	<generator class="native">
+	        <param name="sequence">SEQ_JBPM_PROCESSDEFINITION</param>
+	    </generator>
+    </id>
+    <discriminator type="char" column="CLASS_" />
+
+    <!-- GRAPHELEMENT -->
+    <!-- base class fields are mapped here -->
+    <property name="name" column="NAME_" />
+    <property name="description" column="DESCRIPTION_" type="text"/>
+    <map name="events" cascade="all">
+    	<cache usage="read-write"/>
+      <key column="PROCESSDEFINITION_" foreign-key="FK_EVENT_PROCDEF" />
+      <index column="EVENTTYPE_" type="string"/>
+      <one-to-many class="ru.runa.bpm.graph.def.Event" />
+    </map>
+
+    <property name="version" column="VERSION_"/>
+    <property name="isTerminationImplicit" column="ISTERMINATIONIMPLICIT_"/>
+    <many-to-one name="startState" 
+                 column="STARTSTATE_"
+                 foreign-key="FK_PROCDEF_STRTSTA"
+                 index="IDX_PROCDEF_STRTST" />
+    <list name="nodes" cascade="all" where="SUPERSTATE_ is null">
+    	<cache usage="read-write"/>
+      <!-- 
+      replace the key element 
+      <key column="PROCESSDEFINITION_" />
+      below with 
+      <key column="PROCDEF_NODES_" />
+      in case you want the superstates and their nodes to be 
+      persisted correctly.  since this affects the schema 
+      (addition of column PROCDEF_NODES_ to table JBPM_NODE)
+      we can't introduce this fix till 3.3
+      -->
+      <key column="PROCESSDEFINITION_" />
+      <list-index column="NODECOLLECTIONINDEX_" />
+      <one-to-many class="ru.runa.bpm.graph.def.Node" />
+    </list>
+    <map name="actions" cascade="all" inverse="true">
+    	<cache usage="read-write"/>
+      <key column="PROCESSDEFINITION_" />
+      <map-key column="NAME_" type="string"/>
+      <one-to-many class="ru.runa.bpm.graph.def.Action" />
+    </map>
+    <map name="definitions" cascade="all">
+    	<cache usage="read-write"/>
+      <key column="PROCESSDEFINITION_" />
+      <map-key column="NAME_" type="string"/>
+      <one-to-many class="ru.runa.bpm.module.def.ModuleDefinition" />
+    </map>
+
+  </class>
+</hibernate-mapping>

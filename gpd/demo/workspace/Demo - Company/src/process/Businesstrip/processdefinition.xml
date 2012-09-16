@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="Businesstrip" xmlns="urn:jbpm.org:jpdl-3.2">
+  <description><![CDATA[Participants of this process are members of manager, staff, bookkeeper and human resource groups]]></description>
+  <swimlane name="bookkeeper">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[ru.runa.af.organizationfunction.ExecutorByNameFunction(bookkeeper)]]></assignment>
+  </swimlane>
+  <swimlane name="human resource inspector">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[ru.runa.af.organizationfunction.ExecutorByNameFunction(human resource)]]></assignment>
+  </swimlane>
+  <swimlane name="staffrole">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <swimlane name="boss">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state name="Send an employee to a business trip">
+    <task name="Send an employee to a business trip" swimlane="boss"/>
+    <transition name="tr1" to="Confirm business trip notification"/>
+  </start-state>
+  <decision name="Trip type">
+    <handler
+      class="ru.runa.wf.jbpm.delegation.decision.BSFDecisionHandler" config-type="configuration-property"><![CDATA[if ( businessTripType.equals("toAnotherRegion") ) {
+	return "to another region";
+}
+
+return "local";
+]]></handler>
+    <transition name="local" to="end"/>
+    <transition name="to another region" to="Make an order"/>
+  </decision>
+  <task-node name="Confirm business trip notification">
+    <description><![CDATA[Employee confirms that business trip notification is received]]></description>
+    <task name="Confirm business trip notification" swimlane="staffrole"/>
+    <transition name="tr1" to="Trip type"/>
+  </task-node>
+  <task-node name="Make an order">
+    <description><![CDATA[Make an order for the business trip]]></description>
+    <task name="Make an order" swimlane="human resource inspector"/>
+    <transition name="tr1" to="first fork"/>
+  </task-node>
+  <task-node name="Receive a signature on the order">
+    <description><![CDATA[Receive the employee's signature on the business trip order]]></description>
+    <task name="Receive a signature on the order" swimlane="human resource inspector"/>
+    <transition name="tr1" to="join for the first fork"/>
+  </task-node>
+  <task-node name="Sign the order">
+    <description><![CDATA[Bustness trip. Sign the order]]></description>
+    <task name="Sign the order" swimlane="staffrole"/>
+    <transition name="tr1" to="join for the first fork"/>
+  </task-node>
+  <task-node name="Give a business trip warrant">
+    <description><![CDATA[Give a warrant for the business trip]]></description>
+    <task name="Give a business trip warrant" swimlane="human resource inspector"/>
+    <transition name="tr1" to="join for the second fork"/>
+  </task-node>
+  <task-node name="Take a business trip warrant">
+    <description><![CDATA[Take a warrant for the business trip]]></description>
+    <task name="Take a business trip warrant" swimlane="staffrole"/>
+    <transition name="tr1" to="join for the second fork"/>
+  </task-node>
+  <task-node name="Give business trip money">
+    <description><![CDATA[Give money to employee for a business trip]]></description>
+    <task name="Give business trip money" swimlane="bookkeeper"/>
+    <transition name="tr1" to="join for the third fork"/>
+  </task-node>
+  <task-node name="Take business trip money">
+    <description><![CDATA[Take money from bookkeeper for a business trip]]></description>
+    <task name="Take business trip money" swimlane="staffrole"/>
+    <transition name="tr1" to="join for the third fork"/>
+  </task-node>
+  <task-node name="Take a business trip financial report">
+    <description><![CDATA[Take a business trip financial report from the employee]]></description>
+    <task name="Take a business trip financial report" swimlane="bookkeeper"/>
+    <transition name="tr1" to="join for the fourth fork"/>
+  </task-node>
+  <task-node name="Give a business trip financial report">
+    <description><![CDATA[Give a business trip financial report to bookkeeper]]></description>
+    <task name="Give a business trip financial report" swimlane="staffrole"/>
+    <transition name="tr1" to="join for the fourth fork"/>
+  </task-node>
+  <fork name="first fork">
+    <transition name="tr2" to="Sign the order"/>
+    <transition name="tr1" to="Receive a signature on the order"/>
+  </fork>
+  <fork name="second fork">
+    <transition name="tr02" to="Take a business trip warrant"/>
+    <transition name="tr1" to="Give a business trip warrant"/>
+  </fork>
+  <fork name="third fork">
+    <transition name="tr21" to="Take business trip money"/>
+    <transition name="tr22" to="Give business trip money"/>
+  </fork>
+  <fork name="fourth fork">
+    <transition name="tr31" to="Take a business trip financial report"/>
+    <transition name="tr32" to="Give a business trip financial report"/>
+  </fork>
+  <join name="join for the second fork">
+    <transition name="tr1" to="third fork"/>
+  </join>
+  <join name="join for the first fork">
+    <transition name="tr1" to="second fork"/>
+  </join>
+  <join name="join for the third fork">
+    <transition name="tr1" to="fourth fork"/>
+  </join>
+  <join name="join for the fourth fork">
+    <transition name="tr1" to="end"/>
+  </join>
+  <end-state name="end"/>
+</process-definition>

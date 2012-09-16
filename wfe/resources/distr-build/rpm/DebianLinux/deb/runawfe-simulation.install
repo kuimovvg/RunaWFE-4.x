@@ -1,0 +1,9 @@
+usr/share/pixmaps/RunaWFE-Simulation*.gif
+usr/share/pixmaps/RunaWFE-SimClient*.gif
+usr/share/runawfe-jboss/server/runawfe-simulation/conf/*
+usr/share/runawfe-jboss/server/runawfe-simulation/deploy/*
+usr/share/runawfe-jboss/server/runawfe-simulation/data/*
+usr/share/applications/runawfe-simulator-*.desktop
+etc/xdg/menus/applications-merged/runawfe-simulator.menu
+usr/sbin/runawfe-start-simulation.sh
+

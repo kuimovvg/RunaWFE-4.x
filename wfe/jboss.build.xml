@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="WFE.jboss-specific" default="dist.app" basedir=".">
+	<!-- set global properties for this build -->
+	<dirname property="WFE.jboss-specific.basedir" file="${ant.file.WFE.jboss-specific}"/>
+	<import file="${WFE.jboss-specific.basedir}/wfe.common.xml"/>
+
+	<property name="src.dir" location="src/jboss" />
+
+	<property name="build.classes.dir" location="${build.dir}/app/jboss/classes" />
+
+	<property name="jboss.jar.file" location="${dist.deploy.dir}/wfe-jboss.jar" />
+
+	<target name="clean" description="clean up">
+		<delete dir="${build.app.classes.dir}" />
+		<delete file="${jboss.jar.file}" failonerror="false" />
+	</target>
+
+	<target name="init">
+		<tstamp />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.classes.dir}" />
+		<mkdir dir="${dist.deploy.dir}" />
+	</target>
+
+	<target name="compile.app" depends="init" description="compile the source of application">
+		<javac destdir="${build.classes.dir}" debug="${javac.debug}"  encoding="UTF-8" target="${javac.target}" source="${javac.source}">
+			<src path="${src.dir}" />
+			<classpath refid="lib.classpath" />
+			<classpath refid="app.class.path" />
+		</javac>
+	</target>
+
+	<target name="dist.app" depends="compile.app">
+		<jar destfile="${jboss.jar.file}">
+			<zipfileset dir="${build.classes.dir}" />
+		</jar>
+	</target>
+
+	<target name="deploy.app" depends="dist.app">
+		<copy file="${jboss.jar.file}" todir="${jboss.lib.dir}" overwrite="true" />
+	</target>
+</project>

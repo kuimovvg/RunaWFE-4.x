@@ -1,0 +1,4 @@
+# Install menu-entity's
+install -d %buildroot/%_datadir/pixmaps
+cp wfe/resources/distr-build/icons/C_20x20_256.gif %buildroot/%_datadir/pixmaps/RunaWFE-Client.gif
+cp wfe/resources/distr-build/icons/wf_C_48x128.gif %buildroot/%_datadir/pixmaps/RunaWFE-Client_48.gif

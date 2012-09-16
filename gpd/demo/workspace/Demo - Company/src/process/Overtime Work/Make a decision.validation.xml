@@ -1,0 +1,15 @@
+<validators>
+
+<field name="staff_person_comment">
+
+<field-validator type="stringlength">
+	<message>Length cannot be more than 250 symbols</message>
+	<param name="maxLength">250</param>
+</field-validator>
+</field>
+
+<field name="comment">
+
+</field>
+
+</validators>

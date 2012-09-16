@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form file="enter data.ftl" jsValidation="false" state="enter data"
+    type="ftl" validationFile="enter data.validation.xml"/>
+  <form file="read of save file.ftl" jsValidation="false"
+    state="read of save file" type="ftl" validationFile="read of save file.validation.xml"/>
+</forms>

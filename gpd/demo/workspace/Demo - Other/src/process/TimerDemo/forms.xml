@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form file="Before timer triggered.ftl" jsValidation="false"
+    state="Before timer triggered" type="ftl" validationFile="Before timer triggered.validation.xml"/>
+  <form file="After timer triggered.ftl" jsValidation="false"
+    state="After timer triggered" type="ftl" validationFile="After timer triggered.validation.xml"/>
+</forms>

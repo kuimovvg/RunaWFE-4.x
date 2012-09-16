@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form file="before subprocess.ftl" jsValidation="false"
+    state="before subprocess" type="ftl" validationFile="before subprocess.validation.xml"/>
+  <form file="after subprocess.ftl" jsValidation="false"
+    state="after subprocess" type="ftl" validationFile="after subprocess.validation.xml"/>
+</forms>

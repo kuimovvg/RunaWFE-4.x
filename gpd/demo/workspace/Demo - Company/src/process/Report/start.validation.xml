@@ -1,0 +1,15 @@
+<validators>
+
+<field name="report_theme">
+
+<field-validator type="stringlength">
+	<message>Length cannot be more than 100 symbols</message>
+	<param name="doTrim">false</param>
+	<param name="maxLength">100</param>
+</field-validator>
+<field-validator type="required">
+	<message>Поле обязательно для ввода</message>
+</field-validator>
+</field>
+
+</validators>

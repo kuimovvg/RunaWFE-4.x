@@ -1,0 +1,31 @@
+install subversion, make sure svnserve is installed
+
+1) create repository
+mkdir /path/to/repo
+svnadmin create /path/to/repo
+
+2) configure authentication
+edit /path/to/repo/conf/svnserve.conf
+uncomment
+[global]
+anon-access = read
+auth-access = write
+password-db = passwd
+realm = My First Repository
+
+edit values
+
+create file passwd (value of password-db in svnserve.conf)
+add lines
+[users]
+username1 = password1
+
+3) run server
+add the following line in /etc/inetd.conf
+svn             stream  tcp     nowait  root    /usr/bin/svnserve       svnserve -i
+
+(alternatively you can add 'svnserve -d' in rc script )
+
+
+4) test repository
+svn list svn://servername/path/to/repo

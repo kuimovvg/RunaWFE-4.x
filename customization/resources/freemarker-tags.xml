@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml">
+	<ftltag name="ChooseActor" class="ru.runa.wf.web.ftl.tags.ChooseActorTag" />
+	<ftltag name="DisplayActor" class="ru.runa.wf.web.ftl.tags.DisplayActorTag" />
+	<ftltag name="GroupMembers" class="ru.runa.wf.web.ftl.tags.GroupMembersTag" />
+	<ftltag name="ViewFile" class="ru.runa.wf.web.ftl.tags.FileTag" />
+	<ftltag name="InputDateTime" class="ru.runa.wf.web.ftl.tags.DateTimeInputTag" />
+	<ftltag name="RelationResult" class="ru.runa.wf.web.ftl.tags.RelationResultTag" />
+
+	<ftltag name="DownloadFile" class="ru.runa.wf.web.ftl.VarTagMethodModel">
+		<vartagClassName>ru.runa.wf.web.html.vartag.FileVariableValueDownloadVarTag</vartagClassName>
+	</ftltag>
+</configuration>

@@ -1,0 +1,5 @@
+<config>
+  <input>
+    <param name="uuid" formatFilter="string" label="ID объекта в Alfresco" />
+  </input>
+</config>

@@ -1,0 +1,14 @@
+<config>
+  <input>
+    <param name="uuid" formatFilter="string" label="ID объекта в Alfresco" />
+    <param name="from" formatFilter="date" label="Дата с" />
+    <param name="to" formatFilter="date" label="Дата по" />
+    <param name="appearance" formatFilter="date" label="Дата выхода на работу" />
+    
+    <param name="sicklistNumber" formatFilter="string" label="Номер больничного" />
+    <param name="sicklistDate" formatFilter="date" label="Дата больничного" />
+    <param name="injury" formatFilter="string" label="Причина нетрудоспособности" />
+    <param name="continuousRecord" formatFilter="string" label="Непрерывный трудовой стаж" />
+    <param name="insuranceContinuousRecord" formatFilter="string" label="Cтраховой трудовой стаж" />
+  </input>
+</config>

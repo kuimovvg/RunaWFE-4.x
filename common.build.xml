@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project basedir="." name="RunaWFE-commons">
+
+	<dirname property="RunaWFE-commons.basedir" file="${ant.file.RunaWFE-commons}"/>
+	<property file="${RunaWFE-commons.basedir}/build.properties" />
+	<property file="build.properties" />
+
+	<property name="javadoc" value="http://java.sun.com/j2se/1.5/docs/api" />
+	<property name="build.dir" value="build" />
+	<property name="dist.dir" value="dist" />
+	<property name="lib.dir" value="lib" />
+	<property name="deploy.dir" value="deploy" />
+	<property name="report.dir" location="report" />
+	<property name="resources.dir" value="resources" />
+	<property name="operation.system" value="Windows"/>
+	<import file="${RunaWFE-commons.basedir}/os-specific/${operation.system}.filesets.xml"/>
+	<import file="${RunaWFE-commons.basedir}/os-specific/${operation.system}.targets.xml"/>
+	<property name="jboss.timeout" value="120"/>
+	<property name="web.port" value="8080"/>
+
+	<!-- Jar files from JBOSS which used by build and AdminKit -->
+	<fileset id="libJBoss.fileset" dir="${jboss.home.dir}/client">
+		<include name="jbossall-client.jar" />
+		<include name="mail.jar" />
+	</fileset>
+
+	<!-- This lib used on Build -->
+	<path id="lib.classpath">
+		<fileset refid="local.lib.fileset" />
+		<fileset refid="libJBoss.fileset" />
+		<fileset refid="system.lib.fileset" />
+	</path>
+
+	<path id="app.class.path">
+		<fileset dir="${dist.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset refid="local.lib.fileset" />
+		<fileset refid="libJBoss.fileset" />
+		<fileset refid="system.lib.fileset" />
+	</path>
+
+       <taskdef resource="cactus.tasks">
+               <classpath>
+                       <fileset refid="system.lib.fileset"/>
+                       <fileset refid="cactustests.lib.fileset"/>
+               </classpath>
+       </taskdef>
+
+	<target name="abs-test">
+		<antcall target="start.jboss-server" />
+		<antcall target="test" />
+		<antcall target="stop.jboss-server" />
+	</target>
+
+	<target name="check.jboss.running"> 
+		<condition property="is.jboss.running">
+			<http url="http://localhost:${web.port}"/>
+		</condition>
+	</target>
+
+	<target name="report.tests">
+		<junitreport todir="${report.dir}">
+			<fileset dir="${report.dir}" includes="TEST-*.xml" />
+			<report todir="${report.dir}" format="frames" />
+		</junitreport>
+	</target>
+
+								
+</project>

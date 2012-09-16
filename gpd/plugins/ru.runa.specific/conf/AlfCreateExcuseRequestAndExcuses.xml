@@ -1,0 +1,10 @@
+<config>
+  <input>
+    <param name="from" formatFilter="date" label="Дата начала отчетного перидода" />
+    <param name="to" formatFilter="date" label="Дата окончания отчетного перидода"  />
+    <param name="data" formatFilter="file" label="Excel-файл с данными по несоответсвиям из КС" />
+  </input>
+  <output>
+    <param name="uuid" formatFilter="string" label="Название переменной" help="Переменная, в которую будет записан ID объекта Alfresco" />
+  </output>
+</config>

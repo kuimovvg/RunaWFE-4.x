@@ -1,0 +1,12 @@
+to remove JMS, HSQL and jboss consoles (jmx-console and new applet-console)
+remove from $(JBOSS_HOME)/servers/default/deploy following entries
+
+cache-invalidation-service.xml
+jmx-console.war
+monitoring-service.xml
+hsqldb-ds.xml
+mail-service.xml
+jms
+management
+
+comment 'AJP 1.3 Connector' entry in ${server root}/deploy/jbossweb-tomcat50.sar/server.xml

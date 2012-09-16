@@ -1,0 +1,2 @@
+mkdir -p %buildroot/%runawfe_jboss_libs
+mv %JBOSS_ROOT_RPM/server/default/lib/* %buildroot/%runawfe_jboss_libs/

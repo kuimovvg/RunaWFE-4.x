@@ -1,0 +1,12 @@
+<p>
+<link href="form.css" type="text/css" rel="stylesheet" /></p>
+<div class="form-container">
+<p class="legend"><strong>Rejected</strong></p>
+<fieldset><legend>Request</legend>
+<div>&nbsp;</div>
+<div><label for="requester">Reguester</label>&nbsp;<customtag var="requester" delegation="ru.runa.wf.web.html.vartag.ActorFullNameDisplayVarTag" /></div>
+<div><label for="comment1">Comment1</label>&nbsp;<textarea class="readOnlyText" readonly="readonly"><customtag var="comment1" delegation="ru.runa.wf.web.html.vartag.VariableValueDisplayVarTag" /></textarea></div>
+</fieldset> <fieldset><legend>Comments</legend>
+<div><label for="comment2">comment2</label>&nbsp;<textarea class="readOnlyText" readonly="readonly"><customtag var="comment2" delegation="ru.runa.wf.web.html.vartag.VariableValueDisplayVarTag" /></textarea></div>
+<div><label for="comment3">comment3</label>&nbsp;<textarea class="readOnlyText" readonly="readonly"><customtag var="comment3" delegation="ru.runa.wf.web.html.vartag.VariableValueDisplayVarTag" /></textarea></div>
+</fieldset></div>

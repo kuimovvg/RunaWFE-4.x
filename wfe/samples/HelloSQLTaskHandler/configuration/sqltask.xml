@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- create database table before ussage
+CREATE TABLE REQUESTS(INSTANCE_ID BIGINT,
+REQUESTER_CODE BIGINT,
+REASON VARCHAR(255),
+REQUEST_DATE TIMESTAMP)
+-->
+<database-tasks xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml database-tasks.xsd">
+	<task datasource="java:/DefaultDS">
+		<queries>
+			<query	sql="insert into REQUESTS(INSTANCE_ID, REQUESTER_CODE,REASON,REQUEST_DATE) values(?, ?, ?, ?)">
+				<param  var="instanceId" />
+				<swimlane-param  var="requester" field="code" />
+				<param  var="reason" />
+				<param  var="currentDate" />
+			</query>
+			<query	sql="select  INSTANCE_ID,REASON,REQUESTER_CODE,REQUEST_DATE FROM REQUESTS WHERE REQUESTER_CODE = ?">
+				<swimlane-param  var="requester" field="code" />
+				<result  var="instanceId" />
+				<result  var="reason" />
+				<swimlane-result  var="requester"  field="code" />
+				<result  var="requestDate" />
+			</query>
+		</queries>
+	</task>
+</database-tasks>

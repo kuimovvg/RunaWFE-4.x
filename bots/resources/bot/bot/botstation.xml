@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<botstation xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml botstation.xsd"
+	login="localbotstation"
+	password="123"
+>
+	<thread-pool-size>4</thread-pool-size>
+</botstation>

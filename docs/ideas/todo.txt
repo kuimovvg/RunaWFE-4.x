@@ -1,0 +1,17 @@
+<model>
+add permissions on contents
+think of compenstaion class that runs on process cancel.
+</model>
+
+
+<forms>
+	add default value for variable
+	add composite variables (several form fields are mapped to one process variable)
+	add lable name for variables (if variable was given in wrong format the error tells the lable name instead of variable name)
+</forms>
+
+
+<deployment>
+	Implement mechanisme that allows to add new  Delegation classes(ActionHandlers etc) to workflow application
+	without redeployment of application it self.
+</deployment>

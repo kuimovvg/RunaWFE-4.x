@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-diagram height="534" name="BPMNdemo" notation="bpmn"
+  showActions="false" showGrid="false" width="749">
+  <node height="48" name="Request" width="48" x="156" y="12">
+    <transition name="tr1"/>
+  </node>
+  <node height="60" minimizedView="false" name="Evaluate" width="132"
+    x="108" y="84">
+    <transition name="tr1"/>
+  </node>
+  <node height="84" minimizedView="false" name="Keep informed"
+    width="144" x="288" y="132">
+    <transition name="tr1">
+      <bendpoint x="468" y="168"/>
+    </transition>
+  </node>
+  <node height="60" minimizedView="false" name="Notify of rejection"
+    width="132" x="108" y="252">
+    <transition name="tr1"/>
+  </node>
+  <node height="84" minimizedView="false" name="Submit" width="108"
+    x="336" y="264">
+    <transition name="tr1">
+      <bendpoint x="396" y="360"/>
+    </transition>
+  </node>
+  <node height="84" minimizedView="false" name="Receive" width="132"
+    x="468" y="264">
+    <transition name="tr1">
+      <bendpoint x="540" y="360"/>
+    </transition>
+  </node>
+  <node height="84" minimizedView="false" name="Notify of approval"
+    width="156" x="384" y="396">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" name="fork" width="48" x="444" y="204">
+    <transition name="tr1">
+      <bendpoint x="396" y="228"/>
+    </transition>
+    <transition name="tr2">
+      <bendpoint x="540" y="228"/>
+    </transition>
+  </node>
+  <node height="48" name="join" width="48" x="444" y="336">
+    <transition name="tr1"/>
+  </node>
+  <node height="48" name="Is approved?" width="48" x="156" y="144">
+    <transition name="approved"/>
+    <transition name="rejected"/>
+  </node>
+  <node height="48" name="end" width="48" x="156" y="408"/>
+</process-diagram>

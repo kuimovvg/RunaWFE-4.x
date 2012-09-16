@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<!-- properties -->
+		<property name="hibernate.connection.datasource">java:/runawfe-ds</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+
+		<property name="hibernate.show_sql">true</property>
+		<property name="hibernate.format_sql">false</property>
+		<property name="hibernate.use_sql_comments">false</property>
+		
+		<property name="hibernate.use_outer_join">false</property>
+		<property name="hibernate.cache.provider_class">
+			org.hibernate.cache.EhCacheProvider
+		</property>
+		<!-- property name="hibernate.transaction.factory_class">
+			org.hibernate.transaction.JTATransactionFactory
+		</property -->
+
+		<property name="hibernate.jdbc.batch_size">20</property>
+		<property name="hibernate.jdbc.fetch_size">20</property>
+		<property name="hibernate.cache.use_query_cache">true</property>
+
+		<!-- mapping classes -->
+
+		<mapping class="ru.runa.bpm.graph.def.ArchievedProcessDefinition" />
+
+		<!-- mapping class="ru.runa.bpm.module.def.ModuleDefinition"/>
+	    <mapping class="ru.runa.bpm.file.def.ProcessDefinitionFile"/>
+	    <mapping class="ru.runa.bpm.file.def.FileDefinition"/>
+	    <mapping class="ru.runa.bpm.context.def.ContextDefinition"/ -->
+		
+	    <!-- don't persist them -->
+	    <!-- mapping resource="ru/runa/bpm/graph/def/Node.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/def/Transition.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/def/Event.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/def/Action.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/def/SuperState.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/instantiation/Delegation.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/node/StartState.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/node/EndState.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/node/ProcessState.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/node/Decision.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/node/Fork.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/node/Join.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/node/State.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/node/TaskNode.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/node/MultiInstanceState.hbm.xml"/>
+        <mapping resource="ru/runa/bpm/graph/node/SendMessage.hbm.xml"/>
+        <mapping resource="ru/runa/bpm/graph/node/ReceiveMessage.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/def/VariableAccess.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/taskmgmt/def/Swimlane.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/taskmgmt/def/Task.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/scheduler/def/CreateTimerAction.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/scheduler/def/CancelTimerAction.hbm.xml"/ -->
+
+	    <!-- graph.exe mapping files -->
+		<mapping class="ru.runa.bpm.graph.exe.ProcessInstance" />
+		<mapping class="ru.runa.bpm.graph.exe.Token" />
+		<mapping class="ru.runa.bpm.graph.exe.PassedTransition" />
+		<mapping class="ru.runa.bpm.graph.exe.StartedSubprocesses" />
+
+	    <!-- don't persist them -->
+	    <mapping resource="ru/runa/bpm/module/exe/ModuleInstance.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/exe/ContextInstance.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/taskmgmt/exe/TaskMgmtInstance.hbm.xml"/>
+	    
+		<mapping class="ru.runa.bpm.context.exe.TokenVariableMap" />
+	    <mapping class="ru.runa.bpm.context.exe.VariableInstance" />
+	    <mapping class="ru.runa.bpm.context.exe.variableinstance.ByteArrayInstance" />
+	    <mapping class="ru.runa.bpm.context.exe.variableinstance.DateInstance" />
+	    <mapping class="ru.runa.bpm.context.exe.variableinstance.DoubleInstance" />
+	    <mapping class="ru.runa.bpm.context.exe.variableinstance.LongInstance" />
+	    <mapping class="ru.runa.bpm.context.exe.variableinstance.NullInstance" />
+	    <mapping class="ru.runa.bpm.context.exe.variableinstance.StringInstance" />
+	    <mapping class="ru.runa.bpm.job.Job" />
+	    <mapping class="ru.runa.bpm.job.Timer" />
+	    <mapping class="ru.runa.bpm.job.CleanUpProcessJob" /> <!-- ? -->
+	    <mapping class="ru.runa.bpm.taskmgmt.exe.TaskInstance" />
+	    <mapping class="ru.runa.bpm.taskmgmt.exe.SwimlaneInstance" />
+
+	    <!-- logging mapping files: reorganize them -->
+	    <mapping resource="ru/runa/bpm/logging/log/ProcessLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/logging/log/MessageLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/logging/log/CompositeLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/log/ActionLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/log/NodeLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/log/ProcessInstanceCreateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/log/ProcessInstanceEndLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/log/ProcessStateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/log/SignalLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/log/TokenCreateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/log/TokenEndLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/graph/log/TransitionLog.hbm.xml"/>
+        <mapping resource="ru/runa/bpm/graph/log/MessageNodeLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/log/VariableLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/log/VariableCreateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/log/VariableDeleteLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/log/VariableUpdateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/log/variableinstance/ByteArrayUpdateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/log/variableinstance/DateUpdateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/log/variableinstance/DoubleUpdateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/log/variableinstance/LongUpdateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/context/log/variableinstance/StringUpdateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/taskmgmt/log/TaskLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/taskmgmt/log/TaskCreateLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/taskmgmt/log/TaskAssignLog.hbm.xml"/>
+	    <mapping resource="ru/runa/bpm/taskmgmt/log/TaskEndLog.hbm.xml"/>
+		
+		<!-- mapping RUNA classes -->
+		<mapping class="ru.runa.af.Actor" />
+		<mapping class="ru.runa.af.Bot" />
+		<mapping class="ru.runa.af.BotStation" />
+		<mapping class="ru.runa.af.BotTask" />
+		<mapping class="ru.runa.af.Executor" />
+		<mapping class="ru.runa.af.ExecutorOpenTask" />
+		<mapping class="ru.runa.af.Group" />
+		<mapping class="ru.runa.af.Relation" />
+		<mapping class="ru.runa.af.RelationPair" />
+		<mapping class="ru.runa.af.presentation.BatchPresentation" />
+		<mapping class="ru.runa.af.presentation.DynamicField" />
+		<mapping class="ru.runa.af.presentation.filter.DateFilterCriteria" />
+		<mapping class="ru.runa.af.presentation.filter.FilterCriteria" />
+		<mapping class="ru.runa.af.presentation.filter.IntegerFilterCriteria" />
+		<mapping class="ru.runa.af.presentation.filter.StringFilterCriteria" />
+		<mapping class="ru.runa.af.presentation.filter.AnywhereStringFilterCriteria" />
+		<mapping class="ru.runa.af.presentation.Profile" />
+		<mapping class="ru.runa.af.Substitution" />
+		<mapping class="ru.runa.af.SubstitutionCriteria" />
+		<mapping class="ru.runa.af.SubstitutionCriteriaSwimlane" />
+		<mapping class="ru.runa.af.SubstitutionCriteriaNotEquals" />
+		<mapping class="ru.runa.af.TerminatorSubstitution" />
+		<mapping class="ru.runa.af.dao.impl.ActorPassword" />
+		<mapping class="ru.runa.af.dao.impl.Constant" />
+		<mapping class="ru.runa.af.dao.impl.ExecutorGroupRelation" />
+		<mapping class="ru.runa.af.dao.impl.PermissionMapping" />
+		<mapping class="ru.runa.af.dao.impl.SecuredObjectType" />
+		<mapping class="ru.runa.af.SecuredObject" />
+		<mapping class="ru.runa.af.log.SystemLog" />
+		<mapping class="ru.runa.af.log.ProcessInstanceDeleteLog" />
+		<mapping class="ru.runa.af.log.ProcessDefinitionDeleteLog" />
+		<mapping class="ru.runa.af.log.ProcessDefinitionDeleteExceptionLog" />
+		<mapping class="ru.runa.wf.ProcessDefinitionInfo" />
+		<mapping class="ru.runa.wf.presentation.SystemLogTypeFilterCriteria" />
+	</session-factory>
+
+</hibernate-configuration>

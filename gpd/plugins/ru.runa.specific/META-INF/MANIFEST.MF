@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Runa firm specific
+Bundle-SymbolicName: ru.runa.specific;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: ru.runa.specific.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ ru.runa.bpm.core,
+ ru.runa.bpm.ui,
+ tk.eclipse.plugin.wysiwyg,
+ org.eclipse.jface,
+ org.eclipse.ui,
+ org.eclipse.ui.forms,
+ org.eclipse.draw2d,
+ org.eclipse.ui.views,
+ ru.runa.alfresco
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .

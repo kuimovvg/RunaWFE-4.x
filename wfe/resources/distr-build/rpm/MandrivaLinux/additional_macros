@@ -1,0 +1,39 @@
+%define requires_ant               ant >= 1.6.5 ant-junit >= 1.6.5 ant-trax >= 1.6.5 ant-nodeps >= 1.6.5 ant-optional >= 1.6.5
+%define requires_antlr             coreutils
+%define requires_apache_commons    coreutils
+%define requires_aspectj           coreutils
+%define requires_asm               coreutils
+%define requires_bsh               coreutils
+%define requires_cactus            coreutils
+%define requires_cargo             coreutils
+%define requires_cglib             coreutils
+%define requires_dom4j             coreutils
+%define requires_ecs               coreutils
+%define requires_ehcache           coreutils
+%define requires_freemarker        coreutils
+%define requires_hibernate         coreutils
+%define requires_java              java >= 1.5
+%define requires_java_devel        java-devel >= 1.5
+%define requires_javamail          coreutils
+%define requires_jboss             runawfe-jboss = 4.2.3.GA
+%define requires_jcifs             coreutils
+%define requires_jta               coreutils
+%define requires_mozilla           firefox
+%define requires_nekohtml          coreutils
+%define requires_openoffice        coreutils
+%define requires_odmg              coreutils
+%define requires_portal_bridges    coreutils
+%define requires_perlcgi           coreutils
+%define requires_struts            coreutils
+%define requires_struts_test       coreutils
+%define requires_swt               eclipse-swt
+%define requires_trove             coreutils
+%define requires_xdgutils          coreutils
+%define requires_xjavadoc          coreutils
+%define requires_libgtk            libgtk+2.0_0
+
+%define _sbindir /usr/sbin
+%define _sysconfdir /etc
+%define _datadir /usr/share
+%define _sysconfdir_init_d	   %_sysconfdir/init.d
+%define _libdir /usr/lib

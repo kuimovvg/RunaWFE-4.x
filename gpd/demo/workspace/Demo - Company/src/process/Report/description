@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html">
+	<TITLE></TITLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P STYLE="margin-bottom: 0cm"><I>Description:</I></P>
+<P STYLE="margin-bottom: 0cm">Manager orders employee to make report. 
+Employee makes report. After that manager reads report.</P>
+<P LANG="ru-RU" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><I>How to play the business process:</I></P>
+<OL>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Log in as member of manager group (e.g. julius)</P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Click menu item &ldquo;Process Definitions&rdquo; </P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Click &ldquo;Start&rdquo; for &ldquo;make report demo&rdquo; button</P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Start form will appear. </FONT> </P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Fill the field &laquo;Report theme&raquo; </FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Click &ldquo;OK&rdquo;</FONT></P>
+        <LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>The new instance of &ldquo;make report demo&rdquo; business process will be created and members of staff group will receive task.</P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Click &ldquo;Logout&rdquo;</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Log in as employee, member of staff group (gaiua). </FONT> </P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Click on task &ldquo;make report&rdquo;.</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Fill the &laquo;Report&raquo; field and click &laquo;OK&raquo;.</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Logout </FONT> </P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Log in as the actor, which started the process (<FONT FACE="Arial CYR, sans-serif">julius</FONT>)</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>Click on task &ldquo;read report&rdquo;.</FONT></P>
+	<LI><P ALIGN=LEFT STYLE="margin-bottom: 0cm"><FONT SIZE=3>By clicking &ldquo;OK&rdquo; you&rsquo;ll finish the process.</FONT></P>
+</OL>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-left: 1.91cm; text-indent: -1.91cm; margin-bottom: 0cm">
+<I>Note</I>. To monitor process click on &ldquo;Process Instances&rdquo;
+menu item and then click on instance.</P>
+<P STYLE="margin-bottom: 0cm"><I>Note</I>. To see the business
+process graph click on &ldquo;Process Definitions&rdquo; menu item
+and click on process properties.</P>
+</BODY>
+</HTML>

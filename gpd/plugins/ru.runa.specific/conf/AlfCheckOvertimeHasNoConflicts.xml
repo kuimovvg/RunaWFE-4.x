@@ -1,0 +1,11 @@
+<config>
+  <input>
+    <param name="employee" formatFilter="string" label="Сотрудник" />
+    <param name="from" formatFilter="date" label="Дата с" />
+    <param name="to" formatFilter="date" label="Дата по" />
+  </input>
+  <output>
+    <param name="status" formatFilter="long" label="Статус проверки" />
+    <param name="errorCause" formatFilter="string" label="Причина конфликта" optional="true" />
+  </output>
+</config>

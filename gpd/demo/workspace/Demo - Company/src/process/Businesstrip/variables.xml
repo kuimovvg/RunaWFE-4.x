@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<variables>
+  <variable description=""
+    format="ru.runa.bpm.web.formgen.format.DefaultFormat" name="comment"/>
+  <variable description=""
+    format="ru.runa.bpm.web.formgen.format.DefaultFormat" name="businessTripType"/>
+  <variable description=""
+    format="ru.runa.bpm.web.formgen.format.DefaultFormat" name="official_order_number"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.DateFormat" name="official_order_date"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.DateFormat" name="till"/>
+  <variable description=""
+    format="ru.runa.bpm.web.formgen.format.DefaultFormat" name="reason"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.DateFormat" name="since"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.StringFormat" name="bookkeeper" swimlane="true"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.StringFormat"
+    name="human resource inspector" swimlane="true"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.StringFormat" name="staffrole" swimlane="true"/>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.StringFormat" name="boss" swimlane="true"/>
+</variables>

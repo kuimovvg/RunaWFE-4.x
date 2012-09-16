@@ -1,0 +1,6 @@
+%define requires_ant               ant >= 1.6.5 ant-junit >= 1.6.5 ant-optional >= 1.6.5
+%define requires_apache_commons    apache-commons-validator apache-commons-logging apache-commons-collections apache-commons-digester apache-commons-beanutils apache-commons-lang apache-commons-fileupload apache-commons-io
+%define requires_hibernate         sh chrpath
+%define requires_cargo             cargo spring2-all
+%define requires_portal_bridges    sh
+%define _sysconfdir_init_d	   %_sysconfdir/rc.d/init.d

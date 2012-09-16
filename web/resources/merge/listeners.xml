@@ -1,0 +1,3 @@
+<listener>
+	<listener-class>ru.runa.common.web.InitializeDBListener</listener-class>
+</listener>

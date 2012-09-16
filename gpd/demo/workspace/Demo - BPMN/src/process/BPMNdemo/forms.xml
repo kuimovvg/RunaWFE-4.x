@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form file="Request.ftl" jsValidation="true" state="Request"
+    type="ftl" validationFile="Request.validation.xml"/>
+  <form file="Evaluate.ftl" jsValidation="false" state="Evaluate"
+    type="ftl" validationFile="Evaluate.validation.xml"/>
+  <form file="Keep informed.ftl" jsValidation="false"
+    state="Keep informed" type="ftl" validationFile="Keep informed.validation.xml"/>
+  <form file="Notify of rejection.ftl" jsValidation="false"
+    state="Notify of rejection" type="ftl" validationFile="Notify of rejection.validation.xml"/>
+  <form file="Submit.ftl" jsValidation="false" state="Submit" type="ftl" validationFile="Submit.validation.xml"/>
+  <form file="Receive.ftl" jsValidation="false" state="Receive"
+    type="ftl" validationFile="Receive.validation.xml"/>
+  <form file="Notify of approval.ftl" jsValidation="false"
+    state="Notify of approval" type="ftl" validationFile="Notify of approval.validation.xml"/>
+</forms>

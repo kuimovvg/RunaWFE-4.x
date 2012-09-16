@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="alfwf.core" default="dist" basedir=".">
+	<dirname property="alfwf.core.basedir" file="${ant.file.alfwf.core}"/>
+	<import file="${alfwf.core.basedir}/../common.build.xml"/>
+
+	<property name="src.dir" location="src" />
+	<property name="build.dir" location="build" />
+	<property name="lib.dir" location="lib" />
+	<property name="compile.lib.dir" location="${lib.dir}/compile" />
+	<property name="runtime.lib.dir" location="${lib.dir}/runtime" />
+	<property name="resources.dir" location="resources" />
+	<property name="conf.dir" location="${resources.dir}/conf" />
+	<property name="messages.dir" location="${resources.dir}/messages" />
+	<property name="dist.dir" location="dist" />
+	<property name="jar.file" location="${dist.dir}/alfwf.core.jar" />
+
+	<path id="lib.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean" description="clean up">
+		<delete dir="${build.dir}" failonerror="false" />
+		<delete dir="${dist.dir}" failonerror="false" />
+	</target>
+
+	<target name="init" depends="clean">
+		<tstamp />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source of application">
+		<javac destdir="${build.dir}" debug="true" target="1.5" encoding="UTF-8">
+			<src path="${src.dir}" />
+			<classpath refid="lib.classpath" />
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile">
+		<jar destfile="${jar.file}">
+			<zipfileset dir="${build.dir}" />
+			<zipfileset dir="${messages.dir}" />
+		</jar>
+	</target>
+	
+	<target name="deploy" depends="dist">
+		<copy file="${jar.file}" todir="${deployment.dir}" overwrite="true" />
+		<copy todir="${jboss.home.dir}/server/${jboss.config}/lib" flatten="true" overwrite="true">
+			<fileset dir="${runtime.lib.dir}" excludes=".svn">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="copy.libs">
+		<property name="jboss.deploy.dir" value="${jboss.home.dir}/server/default/deploy/"/>
+		<property name="jboss.lib.dir" value="${jboss.home.dir}/server/default/lib/"/>
+		<property name="jboss.client.dir" value="${jboss.home.dir}/client/"/>
+
+		<copy file="${jboss.deploy.dir}/af.core.jar" todir="${compile.lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/af.delegate.jar" todir="${compile.lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/af.logic.jar" todir="${compile.lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/jbpm.core.jar" todir="${compile.lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/runa-common.jar" todir="${compile.lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/wf.core.jar" todir="${compile.lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/wf.delegate.jar" todir="${compile.lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/wfe-bots.jar" todir="${compile.lib.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/wfe-custom.jar" todir="${compile.lib.dir}" overwrite="true"/>
+	</target>
+
+	<target name="abs-build" depends="copy.libs,deploy" />
+	<target name="abs-test" />
+</project>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<functions xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml orgfunctions.xsd">
+  <function function="ru.runa.af.organizationfunction.ChiefFunction" name="руководитель"/>
+  <function function="ru.runa.af.organizationfunction.DemoChiefFunction" name="руководитель-демо-версия"/>
+  <function
+    function="ru.runa.af.organizationfunction.ExecutorByCodeFunction" name="исполнитель-по-табельному-номеру"/>
+  <function function="ru.runa.af.organizationfunction.DirectorFunction" name="директор"/>
+  <function
+    function="ru.runa.af.organizationfunction.ExecutorByNameFunction" name="исполнитель-по-имени"/>
+  <function function="ru.runa.af.organizationfunction.SQLFunction" name="SQLFunction"/>
+  <function
+    function="ru.runa.wfe.bp.commons.EmployeeOrRequestorFunction" name="сотрудник-или-подавший-заявку-функция"/>
+  <function function="ru.runa.wfe.bp.commons.DepartamentChiefFunction" name="DepartamentChiefFunction"/>
+</functions>

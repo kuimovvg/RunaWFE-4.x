@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bots xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml bots.xsd">
+
+<!--
+	<bot login="Administrator" password="wf">
+		<task name = "evaluating" handler="ru.runa.wf.PrintTaskHandler" configuration="conf/bot/bl/someble" />	
+	</bot>
+
+	<bot login="ботПроцессовУчетаВремени" password="123">
+		<task name = "change data over time" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/overtime_insert.xml" />
+		<task name = "change data shift" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/shift_insert.xml" />
+		<task name = "change data 1" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/change_data1.xml" />
+		<task name = "change data 1a" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/change_data1a.xml" />
+		<task name = "change data 1b" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/change_data1b.xml" />
+		<task name = "change data 1c" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/change_data1c.xml" />
+		<task name = "change data 2" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/change_data2.xml" />
+		<task name = "change data 2a" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/change_data2a.xml" />
+		<task name = "change data 3" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/change_data3.xml" />
+		<task name = "change data 4" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/change_data4.xml" />
+		<task name = "change data 6" handler="ru.runa.wfe.bp.timing.bl.DatabaseTaskHandler" configuration="/bot/handler/change_data6.xml" />
+		<task name = "cancel timing process" handler="ru.runa.wfe.bp.timing.bl.cancelprocess.CancelProcessTaskHandler" configuration="/bot/handler/cancel_process.xml" />
+	</bot>
+
+	<bot login="SMTPbot" password="123">
+		<task name = "Положить записку об окончании процесса в MS Exchange (Поощрительный отгул)" handler="ru.runa.wfe.bp.commons.TextEmailTaskHandler" configuration="bot.handler.sendmail_compensatoryLeave" />
+		<task name = "Положить записку об окончании процесса в MS Exchange (Командировка)" handler="ru.runa.wfe.bp.commons.TextEmailTaskHandler" configuration="bot.handler.sendmail_businessTrip" />
+		<task name = "Положить записку об окончании процесса в MS Exchange (Отпуск по уходу за ребенком)" handler="ru.runa.wfe.bp.commons.TextEmailTaskHandler" configuration="bot.handler.sendmail_childRearingLeaveOfAbsence" />
+		<task name = "Положить записку об окончании процесса в MS Exchange (Отпуск)" handler="ru.runa.wfe.bp.commons.TextEmailTaskHandler" configuration="bot.handler.sendmail_vacation" />
+		<task name = "Положить записку об окончании процесса в MS Exchange (Больничный)" handler="ru.runa.wfe.bp.commons.TextEmailTaskHandler" configuration="bot.handler.sendmail_sickList" />
+		<task name = "Положить записку об окончании процесса в MS Exchange (Отсутствие по неизвестной  или неуважительной причине)" handler="ru.runa.wfe.bp.commons.TextEmailTaskHandler" configuration="bot.handler.sendmail_unknownLeaveOfAbsence" />
+		<task name = "Положить записку об окончании процесса в MS Exchange (Сверхурочные)" handler="ru.runa.wfe.bp.commons.TextEmailTaskHandler" configuration="bot.handler.sendmail_overTime" />
+		<task name = "Положить записку об окончании процесса в MS Exchange (Сдвиг графика)" handler="ru.runa.wfe.bp.commons.TextEmailTaskHandler" configuration="bot.handler.sendmail_scheduleShift" />
+	</bot>
+-->
+
+	<bot login="ExcelBot" password="123">
+		<task name = "make excel 1" handler="ru.runa.wfe.bp.commons.ExcelTaskHandler" configuration="bot.handler.make_report_1" />
+		<task name = "make excel 2" handler="ru.runa.wfe.bp.commons.ExcelTaskHandler" configuration="bot.handler.make_report_2" />
+		<task name = "overtimes" handler="ru.runa.wfe.bp.commons.ExcelTaskHandler" configuration="bot.handler.overtimes_report" />
+		<task name = "timings" handler="ru.runa.wfe.bp.commons.ExcelTaskHandler" configuration="bot.handler.timings_report" />
+		<task name = "worktime" handler="ru.runa.wfe.bp.commons.ExcelTaskHandler" configuration="bot.handler.worktime_report" />
+	</bot>
+
+<!-- 
+
+	<bot login="HelloBot" password="123">
+		<task name = "say hello" handler="ru.runa.wfe.bp.commons.HelloTaskHandler" configuration="bot.handler.hello" />
+	</bot>
+	
+-->
+
+</bots>

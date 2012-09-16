@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<variables>
+  <variable description=""
+    format="ru.runa.wf.web.forms.format.StringFormat" name="requester" swimlane="true"/>
+</variables>

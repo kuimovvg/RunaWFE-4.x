@@ -1,0 +1,15 @@
+# Apply patches to jboss configuration files
+cp -Ru %JBOSS_ROOT_TARGET/server/default/conf %JBOSS_ROOT_TARGET/server/%jboss_cfg_botstation
+cp -Ru %JBOSS_ROOT_TARGET/server/default/deploy %JBOSS_ROOT_TARGET/server/%jboss_cfg_botstation
+
+mkdir %JBOSS_ROOT_TARGET/server/%jboss_cfg_botstation/lib
+
+%make_jboss_libs_links "%JBOSS_ROOT_TARGET/server/default/lib" "%JBOSS_ROOT_TARGET/server/%jboss_cfg_botstation/lib"
+
+%make_jboss_libs_links "%runawfe_jboss_libs"  "%JBOSS_ROOT_TARGET/server/%jboss_cfg_botstation/lib"
+
+chmod +x %_sysconfdir_init_d/runawfe
+%_sysconfdir_init_d/runawfe
+chkconfig --add runawfe
+ln -s %_sbindir/runawfe-start-%botstation_id.sh %_sbindir/runawfe-start.sh
+chmod +xxx %_sbindir/runawfe-start.sh

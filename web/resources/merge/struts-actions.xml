@@ -1,0 +1,174 @@
+<action path="/start" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/login.jsp"/>
+
+<action path="/error" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/error.jsp"/>
+
+<action path="/demo_login" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/demoConfiguration.jsp"/>
+
+<action path="/manage_executor" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/manage_executor.jsp"/>
+
+<action path="/create_executor" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/create_executor.jsp"/>
+
+<action path="/add_executor_to_groups" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/add_executor_to_groups.jsp"/>
+
+<action path="/manage_executors" type="ru.runa.common.web.action.TabHeaderForwardAction"
+        parameter="/WEB-INF/af/manage_executors.jsp"/>
+
+<action path="/manage_relations" type="ru.runa.common.web.action.TabHeaderForwardAction"
+        parameter="/WEB-INF/af/manage_relations.jsp"/>
+
+<action path="/grant_group_of_relations_permission" type="ru.runa.common.web.action.TabHeaderForwardAction"
+        parameter="/WEB-INF/af/grant_permission_on_relations.jsp"/>
+
+<action path="/grant_permission_on_relation" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/grant_permission_on_relation.jsp"/>
+
+<action path="/grant_read_permission_on_executor" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/grant_read_permission_on_executor.jsp"/>
+
+<action path="/manage_executor_permissions" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/manage_executor_permissions.jsp"/>
+
+<action path="/manage_executor" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/manage_executor.jsp"/>
+
+<action path="/editSubstitution" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/edit_substitution.jsp"/>
+
+<action path="/createSubstitution" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/edit_substitution.jsp"/>
+
+<action path="/editSubstitutionCriteria" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/edit_substitution_criteria.jsp"/>
+
+<action path="/createSubstitutionCriteria" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/edit_substitution_criteria.jsp"/>
+
+<action path="/manage_system" type="ru.runa.common.web.action.TabHeaderForwardAction"
+        parameter="/WEB-INF/af/manage_system.jsp"/>
+
+<action path="/grant_login_permission_on_system" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/grant_login_permission_on_system.jsp"/>
+
+<action path="/add_members_to_group" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/add_members_to_group.jsp"/>
+        <!-- wf struts actions -->
+<action path="/manage_process_definitions" type="ru.runa.common.web.action.TabHeaderForwardAction"
+        parameter="/WEB-INF/wf/manage_process_definitions.jsp"/>
+
+<action path="/manage_process_definition" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/manage_process_definition.jsp"/>
+
+<action path="/manage_process_definition_permissions" type="ru.runa.common.web.action.TabHeaderForwardAction"
+        parameter="/WEB-INF/wf/manage_process_definition_permissions.jsp"/>
+
+<action path="/deploy_process_definition" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/deploy_process_definition.jsp"/>
+
+<action path="/redeploy_process_definition" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/redeploy_process_definition.jsp"/>
+
+<action path="/validate_process_definition" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/validate_process_definition.jsp"/>
+
+<action path="/grant_read_permission_on_process_definition" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/grant_read_permission_on_process_definition.jsp"/>
+
+<action path="/manage_process_instances" type="ru.runa.common.web.action.TabHeaderForwardAction"
+        parameter="/WEB-INF/wf/manage_process_instances.jsp"/>
+
+<action path="/manage_process_instance" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/manage_process_instance.jsp"/>
+
+<action path="/manage_process_instance_permissions" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/manage_process_instance_permissions.jsp"/>
+
+<action path="/submit_start_process_instance" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/submit_start_process.jsp"/>
+
+<action path="/manage_tasks" type="ru.runa.common.web.action.TabHeaderForwardAction"
+        parameter="/WEB-INF/wf/manage_tasks.jsp"/>
+
+<action path="/submit_task" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/submit_task.jsp"/>
+
+<action path="/grant_read_permission_on_process_instance" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/grant_read_permission_on_process_instance.jsp"/>
+
+<action path="/display_swimlane" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/display_swimlane.jsp"/>
+
+<action path="/manage_relation" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/manage_relation_members.jsp"/>
+
+<action path="/manage_executor_relation_right" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/manage_executor_right_relations.jsp"/>
+
+<action path="/manage_executor_relation_left" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/manage_executor_left_relations.jsp"/>
+
+<action path="/create_relation" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/create_relation.jsp"/>
+
+<action path="/create_relation_right_executor" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/create_relation_right_executor.jsp"/>
+
+<action path="/create_relation_left_executor" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/create_relation_left_executor.jsp"/>
+
+<action path="/create_relation_group" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/create_relation_group.jsp"/>
+
+<action path="/group_of_relations_permission" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/group_of_relations_permission.jsp"/>
+
+<action path="/relation_permission" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/relation_permission.jsp"/>
+        
+<action path="/configure_bot_station" type="ru.runa.common.web.action.TabHeaderForwardAction"
+        parameter="/WEB-INF/wf/configure_bot_station.jsp"/>
+
+<action path="/add_bot_station" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/add_bot_station.jsp"/>
+        
+<action path="/add_bot" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/add_bot.jsp"/>
+
+<action path="/bot" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/bot.jsp"/>
+        
+<action path="/bot_station" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/bot_station.jsp"/>
+
+<action path="/bot_station_permission" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/bot_station_permission.jsp"/>
+
+<action path="/grant_bot_station_permission" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/af/grant_bot_station_configure_permission.jsp"/>
+        
+<action path="/show_history" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/show_history.jsp"/>
+        
+<action path="/show_system_logs" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/show_system_logs.jsp"/>
+        
+<action path="/show_graph_history" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/show_graph_history.jsp"/>
+
+<action path="/manage_settings" type="ru.runa.common.web.action.TabHeaderForwardAction"
+        parameter="/WEB-INF/af/manage_settings.jsp"/>
+        
+<action path="/show_graph_instance" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/wf/show_graph_instance.jsp"/>
+
+<action path="/version" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/common/version.jsp"/>
+
+<action path="/logs" type="org.apache.struts.actions.ForwardAction"
+        parameter="/WEB-INF/common/logs.jsp"/>
+        

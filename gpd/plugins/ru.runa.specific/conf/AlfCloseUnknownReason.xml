@@ -1,0 +1,6 @@
+<config>
+  <input>
+    <param name="uuid" formatFilter="string" label="ID Alfresco объекта" />
+    <param name="to" formatFilter="date" label="Дата по" />
+  </input>
+</config>

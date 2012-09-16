@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="HelloSQLTaskHandler" width="899" height="775">
+  <node name="start" x="214" y="22" width="50" height="50">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="store data" x="207" y="127" width="64" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="end" x="215" y="195" width="50" height="50"/>
+</root-container>

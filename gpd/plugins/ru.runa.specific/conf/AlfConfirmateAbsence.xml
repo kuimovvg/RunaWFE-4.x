@@ -1,0 +1,9 @@
+<config>
+  <input>
+    <param name="uuid" formatFilter="string" label="ID объекта в Alfresco" />
+    <param name="confirmation" formatFilter="date" label="Дата подтверждения" />
+    <param name="firmCode" formatFilter="long" label="Код фирмы" optional="true" />
+    <param name="firmPositionCode" formatFilter="long" label="Код должности" optional="true" />
+    <param name="firmDepartmentCode" formatFilter="string" label="Код подразделения" optional="true" />
+  </input>
+</config>

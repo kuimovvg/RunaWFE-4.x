@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forms xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
+  <form file="state2.ftl" jsValidation="false" state="state2" type="ftl" validationFile="state2.validation.xml"/>
+  <form file="state3.ftl" jsValidation="false" state="state3" type="ftl" validationFile="state3.validation.xml"/>
+  <form file="state4.ftl" jsValidation="false" state="state4" type="ftl" validationFile="state4.validation.xml"/>
+  <form file="state5.ftl" jsValidation="false" state="state5" type="ftl" validationFile="state5.validation.xml"/>
+  <form file="state6.ftl" jsValidation="false" state="state6" type="ftl" validationFile="state6.validation.xml"/>
+  <form file="state1.ftl" jsValidation="false" state="state1" type="ftl" validationFile="state1.validation.xml"/>
+  <form file="state7.ftl" jsValidation="false" state="state7" type="ftl" validationFile="state7.validation.xml"/>
+  <form file="state8.ftl" jsValidation="false" state="state8" type="ftl" validationFile="state8.validation.xml"/>
+  <form file="state9.ftl" jsValidation="false" state="state9" type="ftl" validationFile="state9.validation.xml"/>
+</forms>

@@ -1,0 +1,10 @@
+<validators>
+
+<field name="d">
+
+<field-validator type="required">
+	<message>Поле обязательно для ввода</message>
+</field-validator>
+</field>
+
+</validators>

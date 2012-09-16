@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding="iso-8859-1"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3CR3//EN"
+                      "../../../../docbook-support/support/docbook-dtd/docbookx.dtd"
+[
+<!ENTITY installation       SYSTEM "modules/installation.xml">
+<!ENTITY guided_tour        SYSTEM "modules/guided_tour.xml">
+<!ENTITY testdriven         SYSTEM "modules/testdriven.xml">
+<!ENTITY integration        SYSTEM "modules/integration.xml">
+<!ENTITY quickhowto			SYSTEM "modules/quickhowto.xml">
+]>
+<book lang="en">
+    <bookinfo>
+        <title>JBoss jBPM Graphical Process Designer</title>
+        <subtitle>Getting Started : How to create your first process definition</subtitle>
+        <releaseinfo>3.0</releaseinfo>
+    </bookinfo>
+    
+    <toc/>
+    
+    <preface id="target" revision="1">
+        <title>Target Audience</title>
+        <para> All developers and process analists who are beginning to use
+        	JBoss jBPM should read this Getting Started guide. It will give
+        	them a jumpstart showing how to create a process definition. </para>
+    </preface>
+    
+    <preface id="preface" revision="1">
+        <title>Preface</title>
+        <para> This document introduces the use of the JBoss jBPM Graphical 
+        	Process Designer (GPD) to create workflow processes. It will help first 
+        	time users with the following tasks : </para>
+        <itemizedlist>
+            <listitem> 
+            	<para> Install the JBoss jBPM GPD Eclipse plugin available from
+            		the JBoss jBPM download area.</para>
+            </listitem>
+            <listitem>
+            	<para> Set up a Java project in Eclipse and prepare it to do 
+            		test driven process development. </para>
+            </listitem>
+            <listitem>
+            	<para> Using the creation wizard to create an empty process 
+            		definition. </para>
+            </listitem>
+            <listitem> 
+            	<para>Use the designer palette to draw the first 
+            		processdefinition. </para>
+            </listitem>
+            <listitem>
+            	<para> Show how the xml processdefinition can be inspected as
+            		an xml file. </para>
+            </listitem>
+            <listitem>
+            	<para> Set up a Java project in Eclipse and prepare it to do 
+            		test driven process development. </para>
+            </listitem>
+            <listitem>
+            	<para> Write an example process test case. </para>
+            </listitem>
+         </itemizedlist>        
+        <para> If you have questions, please feel free to contact Koen Aers or
+        	Tom Baeyens for more information. </para>
+    </preface> 
+
+&installation; 
+
+&guided_tour; 
+
+&testdriven;
+
+&integration;
+
+&quickhowto;
+
+</book>

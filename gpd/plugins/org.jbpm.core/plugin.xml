@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="ru.runa.bpm.core"
+   name="JBoss jBPM Core"
+   version="3.0.1"
+   provider-name="JBoss, Inc.">
+   <runtime>
+      <library name="lib/runa-common.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/jbpm-jpdl-3.2.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/wfe-custom.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/af.delegate.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/jbossall-client.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/jboss-j2ee.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/af.core.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/jcifs.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/wf.core.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/commons-httpclient.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/commons-logging.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/jbpm-jpdl-2.0.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/wf.delegate.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/ejb3-persistence.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/hibernate-annotations.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/hibernate3.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/dom4j-1.4.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/mail.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+   </runtime>
+</plugin>

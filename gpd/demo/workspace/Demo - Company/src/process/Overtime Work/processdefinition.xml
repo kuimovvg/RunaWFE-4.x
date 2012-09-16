@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="Overtime Work" xmlns="urn:jbpm.org:jpdl-3.2">
+  <description><![CDATA[Participants of this process are members of manager and staff groups]]></description>
+  <swimlane name="staffrole">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <swimlane name="manager">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state name="Offer an overtime work">
+    <task name="Offer an overtime work" swimlane="manager"/>
+    <transition name="tr1" to="Make a decision"/>
+  </start-state>
+  <task-node name="Make a decision">
+    <description><![CDATA[Accept or decline the offering]]></description>
+    <task name="Make a decision" swimlane="staffrole"/>
+    <transition name="accepted" to="Notify of acceptance"/>
+    <transition name="rejected" to="Notify of rejection"/>
+  </task-node>
+  <task-node name="Notify of acceptance">
+    <description><![CDATA[Notify that an overtime work is accepted]]></description>
+    <task name="Notify of acceptance" swimlane="manager"/>
+    <transition name="tr1" to="end"/>
+  </task-node>
+  <task-node name="Notify of rejection">
+    <description><![CDATA[Notify that an overtime work is rejected]]></description>
+    <task name="Notify of rejection" swimlane="manager"/>
+    <transition name="tr1" to="end"/>
+  </task-node>
+  <end-state name="end"/>
+</process-definition>

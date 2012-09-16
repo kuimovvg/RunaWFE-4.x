@@ -1,0 +1,2 @@
+rm -Rf %JBOSS_ROOT_RPM/adminkit/lib/jbossall-client.jar && ln -s %JBOSS_ROOT_TARGET/client/jbossall-client.jar %JBOSS_ROOT_RPM/adminkit/lib/jbossall-client.jar
+chmod 544 %JBOSS_ROOT_RPM/adminkit/*.sh

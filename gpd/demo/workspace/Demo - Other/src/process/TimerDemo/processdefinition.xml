@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="TimerDemo" xmlns="urn:jbpm.org:jpdl-3.2">
+  <description><![CDATA[Demo for element timer (no start form provided)]]></description>
+  <swimlane name="requester">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state name="start">
+    <task name="start" swimlane="requester"/>
+    <transition name="tr1" to="Before timer triggered"/>
+  </start-state>
+  <task-node end-tasks="true" name="Before timer triggered">
+    <description><![CDATA[Before timer triggered]]></description>
+    <task name="Before timer triggered" swimlane="requester"/>
+    <timer duedate="3 minutes" transition="time-out-transition"/>
+    <transition name="tr1" to="end"/>
+    <transition name="time-out-transition" to="After timer triggered"/>
+  </task-node>
+  <task-node name="After timer triggered">
+    <description><![CDATA[After timer triggered]]></description>
+    <task name="After timer triggered" swimlane="requester"/>
+    <transition name="tr1" to="end"/>
+  </task-node>
+  <end-state name="end"/>
+</process-definition>

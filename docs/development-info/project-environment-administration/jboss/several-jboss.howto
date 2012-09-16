@@ -1,0 +1,21 @@
+1
+In <jboss_home>/server/xxx/conf/jboss-service.xml, edit the following: 
+For the mbean org.jboss.web.WebService, change the port setting line to (8083 is the default):
+<attribute name="Port">9083</attribute>
+For the mbean org.jboss.naming.NamingService, change the port setting line to (1099/1098 is the default):
+<attribute name="Port">2099</attribute>
+<attribute name="RmiPort">2098</attribute>
+For mbean org.jboss.invocation.jrmp.server.JRMPInvoker, change port settings to (4444 the default):
+<attribute name="RMIObjectPort">5444</attribute>
+For mbean org.jboss.invocation.pooled.server.PooledInvoker, change port settings to (4445 the default):
+<attribute name="ServerBindPort">5445</attribute>
+
+2
+<jboss_home>/server/all/deploy/jbossweb-tomcat50.sar/server.xml, edit the following: 
+ <!-- A HTTP/1.1 Connector on port 8080 -->
+ <Connector port="9080" address="${jboss.bind.address}"  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"   enableLookups="false" redirectPort="8443" acceptCount="100"      connectionTimeout="20000" disableUploadTimeout="true"/>
+
+<!-- A AJP 1.3 Connector on port 8009 -->
+<Connector port="9009" address="${jboss.bind.address}"  enableLookups="false" redirectPort="8443" debug="0"   protocol="AJP/1.3"/>
+
+

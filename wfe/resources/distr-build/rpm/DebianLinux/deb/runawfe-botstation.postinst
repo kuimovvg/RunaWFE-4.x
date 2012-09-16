@@ -1,0 +1,30 @@
+#!/bin/sh
+cp -Rf /usr/share/runawfe-jboss/server/default/conf /usr/share/runawfe-jboss/server/runawfe-botstation
+cp -Rf /usr/share/runawfe-jboss/server/default/deploy /usr/share/runawfe-jboss/server/runawfe-botstation
+cd /usr/share/runawfe-jboss/server/runawfe-botstation
+
+mkdir lib
+for fileName in `ls /usr/share/runawfe-jboss/server/default/lib`; do 
+	linkName=`echo $fileName | awk -F - '/.*-[0-9]*(\\.[0-9]*)*.jar/ {for(i=1; i<NF; i=i+1) {if (i != 1)printf "%s", "-" >>"/dev/stdout"; printf "%s", $i >>"/dev/stdout"}; printf "%s", ".jar" >>"/dev/stdout";}' `
+	if [ "$linkName" = "" ]; then 
+		linkName=`echo $fileName`
+	fi 
+	ln -sf "/usr/share/runawfe-jboss/server/default/lib/$fileName" "lib/$linkName"
+done
+for fileName in `ls /usr/share/java/runawfe-libs`; do 
+	linkName=`echo $fileName | awk -F - '/.*-[0-9]*(\\.[0-9]*)*.jar/ {for(i=1; i<NF; i=i+1) {if (i != 1)printf "%s", "-" >>"/dev/stdout"; printf "%s", $i >>"/dev/stdout"}; printf "%s", ".jar" >>"/dev/stdout";}' `
+	if [ "$linkName" = "" ]; then 
+		linkName=`echo $fileName`
+	fi 
+	ln -sf "/usr/share/java/runawfe-libs/$fileName" "lib/$linkName"
+done
+
+
+for patch_file in `find . -name *.wfe_patch -follow` ;do
+    patch -s -u -i $patch_file -p 0
+done
+
+chmod +x /etc/init.d/runawfe
+/usr/sbin/update-rc.d runawfe defaults
+ln -s /usr/sbin/runawfe-start-botstation.sh /usr/sbin/runawfe-start.sh
+chmod +xxx /usr/sbin/runawfe-start.sh

@@ -1,0 +1,3 @@
+%{_libdir}/RunaRTN
+%_datadir/pixmaps/RunaWFE-TaskNotifier*.gif
+%_datadir/applications/runawfe-notifier.desktop

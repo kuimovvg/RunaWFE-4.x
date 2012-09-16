@@ -1,0 +1,10 @@
+<validators>
+
+<field name="multNumber">
+
+<field-validator type="required">
+	<message>This field is required.</message>
+</field-validator>
+</field>
+
+</validators>

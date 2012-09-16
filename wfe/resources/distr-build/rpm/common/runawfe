@@ -1,0 +1,75 @@
+#!/bin/sh
+#
+# runawfe - runawfe server
+#
+# chkconfig: 2345 99 1
+# processname: runawfe
+# config: /etc/runawfe
+# pidfile: /var/run/runawfe.pid
+#
+### BEGIN INIT INFO
+# Provides: runawfe
+# Default-Start: 2 3 4 5
+# Short-Description: runawfe server
+# Description: runawfe server or botstation daemon
+### END INIT INFO
+
+# Source function library.
+. /etc/init.d/functions
+
+RETVAL=0
+
+# See how we were called.
+  
+prog="/usr/sbin/runawfe-start.sh"
+
+start() {
+	gprintf "Starting %s: " "$prog"
+	daemon $prog < /dev/null
+	RETVAL=$?
+	echo
+	touch /var/lock/subsys/runawfe
+	return $RETVAL
+}
+
+stop() {
+	gprintf "Stopping %s: " "$prog"
+	killproc $prog
+	/usr/sbin/runawfe-stop.sh
+	rm -f /var/lock/subsys/runawfe
+	return 0
+}	
+
+rhstatus() {
+	status $prog
+}	
+
+restart() {
+  	stop
+	start
+}	
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart)
+  	restart
+	;;
+  reload)
+	;;
+  status)
+  	rhstatus
+	;;
+  condrestart)
+  	[ -f /var/lock/subsys/runawfe ] && restart || :
+	;;
+  *)
+	gprintf "Usage: %s {start|stop|status|reload|restart|condrestart}\n" "$0"
+	exit 1
+esac
+
+exit $?

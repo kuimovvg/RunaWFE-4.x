@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <Fragment>
+    <UI>
+      <Dialog Id="SetupTypeDlg" Width="370" Height="270" Title="$(loc.SetupTypeDlg_Title)">
+        <Control Id="ServerButton" Type="PushButton" X="40" Y="65" Width="60" Height="60" ToolTip="$(loc.RunaWFE_Server_ComponentServerName)" Default="yes" Text="Server" Icon="yes">
+          <Publish Property="isBotstation" Value="false">1</Publish>
+          <Publish Property="TARGETDIR" Value="[TARGETDIR]\Server">1</Publish>
+          <Publish Event="Remove" Value="BOTSServerFeature">1</Publish>
+          <Publish Event="AddLocal" Value="WFEServerFeature">1</Publish>
+          <Publish Event="NewDialog" Value="[WixUI_SetupTypeDlg_NextComplete]">1</Publish>
+        </Control>
+        <Control Id="BotstationButton" Type="PushButton" X="40" Y="155" Width="60" Height="60" ToolTip="$(loc.RunaWFE_Server_ComponentBotstationName)" Text="Botstation" Icon="yes">
+          <Publish Property="isBotstation" Value="true">1</Publish>
+          <Publish Property="TARGETDIR" Value="[TARGETDIR]\Botstation">1</Publish>
+          <Publish Event="AddLocal" Value="BOTSServerFeature">1</Publish>
+          <Publish Event="Remove" Value="WFEServerFeature">1</Publish>
+          <Publish Event="NewDialog" Value="[WixUI_SetupTypeDlg_NextComplete]">1</Publish>
+        </Control>
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="$(loc.WixUIBack)">
+          <Publish Event="NewDialog" Value="[WixUI_SetupTypeDlg_Back]">1</Publish>
+        </Control>
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Disabled="yes" Text="$(loc.WixUINext)" />
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="$(loc.WixUICancel)">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="$(loc.SetupTypeDlgBannerBitmap)" />
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.SetupTypeDlgTitle)" />
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="$(loc.SetupTypeDlgDescription)" />
+        <Control Id="ServerDescription" Type="Text" X="110" Y="85" Width="280" Height="20" Text="$(loc.RunaWFE_Server_ComponentServerDescription)" />
+        <Control Id="BotstationDescription" Type="Text" X="110" Y="175" Width="280" Height="20" Text="$(loc.RunaWFE_Server_ComponentBotstationDescription)" />
+      </Dialog>
+    </UI>
+    <Binary Id="Server" SourceFile="Icons\s_20x20_256.ico" />
+    <Binary Id="Botstation" SourceFile="Icons\b_20x20_256.ico" />
+  </Fragment>
+</Wix>
