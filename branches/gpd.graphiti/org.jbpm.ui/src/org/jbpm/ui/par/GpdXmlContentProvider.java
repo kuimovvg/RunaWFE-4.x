@@ -18,29 +18,17 @@ import org.w3c.dom.Element;
 
 public class GpdXmlContentProvider extends AuxContentProvider {
     public static final String GPD_FILE_NAME = "gpd.xml";
-
     private static final String Y_ATTRIBUTE_NAME = "y";
-
     private static final String X_ATTRIBUTE_NAME = "x";
-
     private static final String NOTATION_ATTRIBUTE_NAME = "notation";
-
     private static final String HEIGHT_ATTRIBUTE_NAME = "height";
-
     private static final String WIDTH_ATTRIBUTE_NAME = "width";
-
     private static final String MIN_VIEW_ATTRIBUTE_NAME = "minimizedView";
-
     private static final String SHOW_ACTIONS_NAME = "showActions";
-
     private static final String SHOW_GRID_NAME = "showGrid";
-
     private static final String PROCESS_DIAGRAM_ELEMENT_NAME = "process-diagram";
-
     private static final String NODE_ELEMENT_NAME = "node";
-
     private static final String TRANSITION_ELEMENT_NAME = "transition";
-
     private static final String BENDPOINT_ELEMENT_NAME = "bendpoint";
 
     private void addProcessDiagramInfo(ProcessDefinition definition, Element processDiagramInfo) {
@@ -92,7 +80,6 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                         transition.setBendpoints(bendpoints);
                         break;
                     }
-
                 }
             }
         }
@@ -102,7 +89,7 @@ public class GpdXmlContentProvider extends AuxContentProvider {
     public void saveToFile(IFolder folder, ProcessDefinition definition) throws Exception {
         Document document = XmlUtil.createDocument(PROCESS_DIAGRAM_ELEMENT_NAME, null);
         Element root = document.getDocumentElement();
-
+        addAttribute(root, "type", "graphiti");
         addAttribute(root, NAME_ATTRIBUTE_NAME, definition.getName());
         addAttribute(root, NOTATION_ATTRIBUTE_NAME, definition.getNotation());
         Dimension dimension = definition.getDimension();
@@ -110,7 +97,6 @@ public class GpdXmlContentProvider extends AuxContentProvider {
         addAttribute(root, HEIGHT_ATTRIBUTE_NAME, String.valueOf(dimension.height));
         addAttribute(root, SHOW_ACTIONS_NAME, String.valueOf(definition.isShowActions()));
         addAttribute(root, SHOW_GRID_NAME, String.valueOf(definition.isShowGrid()));
-
         int xOffset = 0;
         int yOffset = 0;
         // calculating negative offsets;
@@ -133,7 +119,6 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                 }
             }
         }
-
         for (Node node : definition.getNodes()) {
             Element element = addElement(root, NODE_ELEMENT_NAME);
             addAttribute(element, NAME_ATTRIBUTE_NAME, node.getName());
@@ -162,9 +147,7 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                 }
             }
         }
-
         byte[] bytes = XmlUtil.writeXml(document);
         updateFile(folder.getFile(GPD_FILE_NAME), bytes);
     }
-
 }

@@ -46,6 +46,14 @@
       <import plugin="org.eclipse.ltk.core.refactoring"/>
       <import plugin="org.eclipse.ltk.ui.refactoring"/>
       <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.graphiti" version="0.9.1"/>
+      <import plugin="org.eclipse.graphiti.mm" version="0.9.1"/>
+      <import plugin="org.eclipse.graphiti.pattern" version="0.9.1"/>
+      <import plugin="org.eclipse.graphiti.ui" version="0.9.1"/>
+      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.200"/>
+      <import plugin="org.eclipse.emf.edit" version="2.7.2"/>
+      <import plugin="org.eclipse.emf.transaction" version="1.4.0"/>
+      <import plugin="org.eclipse.emf.ecore.xmi" version="2.7.0"/>
    </requires>
    <extension-point id="elements" name="Graph Element Extensions" schema="schema/elements.exsd"/>
    <extension-point id="formtype" name="form type" schema="schema/formtype.exsd"/>
@@ -56,13 +64,13 @@
    
   <extension point = "org.eclipse.ui.editors">
     <editor
-          class="org.jbpm.ui.editor.DesignerEditor"
-          contributorClass="org.jbpm.ui.editor.EditorActionsContributor"
+          class="ru.runa.gpd.ui.graphiti.ProcessEditor"
+          contributorClass="org.eclipse.graphiti.ui.editor.DiagramEditorActionBarContributor"
           default="true"
           filenames="processdefinition.xml"
-          icon="icons/process.gif"
-          id="org.jbpm.ui.editor.DesignerEditor"
-          name="jBPM Editor">
+          icon="icons/bpmn/community_icon.png"
+          id="org.jbpm.ui.editor.GraphitiEditor"
+          name="GraphitiEditor">
         <contentTypeBinding contentTypeId="org.jbpm.ui.processdefinition.xml" /> 
         <contentTypeBinding contentTypeId="org.jbpm.ui.gpd.xml" /> 
     </editor>
@@ -85,6 +93,12 @@
 			<parameter name="element" value="process-definition"/>
 		</describer>
 	</content-type>
+   <content-type
+         file-extensions="bpmn"
+         id="bpmn"
+         name="bpmn"
+         priority="normal">
+   </content-type>
   </extension>
   <extension
         name="Tree actions"
@@ -1335,5 +1349,35 @@
              name="%pref.connection.ldap">
        </page>
     </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.diagramTypes">
+      <diagramType
+            description="The BPMN diagram for the process"
+            id="ru.runa.wfe.GraphitiType"
+            name="BPMN diagram type"
+            type="BPMNdiagram">
+      </diagramType>
+   </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.diagramTypeProviders">
+      <diagramTypeProvider
+            class="ru.runa.gpd.ui.graphiti.DiagramTypeProvider"
+            id="ru.runa.wfe.GraphitiTypeProvider"
+            name="BPMN editor">
+         <diagramType
+               id="ru.runa.wfe.GraphitiType">
+         </diagramType>
+         <imageProvider
+               id="ru.runa.wfe.GraphitiImageProvider">
+         </imageProvider>
+      </diagramTypeProvider>
+   </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.imageProviders">
+      <imageProvider
+            class="ru.runa.gpd.ui.graphiti.DiagramImageProvider"
+            id="ru.runa.wfe.GraphitiImageProvider">
+      </imageProvider>
+   </extension>
 
 </plugin>
