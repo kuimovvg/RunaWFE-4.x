@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="org.jbpm.core" default="copy.libs" basedir=".">
+	
+	<target name="copy.libs">
+		<property name="jboss.deploy.dir" value="${jboss.home.dir}/server/default/deploy"/>
+		<property name="libs.dir" value="${basedir}/lib"/>
+		<copy file="${jboss.deploy.dir}/jbpm.core.jar" tofile="${libs.dir}/jbpm-jpdl-3.2.jar" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/runa-common.jar" todir="${libs.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/wfe-custom.jar" todir="${libs.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/af.core.jar" todir="${libs.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/af.delegate.jar" todir="${libs.dir}" overwrite="true"/>
+		<copy file="${jboss.deploy.dir}/wf.core.jar" todir="${libs.dir}" overwrite="true"/>
+	</target>
+
+</project>
