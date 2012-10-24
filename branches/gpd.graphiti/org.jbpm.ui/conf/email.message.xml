@@ -1,0 +1,7 @@
+<email-config>
+  <headers label="MessageSettings">
+    <param name="Subject" variable="false" optional="true" label.key="mail.subject" help.key="mail.subject.help" />
+    <param name="To" variable="false" label.key="mail.to" help.key="mail.to.help" />
+    <param name="Cc" variable="false" optional="true" label.key="mail.cc" help.key="mail.cc.help" />
+  </headers>
+</email-config>
