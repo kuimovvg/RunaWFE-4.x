@@ -39,6 +39,10 @@ public class ElementEntry {
     public String getType() {
         return type;
     }
+    
+    public String getImageName() {
+        return imageName;
+    }
 
     public ImageDescriptor getImageDescriptor(String notation) {
         return SharedImages.getImageDescriptor(bundle, "icons/" + notation + "/palette/" + imageName, true);

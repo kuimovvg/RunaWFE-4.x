@@ -20,6 +20,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.jbpm.ui.ParContentProvider;
 
+import ru.runa.gpd.ui.graphiti.ExtDiagramEditorInput;
+
 /**
  * Be careful using this class (methods can return nulls if no active editor opened).
  */
@@ -40,6 +42,9 @@ public class ProjectFinder {
         }
         if (editorPart.getEditorInput() instanceof IFileEditorInput) {
             return ((IFileEditorInput) editorPart.getEditorInput()).getFile();
+        }
+        if (editorPart.getEditorInput() instanceof ExtDiagramEditorInput) {
+            return ((ExtDiagramEditorInput) editorPart.getEditorInput()).getFile();
         }
         return null;
     }
