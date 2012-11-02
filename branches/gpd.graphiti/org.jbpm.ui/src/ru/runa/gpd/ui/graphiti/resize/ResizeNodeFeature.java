@@ -20,6 +20,7 @@ public class ResizeNodeFeature extends DefaultResizeShapeFeature {
         if (node instanceof StartState) {
             return false;
         }
-        return super.canResizeShape(context);
+        return false;
+        //return super.canResizeShape(context);
     }
 }
