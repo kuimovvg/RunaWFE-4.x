@@ -1,0 +1,102 @@
+/*
+ * This file is part of the RUNA WFE project.
+ * 
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public License 
+ * as published by the Free Software Foundation; version 2.1 
+ * of the License. 
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * GNU Lesser General Public License for more details. 
+ * 
+ * You should have received a copy of the GNU Lesser General Public License 
+ * along with this program; if not, write to the Free Software 
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ */
+package ru.runa.wfe.var.logic;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.security.auth.Subject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import ru.runa.wfe.commons.logic.WFCommonLogic;
+import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.execution.Process;
+import ru.runa.wfe.execution.ProcessDoesNotExistException;
+import ru.runa.wfe.execution.ProcessPermission;
+import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.task.TaskDoesNotExistException;
+import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.dao.VariableDAO;
+import ru.runa.wfe.var.dto.WfVariable;
+
+import com.google.common.collect.Lists;
+
+/**
+ * Process execution logic.
+ * 
+ * @author Dofs
+ * @since 2.0
+ */
+public class VariableLogic extends WFCommonLogic {
+    @Autowired
+    private VariableDAO variableDAO;
+
+    public List<WfVariable> getVariables(Subject subject, Long processId) throws ProcessDoesNotExistException {
+        List<WfVariable> result = Lists.newArrayList();
+        Process process = executionDAO.getProcessNotNull(processId);
+        ProcessDefinition processDefinition = getDefinition(process);
+        checkPermissionAllowed(subject, process, ProcessPermission.READ);
+        Map<String, Object> variables = variableDAO.getVariables(process);
+        for (VariableDefinition variableDefinition : processDefinition.getVariables()) {
+            Object value = variables.get(variableDefinition.getName());
+            result.add(new WfVariable(variableDefinition, value));
+        }
+        return result;
+    }
+
+    public WfVariable getVariable(Subject subject, Long processId, String variableName) throws ProcessDoesNotExistException {
+        Process process = executionDAO.getProcessNotNull(processId);
+        ProcessDefinition processDefinition = getDefinition(process);
+        if (!processDefinition.isVariablePublic(variableName)) {
+            // TODO checkReadToVariablesAllowed(subject, task);
+        }
+        VariableDefinition variableDefinition = processDefinition.getVariable(variableName);
+        ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
+        Object variableValue = executionContext.getVariable(variableName);
+        return new WfVariable(variableDefinition, variableValue);
+    }
+
+    public Map<Long, Object> getVariableValueFromProcesses(Subject subject, List<Long> processIds, String variableName) {
+        List<Identifiable> idents = Lists.newArrayListWithExpectedSize(processIds.size());
+        for (Long processId : processIds) {
+            Process stub = new Process();
+            stub.setId(processId);
+            idents.add(stub);
+        }
+        idents = filterIdentifiable(subject, idents, ProcessPermission.READ);
+        List<Long> readableProcesses = new ArrayList<Long>();
+        for (Identifiable identifiable : idents) {
+            readableProcesses.add(identifiable.getId());
+        }
+        return executionDAO.getVariableValueFromProcesses(processIds, variableName);
+    }
+
+    public void updateVariables(Subject subject, Long processId, Map<String, Object> variables) throws AuthorizationException,
+            TaskDoesNotExistException {
+        Process process = executionDAO.getProcessNotNull(processId);
+        checkPermissionAllowed(subject, process, ProcessPermission.UPDATE_PERMISSIONS);
+        ProcessDefinition processDefinition = getDefinition(process);
+        ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
+        executionContext.setVariables(variables);
+    }
+
+}

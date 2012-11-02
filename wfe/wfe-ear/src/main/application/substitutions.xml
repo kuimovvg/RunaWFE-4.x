@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<orgfunctions>
+    <function messageKey="orgfunction.ExecutorByCodeFunction" class="ru.runa.af.organizationfunction.ExecutorByCodeFunction">
+    	<param messageKey="orgfunction.param.employeeCode" renderer="ru.runa.af.web.orgfunction.ActorCodeRenderer" />
+    </function>
+    <function messageKey="orgfunction.ExecutorByNameFunction" class="ru.runa.af.organizationfunction.ExecutorByNameFunction">
+    	<param messageKey="orgfunction.param.executorName" renderer="ru.runa.af.web.orgfunction.ExecutorNameRenderer" />
+    </function>
+    <function messageKey="orgfunction.ChiefFunction" class="ru.runa.af.organizationfunction.ChiefFunction">
+    	<param messageKey="orgfunction.param.employeeCode" renderer="ru.runa.af.web.orgfunction.ActorCodeRenderer" />
+    </function>
+    <function messageKey="orgfunction.DemoChiefFunction" class="ru.runa.af.organizationfunction.DemoChiefFunction">
+    	<param messageKey="orgfunction.param.employeeCode" renderer="ru.runa.af.web.orgfunction.ActorCodeRenderer" />
+    </function>
+    <function messageKey="orgfunction.DirectorFunction" class="ru.runa.af.organizationfunction.DirectorFunction">
+    	<param messageKey="orgfunction.param.employeeCode" renderer="ru.runa.af.web.orgfunction.ActorCodeRenderer" />
+    </function>
+</orgfunctions>

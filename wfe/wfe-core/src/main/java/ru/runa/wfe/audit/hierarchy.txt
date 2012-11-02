@@ -1,0 +1,26 @@
+
+    <!-- I : ru.runa.bpm.log.ProcessCreateLog -->
+    <!-- X : ru.runa.bpm.log.ProcessEndLog -->
+    <!-- Y : ru.runa.bpm.log.ProcessCancelLog -->
+    <!-- A : ru.runa.bpm.log.ActionLog -->
+    <!-- D : ru.runa.bpm.log.VariableDeleteLog -->
+    
+    <!-- N : ru.runa.bpm.log.NodeEnterLog -->
+    <!-- L : ru.runa.bpm.log.NodeLeaveLog -->
+    <!-- P : ru.runa.bpm.log.ProcessLog -->
+    <!-- R : ru.runa.bpm.log.VariableCreateLog -->
+    <!-- T : ru.runa.bpm.log.TransitionLog -->
+    <!-- U : ru.runa.bpm.log.StringUpdateLog -->
+    <!-- V : ru.runa.bpm.log.VariableLog -->
+    <!-- W : ru.runa.bpm.log.VariableUpdateLog -->
+    <!-- B : ru.runa.bpm.log.SubprocessStartLog -->
+    <!-- Z : ru.runa.bpm.log.SubprocessEndLog -->
+    <!-- 0 : ru.runa.bpm.log.TaskLog -->
+    <!-- 1 : ru.runa.bpm.log.TaskCreateLog -->
+    <!-- 2 : ru.runa.bpm.log.TaskAssignLog -->
+    <!-- 5 : ru.runa.bpm.log.TaskEscalationLog -->
+    <!-- 3 : ru.runa.bpm.log.TaskEndLog -->
+    <!-- 4 : ru.runa.bpm.log.SwimlaneAssignLog -->
+    <!-- 7 : ru.runa.bpm.log.SendMessageLog -->
+    <!-- 8 : ru.runa.bpm.log.ReceiveMessageLog -->
+    

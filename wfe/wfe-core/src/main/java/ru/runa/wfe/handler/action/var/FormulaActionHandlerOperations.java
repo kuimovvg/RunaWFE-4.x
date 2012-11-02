@@ -1,0 +1,623 @@
+/*
+ * This file is part of the RUNA WFE project.
+ * 
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public License 
+ * as published by the Free Software Foundation; version 2.1 
+ * of the License. 
+ * 
+ * This program is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * GNU Lesser General Public License for more details. 
+ * 
+ * You should have received a copy of the GNU Lesser General Public License 
+ * along with this program; if not, write to the Free Software 
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+ */
+package ru.runa.wfe.handler.action.var;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.var.FileVariable;
+
+public class FormulaActionHandlerOperations {
+    private static final Log log = LogFactory.getLog(FormulaActionHandlerOperations.class);
+
+    public Object sum(Object o1, Object o2) {
+        if (Double.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() + ((Double) o2).doubleValue());
+        }
+        if (Double.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() + ((Long) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double(((Long) o1).doubleValue() + ((Double) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Long(((Long) o1).longValue() + ((Long) o2).longValue());
+        }
+        if (Date.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Date(((Date) o1).getTime() + ((Long) o2).longValue() * 60 * 1000);
+        }
+        if (Date.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Date(((Date) o1).getTime() + (long) (((Double) o2).doubleValue() * 60 * 1000));
+        }
+        if (Date.class.isInstance(o1) && Date.class.isInstance(o2)) {
+            Date date2 = (Date) o2;
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(date2);
+            return new Date(((Date) o1).getTime() + calendar.get(Calendar.HOUR_OF_DAY) * 3600000 + calendar.get(Calendar.MINUTE) * 60000);
+        }
+
+        if (String.class.isInstance(o1)) {
+            return (String) o1 + translate(o2, String.class);
+        }
+        if (String.class.isInstance(o2)) {
+            return translate(o1, String.class).toString() + (String) o2;
+        }
+        log.error("Cannot make sum for " + o1.getClass() + " with " + o2.getClass());
+        return null;
+    }
+
+    public Object sub(Object o1, Object o2) {
+        if (Double.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() - ((Double) o2).doubleValue());
+        }
+        if (Double.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() - ((Long) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double(((Long) o1).doubleValue() - ((Double) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Long(((Long) o1).longValue() - ((Long) o2).longValue());
+        }
+        if (Date.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Date(((Date) o1).getTime() - ((Long) o2).longValue() * 60000);
+        }
+        if (Date.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Date(((Date) o1).getTime() - (long) (((Double) o2).doubleValue() * 60 * 1000));
+        }
+        if (Date.class.isInstance(o1) && Date.class.isInstance(o2)) {
+            return new Double((double) (((Date) o1).getTime() - ((Date) o2).getTime()) / 60000);
+        }
+        log.error("Cannot make sub for " + o1.getClass() + " with " + o2.getClass());
+        return null;
+    }
+
+    public Object mul(Object o1, Object o2) {
+        if (Double.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() * ((Double) o2).doubleValue());
+        }
+        if (Double.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() * ((Long) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double(((Long) o1).doubleValue() * ((Double) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Long(((Long) o1).longValue() * ((Long) o2).longValue());
+        }
+        log.error("Cannot make mul for " + (o1 != null ? o1.getClass() : "null") + " with " + (o2 != null ? o2.getClass() : "null"));
+        return null;
+    }
+
+    public Object div(Object o1, Object o2) {
+        if (Double.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() / ((Double) o2).doubleValue());
+        }
+        if (Double.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() / ((Long) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double(((Long) o1).doubleValue() / ((Double) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Long(((Long) o1).longValue() / ((Long) o2).longValue());
+        }
+        log.error("Cannot make div for " + o1.getClass() + " with " + o2.getClass());
+        return null;
+    }
+
+    public Object changeSign(Object o) {
+        if (Double.class.isInstance(o)) {
+            return new Double(-((Double) o).doubleValue());
+        }
+        if (Long.class.isInstance(o)) {
+            return new Long(-((Long) o).longValue());
+        }
+        log.error("Cannot make changeSign for " + o.getClass());
+        return null;
+    }
+
+    public Object not(Object o) {
+        if (Boolean.class.isInstance(o)) {
+            return new Boolean(!((Boolean) o).booleanValue());
+        }
+        log.error("Cannot make not for " + o.getClass());
+        return null;
+    }
+
+    public Object less(Object o1, Object o2) {
+        if (Double.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Boolean(((Double) o1).doubleValue() < ((Double) o2).doubleValue());
+        }
+        if (Double.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Boolean(((Double) o1).doubleValue() < ((Long) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Boolean(((Long) o1).doubleValue() < ((Double) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Boolean(((Long) o1).longValue() < ((Long) o2).longValue());
+        }
+        if (String.class.isInstance(o1) && String.class.isInstance(o2)) {
+            return new Boolean(((String) o1).compareTo((String) o2) < 0);
+        }
+        if (Date.class.isInstance(o1) && Date.class.isInstance(o2)) {
+            return new Boolean(((Date) o1).compareTo((Date) o2) < 0);
+        }
+        log.error("Cannot make less for " + o1.getClass() + " with " + o2.getClass());
+        return null;
+    }
+
+    public Object bigger(Object o1, Object o2) {
+        return less(o2, o1);
+    }
+
+    public Object equal(Object o1, Object o2) {
+        return new Boolean(o1.equals(o2));
+    }
+
+    public Object lessOrEqual(Object o1, Object o2) {
+        Object less = less(o1, o2);
+        Object equal = equal(o1, o2);
+        return or(less, equal);
+    }
+
+    public Object biggerOrEqual(Object o1, Object o2) {
+        Object bigger = bigger(o1, o2);
+        Object equal = equal(o1, o2);
+        return or(bigger, equal);
+    }
+
+    public Object or(Object o1, Object o2) {
+        if (Boolean.class.isInstance(o1) && Boolean.class.isInstance(o2)) {
+            return new Boolean(((Boolean) o1).booleanValue() || ((Boolean) o2).booleanValue());
+        }
+        log.error("Cannot make or for " + o1.getClass() + " with " + o2.getClass());
+        return null;
+    }
+
+    public Object and(Object o1, Object o2) {
+        if (Boolean.class.isInstance(o1) && Boolean.class.isInstance(o2)) {
+            return new Boolean(((Boolean) o1).booleanValue() && ((Boolean) o2).booleanValue());
+        }
+        log.error("Cannot make and for " + o1.getClass() + " with " + o2.getClass());
+        return null;
+    }
+
+    public Object xor(Object o1, Object o2) {
+        if (Boolean.class.isInstance(o1) && Boolean.class.isInstance(o2)) {
+            return new Boolean(((Boolean) o1).booleanValue() ^ ((Boolean) o2).booleanValue());
+        }
+        log.error("Cannot make xor for " + o1.getClass() + " with " + o2.getClass());
+        return null;
+    }
+
+    public Object translate(Object o, Class<?> c) {
+        if (c.isInstance(o)) {
+            return o;
+        }
+        if (c == String.class && Date.class.isInstance(o)) {
+            Date date = (Date) o;
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(date);
+            if (calendar.get(Calendar.HOUR) == 0 && calendar.get(Calendar.MINUTE) == 0 && calendar.get(Calendar.SECOND) == 0) {
+                return CalendarUtil.format(date, CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
+            }
+            if (calendar.get(Calendar.YEAR) == 1970 && calendar.get(Calendar.MONTH) == Calendar.JANUARY && calendar.get(Calendar.DAY_OF_MONTH) == 1) {
+                return CalendarUtil.format(date, CalendarUtil.HOURS_MINUTES_FORMAT);
+            }
+            return CalendarUtil.format(date, CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
+        }
+        if (c == String.class && FileVariable.class.isInstance(o)) {
+            return ((FileVariable) o).getName();
+        }
+        if (c == String.class) {
+            return "" + o;
+        }
+        if (c == Double.class && Long.class.isInstance(o)) {
+            return new Double(((Long) o).longValue());
+        }
+        if (c == Long.class && Double.class.isInstance(o)) {
+            return new Long(((Double) o).longValue());
+        }
+        if (c == Double.class && Integer.class.isInstance(o)) {
+            return new Double(((Integer) o).longValue());
+        }
+        if (c == Long.class && Integer.class.isInstance(o)) {
+            return new Long(((Integer) o).longValue());
+        }
+        if (c == Integer.class && Long.class.isInstance(o)) {
+            return new Integer(((Long) o).intValue());
+        }
+        if (c == Integer.class && Double.class.isInstance(o)) {
+            return new Integer(((Double) o).intValue());
+        }
+        if (Date.class.isAssignableFrom(c) && Date.class.isInstance(o)) {
+            return o;
+        }
+        log.error("Cannot translate " + o.getClass() + " to " + c);
+        return null;
+    }
+
+    public Object dateFunction(Object p) {
+        if (!Date.class.isInstance(p)) {
+            return null;
+        }
+        Date d = (Date) p;
+        try {
+            return new SimpleDateFormat("dd.MM.yy").parse(new SimpleDateFormat("dd.MM.yy").format(d));
+        } catch (ParseException e) {
+            log.warn("Unparseable date", e);
+        }
+        return null;
+    }
+
+    public Object timeFunction(Object p) {
+        if (!Date.class.isInstance(p)) {
+            return null;
+        }
+        Date d = (Date) p;
+        try {
+            String s = CalendarUtil.format(d, CalendarUtil.HOURS_MINUTES_FORMAT);
+            return CalendarUtil.convertToDate(s, CalendarUtil.HOURS_MINUTES_FORMAT);
+        } catch (Exception e) {
+            log.warn("Unparseable time", e); // TODO exc
+        }
+        return null;
+    }
+
+    public Object hoursRoundUpFunction(Object p) {
+        Double d = (Double) translate(p, Double.class);
+        if (d == null) {
+            return null;
+        }
+        double minutes = d.doubleValue();
+        long hours = (long) (minutes / 60);
+        if (hours * 60 < minutes) {
+            hours++;
+        }
+        return new Long(hours * 60);
+    }
+
+    public Long roundUpFunction(double d) {
+        return (long) d + (d == (long) d ? 0 : 1);
+    }
+
+    public Long roundDownFunction(double d) {
+        return (long) d;
+    }
+
+    public Long roundFunction(double d) {
+        return Math.round(d);
+    }
+
+    public Double roundUpFunction(double d, int num) {
+        long st = 1;
+        while (num-- > 0) {
+            st *= 10;
+        }
+        return ((double) roundUpFunction(d * st)) / st;
+    }
+
+    public Double roundDownFunction(double d, int num) {
+        long st = 1;
+        while (num-- > 0) {
+            st *= 10;
+        }
+        return ((double) roundDownFunction(d * st)) / st;
+    }
+
+    public Double roundFunction(double d, int num) {
+        long st = 1;
+        while (num-- > 0) {
+            st *= 10;
+        }
+        return ((double) roundFunction(d * st)) / st;
+    }
+
+    private String wordCaseRussian(String word, int caseNumber, boolean sex, int wordType, boolean onlyOneChar) {
+        // sex : male = true, female = false
+        // wordType : 1 = family name, 2 = name, 3 = parent
+        if (onlyOneChar) {
+            return "" + Character.toUpperCase(word.replaceAll(" ", "").charAt(0)) + '.';
+        }
+
+        switch (wordType) {
+        case 1:
+            if (families.containsKey(word) && families.get(word).containsKey(caseNumber)) {
+                return families.get(word).get(caseNumber);
+            }
+            break;
+        case 2:
+            if (names.containsKey(word) && names.get(word).containsKey(caseNumber)) {
+                return names.get(word).get(caseNumber);
+            }
+            break;
+        case 3:
+            if (parents.containsKey(word) && parents.get(word).containsKey(caseNumber)) {
+                return parents.get(word).get(caseNumber);
+            }
+            break;
+        }
+
+        int i = word.indexOf("-");
+        if (i > 0) {
+            String part1 = word.substring(0, i);
+            String part2 = word.substring(i + 1);
+            return wordCaseRussian(part1, caseNumber, sex, wordType, onlyOneChar) + "-"
+                    + wordCaseRussian(part2, caseNumber, sex, wordType, onlyOneChar);
+        }
+
+        int len = word.length();
+        word = word.toLowerCase();
+
+        String suf3 = word.length() >= 3 ? word.substring(len - 3, len) : "___";
+        String suf2 = word.length() >= 2 ? word.substring(len - 2, len) : "__";
+        String suf1 = word.length() >= 1 ? word.substring(len - 1, len) : "_";// String z9 = suf1;
+
+        if (suf3.equals("кий") && wordType == 1 && !onlyOneChar && word.length() > 4) {
+            String prefix = upcaseFirstChar(word.substring(0, len - 3));
+            switch (caseNumber) {
+            case 1:
+                return prefix + "кий";
+            case 2:
+                return prefix + "кого";
+            case 3:
+                return prefix + "кому";
+            case 4:
+                return prefix + "кого";
+            case 5:
+                return prefix + "ким";
+            case 6:
+                return prefix + "ком";
+            }
+        }
+
+        int za = "ая ия ел ок яц ий па да ца ша ба та га ка".indexOf(suf2) + 1;
+        // za=Найти("ая ия ел ок яц ий па да ца ша ба та га ка",z8);
+        int zb = "аеёийоуэюяжнгхкчшщ".indexOf(suf3.charAt(0)) + 1;
+        // zb=Найти("аеёийоуэюяжнгхкчшщ",Лев(z7,1));
+        int zd = 5;
+        if (za != 4) {
+            zd = "айяь".indexOf(suf1) + 1;
+        }
+        // zd=?(za=4,5,Найти("айяь",z9));
+        String fs1 = "оиеу" + (sex ? "" : "бвгджзклмнпрстфхцчшщъ");
+        String fs2 = "мия мяэ лия кия жая лея";
+        boolean b = (caseNumber == 1) || suf1.equals(".") || ((wordType == 2) && (fs1.indexOf(suf1) >= 0))
+                || ((wordType == 1) && (fs2.indexOf(suf3) >= 0));
+        if (b) {
+            zd = 9;
+        } else {
+            boolean b2 = (zd == 4) && sex;
+            if (b2) {
+                zd = 2;
+            } else {
+                if (wordType == 1) {
+                    if ("оеиую".indexOf(suf1) + "их ых аа еа ёа иа оа уа ыа эа юа яа".indexOf(suf2) + 2 > 0) {
+                        zd = 9;
+                    } else {
+                        if (!sex) {
+                            if (za == 1) {
+                                zd = 7;
+                            } else {
+                                if (suf1.equals("а")) {
+                                    zd = za > 18 ? 1 : 6;
+                                } else {
+                                    zd = 9;
+                                }
+                            }
+                        } else {
+                            boolean b3 = ("ой ый".indexOf(suf2) >= 0 && wordType > 4 && !word.substring(len - 4, len).equals("опой"))
+                                    || (zb > 10 && za > 16);
+                            // zd = b3 ? 8 : zd;
+                            if (b3) {
+                                zd = 8;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /*
+         * zd= ?( (zc=1)или(z9=".")или( (z4=2)и(Найти("оиеу"+?(z3="ч","","бвгджзклмнпрстфхцчшщъ"),z9)>0) ) или ( (z4=1) и (Найти("мия мяэ лия кия жая лея",z7)>0) ) ,9 ,?(
+         * (zd=4)и(z3="ч") ,2, ?( z4=1 ,?( Найти("оеиую",z9)+Найти("их ых аа еа ёа иа оа уа ыа эа юа яа",z8)>0 ,9 ,?( z3<>"ч" ,?( za=1 ,7 ,?( z9="а" ,?( za>18 ,1 ,6 ) ,9 ) ) ,?( (
+         * (Найти("ой ый",z8)>0) и (z5>4) и (Прав(z1,4)<>"опой") ) или ((zb>10)и(za=16)) ,8 ,zd ) ) ) ,zd ) ) );
+         */
+        // zd=?((zc=1)или(z9=".")или((z4=2)и(Найти("оиеу"+?(z3="ч","","бвгджзклмнпрстфхцчшщъ"),z9)>0))или((z4=1)и(Найти("мия мяэ лия кия жая лея",z7)>0)),9,?((zd=4)и(z3="ч"),2,?(z4=1,?(Найти("оеиую",z9)+Найти("их ых аа еа ёа иа оа уа ыа эа юа яа",z8)>0,9,?(z3<>"ч",?(za=1,7,?(z9="а",?(za>18,1,6),9)),?(((Найти("ой ый",z8)>0)и(z5>4)и(Прав(z1,4)<>"опой"))или((zb>10)и(za=16)),8,zd))),zd)));
+        // if (debug) System.out.println("zd = " + zd);
+
+        int ze = "лец вей бей дец пец мец нец рец вец аец иец ыец бер".indexOf(suf3) + 1;
+        // ze=Найти("лец вей бей дец пец мец нец рец вец аец иец ыец бер",z7);
+        // if (debug) System.out.println("ze = " + ze);
+
+        String zf = (zd == 8) && (caseNumber != 5) ? ((zb > 15) || ("жий ний".indexOf(suf3) >= 0) ? "е" : "о") : (word.equals("лев") ? "ьв"
+                : ((len - 4 >= 0 && "аеёийоуэюя".indexOf(word.substring(len - 4, len - 3)) < 0) && ((zb > 11) || (zb == 0)) && (ze != 45) ? ""
+                        : (za == 7 ? "л" : (za == 10 ? "к" : (za == 13 ? "йц" : (ze == 0 ? "" : (ze < 12 ? "ь" + (ze == 1 ? "ц" : "")
+                                : (ze < 37 ? "ц" : (ze < 49 ? "йц" : "р")))))))));
+        /*
+         * zf=?( (zd=8)и(zc<>5) ,?( (zb>15)или (Найти("жий ний",z7)>0) ,"е" ,"о" ) ,?( z1="лев" ,"ьв" ,?( (Найти("аеёийоуэюя",Сред(z1,z5-3 ,1))=0) и ((zb>11)или(zb=0)) и (ze<>45)
+         * ,"" ,?( za=7 ,"л" ,?( za=10 ,"к" ,?( za=13 ,"йц" ,?( ze=0 ,"" ,?( ze<12 ,"ь"+ ?(ze=1,"ц","") ,?( ze<37 ,"ц" ,?(ze<49,"йц","р") ) ) ) ) ) ) ) ) );
+         */
+
+        // zf=?((zd=8)и(zc<>5),?((zb>15)или(Найти("жий ний",z7)>0),"е","о"),?(z1="лев","ьв",?((Найти("аеёийоуэюя",Сред(z1,z5-3
+        // ,1))=0)и((zb>11)или(zb=0))и(ze<>45),"",?(za=7,"л",?(za=10,"к",?(za=13,"йц",?(ze=0,"",?(ze<12,"ь"+?(ze=1,"ц",""),?(ze<37,"ц",?(ze<49,"йц","р"))))))))));
+
+        if (zd != 9) {
+            int nm = len;
+            if ((zd > 6) || (zf.length() > 0)) {
+                nm -= 2;
+            } else {
+                nm -= zd > 0 ? 1 : 0;
+            }
+            String ns = word.substring(0, nm);
+            ns += zf;
+            String ss = "а у а " + "оыые".substring("внч".indexOf(suf1) + 1).charAt(0) + "ме " + ("гжкхш".indexOf(suf2.charAt(0)) > 0 ? "и" : "ы")
+                    + " е у ойе я ю я ем" + (za == 16 ? "и" : "е") + " и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"
+                    + (zf.equals("е") || (za == 16) || ((zb > 12) && (zb < 16)) ? "и" : "ы") + "мм";
+            ns += ss.substring(10 * zd + 2 * caseNumber - 3 - 1, 10 * zd + 2 * caseNumber - 3 + 1);
+            zf = ns;
+        } else {
+            zf = word;
+        }
+
+        /*
+         * 
+         * zf=?( (zd=9) или ((z4=3)и(z3="ы")) ,z1 ,Лев(z1,z5- ?( (zd>6)или(zf<>"") ,2 , ?(zd>0,1,0) )) + zf + СокрП( Сред( "а у а " +Сред("оыые",Найти("внч",z9)+1,1) +"ме "
+         * +?(Найти("гжкхш",Лев(z8,1))>0,"и","ы") +" е у ойе я ю я ем" +?(za=16,"и","е") +" и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"
+         * +?((zf="е")или(za=16)или((zb>12)и(zb<16)),"и","ы") +"мм" ,10*zd+2*zc-3 ,2 ) ) );
+         */
+
+        // zf=?((zd=9)или((z4=3)и(z3="ы")),z1,Лев(z1,z5-?((zd>6)или(zf<>""),2,?(zd>0,1,0)))+zf+СокрП(Сред("а у а "+Сред("оыые",Найти("внч",z9)+1,1)+"ме "+?(Найти("гжкхш",Лев(z8,1))>0,"и","ы")+" е у ойе я ю я ем"+?(za=16,"и","е")+" и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"+?((zf="е")или(za=16)или((zb>12)и(zb<16)),"и","ы")+"мм",10*zd+2*zc-3,2)));
+
+        String ans = zf;
+        ans = ans.replace(" ", "");
+        ans = upcaseFirstChar(ans);
+        return ans;
+    }
+
+    private String upcaseFirstChar(String ans) {
+        if (ans.length() != 0) {
+            ans = "" + Character.toUpperCase(ans.charAt(0)) + ans.substring(1);
+        }
+        return ans;
+    }
+
+    private static TreeMap<String, HashMap<Integer, String>> names = new TreeMap<String, HashMap<Integer, String>>();
+    private static TreeMap<String, HashMap<Integer, String>> families = new TreeMap<String, HashMap<Integer, String>>();
+    private static TreeMap<String, HashMap<Integer, String>> parents = new TreeMap<String, HashMap<Integer, String>>();
+    static {
+        readNameCaseConfig("/ActionHandlers/nameCaseConf.xml");
+    }
+
+    private static void readNameCaseConfig(String path) {
+        try {
+            InputStream is = FormulaActionHandlerOperations.class.getResourceAsStream(path);
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+            if (!doc.getDocumentElement().getTagName().equals("nameCaseConf")) {
+                throw new IOException();
+            }
+            NodeList childs = doc.getDocumentElement().getChildNodes();
+            for (int i = 0; i < childs.getLength(); ++i) {
+                if (!(childs.item(i) instanceof Element)) {
+                    continue;
+                }
+                Element el = (Element) childs.item(i);
+                if (el.getTagName().equals("name")) {
+                    names.put(el.getAttribute("value"), parseNameCaseRules(el));
+                }
+                if (el.getTagName().equals("family")) {
+                    families.put(el.getAttribute("value"), parseNameCaseRules(el));
+                }
+                if (el.getTagName().equals("parent")) {
+                    parents.put(el.getAttribute("value"), parseNameCaseRules(el));
+                }
+            }
+        } catch (Exception e) {
+            log.error("Can`t parse " + path, e);
+        }
+    }
+
+    private static HashMap<Integer, String> parseNameCaseRules(Element el) {
+        HashMap<Integer, String> result = new HashMap<Integer, String>();
+        NodeList childs = el.getChildNodes();
+        for (int i = 0; i < childs.getLength(); ++i) {
+            if (!(childs.item(i) instanceof Element)) {
+                continue;
+            }
+            Element r = (Element) childs.item(i);
+            if (r.getTagName().equals("name")) {
+                break;
+            }
+            int c = Integer.parseInt(r.getAttribute("case"));
+            String v = r.getTextContent();
+            result.put(c, v);
+        }
+        return result;
+    }
+
+    public String nameCaseRussian(String fio, int caseNumber, String mode) {
+        boolean sex = false;
+        StringTokenizer st = new StringTokenizer(fio);
+        if (st.hasMoreElements()) {
+            st.nextToken();
+        }
+        if (st.hasMoreElements()) {
+            st.nextToken();
+        }
+        String parent = st.hasMoreElements() ? st.nextToken() : "   ";
+        if (parent.charAt(parent.length() - 1) == 'ч') {
+            sex = true;
+        }
+        return nameCaseRussian(fio, caseNumber, sex, mode);
+    }
+
+    public String nameCaseRussian(String fio, int caseNumber, boolean sex, String mode) {
+        StringTokenizer st = new StringTokenizer(fio);
+        String family = st.hasMoreElements() ? st.nextToken() : "";
+        String name = st.hasMoreElements() ? st.nextToken() : "";
+        String parent = st.hasMoreElements() ? st.nextToken() : "";
+
+        String answer = "";
+        for (char c : mode.toCharArray()) {
+            switch (c) {
+            case 'F':
+                answer += wordCaseRussian(family, caseNumber, sex, 1, false);
+                break;
+            case 'I':
+                answer += wordCaseRussian(name, caseNumber, sex, 2, false);
+                break;
+            case 'O':
+                answer += wordCaseRussian(parent, caseNumber, sex, 3, false);
+                break;
+            case 'f':
+                answer += wordCaseRussian(family, caseNumber, sex, 1, true);
+                break;
+            case 'i':
+                answer += wordCaseRussian(name, caseNumber, sex, 2, true);
+                break;
+            case 'o':
+                answer += wordCaseRussian(parent, caseNumber, sex, 3, true);
+                break;
+            default:
+                answer += c;
+            }
+        }
+
+        return answer;
+    }
+
+}

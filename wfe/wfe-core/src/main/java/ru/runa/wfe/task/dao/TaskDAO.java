@@ -1,0 +1,58 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2005, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+package ru.runa.wfe.task.dao;
+
+import java.util.List;
+
+import ru.runa.wfe.commons.dao.CommonDAO;
+import ru.runa.wfe.task.Task;
+import ru.runa.wfe.task.TaskDoesNotExistException;
+import ru.runa.wfe.user.Executor;
+
+public class TaskDAO extends CommonDAO {
+
+    /**
+     * @return active tasks assigned to a given executor.
+     */
+    public List<Task> findActiveTasks(Executor executor) {
+        return getHibernateTemplate().find("from Task where executor=? and endDate is null", executor);
+    }
+
+    /**
+     * @return active tasks but not assigned.
+     */
+    public List<Task> findUnassignedActiveTasks() {
+        return getHibernateTemplate().find("from Task where executor is null and endDate is null");
+    }
+
+    /**
+     * @return task by id
+     */
+    public Task getTaskNotNull(Long taskId) {
+        Task task = get(Task.class, taskId);
+        if (task == null) {
+            throw new TaskDoesNotExistException(taskId);
+        }
+        return task;
+    }
+
+}

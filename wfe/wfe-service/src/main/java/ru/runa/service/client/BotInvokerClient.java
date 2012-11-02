@@ -1,0 +1,66 @@
+package ru.runa.service.client;
+
+import ru.runa.service.bot.BotInvokerService;
+import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.wfe.bot.BotInvokerException;
+
+/**
+ * Invokes bots on selected bot station.
+ * 
+ * @author Dofs
+ */
+public class BotInvokerClient {
+    private final static String START_ARGUMENT = "start";
+    private final static String STOP_ARGUMENT = "stop";
+    private final static String STATUS_ARGUMENT = "status";
+
+    public static void main(String[] args) throws Exception {
+        try {
+            BotInvokerService botInvokerService = DelegateFactory.getBotInvokerService();
+            if (args.length == 1) {
+                if (START_ARGUMENT.equals(args[0])) {
+                    botInvokerService.startPeriodicBotsInvocation();
+                    System.out.println("bots pereodic invocation started");
+                    System.exit(0);
+                } else if (STOP_ARGUMENT.equals(args[0])) {
+                    botInvokerService.cancelPeriodicBotsInvocation();
+                    System.out.println("bots pereodic invocation stopped");
+                    System.exit(1);
+                } else if (STATUS_ARGUMENT.equals(args[0])) {
+                    if (printStatus(botInvokerService)) {
+                        System.exit(0);
+                    } else {
+                        System.exit(1);
+                    }
+                }
+            }
+            printUsage();
+            System.exit(-1);
+        } catch (Exception e) {
+            System.out.println("Failed to execute command because of: " + e.getMessage());
+            System.out.println("Stack trace:");
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
+
+    private static void printUsage() {
+        System.out.println("Allowed commands:");
+        System.out.println("start - starts pereodic bots invocation.");
+        System.out.println("stop - stops pereodic bots invocation.");
+        System.out.println("status - checks pereodic bots invocation status.");
+        System.out.println();
+        System.out.println("Error codes:");
+        System.out.println("-1 - invocation error.");
+        System.out.println("0 - bots pereodic invocation started.");
+        System.out.println("1 - bots pereodic invocation stopped.");
+    }
+
+    private static boolean printStatus(BotInvokerService botInvokerService) throws BotInvokerException {
+        boolean isRunning = botInvokerService.isRunning();
+        String status = isRunning ? "started" : "stopped";
+        System.out.println("bots pereodic invocation status:" + status);
+        return isRunning;
+    }
+
+}
