@@ -16,14 +16,18 @@ import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 import org.jbpm.ui.ProcessCache;
+import org.jbpm.ui.common.model.Decision;
 import org.jbpm.ui.common.model.Node;
 import org.jbpm.ui.common.model.ProcessDefinition;
 import org.jbpm.ui.common.model.Transition;
+import org.jbpm.ui.jpdl3.model.TaskState;
 import org.jbpm.ui.util.ProjectFinder;
 
+import ru.runa.gpd.ui.graphiti.add.AddTaskStateFeature;
 import ru.runa.gpd.ui.graphiti.add.AddNodeFeature;
 import ru.runa.gpd.ui.graphiti.add.AddTransitionFeature;
 import ru.runa.gpd.ui.graphiti.create.CreateEndEventFeature;
+import ru.runa.gpd.ui.graphiti.create.CreateTaskStateFeature;
 import ru.runa.gpd.ui.graphiti.create.CreateStartNodeFeature;
 import ru.runa.gpd.ui.graphiti.create.CreateTransitionFeature;
 import ru.runa.gpd.ui.graphiti.delete.DeleteNodeFeature;
@@ -46,11 +50,14 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public ICreateFeature[] getCreateFeatures() {
-        return new ICreateFeature[] { new CreateStartNodeFeature(this), new CreateEndEventFeature(this) };
+        return new ICreateFeature[] { new CreateStartNodeFeature(this), new CreateEndEventFeature(this), new CreateTaskStateFeature(this) };
     }
 
     @Override
     public IAddFeature getAddFeature(IAddContext context) {
+    	if (context.getNewObject() instanceof TaskState) {
+            return new AddTaskStateFeature(this);
+        }
         if (context.getNewObject() instanceof Node) {
             return new AddNodeFeature(this);
         }
