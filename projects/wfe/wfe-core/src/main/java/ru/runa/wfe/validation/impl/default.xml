@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<validators>
+    <validator name="required" class="ru.runa.wfe.validation.impl.RequiredFieldValidator"/>
+    <validator name="requiredstring" class="ru.runa.wfe.validation.impl.RequiredFieldValidator"/>
+    <validator name="number" class="ru.runa.wfe.validation.impl.NumberRangeFieldValidator"/>
+    <validator name="date" class="ru.runa.wfe.validation.impl.DateRangeFieldValidator"/>
+    <validator name="expression" class="ru.runa.wfe.validation.impl.GroovyExpressionValidator"/>
+    <validator name="email" class="ru.runa.wfe.validation.impl.EmailValidator"/>
+    <validator name="url" class="ru.runa.wfe.validation.impl.URLValidator"/>
+    <validator name="stringlength" class="ru.runa.wfe.validation.impl.StringLengthFieldValidator"/>
+    <validator name="regex" class="ru.runa.wfe.validation.impl.RegexFieldValidator"/>
+</validators>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<validators>
+    <validator name="fileSize" class="ru.runa.wfe.validation.impl.FileSizeValidator"/>
+    <validator name="fileContentType" class="ru.runa.wfe.validation.impl.FileMimeTypeValidator"/>
+    <validator name="fileExtension" class="ru.runa.wfe.validation.impl.FileExtensionValidator"/>
+    <validator name="time" class="ru.runa.wfe.validation.impl.TimeRangeValidator"/>
+    <validator name="dateInThisMonth" class="ru.runa.wfe.validation.impl.InThisMonthDateFieldValidator"/>
+    <validator name="dateInThisYear" class="ru.runa.wfe.validation.impl.InThisYearDateFieldValidator"/>
+    <validator name="dateRelativeToCurrent" class="ru.runa.wfe.validation.impl.RelativeToCurrentDateRangeFieldValidator"/>
+    <validator name="arraySize" class="ru.runa.wfe.validation.impl.ArraySizeValidator"/>
+</validators>
