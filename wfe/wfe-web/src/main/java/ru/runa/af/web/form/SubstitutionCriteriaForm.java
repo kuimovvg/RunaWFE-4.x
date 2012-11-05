@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.form.IdForm;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 
 /**
@@ -50,7 +51,7 @@ public class SubstitutionCriteriaForm extends IdForm {
             if (name.isEmpty()) {
                 errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(ERROR_KEY));
             } else {
-                SubstitutionCriteria substitutionCriteria = (SubstitutionCriteria) Class.forName(type).newInstance();
+                SubstitutionCriteria substitutionCriteria = ClassLoaderUtil.instantiate(type);
                 substitutionCriteria.setConf(conf);
                 substitutionCriteria.setName(name);
                 if (!substitutionCriteria.validate()) {

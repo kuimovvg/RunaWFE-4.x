@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.audit.TaskEscalationLog;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.lang.TaskNode;
@@ -70,7 +71,7 @@ public class EscalationActionHandler implements ActionHandler {
         }
         orgFunctionClassName = orgFunctionClassName.trim();
         try {
-            Class.forName(orgFunctionClassName);
+        	ClassLoaderUtil.instantiate(orgFunctionClassName);
         } catch (Throwable e) {
             log.error("Unknown orgFunction: " + orgFunctionClassName);
             return;

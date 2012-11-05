@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.af.web.SubjectHttpSessionHelper;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.os.ParamRenderer;
 
 import com.google.common.base.Charsets;
@@ -49,7 +50,7 @@ public class AjaxCommandServlet extends HttpServlet {
                 result.append("[");
 
                 String rendererClassName = request.getParameter("renderer");
-                ParamRenderer renderer = (ParamRenderer) Class.forName(rendererClassName).newInstance();
+                ParamRenderer renderer = ClassLoaderUtil.instantiate(rendererClassName);
                 List<String[]> data = renderer.loadJSEditorData(subject);
 
                 for (int i = 0; i < data.size(); i++) {
