@@ -33,6 +33,7 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 
@@ -56,7 +57,7 @@ public class UpdateSubstitutionCriteriaAction extends Action {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             SubstitutionCriteria substitutionCriteria;
             if (form.getId() == 0) {
-                substitutionCriteria = (SubstitutionCriteria) Class.forName(form.getType()).newInstance();
+                substitutionCriteria = ClassLoaderUtil.instantiate(form.getType());
                 substitutionCriteria.setConf(form.getConf());
             } else {
                 substitutionCriteria = substitutionService.getSubstitutionCriteria(subject, form.getId());

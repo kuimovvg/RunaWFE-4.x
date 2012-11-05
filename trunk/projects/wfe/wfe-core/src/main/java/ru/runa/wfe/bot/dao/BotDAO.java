@@ -34,8 +34,20 @@ import ru.runa.wfe.commons.dao.CommonDAO;
 
 import com.google.common.base.Strings;
 
+/**
+ * DAO level interface for managing bot stations and so on.
+ * @author Konstantinov Aleksey 25.02.2012
+ */
+@SuppressWarnings("unchecked")
 public class BotDAO extends CommonDAO {
 
+    /**
+     * Load {@linkplain BotStation} from database.
+     * Loading performed by identity and name, provided by parameter.
+     * Throws {@linkplain InternalApplicationException} if no identity and name found. 
+     * @param botStation {@linkplain BotStation}, which parameter used to load result.
+     * @return Loaded {@linkplain BotStation} or null, if no bot station found.
+     */
     public BotStation getBotStation(final BotStation botStation) {
         return getHibernateTemplate().execute(new HibernateCallback<BotStation>() {
 
@@ -56,6 +68,13 @@ public class BotDAO extends CommonDAO {
         });
     }
 
+    /**
+     * Load {@linkplain Bot} from database.
+     * Loading performed by identity and userName and bot station, provided by parameter.
+     * Throws {@linkplain InternalApplicationException} if no identity and userName and bot station found. 
+     * @param bot {@linkplain Bot}, which parameter used to load result.
+     * @return Loaded {@linkplain Bot} or null, if no bot found.
+     */
     public Bot getBot(final Bot bot) {
         return getHibernateTemplate().execute(new HibernateCallback<Bot>() {
 
@@ -79,6 +98,13 @@ public class BotDAO extends CommonDAO {
         });
     }
 
+    /**
+     * Load {@linkplain BotTask} from database.
+     * Loading performed by identity and taskName and bot, provided by parameter.
+     * Throws {@linkplain InternalApplicationException} if no identity and taskName and bot found. 
+     * @param bot {@linkplain BotTask}, which parameter used to load result.
+     * @return Loaded {@linkplain BotTask} or null, if no bot task found.
+     */
     public BotTask getBotTask(final BotTask botTask) {
         return getHibernateTemplate().execute(new HibernateCallback<BotTask>() {
 
@@ -101,10 +127,19 @@ public class BotDAO extends CommonDAO {
         });
     }
 
+    /**
+     * Load all {@linkplain BotStation}'s from database. 
+     * @return {@linkplain BotStation}'s list.
+     */
     public List<BotStation> getBotStationList() {
         return getHibernateTemplate().loadAll(BotStation.class);
     }
 
+    /**
+     * Load all {@linkplain Bot}'s, defined for {@linkplain BotStation}.
+     * @param botStation {@linkplain BotStation} to load {@linkplain Bot}'s. 
+     * @return {@linkplain Bot}'s, defined for {@linkplain BotStation}.
+     */
     public List<Bot> getBotList(final BotStation botStation) {
         return getHibernateTemplate().executeFind(new HibernateCallback<List<Bot>>() {
 
@@ -117,7 +152,13 @@ public class BotDAO extends CommonDAO {
         });
     }
 
-    public List<Bot> getBotList(final Bot bot) {
+    /**
+     * Load {@linkplain Bot}'s.
+     * Loading performed by identity and userName and bot station, provided by parameter.
+     * @param bot {@linkplain Bot}, which parameter used to load result.
+     * @return {@linkplain Bot}'s list.
+     */
+	public List<Bot> getBotList(final Bot bot) {
         return getHibernateTemplate().executeFind(new HibernateCallback<List<Bot>>() {
 
             @Override
@@ -140,6 +181,11 @@ public class BotDAO extends CommonDAO {
         });
     }
 
+    /**
+     * Load all {@linkplain BotTask}, defined for {@linkplain Bot}.
+     * @param bot {@linkplain Bot} to load {@linkplain BotTask}'s.
+     * @return {@linkplain BotTask}, defined for {@linkplain Bot}.
+     */
     public List<BotTask> getBotTaskList(final Bot bot) {
         return getHibernateTemplate().executeFind(new HibernateCallback<List<BotTask>>() {
 
@@ -152,31 +198,61 @@ public class BotDAO extends CommonDAO {
         });
     }
 
+    /**
+     * Save {@linkplain BotStation}. {@linkplain BotStation} must not be saved before.
+     * @param botStation {@linkplain BotStation} to save.
+     * @return Saved {@linkplain BotStation}.
+     */
     public BotStation create(BotStation bs) {
         getHibernateTemplate().save(bs);
         return bs;
     }
 
+    /**
+     * Save {@linkplain Bot}. {@linkplain Bot} must not be saved before.
+     * @param bot {@linkplain Bot} to save.
+     * @return Saved {@linkplain Bot}.
+     */
     public Bot create(Bot bot) {
         getHibernateTemplate().save(bot);
         return bot;
     }
 
+    /**
+     * Save {@linkplain BotTask}. {@linkplain BotTask} must not be saved before. 
+     * @param botTask {@linkplain BotTask} to save.
+     * @return Saved {@linkplain BotTask}.
+     */
     public BotTask create(BotTask task) {
         getHibernateTemplate().save(task);
         return task;
     }
 
+    /**
+     * Update {@linkplain BotStation}. {@linkplain BotStation} must be saved before.
+     * @param botStation {@linkplain BotStation} to update.
+     * @return Updated {@linkplain BotStation}.
+     */
     public BotStation update(BotStation bs) {
         getHibernateTemplate().update(bs);
         return bs;
     }
 
+    /**
+     * Update {@linkplain Bot}. {@linkplain Bot} must be saved before.
+     * @param bot {@linkplain Bot} to update.
+     * @return Updated {@linkplain Bot}.
+     */
     public Bot update(Bot bot) {
         getHibernateTemplate().update(bot);
         return bot;
     }
 
+    /**
+     * Update {@linkplain BotTask}. {@linkplain BotTask} must be saved before. 
+     * @param botTask {@linkplain BotTask} to update.
+     * @return Updated {@linkplain BotTask}.
+     */
     public BotTask update(BotTask task) {
         if (task.getConfiguration() != null && task.getConfiguration().length == 0) {
             BotTask botTaskFromDB = new BotTask();
@@ -189,14 +265,26 @@ public class BotDAO extends CommonDAO {
         return task;
     }
 
+    /**
+     * Remove saved {@linkplain BotStation}.
+     * @param botStation {@linkplain BotStation} to remove.
+     */
     public void remove(BotStation bs) {
         getHibernateTemplate().delete(bs);
     }
 
+    /**
+     * Remove saved {@linkplain Bot}.
+     * @param bot {@linkplain Bot} to remove.
+     */
     public void remove(Bot b) {
         getHibernateTemplate().delete(b);
     }
 
+    /**
+     * Remove saved {@linkplain BotTask}. 
+     * @param botTask {@linkplain BotTask} to remove.
+     */
     public void remove(BotTask task) {
         getHibernateTemplate().delete(task);
     }

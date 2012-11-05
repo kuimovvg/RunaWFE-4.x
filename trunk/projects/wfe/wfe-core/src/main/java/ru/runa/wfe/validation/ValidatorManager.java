@@ -31,7 +31,6 @@ public class ValidatorManager {
     }
 
     static {
-        registerValidatorDefinitions("ru/runa/wfe/validation/impl/default.xml");
         registerValidatorDefinitions("validators.xml");
     }
 

@@ -17,6 +17,7 @@
  */
 package ru.runa.wf.web.html;
 
+import net.sf.ehcache.util.ClassLoaderUtil;
 import ru.runa.common.WebResources;
 import ru.runa.wfe.InternalApplicationException;
 
@@ -51,7 +52,7 @@ public class FormBuilderFactory {
 
     private static <T extends Object> T getBuilder(String className) {
         try {
-            Class<T> taskFormBuilderClass = (Class<T>) Class.forName(className);
+            Class<T> taskFormBuilderClass = ClassLoaderUtil.loadClass(className);
             return taskFormBuilderClass.newInstance();
         } catch (Exception e) {
             throw new InternalApplicationException(e);

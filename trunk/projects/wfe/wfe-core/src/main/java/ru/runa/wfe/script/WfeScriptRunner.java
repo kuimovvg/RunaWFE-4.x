@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +44,7 @@ import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.logic.BotLogic;
-import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.PathEntityResolver;
 import ru.runa.wfe.commons.xml.XMLHelper;
 import ru.runa.wfe.definition.dto.WfDefinition;
@@ -77,6 +76,7 @@ import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 import ru.runa.wfe.user.logic.ProfileLogic;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -155,6 +155,8 @@ public class WfeScriptRunner {
     public void runScript(InputStream inputStream) throws WfeScriptException {
         try {
             processDeployed = 0;
+            namedProcessDefinitionIdentities.clear();
+            namedExecutorIdentities.clear();
             Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
             Element scriptElement = document.getDocumentElement();
             NodeList scriptNodeList = scriptElement.getChildNodes();
@@ -176,7 +178,7 @@ public class WfeScriptRunner {
             String name = element.getNodeName();
             log.info("Processing element " + name + ".");
             if ("custom".equals(name)) {
-                CustomWfeScriptJob job = (CustomWfeScriptJob) Class.forName(element.getAttribute("job")).newInstance();
+                CustomWfeScriptJob job = ClassLoaderUtil.instantiate(element.getAttribute("job"));
                 job.execute(subject, element);
             } else {
                 Method method = this.getClass().getMethod(name, new Class[] { Element.class });
@@ -1061,7 +1063,8 @@ public class WfeScriptRunner {
     protected byte[] getBotTaskConfiguration(String config) throws IOException {
         InputStream is = null;
         try {
-            is = WfeScriptRunner.class.getResourceAsStream(config);
+            is = ClassLoaderUtil.getResourceAsStream(config, getClass());
+            Preconditions.checkNotNull(is, "No resource available: " + config);
             byte[] result = new byte[is.available()];
             is.read(result);
             return result;
@@ -1153,34 +1156,34 @@ public class WfeScriptRunner {
 
     /* @param operation: remove - 1; archiving - 2; retrieve from archive - 3 */
     private void operationWithOldProcesses(Element element, int operation) throws Exception {
-        String prInstName = element.getAttribute(NAME_ATTRIBUTE_NAME);
-        String prInstVersion = element.getAttribute(VERSION_ATTRIBUTE_NAME);
-        String prInstId = element.getAttribute(ID_ATTRIBUTE_NAME);
-        String prInstIdTill = element.getAttribute(ID_TILL_ATTRIBUTE_NAME);
-        String prInstStartDate = element.getAttribute(START_DATE_ATTRIBUTE_NAME);
-        String prInstEndDate = element.getAttribute(END_DATE_ATTRIBUTE_NAME);
-        String prInstOnlyFinished = element.getAttribute(ONLY_FINISHED_ATTRIBUTE_NAME);
-        String prInstDateInterval = element.getAttribute(DATE_INTERVAL_ATTRIBUTE_NAME);
-        boolean onlyFinished = prInstOnlyFinished == null || prInstOnlyFinished.trim().length() == 0 ? true : Boolean
-                .parseBoolean(prInstOnlyFinished);
-        boolean dateInterval = prInstDateInterval == null || prInstDateInterval.trim().length() == 0 ? false : Boolean
-                .parseBoolean(prInstDateInterval);
-        int version = prInstVersion == null || prInstVersion.trim().length() == 0 ? 0 : Integer.parseInt(prInstVersion);
-        Long id = Strings.isNullOrEmpty(prInstId) ? null : Long.parseLong(prInstId);
-        Long idTill = Strings.isNullOrEmpty(prInstIdTill) ? null : Long.parseLong(prInstIdTill);
-        Date startDate = null;
-        Date finishDate = null;
-        if (prInstId == null) {
-            if (prInstStartDate == null && prInstEndDate == null) {
-                return;
-            }
-        }
-        if (prInstStartDate != null && prInstStartDate.trim().length() > 0) {
-            startDate = CalendarUtil.convertToDate(prInstStartDate, CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
-        }
-        if (prInstEndDate != null && prInstEndDate.trim().length() > 0) {
-            finishDate = CalendarUtil.convertToDate(prInstEndDate, CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
-        }
+//        String prInstName = element.getAttribute(NAME_ATTRIBUTE_NAME);
+//        String prInstVersion = element.getAttribute(VERSION_ATTRIBUTE_NAME);
+//        String prInstId = element.getAttribute(ID_ATTRIBUTE_NAME);
+//        String prInstIdTill = element.getAttribute(ID_TILL_ATTRIBUTE_NAME);
+//        String prInstStartDate = element.getAttribute(START_DATE_ATTRIBUTE_NAME);
+//        String prInstEndDate = element.getAttribute(END_DATE_ATTRIBUTE_NAME);
+//        String prInstOnlyFinished = element.getAttribute(ONLY_FINISHED_ATTRIBUTE_NAME);
+//        String prInstDateInterval = element.getAttribute(DATE_INTERVAL_ATTRIBUTE_NAME);
+//        boolean onlyFinished = prInstOnlyFinished == null || prInstOnlyFinished.trim().length() == 0 ? true : Boolean
+//                .parseBoolean(prInstOnlyFinished);
+//        boolean dateInterval = prInstDateInterval == null || prInstDateInterval.trim().length() == 0 ? false : Boolean
+//                .parseBoolean(prInstDateInterval);
+//        int version = prInstVersion == null || prInstVersion.trim().length() == 0 ? 0 : Integer.parseInt(prInstVersion);
+//        Long id = Strings.isNullOrEmpty(prInstId) ? null : Long.parseLong(prInstId);
+//        Long idTill = Strings.isNullOrEmpty(prInstIdTill) ? null : Long.parseLong(prInstIdTill);
+//        Date startDate = null;
+//        Date finishDate = null;
+//        if (prInstId == null) {
+//            if (prInstStartDate == null && prInstEndDate == null) {
+//                return;
+//            }
+//        }
+//        if (prInstStartDate != null && prInstStartDate.trim().length() > 0) {
+//            startDate = CalendarUtil.convertToDate(prInstStartDate, CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
+//        }
+//        if (prInstEndDate != null && prInstEndDate.trim().length() > 0) {
+//            finishDate = CalendarUtil.convertToDate(prInstEndDate, CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
+//        }
         // switch (operation) {
         // case 1:
         // archLogic.removeProcess(subject, startDate, finishDate, prInstName, version, id, idTill, onlyFinished, dateInterval);
@@ -1196,9 +1199,9 @@ public class WfeScriptRunner {
 
     /* @param number: remove - 1; archiving - 2; retrieve from archive - 3 */
     private void operationWithOldProcessDefinitionVersion(Element element, int operation) throws Exception {
-        String defName = element.getAttribute(NAME_ATTRIBUTE_NAME);
-        String version = element.getAttribute(VERSION_ATTRIBUTE_NAME);
-        String versionTo = element.getAttribute("versionTo");
+//        String defName = element.getAttribute(NAME_ATTRIBUTE_NAME);
+//        String version = element.getAttribute(VERSION_ATTRIBUTE_NAME);
+//        String versionTo = element.getAttribute("versionTo");
         // switch (operation) {
         // case 1:
         // archLogic.removeProcessDefinition(subject, defName, version == null || version.trim().length() == 0 ? 0 : Integer.parseInt(version),

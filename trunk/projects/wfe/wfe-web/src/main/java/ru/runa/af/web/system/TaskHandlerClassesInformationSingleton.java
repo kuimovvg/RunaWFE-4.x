@@ -27,10 +27,11 @@ import java.util.jar.JarFile;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.common.WebResources;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 
 /**
- * User: stan79 Date: 07.12.2008 Time: 22:04:10
+ * User: stan79
+ * @since 3.0
  */
 public class TaskHandlerClassesInformationSingleton {
     private static final Log log = LogFactory.getLog(TaskHandlerClassesInformationSingleton.class);
@@ -38,7 +39,7 @@ public class TaskHandlerClassesInformationSingleton {
     private static TaskHandlerClassesInformationSingleton taskHandlerClassesInformationsigleton = null;
     private final SortedSet<String> taskHandlerImplementationClasses = new TreeSet<String>();
 
-    private static final String TASK_HANDLER_INTERFACE_CANONICAL_NAME = "ru.runa.wf.logic.bot.TaskHandler";
+    private static final Class<?> TASK_HANDLER_INTERFACE = ClassLoaderUtil.loadClass("ru.runa.wf.logic.bot.TaskHandler");
 
     private TaskHandlerClassesInformationSingleton() {
         init();
@@ -52,12 +53,11 @@ public class TaskHandlerClassesInformationSingleton {
     }
 
     private void init() {
-        String jbossDeployDir = System.getProperty("jboss.home.dir") + "/server/" + System.getProperty("jboss.server.name") + "/deploy/";
-        String[] botTaskHandlerImplJarFileNames = WebResources.getBotTaskHandlerImplJarFileNames();
+        String runawfeEar = System.getProperty("jboss.home.dir") + "/server/" + System.getProperty("jboss.server.name") + "/deploy/runawfe.ear!/lib/";
+        String[] botTaskHandlerImplJarFileNames = { "wfe-bots-4.0.0-SNAPSHOT.jar" };
         try {
-            Class<?> taskHandlerIface = Class.forName(TASK_HANDLER_INTERFACE_CANONICAL_NAME);
             for (int i = 0; i < botTaskHandlerImplJarFileNames.length; i++) {
-                JarFile jarFile = new JarFile(jbossDeployDir + botTaskHandlerImplJarFileNames[i].trim());
+                JarFile jarFile = new JarFile(runawfeEar + botTaskHandlerImplJarFileNames[i].trim());
                 Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
                     // If we can't load class - just move to next class.
@@ -69,7 +69,7 @@ public class TaskHandlerClassesInformationSingleton {
                             entryName = entryName.substring(0, lastIndexOfDotSymbol).replace('/', '.');
 
                             Class<?> someClass = Class.forName(entryName);
-                            if (taskHandlerIface.isAssignableFrom(someClass)) {
+                            if (TASK_HANDLER_INTERFACE.isAssignableFrom(someClass)) {
                                 taskHandlerImplementationClasses.add(someClass.getCanonicalName());
                             }
                         }
@@ -82,6 +82,7 @@ public class TaskHandlerClassesInformationSingleton {
             log.error(e.getMessage(), e);
         }
     }
+    
 
     public SortedSet<String> getTaskHandlerImplementationClasses() {
         return Collections.unmodifiableSortedSet(taskHandlerImplementationClasses);
