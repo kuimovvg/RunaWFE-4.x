@@ -27,9 +27,11 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.os.ParamRenderer;
 
+@SuppressWarnings("unchecked")
 public class SubstitutionDefinitions {
     private static final Log log = LogFactory.getLog(SubstitutionDefinitions.class);
 
@@ -53,7 +55,7 @@ public class SubstitutionDefinitions {
                     if (rendererClassName == null) {
                         rendererClassName = StringRenderer.class.getName();
                     }
-                    ParamRenderer renderer = (ParamRenderer) Class.forName(rendererClassName).newInstance();
+                    ParamRenderer renderer = ClassLoaderUtil.instantiate(rendererClassName);
                     ParamDef pDef = new ParamDef(pElement.attributeValue("messageKey"), pElement.attributeValue("message"), renderer);
                     fDef.addParam(pDef);
                 }

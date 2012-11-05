@@ -36,6 +36,7 @@ import ru.runa.wfe.bot.BotInvokerException;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.invoker.BotInvoker;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 
 /**
  * Created on 04.03.2005
@@ -106,7 +107,7 @@ public class WorkflowBotInvoker implements BotInvoker {
                     while (i.hasNext()) {
                         BotTask task = i.next();
                         try {
-                            TaskHandler handler = (TaskHandler) Class.forName(task.getClazz()).newInstance();
+                            TaskHandler handler = ClassLoaderUtil.instantiate(task.getClazz());
                             handler.configure(task.getConfiguration());
                             wbot.addTask(task.getName(), handler, 0);
                             log.info("Configured task handler for " + task.getName());

@@ -34,6 +34,7 @@ import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -75,7 +76,7 @@ public class WorkflowBot implements Runnable {
         HashMap<String, TaskHandler> handlers = new HashMap<String, TaskHandler>();
         for (BotTask task : tasks) {
             try {
-                TaskHandler handler = (TaskHandler) Class.forName(task.getClazz()).newInstance();
+                TaskHandler handler = ClassLoaderUtil.instantiate(task.getClazz());
                 handler.configure(task.getConfiguration());
                 handlers.put(task.getName(), handler);
                 log.info("Configured taskHandler for " + task.getName());

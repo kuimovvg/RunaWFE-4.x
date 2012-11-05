@@ -100,6 +100,18 @@
 						<artifactId>ehcache</artifactId>
 						<groupId>net.sf.ehcache</groupId>
 					</exclusion>
+					<exclusion>
+						<artifactId>asm</artifactId>
+						<groupId>asm</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>asm-attrs</artifactId>
+						<groupId>asm</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>cglib</artifactId>
+						<groupId>cglib</groupId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -112,6 +124,12 @@
 				<artifactId>ehcache</artifactId>
 				<version>2.4.3</version>
 				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib</artifactId>
+				<version>3.0</version>
+				<type>jar</type>
 			</dependency>
 
 			<dependency>
@@ -243,7 +261,21 @@
 					<artifactId>maven-ear-plugin</artifactId>
 					<version>2.3.2</version>
 				</plugin>
-
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.6</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.8</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+						<linksource>true</linksource>
+						<additionalJOption>-J-Dfile.encoding=${file.encoding} -J-Dconsole.encoding=${console.encoding}</additionalJOption>
+					</configuration>
+				</plugin>
 				<!-- The JBoss AS plugin deploys your ear to a local JBoss AS container -->
 				<!-- Due to Maven's lack of intelligence with EARs we need to configure 
 					the jboss-as maven plugin to skip deployment for all modules. We then enable 

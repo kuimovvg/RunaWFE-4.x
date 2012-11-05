@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 
 /**
  * Created on 23.03.2005
@@ -45,7 +46,7 @@ public class BotInvokerFactory {
 
     @SuppressWarnings("unchecked")
     private static Class<? extends BotInvoker> getBotInvokerClass() throws ClassNotFoundException {
-        return (Class<? extends BotInvoker>) Class.forName(Resources.getBotInvokerClassName());
+        return (Class<? extends BotInvoker>) ClassLoaderUtil.instantiate(Resources.getBotInvokerClassName());
     }
 
     private static final long MILLISECONDS_IN_SEC = 1000;

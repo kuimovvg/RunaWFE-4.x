@@ -62,14 +62,6 @@ public class WebResources {
     public static final String HIDDEN_ONE_TASK_INDICATOR = "one_task_hidden_field";
     public static final String HIDDEN_TASK_PREVIOUS_OWNER_ID = "taskOwnerId_hidden_field";
 
-    private static String[] readPropertyAsArray(String propertyName, String delimiter) {
-        String value = getStringProperty(propertyName);
-        if (value != null) {
-            return value.split(delimiter);
-        }
-        return new String[0];
-    }
-
     public static String getStringProperty(String name) {
         return PROPERTIES.getProperty(name);
     }
@@ -114,10 +106,6 @@ public class WebResources {
         return getIntegerProperty("process.graph.autoRefreshInterval.seconds", 0);
     }
 
-    public static String[] getBotTaskHandlerImplJarFileNames() {
-        return readPropertyAsArray("wfe.bots.jar.filename", ",");
-    }
-
     public static boolean isGroupBySubprocessEnabled() {
         return getBooleanProperty("group.subprocess.enabled", false);
     }
@@ -154,7 +142,7 @@ public class WebResources {
         try {
             String className = getStringProperty("menu.additional_links", null);
             if (className != null && className.length() > 0) {
-                Class<?> getter = Class.forName(className);
+                Class<?> getter = ClassLoaderUtil.loadClass(className);
                 return getter.getDeclaredMethod("getAdditionalLinks", (Class[]) null).invoke(getter, (Object[]) null).toString();
             }
         } catch (Exception e) {

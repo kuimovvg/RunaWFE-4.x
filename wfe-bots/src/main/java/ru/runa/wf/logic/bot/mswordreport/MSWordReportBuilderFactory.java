@@ -18,6 +18,7 @@
 package ru.runa.wf.logic.bot.mswordreport;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ResourceCommons;
 
 /**
@@ -34,7 +35,7 @@ public class MSWordReportBuilderFactory extends ResourceCommons {
     public static MSWordReportBuilder createMSWordReportBuilder() {
         try {
             String builderClassName = readProperty(BUILDER_PROPERTY, BUNDLE);
-            return (MSWordReportBuilder) Class.forName(builderClassName).newInstance();
+            return (MSWordReportBuilder) ClassLoaderUtil.instantiate(builderClassName);
         } catch (Throwable e) {
             throw new InternalApplicationException(e);
         }
