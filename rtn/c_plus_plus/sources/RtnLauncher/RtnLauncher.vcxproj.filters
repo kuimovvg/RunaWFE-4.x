@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="..\common\Tracing.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FileHelpers.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\TextHelpers.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\TimeHelpers.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="..\common\network\WinHttpCookies.cpp">
+      <Filter>common\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\network\WinHttpWrapper.cpp">
+      <Filter>common\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\ComBase.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\common\Tracing.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\TimeHelpers.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FileHelpers.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\SafeCriticalSection.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\TextHelpers.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\debug\SmartProfiler.h">
+      <Filter>common\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="..\common\network\WinHttpCookies.h">
+      <Filter>common\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\network\WinHttpWrapper.h">
+      <Filter>common\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\ComBase.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\array_ptr.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\basedef.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\compiler.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\TracingInterface.h">
+      <Filter>common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Error.ico">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="Found.ico">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="NotFound.ico">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="RtnLauncher.ico">
+      <Filter>Resources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="common">
+      <UniqueIdentifier>{c65f86e9-6d65-4e7f-97b1-54fed729299f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\debug">
+      <UniqueIdentifier>{8ca213be-0af6-48a2-a092-b73e18961a8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\network">
+      <UniqueIdentifier>{6bf75edf-0848-4b90-a4ea-e37dcf125cbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{c993b0fa-cc6b-465d-b80b-f4e4b34e52f2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RtnLauncher.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
