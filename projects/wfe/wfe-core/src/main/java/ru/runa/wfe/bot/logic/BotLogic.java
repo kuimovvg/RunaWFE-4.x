@@ -161,17 +161,11 @@ public class BotLogic extends CommonLogic {
     }
 
     public BotTask create(Subject subject, BotTask task) throws AuthorizationException, AuthenticationException, BotTaskAlreadyExistsException {
-        BotTask t = new BotTask();
-        t.setName(task.getName());
-        t.setBot(task.getBot());
-        t = getBotTask(subject, t);
-        if (t != null) {
+        if (getBotTask(subject, task) != null) {
             throw new BotTaskAlreadyExistsException(task.getName());
         }
         checkPermissionsOnBotStations(subject, BotStationPermission.BOT_STATION_CONFIGURE);
-        BotTask res = botDAO.create(task);
-        update(subject, task.getBot());
-        return res;
+        return botDAO.create(task);
     }
 
     public List<BotTask> getBotTaskList(Subject subject, Bot bot) throws AuthorizationException, AuthenticationException {

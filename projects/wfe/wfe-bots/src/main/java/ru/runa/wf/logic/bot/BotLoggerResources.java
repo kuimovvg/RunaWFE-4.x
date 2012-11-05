@@ -20,6 +20,7 @@ package ru.runa.wf.logic.bot;
 import java.util.MissingResourceException;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ResourceCommons;
 
 /**
@@ -39,7 +40,7 @@ public class BotLoggerResources extends ResourceCommons {
             if (loggerClassName == null) {
                 return null;
             }
-            return (BotLogger) Class.forName(loggerClassName).newInstance();
+            return (BotLogger) ClassLoaderUtil.instantiate(loggerClassName);
         } catch (MissingResourceException mbe) {
             return null;
         } catch (Throwable e) {
