@@ -36,7 +36,7 @@ public class AddNodeFeature extends AbstractAddShapeFeature {
             Ellipse invisibleCircle = gaService.createEllipse(containerShape);
             invisibleCircle.setFilled(false);
             invisibleCircle.setLineVisible(false);
-            gaService.setLocationAndSize(invisibleCircle, context.getX(), context.getY(), width, height);
+            gaService.setLocationAndSize(invisibleCircle, context.getX()-width/2, context.getY()-height/2, width, height);
             circle = gaService.createEllipse(invisibleCircle);
             circle.setParentGraphicsAlgorithm(invisibleCircle);
             circle.setStyle(StyleUtil.getStyleForEvent(getDiagram()));

@@ -3,9 +3,7 @@ package ru.runa.gpd.ui.graphiti.add;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
-import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
-import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Color;
@@ -17,15 +15,13 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 import org.jbpm.ui.common.model.Node;
-import org.jbpm.ui.common.model.State;
 import org.jbpm.ui.common.model.Subprocess;
-import org.jbpm.ui.common.model.Swimlane;
 
 import ru.runa.gpd.ui.graphiti.StyleUtil;
 
-public class AddTaskStateFeature extends AbstractAddShapeFeature {
+public class AddSubProcessFeature extends AbstractAddShapeFeature {
 	
-    public AddTaskStateFeature(IFeatureProvider provider) {
+    public AddSubProcessFeature(IFeatureProvider provider) {
         super(provider);
     }
 
@@ -33,8 +29,8 @@ public class AddTaskStateFeature extends AbstractAddShapeFeature {
     public PictogramElement add(IAddContext context) {
     	final int GRID_SIZE = 12;
     	
-        State node = (State) context.getNewObject();
-        boolean timerExist = node.timerExist();
+        Subprocess node = (Subprocess) context.getNewObject();
+        
         ContainerShape parent = context.getTargetContainer();
         IPeCreateService createService = Graphiti.getPeCreateService();
         ContainerShape containerShape = createService.createContainerShape(parent, true);
@@ -52,35 +48,19 @@ public class AddTaskStateFeature extends AbstractAddShapeFeature {
         	circle.setForeground(lightBlue);
         	circle.setBackground(veryLightBlue);
         	
-        	Swimlane swimlane = node.getSwimlane();
+        	/*Swimlane swimlane = node.getSwimlane();
         	String swimlaneString = swimlane != null ? "(" + swimlane.getName() + ")" : "";
         	Text st = gaService.createDefaultText(getDiagram(), circle, swimlaneString);
         	st.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
-        	gaService.setLocationAndSize(st, 0, 0, width, height/2);
+        	gaService.setLocationAndSize(st, 0, 0, width, height/2);*/
         	
         	Text t = gaService.createDefaultText(getDiagram(), circle, node.getName()); // node.getDescription()
         	t.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
         	gaService.setLocationAndSize(t, 0, height/2, width, height/2);
         	
-        	gaService.setLocationAndSize(invisible, context.getX(), context.getY(), width+GRID_SIZE*2, height+GRID_SIZE*2);
+        	gaService.setLocationAndSize(invisible, context.getX()-width/2-GRID_SIZE, context.getY()-height/2-GRID_SIZE, width+GRID_SIZE*2, height+GRID_SIZE*2);
         	gaService.setLocationAndSize(circle, GRID_SIZE, GRID_SIZE, width, height);
             circle.setStyle(StyleUtil.getStyleForEvent(getDiagram()));
-            
-            if (timerExist) {
-            	{
-            		Ellipse e = gaService.createEllipse(invisible);
-            		e.setForeground(lightBlue);
-                	e.setBackground(veryLightBlue);
-            		e.setFilled(true);
-            		e.setLineWidth(2);
-            		gaService.setLocationAndSize(e, 2, height-2, GRID_SIZE * 2, GRID_SIZE * 2);
-            	}
-            	{
-            		Polyline l = gaService.createPolyline(invisible, new int[]{GRID_SIZE + 2, GRID_SIZE + height+3, GRID_SIZE + 2, GRID_SIZE + height-2, GRID_SIZE + 7, GRID_SIZE + height-7});
-            		l.setForeground(lightBlue);
-            		l.setLineWidth(2);
-            	}
-            }
             
             link(containerShape, node);
         }
