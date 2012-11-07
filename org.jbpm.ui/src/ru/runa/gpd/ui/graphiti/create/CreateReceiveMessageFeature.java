@@ -2,10 +2,10 @@ package ru.runa.gpd.ui.graphiti.create;
 
 import ru.runa.gpd.ui.graphiti.DiagramFeatureProvider;
 
-public class CreateTaskStateFeature extends AbstractCreateNodeFeature {
-    public static final String ID = "task-node";
+public class CreateReceiveMessageFeature extends AbstractCreateNodeFeature {
+    public static final String ID = "receive-message";
 
-    public CreateTaskStateFeature(DiagramFeatureProvider provider) {
+    public CreateReceiveMessageFeature(DiagramFeatureProvider provider) {
         super(provider);
     }
 
