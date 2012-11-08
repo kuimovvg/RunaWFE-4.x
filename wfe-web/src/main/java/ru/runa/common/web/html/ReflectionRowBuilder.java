@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.Subject;
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -282,7 +281,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         return tr;
     }
 
-    private TR buildItemRow() throws JspException {
+    private TR buildItemRow() {
         Object item = items.get(currentState.getItemIndex());
         TR tr = new TR();
         if (cssClassStrategy != null) {
@@ -355,7 +354,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         this.cssClassStrategy = cssClassStrategy;
     }
 
-    private TR renderTRFromCurrentState() throws JspException {
+    private TR renderTRFromCurrentState() {
         if (currentState.isGroupHeader()) {
             return buildGroupHeader();
         }
@@ -363,7 +362,7 @@ public class ReflectionRowBuilder implements RowBuilder {
     }
 
     @Override
-    public TR buildNext() throws JspException {
+    public TR buildNext() {
         TR tr = renderTRFromCurrentState();
         // If element not displayed (in group), we must emulate displaying.
         // int curIdx = currentState.getItemIndex();

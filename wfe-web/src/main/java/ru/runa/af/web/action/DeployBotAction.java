@@ -14,10 +14,8 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.DeployBotForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
-import ru.runa.wfe.bot.BotStationDoesNotExistException;
-import ru.runa.wfe.security.AuthenticationException;
 
 /**
  * @struts:action path="/deploy_bot" name="deployBotForm" validate="false"
@@ -27,19 +25,14 @@ public class DeployBotAction extends Action {
     public static final String ACTION_PATH = "/deploy_bot";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, final HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, final HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = getErrors(request);
-        DeployBotForm fiForm = (DeployBotForm) form;
+        DeployBotForm form = (DeployBotForm) actionForm;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotsService botsService = DelegateFactory.getBotsService();
-            BotStation station = new BotStation(fiForm.getId());
-            station = botsService.getBotStation(subject, station);
-            if (station == null) {
-                throw new BotStationDoesNotExistException("with id " + fiForm.getId());
-            }
-            botsService.deployBot(subject, station, fiForm.getFile().getInputStream(), fiForm.isReplace());
+            BotService botService = DelegateFactory.getBotService();
+            BotStation station = botService.getBotStation(form.getId());
+            botService.importBot(subject, station, form.getFile().getFileData(), form.isReplace());
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
@@ -47,6 +40,6 @@ public class DeployBotAction extends Action {
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
-        return new ActionForward("/bot_station.do?botStationID=" + fiForm.getId());
+        return new ActionForward("/bot_station.do?botStationID=" + form.getId());
     }
 }

@@ -18,7 +18,6 @@
 package ru.runa.wf.logic.bot;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -29,32 +28,30 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotRunnerException;
-import ru.runa.wfe.bot.BotInvokerException;
 import ru.runa.wfe.bot.BotStation;
+import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.invoker.BotInvoker;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+
+import com.google.common.collect.Sets;
 
 /**
  * Created on 04.03.2005
  */
 public class WorkflowBotInvoker implements BotInvoker {
-    protected static final Log log = LogFactory.getLog(WorkflowBotInvoker.class);
+    private static final Log log = LogFactory.getLog(WorkflowBotInvoker.class);
+    private final Set<BotThread> botThreads = Sets.newHashSet();
 
-    private final Set<BotThread> botThreadSet = new HashSet<BotThread>();
-
+    @Override
     public void invokeBots() {
         // lock
-        try {
-            updateConfig(null);
-        } catch (BotInvokerException e) {
-            log.error("Failed to update config", e);
-        }
-        synchronized (botThreadSet) {
-            for (BotThread botThread : botThreadSet) {
+        updateConfig(null);
+        synchronized (botThreads) {
+            for (BotThread botThread : botThreads) {
                 checkTaskListSizeNotExeeded(botThread);
                 if (!botThread.isAlive()) {
                     botThread.start();
@@ -79,35 +76,26 @@ public class WorkflowBotInvoker implements BotInvoker {
     private long configurationVersion = -1;
     private List<MultitaskBotRunner> workflowBots = null;
 
-    public void init(String configurationPath) {
-    }
-
-    public void updateConfig(String configurationPath) throws BotInvokerException {
+    public void updateConfig(String configurationPath) {
         try {
-            WorkflowBotConfigurationParser configurationParser = new WorkflowBotConfigurationParser();
-            Subject subject = DelegateFactory.getAuthenticationService().authenticate(configurationParser.login,
-                    configurationParser.password);
-            BotStation pattern = new BotStation(configurationParser.login);
-            BotsService botsService = DelegateFactory.getBotsService();
-            BotStation THIS = botsService.getBotStation(subject, pattern);
-            if (THIS == null) {
-                log.error("botstation with name " + configurationParser.login + " doesn`t exist");
-                throw new NullPointerException();
+            BotService botService = DelegateFactory.getBotService();
+            BotStation botStation = botService.getBotStation(BotStationResources.getBotStationName());
+            if (botStation == null) {
+                throw new BotStationDoesNotExistException(BotStationResources.getBotStationName());
             }
-            if (THIS.getVersion() != configurationVersion) {
+            if (botStation.getVersion() != configurationVersion) {
                 log.info("updating bots configuration");
                 workflowBots = new ArrayList<MultitaskBotRunner>();
-                List<Bot> bots = botsService.getBotList(subject, THIS);
+                List<Bot> bots = botService.getBots(botStation.getId());
                 for (Bot bot : bots) {
-                    Subject botSubject = DelegateFactory.getAuthenticationService().authenticate(bot.getWfeUser(),
-                            bot.getWfePass());
-                    MultitaskBotRunner wbot = new MultitaskBotRunner(botSubject, 150, bot.getLastInvoked());
-                    List<BotTask> tasks = botsService.getBotTaskList(subject, bot);
+                    Subject subject = DelegateFactory.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
+                    MultitaskBotRunner wbot = new MultitaskBotRunner(subject, 150, bot.getLastInvoked());
+                    List<BotTask> tasks = botService.getBotTasks(subject, bot.getId());
                     Iterator<BotTask> i = tasks.iterator();
                     while (i.hasNext()) {
                         BotTask task = i.next();
                         try {
-                            TaskHandler handler = ClassLoaderUtil.instantiate(task.getClazz());
+                            TaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
                             handler.configure(task.getConfiguration());
                             wbot.addTask(task.getName(), handler, 0);
                             log.info("Configured task handler for " + task.getName());
@@ -117,27 +105,25 @@ public class WorkflowBotInvoker implements BotInvoker {
                     }
                     workflowBots.add(wbot);
                 }
-                configurationVersion = THIS.getVersion();
+                configurationVersion = botStation.getVersion();
             } else {
                 log.debug("bots configuration is up to date");
             }
-        } catch (WorkflowBotConfigurationParserException e) {
-            log.error("cannot read login and password from botstation.xml", e);
         } catch (Exception e) {
-            log.error("bots configuration updating error", e);
+            log.error("bots configuration update error", e);
         }
         if (configurationVersion != -1) {
-            synchronized (botThreadSet) {
+            synchronized (botThreads) {
                 for (MultitaskBotRunner workflowMultitaskBot : workflowBots) {
                     boolean isStarted = false;
-                    for (BotThread thread : botThreadSet) {
+                    for (BotThread thread : botThreads) {
                         if (thread.hashCode() == workflowMultitaskBot.getSubject().hashCode()) {
                             isStarted = true;
                             break;
                         }
                     }
                     if (!isStarted) {
-                        botThreadSet.add(new BotThread(workflowMultitaskBot));
+                        botThreads.add(new BotThread(workflowMultitaskBot));
                     }
                 }
             }
@@ -163,8 +149,8 @@ public class WorkflowBotInvoker implements BotInvoker {
             } catch (Exception e) {
                 log.error("Error during execution of bot: " + bot, e);
             }
-            synchronized (botThreadSet) {
-                botThreadSet.remove(this);
+            synchronized (botThreads) {
+                botThreads.remove(this);
             }
         }
 

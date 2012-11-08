@@ -16,7 +16,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotTask;
 
 import com.google.common.base.Charsets;
@@ -24,7 +24,8 @@ import com.google.common.base.Charsets;
 /**
  * User: stan79 Date: 24.01.2009 Time: 13:24:46
  * 
- * @struts:action path="/download_bot_task_configuration" name="idForm" input = "/WEB-INF/wf/bot.jsp"
+ * @struts:action path="/download_bot_task_configuration" name="idForm" input =
+ *                "/WEB-INF/wf/bot.jsp"
  */
 public class BotTaskConfigurationFileDownLoader extends Action {
     public static final String DOWNLOAD_BOT_TASK_CONFIGURATION_ACTION_PATH = "/download_bot_task_configuration";
@@ -34,11 +35,9 @@ public class BotTaskConfigurationFileDownLoader extends Action {
             throws Exception {
         IdForm form = (IdForm) actionForm;
         String parameter = request.getParameter("edit");
-        BotsService botsService = DelegateFactory.getBotsService();
+        BotService botService = DelegateFactory.getBotService();
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-        BotTask botTask = new BotTask();
-        botTask.setId(form.getId());
-        botTask = botsService.getBotTask(subject, botTask);
+        BotTask botTask = botService.getBotTask(subject, form.getId());
         String fileName = botTask.getName() + "_" + botTask.getId() + ".xml";
         byte[] configuration = botTask.getConfiguration();
         String tempConfiguration = new String(configuration, Charsets.UTF_8);

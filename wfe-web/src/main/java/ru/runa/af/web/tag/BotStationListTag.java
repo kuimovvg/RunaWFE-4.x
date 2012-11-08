@@ -33,7 +33,7 @@ import ru.runa.common.web.form.IdsForm;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.security.AuthenticationException;
@@ -65,15 +65,9 @@ public class BotStationListTag extends TitledFormTag {
                 ((HttpServletRequest) pageContext.getRequest()).getContextPath() + DeleteBotStationAction.DELETE_BOT_STATION_ACTION_PATH + ".do");
         getForm().setMethod("post");
         tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, "1"));
-        BotsService botsService = DelegateFactory.getBotsService();
-        try {
-            List<BotStation> botStations = botsService.getBotStationList(getSubject());
-            tdFormElement.addElement(new BotStationTableBuilder(pageContext).buildBotStationTable(botStations));
-        } catch (AuthorizationException e) {
-            throw new JspException(e);
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
-        }
+        BotService botService = DelegateFactory.getBotService();
+        List<BotStation> botStations = botService.getBotStations();
+        tdFormElement.addElement(new BotStationTableBuilder(pageContext).buildBotStationTable(botStations));
     }
 
     @Override

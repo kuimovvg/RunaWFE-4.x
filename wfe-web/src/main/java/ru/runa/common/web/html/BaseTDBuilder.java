@@ -17,15 +17,10 @@
  */
 package ru.runa.common.web.html;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.servlet.jsp.JspException;
-
 import org.apache.commons.beanutils.BeanUtils;
 
 import ru.runa.common.web.html.TDBuilder.Env.IdentifiableExtractor;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.security.Permission;
 
 /**
@@ -48,30 +43,22 @@ public abstract class BaseTDBuilder implements TDBuilder {
         this.identifiableExtractor = identifiableExtractor;
     }
 
-    protected boolean isEnabled(Object object, Env env) throws JspException {
-        try {
-            if (permission == null) {
-                return false;
-            }
-            return env.isAllowed(permission, identifiableExtractor);
-        } catch (AuthorizationException e) {
-            throw new JspException(e);
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
+    protected boolean isEnabled(Object object, Env env) {
+        if (permission == null) {
+            return false;
         }
+        return env.isAllowed(permission, identifiableExtractor);
     }
 
-    protected String readProperty(Object object, String propertyName, boolean isExceptionOnAbsent) throws JspException {
+    protected String readProperty(Object object, String propertyName, boolean isExceptionOnAbsent) {
         try {
             return BeanUtils.getProperty(object, propertyName);
-        } catch (IllegalAccessException e) {
-            throw new JspException(e);
-        } catch (InvocationTargetException e) {
-            throw new JspException(e);
         } catch (NoSuchMethodException e) {
             if (isExceptionOnAbsent) {
-                throw new JspException(e);
+                throw new InternalApplicationException(e);
             }
+        } catch (Exception e) {
+            throw new InternalApplicationException(e);
         }
         return "";
     }
@@ -80,10 +67,12 @@ public abstract class BaseTDBuilder implements TDBuilder {
         return identifiableExtractor;
     }
 
+    @Override
     public String[] getSeparatedValues(Object object, Env env) {
         return new String[] { getValue(object, env) };
     }
 
+    @Override
     public int getSeparatedValuesCount(Object object, Env env) {
         return 1;
     }

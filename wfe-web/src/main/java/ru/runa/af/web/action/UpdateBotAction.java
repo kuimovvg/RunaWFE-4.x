@@ -14,14 +14,14 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.BotForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
-import ru.runa.wfe.bot.BotStation;
 
 /**
  * User: petrmikheev
  * 
- * @struts:action path="/update_bot" name="botForm" validate="false" input = "/WEB-INF/wf/bot.jsp"
+ * @struts:action path="/update_bot" name="botForm" validate="false" input =
+ *                "/WEB-INF/wf/bot.jsp"
  */
 public class UpdateBotAction extends Action {
     public static final String UPDATE_BOT_ACTION_PATH = "/update_bot";
@@ -32,15 +32,13 @@ public class UpdateBotAction extends Action {
         BotForm botForm = (BotForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotsService botsService = DelegateFactory.getBotsService();
-            Bot bot = new Bot();
-            bot.setId(botForm.getBotID());
-            bot.setWfeUser(botForm.getWfeUser());
-            bot.setWfePass(botForm.getWfePassword());
+            BotService botService = DelegateFactory.getBotService();
+            Bot bot = botService.getBot(subject, botForm.getBotID());
+            bot.setUsername(botForm.getWfeUser());
+            bot.setPassword(botForm.getWfePassword());
             bot.setLastInvoked(botForm.getBotTimeout());
-            BotStation bs = new BotStation(botForm.getBotStationID());
-            bot.setBotStation(botsService.getBotStation(subject, bs));
-            botsService.update(subject, bot);
+            bot.setBotStation(botService.getBotStation(botForm.getBotStationID()));
+            botService.updateBot(subject, bot);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }

@@ -14,13 +14,14 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 
 /**
  * @author petrmikheev
  * 
- * @struts:action path="/update_bot_station" name="botStationForm" validate="false" input = "/WEB-INF/wf/bot_station.jsp"
+ * @struts:action path="/update_bot_station" name="botStationForm"
+ *                validate="false" input = "/WEB-INF/wf/bot_station.jsp"
  */
 public class UpdateBotStationAction extends Action {
     public static final String UPDATE_BOT_STATION_ACTION_PATH = "/update_bot_station";
@@ -31,19 +32,17 @@ public class UpdateBotStationAction extends Action {
         BotStationForm botStationForm = (BotStationForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotsService botsService = DelegateFactory.getBotsService();
-            BotStation botStation = new BotStation(botStationForm.getBotStationID());
+            BotService botService = DelegateFactory.getBotService();
+            BotStation botStation = botService.getBotStation(botStationForm.getBotStationID());
             botStation.setName(botStationForm.getBotStationName());
             botStation.setAddress(botStationForm.getBotStationRMIAddress());
-            botsService.update(subject, botStation);
+            botService.updateBotStation(subject, botStation);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
-
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
-
         return new ActionForward("/bot_station.do?botStationID=" + botStationForm.getBotStationID());
     }
 }

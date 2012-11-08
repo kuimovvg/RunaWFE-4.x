@@ -28,7 +28,7 @@ public class BotDoesNotExistException extends ApplicationException {
     private final String botName;
 
     public BotDoesNotExistException(String botName) {
-        super("BotRunner " + botName + " doesn`t exists.");
+        super("Bot '" + botName + "' doesn't exist");
         this.botName = botName;
     }
 

@@ -36,10 +36,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
-import ru.runa.wfe.bot.BotInvokerException;
 import ru.runa.wfe.bot.BotStation;
+import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.invoker.BotInvoker;
 import ru.runa.wfe.security.AuthenticationException;
@@ -47,7 +47,6 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.dto.WfTask;
 
 public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
-
     private final Log log = LogFactory.getLog(WorkflowThreadPoolBotInvoker.class);
     private ScheduledExecutorService executor = null;
     private long configurationVersion = -1;
@@ -57,9 +56,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
 
     private final long STUCK_TIMEOUT_SECONDS = 300;
 
-    public void init(String arg0) throws BotInvokerException {
-    }
-
+    @Override
     public synchronized void invokeBots() {
         checkStuckBots();
         if (botInvokerInvocation != null && !botInvokerInvocation.isDone()) {
@@ -68,18 +65,13 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
         }
         if (executor == null) {
             log.debug("Creating new executor(ScheduledExecutorService)");
-            try {
-                WorkflowBotConfigurationParser configurationParser = new WorkflowBotConfigurationParser();
-                executor = new ScheduledThreadPoolExecutor(configurationParser.threadPoolSize);
-            } catch (WorkflowBotConfigurationParserException e) {
-                log.warn("Using thread pool size = 1", e);
-                executor = new ScheduledThreadPoolExecutor(1);
-            }
+            executor = new ScheduledThreadPoolExecutor(BotStationResources.getThreadPoolSize());
         }
         botInvokerInvocation = executor.schedule(this, 1000, TimeUnit.MILLISECONDS);
         logBotsActivites();
     }
 
+    @Override
     public void run() {
         configure();
         if (executor == null) {
@@ -120,8 +112,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                     if (!entry.getKey().setTaskInerruptStatus(true)) {
                         // Try to stop thread soft
                         log.warn(entry.getKey() + " seems to be stuck (not completted at "
-                                + (System.currentTimeMillis() - entry.getKey().getStartTime()) / 1000
-                                + " sec). Interrupt signal will be send.");
+                                + (System.currentTimeMillis() - entry.getKey().getStartTime()) / 1000 + " sec). Interrupt signal will be send.");
                         entry.getKey().getExecutionThread().interrupt();
                     } else {
                         log.error(entry.getKey() + " seems to be stuck (not completted at "
@@ -138,30 +129,24 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
 
     private void configure() {
         try {
-            WorkflowBotConfigurationParser configurationParser = new WorkflowBotConfigurationParser();
-            log.debug("Authenticating ...");
-            Subject subject = DelegateFactory.getAuthenticationService().authenticate(configurationParser.login,
-                    configurationParser.password);
-            log.debug("Authenticated as " + configurationParser.login);
-            BotStation pattern = new BotStation(configurationParser.login);
-            BotsService botsService = DelegateFactory.getBotsService();
-            BotStation botStation = botsService.getBotStation(subject, pattern);
+            BotService botService = DelegateFactory.getBotService();
+            BotStation botStation = botService.getBotStation(BotStationResources.getBotStationName());
             if (botStation == null) {
-                log.error("Botstation configuration error. Botstation with name " + configurationParser.login + " doesn't exist.");
-                return;
+                throw new BotStationDoesNotExistException(BotStationResources.getBotStationName());
             }
             if (botStation.getVersion() != configurationVersion) {
                 botsTemplates = new ArrayList<WorkflowBot>();
                 log.info("Will update bots configuration.");
-                List<Bot> bots = botsService.getBotList(subject, botStation);
+                List<Bot> bots = botService.getBots(botStation.getId());
                 for (Bot bot : bots) {
-                    log.info("Configuring " + bot.getWfeUser());
-                    List<BotTask> tasks = botsService.getBotTaskList(subject, bot);
+                    log.info("Configuring " + bot.getUsername());
+                    Subject subject = DelegateFactory.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
+                    List<BotTask> tasks = botService.getBotTasks(subject, bot.getId());
                     try {
                         WorkflowBot wbot = new WorkflowBot(bot, tasks);
                         botsTemplates.add(wbot);
                     } catch (AuthenticationException e) {
-                        log.error("BotRunner " + bot.getWfeUser() + " has incorrect password.");
+                        log.error("BotRunner " + bot.getUsername() + " has incorrect password.");
                     }
                 }
                 configurationVersion = botStation.getVersion();
@@ -174,7 +159,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
     }
 
     private void logBotsActivites() {
-        BotLogger botLogger = BotLoggerResources.createBotLogger();
+        BotLogger botLogger = BotStationResources.createBotLogger();
         if (botLogger == null) {
             return;
         }

@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
@@ -29,10 +27,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.wfe.commons.web.PortletUrlType;
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.dto.WfTask;
 
 /**
@@ -46,29 +41,22 @@ public class TaskProcessDefinitionTDBuilder implements TDBuilder {
     }
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         WfTask task = (WfTask) object;
         TD td = new TD();
         td.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
-        try {
-            String definitionName = getValue(object, env);
-            if (env.hasProcessDefinitionPermission(DefinitionPermission.READ, task.getProcessDefinitionId())) {
-                String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, IdForm.ID_INPUT_NAME, task.getProcessDefinitionId(),
-                        env.getPageContext(), PortletUrlType.Render);
-                A definitionNameLink = new A(url, definitionName);
-                td.addElement(definitionNameLink);
-            } else {
-                // this should never happend, since read permission required to get definition
-                addDisabledDefinitionName(td, definitionName);
-            }
-            return td;
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
-        } catch (AuthorizationException e) {
-            throw new JspException(e);
-        } catch (DefinitionDoesNotExistException e) {
-            throw new JspException(e);
+        String definitionName = getValue(object, env);
+        if (env.hasProcessDefinitionPermission(DefinitionPermission.READ, task.getProcessDefinitionId())) {
+            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, IdForm.ID_INPUT_NAME, task.getProcessDefinitionId(),
+                    env.getPageContext(), PortletUrlType.Render);
+            A definitionNameLink = new A(url, definitionName);
+            td.addElement(definitionNameLink);
+        } else {
+            // this should never happend, since read permission required to
+            // get definition
+            addDisabledDefinitionName(td, definitionName);
         }
+        return td;
     }
 
     @Override

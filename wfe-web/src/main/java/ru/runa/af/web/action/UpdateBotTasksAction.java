@@ -17,7 +17,6 @@
  */
 package ru.runa.af.web.action;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -33,66 +32,61 @@ import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.BotTasksForm;
+import ru.runa.af.web.system.TaskHandlerClassesInformation;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
-import ru.runa.wfe.bot.Bot;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotTask;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
  * @author petrmikheev
  * 
- * @struts:action path="/update_bot_tasks" name="botTasksForm" validate="true" input = "/WEB-INF/wf/bot.jsp"
+ * @struts:action path="/update_bot_tasks" name="botTasksForm" validate="true"
+ *                input = "/WEB-INF/wf/bot.jsp"
  */
 public class UpdateBotTasksAction extends Action {
     public static final String UPDATE_BOT_TASKS_ACTION_PATH = "/update_bot_tasks";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
-        BotTasksForm tasksForm = (BotTasksForm) form;
+        BotTasksForm form = (BotTasksForm) actionForm;
         try {
-            BotsService botsService = DelegateFactory.getBotsService();
+            BotService botService = DelegateFactory.getBotService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            Bot bot = new Bot();
-            bot.setId(tasksForm.getId());
-            bot = botsService.getBot(subject, bot);
-            List<BotTask> tasks = botsService.getBotTaskList(subject, bot);
+            List<BotTask> tasks = botService.getBotTasks(subject, form.getId());
 
-            Set<Long> checkedIdSet = Sets.newHashSet(tasksForm.getIds());
-
-            List<BotTask> removedTasks = new ArrayList<BotTask>(tasks.size() - checkedIdSet.size());
-            List<BotTask> updatedTasks = new ArrayList<BotTask>(checkedIdSet.size());
+            Set<Long> checkedIdSet = Sets.newHashSet(form.getIds());
+            List<BotTask> tasksToDelete = Lists.newArrayList();
+            List<BotTask> tasksToUpdate = Lists.newArrayList();
             for (BotTask task : tasks) {
                 if (!checkedIdSet.contains(task.getId())) {
-                    removedTasks.add(task);
+                    tasksToDelete.add(task);
                 } else {
-                    BotTasksForm.BotTaskForm updatedTask = tasksForm.getBotTaskForm(task.getId());
+                    BotTasksForm.BotTaskForm updatedTask = form.getBotTaskForm(task.getId());
                     task.setName(updatedTask.getName());
-                    task.setClazz(updatedTask.getHandler());
+                    if (TaskHandlerClassesInformation.isValid(updatedTask.getHandler())) {
+                        task.setTaskHandlerClassName(updatedTask.getHandler());
+                    }
                     task.setConfiguration(updatedTask.getConfigFile().getFileData());
-                    updatedTasks.add(task);
+                    tasksToUpdate.add(task);
                 }
             }
-
-            for (BotTask task : removedTasks) {
-                botsService.remove(subject, task);
+            for (BotTask task : tasksToDelete) {
+                botService.removeBotTask(subject, task.getId());
             }
-
-            for (BotTask task : updatedTasks) {
-                botsService.update(subject, task);
+            for (BotTask task : tasksToUpdate) {
+                botService.updateBotTask(subject, task);
             }
-
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
-
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
-
-        return new ActionForward("/bot.do?botID=" + tasksForm.getId());
+        return new ActionForward("/bot.do?botID=" + form.getId());
     }
 }

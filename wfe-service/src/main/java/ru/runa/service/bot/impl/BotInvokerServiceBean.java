@@ -17,7 +17,6 @@
  */
 package ru.runa.service.bot.impl;
 
-import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,16 +24,13 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.bot.BotInvokerService;
+import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.interceptors.EjbExceptionSupport;
-import ru.runa.wfe.bot.BotInvokerException;
-import ru.runa.wfe.bot.invoker.BotInvoker;
 import ru.runa.wfe.bot.invoker.BotInvokerFactory;
 
 @Stateless
@@ -42,7 +38,6 @@ import ru.runa.wfe.bot.invoker.BotInvokerFactory;
 @Interceptors({ EjbExceptionSupport.class })
 public class BotInvokerServiceBean implements BotInvokerService {
     private static final Log log = LogFactory.getLog(BotInvokerServiceBean.class);
-
     private transient static Timer timer;
 
     @Override
@@ -73,30 +68,17 @@ public class BotInvokerServiceBean implements BotInvokerService {
     }
 
     @Override
-    public void invokeBots() throws BotInvokerException {
-        BotInvoker botIvoker = BotInvokerFactory.getBotInvoker();
-        URL confFile = BotInvoker.class.getResource(BotInvoker.DEFAULT_CONFIGURATION_PATH);
-        botIvoker.init(confFile == null ? null : confFile.toString());
-        botIvoker.invokeBots();
+    public void invokeBots() {
+        BotInvokerFactory.getBotInvoker().invokeBots();
     }
 
     private static class IvokerTimerTask extends TimerTask {
-        private BotInvokerService service;
-
-        public IvokerTimerTask() {
-            try {
-                InitialContext initialContext = new InitialContext();
-                service = (BotInvokerService) initialContext.lookup("BotInvokerService/local");
-            } catch (NamingException e) {
-                throw new ExceptionInInitializerError(e);
-            }
-        }
 
         @Override
         public void run() {
             try {
                 log.debug("Invoking bots...");
-                service.invokeBots();
+                DelegateFactory.getBotInvokerService().invokeBots();
             } catch (Throwable th) {
                 log.error("Unable to invoke bots", th);
             }

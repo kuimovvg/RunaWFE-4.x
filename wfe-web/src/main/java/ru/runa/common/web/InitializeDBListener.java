@@ -13,13 +13,9 @@ public class InitializeDBListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
-        try {
-            log.info("initializing database");
-            DelegateFactory.getInitializerService().init(false);
-            log.info("initialization done");
-        } catch (RuntimeException e) {
-            log.fatal("initialization failed", e);
-        }
+        log.info("initializing database");
+        DelegateFactory.getInitializerService().init(false);
+        log.info("initialization done");
     }
 
     @Override

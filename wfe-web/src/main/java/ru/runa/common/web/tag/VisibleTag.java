@@ -56,7 +56,8 @@ public abstract class VisibleTag extends TagSupport {
     }
 
     /**
-     * Returns <code>true</code>(dafault) if tag content should be displayed, or <code>false</code> otherwise.
+     * Returns <code>true</code>(dafault) if tag content should be displayed, or
+     * <code>false</code> otherwise.
      */
     protected boolean isVisible() throws JspException {
         return true;
@@ -100,7 +101,7 @@ public abstract class VisibleTag extends TagSupport {
     }
 
     protected void handleException(Exception e) throws JspException {
-        log.warn(e.getMessage(), e);
+        log.warn("visibleTag", e);
         throw new JspException(e);
     }
 }

@@ -17,7 +17,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotTask;
 
 import com.google.common.base.Charsets;
@@ -26,7 +26,8 @@ import com.google.common.base.Charsets;
  * 
  * @author riven
  * 
- * @struts:action path="/update_tasks_handler_conf" name="botTasksForm" validate="true" input = "/WEB-INF/wf/bot.jsp"
+ * @struts:action path="/update_tasks_handler_conf" name="botTasksForm"
+ *                validate="true" input = "/WEB-INF/wf/bot.jsp"
  * 
  */
 public class UpdateTaskHandlerConfiguration extends Action {
@@ -38,7 +39,7 @@ public class UpdateTaskHandlerConfiguration extends Action {
         ActionMessages errors = new ActionMessages();
         IdForm idForm = (IdForm) form;
 
-        BotsService botsService = DelegateFactory.getBotsService();
+        BotService botService = DelegateFactory.getBotService();
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
 
         try {
@@ -48,12 +49,9 @@ public class UpdateTaskHandlerConfiguration extends Action {
             if (!Native2AsciiHelper.isXMLfile(parameter)) {
                 configuration = Native2AsciiHelper.nativeToAscii(parameter).getBytes(Charsets.UTF_8);
             }
-
-            BotTask botTask = new BotTask();
-            botTask.setId(botTaskId);
-            botTask = botsService.getBotTask(subject, botTask);
+            BotTask botTask = botService.getBotTask(subject, botTaskId);
             botTask.setConfiguration(configuration);
-            botsService.update(subject, botTask);
+            botService.updateBotTask(subject, botTask);
 
             PrintWriter out = response.getWriter();
             response.setContentType("text/xml");

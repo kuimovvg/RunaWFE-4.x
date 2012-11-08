@@ -20,7 +20,6 @@ package ru.runa.wf.web.html;
 import java.util.List;
 
 import javax.security.auth.Subject;
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
@@ -58,7 +57,7 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
     }
 
     @Override
-    public TR buildNext() throws JspException {
+    public TR buildNext() {
         WfVariable wfVariable = wfVariables.get(idx);
         Object value = wfVariable.getValue();
         TR tr = new TR();

@@ -30,33 +30,32 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
-import ru.runa.wfe.bot.BotStation;
+import ru.runa.service.wf.BotService;
 
 /**
  * User: stanley Date: 08.06.2008 Time: 19:05:07
  * 
- * @struts:action path="/delete_bot_station" name="idsForm" validate="true" input = "/WEB-INF/wf/configure_bot_station.jsp"
- * @struts.action-forward name="success" path="/configure_bot_station.do" redirect = "true"
- * @struts.action-forward name="failure" path="/delete_bot_station.do" redirect = "true"
+ * @struts:action path="/delete_bot_station" name="idsForm" validate="true"
+ *                input = "/WEB-INF/wf/configure_bot_station.jsp"
+ * @struts.action-forward name="success" path="/configure_bot_station.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/delete_bot_station.do" redirect
+ *                        = "true"
  */
 public class DeleteBotStationAction extends Action {
     public static final String DELETE_BOT_STATION_ACTION_PATH = "/delete_bot_station";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         IdsForm idsForm = (IdsForm) form;
         Long[] botStationToDeleteIds = idsForm.getIds();
         if (botStationToDeleteIds.length == 0) {
             return mapping.findForward(Resources.FORWARD_SUCCESS);
         }
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-        BotsService botsService = DelegateFactory.getBotsService();
-        BotStation botStationForDelete;
+        BotService botService = DelegateFactory.getBotService();
         for (Long botStationId : botStationToDeleteIds) {
-            botStationForDelete = new BotStation(botStationId);
-            botStationForDelete = botsService.getBotStation(subject, botStationForDelete);
-            botsService.remove(subject, botStationForDelete);
+            botService.removeBotStation(subject, botStationId);
         }
         return mapping.findForward(Resources.FORWARD_SUCCESS);
     }

@@ -25,6 +25,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -40,11 +41,11 @@ public class BotStation implements Identifiable {
     public static final BotStation INSTANCE = new BotStation(0L);
 
     private Long id;
+    private Long version;
     private String name;
     private String address;
-    private String bsUser;
-    private String bsPass;
-    private Long version;
+    private String username;
+    private String password;
 
     public BotStation() {
     }
@@ -81,6 +82,16 @@ public class BotStation implements Identifiable {
         this.id = id;
     }
 
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     @Column(name = "NAME", unique = true, nullable = false)
     public String getName() {
         return name;
@@ -99,30 +110,22 @@ public class BotStation implements Identifiable {
         this.address = address;
     }
 
-    @Column(name = "BS_USER")
-    public String getBsUser() {
-        return bsUser;
+    @Column(name = "USERNAME")
+    public String getUsername() {
+        return username;
     }
 
-    public void setBsUser(String bsUser) {
-        this.bsUser = bsUser;
+    public void setUsername(String bsUser) {
+        username = bsUser;
     }
 
-    @Column(name = "BS_PASS")
-    public String getBsPass() {
-        return bsPass;
+    @Column(name = "PASSWORD")
+    public String getPassword() {
+        return password;
     }
 
-    public void setBsPass(String bsPass) {
-        this.bsPass = bsPass;
+    public void setPassword(String bsPass) {
+        password = bsPass;
     }
 
-    @Column(name = "VERSION")
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
 }

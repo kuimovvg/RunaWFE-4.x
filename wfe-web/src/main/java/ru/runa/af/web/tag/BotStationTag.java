@@ -2,8 +2,6 @@ package ru.runa.af.web.tag;
 
 import javax.servlet.jsp.JspException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -15,7 +13,6 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.security.AuthenticationException;
@@ -26,8 +23,7 @@ import ru.runa.wfe.security.AuthorizationException;
  * @jsp.tag name = "botStationTag" body-content = "JSP"
  */
 public class BotStationTag extends TitledFormTag {
-    private static final long serialVersionUID = 1920713038009470026L;
-    private static final Log log = LogFactory.getLog(BotStationTag.class);
+    private static final long serialVersionUID = 1L;
 
     private Long botStationID;
 
@@ -44,37 +40,24 @@ public class BotStationTag extends TitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
-        BotStation botStation = findBotStation();
-        if (botStation == null) {
-            throw new JspException("botStation not found by id " + botStationID);
-        }
+        BotStation botStation = DelegateFactory.getBotService().getBotStation(botStationID);
         Table table = new Table();
-        ActorSelectTD actorSelect = new ActorSelectTD(getSubject(), BotStationForm.BOT_STATION_NAME, botStation.getName());
+        Input nameInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_NAME, botStation.getName());
         String address = botStation.getAddress() != null ? botStation.getAddress() : "";
         Input botStationAddressInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_RMI_ADDRESS, address);
 
-        Input hiddenBotStationID = new Input(Input.HIDDEN, BotStationForm.BOT_STATION_ID, botStationID);
+        Input hiddenBotStationID = new Input(Input.HIDDEN, BotStationForm.BOT_STATION_ID, String.valueOf(botStationID));
         tdFormElement.addElement(hiddenBotStationID);
 
         TR tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)));
-        tr.addElement(actorSelect);
+        tr.addElement(nameInput);
         table.addElement(tr);
         tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)));
         tr.addElement(new TD(botStationAddressInput));
         table.addElement(tr);
         tdFormElement.addElement(table);
-    }
-
-    private BotStation findBotStation() {
-        BotsService botsService = DelegateFactory.getBotsService();
-        try {
-            return botsService.getBotStation(getSubject(), new BotStation(botStationID));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return null;
     }
 
     @Override

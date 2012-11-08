@@ -62,14 +62,14 @@ public class WfeScriptForBotStations extends WfeScriptRunner {
         rootElement.setAttribute("xsi:schemaLocation", "http://runa.ru/xml workflowScript.xsd");
         script.appendChild(rootElement);
         Element createBotElement = script.createElement("createBot");
-        createBotElement.setAttribute(NAME_ATTRIBUTE_NAME, bot.getWfeUser());
+        createBotElement.setAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
         createBotElement.setAttribute(PASSWORD_ATTRIBUTE_NAME, "");
         createBotElement.setAttribute(STARTTIMEOUT_ATTRIBUTE_NAME, "" + bot.getLastInvoked());
         rootElement.appendChild(createBotElement);
 
         if (tasks.size() > 0) {
             Element removeTasks = script.createElement("removeConfigurationsFromBot");
-            removeTasks.setAttribute(NAME_ATTRIBUTE_NAME, bot.getWfeUser());
+            removeTasks.setAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
             for (BotTask task : tasks) {
                 Element taskElement = script.createElement("botConfiguration");
                 taskElement.setAttribute(NAME_ATTRIBUTE_NAME, task.getName());
@@ -77,11 +77,11 @@ public class WfeScriptForBotStations extends WfeScriptRunner {
             }
             rootElement.appendChild(removeTasks);
             Element addTasks = script.createElement("addConfigurationsToBot");
-            addTasks.setAttribute(NAME_ATTRIBUTE_NAME, bot.getWfeUser());
+            addTasks.setAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
             for (BotTask task : tasks) {
                 Element taskElement = script.createElement("botConfiguration");
                 taskElement.setAttribute(NAME_ATTRIBUTE_NAME, task.getName());
-                taskElement.setAttribute(HANDLER_ATTRIBUTE_NAME, task.getClazz());
+                taskElement.setAttribute(HANDLER_ATTRIBUTE_NAME, task.getTaskHandlerClassName());
                 if (task.getConfiguration() != null) {
                     taskElement.setAttribute(CONFIGURATION_STRING_ATTRIBUTE_NAME, task.getName() + ".conf");
                 }

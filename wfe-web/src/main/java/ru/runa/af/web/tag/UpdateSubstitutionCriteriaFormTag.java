@@ -23,8 +23,6 @@ import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.Element;
 import org.apache.ecs.Entities;
 import org.apache.ecs.html.A;
@@ -58,9 +56,7 @@ import ru.runa.wfe.ss.SubstitutionCriteria;
  * @jsp.tag name = "updateSubstitutionCriteriaForm" body-content = "JSP"
  */
 public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
-
-    private static final Log log = LogFactory.getLog(UpdateSubstitutionCriteriaFormTag.class);
-    private static final long serialVersionUID = 9096797376521541599L;
+    private static final long serialVersionUID = 1L;
     private SubstitutionCriteria substitutionCriteria;
 
     @Override
@@ -92,7 +88,6 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
             SubstitutionTableBuilder builder = new SubstitutionTableBuilder(pageContext);
             tdFormElement.addElement(builder.buildTable());
         } catch (Exception e) {
-            log.error("", e);
             tdFormElement.addElement(e.getMessage());
         }
     }
@@ -110,13 +105,9 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
 
     @Override
     protected String getTitle() {
-        try {
-            SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
-            if (getIdentifiableId() != 0) {
-                substitutionCriteria = substitutionService.getSubstitutionCriteria(getSubject(), getIdentifiableId());
-            }
-        } catch (Exception e) {
-            log.error("", e);
+        SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+        if (getIdentifiableId() != 0) {
+            substitutionCriteria = substitutionService.getSubstitutionCriteria(getSubject(), getIdentifiableId());
         }
         return Messages.getMessage("substitutioncriteria.edit.title", pageContext);
     }

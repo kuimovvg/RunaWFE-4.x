@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
@@ -50,22 +48,22 @@ public class StartProcessTDBuilder extends BaseTDBuilder {
     }
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
-        WfDefinition pd = (WfDefinition) object;
+    public TD build(Object object, Env env) {
+        WfDefinition definition = (WfDefinition) object;
         ConcreteElement startLink;
 
         String href;
         if (isEnabled(object, env)) {
-            if (pd.hasStartImage()) {
-                href = Commons.getActionUrl(StartImageProcessAction.ACTION_PATH, IdForm.ID_INPUT_NAME, pd.getId(), env.getPageContext(),
+            if (definition.hasStartImage()) {
+                href = Commons.getActionUrl(StartImageProcessAction.ACTION_PATH, IdForm.ID_INPUT_NAME, definition.getId(), env.getPageContext(),
                         PortletUrlType.Resource);
             } else {
                 href = Commons.getUrl(WebResources.START_PROCESS_IMAGE, env.getPageContext(), PortletUrlType.Resource);
             }
         } else {
-            if (pd.hasDisabledImage()) {
-                href = Commons.getActionUrl(StartDisabledImageProcessAction.ACTION_PATH, IdForm.ID_INPUT_NAME, pd.getId(), env.getPageContext(),
-                        PortletUrlType.Resource);
+            if (definition.hasDisabledImage()) {
+                href = Commons.getActionUrl(StartDisabledImageProcessAction.ACTION_PATH, IdForm.ID_INPUT_NAME, definition.getId(),
+                        env.getPageContext(), PortletUrlType.Resource);
             } else {
                 href = Commons.getUrl(WebResources.START_PROCESS_DISABLED_IMAGE, env.getPageContext(), PortletUrlType.Resource);
             }
@@ -76,21 +74,17 @@ public class StartProcessTDBuilder extends BaseTDBuilder {
         startImg.setTitle(startMessage);
         startImg.setBorder(0);
         if (isEnabled(object, env)) {
-            String url = new DefinitionUrlStrategy(env.getPageContext()).getUrl(WebResources.ACTION_MAPPING_START_PROCESS, pd);
+            String url = new DefinitionUrlStrategy(env.getPageContext()).getUrl(WebResources.ACTION_MAPPING_START_PROCESS, definition);
             startLink = new A(url).addElement(startImg);
             if (ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_PARAMETER)
                     || ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER)) {
                 DefinitionService definitionService = DelegateFactory.getDefinitionService();
-                try {
-                    String actionParameter = null;
-                    if (!(definitionService.getStartInteraction(env.getSubject(), pd.getId()).hasForm() || definitionService
-                            .getOutputTransitionNames(env.getSubject(), pd.getId(), null).size() > 1)) {
-                        actionParameter = ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER;
-                        startLink.addAttribute("onclick",
-                                ConfirmationPopupHelper.getInstance().getConfirmationPopupCodeHTML(actionParameter, env.getPageContext()));
-                    }
-                } catch (Exception e) {
-                    throw new JspException(e);
+                String actionParameter = null;
+                if (!(definitionService.getStartInteraction(env.getSubject(), definition.getId()).hasForm() || definitionService
+                        .getOutputTransitionNames(env.getSubject(), definition.getId(), null).size() > 1)) {
+                    actionParameter = ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER;
+                    startLink.addAttribute("onclick",
+                            ConfirmationPopupHelper.getInstance().getConfirmationPopupCodeHTML(actionParameter, env.getPageContext()));
                 }
             }
         } else {
