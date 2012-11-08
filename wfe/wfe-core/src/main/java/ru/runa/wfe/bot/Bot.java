@@ -28,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -42,9 +43,10 @@ public class Bot implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+    private Long version;
     private BotStation botStation;
-    private String wfeUser;
-    private String wfePass;
+    private String username;
+    private String password;
     private Long maxPeriod;
     private Long lastInvoked;
 
@@ -58,6 +60,16 @@ public class Bot implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @ManyToOne(targetEntity = BotStation.class)
@@ -75,26 +87,27 @@ public class Bot implements Serializable {
     /**
      * Username for authentification on WFE server.
      */
-    @Column(name = "WFE_USER")
-    public String getWfeUser() {
-        return wfeUser;
+    @Column(name = "USERNAME")
+    public String getUsername() {
+        return username;
     }
 
-    public void setWfeUser(String wfeUser) {
-        this.wfeUser = wfeUser;
+    public void setUsername(String wfeUser) {
+        this.username = wfeUser;
     }
 
-    @Column(name = "WFE_PASS")
-    public String getWfePass() {
-        return wfePass;
+    @Column(name = "PASSWORD")
+    public String getPassword() {
+        return password;
     }
 
-    public void setWfePass(String wfePass) {
-        this.wfePass = wfePass;
+    public void setPassword(String wfePass) {
+        this.password = wfePass;
     }
 
     /**
-     * Used for periodic bot invocation. If set to 0, periodic invocation on this bot is disabled.
+     * Used for periodic bot invocation. If set to 0, periodic invocation on
+     * this bot is disabled.
      */
     @Column(name = "MAX_PERIOD")
     public Long getMaxPeriod() {
@@ -106,7 +119,8 @@ public class Bot implements Serializable {
     }
 
     /**
-     * Last time when this bot was invoked successfully. Used for periodic bot invocation.
+     * Last time when this bot was invoked successfully. Used for periodic bot
+     * invocation.
      */
     @Column(name = "LAST_INVOKED")
     public Long getLastInvoked() {

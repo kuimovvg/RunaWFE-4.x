@@ -24,7 +24,6 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -37,11 +36,10 @@ import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.form.TaskIdForm;
 
 /**
- * @struts:action path="/processGraphImage" name="taskIdForm" validate="true" input = "/WEB-INF/wf/manage_process.jsp"
+ * @struts:action path="/processGraphImage" name="taskIdForm" validate="true"
+ *                input = "/WEB-INF/wf/manage_process.jsp"
  */
 public class ProcessGraphImageAction extends Action {
-
-    protected static final Log log = LogFactory.getLog(ProcessGraphImageAction.class);
 
     public static final String ACTION_PATH = "/processGraphImage";
 
@@ -57,7 +55,7 @@ public class ProcessGraphImageAction extends Action {
             os.write(diagramBytes);
             os.flush();
         } catch (Exception e) {
-            log.warn(e.getMessage(), e);
+            LogFactory.getLog(getClass()).warn(e.getMessage(), e);
         }
         return null;
     }

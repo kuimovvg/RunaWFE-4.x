@@ -17,13 +17,11 @@
  */
 package ru.runa.common.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TR;
 
 /**
  * Created on 10.11.2004
  */
 public interface HeaderBuilder {
-    public TR build() throws JspException;
+    public TR build();
 }

@@ -20,14 +20,9 @@ package ru.runa.common.web.html.format;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 import ru.runa.wfe.presentation.filter.FilterCriteriaFactory;
-import ru.runa.wfe.presentation.filter.FilterFormatException;
 
 /**
  * 
@@ -35,27 +30,21 @@ import ru.runa.wfe.presentation.filter.FilterFormatException;
  * 
  */
 public class FilterParserImpl implements FiltersParser {
-    private static final Log log = LogFactory.getLog(FilterParserImpl.class);
 
     private FilterCriteria createFilterCriteria(String fieldType) {
         return FilterCriteriaFactory.getFilterCriteria(fieldType);
     }
 
-    public Map<Integer, FilterCriteria> parse(BatchPresentation batchPresentation, Map<Integer, String[]> fieldsToFilterTemplatedMap)
-            throws FilterFormatException {
+    @Override
+    public Map<Integer, FilterCriteria> parse(BatchPresentation batchPresentation, Map<Integer, String[]> fieldsToFilterTemplatedMap) {
         Map<Integer, FilterCriteria> newFilteredFieldsMap = new HashMap<Integer, FilterCriteria>();
-        try {
-            for (Map.Entry<Integer, String[]> entry : fieldsToFilterTemplatedMap.entrySet()) {
-                int fieldIndex = entry.getKey();
-                String[] templates = entry.getValue();
-                String fieldType = batchPresentation.getAllFields()[fieldIndex].fieldType;
-                FilterCriteria filterCriteria = createFilterCriteria(fieldType);
-                filterCriteria.applyFilterTemplates(templates);
-                newFilteredFieldsMap.put(fieldIndex, filterCriteria);
-            }
-        } catch (IllegalArgumentException e) {
-            log.error(e);
-            throw new InternalApplicationException(e);
+        for (Map.Entry<Integer, String[]> entry : fieldsToFilterTemplatedMap.entrySet()) {
+            int fieldIndex = entry.getKey();
+            String[] templates = entry.getValue();
+            String fieldType = batchPresentation.getAllFields()[fieldIndex].fieldType;
+            FilterCriteria filterCriteria = createFilterCriteria(fieldType);
+            filterCriteria.applyFilterTemplates(templates);
+            newFilteredFieldsMap.put(fieldIndex, filterCriteria);
         }
         return newFilteredFieldsMap;
     }

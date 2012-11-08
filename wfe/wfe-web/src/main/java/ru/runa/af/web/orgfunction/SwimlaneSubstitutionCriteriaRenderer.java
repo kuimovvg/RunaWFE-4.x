@@ -23,38 +23,32 @@ import java.util.Set;
 
 import javax.security.auth.Subject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.os.ParamRenderer;
-import ru.runa.wfe.security.AuthenticationException;
 
 public class SwimlaneSubstitutionCriteriaRenderer implements ParamRenderer {
 
-    private static final Log log = LogFactory.getLog(SwimlaneSubstitutionCriteriaRenderer.class);
-
+    @Override
     public boolean hasJSEditor() {
         return true;
     }
 
+    @Override
     public List<String[]> loadJSEditorData(Subject subject) {
         List<String[]> result = new ArrayList<String[]>();
-        try {
-            Set<String> swimlanes = DelegateFactory.getDefinitionService().getAllSwimlanesNamesFromAllDefinitions(subject);
-            for (String swimlaneName : swimlanes) {
-                result.add(new String[] { swimlaneName, swimlaneName });
-            }
-        } catch (AuthenticationException e) {
-            log.error("", e);
+        Set<String> swimlanes = DelegateFactory.getDefinitionService().getAllSwimlanesNamesFromAllDefinitions(subject);
+        for (String swimlaneName : swimlanes) {
+            result.add(new String[] { swimlaneName, swimlaneName });
         }
         return result;
     }
 
+    @Override
     public String getDisplayLabel(Subject subject, String value) {
         return value;
     }
 
+    @Override
     public boolean isValueValid(Subject subject, String value) {
         return value.trim().length() > 0;
     }

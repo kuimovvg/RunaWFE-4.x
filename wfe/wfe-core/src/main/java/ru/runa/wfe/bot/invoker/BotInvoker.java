@@ -17,16 +17,14 @@
  */
 package ru.runa.wfe.bot.invoker;
 
-import ru.runa.wfe.bot.BotInvokerException;
-
-
 /**
- * Created on 22.03.2005
+ * Invoke bots on this server.
+ * 
+ * @author dofs
+ * @since 2.0
  */
 public interface BotInvoker {
-    public final static String DEFAULT_CONFIGURATION_PATH = "/bots.xml";
 
     public void invokeBots();
 
-    public void init(String configuration) throws BotInvokerException;
 }

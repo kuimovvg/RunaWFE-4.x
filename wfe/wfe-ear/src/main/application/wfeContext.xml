@@ -176,6 +176,15 @@
 	<bean class="ru.runa.wfe.audit.dao.AuditDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
+	<bean class="ru.runa.wfe.bot.dao.BotStationDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	<bean class="ru.runa.wfe.bot.dao.BotDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	<bean class="ru.runa.wfe.bot.dao.BotTaskDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
 	<bean class="ru.runa.wfe.definition.dao.DefinitionDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
@@ -201,9 +210,6 @@
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
 	<bean class="ru.runa.wfe.user.dao.ProfileDAO">
-		<property name="hibernateTemplate" ref="hibernateTemplate" />
-	</bean>
-	<bean class="ru.runa.wfe.bot.dao.BotDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
 	<bean class="ru.runa.wfe.commons.dao.InitializerDAO">

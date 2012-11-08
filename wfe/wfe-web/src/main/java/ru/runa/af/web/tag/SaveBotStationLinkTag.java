@@ -31,8 +31,7 @@ import ru.runa.wfe.bot.BotStationPermission;
  * @jsp.tag name = "saveBotStationLink" body-content = "empty"
  */
 public class SaveBotStationLinkTag extends LinkTag {
-
-    private static final long serialVersionUID = 9038757445617109322L;
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected boolean isLinkEnabled() throws JspException {

@@ -24,19 +24,21 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ResourceCommons;
 
 /**
+ * Bot station configuration.
  * 
- * Created on 23.11.2006
- *
+ * @author dofs
+ * @since 4.0
  */
-public class BotLoggerResources extends ResourceCommons {
+public class BotStationResources extends ResourceCommons {
+    private static final String BUNDLE = "botstation";
 
-    private static final String BUNDLE = "botlogger";
-
-    private static final String LOGGER_PROPERTY = "bot.logger.class";
+    private BotStationResources() {
+        super(BUNDLE);
+    }
 
     public static BotLogger createBotLogger() {
         try {
-            String loggerClassName = readPropertyIfExist(LOGGER_PROPERTY, BUNDLE);
+            String loggerClassName = readPropertyIfExist("bot.logger.class", BUNDLE);
             if (loggerClassName == null) {
                 return null;
             }
@@ -48,7 +50,16 @@ public class BotLoggerResources extends ResourceCommons {
         }
     }
 
-    private BotLoggerResources() {
-        super(BUNDLE);
+    public static String getBotStationName() {
+        return readProperty("botstation.name", BUNDLE);
     }
+
+    public static int getThreadPoolSize() {
+        try {
+            return Integer.parseInt(readPropertyIfExist("thread.pool.size", BUNDLE, "1"));
+        } catch (Exception e) {
+            return 1;
+        }
+    }
+
 }

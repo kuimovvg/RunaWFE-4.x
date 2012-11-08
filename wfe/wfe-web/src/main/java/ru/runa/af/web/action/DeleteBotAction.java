@@ -29,13 +29,13 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
-import ru.runa.wfe.bot.Bot;
+import ru.runa.service.wf.BotService;
 
 /**
  * @author petrmikheev
  * 
- * @struts:action path="/delete_bot" name="idsForm" validate="true" input = "/WEB-INF/wf/bot_station.jsp"
+ * @struts:action path="/delete_bot" name="idsForm" validate="true" input =
+ *                "/WEB-INF/wf/bot_station.jsp"
  */
 public class DeleteBotAction extends Action {
     public static final String DELETE_BOT_ACTION_PATH = "/delete_bot";
@@ -48,13 +48,9 @@ public class DeleteBotAction extends Action {
             return new ActionForward("/bot_station.do?botStationID=" + idsForm.getId());
         }
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-        BotsService botsService = DelegateFactory.getBotsService();
-        Bot botForDelete;
+        BotService botService = DelegateFactory.getBotService();
         for (Long botId : botToDeleteIds) {
-            botForDelete = new Bot();
-            botForDelete.setId(botId);
-            botForDelete = botsService.getBot(subject, botForDelete);
-            botsService.remove(subject, botForDelete);
+            botService.removeBot(subject, botId);
         }
         return new ActionForward("/bot_station.do?botStationID=" + idsForm.getId());
     }

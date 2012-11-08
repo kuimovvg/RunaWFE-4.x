@@ -17,8 +17,6 @@
  */
 package ru.runa.common.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TR;
 
 /**
@@ -27,7 +25,7 @@ import org.apache.ecs.html.TR;
  */
 public interface RowBuilder {
 
-    public boolean hasNext() throws JspException;
+    public boolean hasNext();
 
-    public TR buildNext() throws JspException;
+    public TR buildNext();
 }

@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
@@ -40,7 +39,7 @@ import ru.runa.af.web.action.BotTaskConfigurationFileDownLoader;
 import ru.runa.af.web.action.UpdateBotTasksAction;
 import ru.runa.af.web.action.UpdateTaskHandlerConfiguration;
 import ru.runa.af.web.form.BotTasksForm;
-import ru.runa.af.web.system.TaskHandlerClassesInformationSingleton;
+import ru.runa.af.web.system.TaskHandlerClassesInformation;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
@@ -51,8 +50,7 @@ import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
-import ru.runa.wfe.bot.Bot;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.bot.BotTask;
@@ -96,14 +94,12 @@ public class BotTaskListTag extends TitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
         tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botID)));
-        BotsService botsService = DelegateFactory.getBotsService();
+        BotService botService = DelegateFactory.getBotService();
         getForm().setEncType(Form.ENC_UPLOAD);
         try {
-            Bot bot = new Bot();
-            bot.setId(botID);
             AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
             boolean disabled = !authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-            List<BotTask> tasks = botsService.getBotTaskList(getSubject(), bot);
+            List<BotTask> tasks = botService.getBotTasks(getSubject(), botID);
             int nameSize = 1;
             for (BotTask botTask : tasks) {
                 if (botTask.getName().length() > nameSize) {
@@ -202,23 +198,20 @@ public class BotTaskListTag extends TitledFormTag {
 
         private TD buildHandlerTD(BotTask task) {
             TD resTD = new TD();
-            TaskHandlerClassesInformationSingleton singleton = TaskHandlerClassesInformationSingleton.getInstance();
-            SortedSet<String> taskHandlerImplClasses = singleton.getTaskHandlerImplementationClasses();
             resTD.setClass(Resources.CLASS_LIST_TABLE_TD);
             Select select = new Select();
             select.setName(BotTasksForm.BOT_TASK_INPUT_NAME_PREFIX + task.getId() + BotTasksForm.HANDLER_INPUT_NAME);
             select.setDisabled(disabled);
-            String taskHandlerClazz = task.getClazz();
+            String taskHandlerClazz = task.getTaskHandlerClassName();
             boolean isHandlerPresent = false;
-            for (Iterator<String> iterator1 = taskHandlerImplClasses.iterator(); iterator1.hasNext();) {
-                String classCanonicalName = iterator1.next();
+            for (String className : TaskHandlerClassesInformation.getClassNames()) {
                 Option option = new Option();
-                if (classCanonicalName.equalsIgnoreCase(taskHandlerClazz)) {
+                if (className.equalsIgnoreCase(taskHandlerClazz)) {
                     option.setSelected(true);
                     isHandlerPresent = true;
                 }
-                option.setValue(classCanonicalName);
-                option.addElement(classCanonicalName);
+                option.setValue(className);
+                option.addElement(className);
                 select.addElement(option);
             }
             if (!isHandlerPresent) {
@@ -235,7 +228,7 @@ public class BotTaskListTag extends TitledFormTag {
 
         private TD buildSelectTD(BotTask task) {
             TD checkboxTD = new TD();
-            Input checkBoxInput = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, task.getId());
+            Input checkBoxInput = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, String.valueOf(task.getId()));
             checkBoxInput.setChecked(true);
             checkBoxInput.setDisabled(disabled);
             checkboxTD.setClass(Resources.CLASS_LIST_TABLE_TD);

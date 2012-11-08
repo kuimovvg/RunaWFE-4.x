@@ -14,11 +14,12 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.DeployBotForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.security.AuthenticationException;
 
 /**
- * @struts:action path="/deploy_bot_station" name="deployBotForm" validate="false"
+ * @struts:action path="/deploy_bot_station" name="deployBotForm"
+ *                validate="false"
  */
 public class DeployBotStationAction extends Action {
     public static final String ACTION_PATH = "/deploy_bot_station";
@@ -30,8 +31,8 @@ public class DeployBotStationAction extends Action {
         DeployBotForm fileForm = (DeployBotForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotsService botsService = DelegateFactory.getBotsService();
-            botsService.deployBotStation(subject, fileForm.getFile().getInputStream(), fileForm.isReplace());
+            BotService botService = DelegateFactory.getBotService();
+            botService.importBotStation(subject, fileForm.getFile().getFileData(), fileForm.isReplace());
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }

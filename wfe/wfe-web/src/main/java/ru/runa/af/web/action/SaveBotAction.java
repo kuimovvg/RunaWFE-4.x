@@ -17,14 +17,14 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
-import ru.runa.wfe.bot.BotDoesNotExistException;
 
 /**
  * @author petrmikheev
  * 
- * @struts:action path="/save_bot" name="idForm" validate="false" input = "/WEB-INF/wf/bot.jsp"
+ * @struts:action path="/save_bot" name="idForm" validate="false" input =
+ *                "/WEB-INF/wf/bot.jsp"
  */
 public class SaveBotAction extends Action {
 
@@ -36,20 +36,15 @@ public class SaveBotAction extends Action {
         IdForm idForm = (IdForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotsService botsService = DelegateFactory.getBotsService();
-            Bot bot = new Bot();
-            bot.setId(idForm.getId());
-            bot = botsService.getBot(subject, bot);
-            if (bot == null) {
-                throw new BotDoesNotExistException("with id " + idForm.getId());
-            }
-            response.setContentType("application/zip");
-
-            String fileName = bot.getWfeUser() + ".bot";
+            BotService botService = DelegateFactory.getBotService();
+            Bot bot = botService.getBot(subject, idForm.getId());
+            String fileName = bot.getUsername() + ".bot";
             fileName = HTMLUtils.encodeFileName(fileName, request.getHeader("User-Agent"));
+            byte[] archive = botService.exportBot(subject, bot);
+            response.setContentType("application/zip");
             response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\"");
             OutputStream out = response.getOutputStream();
-            botsService.saveBot(subject, bot, out);
+            out.write(archive);
             out.flush();
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);

@@ -17,7 +17,6 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,27 +25,25 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.BotStationForm;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 
 /**
  * @author petrmikheev
  * 
- * @struts:action path="/start_periodic_bots_invocation" name="botStationForm" validate="false" input = "/WEB-INF/wf/bot_station.jsp"
+ * @struts:action path="/start_periodic_bots_invocation" name="botStationForm"
+ *                validate="false" input = "/WEB-INF/wf/bot_station.jsp"
  */
 public class StartPeriodicBotsInvocationAction extends Action {
     public static final String START_PERIODIC_BOTS_INVOCATION = "/start_periodic_bots_invocation";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        long id = ((BotStationForm) form).getBotStationID();
-        Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-        BotsService botsService = DelegateFactory.getBotsService();
-        BotStation botStation = new BotStation(id);
-        botStation = botsService.getBotStation(subject, botStation);
+        Long id = ((BotStationForm) form).getBotStationID();
+        BotService botService = DelegateFactory.getBotService();
+        BotStation botStation = botService.getBotStation(id);
         DelegateFactory.getBotInvokerService(botStation.getAddress()).startPeriodicBotsInvocation();
         return new ActionForward("/bot_station.do?botStationID=" + id);
     }

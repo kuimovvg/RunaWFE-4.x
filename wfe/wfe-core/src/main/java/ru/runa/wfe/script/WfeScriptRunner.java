@@ -184,7 +184,8 @@ public class WfeScriptRunner {
                 Method method = this.getClass().getMethod(name, new Class[] { Element.class });
                 method.invoke(this, new Object[] { element });
             }
-            // HibernateSessionFactory.getSession().flush(); // TODO flushMode (PostgreSQL)
+            // HibernateSessionFactory.getSession().flush(); // TODO flushMode
+            // (PostgreSQL)
             log.info("Processing complete " + name + ".");
         } catch (Throwable e) {
             log.error("Script execution error", e);
@@ -910,18 +911,16 @@ public class WfeScriptRunner {
     public void createBotStation(Element element) throws Exception {
         String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
         String addr = element.getAttribute(ADDRESS_ATTRIBUTE_NAME);
-        BotStation botStation = new BotStation(name, addr);
-        botLogic.create(subject, botStation);
+        botLogic.createBotStation(subject, new BotStation(name, addr));
     }
 
     public void createBot(Element element) throws Exception {
-        String botStation = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
-        if (botStation == null || botStation.length() == 0) {
+        String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
+        if (botStationName == null || botStationName.length() == 0) {
             log.warn("BotStation name doesn`t specified");
             return;
         }
-        BotStation station = new BotStation(botStation);
-        station = botLogic.getBotStation(subject, station);
+        BotStation station = botLogic.getBotStationNotNull(subject, botStationName);
         createBotCommon(element, station);
     }
 
@@ -935,34 +934,27 @@ public class WfeScriptRunner {
             executorLogic.setPassword(subject, actor, pass);
         }
         Bot bot = new Bot();
-        bot.setWfeUser(name);
-        bot.setWfePass(pass);
-        if (timeout != null && !timeout.equals("")) {
+        bot.setBotStation(station);
+        bot.setUsername(name);
+        bot.setPassword(pass);
+        if (!Strings.isNullOrEmpty(timeout)) {
             bot.setLastInvoked(Long.parseLong(timeout));
         }
-        bot.setBotStation(station);
-        botLogic.create(subject, bot);
+        botLogic.createBot(subject, bot);
     }
 
     public void updateBot(Element element) throws Exception {
         String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
         String newName = element.getAttribute(NEW_NAME_ATTRIBUTE_NAME);
         String pass = element.getAttribute(PASSWORD_ATTRIBUTE_NAME);
-        String botStation = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
+        String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
         String timeout = element.getAttribute(STARTTIMEOUT_ATTRIBUTE_NAME);
-        Bot bot = new Bot();
-        bot.setWfeUser(name);
-        if (botStation != null) {
-            BotStation station = new BotStation(botStation);
-            station = botLogic.getBotStation(subject, station);
-            bot.setBotStation(station);
-        }
-        bot = botLogic.getBot(subject, bot);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), name);
         if (newName != null) {
-            bot.setWfeUser(newName);
+            bot.setUsername(newName);
         }
         if (pass != null) {
-            bot.setWfePass(pass);
+            bot.setPassword(pass);
         }
         if (timeout != null) {
             bot.setLastInvoked(Long.parseLong(timeout));
@@ -971,40 +963,34 @@ public class WfeScriptRunner {
         if (newBotStationName != null) {
             bot.getBotStation().setName(newBotStationName);
         }
-        botLogic.update(subject, bot);
+        botLogic.updateBot(subject, bot);
     }
 
     public void updateBotStation(Element element) throws Exception {
         String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
         String newName = element.getAttribute(NEW_NAME_ATTRIBUTE_NAME);
         String address = element.getAttribute(ADDRESS_ATTRIBUTE_NAME);
-        BotStation station = new BotStation(name);
-        station = botLogic.getBotStation(subject, station);
+        BotStation station = botLogic.getBotStationNotNull(subject, name);
         if (newName != null) {
             station.setName(newName);
         }
         if (address != null) {
             station.setAddress(address);
         }
-        botLogic.update(subject, station);
+        botLogic.updateBotStation(subject, station);
     }
 
     public void deleteBotStation(Element element) throws Exception {
         String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
-        BotStation botStation = new BotStation(name);
-        botLogic.remove(subject, botStation);
+        BotStation botStation = botLogic.getBotStationNotNull(subject, name);
+        botLogic.removeBotStation(subject, botStation.getId());
     }
 
     public void deleteBot(Element element) throws Exception {
         String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
-        Bot bot = new Bot();
-        bot.setWfeUser(name);
         String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
-        if (botStationName != null) {
-            BotStation bs = new BotStation(botStationName);
-            bot.setBotStation(botLogic.getBotStation(subject, bs));
-        }
-        botLogic.remove(subject, bot);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), name);
+        botLogic.removeBot(subject, bot.getId());
     }
 
     public void addPermissionsOnBotStations(Element element) throws Exception {
@@ -1019,14 +1005,9 @@ public class WfeScriptRunner {
         removePermissionOnIdentifiable(element, BotStation.INSTANCE);
     }
 
-    protected void addConfigurationsToBotCommon(Element element, BotStation station) throws Exception {
+    protected void addConfigurationsToBotCommon(Element element, BotStation botStation) throws Exception {
         String botName = element.getAttribute(NAME_ATTRIBUTE_NAME);
-        Bot bot = new Bot();
-        bot.setWfeUser(botName);
-        if (station != null) {
-            bot.setBotStation(station);
-        }
-        bot = botLogic.getBot(subject, bot);
+        Bot bot = botLogic.getBotNotNull(subject, botStation.getId(), botName);
         NodeList taskNodeList = element.getElementsByTagName(BOT_CONFIGURATION_ELEMENT_NAME);
         for (int i = 0; i < taskNodeList.getLength(); i++) {
             Element taskElement = (Element) taskNodeList.item(i);
@@ -1038,7 +1019,7 @@ public class WfeScriptRunner {
             if (handler == null) {
                 handler = "";
             }
-            task.setClazz(handler);
+            task.setTaskHandlerClassName(handler);
             String config = taskElement.getAttribute(CONFIGURATION_STRING_ATTRIBUTE_NAME);
             byte[] configuration;
             if (config == null || config.length() == 0) {
@@ -1056,7 +1037,7 @@ public class WfeScriptRunner {
             }
             log.info("adding bot configuration element: " + name + " with conf: " + config);
             task.setConfiguration(configuration);
-            botLogic.create(subject, task);
+            botLogic.createBotTask(subject, task);
         }
     }
 
@@ -1074,11 +1055,10 @@ public class WfeScriptRunner {
     }
 
     public void addConfigurationsToBot(Element element) throws Exception {
-        String botstationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
+        String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
         BotStation bs = null;
-        if (botstationName != null && botstationName.length() > 0) {
-            bs = new BotStation(botstationName);
-            bs = botLogic.getBotStation(subject, bs);
+        if (!Strings.isNullOrEmpty(botStationName)) {
+            bs = botLogic.getBotStationNotNull(subject, botStationName);
         }
         addConfigurationsToBotCommon(element, bs);
     }
@@ -1087,46 +1067,29 @@ public class WfeScriptRunner {
         String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
         BotStation bs = null;
         if (botStationName != null) {
-            bs = new BotStation(botStationName);
-            bs = botLogic.getBotStation(subject, bs);
+            bs = botLogic.getBotStationNotNull(subject, botStationName);
         }
         removeConfigurationsFromBotCommon(element, bs);
     }
 
-    public void removeConfigurationsFromBotCommon(Element element, BotStation botstation) throws Exception {
+    public void removeConfigurationsFromBotCommon(Element element, BotStation botStation) throws Exception {
         String botName = element.getAttribute(NAME_ATTRIBUTE_NAME);
-        Bot bot = new Bot();
-        bot.setWfeUser(botName);
-        if (botstation != null) {
-            bot.setBotStation(botstation);
-        }
-        bot = botLogic.getBot(subject, bot);
+        Bot bot = botLogic.getBotNotNull(subject, botStation.getId(), botName);
         NodeList taskNodeList = element.getElementsByTagName(BOT_CONFIGURATION_ELEMENT_NAME);
         for (int i = 0; i < taskNodeList.getLength(); i++) {
             Element taskElement = (Element) taskNodeList.item(i);
             String name = taskElement.getAttribute(NAME_ATTRIBUTE_NAME);
-            BotTask task = new BotTask();
-            task.setName(name);
-            task.setBot(bot);
-            botLogic.remove(subject, task);
+            BotTask task = botLogic.getBotTaskNotNull(subject, bot.getId(), name);
+            botLogic.removeBotTask(subject, task.getId());
         }
     }
 
     public void removeAllConfigurationsFromBot(Element element) throws Exception {
         String botName = element.getAttribute(NAME_ATTRIBUTE_NAME);
-        Bot bot = new Bot();
-        bot.setWfeUser(botName);
         String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
-        if (botStationName != null) {
-            BotStation bs = new BotStation(botStationName);
-            bot.setBotStation(botLogic.getBotStation(subject, bs));
-        }
-        bot = botLogic.getBot(subject, bot);
-        if (bot == null) {
-            log.warn("BotRunner " + botName + "doesn't exist");
-        }
-        for (BotTask task : botLogic.getBotTaskList(subject, bot)) {
-            botLogic.remove(subject, task);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), botName);
+        for (BotTask task : botLogic.getBotTasks(subject, bot.getId())) {
+            botLogic.removeBotTask(subject, task.getId());
         }
     }
 
@@ -1156,63 +1119,80 @@ public class WfeScriptRunner {
 
     /* @param operation: remove - 1; archiving - 2; retrieve from archive - 3 */
     private void operationWithOldProcesses(Element element, int operation) throws Exception {
-//        String prInstName = element.getAttribute(NAME_ATTRIBUTE_NAME);
-//        String prInstVersion = element.getAttribute(VERSION_ATTRIBUTE_NAME);
-//        String prInstId = element.getAttribute(ID_ATTRIBUTE_NAME);
-//        String prInstIdTill = element.getAttribute(ID_TILL_ATTRIBUTE_NAME);
-//        String prInstStartDate = element.getAttribute(START_DATE_ATTRIBUTE_NAME);
-//        String prInstEndDate = element.getAttribute(END_DATE_ATTRIBUTE_NAME);
-//        String prInstOnlyFinished = element.getAttribute(ONLY_FINISHED_ATTRIBUTE_NAME);
-//        String prInstDateInterval = element.getAttribute(DATE_INTERVAL_ATTRIBUTE_NAME);
-//        boolean onlyFinished = prInstOnlyFinished == null || prInstOnlyFinished.trim().length() == 0 ? true : Boolean
-//                .parseBoolean(prInstOnlyFinished);
-//        boolean dateInterval = prInstDateInterval == null || prInstDateInterval.trim().length() == 0 ? false : Boolean
-//                .parseBoolean(prInstDateInterval);
-//        int version = prInstVersion == null || prInstVersion.trim().length() == 0 ? 0 : Integer.parseInt(prInstVersion);
-//        Long id = Strings.isNullOrEmpty(prInstId) ? null : Long.parseLong(prInstId);
-//        Long idTill = Strings.isNullOrEmpty(prInstIdTill) ? null : Long.parseLong(prInstIdTill);
-//        Date startDate = null;
-//        Date finishDate = null;
-//        if (prInstId == null) {
-//            if (prInstStartDate == null && prInstEndDate == null) {
-//                return;
-//            }
-//        }
-//        if (prInstStartDate != null && prInstStartDate.trim().length() > 0) {
-//            startDate = CalendarUtil.convertToDate(prInstStartDate, CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
-//        }
-//        if (prInstEndDate != null && prInstEndDate.trim().length() > 0) {
-//            finishDate = CalendarUtil.convertToDate(prInstEndDate, CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
-//        }
+        // String prInstName = element.getAttribute(NAME_ATTRIBUTE_NAME);
+        // String prInstVersion = element.getAttribute(VERSION_ATTRIBUTE_NAME);
+        // String prInstId = element.getAttribute(ID_ATTRIBUTE_NAME);
+        // String prInstIdTill = element.getAttribute(ID_TILL_ATTRIBUTE_NAME);
+        // String prInstStartDate =
+        // element.getAttribute(START_DATE_ATTRIBUTE_NAME);
+        // String prInstEndDate = element.getAttribute(END_DATE_ATTRIBUTE_NAME);
+        // String prInstOnlyFinished =
+        // element.getAttribute(ONLY_FINISHED_ATTRIBUTE_NAME);
+        // String prInstDateInterval =
+        // element.getAttribute(DATE_INTERVAL_ATTRIBUTE_NAME);
+        // boolean onlyFinished = prInstOnlyFinished == null ||
+        // prInstOnlyFinished.trim().length() == 0 ? true : Boolean
+        // .parseBoolean(prInstOnlyFinished);
+        // boolean dateInterval = prInstDateInterval == null ||
+        // prInstDateInterval.trim().length() == 0 ? false : Boolean
+        // .parseBoolean(prInstDateInterval);
+        // int version = prInstVersion == null || prInstVersion.trim().length()
+        // == 0 ? 0 : Integer.parseInt(prInstVersion);
+        // Long id = Strings.isNullOrEmpty(prInstId) ? null :
+        // Long.parseLong(prInstId);
+        // Long idTill = Strings.isNullOrEmpty(prInstIdTill) ? null :
+        // Long.parseLong(prInstIdTill);
+        // Date startDate = null;
+        // Date finishDate = null;
+        // if (prInstId == null) {
+        // if (prInstStartDate == null && prInstEndDate == null) {
+        // return;
+        // }
+        // }
+        // if (prInstStartDate != null && prInstStartDate.trim().length() > 0) {
+        // startDate = CalendarUtil.convertToDate(prInstStartDate,
+        // CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
+        // }
+        // if (prInstEndDate != null && prInstEndDate.trim().length() > 0) {
+        // finishDate = CalendarUtil.convertToDate(prInstEndDate,
+        // CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
+        // }
         // switch (operation) {
         // case 1:
-        // archLogic.removeProcess(subject, startDate, finishDate, prInstName, version, id, idTill, onlyFinished, dateInterval);
+        // archLogic.removeProcess(subject, startDate, finishDate, prInstName,
+        // version, id, idTill, onlyFinished, dateInterval);
         // break;
         // case 2:
-        // archLogic.archiveProcesses(subject, startDate, finishDate, prInstName, version, id, idTill, onlyFinished, dateInterval);
+        // archLogic.archiveProcesses(subject, startDate, finishDate,
+        // prInstName, version, id, idTill, onlyFinished, dateInterval);
         // break;
         // case 3:
-        // archLogic.restoreProcesses(subject, startDate, finishDate, prInstName, version, id, idTill, onlyFinished, dateInterval);
+        // archLogic.restoreProcesses(subject, startDate, finishDate,
+        // prInstName, version, id, idTill, onlyFinished, dateInterval);
         // break;
         // }
     }
 
     /* @param number: remove - 1; archiving - 2; retrieve from archive - 3 */
     private void operationWithOldProcessDefinitionVersion(Element element, int operation) throws Exception {
-//        String defName = element.getAttribute(NAME_ATTRIBUTE_NAME);
-//        String version = element.getAttribute(VERSION_ATTRIBUTE_NAME);
-//        String versionTo = element.getAttribute("versionTo");
+        // String defName = element.getAttribute(NAME_ATTRIBUTE_NAME);
+        // String version = element.getAttribute(VERSION_ATTRIBUTE_NAME);
+        // String versionTo = element.getAttribute("versionTo");
         // switch (operation) {
         // case 1:
-        // archLogic.removeProcessDefinition(subject, defName, version == null || version.trim().length() == 0 ? 0 : Integer.parseInt(version),
-        // versionTo == null || versionTo.trim().length() == 0 ? 0 : Integer.parseInt(versionTo));
+        // archLogic.removeProcessDefinition(subject, defName, version == null
+        // || version.trim().length() == 0 ? 0 : Integer.parseInt(version),
+        // versionTo == null || versionTo.trim().length() == 0 ? 0 :
+        // Integer.parseInt(versionTo));
         // break;
         // case 2:
-        // archLogic.archiveProcessDefinition(subject, defName, version == null || version.trim().length() == 0 ? 0 : Integer.parseInt(version));
+        // archLogic.archiveProcessDefinition(subject, defName, version == null
+        // || version.trim().length() == 0 ? 0 : Integer.parseInt(version));
         // break;
         // case 3:
         // archLogic.restoreProcessDefinitionFromArchive(subject, defName,
-        // version == null || version.trim().length() == 0 ? 0 : Integer.parseInt(version));
+        // version == null || version.trim().length() == 0 ? 0 :
+        // Integer.parseInt(version));
         // break;
         // }
     }

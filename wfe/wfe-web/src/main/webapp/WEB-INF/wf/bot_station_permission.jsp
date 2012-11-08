@@ -1,14 +1,9 @@
-<%@ page import="ru.runa.common.web.ProfileHttpSessionHelper" %>
-<%@ page import="ru.runa.af.presentation.Profile" %>
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ page import="ru.runa.common.web.Commons"%>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/wf.tld" prefix="wf" %>
 
-<%
-    long actorId = ((Profile) Commons.getSessionAttribute(session, ProfileHttpSessionHelper.PROFILE_ATTRIBUTE_NAME)).getActorId();
-%>
 <tiles:insert page="/WEB-INF/af/main_layout.jsp" flush="true">
     <tiles:put name="body" type="string">
         <wf:botStationConfigurationTag >

@@ -15,15 +15,18 @@ import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 
 /**
  * User: stanley Date: 08.06.2008 Time: 19:05:07
  * 
- * @struts:action path="/create_bot_station" name="botStationForm" validate="false" input = "/WEB-INF/wf/add_bot_station.jsp"
- * @struts.action-forward name="success" path="/configure_bot_station.do" redirect = "true"
- * @struts.action-forward name="failure" path="/create_bot_station.do" redirect = "true"
+ * @struts:action path="/create_bot_station" name="botStationForm"
+ *                validate="false" input = "/WEB-INF/wf/add_bot_station.jsp"
+ * @struts.action-forward name="success" path="/configure_bot_station.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/create_bot_station.do" redirect
+ *                        = "true"
  */
 public class CreateBotStationAction extends Action {
 
@@ -35,17 +38,15 @@ public class CreateBotStationAction extends Action {
         BotStationForm form = (BotStationForm) actionForm;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotsService botsService = DelegateFactory.getBotsService();
+            BotService botService = DelegateFactory.getBotService();
             BotStation botStation = new BotStation(form.getBotStationName(), form.getBotStationRMIAddress());
-            botsService.create(subject, botStation);
+            botService.createBotStation(subject, botStation);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
-
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
-
         return mapping.findForward(Resources.FORWARD_SUCCESS);
     }
 }

@@ -37,13 +37,14 @@ import ru.runa.common.web.tag.TitledFormTag;
 public class AddBotStationTag extends TitledFormTag {
     private static final long serialVersionUID = 1920713038009470026L;
 
+    @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
         Table table = new Table();
-        ActorSelectTD actorSelect = new ActorSelectTD(getSubject(), BotStationForm.BOT_STATION_NAME);
+        Input nameInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_NAME, "");
         Input botStationRMIAddress = new Input(Input.TEXT, BotStationForm.BOT_STATION_RMI_ADDRESS);
         TR tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)));
-        tr.addElement(actorSelect);
+        tr.addElement(nameInput);
         table.addElement(tr);
         tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)));
@@ -52,18 +53,22 @@ public class AddBotStationTag extends TitledFormTag {
         tdFormElement.addElement(table);
     }
 
+    @Override
     protected String getTitle() {
         return Messages.getMessage(Messages.TITLE_ADD_BOT_STATION, pageContext);
     }
 
+    @Override
     public String getButtonAlignment() {
         return "right";
     }
 
+    @Override
     protected String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_ADD_BOT_STATION, pageContext);
     }
 
+    @Override
     public String getAction() {
         return CreateBotStationAction.CREATE_BOT_STATION_ACTION_PATH;
     }

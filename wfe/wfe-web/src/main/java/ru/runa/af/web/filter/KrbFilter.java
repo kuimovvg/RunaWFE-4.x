@@ -41,7 +41,8 @@ import ru.runa.wfe.security.auth.KerberosLoginModuleConfiguration;
 import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
 
 /**
- * This class in conjunction with {@link ru.runa.af.web.action.KrbLoginAction} provides Kerberos support.
+ * This class in conjunction with {@link ru.runa.af.web.action.KrbLoginAction}
+ * provides Kerberos support.
  * 
  * @web.filter name="krbfilter"
  * @web.filter-mapping url-pattern = "/krblogin.do"
@@ -91,7 +92,6 @@ public class KrbFilter implements Filter {
         if (!(Configuration.getConfiguration() instanceof KerberosLoginModuleConfiguration)) {
             Configuration.setConfiguration(new KerberosLoginModuleConfiguration(KerberosLoginModuleResources.webKerberosResources));
         }
-
         try {
             AuthenticationFilter NegFilter = new AuthenticationFilter();
             NegFilter.init(filter);

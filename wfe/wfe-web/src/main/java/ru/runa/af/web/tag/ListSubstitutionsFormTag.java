@@ -24,8 +24,6 @@ import java.util.Map;
 import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.Entities;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.IMG;
@@ -63,7 +61,6 @@ import ru.runa.wfe.user.ExecutorPermission;
  */
 public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(ListSubstitutionsFormTag.class);
 
     @Override
     protected boolean isVisible() throws JspException {
@@ -95,7 +92,6 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
             formTd.addElement(tableBuilder.build(substitutionHeaderBuilder, substitutionRowBuilder));
             formTd.addElement(new Input(Input.HIDDEN, IdForm.ID_INPUT_NAME, String.valueOf(actor.getId())));
         } catch (Exception e) {
-            log.error("", e);
             formTd.addElement(e.getMessage());
         }
     }
@@ -201,7 +197,6 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
                 try {
                     string = SubstitutionHelper.getUserFriendlyOrgFunction(getSubject(), pageContext, substitution.getSubstitutionOrgFunction());
                 } catch (Exception e) {
-                    log.error("Invalid orgfunction?", e);
                     string = "<span class='error'>" + substitution.getSubstitutionOrgFunction() + "</span>";
                 }
             }

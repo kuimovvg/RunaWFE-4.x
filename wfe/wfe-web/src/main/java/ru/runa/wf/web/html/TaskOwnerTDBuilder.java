@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
@@ -43,7 +41,7 @@ public class TaskOwnerTDBuilder implements TDBuilder {
     }
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         WfTask wfTask = (WfTask) object;
         String actorName = ExecutorNameConverter.getName(wfTask.getOwner(), env.getPageContext());
         ConcreteElement link = new StringElement(actorName);

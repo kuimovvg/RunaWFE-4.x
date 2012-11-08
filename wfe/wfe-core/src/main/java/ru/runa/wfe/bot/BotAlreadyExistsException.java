@@ -20,6 +20,7 @@ package ru.runa.wfe.bot;
 import ru.runa.wfe.ApplicationException;
 
 /**
+ * 
  * @author petr_mikheev
  */
 public class BotAlreadyExistsException extends ApplicationException {
@@ -27,7 +28,7 @@ public class BotAlreadyExistsException extends ApplicationException {
     private final String botName;
 
     public BotAlreadyExistsException(String botName) {
-        super("BotRunner " + botName + " already exists.");
+        super("Bot '" + botName + "' already exists.");
         this.botName = botName;
     }
 

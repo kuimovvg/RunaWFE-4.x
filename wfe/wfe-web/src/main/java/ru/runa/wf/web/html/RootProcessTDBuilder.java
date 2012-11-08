@@ -1,7 +1,5 @@
 package ru.runa.wf.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.html.TDBuilder;
@@ -13,7 +11,7 @@ public class RootProcessTDBuilder implements TDBuilder {
     }
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         TD td = new TD();
         td.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
         td.addElement(getValue(object, env));

@@ -30,7 +30,7 @@ import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.af.SystemService;
 import ru.runa.service.bot.BotInvokerService;
 import ru.runa.service.wf.AdminScriptService;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.service.wf.InitializerService;
@@ -40,12 +40,15 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import com.google.common.collect.Maps;
 
 /**
- * Provides delegates. Delegate's type can not be switched at run-time. Created on 18.10.2004
+ * Provides delegates. Delegate's type can not be switched at run-time. Created
+ * 
+ * @since 4.0
  */
 public class DelegateFactory {
     private static final Properties PROPERTIES = ClassLoaderUtil.getProperties("wfe.delegate.properties");
     private static Map<Class<?>, Object> delegates = Maps.newHashMap();
 
+    @SuppressWarnings("unchecked")
     protected static <T extends EJB3Delegate> T getDelegate(Class<T> delegateClass) {
         if (!delegates.containsKey(delegateClass)) {
             Object delegate = createDelegate(delegateClass);
@@ -93,8 +96,8 @@ public class DelegateFactory {
         return getDelegate(SubstitutionServiceDelegate.class);
     }
 
-    public static BotsService getBotsService() {
-        return getDelegate(BotsServiceDelegate.class);
+    public static BotService getBotService() {
+        return getDelegate(BotServiceDelegate.class);
     }
 
     public static DefinitionService getDefinitionService() {

@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
@@ -45,7 +43,7 @@ public class AssignTaskCheckboxTDBuilder extends CheckboxTDBuilder {
     }
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         Input input = new Input(Input.CHECKBOX, StrIdsForm.IDS_INPUT_NAME, getIdValue(object));
 
         if (!isEnabled(object, env)) {
@@ -62,7 +60,7 @@ public class AssignTaskCheckboxTDBuilder extends CheckboxTDBuilder {
     }
 
     @Override
-    protected boolean isEnabled(Object object, Env env) throws JspException {
+    protected boolean isEnabled(Object object, Env env) {
         WfTask task = (WfTask) object;
         return task.isGroupAssigned() && enableControl;
     }
@@ -78,7 +76,7 @@ public class AssignTaskCheckboxTDBuilder extends CheckboxTDBuilder {
     }
 
     @Override
-    protected String getIdValue(Object object) throws JspException {
+    protected String getIdValue(Object object) {
         WfTask task = (WfTask) object;
         Long ownerId = null;
         if (task.getOwner() != null) {

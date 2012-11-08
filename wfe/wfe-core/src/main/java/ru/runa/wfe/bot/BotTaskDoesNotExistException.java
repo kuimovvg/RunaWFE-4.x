@@ -28,7 +28,7 @@ public class BotTaskDoesNotExistException extends ApplicationException {
     private final String botTaskName;
 
     public BotTaskDoesNotExistException(String botTaskName) {
-        super("BotTask " + botTaskName + " doesn`t exists.");
+        super("BotTask '" + botTaskName + "' does not exist");
         this.botTaskName = botTaskName;
     }
 
