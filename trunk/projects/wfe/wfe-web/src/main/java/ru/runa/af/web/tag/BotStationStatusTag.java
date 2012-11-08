@@ -2,8 +2,6 @@ package ru.runa.af.web.tag;
 
 import javax.servlet.jsp.JspException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -15,9 +13,7 @@ import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.bot.BotInvokerService;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 
@@ -26,7 +22,6 @@ import ru.runa.wfe.bot.BotStationPermission;
  * @jsp.tag name = "botStationStatusTag" body-content = "JSP"
  */
 public class BotStationStatusTag extends TitledFormTag {
-    private static final Log log = LogFactory.getLog(BotStationStatusTag.class);
     private static final long serialVersionUID = 1920713038009470026L;
 
     private Long botStationID;
@@ -46,13 +41,9 @@ public class BotStationStatusTag extends TitledFormTag {
     private boolean periodicInvocationOn = false;
 
     private void renewValues() throws JspException {
-        BotStation botStation = findBotStation();
-        if (botStation == null) {
-            throw new JspException();
-        }
-        BotInvokerService botInvokerService = DelegateFactory.getBotInvokerService(botStation.getAddress());
         try {
-            periodicInvocationOn = botInvokerService.isRunning();
+            BotStation botStation = DelegateFactory.getBotService().getBotStation(botStationID);
+            periodicInvocationOn = DelegateFactory.getBotInvokerService(botStation.getAddress()).isRunning();
             stationOn = true;
         } catch (Exception e) {
             stationOn = false;
@@ -63,7 +54,7 @@ public class BotStationStatusTag extends TitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
         renewValues();
-        Input hiddenBotStationID = new Input(Input.HIDDEN, BotStationForm.BOT_STATION_ID, botStationID);
+        Input hiddenBotStationID = new Input(Input.HIDDEN, BotStationForm.BOT_STATION_ID, String.valueOf(botStationID));
         tdFormElement.addElement(hiddenBotStationID);
         Table table = new Table();
         TR tr = new TR();
@@ -77,16 +68,6 @@ public class BotStationStatusTag extends TitledFormTag {
             table.addElement(tr);
         }
         tdFormElement.addElement(table);
-    }
-
-    private BotStation findBotStation() {
-        BotsService botsService = DelegateFactory.getBotsService();
-        try {
-            return botsService.getBotStation(getSubject(), new BotStation(botStationID));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return null;
     }
 
     @Override

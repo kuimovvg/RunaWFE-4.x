@@ -20,7 +20,6 @@ package ru.runa.common.web.html;
 import java.io.Serializable;
 
 import javax.security.auth.Subject;
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.TD;
@@ -61,7 +60,7 @@ public interface TDBuilder {
         public Object getTaskVariable(Object object, IdentifiableExtractor processIdExtractor, String variableName) throws AuthenticationException;
     }
 
-    public TD build(Object object, Env env) throws JspException;
+    public TD build(Object object, Env env);
 
     public String getValue(Object object, Env env);
 

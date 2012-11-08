@@ -91,7 +91,7 @@ public class ListExecutorRightRelationMembersFormTag extends TitledFormTag {
             TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
 
                 @Override
-                protected boolean isEnabled(Object object, Env env) throws JspException {
+                protected boolean isEnabled(Object object, Env env) {
                     return isFormButtonVisible;
                 }
             };

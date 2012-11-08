@@ -26,8 +26,6 @@ import java.util.List;
 import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 import org.apache.ecs.html.TD;
@@ -42,7 +40,6 @@ import ru.runa.wfe.user.Executor;
 
 public class ActorSelectTD extends TD {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(ListAllExecutorsFormTag.class);
 
     public ActorSelectTD(Subject subject, String name) throws JspException {
         this(subject, name, (String) null, true);
@@ -80,46 +77,41 @@ public class ActorSelectTD extends TD {
     public ActorSelectTD(Subject subject, String name, String current, boolean actorOnly) throws JspException {
         Select select = new Select();
         select.setName(name);
-        try {
-            boolean exist = false;
-            ExecutorService executorService = DelegateFactory.getExecutorService();
-            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-            batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
-            List<Executor> executors = executorService.getAll(subject, batchPresentation);
-            ArrayList<Option> options = new ArrayList<Option>();
-            for (Executor executor : executors) {
-                if (!(executor instanceof Actor) && actorOnly) {
-                    continue;
-                }
-                Option option = new Option();
-                option.setValue(executor.getName());
-                option.addElement(executor.getName());
-                if (executor.getName().equals(current)) {
-                    option.setSelected(true);
-                    exist = true;
-                }
-                options.add(option);
+        boolean exist = false;
+        ExecutorService executorService = DelegateFactory.getExecutorService();
+        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        List<Executor> executors = executorService.getAll(subject, batchPresentation);
+        ArrayList<Option> options = new ArrayList<Option>();
+        for (Executor executor : executors) {
+            if (!(executor instanceof Actor) && actorOnly) {
+                continue;
             }
-            if (!exist && current != null) {
-                Option option = new Option();
-                option.setValue(current);
-                option.addElement(current);
+            Option option = new Option();
+            option.setValue(executor.getName());
+            option.addElement(executor.getName());
+            if (executor.getName().equals(current)) {
                 option.setSelected(true);
-                options.add(option);
+                exist = true;
             }
-            Option[] opts = options.toArray(new Option[0]);
-            Comparator<Option> comp = new Comparator<Option>() {
-                @Override
-                public int compare(Option o1, Option o2) {
-                    return o1.getValue().compareToIgnoreCase(o2.getValue());
-                }
-            };
-            Arrays.sort(opts, comp);
-            select.addElement(opts);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new JspException(e);
+            options.add(option);
         }
+        if (!exist && current != null) {
+            Option option = new Option();
+            option.setValue(current);
+            option.addElement(current);
+            option.setSelected(true);
+            options.add(option);
+        }
+        Option[] opts = options.toArray(new Option[0]);
+        Comparator<Option> comp = new Comparator<Option>() {
+            @Override
+            public int compare(Option o1, Option o2) {
+                return o1.getValue().compareToIgnoreCase(o2.getValue());
+            }
+        };
+        Arrays.sort(opts, comp);
+        select.addElement(opts);
         super.addElement(select);
     }
 }

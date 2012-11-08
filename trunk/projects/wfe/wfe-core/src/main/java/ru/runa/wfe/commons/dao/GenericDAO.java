@@ -1,0 +1,129 @@
+package ru.runa.wfe.commons.dao;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+/**
+ * General DAO implementation (type-safe generic DAO pattern).
+ * 
+ * @author dofs
+ * @since 4.0
+ * 
+ * @param <T>
+ *            entity class
+ */
+@SuppressWarnings("unchecked")
+public abstract class GenericDAO<T extends Object> extends HibernateDaoSupport {
+    protected static final Log log = LogFactory.getLog(GenericDAO.class);
+    private final Class<T> entityClass;
+
+    /**
+     * Constructor
+     */
+    public GenericDAO() {
+        Type t = getClass().getGenericSuperclass();
+        ParameterizedType pt = (ParameterizedType) t;
+        entityClass = (Class<T>) pt.getActualTypeArguments()[0];
+    }
+
+    /**
+     * Load entity from database by id.
+     * 
+     * @return entity or <code>null</code> if no entity found.
+     */
+    public T get(Long id) {
+        return getHibernateTemplate().get(entityClass, id);
+    }
+
+    /**
+     * Load entity from database by id.
+     * 
+     * @return entity.
+     */
+    public T getNotNull(Long id) {
+        T entity = get(id);
+        checkNotNull(entity, id);
+        return entity;
+    }
+
+    /**
+     * Checks that entity is not null. Throws exception in that case. Used in
+     * *NotNull methods. Expected to be overriden in subclasses.
+     * 
+     * @param entity
+     *            test entity
+     * @param identity
+     *            search data
+     * @throws Exception
+     *             or any of its subclass (NullPointerException in base
+     *             implementation)
+     */
+    protected void checkNotNull(T entity, Object identity) {
+        if (entity == null) {
+            throw new NullPointerException("No entity found");
+        }
+    }
+
+    /**
+     * Load all entities from database.
+     * 
+     * @return entities list, not <code>null</code>.
+     */
+    public List<T> getAll() {
+        return getHibernateTemplate().loadAll(entityClass);
+    }
+
+    /**
+     * @return first entity from list or <code>null</code>
+     */
+    protected T getFirstOrNull(List<T> list) {
+        if (list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * Finds entities.
+     * 
+     * @param hql
+     *            Hibernate query
+     * @param parameters
+     *            query parameters
+     * @return first entity from list or <code>null</code>
+     */
+    protected T findFirstOrNull(String hql, Object... parameters) {
+        List<T> list = getHibernateTemplate().find(hql, parameters);
+        return getFirstOrNull(list);
+    }
+
+    /**
+     * Saves transient entity.
+     * 
+     * @return saved entity.
+     */
+    public T create(T entity) {
+        getHibernateTemplate().save(entity);
+        return entity;
+    }
+
+    /**
+     * Updates entity.
+     */
+    public void update(T entity) {
+        getHibernateTemplate().merge(entity);
+    }
+
+    /**
+     * Deletes entity from DB by id.
+     */
+    public void delete(Long id) {
+        getHibernateTemplate().delete(getNotNull(id));
+    }
+
+}

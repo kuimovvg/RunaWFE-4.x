@@ -36,20 +36,21 @@ public abstract class EJB3Delegate {
      */
     public EJB3Delegate(String beanName, Class<?> remoteInterfaceClass) {
         this.beanName = beanName;
-        this.localInterfaceClassName = null;
-        this.remoteInterfaceClassName = remoteInterfaceClass.getName();
+        localInterfaceClassName = null;
+        remoteInterfaceClassName = remoteInterfaceClass.getName();
         setEjbType(EJB_REMOTE);
     }
 
     /**
-     * Creates delegate based on base interface class (implicit assumptions about @Local, @Remote interface and EJB bean naming)
+     * Creates delegate based on base interface class (implicit assumptions
+     * about @Local, @Remote interface and EJB bean naming)
      * 
      * @param baseInterfaceClass
      */
     public EJB3Delegate(Class<?> baseInterfaceClass) {
-        this.beanName = baseInterfaceClass.getSimpleName() + "Bean";
-        this.localInterfaceClassName = baseInterfaceClass.getName() + "Local";
-        this.remoteInterfaceClassName = baseInterfaceClass.getName() + "Remote";
+        beanName = baseInterfaceClass.getSimpleName() + "Bean";
+        localInterfaceClassName = baseInterfaceClass.getName() + "Local";
+        remoteInterfaceClassName = baseInterfaceClass.getName() + "Remote";
     }
 
     public void setEjbType(String ejbType) {
@@ -64,6 +65,7 @@ public abstract class EJB3Delegate {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     protected <T> T getService() {
         if (!services.containsKey(beanName)) {
             Map<String, String> variables = Maps.newHashMap();

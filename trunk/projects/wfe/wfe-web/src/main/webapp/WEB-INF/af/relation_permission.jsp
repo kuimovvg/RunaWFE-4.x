@@ -1,5 +1,3 @@
-<%@ page import="ru.runa.common.web.ProfileHttpSessionHelper" %>
-<%@ page import="ru.runa.af.presentation.Profile" %>
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ page import="ru.runa.common.web.Commons"%>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>

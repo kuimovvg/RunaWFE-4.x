@@ -17,8 +17,6 @@
  */
 package ru.runa.common.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
@@ -57,7 +55,7 @@ public class PropertyTDBuilder extends BaseTDBuilder {
     }
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         ConcreteElement element;
         if (authState == AUTH_STATE.ALWAYS_ENABLE || (authState == AUTH_STATE.ASK_WFE && isEnabled(object, env))) {
             element = new A(env.getURL(object), getValue(object, env));
@@ -78,8 +76,8 @@ public class PropertyTDBuilder extends BaseTDBuilder {
         try {
             String property = readProperty(object, propertyName, false);
             return property == null ? "" : property;
-        } catch (JspException e) {
-            return "";
+        } catch (Exception e) {
+            return e.getMessage();
         }
     }
 

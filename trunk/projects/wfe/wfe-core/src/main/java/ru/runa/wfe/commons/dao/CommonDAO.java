@@ -6,10 +6,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-import ru.runa.wfe.definition.dao.DefinitionDAO;
-
 public abstract class CommonDAO extends HibernateDaoSupport {
-    protected static final Log log = LogFactory.getLog(DefinitionDAO.class);
+    protected static final Log log = LogFactory.getLog(CommonDAO.class);
 
     protected <T extends Object> T get(Class<T> clazz, Long id) {
         return getHibernateTemplate().get(clazz, id);

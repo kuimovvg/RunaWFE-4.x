@@ -1,5 +1,7 @@
 package ru.runa.service.interceptors;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.interceptor.AroundInvoke;
@@ -17,6 +19,7 @@ import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 public class EjbTransactionSupport {
     @Resource
@@ -29,7 +32,7 @@ public class EjbTransactionSupport {
             transaction.begin();
             System.out.println("=== " + ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName() + "("
                     + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")");
-            if (ic.getParameters().length > 0 && ic.getParameters()[0] instanceof Subject) {
+            if (ic.getParameters() != null && ic.getParameters().length > 0 && ic.getParameters()[0] instanceof Subject) {
                 SubjectHolder.set((Subject) ic.getParameters()[0]);
             }
             Object result = invokeWithRetry(ic);
@@ -57,23 +60,24 @@ public class EjbTransactionSupport {
         }
     }
 
-    private String[] getDebugArguments(Object[] values) {
-        String[] strings = new String[values.length];
-        for (int i = 0; i < strings.length; i++) {
-            Object object = values[i];
-            String string;
-            if (object == null) {
-                string = "null";
-            } else if (object instanceof Subject) {
-                try {
-                    string = SubjectPrincipalsHelper.getActor((Subject) object).getName();
-                } catch (Exception e) {
-                    string = null;
+    private List<String> getDebugArguments(Object[] values) {
+        List<String> strings = Lists.newArrayList();
+        if (values != null) {
+            for (Object object : values) {
+                String string;
+                if (object == null) {
+                    string = "null";
+                } else if (object instanceof Subject) {
+                    try {
+                        string = SubjectPrincipalsHelper.getActor((Subject) object).getName();
+                    } catch (Exception e) {
+                        string = null;
+                    }
+                } else {
+                    string = object.toString();
                 }
-            } else {
-                string = object.toString();
+                strings.add(string);
             }
-            strings[i] = string;
         }
         return strings;
     }

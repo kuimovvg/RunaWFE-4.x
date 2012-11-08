@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.html.PropertyTDBuilder;
@@ -43,7 +41,7 @@ public abstract class RelationExecutorBaseTDBuilder implements TDBuilder {
     protected abstract Executor getExecutor(RelationPair relation);
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         return builder.build(getExecutor((RelationPair) object), env);
     }
 

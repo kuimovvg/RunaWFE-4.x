@@ -23,7 +23,6 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -39,10 +38,11 @@ import ru.runa.wfe.definition.IFileDataProvider;
 /**
  * Created on 27.09.2005
  * 
- * @struts:action path="/processDefinitionGraphImage" name="idForm" validate="true" input = "/WEB-INF/wf/manage_process_definitions.jsp"
+ * @struts:action path="/processDefinitionGraphImage" name="idForm"
+ *                validate="true" input =
+ *                "/WEB-INF/wf/manage_process_definitions.jsp"
  */
 public class ProcessDefinitionGraphImageAction extends Action {
-    protected static final Log log = LogFactory.getLog(ProcessDefinitionGraphImageAction.class);
     public static final String ACTION_PATH = "/processDefinitionGraphImage";
 
     @Override
@@ -63,7 +63,7 @@ public class ProcessDefinitionGraphImageAction extends Action {
             os.write(bytes);
             os.flush();
         } catch (Exception e) {
-            log.error("Unable to fetch process diagram", e);
+            LogFactory.getLog(getClass()).error("Unable to fetch process diagram", e);
         }
         return null;
     }

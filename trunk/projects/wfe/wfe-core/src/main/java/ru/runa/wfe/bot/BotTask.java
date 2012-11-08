@@ -29,6 +29,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -43,10 +44,10 @@ public class BotTask implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+    private Long version;
     private Bot bot;
     private String name;
-    private String clazz;
-    private String config;
+    private String taskHandlerClassName;
     private byte[] configuration;
 
     @Id
@@ -59,6 +60,16 @@ public class BotTask implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @ManyToOne(targetEntity = Bot.class)
@@ -82,22 +93,13 @@ public class BotTask implements Serializable {
         this.name = name;
     }
 
-    @Column(name = "CLAZZ")
-    public String getClazz() {
-        return clazz;
+    @Column(name = "TASK_HANDLER")
+    public String getTaskHandlerClassName() {
+        return taskHandlerClassName;
     }
 
-    public void setClazz(String clazz) {
-        this.clazz = clazz;
-    }
-
-    @Column(name = "CONFIG")
-    public String getConfig() {
-        return config;
-    }
-
-    public void setConfig(String config) {
-        this.config = config;
+    public void setTaskHandlerClassName(String clazz) {
+        this.taskHandlerClassName = clazz;
     }
 
     @Lob

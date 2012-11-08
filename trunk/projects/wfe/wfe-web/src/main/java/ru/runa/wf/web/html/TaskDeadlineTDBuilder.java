@@ -19,8 +19,6 @@ package ru.runa.wf.web.html;
 
 import java.util.Date;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.html.TDBuilder;
@@ -30,7 +28,7 @@ import ru.runa.wfe.var.format.DateTimeFormat;
 public class TaskDeadlineTDBuilder implements TDBuilder {
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         TD td = new TD();
         td.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
         td.addElement(getValue(object, env));

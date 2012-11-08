@@ -15,7 +15,6 @@ import ru.runa.common.web.form.IdsForm;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
@@ -42,10 +41,8 @@ public class BotListTag extends TitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
         tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botStationID)));
-        BotsService botsService = DelegateFactory.getBotsService();
         try {
-            BotStation station = new BotStation(botStationID);
-            List<Bot> bots = botsService.getBotList(getSubject(), station);
+            List<Bot> bots = DelegateFactory.getBotService().getBots(botStationID);
             tdFormElement.addElement(new BotTableBuilder(pageContext).buildBotTable(bots));
         } catch (Exception e) {
             handleException(e);

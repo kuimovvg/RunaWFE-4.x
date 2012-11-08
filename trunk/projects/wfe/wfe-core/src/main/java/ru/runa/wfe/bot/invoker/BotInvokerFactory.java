@@ -28,25 +28,20 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
  * 
  */
 public class BotInvokerFactory {
-    private static BotInvoker BOT_INVOKER_INSTANCE = null;
+    private static BotInvoker INSTANCE = null;
 
     private static final Log log = LogFactory.getLog(BotInvokerFactory.class);
 
     public static BotInvoker getBotInvoker() {
         try {
-            if (BOT_INVOKER_INSTANCE == null) {
-                BOT_INVOKER_INSTANCE = getBotInvokerClass().newInstance();
-                log.info("Using " + BOT_INVOKER_INSTANCE.getClass().getName());
+            if (INSTANCE == null) {
+                INSTANCE = ClassLoaderUtil.instantiate(Resources.getBotInvokerClassName());
+                log.info("Using " + INSTANCE.getClass().getName());
             }
-            return BOT_INVOKER_INSTANCE;
+            return INSTANCE;
         } catch (Exception e) {
             throw new InternalApplicationException(e);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Class<? extends BotInvoker> getBotInvokerClass() throws ClassNotFoundException {
-        return (Class<? extends BotInvoker>) ClassLoaderUtil.instantiate(Resources.getBotInvokerClassName());
     }
 
     private static final long MILLISECONDS_IN_SEC = 1000;

@@ -17,8 +17,6 @@
  */
 package ru.runa.common.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Table;
 
 import ru.runa.common.web.Resources;
@@ -31,7 +29,7 @@ public class TableBuilder {
 
     static final int max_rows = 1500;
 
-    public Table build(HeaderBuilder headerBuilder, RowBuilder rowBuilder) throws JspException {
+    public Table build(HeaderBuilder headerBuilder, RowBuilder rowBuilder) {
         Table table = new Table();
         table.setClass(Resources.CLASS_LIST_TABLE);
         table.addElement(headerBuilder.build());

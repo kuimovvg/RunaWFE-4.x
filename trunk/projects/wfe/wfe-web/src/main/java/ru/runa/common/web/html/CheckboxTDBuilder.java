@@ -17,8 +17,6 @@
  */
 package ru.runa.common.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
@@ -40,7 +38,8 @@ public class CheckboxTDBuilder extends BaseTDBuilder {
         this.objectReadProperty = objectReadProperty;
     }
 
-    public TD build(Object object, Env env) throws JspException {
+    @Override
+    public TD build(Object object, Env env) {
         Input input = new Input(Input.CHECKBOX, actionFormId, getIdValue(object));
 
         if (!isEnabled(object, env)) {
@@ -51,18 +50,21 @@ public class CheckboxTDBuilder extends BaseTDBuilder {
         return td;
     }
 
+    @Override
     public String getValue(Object object, Env env) {
         return "";
     }
 
-    protected String getIdValue(Object object) throws JspException {
+    protected String getIdValue(Object object) {
         return readProperty(object, objectReadProperty, true);
     }
 
+    @Override
     public String[] getSeparatedValues(Object object, Env env) {
         return new String[] { getValue(object, env) };
     }
 
+    @Override
     public int getSeparatedValuesCount(Object object, Env env) {
         return 1;
     }

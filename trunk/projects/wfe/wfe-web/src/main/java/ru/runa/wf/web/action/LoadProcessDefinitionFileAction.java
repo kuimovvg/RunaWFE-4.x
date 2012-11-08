@@ -23,7 +23,6 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -40,8 +39,6 @@ import ru.runa.service.wf.DefinitionService;
  * Powered by Dofs
  */
 abstract class LoadProcessDefinitionFileAction extends Action {
-
-    protected static final Log log = LogFactory.getLog(LoadProcessDefinitionFileAction.class);
 
     protected abstract String getFileName(HttpServletRequest request);
 
@@ -66,7 +63,7 @@ abstract class LoadProcessDefinitionFileAction extends Action {
             os.write(bytes);
             os.flush();
         } catch (Exception e) {
-            log.error("No file found: " + fileName, e);
+            LogFactory.getLog(getClass()).error("No file found: " + fileName, e);
         }
         return null;
     }

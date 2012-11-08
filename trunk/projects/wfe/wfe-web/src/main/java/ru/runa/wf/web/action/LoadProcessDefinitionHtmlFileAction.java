@@ -24,8 +24,6 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -43,15 +41,15 @@ import ru.runa.wf.web.form.DefinitionFileForm;
 /**
  * Powered by Dofs
  * 
- * @struts:action path="/getHtmlFile" name="idUrlForm" validate="true" input = "/WEB-INF/wf/manage_process_definitions.jsp"
- * @struts.action-forward name="success" path="/WEB-INF/wf/process_definition_description.jsp"
+ * @struts:action path="/getHtmlFile" name="idUrlForm" validate="true" input =
+ *                "/WEB-INF/wf/manage_process_definitions.jsp"
+ * @struts.action-forward name="success"
+ *                        path="/WEB-INF/wf/process_definition_description.jsp"
  * @struts.action-forward name="failure" path="/error.do" redirect = "true"
  */
 public class LoadProcessDefinitionHtmlFileAction extends Action {
 
     public static final String ACTION_PATH = "/getHtmlFile";
-
-    protected static final Log log = LogFactory.getLog(LoadProcessDefinitionGifAction.class);
 
     // private static final String CONTENT_TYPE = "text/html";
     private static MimetypesFileTypeMap fileTypeMap = new MimetypesFileTypeMap();

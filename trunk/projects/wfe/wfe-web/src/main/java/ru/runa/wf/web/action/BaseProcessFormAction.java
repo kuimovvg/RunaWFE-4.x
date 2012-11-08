@@ -23,8 +23,6 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -50,7 +48,6 @@ import ru.runa.wfe.validation.impl.ValidationException;
  * 
  */
 abstract class BaseProcessFormAction extends Action {
-    protected static final Log log = LogFactory.getLog(BaseProcessFormAction.class);
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
@@ -68,7 +65,8 @@ abstract class BaseProcessFormAction extends Action {
                 return new ActionForward("/manage_tasks.do", true);
             }
         } catch (TaskDoesNotExistException e) {
-            // In this case we must go to success forwarding, because of this task is absent and form can't be displayed
+            // In this case we must go to success forwarding, because of this
+            // task is absent and form can't be displayed
             ActionExceptionHelper.addException(errors, e);
             saveErrors(request.getSession(), errors);
             // save in request user input
@@ -83,7 +81,8 @@ abstract class BaseProcessFormAction extends Action {
                 errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(msg, false));
             }
             if (errors.size() == 0) {
-                // we add at least 1 error message in order to prevent successful forward
+                // we add at least 1 error message in order to prevent
+                // successful forward
                 errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.MESSAGE_WEB_CLIENT_VALIDATION_ERROR));
             }
         } catch (VariablesFormatException e) {
