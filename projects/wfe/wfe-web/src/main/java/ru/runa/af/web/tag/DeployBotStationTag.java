@@ -38,8 +38,7 @@ import ru.runa.wfe.bot.BotStationPermission;
  * @jsp.tag name = "deployBotStation" body-content = "empty"
  */
 public class DeployBotStationTag extends TitledFormTag {
-
-    private static final long serialVersionUID = 9038757445617109322L;
+    private static final long serialVersionUID = 1L;
 
     private Long ID;
 

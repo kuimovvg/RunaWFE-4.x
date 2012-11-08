@@ -96,21 +96,27 @@ public class CommonLogic {
     }
 
     /**
-     * Load objects list according to {@linkplain BatchPresentation} with permission check for subject.
+     * Load objects list according to {@linkplain BatchPresentation} with
+     * permission check for subject.
      * 
      * @param subject
      *            Current actor {@linkplain Subject}.
      * @param batchPresentation
      *            {@linkplain BatchPresentation} to load objects.
      * @param permission
-     *            {@linkplain Permission}, which current actor must have on loaded objects.
+     *            {@linkplain Permission}, which current actor must have on
+     *            loaded objects.
      * @param securedObjectClasses
-     *            Classes, loaded by query. Must be subset of classes, loaded by {@linkplain BatchPresentation}. For example {@linkplain Actor} for {@linkplain BatchPresentation},
-     *            which loads {@linkplain Executor}.
+     *            Classes, loaded by query. Must be subset of classes, loaded by
+     *            {@linkplain BatchPresentation}. For example {@linkplain Actor}
+     *            for {@linkplain BatchPresentation}, which loads
+     *            {@linkplain Executor}.
      * @param enablePaging
-     *            Flag, equals true, if paging must be enabled; false to load all objects.
+     *            Flag, equals true, if paging must be enabled; false to load
+     *            all objects.
      * @return Loaded according to {@linkplain BatchPresentation} objects list.
      */
+    @SuppressWarnings("unchecked")
     public <T extends Object> List<T> getPersistentObjects(Subject subject, BatchPresentation batchPresentation, Permission permission,
             SecuredObjectType[] securedObjectTypes, boolean enablePaging) throws AuthenticationException {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
@@ -119,18 +125,23 @@ public class CommonLogic {
     }
 
     /**
-     * Load objects count according to {@linkplain BatchPresentation} with permission check for subject.
+     * Load objects count according to {@linkplain BatchPresentation} with
+     * permission check for subject.
      * 
      * @param subject
      *            Current actor {@linkplain Subject}.
      * @param batchPresentation
      *            {@linkplain BatchPresentation} to load objects count.
      * @param permission
-     *            {@linkplain Permission}, which current actor must have on loaded objects.
+     *            {@linkplain Permission}, which current actor must have on
+     *            loaded objects.
      * @param securedObjectClasses
-     *            Classes, loaded by query. Must be subset of classes, loaded by {@linkplain BatchPresentation}. For example {@linkplain Actor} for {@linkplain BatchPresentation},
-     *            which loads {@linkplain Executor}.
-     * @return Objects count, which will be loaded according to {@linkplain BatchPresentation}.
+     *            Classes, loaded by query. Must be subset of classes, loaded by
+     *            {@linkplain BatchPresentation}. For example {@linkplain Actor}
+     *            for {@linkplain BatchPresentation}, which loads
+     *            {@linkplain Executor}.
+     * @return Objects count, which will be loaded according to
+     *         {@linkplain BatchPresentation}.
      */
     public int getPersistentObjectCount(Subject subject, BatchPresentation batchPresentation, Permission permission,
             SecuredObjectType[] securedObjectTypes) throws AuthenticationException {

@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
@@ -39,14 +37,15 @@ import ru.runa.wfe.user.ExecutorPermission;
 public class SystemLogActorTDBuilder extends BaseTDBuilder {
 
     /**
-     * Creates component to build table cell for {@link Executor}, executed action.
+     * Creates component to build table cell for {@link Executor}, executed
+     * action.
      */
     public SystemLogActorTDBuilder() {
         super(ExecutorPermission.READ, new SystemLogActorExtractor());
     }
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         ConcreteElement element;
         Actor actor = (Actor) getExtractor().getIdentifiable(object, env);
         if (actor == null || !isEnabled(object, env)) {

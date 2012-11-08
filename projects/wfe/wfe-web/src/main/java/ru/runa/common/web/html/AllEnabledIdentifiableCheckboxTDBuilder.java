@@ -17,8 +17,6 @@
  */
 package ru.runa.common.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.wfe.security.Identifiable;
 
 /**
@@ -38,7 +36,7 @@ public class AllEnabledIdentifiableCheckboxTDBuilder extends CheckboxTDBuilder {
     }
 
     @Override
-    protected boolean isEnabled(Object object, Env env) throws JspException {
+    protected boolean isEnabled(Object object, Env env) {
         return true;
     }
 }

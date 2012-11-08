@@ -2,7 +2,6 @@ package ru.runa.service.client;
 
 import ru.runa.service.bot.BotInvokerService;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.wfe.bot.BotInvokerException;
 
 /**
  * Invokes bots on selected bot station.
@@ -56,7 +55,7 @@ public class BotInvokerClient {
         System.out.println("1 - bots pereodic invocation stopped.");
     }
 
-    private static boolean printStatus(BotInvokerService botInvokerService) throws BotInvokerException {
+    private static boolean printStatus(BotInvokerService botInvokerService) {
         boolean isRunning = botInvokerService.isRunning();
         String status = isRunning ? "started" : "stopped";
         System.out.println("bots pereodic invocation status:" + status);

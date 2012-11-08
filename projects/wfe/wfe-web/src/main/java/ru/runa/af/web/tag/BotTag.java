@@ -2,8 +2,6 @@ package ru.runa.af.web.tag;
 
 import javax.servlet.jsp.JspException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -15,7 +13,6 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
@@ -27,8 +24,7 @@ import ru.runa.wfe.security.AuthorizationException;
  * @jsp.tag name = "botTag" body-content = "JSP"
  */
 public class BotTag extends TitledFormTag {
-    private static final long serialVersionUID = 1920713038009470026L;
-    private static final Log log = LogFactory.getLog(BotTag.class);
+    private static final long serialVersionUID = 1L;
 
     private Long botID;
 
@@ -50,12 +46,12 @@ public class BotTag extends TitledFormTag {
             throw new JspException();
         }
         Table table = new Table();
-        ActorSelectTD actorSelect = new ActorSelectTD(getSubject(), BotForm.USER_NAME, bot.getWfeUser());
-        Input botPasswordInput = new Input(Input.PASSWORD, BotForm.PASSWORD, bot.getWfePass());
-        Input botTimeoutInput = new Input(Input.TEXT, BotForm.BOT_TIMEOUT, bot.getLastInvoked());
+        ActorSelectTD actorSelect = new ActorSelectTD(getSubject(), BotForm.USER_NAME, bot.getUsername());
+        Input botPasswordInput = new Input(Input.PASSWORD, BotForm.PASSWORD, bot.getPassword());
+        Input botTimeoutInput = new Input(Input.TEXT, BotForm.BOT_TIMEOUT, String.valueOf(bot.getLastInvoked()));
 
         Input hiddenBotStationID = new Input(Input.HIDDEN, BotForm.BOT_STATION_ID, bot.getBotStation().getId().intValue());
-        Input hiddenBotID = new Input(Input.HIDDEN, BotForm.BOT_ID, botID);
+        Input hiddenBotID = new Input(Input.HIDDEN, BotForm.BOT_ID, String.valueOf(botID));
         tdFormElement.addElement(hiddenBotStationID);
         tdFormElement.addElement(hiddenBotID);
 
@@ -76,15 +72,7 @@ public class BotTag extends TitledFormTag {
     }
 
     private Bot findBot() {
-        BotsService botsService = DelegateFactory.getBotsService();
-        Bot pattern = new Bot();
-        pattern.setId(botID);
-        try {
-            return botsService.getBot(getSubject(), pattern);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return null;
+        return DelegateFactory.getBotService().getBot(getSubject(), botID);
     }
 
     @Override

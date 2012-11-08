@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.web.html;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.TD;
@@ -31,22 +30,26 @@ import ru.runa.wfe.audit.ProcessDeleteLog;
 import ru.runa.wfe.audit.SystemLog;
 
 /**
- * {@link TDBuilder} implementation to show system log as human readable message.
+ * {@link TDBuilder} implementation to show system log as human readable
+ * message.
  */
 public class SystemLogTDBuilder implements TDBuilder {
 
     /**
-     * Process place holder name. All occurrences of this place holder will be replaced with process instance identity.
+     * Process place holder name. All occurrences of this place holder will be
+     * replaced with process instance identity.
      */
     private static String PH_PROCESS = null;
 
     /**
-     * Process definition name place holder name. All occurrences of this place holder will be replaced with process definition name.
+     * Process definition name place holder name. All occurrences of this place
+     * holder will be replaced with process definition name.
      */
     private static String PH_PROCESS_DEFINITION = null;
 
     /**
-     * Process definition version place holder name. All occurrences of this place holder will be replaced with process definition version.
+     * Process definition version place holder name. All occurrences of this
+     * place holder will be replaced with process definition version.
      */
     private static String PH_VERSION = null;
 
@@ -60,7 +63,7 @@ public class SystemLogTDBuilder implements TDBuilder {
     }
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         TD result = new TD(getValue(object, env));
         result.setClass(Resources.CLASS_LIST_TABLE_TD);
         return result;

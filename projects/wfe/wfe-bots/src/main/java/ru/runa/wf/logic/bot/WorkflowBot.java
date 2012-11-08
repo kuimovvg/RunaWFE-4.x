@@ -72,22 +72,22 @@ public class WorkflowBot implements Runnable {
 
     // Creating WorkflowBot template object
     public WorkflowBot(Bot bot, List<BotTask> tasks) throws AuthenticationException {
-        subject = DelegateFactory.getAuthenticationService().authenticate(bot.getWfeUser(), bot.getWfePass());
+        subject = DelegateFactory.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
         HashMap<String, TaskHandler> handlers = new HashMap<String, TaskHandler>();
         for (BotTask task : tasks) {
             try {
-                TaskHandler handler = ClassLoaderUtil.instantiate(task.getClazz());
+                TaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
                 handler.configure(task.getConfiguration());
                 handlers.put(task.getName(), handler);
                 log.info("Configured taskHandler for " + task.getName());
             } catch (Throwable th) {
-                log.error("Can't create handler for bot " + bot.getWfeUser() + " (task is " + task + ")", th);
+                log.error("Can't create handler for bot " + bot.getUsername() + " (task is " + task + ")", th);
             }
         }
         taskHandlerMap = handlers;
         task = null;
         parent = null;
-        botName = bot.getWfeUser();
+        botName = bot.getUsername();
         botDeplay = bot.getLastInvoked();
         existingBots = new HashSet<WorkflowBot>();
     }
@@ -255,7 +255,7 @@ public class WorkflowBot implements Runnable {
     }
 
     private void logBotsError(WfTask task, Throwable th) {
-        BotLogger botLogger = BotLoggerResources.createBotLogger();
+        BotLogger botLogger = BotStationResources.createBotLogger();
         if (botLogger == null) {
             return;
         }

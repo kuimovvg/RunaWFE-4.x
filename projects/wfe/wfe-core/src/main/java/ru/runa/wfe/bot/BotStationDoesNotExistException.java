@@ -24,12 +24,12 @@ import ru.runa.wfe.ApplicationException;
  * @author petr_mikheev
  */
 public class BotStationDoesNotExistException extends ApplicationException {
-    private static final long serialVersionUID = -9186710256485510506L;
+    private static final long serialVersionUID = 1L;
     private final String botstationName;
 
-    public BotStationDoesNotExistException(String botstationName) {
-        super("BotStation " + botstationName + " doesn`t exists.");
-        this.botstationName = botstationName;
+    public BotStationDoesNotExistException(String botStationName) {
+        super("BotStation '" + botStationName + "' does not exist");
+        botstationName = botStationName;
     }
 
     public String getBotStationName() {

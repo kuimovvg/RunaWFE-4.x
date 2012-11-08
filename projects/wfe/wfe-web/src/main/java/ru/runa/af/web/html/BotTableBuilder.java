@@ -66,7 +66,7 @@ public class BotTableBuilder {
         String path = Commons.getActionUrl("bot.do", "botID", new Long(bot.getId()), pageContext, PortletUrlType.Render);
         tr.addElement(new TD(input).setClass(Resources.CLASS_LIST_TABLE_TD));
         // tr.addElement(new TD(new A(path, new Long(bot.getId()).toString()).toString()).setWidth("10%").setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(new A(path, bot.getWfeUser())).setWidth("90%").setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(new A(path, bot.getUsername())).setWidth("90%").setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }
 

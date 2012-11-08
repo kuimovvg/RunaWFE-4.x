@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.Messages;
@@ -27,12 +25,13 @@ import ru.runa.common.web.html.TDBuilder;
 import ru.runa.wfe.presentation.SystemLogTypeHelper;
 
 /**
- * {@link TDBuilder} implementation to show system log type in human readable format.
+ * {@link TDBuilder} implementation to show system log type in human readable
+ * format.
  */
 public class SystemLogTypeTDBuilder implements TDBuilder {
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         TD result = new TD(getValue(object, env));
         result.setClass(Resources.CLASS_LIST_TABLE_TD);
         return result;

@@ -27,7 +27,7 @@ public class BotStationAlreadyExistsException extends ApplicationException {
     private final String botstationName;
 
     public BotStationAlreadyExistsException(String botstationName) {
-        super("BotStation " + botstationName + " already exists.");
+        super("BotStation '" + botstationName + "' already exists.");
         this.botstationName = botstationName;
     }
 

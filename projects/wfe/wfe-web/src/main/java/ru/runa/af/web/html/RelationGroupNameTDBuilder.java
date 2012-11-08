@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.TD;
 
@@ -29,7 +27,7 @@ import ru.runa.wfe.relation.RelationPair;
 public class RelationGroupNameTDBuilder implements TDBuilder {
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         TD td = new TD();
         td.setClass(Resources.CLASS_LIST_TABLE_TD);
         td.addElement(new StringElement(getValue(object, env)));

@@ -48,11 +48,16 @@ import com.google.common.base.Objects;
 /**
  * Created on 18.08.2004
  * 
- * @struts:action path="/submitTaskForm" name="processForm" validate="true" input = "/WEB-INF/wf/manage_tasks.jsp"
- * @struts.action-forward name="success" path="/manage_tasks.do" redirect = "true"
- * @struts.action-forward name="failure" path="/submit_task.do" redirect = "false"
- * @struts.action-forward name="submitTask" path="/submit_task.do" redirect = "false"
- * @struts.action-forward name="tasksList" path="/manage_tasks.do" redirect = "true"
+ * @struts:action path="/submitTaskForm" name="processForm" validate="true"
+ *                input = "/WEB-INF/wf/manage_tasks.jsp"
+ * @struts.action-forward name="success" path="/manage_tasks.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure" path="/submit_task.do" redirect =
+ *                        "false"
+ * @struts.action-forward name="submitTask" path="/submit_task.do" redirect =
+ *                        "false"
+ * @struts.action-forward name="tasksList" path="/manage_tasks.do" redirect =
+ *                        "true"
  */
 public class SubmitTaskFormAction extends BaseProcessFormAction {
 
@@ -76,7 +81,6 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
         }
 
         String transitionName = form.getSubmitButton();
-        log.debug("User tries to complete task '" + taskId + "' in " + processId);
         variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
         executionService.completeTask(subject, taskId, variables);
 

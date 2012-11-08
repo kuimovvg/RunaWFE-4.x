@@ -54,7 +54,7 @@ public class AddBotTag extends TitledFormTag {
         ActorSelectTD actorSelect = new ActorSelectTD(getSubject(), BotForm.USER_NAME);
         Input botPasswordInput = new Input(Input.TEXT, BotForm.PASSWORD);
 
-        Input hiddenBotStationID = new Input(Input.HIDDEN, BotForm.BOT_STATION_ID, botStationID);
+        Input hiddenBotStationID = new Input(Input.HIDDEN, BotForm.BOT_STATION_ID, String.valueOf(botStationID));
         tdFormElement.addElement(hiddenBotStationID);
 
         TR tr = new TR();

@@ -28,7 +28,7 @@ public class BotTaskAlreadyExistsException extends ApplicationException {
     private final String botTaskName;
 
     public BotTaskAlreadyExistsException(String botTaskName) {
-        super("BotTask " + botTaskName + " already exists.");
+        super("BotTask '" + botTaskName + "' already exists.");
         this.botTaskName = botTaskName;
     }
 

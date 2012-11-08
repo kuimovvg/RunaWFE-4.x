@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.html;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
@@ -44,13 +42,14 @@ public class RedeployProcessTDBuilder extends BaseTDBuilder {
     }
 
     @Override
-    public TD build(Object object, Env env) throws JspException {
+    public TD build(Object object, Env env) {
         WfDefinition pd = (WfDefinition) object;
         ConcreteElement startLink;
 
         if (isEnabled(object, env)) {
             startLink = new A(Commons.getActionUrl(WebResources.ACTION_MAPPING_REDEPLOY_PROCESS_DEFINITION, IdForm.ID_INPUT_NAME, pd.getId(),
-                    env.getPageContext(), PortletUrlType.Action), Messages.getMessage(Messages.LABEL_REDEPLOY_PROCESS_DEFINIION, env.getPageContext()));
+                    env.getPageContext(), PortletUrlType.Action),
+                    Messages.getMessage(Messages.LABEL_REDEPLOY_PROCESS_DEFINIION, env.getPageContext()));
         } else {
             startLink = new StringElement();
         }

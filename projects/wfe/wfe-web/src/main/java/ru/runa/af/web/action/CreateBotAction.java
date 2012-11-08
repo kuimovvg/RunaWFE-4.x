@@ -14,16 +14,16 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.BotForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.BotsService;
+import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
-import ru.runa.wfe.bot.BotStation;
-import ru.runa.wfe.bot.BotStationDoesNotExistException;
 
 /**
  * @author petrmikheev
  * 
- * @struts:action path="/create_bot" name="botForm" validate="false" input = "/WEB-INF/wf/add_bot.jsp"
- * @struts.action-forward name="success" path="/bot_station.do" redirect = "true"
+ * @struts:action path="/create_bot" name="botForm" validate="false" input =
+ *                "/WEB-INF/wf/add_bot.jsp"
+ * @struts.action-forward name="success" path="/bot_station.do" redirect =
+ *                        "true"
  * @struts.action-forward name="failure" path="/create_bot.do" redirect = "true"
  */
 public class CreateBotAction extends Action {
@@ -36,25 +36,18 @@ public class CreateBotAction extends Action {
         BotForm botForm = (BotForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotsService botsService = DelegateFactory.getBotsService();
+            BotService botService = DelegateFactory.getBotService();
             Bot bot = new Bot();
-            bot.setWfeUser(botForm.getWfeUser());
-            bot.setWfePass(botForm.getWfePassword());
-            BotStation station = new BotStation(botForm.getBotStationID());
-            station = botsService.getBotStation(subject, station);
-            if (station == null) {
-                throw new BotStationDoesNotExistException("with id " + botForm.getBotStationID());
-            }
-            bot.setBotStation(station);
-            botsService.create(subject, bot);
+            bot.setUsername(botForm.getWfeUser());
+            bot.setPassword(botForm.getWfePassword());
+            bot.setBotStation(botService.getBotStation(botForm.getBotStationID()));
+            botService.createBot(subject, bot);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
-
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
-
         return new ActionForward("/bot_station.do?botStationID=" + botForm.getBotStationID());
     }
 }
