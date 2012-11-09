@@ -29,7 +29,6 @@ import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.security.AuthenticationException;
@@ -77,8 +76,7 @@ public class RelationResultTag extends FreemarkerTag {
         }
         List<Executor> result = new ArrayList<Executor>();
         result.add(executor);
-        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
         result.addAll(executorService.getExecutorGroups(subject, executor, batchPresentation, false));
         return result;
     }

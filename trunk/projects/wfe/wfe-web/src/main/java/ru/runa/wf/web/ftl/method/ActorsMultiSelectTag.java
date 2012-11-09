@@ -33,7 +33,7 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
             Map<String, String> substitutions = new HashMap<String, String>();
             substitutions.put("VARIABLE", variableName);
             StringBuffer html = new StringBuffer();
-            html.append(exportScript("ActorsMultiSelectTag.js", substitutions));
+            html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions));
 
             html.append("<div id=\"actorsMultiSelect").append(variableName).append("\"><div id=\"actorsMultiSelectCnt").append(variableName)
                     .append("\"></div><div id=\"actorsMultiSelectAddButton\"><a href=\"javascript:{}\" id=\"btnAdd").append(variableName)
@@ -87,7 +87,7 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
     private List<Executor> getActors(Subject subject, boolean byLogin, String hint) throws TemplateModelException {
         try {
             ExecutorService executorService = DelegateFactory.getExecutorService();
-            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
             batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
             if (hint.length() > 0) {
                 int filterIndex = byLogin ? 0 : 1;
@@ -97,8 +97,8 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
                 filterCriteriaEnd.applyFilterTemplates(new String[] { hint + "%" });
                 filterFieldsMap.put(filterIndex, filterCriteriaEnd);
             }
-            batchPresentation.setRangeSize(50);
-            // thid method used instead of getActors due to lack paging in that method
+            // this method used instead of getActors due to lack paging in that
+            // method
             return executorService.getAll(subject, batchPresentation);
         } catch (Exception e) {
             throw new TemplateModelException(e);

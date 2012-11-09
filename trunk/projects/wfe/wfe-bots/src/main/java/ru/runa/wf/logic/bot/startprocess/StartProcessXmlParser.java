@@ -30,22 +30,13 @@ import ru.runa.wfe.commons.xml.XMLHelper;
 
 public class StartProcessXmlParser {
     private static final String PROCESS_ELEMENT_NAME = "process";
-
     private static final String TITLE_ATTRIBUTE_NAME = "name";
-
     private static final String VARIABLE_ELEMENT_NAME = "variable";
-
     private static final String VARFROM_ATTRIBUTE_NAME = "from";
-
     private static final String VARTO_ATTRIBUTE_NAME = "to";
-
     private static final String STARTED_PROCESS_ID = "started-process-id";
-
     private static final String VARIABLE_NAME = "variable-name";
-
-    private static final String XSD_PATH = "/process-start.xsd";
-
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver(XSD_PATH);
+    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("process-start.xsd");
 
     /**
      * Parses StartProcessXmlHandler configuration

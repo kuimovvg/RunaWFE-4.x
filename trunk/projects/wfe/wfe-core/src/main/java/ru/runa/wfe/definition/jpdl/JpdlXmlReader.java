@@ -34,6 +34,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
@@ -67,7 +68,7 @@ import ru.runa.wfe.var.VariableMapping;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JpdlXmlReader {
     private final byte[] definitionXml;
     private String defaultDueDate;
@@ -99,7 +100,7 @@ public class JpdlXmlReader {
 
     public ProcessDefinition readProcessDefinition(ProcessDefinition processDefinition) {
         try {
-            document = XmlUtils.parseWithXSDValidation(definitionXml, getClass().getResourceAsStream("/jpdl-3.2.xsd"));
+            document = XmlUtils.parseWithXSDValidation(definitionXml, ClassLoaderUtil.getResourceAsStream("jpdl-3.2.xsd", getClass()));
             Element root = document.getRootElement();
 
             // read the process name
@@ -126,7 +127,7 @@ public class JpdlXmlReader {
         return processDefinition;
     }
 
-	private void readSwimlanes(ProcessDefinition processDefinition, Element processDefinitionElement) {
+    private void readSwimlanes(ProcessDefinition processDefinition, Element processDefinitionElement) {
         List<Element> elements = processDefinitionElement.elements("swimlane");
         for (Element element : elements) {
             String swimlaneName = element.attributeValue("name");
@@ -251,7 +252,8 @@ public class JpdlXmlReader {
             actionNode.setAction(readSingleAction(processDefinition, element));
         }
         // if (node instanceof WaitState) {
-        // CreateTimerAction createTimerAction = ApplicationContextFactory.createAutowiredBean(CreateTimerAction.class);
+        // CreateTimerAction createTimerAction =
+        // ApplicationContextFactory.createAutowiredBean(CreateTimerAction.class);
         // createTimerAction.setName(node.getName() + "/wait");
         // createTimerAction.setTransitionName(element.attributeValue("transition"));
         // createTimerAction.setDueDate(element.attributeValue("duedate"));
@@ -386,7 +388,8 @@ public class JpdlXmlReader {
                     configuration = configuration.trim();
                 } else {
                     StringWriter stringWriter = new StringWriter();
-                    // when parsing, it could be to store the config in the database, so we want to make the configuration compact
+                    // when parsing, it could be to store the config in the
+                    // database, so we want to make the configuration compact
                     XMLWriter xmlWriter = new XMLWriter(stringWriter, OutputFormat.createCompactFormat());
                     for (Node node : nodes) {
                         xmlWriter.write(node);
@@ -424,7 +427,9 @@ public class JpdlXmlReader {
     /**
      * creates the transition object and configures it by the read attributes
      * 
-     * @return the created <code>ru.runa.wfe.lang.Transition</code> object (useful, if you want to override this method to read additional configuration properties)
+     * @return the created <code>ru.runa.wfe.lang.Transition</code> object
+     *         (useful, if you want to override this method to read additional
+     *         configuration properties)
      */
     private void resolveTransitionDestination(ProcessDefinition processDefinition, Element element, Node node) {
         Transition transition = new Transition();

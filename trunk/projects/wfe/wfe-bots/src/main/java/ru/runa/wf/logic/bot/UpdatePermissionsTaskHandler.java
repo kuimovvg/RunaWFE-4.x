@@ -33,10 +33,12 @@ import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsSettings;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsXmlParser;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.os.OrgFunctionException;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.IVariableProvider;
@@ -47,14 +49,14 @@ import com.google.common.collect.Lists;
  * Created on 18.05.2006
  * 
  */
-public class UpdatePermissionsTaskHandler extends AbstractOrgFunctionTaskHandler {
+public class UpdatePermissionsTaskHandler implements TaskHandler {
     private static final Log log = LogFactory.getLog(UpdatePermissionsTaskHandler.class);
 
     private UpdatePermissionsSettings settings;
 
     @Override
     public void configure(String configurationName) throws TaskHandlerException {
-        settings = UpdatePermissionsXmlParser.read(getClass().getResourceAsStream(configurationName));
+        settings = UpdatePermissionsXmlParser.read(ClassLoaderUtil.getResourceAsStream(configurationName, getClass()));
     }
 
     @Override
@@ -74,8 +76,8 @@ public class UpdatePermissionsTaskHandler extends AbstractOrgFunctionTaskHandler
                 }
             }
             if (allowed) {
-                List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions(),
-                        getActorToSubstituteCode(subject));
+                Long actorCode = SubjectPrincipalsHelper.getActor(subject).getCode();
+                List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions(), actorCode);
                 AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
                 List<Collection<Permission>> allPermissions = Lists.newArrayListWithExpectedSize(executors.size());
                 Identifiable identifiable = DelegateFactory.getExecutionService().getProcess(subject, wfTask.getProcessId());

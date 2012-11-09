@@ -131,7 +131,7 @@ public abstract class ProcessLog implements IAttributes, Serializable {
     }
 
     public void setContent(String content) {
-        this.attributes = XmlUtils.deserialize(content);
+        attributes = XmlUtils.deserialize(content);
     }
 
     @Lob
@@ -159,7 +159,8 @@ public abstract class ProcessLog implements IAttributes, Serializable {
     }
 
     /**
-     * @return Arguments for localized pattern to format log message description.
+     * @return Arguments for localized pattern to format log message
+     *         description.
      */
     @Transient
     public abstract Object[] getPatternArguments();
@@ -175,4 +176,17 @@ public abstract class ProcessLog implements IAttributes, Serializable {
         return MessageFormat.format(pattern, arguments);
     }
 
+    // @Override
+    // public boolean equals(Object obj) {
+    // if (!(obj instanceof ProcessLog)) {
+    // return false;
+    // }
+    // ProcessLog l = (ProcessLog) obj;
+    // return Objects.equal(id, l.id);
+    // }
+    //
+    // @Override
+    // public int hashCode() {
+    // return Objects.hashCode(id);
+    // }
 }

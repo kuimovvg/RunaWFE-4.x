@@ -25,12 +25,8 @@ import ru.runa.wfe.ApplicationException;
 public class ProcessDoesNotExistException extends ApplicationException {
     private static final long serialVersionUID = 1L;
 
-    public ProcessDoesNotExistException(String name) {
-        super(name);
-    }
-
-    public ProcessDoesNotExistException(Long id) {
-        this("with id = " + id);
+    public ProcessDoesNotExistException(Object identity) {
+        super("Process does not exist: " + identity);
     }
 
 }

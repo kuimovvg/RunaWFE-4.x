@@ -7,6 +7,8 @@ import java.util.List;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import ru.runa.wfe.commons.ClassLoaderUtil;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
@@ -102,9 +104,8 @@ public class EmailConfigParser {
     }
 
     private static EmailConfig parseFromFile(String fileName) throws IOException {
-        String name = "/" + fileName;
-        InputStream is = EmailConfigParser.class.getResourceAsStream(name);
-        Preconditions.checkNotNull(is, "Resource not found by name " + name);
+        InputStream is = ClassLoaderUtil.getResourceAsStream(fileName, EmailConfigParser.class);
+        Preconditions.checkNotNull(is, "Resource not found by name " + fileName);
         String c = new String(ByteStreams.toByteArray(is), Charsets.UTF_8);
         return parse(c);
     }

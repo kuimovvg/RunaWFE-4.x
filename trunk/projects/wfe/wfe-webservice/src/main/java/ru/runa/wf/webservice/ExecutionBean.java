@@ -52,7 +52,6 @@ import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -175,7 +174,7 @@ public class ExecutionBean {
     public List<wfeTask> getTasks(
             @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor)
             throws AuthenticationException {
-        List<WfTask> tasks = taskLogic.getTasks(getSubject(actor), BatchPresentationFactory.TASKS.createDefault());
+        List<WfTask> tasks = taskLogic.getTasks(getSubject(actor), BatchPresentationFactory.TASKS.createNonPaged());
         List<wfeTask> result = new ArrayList<wfeTask>();
         if (tasks != null) {
             for (WfTask task : tasks) {
@@ -187,10 +186,15 @@ public class ExecutionBean {
 
     // @WebMethod
     // public VariableDescr[] getVariables(
-    // @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
-    // @WebParam(mode = Mode.IN, name = "taskId", targetNamespace = "http://runa.ru/workflow/webservices") Long taskId)
-    // throws AuthorizationException, AuthenticationException, TaskDoesNotExistException {
-    // return convertVariableMap(executionLogic.getVariableValues(getSubject(actor), taskId));
+    // @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace =
+    // "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+    // @WebParam(mode = Mode.IN, name = "taskId", targetNamespace =
+    // "http://runa.ru/workflow/webservices") Long taskId)
+    // throws AuthorizationException, AuthenticationException,
+    // TaskDoesNotExistException {
+    // return
+    // convertVariableMap(executionLogic.getVariableValues(getSubject(actor),
+    // taskId));
     // }
 
     @WebMethod
@@ -314,8 +318,7 @@ public class ExecutionBean {
     public List<WfProcess> getProcesses(
             @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor)
             throws AuthorizationException, AuthenticationException, ProcessDoesNotExistException {
-        BatchPresentation batchPresentation = BatchPresentationFactory.PROCESSES.createDefault();
-        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        BatchPresentation batchPresentation = BatchPresentationFactory.PROCESSES.createNonPaged();
         return executionLogic.getProcesses(getSubject(actor), batchPresentation);
     }
 

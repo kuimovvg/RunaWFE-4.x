@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ru.runa.wf.logic.bot.TaskHandlerException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.format.VariableFormat;
 
@@ -45,9 +46,8 @@ public class TextReportGenerator {
         String encoding = settings.getReportEncoding();
 
         try {
-            InputStream inputStream = TextReportGenerator.class.getResourceAsStream(templateFileName);
+            InputStream inputStream = ClassLoaderUtil.getResourceAsStream(templateFileName, TextReportGenerator.class);
             String content = new String(ByteStreams.toByteArray(inputStream), templateEncoding);
-
             String[] symbols = settings.getContextSymbols();
             String[] replacements = settings.getContextReplacements();
             SymbolsReplacer symbolsReplacer = new SymbolsReplacer(symbols, replacements, settings.isXmlFormatSupport());

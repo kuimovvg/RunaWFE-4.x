@@ -80,8 +80,7 @@ public class BotLogic extends CommonLogic {
         return botStationDAO.get(name);
     }
 
-    public BotStation getBotStationNotNull(Subject subject, String name) throws AuthorizationException, BotStationDoesNotExistException {
-        checkPermissionsOnBotStations(subject, Permission.READ);
+    public BotStation getBotStationNotNull(String name) throws AuthorizationException, BotStationDoesNotExistException {
         return botStationDAO.getNotNull(name);
     }
 
@@ -95,8 +94,8 @@ public class BotLogic extends CommonLogic {
     }
 
     public Bot createBot(Subject subject, Bot bot) throws AuthorizationException, BotAlreadyExistsException {
-        Preconditions.checkNotNull(bot.getBotStation());
         checkPermissionsOnBotStations(subject, BotStationPermission.BOT_STATION_CONFIGURE);
+        Preconditions.checkNotNull(bot.getBotStation());
         if (getBot(subject, bot.getBotStation().getId(), bot.getUsername()) != null) {
             throw new BotAlreadyExistsException(bot.getUsername());
         }
@@ -145,11 +144,11 @@ public class BotLogic extends CommonLogic {
     }
 
     public BotTask createBotTask(Subject subject, BotTask botTask) throws AuthorizationException, BotTaskAlreadyExistsException {
+        checkPermissionsOnBotStations(subject, BotStationPermission.BOT_STATION_CONFIGURE);
         Preconditions.checkNotNull(botTask.getBot());
         if (getBotTask(subject, botTask.getBot().getId(), botTask.getName()) != null) {
             throw new BotTaskAlreadyExistsException(botTask.getName());
         }
-        checkPermissionsOnBotStations(subject, BotStationPermission.BOT_STATION_CONFIGURE);
         return botTaskDAO.create(botTask);
     }
 

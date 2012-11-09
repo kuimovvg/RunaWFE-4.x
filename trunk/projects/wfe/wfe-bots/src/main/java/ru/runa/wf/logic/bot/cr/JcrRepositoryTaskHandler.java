@@ -41,6 +41,7 @@ import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.TaskHandler;
 import ru.runa.wf.logic.bot.TaskHandlerException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -64,7 +65,7 @@ public class JcrRepositoryTaskHandler implements TaskHandler {
 
     @Override
     public void configure(String bundleName) {
-        config = ConfigXmlParser.parse(getClass().getResourceAsStream(bundleName));
+        config = ConfigXmlParser.parse(ClassLoaderUtil.getResourceAsStream(bundleName, getClass()));
     }
 
     @Override

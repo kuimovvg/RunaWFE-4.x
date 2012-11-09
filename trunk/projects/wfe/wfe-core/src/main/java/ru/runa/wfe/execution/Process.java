@@ -61,6 +61,7 @@ import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
@@ -90,7 +91,7 @@ public class Process implements Identifiable {
     @Transient
     @Override
     public SecuredObjectType getSecuredObjectType() {
-        return SecuredObjectType.EXECUTION;
+        return SecuredObjectType.PROCESS;
     }
 
     @Override
@@ -132,7 +133,7 @@ public class Process implements Identifiable {
     }
 
     public void setStartDate(Date start) {
-        this.startDate = start;
+        startDate = start;
     }
 
     @Column(name = "END_DATE")
@@ -141,7 +142,7 @@ public class Process implements Identifiable {
     }
 
     public void setEndDate(Date end) {
-        this.endDate = end;
+        endDate = end;
     }
 
     @ManyToOne(targetEntity = Deployment.class)
@@ -153,7 +154,7 @@ public class Process implements Identifiable {
     }
 
     public void setDefinition(Deployment processDeployment) {
-        this.definition = processDeployment;
+        definition = processDeployment;
     }
 
     @ManyToOne(targetEntity = Token.class, cascade = { javax.persistence.CascadeType.ALL })
@@ -260,7 +261,8 @@ public class Process implements Identifiable {
     }
 
     /**
-     * instructs the main path of execution to continue by taking the default transition on the current node.
+     * instructs the main path of execution to continue by taking the default
+     * transition on the current node.
      * 
      * @throws IllegalStateException
      *             if the token is not active.
@@ -324,7 +326,7 @@ public class Process implements Identifiable {
 
     @Override
     public String toString() {
-        return getDefinition().getName() + ": " + id;
+        return Objects.toStringHelper(this).add("id", id).add("definition", definition).toString();
     }
 
 }

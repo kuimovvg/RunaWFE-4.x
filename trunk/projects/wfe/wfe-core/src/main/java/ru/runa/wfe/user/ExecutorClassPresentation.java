@@ -24,7 +24,6 @@ import ru.runa.wfe.presentation.FieldFilterMode;
 import ru.runa.wfe.security.Permission;
 
 /**
- * 
  * Created on 22.10.2005
  */
 public class ExecutorClassPresentation extends ClassPresentation {
@@ -39,7 +38,8 @@ public class ExecutorClassPresentation extends ClassPresentation {
 
     private ExecutorClassPresentation() {
         super(Executor.class, "", true, new FieldDescriptor[] {
-                // display name field type DB source isSort filter mode get value/show in web getter param
+                // display name field type DB source isSort filter mode get
+                // value/show in web getter param
                 new FieldDescriptor(EXECUTOR_BATCH_PRESENTATION_NAME, String.class.getName(), new DefaultDBSource(Executor.class, "name"), true,
                         FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "name" }),
                 new FieldDescriptor(EXECUTOR_BATCH_PRESENTATION_FULL_NAME, String.class.getName(), new DefaultDBSource(Executor.class, "fullName"),

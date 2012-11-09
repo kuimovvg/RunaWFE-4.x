@@ -21,9 +21,9 @@ import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TDBuilder.Env.IdentifiableExtractor;
+import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
-import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.dto.WfTask;
 
 public class TaskVariableTDBuilder implements TDBuilder {
@@ -33,19 +33,9 @@ public class TaskVariableTDBuilder implements TDBuilder {
 
         @Override
         public Identifiable getIdentifiable(final Object o, final Env env) {
-            return new Identifiable() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public Long getId() {
-                    return ((WfTask) o).getProcessId();
-                }
-
-                @Override
-                public SecuredObjectType getSecuredObjectType() {
-                    return SecuredObjectType.NONE;
-                }
-            };
+            Process identifiable = new Process();
+            identifiable.setId(((WfTask) o).getProcessId());
+            return identifiable;
         }
     }
 

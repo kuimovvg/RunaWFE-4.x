@@ -45,17 +45,15 @@ public class SerializableToByteArrayConverter implements Converter {
 
     @Override
     public Object convert(Object o) {
-        byte[] bytes = null;
         try {
             ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
             ObjectOutputStream objectStream = new ObjectOutputStream(memoryStream);
             objectStream.writeObject(o);
             objectStream.flush();
-            bytes = memoryStream.toByteArray();
+            return memoryStream.toByteArray();
         } catch (IOException e) {
             throw new InternalApplicationException("couldn't serialize '" + o + "'", e);
         }
-        return bytes;
     }
 
     @Override

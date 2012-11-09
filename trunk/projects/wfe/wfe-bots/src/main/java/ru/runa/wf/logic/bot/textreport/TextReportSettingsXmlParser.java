@@ -68,10 +68,7 @@ public class TextReportSettingsXmlParser {
     private static final String XML_FORMAT_ATTRIBUTE_NAME = "xmlFormat";
 
     private static final String APPLY_TO_REGEXP_ATTRIBUTE_NAME = "applyToRegexp";
-
-    private static final String XSD_PATH = "/textreport.xsd";
-
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver(XSD_PATH);
+    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("textreport.xsd");
 
     private TextReportSettingsXmlParser() {
         // prevents direct object instantiation

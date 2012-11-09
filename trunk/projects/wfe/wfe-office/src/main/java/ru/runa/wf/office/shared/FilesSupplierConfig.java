@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -73,7 +74,7 @@ public abstract class FilesSupplierConfig {
                     throw new InternalApplicationException("Unable to read input file from location '" + inputFilePath + "'");
                 }
             }
-            InputStream inputStream = getClass().getResourceAsStream(inputFilePath);
+            InputStream inputStream = ClassLoaderUtil.getResourceAsStream(inputFilePath, getClass());
             if (inputStream != null) {
                 return inputStream;
             }

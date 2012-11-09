@@ -34,17 +34,11 @@ import ru.runa.wfe.commons.xml.XMLHelper;
  */
 public class CancelProcessTaskXmlParser {
     private static final String PROCESS_TO_CANCEL = "processToCancel";
-
     private static final String NAME_ATTRIBUTE_NAME = "name";
-
     private static final String TASK_HANDLER_CONFIGURATION_ATTRIBUT_NAME = "taskHandlerConfiguration";
-
     private static final String PROCESS_ID_VARIABLE_ATTRIBUTE_NAME = "processIdVariable";
-
-    public static final String PROCESSES_ELEMENT_NAME = "processes";
-
-    private static final String XSD_PATH = "/cancel-process.xsd";
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver(XSD_PATH);
+    private static final String PROCESSES_ELEMENT_NAME = "processes";
+    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("cancel-process.xsd");
 
     /**
      * Parses DatabaseTaskHandler configuration

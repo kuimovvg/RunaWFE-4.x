@@ -44,7 +44,7 @@ public class StartPeriodicBotsInvocationAction extends Action {
         Long id = ((BotStationForm) form).getBotStationID();
         BotService botService = DelegateFactory.getBotService();
         BotStation botStation = botService.getBotStation(id);
-        DelegateFactory.getBotInvokerService(botStation.getAddress()).startPeriodicBotsInvocation();
+        DelegateFactory.getBotInvokerService(botStation.getAddress()).startPeriodicBotsInvocation(botStation);
         return new ActionForward("/bot_station.do?botStationID=" + id);
     }
 }

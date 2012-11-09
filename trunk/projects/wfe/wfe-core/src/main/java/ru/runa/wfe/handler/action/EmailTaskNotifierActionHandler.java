@@ -59,7 +59,7 @@ public class EmailTaskNotifierActionHandler implements ActionHandler {
     public void setConfiguration(String path) {
         try {
             InputStream in = ClassLoaderUtil.getResourceAsStream(path, getClass());
-            this.configBytes = ByteStreams.toByteArray(in);
+            configBytes = ByteStreams.toByteArray(in);
         } catch (Exception e) {
             log.error("Configuration error", e);
         }
@@ -67,7 +67,7 @@ public class EmailTaskNotifierActionHandler implements ActionHandler {
 
     @Override
     public void execute(ExecutionContext executionContext) throws Exception {
-        List<Actor> actors = executorDAO.getAllActors(BatchPresentationFactory.EXECUTORS.createDefault());
+        List<Actor> actors = executorDAO.getAllActors(BatchPresentationFactory.ACTORS.createNonPaged());
         for (Actor actor : actors) {
             String email = actor.getEmail();
             if (email != null && email.length() > 0) {

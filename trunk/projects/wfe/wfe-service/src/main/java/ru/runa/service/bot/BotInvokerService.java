@@ -2,12 +2,14 @@ package ru.runa.service.bot;
 
 import javax.ejb.Remote;
 
+import ru.runa.wfe.bot.BotStation;
+
 @Remote
 public interface BotInvokerService {
 
-    public void invokeBots();
+    public void invokeBots(BotStation botStation);
 
-    public void startPeriodicBotsInvocation();
+    public void startPeriodicBotsInvocation(BotStation botStation);
 
     public boolean isRunning();
 

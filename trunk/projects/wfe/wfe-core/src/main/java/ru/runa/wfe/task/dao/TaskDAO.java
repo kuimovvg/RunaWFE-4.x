@@ -23,12 +23,20 @@ package ru.runa.wfe.task.dao;
 
 import java.util.List;
 
-import ru.runa.wfe.commons.dao.CommonDAO;
+import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Executor;
 
-public class TaskDAO extends CommonDAO {
+@SuppressWarnings("unchecked")
+public class TaskDAO extends GenericDAO<Task> {
+
+    @Override
+    protected void checkNotNull(Task entity, Object identity) {
+        if (entity == null) {
+            throw new TaskDoesNotExistException(identity);
+        }
+    }
 
     /**
      * @return active tasks assigned to a given executor.
@@ -42,17 +50,6 @@ public class TaskDAO extends CommonDAO {
      */
     public List<Task> findUnassignedActiveTasks() {
         return getHibernateTemplate().find("from Task where executor is null and endDate is null");
-    }
-
-    /**
-     * @return task by id
-     */
-    public Task getTaskNotNull(Long taskId) {
-        Task task = get(Task.class, taskId);
-        if (task == null) {
-            throw new TaskDoesNotExistException(taskId);
-        }
-        return task;
     }
 
 }

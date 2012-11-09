@@ -46,7 +46,6 @@ public class TaskFactory {
         Token token = executionContext.getToken();
         task.setToken(token);
         task.setProcess(process);
-        process.getTasks().add(task);
 
         executionContext.addLog(new TaskCreateLog(task));
         task.setDeadlineDate(ExpressionEvaluator.evaluateDuration(executionContext, getDeadlineDuration(taskDefinition)));
@@ -57,7 +56,8 @@ public class TaskFactory {
         if (task.isStartTask(executionContext, taskDefinition)) {
             swimlane = process.getSwimlane(swimlaneDefinition.getName());
             if (swimlane == null) {
-                // swimlane.setExecutor(executionContext, SubjectPrincipalHolder.actors.get(), true);
+                // swimlane.setExecutor(executionContext,
+                // SubjectPrincipalHolder.actors.get(), true);
                 throw new UnsupportedOperationException("use ru.runa.wfe.execution.TaskFactory.createStart(ExecutionContext, Actor)");
             }
         } else {
@@ -73,6 +73,7 @@ public class TaskFactory {
         } catch (Exception e) {
             log.info("Task notifier error", e);
         }
+        process.getTasks().add(task);
         return task;
     }
 

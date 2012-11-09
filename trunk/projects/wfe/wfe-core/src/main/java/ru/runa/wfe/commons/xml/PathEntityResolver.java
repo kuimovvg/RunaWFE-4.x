@@ -20,6 +20,8 @@ package ru.runa.wfe.commons.xml;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
+import ru.runa.wfe.commons.ClassLoaderUtil;
+
 /**
  * 
  * Created on 20.12.2005
@@ -32,8 +34,9 @@ public class PathEntityResolver implements EntityResolver {
         this.path = path;
     }
 
+    @Override
     public InputSource resolveEntity(String publicId, String systemId) {
-        return new InputSource(getClass().getResourceAsStream(path));
+        return new InputSource(ClassLoaderUtil.getResourceAsStream(path, getClass()));
 
     }
 }

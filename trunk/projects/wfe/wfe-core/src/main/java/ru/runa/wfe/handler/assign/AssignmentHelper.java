@@ -25,7 +25,7 @@ public class AssignmentHelper {
         Executor oldExecutor = task.getExecutor();
         task.assignExecutor(executionContext, newExecutor, false);
         if (oldExecutor instanceof TemporaryGroup) {
-            executorDAO.remove(oldExecutor);
+            executorLogic.remove(oldExecutor);
         }
     }
 

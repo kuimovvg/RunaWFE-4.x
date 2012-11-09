@@ -23,7 +23,7 @@ import ru.runa.wfe.commons.cache.BaseCacheImpl;
 import ru.runa.wfe.commons.cache.Cache;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
-import ru.runa.wfe.definition.dao.DefinitionDAO;
+import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.definition.jpdl.JpdlProcessArchive;
 import ru.runa.wfe.lang.ProcessDefinition;
 
@@ -56,7 +56,7 @@ class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCach
     }
 
     @Override
-    public ProcessDefinition getDefinition(DefinitionDAO definitionDAO, Long definitionId) throws DefinitionDoesNotExistException {
+    public ProcessDefinition getDefinition(DeploymentDAO deploymentDAO, Long definitionId) throws DefinitionDoesNotExistException {
         ProcessDefinition processDefinition = null;
         synchronized (this) {
             processDefinition = definitionIdToDefinition.get(definitionId);
@@ -64,7 +64,7 @@ class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCach
                 return processDefinition;
             }
         }
-        Deployment processDeploymentDbImpl = definitionDAO.getDeploymentNotNull(definitionId);
+        Deployment processDeploymentDbImpl = deploymentDAO.getNotNull(definitionId);
         JpdlProcessArchive archive = new JpdlProcessArchive(processDeploymentDbImpl);
         processDefinition = archive.parseProcessDefinition();
         synchronized (this) {
@@ -74,32 +74,32 @@ class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCach
     }
 
     @Override
-    public ProcessDefinition getLatestDefinition(DefinitionDAO definitionDAO, String definitionName) {
+    public ProcessDefinition getLatestDefinition(DeploymentDAO deploymentDAO, String definitionName) {
         Long definitionId = null;
         synchronized (this) {
             definitionId = definitionNameToId.get(definitionName);
             if (definitionId != null) {
-                return getDefinition(definitionDAO, definitionId);
+                return getDefinition(deploymentDAO, definitionId);
             }
         }
-        definitionId = definitionDAO.findLatestDeployment(definitionName).getId();
+        definitionId = deploymentDAO.findLatestDeployment(definitionName).getId();
         synchronized (this) {
             definitionNameToId.put(definitionName, definitionId);
         }
-        return getDefinition(definitionDAO, definitionId);
+        return getDefinition(deploymentDAO, definitionId);
     }
 
     @Override
-    public List<ProcessDefinition> getLatestProcessDefinitions(DefinitionDAO definitionDAO) {
+    public List<ProcessDefinition> getLatestProcessDefinitions(DeploymentDAO deploymentDAO) {
         synchronized (this) {
             if (latestProcessDefinition.size() != 0) {
                 return latestProcessDefinition;
             }
         }
-        List<Deployment> result = definitionDAO.findLatestDeployments();
+        List<Deployment> result = deploymentDAO.findLatestDeployments();
         synchronized (this) {
             for (Deployment processDeployment : result) {
-                latestProcessDefinition.add(getDefinition(definitionDAO, processDeployment.getId()));
+                latestProcessDefinition.add(getDefinition(deploymentDAO, processDeployment.getId()));
             }
         }
         return latestProcessDefinition;

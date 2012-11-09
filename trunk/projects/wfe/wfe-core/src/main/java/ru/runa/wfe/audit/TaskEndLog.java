@@ -47,14 +47,14 @@ public class TaskEndLog extends TaskLog {
     }
 
     @Transient
-    public String getExecutorName() {
+    public String getActorName() {
         return getAttributeNotNull(ATTR_ACTOR_NAME);
     }
 
     @Override
     @Transient
     public Object[] getPatternArguments() {
-        return new Object[] { getTaskName(), new ExecutorNameValue(getExecutorName()) };
+        return new Object[] { getTaskName(), new ExecutorNameValue(getActorName()) };
     }
 
 }

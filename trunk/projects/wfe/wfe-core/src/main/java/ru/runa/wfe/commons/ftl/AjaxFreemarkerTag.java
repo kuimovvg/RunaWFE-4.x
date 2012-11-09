@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.commons.web.WebHelper;
@@ -72,6 +73,9 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
     }
 
     protected String exportExternalScript(String src) {
+        if (pageContext == null || webHelper == null) {
+            return "";
+        }
         if (pageContext.getAttribute(src) == null) {
             pageContext.setAttribute(src, Boolean.TRUE);
             String url = webHelper.getUrl(src, pageContext, PortletUrlType.Resource);
@@ -85,7 +89,10 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
     }
 
     protected String exportScript(String path, Map<String, String> substitutions) throws IOException {
-        InputStream is = getClass().getResourceAsStream(path);
+        if (pageContext == null || webHelper == null) {
+            return "";
+        }
+        InputStream is = ClassLoaderUtil.getResourceAsStream(path, getClass());
         if (is == null) {
             throw new NullPointerException("Script not found '" + path + "'");
         }
