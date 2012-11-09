@@ -37,6 +37,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.var.FileVariable;
 
 public class FormulaActionHandlerOperations {
@@ -385,7 +386,10 @@ public class FormulaActionHandlerOperations {
 
         String suf3 = word.length() >= 3 ? word.substring(len - 3, len) : "___";
         String suf2 = word.length() >= 2 ? word.substring(len - 2, len) : "__";
-        String suf1 = word.length() >= 1 ? word.substring(len - 1, len) : "_";// String z9 = suf1;
+        String suf1 = word.length() >= 1 ? word.substring(len - 1, len) : "_";// String
+                                                                              // z9
+                                                                              // =
+                                                                              // suf1;
 
         if (suf3.equals("кий") && wordType == 1 && !onlyOneChar && word.length() > 4) {
             String prefix = upcaseFirstChar(word.substring(0, len - 3));
@@ -453,9 +457,14 @@ public class FormulaActionHandlerOperations {
         }
 
         /*
-         * zd= ?( (zc=1)или(z9=".")или( (z4=2)и(Найти("оиеу"+?(z3="ч","","бвгджзклмнпрстфхцчшщъ"),z9)>0) ) или ( (z4=1) и (Найти("мия мяэ лия кия жая лея",z7)>0) ) ,9 ,?(
-         * (zd=4)и(z3="ч") ,2, ?( z4=1 ,?( Найти("оеиую",z9)+Найти("их ых аа еа ёа иа оа уа ыа эа юа яа",z8)>0 ,9 ,?( z3<>"ч" ,?( za=1 ,7 ,?( z9="а" ,?( za>18 ,1 ,6 ) ,9 ) ) ,?( (
-         * (Найти("ой ый",z8)>0) и (z5>4) и (Прав(z1,4)<>"опой") ) или ((zb>10)и(za=16)) ,8 ,zd ) ) ) ,zd ) ) );
+         * zd= ?( (zc=1)или(z9=".")или(
+         * (z4=2)и(Найти("оиеу"+?(z3="ч","","бвгджзклмнпрстфхцчшщъ"),z9)>0) )
+         * или ( (z4=1) и (Найти("мия мяэ лия кия жая лея",z7)>0) ) ,9 ,?(
+         * (zd=4)и(z3="ч") ,2, ?( z4=1 ,?(
+         * Найти("оеиую",z9)+Найти("их ых аа еа ёа иа оа уа ыа эа юа яа",z8)>0
+         * ,9 ,?( z3<>"ч" ,?( za=1 ,7 ,?( z9="а" ,?( za>18 ,1 ,6 ) ,9 ) ) ,?( (
+         * (Найти("ой ый",z8)>0) и (z5>4) и (Прав(z1,4)<>"опой") ) или
+         * ((zb>10)и(za=16)) ,8 ,zd ) ) ) ,zd ) ) );
          */
         // zd=?((zc=1)или(z9=".")или((z4=2)и(Найти("оиеу"+?(z3="ч","","бвгджзклмнпрстфхцчшщъ"),z9)>0))или((z4=1)и(Найти("мия мяэ лия кия жая лея",z7)>0)),9,?((zd=4)и(z3="ч"),2,?(z4=1,?(Найти("оеиую",z9)+Найти("их ых аа еа ёа иа оа уа ыа эа юа яа",z8)>0,9,?(z3<>"ч",?(za=1,7,?(z9="а",?(za>18,1,6),9)),?(((Найти("ой ый",z8)>0)и(z5>4)и(Прав(z1,4)<>"опой"))или((zb>10)и(za=16)),8,zd))),zd)));
         // if (debug) System.out.println("zd = " + zd);
@@ -469,8 +478,11 @@ public class FormulaActionHandlerOperations {
                         : (za == 7 ? "л" : (za == 10 ? "к" : (za == 13 ? "йц" : (ze == 0 ? "" : (ze < 12 ? "ь" + (ze == 1 ? "ц" : "")
                                 : (ze < 37 ? "ц" : (ze < 49 ? "йц" : "р")))))))));
         /*
-         * zf=?( (zd=8)и(zc<>5) ,?( (zb>15)или (Найти("жий ний",z7)>0) ,"е" ,"о" ) ,?( z1="лев" ,"ьв" ,?( (Найти("аеёийоуэюя",Сред(z1,z5-3 ,1))=0) и ((zb>11)или(zb=0)) и (ze<>45)
-         * ,"" ,?( za=7 ,"л" ,?( za=10 ,"к" ,?( za=13 ,"йц" ,?( ze=0 ,"" ,?( ze<12 ,"ь"+ ?(ze=1,"ц","") ,?( ze<37 ,"ц" ,?(ze<49,"йц","р") ) ) ) ) ) ) ) ) );
+         * zf=?( (zd=8)и(zc<>5) ,?( (zb>15)или (Найти("жий ний",z7)>0) ,"е" ,"о"
+         * ) ,?( z1="лев" ,"ьв" ,?( (Найти("аеёийоуэюя",Сред(z1,z5-3 ,1))=0) и
+         * ((zb>11)или(zb=0)) и (ze<>45) ,"" ,?( za=7 ,"л" ,?( za=10 ,"к" ,?(
+         * za=13 ,"йц" ,?( ze=0 ,"" ,?( ze<12 ,"ь"+ ?(ze=1,"ц","") ,?( ze<37
+         * ,"ц" ,?(ze<49,"йц","р") ) ) ) ) ) ) ) ) );
          */
 
         // zf=?((zd=8)и(zc<>5),?((zb>15)или(Найти("жий ний",z7)>0),"е","о"),?(z1="лев","ьв",?((Найти("аеёийоуэюя",Сред(z1,z5-3
@@ -496,9 +508,14 @@ public class FormulaActionHandlerOperations {
 
         /*
          * 
-         * zf=?( (zd=9) или ((z4=3)и(z3="ы")) ,z1 ,Лев(z1,z5- ?( (zd>6)или(zf<>"") ,2 , ?(zd>0,1,0) )) + zf + СокрП( Сред( "а у а " +Сред("оыые",Найти("внч",z9)+1,1) +"ме "
-         * +?(Найти("гжкхш",Лев(z8,1))>0,"и","ы") +" е у ойе я ю я ем" +?(za=16,"и","е") +" и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"
-         * +?((zf="е")или(za=16)или((zb>12)и(zb<16)),"и","ы") +"мм" ,10*zd+2*zc-3 ,2 ) ) );
+         * zf=?( (zd=9) или ((z4=3)и(z3="ы")) ,z1 ,Лев(z1,z5- ?(
+         * (zd>6)или(zf<>"") ,2 , ?(zd>0,1,0) )) + zf + СокрП( Сред( "а у а "
+         * +Сред("оыые",Найти("внч",z9)+1,1) +"ме "
+         * +?(Найти("гжкхш",Лев(z8,1))>0,"и","ы") +" е у ойе я ю я ем"
+         * +?(za=16,"и","е")
+         * +" и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"
+         * +?((zf="е")или(za=16)или((zb>12)и(zb<16)),"и","ы") +"мм"
+         * ,10*zd+2*zc-3 ,2 ) ) );
          */
 
         // zf=?((zd=9)или((z4=3)и(z3="ы")),z1,Лев(z1,z5-?((zd>6)или(zf<>""),2,?(zd>0,1,0)))+zf+СокрП(Сред("а у а "+Сред("оыые",Найти("внч",z9)+1,1)+"ме "+?(Найти("гжкхш",Лев(z8,1))>0,"и","ы")+" е у ойе я ю я ем"+?(za=16,"и","е")+" и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"+?((zf="е")или(za=16)или((zb>12)и(zb<16)),"и","ы")+"мм",10*zd+2*zc-3,2)));
@@ -525,7 +542,7 @@ public class FormulaActionHandlerOperations {
 
     private static void readNameCaseConfig(String path) {
         try {
-            InputStream is = FormulaActionHandlerOperations.class.getResourceAsStream(path);
+            InputStream is = ClassLoaderUtil.getResourceAsStream(path, FormulaActionHandlerOperations.class);
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
             if (!doc.getDocumentElement().getTagName().equals("nameCaseConf")) {
                 throw new IOException();

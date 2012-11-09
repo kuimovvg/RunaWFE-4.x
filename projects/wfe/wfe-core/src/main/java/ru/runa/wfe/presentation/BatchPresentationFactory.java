@@ -26,7 +26,9 @@ import ru.runa.wfe.presentation.filter.FilterCriteria;
 import ru.runa.wfe.relation.RelationClassPresentation;
 import ru.runa.wfe.relation.RelationGroupClassPresentation;
 import ru.runa.wfe.task.TaskClassPresentation;
+import ru.runa.wfe.user.ActorClassPresentation;
 import ru.runa.wfe.user.ExecutorClassPresentation;
+import ru.runa.wfe.user.GroupClassPresentation;
 
 import com.google.common.collect.Maps;
 
@@ -37,9 +39,11 @@ import com.google.common.collect.Maps;
  * @since 4.0
  */
 public class BatchPresentationFactory {
+    public static final BatchPresentationFactory EXECUTORS = new BatchPresentationFactory(ExecutorClassPresentation.class, 100);
+    public static final BatchPresentationFactory ACTORS = new BatchPresentationFactory(ActorClassPresentation.class, 100);
+    public static final BatchPresentationFactory GROUPS = new BatchPresentationFactory(GroupClassPresentation.class, 100);
     public static final BatchPresentationFactory RELATION_GROUPS = new BatchPresentationFactory(RelationGroupClassPresentation.class);
     public static final BatchPresentationFactory RELATIONS = new BatchPresentationFactory(RelationClassPresentation.class);
-    public static final BatchPresentationFactory EXECUTORS = new BatchPresentationFactory(ExecutorClassPresentation.class, 100);
     public static final BatchPresentationFactory SYSTEM_LOGS = new BatchPresentationFactory(SystemLogClassPresentation.class);
     public static final BatchPresentationFactory PROCESSES = new BatchPresentationFactory(ProcessClassPresentation.class);
     public static final BatchPresentationFactory DEFINITIONS = new BatchPresentationFactory(DefinitionClassPresentation.class);
@@ -57,7 +61,7 @@ public class BatchPresentationFactory {
     }
 
     public BatchPresentationFactory(Class<?> classPresentationClass, int defaultPageRangeSize) {
-        this.classPresentation = ClassPresentations.getClassPresentation(classPresentationClass);
+        classPresentation = ClassPresentations.getClassPresentation(classPresentationClass);
         this.defaultPageRangeSize = defaultPageRangeSize;
         // if (CoreResources.isInitialDisplayFieldsEmpty()) {
         // // This case is for RTN - do not create dependence from jbpm.core.jar
@@ -88,6 +92,12 @@ public class BatchPresentationFactory {
                 getFieldsToSortIds(), getFieldsToSortModes(), getFieldsToDisplayIds(), getFieldsToFilter(), getFieldsToGroupIds());
         result.setRangeSize(defaultPageRangeSize);
         return result;
+    }
+
+    public BatchPresentation createNonPaged() {
+        BatchPresentation batchPresentation = createDefault(BatchPresentationConsts.DEFAULT_ID);
+        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        return batchPresentation;
     }
 
     private int[] getFieldsToDisplayIds() {

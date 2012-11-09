@@ -95,14 +95,9 @@ public class WebServiceTaskHandlerXMLParser {
     private static final String LOGGING = "log";
 
     /**
-     * Path to XSD for validating settings.
-     */
-    private static final String XSD_PATH = "/webServiceTaskHandlerConfig.xsd";
-
-    /**
      * Allows XML parser to resolve external entities (XSD).
      */
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver(XSD_PATH);
+    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("webServiceTaskHandlerConfig.xsd");
 
     /**
      * Read XML from specified stream and create

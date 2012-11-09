@@ -42,12 +42,23 @@ public class NodeLeaveLog extends ProcessLog {
 
     public NodeLeaveLog(Node node) {
         addAttribute(ATTR_NODE_ID, node.getNodeId());
+        addAttribute(ATTR_NODE_TYPE, node.getNodeType().name());
+    }
+
+    @Transient
+    public String getNodeName() {
+        return getAttributeNotNull(ATTR_NODE_ID);
+    }
+
+    @Transient
+    public String getNodeType() {
+        return getAttributeNotNull(ATTR_NODE_TYPE);
     }
 
     @Transient
     @Override
     public Object[] getPatternArguments() {
-        return new Object[] { getAttributeNotNull(ATTR_NODE_ID) };
+        return new Object[] { getNodeName() };
     }
 
 }

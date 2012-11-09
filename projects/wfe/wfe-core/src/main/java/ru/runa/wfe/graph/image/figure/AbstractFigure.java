@@ -41,6 +41,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
 import ru.runa.wfe.graph.image.figure.uml.StateFigure;
 import ru.runa.wfe.graph.image.model.NodeModel;
@@ -166,7 +167,7 @@ public abstract class AbstractFigure {
     protected void drawImage(Graphics2D graphics, String name) {
         try {
             if (!DrawProperties.useEdgingOnly()) {
-                BufferedImage image = ImageIO.read(getClass().getResourceAsStream(name));
+                BufferedImage image = ImageIO.read(ClassLoaderUtil.getResourceAsStream(name, getClass()));
                 graphics.drawRenderedImage(image, AffineTransform.getTranslateInstance(coords[0], coords[1]));
             }
         } catch (IOException e) {

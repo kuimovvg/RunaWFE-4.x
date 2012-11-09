@@ -131,7 +131,7 @@ public class ProfileBean {
         if (replicationDescr.isEmpty()) {
             return;
         }
-        List<Actor> allActors = executorLogic.getActors(subject, BatchPresentationFactory.EXECUTORS.createDefault());
+        List<Actor> allActors = executorLogic.getActors(subject, BatchPresentationFactory.ACTORS.createNonPaged());
         List<Long> actorIds = Lists.newArrayListWithExpectedSize(allActors.size());
         for (Actor actor : allActors) {
             actorIds.add(actor.getId());
@@ -160,7 +160,7 @@ public class ProfileBean {
                 }
             }
         }
-        profileLogic.saveProfiles(subject, profiles);
+        profileLogic.updateProfiles(subject, profiles);
     }
 
     private enum setActiveMode {
@@ -214,18 +214,29 @@ public class ProfileBean {
         String actorName = batchPresentationTypeDescr.getActorName();
         String batchName = batchPresentationTypeDescr.getBatchName();
         String batchId = batchPresentationTypeDescr.getBatchId();
-        // if ((actorName == null || actorName.equals("")) && (batchName == null || batchName.equals(""))) {
-        // if (ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.PROCESS_TASK_BATCH_PRESENTATION_ID.equals(batchId)) {
-        // return ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.TASK_DEFAULT_BATCH_PRESENTATION_FACTORY.getDefaultBatchPresentation(
+        // if ((actorName == null || actorName.equals("")) && (batchName == null
+        // || batchName.equals(""))) {
+        // if
+        // (ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.PROCESS_TASK_BATCH_PRESENTATION_ID.equals(batchId))
+        // {
+        // return
+        // ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.TASK_DEFAULT_BATCH_PRESENTATION_FACTORY.getDefaultBatchPresentation(
         // BatchPresentationConsts.DEFAULT_NAME, batchId);
-        // } else if (ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.PROCESS_BATCH_PRESENTATION_ID.equals(batchId)) {
-        // return ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.PROCESS_DEFAULT_BATCH_PRESENTATION_FACTORY.getDefaultBatchPresentation(
+        // } else if
+        // (ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.PROCESS_BATCH_PRESENTATION_ID.equals(batchId))
+        // {
+        // return
+        // ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.PROCESS_DEFAULT_BATCH_PRESENTATION_FACTORY.getDefaultBatchPresentation(
         // BatchPresentationConsts.DEFAULT_NAME, batchId);
-        // } else if (ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.PROCESS_DEFINITION_BATCH_PRESENTATION_ID.equals(batchId)) {
-        // return ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.PROCESS_DEFINITION_DEFAULT_BATCH_PRESENTATION_FACTORY.getDefaultBatchPresentation(
+        // } else if
+        // (ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.PROCESS_DEFINITION_BATCH_PRESENTATION_ID.equals(batchId))
+        // {
+        // return
+        // ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.PROCESS_DEFINITION_DEFAULT_BATCH_PRESENTATION_FACTORY.getDefaultBatchPresentation(
         // BatchPresentationConsts.DEFAULT_NAME, batchId);
         // } else {
-        // return ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.EXECUTOR_DEAFAULT_BATCH_PRESENTATOIN_FACTORY.getDefaultBatchPresentation(
+        // return
+        // ru.runa.wfe.wfe.wf.presentation.WFProfileStrategy.EXECUTOR_DEAFAULT_BATCH_PRESENTATOIN_FACTORY.getDefaultBatchPresentation(
         // BatchPresentationConsts.DEFAULT_NAME, batchId);
         // }
         // }

@@ -10,12 +10,16 @@ import ru.runa.wfe.execution.ProcessClassPresentation;
 import ru.runa.wfe.relation.RelationClassPresentation;
 import ru.runa.wfe.relation.RelationGroupClassPresentation;
 import ru.runa.wfe.task.TaskClassPresentation;
+import ru.runa.wfe.user.ActorClassPresentation;
 import ru.runa.wfe.user.ExecutorClassPresentation;
+import ru.runa.wfe.user.GroupClassPresentation;
 
 public class ClassPresentations {
     private static final Map<Integer, ClassPresentation> map = new HashMap<Integer, ClassPresentation>();
     static {
         registerClassPresentation(ExecutorClassPresentation.getInstance());
+        registerClassPresentation(ActorClassPresentation.getInstance());
+        registerClassPresentation(GroupClassPresentation.getInstance());
         registerClassPresentation(DefinitionClassPresentation.getInstance());
         registerClassPresentation(ProcessClassPresentation.getInstance());
         registerClassPresentation(TaskClassPresentation.getInstance());

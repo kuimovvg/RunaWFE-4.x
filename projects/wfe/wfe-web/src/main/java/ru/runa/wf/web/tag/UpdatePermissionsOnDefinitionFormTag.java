@@ -30,11 +30,8 @@ import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wf.web.action.UpdatePermissionOnProcessDefinitionAction;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.SystemExecutors;
 
 /**
@@ -52,15 +49,12 @@ public class UpdatePermissionsOnDefinitionFormTag extends ProcessDefinitionBaseF
             WfDefinition defintion = getDefinition();
             PermissionTableBuilder tableBuilder = new PermissionTableBuilder(defintion, getSubject(), pageContext);
             Table table = tableBuilder.buildTable();
-            table.addElement(tableBuilder.createTR(getProcessStarterExecutor(), getUnmodifiablePermissions(), false));
+            Actor starter = DelegateFactory.getExecutorService().getExecutor(getSubject(), SystemExecutors.PROCESS_STARTER_NAME);
+            table.addElement(tableBuilder.createTR(starter, getUnmodifiablePermissions(), false));
             tdFormElement.addElement(table);
         } catch (Exception e) {
             handleException(e);
         }
-    }
-
-    private Executor getProcessStarterExecutor() throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
-        return DelegateFactory.getExecutorService().getActor(getSubject(), SystemExecutors.PROCESS_STARTER_NAME);
     }
 
     private List<Permission> getUnmodifiablePermissions() {

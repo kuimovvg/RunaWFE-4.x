@@ -43,7 +43,7 @@ import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
-import ru.runa.wfe.execution.dao.ExecutionDAO;
+import ru.runa.wfe.execution.dao.TokenDAO;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.ReceiveMessage;
@@ -59,7 +59,7 @@ import ru.runa.wfe.var.VariableMapping;
 public class ReceiveMessageBean implements MessageListener {
     private static Log log = LogFactory.getLog(ReceiveMessageBean.class);
     @Autowired
-    private ExecutionDAO executionDAO;
+    private TokenDAO tokenDAO;
     @Autowired
     private IProcessDefinitionLoader processDefinitionLoader;
 
@@ -72,7 +72,7 @@ public class ReceiveMessageBean implements MessageListener {
             String log = JMSUtil.toString(objectMessage);
             boolean handled = false;
             // TODO performance
-            List<Token> tokens = executionDAO.findAllActiveTokens();
+            List<Token> tokens = tokenDAO.findAllActiveTokens();
             for (Token token : tokens) {
                 ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(token.getProcess().getDefinition().getId());
                 Node node = token.getNode(processDefinition);

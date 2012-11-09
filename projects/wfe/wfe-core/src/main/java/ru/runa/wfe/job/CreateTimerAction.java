@@ -47,7 +47,7 @@ public class CreateTimerAction extends Action {
         timer.setRepeatDurationString(repeatDurationString);
         timer.setOutTransitionName(transitionName);
         getParent().fireEvent(executionContext, Event.EVENTTYPE_TIMER_CREATE);
-        jobDAO.saveJob(timer);
+        jobDAO.create(timer);
     }
 
     public String getDueDate() {
@@ -55,7 +55,7 @@ public class CreateTimerAction extends Action {
     }
 
     public void setDueDate(String dueDateDuration) {
-        this.dueDate = dueDateDuration;
+        dueDate = dueDateDuration;
     }
 
     public void setRepeatDurationString(String repeatDurationString) {

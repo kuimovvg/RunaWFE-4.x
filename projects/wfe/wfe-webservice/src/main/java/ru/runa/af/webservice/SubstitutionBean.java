@@ -205,7 +205,7 @@ public class SubstitutionBean {
             substitutionLogic.delete(subject, substitution);
         }
         for (Substitution substitution : createdSubstitutions) {
-            substitutionLogic.store(subject, substitution);
+            substitutionLogic.create(subject, substitution);
         }
     }
 

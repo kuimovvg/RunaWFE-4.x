@@ -144,7 +144,7 @@ public class TasklistBuilder {
                 if (actor.isActive() && (criteria == null || criteria.isSatisfied(executionContext, task, asActor, actor))) {
                     substitutionApplies = true;
                 }
-                if (Objects.equal(actor.getCode(), substitutorActor.getCode())) {
+                if (Objects.equal(actor, substitutorActor)) {
                     canISubstitute = true;
                 }
             }

@@ -51,7 +51,7 @@ public class BotStationTag extends TitledFormTag {
 
         TR tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)));
-        tr.addElement(nameInput);
+        tr.addElement(new TD(nameInput));
         table.addElement(tr);
         tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)));

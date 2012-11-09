@@ -32,9 +32,9 @@ import ru.runa.common.web.html.TDBuilder.Env.IdentifiableExtractor;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wf.web.form.TaskIdForm;
 import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.dto.WfTask;
 
 import com.google.common.collect.Maps;
@@ -63,30 +63,11 @@ public class TaskProcessIdTDBuilder implements TDBuilder, Serializable {
 
                 @Override
                 public Identifiable getIdentifiable(final Object o, final Env env) {
-                    return new Identifiable() {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public SecuredObjectType getSecuredObjectType() {
-                            return SecuredObjectType.EXECUTION;
-                        }
-
-                        @Override
-                        public Long getId() {
-                            return ((WfTask) o).getProcessId();
-                        }
-                    };
+                    Process identifiable = new Process();
+                    identifiable.setId(((WfTask) o).getProcessId());
+                    return identifiable;
                 }
 
-                @Override
-                public int hashCode() {
-                    return 156249887;
-                }
-
-                @Override
-                public boolean equals(Object other) {
-                    return (other != null) && other.getClass().equals(this.getClass());
-                }
             });
         } catch (Exception e) {
         }

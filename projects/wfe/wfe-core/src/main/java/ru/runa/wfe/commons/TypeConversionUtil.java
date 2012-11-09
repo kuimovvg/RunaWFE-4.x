@@ -165,12 +165,16 @@ public class TypeConversionUtil {
                 return convertTo(groupCode, classConvertTo);
             }
             if (object instanceof String && Executor.class.isAssignableFrom(classConvertTo)) {
-                if (classConvertTo == Actor.class) {
-                    Long code = convertTo(object, Long.class);
-                    return (T) ApplicationContextFactory.getExecutorDAO().getActorByCode(code);
-                } else {
+                String s = (String) object;
+                if (s.startsWith("G")) {
                     Long id = Long.valueOf(((String) object).substring(1));
                     return (T) ApplicationContextFactory.getExecutorDAO().getExecutor(id);
+                }
+                try {
+                    Long code = convertTo(object, Long.class);
+                    return (T) ApplicationContextFactory.getExecutorDAO().getActorByCode(code);
+                } catch (Exception e) {
+                    return (T) ApplicationContextFactory.getExecutorDAO().getExecutor(s);
                 }
             }
         } catch (Exception e) {

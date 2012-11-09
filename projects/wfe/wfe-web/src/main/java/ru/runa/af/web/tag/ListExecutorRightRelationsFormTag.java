@@ -44,7 +44,6 @@ import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.relation.Relation;
@@ -71,7 +70,9 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
     /*
      * (non-Javadoc)
      * 
-     * @see ru.runa.common.web.tag.IdentifiableFormTag#fillFormData(org.apache.ecs.html.TD)
+     * @see
+     * ru.runa.common.web.tag.IdentifiableFormTag#fillFormData(org.apache.ecs
+     * .html.TD)
      */
     @Override
     protected void fillFormData(TD tdFormElement) throws JspException {
@@ -80,8 +81,7 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
         try {
             List<Executor> executors = new ArrayList<Executor>();
             executors.add(getIdentifiable());
-            BatchPresentation executorBatchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-            executorBatchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+            BatchPresentation executorBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
             for (Group group : executorService.getExecutorGroups(getSubject(), getIdentifiable(), executorBatchPresentation, false)) {
                 executors.add(group);
             }

@@ -17,11 +17,14 @@
  */
 package ru.runa.service.bot.handler;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.ConfigurationException;
+import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
 
@@ -42,7 +45,29 @@ public class BotInvokerActionHandler implements ActionHandler {
     @Override
     public void execute(ExecutionContext executionContext) {
         try {
-            DelegateFactory.getBotInvokerService(configuration).invokeBots();
+            List<BotStation> botStations = DelegateFactory.getBotService().getBotStations();
+            BotStation botStation = null;
+            if (configuration != null) {
+                // old way: search by address
+                for (BotStation bs : botStations) {
+                    if (configuration.equals(bs.getAddress())) {
+                        botStation = bs;
+                        break;
+                    }
+                }
+                if (botStation == null) {
+                    botStation = DelegateFactory.getBotService().getBotStation(configuration);
+                }
+            } else {
+                if (botStations.size() > 0) {
+                    botStation = botStations.get(0);
+                }
+            }
+            if (botStation == null) {
+                log.warn("No botstation can be found for invocation " + configuration);
+                return;
+            }
+            DelegateFactory.getBotInvokerService(botStation.getAddress()).invokeBots(botStation);
         } catch (Throwable e) {
             log.warn("BotRunner invoker can't invoke bots.", e);
         }

@@ -136,7 +136,7 @@ public class EmailUtils {
         } else {
             formBytes = config.getMessage().getBytes(Charsets.UTF_8);
         }
-        FormHashModel model = new FormHashModel(subject, null, variableProvider);
+        FormHashModel model = new FormHashModel(subject, null, variableProvider, null);
         String formMessage = FreemarkerProcessor.process(formBytes, model);
 
         Map<String, String> replacements = new HashMap<String, String>();
@@ -146,7 +146,8 @@ public class EmailUtils {
         // for (String image : images) {
         // Attachment attachment = new Attachment();
         // attachment.fileName = image;
-        // attachment.content = fileDataProvider.getFileDataNotNull(attachment.fileName);
+        // attachment.content =
+        // fileDataProvider.getFileDataNotNull(attachment.fileName);
         // attachment.inlined = true;
         // attachments.add(attachment);
         // replacements.put(attachment.fileName, "cid:" + attachment.fileName);

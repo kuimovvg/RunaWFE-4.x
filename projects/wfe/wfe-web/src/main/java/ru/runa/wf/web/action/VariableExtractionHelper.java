@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
 
@@ -109,6 +110,7 @@ class VariableExtractionHelper {
                         VariableFormat format = FormatCommons.create(formatClassName);
                         variableValue = format.parse(valuesToFormat);
                     } catch (Exception e) {
+                        LogFactory.getLog(VariableExtractionHelper.class).warn(e);
                         if (valuesToFormat[0].length() > 0) {
                             // in other case we put validation in logic
                             formatErrorsForFields.add(variableDefinition.getName());

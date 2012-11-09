@@ -22,12 +22,14 @@ import ru.runa.wf.web.action.CancelProcessAction;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
+import ru.runa.wfe.audit.ProcessStartLog;
 import ru.runa.wfe.audit.TaskCreateLog;
 import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -61,6 +63,17 @@ public class ShowTasksHistoryTag extends ProcessBaseFormTag {
             List<TR> result = Lists.newArrayList();
             Map<TaskCreateLog, TaskEndLog> taskLogs = logs.getTaskLogs();
             for (ProcessLog log : logs.getLogs()) {
+                if (log instanceof ProcessStartLog) {
+                    TaskCreateLog createLog = null;
+                    for (TaskCreateLog key : taskLogs.keySet()) {
+                        if (Objects.equal(key.getId(), log.getId())) {
+                            createLog = key;
+                            break;
+                        }
+                    }
+                    TaskEndLog endLog = taskLogs.get(createLog);
+                    result.add(populateTaskRow(createLog, endLog));
+                }
                 if (log instanceof TaskCreateLog) {
                     TaskCreateLog createLog = (TaskCreateLog) log;
                     TaskEndLog endLog = taskLogs.get(createLog);
@@ -81,7 +94,7 @@ public class ShowTasksHistoryTag extends ProcessBaseFormTag {
         if (endLog != null) {
             taskEndDate = CalendarUtil.dateToCalendar(endLog.getDate());
             taskEndDateString = CalendarUtil.formatDateTime(taskEndDate);
-            actorName = endLog.getExecutorName();
+            actorName = endLog.getActorName();
         }
         TR tr = new TR();
         tr.addElement(new TD().addElement(createLog.getTaskName()).setClass(Resources.CLASS_LIST_TABLE_TD));

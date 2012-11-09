@@ -24,6 +24,8 @@ import net.sf.ehcache.CacheManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.ClassLoaderUtil;
+
 /**
  * Helper to save caching information using EHCache.
  * 
@@ -37,7 +39,7 @@ public final class EhcacheHelper {
     private static final Log log = LogFactory.getLog(EhcacheHelper.class);
 
     /**
-     * XML file name with caches settings. 
+     * XML file name with caches settings.
      */
     public static final String settingsFile = "/ehcache_wfe_caching.xml";
 
@@ -47,8 +49,9 @@ public final class EhcacheHelper {
     private static final CacheManager cacheManager = createManager();
 
     /**
-     * Get {@linkplain CacheManager} to be used in WFE caches. 
-     * May be null, if no settings found.
+     * Get {@linkplain CacheManager} to be used in WFE caches. May be null, if
+     * no settings found.
+     * 
      * @return {@linkplain CacheManager} to be used in WFE caches.
      */
     public static CacheManager getCacheManager() {
@@ -57,11 +60,12 @@ public final class EhcacheHelper {
 
     /**
      * Creates {@linkplain CacheManager} according to settings file.
+     * 
      * @return Created {@linkplain CacheManager} or null if creation failed.
      */
     private static CacheManager createManager() {
         try {
-            InputStream configuration = EhcacheHelper.class.getResourceAsStream(settingsFile);
+            InputStream configuration = ClassLoaderUtil.getResourceAsStream(settingsFile, EhcacheHelper.class);
             if (configuration == null) {
                 log.warn("EHCache manager settings for WFE caching not found. Local caching will be used.");
                 return null;

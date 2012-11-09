@@ -21,35 +21,24 @@ import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TDBuilder.Env.IdentifiableExtractor;
+import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
-import ru.runa.wfe.security.SecuredObjectType;
 
 /**
  * @author Konstantinov Aleksey
  */
-public class ProcessVariableTDBuilder implements TDBuilder { // TODO check usage
+public class ProcessVariableTDBuilder implements TDBuilder {
 
     class ProcessIdExtractor implements IdentifiableExtractor {
         private static final long serialVersionUID = 1L;
 
         @Override
         public Identifiable getIdentifiable(final Object o, final Env env) {
-            return new Identifiable() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public Long getId() {
-                    return ((WfProcess) o).getId();
-                }
-
-                @Override
-                public SecuredObjectType getSecuredObjectType() {
-                    return SecuredObjectType.NONE;
-                }
-
-            };
+            Process identifiable = new Process();
+            identifiable.setId(((WfProcess) o).getId());
+            return identifiable;
         }
 
     }

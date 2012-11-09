@@ -17,7 +17,7 @@
  */
 package ru.runa.wfe.user.dao;
 
-import ru.runa.wfe.commons.dao.CommonDAO;
+import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Profile;
 
@@ -26,30 +26,17 @@ import ru.runa.wfe.user.Profile;
  * 
  * @author Konstantinov Aleksey 23.02.2012
  */
-public class ProfileDAO extends CommonDAO {
+public class ProfileDAO extends GenericDAO<Profile> {
 
     /**
-     * Store or update user profile.
-     * 
-     * @param profile
-     *            New user profile.
-     */
-    public void store(Profile profile) {
-        if (profile.getId() == null && getProfile(profile.getActor()) != null) {
-            throw new IllegalArgumentException("profile.id == null but insert not allowed");
-        }
-        getHibernateTemplate().saveOrUpdate(profile);
-    }
-
-    /**
-     * Load profile for user. Return null, if no profile for user found.
+     * Load profile for user. Return null, if no profile for user can be found.
      * 
      * @param actor
      *            Actor to load profile.
      * @return Actor profile or null.
      */
-    public Profile getProfile(Actor actor) {
-        return (Profile) getFirstOrNull(getHibernateTemplate().find("from Profile where actor = ?", actor));
+    public Profile get(Actor actor) {
+        return findFirstOrNull("from Profile where actor = ?", actor);
     }
 
     /**
@@ -58,8 +45,8 @@ public class ProfileDAO extends CommonDAO {
      * @param actor
      *            Actor to remove profile.
      */
-    public void deleteProfile(Actor actor) {
-        Profile profile = getProfile(actor);
+    public void delete(Actor actor) {
+        Profile profile = get(actor);
         if (profile != null) {
             getHibernateTemplate().delete(profile);
         }

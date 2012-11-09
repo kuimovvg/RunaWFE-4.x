@@ -173,7 +173,7 @@ public abstract class Variable<T extends Object> {
                     + newStorableValue.getClass().getName() + "'.");
         }
         Object oldValue = getStorableValue();
-        if (converter != null) {
+        if (converter != null && oldValue != null) {
             oldValue = converter.revert(oldValue);
         }
         addLog(executionContext, oldValue, newValue);

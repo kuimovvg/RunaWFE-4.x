@@ -140,8 +140,7 @@ public class WfeScriptRunner {
     private byte[][] processDefinitionsBytes;
     private final Map<String, Set<String>> namedProcessDefinitionIdentities = new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> namedExecutorIdentities = new HashMap<String, Set<String>>();
-    private static final String XSD_PATH = "/workflowScript.xsd";
-    protected static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver(XSD_PATH);
+    protected static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("workflowScript.xsd");
     private int processDeployed;
 
     public void setSubject(Subject subject) {
@@ -560,8 +559,7 @@ public class WfeScriptRunner {
     }
 
     private void removeAllPermissionOnIdentifiable(Identifiable identifiable) throws Exception {
-        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         List<Executor> executors = authorizationLogic.getExecutorsWithPermission(subject, identifiable, batchPresentation, true);
         for (Executor executor : executors) {
             if (!authorizationLogic.isPrivelegedExecutor(subject, executor, identifiable)) {
@@ -661,7 +659,7 @@ public class WfeScriptRunner {
         if (replicationDescr.isEmpty()) {
             return;
         }
-        List<Actor> allActors = executorLogic.getActors(subject, BatchPresentationFactory.EXECUTORS.createDefault());
+        List<Actor> allActors = executorLogic.getActors(subject, BatchPresentationFactory.ACTORS.createNonPaged());
         List<Long> actorsIds = Lists.newArrayListWithExpectedSize(allActors.size());
         for (Actor actor : allActors) {
             actorsIds.add(actor.getId());
@@ -689,7 +687,7 @@ public class WfeScriptRunner {
                 }
             }
         }
-        profileLogic.saveProfiles(subject, profiles);
+        profileLogic.updateProfiles(subject, profiles);
     }
 
     public void replicateBatchPresentation(Element element) throws Exception {
@@ -887,7 +885,7 @@ public class WfeScriptRunner {
             substitutionLogic.delete(subject, substitution);
         }
         for (Substitution substitution : createdSubstitutions) {
-            substitutionLogic.store(subject, substitution);
+            substitutionLogic.create(subject, substitution);
         }
     }
 
@@ -920,7 +918,7 @@ public class WfeScriptRunner {
             log.warn("BotStation name doesn`t specified");
             return;
         }
-        BotStation station = botLogic.getBotStationNotNull(subject, botStationName);
+        BotStation station = botLogic.getBotStationNotNull(botStationName);
         createBotCommon(element, station);
     }
 
@@ -949,7 +947,7 @@ public class WfeScriptRunner {
         String pass = element.getAttribute(PASSWORD_ATTRIBUTE_NAME);
         String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
         String timeout = element.getAttribute(STARTTIMEOUT_ATTRIBUTE_NAME);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), name);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), name);
         if (newName != null) {
             bot.setUsername(newName);
         }
@@ -970,7 +968,7 @@ public class WfeScriptRunner {
         String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
         String newName = element.getAttribute(NEW_NAME_ATTRIBUTE_NAME);
         String address = element.getAttribute(ADDRESS_ATTRIBUTE_NAME);
-        BotStation station = botLogic.getBotStationNotNull(subject, name);
+        BotStation station = botLogic.getBotStationNotNull(name);
         if (newName != null) {
             station.setName(newName);
         }
@@ -982,14 +980,14 @@ public class WfeScriptRunner {
 
     public void deleteBotStation(Element element) throws Exception {
         String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
-        BotStation botStation = botLogic.getBotStationNotNull(subject, name);
+        BotStation botStation = botLogic.getBotStationNotNull(name);
         botLogic.removeBotStation(subject, botStation.getId());
     }
 
     public void deleteBot(Element element) throws Exception {
         String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
         String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), name);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), name);
         botLogic.removeBot(subject, bot.getId());
     }
 
@@ -1058,7 +1056,7 @@ public class WfeScriptRunner {
         String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
         BotStation bs = null;
         if (!Strings.isNullOrEmpty(botStationName)) {
-            bs = botLogic.getBotStationNotNull(subject, botStationName);
+            bs = botLogic.getBotStationNotNull(botStationName);
         }
         addConfigurationsToBotCommon(element, bs);
     }
@@ -1067,7 +1065,7 @@ public class WfeScriptRunner {
         String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
         BotStation bs = null;
         if (botStationName != null) {
-            bs = botLogic.getBotStationNotNull(subject, botStationName);
+            bs = botLogic.getBotStationNotNull(botStationName);
         }
         removeConfigurationsFromBotCommon(element, bs);
     }
@@ -1087,7 +1085,7 @@ public class WfeScriptRunner {
     public void removeAllConfigurationsFromBot(Element element) throws Exception {
         String botName = element.getAttribute(NAME_ATTRIBUTE_NAME);
         String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), botName);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), botName);
         for (BotTask task : botLogic.getBotTasks(subject, bot.getId())) {
             botLogic.removeBotTask(subject, task.getId());
         }
@@ -1201,7 +1199,7 @@ public class WfeScriptRunner {
         String relationName = element.getAttribute(NAME_ATTRIBUTE_NAME);
         String relationDescription = element.getAttribute(DESCRIPTION_ATTRIBUTE_NAME);
         boolean isExists = false;
-        for (Relation group : relationLogic.getRelations(subject, BatchPresentationFactory.RELATION_GROUPS.createDefault())) {
+        for (Relation group : relationLogic.getRelations(subject, BatchPresentationFactory.RELATION_GROUPS.createNonPaged())) {
             isExists = isExists || (group.getName().compareToIgnoreCase(relationName) == 0);
         }
         if (!isExists) {

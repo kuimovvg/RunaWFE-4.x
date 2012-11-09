@@ -166,12 +166,8 @@ public class WfeScriptClient {
     }
 
     private static final String DEPLOY_PROCESS_DEFINITION_TAG_NAME = "deployProcessDefinition";
-
     private static final String FILE_ATTRIBUTE_NAME = "file";
-
-    private static final String XSD_PATH = "/workflowScript.xsd";
-
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver(XSD_PATH);
+    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("workflowScript.xsd");
 
     private static String[] readProcessDefinitionFileNames(Document document) throws ParserConfigurationException, SAXException, IOException {
         NodeList deployProcessDefinitionNodeList = document.getElementsByTagName(DEPLOY_PROCESS_DEFINITION_TAG_NAME);

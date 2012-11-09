@@ -34,7 +34,6 @@ import ru.runa.common.web.tag.FormTag;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -131,8 +130,7 @@ public class CreateRelationLeftExecutorFormTag extends FormTag {
             ExecutorService executorService = DelegateFactory.getExecutorService();
             Executor ex = executorService.getExecutor(getSubject(), executorId);
             result.add(ex);
-            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-            batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+            BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
             for (Executor executor : executorService.getExecutorGroups(getSubject(), ex, batchPresentation, false)) {
                 result.add(executor);
             }

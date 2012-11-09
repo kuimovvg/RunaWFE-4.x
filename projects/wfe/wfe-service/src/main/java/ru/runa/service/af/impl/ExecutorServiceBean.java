@@ -58,25 +58,10 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     private ExecutorLogic executorLogic;
 
     @Override
-    public List<? extends Executor> create(Subject subject, List<? extends Executor> executors) throws ExecutorAlreadyExistsException {
+    public void update(Subject subject, Executor executor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException {
         Preconditions.checkNotNull(subject);
-        Preconditions.checkNotNull(executors);
-        executorLogic.create(subject, executors);
-        return executors;
-    }
-
-    @Override
-    public Actor update(Subject subject, Actor actor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        Preconditions.checkNotNull(actor);
-        return executorLogic.update(subject, actor);
-    }
-
-    @Override
-    public Group update(Subject subject, Group group) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        Preconditions.checkNotNull(group);
-        return executorLogic.update(subject, group);
+        Preconditions.checkNotNull(executor);
+        executorLogic.update(subject, executor);
     }
 
     @Override
@@ -101,27 +86,9 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public Actor getActor(Subject subject, String name) throws ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return executorLogic.getActor(subject, name);
-    }
-
-    @Override
     public Actor getActorCaseInsensitive(String login) throws ExecutorDoesNotExistException {
         Preconditions.checkNotNull(login);
         return executorLogic.getActorCaseInsensitive(login);
-    }
-
-    @Override
-    public Actor getActor(Subject subject, Long id) throws ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return executorLogic.getActor(subject, id);
-    }
-
-    @Override
-    public Group getGroup(Subject subject, String name) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return executorLogic.getGroup(subject, name);
     }
 
     @Override
@@ -145,17 +112,10 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public Actor create(Subject subject, Actor newActor) throws ExecutorAlreadyExistsException, AuthorizationException, AuthenticationException {
+    public <T extends Executor> T create(Subject subject, T executor) throws ExecutorAlreadyExistsException, AuthorizationException {
         Preconditions.checkNotNull(subject);
-        Preconditions.checkNotNull(newActor);
-        return executorLogic.create(subject, newActor);
-    }
-
-    @Override
-    public Group create(Subject subject, Group newGroup) throws ExecutorAlreadyExistsException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        Preconditions.checkNotNull(newGroup);
-        return executorLogic.create(subject, newGroup);
+        Preconditions.checkNotNull(executor);
+        return executorLogic.create(subject, executor);
     }
 
     @Override
@@ -307,12 +267,6 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
             AuthenticationException {
         Preconditions.checkNotNull(subject);
         return executorLogic.isExecutorExist(subject, executorName);
-    }
-
-    @Override
-    public Group getGroup(Subject subject, Long id) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return executorLogic.getGroup(subject, id);
     }
 
     @Override

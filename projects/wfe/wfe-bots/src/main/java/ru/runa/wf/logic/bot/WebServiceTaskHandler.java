@@ -56,6 +56,7 @@ import ru.runa.wf.logic.bot.webservice.WebServiceTaskHandlerSettings;
 import ru.runa.wf.logic.bot.webservice.WebServiceTaskHandlerXMLParser;
 import ru.runa.wf.logic.bot.webservice.WebServiceTaskHandlerXSLTHelper;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -69,8 +70,10 @@ import ru.runa.wfe.var.dto.WfVariable;
 import com.google.common.io.NullOutputStream;
 
 /**
- * Web service task handler. Making web requests to web services and receiving responses. Some data from WFE system can be added to requests using XSLT transformation and special
- * XSLT tags. Responses can be processed with XSLT to fill some variables, or can be stored completely in variables.
+ * Web service task handler. Making web requests to web services and receiving
+ * responses. Some data from WFE system can be added to requests using XSLT
+ * transformation and special XSLT tags. Responses can be processed with XSLT to
+ * fill some variables, or can be stored completely in variables.
  */
 public class WebServiceTaskHandler implements TaskHandler {
     /**
@@ -78,7 +81,9 @@ public class WebServiceTaskHandler implements TaskHandler {
      */
     private static final Log log = LogFactory.getLog(WebServiceTaskHandler.class);
     /**
-     * XSLT transformation applied in bot thread, so {@link WebServiceTaskHandlerXSLTHelper} to process tag is stored in {@link ThreadLocal}.
+     * XSLT transformation applied in bot thread, so
+     * {@link WebServiceTaskHandlerXSLTHelper} to process tag is stored in
+     * {@link ThreadLocal}.
      */
     private static ThreadLocal<WebServiceTaskHandlerXSLTHelper> xsltHelper = new ThreadLocal<WebServiceTaskHandlerXSLTHelper>();
 
@@ -89,7 +94,7 @@ public class WebServiceTaskHandler implements TaskHandler {
 
     @Override
     public void configure(String configurationName) throws TaskHandlerException {
-        settings = WebServiceTaskHandlerXMLParser.read(getClass().getResourceAsStream(configurationName));
+        settings = WebServiceTaskHandlerXMLParser.read(ClassLoaderUtil.getResourceAsStream(configurationName, getClass()));
     }
 
     @Override
@@ -135,11 +140,14 @@ public class WebServiceTaskHandler implements TaskHandler {
     }
 
     /**
-     * WFE XSLT tag support: Read process instance id from variable and returns process instance graph for this process instance encoded in {@link Base64}.
+     * WFE XSLT tag support: Read process instance id from variable and returns
+     * process instance graph for this process instance encoded in
+     * {@link Base64}.
      * 
      * @param processIdVariable
      *            Variable name to read process instance id.
-     * @return Process instance graph for this process instance encoded in {@link Base64}.
+     * @return Process instance graph for this process instance encoded in
+     *         {@link Base64}.
      */
     public static String getProcessGraph(String processIdVariable) throws Exception {
         return xsltHelper.get().getProcessGraph(processIdVariable);
@@ -174,8 +182,9 @@ public class WebServiceTaskHandler implements TaskHandler {
     }
 
     /**
-     * Get web service URL. Tries to create URL from settings (URL parameter). If URL creation failed, then read variable with name from URL parameter and create URL with variable
-     * value.
+     * Get web service URL. Tries to create URL from settings (URL parameter).
+     * If URL creation failed, then read variable with name from URL parameter
+     * and create URL with variable value.
      * 
      * @param subject
      *            Current bot subject.
@@ -194,7 +203,8 @@ public class WebServiceTaskHandler implements TaskHandler {
     }
 
     /**
-     * Prepare web request to send. Applies XSLT to replace WFE tags with actual values.
+     * Prepare web request to send. Applies XSLT to replace WFE tags with actual
+     * values.
      * 
      * @param taskStub
      *            Current task instance to be processed.
@@ -206,7 +216,7 @@ public class WebServiceTaskHandler implements TaskHandler {
             TransformerFactoryConfigurationError, UnsupportedEncodingException {
         ByteArrayOutputStream res2 = new ByteArrayOutputStream();
         Transformer transformer = TransformerFactory.newInstance().newTransformer(
-                new StreamSource(getClass().getResourceAsStream("/bot/webServiceTaskHandlerRequest.xslt")));
+                new StreamSource(ClassLoaderUtil.getResourceAsStream("bot/webServiceTaskHandlerRequest.xslt", getClass())));
         transformer.transform(new StreamSource(new ByteArrayInputStream(interaction.requestXML.getBytes(settings.encoding))), new StreamResult(res2));
         byte[] soapData = res2.toByteArray();
         if (settings.isLoggingEnable && log.isDebugEnabled()) {
@@ -216,7 +226,8 @@ public class WebServiceTaskHandler implements TaskHandler {
     }
 
     /**
-     * Opens HTTP connection to web service and setup required connection parameters. Send request to web service.
+     * Opens HTTP connection to web service and setup required connection
+     * parameters. Send request to web service.
      * 
      * @param url
      *            URL to open connection.
@@ -245,7 +256,8 @@ public class WebServiceTaskHandler implements TaskHandler {
     }
 
     /**
-     * Called to process response from web service with code not from [200; 299] (This codes indicates error).
+     * Called to process response from web service with code not from [200; 299]
+     * (This codes indicates error).
      * 
      * @param subject
      *            Current bot subject.
@@ -255,7 +267,8 @@ public class WebServiceTaskHandler implements TaskHandler {
      *            HTTP connection to communicate with web service.
      * @param interaction
      *            Current processing interaction.
-     * @return true, if next interaction must be processed and false if required to stop interaction processing.
+     * @return true, if next interaction must be processed and false if required
+     *         to stop interaction processing.
      */
     private boolean onErrorResponse(Subject subject, WfTask taskStub, HttpURLConnection connection, Interaction interaction) throws IOException,
             TaskHandlerException, InternalApplicationException, AuthorizationException, AuthenticationException, TaskDoesNotExistException {
@@ -287,7 +300,8 @@ public class WebServiceTaskHandler implements TaskHandler {
     }
 
     /**
-     * Called to process response from web service with code from [200; 299] (This codes indicates successful request processing).
+     * Called to process response from web service with code from [200; 299]
+     * (This codes indicates successful request processing).
      * 
      * @param taskStub
      *            Current task instance to be processed.
@@ -341,7 +355,8 @@ public class WebServiceTaskHandler implements TaskHandler {
      * @param stream
      *            Stream with data, to read from.
      * @param encoding
-     *            Characters encoding, used to convert bytes in stream to characters.
+     *            Characters encoding, used to convert bytes in stream to
+     *            characters.
      * @param maxLength
      *            Maximum data length.
      * @return String, readed from stream.
