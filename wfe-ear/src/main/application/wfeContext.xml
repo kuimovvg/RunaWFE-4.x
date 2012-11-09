@@ -173,9 +173,6 @@
 
 
 
-	<bean class="ru.runa.wfe.audit.dao.AuditDAO">
-		<property name="hibernateTemplate" ref="hibernateTemplate" />
-	</bean>
 	<bean class="ru.runa.wfe.bot.dao.BotStationDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
@@ -185,22 +182,31 @@
 	<bean class="ru.runa.wfe.bot.dao.BotTaskDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
-	<bean class="ru.runa.wfe.definition.dao.DefinitionDAO">
+	<bean class="ru.runa.wfe.commons.dao.ConstantDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
-	<bean class="ru.runa.wfe.execution.dao.ExecutionDAO">
-		<property name="hibernateTemplate" ref="hibernateTemplate" />
-	</bean>
-	<bean class="ru.runa.wfe.job.dao.JobDAO">
-		<property name="hibernateTemplate" ref="hibernateTemplate" />
-	</bean>
-	<bean class="ru.runa.wfe.task.dao.TaskDAO">
+	<bean class="ru.runa.wfe.definition.dao.DeploymentDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
 	<bean class="ru.runa.wfe.user.dao.ExecutorDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
+	<bean class="ru.runa.wfe.job.dao.JobDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	<bean class="ru.runa.wfe.execution.dao.NodeProcessDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
 	<bean class="ru.runa.wfe.security.dao.PermissionDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	<bean class="ru.runa.wfe.execution.dao.ProcessDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	<bean class="ru.runa.wfe.audit.dao.ProcessLogDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	<bean class="ru.runa.wfe.user.dao.ProfileDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
 	<bean class="ru.runa.wfe.relation.dao.RelationDAO">
@@ -209,10 +215,16 @@
 	<bean class="ru.runa.wfe.ss.dao.SubstitutionDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
-	<bean class="ru.runa.wfe.user.dao.ProfileDAO">
+	<bean class="ru.runa.wfe.ss.dao.SubstitutionCriteriaDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
-	<bean class="ru.runa.wfe.commons.dao.InitializerDAO">
+	<bean class="ru.runa.wfe.audit.dao.SystemLogDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	<bean class="ru.runa.wfe.task.dao.TaskDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	<bean class="ru.runa.wfe.execution.dao.TokenDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
 	<bean class="ru.runa.wfe.var.dao.VariableDAO">
@@ -294,13 +306,15 @@
 
 
 
-	<bean class="ru.runa.wfe.job.JobExecutor">
-	</bean>
 	<bean id="jobExecutorTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="60000" />
 		<property name="period" value="60000" />
 		<property name="timerTask">
-			<bean class="ru.runa.wfe.job.ExpiredJobCheckerTask">
+			<bean class="ru.runa.wfe.job.impl.ExpiredJobCheckerTask">
+				<property name="executor">
+					<bean class="ru.runa.wfe.job.impl.JobExecutor">
+					</bean>
+				</property>
 			</bean>
 		</property>
 	</bean>
@@ -316,7 +330,11 @@
 		<property name="delay" value="5000" />
 		<property name="period" value="600000" />
 		<property name="timerTask">
-			<bean class="ru.runa.wfe.job.impl.TaskAssigner">
+			<bean class="ru.runa.wfe.job.impl.AssignStalledTasks">
+				<property name="executor">
+					<bean class="ru.runa.wfe.job.impl.TaskAssigner">
+					</bean>
+				</property>
 			</bean>
 		</property>
 	</bean>

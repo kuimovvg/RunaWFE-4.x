@@ -212,8 +212,7 @@ public class LDAPImporter implements LoginHandler {
         }
     }
 
-    private void importExecutors(List<? extends Executor> executorList) throws ExecutorDoesNotExistException, AuthorizationException,
-            AuthenticationException, ExecutorAlreadyExistsException, UnapplicablePermissionException, ExecutorAlreadyInGroupException {
+    private void importExecutors(List<? extends Executor> executorList) {
         List<Executor> existExecutorList = new ArrayList<Executor>();
         List<Executor> executorToImportList = new ArrayList<Executor>();
         for (Executor executor : executorList) {
@@ -224,9 +223,9 @@ public class LDAPImporter implements LoginHandler {
             } else {
                 log.info("Importing " + executor.getName());
                 executorToImportList.add(executor);
+                executorLogic.create(subject, executor);
             }
         }
-        executorLogic.create(subject, executorToImportList);
         Group ldapUsersGroup = getLDAPUsersGroup();
         executorLogic.addExecutorsToGroup(subject, executorToImportList, ldapUsersGroup);
         authorizationLogic.setPermissions(subject, ldapUsersGroup, Lists.newArrayList(Permission.READ), executorToImportList);
@@ -333,7 +332,8 @@ public class LDAPImporter implements LoginHandler {
                                 log.warn("Failed to get executor", e);
                             }
                         }
-                        if (executorsList.size() > 0) {// small performance optimization
+                        if (executorsList.size() > 0) {// small performance
+                                                       // optimization
                             executorLogic.addExecutorsToGroup(subject, executorsList, group);
                         }
                     } catch (AuthorizationException e) {

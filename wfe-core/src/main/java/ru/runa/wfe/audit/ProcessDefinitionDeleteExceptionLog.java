@@ -27,8 +27,8 @@ public class ProcessDefinitionDeleteExceptionLog extends ProcessDefinitionDelete
     private boolean processExists;
     private boolean lastVersion;
 
-    public ProcessDefinitionDeleteExceptionLog(Long actorCode, String name, Long version) {
-        super(actorCode, name, version);
+    public ProcessDefinitionDeleteExceptionLog(Long actorId, String name, Long version) {
+        super(actorId, name, version);
     }
 
     @Column(name = "PROCESS_DEFINITION_PI_EXIST", updatable = false)

@@ -27,9 +27,6 @@ import org.apache.ecs.html.Select;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
-import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
@@ -58,10 +55,7 @@ public class GroupMembersTag extends FreemarkerTag {
     private List<Actor> getActors(Subject subject, String groupName) throws TemplateModelException {
         try {
             ExecutorService executorService = DelegateFactory.getExecutorService();
-            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-            batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
-            batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
-            Group group = executorService.getGroup(subject, groupName);
+            Group group = executorService.getExecutor(subject, groupName);
             return executorService.getGroupActors(subject, group);
         } catch (Exception e) {
             throw new TemplateModelException(e);

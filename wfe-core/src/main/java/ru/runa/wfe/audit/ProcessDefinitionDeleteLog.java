@@ -30,8 +30,8 @@ public class ProcessDefinitionDeleteLog extends SystemLog {
     protected ProcessDefinitionDeleteLog() {
     }
 
-    public ProcessDefinitionDeleteLog(Long actorCode, String name, Long version) {
-        super(actorCode);
+    public ProcessDefinitionDeleteLog(Long actorId, String name, Long version) {
+        super(actorId);
         this.name = name;
         this.version = version;
     }

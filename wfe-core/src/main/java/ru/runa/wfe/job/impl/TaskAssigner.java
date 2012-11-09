@@ -17,11 +17,8 @@
  */
 package ru.runa.wfe.job.impl;
 
-import java.util.TimerTask;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.runa.wfe.task.logic.TaskLogic;
@@ -31,20 +28,14 @@ import ru.runa.wfe.task.logic.TaskLogic;
  * 
  * @author Konstantinov Aleksey
  */
-@Transactional
-public class TaskAssigner extends TimerTask {
-    private static final Log log = LogFactory.getLog(TaskAssigner.class);
+public class TaskAssigner {
 
     @Autowired
     private TaskLogic taskLogic;
 
-    @Override
-    public void run() {
-        try {
-            taskLogic.assignUnassignedTasks();
-        } catch (Throwable th) {
-            log.error("error", th);
-        }
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void execute() {
+        taskLogic.assignUnassignedTasks();
     }
 
 }

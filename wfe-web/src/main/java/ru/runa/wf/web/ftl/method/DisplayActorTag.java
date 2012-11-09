@@ -40,7 +40,7 @@ public class DisplayActorTag extends FreemarkerTag {
                 String var = getVariableAs(String.class, actorVarName, false);
                 if (var.startsWith("G")) {
                     Long groupId = TypeConversionUtil.convertTo(var.substring(1), Long.class);
-                    Group group = executorService.getGroup(subject, groupId);
+                    Group group = executorService.getExecutor(subject, groupId);
                     return "<p style='color: blue;'>" + group.getName() + "</p>";
                 } else {
                     throw e;

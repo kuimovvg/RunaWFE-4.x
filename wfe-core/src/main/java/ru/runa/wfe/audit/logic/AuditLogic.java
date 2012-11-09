@@ -26,9 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
-import ru.runa.wfe.audit.dao.AuditDAO;
+import ru.runa.wfe.audit.dao.ProcessLogDAO;
 import ru.runa.wfe.commons.logic.CommonLogic;
-import ru.runa.wfe.execution.dao.ExecutionDAO;
+import ru.runa.wfe.execution.dao.NodeProcessDAO;
+import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
 import ru.runa.wfe.security.ASystem;
@@ -39,14 +40,18 @@ import ru.runa.wfe.security.SystemPermission;
 import com.google.common.base.Preconditions;
 
 /**
- * Created on 14.03.2005
+ * Audit logic.
  * 
+ * @author dofs
+ * @since 4.0
  */
 public class AuditLogic extends CommonLogic {
     @Autowired
-    private AuditDAO auditDAO;
+    private ProcessDAO processDAO;
     @Autowired
-    private ExecutionDAO executionDAO;
+    private ProcessLogDAO processLogDAO;
+    @Autowired
+    private NodeProcessDAO nodeProcessDAO;
 
     public void login(Subject subject, ASystem system) throws AuthorizationException, AuthenticationException {
         checkLoginAllowed(subject, system);
@@ -63,11 +68,11 @@ public class AuditLogic extends CommonLogic {
         // TODO checkPermissionAllowed(subject, identifiable, permission);
         Preconditions.checkNotNull(filter.getProcessId(), "filter.processId");
         ProcessLogs result = new ProcessLogs(filter.getProcessId());
-        result.addLogs(auditDAO.getProcessLogs(filter.getProcessId()));
+        result.addLogs(processLogDAO.getAll(filter.getProcessId()));
         if (filter.isIncludeSubprocessLogs()) {
-            ru.runa.wfe.execution.Process process = executionDAO.getProcessNotNull(filter.getProcessId());
-            for (ru.runa.wfe.execution.Process subprocess : executionDAO.getSubprocessesRecursive(process)) {
-                result.addLogs(auditDAO.getProcessLogs(subprocess.getId()));
+            ru.runa.wfe.execution.Process process = processDAO.getNotNull(filter.getProcessId());
+            for (ru.runa.wfe.execution.Process subprocess : nodeProcessDAO.getSubprocessesRecursive(process)) {
+                result.addLogs(processLogDAO.getAll(subprocess.getId()));
             }
         }
         return result;

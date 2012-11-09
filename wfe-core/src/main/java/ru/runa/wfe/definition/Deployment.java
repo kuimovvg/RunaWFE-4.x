@@ -21,6 +21,7 @@ import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.SecuredObjectType;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "BPM_PROCESS_DEFINITION")
@@ -116,7 +117,12 @@ public class Deployment implements Identifiable {
     }
 
     public void setCategories(List<String> categories) {
-        this.category = Joiner.on("/").join(categories);
+        category = Joiner.on("/").join(categories);
     }
 
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
+    }
 }

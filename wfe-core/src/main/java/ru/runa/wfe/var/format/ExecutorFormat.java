@@ -21,12 +21,16 @@ public class ExecutorFormat implements VariableFormat, VariableDisplaySupport {
 
     @Override
     public Object parse(String[] source) throws Exception {
-        return executorDAO.getExecutor(TypeConversionUtil.convertTo(source[0], Long.class));
+        return executorDAO.getActorByCode(TypeConversionUtil.convertTo(source[0], Long.class));
+        // TODO tmp
+        // return
+        // executorDAO.getExecutor(TypeConversionUtil.convertTo(source[0],
+        // Long.class));
     }
 
     @Override
     public String format(Object object) {
-        return ((Executor) object).getName();
+        return ((Executor) object).getFullName();
     }
 
     @Override

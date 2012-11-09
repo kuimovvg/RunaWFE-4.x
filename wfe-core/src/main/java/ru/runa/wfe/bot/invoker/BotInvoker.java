@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.bot.invoker;
 
+import ru.runa.wfe.bot.BotStation;
+
 /**
  * Invoke bots on this server.
  * 
@@ -25,6 +27,6 @@ package ru.runa.wfe.bot.invoker;
  */
 public interface BotInvoker {
 
-    public void invokeBots();
+    public void invokeBots(BotStation botStation);
 
 }

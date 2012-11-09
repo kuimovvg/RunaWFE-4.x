@@ -30,18 +30,20 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.audit.dao.AuditDAO;
+import ru.runa.wfe.audit.dao.ProcessLogDAO;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
-import ru.runa.wfe.definition.dao.DefinitionDAO;
+import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.definition.dao.ProcessDefinitionLoader;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessPermission;
-import ru.runa.wfe.execution.dao.ExecutionDAO;
+import ru.runa.wfe.execution.dao.NodeProcessDAO;
+import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.image.GraphElementPresentationBuilder;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.graph.view.GraphElementPresentationVisitor;
+import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -58,6 +60,7 @@ import ru.runa.wfe.validation.ValidatorContext;
 import ru.runa.wfe.validation.ValidatorManager;
 import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.dao.VariableDAO;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
@@ -65,7 +68,6 @@ import com.google.common.collect.Sets;
 /**
  * Created on 15.03.2005
  */
-@SuppressWarnings({ "unchecked" })
 public class WFCommonLogic extends CommonLogic {
     private static final Log log = LogFactory.getLog(WFCommonLogic.class);
 
@@ -75,13 +77,19 @@ public class WFCommonLogic extends CommonLogic {
     protected SubstitutionLogic substitutionLogic;
 
     @Autowired
-    protected DefinitionDAO definitionDAO;
+    protected DeploymentDAO deploymentDAO;
     @Autowired
-    protected ExecutionDAO executionDAO;
+    protected ProcessDAO processDAO;
+    @Autowired
+    protected NodeProcessDAO nodeProcessDAO;
     @Autowired
     protected TaskDAO taskDAO;
     @Autowired
-    protected AuditDAO auditDAO;
+    protected VariableDAO variableDAO;
+    @Autowired
+    protected ProcessLogDAO processLogDAO;
+    @Autowired
+    protected JobDAO jobDAO;
 
     public ProcessDefinition getDefinition(Long processDefinitionId) {
         return processDefinitionLoader.getDefinition(processDefinitionId);
@@ -97,10 +105,6 @@ public class WFCommonLogic extends CommonLogic {
 
     protected ProcessDefinition getLatestDefinition(String definitionName) throws DefinitionDoesNotExistException {
         return processDefinitionLoader.getLatestDefinition(definitionName);
-    }
-
-    protected Task getTaskNotNull(Long taskId) throws TaskDoesNotExistException {
-        return taskDAO.getTaskNotNull(taskId);
     }
 
     protected void validateVariables(ProcessDefinition processDefinition, String stateName, IVariableProvider variableProvider)
@@ -148,7 +152,7 @@ public class WFCommonLogic extends CommonLogic {
             throw new AuthorizationException("Unable to participate in unassigned task");
         }
         if (taskExecutor instanceof Actor) {
-            if (Objects.equal(actor.getCode(), ((Actor) taskExecutor).getCode())) {
+            if (Objects.equal(actor, taskExecutor)) {
                 return;
             }
         } else {
@@ -181,10 +185,22 @@ public class WFCommonLogic extends CommonLogic {
         }
     }
 
-    protected void prepareProcessRemoval(Process process) {
-        for (Process subProcess : executionDAO.getSubprocesses(process)) {
-            prepareProcessRemoval(subProcess);
+    protected void deleteProcess(Process process) {
+        log.debug("deleting process " + process);
+        // delete subprocessees
+        List<Process> subProcesses = nodeProcessDAO.getSubprocesses(process);
+        for (Process subProcess : subProcesses) {
+            log.debug("deleting sub process " + subProcess.getId());
+            deleteProcess(subProcess);
         }
+        processLogDAO.deleteAll(process.getId());
+        jobDAO.deleteJobs(process);
+        variableDAO.deleteAll(process);
+
+        // delete started subprocesses
+        log.debug("deleting started subprocesses for process " + process.getId());
+        nodeProcessDAO.deleteByProcess(process.getId());
+        processDAO.delete(process.getId());
     }
 
     /**
@@ -193,9 +209,11 @@ public class WFCommonLogic extends CommonLogic {
      * @param subject
      *            Current subject.
      * @param id
-     *            Identity of process definition, which presentation elements must be loaded.
+     *            Identity of process definition, which presentation elements
+     *            must be loaded.
      * @param visitor
-     *            Operation, which must be applied to loaded graph elements, or null, if nothing to apply.
+     *            Operation, which must be applied to loaded graph elements, or
+     *            null, if nothing to apply.
      * @return List of graph presentation elements.
      */
     public List<GraphElementPresentation> getDefinitionGraphElements(Subject subject, Long id, GraphElementPresentationVisitor visitor) {

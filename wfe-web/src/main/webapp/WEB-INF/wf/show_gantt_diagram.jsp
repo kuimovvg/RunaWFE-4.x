@@ -31,12 +31,8 @@
 	g.setShowRes(1); // Show/Hide Responsible (0/1)
 	g.setShowDur(1); // Show/Hide Duration (0/1)
 	g.setShowComp(0); // Show/Hide % Complete(0/1)
-	g.setCaptionType('Executor');  // Set to Show Caption (None,Caption,Resource,Duration,Complete)
 	g.setShowStartDate(1); // Show/Hide Start Date(0/1)
 	g.setShowEndDate(1); // Show/Hide End Date(0/1)
-	g.setDateInputFormat('mm.dd.yyyy');
-	g.setDateDisplayFormat('mm.dd.yyyy');
-	g.setFormatArr("day", "week", "month", "year");
 </script>
 </wf:showGanttDiagram>
 

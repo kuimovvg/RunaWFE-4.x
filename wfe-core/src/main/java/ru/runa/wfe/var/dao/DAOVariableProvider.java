@@ -15,7 +15,7 @@ public class DAOVariableProvider extends AbstractVariableProvider {
 
     @Override
     public Object get(String variableName) {
-        Variable<?> variable = variableDAO.getVariable(process, variableName);
+        Variable<?> variable = variableDAO.get(process, variableName);
         if (variable != null) {
             return variable.getValue();
         }

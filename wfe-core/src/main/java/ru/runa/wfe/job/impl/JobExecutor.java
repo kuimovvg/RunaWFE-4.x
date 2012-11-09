@@ -1,4 +1,4 @@
-package ru.runa.wfe.job;
+package ru.runa.wfe.job.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.job.Job;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.ProcessDefinition;
 
@@ -20,7 +21,7 @@ public class JobExecutor {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void executeJobs(Long id) {
-        Job job = jobDAO.getJob(id);
+        Job job = jobDAO.getNotNull(id);
         log.debug("executing " + job);
         ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(job.getProcess().getDefinition().getId());
         ExecutionContext executionContext = new ExecutionContext(processDefinition, job.getToken());

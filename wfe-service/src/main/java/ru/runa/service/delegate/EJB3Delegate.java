@@ -10,6 +10,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 
 import com.google.common.base.Preconditions;
@@ -88,7 +89,7 @@ public abstract class EJB3Delegate {
         if (initialContext == null) {
             try {
                 Properties env = new Properties();
-                InputStream is = getClass().getResourceAsStream("/jndi.properties");
+                InputStream is = ClassLoaderUtil.getResourceAsStream("jndi.properties", getClass());
                 if (is != null) {
                     Preconditions.checkNotNull(is, "jndi.properties is not in classpath");
                     env.load(is);

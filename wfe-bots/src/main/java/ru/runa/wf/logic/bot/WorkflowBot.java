@@ -46,9 +46,20 @@ import com.google.common.base.Objects;
 public class WorkflowBot implements Runnable {
     private final Log log = LogFactory.getLog(WorkflowBot.class);
 
-    private final long complettedTasksHoldPeriod = 10000; // This time completted tasks stay in existingBots (prevent tasks double execution)
-    private final long failedTasksDelayPeriod = 30000; // first wait is 30 sec. Next wait is 2*wait, but no more failedTasksMaxDelayPeriod
-    private final long failedTasksMaxDelayPeriod = 4 * 1920000; // 4*32 min
+    /**
+     * This time completted tasks stay in existingBots (prevent tasks double
+     * execution)
+     */
+    private final long complettedTasksHoldPeriod = 10000;
+    /**
+     * first wait is 30 sec. Next wait is 2*wait, but no more
+     * failedTasksMaxDelayPeriod
+     */
+    private final long failedTasksDelayPeriod = 30000;
+    /**
+     * 4*32 min
+     */
+    private final long failedTasksMaxDelayPeriod = 4 * 1920000;
 
     private enum BotExecutionStatus {
         scheduled, completted, failed
@@ -64,7 +75,8 @@ public class WorkflowBot implements Runnable {
     private final long botDeplay;
 
     private final Set<WorkflowBot> existingBots;
-    // This need for thread execution stuck detection and stuck thread termination
+    // This need for thread execution stuck detection and stuck thread
+    // termination
     private long startTime = -1;
     private long resetTime = -1;
     private Thread executionThread = null;
@@ -92,19 +104,19 @@ public class WorkflowBot implements Runnable {
         existingBots = new HashSet<WorkflowBot>();
     }
 
-    private WorkflowBot(WorkflowBot parent, WfTask taskStub) {
+    private WorkflowBot(WorkflowBot parent, WfTask task) {
         subject = parent.subject;
         taskHandlerMap = parent.taskHandlerMap;
         botName = parent.botName;
-        this.task = taskStub;
+        this.task = task;
         this.parent = parent;
         botDeplay = parent.botDeplay;
         existingBots = null;
     }
 
     public WorkflowBot createTask(WfTask task) {
-        if (parent != null || task != null) {
-            throw new InternalApplicationException("WorkflowBot task can be created only by template WorkflowBot.");
+        if (parent != null || this.task != null) {
+            throw new InternalApplicationException("WorkflowBot task can be created only by template");
         }
         WorkflowBot result = new WorkflowBot(this, task);
         if (existingBots.contains(result)) {
@@ -125,13 +137,14 @@ public class WorkflowBot implements Runnable {
     }
 
     public Set<WfTask> getNewTasks() throws AuthenticationException, AuthorizationException {
-        List<WfTask> currentTasks = DelegateFactory.getExecutionService().getTasks(subject, BatchPresentationFactory.TASKS.createDefault());
+        List<WfTask> currentTasks = DelegateFactory.getExecutionService().getTasks(subject, BatchPresentationFactory.TASKS.createNonPaged());
         Set<WfTask> result = new HashSet<WfTask>();
         Set<WorkflowBot> failedBotsToRestart = new HashSet<WorkflowBot>();
         for (Iterator<WorkflowBot> botIterator = existingBots.iterator(); botIterator.hasNext();) {
             WorkflowBot bot = botIterator.next();
             if (bot.botStatus == BotExecutionStatus.completted && bot.resetTime < System.currentTimeMillis()) {
-                botIterator.remove(); // Completted bot task hold time is elapsed
+                botIterator.remove(); // Completted bot task hold time is
+                                      // elapsed
             }
             if (bot.botStatus == BotExecutionStatus.failed && bot.resetTime < System.currentTimeMillis()) {
                 // Search in currentTasks
@@ -156,21 +169,14 @@ public class WorkflowBot implements Runnable {
     }
 
     public void doHandle() throws Exception {
-        try {
-            // TODO getTransactionManager().begin();
-            TaskHandler taskHandler = taskHandlerMap.get(task.getName());
-            if (taskHandler == null) {
-                log.warn("No handler for task " + task + ", bot " + botName);
-                return;
-            }
-            IVariableProvider variableProvider = new DelegateProcessVariableProvider(subject, task.getProcessId());
-            taskHandler.handle(subject, variableProvider, task);
-            log.debug("Handled task " + task + ", bot " + botName);
-            // commit
-        } catch (Exception e) {
-            // getTransactionManager().rollback();
-            throw e;
+        TaskHandler taskHandler = taskHandlerMap.get(task.getName());
+        if (taskHandler == null) {
+            log.warn("No handler for task " + task + ", bot " + botName);
+            return;
         }
+        IVariableProvider variableProvider = new DelegateProcessVariableProvider(subject, task.getProcessId());
+        taskHandler.handle(subject, variableProvider, task);
+        log.debug("Handled task " + task + ", bot " + botName);
     }
 
     @Override
@@ -196,7 +202,10 @@ public class WorkflowBot implements Runnable {
             log.error("Error execution bot " + botName + " for task " + task, e);
             logBotsError(task, e);
             botStatus = BotExecutionStatus.failed;
-            long newDelay = resetTime == -1 ? failedTasksDelayPeriod : (resetTime - startTime) * 2; // Double delay if exists
+            long newDelay = resetTime == -1 ? failedTasksDelayPeriod : (resetTime - startTime) * 2; // Double
+                                                                                                    // delay
+                                                                                                    // if
+                                                                                                    // exists
             if (newDelay > failedTasksMaxDelayPeriod) {
                 newDelay = failedTasksMaxDelayPeriod;
             }

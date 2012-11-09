@@ -29,8 +29,8 @@ public class ProcessDeleteLog extends SystemLog {
     protected ProcessDeleteLog() {
     }
 
-    public ProcessDeleteLog(Long actorCode, Long processId) {
-        super(actorCode);
+    public ProcessDeleteLog(Long actorId, Long processId) {
+        super(actorId);
         this.processId = processId;
     }
 

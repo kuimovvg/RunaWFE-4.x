@@ -38,11 +38,13 @@ import com.google.common.collect.Maps;
  */
 public class ClassLoaderUtil {
     /**
-     * This map contains substitution for loaded classes (back compatibility on class loading).
+     * This map contains substitution for loaded classes (back compatibility on
+     * class loading).
      */
     private static Map<String, String> bcc = Maps.newHashMap();
     static {
         // formats renamed
+        bcc.put("ru.runa.web.formgen.format.DoubleFormat", "ru.runa.wfe.var.format.DoubleFormat");
         bcc.put("org.jbpm.web.formgen.format.DoubleFormat", "ru.runa.wfe.var.format.DoubleFormat");
         bcc.put("org.jbpm.web.formgen.format.DefaultFormat", "ru.runa.wfe.var.format.StringFormat");
         bcc.put("ru.runa.wf.web.forms.format.ArrayListFormat", "ru.runa.wfe.var.format.ArrayListFormat");
@@ -57,7 +59,7 @@ public class ClassLoaderUtil {
         bcc.put("ru.runa.wf.web.forms.format.TimeFormat", "ru.runa.wfe.var.format.TimeFormat");
         bcc.put("ru.runa.wf.web.forms.format.TimeWithSecondsFormat", "ru.runa.wfe.var.format.TimeWithSecondsFormat");
         // assignment handler renamed
-        bcc.put("ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler", "ru.runa.wfe.handler.assign.WfAssignmentHandler");
+        bcc.put("ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler", "ru.runa.wfe.handler.assign.DefaultAssignmentHandler");
         // decision handler renamed
         bcc.put("ru.runa.wf.jbpm.delegation.decision.BSFDecisionHandler", "ru.runa.wfe.handler.decision.BSFDecisionHandler");
         // action handlers renamed
@@ -78,15 +80,15 @@ public class ClassLoaderUtil {
         bcc.put("ru.runa.wf.SendEmailActionHandler", "ru.runa.wfe.handler.action.SendEmailActionHandler");
         bcc.put("ru.runa.wf.SQLActionHandler", "ru.runa.wfe.handler.action.SQLActionHandler");
         // org functions renamed
-        bcc.put("ru.runa.wfe.af.organizationfunction.ChiefFunction", "ru.runa.wfe.os.func.ChiefFunction");
-        bcc.put("ru.runa.wfe.af.organizationfunction.ChiefRecursiveFunction", "ru.runa.wfe.os.func.ChiefRecursiveFunction");
-        bcc.put("ru.runa.wfe.af.organizationfunction.DemoChiefFunction", "ru.runa.wfe.os.func.DemoChiefFunction");
-        bcc.put("ru.runa.wfe.af.organizationfunction.DirectorFunction", "ru.runa.wfe.os.func.DirectorFunction");
-        bcc.put("ru.runa.wfe.af.organizationfunction.ExecutorByCodeFunction", "ru.runa.wfe.os.func.ExecutorByCodeFunction");
-        bcc.put("ru.runa.wfe.af.organizationfunction.ExecutorByNameFunction", "ru.runa.wfe.os.func.ExecutorByNameFunction");
-        bcc.put("ru.runa.wfe.af.organizationfunction.SQLFunction", "ru.runa.wfe.os.func.SQLFunction");
-        bcc.put("ru.runa.wfe.af.organizationfunction.SubordinateFunction", "ru.runa.wfe.os.func.SubordinateFunction");
-        bcc.put("ru.runa.wfe.af.organizationfunction.SubordinateRecursiveFunction", "ru.runa.wfe.os.func.SubordinateRecursiveFunction");
+        bcc.put("ru.runa.af.organizationfunction.ChiefFunction", "ru.runa.wfe.os.func.ChiefFunction");
+        bcc.put("ru.runa.af.organizationfunction.ChiefRecursiveFunction", "ru.runa.wfe.os.func.ChiefRecursiveFunction");
+        bcc.put("ru.runa.af.organizationfunction.DemoChiefFunction", "ru.runa.wfe.os.func.DemoChiefFunction");
+        bcc.put("ru.runa.af.organizationfunction.DirectorFunction", "ru.runa.wfe.os.func.DirectorFunction");
+        bcc.put("ru.runa.af.organizationfunction.ExecutorByCodeFunction", "ru.runa.wfe.os.func.ExecutorByCodeFunction");
+        bcc.put("ru.runa.af.organizationfunction.ExecutorByNameFunction", "ru.runa.wfe.os.func.ExecutorByNameFunction");
+        bcc.put("ru.runa.af.organizationfunction.SQLFunction", "ru.runa.wfe.os.func.SQLFunction");
+        bcc.put("ru.runa.af.organizationfunction.SubordinateFunction", "ru.runa.wfe.os.func.SubordinateFunction");
+        bcc.put("ru.runa.af.organizationfunction.SubordinateRecursiveFunction", "ru.runa.wfe.os.func.SubordinateRecursiveFunction");
     }
 
     public static Class<?> loadClass(String className, Class<?> callingClass) throws ClassNotFoundException {
@@ -116,6 +118,7 @@ public class ClassLoaderUtil {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends Object> T instantiate(String className) {
         try {
             return (T) instantiate(loadClass(className));
@@ -161,6 +164,9 @@ public class ClassLoaderUtil {
             if (loader != null) {
                 url = loader.getResource(resourceName);
             }
+        }
+        if (url == null) {
+            url = callingClass.getResource(resourceName);
         }
         if ((url == null) && (resourceName != null) && (resourceName.charAt(0) != '/')) {
             return getResource('/' + resourceName, callingClass);

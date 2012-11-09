@@ -34,13 +34,13 @@ import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.collect.Maps;
 
-public class AdvancedSwimlaneAssignerTaskHandler extends AbstractOrgFunctionTaskHandler {
+public class AdvancedSwimlaneAssignerTaskHandler implements TaskHandler {
 
     private AssignerSettings settings;
 
     @Override
     public void configure(String configurationName) throws TaskHandlerException {
-        settings = AssignerSettingsXmlParser.read(getClass().getResourceAsStream(configurationName));
+        settings = AssignerSettingsXmlParser.read(ClassLoaderUtil.getResourceAsStream(configurationName, getClass()));
     }
 
     @Override

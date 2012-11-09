@@ -48,19 +48,19 @@ public class ProfileLogic extends CommonLogic {
     @Autowired
     private ProfileDAO profileDAO;
 
-    public void saveProfiles(Subject subject, List<Profile> profiles) throws AuthorizationException {
+    public void updateProfiles(Subject subject, List<Profile> profiles) throws AuthorizationException {
         for (Profile profile : profiles) {
             checkPermissionAllowed(subject, profile.getActor(), ExecutorPermission.UPDATE);
-            profileDAO.store(profile);
+            profileDAO.update(profile);
         }
     }
 
     private Profile getProfileNotNull(Actor actor) {
-        Profile profile = profileDAO.getProfile(actor);
+        Profile profile = profileDAO.get(actor);
         if (profile == null) {
             profile = new Profile();
             profile.setActor(actor);
-            profileDAO.store(profile);
+            profileDAO.create(profile);
         }
         return profile;
     }
@@ -83,34 +83,34 @@ public class ProfileLogic extends CommonLogic {
 
     public void changeActiveBatchPresentation(Subject subject, String batchPresentationId, String newActiveBatchName) {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        Profile profile = profileDAO.getProfile(actor);
+        Profile profile = profileDAO.get(actor);
         profile.setActiveBatchPresentation(batchPresentationId, newActiveBatchName);
-        profileDAO.store(profile);
+        profileDAO.update(profile);
     }
 
     public void deleteBatchPresentation(Subject subject, BatchPresentation batchPresentation) {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        Profile profile = profileDAO.getProfile(actor);
+        Profile profile = profileDAO.get(actor);
         profile.deleteBatchPresentation(batchPresentation);
-        profileDAO.store(profile);
+        profileDAO.update(profile);
     }
 
     public BatchPresentation createBatchPresentation(Subject subject, BatchPresentation batchPresentation) {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        Profile profile = profileDAO.getProfile(actor);
+        Profile profile = profileDAO.get(actor);
         profile.addBatchPresentation(batchPresentation);
         profile.setActiveBatchPresentation(batchPresentation.getCategory(), batchPresentation.getName());
-        profileDAO.store(profile);
+        profileDAO.update(profile);
         return batchPresentation;
     }
 
     public void saveBatchPresentation(Subject subject, BatchPresentation batchPresentation) {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        Profile profile = profileDAO.getProfile(actor);
+        Profile profile = profileDAO.get(actor);
         if (BatchPresentationConsts.DEFAULT_NAME.equals(batchPresentation.getName())) {
             throw new InternalApplicationException("default batch presentation cannot be changed");
         }
         profile.addBatchPresentation(batchPresentation);
-        profileDAO.store(profile);
+        profileDAO.update(profile);
     }
 }

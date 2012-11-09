@@ -38,16 +38,20 @@ import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
-import ru.runa.wfe.user.Group;
 
 /**
  * Created on 19.08.2004
  * 
- * @struts:action path="/updateExecutorDetails" name="updateExecutorDetailsForm" validate="true" input = "/WEB-INF/af/manage_executor.jsp"
- * @struts.action-forward name="success" path="/manage_executor.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_executor.do" redirect = "true"
- * @struts.action-forward name="failure_executor_does_not_exist" path="/manage_executors.do" redirect = "true"
+ * @struts:action path="/updateExecutorDetails" name="updateExecutorDetailsForm"
+ *                validate="true" input = "/WEB-INF/af/manage_executor.jsp"
+ * @struts.action-forward name="success" path="/manage_executor.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure" path="/manage_executor.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure_executor_does_not_exist"
+ *                        path="/manage_executors.do" redirect = "true"
  */
 public class UpdateExecutorDetailsAction extends Action {
 
@@ -58,20 +62,21 @@ public class UpdateExecutorDetailsAction extends Action {
             throws AuthenticationException {
         ActionMessages errors = new ActionMessages();
         UpdateExecutorDetailsForm form = (UpdateExecutorDetailsForm) actionForm;
-        String name = form.getNewName();
         boolean executorExists = true;
         try {
             ExecutorService executorService = DelegateFactory.getExecutorService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            if (form.getCode() != null) { // discriminator
-                Actor actor = new Actor(name, form.getDescription(), form.getFullName(), form.getCode(), form.getEmail(), form.getPhone());
-                actor.setId(form.getId());
-                executorService.update(subject, actor);
-            } else {
-                Group group = new Group(name, form.getDescription(), form.getEmail());
-                group.setId(form.getId());
-                executorService.update(subject, group);
+            Executor executor = executorService.getExecutor(subject, form.getId());
+            executor.setDescription(form.getDescription());
+            executor.setFullName(form.getFullName());
+            executor.setName(form.getNewName());
+            if (executor instanceof Actor) {
+                Actor actor = (Actor) executor;
+                actor.setCode(form.getCode());
+                actor.setEmail(form.getEmail());
+                actor.setPhone(form.getPhone());
             }
+            executorService.update(subject, executor);
         } catch (ExecutorDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);
             executorExists = false;

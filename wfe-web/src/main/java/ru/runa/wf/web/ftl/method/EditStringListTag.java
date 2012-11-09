@@ -21,7 +21,7 @@ public class EditStringListTag extends AjaxFreemarkerTag {
             Map<String, String> substitutions = new HashMap<String, String>();
             substitutions.put("VARIABLE", variableName);
             StringBuffer html = new StringBuffer();
-            html.append(exportScript("EditStringListTag.js", substitutions));
+            html.append(exportScript("scripts/EditStringListTag.js", substitutions));
             pageContext.removeAttribute("EditStringListTag.js");
             List<Object> list = getVariableAs(List.class, variableName, true);
             if (list == null) {

@@ -55,9 +55,9 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
     public SubstitutionCacheImpl() {
         actorToSubstitutors = createCache(substitutorsName, true);
         actorToSubstituted = createCache(substitutedName, true);
-        Map<Long, TreeMap<Substitution, HashSet<Long>>> actToSubstitutors = getMapActorToSubstitutors(getAllSubstitution());
+        Map<Long, TreeMap<Substitution, HashSet<Long>>> actToSubstitutors = getMapActorToSubstitutors();
         Map<Long, HashSet<Long>> actToSubstituted = getMapActorToSubstituted(actToSubstitutors);
-        for (Actor actor : executorDAO.getAllActors(BatchPresentationFactory.EXECUTORS.createDefault())) {
+        for (Actor actor : executorDAO.getAllActors(BatchPresentationFactory.ACTORS.createNonPaged())) {
             if (actToSubstituted.get(actor.getId()) == null) {
                 actToSubstituted.put(actor.getId(), new HashSet<Long>());
             }
@@ -78,7 +78,7 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
         if (result != null) {
             return new TreeMap<Substitution, Set<Long>>(result);
         }
-        Map<Long, TreeMap<Substitution, HashSet<Long>>> actToSubstitutors = getMapActorToSubstitutors(getAllSubstitution());
+        Map<Long, TreeMap<Substitution, HashSet<Long>>> actToSubstitutors = getMapActorToSubstitutors();
         result = actToSubstitutors.get(actor.getId());
         return result != null ? new TreeMap<Substitution, Set<Long>>(result) : new TreeMap<Substitution, Set<Long>>();
     }
@@ -96,7 +96,9 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
 
     public void onActorChange(Actor actor) {
         /*
-         * if(actorToSubstitutors.containsKey(actor.getId())) return; actorToSubstitutors.put(actor.getId(), new TreeMap<Substitution,HashSet<Long>>());
+         * if(actorToSubstitutors.containsKey(actor.getId())) return;
+         * actorToSubstitutors.put(actor.getId(), new
+         * TreeMap<Substitution,HashSet<Long>>());
          */
     }
 
@@ -129,15 +131,16 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
         }
     }
 
-    private Map<Long, TreeMap<Substitution, HashSet<Long>>> getMapActorToSubstitutors(List<Substitution> substitutions) {
+    private Map<Long, TreeMap<Substitution, HashSet<Long>>> getMapActorToSubstitutors() {
         Map<Long, TreeMap<Substitution, HashSet<Long>>> result = new HashMap<Long, TreeMap<Substitution, HashSet<Long>>>();
-        for (Substitution substitution : substitutions) {
+        for (Substitution substitution : substitutionDAO.getAll()) {
             try {
                 Actor actor = null;
                 try {
                     actor = executorDAO.getActor(substitution.getActorId());
                 } catch (ExecutorDoesNotExistException e) {
-                    substitutionDAO.deleteSubstitution(substitution.getId());
+                    // TODO auto-deletion?
+                    substitutionDAO.delete(substitution.getId());
                     continue;
                 }
                 if (!substitution.isEnabled()) {
@@ -234,7 +237,4 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
         return result;
     }
 
-    private List<Substitution> getAllSubstitution() {
-        return substitutionDAO.getAllSubstitutions();
-    }
 }

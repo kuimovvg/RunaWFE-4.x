@@ -45,12 +45,12 @@ public class SystemLogActorExtractor implements IdentifiableExtractor {
     public Identifiable getIdentifiable(Object o, Env env) {
         SystemLog systemLog = (SystemLog) o;
         try {
-            if (cache.containsKey(systemLog.getActorCode())) {
-                return cache.get(systemLog.getActorCode());
+            if (cache.containsKey(systemLog.getActorId())) {
+                return cache.get(systemLog.getActorId());
             }
-            Actor actor = DelegateFactory.getExecutorService().getActorByCode(env.getSubject(), systemLog.getActorCode());
+            Actor actor = DelegateFactory.getExecutorService().getActorByCode(env.getSubject(), systemLog.getActorId());
             // Actor may be null, but it is correct result (if deleted).
-            cache.put(systemLog.getActorCode(), actor);
+            cache.put(systemLog.getActorId(), actor);
             return actor;
         } catch (Exception e) {
             log.error("Can't load actor for system log with id " + systemLog.getId(), e);

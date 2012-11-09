@@ -25,8 +25,8 @@ import ru.runa.wfe.ApplicationException;
 public class TaskDoesNotExistException extends ApplicationException {
     private static final long serialVersionUID = 1L;
 
-    public TaskDoesNotExistException(Long id) {
-        super("with id = " + id);
+    public TaskDoesNotExistException(Object identity) {
+        super("Task does not exist: " + identity);
     }
 
 }

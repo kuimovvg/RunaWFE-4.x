@@ -3,6 +3,7 @@ package ru.runa.wf.web.ftl;
 import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
+import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.service.client.DelegateProcessVariableProvider;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wf.web.FormProcessingException;
@@ -20,7 +21,8 @@ public class FreemarkerTaskFormBuilder extends BaseTaskFormBuilder implements Ta
             FormProcessingException {
         try {
             WfTask task = DelegateFactory.getExecutionService().getTask(subject, taskId);
-            FormHashModel model = new FormHashModel(subject, pageContext, new DelegateProcessVariableProvider(subject, task.getProcessId()));
+            FormHashModel model = new FormHashModel(subject, pageContext, new DelegateProcessVariableProvider(subject, task.getProcessId()),
+                    StrutsWebHelper.INSTANCE);
             return build(interaction, model, task.getProcessDefinitionId());
         } catch (Exception e) {
             throw new InternalApplicationException(e);

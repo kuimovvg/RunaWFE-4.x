@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.ExecutionService;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.SQLCommons;
 import ru.runa.wfe.commons.sqltask.AbstractQuery;
 import ru.runa.wfe.commons.sqltask.DatabaseTask;
@@ -64,12 +65,12 @@ public class DatabaseTaskHandler implements TaskHandler {
 
     @Override
     public void configure(String configurationName) throws TaskHandlerException {
-        InputStream inputStream = DatabaseTaskHandler.class.getResourceAsStream(configurationName);
+        InputStream inputStream = ClassLoaderUtil.getResourceAsStream(configurationName, DatabaseTaskHandler.class);
         if (inputStream == null) {
             throw new TaskHandlerException("Unable to find configuration " + configurationName);
         }
         try {
-            this.configuration = ByteStreams.toByteArray(inputStream);
+            configuration = ByteStreams.toByteArray(inputStream);
         } catch (IOException e) {
             throw new TaskHandlerException("Unable to read configuration " + configurationName, e);
         }
@@ -145,9 +146,9 @@ public class DatabaseTaskHandler implements TaskHandler {
                 if ("code".equals(fieldName)) {
                     actor = DelegateFactory.getExecutorService().getActorByCode(subject, ((Long) newValue).longValue());
                 } else if ("id".equals(fieldName)) {
-                    actor = DelegateFactory.getExecutorService().getActor(subject, ((Long) newValue).longValue());
+                    actor = DelegateFactory.getExecutorService().getExecutor(subject, ((Long) newValue).longValue());
                 } else {
-                    actor = DelegateFactory.getExecutorService().getActor(subject, (String) newValue);
+                    actor = DelegateFactory.getExecutorService().getExecutor(subject, (String) newValue);
                 }
                 newValue = Long.toString(actor.getCode());
             } else if (result.isFieldSetup()) {

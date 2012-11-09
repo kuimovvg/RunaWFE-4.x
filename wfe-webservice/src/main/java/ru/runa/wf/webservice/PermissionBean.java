@@ -41,7 +41,6 @@ import ru.runa.wfe.definition.logic.DefinitionLogic;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthenticationException;
@@ -402,8 +401,7 @@ public class PermissionBean {
 
     private void removeAllPermissionOnIdentifiable(Subject subject, Identifiable identifiable) throws ExecutorDoesNotExistException,
             AuthorizationException, AuthenticationException {
-        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         List<Executor> executors = authorizationLogic.getExecutorsWithPermission(subject, identifiable, batchPresentation, true);
         for (Executor executor : executors) {
             if (!authorizationLogic.isPrivelegedExecutor(subject, executor, identifiable)) {

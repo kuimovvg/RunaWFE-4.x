@@ -48,10 +48,13 @@ import com.google.common.collect.Lists;
  * @author Konstantinov Aleksey 12.02.2012
  * @since 3.3
  */
+@SuppressWarnings("unchecked")
 public class RelationDAO extends CommonDAO {
 
     /**
-     * Create {@link Relation} with specified name and description or throws {@link RelationAlreadyExistException} if relation with such name is already exists.
+     * Create {@link Relation} with specified name and description or throws
+     * {@link RelationAlreadyExistException} if relation with such name is
+     * already exists.
      * 
      * @param name
      *            Relation name
@@ -72,7 +75,9 @@ public class RelationDAO extends CommonDAO {
     }
 
     /**
-     * Return {@link Relation} with specified identity or throws {@link RelationDoesNotExistException} if relation with such identity does not exists.
+     * Return {@link Relation} with specified identity or throws
+     * {@link RelationDoesNotExistException} if relation with such identity does
+     * not exists.
      * 
      * @param id
      *            Relation identity.
@@ -89,7 +94,9 @@ public class RelationDAO extends CommonDAO {
     }
 
     /**
-     * Return {@link Relation} with specified name or throws {@link RelationDoesNotExistException} if relation with such name does not exists.
+     * Return {@link Relation} with specified name or throws
+     * {@link RelationDoesNotExistException} if relation with such name does not
+     * exists.
      * 
      * @param name
      *            Relation name
@@ -110,7 +117,8 @@ public class RelationDAO extends CommonDAO {
     }
 
     /**
-     * Return list of {@link Relation}, according to specified {@link BatchPresentation}.
+     * Return list of {@link Relation}, according to specified
+     * {@link BatchPresentation}.
      * 
      * @param batchPresentation
      *            Restrictions to get relations.
@@ -180,12 +188,15 @@ public class RelationDAO extends CommonDAO {
     }
 
     /**
-     * Return {@link RelationPair} for specified {@link Relation}, which right part contains executor from 'right' parameter.
+     * Return {@link RelationPair} for specified {@link Relation}, which right
+     * part contains executor from 'right' parameter.
      * 
      * @param relationName
-     *            {@link Relation} name. If null, when {@link RelationPair} for all {@link Relation} returned.
+     *            {@link Relation} name. If null, when {@link RelationPair} for
+     *            all {@link Relation} returned.
      * @param right
-     *            Collection of {@link Executor}, which contains in right part of {@link RelationPair}.
+     *            Collection of {@link Executor}, which contains in right part
+     *            of {@link RelationPair}.
      * @return List of {@link RelationPair}.
      * @throws RelationDoesNotExistException
      *             {@link Relation} with specified name does not exists.
@@ -199,12 +210,15 @@ public class RelationDAO extends CommonDAO {
     }
 
     /**
-     * Return {@link RelationPair} for specified {@link Relation}, which left part contains executor from 'left' parameter.
+     * Return {@link RelationPair} for specified {@link Relation}, which left
+     * part contains executor from 'left' parameter.
      * 
      * @param relationName
-     *            {@link Relation} name. If null, when {@link RelationPair} for all {@link Relation} returned.
+     *            {@link Relation} name. If null, when {@link RelationPair} for
+     *            all {@link Relation} returned.
      * @param right
-     *            Collection of {@link Executor}, which contains in left part of {@link RelationPair}.
+     *            Collection of {@link Executor}, which contains in left part of
+     *            {@link RelationPair}.
      * @return List of {@link RelationPair}.
      * @throws RelationDoesNotExistException
      *             {@link Relation} with specified name does not exists.
@@ -235,7 +249,8 @@ public class RelationDAO extends CommonDAO {
     }
 
     /**
-     * Return {@link RelationPair} for specified {@link Relation}, according to specified {@link BatchPresentation}.
+     * Return {@link RelationPair} for specified {@link Relation}, according to
+     * specified {@link BatchPresentation}.
      * 
      * @param relationName
      *            Relation name
@@ -260,7 +275,8 @@ public class RelationDAO extends CommonDAO {
     }
 
     /**
-     * Return {@link RelationPair} for specified {@link Relation}, according to specified {@link BatchPresentation}.
+     * Return {@link RelationPair} for specified {@link Relation}, according to
+     * specified {@link BatchPresentation}.
      * 
      * @param id
      *            Relation identity.

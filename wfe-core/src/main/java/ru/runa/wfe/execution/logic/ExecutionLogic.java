@@ -73,13 +73,13 @@ public class ExecutionLogic extends WFCommonLogic {
 
     public void cancelProcess(Subject subject, Long processId) throws ProcessDoesNotExistException {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        Process process = executionDAO.getProcessNotNull(processId);
+        Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         checkPermissionAllowed(subject, process, ProcessPermission.CANCEL_PROCESS);
         process.cancel(executionContext, actor);
         log.info("Process " + process + " was cancelled by " + actor);
-        // TODO test without this executionDAO.saveProcess(process);
+        // TODO test without this processDAO.saveProcess(process);
     }
 
     public int getAllProcessesCount(Subject subject, BatchPresentation batchPresentation) throws InternalApplicationException,
@@ -87,12 +87,15 @@ public class ExecutionLogic extends WFCommonLogic {
         return getPersistentObjectCount(subject, batchPresentation, ProcessPermission.READ, PROCESS_EXECUTION_CLASSES);
     }
 
-    private static final SecuredObjectType[] PROCESS_EXECUTION_CLASSES = { SecuredObjectType.EXECUTION };
+    private static final SecuredObjectType[] PROCESS_EXECUTION_CLASSES = { SecuredObjectType.PROCESS };
 
     public List<WfProcess> getProcesses(Subject subject, BatchPresentation batchPresentation) throws AuthenticationException {
-        // Uncomment for WFDEMO (default ordering in processes is decrease time start)
+        // Uncomment for WFDEMO (default ordering in processes is decrease time
+        // start)
         /*
-         * if(batchPresentation.isDefault()){ batchPresentation.setFieldsToSort(new int[]{2}, new boolean[]{false}); }
+         * if(batchPresentation.isDefault()){
+         * batchPresentation.setFieldsToSort(new int[]{2}, new
+         * boolean[]{false}); }
          */
         List<Process> list = getPersistentObjects(subject, batchPresentation, ProcessPermission.READ, PROCESS_EXECUTION_CLASSES, true);
         return getProcesses(list);
@@ -101,20 +104,20 @@ public class ExecutionLogic extends WFCommonLogic {
     public List<WfProcess> getProcessesForDefinitionName(Subject subject, String processDefinitionName) throws AuthenticationException {
         ProcessFilter filter = new ProcessFilter();
         filter.setDefinitionName(processDefinitionName);
-        List<Process> process = executionDAO.getProcesses(filter);
+        List<Process> process = processDAO.getProcesses(filter);
         process = filterIdentifiable(subject, process, ProcessPermission.READ);
         return getProcesses(process);
     }
 
     public WfProcess getProcess(Subject subject, Long id) throws AuthorizationException, AuthenticationException, ProcessDoesNotExistException {
-        Process process = executionDAO.getProcessNotNull(id);
+        Process process = processDAO.getNotNull(id);
         checkPermissionAllowed(subject, process, Permission.READ);
         return new WfProcess(process);
     }
 
     public WfProcess getParentProcess(Subject subject, Long id) throws AuthenticationException, ProcessDoesNotExistException {
-        Process process = executionDAO.getProcessNotNull(id);
-        NodeProcess nodeProcess = executionDAO.getNodeProcessByChild(process.getId());
+        Process process = processDAO.getNotNull(id);
+        NodeProcess nodeProcess = nodeProcessDAO.getNodeProcessByChild(process.getId());
         if (nodeProcess == null) {
             return null;
         }
@@ -168,19 +171,19 @@ public class ExecutionLogic extends WFCommonLogic {
     public byte[] getProcessDiagram(Subject subject, Long processId, Long taskId, Long childProcessId) throws AuthorizationException,
             AuthenticationException, ProcessDoesNotExistException {
         try {
-            Process process = executionDAO.getProcessNotNull(processId);
+            Process process = processDAO.getNotNull(processId);
             checkPermissionAllowed(subject, process, ProcessPermission.READ);
             ProcessDefinition processDefinition = getDefinition(process);
             Token highlightedToken = null;
             if (taskId != null) {
-                highlightedToken = taskDAO.getTaskNotNull(taskId).getToken();
+                highlightedToken = taskDAO.getNotNull(taskId).getToken();
             }
             if (childProcessId != null) {
-                highlightedToken = executionDAO.getNodeProcessByChild(childProcessId).getParentToken();
+                highlightedToken = nodeProcessDAO.getNodeProcessByChild(childProcessId).getParentToken();
             }
             GraphImageBuilder builder = new GraphImageBuilder(taskObjectFactory, processDefinition);
             builder.setHighlightedToken(highlightedToken);
-            return builder.createDiagram(process, auditDAO.getPassedTransitions(processDefinition, process));
+            return builder.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));
         } catch (Exception e) {
             throw new InternalApplicationException("Unable to draw diagram", e);
         }
@@ -189,12 +192,13 @@ public class ExecutionLogic extends WFCommonLogic {
     public byte[] getProcessHistoryDiagram(Subject subject, Long processId, Long taskId) throws AuthorizationException, AuthenticationException,
             ProcessDoesNotExistException {
         try {
-            // Process process = executionDAO.getInstanceNotNull(processId);
+            // Process process = processDAO.getInstanceNotNull(processId);
             // checkPermissionAllowed(subject, process, ProcessPermission.READ);
             // ProcessDefinition processDefinition = getDefinition(process);
             // Task task = taskDAO.getTaskNotNull(taskId);
             // Token token = task == null ? null : task.getToken();
-            // while (token != null && token.getProcess().getId() != process.getId()) {
+            // while (token != null && token.getProcess().getId() !=
+            // process.getId()) {
             // token = token.getProcess().getSuperProcessToken();
             // }
             // List<ProcessLog> logs = getProcessLogs(subject, processId);
@@ -208,18 +212,21 @@ public class ExecutionLogic extends WFCommonLogic {
     public List<GraphElementPresentation> getProcessUIHistoryData(Subject subject, Long processId, Long taskId) throws AuthorizationException,
             AuthenticationException, ProcessDoesNotExistException {
         try {
-            // Process process = executionDAO.getInstanceNotNull(processId);
+            // Process process = processDAO.getInstanceNotNull(processId);
             // checkPermissionAllowed(subject, process, ProcessPermission.READ);
             // ProcessDefinition processDefinition = getDefinition(process);
             // Task task = taskDAO.getTaskNotNull(taskId);
             // Token token = task == null ? null : task.getToken();
-            // while (token != null && token.getProcess().getId() != process.getId()) {
+            // while (token != null && token.getProcess().getId() !=
+            // process.getId()) {
             // token = token.getProcess().getSuperProcessToken();
             // }
             // List<ProcessLog> logs = getProcessLogs(subject, processId);
             // GraphConverter converter = new GraphConverter(processDefinition);
             // List<Token> tokens = tmpDAO.getProcessTokens(process.getId());
-            // List<GraphElementPresentation> logElements = converter.getProcessUIHistoryData(subject, process, tokens, logs);
+            // List<GraphElementPresentation> logElements =
+            // converter.getProcessUIHistoryData(subject, process, tokens,
+            // logs);
             return null;
         } catch (Exception e) {
             throw new InternalApplicationException("Unable to retrieve history", e);
@@ -227,19 +234,21 @@ public class ExecutionLogic extends WFCommonLogic {
     }
 
     /**
-     * Loads graph presentation elements for process definition and set identity of started subprocesses.
+     * Loads graph presentation elements for process definition and set identity
+     * of started subprocesses.
      * 
      * @param subject
      *            Current subject.
      * @param definitionId
-     *            Identity of process definition, which presentation elements must be loaded.
+     *            Identity of process definition, which presentation elements
+     *            must be loaded.
      * @return List of graph presentation elements.
      */
     public List<GraphElementPresentation> getProcessGraphElements(Subject subject, Long processId) throws AuthenticationException,
             AuthorizationException {
         try {
-            Process process = executionDAO.getProcessNotNull(processId);
-            List<NodeProcess> nodeProcesses = executionDAO.getNodeProcesses(processId);
+            Process process = processDAO.getNotNull(processId);
+            List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(processId);
             StartedSubprocessesVisitor operation = new StartedSubprocessesVisitor(subject, nodeProcesses);
             return getDefinitionGraphElements(subject, process.getDefinition().getId(), operation);
         } catch (ProcessDoesNotExistException e) {

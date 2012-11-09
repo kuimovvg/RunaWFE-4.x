@@ -48,6 +48,7 @@ import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.BotTaskAlreadyExistsException;
 import ru.runa.wfe.bot.BotTaskDoesNotExistException;
 import ru.runa.wfe.bot.logic.BotLogic;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.WeakPasswordException;
@@ -57,6 +58,7 @@ import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.Closeables;
 
 @Stateless
@@ -88,7 +90,7 @@ public class BotBean {
             @WebParam(mode = Mode.IN, name = "address", targetNamespace = "http://runa.ru/workflow/webservices") String address)
             throws BotStationAlreadyExistsException, AuthorizationException, AuthenticationException {
         Subject subject = getSubject(actorPrincipal);
-        BotStation botStation = botLogic.getBotStationNotNull(subject, name);
+        BotStation botStation = botLogic.getBotStationNotNull(name);
         if (newName != null) {
             botStation.setName(newName);
         }
@@ -104,7 +106,7 @@ public class BotBean {
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name)
             throws BotStationDoesNotExistException, AuthorizationException, AuthenticationException {
         Subject subject = getSubject(actorPrincipal);
-        BotStation botStation = botLogic.getBotStationNotNull(subject, name);
+        BotStation botStation = botLogic.getBotStationNotNull(name);
         botLogic.removeBotStation(subject, botStation.getId());
     }
 
@@ -126,7 +128,7 @@ public class BotBean {
         executorLogic.setPassword(subject, actor, password);
 
         Bot bot = new Bot();
-        bot.setBotStation(botLogic.getBotStationNotNull(subject, botStationName));
+        bot.setBotStation(botLogic.getBotStationNotNull(botStationName));
         bot.setUsername(name);
         bot.setPassword(password);
         bot.setLastInvoked(startTimeout);
@@ -144,7 +146,7 @@ public class BotBean {
             @WebParam(mode = Mode.IN, name = "startTimeout", targetNamespace = "http://runa.ru/workflow/webservices") Long startTimeout)
             throws BotAlreadyExistsException, AuthorizationException, BotDoesNotExistException {
         Subject subject = getSubject(actorPrincipal);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), name);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), name);
         if (newName != null) {
             bot.setUsername(newName);
         }
@@ -153,7 +155,7 @@ public class BotBean {
         }
         bot.setLastInvoked(startTimeout);
         if (newBotStationName != null) {
-            bot.setBotStation(botLogic.getBotStationNotNull(subject, newBotStationName));
+            bot.setBotStation(botLogic.getBotStationNotNull(newBotStationName));
         }
         botLogic.updateBot(subject, bot);
     }
@@ -165,7 +167,7 @@ public class BotBean {
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name)
             throws AuthorizationException, AuthenticationException, BotDoesNotExistException {
         Subject subject = getSubject(actorPrincipal);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), name);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), name);
         botLogic.removeBot(subject, bot.getId());
     }
 
@@ -177,7 +179,7 @@ public class BotBean {
             @WebParam(mode = Mode.IN, name = "configurations", targetNamespace = "http://runa.ru/workflow/webservices") BotConfigurationDescr[] botConfigurations)
             throws IOException, AuthorizationException, AuthenticationException, BotTaskAlreadyExistsException {
         Subject subject = getSubject(actorPrincipal);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), botName);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), botName);
         for (BotConfigurationDescr botConfigurationDescr : botConfigurations) {
             String name = botConfigurationDescr.getName();
             String handler = botConfigurationDescr.getHandler();
@@ -209,7 +211,7 @@ public class BotBean {
             @WebParam(mode = Mode.IN, name = "configurations", targetNamespace = "http://runa.ru/workflow/webservices") BotConfigurationDescr[] botConfigurations)
             throws AuthorizationException, AuthenticationException, BotTaskDoesNotExistException {
         Subject subject = getSubject(actorPrincipal);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), botName);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), botName);
         for (BotConfigurationDescr botConfigurationDescr : botConfigurations) {
             String name = botConfigurationDescr.getName();
             BotTask task = botLogic.getBotTaskNotNull(subject, bot.getId(), name);
@@ -224,7 +226,7 @@ public class BotBean {
             @WebParam(mode = Mode.IN, name = "botName", targetNamespace = "http://runa.ru/workflow/webservices") String botName)
             throws AuthorizationException, AuthenticationException, BotTaskDoesNotExistException {
         Subject subject = getSubject(actorPrincipal);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(subject, botStationName).getId(), botName);
+        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), botName);
         for (BotTask task : botLogic.getBotTasks(subject, bot.getId())) {
             botLogic.removeBotTask(subject, task.getId());
         }
@@ -260,7 +262,8 @@ public class BotBean {
     private byte[] getBotTaskConfiguration(String config) throws IOException {
         InputStream is = null;
         try {
-            is = getClass().getResourceAsStream(config);
+            is = ClassLoaderUtil.getResourceAsStream(config, getClass());
+            Preconditions.checkNotNull(is, config);
             byte[] result = new byte[is.available()];
             is.read(result);
             return result;

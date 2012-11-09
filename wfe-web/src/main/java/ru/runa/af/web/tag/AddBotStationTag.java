@@ -44,7 +44,7 @@ public class AddBotStationTag extends TitledFormTag {
         Input botStationRMIAddress = new Input(Input.TEXT, BotStationForm.BOT_STATION_RMI_ADDRESS);
         TR tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)));
-        tr.addElement(nameInput);
+        tr.addElement(new TD(nameInput));
         table.addElement(tr);
         tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)));

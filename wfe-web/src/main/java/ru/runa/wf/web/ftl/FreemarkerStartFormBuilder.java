@@ -3,6 +3,7 @@ package ru.runa.wf.web.ftl;
 import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
+import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.wf.web.FormProcessingException;
 import ru.runa.wf.web.html.StartFormBuilder;
 import ru.runa.wfe.InternalApplicationException;
@@ -18,7 +19,7 @@ public class FreemarkerStartFormBuilder extends BaseTaskFormBuilder implements S
             FormProcessingException {
         try {
             FormHashModel model = new FormHashModel(subject, pageContext, new MapDelegableVariableProvider(interaction.getDefaultVariableValues(),
-                    null));
+                    null), StrutsWebHelper.INSTANCE);
             return build(interaction, model, definitionId);
         } catch (Exception e) {
             throw new InternalApplicationException(e);

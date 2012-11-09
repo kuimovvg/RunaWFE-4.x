@@ -33,7 +33,7 @@ public class ActorCodeRenderer extends ExecutorRendererBase {
     @Override
     protected List<? extends Executor> loadExecutors(Subject subject) throws Exception {
         ExecutorService executorService = DelegateFactory.getExecutorService();
-        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+        BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
         batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
         return executorService.getActors(subject, batchPresentation);
     }

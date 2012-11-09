@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.service.bot.BotInvokerService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.interceptors.EjbExceptionSupport;
+import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.invoker.BotInvokerFactory;
 
 @Stateless
@@ -41,11 +42,11 @@ public class BotInvokerServiceBean implements BotInvokerService {
     private transient static Timer timer;
 
     @Override
-    public synchronized void startPeriodicBotsInvocation() {
+    public synchronized void startPeriodicBotsInvocation(BotStation botStation) {
         if (timer == null) {
             log.info("Starting periodic bot execution...");
             timer = new Timer();
-            timer.schedule(new IvokerTimerTask(), 0, BotInvokerFactory.getBotInvocationPeriod());
+            timer.schedule(new IvokerTimerTask(botStation), 0, BotInvokerFactory.getBotInvocationPeriod());
         } else {
             log.info("BotRunner is running. skipping start...");
         }
@@ -68,17 +69,22 @@ public class BotInvokerServiceBean implements BotInvokerService {
     }
 
     @Override
-    public void invokeBots() {
-        BotInvokerFactory.getBotInvoker().invokeBots();
+    public void invokeBots(BotStation botStation) {
+        BotInvokerFactory.getBotInvoker().invokeBots(botStation);
     }
 
     private static class IvokerTimerTask extends TimerTask {
+        private final BotStation botStation;
+
+        public IvokerTimerTask(BotStation botStation) {
+            this.botStation = botStation;
+        }
 
         @Override
         public void run() {
             try {
                 log.debug("Invoking bots...");
-                DelegateFactory.getBotInvokerService().invokeBots();
+                DelegateFactory.getBotInvokerService().invokeBots(botStation);
             } catch (Throwable th) {
                 log.error("Unable to invoke bots", th);
             }

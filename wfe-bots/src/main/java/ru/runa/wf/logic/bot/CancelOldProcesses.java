@@ -49,7 +49,7 @@ public class CancelOldProcesses implements TaskHandler {
     public void handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws TaskHandlerException {
         try {
             ExecutionService executionService = DelegateFactory.getExecutionService();
-            BatchPresentation batchPresentation = BatchPresentationFactory.PROCESSES.createDefault().clone();
+            BatchPresentation batchPresentation = BatchPresentationFactory.PROCESSES.createNonPaged();
             FilterCriteria filter = FilterCriteriaFactory.getFilterCriteria(batchPresentation, 3);
             Date lastDate = new Date();
             long timeout = variableProvider.getNotNull(long.class, "timeout");

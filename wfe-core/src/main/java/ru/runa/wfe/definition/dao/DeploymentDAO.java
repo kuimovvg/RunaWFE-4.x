@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.wfe.commons.dao.CommonDAO;
+import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
 
@@ -33,9 +33,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
- * Process definition DB operations.
+ * DAO for {@link Deployment}.
+ * 
+ * @author dofs
+ * @since 4.0
  */
-public class DefinitionDAO extends CommonDAO {
+@SuppressWarnings("unchecked")
+public class DeploymentDAO extends GenericDAO<Deployment> {
 
     public void deploy(Deployment deployment, Deployment previousLatestVersion) {
         // if there is a current latest process definition
@@ -49,21 +53,16 @@ public class DefinitionDAO extends CommonDAO {
         getHibernateTemplate().save(deployment);
     }
 
-    /**
-     * gets a process definition from the database by the identifier.
-     * 
-     * @return the referenced process definition or null in case it doesn't exist.
-     */
-    public Deployment getDeploymentNotNull(Long definitionId) {
-        Deployment deployment = get(Deployment.class, definitionId);
-        if (deployment == null) {
-            throw new DefinitionDoesNotExistException(definitionId);
+    @Override
+    protected void checkNotNull(Deployment entity, Object identity) {
+        if (entity == null) {
+            throw new DefinitionDoesNotExistException(String.valueOf(identity));
         }
-        return deployment;
     }
 
     /**
-     * queries the database for the latest version of a process definition with the given name.
+     * queries the database for the latest version of a process definition with
+     * the given name.
      */
     public Deployment findLatestDeployment(String name) {
         Deployment deployment = findFirstOrNull("from Deployment where name=? order by version desc", name);
@@ -74,7 +73,8 @@ public class DefinitionDAO extends CommonDAO {
     }
 
     /**
-     * queries the database for the latest version of each process definition. Process definitions are distinct by name.
+     * queries the database for the latest version of each process definition.
+     * Process definitions are distinct by name.
      */
     public List<Deployment> findLatestDeployments() {
         Map<String, Deployment> processDeploymentsByName = new HashMap<String, Deployment>();
@@ -91,19 +91,16 @@ public class DefinitionDAO extends CommonDAO {
     }
 
     /**
-     * queries the database for all versions of process definitions with the given name, ordered by version (descending).
+     * queries the database for all versions of process definitions with the
+     * given name, ordered by version (descending).
      */
     public List<Deployment> findAllDeploymentVersions(String name) {
         return getHibernateTemplate().find("from Deployment where name=? order by version desc", name);
     }
 
-    public void delete(Deployment processDeployment) {
-        Preconditions.checkNotNull(processDeployment, "processDefinition is null");
-        getHibernateTemplate().delete(processDeployment);
-    }
-
-    public void update(Deployment deployment) {
-        getHibernateTemplate().update(deployment);
+    public void delete(Deployment deployment) {
+        Preconditions.checkNotNull(deployment, "deployment is null");
+        delete(deployment.getId());
     }
 
 }

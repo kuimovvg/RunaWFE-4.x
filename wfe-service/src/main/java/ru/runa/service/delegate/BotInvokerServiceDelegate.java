@@ -18,6 +18,7 @@
 package ru.runa.service.delegate;
 
 import ru.runa.service.bot.BotInvokerService;
+import ru.runa.wfe.bot.BotStation;
 
 /**
  * Created on 04.03.2005
@@ -43,8 +44,8 @@ public class BotInvokerServiceDelegate extends EJB3Delegate implements BotInvoke
     }
 
     @Override
-    public void startPeriodicBotsInvocation() {
-        getBotInvokerService().startPeriodicBotsInvocation();
+    public void startPeriodicBotsInvocation(BotStation botStation) {
+        getBotInvokerService().startPeriodicBotsInvocation(botStation);
     }
 
     @Override
@@ -58,8 +59,8 @@ public class BotInvokerServiceDelegate extends EJB3Delegate implements BotInvoke
     }
 
     @Override
-    public void invokeBots() {
-        getBotInvokerService().invokeBots();
+    public void invokeBots(BotStation botStation) {
+        getBotInvokerService().invokeBots(botStation);
     }
 
 }

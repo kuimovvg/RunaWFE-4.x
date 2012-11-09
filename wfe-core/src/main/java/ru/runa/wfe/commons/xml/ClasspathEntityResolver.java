@@ -20,6 +20,8 @@ package ru.runa.wfe.commons.xml;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
+import ru.runa.wfe.commons.ClassLoaderUtil;
+
 /**
  * Created on 25.07.2005
  * 
@@ -28,17 +30,18 @@ public class ClasspathEntityResolver implements EntityResolver {
     private static ClasspathEntityResolver INSTANCE = new ClasspathEntityResolver();
 
     private ClasspathEntityResolver() {
-        //prevents instantiation of singleton class
+        // prevents instantiation of singleton class
     }
 
     public static final EntityResolver getInstance() {
         return INSTANCE;
     }
 
+    @Override
     public InputSource resolveEntity(String publicId, String systemId) {
         int index = systemId.lastIndexOf("/");
         if (index != -1) {
-            return new InputSource(getClass().getResourceAsStream(systemId.substring(index)));
+            return new InputSource(ClassLoaderUtil.getResourceAsStream(systemId.substring(index), getClass()));
         }
         return null;
     }

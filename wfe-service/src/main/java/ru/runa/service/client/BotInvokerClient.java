@@ -2,6 +2,7 @@ package ru.runa.service.client;
 
 import ru.runa.service.bot.BotInvokerService;
 import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.wfe.bot.BotStation;
 
 /**
  * Invokes bots on selected bot station.
@@ -18,7 +19,12 @@ public class BotInvokerClient {
             BotInvokerService botInvokerService = DelegateFactory.getBotInvokerService();
             if (args.length == 1) {
                 if (START_ARGUMENT.equals(args[0])) {
-                    botInvokerService.startPeriodicBotsInvocation();
+                    String botStationName = args[1];
+                    BotStation botStation = DelegateFactory.getBotService().getBotStation(botStationName);
+                    if (botStation == null) {
+                        System.err.println("No botstation could not be found '" + botStationName + "'");
+                    }
+                    botInvokerService.startPeriodicBotsInvocation(botStation);
                     System.out.println("bots pereodic invocation started");
                     System.exit(0);
                 } else if (STOP_ARGUMENT.equals(args[0])) {
@@ -45,7 +51,7 @@ public class BotInvokerClient {
 
     private static void printUsage() {
         System.out.println("Allowed commands:");
-        System.out.println("start - starts pereodic bots invocation.");
+        System.out.println("start - starts pereodic bots invocation, botStationName");
         System.out.println("stop - stops pereodic bots invocation.");
         System.out.println("status - checks pereodic bots invocation status.");
         System.out.println();

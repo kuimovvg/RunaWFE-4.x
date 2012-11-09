@@ -24,44 +24,33 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import ru.runa.wf.logic.bot.TaskHandlerException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.PathEntityResolver;
 import ru.runa.wfe.commons.xml.XMLHelper;
 
 /**
  * 
  * Created on 24.11.2006
- *
+ * 
  */
 public class WordReportSettingsXmlParser {
-
     private static final String TEMPLATE_FILE_PATH_ELEMENT_NAME = "template-path";
-
     private static final String OUTPUT_VARIABLE_FILE_ELEMENT_NAME = "output-variable-file-name";
-
     private static final String OUTPUT_VARIABLE_ELEMENT_NAME = "output-variable";
-
     private static final String MAPPING_ELEMENT_NAME = "mapping";
-
     private static final String BOOKMARK_ATTRIBUTE_NAME = "bookmark";
-
     private static final String VARIABLE_ATTRIBUTE_NAME = "variable";
-
     private static final String FORMAT_CLASS_ATTRIBUTE_NAME = "format-class";
-
     private static final String FORMAT_ATTRIBUTE_NAME = "format";
-
     private static final String REPORT_TASK_ELEMENT_NAME = "report";
-
-    private static final String XSD_PATH = "/msword-report-task.xsd";
-
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver(XSD_PATH);
+    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("msword-report-task.xsd");
 
     private WordReportSettingsXmlParser() {
     }
 
     public static MSWordReportTaskSettings read(String configurationPath) throws TaskHandlerException {
         try {
-            InputStream inputStream = WordReportSettingsXmlParser.class.getResourceAsStream(configurationPath);
+            InputStream inputStream = ClassLoaderUtil.getResourceAsStream(configurationPath, WordReportSettingsXmlParser.class);
             Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
             return parse(document);
         } catch (Exception e) {
@@ -77,7 +66,7 @@ public class WordReportSettingsXmlParser {
             throw new TaskHandlerException(e);
         }
     }
-    
+
     private static MSWordReportTaskSettings parse(Document document) throws TaskHandlerException {
         try {
             Element report = (Element) document.getElementsByTagName(REPORT_TASK_ELEMENT_NAME).item(0);
@@ -100,5 +89,5 @@ public class WordReportSettingsXmlParser {
             throw new TaskHandlerException(e);
         }
     }
-    
+
 }

@@ -103,7 +103,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             for (Substitution substitution : substitutions) {
                 ExecutorService executorService = DelegateFactory.getExecutorService();
                 try {
-                    Actor actor = executorService.getActor(getSubject(), substitution.getActorId());
+                    Actor actor = executorService.getExecutor(getSubject(), substitution.getActorId());
                     message += "<li>" + actor.getFullName() + " (" + actor.getName() + ")</li>";
                 } catch (Exception e) {
                     handleException(e);

@@ -42,7 +42,6 @@ import ru.runa.service.af.ExecutorService;
 import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.relation.Relation;
@@ -79,8 +78,7 @@ public class ListExecutorRightRelationMembersFormTag extends TitledFormTag {
             List<Executor> executors = new ArrayList<Executor>();
             Executor executor = executorService.getExecutor(getSubject(), executorId);
             executors.add(executor);
-            BatchPresentation executorBatchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-            executorBatchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+            BatchPresentation executorBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
             for (Group group : executorService.getExecutorGroups(getSubject(), executor, executorBatchPresentation, false)) {
                 executors.add(group);
             }

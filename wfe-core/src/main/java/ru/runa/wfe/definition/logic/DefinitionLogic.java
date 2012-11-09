@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ProcessDefinitionDeleteLog;
-import ru.runa.wfe.audit.dao.AuditDAO;
+import ru.runa.wfe.audit.dao.SystemLogDAO;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
@@ -74,7 +74,7 @@ import com.google.common.collect.Lists;
 public class DefinitionLogic extends WFCommonLogic {
     private static final Log log = LogFactory.getLog(DefinitionLogic.class);
     @Autowired
-    private AuditDAO auditDAO;
+    private SystemLogDAO systemLogDAO;
 
     public WfDefinition deployProcessDefinition(Subject subject, byte[] processArchiveBytes, List<String> processType)
             throws DefinitionAlreadyExistException, DefinitionArchiveFormatException, DefinitionDoesNotExistException {
@@ -87,7 +87,7 @@ public class DefinitionLogic extends WFCommonLogic {
             // expected
         }
         definition.getDBImpl().setCategories(processType);
-        definitionDAO.deploy(definition.getDBImpl(), null);
+        deploymentDAO.deploy(definition.getDBImpl(), null);
         Collection<Permission> allPermissions = new DefinitionPermission().getAllPermissions();
         permissionDAO.setPermissions(SubjectPrincipalsHelper.getActor(subject), allPermissions, definition);
         log.debug("Deployed process definition " + definition);
@@ -98,10 +98,10 @@ public class DefinitionLogic extends WFCommonLogic {
             throws DefinitionDoesNotExistException, DefinitionArchiveFormatException, DefinitionNameMismatchException {
         ProcessDefinition deployedDefinition = getDefinition(definitionId);
         checkPermissionAllowed(subject, deployedDefinition, DefinitionPermission.REDEPLOY_DEFINITION);
-        deployedDefinition.getDBImpl().setCategories(processType);
         if (processArchiveBytes == null) {
             // update only categories
-            definitionDAO.update(deployedDefinition.getDBImpl());
+            deployedDefinition.getDBImpl().setCategories(processType);
+            deploymentDAO.update(deployedDefinition.getDBImpl());
             return new WfDefinition(deployedDefinition);
         }
         ProcessDefinition definition = parseProcessDefinition(processArchiveBytes);
@@ -109,7 +109,8 @@ public class DefinitionLogic extends WFCommonLogic {
             throw new DefinitionNameMismatchException("Process archive contains definition for process " + definition.getName()
                     + " mismatch with deployed process name " + deployedDefinition.getName(), definition.getName(), deployedDefinition.getName());
         }
-        definitionDAO.deploy(definition.getDBImpl(), deployedDefinition.getDBImpl());
+        definition.getDBImpl().setCategories(processType);
+        deploymentDAO.deploy(definition.getDBImpl(), deployedDefinition.getDBImpl());
         for (Executor executor : permissionDAO.getExecutorsWithPermission(deployedDefinition)) {
             List<Permission> permissions = permissionDAO.getOwnPermissions(executor, deployedDefinition);
             permissionDAO.setPermissions(executor, permissions, definition);
@@ -134,19 +135,21 @@ public class DefinitionLogic extends WFCommonLogic {
 
     public WfDefinition getProcessDefinitionByProcessId(Subject subject, Long processId) throws AuthenticationException, AuthorizationException,
             ProcessDoesNotExistException {
-        Process process = executionDAO.getProcessNotNull(processId);
+        Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         checkPermissionAllowed(subject, processDefinition, Permission.READ);
         return new WfDefinition(processDefinition);
     }
 
     /**
-     * Loads graph presentation elements for process definition and set readable flag.
+     * Loads graph presentation elements for process definition and set readable
+     * flag.
      * 
      * @param subject
      *            Current subject.
      * @param definitionId
-     *            Identity of process definition, which presentation elements must be loaded.
+     *            Identity of process definition, which presentation elements
+     *            must be loaded.
      * @return List of graph presentation elements.
      */
     public List<GraphElementPresentation> getProcessDefinitionGraphElements(Subject subject, Long definitionId) throws AuthenticationException,
@@ -168,7 +171,7 @@ public class DefinitionLogic extends WFCommonLogic {
     }
 
     public List<WfDefinition> getProcessDefinitionHistory(Subject subject, String name) throws AuthenticationException {
-        List<Deployment> deploymentVersions = definitionDAO.findAllDeploymentVersions(name);
+        List<Deployment> deploymentVersions = deploymentDAO.findAllDeploymentVersions(name);
         List<WfDefinition> result = Lists.newArrayListWithExpectedSize(deploymentVersions.size());
         for (Deployment deployment : deploymentVersions) {
             if (isPermissionAllowed(subject, deployment, Permission.READ)) {
@@ -185,13 +188,12 @@ public class DefinitionLogic extends WFCommonLogic {
         checkPermissionAllowed(subject, processDefinition, DefinitionPermission.UNDEPLOY_DEFINITION);
         ProcessFilter filter = new ProcessFilter();
         filter.setDefinitionName(definitionName);
-        List<Process> processes = executionDAO.getProcesses(filter);
+        List<Process> processes = processDAO.getProcesses(filter);
         for (Process process : processes) {
-            if (executionDAO.getNodeProcessByChild(process.getId()) != null) {
-                throw new SuperProcessExistsException(definitionName, executionDAO.getNodeProcessByChild(process.getId()).getProcess()
+            if (nodeProcessDAO.getNodeProcessByChild(process.getId()) != null) {
+                throw new SuperProcessExistsException(definitionName, nodeProcessDAO.getNodeProcessByChild(process.getId()).getProcess()
                         .getDefinition().getName());
             }
-            prepareProcessRemoval(process);
         }
         deleteProcessDefinitionsByName(subject, definitionName);
         log.debug("Process definition " + processDefinition + " was undeployed");
@@ -201,22 +203,22 @@ public class DefinitionLogic extends WFCommonLogic {
      * Deletes all Process Definitions from the database
      */
     private void deleteProcessDefinitionsByName(Subject subject, String definitionName) throws AuthenticationException {
-        List<Deployment> deployments = definitionDAO.findAllDeploymentVersions(definitionName);
+        Long actorId = SubjectPrincipalsHelper.getActor(subject).getId();
+        List<Deployment> deployments = deploymentDAO.findAllDeploymentVersions(definitionName);
         for (Deployment deployment : deployments) {
             // delete all the processes of this definition
-            List<Process> processes = executionDAO.findAllProcesses(deployment.getId());
+            List<Process> processes = processDAO.findAllProcesses(deployment.getId());
             for (Process process : processes) {
-                executionDAO.deleteProcess(process);
+                deleteProcess(process);
             }
-            definitionDAO.delete(deployment);
-            auditDAO.create(new ProcessDefinitionDeleteLog(SubjectPrincipalsHelper.getActor(subject).getCode(), definitionName, deployment
-                    .getVersion()));
+            deploymentDAO.delete(deployment);
+            systemLogDAO.create(new ProcessDefinitionDeleteLog(actorId, definitionName, deployment.getVersion()));
         }
     }
 
     public Interaction getInteraction(Subject subject, Long taskId) throws AuthorizationException, AuthenticationException, TaskDoesNotExistException {
         try {
-            Task task = getTaskNotNull(taskId);
+            Task task = taskDAO.getNotNull(taskId);
             ProcessDefinition definition = getDefinition(task);
             if (!isPermissionAllowed(subject, definition, DefinitionPermission.READ)) {
                 checkCanParticipate(subject, task, null);
@@ -235,7 +237,7 @@ public class DefinitionLogic extends WFCommonLogic {
                 ProcessDefinition processDefinition = getDefinition(definitionId);
                 transitions = processDefinition.getStartStateNotNull().getLeavingTransitions();
             } else {
-                Task task = taskDAO.getTaskNotNull(taskId);
+                Task task = taskDAO.getNotNull(taskId);
                 ProcessDefinition processDefinition = getDefinition(task);
                 transitions = task.getTask(processDefinition).getNode().getLeavingTransitions();
             }
