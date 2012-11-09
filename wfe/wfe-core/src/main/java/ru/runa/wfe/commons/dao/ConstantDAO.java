@@ -17,31 +17,18 @@
  */
 package ru.runa.wfe.commons.dao;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.tool.hbm2ddl.SchemaExport;
-
-import ru.runa.wfe.commons.ApplicationContextFactory;
 
 /**
- * DAO for database initialization and variables managing. Creates appropriate tables (drops tables if such tables already exists) and records.
+ * DAO for database initialization and variables managing. Creates appropriate
+ * tables (drops tables if such tables already exists) and records.
  */
-public class InitializerDAO extends CommonDAO {
-    private static final Log log = LogFactory.getLog(InitializerDAO.class);
+public class ConstantDAO extends GenericDAO<Constant> {
+    private static final Log log = LogFactory.getLog(ConstantDAO.class);
 
-    public void createTables() {
-        SchemaExport schemaExport = new SchemaExport(ApplicationContextFactory.getConfiguration());
-        schemaExport.create(true, true);
-    }
-
-    private Constant getConstant(String name) {
-        List<Constant> list = getHibernateTemplate().find("select c from Constant c where c.name = ?", name);
-        if (list.size() > 0) {
-            return list.get(0);
-        }
-        return null;
+    private Constant get(String name) {
+        return findFirstOrNull("from Constant where name = ?", name);
     }
 
     /**
@@ -53,7 +40,7 @@ public class InitializerDAO extends CommonDAO {
      */
     public String getValue(String name) {
         try {
-            Constant constant = getConstant(name);
+            Constant constant = get(name);
             if (constant == null) {
                 return null;
             }
@@ -73,13 +60,13 @@ public class InitializerDAO extends CommonDAO {
      *            Variable value.
      */
     public void saveOrUpdateConstant(String name, String value) {
-        Constant constant = getConstant(name);
+        Constant constant = get(name);
         if (constant == null) {
-            constant = new Constant();
-            constant.setName(name);
+            create(new Constant(name, value));
+        } else {
+            constant.setValue(value);
+            update(constant);
         }
-        constant.setValue(value);
-        getHibernateTemplate().saveOrUpdate(constant);
     }
 
 }

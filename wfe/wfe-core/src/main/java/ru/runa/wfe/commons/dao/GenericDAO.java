@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import com.google.common.base.Preconditions;
 
 /**
  * General DAO implementation (type-safe generic DAO pattern).
@@ -18,7 +19,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
  *            entity class
  */
 @SuppressWarnings("unchecked")
-public abstract class GenericDAO<T extends Object> extends HibernateDaoSupport {
+public abstract class GenericDAO<T extends Object> extends CommonDAO {
     protected static final Log log = LogFactory.getLog(GenericDAO.class);
     private final Class<T> entityClass;
 
@@ -37,7 +38,7 @@ public abstract class GenericDAO<T extends Object> extends HibernateDaoSupport {
      * @return entity or <code>null</code> if no entity found.
      */
     public T get(Long id) {
-        return getHibernateTemplate().get(entityClass, id);
+        return get(entityClass, id);
     }
 
     /**
@@ -79,16 +80,6 @@ public abstract class GenericDAO<T extends Object> extends HibernateDaoSupport {
     }
 
     /**
-     * @return first entity from list or <code>null</code>
-     */
-    protected T getFirstOrNull(List<T> list) {
-        if (list.size() > 0) {
-            return list.get(0);
-        }
-        return null;
-    }
-
-    /**
      * Finds entities.
      * 
      * @param hql
@@ -97,6 +88,7 @@ public abstract class GenericDAO<T extends Object> extends HibernateDaoSupport {
      *            query parameters
      * @return first entity from list or <code>null</code>
      */
+    @Override
     protected T findFirstOrNull(String hql, Object... parameters) {
         List<T> list = getHibernateTemplate().find(hql, parameters);
         return getFirstOrNull(list);
@@ -123,7 +115,18 @@ public abstract class GenericDAO<T extends Object> extends HibernateDaoSupport {
      * Deletes entity from DB by id.
      */
     public void delete(Long id) {
+        Preconditions.checkNotNull(id);
         getHibernateTemplate().delete(getNotNull(id));
+    }
+
+    /**
+     * Deletes entities from DB by ids.
+     */
+    public void delete(List<Long> ids) {
+        Preconditions.checkNotNull(ids);
+        for (Long id : ids) {
+            delete(id);
+        }
     }
 
 }

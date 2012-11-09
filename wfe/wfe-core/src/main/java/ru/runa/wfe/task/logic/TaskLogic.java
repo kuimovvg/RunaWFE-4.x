@@ -62,7 +62,7 @@ public class TaskLogic extends WFCommonLogic {
 
     public void completeTask(Subject subject, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        Task task = getTaskNotNull(taskId);
+        Task task = taskDAO.getNotNull(taskId);
         if (!task.isActive()) {
             throw new TaskAlreadyCompletedException(task.getName());
         }
@@ -89,12 +89,12 @@ public class TaskLogic extends WFCommonLogic {
     }
 
     public void markTaskOpened(Subject subject, Long taskId) {
-        Task task = taskDAO.getTaskNotNull(taskId);
+        Task task = taskDAO.getNotNull(taskId);
         task.setFirstOpen(false);
     }
 
     public WfTask getTask(Subject subject, Long taskId) throws AuthenticationException {
-        Task task = taskDAO.getTaskNotNull(taskId);
+        Task task = taskDAO.getNotNull(taskId);
         return taskObjectFactory.create(task, SubjectPrincipalsHelper.getActor(subject), null);
     }
 
@@ -124,7 +124,7 @@ public class TaskLogic extends WFCommonLogic {
     public List<WfTask> getActiveTasks(Subject subject, Long processId) throws ProcessDoesNotExistException {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
         List<WfTask> result = Lists.newArrayList();
-        Process process = executionDAO.getProcessNotNull(processId);
+        Process process = processDAO.getNotNull(processId);
         checkPermissionAllowed(subject, process, ProcessPermission.READ);
         for (Task task : process.getActiveTasks(null)) {
             result.add(taskObjectFactory.create(task, actor, null));
@@ -133,7 +133,7 @@ public class TaskLogic extends WFCommonLogic {
     }
 
     public List<WfSwimlane> getSwimlanes(Subject subject, Long processId) throws ProcessDoesNotExistException {
-        Process process = executionDAO.getProcessNotNull(processId);
+        Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         checkPermissionAllowed(subject, process, ProcessPermission.READ);
         Actor performer = SubjectPrincipalsHelper.getActor(subject);
@@ -155,7 +155,7 @@ public class TaskLogic extends WFCommonLogic {
     }
 
     public void assignSwimlane(Subject subject, Long processId, String swimlaneName, Executor executor) {
-        Process process = executionDAO.getProcessNotNull(processId);
+        Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlaneNotNull(swimlaneName);
         Swimlane swimlane = process.getSwimlaneNotNull(swimlaneDefinition);
@@ -164,7 +164,7 @@ public class TaskLogic extends WFCommonLogic {
 
     public void assignTask(Subject subject, Long taskId, Executor previousOwner, Actor actor) throws TaskAlreadyAcceptedException {
         // check assigned executor for the task
-        Task task = getTaskNotNull(taskId);
+        Task task = taskDAO.getNotNull(taskId);
         if (!task.isActive() || !Objects.equal(previousOwner, task.getExecutor())) {
             throw new TaskAlreadyAcceptedException(task.getName());
         }

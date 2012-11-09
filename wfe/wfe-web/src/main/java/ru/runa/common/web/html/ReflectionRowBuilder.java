@@ -115,7 +115,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) throws AuthorizationException, AuthenticationException {
             boolean[] retVal = isAllowedCache.get(new Pair(permission, extractor));
             if (retVal == null) {
-                AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
+                AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
                 if (extractor == null) {
                     retVal = authorizationService.isAllowed(getSubject(), permission, (List<Identifiable>) items);
                 } else {

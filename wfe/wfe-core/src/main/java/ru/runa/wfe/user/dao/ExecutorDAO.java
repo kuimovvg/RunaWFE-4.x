@@ -32,16 +32,12 @@ import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import ru.runa.wfe.commons.dao.CommonDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
-import ru.runa.wfe.relation.dao.RelationDAO;
-import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
@@ -70,10 +66,6 @@ public class ExecutorDAO extends CommonDAO {
     private static final String NAME_PROPERTY_NAME = "name";
     private static final String ID_PROPERTY_NAME = "id";
     private static final String CODE_PROPERTY_NAME = "code";
-    @Autowired
-    private RelationDAO relationDAO;
-    @Autowired
-    private PermissionDAO permissionDAO;
 
     /**
      * Check if executor with given name exists.
@@ -282,15 +274,6 @@ public class ExecutorDAO extends CommonDAO {
     }
 
     /**
-     * Load all not active {@linkplain Actor}s codes.
-     * 
-     * @return Not active actors codes.
-     */
-    public List<Long> getNotActiveActorCodes() {
-        return getHibernateTemplate().find("select actor.code from Actor as actor where actor.active = 0");
-    }
-
-    /**
      * Load available {@linkplain Actor}'s with given codes. If actor with some
      * code not available, it will be ignored. Result order is not specified.
      * 
@@ -349,19 +332,6 @@ public class ExecutorDAO extends CommonDAO {
     }
 
     /**
-     * Removes executors with given id's.
-     * 
-     * @param ids
-     *            Removing executors id's.
-     */
-    public void remove(List<Long> ids) throws ExecutorDoesNotExistException {
-        List<Executor> executors = getExecutors(ids);
-        for (Executor executor : executors) {
-            remove(executor);
-        }
-    }
-
-    /**
      * Updates password for {@linkplain Actor}.
      * 
      * @param actor
@@ -410,17 +380,6 @@ public class ExecutorDAO extends CommonDAO {
     public void setStatus(Actor actor, boolean isActive) throws ExecutorDoesNotExistException {
         actor.setActive(isActive);
         getHibernateTemplate().update(actor);
-    }
-
-    /**
-     * Check if actor is active.
-     * 
-     * @param code
-     *            Checking actor code.
-     * @return Returns true, if actor is active and false otherwise.
-     */
-    public boolean isActorActive(Long code) throws ExecutorDoesNotExistException {
-        return getActorByCode(code).isActive();
     }
 
     /**
@@ -499,8 +458,7 @@ public class ExecutorDAO extends CommonDAO {
      * @return {@linkplain Group}s.
      */
     public List<Group> getAllGroups() {
-        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
         return getAll(Group.class, batchPresentation);
     }
 
@@ -576,28 +534,6 @@ public class ExecutorDAO extends CommonDAO {
      */
     public boolean isExecutorInGroup(Executor executor, Group group) throws ExecutorDoesNotExistException {
         return getExecutorParentsAll(executor).contains(group);
-    }
-
-    /**
-     * Returns an array of group children (first level children, not
-     * recursively).</br> For example G1 contains G2, G2 contains A1 and A2. In
-     * this case:</br>
-     * <code> getGroupChildren(G2, defaultPresentation) == {A1, A2}</code><br/>
-     * <code> getGroupChildren(G1, defaultPresentation) == {G2} </code>
-     * 
-     * @param group
-     *            A group to load children's from.
-     * @param batchPresentation
-     *            As {@linkplain BatchPresentation} of array returned.
-     * @return Array of group children.
-     */
-    public List<Executor> getGroupChildren(Group group, BatchPresentation batchPresentation) throws ExecutorDoesNotExistException {
-        Set<Executor> childrenSet = getGroupChildren(group);
-        List<Executor> unmodify = getAll(Executor.class, batchPresentation);
-        List<Executor> allExecutorList = new ArrayList<Executor>();
-        allExecutorList.addAll(unmodify);
-        allExecutorList.retainAll(childrenSet);
-        return allExecutorList;
     }
 
     /**
@@ -695,23 +631,6 @@ public class ExecutorDAO extends CommonDAO {
         return retVal;
     }
 
-    /**
-     * Returns an array of executor groups (first level, not recursively).
-     * 
-     * @param executor
-     *            Executor, which groups is loaded.
-     * @return Array of executor groups.
-     */
-    public List<Group> getExecutorGroups(Executor executor, BatchPresentation batchPresentation) throws ExecutorDoesNotExistException {
-        Set<Group> executorGroupSet = getExecutorGroups(executor);
-        List<Group> tmp = getAll(Group.class, batchPresentation);
-        List<Group> allGroupList = new ArrayList<Group>();
-        allGroupList.addAll(tmp);
-        allGroupList.retainAll(executorGroupSet);
-        allGroupList.remove(executor);
-        return allGroupList;
-    }
-
     public void remove(Executor executor) {
         getHibernateTemplate().deleteAll(getRelationExecutorWithGroups(executor));
         if (executor instanceof Group) {
@@ -722,9 +641,8 @@ public class ExecutorDAO extends CommonDAO {
                 getHibernateTemplate().delete(actorPassword);
             }
         }
-        permissionDAO.deleteAllPermissions(executor);
-        relationDAO.removeAllRelationPairs(executor);
-        executor = getExecutor(executor.getId());
+        // TODO avoid DuplicateKeyException
+        executor = getHibernateTemplate().get(executor.getClass(), executor.getId());
         getHibernateTemplate().delete(executor);
     }
 
@@ -924,7 +842,7 @@ public class ExecutorDAO extends CommonDAO {
     }
 
     private <T extends Executor> T getExecutor(Class<T> clazz, Long id) throws ExecutorDoesNotExistException {
-        return checkExecutorNotNull(getExecutorById(clazz, new Long(id)), id, clazz);
+        return checkExecutorNotNull(getExecutorById(clazz, id), id, clazz);
     }
 
     private <T extends Executor> T getExecutor(Class<T> clazz, String name) throws ExecutorDoesNotExistException {

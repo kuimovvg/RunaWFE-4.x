@@ -13,7 +13,8 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ProcessStartLog;
 import ru.runa.wfe.audit.SubprocessStartLog;
 import ru.runa.wfe.definition.DefinitionPermission;
-import ru.runa.wfe.execution.dao.ExecutionDAO;
+import ru.runa.wfe.execution.dao.NodeProcessDAO;
+import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
@@ -33,11 +34,13 @@ import com.google.common.base.Preconditions;
 
 public class ProcessFactory {
     @Autowired
-    private ExecutionDAO executionDAO;
+    private ProcessDAO processDAO;
     @Autowired
     private PermissionDAO permissionDAO;
     @Autowired
     private ExecutorDAO executorDAO;
+    @Autowired
+    private NodeProcessDAO nodeProcessDAO;
 
     private static final Map<Permission, Permission> DEFINITION_TO_PROCESS_PERMISSION_MAP;
     static {
@@ -58,11 +61,15 @@ public class ProcessFactory {
     }
 
     /**
-     * Creates and starts a new process for the given process definition, puts the root-token (=main path of execution) in the start state and executes the initial node.
+     * Creates and starts a new process for the given process definition, puts
+     * the root-token (=main path of execution) in the start state and executes
+     * the initial node.
      * 
      * @param variables
-     *            will be inserted into the context variables after the context submodule has been created and before the process-start event is fired, which is also before the
-     *            execution of the initial node.
+     *            will be inserted into the context variables after the context
+     *            submodule has been created and before the process-start event
+     *            is fired, which is also before the execution of the initial
+     *            node.
      * @throws InternalApplicationException
      */
     public Process startProcess(ProcessDefinition processDefinition, Map<String, Object> variables, Actor actor, String transitionName) {
@@ -97,7 +104,7 @@ public class ProcessFactory {
         Node subProcessNode = parentExecutionContext.getNode();
         Process subProcess = startProcessInternal(processDefinition, variables, null, null);
         subProcess.setHierarchySubProcess(parentProcess.getHierarchySubProcess() + "/" + subProcess.getId());
-        executionDAO.saveNodeProcess(new NodeProcess(parentExecutionContext.getToken(), subProcess, subProcessNode));
+        nodeProcessDAO.create(new NodeProcess(parentExecutionContext.getToken(), subProcess, subProcessNode));
         parentExecutionContext.addLog(new SubprocessStartLog(subProcessNode, subProcess));
         grantSubprocessPermissions(processDefinition, subProcess, parentProcess);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, subProcess);
@@ -126,14 +133,14 @@ public class ProcessFactory {
         process.setTasks(new HashSet<Task>());
         Token rootToken = new Token(processDefinition, process);
         process.setRootToken(rootToken);
-        executionDAO.saveProcess(process);
-
+        processDAO.create(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, rootToken);
-        executionContext.setVariables(variables);
 
         if (actor != null) {
             executionContext.addLog(new ProcessStartLog(actor));
         }
+
+        executionContext.setVariables(variables);
 
         if (actor != null) {
             SwimlaneDefinition swimlaneDefinition = processDefinition.getStartStateNotNull().getFirstTaskNotNull().getSwimlane();
@@ -144,7 +151,7 @@ public class ProcessFactory {
         processDefinition.fireEvent(executionContext, Event.EVENTTYPE_PROCESS_START);
         // execute the start node
         StartState startState = processDefinition.getStartStateNotNull();
-        startState.enter(executionContext);
+        // startState.enter(executionContext);
         Transition transition = null;
         if (transitionName != null) {
             transition = processDefinition.getStartStateNotNull().getLeavingTransitionNotNull(transitionName);

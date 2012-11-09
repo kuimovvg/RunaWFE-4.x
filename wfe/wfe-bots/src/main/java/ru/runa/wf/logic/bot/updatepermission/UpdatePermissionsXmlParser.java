@@ -46,12 +46,10 @@ public class UpdatePermissionsXmlParser {
 
     public static final String PERMISSION_VARIABLE_ELEMENT_NAME = "permission";
 
-    private static final String XSD_PATH = "/update-permissions.xsd";
-
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver(XSD_PATH);
+    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("update-permissions.xsd");
 
     private UpdatePermissionsXmlParser() {
-        //prevents direct object instantiation
+        // prevents direct object instantiation
     }
 
     public static UpdatePermissionsSettings read(InputStream inputStream) throws TaskHandlerException {
@@ -66,8 +64,8 @@ public class UpdatePermissionsXmlParser {
             NodeList nodeList = document.getElementsByTagName(CONDITION_ELEMENT_NAME);
             if (nodeList.getLength() > 0) {
                 Element conditionNode = (Element) nodeList.item(0);
-                settings.setCondition(conditionNode.getAttribute(CONDITION_VAR_NAME_ATTRIBUTE_NAME), conditionNode
-                        .getAttribute(CONDITION_VAR_VALUE_ATTRIBUTE_NAME));
+                settings.setCondition(conditionNode.getAttribute(CONDITION_VAR_NAME_ATTRIBUTE_NAME),
+                        conditionNode.getAttribute(CONDITION_VAR_VALUE_ATTRIBUTE_NAME));
             }
             return settings;
         } catch (Exception e) {

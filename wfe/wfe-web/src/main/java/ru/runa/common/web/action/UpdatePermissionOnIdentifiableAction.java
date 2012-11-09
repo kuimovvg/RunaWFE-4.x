@@ -36,7 +36,6 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
@@ -69,8 +68,7 @@ abstract public class UpdatePermissionOnIdentifiableAction extends IdentifiableA
                     }
                     permissionList.add(permissions);
                 }
-                BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-                batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+                BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
                 List<Executor> executors = authorizationService.getExecutorsWithPermission(subject, identifiable, batchPresentation, true);
                 for (Executor executor : executors) {
                     if (!executorsIdList.contains(executor.getId())) {

@@ -24,7 +24,6 @@ import javax.security.auth.Subject;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Executor;
 
@@ -33,8 +32,7 @@ public class ExecutorNameRenderer extends ExecutorRendererBase {
     @Override
     protected List<? extends Executor> loadExecutors(Subject subject) throws Exception {
         ExecutorService executorService = DelegateFactory.getExecutorService();
-        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
         return executorService.getAll(subject, batchPresentation);
     }

@@ -31,10 +31,6 @@ public class DefinitionDoesNotExistException extends ApplicationException {
         this.name = name;
     }
 
-    public DefinitionDoesNotExistException(long id) {
-        this("with id = " + id);
-    }
-
     public String getName() {
         return name;
     }

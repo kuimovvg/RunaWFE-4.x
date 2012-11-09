@@ -50,12 +50,15 @@ import com.google.common.collect.Sets;
  * 
  * @author Konstantinov Aleksey 19.02.2012
  */
+@SuppressWarnings("unchecked")
 public class PermissionDAO extends CommonDAO {
     @Autowired
     private ExecutorDAO executorDAO;
 
     /**
-     * Returns an array of Permission that executor has on identifiable. Returns as own permissions on identifiable as inherited group(s) permissions on identifiable.
+     * Returns an array of Permission that executor has on identifiable. Returns
+     * as own permissions on identifiable as inherited group(s) permissions on
+     * identifiable.
      * 
      * @param executor
      *            Executor for loading permissions.
@@ -86,7 +89,8 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Returns an array of Permission that executor itself has on identifiable. Inherited permissions are not returned.
+     * Returns an array of Permission that executor itself has on identifiable.
+     * Inherited permissions are not returned.
      * 
      * @param executor
      *            Executor for loading permissions.
@@ -126,7 +130,8 @@ public class PermissionDAO extends CommonDAO {
      *            Checking permission.
      * @param identifiable
      *            Secured object to check permission on.
-     * @return true if executor has requested permission on secuedObject; false otherwise.
+     * @return true if executor has requested permission on secuedObject; false
+     *         otherwise.
      */
     public boolean isAllowed(final Executor executor, final Permission permission, final Identifiable identifiable) {
         final Set<Executor> executorWithGroups = getExecutorWithAllHisGroups(executor);
@@ -150,7 +155,8 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Checks whether executor has permission on identifiable's. Create result array in same order, as identifiable's.
+     * Checks whether executor has permission on identifiable's. Create result
+     * array in same order, as identifiable's.
      * 
      * @param executor
      *            Executor, which permission must be check.
@@ -158,7 +164,8 @@ public class PermissionDAO extends CommonDAO {
      *            Checking permission.
      * @param identifiable
      *            Secured objects to check permission on.
-     * @return Array of: true if executor has requested permission on secuedObject; false otherwise.
+     * @return Array of: true if executor has requested permission on
+     *         secuedObject; false otherwise.
      */
     public boolean[] isAllowed(final Executor executor, final Permission permission, final List<? extends Identifiable> identifiables) {
         if (identifiables.size() == 0) {
@@ -212,7 +219,8 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Check if {@linkplain Permission} is correct e. q. it's allowed for secured object.
+     * Check if {@linkplain Permission} is correct e. q. it's allowed for
+     * secured object.
      * 
      * @param identifiable
      *            Secured object (permissions must be for this secured object).
@@ -251,7 +259,8 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Loads all permission mappings on specified secured object belongs to specified executor.
+     * Loads all permission mappings on specified secured object belongs to
+     * specified executor.
      * 
      * @param session
      *            Session to load permissions.
@@ -268,12 +277,14 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Converts collection of {@linkplain PermissionMapping} into {@linkplain Permission} array.
+     * Converts collection of {@linkplain PermissionMapping} into
+     * {@linkplain Permission} array.
      * 
      * @param permissionMappings
      *            Converted collection of {@linkplain PermissionMapping}.
      * @param permission
-     *            Template permission to transform {@linkplain PermissionMapping} into {@linkplain Permission}.
+     *            Template permission to transform
+     *            {@linkplain PermissionMapping} into {@linkplain Permission}.
      * @return {@linkplain Permission} array.
      */
     private List<Permission> getPermissions(Collection<PermissionMapping> permissionMappings, Permission permission)
@@ -302,12 +313,14 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Load {@linkplain Executor}'s, which have permission on {@linkplain Identifiable}. <br/>
+     * Load {@linkplain Executor}'s, which have permission on
+     * {@linkplain Identifiable}. <br/>
      * <b>Paging is not enabled.</b>
      * 
      * @param identifiable
      *            {@linkplain Identifiable} to load {@linkplain Executor}'s.
-     * @return List of {@linkplain Executor}'s with permission on {@linkplain Identifiable}.
+     * @return List of {@linkplain Executor}'s with permission on
+     *         {@linkplain Identifiable}.
      */
     public Set<Executor> getExecutorsWithPermission(Identifiable identifiable) {
         List<Executor> list = getHibernateTemplate().find(
@@ -319,10 +332,13 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Return array of privileged {@linkplain Executor}s for given (@linkplain SecuredObject) type (i.e. executors whose permissions on SecuredObject type can not be changed).
+     * Return array of privileged {@linkplain Executor}s for given (@linkplain
+     * SecuredObject) type (i.e. executors whose permissions on SecuredObject
+     * type can not be changed).
      * 
      * @param identifiable
-     *            {@linkplain Identifiable} for which you want to get privileged executors.
+     *            {@linkplain Identifiable} for which you want to get privileged
+     *            executors.
      * @return Privileged {@linkplain Executor}'s array.
      */
     public List<Executor> getPrivilegedExecutors(Identifiable identifiable) {
@@ -330,8 +346,9 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Return array of all privileged {@linkplain Executor}s for all (@linkplain SecuredObject) type (i.e. executors whose permissions on any SecuredObject type can not be
-     * changed).
+     * Return array of all privileged {@linkplain Executor}s for all (@linkplain
+     * SecuredObject) type (i.e. executors whose permissions on any
+     * SecuredObject type can not be changed).
      * 
      * @return Privileged {@linkplain Executor}'s array.
      */
@@ -340,13 +357,17 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Check if executor is privileged executor for given identifiable. Throw exception, if no {@linkplain SecuredObject} for {@linkplain Identifiable} found.
+     * Check if executor is privileged executor for given identifiable. Throw
+     * exception, if no {@linkplain SecuredObject} for {@linkplain Identifiable}
+     * found.
      * 
      * @param executor
      *            {@linkplain Executor}, to check if privileged.
      * @param identifiable
-     *            {@linkplain Identifiable} object, to check if executor is privileged to it.
-     * @return true if executor is privileged for given identifiable and false otherwise.
+     *            {@linkplain Identifiable} object, to check if executor is
+     *            privileged to it.
+     * @return true if executor is privileged for given identifiable and false
+     *         otherwise.
      */
     public boolean isPrivilegedExecutor(Executor executor, Identifiable identifiable) {
         return getHibernateTemplate().find("from PrivelegedMapping where type=? and executor=?", identifiable.getSecuredObjectType(), executor)
@@ -354,14 +375,16 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Adds new record in <i>dictionary</i> tables describing new SecuredObject type.
+     * Adds new record in <i>dictionary</i> tables describing new SecuredObject
+     * type.
      * 
      * @param type
      *            Type of SecuredObject.
      * @param privelegedExecutors
      *            Privileged executors for target class.
      * @param permission
-     *            Permission class, describes allowed permissions for target class.
+     *            Permission class, describes allowed permissions for target
+     *            class.
      */
     public void addType(SecuredObjectType type, List<? extends Executor> privelegedExecutors) {
         for (Executor executor : privelegedExecutors) {
@@ -370,26 +393,33 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Load list of {@linkplain Identifiable} for which executors have permission on.
+     * Load list of {@linkplain Identifiable} for which executors have
+     * permission on.
      * 
      * @param executorIds
-     *            Executors identities, which must have permission on loaded {@linkplain Identifiable} (at least one).
+     *            Executors identities, which must have permission on loaded
+     *            {@linkplain Identifiable} (at least one).
      * @param batchPresentation
-     *            {@linkplain BatchPresentation} with parameters for loading {@linkplain Identifiable}'s.
+     *            {@linkplain BatchPresentation} with parameters for loading
+     *            {@linkplain Identifiable}'s.
      * @param permission
-     *            {@linkplain Permission}, which executors must has on {@linkplain Identifiable}.
+     *            {@linkplain Permission}, which executors must has on
+     *            {@linkplain Identifiable}.
      * @param securedObjectTypes
      *            {@linkplain SecuredObject} types, used to check permissions.
      * @param enablePaging
-     *            Flag, equals true, if paging must be enabled and false otherwise.
-     * @return List of {@link Identifiable}'s for which executors have permission on.
+     *            Flag, equals true, if paging must be enabled and false
+     *            otherwise.
+     * @return List of {@link Identifiable}'s for which executors have
+     *         permission on.
      */
     public List<? extends Identifiable> getPersistentObjects(List<Long> executorIds, BatchPresentation batchPresentation, Permission permission,
             SecuredObjectType[] securedObjectTypes, boolean enablePaging) {
         List<? extends Identifiable> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(enablePaging, executorIds,
                 permission, securedObjectTypes);
         if (result.size() == 0 && enablePaging && batchPresentation.getPageNumber() > 1) {
-            // several objects were removed since we last time created batch presentation
+            // several objects were removed since we last time created batch
+            // presentation
             setLastPageNumber(executorIds, batchPresentation, permission, securedObjectTypes);
             result = getPersistentObjects(executorIds, batchPresentation, permission, securedObjectTypes, enablePaging);
         }
@@ -397,19 +427,25 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Load count of {@linkplain Identifiable} for which executors have permission on.
+     * Load count of {@linkplain Identifiable} for which executors have
+     * permission on.
      * 
      * @param executorIds
-     *            Executors identities, which must have permission on loaded {@linkplain Identifiable} (at least one).
+     *            Executors identities, which must have permission on loaded
+     *            {@linkplain Identifiable} (at least one).
      * @param batchPresentation
-     *            {@linkplain BatchPresentation} with parameters for loading {@linkplain Identifiable}'s.
+     *            {@linkplain BatchPresentation} with parameters for loading
+     *            {@linkplain Identifiable}'s.
      * @param permission
-     *            {@linkplain Permission}, which executors must has on {@linkplain Identifiable}.
+     *            {@linkplain Permission}, which executors must has on
+     *            {@linkplain Identifiable}.
      * @param securedObjectTypes
      *            {@linkplain SecuredObject} types, used to check permissions.
      * @param enablePaging
-     *            Flag, equals true, if paging must be enabled and false otherwise.
-     * @return Count of {@link Identifiable}'s for which executors have permission on.
+     *            Flag, equals true, if paging must be enabled and false
+     *            otherwise.
+     * @return Count of {@link Identifiable}'s for which executors have
+     *         permission on.
      */
     public int getPersistentObjectCount(List<Long> executorIds, BatchPresentation batchPresentation, Permission permission,
             SecuredObjectType[] securedObjectTypes) {

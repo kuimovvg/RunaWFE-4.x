@@ -3,28 +3,23 @@ package ru.runa.wfe.job.dao;
 import java.util.Date;
 import java.util.List;
 
-import ru.runa.wfe.commons.dao.CommonDAO;
+import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.job.Job;
 import ru.runa.wfe.job.Timer;
 
-public class JobDAO extends CommonDAO {
-
-    public Job getJob(Long id) {
-        return getHibernateTemplate().get(Job.class, id);
-    }
+/**
+ * DAO for {@link Job} hierarchy.
+ * 
+ * @author dofs
+ * @since 4.0
+ */
+@SuppressWarnings("unchecked")
+public class JobDAO extends GenericDAO<Job> {
 
     public List<Job> getExpiredJobs() {
         return getHibernateTemplate().find("from Job where dueDate<=? order by dueDate", new Date());
-    }
-
-    public void saveJob(Job job) {
-        getHibernateTemplate().saveOrUpdate(job);
-    }
-
-    public void deleteJob(Job job) {
-        getHibernateTemplate().delete(job);
     }
 
     public void deleteTimersByName(String name, Token token) {

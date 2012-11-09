@@ -65,9 +65,7 @@ public class DatabaseTaskXmlParser {
 
     private static final String FIELD_PARAMETER_ELEMENT_NAME = "field";
 
-    private static final String XSD_PATH = "/database-tasks.xsd";
-
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver(XSD_PATH);
+    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("database-tasks.xsd");
 
     /**
      * Parses DatabaseTaskHandler configuration

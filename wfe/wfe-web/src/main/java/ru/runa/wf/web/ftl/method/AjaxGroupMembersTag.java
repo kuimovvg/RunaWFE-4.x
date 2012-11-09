@@ -30,7 +30,6 @@ import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -54,7 +53,7 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
             substitutions.put("groupSelectorId", groupVarName);
             substitutions.put("userSelectorId", userVarName);
             StringBuffer html = new StringBuffer();
-            html.append(exportScript("AjaxGroupMembersTag.js", substitutions));
+            html.append(exportScript("scripts/AjaxGroupMembersTag.js", substitutions));
             html.append("<div style=\"border: solid 1px green; background-color: #ffeeff; padding: 5px;\">");
             html.append("Choose user from group&nbsp;&nbsp;&nbsp;");
             html.append("<select id='").append(groupVarName).append("' name='").append(groupVarName).append("'>");
@@ -127,7 +126,7 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
     private List<Actor> getActors(Subject subject, Long groupId) throws TemplateModelException {
         try {
             ExecutorService executorService = DelegateFactory.getExecutorService();
-            Group group = executorService.getGroup(subject, groupId);
+            Group group = executorService.getExecutor(subject, groupId);
             return executorService.getGroupActors(subject, group);
         } catch (Exception e) {
             throw new TemplateModelException(e);
@@ -137,8 +136,7 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
     private List<Group> getGroups() throws TemplateModelException {
         try {
             ExecutorService executorService = DelegateFactory.getExecutorService();
-            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-            batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
             // TODO add executorService.getAllGroups
             List<Executor> executors = executorService.getAll(subject, batchPresentation);
             List<Group> groupList = new ArrayList<Group>();

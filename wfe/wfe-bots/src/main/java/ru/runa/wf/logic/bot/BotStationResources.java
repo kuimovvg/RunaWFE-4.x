@@ -50,10 +50,6 @@ public class BotStationResources extends ResourceCommons {
         }
     }
 
-    public static String getBotStationName() {
-        return readProperty("botstation.name", BUNDLE);
-    }
-
     public static int getThreadPoolSize() {
         try {
             return Integer.parseInt(readPropertyIfExist("thread.pool.size", BUNDLE, "1"));

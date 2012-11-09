@@ -94,7 +94,7 @@ public class SubstitutionServiceBean implements SubstitutionServiceLocal, Substi
             ExecutorDoesNotExistException {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(substitution);
-        substitutionLogic.store(subject, substitution);
+        substitutionLogic.create(subject, substitution);
     }
 
     @Override

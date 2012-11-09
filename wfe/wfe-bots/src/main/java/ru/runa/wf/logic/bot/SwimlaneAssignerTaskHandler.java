@@ -29,11 +29,12 @@ import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.assigner.AssignerResources;
 import ru.runa.wfe.os.OrgFunctionHelper;
+import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.IVariableProvider;
 
-public class SwimlaneAssignerTaskHandler extends AbstractOrgFunctionTaskHandler {
+public class SwimlaneAssignerTaskHandler implements TaskHandler {
     private static final Log log = LogFactory.getLog(SwimlaneAssignerTaskHandler.class);
 
     private AssignerResources resources;
@@ -55,12 +56,12 @@ public class SwimlaneAssignerTaskHandler extends AbstractOrgFunctionTaskHandler 
             ExecutionService executionService = DelegateFactory.getExecutionService();
 
             String swimlaneName = resources.getSwimlaneName();
-            List<? extends Executor> swimlaneValues = OrgFunctionHelper.evaluateOrgFunction(variableProvider, resources.getAssignerFunction(),
-                    getActorToSubstituteCode(subject));
-            if (swimlaneValues.size() != 1) {
+            Long actorCode = SubjectPrincipalsHelper.getActor(subject).getCode();
+            List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(variableProvider, resources.getAssignerFunction(), actorCode);
+            if (executors.size() != 1) {
                 throw new TaskHandlerException("assigner (organization) function return more than 1 actor to be assigned in swimlane");
             }
-            executionService.assignSwimlane(subject, wfTask.getProcessId(), swimlaneName, swimlaneValues.get(0));
+            executionService.assignSwimlane(subject, wfTask.getProcessId(), swimlaneName, executors.get(0));
             executionService.completeTask(subject, wfTask.getId(), new HashMap<String, Object>());
             log.debug("SwimlaneAssigner finished, task " + wfTask);
         } catch (Exception e) {

@@ -24,6 +24,7 @@ import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -31,7 +32,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.DBType;
-import ru.runa.wfe.commons.dao.InitializerDAO;
+import ru.runa.wfe.commons.dao.ConstantDAO;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
@@ -86,7 +87,7 @@ public class InitializerLogic {
     };
 
     @Autowired
-    protected InitializerDAO initializerDAO;
+    protected ConstantDAO constantDAO;
     @Autowired
     protected ExecutorDAO executorDAO;
     @Autowired
@@ -123,15 +124,17 @@ public class InitializerLogic {
     }
 
     private boolean isAlreadyIntialized() {
-        String version = initializerDAO.getValue(IS_DATABASE_INITIALIZED_VARIABLE_NAME);
+        String version = constantDAO.getValue(IS_DATABASE_INITIALIZED_VARIABLE_NAME);
         return "true".equalsIgnoreCase(version);
     }
 
     /**
-     * Initialize database if needed. Default hibernate session must be already set to archive if required.
+     * Initialize database if needed. Default hibernate session must be already
+     * set to archive if required.
      * 
      * @param isArchiveDBinit
-     *            Flag, equals true if archiving database is initialized; false for main database.
+     *            Flag, equals true if archiving database is initialized; false
+     *            for main database.
      */
     public void init(UserTransaction transaction, boolean force) {
         try {
@@ -152,7 +155,8 @@ public class InitializerLogic {
      * @param daoHolder
      *            Helper object for getting DAO's.
      * @param force
-     *            Flag, equals true if database must be initialized even if it already exists.
+     *            Flag, equals true if database must be initialized even if it
+     *            already exists.
      */
     private void initializeDatabase(UserTransaction transaction, boolean force) {
         if (force) {
@@ -160,12 +164,13 @@ public class InitializerLogic {
         } else {
             log.info("database is not initialized. initializing...");
         }
-        initializerDAO.createTables();
+        SchemaExport schemaExport = new SchemaExport(ApplicationContextFactory.getConfiguration());
+        schemaExport.create(true, true);
         try {
             transaction.begin();
             insertInitialData();
-            initializerDAO.saveOrUpdateConstant(IS_DATABASE_INITIALIZED_VARIABLE_NAME, String.valueOf(Boolean.TRUE));
-            initializerDAO.saveOrUpdateConstant(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(dbPatches.size()));
+            constantDAO.saveOrUpdateConstant(IS_DATABASE_INITIALIZED_VARIABLE_NAME, String.valueOf(Boolean.TRUE));
+            constantDAO.saveOrUpdateConstant(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(dbPatches.size()));
             transaction.commit();
         } catch (Throwable th) {
             rollbackTransaction(transaction);
@@ -193,14 +198,14 @@ public class InitializerLogic {
         permissionDAO.addType(SecuredObjectType.RELATIONPAIR, adminWithGroupExecutors);
         permissionDAO.addType(SecuredObjectType.BOTSTATION, adminWithGroupExecutors);
         permissionDAO.addType(SecuredObjectType.DEFINITION, adminWithGroupExecutors);
-        permissionDAO.addType(SecuredObjectType.EXECUTION, adminWithGroupExecutors);
+        permissionDAO.addType(SecuredObjectType.PROCESS, adminWithGroupExecutors);
     }
 
     /**
      * Apply patches to initialized database.
      */
     private void applyPatches(UserTransaction transaction) {
-        String versionString = initializerDAO.getValue(DATABASE_VERSION_VARIABLE_NAME);
+        String versionString = constantDAO.getValue(DATABASE_VERSION_VARIABLE_NAME);
         int dbVersion = Strings.isNullOrEmpty(versionString) ? 0 : Integer.parseInt(versionString);
         DBType dbType = ApplicationContextFactory.getDBType();
         boolean isDDLTransacted = (dbType == DBType.MSSQL || dbType == DBType.PostgreSQL);
@@ -225,12 +230,12 @@ public class InitializerLogic {
                 }
                 patch.executeDML();
                 if (!isDDLTransacted) {
-                    initializerDAO.saveOrUpdateConstant(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(dbVersion));
+                    constantDAO.saveOrUpdateConstant(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(dbVersion));
                     transaction.commit();
                 }
                 patch.executeDDLAfter(isDDLTransacted);
                 if (isDDLTransacted) {
-                    initializerDAO.saveOrUpdateConstant(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(dbVersion));
+                    constantDAO.saveOrUpdateConstant(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(dbVersion));
                     transaction.commit();
                 }
                 log.info("Patch " + patch.getClass().getName() + "(" + dbVersion + ") is applied to database successfuly.");

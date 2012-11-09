@@ -48,19 +48,9 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public List<? extends Executor> create(Subject subject, List<? extends Executor> executors) throws ExecutorAlreadyExistsException,
-            AuthorizationException, AuthenticationException {
-        return getExecutorService().create(subject, executors);
-    }
-
-    @Override
-    public Actor create(Subject subject, Actor actor) throws ExecutorAlreadyExistsException, AuthorizationException, AuthenticationException {
-        return getExecutorService().create(subject, actor);
-    }
-
-    @Override
-    public Group create(Subject subject, Group group) throws ExecutorAlreadyExistsException, AuthorizationException, AuthenticationException {
-        return getExecutorService().create(subject, group);
+    public <T extends Executor> T create(Subject subject, T executor) throws ExecutorAlreadyExistsException, AuthorizationException,
+            AuthenticationException {
+        return getExecutorService().create(subject, executor);
     }
 
     @Override
@@ -74,15 +64,9 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public Actor update(Subject subject, Actor actor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException, AuthorizationException,
-            AuthenticationException {
-        return getExecutorService().update(subject, actor);
-    }
-
-    @Override
-    public Group update(Subject subject, Group group) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException, AuthorizationException,
-            AuthenticationException {
-        return getExecutorService().update(subject, group);
+    public void update(Subject subject, Executor executor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException,
+            AuthorizationException {
+        getExecutorService().update(subject, executor);
     }
 
     @Override
@@ -101,18 +85,8 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public Actor getActor(Subject subject, String name) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        return getExecutorService().getActor(subject, name);
-    }
-
-    @Override
     public Actor getActorCaseInsensitive(String login) throws ExecutorDoesNotExistException {
         return getExecutorService().getActorCaseInsensitive(login);
-    }
-
-    @Override
-    public Group getGroup(Subject subject, String name) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        return getExecutorService().getGroup(subject, name);
     }
 
     @Override
@@ -122,7 +96,8 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public Executor getExecutor(Subject subject, String name) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+    public <T extends Executor> T getExecutor(Subject subject, String name) throws ExecutorDoesNotExistException, AuthorizationException,
+            AuthenticationException {
         return getExecutorService().getExecutor(subject, name);
     }
 
@@ -217,17 +192,8 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public Actor getActor(Subject subject, Long id) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        return getExecutorService().getActor(subject, id);
-    }
-
-    @Override
-    public Group getGroup(Subject subject, Long id) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        return getExecutorService().getGroup(subject, id);
-    }
-
-    @Override
-    public Executor getExecutor(Subject subject, Long id) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+    public <T extends Executor> T getExecutor(Subject subject, Long id) throws ExecutorDoesNotExistException, AuthorizationException,
+            AuthenticationException {
         return getExecutorService().getExecutor(subject, id);
     }
 

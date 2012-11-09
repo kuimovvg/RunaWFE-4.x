@@ -161,7 +161,7 @@ public class MultitaskBotRunner extends BotRunner {
 
     private Set<WfTask> getTasks() throws AuthorizationException, AuthenticationException {
         ExecutionService executionService = DelegateFactory.getExecutionService();
-        List<WfTask> receivedTasks = executionService.getTasks(getSubject(), BatchPresentationFactory.TASKS.createDefault());
+        List<WfTask> receivedTasks = executionService.getTasks(getSubject(), BatchPresentationFactory.TASKS.createNonPaged());
         Set<WfTask> tasksToDoSet = new HashSet<WfTask>();
         tasksToDoSet.addAll(receivedTasks);
         return tasksToDoSet;

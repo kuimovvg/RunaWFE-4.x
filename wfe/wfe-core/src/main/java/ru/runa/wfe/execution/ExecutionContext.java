@@ -32,10 +32,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.VariableDeleteLog;
-import ru.runa.wfe.audit.dao.AuditDAO;
+import ru.runa.wfe.audit.dao.ProcessLogDAO;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.execution.dao.ExecutionDAO;
+import ru.runa.wfe.execution.dao.NodeProcessDAO;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -60,9 +60,9 @@ public class ExecutionContext {
     @Autowired
     private VariableCreator variableCreator;
     @Autowired
-    private ExecutionDAO executionDAO;
+    private NodeProcessDAO nodeProcessDAO;
     @Autowired
-    private AuditDAO auditDAO;
+    private ProcessLogDAO processLogDAO;
     @Autowired
     private VariableDAO variableDAO;
 
@@ -123,7 +123,7 @@ public class ExecutionContext {
     }
 
     public Process getParentProcess(Process subProcess) {
-        NodeProcess nodeProcess = executionDAO.getNodeProcessByChild(subProcess.getId());
+        NodeProcess nodeProcess = nodeProcessDAO.getNodeProcessByChild(subProcess.getId());
         if (nodeProcess != null) {
             return nodeProcess.getProcess();
         }
@@ -131,12 +131,12 @@ public class ExecutionContext {
     }
 
     public NodeProcess getParentNodeProcess() {
-        return executionDAO.getNodeProcessByChild(getProcess().getId());
+        return nodeProcessDAO.getNodeProcessByChild(getProcess().getId());
     }
 
     public List<Process> getChildProcesses() {
         String nodeId = getNode().getNodeId();
-        List<NodeProcess> nodeProcesses = executionDAO.getNodeProcesses(getProcess().getId());
+        List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(getProcess().getId());
         List<Process> result = Lists.newArrayListWithExpectedSize(nodeProcesses.size());
         for (NodeProcess nodeProcess : nodeProcesses) {
             if (nodeId.equals(nodeProcess.getNodeId())) {
@@ -150,7 +150,7 @@ public class ExecutionContext {
      * @return the variable value with the given name.
      */
     public Object getVariable(String name) {
-        Variable<?> variable = variableDAO.getVariable(getProcess(), name);
+        Variable<?> variable = variableDAO.get(getProcess(), name);
         if (variable != null) {
             return variable.getValue();
         }
@@ -173,8 +173,9 @@ public class ExecutionContext {
                 return;
             }
         }
-        Variable<?> variable = variableDAO.getVariable(getProcess(), name);
-        // if there is already a variable and it doesn't support the current type
+        Variable<?> variable = variableDAO.get(getProcess(), name);
+        // if there is already a variable and it doesn't support the current
+        // type
         if (variable != null && !variable.supports(value)) {
             // delete the old variable
             log.debug("variable type change. deleting '" + name + "' from '" + this + "'");
@@ -184,18 +185,20 @@ public class ExecutionContext {
         }
         if (variable == null) {
             variable = variableCreator.create(this, name, value);
+            variableDAO.create(variable);
         } else {
             if (Objects.equal(variable.getValue(), value)) {
                 return;
             }
             log.debug("update variable '" + name + "' in '" + this + "' to value '" + value + "'");
             variable.setValue(this, value);
+            variableDAO.update(variable);
         }
-        variableDAO.saveOrUpdate(variable);
     }
 
     /**
-     * Adds all the given variables. It doesn't remove any existing variables unless they are overwritten by the given variables.
+     * Adds all the given variables. It doesn't remove any existing variables
+     * unless they are overwritten by the given variables.
      */
     public void setVariables(Map<String, Object> variables) {
         for (Map.Entry<String, Object> entry : variables.entrySet()) {
@@ -214,7 +217,7 @@ public class ExecutionContext {
         processLog.setProcessId(getProcess().getId());
         processLog.setTokenId(getToken().getId());
         processLog.setDate(new Date());
-        auditDAO.addProcessLog(processLog);
+        processLogDAO.create(processLog);
     }
 
     @Override

@@ -35,12 +35,10 @@ public class AssignerSettingsXmlParser {
     private static final String FUNCTION_ELEMENT_NAME = "function";
     private static final String VARIABLE_ELEMENT_NAME = "variableName";
 
-    private static final String XSD_PATH = "/assigner.xsd";
-
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver(XSD_PATH);
+    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("assigner.xsd");
 
     private AssignerSettingsXmlParser() {
-        //prevents direct object instantiation
+        // prevents direct object instantiation
     }
 
     public static AssignerSettings read(InputStream inputStream) throws TaskHandlerException {

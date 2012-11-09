@@ -29,7 +29,6 @@ import ru.runa.wfe.definition.logic.DefinitionLogic;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.SuperProcessExistsException;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -133,7 +132,7 @@ public class DefinitionBean {
     }
 
     @WebMethod
-    public WfDefinition getLatestProcessDefinitionStub(
+    public WfDefinition getLatestProcessDefinition(
             @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name)
             throws AuthenticationException, AuthorizationException, DefinitionDoesNotExistException {
@@ -142,7 +141,7 @@ public class DefinitionBean {
     }
 
     @WebMethod
-    public WfDefinition getProcessDefinitionStub(
+    public WfDefinition getProcessDefinition(
             @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
             @WebParam(mode = Mode.IN, name = "definitionId", targetNamespace = "http://runa.ru/workflow/webservices") Long definitionId)
             throws AuthenticationException, AuthorizationException, DefinitionDoesNotExistException {
@@ -151,7 +150,7 @@ public class DefinitionBean {
     }
 
     @WebMethod
-    public WfDefinition getProcessDefinitionStubByProcessId(
+    public WfDefinition getProcessDefinitionByProcessId(
             @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
             @WebParam(mode = Mode.IN, name = "processId", targetNamespace = "http://runa.ru/workflow/webservices") Long processId)
             throws AuthenticationException, AuthorizationException, DefinitionDoesNotExistException, ProcessDoesNotExistException {
@@ -166,12 +165,11 @@ public class DefinitionBean {
     }
 
     @WebMethod
-    public List<WfDefinition> getLatestProcessDefinitionStubs(
+    public List<WfDefinition> getLatestProcessDefinitions(
             @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor)
             throws AuthenticationException, AuthorizationException, DefinitionDoesNotExistException {
         Subject subject = getSubject(actor);
-        BatchPresentation batchPresentation = BatchPresentationFactory.DEFINITIONS.createDefault();
-        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        BatchPresentation batchPresentation = BatchPresentationFactory.DEFINITIONS.createNonPaged();
         return definitionLogic.getLatestProcessDefinitions(subject, batchPresentation);
     }
 

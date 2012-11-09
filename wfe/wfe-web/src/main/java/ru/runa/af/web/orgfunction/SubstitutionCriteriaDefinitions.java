@@ -35,12 +35,12 @@ import ru.runa.wfe.os.ParamRenderer;
 public class SubstitutionCriteriaDefinitions {
     private static final Log log = LogFactory.getLog(SubstitutionCriteriaDefinitions.class);
 
-    private static final String LIST_XML = "/substitutioncriterias.xml";
+    private static final String LIST_XML = "substitutioncriterias.xml";
     private static List<FunctionDef> definitions = new ArrayList<FunctionDef>();
 
     static {
         try {
-            InputStream is = SubstitutionDefinitions.class.getResourceAsStream(LIST_XML);
+            InputStream is = ClassLoaderUtil.getResourceAsStream(LIST_XML, SubstitutionDefinitions.class);
             if (is == null) {
                 throw new InternalApplicationException("Config file not found: " + LIST_XML);
             }

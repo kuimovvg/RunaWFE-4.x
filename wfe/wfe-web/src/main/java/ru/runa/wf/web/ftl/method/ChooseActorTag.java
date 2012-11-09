@@ -40,7 +40,7 @@ public class ChooseActorTag extends FreemarkerTag {
         String view = getParameterAs(String.class, 1);
         try {
             ExecutorService executorService = DelegateFactory.getExecutorService();
-            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+            BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
             int[] sortIds = { 1 };
             boolean[] sortOrder = { true };
             batchPresentation.setFieldsToSort(sortIds, sortOrder);

@@ -41,7 +41,7 @@ public class ProcessTypesIterator implements Iterator<String[]> {
 
     public ProcessTypesIterator(Subject subject) throws AuthenticationException, AuthorizationException {
         DefinitionService definitionService = DelegateFactory.getDefinitionService();
-        BatchPresentation batchPresentation = BatchPresentationFactory.DEFINITIONS.createDefault();
+        BatchPresentation batchPresentation = BatchPresentationFactory.DEFINITIONS.createNonPaged();
         List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(subject, batchPresentation);
         SortedSet<String[]> processTypesSet = new TreeSet<String[]>(new Comparator<String[]>() {
             @Override

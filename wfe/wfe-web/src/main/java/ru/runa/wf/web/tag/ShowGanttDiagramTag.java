@@ -1,6 +1,7 @@
 package ru.runa.wf.web.tag;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 
@@ -8,7 +9,6 @@ import org.apache.ecs.StringElement;
 import org.apache.ecs.html.Script;
 import org.apache.ecs.html.TD;
 
-import ru.runa.af.web.ExecutorNameConverter;
 import ru.runa.common.web.Messages;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.ExecutionService;
@@ -16,11 +16,16 @@ import ru.runa.wf.web.action.CancelProcessAction;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
+import ru.runa.wfe.audit.ProcessStartLog;
+import ru.runa.wfe.audit.SubprocessStartLog;
 import ru.runa.wfe.audit.TaskCreateLog;
+import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.execution.ProcessPermission;
+import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.task.Task;
+
+import com.google.common.base.Objects;
 
 /**
  * Renders Gantt diagram.
@@ -37,23 +42,36 @@ public class ShowGanttDiagramTag extends ProcessBaseFormTag {
         String js = "";
         try {
             ExecutionService executionService = DelegateFactory.getExecutionService();
-            ProcessLogFilter filter = new ProcessLogFilter(getIdentifiableId());
+            WfProcess process = executionService.getProcess(getSubject(), getIdentifiableId());
+            ProcessLogFilter filter = new ProcessLogFilter(process.getId());
+            filter.setIncludeSubprocessLogs(true);
             ProcessLogs logs = executionService.getProcessLogs(getSubject(), filter);
+            Map<TaskCreateLog, TaskEndLog> taskLogs = logs.getTaskLogs();
+            js += getBar(process.getId(), process.getName(), null, null, "444444", null, true, "0", null);
             for (ProcessLog log : logs.getLogs()) {
+                if (log instanceof ProcessStartLog) {
+                    TaskCreateLog createLog = null;
+                    for (TaskCreateLog key : taskLogs.keySet()) {
+                        if (Objects.equal(key.getId(), log.getId())) {
+                            createLog = key;
+                            break;
+                        }
+                    }
+                    TaskEndLog endLog = taskLogs.get(createLog);
+                    js += getBar(createLog.getId(), createLog.getTaskName(), createLog.getDate(), endLog.getDate(), "0ccc00", endLog.getActorName(),
+                            false, createLog.getProcessId(), null);
+                }
                 if (log instanceof TaskCreateLog) {
-                    Task task = null; // ((TaskCreateLog) log).getTask();
-                    js += "g.AddTaskItem(new JSGantt.TaskItem(" + task.getId() + ",'" + task.getName() + "','"
-                            + CalendarUtil.formatDate(task.getCreateDate()) + "','";
-                    if (task.isActive()) {
-                        js += CalendarUtil.formatDate(new Date());
-                    } else {
-                        js += CalendarUtil.formatDate(task.getEndDate());
-                    }
-                    js += "','ff0000','',0,'";
-                    if (task.getExecutor() != null) {
-                        js += ExecutorNameConverter.getName(task.getExecutor(), pageContext);
-                    }
-                    js += "',0,0,0,1));\n";
+                    TaskCreateLog createLog = (TaskCreateLog) log;
+                    TaskEndLog endLog = taskLogs.get(createLog);
+                    Date end = (endLog != null) ? endLog.getDate() : new Date();
+                    String executorName = (endLog != null) ? endLog.getActorName() : null;
+                    js += getBar(createLog.getId(), createLog.getTaskName(), createLog.getDate(), end, "008880", executorName, false,
+                            createLog.getProcessId(), null);
+                }
+                if (log instanceof SubprocessStartLog) {
+                    WfProcess subProcess = executionService.getProcess(getSubject(), ((SubprocessStartLog) log).getSubprocessId());
+                    js += getBar(subProcess.getId(), subProcess.getName(), null, null, "44ff44", null, true, process.getId(), null);
                 }
             }
         } catch (Exception e) {
@@ -65,6 +83,28 @@ public class ShowGanttDiagramTag extends ProcessBaseFormTag {
         script.setType("text/javascript");
         script.addElement(new StringElement(js));
         tdFormElement.addElement(script);
+    }
+
+    private String getBar(Object id, String name, Date start, Date end, String color, String executorName, boolean group, Object parentId,
+            String depends) {
+        String js = "g.AddTaskItem(new JSGantt.TaskItem(" + id + ", '" + name + "', ";
+        if (group) {
+            js += "'', '', ";
+        } else {
+            js += "'" + CalendarUtil.formatDateTime(start) + "', '" + CalendarUtil.formatDateTime(end) + "', ";
+        }
+        js += "'" + color + "', 0, '";
+        if (executorName != null) {
+            js += executorName;
+        }
+        js += "', 0, ";
+        js += group ? "1" : "0";
+        js += ", " + parentId + ", 1";
+        if (depends != null) {
+            js += ", '" + depends + "'";
+        }
+        js += "));\n";
+        return js;
     }
 
     @Override

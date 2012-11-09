@@ -71,7 +71,7 @@ public class WfProcess implements Identifiable {
 
     @Override
     public SecuredObjectType getSecuredObjectType() {
-        return SecuredObjectType.EXECUTION;
+        return SecuredObjectType.PROCESS;
     }
 
     public String getName() {

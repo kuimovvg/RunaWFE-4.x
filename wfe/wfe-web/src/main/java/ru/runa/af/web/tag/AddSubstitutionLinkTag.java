@@ -53,7 +53,7 @@ public class AddSubstitutionLinkTag extends IdLinkBaseTag {
         try {
             Subject subject = getSubject();
             ExecutorService executorService = DelegateFactory.getExecutorService();
-            Actor actor = executorService.getActor(subject, getIdentifiableId());
+            Actor actor = executorService.getExecutor(subject, getIdentifiableId());
             AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
             return authorizationService.isAllowed(getSubject(), ActorPermission.UPDATE, actor);
         } catch (Exception e) {

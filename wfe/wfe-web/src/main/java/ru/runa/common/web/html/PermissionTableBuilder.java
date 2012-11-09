@@ -46,7 +46,6 @@ import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -57,7 +56,8 @@ import ru.runa.wfe.user.Executor;
 import com.google.common.collect.Sets;
 
 /**
- * Builds HTML Table of executors with their own permissions on given identifiable.
+ * Builds HTML Table of executors with their own permissions on given
+ * identifiable.
  */
 public class PermissionTableBuilder {
     private final Identifiable identifiable;
@@ -70,7 +70,10 @@ public class PermissionTableBuilder {
 
     private List<Permission> allowedPermission;
 
-    /** this flag will be set to true if subject does not have permission to update permissions on identifiable . */
+    /**
+     * this flag will be set to true if subject does not have permission to
+     * update permissions on identifiable .
+     */
     private boolean isDisabled;
 
     public PermissionTableBuilder(Identifiable identifiable, Subject subject, PageContext pageContext) throws JspException {
@@ -92,8 +95,7 @@ public class PermissionTableBuilder {
         Table table = new Table();
         table.setClass(Resources.CLASS_PERMISSION_TABLE);
         table.addElement(createTableHeaderTR());
-        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         List<Executor> executors = authorizationService.getExecutorsWithPermission(subject, identifiable, batchPresentation, true);
         for (Executor executor : executors) {
             table.addElement(createTR(executor, new ArrayList<Permission>(), true));

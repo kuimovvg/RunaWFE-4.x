@@ -33,6 +33,7 @@ import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wf.logic.bot.textreport.TextReportGenerator;
 import ru.runa.wf.logic.bot.textreport.TextReportSettings;
 import ru.runa.wf.logic.bot.textreport.TextReportSettingsXmlParser;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -47,7 +48,7 @@ public class TextReportTaskHandler implements TaskHandler {
 
     @Override
     public void configure(String configurationName) throws TaskHandlerException {
-        settings = TextReportSettingsXmlParser.read(getClass().getResourceAsStream(configurationName));
+        settings = TextReportSettingsXmlParser.read(ClassLoaderUtil.getResourceAsStream(configurationName, getClass()));
     }
 
     @Override

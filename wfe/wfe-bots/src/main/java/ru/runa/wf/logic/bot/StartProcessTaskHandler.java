@@ -35,13 +35,12 @@ import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.startprocess.StartProcessTask;
 import ru.runa.wf.logic.bot.startprocess.StartProcessTaskXmlParserException;
-import ru.runa.wf.logic.bot.startprocess.StartProcessXmlParser;
 import ru.runa.wf.logic.bot.startprocess.StartProcessVariableMapping;
+import ru.runa.wf.logic.bot.startprocess.StartProcessXmlParser;
 import ru.runa.wfe.commons.sqltask.DatabaseTask;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.task.dto.WfTask;
@@ -126,8 +125,7 @@ public class StartProcessTaskHandler implements TaskHandler {
                     AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
                     WfProcess wfProcess = executionService.getProcess(subject, startedProcessId);
                     WfProcess superWfProcess = executionService.getProcess(subject, wfTask.getProcessId());
-                    BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
-                    batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+                    BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
                     List<Executor> executors = authorizationService.getExecutorsWithPermission(subject, superWfProcess, batchPresentation, true);
                     for (Executor executor : executors) {
                         Set<Permission> permissions = new HashSet<Permission>();

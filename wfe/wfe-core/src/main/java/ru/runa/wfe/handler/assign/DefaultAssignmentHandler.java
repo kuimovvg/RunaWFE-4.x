@@ -70,7 +70,7 @@ public class DefaultAssignmentHandler implements AssignmentHandler {
                 return;
             }
             assignmentHelper.assignSwimlane(executionContext, assignable, orgFunctionExecutors);
-            // TODO check without this executionDAO.saveProcess(executionContext.getToken().getProcess());
+            // TODO check without this processDAO.saveProcess(executionContext.getToken().getProcess());
         } catch (Exception e) {
             log.warn("Unable to assign in process id = " + executionContext.getProcess().getId(), e);
         }

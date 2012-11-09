@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,25 +38,27 @@ import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
-import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.invoker.BotInvoker;
 import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.dto.WfTask;
+
+import com.google.common.collect.Lists;
 
 public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
     private final Log log = LogFactory.getLog(WorkflowThreadPoolBotInvoker.class);
     private ScheduledExecutorService executor = null;
     private long configurationVersion = -1;
-    private List<WorkflowBot> botsTemplates;
+    private List<WorkflowBot> botTemplates;
     private Future<?> botInvokerInvocation = null;
     private final Map<WorkflowBot, ScheduledFuture<?>> scheduledTasks = new HashMap<WorkflowBot, ScheduledFuture<?>>();
 
     private final long STUCK_TIMEOUT_SECONDS = 300;
+    private BotStation botStation;
 
     @Override
-    public synchronized void invokeBots() {
+    public synchronized void invokeBots(BotStation botStation) {
+        this.botStation = botStation;
         checkStuckBots();
         if (botInvokerInvocation != null && !botInvokerInvocation.isDone()) {
             log.debug("botInvokerInvocation != null && !botInvokerInvocation.isDone()");
@@ -78,7 +79,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
             log.warn("executor(ScheduledExecutorService) == null");
             return;
         }
-        for (WorkflowBot bot : botsTemplates) {
+        for (WorkflowBot bot : botTemplates) {
             try {
                 Set<WfTask> tasks = bot.getNewTasks();
                 for (WfTask task : tasks) {
@@ -89,11 +90,11 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                     }
                     scheduledTasks.put(taskBot, executor.schedule(taskBot, taskBot.getBotDelay(), TimeUnit.MILLISECONDS));
                 }
-            } catch (AuthorizationException e) {
-                log.error("BotRunner execution failed.", e);
             } catch (AuthenticationException e) {
                 configurationVersion = -1;
                 log.error("BotRunner execution failed. Will recreate botstation settings and bots.", e);
+            } catch (Exception e) {
+                log.error("BotRunner execution failed.", e);
             }
         }
     }
@@ -130,12 +131,8 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
     private void configure() {
         try {
             BotService botService = DelegateFactory.getBotService();
-            BotStation botStation = botService.getBotStation(BotStationResources.getBotStationName());
-            if (botStation == null) {
-                throw new BotStationDoesNotExistException(BotStationResources.getBotStationName());
-            }
             if (botStation.getVersion() != configurationVersion) {
-                botsTemplates = new ArrayList<WorkflowBot>();
+                botTemplates = Lists.newArrayList();
                 log.info("Will update bots configuration.");
                 List<Bot> bots = botService.getBots(botStation.getId());
                 for (Bot bot : bots) {
@@ -143,8 +140,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                     Subject subject = DelegateFactory.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
                     List<BotTask> tasks = botService.getBotTasks(subject, bot.getId());
                     try {
-                        WorkflowBot wbot = new WorkflowBot(bot, tasks);
-                        botsTemplates.add(wbot);
+                        botTemplates.add(new WorkflowBot(bot, tasks));
                     } catch (AuthenticationException e) {
                         log.error("BotRunner " + bot.getUsername() + " has incorrect password.");
                     }

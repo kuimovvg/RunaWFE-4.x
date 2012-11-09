@@ -23,8 +23,6 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
@@ -35,7 +33,6 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.var.VariableDefinition;
-import ru.runa.wfe.var.dao.VariableDAO;
 import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
@@ -47,15 +44,13 @@ import com.google.common.collect.Lists;
  * @since 2.0
  */
 public class VariableLogic extends WFCommonLogic {
-    @Autowired
-    private VariableDAO variableDAO;
 
     public List<WfVariable> getVariables(Subject subject, Long processId) throws ProcessDoesNotExistException {
         List<WfVariable> result = Lists.newArrayList();
-        Process process = executionDAO.getProcessNotNull(processId);
+        Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         checkPermissionAllowed(subject, process, ProcessPermission.READ);
-        Map<String, Object> variables = variableDAO.getVariables(process);
+        Map<String, Object> variables = variableDAO.getAll(process);
         for (VariableDefinition variableDefinition : processDefinition.getVariables()) {
             Object value = variables.get(variableDefinition.getName());
             result.add(new WfVariable(variableDefinition, value));
@@ -64,7 +59,7 @@ public class VariableLogic extends WFCommonLogic {
     }
 
     public WfVariable getVariable(Subject subject, Long processId, String variableName) throws ProcessDoesNotExistException {
-        Process process = executionDAO.getProcessNotNull(processId);
+        Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         if (!processDefinition.isVariablePublic(variableName)) {
             // TODO checkReadToVariablesAllowed(subject, task);
@@ -87,12 +82,12 @@ public class VariableLogic extends WFCommonLogic {
         for (Identifiable identifiable : idents) {
             readableProcesses.add(identifiable.getId());
         }
-        return executionDAO.getVariableValueFromProcesses(processIds, variableName);
+        return processDAO.getVariableValueFromProcesses(processIds, variableName);
     }
 
     public void updateVariables(Subject subject, Long processId, Map<String, Object> variables) throws AuthorizationException,
             TaskDoesNotExistException {
-        Process process = executionDAO.getProcessNotNull(processId);
+        Process process = processDAO.getNotNull(processId);
         checkPermissionAllowed(subject, process, ProcessPermission.UPDATE_PERMISSIONS);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);

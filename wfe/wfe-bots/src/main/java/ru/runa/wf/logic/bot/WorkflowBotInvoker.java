@@ -32,7 +32,6 @@ import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotRunnerException;
 import ru.runa.wfe.bot.BotStation;
-import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.invoker.BotInvoker;
 import ru.runa.wfe.commons.ClassLoaderUtil;
@@ -47,9 +46,9 @@ public class WorkflowBotInvoker implements BotInvoker {
     private final Set<BotThread> botThreads = Sets.newHashSet();
 
     @Override
-    public void invokeBots() {
+    public void invokeBots(BotStation botStation) {
         // lock
-        updateConfig(null);
+        updateConfig(botStation);
         synchronized (botThreads) {
             for (BotThread botThread : botThreads) {
                 checkTaskListSizeNotExeeded(botThread);
@@ -76,13 +75,9 @@ public class WorkflowBotInvoker implements BotInvoker {
     private long configurationVersion = -1;
     private List<MultitaskBotRunner> workflowBots = null;
 
-    public void updateConfig(String configurationPath) {
+    public void updateConfig(BotStation botStation) {
         try {
             BotService botService = DelegateFactory.getBotService();
-            BotStation botStation = botService.getBotStation(BotStationResources.getBotStationName());
-            if (botStation == null) {
-                throw new BotStationDoesNotExistException(BotStationResources.getBotStationName());
-            }
             if (botStation.getVersion() != configurationVersion) {
                 log.info("updating bots configuration");
                 workflowBots = new ArrayList<MultitaskBotRunner>();

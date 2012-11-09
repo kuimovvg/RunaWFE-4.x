@@ -59,7 +59,7 @@ public abstract class SystemLog {
     /**
      * Code of {@link Actor}, executed action.
      */
-    private Long actorCode;
+    private Long actorId;
 
     /**
      * Action time.
@@ -74,9 +74,8 @@ public abstract class SystemLog {
      * @param actionTime
      *            Action time.
      */
-    public SystemLog(Long actorCode) {
-        super();
-        this.actorCode = actorCode;
+    public SystemLog(Long actorId) {
+        this.actorId = actorId;
         actionTime = new Date();
     }
 
@@ -111,16 +110,16 @@ public abstract class SystemLog {
      * 
      * @return Code of {@link Actor}, executed action.
      */
-    @Column(name = "ACTOR_CODE", nullable = false)
-    public Long getActorCode() {
-        return actorCode;
+    @Column(name = "ACTOR_ID", nullable = false)
+    public Long getActorId() {
+        return actorId;
     }
 
     /**
      * Hibernate support.
      */
-    public void setActorCode(Long actorCode) {
-        this.actorCode = actorCode;
+    public void setActorId(Long actorCode) {
+        actorId = actorCode;
     }
 
     /**

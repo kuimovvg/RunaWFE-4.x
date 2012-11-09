@@ -43,10 +43,14 @@ import ru.runa.wfe.user.ExecutorDoesNotExistException;
 /**
  * Created on 24.08.2004
  * 
- * @struts:action path="/updatePassword" name="updatePasswordForm" validate="true" input = "/WEB-INF/af/manage_executor.jsp"
- * @struts.action-forward name="success" path="/manage_executor.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_executor.do" redirect = "true"
- * @struts.action-forward name="failure_executor_does_not_exist" path="/manage_executors.do" redirect = "true"
+ * @struts:action path="/updatePassword" name="updatePasswordForm"
+ *                validate="true" input = "/WEB-INF/af/manage_executor.jsp"
+ * @struts.action-forward name="success" path="/manage_executor.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure" path="/manage_executor.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure_executor_does_not_exist"
+ *                        path="/manage_executors.do" redirect = "true"
  */
 public class UpdatePasswordAction extends Action {
 
@@ -61,7 +65,7 @@ public class UpdatePasswordAction extends Action {
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             ExecutorService executorService = DelegateFactory.getExecutorService();
-            Actor actor = executorService.getActor(subject, form.getId());
+            Actor actor = executorService.getExecutor(subject, form.getId());
             executorService.setPassword(subject, actor, form.getPassword());
         } catch (ExecutorDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);
