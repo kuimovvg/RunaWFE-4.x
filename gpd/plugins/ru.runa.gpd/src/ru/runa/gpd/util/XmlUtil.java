@@ -1,0 +1,100 @@
+package ru.runa.gpd.util;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
+
+import ru.runa.wfe.InternalApplicationException;
+
+import com.google.common.base.Charsets;
+
+/**
+ * Util for HTML with custom tags
+ * 
+ * @author Dofs
+ */
+public class XmlUtil {
+    public static Document parseWithoutValidation(String data) {
+        return parseWithoutValidation(data.getBytes(Charsets.UTF_8));
+    }
+
+    public static Document parseWithoutValidation(byte[] data) {
+        return parse(new ByteArrayInputStream(data), false, null);
+    }
+
+    public static Document parseWithoutValidation(InputStream in) {
+        return parse(in, false, null);
+    }
+
+    public static Document parseWithXSDValidation(InputStream in) {
+        return parse(in, true, null);
+    }
+
+    private static Document parse(InputStream in, boolean xsdValidation, InputStream xsdInputStream) {
+        try {
+            SAXReader reader;
+            if (xsdValidation) {
+                SAXParserFactory factory = SAXParserFactory.newInstance();
+                if (xsdInputStream != null) {
+                    SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+                    factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(xsdInputStream) }));
+                } else {
+                    factory.setValidating(true);
+                }
+                SAXParser parser = factory.newSAXParser();
+                if (xsdInputStream == null) {
+                    parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
+                }
+                reader = new SAXReader(parser.getXMLReader());
+            } else {
+                reader = new SAXReader();
+            }
+            reader.setValidation(xsdValidation && xsdInputStream == null);
+            reader.setErrorHandler(SimpleErrorHandler.getInstance());
+            return reader.read(new InputStreamReader(in, Charsets.UTF_8));
+        } catch (Exception e) {
+            throw new InternalApplicationException(e);
+        }
+    }
+
+    public static byte[] writeXml(Document document) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        writeXml(document, baos);
+        return baos.toByteArray();
+    }
+
+    public static void writeXml(Document document, OutputStream outputStream) {
+        try {
+            XMLWriter writer = new XMLWriter(outputStream, OutputFormat.createPrettyPrint());
+            writer.write(document);
+            writer.flush();
+        } catch (IOException e) {
+            throw new InternalApplicationException(e);
+        }
+    }
+
+    public static String toString(Document document) {
+        return new String(writeXml(document), Charsets.UTF_8);
+    }
+
+    public static Document createDocument(String rootElementName) {
+        Document document = DocumentHelper.createDocument();
+        document.addElement(rootElementName);
+        return document;
+    }
+}
