@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ru.runa.gpd.handlers">
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.bp.AlfSetContent"
+            name="Alfresco: upload file data"
+            type="actionHandler">
+      </handler>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.bp.demo.ApproveMyDoc"
+            name="alfdemo: approve document"
+            type="actionHandler">
+      </handler>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.bp.demo.CreateMyDoc"
+            name="alfdemo: create document"
+            type="actionHandler">
+      </handler>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.bp.demo.RejectMyDoc"
+            name="alfdemo: reject document"
+            type="actionHandler">
+      </handler>
+   </extension>
+   <extension
+         point="ru.runa.gpd.form.ftl.tags">
+      <tag
+            id="GetMyDocStatus"
+            name="Show status of document">
+      </tag>
+   </extension>
+
+</plugin>

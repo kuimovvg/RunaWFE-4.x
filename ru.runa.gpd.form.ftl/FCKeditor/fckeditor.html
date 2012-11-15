@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="sample.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="fckeditor.js"></script>
+    <script type="text/javascript">
+      var inited;
+      var bufferedHtml = "";
+      
+      function getHTML(sync) {
+        var oEditor = FCKeditorAPI.GetInstance('editor');
+        var prefix;
+        if (sync) {
+        	prefix = 'SYNCHTML:';
+        } else {
+        	prefix = 'HTML:';
+        }
+	    window.status = prefix + oEditor.GetXHTML(true);
+      }
+
+      function setHTML(html) {
+        bufferedHtml = html;
+        if (inited) {
+	      window.setTimeout(internalSetHtml, 250);
+    	}
+      }
+      
+      function internalSetHtml() {
+          var oEditor = FCKeditorAPI.GetInstance('editor');
+          oEditor.SetHTML(bufferedHtml);
+      }
+
+      function FCKeditor_OnComplete( editorInstance )	{
+        inited = true;
+        setHTML(bufferedHtml);
+      }      
+    </script>
+  </head>
+  <body style="margin: 0px; padding: 0px;" onload="javascript:window.status='STARTSYNC';">
+    <form method="POST" name="form">
+      <script type="text/javascript">
+        var oEditor = new FCKeditor('editor');
+        oEditor.BasePath = "";
+        oEditor.Height   = '100%';
+        oEditor.Value    = '';
+        oEditor.Create();
+      </script>
+    </form>
+  </body>
+</html>
