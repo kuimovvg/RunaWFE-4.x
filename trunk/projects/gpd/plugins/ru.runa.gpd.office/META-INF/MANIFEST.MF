@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: RunaWFE Office support Plug-in
+Bundle-SymbolicName: ru.runa.gpd.office; singleton:=true
+Bundle-Version: 4.0.0
+Bundle-Activator: ru.runa.gpd.office.Activator
+Bundle-Vendor: Runa
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.forms,
+ ru.runa.gpd
+Bundle-ActivationPolicy: lazy
+

@@ -1,0 +1,117 @@
+package ru.runa.gpd.wfe;
+
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.Activator;
+import ru.runa.gpd.Localization;
+
+public abstract class DataImporter {
+
+    private final IConnector connector;
+
+    protected DataImporter(IConnector connector) {
+        this.connector = connector;
+    }
+
+    public boolean isConfigured() {
+        return connector.isConfigured();
+    }
+
+    public void connect() throws Exception {
+        connector.connect();
+    }
+
+    protected File getCacheFile() {
+        String fileName = getClass().getSimpleName() + ".xml";
+        return new File(Activator.getPreferencesFolder(), fileName);
+    }
+
+    protected abstract void clearInMemoryCache();
+
+    protected abstract void loadRemoteData(IProgressMonitor monitor) throws Exception;
+
+    protected abstract void saveCachedData() throws Exception;
+
+    public abstract Object loadCachedData() throws Exception;
+
+    public boolean hasCachedData() {
+        try {
+            return loadCachedData() != null;
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("", e);
+            return false;
+        }
+    }
+
+    // TODO move to Connector
+    // public final void connectWithRunnable() {
+    // final ProgressMonitorDialog monitorDialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+    // monitorDialog.setCancelable(true);
+    // final IRunnableWithProgress runnable = new IRunnableWithProgress() {
+    //
+    // public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+    // try {
+    // monitor.beginTask(Messages.getString("task.Connect"), 1);
+    // connect();
+    // } catch (Exception e) {
+    // DesignerLogger.logErrorWithoutDialog("error.Connect", e);
+    // throw new InvocationTargetException(e);
+    // } finally {
+    // monitor.done();
+    // }
+    // }
+    // };
+    // try {
+    // monitorDialog.run(true, false, runnable);
+    // } catch (InvocationTargetException ex) {
+    // throw new RuntimeException(ex.getTargetException());
+    // } catch (InterruptedException ex) {
+    // //
+    // }
+    // }
+
+    public final void synchronize() {
+        Shell shell = Display.getCurrent() != null ? Display.getCurrent().getActiveShell() : null;
+        final ProgressMonitorDialog monitorDialog = new ProgressMonitorDialog(shell);
+        monitorDialog.setCancelable(true);
+        final IRunnableWithProgress runnable = new IRunnableWithProgress() {
+
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                try {
+                    monitor.beginTask(Localization.getString("task.SynchronizeData"), 120);
+                    monitor.subTask(Localization.getString("task.Connect"));
+                    connect();
+                    monitor.worked(10);
+                    monitor.subTask(Localization.getString("task.LoadData"));
+                    clearInMemoryCache();
+                    loadRemoteData(monitor);
+                    // monitor.worked(1);
+                    monitor.subTask(Localization.getString("task.SaveData"));
+                    saveCachedData();
+                    monitor.done();
+                } catch (Exception e) {
+                    PluginLogger.logErrorWithoutDialog("error.Synchronize", e);
+                    throw new InvocationTargetException(e);
+                } finally {
+                    monitor.done();
+                }
+            }
+        };
+        try {
+            monitorDialog.run(true, false, runnable);
+        } catch (InvocationTargetException ex) {
+            throw new RuntimeException(ex.getTargetException());
+        } catch (InterruptedException ex) {
+            // 
+        }
+    }
+
+}
