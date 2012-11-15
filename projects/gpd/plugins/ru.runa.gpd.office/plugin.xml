@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+    <extension
+         point="ru.runa.gpd.handlers">
+      <handler
+            cellEditorProvider="ru.runa.gpd.office.excel.ReadHandlerCellEditorProvider"
+            className="ru.runa.wf.office.excel.handlers.ReadHandler"
+            name="%ActionHandler.ReadHandler"
+            type="actionHandler">
+      </handler>
+      <handler
+            cellEditorProvider="ru.runa.gpd.office.excel.SaveHandlerCellEditorProvider"
+            className="ru.runa.wf.office.excel.handlers.SaveHandler"
+            name="%ActionHandler.SaveHandler"
+            type="actionHandler">
+      </handler>
+      <handler
+            cellEditorProvider="ru.runa.gpd.office.word.DocxHandlerCellEditorProvider"
+            className="ru.runa.wf.office.doc.DocxHandler"
+            name="%ActionHandler.DocxHandler"
+            type="actionHandler">
+      </handler>
+   </extension>
+
+</plugin>
