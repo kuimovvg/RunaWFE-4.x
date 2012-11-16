@@ -38,6 +38,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
 import ru.runa.gpd.lang.model.GraphElement;
 
 public class PropertiesView extends ViewPart implements ISelectionListener, PropertyChangeListener, IPartListener {
@@ -134,6 +135,9 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {
         this.sourcePart = part;
         IPropertySource newSource = getSource(selection);
+        if (part instanceof GraphitiProcessEditor) {
+            newSource = ((GraphitiProcessEditor) part).translateSelection(selection);
+        }
         if (areObjectsEqual(source, newSource)) {
             return;
         }
