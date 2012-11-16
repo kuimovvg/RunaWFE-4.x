@@ -1,14 +1,9 @@
 package ru.runa.gpd.editor.gef;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.Viewport;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -16,23 +11,16 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.DragTracker;
-import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.KeyHandler;
 import org.eclipse.gef.KeyStroke;
-import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.Request;
-import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.editparts.FreeformGraphicalRootEditPart;
-import org.eclipse.gef.editparts.LayerManager;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
-import org.eclipse.gef.internal.GEFMessages;
 import org.eclipse.gef.tools.MarqueeDragTracker;
 import org.eclipse.gef.tools.MarqueeSelectionTool;
 import org.eclipse.gef.ui.actions.Clipboard;
@@ -41,20 +29,13 @@ import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
-import org.eclipse.gef.ui.properties.UndoablePropertySheetEntry;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -63,30 +44,24 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
-import org.eclipse.ui.views.properties.PropertySheetPage;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.editor.ProcessEditorBase;
+import ru.runa.gpd.editor.SelectAllFiguresAction;
 import ru.runa.gpd.editor.gef.command.CopyGraphCommand;
 import ru.runa.gpd.editor.gef.part.graph.ActionGraphicalEditPart;
 import ru.runa.gpd.editor.gef.part.graph.ProcessDefinitionGraphicalEditPart;
 import ru.runa.gpd.editor.gef.part.graph.TransitionGraphicalEditPart;
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.par.ParContentProvider;
 
 public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalette {
     private KeyHandler commonKeyHandler;
-    private final GEFProcessEditor editor;
-    private OutlineViewer outlineViewer;
-    private PropertySheetPage undoablePropertySheetPage;
+    private final ProcessEditorBase editor;
     private IStructuredSelection selection;
     private MoveViewportThread moveViewportThread;
     private DesignerPaletteRoot paletteRoot;
 
-    public DesignerGraphicalEditorPart(GEFProcessEditor editor) {
+    public DesignerGraphicalEditorPart(ProcessEditorBase editor) {
         this.editor = editor;
         DefaultEditDomain defaultEditDomain = new DefaultEditDomain(this);
         setEditDomain(defaultEditDomain);
@@ -105,7 +80,7 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
         getActionRegistry().registerAction(pasteAction);
         getSelectionActions().add(pasteAction.getId());
         super.createActions();
-        getActionRegistry().registerAction(new CustomSelectAllAction(this));
+        getActionRegistry().registerAction(new SelectAllFiguresAction(editor));
         activateHandler(copyAction.getId());
         activateHandler(pasteAction.getId());
         activateHandler(ActionFactory.SELECT_ALL.getId());
@@ -118,16 +93,6 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
     private void activateHandler(String actionId) {
         IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
         handlerService.activateHandler(actionId, new ActionHandler(getActionRegistry().getAction(actionId)));
-    }
-
-    @Override
-    public CommandStack getCommandStack() {
-        return super.getCommandStack();
-    }
-
-    @Override
-    public DefaultEditDomain getEditDomain() {
-        return super.getEditDomain();
     }
 
     @Override
@@ -156,7 +121,7 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
     public void select(GraphElement element) {
         GraphicalEditPart target = (GraphicalEditPart) getGraphicalViewer().getEditPartRegistry().get(element);
         if (target == null || !target.getFigure().isVisible()) {
-            getOutlineViewer().select(element);
+            editor.getOutlineViewer().select(element);
             return;
         }
         Rectangle targetElementConstraint = element.getConstraint();
@@ -240,82 +205,7 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
     }
 
     @Override
-    public Object getAdapter(Class adapter) {
-        if (adapter == EditDomain.class) {
-            return getEditDomain();
-        } else if (adapter == IPropertySheetPage.class) {
-            return getPropertySheetPage();
-        } else if (adapter == IContentOutlinePage.class) {
-            return getOutlineViewer();
-        }
-        // the super implementation handles the rest
-        return super.getAdapter(adapter);
-    }
-
-    public OutlineViewer getOutlineViewer() {
-        if (outlineViewer == null && getGraphicalViewer() != null) {
-            RootEditPart rootEditPart = getGraphicalViewer().getRootEditPart();
-            if (rootEditPart instanceof ScalableFreeformRootEditPart) {
-                outlineViewer = new OutlineViewer(this);
-            }
-        }
-        return outlineViewer;
-    }
-
-    @Override
-    public GraphicalViewer getGraphicalViewer() {
-        return super.getGraphicalViewer();
-    }
-
-    @Override
     public void doSave(IProgressMonitor monitor) {
-        // we remove the selection in order to generate valid graph picture
-        getGraphicalViewer().deselectAll();
-        getGraphicalViewer().flush();
-        SWTGraphics g = null;
-        GC gc = null;
-        Image image = null;
-        LayerManager lm = (LayerManager) getGraphicalViewer().getEditPartRegistry().get(LayerManager.ID);
-        IFigure figure = lm.getLayer(LayerConstants.PRINTABLE_LAYERS);
-        try {
-            Rectangle r = figure.getBounds();
-            editor.getDefinition().setDimension(new Dimension(r.width, r.height));
-            image = new Image(Display.getDefault(), r.width, r.height);
-            gc = new GC(image);
-            g = new SWTGraphics(gc);
-            g.translate(r.x * -1, r.y * -1);
-            figure.paint(g);
-            ImageLoader imageLoader = new ImageLoader();
-            imageLoader.data = new ImageData[] { ImageHelper.downSample(image) };
-            imageLoader.save(getImageSavePath(), SWT.IMAGE_JPEG);
-        } catch (Exception e) {
-            PluginLogger.logError(e);
-        } finally {
-            if (g != null) {
-                g.dispose();
-            }
-            if (gc != null) {
-                gc.dispose();
-            }
-            if (image != null) {
-                image.dispose();
-            }
-        }
-    }
-
-    private String getImageSavePath() {
-        IFile file = ((FileEditorInput) getEditorInput()).getFile();
-        IPath path = file.getRawLocation().removeLastSegments(1).append(ParContentProvider.PROCESS_IMAGE_FILE_NAME);
-        return path.toOSString();
-    }
-
-    @Override
-    public void doSaveAs() {
-    }
-
-    @Override
-    public boolean isSaveAsAllowed() {
-        return false;
     }
 
     @Override
@@ -325,8 +215,10 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
         getPaletteRoot().refreshActionsVisibility();
     }
 
-    public GEFProcessEditor getEditor() {
-        return editor;
+    @Override
+    protected void initializeGraphicalViewer() {
+        super.initializeGraphicalViewer();
+        getGraphicalViewer().setContents(editor.getDefinition());
     }
 
     @Override
@@ -335,12 +227,6 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
             paletteRoot = new DesignerPaletteRoot(editor);
         }
         return paletteRoot;
-    }
-
-    @Override
-    protected void initializeGraphicalViewer() {
-        super.initializeGraphicalViewer();
-        getGraphicalViewer().setContents(editor.getDefinition());
     }
 
     @Override
@@ -415,14 +301,6 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
         }
     }
 
-    protected PropertySheetPage getPropertySheetPage() {
-        if (undoablePropertySheetPage == null) {
-            undoablePropertySheetPage = new PropertySheetPage();
-            undoablePropertySheetPage.setRootEntry(new UndoablePropertySheetEntry(getCommandStack()));
-        }
-        return undoablePropertySheetPage;
-    }
-
     @Override
     protected FlyoutPreferences getPalettePreferences() {
         return new PaletteFlyoutPreferences();
@@ -478,39 +356,6 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
         public void run() {
             if (selection != null) {
                 Clipboard.getDefault().setContents(new Object[] { editor.getDefinitionFile().getParent(), editor.getDefinition(), selection });
-            }
-        }
-    }
-
-    private static class CustomSelectAllAction extends Action {
-        private final IWorkbenchPart part;
-
-        public CustomSelectAllAction(IWorkbenchPart part) {
-            this.part = part;
-            setText(GEFMessages.SelectAllAction_Label);
-            setToolTipText(GEFMessages.SelectAllAction_Tooltip);
-            setId(ActionFactory.SELECT_ALL.getId());
-        }
-
-        @Override
-        public void run() {
-            GraphicalViewer viewer = (GraphicalViewer) part.getAdapter(GraphicalViewer.class);
-            if (viewer != null) {
-                List<EditPart> elements = new ArrayList<EditPart>();
-                getAllChildren(viewer.getContents(), elements);
-                viewer.setSelection(new StructuredSelection(elements));
-            }
-        }
-
-        @SuppressWarnings("unchecked")
-        private void getAllChildren(EditPart editPart, List<EditPart> allChildren) {
-            List<EditPart> children = editPart.getChildren();
-            for (int i = 0; i < children.size(); i++) {
-                GraphicalEditPart child = (GraphicalEditPart) children.get(i);
-                allChildren.add(child);
-                allChildren.addAll(child.getSourceConnections());
-                allChildren.addAll(child.getTargetConnections());
-                getAllChildren(child, allChildren);
             }
         }
     }

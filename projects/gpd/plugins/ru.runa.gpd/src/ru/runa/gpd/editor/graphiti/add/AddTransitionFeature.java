@@ -47,7 +47,7 @@ public class AddTransitionFeature extends AbstractAddFeature {
     @Override
     public PictogramElement add(IAddContext context) {
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
-        Transition addedSequenceFlow = (Transition) context.getNewObject();
+        Transition transition = (Transition) context.getNewObject();
         Anchor sourceAnchor = null;
         Anchor targetAnchor = null;
         if (addConContext.getSourceAnchor() == null) {
@@ -91,8 +91,8 @@ public class AddTransitionFeature extends AbstractAddFeature {
         connection.setEnd(targetAnchor);
         sourceAnchor.getOutgoingConnections().add(connection);
         targetAnchor.getIncomingConnections().add(connection);
-        GraphicsAlgorithm sourceGraphics = getPictogramElement(addedSequenceFlow.getSource()).getGraphicsAlgorithm();
-        GraphicsAlgorithm targetGraphics = getPictogramElement(addedSequenceFlow.getTarget()).getGraphicsAlgorithm();
+        GraphicsAlgorithm sourceGraphics = getPictogramElement(transition.getSource()).getGraphicsAlgorithm();
+        GraphicsAlgorithm targetGraphics = getPictogramElement(transition.getTarget()).getGraphicsAlgorithm();
         List<Bendpoint> bendpoints = null;
         if (addConContext.getProperty("org.activiti.designer.bendpoints") != null) {
             bendpoints = (List<Bendpoint>) addConContext.getProperty("org.activiti.designer.bendpoints");
@@ -105,11 +105,11 @@ public class AddTransitionFeature extends AbstractAddFeature {
                 connection.getBendpoints().add(bendPoint);
             }
         } else {
-            Shape sourceShape = (Shape) getPictogramElement(addedSequenceFlow.getSource());
+            Shape sourceShape = (Shape) getPictogramElement(transition.getSource());
             ILocation sourceShapeLocation = Graphiti.getLayoutService().getLocationRelativeToDiagram(sourceShape);
             int sourceX = sourceShapeLocation.getX();
             int sourceY = sourceShapeLocation.getY();
-            Shape targetShape = (Shape) getPictogramElement(addedSequenceFlow.getTarget());
+            Shape targetShape = (Shape) getPictogramElement(transition.getTarget());
             ILocation targetShapeLocation = Graphiti.getLayoutService().getLocationRelativeToDiagram(targetShape);
             int targetX = targetShapeLocation.getX();
             int targetY = targetShapeLocation.getY();
@@ -164,7 +164,7 @@ public class AddTransitionFeature extends AbstractAddFeature {
         polyline.setLineStyle(LineStyle.SOLID);
         polyline.setForeground(Graphiti.getGaService().manageColor(getDiagram(), IColorConstant.BLACK));
         // create link and wire it
-        link(connection, addedSequenceFlow);
+        link(connection, transition);
         // add dynamic text decorator for the reference name
         ConnectionDecorator textDecorator = peCreateService.createConnectionDecorator(connection, true, 0.5, true);
         MultiText text = gaService.createDefaultMultiText(getDiagram(), textDecorator);
@@ -177,9 +177,9 @@ public class AddTransitionFeature extends AbstractAddFeature {
         } else {
             gaService.setLocation(text, 10, 0);
         }
-        TextUtil.setTextSize(addedSequenceFlow.getName(), text);
+        TextUtil.setTextSize(transition.getName(), text);
         // set reference name in the text decorator
-        text.setValue(addedSequenceFlow.getName());
+        text.setValue(transition.getName());
         // add static graphical decorators (composition and navigable)
         ConnectionDecorator cd = peCreateService.createConnectionDecorator(connection, false, 1.0, true);
         createArrow(cd);

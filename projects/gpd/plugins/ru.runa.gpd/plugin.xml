@@ -675,9 +675,17 @@
       <element
             model="ru.runa.gpd.lang.model.Swimlane"
             name="swimlane"
-            label="swimlane">
+            label="%default.swimlane.name">
          <gefEntry 
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.SwimlaneTreeEditPart">
+         </gefEntry>
+      </element>
+      <element
+            label="%default.variable.name"
+            model="ru.runa.gpd.lang.model.Variable"
+            name="variable">
+         <gefEntry
+               treeEditPart="ru.runa.gpd.editor.gef.part.tree.VariableTreeEditPart">
          </gefEntry>
       </element>
       <element

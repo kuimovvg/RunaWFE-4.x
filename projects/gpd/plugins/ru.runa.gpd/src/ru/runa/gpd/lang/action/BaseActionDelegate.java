@@ -13,22 +13,23 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 
-import ru.runa.gpd.editor.gef.GEFProcessEditor;
-import ru.runa.gpd.editor.gef.OutlineViewer;
+import ru.runa.gpd.editor.OutlineViewer;
+import ru.runa.gpd.editor.ProcessEditorBase;
 
 public abstract class BaseActionDelegate implements IObjectActionDelegate {
-
     protected IWorkbenchPart targetPart;
-
     protected EditPart selectedPart;
 
+    @Override
     public void setActivePart(IAction action, IWorkbenchPart targetPart) {
         this.targetPart = targetPart;
     }
 
+    @Override
     public void selectionChanged(IAction action, ISelection selection) {
-        if (selection == null || !(selection instanceof StructuredSelection))
+        if (selection == null || !(selection instanceof StructuredSelection)) {
             return;
+        }
         Object object = ((StructuredSelection) selection).getFirstElement();
         if (object instanceof EditPart) {
             selectedPart = (EditPart) object;
@@ -41,18 +42,21 @@ public abstract class BaseActionDelegate implements IObjectActionDelegate {
             commandStack = (CommandStack) ((GraphicalEditor) targetPart).getAdapter(CommandStack.class);
         } else {
             commandStack = ((OutlineViewer) ((ContentOutline) targetPart).getCurrentPage()).getCommandStack();
+            command.execute();
         }
-        commandStack.execute(command);
+        // TODO GEF 
+        command.execute();
+        //commandStack.execute(command);
     }
-    
+
     protected IEditorPart getActiveEditor() {
         return targetPart.getSite().getPage().getActiveEditor();
     }
 
-    protected GEFProcessEditor getActiveDesignerEditor() {
+    protected ProcessEditorBase getActiveDesignerEditor() {
         IEditorPart editor = getActiveEditor();
-        if (editor instanceof GEFProcessEditor) {
-            return (GEFProcessEditor) editor;
+        if (editor instanceof ProcessEditorBase) {
+            return (ProcessEditorBase) editor;
         }
         return null;
     }
@@ -60,5 +64,4 @@ public abstract class BaseActionDelegate implements IObjectActionDelegate {
     protected IFile getDefinitionFile() {
         return getActiveDesignerEditor().getDefinitionFile();
     }
-
 }
