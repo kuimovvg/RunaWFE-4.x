@@ -18,12 +18,12 @@ public class GroupElementTreeEditPart extends ElementTreeEditPart {
 
     @Override
     protected List<? extends GraphElement> getModelChildren() {
-        return getModel().getProcessDefinition().getChildren(getModel().getType().getModelClass());
+        return getModel().getProcessDefinition().getChildren(getModel().getTypeDefinition().getModelClass());
     }
 
     @Override
     protected void refreshVisuals() {
         setWidgetImage(SharedImages.getImage("icons/obj/group.gif"));
-        setWidgetText(getModel().getType().getLabel());
+        setWidgetText(getModel().getTypeDefinition().getLabel());
     }
 }

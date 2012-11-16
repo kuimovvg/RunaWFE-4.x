@@ -19,7 +19,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.editor.gef.GEFProcessEditor;
+import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.handler.CustomizationRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
@@ -73,7 +73,6 @@ public class GPDSearchPage extends AbstractTextSearchViewPage {
     protected void showMatch(Match match, int offset, int length, boolean activate) throws PartInitException {
         ElementMatch elementMatch = (ElementMatch) match.getElement();
         IFile file = elementMatch.getFile();
-
         IEditorPart editor = null;
         if (ElementMatch.CONTEXT_FORM.equals(elementMatch.getContext())) {
             try {
@@ -97,7 +96,7 @@ public class GPDSearchPage extends AbstractTextSearchViewPage {
             SubprocessDelegate delegate = new SubprocessDelegate();
             delegate.openDetails((Subprocess) elementMatch.getGraphElement());
         } else if (elementMatch.getGraphElement() != null) {
-            GEFProcessEditor designerEditor = (GEFProcessEditor) IDE.openEditor(getSite().getPage(), elementMatch.getFile());
+            ProcessEditorBase designerEditor = (ProcessEditorBase) IDE.openEditor(getSite().getPage(), elementMatch.getFile());
             designerEditor.select(elementMatch.getGraphElement());
         }
         if (editor == null) {
@@ -119,13 +118,15 @@ public class GPDSearchPage extends AbstractTextSearchViewPage {
 
     @Override
     protected void elementsChanged(Object[] objects) {
-        if (contentProvider != null)
+        if (contentProvider != null) {
             contentProvider.elementsChanged(objects);
+        }
     }
 
     @Override
     protected void clear() {
-        if (contentProvider != null)
+        if (contentProvider != null) {
             contentProvider.clear();
+        }
     }
 }

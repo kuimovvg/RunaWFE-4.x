@@ -23,16 +23,13 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.EditorPart;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 
 public abstract class EditorPartBase extends EditorPart implements PropertyChangeListener {
-
-    protected final GEFProcessEditor editor;
-
+    protected final ProcessEditorBase editor;
     protected FormToolkit toolkit;
 
-    public EditorPartBase(final GEFProcessEditor editor) {
+    public EditorPartBase(ProcessEditorBase editor) {
         this.editor = editor;
     }
 
@@ -87,7 +84,6 @@ public abstract class EditorPartBase extends EditorPart implements PropertyChang
         Button button = toolkit.createButton(parent, Localization.getString(buttonKey), SWT.PUSH);
         button.setLayoutData(gridData);
         button.addSelectionListener(selectionListener);
-
         if (addToMenu) {
             MenuItem item = new MenuItem(menu, SWT.NONE);
             item.setText(Localization.getString(buttonKey));
@@ -106,12 +102,10 @@ public abstract class EditorPartBase extends EditorPart implements PropertyChang
         toolkit = new FormToolkit(parent.getDisplay());
         Form form = toolkit.createForm(parent);
         form.setText(Localization.getString(titleKey));
-
         GridLayout layout = new GridLayout();
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         form.getBody().setLayout(layout);
-
         SashForm sashForm = new SashForm(form.getBody(), SWT.NULL);
         toolkit.adapt(sashForm, false, false);
         sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -123,18 +117,14 @@ public abstract class EditorPartBase extends EditorPart implements PropertyChang
         section.marginHeight = 5;
         section.marginWidth = 5;
         section.setText(Localization.getString(sectionTitleKey));
-
         Composite clientArea = toolkit.createComposite(section);
         section.setClient(clientArea);
         toolkit.paintBordersFor(clientArea);
-
         GridLayout layoutRight = new GridLayout();
         layoutRight.marginWidth = 2;
         layoutRight.marginHeight = 2;
         layoutRight.numColumns = 2;
         clientArea.setLayout(layoutRight);
-
         return clientArea;
     }
-
 }
