@@ -17,8 +17,7 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.editor.gef.DesignerGraphicalEditorPart;
-import ru.runa.gpd.editor.gef.GEFProcessEditor;
+import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.command.EnableReassignmentCommand;
 import ru.runa.gpd.editor.gef.command.IgnoreSubstitutionCommand;
 import ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart;
@@ -159,7 +158,7 @@ public class SwimlaneActionsDelegate extends BaseActionDelegate implements IMenu
     }
 
     private void editSwimlane() {
-        GEFProcessEditor editor = ((DesignerGraphicalEditorPart) targetPart).getEditor();
+        ProcessEditorBase editor = getActiveDesignerEditor();
         editor.openPage(1);
         if (currentNode.getSwimlane() != null) {
             editor.select(currentNode.getSwimlane());

@@ -34,7 +34,7 @@ import ru.runa.gpd.editor.graphiti.create.CreateStartNodeFeature;
 import ru.runa.gpd.editor.graphiti.create.CreateSubProcessFeature;
 import ru.runa.gpd.editor.graphiti.create.CreateTaskStateFeature;
 import ru.runa.gpd.editor.graphiti.create.CreateTransitionFeature;
-import ru.runa.gpd.editor.graphiti.delete.DeleteNodeFeature;
+import ru.runa.gpd.editor.graphiti.delete.DeleteElementFeature;
 import ru.runa.gpd.editor.graphiti.edit.DirectEditNodeFeature;
 import ru.runa.gpd.editor.graphiti.move.MoveNodeFeature;
 import ru.runa.gpd.editor.graphiti.resize.ResizeNodeFeature;
@@ -119,7 +119,7 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public IDeleteFeature getDeleteFeature(IDeleteContext context) {
-        return new DeleteNodeFeature(this);
+        return new DeleteElementFeature(this);
     }
 
     @Override

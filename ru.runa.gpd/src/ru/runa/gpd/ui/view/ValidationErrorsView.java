@@ -36,7 +36,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
-import ru.runa.gpd.editor.gef.GEFProcessEditor;
+import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.Active;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -94,15 +94,15 @@ public class ValidationErrorsView extends ViewPart implements ISelectionChangedL
         }
         try {
             IFile resource = (IFile) marker.getResource();
-            GEFProcessEditor designerEditor = (GEFProcessEditor) IDE.openEditor(getSite().getPage(), resource);
+            ProcessEditorBase editor = (ProcessEditorBase) IDE.openEditor(getSite().getPage(), resource);
             GraphElement graphElement = null;
             String elementName = marker.getAttribute(PluginConstants.SELECTION_LINK_KEY, null);
             if (elementName != null) {
-                graphElement = findElement(designerEditor.getDefinition(), NamedGraphElement.class, elementName);
+                graphElement = findElement(editor.getDefinition(), NamedGraphElement.class, elementName);
             }
             String swimlaneName = marker.getAttribute(PluginConstants.SWIMLANE_LINK_KEY, null);
             if (swimlaneName != null) {
-                graphElement = findElement(designerEditor.getDefinition(), Swimlane.class, swimlaneName);
+                graphElement = findElement(editor.getDefinition(), Swimlane.class, swimlaneName);
             }
             int actionIndex = marker.getAttribute(PluginConstants.ACTION_INDEX_KEY, -1);
             if (actionIndex != -1) {
@@ -110,9 +110,9 @@ public class ValidationErrorsView extends ViewPart implements ISelectionChangedL
                 String[] paths = parentTreePath.split("\\|", -1);
                 Active active;
                 if (paths.length == 1) {
-                    active = (Active) findElement(designerEditor.getDefinition(), NamedGraphElement.class, paths[0]);
+                    active = (Active) findElement(editor.getDefinition(), NamedGraphElement.class, paths[0]);
                 } else if (paths.length == 2) {
-                    Node node = (Node) findElement(designerEditor.getDefinition(), Node.class, paths[0]);
+                    Node node = (Node) findElement(editor.getDefinition(), Node.class, paths[0]);
                     active = node.getTransitionByName(paths[1]);
                 } else {
                     throw new RuntimeException("Invalid tree path: " + parentTreePath);
@@ -121,7 +121,7 @@ public class ValidationErrorsView extends ViewPart implements ISelectionChangedL
                 graphElement = activeActions.get(actionIndex);
             }
             if (graphElement != null) {
-                designerEditor.select(graphElement);
+                editor.select(graphElement);
             }
         } catch (Exception e) {
             // don't display error to user

@@ -19,14 +19,12 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import ru.runa.gpd.editor.graphiti.ExtDiagramEditorInput;
 import ru.runa.gpd.lang.par.ParContentProvider;
 
 /**
  * Be careful using this class (methods can return nulls if no active editor opened).
  */
 public class ProjectFinder {
-
     public static IProject[] getAllProjects() {
         return ResourcesPlugin.getWorkspace().getRoot().getProjects();
     }
@@ -42,9 +40,6 @@ public class ProjectFinder {
         }
         if (editorPart.getEditorInput() instanceof IFileEditorInput) {
             return ((IFileEditorInput) editorPart.getEditorInput()).getFile();
-        }
-        if (editorPart.getEditorInput() instanceof ExtDiagramEditorInput) {
-            return ((ExtDiagramEditorInput) editorPart.getEditorInput()).getFile();
         }
         return null;
     }
@@ -117,8 +112,7 @@ public class ProjectFinder {
             }
         } else if (resource instanceof IFile) {
             IFile file = (IFile) resource;
-            if (ParContentProvider.PROCESS_DEFINITION_FILE_NAME.equals(file.getName())
-                    && !file.getFullPath().toString().startsWith(excludePath.toString())) {
+            if (ParContentProvider.PROCESS_DEFINITION_FILE_NAME.equals(file.getName()) && !file.getFullPath().toString().startsWith(excludePath.toString())) {
                 fileList.add(file);
             }
         }
@@ -131,5 +125,4 @@ public class ProjectFinder {
     public static IFile getProcessDefinitionFile(IFolder folder) {
         return folder.getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
     }
-
 }

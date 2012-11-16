@@ -1,4 +1,4 @@
-package ru.runa.gpd.editor.gef;
+package ru.runa.gpd.editor;
 
 import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.draw2d.MarginBorder;
@@ -35,16 +35,15 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 
 public class OutlineViewer extends ContentOutlinePage implements ISelectionListener {
-    private final DesignerGraphicalEditorPart editor;
+    private final ProcessEditorBase editor;
     private PageBook pageBook;
     private Control treeview;
     private Canvas overview;
     private Thumbnail thumbnail;
-
     private IAction showOverviewAction;
     private IAction showTreeviewAction;
 
-    public OutlineViewer(DesignerGraphicalEditorPart editor) {
+    public OutlineViewer(ProcessEditorBase editor) {
         super(new TreeViewer());
         this.editor = editor;
     }
@@ -65,6 +64,7 @@ public class OutlineViewer extends ContentOutlinePage implements ISelectionListe
         super.dispose();
     }
 
+    @Override
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {
         if (!(selection instanceof IStructuredSelection)) {
             return;
@@ -75,7 +75,9 @@ public class OutlineViewer extends ContentOutlinePage implements ISelectionListe
             return;
         }
         EditPart source = (EditPart) selectedObject;
-        select((GraphElement) source.getModel());
+        if (source.getModel() instanceof GraphElement) { // TODO
+            select((GraphElement) source.getModel());
+        }
     }
 
     public void select(GraphElement element) {
@@ -149,12 +151,13 @@ public class OutlineViewer extends ContentOutlinePage implements ISelectionListe
         getSite().setSelectionProvider(getViewer());
         getViewer().setEditDomain(editor.getEditDomain());
         getViewer().setEditPartFactory(new GPDEditPartFactory());
-        getViewer().setContents(editor.getEditor().getDefinition());
+        getViewer().setContents(editor.getDefinition());
     }
 
     private static class GPDEditPartFactory implements EditPartFactory {
         private boolean firstTime = true;
 
+        @Override
         public EditPart createEditPart(EditPart context, Object model) {
             if (firstTime && model instanceof ProcessDefinition) {
                 firstTime = false;
@@ -181,5 +184,4 @@ public class OutlineViewer extends ContentOutlinePage implements ISelectionListe
     public Control getControl() {
         return pageBook;
     }
-
 }

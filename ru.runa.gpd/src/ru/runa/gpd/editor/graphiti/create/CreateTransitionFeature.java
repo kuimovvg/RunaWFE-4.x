@@ -52,10 +52,11 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
         Node target = getFlowNode(context.getTargetAnchor());
         if (source != null && target != null) {
             // create new business object
-            Transition transition = new Transition();
+            Transition transition = NodeRegistry.getNodeTypeDefinition("transition").createElement();
             transition.setParent(source);
             transition.setTarget(target);
             transition.setName(source.getNextTransitionName());
+            source.addLeavingTransition(transition);
             // add connection for business object
             AddConnectionContext addConnectionContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
             addConnectionContext.setNewObject(transition);

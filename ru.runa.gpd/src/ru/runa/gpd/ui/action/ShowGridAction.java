@@ -3,19 +3,19 @@ package ru.runa.gpd.ui.action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
-import ru.runa.gpd.editor.gef.GEFProcessEditor;
+import ru.runa.gpd.editor.ProcessEditorBase;
 
 public class ShowGridAction extends BaseActionDelegate {
-
-	public void run(IAction action) {
-        GEFProcessEditor editor = getActiveDesignerEditor();
+    @Override
+    public void run(IAction action) {
+        ProcessEditorBase editor = getActiveDesignerEditor();
         editor.getDefinition().setShowGrid(!editor.getDefinition().isShowGrid());
-	}
+    }
 
     @Override
-	public void selectionChanged(IAction action, ISelection selection) {
-        GEFProcessEditor editor = getActiveDesignerEditor();
+    public void selectionChanged(IAction action, ISelection selection) {
+        ProcessEditorBase editor = getActiveDesignerEditor();
         action.setChecked(editor != null && editor.getDefinition().isShowGrid());
         action.setEnabled(editor != null);
-	}
+    }
 }
