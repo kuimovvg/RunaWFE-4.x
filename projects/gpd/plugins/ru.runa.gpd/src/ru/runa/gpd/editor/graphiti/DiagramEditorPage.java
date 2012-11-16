@@ -28,6 +28,8 @@ import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorContextMenuProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
 
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -39,6 +41,12 @@ public class DiagramEditorPage extends DiagramEditor {
 
     public DiagramEditorPage(ProcessEditorBase editor) {
         this.editor = editor;
+    }
+
+    @Override
+    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+        super.init(site, input);
+        //getSite().setSelectionProvider(editor.getSite().getSelectionProvider());
     }
 
     @Override
@@ -79,8 +87,35 @@ public class DiagramEditorPage extends DiagramEditor {
         return new DiagramEditorContextMenuProvider(getGraphicalViewer(), getActionRegistry(), getDiagramTypeProvider());
     }
 
+    //    @Override
+    //    protected void hookGraphicalViewer() {
+    //        getSelectionSynchronizer().addViewer(getGraphicalViewer());
+    //        getSite().setSelectionProvider(new DelegableSelectionProvider(this, getGraphicalViewer()));
+    //    }
+    // translate selection
+    //    @Override
+    //    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+    //        super.selectionChanged(part, selection);
+    //        if (selection instanceof IStructuredSelection) {
+    //            IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+    //            Object selected = structuredSelection.getFirstElement();
+    //            if (!(selected instanceof EditPart)) {
+    //                return;
+    //            }
+    //            if (structuredSelection.size() > 1) {
+    //                return;
+    //            }
+    //            EditPart source = (EditPart) selected;
+    //            if (source.getModel() instanceof PictogramElement) {
+    //                PictogramElement pe = (PictogramElement) source.getModel();
+    //                Object bo = getDiagramTypeProvider().getFeatureProvider().getBusinessObjectForPictogramElement(pe);
+    //                getSite().getSelectionProvider().setSelection(new StructuredSelection(bo));
+    //            }
+    //        }
+    //    }
     @Override
     public boolean isDirty() {
+        //super.isDirty()
         TransactionalEditingDomain editingDomain = getEditingDomain();
         // Check that the editor is not yet disposed
         if (editingDomain != null && editingDomain.getCommandStack() != null) {
