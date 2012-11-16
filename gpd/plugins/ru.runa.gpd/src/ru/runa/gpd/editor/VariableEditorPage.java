@@ -40,9 +40,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ide.IDE;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.editor.gef.GEFProcessEditor;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveVariablesCommand;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.NotificationMessages;
@@ -56,7 +55,6 @@ import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
 import ru.runa.gpd.util.TypeNameMapping;
 
 public class VariableEditorPage extends EditorPartBase {
-
     private TableViewer tableViewer;
     private Button searchButton;
     private Button moveUpButton;
@@ -67,7 +65,7 @@ public class VariableEditorPage extends EditorPartBase {
     private Button copyButton;
     private Button pasteButton;
 
-    public VariableEditorPage(GEFProcessEditor editor) {
+    public VariableEditorPage(ProcessEditorBase editor) {
         super(editor);
     }
 
@@ -80,20 +78,16 @@ public class VariableEditorPage extends EditorPartBase {
     @Override
     public void createPartControl(Composite parent) {
         SashForm sashForm = createToolkit(parent, "DesignerVariableEditorPage.label.variables");
-
         Composite allVariablesComposite = createSection(sashForm, "DesignerVariableEditorPage.label.all_variables");
-
         tableViewer = new TableViewer(allVariablesComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         toolkit.adapt(tableViewer.getControl(), false, false);
         GridData gridData = new GridData(GridData.FILL_BOTH);
         gridData.minimumWidth = 100;
         tableViewer.getControl().setLayoutData(gridData);
-
         tableViewer.setLabelProvider(new TableViewerLabelProvider());
         tableViewer.setContentProvider(new ArrayContentProvider());
         createContextMenu(tableViewer.getControl());
         getSite().setSelectionProvider(tableViewer);
-
         Table table = tableViewer.getTable();
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
@@ -106,7 +100,6 @@ public class VariableEditorPage extends EditorPartBase {
             tableColumn.setText(columnNames[i]);
             tableColumn.setWidth(columnWidths[i]);
         }
-
         Composite buttonsBar = toolkit.createComposite(allVariablesComposite);
         buttonsBar.setLayout(new GridLayout(1, false));
         gridData = new GridData();
@@ -122,16 +115,14 @@ public class VariableEditorPage extends EditorPartBase {
         moveUpButton = addButton(buttonsBar, "button.up", new MoveVariableSelectionListener(true), true);
         moveDownButton = addButton(buttonsBar, "button.down", new MoveVariableSelectionListener(false), true);
         deleteButton = addButton(buttonsBar, "button.delete", new RemoveVariableSelectionListener(), true);
-
         tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
+            @Override
             public void selectionChanged(SelectionChangedEvent event) {
                 updateButtons();
             }
         });
         fillViewer();
         updateButtons();
-
         int dndOperations = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
         Transfer[] transfers = new Transfer[] { TextTransfer.getInstance() };
         tableViewer.addDragSupport(dndOperations, transfers, new MoveVariableDragListener(tableViewer));
@@ -141,7 +132,6 @@ public class VariableEditorPage extends EditorPartBase {
     private void updateButtons() {
         List<?> variables = (List<?>) tableViewer.getInput();
         List<?> selected = ((IStructuredSelection) tableViewer.getSelection()).toList();
-
         enableAction(searchButton, selected.size() == 1);
         enableAction(changeButton, selected.size() == 1);
         enableAction(moveUpButton, selected.size() == 1 && variables.indexOf(selected.get(0)) > 0);
@@ -163,17 +153,16 @@ public class VariableEditorPage extends EditorPartBase {
         tableViewer.setSelection(new StructuredSelection(variable));
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String type = evt.getPropertyName();
         if (NotificationMessages.NODE_CHILDS_CHANGED.equals(type)) {
             fillViewer();
         } else if (evt.getSource() instanceof Variable) {
-            if (NotificationMessages.PROPERTY_NAME.equals(type) || NotificationMessages.PROPERTY_FORMAT.equals(type)
-                    || NotificationMessages.PROPERTY_DEFAULT_VALUE.equals(type)) {
+            if (NotificationMessages.PROPERTY_NAME.equals(type) || NotificationMessages.PROPERTY_FORMAT.equals(type) || NotificationMessages.PROPERTY_DEFAULT_VALUE.equals(type)) {
                 tableViewer.refresh(evt.getSource());
             }
         }
-
     }
 
     private void fillViewer() {
@@ -194,7 +183,6 @@ public class VariableEditorPage extends EditorPartBase {
     }
 
     private class MoveVariableSelectionListener extends SelectionAdapter {
-
         private final boolean up;
 
         public MoveVariableSelectionListener(boolean up) {
@@ -227,17 +215,16 @@ public class VariableEditorPage extends EditorPartBase {
         if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("ConfirmDelete"), formNames.toString())) {
             // remove variable from form validations
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, variable);
-
             // remove variable from definition
             ProcessDefinitionRemoveVariablesCommand command = new ProcessDefinitionRemoveVariablesCommand();
             command.setProcessDefinition(getDefinition());
             command.setVariable(variable);
-            editor.getCommandStack().execute(command);
+            // TODO GEF editor.getCommandStack().execute(command);
+            command.execute();
         }
     }
 
     private class SearchVariableUsageSelectionListener extends SelectionAdapter {
-
         @Override
         public void widgetSelected(SelectionEvent e) {
             try {
@@ -252,12 +239,10 @@ public class VariableEditorPage extends EditorPartBase {
     }
 
     private class RenameVariableSelectionListener extends SelectionAdapter {
-
         @Override
         public void widgetSelected(SelectionEvent e) {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
-
             UpdateVariableNameDialog dialog = new UpdateVariableNameDialog(editor.getDefinition());
             dialog.setName(variable.getName());
             int result = dialog.open();
@@ -265,15 +250,12 @@ public class VariableEditorPage extends EditorPartBase {
                 return;
             }
             String replacement = dialog.getName();
-
             IResource projectRoot = editor.getDefinitionFile().getParent();
-            PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), variable.getName(),
-                    replacement);
+            PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), variable.getName(), replacement);
             boolean useLtk = ref.isUserInteractionNeeded();
             if (useLtk) {
                 RenameRefactoringWizard wizard = new RenameRefactoringWizard(ref);
                 wizard.setDefaultPageTitle(Localization.getString("Refactoring.variable.name"));
-
                 RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
                 try {
                     result = op.run(Display.getCurrent().getActiveShell(), "");
@@ -292,7 +274,6 @@ public class VariableEditorPage extends EditorPartBase {
     }
 
     private class RemoveVariableSelectionListener extends SelectionAdapter {
-
         @SuppressWarnings("unchecked")
         @Override
         public void widgetSelected(SelectionEvent e) {
@@ -309,7 +290,6 @@ public class VariableEditorPage extends EditorPartBase {
     }
 
     private class CreateVariableSelectionListener extends SelectionAdapter {
-
         @Override
         public void widgetSelected(SelectionEvent e) {
             CreateVariableDialog dialog = new CreateVariableDialog(getDefinition(), null);
@@ -320,16 +300,13 @@ public class VariableEditorPage extends EditorPartBase {
                 tableViewer.setSelection(selection);
             }
         }
-
     }
 
     private class ChangeVariableSelectionListener extends SelectionAdapter {
-
         @Override
         public void widgetSelected(SelectionEvent e) {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
-
             CreateVariableDialog dialog = new CreateVariableDialog(getDefinition(), variable);
             if (dialog.open() == IDialogConstants.OK_ID) {
                 variable.setFormat(dialog.getType());
@@ -338,21 +315,17 @@ public class VariableEditorPage extends EditorPartBase {
                 tableViewer.setSelection(selection);
             }
         }
-
     }
 
     private class CopyVariableSelectionListener extends SelectionAdapter {
-
         @Override
         public void widgetSelected(SelectionEvent e) {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Clipboard.getDefault().setContents(selection.toList());
         }
-
     }
 
     private class PasteVariableSelectionListener extends SelectionAdapter {
-
         @SuppressWarnings("unchecked")
         @Override
         public void widgetSelected(SelectionEvent e) {
@@ -367,11 +340,10 @@ public class VariableEditorPage extends EditorPartBase {
                 }
             }
         }
-
     }
 
     private static class TableViewerLabelProvider extends LabelProvider implements ITableLabelProvider {
-
+        @Override
         public String getColumnText(Object element, int index) {
             Variable variable = (Variable) element;
             switch (index) {
@@ -395,14 +367,13 @@ public class VariableEditorPage extends EditorPartBase {
             return variable.getName();
         }
 
+        @Override
         public Image getColumnImage(Object element, int columnIndex) {
             return null;
         }
-
     }
 
     private class MoveVariableDragListener extends DragSourceAdapter {
-
         private final TableViewer viewer;
 
         public MoveVariableDragListener(TableViewer viewer) {
@@ -417,11 +388,9 @@ public class VariableEditorPage extends EditorPartBase {
                 event.data = firstElement.getName();
             }
         }
-
     }
 
     private class MoveVariableDropListener extends ViewerDropAdapter {
-
         public MoveVariableDropListener(Viewer viewer) {
             super(viewer);
         }
@@ -443,6 +412,5 @@ public class VariableEditorPage extends EditorPartBase {
         public boolean validateDrop(Object target, int operation, TransferData transferType) {
             return true;
         }
-
     }
 }

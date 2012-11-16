@@ -10,7 +10,8 @@ public class GroupElement extends GraphElement {
         this.typeDefinition = typeDefinition;
     }
 
-    public NodeTypeDefinition getType() {
+    @Override
+    public NodeTypeDefinition getTypeDefinition() {
         return typeDefinition;
     }
 }

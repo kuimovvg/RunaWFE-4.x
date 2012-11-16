@@ -49,9 +49,11 @@ public abstract class AbstractCreateNodeFeature extends AbstractCreateFeature {
 
     @Override
     public Object[] create(ICreateContext context) {
-        Node startState = getNodeDefinition().createElement();
-        addObjectToContainer(context, startState);
-        return new Object[] { startState };
+        Node element = getNodeDefinition().createElement();
+        element.setParent(getProcessDefinition());
+        element.postCreate();
+        addObjectToContainer(context, element);
+        return new Object[] { element };
     }
 
     @Override
