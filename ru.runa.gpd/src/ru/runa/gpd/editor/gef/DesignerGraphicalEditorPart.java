@@ -33,7 +33,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.commands.ActionHandler;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -59,12 +58,75 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
     private final ProcessEditorBase editor;
     private IStructuredSelection selection;
     private MoveViewportThread moveViewportThread;
-    private DesignerPaletteRoot paletteRoot;
+    private final DesignerPaletteRoot paletteRoot;
 
     public DesignerGraphicalEditorPart(ProcessEditorBase editor) {
         this.editor = editor;
-        DefaultEditDomain defaultEditDomain = new DefaultEditDomain(this);
-        setEditDomain(defaultEditDomain);
+        this.paletteRoot = new DesignerPaletteRoot(editor);
+        setEditDomain(new DefaultEditDomain(this));
+    }
+
+    @Override
+    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+        super.init(site, input);
+        getSite().setSelectionProvider(editor.getSite().getSelectionProvider());
+        getPaletteRoot().refreshActionsVisibility();
+    }
+
+    @Override
+    protected void initializeGraphicalViewer() {
+        super.initializeGraphicalViewer();
+        getGraphicalViewer().setContents(editor.getDefinition());
+    }
+
+    @Override
+    public DesignerPaletteRoot getPaletteRoot() {
+        return paletteRoot;
+    }
+
+    @Override
+    protected void configureGraphicalViewer() {
+        super.configureGraphicalViewer();
+        getEditDomain().addViewer(getGraphicalViewer());
+        getGraphicalViewer().setRootEditPart(new ScalableFreeformRootEditPart() {
+            @Override
+            public DragTracker getDragTracker(Request req) {
+                MarqueeDragTracker tracker = (MarqueeDragTracker) super.getDragTracker(req);
+                tracker.setMarqueeBehavior(MarqueeSelectionTool.BEHAVIOR_NODES_AND_CONNECTIONS);
+                return tracker;
+            }
+        });
+        getGraphicalViewer().setEditPartFactory(new EditPartFactory() {
+            @Override
+            public EditPart createEditPart(EditPart context, Object object) {
+                if (!(object instanceof GraphElement)) {
+                    return null;
+                }
+                GraphElement element = (GraphElement) object;
+                EditPart editPart = element.getTypeDefinition().createGraphicalEditPart(element);
+                return editPart;
+            }
+        });
+        KeyHandler keyHandler = new GraphicalViewerKeyHandler(getGraphicalViewer());
+        keyHandler.setParent(getCommonKeyHandler());
+        getGraphicalViewer().setKeyHandler(keyHandler);
+        getGraphicalViewer().setContextMenu(createContextMenu());
+        getSite().setSelectionProvider(getGraphicalViewer());
+    }
+
+    protected KeyHandler getCommonKeyHandler() {
+        if (commonKeyHandler == null) {
+            commonKeyHandler = new KeyHandler();
+            commonKeyHandler.put(KeyStroke.getPressed(SWT.DEL, 127, 0), getActionRegistry().getAction(ActionFactory.DELETE.getId()));
+            commonKeyHandler.put(KeyStroke.getPressed(SWT.F2, 0), getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT));
+        }
+        return commonKeyHandler;
+    }
+
+    private MenuManager createContextMenu() {
+        MenuManager menuManager = new EditorContextMenuProvider(getGraphicalViewer());
+        getSite().registerContextMenu("ru.runa.gpd.graph.contextmenu", menuManager, getSite().getSelectionProvider());
+        return menuManager;
     }
 
     @SuppressWarnings("unchecked")
@@ -95,29 +157,28 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
         handlerService.activateHandler(actionId, new ActionHandler(getActionRegistry().getAction(actionId)));
     }
 
-    @Override
-    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-        if (editor.equals(getSite().getPage().getActiveEditor())) {
-            updateActions(getSelectionActions());
-        }
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-            Object selected = structuredSelection.getFirstElement();
-            if (!(selected instanceof EditPart)) {
-                return;
-            }
-            this.selection = structuredSelection;
-            if (structuredSelection.size() > 1) {
-                return;
-            }
-            EditPart source = (EditPart) selected;
-            GraphicalEditPart target = (GraphicalEditPart) getGraphicalViewer().getEditPartRegistry().get(source.getModel());
-            if (target != null && target.getFigure().isVisible()) {
-                getGraphicalViewer().select(target);
-            }
-        }
-    }
-
+    //    @Override
+    //    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+    //        if (editor.equals(getSite().getPage().getActiveEditor())) {
+    //            updateActions(getSelectionActions());
+    //        }
+    //        if (selection instanceof IStructuredSelection) {
+    //            IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+    //            Object selected = structuredSelection.getFirstElement();
+    //            if (!(selected instanceof EditPart)) {
+    //                return;
+    //            }
+    //            this.selection = structuredSelection;
+    //            if (structuredSelection.size() > 1) {
+    //                return;
+    //            }
+    //            EditPart source = (EditPart) selected;
+    //            GraphicalEditPart target = (GraphicalEditPart) getGraphicalViewer().getEditPartRegistry().get(source.getModel());
+    //            if (target != null && target.getFigure().isVisible()) {
+    //                getGraphicalViewer().select(target);
+    //            }
+    //        }
+    //    }
     public void select(GraphElement element) {
         GraphicalEditPart target = (GraphicalEditPart) getGraphicalViewer().getEditPartRegistry().get(element);
         if (target == null || !target.getFigure().isVisible()) {
@@ -206,72 +267,6 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
 
     @Override
     public void doSave(IProgressMonitor monitor) {
-    }
-
-    @Override
-    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-        super.init(site, input);
-        getSite().setSelectionProvider(editor.getSite().getSelectionProvider());
-        getPaletteRoot().refreshActionsVisibility();
-    }
-
-    @Override
-    protected void initializeGraphicalViewer() {
-        super.initializeGraphicalViewer();
-        getGraphicalViewer().setContents(editor.getDefinition());
-    }
-
-    @Override
-    public DesignerPaletteRoot getPaletteRoot() {
-        if (paletteRoot == null) {
-            paletteRoot = new DesignerPaletteRoot(editor);
-        }
-        return paletteRoot;
-    }
-
-    @Override
-    protected void configureGraphicalViewer() {
-        super.configureGraphicalViewer();
-        getEditDomain().addViewer(getGraphicalViewer());
-        getGraphicalViewer().setRootEditPart(new ScalableFreeformRootEditPart() {
-            @Override
-            public DragTracker getDragTracker(Request req) {
-                MarqueeDragTracker tracker = (MarqueeDragTracker) super.getDragTracker(req);
-                tracker.setMarqueeBehavior(MarqueeSelectionTool.BEHAVIOR_NODES_AND_CONNECTIONS);
-                return tracker;
-            }
-        });
-        getGraphicalViewer().setEditPartFactory(new EditPartFactory() {
-            @Override
-            public EditPart createEditPart(EditPart context, Object object) {
-                if (!(object instanceof GraphElement)) {
-                    return null;
-                }
-                GraphElement element = (GraphElement) object;
-                EditPart editPart = element.getTypeDefinition().createGraphicalEditPart(element);
-                return editPart;
-            }
-        });
-        KeyHandler keyHandler = new GraphicalViewerKeyHandler(getGraphicalViewer());
-        keyHandler.setParent(getCommonKeyHandler());
-        getGraphicalViewer().setKeyHandler(keyHandler);
-        getGraphicalViewer().setContextMenu(createContextMenu());
-        getSite().setSelectionProvider(getGraphicalViewer());
-    }
-
-    protected KeyHandler getCommonKeyHandler() {
-        if (commonKeyHandler == null) {
-            commonKeyHandler = new KeyHandler();
-            commonKeyHandler.put(KeyStroke.getPressed(SWT.DEL, 127, 0), getActionRegistry().getAction(ActionFactory.DELETE.getId()));
-            commonKeyHandler.put(KeyStroke.getPressed(SWT.F2, 0), getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT));
-        }
-        return commonKeyHandler;
-    }
-
-    private MenuManager createContextMenu() {
-        MenuManager menuManager = new EditorContextMenuProvider(getGraphicalViewer());
-        getSite().registerContextMenu("ru.runa.gpd.graph.contextmenu", menuManager, getSite().getSelectionProvider());
-        return menuManager;
     }
 
     private class EditorContextMenuProvider extends ContextMenuProvider {
