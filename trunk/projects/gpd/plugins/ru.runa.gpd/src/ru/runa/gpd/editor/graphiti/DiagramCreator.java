@@ -41,30 +41,25 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditorInput;
 import org.eclipse.graphiti.ui.internal.services.GraphitiUiInternal;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 
 public class DiagramCreator {
     private final static String TEMPFILE_EXTENSION = "bpmn2d";
     private IFolder diagramFolder;
     private IFile diagramFile;
     private URI uri;
-    private final IFile definitionFile;
-    
+
     public DiagramCreator(IFile definitionFile) {
-        this.definitionFile = definitionFile;
         IPath fullPath = definitionFile.getFullPath();
         IFolder folder = getTempFolder(fullPath);
         diagramFile = getTempFile(fullPath, folder);
     }
 
-    public ExtDiagramEditorInput createDiagram(boolean openEditor, String contentFileName) {
+    public DiagramEditorInput createDiagram(String contentFileName) {
         try {
             if (diagramFolder != null && !diagramFolder.exists()) {
                 diagramFolder.create(false, true, null);
             }
-            final Diagram diagram = Graphiti.getPeCreateService().createDiagram("BPMNdiagram",
-                    diagramFile.getFullPath().removeFileExtension().lastSegment(), true);
+            Diagram diagram = Graphiti.getPeCreateService().createDiagram("BPMNdiagram", diagramFile.getFullPath().removeFileExtension().lastSegment(), true);
             // permanently hide grid on diagram
             //diagram.setGridUnit(0);
             //diagram.setVerticalGridUnit(0);
@@ -89,27 +84,11 @@ public class DiagramCreator {
             }
             createEmfFileForDiagram(uri, diagram);
             String providerId = GraphitiUi.getExtensionManager().getDiagramTypeProviderId(diagram.getDiagramTypeId());
-            ExtDiagramEditorInput editorInput = new ExtDiagramEditorInput(EcoreUtil.getURI(diagram), providerId, definitionFile);
-            if (openEditor) {
-                openEditor(editorInput);
-            }
+            DiagramEditorInput editorInput = new DiagramEditorInput(EcoreUtil.getURI(diagram), providerId);
             return editorInput;
         } catch (CoreException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void openEditor(final DiagramEditorInput editorInput) {
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, GraphitiProcessEditor.ID);
-                } catch (PartInitException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     public IFolder getDiagramFolder() {
@@ -138,8 +117,9 @@ public class DiagramCreator {
         try {
             IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
             String name = fullPath.getFileExtension();
-            if (name == null || name.length() == 0)
+            if (name == null || name.length() == 0) {
                 name = "bpmn";
+            }
             String dir = fullPath.segment(0);
             IFolder folder = root.getProject(dir).getFolder("." + name);
             if (!folder.exists()) {
@@ -200,15 +180,17 @@ public class DiagramCreator {
         int totalSegments = fullPath.segmentCount();
         String ext = fullPath.getFileExtension();
         // sanity check: make sure the fullPath is not the project
-        if (totalSegments <= matchingSegments)
+        if (totalSegments <= matchingSegments) {
             return null;
+        }
         String[] segments = fullPath.segments();
         IPath path = null;
         if (TEMPFILE_EXTENSION.equals(ext)) {
             // this is a tempFile - rebuild the BPMN2 model file name from its path
             ext = fullPath.segment(matchingSegments);
-            if (ext.startsWith("."))
+            if (ext.startsWith(".")) {
                 ext = ext.substring(1);
+            }
             path = project.getFullPath();
             for (int i = matchingSegments + 1; i < segments.length; ++i) {
                 path = path.append(segments[i]);
@@ -255,10 +237,12 @@ public class DiagramCreator {
             IResource[] members = container.members();
             for (IResource res : members) {
                 int type = res.getType();
-                if (type == IResource.FILE || type == IResource.PROJECT || type == IResource.ROOT)
+                if (type == IResource.FILE || type == IResource.PROJECT || type == IResource.ROOT) {
                     return false;
-                if (!isEmptyFolder((IContainer) res))
+                }
+                if (!isEmptyFolder((IContainer) res)) {
                     return false;
+                }
             }
         } catch (CoreException e) {
             return false;

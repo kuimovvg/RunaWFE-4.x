@@ -69,6 +69,9 @@ public class NodeRegistry {
     }
 
     public static NodeTypeDefinition getNodeTypeDefinition(String name) {
+        if (!types.containsKey(name)) {
+            throw new RuntimeException("No type found by name '" + name + "'");
+        }
         return types.get(name);
     }
 

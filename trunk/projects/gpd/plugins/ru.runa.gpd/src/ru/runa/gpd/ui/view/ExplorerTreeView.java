@@ -33,11 +33,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.editor.gef.GEFProcessEditor;
+import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.util.WorkspaceOperations;
 
 public class ExplorerTreeView extends ViewPart implements ISelectionListener {
-
     private TreeViewer viewer;
 
     @Override
@@ -52,9 +51,10 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
         super.dispose();
     }
 
+    @Override
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-        if (part instanceof GEFProcessEditor) {
-            IContainer definitionFolder = ((GEFProcessEditor) part).getDefinitionFile().getParent();
+        if (part instanceof ProcessEditorBase) {
+            IContainer definitionFolder = ((ProcessEditorBase) part).getDefinitionFile().getParent();
             IContainer projectFolder = definitionFolder.getParent().getParent().getParent();
             viewer.expandToLevel(projectFolder, AbstractTreeViewer.ALL_LEVELS);
             viewer.setSelection(new StructuredSelection(definitionFolder), true);
@@ -67,13 +67,12 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
         viewer.setContentProvider(new ResourcesContentProvider());
         viewer.setLabelProvider(new ResourcesLabelProvider());
         viewer.setInput(new Object());
-
         ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
-
+            @Override
             public void resourceChanged(IResourceChangeEvent event) {
                 try {
                     PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
+                        @Override
                         public void run() {
                             if (!viewer.getControl().isDisposed()) {
                                 viewer.refresh();
@@ -85,9 +84,8 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
                 }
             }
         });
-
         viewer.addDoubleClickListener(new IDoubleClickListener() {
-
+            @Override
             public void doubleClick(DoubleClickEvent event) {
                 Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
                 if (element instanceof IFolder) {
@@ -96,18 +94,16 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
             }
         });
         getSite().setSelectionProvider(viewer);
-
         MenuManager menuMgr = new MenuManager();
         Menu menu = menuMgr.createContextMenu(viewer.getControl());
         menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         menuMgr.setRemoveAllWhenShown(true);
         menuMgr.addMenuListener(new IMenuListener() {
-
+            @Override
             public void menuAboutToShow(IMenuManager manager) {
                 ExplorerTreeView.this.fillContextMenu(manager);
             }
         });
-
         viewer.getControl().setMenu(menu);
     }
 
@@ -116,76 +112,62 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
         final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
         final Object selectedObject = selection.getFirstElement();
         final List<IResource> resources = selection.toList();
-
         if (!selection.isEmpty() && selectedObject instanceof IFolder) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.openProcess")) {
-
                 @Override
                 public void run() {
                     WorkspaceOperations.openProcessDefinition((IFolder) selectedObject);
                 }
             });
         }
-
         manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newProject")) {
-
             @Override
             public void run() {
                 WorkspaceOperations.createNewProject();
             }
         });
-
         if (!selection.isEmpty() && selectedObject instanceof IProject) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newProcess")) {
-
                 @Override
                 public void run() {
                     WorkspaceOperations.createNewProcessDefinition(selection);
                 }
             });
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.importProcess")) {
-
                 @Override
                 public void run() {
                     WorkspaceOperations.importProcessDefinition(selection);
                 }
             });
         }
-
         if (!selection.isEmpty() && selectedObject instanceof IFolder) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.copyProcess")) {
-
                 @Override
                 public void run() {
                     WorkspaceOperations.copyProcessDefinition(selection);
                 }
             });
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.exportProcess")) {
-
                 @Override
                 public void run() {
                     WorkspaceOperations.exportProcessDefinition(selection);
                 }
             });
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.renameProcess")) {
-
                 @Override
                 public void run() {
                     WorkspaceOperations.renameProcessDefinition(selection);
                 }
             });
         }
-
         if (!selection.isEmpty()) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.refresh")) {
-
                 @Override
                 public void run() {
                     WorkspaceOperations.refreshResources(resources);
                 }
             });
             manager.add(new Action(Localization.getString("button.delete")) {
-
                 @Override
                 public void run() {
                     WorkspaceOperations.deleteResources(resources);
@@ -197,5 +179,4 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
     @Override
     public void setFocus() {
     }
-
 }

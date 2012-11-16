@@ -33,7 +33,6 @@ import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveSwimlaneCommand;
 import ru.runa.gpd.handler.assign.SwimlaneConfigDialog;
 import ru.runa.gpd.lang.NodeRegistry;
@@ -56,7 +55,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
     private Button copyButton;
     private Button pasteButton;
 
-    public SwimlaneEditorPage(GEFProcessEditor editor) {
+    public SwimlaneEditorPage(ProcessEditorBase editor) {
         super(editor);
     }
 
@@ -201,7 +200,8 @@ public class SwimlaneEditorPage extends EditorPartBase {
             ProcessDefinitionRemoveSwimlaneCommand command = new ProcessDefinitionRemoveSwimlaneCommand();
             command.setProcessDefinition(getDefinition());
             command.setSwimlane(swimlane);
-            editor.getCommandStack().execute(command);
+            // TODO GEF editor.getCommandStack().execute(command);
+            command.execute();
             getDefinition().getSwimlaneGUIConfiguration().removeSwimlanePath(swimlane.getName());
         }
     }

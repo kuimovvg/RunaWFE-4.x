@@ -14,19 +14,20 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.editor.gef.GEFProcessEditor;
+import ru.runa.gpd.editor.ProcessEditorBase;
 
 public class EditorUtils {
-
     public static synchronized void closeEditorIfRequired(IResourceChangeEvent event, final IFile file, final IEditorPart editor) {
         if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
             IResourceDelta delta = event.getDelta().findMember(file.getFullPath());
             if (delta != null) {
                 IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+                    @Override
                     public boolean visit(IResourceDelta delta) {
                         if (delta.getKind() == IResourceDelta.REMOVED) {
                             if (file.equals(delta.getResource())) {
                                 Display.getDefault().asyncExec(new Runnable() {
+                                    @Override
                                     public void run() {
                                         try {
                                             editor.getSite().getPage().closeEditor(editor, false);
@@ -50,7 +51,7 @@ public class EditorUtils {
         }
     }
 
-    public static GEFProcessEditor getOpenedEditor(IFile definitionFile) throws PartInitException {
+    public static ProcessEditorBase getOpenedEditor(IFile definitionFile) throws PartInitException {
         IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (activeWindow == null) {
             return null;
@@ -58,21 +59,22 @@ public class EditorUtils {
         for (IEditorReference editorRef : activeWindow.getActivePage().getEditorReferences()) {
             if (editorRef.getEditorInput() instanceof IFileEditorInput) {
                 IFileEditorInput editorInput = (IFileEditorInput) editorRef.getEditorInput();
-                if (definitionFile.equals(editorInput.getFile()))
-                    return (GEFProcessEditor) editorRef.getEditor(true);
+                if (definitionFile.equals(editorInput.getFile())) {
+                    return (ProcessEditorBase) editorRef.getEditor(true);
+                }
             }
         }
         return null;
     }
 
-    public static GEFProcessEditor getCurrentEditor() {
+    public static ProcessEditorBase getCurrentEditor() {
         IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (activeWindow == null) {
             return null;
         }
         IEditorPart editorPart = activeWindow.getActivePage().getActiveEditor();
-        if (editorPart instanceof GEFProcessEditor) {
-            return (GEFProcessEditor) editorPart;
+        if (editorPart instanceof ProcessEditorBase) {
+            return (ProcessEditorBase) editorPart;
         }
         return null;
     }

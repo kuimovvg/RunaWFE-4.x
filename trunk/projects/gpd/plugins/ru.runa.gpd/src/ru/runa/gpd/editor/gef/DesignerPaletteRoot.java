@@ -12,15 +12,16 @@ import org.eclipse.gef.palette.SelectionToolEntry;
 import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.gef.requests.CreationFactory;
 
+import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.lang.GEFPaletteEntry;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 
 public class DesignerPaletteRoot extends PaletteRoot {
-    private final GEFProcessEditor editor;
+    private final ProcessEditorBase editor;
 
-    public DesignerPaletteRoot(GEFProcessEditor editor) {
+    public DesignerPaletteRoot(ProcessEditorBase editor) {
         this.editor = editor;
         addControls();
     }
