@@ -38,11 +38,11 @@ public class Variable extends NamedGraphElement {
     }
 
     @Override
-    protected boolean canSetNameTo(String name) {
-        if (name.trim().length() == 0) {
-            return false;
+    public void setName(String name) {
+        if (name.trim().length() == 0 || getProcessDefinition().getVariableNames(true).contains(name)) {
+            return;
         }
-        return !getProcessDefinition().getVariableNames(true).contains(name);
+        super.setName(name);
     }
 
     public String getFormat() {

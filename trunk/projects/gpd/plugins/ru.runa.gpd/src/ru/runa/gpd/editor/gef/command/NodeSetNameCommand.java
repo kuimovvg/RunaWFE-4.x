@@ -5,11 +5,8 @@ import org.eclipse.gef.commands.Command;
 import ru.runa.gpd.lang.model.Node;
 
 public class NodeSetNameCommand extends Command {
-
     private String oldName;
-
     private String newName;
-
     private Node node;
 
     public void setName(String name) {
@@ -30,13 +27,7 @@ public class NodeSetNameCommand extends Command {
     }
 
     @Override
-    public boolean canExecute() {
-        return node.canSetNameTo(newName);
-    }
-
-    @Override
     public void undo() {
         node.setName(oldName);
     }
-
 }

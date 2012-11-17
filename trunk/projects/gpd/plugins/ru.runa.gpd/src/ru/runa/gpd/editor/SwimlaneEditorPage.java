@@ -279,8 +279,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
         public void widgetSelected(SelectionEvent e) {
             UpdateSwimlaneNameDialog dialog = new UpdateSwimlaneNameDialog(getDefinition(), true);
             if (dialog.open() == IDialogConstants.OK_ID) {
-                Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition("swimlane").createElement();
-                newSwimlane.setParent(getDefinition());
+                Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition("swimlane").createElement(getDefinition());
                 newSwimlane.setName(dialog.getName());
                 newSwimlane.setDelegationClassName(Swimlane.DELEGATION_CLASS_NAME);
                 getDefinition().addSwimlane(newSwimlane);
@@ -322,8 +321,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
                 boolean add = false;
                 Swimlane newSwimlane = getDefinition().getSwimlaneByName(swimlane.getName());
                 if (newSwimlane == null) {
-                    newSwimlane = NodeRegistry.getNodeTypeDefinition("swimlane").createElement();
-                    newSwimlane.setParent(getDefinition());
+                    newSwimlane = NodeRegistry.getNodeTypeDefinition("swimlane").createElement(getDefinition());
                     newSwimlane.setName(swimlane.getName());
                     add = true;
                 }

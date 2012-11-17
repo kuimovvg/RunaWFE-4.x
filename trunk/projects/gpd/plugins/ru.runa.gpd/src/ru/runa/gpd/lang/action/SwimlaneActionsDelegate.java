@@ -139,8 +139,7 @@ public class SwimlaneActionsDelegate extends BaseActionDelegate implements IMenu
         UpdateSwimlaneNameDialog newSwimlaneDialog = new UpdateSwimlaneNameDialog(currentDefinition, true);
         if (newSwimlaneDialog.open() == IDialogConstants.OK_ID) {
             String swimlaneName = newSwimlaneDialog.getName();
-            Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition("swimlane").createElement();
-            newSwimlane.setParent(currentDefinition);
+            Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition("swimlane").createElement(currentDefinition);
             newSwimlane.setName(swimlaneName);
             newSwimlane.setDelegationClassName(Swimlane.DELEGATION_CLASS_NAME);
             currentDefinition.addSwimlane(newSwimlane);

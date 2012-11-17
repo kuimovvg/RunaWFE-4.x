@@ -23,13 +23,11 @@ public class Swimlane extends NamedGraphElement implements Delegable {
     }
 
     @Override
-    protected boolean canSetNameTo(String name) {
-        ProcessDefinition definition = getProcessDefinition();
-        if (definition == null) {
-            return false;
+    public void setName(String name) {
+        if (getProcessDefinition().getSwimlaneByName(name) != null) {
+            return;
         }
-        Swimlane swimlane = definition.getSwimlaneByName(name);
-        return swimlane == null;
+        super.setName(name);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package ru.runa.gpd.lang.model;
 
 public abstract class NamedGraphElement extends GraphElement {
-
     private String name;
 
     public NamedGraphElement() {
@@ -17,13 +16,9 @@ public abstract class NamedGraphElement extends GraphElement {
 
     public void setName(String name) {
         String old = this.getName();
-        if (name != null && canSetNameTo(name)) {
-            this.name = name;
-            firePropertyChange(PROPERTY_NAME, old, this.getName());
-        }
+        this.name = name;
+        firePropertyChange(PROPERTY_NAME, old, this.getName());
     }
-
-    protected abstract boolean canSetNameTo(String name);
 
     protected boolean canNameBeSetFromProperties() {
         return true;
@@ -50,5 +45,4 @@ public abstract class NamedGraphElement extends GraphElement {
     public String toString() {
         return name;
     }
-
 }

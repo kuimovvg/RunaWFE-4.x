@@ -5,6 +5,7 @@ import org.eclipse.gef.commands.Command;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.Active;
+import ru.runa.gpd.lang.model.GraphElement;
 
 public class AddActionCommand extends Command {
     private Active target;
@@ -13,9 +14,8 @@ public class AddActionCommand extends Command {
 
     @Override
     public void execute() {
-        if (action == null) {
-            action = createAction();
-        }
+        action = NodeRegistry.getNodeTypeDefinition("action").createElement((GraphElement) target);
+        action.setDelegationClassName("");
         target.addAction(action, actionIndex);
     }
 
@@ -34,11 +34,5 @@ public class AddActionCommand extends Command {
 
     public void setActionIndex(int actionIndex) {
         this.actionIndex = actionIndex;
-    }
-
-    private Action createAction() {
-        Action action = NodeRegistry.getNodeTypeDefinition("action").createElement();
-        action.setDelegationClassName("");
-        return action;
     }
 }
