@@ -49,7 +49,7 @@ public abstract class BaseHtmlFormType extends FormType {
                     String op = "create";
                     try {
                         if (!formNode.hasFormValidation()) {
-                            String validationFileName = ValidationUtil.getFormValidationFileName(formNode.getName());
+                            String validationFileName = formNode.getNodeId() + "." + FormNode.VALIDATION_SUFFIX;
                             IFile validationFile = ValidationUtil.createNewValidationUsingForm(formFile, validationFileName, formNode);
                             formNode.setValidationFileName(validationFile.getName());
                         } else {
@@ -99,11 +99,6 @@ public abstract class BaseHtmlFormType extends FormType {
     }
 
     protected abstract Map<String, Integer> getTypeSpecificVariableNames(FormNode formNode, byte[] formBytes) throws Exception;
-
-    @Override
-    public String getFormFileName(IFile definitionFile, FormNode formNode) {
-        return formNode.getName().concat(".").concat(formNode.getFormType());
-    }
 
     @Override
     public Map<String, Integer> getFormVariableNames(IFile formFile, FormNode formNode) throws Exception {
