@@ -15,7 +15,7 @@ import ru.runa.gpd.ui.dialog.ChooseFormTypeDialog;
 import ru.runa.gpd.util.IOUtils;
 
 public class CreateFormDelegate extends BaseActionDelegate {
-
+    @Override
     public void run(IAction action) {
         try {
             FormNode formNode = ((FormNodeEditPart) selectedPart).getModel();
@@ -24,15 +24,16 @@ public class CreateFormDelegate extends BaseActionDelegate {
                 return;
             }
             formNode.setFormType(chooseFormTypeDialog.getType());
-            String fileName = FormTypeProvider.getFormType(formNode.getFormType()).getFormFileName(getDefinitionFile(), formNode);
-            fileName = IOUtils.fixFileName(fileName);
+            if (!FormTypeProvider.getFormType(formNode.getFormType()).isCreationAllowed()) {
+                throw new UnsupportedOperationException("DEPRACATED. Creation does not allowed.");
+            }
+            String fileName = formNode.getNodeId().concat(".").concat(formNode.getFormType());
             IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), fileName);
             if (!file.exists()) {
                 file = IOUtils.createFileSafely(file);
             }
             setNewFormFile(formNode, file.getName());
             formNode.setDirty();
-
             // open form
             OpenFormEditorDelegate openFormEditorDelegate;
             if (ChooseFormTypeDialog.EDITOR_EXTERNAL.equals(chooseFormTypeDialog.getEditorType())) {
@@ -55,5 +56,4 @@ public class CreateFormDelegate extends BaseActionDelegate {
         command.setFileName(fileName);
         executeCommand(command);
     }
-
 }

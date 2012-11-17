@@ -9,19 +9,13 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.StartState;
 
 public class NodeCreateCommand extends Command {
-
     private Node node;
-
     private Rectangle constraint;
-
     protected ProcessDefinition definition;
 
     @Override
     public void execute() {
         node.setConstraint(constraint);
-        if (node.getName() == null) {
-            node.setName(definition.getNextNodeName(node));
-        }
         definition.addChild(node);
     }
 

@@ -12,6 +12,7 @@ import ru.runa.gpd.editor.gef.figure.GridSupportLayer;
 import ru.runa.gpd.editor.gef.figure.NodeFigure;
 import ru.runa.gpd.editor.gef.figure.TransitionFigure;
 import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.ltk.VariableRenameProvider;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
@@ -88,9 +89,13 @@ public class NodeTypeDefinition {
         }
     }
 
-    public <T extends GraphElement> T createElement() {
+    public <T extends GraphElement> T createElement(GraphElement parent) {
         GraphElement element = createExecutableExtension(configElement, "model");
         element.setTypeName(name);
+        element.setParent(parent);
+        if (element instanceof NamedGraphElement) {
+            ((NamedGraphElement) element).setName(label);
+        }
         return (T) element;
     }
 

@@ -20,8 +20,6 @@ import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.Language;
-import ru.runa.gpd.lang.NodeRegistry;
-import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.orgfunction.SwimlaneGUIConfiguration;
 import ru.runa.gpd.property.DefaultTaskDueDatePropertyDescriptor;
 import ru.runa.gpd.property.StartImagePropertyDescriptor;
@@ -29,6 +27,9 @@ import ru.runa.gpd.ui.view.ValidationErrorsView;
 import ru.runa.gpd.util.TimerDuration;
 import ru.runa.wfe.var.format.StringFormat;
 
+import com.google.common.base.Objects;
+
+@SuppressWarnings("unchecked")
 public class ProcessDefinition extends NamedGraphElement implements Active, Describable, ITimeOut {
     private Language language;
     private Dimension dimension;
@@ -40,6 +41,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private TimerDuration timeOutDuration;
     private TimerAction timeOutAction = null;
     private boolean invalid;
+    private int nextNodeId;
 
     public String getDefaultTaskDuedate() {
         return defaultTaskDuration.getDuration();
@@ -69,6 +71,26 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
 
     public boolean isInvalid() {
         return invalid;
+    }
+
+    @Override
+    public void addChild(GraphElement child, int index) {
+        super.addChild(child, index);
+        if (child instanceof Node) {
+            try {
+                String nodeId = ((Node) child).getNodeId();
+                if (nodeId == null) {
+                    ((Node) child).setNodeId(String.valueOf(nextNodeId));
+                    nextNodeId++;
+                } else {
+                    int nodeIdInt = Integer.parseInt(((Node) child).getNodeId());
+                    if (nodeIdInt > nextNodeId) {
+                        nextNodeId = nodeIdInt + 1;
+                    }
+                }
+            } catch (NumberFormatException e) {
+            }
+        }
     }
 
     public void setShowActions(boolean showActions) {
@@ -254,21 +276,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         }
     }
 
-    public String getNextNodeName(Node node) {
-        NodeTypeDefinition etd = NodeRegistry.getNodeTypeDefinition(node.getTypeName());
-        if (node instanceof StartState || node instanceof EndState) {
-            return etd.getLabel();
-        }
-        int runner = 1;
-        while (true) {
-            String candidate = etd.getLabel() + runner;
-            if (getNodeByName(candidate) == null) {
-                return candidate;
-            }
-            runner++;
-        }
-    }
-
     public List<String> getVariableNames(boolean includeSwimlanes) {
         List<String> names = new ArrayList<String>();
         for (Variable variable : getVariablesList()) {
@@ -371,29 +378,30 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         firePropertyChange(ELEMENT_SWIMLANE_REMOVED, null, swimlane);
     }
 
-    @Override
-    protected boolean canSetNameTo(String name) {
-        return true;
-    }
-
-    public Node getNodeByName(String name) {
+    public <T extends Node> T getNodeById(String nodeId) {
         List<Node> nodes = getNodes();
         for (Node node : nodes) {
-            if (name.equals(node.getName())) {
-                return node;
+            if (Objects.equal(nodeId, node.getNodeId())) {
+                return (T) node;
             }
         }
         return null;
     }
 
-    public Node getNodeByNameNotNull(String name) {
-        Node node = getNodeByName(name);
+    public <T extends Node> T getNodeByIdNotNull(String nodeId) {
+        T node = ((T) getNodeById(nodeId));
         if (node == null) {
-            List<String> nodeNames = new ArrayList<String>();
+            // back compatibility: search by name
+            //            for (Node testNode : getNodes()) {
+            //                if (Objects.equal(nodeId, testNode.getName())) {
+            //                    return (T) node;
+            //                }
+            //            }
+            List<String> nodeIds = new ArrayList<String>();
             for (Node childNode : getChildren(Node.class)) {
-                nodeNames.add(childNode.getName());
+                nodeIds.add(childNode.getNodeId());
             }
-            throw new RuntimeException("Node not found in process definition: " + name + ", all nodes: " + nodeNames);
+            throw new RuntimeException("Node not found in process definition: " + nodeId + ", all nodes: " + nodeIds);
         }
         return node;
     }
@@ -408,8 +416,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         list.add(new StartImagePropertyDescriptor("startProcessImage", Localization.getString("ProcessDefinition.property.startImage")));
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
         list.add(new DefaultTaskDueDatePropertyDescriptor(PROPERTY_DEFAULT_TASK_DURATION, this));
-        //list.add(new TimeOutDurationPropertyDescriptor(PROPERTY_TIMEOUT_DURATION, this));
-        //list.add(new TimeOutActionPropertyDescriptor(PROPERTY_TIMEOUT_ACTION, Messages.getString("TimeOut.action"), this));
         return list;
     }
 

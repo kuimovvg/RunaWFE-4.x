@@ -13,7 +13,6 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.ActionImpl;
-import ru.runa.gpd.lang.model.ActionNode;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Describable;
@@ -23,7 +22,6 @@ import ru.runa.gpd.lang.model.Fork;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.Join;
-import ru.runa.gpd.lang.model.MailNode;
 import ru.runa.gpd.lang.model.MultiInstance;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Node;
@@ -46,43 +44,8 @@ import ru.runa.gpd.util.XmlUtil;
 
 @SuppressWarnings("unchecked")
 public class JpdlSerializer extends ProcessSerializer {
-    private static final String TIMER_GLOBAL_NAME = "__GLOBAL";
-    private static final String TIMER_ESCALATION = "__ESCALATION";
-    protected static final String ROOT_ELEMENT = "process-definition";
-    private static boolean validationEnabled = true;
-
-    public static void setValidationEnabled(boolean validationEnabled) {
-        JpdlSerializer.validationEnabled = validationEnabled;
-    }
-
-    @Override
-    public Document getInitialProcessDefinitionDocument(String processName) {
-        Document document = XmlUtil.createDocument(ROOT_ELEMENT);
-        document.getRootElement().addAttribute("name", processName);
-        document.getRootElement().addAttribute("lang", Language.JPDL.name());
-        return document;
-    }
-
-    @Override
-    public void validateProcessDefinitionXML(IFile file) {
-        if (!validationEnabled) {
-            return;
-        }
-        //        try {
-        //            XmlUtil.parseWithXSDValidation(getClass().getResourceAsStream("/schema/" + XSD_FILE_NAME));
-        //        } catch (Exception e) {
-        //            throw new RuntimeException(e);
-        //        } TODO
-    }
-
-    @Override
-    public boolean isSupported(Document document) {
-        if (ROOT_ELEMENT.equals(document.getRootElement().getName())) {
-            return Language.JPDL.name().equals(document.getRootElement().attributeValue("lang"));
-        }
-        return false;
-    }
-
+    private static final String ROOT_ELEMENT = "process-definition";
+    private static final String INVALID_ATTR = "invalid";
     private static final String ACCESS_ATTR = "access";
     private static final String END_STATE_NODE = "end-state";
     private static final String VARIABLE_NODE = "variable";
@@ -100,12 +63,10 @@ public class JpdlSerializer extends ProcessSerializer {
     private static final String ASSIGNMENT_NODE = "assignment";
     private static final String TASK_STATE_NODE = "task-node";
     private static final String TASK_NODE = "task";
-    private static final String ACTION_NODE_NODE = "node";
-    private static final String MAIL_NODE = "mail-node";
+    private static final String WAIT_STATE_NODE = "wait-state";
     private static final String START_STATE_NODE = "start-state";
     private static final String SWIMLANE_NODE = "swimlane";
     private static final String REASSIGN_ATTR = "reassign";
-    private static final String END_TASKS_ATTR = "end-tasks";
     private static final String TO_ATTR = "to";
     private static final String CLASS_ATTR = "class";
     private static final String ACTION_NODE = "action";
@@ -114,17 +75,47 @@ public class JpdlSerializer extends ProcessSerializer {
     private static final String HANDLER_NODE = "handler";
     private static final String DESCRIPTION_NODE = "description";
     private static final String NAME_ATTR = "name";
+    private static final String TYPE_ATTR = "type";
+    private static final String ID_ATTR = "id";
+    private static final String SWIMLANE_ATTR = "swimlane";
+    private static final String TRANSITION_ATTR = "transition";
     private static final String SEND_MESSAGE_NODE = "send-message";
     private static final String RECEIVE_MESSAGE_NODE = "receive-message";
+    private static final String TIMER_GLOBAL_NAME = "__GLOBAL";
+    private static final String TIMER_ESCALATION = "__ESCALATION";
+
+    @Override
+    public boolean isSupported(Document document) {
+        return ROOT_ELEMENT.equals(document.getRootElement().getName());
+    }
+
+    @Override
+    public Document getInitialProcessDefinitionDocument(String processName) {
+        Document document = XmlUtil.createDocument(ROOT_ELEMENT);
+        document.getRootElement().addAttribute(NAME_ATTR, processName);
+        return document;
+    }
+
+    @Override
+    public void validateProcessDefinitionXML(IFile file) {
+        //        try {
+        //            XmlUtil.parseWithXSDValidation(getClass().getResourceAsStream("/schema/" + XSD_FILE_NAME));
+        //        } catch (Exception e) {
+        //            throw new RuntimeException(e);
+        //        } TODO
+    }
 
     private <T extends GraphElement> T create(Element node, GraphElement parent) {
         return create(node, parent, node.getName());
     }
 
     private <T extends GraphElement> T create(Element node, GraphElement parent, String typeName) {
-        GraphElement element = NodeRegistry.getNodeTypeDefinition(typeName).createElement();
+        GraphElement element = NodeRegistry.getNodeTypeDefinition(typeName).createElement(parent);
         if (parent != null) {
             parent.addChild(element);
+        }
+        if (element instanceof Node) {
+            ((Node) element).setNodeId(node.attributeValue(ID_ATTR));
         }
         if (element instanceof NamedGraphElement) {
             ((NamedGraphElement) element).setName(node.attributeValue(NAME_ATTR));
@@ -143,8 +134,6 @@ public class JpdlSerializer extends ProcessSerializer {
                 String eventType;
                 if (element instanceof Transition) {
                     eventType = Event.TRANSITION;
-                } else if (element instanceof ActionNode) {
-                    eventType = Event.NODE_ACTION;
                 } else {
                     throw new RuntimeException("Unexpected action in XML, context of " + element);
                 }
@@ -164,7 +153,7 @@ public class JpdlSerializer extends ProcessSerializer {
     }
 
     private void parseAction(Element node, GraphElement parent, String eventType) {
-        ActionImpl action = NodeRegistry.getNodeTypeDefinition(ACTION_NODE).createElement();
+        ActionImpl action = NodeRegistry.getNodeTypeDefinition(ACTION_NODE).createElement(parent);
         action.setDelegationClassName(node.attributeValue(CLASS_ATTR));
         action.setDelegationConfiguration(node.getTextTrim());
         parent.addAction(action, -1);
@@ -193,25 +182,9 @@ public class JpdlSerializer extends ProcessSerializer {
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
                 if (TASK_NODE.equals(stateNodeChild.getName())) {
-                    String swimlaneName = stateNodeChild.attributeValue(SWIMLANE_NODE);
+                    String swimlaneName = stateNodeChild.attributeValue(SWIMLANE_ATTR);
                     Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
                     startState.setSwimlane(swimlane);
-                }
-            }
-        }
-        List<Element> actionNodeNodes = root.elements(ACTION_NODE_NODE);
-        for (Element node : actionNodeNodes) {
-            ActionNode actionNode = create(node, definition);
-            List<Element> aaa = node.elements();
-            for (Element a : aaa) {
-                if (EVENT_NODE.equals(a.getName())) {
-                    String eventType = a.attributeValue("type");
-                    List<Element> actionNodes = a.elements();
-                    for (Element aa : actionNodes) {
-                        if (ACTION_NODE.equals(aa.getName())) {
-                            parseAction(aa, actionNode, eventType);
-                        }
-                    }
                 }
             }
         }
@@ -231,14 +204,14 @@ public class JpdlSerializer extends ProcessSerializer {
             }
             GraphElement state;
             if (transitionsCount == 1 && hasTimeOutTransition) {
-                state = create(node, definition, "waitState");
+                state = create(node, definition, WAIT_STATE_NODE);
             } else {
                 state = create(node, definition);
             }
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
                 if (TASK_NODE.equals(stateNodeChild.getName())) {
-                    String swimlaneName = stateNodeChild.attributeValue(SWIMLANE_NODE);
+                    String swimlaneName = stateNodeChild.attributeValue(SWIMLANE_ATTR);
                     if (swimlaneName != null && state instanceof SwimlanedNode) {
                         Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
                         ((SwimlanedNode) state).setSwimlane(swimlane);
@@ -255,7 +228,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     List<Element> aaa = stateNodeChild.elements();
                     for (Element a : aaa) {
                         if (EVENT_NODE.equals(a.getName())) {
-                            String eventType = a.attributeValue("type");
+                            String eventType = a.attributeValue(TYPE_ATTR);
                             List<Element> actionNodes = a.elements();
                             for (Element aa : actionNodes) {
                                 if (ACTION_NODE.equals(aa.getName())) {
@@ -305,20 +278,6 @@ public class JpdlSerializer extends ProcessSerializer {
                             }
                         }
                     }
-                }
-            }
-        }
-        List<Element> mailNodes = root.elements(MAIL_NODE);
-        for (Element node : mailNodes) {
-            MailNode mailNode = create(node, definition);
-            mailNode.setRecipient(node.attributeValue("to"));
-            List<Element> mailNodeChilds = node.elements();
-            for (Element mailNodeChild : mailNodeChilds) {
-                if ("body".equals(mailNodeChild.getName())) {
-                    mailNode.setMailBody(mailNodeChild.getTextTrim());
-                }
-                if ("subject".equals(mailNodeChild.getName())) {
-                    mailNode.setSubject(mailNodeChild.getTextTrim());
                 }
             }
         }
@@ -424,8 +383,8 @@ public class JpdlSerializer extends ProcessSerializer {
         }
         List<Transition> tmpTransitions = new ArrayList<Transition>(TRANSITION_TARGETS.keySet());
         for (Transition transition : tmpTransitions) {
-            String targetName = TRANSITION_TARGETS.remove(transition);
-            ru.runa.gpd.lang.model.Node target = definition.getNodeByNameNotNull(targetName);
+            String targetNodeId = TRANSITION_TARGETS.remove(transition);
+            Node target = definition.getNodeByIdNotNull(targetNodeId);
             transition.setTarget(target);
         }
         return definition;
@@ -439,7 +398,7 @@ public class JpdlSerializer extends ProcessSerializer {
             root.addAttribute(DEFAULT_DUEDATE_ATTR, definition.getDefaultTaskDuedate());
         }
         if (definition.isInvalid()) {
-            root.addAttribute("invalid", String.valueOf(definition.isInvalid()));
+            root.addAttribute(INVALID_ATTR, String.valueOf(definition.isInvalid()));
         }
         if (definition.getDescription() != null && definition.getDescription().length() > 0) {
             Element desc = root.addElement(DESCRIPTION_NODE);
@@ -454,16 +413,6 @@ public class JpdlSerializer extends ProcessSerializer {
         if (startState != null) {
             Element startStateElement = writeTaskState(root, startState);
             writeTransitions(startStateElement, startState);
-        }
-        List<ActionNode> actionNodeNodes = definition.getChildren(ActionNode.class);
-        for (ActionNode actionNode : actionNodeNodes) {
-            Element actionNodeElement = writeNode(root, actionNode, null);
-            for (Action action : actionNode.getActions()) {
-                ActionImpl actionImpl = (ActionImpl) action;
-                if (!Event.NODE_ACTION.equals(actionImpl.getEventType())) {
-                    writeEvent(actionNodeElement, new Event(actionImpl.getEventType()), actionImpl);
-                }
-            }
         }
         List<Decision> decisions = definition.getChildren(Decision.class);
         for (Decision decision : decisions) {
@@ -483,12 +432,10 @@ public class JpdlSerializer extends ProcessSerializer {
                     }
                     writeDelegation(timerElement, ACTION_NODE, state.getTimerAction());
                 } else {
-                    setAttribute(timerElement, TRANSITION_NODE, PluginConstants.TIMER_TRANSITION_NAME);
+                    setAttribute(timerElement, TRANSITION_ATTR, PluginConstants.TIMER_TRANSITION_NAME);
                 }
             }
             if (state.isUseEscalation()) {
-                //boolean escalationEnabled = DesignerPlugin.getPrefBoolean(PrefConstants.P_TASKS_TIMEOUT_ENABLED);
-                //if (escalationEnabled) {
                 String timerName = TIMER_ESCALATION;
                 TimerDuration escalationDuration = state.getEscalationTime();
                 Element timerElement = stateElement.addElement(TIMER_NODE);
@@ -503,7 +450,6 @@ public class JpdlSerializer extends ProcessSerializer {
                     }
                     writeDelegation(timerElement, ACTION_NODE, escalationAction);
                 }
-                //}
             }
             writeTransitions(stateElement, state);
         }
@@ -511,16 +457,6 @@ public class JpdlSerializer extends ProcessSerializer {
         for (WaitState waitState : waitStates) {
             Element stateElement = writeWaitState(root, waitState);
             writeTransitions(stateElement, waitState);
-        }
-        List<MailNode> mailNodes = definition.getChildren(MailNode.class);
-        for (MailNode mailNode : mailNodes) {
-            Element nodeElement = writeNode(root, mailNode, null);
-            setAttribute(nodeElement, "to", mailNode.getRecipient());
-            writeTransitions(nodeElement, mailNode);
-            Element subject = nodeElement.addElement("subject");
-            setNodeValue(subject, mailNode.getSubject());
-            Element body = nodeElement.addElement("body");
-            setNodeValue(body, mailNode.getMailBody());
         }
         List<Fork> forks = definition.getChildren(Fork.class);
         for (ru.runa.gpd.lang.model.Node node : forks) {
@@ -535,7 +471,6 @@ public class JpdlSerializer extends ProcessSerializer {
             Element processStateElement = writeNode(root, subprocess, null);
             Element subProcessElement = processStateElement.addElement(SUB_PROCESS_NODE);
             setAttribute(subProcessElement, NAME_ATTR, subprocess.getSubProcessName());
-            setAttribute(subProcessElement, "binding", "late");
             for (VariableMapping variable : subprocess.getVariablesList()) {
                 Element variableElement = processStateElement.addElement(VARIABLE_NODE);
                 setAttribute(variableElement, NAME_ATTR, variable.getProcessVariable());
@@ -571,7 +506,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     }
                     writeDelegation(timerElement, ACTION_NODE, messageNode.getTimerAction());
                 } else {
-                    setAttribute(timerElement, TRANSITION_NODE, PluginConstants.TIMER_TRANSITION_NAME);
+                    setAttribute(timerElement, TRANSITION_ATTR, PluginConstants.TIMER_TRANSITION_NAME);
                 }
             }
         }
@@ -595,16 +530,13 @@ public class JpdlSerializer extends ProcessSerializer {
         Element taskElement = nodeElement.addElement(TASK_NODE);
         setAttribute(taskElement, DUEDATE_ATTR, state.getTimeOutDueDate());
         setAttribute(taskElement, NAME_ATTR, state.getName());
-        setAttribute(taskElement, SWIMLANE_NODE, state.getSwimlaneName());
+        setAttribute(taskElement, SWIMLANE_ATTR, state.getSwimlaneName());
         if (state instanceof State && ((State) state).isReassignmentEnabled()) {
             setAttribute(taskElement, REASSIGN_ATTR, "true");
         }
         for (Action action : state.getActions()) {
             ActionImpl actionImpl = (ActionImpl) action;
             writeEvent(taskElement, new Event(actionImpl.getEventType()), actionImpl);
-        }
-        if (state instanceof ITimed && ((ITimed) state).timerExist()) {
-            setAttribute(nodeElement, END_TASKS_ATTR, "true");
         }
         return nodeElement;
     }
@@ -613,7 +545,7 @@ public class JpdlSerializer extends ProcessSerializer {
         Element nodeElement = writeElement(parent, state);
         Element taskElement = nodeElement.addElement(TASK_NODE);
         setAttribute(taskElement, NAME_ATTR, state.getName());
-        setAttribute(taskElement, SWIMLANE_NODE, state.getSwimlaneName());
+        setAttribute(taskElement, SWIMLANE_ATTR, state.getSwimlaneName());
         if (state instanceof State && ((State) state).isReassignmentEnabled()) {
             setAttribute(taskElement, REASSIGN_ATTR, "true");
         }
@@ -621,17 +553,11 @@ public class JpdlSerializer extends ProcessSerializer {
             ActionImpl actionImpl = (ActionImpl) action;
             writeEvent(taskElement, new Event(actionImpl.getEventType()), actionImpl);
         }
-        if (state instanceof ITimed && ((ITimed) state).timerExist()) {
-            setAttribute(nodeElement, END_TASKS_ATTR, "true");
-        }
         return nodeElement;
     }
 
     private Element writeWaitState(Element parent, WaitState state) {
-        Element nodeElement = writeElement(parent, state, "task-node");
-        Element taskElement = nodeElement.addElement(TASK_NODE);
-        setAttribute(taskElement, NAME_ATTR, state.getName());
-        setAttribute(nodeElement, END_TASKS_ATTR, "true");
+        Element nodeElement = writeElement(parent, state, WAIT_STATE_NODE);
         Element timerElement = nodeElement.addElement(TIMER_NODE);
         setAttribute(timerElement, DUEDATE_ATTR, state.getDueDate());
         if (state.getTimerAction() != null) {
@@ -640,7 +566,7 @@ public class JpdlSerializer extends ProcessSerializer {
             }
             writeDelegation(timerElement, ACTION_NODE, state.getTimerAction());
         }
-        setAttribute(timerElement, TRANSITION_NODE, PluginConstants.TIMER_TRANSITION_NAME);
+        setAttribute(timerElement, TRANSITION_ATTR, PluginConstants.TIMER_TRANSITION_NAME);
         return nodeElement;
     }
 
@@ -650,14 +576,11 @@ public class JpdlSerializer extends ProcessSerializer {
 
     private Element writeElement(Element parent, GraphElement element, String typeName) {
         Element result = parent.addElement(typeName);
+        if (element instanceof Node) {
+            setAttribute(result, ID_ATTR, ((Node) element).getNodeId());
+        }
         if (element instanceof NamedGraphElement) {
             setAttribute(result, NAME_ATTR, ((NamedGraphElement) element).getName());
-        }
-        if (element instanceof ActionNode) {
-            List<Action> nodeActions = ((ActionNode) element).getNodeActions();
-            for (Action nodeAction : nodeActions) {
-                writeDelegation(result, ACTION_NODE, nodeAction);
-            }
         }
         if (element instanceof Describable) {
             String description = ((Describable) element).getDescription();
@@ -673,7 +596,7 @@ public class JpdlSerializer extends ProcessSerializer {
         List<Transition> transitions = node.getLeavingTransitions();
         for (Transition transition : transitions) {
             Element transitionElement = writeElement(parent, transition);
-            transitionElement.addAttribute(TO_ATTR, transition.getTargetName());
+            transitionElement.addAttribute(TO_ATTR, transition.getTarget().getNodeId());
             for (Action action : transition.getActions()) {
                 writeDelegation(transitionElement, ACTION_NODE, action);
             }
@@ -682,14 +605,13 @@ public class JpdlSerializer extends ProcessSerializer {
 
     private void writeEvent(Element parent, Event event, ActionImpl action) {
         Element eventElement = writeElement(parent, event, EVENT_NODE);
-        setAttribute(eventElement, "type", event.getType());
+        setAttribute(eventElement, TYPE_ATTR, event.getType());
         writeDelegation(eventElement, ACTION_NODE, action);
     }
 
     private void writeDelegation(Element parent, String elementName, Delegable delegable) {
         Element delegationElement = parent.addElement(elementName);
         setAttribute(delegationElement, CLASS_ATTR, delegable.getDelegationClassName());
-        setAttribute(delegationElement, "config-type", "configuration-property");
         setNodeValue(delegationElement, delegable.getDelegationConfiguration());
     }
 }

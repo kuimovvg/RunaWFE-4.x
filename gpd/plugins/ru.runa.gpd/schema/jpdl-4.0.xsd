@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xs:schema xmlns=          "urn:jbpm.org:jpdl-3.2" 
-           targetNamespace="urn:jbpm.org:jpdl-3.2" 
+<xs:schema xmlns="urn:runa.ru:jpdl-4.0" 
+           targetNamespace="urn:runa.ru:jpdl-4.0" 
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="qualified">
 
@@ -47,6 +47,7 @@
         <xs:element ref="event"/>
         <xs:element ref="exception-handler"/>
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
   </xs:element>
@@ -58,6 +59,7 @@
         <xs:element ref="event"/>
         <xs:element ref="exception-handler"/>
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
@@ -71,6 +73,7 @@
         <xs:element ref="exception-handler"/>
         <xs:element ref="transition"/>
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="expression" type="xs:string" />
       <xs:attribute name="async" type="xs:string" default="false" />
@@ -83,6 +86,7 @@
         <xs:element ref="script" />
         <xs:group ref="node-content-elements" />
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="async" type="xs:string" default="false" />
     </xs:complexType>
@@ -93,6 +97,7 @@
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:group ref="node-content-elements" />
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="async" type="xs:string" default="false" />
     </xs:complexType>
@@ -108,6 +113,7 @@
           <xs:group ref="node-content-elements" />
         </xs:choice>
       </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="async" type="xs:string" default="false" />
     </xs:complexType>
@@ -126,6 +132,7 @@
         <xs:element ref="variable" />
         <xs:group ref="node-content-elements" />
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="async" type="xs:string" default="false" />
     </xs:complexType>
@@ -144,6 +151,7 @@
         <xs:element ref="variable" />
         <xs:group ref="node-content-elements" />
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="async" type="xs:string" default="false" />
     </xs:complexType>
@@ -155,6 +163,7 @@
         <xs:element ref="variable" />
         <xs:group ref="node-content-elements" />
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
@@ -165,6 +174,7 @@
         <xs:element ref="variable" />
         <xs:group ref="node-content-elements" />
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
@@ -174,6 +184,7 @@
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:group ref="node-content-elements"/>
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="async" type="xs:string" default="false" />
     </xs:complexType>
@@ -185,6 +196,7 @@
         <xs:group ref="node-elements"/>
         <xs:group ref="node-content-elements"/>
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="async" type="xs:string" default="false" />
     </xs:complexType>
@@ -196,6 +208,7 @@
         <xs:element ref="task" />
         <xs:group ref="node-content-elements" />
       </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="create-tasks" type="booleanType" default="true" />
       <xs:attribute name="end-tasks" type="booleanType" default="false" />
@@ -214,24 +227,6 @@
       <xs:attribute name="async" type="xs:string" default="false" />
     </xs:complexType>
   </xs:element>
-
-  <xs:element name="mail-node">
-    <xs:complexType>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element ref="subject" />
-        <xs:element ref="text" />
-        <xs:group ref="node-content-elements"/>
-      </xs:choice>
-      <xs:attribute name="name" type="xs:string" use="required"/>
-      <xs:attribute name="async" type="xs:string" default="false" />
-      <xs:attribute name="template" type="xs:string"/>
-      <xs:attribute name="actors" type="xs:string"/>
-      <xs:attribute name="to" type="xs:string"/>
-      <xs:attribute name="subject" type="xs:string"/>
-      <xs:attribute name="text" type="xs:string"/>
-    </xs:complexType>
-  </xs:element>
-
 
   <!--  TRANSITION -->
   <!--  ########## -->
@@ -301,28 +296,12 @@
   </xs:element>
 
   <xs:element name="script">
-    <xs:complexType  mixed="true">
+    <xs:complexType mixed="true">
       <xs:sequence>
         <xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" />
       <xs:attribute name="accept-propagated-events" type="booleanType" default="true" />
-    </xs:complexType>
-  </xs:element>
-
-  <xs:element name="mail">
-    <xs:complexType>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element ref="subject" />
-        <xs:element ref="text" />
-      </xs:choice>
-      <xs:attribute name="name" type="xs:string" use="required"/>
-      <xs:attribute name="async" type="xs:string" default="false" />
-      <xs:attribute name="template" type="xs:string"/>
-      <xs:attribute name="actors" type="xs:string"/>
-      <xs:attribute name="to" type="xs:string"/>
-      <xs:attribute name="subject" type="xs:string"/>
-      <xs:attribute name="text" type="xs:string"/>
     </xs:complexType>
   </xs:element>
 
@@ -400,7 +379,6 @@
       <xs:attribute name="duedate" type="xs:string" />
       <xs:attribute name="swimlane" type="xs:string" />
       <xs:attribute name="reassign" type="booleanType" default="false" />
-      <xs:attribute name="priority" type="priorityType" default="normal" />
       <xs:attribute name="notify" type="booleanType" default="false"/>
     </xs:complexType>
   </xs:element>
@@ -445,14 +423,6 @@
     </xs:complexType>
   </xs:element>
 
-  <!--  MAIL  -->
-  <!--  #### -->
-  <xs:element name="to" type="xs:string"/>
-  <xs:element name="recipients" type="xs:string"/>
-  <xs:element name="subject" type="xs:string"/>
-  <xs:element name="text" type="xs:string"/>
-  <xs:element name="template" type="xs:string"/>
-
   <!-- TYPES AND GROUPS -->
   <!-- ################ -->
 
@@ -463,55 +433,15 @@
       <xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="class" type="xs:string" />
-    <xs:attribute name="config-type" default="field">
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="field"/>
-          <xs:enumeration value="bean"/>
-          <xs:enumeration value="constructor"/>
-          <xs:enumeration value="configuration-property"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
   </xs:complexType>
-
-  <xs:simpleType name="configType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="field"/>
-      <xs:enumeration value="bean"/>
-      <xs:enumeration value="constructor"/>
-      <xs:enumeration value="configuration-property"/>
-    </xs:restriction>
-  </xs:simpleType>
 
   <xs:simpleType name="booleanType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="yes"/>
-      <xs:enumeration value="no"/>
       <xs:enumeration value="true"/>
       <xs:enumeration value="false"/>
-      <xs:enumeration value="on"/>
-      <xs:enumeration value="off"/>
     </xs:restriction>
   </xs:simpleType>
   
-  <xs:simpleType name="priorityType">
-    <xs:union>
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="highest"/>
-          <xs:enumeration value="high"/>
-          <xs:enumeration value="normal"/>
-          <xs:enumeration value="low"/>
-          <xs:enumeration value="lowest"/>
-        </xs:restriction>
-      </xs:simpleType>
-      <xs:simpleType>
-        <xs:restriction base="xs:int"/>
-      </xs:simpleType>
-    </xs:union>
-  </xs:simpleType>
-
   <xs:group name="node-elements">
     <xs:choice>
       <xs:element ref="node"/>
@@ -526,7 +456,6 @@
       <xs:element ref="join"/>
       <xs:element ref="decision"/>
       <xs:element ref="end-state"/>
-      <xs:element ref="mail-node"/>
     </xs:choice>
   </xs:group>
   
@@ -536,7 +465,6 @@
       <xs:element ref="script"/>
       <xs:element ref="create-timer"/>
       <xs:element ref="cancel-timer"/>
-      <xs:element ref="mail"/>
     </xs:choice>
   </xs:group>
   
