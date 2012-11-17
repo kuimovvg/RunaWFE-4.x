@@ -39,7 +39,7 @@ public class ValidatorParser {
         }
     }
 
-    public static IFile writeValidatorXml(IFile validationFile, Map<String, Map<String, ValidatorConfig>> fieldConfigs) {
+    public static void writeValidatorXml(IFile validationFile, Map<String, Map<String, ValidatorConfig>> fieldConfigs) {
         try {
             StringBuffer buffer = new StringBuffer();
             buffer.append("<validators>\n");
@@ -66,10 +66,8 @@ public class ValidatorParser {
                 validationFile = IOUtils.createFileSafely(validationFile);
             }
             validationFile.setContents(is, true, false, null);
-            return validationFile;
         } catch (Exception e) {
             PluginLogger.logError("Validation file update error", e);
-            return null;
         }
     }
 

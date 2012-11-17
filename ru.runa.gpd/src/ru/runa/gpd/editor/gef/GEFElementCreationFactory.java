@@ -17,17 +17,11 @@ public class GEFElementCreationFactory implements CreationFactory {
 
     @Override
     public Object getNewObject() {
-        GraphElement element = NodeRegistry.getNodeTypeDefinition(elementType).createElement();
-        element.setParent(definition);
-        element.postCreate();
-        return element;
+        return NodeRegistry.getNodeTypeDefinition(elementType).createElement(definition);
     }
 
     public Object getNewObject(GraphElement parent) {
-        GraphElement element = NodeRegistry.getNodeTypeDefinition(elementType).createElement();
-        element.setParent(parent);
-        element.postCreate();
-        return element;
+        return NodeRegistry.getNodeTypeDefinition(elementType).createElement(parent);
     }
 
     @Override

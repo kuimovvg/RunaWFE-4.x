@@ -81,7 +81,7 @@ public class CopyGraphCommand extends Command {
                     factory = new GEFElementCreationFactory("start-state", targetDefinition);
                 } else if (node instanceof EndState && targetDefinition.getChildren(EndState.class).size() == 0) {
                     factory = new GEFElementCreationFactory("end-state", targetDefinition);
-                } else if (targetDefinition.getNodeByName(node.getName()) == null) {
+                } else if (targetDefinition.getNodeById(node.getNodeId()) == null) {
                     factory = new GEFElementCreationFactory(node.getTypeName(), targetDefinition);
                 }
                 if (factory != null) {
@@ -197,7 +197,7 @@ public class CopyGraphCommand extends Command {
             // set swimlanes
             for (Node node : targetNodeList.values()) {
                 if (node instanceof SwimlanedNode) {
-                    SwimlanedNode sourceNode = (SwimlanedNode) copyBuffer.getSourceDefinition().getNodeByNameNotNull(node.getName());
+                    SwimlanedNode sourceNode = copyBuffer.getSourceDefinition().getNodeByIdNotNull(node.getNodeId());
                     Swimlane swimlane = targetDefinition.getSwimlaneByName(sourceNode.getSwimlaneName());
                     ((SwimlanedNode) node).setSwimlane(swimlane);
                 }
@@ -264,7 +264,7 @@ public class CopyGraphCommand extends Command {
         public void execute() throws CoreException {
             if (sourceFormNode.hasForm()) {
                 formFile = copyFile(sourceFormNode.getFormFileName());
-                targetFormNode.setFormFileName(sourceFormNode.getFormFileName());
+                targetFormNode.setFormFileName(sourceFormNode.getFormFileName()); // TODO
                 targetFormNode.setFormType(sourceFormNode.getFormType());
             }
             if (sourceFormNode.hasFormValidation()) {

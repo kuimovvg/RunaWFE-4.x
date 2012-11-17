@@ -3,7 +3,36 @@ package ru.runa.gpd.lang.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
+
+import ru.runa.gpd.Localization;
+
 public abstract class Node extends NamedGraphElement {
+    private String nodeId;
+
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    @Override
+    protected List<IPropertyDescriptor> getCustomPropertyDescriptors() {
+        List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
+        list.add(new PropertyDescriptor(PROPERTY_ID, Localization.getString("Node.property.id")));
+        return list;
+    }
+
+    @Override
+    public Object getPropertyValue(Object id) {
+        if (PROPERTY_ID.equals(id)) {
+            return nodeId != null ? nodeId : "";
+        }
+        return super.getPropertyValue(id);
+    }
 
     @Override
     protected void validate() {
@@ -95,19 +124,6 @@ public abstract class Node extends NamedGraphElement {
         return arrivingTransitions;
     }
 
-    @Override
-    public boolean canSetNameTo(String name) {
-        ProcessDefinition definition = getProcessDefinition();
-        if (definition == null) {
-            return false;
-        }
-        Node node = definition.getNodeByName(name);
-        if (node != null) {
-            return false;
-        }
-        return true;
-    }
-
     public final boolean canAddArrivingTransition(Node source) {
         List<Transition> transitions = getArrivingTransitions();
         return allowArrivingTransition(source, transitions);
@@ -150,6 +166,6 @@ public abstract class Node extends NamedGraphElement {
     }
 
     public boolean isExclusive() {
-    	return false;
+        return false;
     }
 }

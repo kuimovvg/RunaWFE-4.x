@@ -5,7 +5,7 @@ import org.dom4j.Document;
 public class BpmnSerializer extends JpdlSerializer {
     @Override
     public boolean isSupported(Document document) {
-        if (ROOT_ELEMENT.equals(document.getRootElement().getName())) {
+        if ("".equals(document.getRootElement().getName())) {
             return Language.BPMN.name().equals(document.getRootElement().attributeValue("lang"));
         }
         return false;

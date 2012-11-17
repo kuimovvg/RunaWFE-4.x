@@ -9,9 +9,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import ru.runa.gpd.Localization;
 
 public class Transition extends NamedGraphElement implements Active {
-
     private Node target;
-
     private List<Bendpoint> bendpoints = new ArrayList<Bendpoint>();
 
     public List<Bendpoint> getBendpoints() {
@@ -39,18 +37,18 @@ public class Transition extends NamedGraphElement implements Active {
     }
 
     @Override
-    protected boolean canSetNameTo(String name) {
+    public void setName(String name) {
         Node source = getSource();
         if (source == null) {
-            return false;
+            return;
         }
         List<Transition> list = source.getLeavingTransitions();
         for (Transition transition : list) {
             if (name.equals(transition.getName())) {
-                return false;
+                return;
             }
         }
-        return true;
+        super.setName(name);
     }
 
     public Node getSource() {
@@ -59,10 +57,6 @@ public class Transition extends NamedGraphElement implements Active {
 
     public Node getTarget() {
         return target;
-    }
-
-    public String getTargetName() {
-        return target.getName();
     }
 
     public void setTarget(Node target) {
@@ -104,5 +98,4 @@ public class Transition extends NamedGraphElement implements Active {
         }
         return ((Node) getParent()).getName() + " -> " + target.getName();
     }
-
 }

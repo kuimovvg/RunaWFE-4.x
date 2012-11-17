@@ -584,7 +584,7 @@
       </element>
       <element
             model="ru.runa.gpd.lang.model.WaitState"
-            name="waitState"
+            name="wait-state"
             label="%label.element.waitstate">
          <gefEntry 
             figure="ru.runa.gpd.editor.gef.figure.WaitStateFigure"

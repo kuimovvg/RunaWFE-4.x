@@ -449,8 +449,4 @@ public class DiagramEditorPage extends DiagramEditor {
             getDiagramTypeProvider().getFeatureProvider().addIfPossible(addContext);
         }
     }
-
-    private Node getBaseElement(String elementId) {
-        return editor.getDefinition().getNodeByNameNotNull(elementId);
-    }
 }

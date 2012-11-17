@@ -32,8 +32,8 @@ public class FormsXmlContentProvider extends AuxContentProvider {
         Document document = XmlUtil.parseWithoutValidation(formsFile.getContents());
         List<Element> formElementsList = document.getRootElement().elements(FORM_ELEMENT_NAME);
         for (Element formElement : formElementsList) {
-            String stateName = formElement.attributeValue(STATE_ATTRIBUTE_NAME);
-            Node node = definition.getNodeByNameNotNull(stateName);
+            String stateId = formElement.attributeValue(STATE_ATTRIBUTE_NAME);
+            Node node = definition.getNodeByIdNotNull(stateId);
             if (node instanceof FormNode) {
                 FormNode formNode = (FormNode) node;
                 String typeName = formElement.attributeValue(TYPE_ATTRIBUTE_NAME);
@@ -71,7 +71,7 @@ public class FormsXmlContentProvider extends AuxContentProvider {
                 FormNode formNode = (FormNode) node;
                 if (formNode.hasForm() || formNode.hasFormValidation()) {
                     Element formElement = root.addElement(FORM_ELEMENT_NAME);
-                    formElement.addAttribute(STATE_ATTRIBUTE_NAME, formNode.getName());
+                    formElement.addAttribute(STATE_ATTRIBUTE_NAME, formNode.getNodeId());
                     if (formNode.hasForm()) {
                         formElement.addAttribute(FILE_ATTRIBUTE_NAME, formNode.getFormFileName());
                         formElement.addAttribute(TYPE_ATTRIBUTE_NAME, formNode.getFormType());
