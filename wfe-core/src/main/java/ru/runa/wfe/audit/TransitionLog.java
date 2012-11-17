@@ -43,8 +43,8 @@ public class TransitionLog extends ProcessLog {
 
     public TransitionLog(Transition transition) {
         addAttribute(ATTR_TRANSITION_ID, transition.getName());
-        addAttribute(ATTR_NODE_ID_FROM, transition.getFrom().getName());
-        addAttribute(ATTR_NODE_ID_TO, transition.getTo().getName());
+        addAttribute(ATTR_NODE_ID_FROM, transition.getFrom().getNodeId());
+        addAttribute(ATTR_NODE_ID_TO, transition.getTo().getNodeId());
     }
 
     public Transition getTransition(ProcessDefinition processDefinition) {
@@ -54,7 +54,7 @@ public class TransitionLog extends ProcessLog {
     @Override
     @Transient
     public Object[] getPatternArguments() {
-        return new Object[] { getAttributeNotNull(ATTR_TRANSITION_ID), getAttributeNotNull(ATTR_NODE_ID_FROM), getAttributeNotNull(ATTR_NODE_ID_TO) };
+        return new Object[] { getAttributeNotNull(ATTR_TRANSITION_ID) };
     }
 
 }

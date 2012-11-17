@@ -26,7 +26,7 @@ public class ExpiredJobCheckerTask extends TransactionalTaskBase {
     protected boolean doPrerequsites() {
         List<Job> jobs = jobDAO.getExpiredJobs();
         log.debug("Expired jobs: " + jobs.size());
-        return jobs.size() == 0;
+        return jobs.size() > 0;
     }
 
     @Override

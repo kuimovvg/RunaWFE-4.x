@@ -223,7 +223,7 @@ public class DefinitionLogic extends WFCommonLogic {
             if (!isPermissionAllowed(subject, definition, DefinitionPermission.READ)) {
                 checkCanParticipate(subject, task, null);
             }
-            return definition.getInteractionNotNull(task.getName());
+            return definition.getInteractionNotNull(task.getNodeId());
         } catch (DefinitionDoesNotExistException e) {
             throw new InternalApplicationException(e);
         }
@@ -239,7 +239,7 @@ public class DefinitionLogic extends WFCommonLogic {
             } else {
                 Task task = taskDAO.getNotNull(taskId);
                 ProcessDefinition processDefinition = getDefinition(task);
-                transitions = task.getTask(processDefinition).getNode().getLeavingTransitions();
+                transitions = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitions();
             }
             List<String> result = new ArrayList<String>();
             for (Transition transition : transitions) {
@@ -267,7 +267,7 @@ public class DefinitionLogic extends WFCommonLogic {
             DefinitionDoesNotExistException {
         ProcessDefinition definition = getDefinition(definitionId);
         checkPermissionAllowed(subject, definition, DefinitionPermission.READ);
-        Interaction interaction = definition.getInteractionNotNull(definition.getStartStateNotNull().getName());
+        Interaction interaction = definition.getInteractionNotNull(definition.getStartStateNotNull().getNodeId());
         Map<String, Object> defaultValues = definition.getDefaultVariableValues();
         for (Map.Entry<String, Object> entry : defaultValues.entrySet()) {
             interaction.getDefaultVariableValues().put(entry.getKey(), entry.getValue());

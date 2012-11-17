@@ -22,8 +22,8 @@ public class TaskSubsitutionParser implements ProcessArchiveParser {
         Element root = document.getRootElement();
         List<Element> elements = root.elements("task");
         for (Element element : elements) {
-            String taskName = element.attributeValue("name");
-            processDefinition.addTaskNameToignoreSubstitutionRules(taskName);
+            String nodeId = element.attributeValue("name");
+            processDefinition.addTaskNameToignoreSubstitutionRules(nodeId);
         }
     }
 

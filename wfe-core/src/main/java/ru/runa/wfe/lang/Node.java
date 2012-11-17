@@ -69,7 +69,8 @@ public abstract class Node extends GraphElement {
     }
 
     /**
-     * creates a bidirection relation between this node and the given leaving transition.
+     * creates a bidirection relation between this node and the given leaving
+     * transition.
      * 
      * @throws IllegalArgumentException
      *             if leavingTransition is null.
@@ -83,14 +84,16 @@ public abstract class Node extends GraphElement {
     /**
      * checks for the presence of a leaving transition with the given name.
      * 
-     * @return true if this node has a leaving transition with the given name, false otherwise.
+     * @return true if this node has a leaving transition with the given name,
+     *         false otherwise.
      */
     public boolean hasLeavingTransition(String transitionName) {
         return getLeavingTransition(transitionName) != null;
     }
 
     /**
-     * retrieves a leaving transition by name. note that also the leaving transitions of the supernode are taken into account.
+     * retrieves a leaving transition by name. note that also the leaving
+     * transitions of the supernode are taken into account.
      */
     public Transition getLeavingTransition(String transitionName) {
         for (Transition transition : leavingTransitions) {
@@ -125,7 +128,8 @@ public abstract class Node extends GraphElement {
     }
 
     /**
-     * add a bidirection relation between this node and the given arriving transition.
+     * add a bidirection relation between this node and the given arriving
+     * transition.
      * 
      * @throws IllegalArgumentException
      *             if t is null.
@@ -155,14 +159,16 @@ public abstract class Node extends GraphElement {
     protected abstract void execute(ExecutionContext executionContext);
 
     /**
-     * called by the implementation of this node to continue execution over the default transition.
+     * called by the implementation of this node to continue execution over the
+     * default transition.
      */
     public final void leave(ExecutionContext executionContext) {
         leave(executionContext, null);
     }
 
     /**
-     * called by the implementation of this node to continue execution over the given transition.
+     * called by the implementation of this node to continue execution over the
+     * given transition.
      */
     public void leave(ExecutionContext executionContext, Transition transition) {
         Token token = executionContext.getToken();
@@ -180,7 +186,7 @@ public abstract class Node extends GraphElement {
 
     @Override
     public String toString() {
-        return getNodeId();
+        return String.format("[%s] [%s]", getNodeId(), getName());
     }
 
 }

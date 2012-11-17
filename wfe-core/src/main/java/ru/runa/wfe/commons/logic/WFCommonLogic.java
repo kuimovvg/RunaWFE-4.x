@@ -107,9 +107,9 @@ public class WFCommonLogic extends CommonLogic {
         return processDefinitionLoader.getLatestDefinition(definitionName);
     }
 
-    protected void validateVariables(ProcessDefinition processDefinition, String stateName, IVariableProvider variableProvider)
+    protected void validateVariables(ProcessDefinition processDefinition, String nodeId, IVariableProvider variableProvider)
             throws ValidationException {
-        Interaction interaction = processDefinition.getInteractionNotNull(stateName);
+        Interaction interaction = processDefinition.getInteractionNotNull(nodeId);
         if (interaction.getValidationData() != null) {
             InputStream is = new ByteArrayInputStream(interaction.getValidationData());
             ValidatorContext context = ValidatorManager.getInstance().validate(is, variableProvider);
