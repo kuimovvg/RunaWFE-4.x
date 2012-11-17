@@ -23,24 +23,48 @@ package ru.runa.wfe.audit;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import ru.runa.wfe.lang.Node;
 
 /**
- * Logging node leaving.
+ * Logging node execution.
  * 
  * @author Dofs
  */
 @Entity
-@DiscriminatorValue(value = "L")
-public class NodeLeaveLog extends NodeLog {
+@DiscriminatorValue(value = "6")
+public abstract class NodeLog extends ProcessLog {
     private static final long serialVersionUID = 1L;
 
-    public NodeLeaveLog() {
+    public NodeLog() {
     }
 
-    public NodeLeaveLog(Node node) {
-        super(node);
+    public NodeLog(Node node) {
+        addAttribute(ATTR_NODE_ID, node.getNodeId());
+        addAttribute(ATTR_NODE_NAME, node.getName());
+        addAttribute(ATTR_NODE_TYPE, node.getNodeType().name());
+    }
+
+    @Transient
+    public String getNodeId() {
+        return getAttributeNotNull(ATTR_NODE_ID);
+    }
+
+    @Transient
+    public String getNodeName() {
+        return getAttributeNotNull(ATTR_NODE_NAME);
+    }
+
+    @Transient
+    public String getNodeType() {
+        return getAttributeNotNull(ATTR_NODE_TYPE);
+    }
+
+    @Transient
+    @Override
+    public Object[] getPatternArguments() {
+        return new Object[] { getNodeName() };
     }
 
 }

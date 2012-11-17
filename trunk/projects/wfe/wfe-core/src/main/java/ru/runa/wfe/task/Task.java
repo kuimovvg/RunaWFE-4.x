@@ -50,7 +50,6 @@ import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.handler.assign.Assignable;
 import ru.runa.wfe.lang.Event;
-import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
@@ -59,7 +58,9 @@ import ru.runa.wfe.user.Executor;
 import com.google.common.base.Preconditions;
 
 /**
- * is one task that can be assigned to an actor (read: put in someones task list) and that can trigger the coninuation of execution of the token upon completion.
+ * is one task that can be assigned to an actor (read: put in someones task
+ * list) and that can trigger the coninuation of execution of the token upon
+ * completion.
  */
 @Entity
 @Table(name = "BPM_TASK")
@@ -70,6 +71,7 @@ public class Task implements Assignable {
 
     private Long id;
     private Long version;
+    private String nodeId;
     private String name;
     private String description;
     private Executor executor;
@@ -85,6 +87,7 @@ public class Task implements Assignable {
     }
 
     public Task(TaskDefinition taskDefinition) {
+        setNodeId(taskDefinition.getNodeId());
         setName(taskDefinition.getName());
         setDescription(taskDefinition.getDescription());
         setFirstOpen(true);
@@ -111,6 +114,15 @@ public class Task implements Assignable {
 
     protected void setVersion(Long version) {
         this.version = version;
+    }
+
+    @Column(name = "NODE_ID")
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
     }
 
     @Column(name = "NAME")
@@ -215,10 +227,6 @@ public class Task implements Assignable {
         this.executor = executor;
     }
 
-    public TaskDefinition getTask(ProcessDefinition processDefinition) {
-        return processDefinition.getTaskNotNull(name);
-    }
-
     @Transient
     public boolean isStartTask(ExecutionContext executionContext, TaskDefinition taskDefinition) {
         return taskDefinition.equals(executionContext.getProcessDefinition().getStartStateNotNull().getFirstTaskNotNull());
@@ -234,21 +242,24 @@ public class Task implements Assignable {
         if (cascadeUpdate) {
             swimlane.assignExecutor(executionContext, executor, false);
         }
-        // fire the event
-        getTask(executionContext.getProcessDefinition()).fireEvent(new ExecutionContext(executionContext.getProcessDefinition(), this),
-                Event.EVENTTYPE_TASK_ASSIGN);
+        // fire the event TODO simplify
+        executionContext.getProcessDefinition().getTaskNotNull(nodeId)
+                .fireEvent(new ExecutionContext(executionContext.getProcessDefinition(), this), Event.EVENTTYPE_TASK_ASSIGN);
     }
 
     /**
-     * marks this task as done and specifies a transition leaving the task-node for the case that the completion of this tasks triggers a signal on the token. If this task leads to
-     * a signal on the token, the given transition name will be used in the signal. If this task completion does not trigger execution to move on, the transition is ignored.
+     * marks this task as done and specifies a transition leaving the task-node
+     * for the case that the completion of this tasks triggers a signal on the
+     * token. If this task leads to a signal on the token, the given transition
+     * name will be used in the signal. If this task completion does not trigger
+     * execution to move on, the transition is ignored.
      */
     public void end(ExecutionContext executionContext, Transition transition, boolean leaveNode) {
         Preconditions.checkState(isActive(), "task '" + id + "' is already ended");
         // mark the end of this task
         setEndDate(new Date());
         // fire the task end event
-        TaskDefinition taskDefinition = getTask(executionContext.getProcessDefinition());
+        TaskDefinition taskDefinition = executionContext.getProcessDefinition().getTaskNotNull(nodeId);
         taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_END);
         executionContext.addLog(new TaskEndLog(this));
         // verify if the end of this task triggers continuation of execution

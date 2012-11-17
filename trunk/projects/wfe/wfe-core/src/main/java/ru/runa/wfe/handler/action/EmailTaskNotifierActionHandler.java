@@ -76,7 +76,7 @@ public class EmailTaskNotifierActionHandler implements ActionHandler {
                     if (!Objects.equal(task.getId(), executionContext.getTask().getId())) {
                         EmailConfig config = EmailConfigParser.parse(configBytes);
                         config.getHeaderProperties().put("To", email);
-                        Interaction interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getName());
+                        Interaction interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
                         EmailUtils.sendTaskMessage(SubjectHolder.get(), config, interaction, executionContext.getVariableProvider(),
                                 executionContext.getProcessDefinition());
                     }

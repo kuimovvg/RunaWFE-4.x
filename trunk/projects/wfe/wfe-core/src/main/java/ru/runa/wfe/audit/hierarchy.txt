@@ -18,9 +18,10 @@
     <!-- 0 : ru.runa.bpm.log.TaskLog -->
     <!-- 1 : ru.runa.bpm.log.TaskCreateLog -->
     <!-- 2 : ru.runa.bpm.log.TaskAssignLog -->
-    <!-- 5 : ru.runa.bpm.log.TaskEscalationLog -->
     <!-- 3 : ru.runa.bpm.log.TaskEndLog -->
     <!-- 4 : ru.runa.bpm.log.SwimlaneAssignLog -->
+    <!-- 5 : ru.runa.bpm.log.TaskEscalationLog -->
+    <!-- 6 : ru.runa.bpm.log.NodeLog -->
     <!-- 7 : ru.runa.bpm.log.SendMessageLog -->
     <!-- 8 : ru.runa.bpm.log.ReceiveMessageLog -->
     

@@ -93,6 +93,9 @@ public class ReceiveMessageBean implements MessageListener {
                             if ("${currentNodeName}".equals(expectedValue)) {
                                 expectedValue = receiveMessage.getName();
                             }
+                            if ("${currentNodeId}".equals(expectedValue)) {
+                                expectedValue = receiveMessage.getNodeId();
+                            }
                             if (!expectedValue.equals(selectorValue)) {
                                 suitable = false;
                                 break;

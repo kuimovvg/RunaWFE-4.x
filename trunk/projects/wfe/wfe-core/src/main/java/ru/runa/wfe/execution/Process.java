@@ -218,15 +218,15 @@ public class Process implements Identifiable {
                 AssignmentHandler assignmentHandler = swimlaneDefinition.getDelegation().getInstance();
                 assignmentHandler.assign(executionContext, swimlane);
             } catch (Exception e) {
-                throw new InternalApplicationException(swimlaneDefinition.getName(), e);
+                throw new InternalApplicationException(swimlaneDefinition.toString(), e);
             }
         }
         return swimlane;
     }
 
-    public Task getTask(String taskName) {
+    public Task getTask(String nodeId) {
         for (Task task : tasks) {
-            if (taskName.equals(task.getName())) {
+            if (Objects.equal(nodeId, task.getNodeId())) {
                 return task;
             }
         }

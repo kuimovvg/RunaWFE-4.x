@@ -3,9 +3,11 @@ package ru.runa.wfe.graph.image;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.graph.image.model.DiagramModel;
 import ru.runa.wfe.graph.image.model.NodeModel;
+import ru.runa.wfe.graph.view.BaseGraphElementPresentation;
 import ru.runa.wfe.graph.view.DecisionGraphElementPresentation;
 import ru.runa.wfe.graph.view.EndStateGraphElementPresentation;
 import ru.runa.wfe.graph.view.ForkGraphElementPresentation;
@@ -39,53 +41,54 @@ public class GraphElementPresentationBuilder {
         DiagramModel diagramModel = DiagramModel.load(definition.getFileDataNotNull(IFileDataProvider.GPD_XML_FILE_NAME));
         List<GraphElementPresentation> result = new ArrayList<GraphElementPresentation>();
         for (Node node : definition.getNodes()) {
-            NodeModel model = diagramModel.getNode(node.getName());
+            NodeModel model = diagramModel.getNode(node.getNodeId());
+            BaseGraphElementPresentation presentation;
             switch (node.getNodeType()) {
             case SubProcess:
-                result.add(new SubprocessGraphElementPresentation(node.getName(), ((SubProcessState) node).getSubProcessName(), model
-                        .getConstraints()));
+                presentation = new SubprocessGraphElementPresentation(((SubProcessState) node).getSubProcessName());
                 break;
             case MultiInstance:
-                result.add(new MultiinstanceGraphElementPresentation(node.getName(), ((MultiProcessState) node).getSubProcessName(), model
-                        .getConstraints()));
+                presentation = new MultiinstanceGraphElementPresentation(((MultiProcessState) node).getSubProcessName());
                 break;
             case Task:
                 TaskDefinition taskDefinition = ((TaskNode) node).getFirstTaskNotNull();
-                result.add(new TaskGraphElementPresentation(node.getName(), model.getConstraints(), taskDefinition.getSwimlane().getName(), model
-                        .isMinimizedView()));
+                presentation = new TaskGraphElementPresentation(taskDefinition.getSwimlane().getName(), model.isMinimizedView());
                 break;
             case WaitState:
-                result.add(new WaitStateGraphElementPresentation(node.getName(), model.getConstraints()));
+                presentation = new WaitStateGraphElementPresentation();
                 break;
             case StartState:
-                result.add(new StartStateGraphElementPresentation(node.getName(), model.getConstraints()));
+                presentation = new StartStateGraphElementPresentation();
                 break;
             case EndState:
-                result.add(new EndStateGraphElementPresentation(node.getName(), model.getConstraints()));
+                presentation = new EndStateGraphElementPresentation();
                 break;
             case Fork:
-                result.add(new ForkGraphElementPresentation(node.getName(), model.getConstraints()));
+                presentation = new ForkGraphElementPresentation();
                 break;
             case Join:
-                result.add(new JoinGraphElementPresentation(node.getName(), model.getConstraints()));
+                presentation = new JoinGraphElementPresentation();
                 break;
             case Decision:
-                result.add(new DecisionGraphElementPresentation(node.getName(), model.getConstraints()));
+                presentation = new DecisionGraphElementPresentation();
                 break;
             case ActionNode:
-                result.add(new NodeGraphElementPresentation(node.getName(), model.getConstraints()));
+                presentation = new NodeGraphElementPresentation();
                 break;
             case SendMessage:
-                result.add(new SendMessageGraphElementPresentation(node.getName(), model.getConstraints()));
+                presentation = new SendMessageGraphElementPresentation();
                 break;
             case ReceiveMessage:
-                result.add(new ReceiveMessageGraphElementPresentation(node.getName(), model.getConstraints()));
+                presentation = new ReceiveMessageGraphElementPresentation();
                 break;
             default:
-                break;
+                throw new InternalApplicationException("Unexpected element " + node.getNodeType());
             }
+            presentation.setNodeId(node.getNodeId());
+            presentation.setName(node.getName());
+            presentation.setGraphConstraints(model.getConstraints());
+            result.add(presentation);
         }
         return result;
     }
-
 }

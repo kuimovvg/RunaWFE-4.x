@@ -21,17 +21,7 @@ package ru.runa.wfe.graph.view;
  * Represent start state element on process graph.
  */
 public class StartStateGraphElementPresentation extends BaseGraphElementPresentation {
-
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Creates instance, representing start state element on process graph.
-     * @param name State name.
-     * @param graphConstraints State position constraints.
-     */
-    public StartStateGraphElementPresentation(String name, int[] graphConstraints) {
-        super(name, graphConstraints, null);
-    }
 
     @Override
     public void visit(GraphElementPresentationVisitor visitor) {

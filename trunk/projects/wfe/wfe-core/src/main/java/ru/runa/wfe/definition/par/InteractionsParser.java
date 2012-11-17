@@ -64,11 +64,11 @@ public class InteractionsParser implements ProcessArchiveParser {
             NodeList formElementsList = document.getElementsByTagName(FORM_ELEMENT_NAME);
             for (int i = 0; i < formElementsList.getLength(); i++) {
                 Element formElement = (Element) formElementsList.item(i);
-                String stateName = formElement.getAttribute(STATE_ATTRIBUTE_NAME);
+                String stateId = formElement.getAttribute(STATE_ATTRIBUTE_NAME);
                 String fileName = formElement.getAttribute(FILE_ATTRIBUTE_NAME);
                 String typeName = formElement.getAttribute(TYPE_ATTRIBUTE_NAME);
                 if (typeName == null || typeName.length() == 0) {
-                    throw new InvalidDefinitionException("Invalid form type = '" + typeName + "' for state " + stateName);
+                    throw new InvalidDefinitionException("Invalid form type = '" + typeName + "' for state " + stateId);
                 }
                 String validationFileName = formElement.getAttribute(VALIDATION_FILE_ATTRIBUTE_NAME);
                 boolean jsValidationEnabled = Boolean.parseBoolean(formElement.getAttribute(JS_VALIDATION_ATTRIBUTE_NAME));
@@ -87,7 +87,7 @@ public class InteractionsParser implements ProcessArchiveParser {
                     scriptJs = archive.getFileDataNotNull(scriptFileName);
                 }
                 byte[] css = archive.getFileData(IFileDataProvider.FORM_CSS_FILE_NAME);
-                Interaction interaction = new Interaction(typeName, stateName, formCode, validationXml, jsValidationEnabled, scriptJs, css);
+                Interaction interaction = new Interaction(typeName, formCode, validationXml, jsValidationEnabled, scriptJs, css);
                 if (validationXml != null) {
                     List<String> variableNames = ValidationXmlParser.readVariableNames(validationXml);
                     List<String> requiredVarNames = ValidationXmlParser.readRequiredVariableNames(validationXml);
@@ -103,7 +103,7 @@ public class InteractionsParser implements ProcessArchiveParser {
                         interaction.getVariables().put(name, variableDefinition);
                     }
                 }
-                processDefinition.addInteraction(stateName, interaction);
+                processDefinition.addInteraction(stateId, interaction);
             }
         } catch (Exception e) {
             throw new InvalidDefinitionException(IFileDataProvider.FORMS_XML_FILE_NAME, e);

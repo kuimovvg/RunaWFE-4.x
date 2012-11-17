@@ -137,25 +137,25 @@ public class ExecutionLogic extends WFCommonLogic {
         return result;
     }
 
-    private Long startProcessInternal(Subject subject, String definitionName, Map<String, Object> variablesMap) throws AuthorizationException,
+    private Long startProcessInternal(Subject subject, String definitionName, Map<String, Object> variables) throws AuthorizationException,
             AuthenticationException, DefinitionDoesNotExistException, ValidationException {
         try {
             Actor actor = SubjectPrincipalsHelper.getActor(subject);
-            if (variablesMap == null) {
-                variablesMap = Maps.newHashMap();
+            if (variables == null) {
+                variables = Maps.newHashMap();
             }
             ProcessDefinition processDefinition = getLatestDefinition(definitionName);
             checkPermissionAllowed(subject, processDefinition, DefinitionPermission.START_PROCESS);
             Map<String, Object> defaultValues = processDefinition.getDefaultVariableValues();
             for (Map.Entry<String, Object> entry : defaultValues.entrySet()) {
-                if (!variablesMap.containsKey(entry.getKey())) {
-                    variablesMap.put(entry.getKey(), entry.getValue());
+                if (!variables.containsKey(entry.getKey())) {
+                    variables.put(entry.getKey(), entry.getValue());
                 }
             }
-            validateVariables(processDefinition, processDefinition.getStartStateNotNull().getName(), new MapDelegableVariableProvider(variablesMap,
+            validateVariables(processDefinition, processDefinition.getStartStateNotNull().getNodeId(), new MapDelegableVariableProvider(variables,
                     null));
-            String transitionName = (String) variablesMap.remove(WfProcess.SELECTED_TRANSITION_KEY);
-            Process process = processFactory.startProcess(processDefinition, variablesMap, actor, transitionName);
+            String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
+            Process process = processFactory.startProcess(processDefinition, variables, actor, transitionName);
             log.info("Process " + process + " was successfully started");
             return process.getId();
         } catch (Exception e) {

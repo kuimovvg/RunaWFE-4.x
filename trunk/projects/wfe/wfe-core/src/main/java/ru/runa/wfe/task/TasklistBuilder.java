@@ -65,7 +65,7 @@ public class TasklistBuilder {
             for (Task task : tasks) {
                 Executor taskExecutor = task.getExecutor();
                 ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task);
-                Interaction interaction = processDefinition.getInteractionNotNull(task.getName());
+                Interaction interaction = processDefinition.getInteractionNotNull(task.getNodeId());
                 String formType = (interaction == null ? null : interaction.getType());
                 if (executorsToGetTasks.contains(taskExecutor)) {
                     // Our task - get.

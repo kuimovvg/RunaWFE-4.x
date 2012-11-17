@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.graph.view;
 
-
 /**
  * Represents an task state graph element.
  */
@@ -36,33 +35,12 @@ public class TaskGraphElementPresentation extends BaseGraphElementPresentation {
     private final String swimlaneName;
 
     /**
-     * @param name
-     *            Graph element name. Can be null if not set.
-     * @param graphConstraints
-     *            Graph element position constraints.
      * @param swimlaneName
      *            Swimlane name of this task element.
      * @param isMinimized
      *            Flag, equals true, if state is minimized; false otherwise.
      */
-    public TaskGraphElementPresentation(String name, int[] graphConstraints, String swimlaneName, boolean isMinimized) {
-        this(name, graphConstraints, swimlaneName, isMinimized, null);
-    }
-
-    /**
-     * @param name
-     *            Graph element name. Can be null if not set.
-     * @param graphConstraints
-     *            Graph element position constraints.
-     * @param swimlaneName
-     *            Swimlane name of this task element.
-     * @param isMinimized
-     *            Flag, equals true, if state is minimized; false otherwise.
-     * @param data
-     *            Some additional data, assigned to graph element.
-     */
-    public TaskGraphElementPresentation(String name, int[] graphConstraints, String swimlaneName, boolean isMinimized, Object data) {
-        super(name, graphConstraints, data);
+    public TaskGraphElementPresentation(String swimlaneName, boolean isMinimized) {
         this.swimlaneName = swimlaneName;
         this.isMinimized = isMinimized;
     }

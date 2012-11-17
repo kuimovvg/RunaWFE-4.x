@@ -89,7 +89,7 @@ public class GraphImageBuilder {
             allNodeFigures.put(nodeModel.getName(), nodeFigure);
         }
         for (Node node : processDefinition.getNodes()) {
-            NodeModel nodeModel = allNodes.get(node.getName());
+            NodeModel nodeModel = allNodes.get(node.getNodeId());
             AbstractFigure nodeFigure = allNodeFigures.get(node.getNodeId());
             if (!DrawProperties.useEdgingOnly()) {
                 nodeFigures.put(nodeFigure, new RenderHits(DrawProperties.getBaseColor()));
@@ -103,7 +103,7 @@ public class GraphImageBuilder {
                 if (diagramModel.isShowActions()) {
                     transitionModel.setActionsCount(getTransitionActionsCount(transition));
                 }
-                AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getName());
+                AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getNodeId());
                 TransitionFigure transitionFigure = factory.createTransitionFigure(transitionModel, nodeFigure, figureTo);
                 if (!diagramModel.isUmlNotation()) {
                     boolean exclusiveNode = (nodeFigure.getType() != NodeModel.FORK_JOIN);
@@ -120,10 +120,10 @@ public class GraphImageBuilder {
         }
         for (Transition transition : passedTransitions) {
             // Mark 'from' block as PASSED
-            AbstractFigure nodeModelFrom = allNodeFigures.get(transition.getFrom().getName());
+            AbstractFigure nodeModelFrom = allNodeFigures.get(transition.getFrom().getNodeId());
             nodeFigures.put(nodeModelFrom, new RenderHits(DrawProperties.getHighlightColor(), true));
             // Mark 'to' block as PASSED
-            AbstractFigure nodeModelTo = allNodeFigures.get(transition.getTo().getName());
+            AbstractFigure nodeModelTo = allNodeFigures.get(transition.getTo().getNodeId());
             nodeFigures.put(nodeModelTo, new RenderHits(DrawProperties.getHighlightColor(), true));
             // Mark transition as PASSED
             TransitionFigure transitionFigure = nodeModelFrom.getTransition(transition.getName());
@@ -154,7 +154,7 @@ public class GraphImageBuilder {
 
     private void fillActiveTasks(Process process) {
         for (Task task : process.getActiveTasks(null)) {
-            AbstractFigure node = allNodeFigures.get(task.getName());
+            AbstractFigure node = allNodeFigures.get(task.getNodeId());
             Color color = DrawProperties.getBaseColor();
             if (highlightedToken != null && Objects.equal(task.getToken().getId(), highlightedToken.getId())) {
                 color = DrawProperties.getHighlightColor();
@@ -171,9 +171,9 @@ public class GraphImageBuilder {
 
     private void fillExpiredTasks(Process process) {
         for (Task task : process.getTasks()) {
-            AbstractFigure figure = allNodeFigures.get(task.getName());
+            AbstractFigure figure = allNodeFigures.get(task.getNodeId());
             for (Node node : processDefinition.getNodes()) {
-                if (node.getName().equals(task.getName())) {
+                if (Objects.equal(node.getNodeId(), task.getNodeId())) {
                     if (task.isActive() || task.getDeadlineDate() == null) {
                         continue;
                     }
