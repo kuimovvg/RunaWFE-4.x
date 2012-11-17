@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -123,10 +121,6 @@ public class IOUtils {
         }
     }
 
-    public static String fixFileName(String fileName) {
-        return fileName.replaceAll(Pattern.quote("?"), Matcher.quoteReplacement(""));
-    }
-
     public static IFile createFileSafely(IFile file) throws CoreException {
         IFolder folder = (IFolder) file.getParent();
         String fileName = file.getName();
@@ -204,6 +198,7 @@ public class IOUtils {
         }
     }
 
+    // unused now
     public static void renameFormFiles(FormNode formNode, String newName) throws CoreException {
         if (formNode.hasForm()) {
             IFile file = ProjectFinder.getFile(formNode.getFormFileName());

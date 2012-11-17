@@ -20,7 +20,6 @@ import ru.runa.gpd.editor.gef.policy.TransitionConnectionEditPolicy;
 import ru.runa.gpd.editor.gef.policy.TransitionConnectionEndpointsEditPolicy;
 import ru.runa.gpd.handler.CustomizationRegistry;
 import ru.runa.gpd.handler.decision.IDecisionProvider;
-import ru.runa.gpd.lang.model.ActionNode;
 import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.ITimed;
@@ -109,15 +108,6 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
         if (transition.getSource() instanceof TaskState && !PluginConstants.TIMER_TRANSITION_NAME.equals(transition.getName())) {
             String label;
             if (((TaskState) transition.getSource()).hasMultipleOutputTransitions()) {
-                label = transition.getName();
-            } else {
-                label = "";
-            }
-            getFigure().setLabelText(label);
-        }
-        if (transition.getSource() instanceof ActionNode) {
-            String label;
-            if (transition.getSource().getLeavingTransitions().size() > 1) {
                 label = transition.getName();
             } else {
                 label = "";

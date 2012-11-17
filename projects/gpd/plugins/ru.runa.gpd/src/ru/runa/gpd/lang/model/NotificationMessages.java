@@ -1,6 +1,7 @@
 package ru.runa.gpd.lang.model;
 
 public interface NotificationMessages {
+    public static final String PROPERTY_ID = "id";
     public static final String PROPERTY_NAME = "name";
     public static final String PROPERTY_DESCRIPTION = "description";
     public static final String PROPERTY_CLASS = "class";

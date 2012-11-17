@@ -8,11 +8,9 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.form.FormTypeProvider;
@@ -23,15 +21,10 @@ public abstract class FormNode extends SwimlanedNode {
     public static final String EMPTY = "";
     public static final String VALIDATION_SUFFIX = "validation.xml";
     public static final String SCRIPT_SUFFIX = "js";
-
     private String formFileName;
-
     private String formType;
-
     private String validationFileName;
-
     private boolean useJSValidation;
-
     private String scriptFileName;
 
     public String getFormType() {
@@ -45,9 +38,11 @@ public abstract class FormNode extends SwimlanedNode {
     public boolean hasForm() {
         return formFileName != null && formFileName.length() > 0;
     }
+
     public boolean hasFormValidation() {
         return validationFileName != null && validationFileName.length() > 0;
     }
+
     public boolean hasFormScript() {
         return scriptFileName != null && scriptFileName.length() > 0;
     }
@@ -81,35 +76,15 @@ public abstract class FormNode extends SwimlanedNode {
         this.useJSValidation = useJSValidation;
         firePropertyChange(PROPERTY_FORM_JS_VALIDATION, old, this.useJSValidation);
     }
-    
+
     public String getScriptFileName() {
         return scriptFileName;
     }
-    
+
     public void setScriptFileName(String scriptFile) {
         String old = this.scriptFileName;
         this.scriptFileName = scriptFile;
         firePropertyChange(PROPERTY_FORM_SCRIPT_FILE, old, this.scriptFileName);
-    }
-    
-    @Override
-    public boolean canSetNameTo(String name) {
-        if (!super.canSetNameTo(name)) {
-            return false;
-        }
-        return name != null && name.trim().length() > 0;
-    }
-    
-    @Override
-    public void setName(String name) {
-        if (getName() != null && canSetNameTo(name)) {
-            try {
-                IOUtils.renameFormFiles(this, name);
-            } catch (CoreException e) {
-                PluginLogger.logErrorWithoutDialog("Unable rename form files", e);
-            }
-        }
-        super.setName(name);
     }
 
     @Override
@@ -155,7 +130,7 @@ public abstract class FormNode extends SwimlanedNode {
         IFile formFile = IOUtils.getAdjacentFile(getProcessDefinition().getDefinitionFile(), this.formFileName);
         formType.validate(formFile, this);
     }
-    
+
     public Set<String> getValidationVariables(IFolder processFolder) throws Exception {
         if (!hasFormValidation()) {
             return new HashSet<String>();
@@ -163,7 +138,7 @@ public abstract class FormNode extends SwimlanedNode {
         IFile validationFile = IOUtils.getAdjacentFile(processFolder, this.validationFileName);
         return ValidatorParser.parseValidatorConfigs(validationFile).keySet();
     }
-    
+
     public Map<String, Integer> getFormVariables(IFolder definitionFile) throws Exception {
         if (!hasForm()) {
             return new HashMap<String, Integer>();

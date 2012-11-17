@@ -8,8 +8,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.FormNodeSetValidationFileCommand;
 import ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart;
 import ru.runa.gpd.lang.model.FormNode;
@@ -20,19 +20,16 @@ import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDialog;
 
 public class OpenFormValidationDelegate extends BaseActionDelegate {
-
+    @Override
     public void run(IAction action) {
         try {
             FormNode formNode = ((FormNodeEditPart) selectedPart).getModel();
-
             if (!formNode.hasFormValidation()) {
-                if (!MessageDialog.openQuestion(targetPart.getSite().getShell(), "", Localization
-                        .getString("OpenFormValidationDelegate.CreateEmptyValidation"))) {
+                if (!MessageDialog.openQuestion(targetPart.getSite().getShell(), "", Localization.getString("OpenFormValidationDelegate.CreateEmptyValidation"))) {
                     return;
                 }
-                String validationFileName = ValidationUtil.getFormValidationFileName(formNode.getName());
-                IFile file = ValidationUtil.rewriteValidation(getDefinitionFile(), validationFileName,
-                        new HashMap<String, Map<String, ValidatorConfig>>());
+                String validationFileName = formNode.getNodeId() + "." + FormNode.VALIDATION_SUFFIX;
+                IFile file = ValidationUtil.rewriteValidation(getDefinitionFile(), validationFileName, new HashMap<String, Map<String, ValidatorConfig>>());
                 setNewValidationFormFile(formNode, file.getName());
             }
             IFile validationFile = IOUtils.getAdjacentFile(getDefinitionFile(), formNode.getValidationFileName());
@@ -59,5 +56,4 @@ public class OpenFormValidationDelegate extends BaseActionDelegate {
         command.setValidationFileName(fileName);
         executeCommand(command);
     }
-
 }

@@ -47,7 +47,7 @@ public class GpdXmlContentProvider extends AuxContentProvider {
         addProcessDiagramInfo(definition, processDiagramInfo);
         List<Element> children = getNamedChildren(processDiagramInfo, NODE_ELEMENT_NAME);
         for (Element element : children) {
-            Node node = definition.getNodeByNameNotNull(element.attributeValue(NAME_ATTRIBUTE_NAME));
+            Node node = definition.getNodeByIdNotNull(element.attributeValue(NAME_ATTRIBUTE_NAME));
             Rectangle constraint = new Rectangle();
             constraint.x = getIntAttribute(element, X_ATTRIBUTE_NAME, 0);
             constraint.y = getIntAttribute(element, Y_ATTRIBUTE_NAME, 0);
@@ -120,7 +120,7 @@ public class GpdXmlContentProvider extends AuxContentProvider {
         }
         for (Node node : definition.getNodes()) {
             Element element = root.addElement(NODE_ELEMENT_NAME);
-            addAttribute(element, NAME_ATTRIBUTE_NAME, node.getName());
+            addAttribute(element, NAME_ATTRIBUTE_NAME, node.getNodeId());
             Rectangle constraint = node.getConstraint();
             if (constraint.width == 0 || constraint.height == 0) {
                 throw new Exception("Invalid figure size: " + constraint.getSize());
