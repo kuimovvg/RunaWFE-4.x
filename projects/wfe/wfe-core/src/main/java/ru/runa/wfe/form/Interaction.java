@@ -34,7 +34,6 @@ public class Interaction implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final String type;
-    private final String stateName;
     private final byte[] formData;
     private final byte[] validationData;
     private final boolean useJSValidation;
@@ -44,10 +43,8 @@ public class Interaction implements Serializable {
     private final Map<String, VariableDefinition> variableDefinitions = Maps.newHashMap();
     private final Map<String, Object> defaultVariableValues = Maps.newHashMap();
 
-    public Interaction(String type, String stateName, byte[] formData, byte[] validationData, boolean useJSValidation, byte[] scriptData,
-            byte[] cssData) {
+    public Interaction(String type, byte[] formData, byte[] validationData, boolean useJSValidation, byte[] scriptData, byte[] cssData) {
         this.type = type;
-        this.stateName = stateName;
         this.formData = formData;
         this.validationData = validationData;
         this.useJSValidation = useJSValidation;
@@ -57,7 +54,7 @@ public class Interaction implements Serializable {
 
     public byte[] getFormDataNotNull() {
         if (formData == null) {
-            return ("No form defined for state: " + stateName).getBytes(Charsets.UTF_8);
+            return ("No form defined.").getBytes(Charsets.UTF_8);
         }
         return formData;
     }
@@ -91,10 +88,6 @@ public class Interaction implements Serializable {
 
     public List<String> getRequiredVariableNames() {
         return requiredVariableNames;
-    }
-
-    public String getStateName() {
-        return stateName;
     }
 
     public Map<String, VariableDefinition> getVariables() {

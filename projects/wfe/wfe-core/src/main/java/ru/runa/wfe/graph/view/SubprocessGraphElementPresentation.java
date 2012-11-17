@@ -30,7 +30,8 @@ public class SubprocessGraphElementPresentation extends BaseGraphElementPresenta
     private Long subprocessId;
 
     /**
-     * Flag, equals true, if subprocess is readable by current user; false otherwise.
+     * Flag, equals true, if subprocess is readable by current user; false
+     * otherwise.
      */
     private boolean readPermission;
 
@@ -40,22 +41,10 @@ public class SubprocessGraphElementPresentation extends BaseGraphElementPresenta
     private final String subprocessName;
 
     /**
-     * @param name Graph element name. Can be null if not set.
-     * @param subprocessName Name of subprocess.
-     * @param graphConstraints Graph element position constraints.
+     * @param subprocessName
+     *            Name of subprocess.
      */
-    public SubprocessGraphElementPresentation(String name, String subprocessName, int[] graphConstraints) {
-        this(name, subprocessName, graphConstraints, null);
-    }
-
-    /**
-     * @param name Graph element name. Can be null if not set.
-     * @param subprocessName Name of subprocess.
-     * @param graphConstraints Graph element position constraints.
-     * @param data Some additional data, assigned to graph element.
-     */
-    public SubprocessGraphElementPresentation(String name, String subprocessName, int[] graphConstraints, Object data) {
-        super(name, graphConstraints, data);
+    public SubprocessGraphElementPresentation(String subprocessName) {
         this.subprocessName = subprocessName;
     }
 
@@ -79,14 +68,16 @@ public class SubprocessGraphElementPresentation extends BaseGraphElementPresenta
     }
 
     /**
-     * Flag, equals true, if subprocess is readable by current user; false otherwise.
+     * Flag, equals true, if subprocess is readable by current user; false
+     * otherwise.
      */
     public boolean isReadPermission() {
         return readPermission;
     }
 
     /**
-     * Set flag, equals true, if subprocess is readable by current user; false otherwise.
+     * Set flag, equals true, if subprocess is readable by current user; false
+     * otherwise.
      */
     public void setReadPermission(boolean readPermission) {
         this.readPermission = readPermission;

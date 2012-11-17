@@ -42,7 +42,8 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
      * Create instance of operation to set starting process readable flag.
      * 
      * @param subprocessesInstanstances
-     *            Instances of subprocesses, which must be added to graph elements.
+     *            Instances of subprocesses, which must be added to graph
+     *            elements.
      * @param subject
      *            Current subject.
      */
@@ -55,7 +56,7 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
     public void onMultiinstance(MultiinstanceGraphElementPresentation element) {
         try {
             for (NodeProcess subprocess : nodeProcesses) {
-                if (subprocess.getNodeId().equals(element.getName())) {
+                if (subprocess.getNodeId().equals(element.getNodeId())) {
                     element.addSubprocessId(subprocess.getSubProcess().getId());
                     if (checkPermission(subprocess.getSubProcess())) {
                         element.setReadPermission(true);
@@ -72,7 +73,7 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
     public void onSubprocess(SubprocessGraphElementPresentation element) {
         try {
             for (NodeProcess subprocess : nodeProcesses) {
-                if (subprocess.getNodeId().equals(element.getName())) {
+                if (subprocess.getNodeId().equals(element.getNodeId())) {
                     element.setSubprocessId(subprocess.getSubProcess().getId());
                     if (checkPermission(subprocess.getSubProcess())) {
                         element.setReadPermission(true);
@@ -90,7 +91,8 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
      * 
      * @param process
      *            Process instance to check READ permission.
-     * @return true, if current actor can read process definition and false otherwise.
+     * @return true, if current actor can read process definition and false
+     *         otherwise.
      */
     private boolean checkPermission(Process process) throws DefinitionDoesNotExistException, AuthenticationException {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);

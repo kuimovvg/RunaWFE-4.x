@@ -61,7 +61,9 @@ public abstract class GraphElement implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-        setNodeId(name);
+        if (getNodeId() == null) {
+            setNodeId(name);
+        }
     }
 
     public String getDescription() {
@@ -81,8 +83,10 @@ public abstract class GraphElement implements Serializable {
     }
 
     /**
-     * indicative set of event types supported by this graph element. this is currently only used by the process designer to know which event types to show on a given graph
-     * element. in process definitions and at runtime, there are no constraints on the event-types.
+     * indicative set of event types supported by this graph element. this is
+     * currently only used by the process designer to know which event types to
+     * show on a given graph element. in process definitions and at runtime,
+     * there are no constraints on the event-types.
      */
     public abstract String[] getSupportedEventTypes();
 
@@ -153,9 +157,13 @@ public abstract class GraphElement implements Serializable {
     }
 
     /**
-     * throws an ActionException if no applicable exception handler is found. An ExceptionHandler is searched for in this graph element and then recursively up the parent
-     * hierarchy. If an exception handler is found, it is applied. If the exception handler does not throw an exception, the exception is considered handled. Otherwise the search
-     * for an applicable exception handler continues where it left of with the newly thrown exception.
+     * throws an ActionException if no applicable exception handler is found. An
+     * ExceptionHandler is searched for in this graph element and then
+     * recursively up the parent hierarchy. If an exception handler is found, it
+     * is applied. If the exception handler does not throw an exception, the
+     * exception is considered handled. Otherwise the search for an applicable
+     * exception handler continues where it left of with the newly thrown
+     * exception.
      */
     public void raiseException(Throwable exception) {
         // there was exceptionHandlers
@@ -178,7 +186,7 @@ public abstract class GraphElement implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ": '" + getNodeId() + "'";
+        return String.format("[%s] [%s] [%s]", getClass().getSimpleName(), getNodeId(), getName());
     }
 
 }

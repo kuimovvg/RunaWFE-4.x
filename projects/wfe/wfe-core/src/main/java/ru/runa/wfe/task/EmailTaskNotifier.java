@@ -31,7 +31,7 @@ public class EmailTaskNotifier implements ITaskNotifier {
     public void setConfigLocation(String path) {
         try {
             InputStream in = ClassLoaderUtil.getResourceAsStream(path, getClass());
-            this.configBytes = ByteStreams.toByteArray(in);
+            configBytes = ByteStreams.toByteArray(in);
         } catch (Exception e) {
             log.error("Configuration error", e);
         }
@@ -44,7 +44,7 @@ public class EmailTaskNotifier implements ITaskNotifier {
         }
         EmailConfig config = EmailConfigParser.parse(configBytes);
         Task task = executionContext.getTask();
-        Interaction interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getName());
+        Interaction interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
         EmailUtils.sendTaskMessage(SubjectHolder.get(), config, interaction, executionContext.getVariableProvider(),
                 executionContext.getProcessDefinition());
     }

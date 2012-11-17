@@ -44,7 +44,6 @@ public class SendEmailActionHandler implements ActionHandler {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void execute(ExecutionContext executionContext) throws Exception {
         if (!EmailConfigParser.canParse(configuration)) {
             throw new ConfigurationException("Invalid configuration " + configuration);
@@ -57,7 +56,7 @@ public class SendEmailActionHandler implements ActionHandler {
                 if (task == null) {
                     throw new ConfigurationException("task is null");
                 }
-                interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getName());
+                interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
             }
             EmailUtils.sendTaskMessage(SubjectHolder.get(), config, interaction, executionContext.getVariableProvider(),
                     executionContext.getProcessDefinition());

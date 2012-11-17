@@ -71,21 +71,20 @@ public class TaskLogic extends WFCommonLogic {
         if (variables == null) {
             variables = Maps.newHashMap();
         }
-        String transitionName = (String) variables.get(WfProcess.SELECTED_TRANSITION_KEY);
+        String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
         checkCanParticipate(subject, task, actor);
         actor = checkPermissionsOnExecutor(subject, actor, ActorPermission.READ);
 
         assignmentHelper.reassignTask(executionContext, task, actor);
 
-        String stateName = task.getName();
-        validateVariables(processDefinition, task.getName(), new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
+        validateVariables(processDefinition, task.getNodeId(), new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
         executionContext.setVariables(variables);
         Transition transition = null;
         if (transitionName != null) {
-            transition = task.getTask(processDefinition).getNode().getLeavingTransitionNotNull(transitionName);
+            transition = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitionNotNull(transitionName);
         }
         task.end(executionContext, transition, true);
-        log.info("Task '" + stateName + "' was done by " + actor + " in process " + task.getProcess());
+        log.info("Task '" + task.getName() + "' was done by " + actor + " in process " + task.getProcess());
     }
 
     public void markTaskOpened(Subject subject, Long taskId) {

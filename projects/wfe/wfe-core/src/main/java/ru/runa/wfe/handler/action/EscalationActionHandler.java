@@ -71,7 +71,7 @@ public class EscalationActionHandler implements ActionHandler {
         }
         orgFunctionClassName = orgFunctionClassName.trim();
         try {
-        	ClassLoaderUtil.instantiate(orgFunctionClassName);
+            ClassLoaderUtil.instantiate(orgFunctionClassName);
         } catch (Throwable e) {
             log.error("Unknown orgFunction: " + orgFunctionClassName);
             return;
@@ -83,7 +83,7 @@ public class EscalationActionHandler implements ActionHandler {
                 log.warn("Task '" + task + "' is not assigned");
                 return;
             }
-            log.info("Escalation for '" + task.getName() + "' with current swimlane value '" + swimlaneExecutor + "'");
+            log.info("Escalation for '" + task + "' with current swimlane value '" + swimlaneExecutor + "'");
             Executor originalExecutor;
             int previousEscalationLevel = 0;
             Set<Actor> previousSwimlaneActors = new HashSet<Actor>();

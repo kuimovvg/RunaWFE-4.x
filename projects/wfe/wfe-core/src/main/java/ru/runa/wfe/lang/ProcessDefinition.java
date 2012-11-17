@@ -43,6 +43,7 @@ import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -70,8 +71,8 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
             Event.EVENTTYPE_SUBPROCESS_END, Event.EVENTTYPE_TIMER };
 
     public ProcessDefinition(Deployment processDeploymentDBImpl) {
-        this.dBImpl = processDeploymentDBImpl;
-        this.processDefinition = this;
+        dBImpl = processDeploymentDBImpl;
+        processDefinition = this;
     }
 
     @Override
@@ -146,10 +147,10 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
         return variables;
     }
 
-    public Interaction getInteractionNotNull(String stateName) {
-        Interaction interaction = interactions.get(stateName);
+    public Interaction getInteractionNotNull(String nodeId) {
+        Interaction interaction = interactions.get(nodeId);
         if (interaction == null) {
-            interaction = new Interaction(null, stateName, null, null, false, null, null);
+            interaction = new Interaction(null, null, null, false, null, null);
         }
         return interaction;
     }
@@ -212,10 +213,10 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
         nodes.add(node);
         node.processDefinition = this;
         if (node instanceof StartState) {
-            if (this.startState != null) {
+            if (startState != null) {
                 throw new InvalidDefinitionException("only one start-state allowed in a process");
             }
-            this.startState = (StartState) node;
+            startState = (StartState) node;
         }
         return node;
     }
@@ -286,17 +287,17 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
         return swimlaneDefinition;
     }
 
-    public TaskDefinition getTaskNotNull(String taskName) {
+    public TaskDefinition getTaskNotNull(String nodeId) {
         for (Node node : getNodes()) {
             if (node instanceof InteractionNode) {
                 for (TaskDefinition taskDefinition : ((InteractionNode) node).getTasks()) {
-                    if (taskName.equals(taskDefinition.getName())) {
+                    if (Objects.equal(nodeId, taskDefinition.getNodeId())) {
                         return taskDefinition;
                     }
                 }
             }
         }
-        throw new InternalApplicationException("task '" + taskName + "' not found in " + this);
+        throw new InternalApplicationException("task '" + nodeId + "' not found in " + this);
     }
 
     public Transition getTransitionNotNull(String fromNodeId, String transitionName) {
@@ -305,11 +306,11 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
     }
 
     public boolean isSubsitutionIgnoredFor(Task task) {
-        return taskNamesToignoreSubstitutionRules.contains(task.getName());
+        return taskNamesToignoreSubstitutionRules.contains(task.getNodeId());
     }
 
-    public void addTaskNameToignoreSubstitutionRules(String taskName) {
-        taskNamesToignoreSubstitutionRules.add(taskName);
+    public void addTaskNameToignoreSubstitutionRules(String nodeId) {
+        taskNamesToignoreSubstitutionRules.add(nodeId);
     }
 
     public Map<String, String> getDisplayMappings() {

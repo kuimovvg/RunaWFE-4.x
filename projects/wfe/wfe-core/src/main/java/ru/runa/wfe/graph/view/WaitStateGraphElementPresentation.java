@@ -21,20 +21,7 @@ package ru.runa.wfe.graph.view;
  * Represents WaitState element on process graph.
  */
 public class WaitStateGraphElementPresentation extends BaseGraphElementPresentation {
-
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Creates instance, representing State element on process graph.
-     * 
-     * @param name
-     *            State name.
-     * @param graphConstraints
-     *            State position constraints.
-     */
-    public WaitStateGraphElementPresentation(String name, int[] graphConstraints) {
-        super(name, graphConstraints, null);
-    }
 
     @Override
     public void visit(GraphElementPresentationVisitor visitor) {

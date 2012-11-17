@@ -27,50 +27,62 @@ public abstract class BaseGraphElementPresentation implements GraphElementPresen
     private static final long serialVersionUID = 1L;
 
     /**
-     * Graph element name. Can be null if not set.
+     * Graph element ID.
      */
-    private final String name;
+    private String nodeId;
+
+    /**
+     * Graph element name.
+     */
+    private String name;
 
     /**
      * Graph element position constraints.
      */
-    private final int[] graphConstraints;
+    private int[] graphConstraints;
 
     /**
-     * Some additional data, assigned to graph element.
-     * This data is differs in graph elements, returned by different kinds of requests.
-     * May be null if not set.  
+     * Some additional data, assigned to graph element. This data is differs in
+     * graph elements, returned by different kinds of requests. May be null if
+     * not set.
      */
-    private final Object data;
-
-    /**
-     * @param name Graph element name. Can be null if not set.
-     * @param graphConstraints Graph element position constraints.
-     * @param data Some additional data, assigned to graph element.
-     */
-    protected BaseGraphElementPresentation(String name, int[] graphConstraints, Object data) {
-        super();
-        this.name = name;
-        this.graphConstraints = graphConstraints;
-        this.data = data;
-    }
+    private Object data;
 
     @Override
     public abstract void visit(GraphElementPresentationVisitor visitor);
 
     /**
-     * Graph element name. Can be null if not set.
+     * Graph element ID.
+     */
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    /**
+     * Graph element name.
      */
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
-     * Graph element position constraints.
-     * For rectangles represents upper-left and bottom-right corners. 
+     * Graph element position constraints. For rectangles represents upper-left
+     * and bottom-right corners.
      */
     public int[] getGraphConstraints() {
         return graphConstraints;
+    }
+
+    public void setGraphConstraints(int[] graphConstraints) {
+        this.graphConstraints = graphConstraints;
     }
 
     /**
@@ -78,5 +90,9 @@ public abstract class BaseGraphElementPresentation implements GraphElementPresen
      */
     public Object getData() {
         return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
 }
