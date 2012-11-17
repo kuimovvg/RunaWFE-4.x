@@ -49,9 +49,7 @@ public abstract class AbstractCreateNodeFeature extends AbstractCreateFeature {
 
     @Override
     public Object[] create(ICreateContext context) {
-        Node element = getNodeDefinition().createElement();
-        element.setParent(getProcessDefinition());
-        element.postCreate();
+        Node element = getNodeDefinition().createElement(getProcessDefinition());
         addObjectToContainer(context, element);
         return new Object[] { element };
     }
@@ -69,7 +67,6 @@ public abstract class AbstractCreateNodeFeature extends AbstractCreateFeature {
      * @param node the base element to add
      */
     protected void addObjectToContainer(ICreateContext context, Node node) {
-        node.setName(getProcessDefinition().getNextNodeName(node));
         ContainerShape targetContainer = context.getTargetContainer();
         if (targetContainer instanceof Diagram) {
             getProcessDefinition().addChild(node);

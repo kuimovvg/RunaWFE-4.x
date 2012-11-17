@@ -26,12 +26,12 @@ public class SubstitutionExceptionsXmlContentProvider extends AuxContentProvider
         Document document = XmlUtil.parseWithoutValidation(file.getContents());
         List<Element> elementsList = document.getRootElement().elements(TASK_ELEMENT_NAME);
         for (Element element : elementsList) {
-            String taskName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+            String taskId = element.attributeValue(NAME_ATTRIBUTE_NAME);
             try {
-                TaskState taskState = (TaskState) definition.getNodeByName(taskName);
+                TaskState taskState = definition.getNodeByIdNotNull(taskId);
                 taskState.setIgnoreSubstitution(true);
             } catch (Exception e) {
-                PluginLogger.logErrorWithoutDialog("No swimlane found for " + taskName, e);
+                PluginLogger.logErrorWithoutDialog("No swimlane found for " + taskId, e);
             }
         }
     }

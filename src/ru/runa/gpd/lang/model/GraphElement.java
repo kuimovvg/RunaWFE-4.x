@@ -35,9 +35,6 @@ public abstract class GraphElement implements IPropertySource, NotificationMessa
         return constraint;
     }
 
-    public void postCreate() {
-    }
-
     public void setDirty() {
         ProcessDefinition pd = getProcessDefinition();
         if (pd != null) {
@@ -111,9 +108,7 @@ public abstract class GraphElement implements IPropertySource, NotificationMessa
     }
 
     public void addChild(GraphElement child) {
-        childs.add(child);
-        child.setParent(this);
-        firePropertyChange(NODE_CHILDS_CHANGED, null, null);
+        addChild(child, childs.size());
     }
 
     public void addChild(GraphElement child, int index) {
