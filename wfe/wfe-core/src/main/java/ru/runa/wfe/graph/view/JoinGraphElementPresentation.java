@@ -21,17 +21,7 @@ package ru.runa.wfe.graph.view;
  * Represent join element on process graph.
  */
 public class JoinGraphElementPresentation extends BaseGraphElementPresentation {
-
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Creates instance, representing join element on process graph.
-     * @param name State name.
-     * @param graphConstraints State position constraints.
-     */
-    public JoinGraphElementPresentation(String name, int[] graphConstraints) {
-        super(name, graphConstraints, null);
-    }
 
     @Override
     public void visit(GraphElementPresentationVisitor visitor) {

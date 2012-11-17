@@ -28,13 +28,14 @@ public class MultiinstanceGraphElementPresentation extends BaseGraphElementPrese
     private static final long serialVersionUID = 1L;
 
     /**
-     * Identities of subprocesses, forked by this graph element. 
-     * Contains subprocess definition id if used in definition page.
+     * Identities of subprocesses, forked by this graph element. Contains
+     * subprocess definition id if used in definition page.
      */
     private final List<Long> ids = new ArrayList<Long>();
 
     /**
-     * Flag, equals true, if subprocess is readable by current user; false otherwise.
+     * Flag, equals true, if subprocess is readable by current user; false
+     * otherwise.
      */
     private boolean readPermission;
 
@@ -45,23 +46,13 @@ public class MultiinstanceGraphElementPresentation extends BaseGraphElementPrese
 
     /**
      * Creates multiple instance graph element.
-     * @param name Graph element name. Can be null if not set.
-     * @param subprocessName Name of subprocess.
-     * @param graphConstraints Graph element position constraints.
+     * 
+     * @param subprocessName
+     *            Name of subprocess.
+     * @param data
+     *            Some additional data, assigned to graph element.
      */
-    public MultiinstanceGraphElementPresentation(String name, String subprocessName, int[] graphConstraints) {
-        this(name, subprocessName, graphConstraints, null);
-    }
-
-    /**
-     * Creates multiple instance graph element.
-     * @param name Graph element name. Can be null if not set.
-     * @param subprocessName Name of subprocess.
-     * @param graphConstraints Graph element position constraints.
-     * @param data Some additional data, assigned to graph element.
-     */
-    public MultiinstanceGraphElementPresentation(String name, String subprocessName, int[] graphConstraints, Object data) {
-        super(name, graphConstraints, data);
+    public MultiinstanceGraphElementPresentation(String subprocessName) {
         this.subprocessName = subprocessName;
     }
 
@@ -72,28 +63,32 @@ public class MultiinstanceGraphElementPresentation extends BaseGraphElementPrese
 
     /**
      * Add process id to forked subprocesses list.
-     * @param id Process identity.
+     * 
+     * @param id
+     *            Process identity.
      */
     public void addSubprocessId(Long id) {
         ids.add(id);
     }
 
     /**
-     * Identities of subprocesses, forked by this graph element. 
+     * Identities of subprocesses, forked by this graph element.
      */
     public List<Long> getIds() {
         return ids;
     }
 
     /**
-     * Flag, equals true, if subprocess is readable by current user; false otherwise.
+     * Flag, equals true, if subprocess is readable by current user; false
+     * otherwise.
      */
     public boolean isReadPermission() {
         return readPermission;
     }
 
     /**
-     * Flag, equals true, if subprocess is readable by current user; false otherwise.
+     * Flag, equals true, if subprocess is readable by current user; false
+     * otherwise.
      */
     public void setReadPermission(boolean readPermission) {
         this.readPermission = readPermission;

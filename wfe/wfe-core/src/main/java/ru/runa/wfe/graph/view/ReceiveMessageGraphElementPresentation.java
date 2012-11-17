@@ -20,18 +20,6 @@ package ru.runa.wfe.graph.view;
 public class ReceiveMessageGraphElementPresentation extends BaseGraphElementPresentation {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Creates instance, representing decision state element on process graph.
-     * 
-     * @param name
-     *            State name.
-     * @param graphConstraints
-     *            State position constraints.
-     */
-    public ReceiveMessageGraphElementPresentation(String name, int[] graphConstraints) {
-        super(name, graphConstraints, null);
-    }
-
     @Override
     public void visit(GraphElementPresentationVisitor visitor) {
         visitor.onReceiveMessage(this);

@@ -23,31 +23,24 @@ package ru.runa.wfe.audit;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 
 import ru.runa.wfe.lang.Node;
 
 /**
- * Logging node execution.
+ * Logging node entering.
  * 
  * @author Dofs
  */
 @Entity
 @DiscriminatorValue(value = "N")
-public class NodeEnterLog extends ProcessLog {
+public class NodeEnterLog extends NodeLog {
     private static final long serialVersionUID = 1L;
 
     public NodeEnterLog() {
     }
 
     public NodeEnterLog(Node node) {
-        addAttribute(ATTR_NODE_ID, node.getNodeId());
-    }
-
-    @Transient
-    @Override
-    public Object[] getPatternArguments() {
-        return new Object[] { getAttributeNotNull(ATTR_NODE_ID) };
+        super(node);
     }
 
 }

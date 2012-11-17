@@ -54,6 +54,7 @@ public class SendMessage extends VariableContainerNode {
             variables.put("currentInstanceId", executionContext.getProcess().getId());
             variables.put("currentDefinitionName", executionContext.getProcessDefinition().getName());
             variables.put("currentNodeName", executionContext.getNode().getName());
+            variables.put("currentNodeId", executionContext.getNode().getNodeId());
             MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(variables, executionContext.getVariableProvider());
             ObjectMessage message = JMSUtil.sendMessage(variableMappings, variableProvider);
             String log = JMSUtil.toString(message);
