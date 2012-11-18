@@ -19,19 +19,19 @@ package ru.runa.wfe.var.format;
 
 import java.util.Arrays;
 
-
 /**
  * @deprecated Use {@link ArrayListFormat}
  */
-public class StringArrayFormat implements VariableFormat {
+@Deprecated
+public class StringArrayFormat implements VariableFormat<String[]> {
 
     @Override
-    public Object parse(String[] source) {
+    public String[] parse(String[] source) {
         return source;
     }
 
     @Override
-    public String format(Object obj) {
-        return Arrays.toString((String[]) obj);
+    public String format(String[] obj) {
+        return Arrays.toString(obj);
     }
 }

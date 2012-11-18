@@ -10,11 +10,11 @@ import ru.runa.wfe.commons.web.WebHelper;
  * 
  * @author Dofs
  */
-public interface VariableDisplaySupport {
+public interface VariableDisplaySupport<T> {
 
     /**
      * Generates HTML for variable value display.
      */
-    public String getHtml(Subject subject, PageContext pageContext, WebHelper webHelper, Long processId, String name, Object value);
+    public String getHtml(Subject subject, PageContext pageContext, WebHelper webHelper, Long processId, String name, T value);
 
 }

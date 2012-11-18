@@ -31,25 +31,24 @@ import com.google.common.collect.Maps;
 /**
  * This class is marker class for validation.
  */
-public class FileFormat implements VariableFormat, VariableDisplaySupport {
+public class FileFormat implements VariableFormat<FileVariable>, VariableDisplaySupport<FileVariable> {
 
     @Override
-    public String format(Object object) {
-        return ((FileVariable) object).getName();
+    public String format(FileVariable object) {
+        return object.getName();
     }
 
     @Override
-    public Object parse(String[] strings) {
+    public FileVariable parse(String[] strings) {
         throw new UnsupportedOperationException("file variable cannot be representable as string");
     }
 
     @Override
-    public String getHtml(Subject subject, PageContext pageContext, WebHelper webHelper, Long processId, String name, Object value) {
-        FileVariable fileVariable = (FileVariable) value;
+    public String getHtml(Subject subject, PageContext pageContext, WebHelper webHelper, Long processId, String name, FileVariable value) {
         HashMap<String, Object> params = Maps.newHashMap();
         params.put("id", processId);
         params.put("variableName", name);
         String href = webHelper.getActionUrl("/variableDownloader", params, pageContext, PortletUrlType.Render);
-        return "<a href=\"" + href + "\">" + fileVariable.getName() + "</>";
+        return "<a href=\"" + href + "\">" + value.getName() + "</>";
     }
 }
