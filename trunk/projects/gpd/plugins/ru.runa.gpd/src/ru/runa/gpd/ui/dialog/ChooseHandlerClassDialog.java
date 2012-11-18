@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.handler.CustomizationRegistry;
-import ru.runa.gpd.util.TypeNameMapping;
+import ru.runa.gpd.util.LocalizationRegistry;
 
 public class ChooseHandlerClassDialog extends ChooseItemDialog {
     private String type;
@@ -26,13 +26,13 @@ public class ChooseHandlerClassDialog extends ChooseItemDialog {
             setLabelProvider(new LabelProvider() {
                 @Override
                 public String getText(Object element) {
-                    return TypeNameMapping.getTypeName((String) element);
+                    return LocalizationRegistry.getTypeName((String) element);
                 }
             });
             List<String> typeList = new ArrayList<String>();
             Set<String> typeNames = CustomizationRegistry.getHandlerClasses(type);
             for (String typeName : typeNames) {
-                if (TypeNameMapping.showType(typeName)) {
+                if (LocalizationRegistry.showType(typeName)) {
                     typeList.add(typeName);
                 }
             }
@@ -51,8 +51,8 @@ public class ChooseHandlerClassDialog extends ChooseItemDialog {
     private static class MappedNameComparator implements Comparator<String> {
 
 		public int compare(String o1, String o2) {
-			String m1 = TypeNameMapping.getTypeName(o1);
-			String m2 = TypeNameMapping.getTypeName(o2);
+			String m1 = LocalizationRegistry.getTypeName(o1);
+			String m2 = LocalizationRegistry.getTypeName(o2);
 			return m1.compareTo(m2);
 		}
     	

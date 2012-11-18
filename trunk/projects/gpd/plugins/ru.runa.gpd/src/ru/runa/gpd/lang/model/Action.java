@@ -2,7 +2,7 @@ package ru.runa.gpd.lang.model;
 
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.util.TypeNameMapping;
+import ru.runa.gpd.util.LocalizationRegistry;
 
 public class Action extends GraphElement implements Delegable {
 
@@ -15,7 +15,7 @@ public class Action extends GraphElement implements Delegable {
         if (className == null || className.length() == 0) {
             className = Localization.getString("label.new");
         }
-		className = TypeNameMapping.getTypeName(className);
+		className = LocalizationRegistry.getTypeName(className);
         int index = className.lastIndexOf(".");
         if (index > 0) {
             className = className.substring(index + 1);

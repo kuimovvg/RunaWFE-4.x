@@ -90,7 +90,7 @@ public abstract class GraphElement implements IPropertySource, NotificationMessa
     }
 
     public NodeTypeDefinition getTypeDefinition() {
-        return NodeRegistry.getNodeTypeDefinition(typeName);
+        return NodeRegistry.getNodeTypeDefinition(getClass());
     }
 
     public GraphElement getParent() {

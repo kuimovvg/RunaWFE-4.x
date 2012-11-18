@@ -10,6 +10,8 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.GroupElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.StartState;
+import ru.runa.gpd.lang.model.Swimlane;
+import ru.runa.gpd.lang.model.Variable;
 
 public class ProcessDefinitionTreeEditPart extends ElementTreeEditPart {
     @Override
@@ -32,8 +34,8 @@ public class ProcessDefinitionTreeEditPart extends ElementTreeEditPart {
                 }
             }
         }
-        result.add(new GroupElement(getModel(), NodeRegistry.getNodeTypeDefinition("variable")));
-        result.add(new GroupElement(getModel(), NodeRegistry.getNodeTypeDefinition("swimlane")));
+        result.add(new GroupElement(getModel(), NodeRegistry.getNodeTypeDefinition(Variable.class)));
+        result.add(new GroupElement(getModel(), NodeRegistry.getNodeTypeDefinition(Swimlane.class)));
         result.addAll(getModel().getChildren(EndState.class));
         return result;
     }

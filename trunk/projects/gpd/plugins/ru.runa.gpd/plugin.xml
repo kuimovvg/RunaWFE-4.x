@@ -1402,6 +1402,13 @@
             id="ru.runa.wfe.GraphitiImageProvider">
       </imageProvider>
    </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.imageProviders">
+      <imageProvider
+            class="ru.runa.gpd.editor.graphiti.GraphitiImageProvider"
+            id="ru.runa.gpd.editor.graphiti.GraphitiImageProvider">
+      </imageProvider>
+   </extension>
    
    <extension
          id="application"

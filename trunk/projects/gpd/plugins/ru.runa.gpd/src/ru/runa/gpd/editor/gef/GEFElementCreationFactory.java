@@ -2,30 +2,30 @@ package ru.runa.gpd.editor.gef;
 
 import org.eclipse.gef.requests.CreationFactory;
 
-import ru.runa.gpd.lang.NodeRegistry;
+import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 
 public class GEFElementCreationFactory implements CreationFactory {
-    private final String elementType;
+    private final NodeTypeDefinition nodeTypeDefinition;
     private final ProcessDefinition definition;
 
-    public GEFElementCreationFactory(String elementType, ProcessDefinition definition) {
-        this.elementType = elementType;
+    public GEFElementCreationFactory(NodeTypeDefinition nodeTypeDefinition, ProcessDefinition definition) {
+        this.nodeTypeDefinition = nodeTypeDefinition;
         this.definition = definition;
     }
 
     @Override
     public Object getNewObject() {
-        return NodeRegistry.getNodeTypeDefinition(elementType).createElement(definition);
+        return nodeTypeDefinition.createElement(definition);
     }
 
     public Object getNewObject(GraphElement parent) {
-        return NodeRegistry.getNodeTypeDefinition(elementType).createElement(parent);
+        return nodeTypeDefinition.createElement(parent);
     }
 
     @Override
     public Object getObjectType() {
-        return elementType;
+        return nodeTypeDefinition.getName();
     }
 }
