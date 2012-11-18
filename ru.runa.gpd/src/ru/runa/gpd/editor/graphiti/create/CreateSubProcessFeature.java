@@ -1,17 +1,10 @@
 package ru.runa.gpd.editor.graphiti.create;
 
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
+import ru.runa.gpd.lang.model.Subprocess;
 
 public class CreateSubProcessFeature extends AbstractCreateNodeFeature {
-    public static final String ID = "process-state";
-
     public CreateSubProcessFeature(DiagramFeatureProvider provider) {
-        super(provider);
+        super(provider, Subprocess.class);
     }
-
-    @Override
-    protected String getNodeId() {
-        return ID;
-    }
-
 }

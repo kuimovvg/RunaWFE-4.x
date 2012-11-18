@@ -7,15 +7,8 @@ import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.Subprocess;
 
 public class CreateStartNodeFeature extends AbstractCreateNodeFeature {
-    public static final String ID = "start-state";
-
     public CreateStartNodeFeature(DiagramFeatureProvider provider) {
-        super(provider);
-    }
-
-    @Override
-    protected String getNodeId() {
-        return ID;
+        super(provider, StartState.class);
     }
 
     @Override

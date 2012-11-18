@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.XmlUtil;
@@ -21,7 +22,8 @@ import ru.runa.gpd.util.XmlUtil;
 import com.google.common.collect.Maps;
 
 public class NodeRegistry {
-    private static Map<String, NodeTypeDefinition> types = Maps.newHashMap();
+    private static Map<String, NodeTypeDefinition> typesByModelClass = Maps.newHashMap();
+    private static Map<String, NodeTypeDefinition> typesByName = Maps.newHashMap();
     private static Map<String, Map<String, NodeTypeDefinition>> gefPalette = Maps.newTreeMap();
     static {
         processJpdlElements();
@@ -46,7 +48,8 @@ public class NodeRegistry {
             throw new RuntimeException("unknown config element: " + configElement.getName());
         }
         NodeTypeDefinition type = new NodeTypeDefinition(configElement);
-        types.put(type.getName(), type);
+        typesByName.put(type.getName(), type);
+        typesByModelClass.put(configElement.getAttribute("model"), type);
         GEFPaletteEntry entry = type.getGEFPaletteEntry();
         if (entry == null) {
             return;
@@ -69,15 +72,22 @@ public class NodeRegistry {
     }
 
     public static NodeTypeDefinition getNodeTypeDefinition(String name) {
-        if (!types.containsKey(name)) {
-            throw new RuntimeException("No type found by name '" + name + "'");
+        if (!typesByModelClass.containsKey(name)) {
+            throw new RuntimeException("No type found by name " + name);
         }
-        return types.get(name);
+        return typesByModelClass.get(name);
+    }
+
+    public static NodeTypeDefinition getNodeTypeDefinition(Class<? extends GraphElement> clazz) {
+        if (!typesByModelClass.containsKey(clazz.getName())) {
+            throw new RuntimeException("No type found by class " + clazz);
+        }
+        return typesByModelClass.get(clazz.getName());
     }
 
     public static List<NodeTypeDefinition> getTypesWithVariableRenameProvider() {
         List<NodeTypeDefinition> list = new ArrayList<NodeTypeDefinition>();
-        for (NodeTypeDefinition definition : types.values()) {
+        for (NodeTypeDefinition definition : typesByModelClass.values()) {
             if (definition.hasVariableRenameProvider()) {
                 list.add(definition);
             }

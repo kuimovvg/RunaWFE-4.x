@@ -88,7 +88,6 @@ public class GpdXmlContentProvider extends AuxContentProvider {
     public void saveToFile(IFolder folder, ProcessDefinition definition) throws Exception {
         Document document = XmlUtil.createDocument(PROCESS_DIAGRAM_ELEMENT_NAME);
         Element root = document.getRootElement();
-        addAttribute(root, "type", "graphiti");
         addAttribute(root, NAME_ATTRIBUTE_NAME, definition.getName());
         addAttribute(root, NOTATION_ATTRIBUTE_NAME, definition.getLanguage().getNotation());
         Dimension dimension = definition.getDimension();

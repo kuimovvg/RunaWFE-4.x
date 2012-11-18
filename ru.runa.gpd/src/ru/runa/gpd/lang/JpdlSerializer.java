@@ -115,7 +115,11 @@ public class JpdlSerializer extends ProcessSerializer {
             parent.addChild(element);
         }
         if (element instanceof Node) {
-            ((Node) element).setNodeId(node.attributeValue(ID_ATTR));
+            String nodeId = node.attributeValue(ID_ATTR);
+            if (nodeId == null) {
+                nodeId = ((Node) element).getName();
+            }
+            ((Node) element).setNodeId(nodeId);
         }
         if (element instanceof NamedGraphElement) {
             ((NamedGraphElement) element).setName(node.attributeValue(NAME_ATTR));
@@ -190,24 +194,7 @@ public class JpdlSerializer extends ProcessSerializer {
         }
         List<Element> states = root.elements(TASK_STATE_NODE);
         for (Element node : states) {
-            List<Element> nodeList = node.elements();
-            int transitionsCount = 0;
-            boolean hasTimeOutTransition = false;
-            for (Element childNode : nodeList) {
-                if (TRANSITION_NODE.equals(childNode.getName())) {
-                    String transitionName = childNode.attributeValue(NAME_ATTR);
-                    if (PluginConstants.TIMER_TRANSITION_NAME.equals(transitionName)) {
-                        hasTimeOutTransition = true;
-                    }
-                    transitionsCount++;
-                }
-            }
-            GraphElement state;
-            if (transitionsCount == 1 && hasTimeOutTransition) {
-                state = create(node, definition, WAIT_STATE_NODE);
-            } else {
-                state = create(node, definition);
-            }
+            State state = create(node, definition);
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
                 if (TASK_NODE.equals(stateNodeChild.getName())) {
@@ -218,12 +205,12 @@ public class JpdlSerializer extends ProcessSerializer {
                         String reassign = stateNodeChild.attributeValue(REASSIGN_ATTR);
                         if (reassign != null) {
                             boolean forceReassign = Boolean.parseBoolean(reassign);
-                            ((State) state).setReassignmentEnabled(forceReassign);
+                            state.setReassignmentEnabled(forceReassign);
                         }
                     }
-                    String duedate_attr = stateNodeChild.attributeValue(DUEDATE_ATTR);
-                    if (duedate_attr != null) {
-                        ((State) state).setTimeOutDueDate(duedate_attr);
+                    String duedateAttr = stateNodeChild.attributeValue(DUEDATE_ATTR);
+                    if (duedateAttr != null) {
+                        state.setTimeOutDueDate(duedateAttr);
                     }
                     List<Element> aaa = stateNodeChild.elements();
                     for (Element a : aaa) {
@@ -249,17 +236,9 @@ public class JpdlSerializer extends ProcessSerializer {
                     } else if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
                         definition.setTimeOutDueDate(dueDate);
                     } else {
-                        if (State.class.isInstance(state)) {
-                            ((State) state).setHasTimer(true);
-                            if (dueDate != null) {
-                                ((State) state).setDueDate(dueDate);
-                            }
-                        } else if (WaitState.class.isInstance(state)) {
-                            if (dueDate != null) {
-                                ((WaitState) state).setDueDate(dueDate);
-                            } else {
-                                ((WaitState) state).setDueDate(TimerDuration.EMPTY);
-                            }
+                        state.setHasTimer(true);
+                        if (dueDate != null) {
+                            state.setDueDate(dueDate);
                         }
                     }
                     List<Element> actionNodes = stateNodeChild.elements();
@@ -273,6 +252,37 @@ public class JpdlSerializer extends ProcessSerializer {
                                 definition.setTimeOutAction(timerAction);
                             } else if (TIMER_ESCALATION.equals(nameTimer)) {
                                 ((TaskState) state).setEscalationAction(timerAction);
+                            } else {
+                                ((ITimed) state).setTimerAction(timerAction);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        List<Element> waitStates = root.elements(WAIT_STATE_NODE);
+        for (Element node : waitStates) {
+            create(node, definition);
+            WaitState state = create(node, definition);
+            List<Element> stateChilds = node.elements();
+            for (Element stateNodeChild : stateChilds) {
+                if (TIMER_NODE.equals(stateNodeChild.getName())) {
+                    String nameTimer = stateNodeChild.attributeValue(NAME_ATTR);
+                    String dueDate = stateNodeChild.attributeValue(DUEDATE_ATTR);
+                    if (dueDate != null) {
+                        state.setDueDate(dueDate);
+                    } else {
+                        state.setDueDate(TimerDuration.EMPTY);
+                    }
+                    List<Element> actionNodes = stateNodeChild.elements();
+                    for (Element aa : actionNodes) {
+                        if (ACTION_NODE.equals(aa.getName())) {
+                            TimerAction timerAction = new TimerAction(null);
+                            timerAction.setDelegationClassName(aa.attributeValue(CLASS_ATTR));
+                            timerAction.setDelegationConfiguration(aa.getTextTrim());
+                            timerAction.setRepeat(stateNodeChild.attributeValue(REPEAT_ATTR));
+                            if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
+                                definition.setTimeOutAction(timerAction);
                             } else {
                                 ((ITimed) state).setTimerAction(timerAction);
                             }

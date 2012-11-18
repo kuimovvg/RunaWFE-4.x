@@ -16,8 +16,8 @@ import ru.runa.gpd.handler.decision.DefaultDecisionProvider;
 import ru.runa.gpd.handler.decision.IDecisionProvider;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
-import ru.runa.gpd.util.MappingContentProvider;
-import ru.runa.gpd.util.TypeNameMapping;
+import ru.runa.gpd.util.LocalizationsProvider;
+import ru.runa.gpd.util.LocalizationRegistry;
 import ru.runa.wfe.handler.action.ActionHandler;
 import ru.runa.wfe.handler.assign.AssignmentHandler;
 import ru.runa.wfe.handler.decision.DecisionHandler;
@@ -58,9 +58,9 @@ public class CustomizationRegistry {
                     if (Delegable.DECISION_HANDLER.equals(type) && !(provider instanceof IDecisionProvider)) {
                         throw new Exception("Custom decision provider should implement IDecisionProvider interface.");
                     }
-                    if (!TypeNameMapping.containsMapping(className)) {
-                        TypeNameMapping.addMapping(className, configElement.getAttribute("name"));
-                        MappingContentProvider.INSTANCE.saveToInput();
+                    if (!LocalizationRegistry.containsMapping(className)) {
+                        LocalizationRegistry.addMapping(className, configElement.getAttribute("name"));
+                        LocalizationsProvider.INSTANCE.save();
                     }
                     customDelegableProviders.put(className, provider);
                     handlers.get(type).add(className);

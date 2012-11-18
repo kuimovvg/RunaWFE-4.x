@@ -1,16 +1,10 @@
 package ru.runa.gpd.editor.graphiti.create;
 
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
+import ru.runa.gpd.lang.model.EndState;
 
 public class CreateEndEventFeature extends AbstractCreateNodeFeature {
-    public static final String ID = "end-state";
-
     public CreateEndEventFeature(DiagramFeatureProvider provider) {
-        super(provider);
-    }
-
-    @Override
-    protected String getNodeId() {
-        return ID;
+        super(provider, EndState.class);
     }
 }

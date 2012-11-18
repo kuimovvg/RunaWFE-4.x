@@ -48,7 +48,7 @@ public class DesignerPaletteRoot extends PaletteRoot {
     }
 
     private PaletteEntry createEntry(NodeTypeDefinition elementType) {
-        CreationFactory factory = new GEFElementCreationFactory(elementType.getName(), editor.getDefinition());
+        CreationFactory factory = new GEFElementCreationFactory(elementType, editor.getDefinition());
         GEFPaletteEntry entry = elementType.getGEFPaletteEntry();
         PaletteEntry paletteEntry = null;
         if ("node".equals(entry.getType())) {
