@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package ru.runa.wfe.definition.jpdl;
+package ru.runa.wfe.definition.par;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,19 +32,13 @@ import java.util.zip.ZipInputStream;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.Deployment;
-import ru.runa.wfe.definition.par.FileArchiveParser;
-import ru.runa.wfe.definition.par.FileDataProvider;
-import ru.runa.wfe.definition.par.InteractionsParser;
-import ru.runa.wfe.definition.par.ProcessArchiveParser;
-import ru.runa.wfe.definition.par.TaskSubsitutionParser;
-import ru.runa.wfe.definition.par.VariableDefinitionParser;
 import ru.runa.wfe.lang.ProcessDefinition;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
-public class JpdlProcessArchive extends FileDataProvider {
+public class ProcessArchive extends FileDataProvider {
     private final Deployment parDeployment;
     public static List<String> UNSECURED_FILE_NAMES = Lists.newArrayList();
     static {
@@ -55,7 +49,7 @@ public class JpdlProcessArchive extends FileDataProvider {
 
     static List<ProcessArchiveParser> processArchiveParsers = new ArrayList<ProcessArchiveParser>();
     static {
-        processArchiveParsers.add(ApplicationContextFactory.autowireBean(new JpdlArchiveParser()));
+        processArchiveParsers.add(ApplicationContextFactory.autowireBean(new ProcessDefinitionParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new FileArchiveParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new VariableDefinitionParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new InteractionsParser()));
@@ -64,7 +58,7 @@ public class JpdlProcessArchive extends FileDataProvider {
 
     private Map<String, byte[]> fileData = Maps.newHashMap();
 
-    public JpdlProcessArchive(Deployment parDeployment) {
+    public ProcessArchive(Deployment parDeployment) {
         try {
             this.parDeployment = parDeployment;
             ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(parDeployment.getContent()));

@@ -43,7 +43,7 @@ import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.Language;
 import ru.runa.wfe.definition.WorkflowSystemPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wfe.definition.jpdl.JpdlProcessArchive;
+import ru.runa.wfe.definition.par.ProcessArchive;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
@@ -254,10 +254,10 @@ public class DefinitionLogic extends WFCommonLogic {
     public byte[] getFile(Subject subject, Long definitionId, String fileName) throws AuthenticationException, DefinitionDoesNotExistException,
             AuthorizationException {
         ProcessDefinition definition = getDefinition(definitionId);
-        if (!JpdlProcessArchive.UNSECURED_FILE_NAMES.contains(fileName)) {
+        if (!ProcessArchive.UNSECURED_FILE_NAMES.contains(fileName)) {
             checkPermissionAllowed(subject, definition, DefinitionPermission.READ);
         }
-        if (JpdlProcessArchive.PAR_FILE.equals(fileName)) {
+        if (ProcessArchive.PAR_FILE.equals(fileName)) {
             return definition.getDBImpl().getContent();
         }
         return definition.getFileData(fileName);
@@ -300,7 +300,7 @@ public class DefinitionLogic extends WFCommonLogic {
         Deployment parDeployment = new Deployment();
         parDeployment.setLanguage(Language.JPDL);
         parDeployment.setContent(data);
-        JpdlProcessArchive archive = new JpdlProcessArchive(parDeployment);
+        ProcessArchive archive = new ProcessArchive(parDeployment);
         return archive.parseProcessDefinition();
     }
 
