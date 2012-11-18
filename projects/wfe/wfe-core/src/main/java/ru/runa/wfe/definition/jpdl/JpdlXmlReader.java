@@ -1,24 +1,3 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2005, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
 package ru.runa.wfe.definition.jpdl;
 
 import java.io.IOException;
@@ -36,13 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
-import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
 import ru.runa.wfe.lang.Action;
-import ru.runa.wfe.lang.ActionNode;
 import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EndNode;
@@ -71,14 +48,13 @@ import com.google.common.collect.Maps;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class JpdlXmlReader {
-    private final byte[] definitionXml;
     private String defaultDueDate;
     private final List<Object[]> unresolvedTransitionDestinations = Lists.newArrayList();
 
     @Autowired
     private LocalizationDAO localizationDAO;
 
-    private Document document;
+    private final Document document;
     // TODO move to Spring (or GPD process setting)
     private boolean waitStateCompatibility = true;
 
@@ -86,7 +62,6 @@ public class JpdlXmlReader {
     static {
         nodeTypes.put("start-state", StartState.class);
         nodeTypes.put("end-state", EndNode.class);
-        nodeTypes.put("node", ActionNode.class);
         nodeTypes.put("wait-state", WaitState.class);
         nodeTypes.put("task-node", TaskNode.class);
         nodeTypes.put("fork", Fork.class);
@@ -98,8 +73,8 @@ public class JpdlXmlReader {
         nodeTypes.put("receive-message", ReceiveMessage.class);
     }
 
-    public JpdlXmlReader(byte[] definitionXml) {
-        this.definitionXml = definitionXml;
+    public JpdlXmlReader(Document document) {
+        this.document = document;
     }
 
     private static final String INVALID_ATTR = "invalid";
@@ -132,12 +107,11 @@ public class JpdlXmlReader {
         try {
             // TODO document = XmlUtils.parseWithXSDValidation(definitionXml,
             // ClassLoaderUtil.getResourceAsStream("jpdl-4.0.xsd", getClass()));
-            document = XmlUtils.parseWithoutValidation(definitionXml);
             Element root = document.getRootElement();
 
             // read the process name
             processDefinition.setName(root.attributeValue(NAME_ATTR));
-            processDefinition.setDescription(root.elementTextTrim(DECISION_NODE));
+            processDefinition.setDescription(root.elementTextTrim(DESCRIPTION_NODE));
             defaultDueDate = root.attributeValue(DEFAULT_DUEDATE_ATTR);
             if ("true".equals(root.attributeValue(INVALID_ATTR))) {
                 throw new InvalidDefinitionException("invalid process definition");
@@ -290,10 +264,6 @@ public class JpdlXmlReader {
             if (startTaskElement != null) {
                 readTask(processDefinition, startTaskElement, startState);
             }
-        }
-        if (node instanceof ActionNode) {
-            ActionNode actionNode = (ActionNode) node;
-            actionNode.setAction(readSingleAction(processDefinition, element));
         }
         // if (node instanceof WaitState) {
         // CreateTimerAction createTimerAction =

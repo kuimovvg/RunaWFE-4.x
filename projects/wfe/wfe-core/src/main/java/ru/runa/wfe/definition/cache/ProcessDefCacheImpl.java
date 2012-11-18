@@ -24,7 +24,7 @@ import ru.runa.wfe.commons.cache.Cache;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.dao.DeploymentDAO;
-import ru.runa.wfe.definition.jpdl.JpdlProcessArchive;
+import ru.runa.wfe.definition.par.ProcessArchive;
 import ru.runa.wfe.lang.ProcessDefinition;
 
 import com.google.common.collect.Lists;
@@ -65,7 +65,7 @@ class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCach
             }
         }
         Deployment processDeploymentDbImpl = deploymentDAO.getNotNull(definitionId);
-        JpdlProcessArchive archive = new JpdlProcessArchive(processDeploymentDbImpl);
+        ProcessArchive archive = new ProcessArchive(processDeploymentDbImpl);
         processDefinition = archive.parseProcessDefinition();
         synchronized (this) {
             definitionIdToDefinition.put(definitionId, processDefinition);

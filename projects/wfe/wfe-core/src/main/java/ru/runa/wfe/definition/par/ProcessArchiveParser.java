@@ -21,11 +21,10 @@
  */
 package ru.runa.wfe.definition.par;
 
-import ru.runa.wfe.definition.jpdl.JpdlProcessArchive;
 import ru.runa.wfe.lang.ProcessDefinition;
 
 public interface ProcessArchiveParser {
 
-    void readFromArchive(JpdlProcessArchive archive, ProcessDefinition processDefinition);
+    void readFromArchive(ProcessArchive archive, ProcessDefinition processDefinition);
 
 }

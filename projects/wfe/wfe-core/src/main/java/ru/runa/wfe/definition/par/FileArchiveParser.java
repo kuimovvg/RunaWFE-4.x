@@ -23,14 +23,13 @@ package ru.runa.wfe.definition.par;
 
 import java.util.Map;
 
-import ru.runa.wfe.definition.jpdl.JpdlProcessArchive;
 import ru.runa.wfe.lang.ProcessDefinition;
 
 public class FileArchiveParser implements ProcessArchiveParser {
 
     @Override
-    public void readFromArchive(JpdlProcessArchive jpdlProcessArchive, ProcessDefinition processDefinition) {
-        for (Map.Entry<String, byte[]> entry : jpdlProcessArchive.getFileData().entrySet()) {
+    public void readFromArchive(ProcessArchive processArchive, ProcessDefinition processDefinition) {
+        for (Map.Entry<String, byte[]> entry : processArchive.getFileData().entrySet()) {
             processDefinition.addFile(entry.getKey(), entry.getValue());
         }
     }
