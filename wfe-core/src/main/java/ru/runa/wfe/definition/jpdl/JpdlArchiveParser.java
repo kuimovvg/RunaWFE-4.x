@@ -21,6 +21,7 @@
  */
 package ru.runa.wfe.definition.jpdl;
 
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.par.ProcessArchiveParser;
 import ru.runa.wfe.lang.ProcessDefinition;
@@ -30,7 +31,7 @@ public class JpdlArchiveParser implements ProcessArchiveParser {
     @Override
     public void readFromArchive(JpdlProcessArchive jpdlProcessArchive, ProcessDefinition processDefinition) {
         byte[] definitionXml = jpdlProcessArchive.getFileDataNotNull(IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME);
-        JpdlXmlReader jpdlXmlReader = new JpdlXmlReader(definitionXml);
+        JpdlXmlReader jpdlXmlReader = ApplicationContextFactory.autowireBean(new JpdlXmlReader(definitionXml));
         jpdlXmlReader.readProcessDefinition(processDefinition);
     }
 }
