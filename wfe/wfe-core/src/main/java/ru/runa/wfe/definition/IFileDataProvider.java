@@ -6,7 +6,6 @@ public interface IFileDataProvider {
     public static final String FORMS_XML_FILE_NAME = "forms.xml";
     public static final String GPD_XML_FILE_NAME = "gpd.xml";
     public static final String VARIABLES_XML_FILE_NAME = "variables.xml";
-    public static final String MAPPINGS_XML_FILE_NAME = "mapping.xml";
     public static final String GRAPH_IMAGE_OLD_FILE_NAME = "graph.gif";
     public static final String GRAPH_IMAGE_NEW_FILE_NAME = "processimage.jpg";
     public static final String INDEX_FILE_NAME = "index.html";

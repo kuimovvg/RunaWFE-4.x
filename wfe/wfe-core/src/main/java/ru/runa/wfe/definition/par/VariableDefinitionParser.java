@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.jpdl.JpdlProcessArchive;
@@ -12,6 +14,8 @@ import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.var.VariableDefinition;
 
 public class VariableDefinitionParser implements ProcessArchiveParser {
+    @Autowired
+    private LocalizationDAO localizationDAO;
 
     @Override
     public void readFromArchive(JpdlProcessArchive archive, ProcessDefinition processDefinition) {
@@ -25,6 +29,7 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
             variable.setFormat(element.attributeValue("format"));
             variable.setPublicAccess(Boolean.parseBoolean(element.attributeValue("public", "false")));
             variable.setDefaultValue(element.attributeValue("defaultValue"));
+            variable.setDisplayFormat(localizationDAO.getLocalized(variable.getFormat()));
             processDefinition.addVariable(variable.getName(), variable);
         }
     }

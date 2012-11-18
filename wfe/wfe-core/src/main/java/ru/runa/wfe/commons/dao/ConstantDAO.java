@@ -32,11 +32,11 @@ public class ConstantDAO extends GenericDAO<Constant> {
     }
 
     /**
-     * Load variable value. Returns null, if variable is not present.
+     * Load constant value. Returns null, if constant is not present.
      * 
      * @param name
-     *            Variable name.
-     * @return Variable value.
+     *            constant name.
+     * @return constant value.
      */
     public String getValue(String name) {
         try {
@@ -52,12 +52,12 @@ public class ConstantDAO extends GenericDAO<Constant> {
     }
 
     /**
-     * Save variable.
+     * Save constant.
      * 
      * @param name
-     *            Variable name.
+     *            constant name.
      * @param value
-     *            Variable value.
+     *            constant value.
      */
     public void saveOrUpdateConstant(String name, String value) {
         Constant constant = get(name);

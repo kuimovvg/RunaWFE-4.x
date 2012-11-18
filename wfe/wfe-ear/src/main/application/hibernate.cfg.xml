@@ -46,29 +46,14 @@
 		<property name="hibernate.cache.use_query_cache">true</property>
 
 		<!-- mapping classes -->
-
-		<mapping class="ru.runa.wfe.definition.Deployment" />
-		<mapping class="ru.runa.wfe.execution.Process" />
-		<mapping class="ru.runa.wfe.execution.Token" />
-		<mapping class="ru.runa.wfe.execution.NodeProcess" />
-	    <mapping class="ru.runa.wfe.task.Task" />
-	    <mapping class="ru.runa.wfe.execution.Swimlane" />
-
-	    <mapping class="ru.runa.wfe.var.Variable" />
-	    <mapping class="ru.runa.wfe.var.impl.ByteArrayVariable" />
-	    <mapping class="ru.runa.wfe.var.impl.DateVariable" />
-	    <mapping class="ru.runa.wfe.var.impl.DoubleVariable" />
-	    <mapping class="ru.runa.wfe.var.impl.LongVariable" />
-	    <mapping class="ru.runa.wfe.var.impl.NullVariable" />
-	    <mapping class="ru.runa.wfe.var.impl.StringVariable" />
-	    <mapping class="ru.runa.wfe.job.Job" />
-	    <mapping class="ru.runa.wfe.job.Timer" />
-
-	    <!-- logging mapping -->
+		<mapping class="ru.runa.wfe.audit.SystemLog" />
+		<mapping class="ru.runa.wfe.audit.ProcessDeleteLog" />
+		<mapping class="ru.runa.wfe.audit.ProcessDefinitionDeleteLog" />
+		<mapping class="ru.runa.wfe.audit.ProcessDefinitionDeleteExceptionLog" />
+	    <mapping class="ru.runa.wfe.audit.ProcessLog" />
 	    <mapping class="ru.runa.wfe.audit.ProcessStartLog" />
 	    <mapping class="ru.runa.wfe.audit.ProcessCancelLog" />
 	    <mapping class="ru.runa.wfe.audit.ProcessEndLog" />
-	    <mapping class="ru.runa.wfe.audit.ProcessLog" />
 	    <mapping class="ru.runa.wfe.audit.ActionLog" />
 	    <mapping class="ru.runa.wfe.audit.NodeEnterLog" />
 	    <mapping class="ru.runa.wfe.audit.NodeLeaveLog" />
@@ -87,34 +72,44 @@
 	    <mapping class="ru.runa.wfe.audit.TaskEscalationLog" />
 	    <mapping class="ru.runa.wfe.audit.TaskEndLog" />
 	    <mapping class="ru.runa.wfe.audit.SwimlaneAssignLog" />
-		
-		<!-- mapping RUNA classes -->
-		<mapping class="ru.runa.wfe.user.Actor" />
 		<mapping class="ru.runa.wfe.bot.Bot" />
 		<mapping class="ru.runa.wfe.bot.BotStation" />
 		<mapping class="ru.runa.wfe.bot.BotTask" />
-		<mapping class="ru.runa.wfe.user.Executor" />
-		<mapping class="ru.runa.wfe.user.Group" />
-		<mapping class="ru.runa.wfe.user.TemporaryGroup" />
-		<mapping class="ru.runa.wfe.user.EscalationGroup" />
+		<mapping class="ru.runa.wfe.commons.dao.Constant" />
+		<mapping class="ru.runa.wfe.commons.dao.Localization" />
+		<mapping class="ru.runa.wfe.definition.Deployment" />
+		<mapping class="ru.runa.wfe.execution.Process" />
+		<mapping class="ru.runa.wfe.execution.Token" />
+		<mapping class="ru.runa.wfe.execution.NodeProcess" />
+	    <mapping class="ru.runa.wfe.execution.Swimlane" />
+	    <mapping class="ru.runa.wfe.job.Job" />
+	    <mapping class="ru.runa.wfe.job.Timer" />
+		<mapping class="ru.runa.wfe.presentation.BatchPresentation" />
 		<mapping class="ru.runa.wfe.relation.Relation" />
 		<mapping class="ru.runa.wfe.relation.RelationPair" />
-		<mapping class="ru.runa.wfe.user.ExecutorGroupRelation" />
-		<mapping class="ru.runa.wfe.presentation.BatchPresentation" />
-		<mapping class="ru.runa.wfe.user.Profile" />
+		<mapping class="ru.runa.wfe.security.dao.PermissionMapping" />
+		<mapping class="ru.runa.wfe.security.dao.PrivelegedMapping" />
 		<mapping class="ru.runa.wfe.ss.Substitution" />
 		<mapping class="ru.runa.wfe.ss.SubstitutionCriteria" />
 		<mapping class="ru.runa.wfe.ss.SubstitutionCriteriaSwimlane" />
 		<mapping class="ru.runa.wfe.ss.SubstitutionCriteriaNotEquals" />
 		<mapping class="ru.runa.wfe.ss.TerminatorSubstitution" />
+	    <mapping class="ru.runa.wfe.task.Task" />
+		<mapping class="ru.runa.wfe.user.Executor" />
+		<mapping class="ru.runa.wfe.user.Actor" />
+		<mapping class="ru.runa.wfe.user.Group" />
+		<mapping class="ru.runa.wfe.user.ExecutorGroupRelation" />
+		<mapping class="ru.runa.wfe.user.Profile" />
+		<mapping class="ru.runa.wfe.user.TemporaryGroup" />
+		<mapping class="ru.runa.wfe.user.EscalationGroup" />
 		<mapping class="ru.runa.wfe.user.dao.ActorPassword" />
-		<mapping class="ru.runa.wfe.commons.dao.Constant" />
-		<mapping class="ru.runa.wfe.security.dao.PermissionMapping" />
-		<mapping class="ru.runa.wfe.security.dao.PrivelegedMapping" />
-		<mapping class="ru.runa.wfe.audit.SystemLog" />
-		<mapping class="ru.runa.wfe.audit.ProcessDeleteLog" />
-		<mapping class="ru.runa.wfe.audit.ProcessDefinitionDeleteLog" />
-		<mapping class="ru.runa.wfe.audit.ProcessDefinitionDeleteExceptionLog" />
+	    <mapping class="ru.runa.wfe.var.Variable" />
+	    <mapping class="ru.runa.wfe.var.impl.ByteArrayVariable" />
+	    <mapping class="ru.runa.wfe.var.impl.DateVariable" />
+	    <mapping class="ru.runa.wfe.var.impl.DoubleVariable" />
+	    <mapping class="ru.runa.wfe.var.impl.LongVariable" />
+	    <mapping class="ru.runa.wfe.var.impl.NullVariable" />
+	    <mapping class="ru.runa.wfe.var.impl.StringVariable" />
 	</session-factory>
 
 </hibernate-configuration>

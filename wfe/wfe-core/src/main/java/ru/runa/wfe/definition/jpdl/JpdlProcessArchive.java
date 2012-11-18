@@ -29,12 +29,12 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.par.FileArchiveParser;
 import ru.runa.wfe.definition.par.FileDataProvider;
 import ru.runa.wfe.definition.par.InteractionsParser;
-import ru.runa.wfe.definition.par.MappingsParser;
 import ru.runa.wfe.definition.par.ProcessArchiveParser;
 import ru.runa.wfe.definition.par.TaskSubsitutionParser;
 import ru.runa.wfe.definition.par.VariableDefinitionParser;
@@ -55,12 +55,11 @@ public class JpdlProcessArchive extends FileDataProvider {
 
     static List<ProcessArchiveParser> processArchiveParsers = new ArrayList<ProcessArchiveParser>();
     static {
-        processArchiveParsers.add(new MappingsParser());
-        processArchiveParsers.add(new JpdlArchiveParser());
-        processArchiveParsers.add(new FileArchiveParser());
-        processArchiveParsers.add(new VariableDefinitionParser());
-        processArchiveParsers.add(new InteractionsParser());
-        processArchiveParsers.add(new TaskSubsitutionParser());
+        processArchiveParsers.add(ApplicationContextFactory.autowireBean(new JpdlArchiveParser()));
+        processArchiveParsers.add(ApplicationContextFactory.autowireBean(new FileArchiveParser()));
+        processArchiveParsers.add(ApplicationContextFactory.autowireBean(new VariableDefinitionParser()));
+        processArchiveParsers.add(ApplicationContextFactory.autowireBean(new InteractionsParser()));
+        processArchiveParsers.add(ApplicationContextFactory.autowireBean(new TaskSubsitutionParser()));
     }
 
     private Map<String, byte[]> fileData = Maps.newHashMap();

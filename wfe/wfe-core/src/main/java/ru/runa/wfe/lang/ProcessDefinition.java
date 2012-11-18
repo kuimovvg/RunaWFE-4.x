@@ -62,7 +62,6 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
     private final List<VariableDefinition> variables = Lists.newArrayList();
     private final Map<String, VariableDefinition> variablesMap = Maps.newHashMap();
     private final Set<String> taskNamesToignoreSubstitutionRules = Sets.newHashSet();
-    private Map<String, String> displayMappings = Maps.newHashMap();
 
     private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_PROCESS_START, Event.EVENTTYPE_PROCESS_END,
             Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE, Event.EVENTTYPE_TASK_CREATE, Event.EVENTTYPE_TASK_ASSIGN,
@@ -126,7 +125,6 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
     }
 
     public void addVariable(String name, VariableDefinition variableDefinition) {
-        variableDefinition.setDisplayFormat(displayMappings.get(variableDefinition.getFormat()));
         variablesMap.put(name, variableDefinition);
         variables.add(variableDefinition);
     }
@@ -257,17 +255,6 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
     }
 
     public void addSwimlane(SwimlaneDefinition swimlaneDefinition) {
-        if (swimlaneDefinition.getDelegation() != null && swimlaneDefinition.getDelegation().getConfiguration() != null) {
-            String conf = swimlaneDefinition.getDelegation().getConfiguration();
-            swimlaneDefinition.setDisplayOrgFunction(conf);
-            String[] orgFunctionParts = conf.split("\\(");
-            if (orgFunctionParts.length == 2) {
-                String mapping = displayMappings.get(orgFunctionParts[0].trim());
-                if (mapping != null) {
-                    swimlaneDefinition.setDisplayOrgFunction(mapping + " (" + orgFunctionParts[1]);
-                }
-            }
-        }
         swimlaneDefinitions.put(swimlaneDefinition.getName(), swimlaneDefinition);
     }
 
@@ -311,10 +298,6 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
 
     public void addTaskNameToignoreSubstitutionRules(String nodeId) {
         taskNamesToignoreSubstitutionRules.add(nodeId);
-    }
-
-    public Map<String, String> getDisplayMappings() {
-        return displayMappings;
     }
 
     @Override
