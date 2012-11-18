@@ -1,5 +1,6 @@
 package ru.runa.gpd.handler;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,8 +17,8 @@ import ru.runa.gpd.handler.decision.DefaultDecisionProvider;
 import ru.runa.gpd.handler.decision.IDecisionProvider;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
-import ru.runa.gpd.util.LocalizationsProvider;
 import ru.runa.gpd.util.LocalizationRegistry;
+import ru.runa.gpd.util.LocalizationsProvider;
 import ru.runa.wfe.handler.action.ActionHandler;
 import ru.runa.wfe.handler.assign.AssignmentHandler;
 import ru.runa.wfe.handler.decision.DecisionHandler;
@@ -44,6 +45,13 @@ public class CustomizationRegistry {
         handlers.put(Delegable.ASSIGNMENT_HANDLER, classNames);
         classNames = new HashSet<String>();
         classNames.addAll(ClassLoaderUtil.getChildsOfType(project, VariableFormat.class.getName()));
+        for (String string : classNames) {
+            try { // TODO
+                System.out.println(((Class<?>) ((ParameterizedType) Class.forName(string).getGenericInterfaces()[0]).getActualTypeArguments()[0]).getName());
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+        }
         handlers.put("FORMAT", classNames);
         IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("ru.runa.gpd.handlers").getExtensions();
         for (IExtension extension : extensions) {

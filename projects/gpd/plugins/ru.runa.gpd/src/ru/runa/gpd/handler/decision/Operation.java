@@ -3,7 +3,6 @@ package ru.runa.gpd.handler.decision;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.handler.decision.BSHTypeSupport.StringType;
 import ru.runa.gpd.lang.model.Variable;
@@ -11,25 +10,24 @@ import ru.runa.gpd.lang.model.Variable;
 public class Operation {
     private static final List<Operation> OPERATIONS_LIST = new ArrayList<Operation>();
     public static final String VOID = "void";
-    
+    public static final String NULL = "null";
     public static final Operation EQ = new Eq();
     public static final Operation NOT_EQ = new NotEq();
 
     static void registerOperation(Operation operation) {
         OPERATIONS_LIST.add(operation);
     }
-    
-    static class Eq extends Operation {
 
+    static class Eq extends Operation {
         private Eq() {
             super(Localization.getString("BSH.Operation.equals"), "==");
             registerOperation(this);
         }
-        
+
         @Override
         public String generateCode(Variable variable, Object lexem2) {
-            if ("null".equals(lexem2)) {
-                return variable.getName() + " == void";
+            if (NULL.equals(lexem2)) {
+                return variable.getName() + " == " + NULL;
             }
             BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable.getFormat());
             if (typeSupport instanceof StringType) {
@@ -42,20 +40,18 @@ public class Operation {
             }
             return super.generateCode(variable, lexem2);
         }
-
     }
 
     static class NotEq extends Operation {
-
         private NotEq() {
             super(Localization.getString("BSH.Operation.notequals"), "!=");
             registerOperation(this);
         }
-        
+
         @Override
         public String generateCode(Variable variable, Object lexem2) {
-            if ("null".equals(lexem2)) {
-                return variable.getName() + " != void";
+            if (NULL.equals(lexem2)) {
+                return variable.getName() + " != " + NULL;
             }
             BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable.getFormat());
             if (typeSupport instanceof StringType) {
@@ -68,11 +64,9 @@ public class Operation {
             }
             return super.generateCode(variable, lexem2);
         }
-
     }
 
     private String visibleName;
-
     private String operator;
 
     public Operation(String visibleName, String operator) {
@@ -103,14 +97,12 @@ public class Operation {
 
     public String generateCode(Variable variable, Object lexem2) {
         BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable.getFormat());
-
         StringBuffer buffer = new StringBuffer();
         buffer.append(typeSupport.wrap(variable));
         buffer.append(" ");
         buffer.append(getOperator());
         buffer.append(" ");
         buffer.append(typeSupport.wrap(lexem2));
-
         return buffer.toString();
     }
 
