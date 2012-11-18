@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.util.TypeNameMapping;
+import ru.runa.gpd.util.LocalizationRegistry;
 
 public class MappingDialog extends Dialog {
     private TableViewer tableViewer;
@@ -67,7 +67,7 @@ public class MappingDialog extends Dialog {
     }
 
     private void setTableInput() {
-        tableViewer.setInput(createItems(TypeNameMapping.getMapping(), TypeNameMapping.getHiddenMapping()));
+        tableViewer.setInput(createItems(LocalizationRegistry.getMapping(), LocalizationRegistry.getHiddenMapping()));
         for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
             TableItem item = tableViewer.getTable().getItem(i);
             TableItemData data = (TableItemData) item.getData();
@@ -137,8 +137,8 @@ public class MappingDialog extends Dialog {
             } else {
                 hiddenMapping.put(data.getType(), data.getName());
             }
-            TypeNameMapping.setMapping(mapping);
-            TypeNameMapping.setHiddenMapping(hiddenMapping);
+            LocalizationRegistry.setMapping(mapping);
+            LocalizationRegistry.setHiddenMapping(hiddenMapping);
         }
     }
 

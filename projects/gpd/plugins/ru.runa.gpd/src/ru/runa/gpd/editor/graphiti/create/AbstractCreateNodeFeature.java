@@ -13,20 +13,18 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Subprocess;
 
 public abstract class AbstractCreateNodeFeature extends AbstractCreateFeature {
-    private static final String CONNECTION_ATTRIBUTE = "org.activiti.designer.connectionContext";
     private final NodeTypeDefinition nodeDefinition;
 
-    public AbstractCreateNodeFeature(DiagramFeatureProvider provider) {
+    public AbstractCreateNodeFeature(DiagramFeatureProvider provider, Class<? extends GraphElement> nodeClass) {
         super(provider, "", "");
-        this.nodeDefinition = NodeRegistry.getNodeTypeDefinition(getNodeId());
+        this.nodeDefinition = NodeRegistry.getNodeTypeDefinition(nodeClass);
     }
-
-    protected abstract String getNodeId();
 
     @Override
     public String getCreateName() {

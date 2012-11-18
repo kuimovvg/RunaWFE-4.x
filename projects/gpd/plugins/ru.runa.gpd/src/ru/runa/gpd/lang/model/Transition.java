@@ -8,6 +8,8 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 
+import com.google.common.base.Objects;
+
 public class Transition extends NamedGraphElement implements Active {
     private Node target;
     private List<Bendpoint> bendpoints = new ArrayList<Bendpoint>();
@@ -44,7 +46,7 @@ public class Transition extends NamedGraphElement implements Active {
         }
         List<Transition> list = source.getLeavingTransitions();
         for (Transition transition : list) {
-            if (name.equals(transition.getName())) {
+            if (Objects.equal(name, transition.getName())) {
                 return;
             }
         }

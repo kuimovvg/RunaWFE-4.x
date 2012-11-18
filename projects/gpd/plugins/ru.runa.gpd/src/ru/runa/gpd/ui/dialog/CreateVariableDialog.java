@@ -27,7 +27,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.handler.CustomizationRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.util.TypeNameMapping;
+import ru.runa.gpd.util.LocalizationRegistry;
 import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.VariableFormat;
 
@@ -90,8 +90,8 @@ public class CreateVariableDialog extends Dialog {
         List<String> typeMappingList = new ArrayList<String>();
         final Map<String, String> reverseMapping = new HashMap<String, String>();
         for (String typeName : typeNames) {
-            if (TypeNameMapping.showType(typeName)) {
-                String typeMapping = TypeNameMapping.getTypeName(typeName);
+            if (LocalizationRegistry.showType(typeName)) {
+                String typeMapping = LocalizationRegistry.getTypeName(typeName);
                 typeMappingList.add(typeMapping);
                 reverseMapping.put(typeMapping, typeName);
             }
@@ -101,7 +101,7 @@ public class CreateVariableDialog extends Dialog {
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.minimumWidth = 200;
         typeCombo.setLayoutData(gridData);
-        typeCombo.setText(TypeNameMapping.getTypeName(type));
+        typeCombo.setText(LocalizationRegistry.getTypeName(type));
         typeCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
