@@ -1,17 +1,17 @@
 package ru.runa.wfe.var.format;
 
 import java.util.Arrays;
+import java.util.List;
 
-
-public class ArrayListFormat implements VariableFormat {
+public class ArrayListFormat implements VariableFormat<List<?>> {
 
     @Override
-    public Object parse(String[] source) {
+    public List<?> parse(String[] source) {
         return Arrays.asList(source);
     }
 
     @Override
-    public String format(Object obj) {
+    public String format(List<?> obj) {
         return obj.toString();
     }
 
