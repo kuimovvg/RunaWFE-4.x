@@ -1,17 +1,10 @@
 package ru.runa.gpd.editor.graphiti.create;
 
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
+import ru.runa.gpd.lang.model.MultiInstance;
 
 public class CreateMultiInstanceFeature extends AbstractCreateNodeFeature {
-    public static final String ID = "multiinstance-state";
-
     public CreateMultiInstanceFeature(DiagramFeatureProvider provider) {
-        super(provider);
+        super(provider, MultiInstance.class);
     }
-
-    @Override
-    protected String getNodeId() {
-        return ID;
-    }
-
 }

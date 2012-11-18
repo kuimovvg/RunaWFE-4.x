@@ -22,7 +22,7 @@ import ru.runa.gpd.handler.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.util.TypeNameMapping;
+import ru.runa.gpd.util.LocalizationRegistry;
 
 public abstract class ParamBasedProvider extends DelegableProvider {
 
@@ -41,7 +41,7 @@ public abstract class ParamBasedProvider extends DelegableProvider {
                 definition.getVariableFormats(true), 
                 config.parseConfiguration(delegable.getDelegationConfiguration()), 
                 config, 
-                TypeNameMapping.getTypeName(delegable.getDelegationClassName()));
+                LocalizationRegistry.getTypeName(delegable.getDelegationClassName()));
         final ConfigurationWizard wizard = new ConfigurationWizard(page);
         WizardDialog dialog = new WizardDialog(Display.getCurrent().getActiveShell(), wizard) {
 

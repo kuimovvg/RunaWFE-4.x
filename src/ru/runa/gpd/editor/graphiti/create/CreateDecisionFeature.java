@@ -1,17 +1,10 @@
 package ru.runa.gpd.editor.graphiti.create;
 
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
+import ru.runa.gpd.lang.model.Decision;
 
 public class CreateDecisionFeature extends AbstractCreateNodeFeature {
-    public static final String ID = "decision";
-
     public CreateDecisionFeature(DiagramFeatureProvider provider) {
-        super(provider);
+        super(provider, Decision.class);
     }
-
-    @Override
-    protected String getNodeId() {
-        return ID;
-    }
-
 }

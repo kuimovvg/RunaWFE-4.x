@@ -3,11 +3,11 @@ package ru.runa.gpd.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TypeNameMapping {
+public class LocalizationRegistry {
     private static Map<String, String> mapping = new HashMap<String, String>();
     private static Map<String, String> hiddenMapping = new HashMap<String, String>();
     static {
-        MappingContentProvider.INSTANCE.addMappingInfo();
+        LocalizationsProvider.INSTANCE.init();
     }
 
     public static String getTypeName(String key) {
@@ -23,14 +23,14 @@ public class TypeNameMapping {
 
     public static Map<String, String> getMapping() {
         if (mapping.size() == 0) {
-            MappingContentProvider.INSTANCE.addMappingInfo();
+            LocalizationsProvider.INSTANCE.init();
         }
         return mapping;
     }
 
     public static Map<String, String> getHiddenMapping() {
         if (mapping.size() == 0) {
-            MappingContentProvider.INSTANCE.addMappingInfo();
+            LocalizationsProvider.INSTANCE.init();
         }
         return hiddenMapping;
     }
@@ -55,7 +55,7 @@ public class TypeNameMapping {
     public static boolean containsMapping(String key) {
         return mapping.containsKey(key);
     }
-    
+
     public static void updateMapping(String key, String value) {
         if (mapping.containsKey(key)) {
             mapping.put(key, value);
@@ -64,5 +64,4 @@ public class TypeNameMapping {
             hiddenMapping.put(key, value);
         }
     }
-
 }
