@@ -18,11 +18,14 @@
 package ru.runa.wfe.commons.logic;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.commons.dao.Localization;
+import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -38,16 +41,18 @@ import ru.runa.wfe.user.SystemExecutors;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Created on 14.03.2005
- * 
  */
 public class CommonLogic {
     @Autowired
     protected PermissionDAO permissionDAO;
     @Autowired
     protected ExecutorDAO executorDAO;
+    @Autowired
+    protected LocalizationDAO localizationDAO;
 
     protected <T extends Executor> T checkPermissionsOnExecutor(Subject subject, T executor, Permission permission) throws AuthorizationException,
             ExecutorDoesNotExistException {
@@ -148,6 +153,21 @@ public class CommonLogic {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
         List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(actor);
         return permissionDAO.getPersistentObjectCount(actorAndGroupsIds, batchPresentation, permission, securedObjectTypes);
+    }
+
+    public Map<String, String> getLocalizations(Subject subject) {
+        // TODO permissions
+        List<Localization> localizations = localizationDAO.getAll();
+        Map<String, String> result = Maps.newHashMapWithExpectedSize(localizations.size());
+        for (Localization localization : localizations) {
+            result.put(localization.getName(), localization.getValue());
+        }
+        return result;
+    }
+
+    public void saveLocalizations(Subject subject, Map<String, String> localizations) {
+        // TODO permissions
+        localizationDAO.saveLocalizations(localizations, true);
     }
 
 }
