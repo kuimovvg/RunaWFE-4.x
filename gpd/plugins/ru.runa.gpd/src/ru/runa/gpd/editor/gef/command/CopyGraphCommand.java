@@ -20,7 +20,8 @@ import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.CopyBuffer;
 import ru.runa.gpd.editor.gef.CopyBuffer.ExtraCopyAction;
-import ru.runa.gpd.editor.gef.GEFElementCreationFactory;
+import ru.runa.gpd.lang.NodeRegistry;
+import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.Active;
 import ru.runa.gpd.lang.model.Bendpoint;
@@ -76,16 +77,16 @@ public class CopyGraphCommand extends Command {
             List<Node> sourceNodeList = copyBuffer.extractSourceNodes();
             // add nodes
             for (Node node : sourceNodeList) {
-                GEFElementCreationFactory factory = null;
+                NodeTypeDefinition definition = null;
                 if (node instanceof StartState && targetDefinition.getChildren(StartState.class).size() == 0) {
-                    factory = new GEFElementCreationFactory("start-state", targetDefinition);
+                    definition = NodeRegistry.getNodeTypeDefinition(StartState.class);
                 } else if (node instanceof EndState && targetDefinition.getChildren(EndState.class).size() == 0) {
-                    factory = new GEFElementCreationFactory("end-state", targetDefinition);
+                    definition = NodeRegistry.getNodeTypeDefinition(EndState.class);
                 } else if (targetDefinition.getNodeById(node.getNodeId()) == null) {
-                    factory = new GEFElementCreationFactory(node.getTypeName(), targetDefinition);
+                    definition = NodeRegistry.getNodeTypeDefinition(node.getClass());
                 }
-                if (factory != null) {
-                    Node copy = (Node) factory.getNewObject();
+                if (definition != null) {
+                    Node copy = definition.createElement(targetDefinition);
                     copy.setName(node.getName());
                     copy.setDescription(node.getDescription());
                     copy.setConstraint(node.getConstraint());
@@ -154,14 +155,14 @@ public class CopyGraphCommand extends Command {
                 }
             }
             // add transitions
-            GEFElementCreationFactory trFactory = new GEFElementCreationFactory("transition", targetDefinition);
+            NodeTypeDefinition definition = NodeRegistry.getNodeTypeDefinition(Transition.class);
             for (Node node : sourceNodeList) {
                 List<Transition> transitions = node.getChildren(Transition.class);
                 for (Transition transition : transitions) {
                     Node source = targetNodeList.get(transition.getSource().getName());
                     Node target = targetNodeList.get(transition.getTarget().getName());
                     if (source != null && target != null) {
-                        Transition tr = (Transition) trFactory.getNewObject(source);
+                        Transition tr = definition.createElement(source);
                         tr.setName(transition.getName());
                         tr.setTarget(target);
                         for (Bendpoint bp : transition.getBendpoints()) {
@@ -309,8 +310,7 @@ public class CopyGraphCommand extends Command {
 
         public CopySwimlaneAction(Swimlane sourceSwimlane) {
             super(CopyBuffer.GROUP_SWIMLANES, sourceSwimlane.getName());
-            GEFElementCreationFactory swimlaneFactory = new GEFElementCreationFactory("swimlane", targetDefinition);
-            this.swimlane = (Swimlane) swimlaneFactory.getNewObject();
+            this.swimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(targetDefinition);
             this.swimlane.setName(sourceSwimlane.getName());
             this.swimlane.setDelegationClassName(sourceSwimlane.getDelegationClassName());
             this.swimlane.setDelegationConfiguration(sourceSwimlane.getDelegationConfiguration());
@@ -379,8 +379,7 @@ public class CopyGraphCommand extends Command {
         public AddActionHandlerAction(Active active, Action action) {
             super(CopyBuffer.GROUP_ACTION_HANDLERS, action.toString());
             this.active = active;
-            GEFElementCreationFactory actionFactory = new GEFElementCreationFactory("action", targetDefinition);
-            this.action = (Action) actionFactory.getNewObject((GraphElement) active);
+            this.action = NodeRegistry.getNodeTypeDefinition(Action.class).createElement((GraphElement) active);
             this.action.setDelegationClassName(action.getDelegationClassName());
             this.action.setDelegationConfiguration(action.getDelegationConfiguration());
         }

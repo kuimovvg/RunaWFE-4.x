@@ -52,7 +52,7 @@ import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.GPDSearchQuery;
 import ru.runa.gpd.ui.dialog.CreateVariableDialog;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
-import ru.runa.gpd.util.TypeNameMapping;
+import ru.runa.gpd.util.LocalizationRegistry;
 
 public class VariableEditorPage extends EditorPartBase {
     private TableViewer tableViewer;
@@ -350,7 +350,7 @@ public class VariableEditorPage extends EditorPartBase {
             case 0:
                 return variable.getName();
             case 1:
-                return TypeNameMapping.getTypeName(variable.getFormat());
+                return LocalizationRegistry.getTypeName(variable.getFormat());
             case 2:
                 if (variable.getDefaultValue() == null) {
                     return "";

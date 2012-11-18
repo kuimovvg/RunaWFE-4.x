@@ -18,7 +18,7 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
 
     public CreateTransitionFeature(IFeatureProvider provider) {
         super(provider, "", "");
-        this.transitionDefinition = NodeRegistry.getNodeTypeDefinition("transition");
+        this.transitionDefinition = NodeRegistry.getNodeTypeDefinition(Transition.class);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
         Node target = getFlowNode(context.getTargetAnchor());
         if (source != null && target != null) {
             // create new business object
-            Transition transition = NodeRegistry.getNodeTypeDefinition("transition").createElement(source);
+            Transition transition = transitionDefinition.createElement(source);
             transition.setTarget(target);
             transition.setName(source.getNextTransitionName());
             source.addLeavingTransition(transition);

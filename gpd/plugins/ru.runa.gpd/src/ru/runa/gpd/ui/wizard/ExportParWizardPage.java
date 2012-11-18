@@ -2,7 +2,6 @@ package ru.runa.gpd.ui.wizard;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,8 +48,6 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
-import ru.runa.gpd.util.IOUtils;
-import ru.runa.gpd.util.MappingContentProvider;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
@@ -200,27 +197,6 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                 SyncUIHelper.openConnectionSettingsDialog(WFEConnectionPreferencePage.class);
                 if (!WFEServerProcessDefinitionImporter.getInstance().isConfigured()) {
                     return false;
-                }
-            }
-            // Add orgfunctions & mappings .xml
-            File orgFile = MappingContentProvider.INSTANCE.getOrgFile();
-            if (orgFile.exists()) {
-                InputStream is = new FileInputStream(orgFile);
-                IFile file = IOUtils.getAdjacentFile(definitionFile, MappingContentProvider.ORG_XML_FILE_NAME);
-                if (file.exists()) {
-                    file.setContents(is, true, false, null);
-                } else {
-                    file.create(is, true, null);
-                }
-            }
-            File mappingFile = MappingContentProvider.INSTANCE.getMappingFile();
-            if (mappingFile.exists()) {
-                InputStream is = new FileInputStream(mappingFile);
-                IFile file = IOUtils.getAdjacentFile(definitionFile, MappingContentProvider.MAPPING_XML_FILE_NAME);
-                if (file.exists()) {
-                    file.setContents(is, true, false, null);
-                } else {
-                    file.create(is, true, null);
                 }
             }
             List<IFile> resourcesToExport = new ArrayList<IFile>();

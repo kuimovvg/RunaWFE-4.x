@@ -1,17 +1,10 @@
 package ru.runa.gpd.editor.graphiti.create;
 
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
+import ru.runa.gpd.lang.model.Join;
 
 public class CreateJoinFeature extends AbstractCreateNodeFeature {
-    public static final String ID = "join";
-
     public CreateJoinFeature(DiagramFeatureProvider provider) {
-        super(provider);
+        super(provider, Join.class);
     }
-
-    @Override
-    protected String getNodeId() {
-        return ID;
-    }
-
 }

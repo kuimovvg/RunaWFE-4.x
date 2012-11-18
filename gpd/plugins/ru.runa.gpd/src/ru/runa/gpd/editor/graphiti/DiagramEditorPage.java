@@ -5,10 +5,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.commands.CommandStack;
@@ -113,17 +111,15 @@ public class DiagramEditorPage extends DiagramEditor {
     //            }
     //        }
     //    }
-    @Override
-    public boolean isDirty() {
-        //super.isDirty()
-        TransactionalEditingDomain editingDomain = getEditingDomain();
-        // Check that the editor is not yet disposed
-        if (editingDomain != null && editingDomain.getCommandStack() != null) {
-            return ((BasicCommandStack) editingDomain.getCommandStack()).isSaveNeeded();
-        }
-        return false;
-    }
-
+    //    @Override
+    //    public boolean isDirty() {
+    //        TransactionalEditingDomain editingDomain = getEditingDomain();
+    //        // Check that the editor is not yet disposed
+    //        if (editingDomain != null && editingDomain.getCommandStack() != null) {
+    //            return ((BasicCommandStack) editingDomain.getCommandStack()).isSaveNeeded();
+    //        }
+    //        return false;
+    //    }
     private void importDiagram() {
         final Diagram diagram = getDiagramTypeProvider().getDiagram();
         //diagram.setActive(true);
