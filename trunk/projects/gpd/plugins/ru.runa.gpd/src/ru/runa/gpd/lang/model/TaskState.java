@@ -10,64 +10,65 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
 import ru.runa.gpd.property.EscalationDurationPropertyDescriptor;
-import ru.runa.gpd.property.TimeOutActionPropertyDescriptor;
 import ru.runa.gpd.property.TimeOutDurationPropertyDescriptor;
 import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.util.TimerDuration;
+import ru.runa.wfe.handler.action.EscalationActionHandler;
 
 public class TaskState extends State {
     private TimerAction timerAction = null;
     private TimerAction escalationAction = null;
+
     public TimerAction getEscalationAction() {
-		return escalationAction;
-	}
+        return escalationAction;
+    }
 
-	public void setEscalationAction(TimerAction escalationAction) {
-		this.escalationAction = escalationAction;
-	}
+    public void setEscalationAction(TimerAction escalationAction) {
+        this.escalationAction = escalationAction;
+    }
 
-	//private TimerAction timeOutAction = null;
+    //private TimerAction timeOutAction = null;
     private boolean ignoreSubstitution;
     private boolean useEscalation = false;
     private TimerDuration escalationTime = null;
-    public TimerDuration getEscalationTime() {
-		return escalationTime;
-	}
 
-	public void setEscalationTime(TimerDuration escalationTime) {
-		this.escalationTime = escalationTime;
-		firePropertyChange(PROPERTY_ESCALATION, null, null);
-	}
+    public TimerDuration getEscalationTime() {
+        return escalationTime;
+    }
+
+    public void setEscalationTime(TimerDuration escalationTime) {
+        this.escalationTime = escalationTime;
+        firePropertyChange(PROPERTY_ESCALATION, null, null);
+    }
 
     public boolean isUseEscalation() {
-		return useEscalation;
-	}
+        return useEscalation;
+    }
 
-	public void setUseEscalation(boolean useEscalation) {
-		
-		if (escalationAction == null || !this.useEscalation) {
-			escalationAction = new TimerAction(getProcessDefinition());
-			escalationAction.setDelegationClassName("ru.runa.wf.EscalationActionHandler");
-			
-			String org_function = Activator.getPrefString(PrefConstants.P_ESCALATION_CONFIG);
-			//if (org_function==null || org_function=="") org_function = "ru.runa.af.organizationfunction.DemoChiefFunction";
-			escalationAction.setDelegationConfiguration(org_function);
-			
-			String repeat = Activator.getPrefString(PrefConstants.P_ESCALATION_REPEAT);
-			if (repeat!=null && repeat!="" && (new TimerDuration(repeat).hasDuration())) escalationAction.setRepeat(repeat);
-			
-			String expirationTime = Activator.getPrefString(PrefConstants.P_ESCALATION_DURATION);
-			if (expirationTime!=null && expirationTime!="" && (new TimerDuration(expirationTime).hasDuration()))
-				escalationTime = new TimerDuration(expirationTime);
-			else
-				escalationTime = null;
-		}
-		this.useEscalation = useEscalation;
-		firePropertyChange(PROPERTY_ESCALATION, null, null);
-	}
+    public void setUseEscalation(boolean useEscalation) {
+        if (escalationAction == null || !this.useEscalation) {
+            escalationAction = new TimerAction(getProcessDefinition());
+            escalationAction.setDelegationClassName(EscalationActionHandler.class.getName());
+            String org_function = Activator.getPrefString(PrefConstants.P_ESCALATION_CONFIG);
+            //if (org_function==null || org_function=="") org_function = "ru.runa.af.organizationfunction.DemoChiefFunction";
+            escalationAction.setDelegationConfiguration(org_function);
+            String repeat = Activator.getPrefString(PrefConstants.P_ESCALATION_REPEAT);
+            if (repeat != null && repeat != "" && (new TimerDuration(repeat).hasDuration())) {
+                escalationAction.setRepeat(repeat);
+            }
+            String expirationTime = Activator.getPrefString(PrefConstants.P_ESCALATION_DURATION);
+            if (expirationTime != null && expirationTime != "" && (new TimerDuration(expirationTime).hasDuration())) {
+                escalationTime = new TimerDuration(expirationTime);
+            } else {
+                escalationTime = null;
+            }
+        }
+        this.useEscalation = useEscalation;
+        firePropertyChange(PROPERTY_ESCALATION, null, null);
+    }
 
-	/**
+    /**
      * @return true if there is more than one output transitions (timer
      *         transition ignored)
      */
@@ -88,6 +89,7 @@ public class TaskState extends State {
         return false;
     }
 
+    @Override
     public void setTimerAction(TimerAction timerAction) {
         if (timerAction == TimerAction.NONE) {
             timerAction = null;
@@ -97,6 +99,7 @@ public class TaskState extends State {
         firePropertyChange(PROPERTY_TIMER_ACTION, old, this.timerAction);
     }
 
+    @Override
     public TimerAction getTimerAction() {
         return timerAction;
     }
@@ -109,7 +112,7 @@ public class TaskState extends State {
         this.timeOutAction = timeOutAction;
         firePropertyChange(PROPERTY_TIMEOUT_ACTION, old, this.timeOutAction);
     }*/
-
+    @Override
     public TimerAction getTimeOutAction() {
         return null;//timeOutAction;
     }
@@ -131,12 +134,12 @@ public class TaskState extends State {
             list.add(new TimerActionPropertyDescriptor(PROPERTY_TIMER_ACTION, Localization.getString("Timer.action"), this));
         } /*else if (!timerExist()) {
             list.add(new TimeOutActionPropertyDescriptor(PROPERTY_TIMEOUT_ACTION, Messages.getString("TimeOut.action"), this));
-        }*/
+          }*/
         list.add(new PropertyDescriptor(PROPERTY_IGNORE_SUBSTITUTION, Localization.getString("property.ignoreSubstitution")));
         list.add(new TimeOutDurationPropertyDescriptor(PROPERTY_TIMEOUT_DURATION, this));
         if (useEscalation) {
-        	list.add(new EscalationActionPropertyDescriptor(PROPERTY_ESCALATION_ACTION, Localization.getString("escalation.action"), this));
-        	list.add(new EscalationDurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, this));
+            list.add(new EscalationActionPropertyDescriptor(PROPERTY_ESCALATION_ACTION, Localization.getString("escalation.action"), this));
+            list.add(new EscalationDurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, this));
         }
         return list;
     }
@@ -147,16 +150,20 @@ public class TaskState extends State {
             return timerAction;
         }
         if (PROPERTY_ESCALATION_DURATION.equals(id)) {
-        	if (escalationTime==null || !escalationTime.hasDuration()) return "";
+            if (escalationTime == null || !escalationTime.hasDuration()) {
+                return "";
+            }
             return escalationTime;
         }
         if (PROPERTY_TIMEOUT_DURATION.equals(id)) {
-        	TimerDuration d = getTimeOutDuration();
-        	if (d==null || !d.hasDuration()) return "";
-        	return d;
+            TimerDuration d = getTimeOutDuration();
+            if (d == null || !d.hasDuration()) {
+                return "";
+            }
+            return d;
         }
         if (PROPERTY_ESCALATION_ACTION.equals(id)) {
-        	return escalationAction;
+            return escalationAction;
         }
         if (PROPERTY_IGNORE_SUBSTITUTION.equals(id)) {
             return ignoreSubstitution ? Localization.getString("message.yes") : Localization.getString("message.no");
@@ -177,7 +184,7 @@ public class TaskState extends State {
         } else if (PROPERTY_ESCALATION_ACTION.equals(id)) {
             setEscalationAction((TimerAction) value);
         } else if (PROPERTY_ESCALATION_DURATION.equals(id)) {
-        	setEscalationTime((TimerDuration) value);
+            setEscalationTime((TimerDuration) value);
         } else {
             super.setPropertyValue(id, value);
         }

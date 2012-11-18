@@ -7,7 +7,7 @@
    provider-name="Runa"
    class="ru.runa.gpd.Activator">
    <runtime>
-      <library name="lib/bsh-2.0b2.jar">
+      <library name=".">
          <export
                name="*">
          </export>
@@ -82,7 +82,37 @@
                name="*">
          </export>
       </library>
-      <library name=".">
+      <library name="lib/groovy-2.0.5.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/asm-4.0.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/asm-analysis-4.0.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/asm-commons-4.0.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/asm-tree-4.0.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/asm-util-4.0.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/antlr-2.7.6.jar">
          <export
                name="*">
          </export>
@@ -763,6 +793,16 @@
          <onVariableRenamed
                provider="ru.runa.gpd.ltk.ReceiveMessageRenameProvider">
          </onVariableRenamed>
+      </element>
+      <element
+            label="action node (deprecated)"
+            model="ru.runa.gpd.lang.model.ActionNode"
+            name="node">
+         <gefEntry
+               figure="ru.runa.gpd.editor.gef.figure.ActionNodeFigure"
+               graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.ActionNodeGraphicalEditPart"
+               treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
+         </gefEntry>
       </element>
    </extension>
    

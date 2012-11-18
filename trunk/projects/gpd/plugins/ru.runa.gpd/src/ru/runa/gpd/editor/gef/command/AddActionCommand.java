@@ -15,7 +15,6 @@ public class AddActionCommand extends Command {
     @Override
     public void execute() {
         action = NodeRegistry.getNodeTypeDefinition(Action.class).createElement((GraphElement) target);
-        action.setDelegationClassName("");
         target.addAction(action, actionIndex);
     }
 

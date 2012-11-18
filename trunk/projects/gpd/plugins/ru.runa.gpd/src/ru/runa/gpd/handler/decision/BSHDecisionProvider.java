@@ -1,6 +1,8 @@
 package ru.runa.gpd.handler.decision;
 
-import java.io.ByteArrayInputStream;
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,11 +20,7 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Transition;
 
-import bsh.ParseException;
-import bsh.Parser;
-
 public class BSHDecisionProvider extends DelegableProvider implements IDecisionProvider {
-
     @Override
     public String showConfigurationDialog(Delegable delegable) {
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
@@ -31,9 +29,7 @@ public class BSHDecisionProvider extends DelegableProvider implements IDecisionP
         for (Transition transition : transitions) {
             transitionNames.add(transition.getName());
         }
-
         BSHEditorDialog dialog = new BSHEditorDialog(delegable.getDelegationConfiguration(), transitionNames, definition.getVariablesList());
-
         if (dialog.open() == Window.OK) {
             return dialog.getResult();
         }
@@ -44,17 +40,17 @@ public class BSHDecisionProvider extends DelegableProvider implements IDecisionP
     public boolean validateValue(Delegable delegable) {
         try {
             String configuration = delegable.getDelegationConfiguration();
-            Parser parser = new Parser(new ByteArrayInputStream(configuration.getBytes()));
-            while (!parser.Line()) {
-                parser.popNode();
-            }
+            Binding binding = new Binding();
+            GroovyShell shell = new GroovyShell(binding);
+            shell.parse(configuration);
             return configuration.trim().length() > 0;
-        } catch (ParseException e) {
-            PluginLogger.logErrorWithoutDialog("BSH parser exception", e);
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("Script parse error", e);
             return false;
         }
     }
 
+    @Override
     public Set<String> getTransitionNames(Decision decision) {
         try {
             BSHDecisionModel model = new BSHDecisionModel(decision.getDelegationConfiguration(), decision.getProcessDefinition().getVariablesList());
@@ -64,6 +60,7 @@ public class BSHDecisionProvider extends DelegableProvider implements IDecisionP
         return new HashSet<String>();
     }
 
+    @Override
     public String getDefaultTransitionName(Decision decision) {
         try {
             BSHDecisionModel model = new BSHDecisionModel(decision.getDelegationConfiguration(), decision.getProcessDefinition().getVariablesList());
@@ -73,10 +70,10 @@ public class BSHDecisionProvider extends DelegableProvider implements IDecisionP
         return null;
     }
 
+    @Override
     public void transitionRenamed(Decision decision, String oldName, String newName) {
         String conf = decision.getDelegationConfiguration();
         conf = conf.replaceAll(Pattern.quote("\"" + oldName + "\""), Matcher.quoteReplacement("\"" + newName + "\""));
         decision.setDelegationConfiguration(conf);
     }
-
 }

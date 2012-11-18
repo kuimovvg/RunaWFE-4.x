@@ -13,6 +13,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.ActionImpl;
+import ru.runa.gpd.lang.model.ActionNode;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Describable;
@@ -41,6 +42,7 @@ import ru.runa.gpd.ui.dialog.ErrorDialog;
 import ru.runa.gpd.util.TimerDuration;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
+import ru.runa.wfe.commons.BackCompatibilityClassNames;
 
 @SuppressWarnings("unchecked")
 public class JpdlSerializer extends ProcessSerializer {
@@ -81,6 +83,7 @@ public class JpdlSerializer extends ProcessSerializer {
     private static final String TRANSITION_ATTR = "transition";
     private static final String SEND_MESSAGE_NODE = "send-message";
     private static final String RECEIVE_MESSAGE_NODE = "receive-message";
+    private static final String ACTION_NODE_NODE = "node";
     private static final String TIMER_GLOBAL_NAME = "__GLOBAL";
     private static final String TIMER_ESCALATION = "__ESCALATION";
 
@@ -114,6 +117,9 @@ public class JpdlSerializer extends ProcessSerializer {
         if (parent != null) {
             parent.addChild(element);
         }
+        if (element instanceof NamedGraphElement) {
+            ((NamedGraphElement) element).setName(node.attributeValue(NAME_ATTR));
+        }
         if (element instanceof Node) {
             String nodeId = node.attributeValue(ID_ATTR);
             if (nodeId == null) {
@@ -121,16 +127,13 @@ public class JpdlSerializer extends ProcessSerializer {
             }
             ((Node) element).setNodeId(nodeId);
         }
-        if (element instanceof NamedGraphElement) {
-            ((NamedGraphElement) element).setName(node.attributeValue(NAME_ATTR));
-        }
         List<Element> nodeList = node.elements();
         for (Element childNode : nodeList) {
             if (DESCRIPTION_NODE.equals(childNode.getName())) {
                 ((Describable) element).setDescription(childNode.getTextTrim());
             }
             if (HANDLER_NODE.equals(childNode.getName()) || ASSIGNMENT_NODE.equals(childNode.getName())) {
-                ((Delegable) element).setDelegationClassName(childNode.attributeValue(CLASS_ATTR));
+                setDelegableClassName((Delegable) element, childNode.attributeValue(CLASS_ATTR));
                 element.setDelegationConfiguration(childNode.getTextTrim());
             }
             if (ACTION_NODE.equals(childNode.getName())) {
@@ -138,6 +141,8 @@ public class JpdlSerializer extends ProcessSerializer {
                 String eventType;
                 if (element instanceof Transition) {
                     eventType = Event.TRANSITION;
+                } else if (element instanceof ActionNode) {
+                    eventType = Event.NODE_ACTION;
                 } else {
                     throw new RuntimeException("Unexpected action in XML, context of " + element);
                 }
@@ -158,7 +163,7 @@ public class JpdlSerializer extends ProcessSerializer {
 
     private void parseAction(Element node, GraphElement parent, String eventType) {
         ActionImpl action = NodeRegistry.getNodeTypeDefinition(ACTION_NODE).createElement(parent);
-        action.setDelegationClassName(node.attributeValue(CLASS_ATTR));
+        setDelegableClassName(action, node.attributeValue(CLASS_ATTR));
         action.setDelegationConfiguration(node.getTextTrim());
         parent.addAction(action, -1);
         action.setEventType(eventType);
@@ -192,25 +197,60 @@ public class JpdlSerializer extends ProcessSerializer {
                 }
             }
         }
+        // this is for back compatibility
+        List<Element> actionNodeNodes = root.elements(ACTION_NODE_NODE);
+        for (Element node : actionNodeNodes) {
+            ActionNode actionNode = create(node, definition);
+            List<Element> aaa = node.elements();
+            for (Element a : aaa) {
+                if (EVENT_NODE.equals(a.getName())) {
+                    String eventType = a.attributeValue("type");
+                    List<Element> actionNodes = a.elements();
+                    for (Element aa : actionNodes) {
+                        if (ACTION_NODE.equals(aa.getName())) {
+                            parseAction(aa, actionNode, eventType);
+                        }
+                    }
+                }
+            }
+        }
         List<Element> states = root.elements(TASK_STATE_NODE);
         for (Element node : states) {
-            State state = create(node, definition);
+            List<Element> nodeList = node.elements();
+            int transitionsCount = 0;
+            boolean hasTimeOutTransition = false;
+            for (Element childNode : nodeList) {
+                if (TRANSITION_NODE.equals(childNode.getName())) {
+                    String transitionName = childNode.attributeValue(NAME_ATTR);
+                    if (PluginConstants.TIMER_TRANSITION_NAME.equals(transitionName)) {
+                        hasTimeOutTransition = true;
+                    }
+                    transitionsCount++;
+                }
+            }
+            GraphElement state;
+            if (transitionsCount == 1 && hasTimeOutTransition) {
+                state = create(node, definition, WAIT_STATE_NODE);
+            } else {
+                state = create(node, definition);
+            }
+            // backCompatibility: waitState was persisted as taskState earlier
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
                 if (TASK_NODE.equals(stateNodeChild.getName())) {
-                    String swimlaneName = stateNodeChild.attributeValue(SWIMLANE_ATTR);
+                    String swimlaneName = stateNodeChild.attributeValue(SWIMLANE_NODE);
                     if (swimlaneName != null && state instanceof SwimlanedNode) {
                         Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
                         ((SwimlanedNode) state).setSwimlane(swimlane);
                         String reassign = stateNodeChild.attributeValue(REASSIGN_ATTR);
                         if (reassign != null) {
                             boolean forceReassign = Boolean.parseBoolean(reassign);
-                            state.setReassignmentEnabled(forceReassign);
+                            ((State) state).setReassignmentEnabled(forceReassign);
                         }
                     }
-                    String duedateAttr = stateNodeChild.attributeValue(DUEDATE_ATTR);
-                    if (duedateAttr != null) {
-                        state.setTimeOutDueDate(duedateAttr);
+                    String duedate_attr = stateNodeChild.attributeValue(DUEDATE_ATTR);
+                    if (duedate_attr != null) {
+                        ((State) state).setTimeOutDueDate(duedate_attr);
                     }
                     List<Element> aaa = stateNodeChild.elements();
                     for (Element a : aaa) {
@@ -236,16 +276,24 @@ public class JpdlSerializer extends ProcessSerializer {
                     } else if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
                         definition.setTimeOutDueDate(dueDate);
                     } else {
-                        state.setHasTimer(true);
-                        if (dueDate != null) {
-                            state.setDueDate(dueDate);
+                        if (State.class.isInstance(state)) {
+                            ((State) state).setHasTimer(true);
+                            if (dueDate != null) {
+                                ((State) state).setDueDate(dueDate);
+                            }
+                        } else if (WaitState.class.isInstance(state)) {
+                            if (dueDate != null) {
+                                ((WaitState) state).setDueDate(dueDate);
+                            } else {
+                                ((WaitState) state).setDueDate(TimerDuration.EMPTY);
+                            }
                         }
                     }
                     List<Element> actionNodes = stateNodeChild.elements();
                     for (Element aa : actionNodes) {
                         if (ACTION_NODE.equals(aa.getName())) {
                             TimerAction timerAction = new TimerAction(null);
-                            timerAction.setDelegationClassName(aa.attributeValue(CLASS_ATTR));
+                            setDelegableClassName(timerAction, aa.attributeValue(CLASS_ATTR));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
                             timerAction.setRepeat(stateNodeChild.attributeValue(REPEAT_ATTR));
                             if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
@@ -278,7 +326,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     for (Element aa : actionNodes) {
                         if (ACTION_NODE.equals(aa.getName())) {
                             TimerAction timerAction = new TimerAction(null);
-                            timerAction.setDelegationClassName(aa.attributeValue(CLASS_ATTR));
+                            setDelegableClassName(timerAction, aa.attributeValue(CLASS_ATTR));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
                             timerAction.setRepeat(stateNodeChild.attributeValue(REPEAT_ATTR));
                             if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
@@ -377,7 +425,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     for (Element aa : actionNodes) {
                         if (ACTION_NODE.equals(aa.getName())) {
                             TimerAction timerAction = new TimerAction(null);
-                            timerAction.setDelegationClassName(aa.attributeValue(CLASS_ATTR));
+                            setDelegableClassName(timerAction, aa.attributeValue(CLASS_ATTR));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
                             timerAction.setRepeat(childNode.attributeValue(REPEAT_ATTR));
                             messageNode.setTimerAction(timerAction);
@@ -423,6 +471,17 @@ public class JpdlSerializer extends ProcessSerializer {
         if (startState != null) {
             Element startStateElement = writeTaskState(root, startState);
             writeTransitions(startStateElement, startState);
+        }
+        // back compatibility
+        List<ActionNode> actionNodeNodes = definition.getChildren(ActionNode.class);
+        for (ActionNode actionNode : actionNodeNodes) {
+            Element actionNodeElement = writeNode(root, actionNode, null);
+            for (Action action : actionNode.getActions()) {
+                ActionImpl actionImpl = (ActionImpl) action;
+                if (!Event.NODE_ACTION.equals(actionImpl.getEventType())) {
+                    writeEvent(actionNodeElement, new Event(actionImpl.getEventType()), actionImpl);
+                }
+            }
         }
         List<Decision> decisions = definition.getChildren(Decision.class);
         for (Decision decision : decisions) {
@@ -623,5 +682,10 @@ public class JpdlSerializer extends ProcessSerializer {
         Element delegationElement = parent.addElement(elementName);
         setAttribute(delegationElement, CLASS_ATTR, delegable.getDelegationClassName());
         setNodeValue(delegationElement, delegable.getDelegationConfiguration());
+    }
+
+    private void setDelegableClassName(Delegable delegable, String className) {
+        className = BackCompatibilityClassNames.getClassName(className);
+        delegable.setDelegationClassName(className);
     }
 }
