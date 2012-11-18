@@ -27,7 +27,6 @@ import org.w3c.dom.NodeList;
 import ru.runa.wfe.commons.xml.XMLHelper;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
-import ru.runa.wfe.definition.jpdl.JpdlProcessArchive;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.var.VariableDefinition;
@@ -57,7 +56,7 @@ public class InteractionsParser implements ProcessArchiveParser {
     private final static String TYPE_ATTRIBUTE_NAME = "type";
 
     @Override
-    public void readFromArchive(JpdlProcessArchive archive, ProcessDefinition processDefinition) {
+    public void readFromArchive(ProcessArchive archive, ProcessDefinition processDefinition) {
         try {
             byte[] formsXml = archive.getFileDataNotNull(IFileDataProvider.FORMS_XML_FILE_NAME);
             Document document = XMLHelper.getDocumentWithoutValidation(new ByteArrayInputStream(formsXml));

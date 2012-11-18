@@ -7,13 +7,12 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
-import ru.runa.wfe.definition.jpdl.JpdlProcessArchive;
 import ru.runa.wfe.lang.ProcessDefinition;
 
 public class TaskSubsitutionParser implements ProcessArchiveParser {
 
     @Override
-    public void readFromArchive(JpdlProcessArchive archive, final ProcessDefinition processDefinition) {
+    public void readFromArchive(ProcessArchive archive, final ProcessDefinition processDefinition) {
         byte[] xml = processDefinition.getFileData(IFileDataProvider.SUBSTITUTION_EXCEPTIONS_FILE_NAME);
         if (xml == null) {
             return;
