@@ -17,21 +17,20 @@
  */
 package ru.runa.wfe.var.format;
 
-
 /**
  * Created on 30.11.2004
  */
-public class BooleanFormat implements VariableFormat {
+public class BooleanFormat implements VariableFormat<Boolean> {
 
     @Override
-    public Object parse(String[] source) {
+    public Boolean parse(String[] source) {
         String value = source[0];
         return "true".equalsIgnoreCase(value) || "on".equalsIgnoreCase(value);
 
     }
 
     @Override
-    public String format(Object obj) {
+    public String format(Boolean obj) {
         return obj.toString();
     }
 }

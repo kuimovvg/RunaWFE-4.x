@@ -17,22 +17,21 @@
  */
 package ru.runa.wfe.var.format;
 
-
 /**
  * Format object that converts given object to string.
  * 
  * Created on 24.11.2006
  * 
  */
-public class StringFormat implements VariableFormat {
+public class StringFormat implements VariableFormat<String> {
 
     @Override
-    public Object parse(String[] source) {
+    public String parse(String[] source) {
         return source[0];
     }
 
     @Override
-    public String format(Object obj) {
+    public String format(String obj) {
         return obj.toString();
     }
 }
