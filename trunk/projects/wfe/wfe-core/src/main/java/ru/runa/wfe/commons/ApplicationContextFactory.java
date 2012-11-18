@@ -134,10 +134,15 @@ public class ApplicationContextFactory {
     public static <T extends Object> T createAutowiredBean(Class<T> clazz) {
         try {
             T object = clazz.newInstance();
-            getContext().getAutowireCapableBeanFactory().autowireBean(object);
+            autowireBean(object);
             return object;
         } catch (Exception e) {
             throw new InternalApplicationException(e);
         }
+    }
+
+    public static <T extends Object> T autowireBean(T bean) {
+        getContext().getAutowireCapableBeanFactory().autowireBean(bean);
+        return bean;
     }
 }

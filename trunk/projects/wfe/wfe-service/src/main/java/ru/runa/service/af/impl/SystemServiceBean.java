@@ -17,6 +17,8 @@
  */
 package ru.runa.service.af.impl;
 
+import java.util.Map;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -37,7 +39,8 @@ import ru.runa.wfe.security.AuthorizationException;
 import com.google.common.base.Preconditions;
 
 /**
- * Represent system ru.runa.commons.test operations login/logout. Created on 16.08.2004
+ * Represent system ru.runa.commons.test operations login/logout. Created on
+ * 16.08.2004
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -58,6 +61,19 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(system);
         auditLogic.logout(subject, system);
+    }
+
+    @Override
+    public Map<String, String> getLocalizations(Subject subject) {
+        Preconditions.checkNotNull(subject);
+        return auditLogic.getLocalizations(subject);
+    }
+
+    @Override
+    public void saveLocalizations(Subject subject, Map<String, String> localizations) {
+        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(localizations);
+        auditLogic.saveLocalizations(subject, localizations);
     }
 
 }

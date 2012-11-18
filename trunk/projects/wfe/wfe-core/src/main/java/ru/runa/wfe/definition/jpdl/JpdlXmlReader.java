@@ -32,8 +32,10 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
@@ -72,6 +74,9 @@ public class JpdlXmlReader {
     private final byte[] definitionXml;
     private String defaultDueDate;
     private final List<Object[]> unresolvedTransitionDestinations = Lists.newArrayList();
+
+    @Autowired
+    private LocalizationDAO localizationDAO;
 
     private Document document;
     // TODO move to Spring (or GPD process setting)
@@ -166,6 +171,17 @@ public class JpdlXmlReader {
             Element assignmentElement = element.element(ASSIGNMENT_NODE);
             if (assignmentElement != null) {
                 swimlaneDefinition.setDelegation(readDelegation(processDefinition, assignmentElement));
+            }
+            if (swimlaneDefinition.getDelegation() != null && swimlaneDefinition.getDelegation().getConfiguration() != null) {
+                String conf = swimlaneDefinition.getDelegation().getConfiguration();
+                swimlaneDefinition.setDisplayOrgFunction(conf);
+                String[] orgFunctionParts = conf.split("\\(");
+                if (orgFunctionParts.length == 2) {
+                    String localized = localizationDAO.getLocalized(orgFunctionParts[0].trim());
+                    if (localized != null) {
+                        swimlaneDefinition.setDisplayOrgFunction(localized + " (" + orgFunctionParts[1]);
+                    }
+                }
             }
             processDefinition.addSwimlane(swimlaneDefinition);
         }

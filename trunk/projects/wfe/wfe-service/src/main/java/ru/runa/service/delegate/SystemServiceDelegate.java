@@ -17,6 +17,8 @@
  */
 package ru.runa.service.delegate;
 
+import java.util.Map;
+
 import javax.security.auth.Subject;
 
 import ru.runa.service.af.SystemService;
@@ -25,8 +27,9 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 
 /**
- * Base interface which implementaions provide operations on ASystem they are represent. For example {@link SystemServiceDelegete}represents delegete to AASystem. Created on
- * 17.08.2004
+ * Base interface which implementaions provide operations on ASystem they are
+ * represent. For example {@link SystemServiceDelegete}represents delegete to
+ * AASystem. Created on 17.08.2004
  * 
  * 
  */
@@ -49,4 +52,15 @@ public class SystemServiceDelegate extends EJB3Delegate implements SystemService
     public void logout(Subject subject, ASystem system) {
         getSystemService().logout(subject, system);
     }
+
+    @Override
+    public Map<String, String> getLocalizations(Subject subject) {
+        return getSystemService().getLocalizations(subject);
+    }
+
+    @Override
+    public void saveLocalizations(Subject subject, Map<String, String> localizations) {
+        getSystemService().saveLocalizations(subject, localizations);
+    }
+
 }

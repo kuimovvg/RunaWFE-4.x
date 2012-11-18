@@ -17,7 +17,9 @@
  */
 package ru.runa.wfe.commons.logic;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
@@ -33,6 +35,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.commons.dao.ConstantDAO;
+import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
@@ -87,11 +90,13 @@ public class InitializerLogic {
     };
 
     @Autowired
-    protected ConstantDAO constantDAO;
+    private ConstantDAO constantDAO;
     @Autowired
-    protected ExecutorDAO executorDAO;
+    private ExecutorDAO executorDAO;
     @Autowired
-    protected PermissionDAO permissionDAO;
+    private PermissionDAO permissionDAO;
+    @Autowired
+    private LocalizationDAO localizationDAO;
     private String administratorName;
     private String administratorDescription;
     private String administratorPassword;
@@ -143,6 +148,13 @@ public class InitializerLogic {
             } else {
                 log.info("database is initialized. skipping initialization ...");
                 applyPatches(transaction);
+            }
+            InputStream stream = ClassLoaderUtil.getResourceAsStream("localizations.xml", getClass());
+            if (stream != null) {
+                Map<String, String> localizations = LocalizationParser.parseLocalizations(stream);
+                localizationDAO.saveLocalizations(localizations, false);
+            } else {
+                log.warn("No 'localizations.xml' found.");
             }
         } catch (Exception e) {
             log.fatal("initialization failed", e);

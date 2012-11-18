@@ -194,6 +194,9 @@
 	<bean class="ru.runa.wfe.job.dao.JobDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
+	<bean class="ru.runa.wfe.commons.dao.LocalizationDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
 	<bean class="ru.runa.wfe.execution.dao.NodeProcessDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>

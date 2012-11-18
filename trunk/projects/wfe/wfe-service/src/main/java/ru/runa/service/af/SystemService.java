@@ -17,6 +17,8 @@
  */
 package ru.runa.service.af;
 
+import java.util.Map;
+
 import javax.security.auth.Subject;
 
 import ru.runa.wfe.security.ASystem;
@@ -24,7 +26,7 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 
 /**
- * Base interface which implementations provide operations on ASystem they are represent.
+ * Interface for common operations.
  * 
  * @since 2.0
  */
@@ -33,4 +35,8 @@ public interface SystemService {
     public void login(Subject subject, ASystem system) throws AuthenticationException, AuthorizationException;
 
     public void logout(Subject subject, ASystem system);
+
+    public Map<String, String> getLocalizations(Subject subject);
+
+    public void saveLocalizations(Subject subject, Map<String, String> localizations);
 }
