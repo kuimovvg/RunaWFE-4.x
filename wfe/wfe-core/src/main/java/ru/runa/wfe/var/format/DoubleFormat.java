@@ -20,23 +20,12 @@ package ru.runa.wfe.var.format;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Locale;
 
-
-public class DoubleFormat implements VariableFormat {
-
-    private final NumberFormat decimalFormat;
-
-    public DoubleFormat() {
-        decimalFormat = new DecimalFormat("0.####################################");
-    }
-
-    public DoubleFormat(Locale locale) {
-        decimalFormat = DecimalFormat.getInstance(locale);
-    }
+public class DoubleFormat implements VariableFormat<Double> {
+    private final NumberFormat decimalFormat = new DecimalFormat("0.####################################");
 
     @Override
-    public Object parse(String[] source) throws ParseException {
+    public Double parse(String[] source) throws ParseException {
         Double result = null;
         if (source != null) {
             result = new Double(decimalFormat.parse(source[0]).doubleValue());
@@ -45,7 +34,7 @@ public class DoubleFormat implements VariableFormat {
     }
 
     @Override
-    public String format(Object obj) {
+    public String format(Double obj) {
         return decimalFormat.format(obj);
     }
 }

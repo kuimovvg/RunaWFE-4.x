@@ -20,20 +20,15 @@ package ru.runa.wfe.var.format;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
-
 /**
  * Created on 22.05.2006
  * 
  */
-public class LongFormat implements VariableFormat {
-    private final DecimalFormat decimalFormat;
-
-    public LongFormat() {
-        decimalFormat = new DecimalFormat("0");
-    }
+public class LongFormat implements VariableFormat<Long> {
+    private final DecimalFormat decimalFormat = new DecimalFormat("0");
 
     @Override
-    public Object parse(String[] source) throws ParseException {
+    public Long parse(String[] source) throws ParseException {
         Long result = null;
         if (source != null) {
             result = new Long(decimalFormat.parse(source[0]).longValue());
@@ -42,7 +37,7 @@ public class LongFormat implements VariableFormat {
     }
 
     @Override
-    public String format(Object obj) {
+    public String format(Long obj) {
         return decimalFormat.format(obj);
     }
 }
