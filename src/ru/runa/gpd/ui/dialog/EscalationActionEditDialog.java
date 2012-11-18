@@ -15,8 +15,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.handler.CustomizationRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -31,13 +31,11 @@ public class EscalationActionEditDialog extends Dialog {
     private Text classNameField;
     private Text configField;
     private Text repeatField;
-    //private final boolean deleteEnabled;
-    
+
     public EscalationActionEditDialog(ProcessDefinition definition, TimerAction timerAction) {
         super(Display.getCurrent().getActiveShell());
         this.definition = definition;
         editable = new TimerAction(definition);
-        //deleteEnabled = timerAction != null;
         if (timerAction != null) {
             editable.setDelegationClassName(timerAction.getDelegationClassName());
             editable.setDelegationConfiguration(timerAction.getDelegationConfiguration());
@@ -63,22 +61,7 @@ public class EscalationActionEditDialog extends Dialog {
             GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
             gridData.minimumWidth = 200;
             classNameField.setLayoutData(gridData);
-
-            /*Button button = new Button(area, SWT.PUSH);
-            button.setText("...");
-            button.addSelectionListener(new SelectionAdapter() {
-                @Override
-                public void widgetSelected(SelectionEvent e) {
-                    ChooseHandlerClassDialog dialog = new ChooseHandlerClassDialog(Delegable.ACTION_HANDLER);
-                    String className = dialog.openDialog();
-                    if (className != null) {
-                        editable.setDelegationClassName(className);
-                        updateGUI();
-                    }
-                }
-            });*/
         }
-
         {
             Label label = new Label(area, SWT.NO_BACKGROUND);
             GridData data = new GridData();
@@ -93,7 +76,6 @@ public class EscalationActionEditDialog extends Dialog {
             gridData.widthHint = 300;
             gridData.heightHint = 100;
             configField.setLayoutData(gridData);
-
             Button button = new Button(area, SWT.PUSH);
             button.setText("...");
             gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
@@ -115,7 +97,6 @@ public class EscalationActionEditDialog extends Dialog {
             });
             editConfigButton = button;
         }
-
         {
             Label label = new Label(area, SWT.NO_BACKGROUND);
             GridData data = new GridData();
@@ -129,7 +110,6 @@ public class EscalationActionEditDialog extends Dialog {
             GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
             gridData.minimumWidth = 200;
             repeatField.setLayoutData(gridData);
-
             Button button = new Button(area, SWT.PUSH);
             button.setText("...");
             button.addSelectionListener(new SelectionAdapter() {
@@ -168,17 +148,8 @@ public class EscalationActionEditDialog extends Dialog {
 
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        //Button button = createButton(parent, DELETE_ID, Messages.getString("button.delete"), false);
-        //button.setEnabled(deleteEnabled);
         super.createButtonsForButtonBar(parent);
         getButton(IDialogConstants.OK_ID).setEnabled(false);
-        /*button.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                setReturnCode(DELETE_ID);
-                close();
-            }
-        });*/
         updateGUI();
     }
 
@@ -192,5 +163,4 @@ public class EscalationActionEditDialog extends Dialog {
         }
         return null;
     }
-
 }

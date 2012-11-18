@@ -9,22 +9,17 @@ import ru.runa.gpd.lang.model.Variable;
 
 public class BSHDecisionModel {
     private List<IfExpr> ifs = new ArrayList<IfExpr>();
-
     private final List<Variable> variables;
-
     private static Pattern IF_PATTERN = Pattern.compile("if \\((.*)\\)");
-
     private static Pattern RETURN_PATTERN = Pattern.compile("return \"([^\"]*)\";");
 
     public BSHDecisionModel(List<Variable> variables) {
         this.variables = variables;
     }
-    
+
     public BSHDecisionModel(String code, List<Variable> variables) throws Exception {
         this(variables);
-
         Matcher returnMatcher = RETURN_PATTERN.matcher(code);
-
         Matcher matcher = IF_PATTERN.matcher(code);
         int startReturnSearch = 0;
         while (matcher.find()) {
@@ -69,7 +64,6 @@ public class BSHDecisionModel {
             } else {
                 throw new RuntimeException("unparsed");
             }
-
             if (lexem1Text.indexOf(".") > 0) {
                 // Java names doesn't allowed use of point in variable name
                 lexem1Text = lexem1Text.substring(0, lexem1Text.indexOf("."));
@@ -80,12 +74,10 @@ public class BSHDecisionModel {
                 continue;
             }
             BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(var1.getFormat());
-
             Operation operation = Operation.getByOperator(operator, typeSupport);
             if (operation == null) {
                 throw new RuntimeException("Operation not found for operator: " + operator);
             }
-
             Object lexem2;
             if (lexem2Text.indexOf(".") > 0) {
                 // Java names doesn't allowed use of point in variable name
@@ -94,7 +86,7 @@ public class BSHDecisionModel {
             Variable var2 = getVariableByName(lexem2Text);
             if (var2 != null) {
                 lexem2 = var2;
-            } else if ("void".equals(lexem2Text)) {
+            } else if (Operation.VOID.equals(lexem2Text) || Operation.NULL.equals(lexem2Text)) {
                 lexem2 = "null";
             } else {
                 lexem2 = typeSupport.unwrapValue(lexem2Text);
@@ -102,16 +94,15 @@ public class BSHDecisionModel {
             IfExpr ifExpr = new IfExpr(transition, var1, lexem2, operation);
             addIfExpr(ifExpr);
         }
-
         if (returnMatcher.find(startReturnSearch)) {
             String defaultTransition = returnMatcher.group(1);
             IfExpr ifExpr = new IfExpr(defaultTransition);
             addIfExpr(ifExpr);
-        //} else {
+            //} else {
             //throw new RuntimeException("Unable to parse BSH code from string: " + code);
         }
     }
-    
+
     public List<String> getTransitionNames() {
         List<String> transitionNames = new ArrayList<String>();
         for (IfExpr ifExpr : ifs) {
@@ -122,8 +113,9 @@ public class BSHDecisionModel {
 
     public String getDefaultTransitionName() {
         for (IfExpr ifExpr : ifs) {
-            if (ifExpr.isByDefault())
+            if (ifExpr.isByDefault()) {
                 return ifExpr.getTransition();
+            }
         }
         return null;
     }
@@ -168,25 +160,23 @@ public class BSHDecisionModel {
         StringBuffer buffer = new StringBuffer();
         IfExpr defaultIf = null;
         for (IfExpr ifExpr : ifs) {
-            if (!ifExpr.isByDefault())
+            if (!ifExpr.isByDefault()) {
                 buffer.append(ifExpr.generateCode());
-            else
+            } else {
                 defaultIf = ifExpr;
+            }
         }
-        if (defaultIf != null)
+        if (defaultIf != null) {
             buffer.append("\nreturn \"" + defaultIf.getTransition() + "\";\n");
+        }
         return buffer.toString();
     }
 
     public static class IfExpr {
         private final Variable variable;
-
         private final Object lexem2;
-
         private final Operation operation;
-
         private final String transition;
-
         private boolean byDefault;
 
         public IfExpr(String transition) {
@@ -237,6 +227,5 @@ public class BSHDecisionModel {
         public String getTransition() {
             return transition;
         }
-
     }
 }

@@ -10,6 +10,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.NumberInputDialog;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
+import ru.runa.wfe.var.format.ArrayListFormat;
 import ru.runa.wfe.var.format.BooleanFormat;
 import ru.runa.wfe.var.format.DateFormat;
 import ru.runa.wfe.var.format.DateTimeFormat;
@@ -32,6 +33,7 @@ public abstract class BSHTypeSupport {
         TYPES_MAP.put(TimeFormat.class.getName(), new DateType());
         TYPES_MAP.put(DateTimeFormat.class.getName(), new DateType());
         TYPES_MAP.put(FileFormat.class.getName(), new DefaultType());
+        TYPES_MAP.put(ArrayListFormat.class.getName(), new DefaultType()); // TODO make mapping by java class
     }
 
     public static BSHTypeSupport getByFormat(String format) {
