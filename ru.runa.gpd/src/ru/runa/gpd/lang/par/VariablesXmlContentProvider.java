@@ -12,6 +12,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.XmlUtil;
+import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.var.format.StringFormat;
 
 public class VariablesXmlContentProvider extends AuxContentProvider {
@@ -38,6 +39,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
             if (isEmptyOrNull(formatName)) {
                 formatName = StringFormat.class.getName();
             }
+            formatName = BackCompatibilityClassNames.getClassName(formatName);
             String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
             String swimlaneName = element.attributeValue(SWIMLANE_ATTRIBUTE_NAME);
             String publicVisibilityStr = element.attributeValue(PUBLUC_ATTRIBUTE_NAME);
