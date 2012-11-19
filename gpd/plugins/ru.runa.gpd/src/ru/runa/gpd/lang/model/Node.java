@@ -110,7 +110,6 @@ public abstract class Node extends NamedGraphElement {
     }
 
     public List<Transition> getArrivingTransitions() {
-        // TODO add to field
         List<Transition> arrivingTransitions = new ArrayList<Transition>();
         List<Node> allNodes = getProcessDefinition().getNodes();
         for (Node node : allNodes) {

@@ -30,6 +30,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
 import ru.runa.gpd.editor.ProcessEditorBase;
+import ru.runa.gpd.editor.graphiti.add.AddTransitionFeature;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.Transition;
@@ -77,7 +78,6 @@ public class DiagramEditorPage extends DiagramEditor {
             IFigure gridFigure = ((LayerManager) rootEditPart).getLayer(LayerConstants.GRID_LAYER);
             gridFigure.setVisible(false);
         }
-        // setPartName("MyDiagram2");
     }
 
     @Override
@@ -120,6 +120,11 @@ public class DiagramEditorPage extends DiagramEditor {
     //        }
     //        return false;
     //    }
+    @Override
+    public boolean isDirty() {
+        return getCommandStack().isDirty();
+    }
+
     private void importDiagram() {
         final Diagram diagram = getDiagramTypeProvider().getDiagram();
         //diagram.setActive(true);
@@ -192,47 +197,13 @@ public class DiagramEditorPage extends DiagramEditor {
             }
             context.setNewObject(node);
             context.setSize(node.getConstraint().width, node.getConstraint().height);
-            ContainerShape parentContainer = null;
+            context.setTargetContainer(parentShape);
             if (parentShape instanceof Diagram) {
-                parentContainer = getParentContainer(node.getName(), (Diagram) parentShape);
-            } else {
-                parentContainer = parentShape;
-            }
-            context.setTargetContainer(parentContainer);
-            if (parentContainer instanceof Diagram == false) {
-                Point location = getLocation(parentContainer);
-                context.setLocation(node.getConstraint().x - location.x, node.getConstraint().y - location.y);
-            } else {
                 context.setLocation(node.getConstraint().x, node.getConstraint().y);
+            } else {
+                Point location = getLocation(parentShape);
+                context.setLocation(node.getConstraint().x - location.x, node.getConstraint().y - location.y);
             }
-            //            if (node instanceof ServiceTask) {
-            //                // Customize the name displayed by default
-            //                final List<CustomServiceTask> customServiceTasks = ExtensionUtil.getCustomServiceTasks(ActivitiUiUtil
-            //                        .getProjectFromDiagram(getDiagramTypeProvider().getDiagram()));
-            //                ServiceTask serviceTask = (ServiceTask) node;
-            //                CustomServiceTask targetTask = null;
-            //                for (final CustomServiceTask customServiceTask : customServiceTasks) {
-            //                    if (customServiceTask.getRuntimeClassname().equals(serviceTask.getImplementation())) {
-            //                        targetTask = customServiceTask;
-            //                        break;
-            //                    }
-            //                }
-            //                if (targetTask != null) {
-            //                    CustomProperty customServiceTaskProperty = new CustomProperty();
-            //                    customServiceTaskProperty.setId(ExtensionUtil.wrapCustomPropertyId(serviceTask,
-            //                            ExtensionConstants.PROPERTY_ID_CUSTOM_SERVICE_TASK));
-            //                    customServiceTaskProperty.setName(ExtensionConstants.PROPERTY_ID_CUSTOM_SERVICE_TASK);
-            //                    customServiceTaskProperty.setSimpleValue(targetTask.getId());
-            //                    serviceTask.getCustomProperties().add(customServiceTaskProperty);
-            //                    for (FieldExtension field : serviceTask.getFieldExtensions()) {
-            //                        CustomProperty customFieldProperty = new CustomProperty();
-            //                        customFieldProperty.setName(field.getFieldName());
-            //                        customFieldProperty.setSimpleValue(field.getExpression());
-            //                        serviceTask.getCustomProperties().add(customFieldProperty);
-            //                    }
-            //                    serviceTask.getFieldExtensions().clear();
-            //                }
-            //            }
             if (addFeature.canAdd(context)) {
                 PictogramElement newContainer = addFeature.add(context);
                 featureProvider.link(newContainer, new Object[] { node });
@@ -269,22 +240,6 @@ public class DiagramEditorPage extends DiagramEditor {
         }
     }
 
-    private ContainerShape getParentContainer(String flowElementId, Diagram diagram) {
-        //        Lane foundLane = null;
-        //        for (Lane lane : process.getLanes()) {
-        //            if (lane.getFlowReferences().contains(flowElementId)) {
-        //                foundLane = lane;
-        //                break;
-        //            }
-        //        }
-        //        if (foundLane != null) {
-        //            final IFeatureProvider featureProvider = getDiagramTypeProvider().getFeatureProvider();
-        //            return (ContainerShape) featureProvider.getPictogramElementForBusinessObject(foundLane);
-        //        } else {
-        return diagram;
-        //        }
-    }
-
     private Point getLocation(ContainerShape containerShape) {
         if (containerShape instanceof Diagram == true) {
             return new Point(containerShape.getGraphicsAlgorithm().getX(), containerShape.getGraphicsAlgorithm().getY());
@@ -293,126 +248,6 @@ public class DiagramEditorPage extends DiagramEditor {
         return new Point(location.x + containerShape.getGraphicsAlgorithm().getX(), location.y + containerShape.getGraphicsAlgorithm().getY());
     }
 
-    //    private void drawArtifacts(final List<Artifact> artifacts, final Map<String, GraphicInfo> locationMap, final ContainerShape parent,
-    //            final Process process) {
-    //        final IFeatureProvider featureProvider = getDiagramTypeProvider().getFeatureProvider();
-    //        final List<Artifact> artifactsWithoutDI = new ArrayList<Artifact>();
-    //        for (final Artifact artifact : artifacts) {
-    //            final AddContext context = new AddContext(new AreaContext(), artifact);
-    //            final IAddFeature addFeature = featureProvider.getAddFeature(context);
-    //            if (addFeature == null) {
-    //                System.out.println("Element not supported: " + artifact);
-    //                return;
-    //            }
-    //            final GraphicInfo gi = locationMap.get(artifact.getId());
-    //            if (gi == null) {
-    //                artifactsWithoutDI.add(artifact);
-    //            } else {
-    //                context.setNewObject(artifact);
-    //                context.setSize(gi.width, gi.height);
-    //                ContainerShape parentContainer = null;
-    //                if (parent instanceof Diagram) {
-    //                    parentContainer = getParentContainer(artifact.getId(), process, (Diagram) parent);
-    //                } else {
-    //                    parentContainer = parent;
-    //                }
-    //                context.setTargetContainer(parentContainer);
-    //                if (parentContainer instanceof Diagram) {
-    //                    context.setLocation(gi.x, gi.y);
-    //                } else {
-    //                    final Point location = getLocation(parentContainer);
-    //                    context.setLocation(gi.x - location.x, gi.y - location.y);
-    //                }
-    //                if (addFeature.canAdd(context)) {
-    //                    final PictogramElement newContainer = addFeature.add(context);
-    //                    featureProvider.link(newContainer, new Object[] { artifact });
-    //                }
-    //            }
-    //        }
-    //        for (final Artifact artifact : artifactsWithoutDI) {
-    //            artifacts.remove(artifact);
-    //        }
-    //    }
-    //    private void drawSequenceFlows(List<Process> processes) {
-    //        int sequenceCounter = 1;
-    //        for (SequenceFlowModel sequenceFlowModel : parser.sequenceFlowList) {
-    //            SequenceFlow sequenceFlow = new SequenceFlow();
-    //            if (Strings.isNullOrEmpty(sequenceFlowModel.id) || sequenceFlowModel.id.matches("sid-\\w{4,12}-\\w{4,12}-\\w{4,12}-\\w{4,12}-\\w{4,12}")) {
-    //                sequenceFlow.setId("flow" + sequenceCounter);
-    //                sequenceCounter++;
-    //            } else {
-    //                sequenceFlow.setId(sequenceFlowModel.id);
-    //            }
-    //            if (Strings.isNullOrEmpty(sequenceFlowModel.name)) {
-    //                sequenceFlow.setName(sequenceFlowModel.name);
-    //            }
-    //            sequenceFlow.setSourceRef(getFlowNode(sequenceFlowModel.sourceRef, processes));
-    //            sequenceFlow.setTargetRef(getFlowNode(sequenceFlowModel.targetRef, processes));
-    //            if (sequenceFlow.getSourceRef() == null || sequenceFlow.getSourceRef().getId() == null || sequenceFlow.getTargetRef() == null
-    //                    || sequenceFlow.getTargetRef().getId() == null)
-    //                continue;
-    //            if (sequenceFlowModel.conditionExpression != null) {
-    //                sequenceFlow.setConditionExpression(sequenceFlowModel.conditionExpression);
-    //            }
-    //            if (sequenceFlowModel.listenerList.size() > 0) {
-    //                sequenceFlow.getExecutionListeners().addAll(sequenceFlowModel.listenerList);
-    //            }
-    //            SubProcess subProcessContainsFlow = null;
-    //            for (FlowElement flowElement : sequenceFlowModel.parentProcess.getFlowElements()) {
-    //                if (flowElement instanceof SubProcess) {
-    //                    SubProcess subProcess = (SubProcess) flowElement;
-    //                    if (subProcess.getFlowElements().contains(sequenceFlow.getSourceRef())) {
-    //                        subProcessContainsFlow = subProcess;
-    //                    }
-    //                }
-    //            }
-    //            if (subProcessContainsFlow != null) {
-    //                subProcessContainsFlow.getFlowElements().add(sequenceFlow);
-    //            } else {
-    //                sequenceFlowModel.parentProcess.getFlowElements().add(sequenceFlow);
-    //            }
-    //            sequenceFlow.getSourceRef().getOutgoing().add(sequenceFlow);
-    //            sequenceFlow.getTargetRef().getIncoming().add(sequenceFlow);
-    //            Anchor sourceAnchor = null;
-    //            Anchor targetAnchor = null;
-    //            ContainerShape sourceShape = (ContainerShape) getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(
-    //                    sequenceFlow.getSourceRef());
-    //            if (sourceShape == null)
-    //                continue;
-    //            EList<Anchor> anchorList = sourceShape.getAnchors();
-    //            for (Anchor anchor : anchorList) {
-    //                if (anchor instanceof ChopboxAnchor) {
-    //                    sourceAnchor = anchor;
-    //                    break;
-    //                }
-    //            }
-    //            ContainerShape targetShape = (ContainerShape) getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(
-    //                    sequenceFlow.getTargetRef());
-    //            if (targetShape == null)
-    //                continue;
-    //            anchorList = targetShape.getAnchors();
-    //            for (Anchor anchor : anchorList) {
-    //                if (anchor instanceof ChopboxAnchor) {
-    //                    targetAnchor = anchor;
-    //                    break;
-    //                }
-    //            }
-    //            AddConnectionContext addContext = new AddConnectionContext(sourceAnchor, targetAnchor);
-    //            List<GraphicInfo> bendpointList = new ArrayList<GraphicInfo>();
-    //            if (parser.flowLocationMap.containsKey(sequenceFlowModel.id)) {
-    //                List<GraphicInfo> pointList = parser.flowLocationMap.get(sequenceFlowModel.id);
-    //                if (pointList.size() > 2) {
-    //                    for (int i = 1; i < pointList.size() - 1; i++) {
-    //                        bendpointList.add(pointList.get(i));
-    //                    }
-    //                }
-    //            }
-    //            addContext.putProperty("org.activiti.designer.bendpoints", bendpointList);
-    //            addContext.putProperty("org.activiti.designer.connectionlabel", parser.labelLocationMap.get(sequenceFlowModel.id));
-    //            addContext.setNewObject(sequenceFlow);
-    //            getDiagramTypeProvider().getFeatureProvider().addIfPossible(addContext);
-    //        }
-    //    }
     private void drawTransitions() {
         for (Transition transition : editor.getDefinition().getChildrenRecursive(Transition.class)) {
             Anchor sourceAnchor = null;
@@ -440,7 +275,7 @@ public class DiagramEditorPage extends DiagramEditor {
                 }
             }
             AddConnectionContext addContext = new AddConnectionContext(sourceAnchor, targetAnchor);
-            addContext.putProperty("org.activiti.designer.bendpoints", transition.getBendpoints());
+            addContext.putProperty(AddTransitionFeature.BENDPOINTS_PROPERTY, transition.getBendpoints());
             addContext.setNewObject(transition);
             getDiagramTypeProvider().getFeatureProvider().addIfPossible(addContext);
         }

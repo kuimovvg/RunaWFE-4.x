@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 
-import ru.runa.gpd.editor.gef.figure.GEFConstants;
+import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Transition;
 

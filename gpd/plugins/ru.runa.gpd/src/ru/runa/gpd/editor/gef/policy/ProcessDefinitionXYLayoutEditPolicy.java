@@ -12,9 +12,9 @@ import org.eclipse.gef.editpolicies.ResizableEditPolicy;
 import org.eclipse.gef.editpolicies.XYLayoutEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
 
+import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.editor.gef.command.NodeChangeConstraintCommand;
 import ru.runa.gpd.editor.gef.command.NodeCreateCommand;
-import ru.runa.gpd.editor.gef.figure.GEFConstants;
 import ru.runa.gpd.editor.gef.figure.NodeFigure;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;

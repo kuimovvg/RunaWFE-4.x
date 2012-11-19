@@ -5,11 +5,11 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.BendpointEditPolicy;
 import org.eclipse.gef.requests.BendpointRequest;
 
+import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.editor.gef.command.TransitionAbstractBendpointCommand;
 import ru.runa.gpd.editor.gef.command.TransitionCreateBendpointCommand;
 import ru.runa.gpd.editor.gef.command.TransitionDeleteBendpointCommand;
 import ru.runa.gpd.editor.gef.command.TransitionMoveBendpointCommand;
-import ru.runa.gpd.editor.gef.figure.GEFConstants;
 import ru.runa.gpd.lang.model.Transition;
 
 public class TransitionConnectionBendpointEditPolicy extends BendpointEditPolicy {

@@ -4,6 +4,8 @@ import org.eclipse.draw2d.EllipseAnchor;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
 
+import ru.runa.gpd.editor.GEFConstants;
+
 /**
  * drawing flat transitions
  * 
