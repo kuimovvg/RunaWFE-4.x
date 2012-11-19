@@ -8,6 +8,7 @@ import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
 
+import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.editor.gef.ActionGraphUtils;
 
 public class ActionsContainer extends Figure {

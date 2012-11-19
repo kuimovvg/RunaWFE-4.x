@@ -4,7 +4,7 @@ import org.eclipse.draw2d.AbstractConnectionAnchor;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 
-import ru.runa.gpd.editor.gef.figure.GEFConstants;
+import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.editor.gef.figure.TimerStateFigure;
 
 public class TimerAnchor extends AbstractConnectionAnchor implements GEFConstants {
