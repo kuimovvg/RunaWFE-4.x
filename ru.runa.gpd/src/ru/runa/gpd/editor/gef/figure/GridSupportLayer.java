@@ -11,6 +11,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.SnapToGrid;
 
+import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 
 public class GridSupportLayer extends FreeformLayer implements GEFConstants {

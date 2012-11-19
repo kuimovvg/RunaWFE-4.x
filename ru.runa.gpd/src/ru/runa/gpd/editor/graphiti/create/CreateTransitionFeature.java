@@ -27,9 +27,13 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
     }
 
     @Override
+    public String getCreateImageId() {
+        return transitionDefinition.getGEFPaletteEntry().getImageName();
+    }
+
+    @Override
     public boolean canStartConnection(ICreateConnectionContext context) {
-        Node source = getFlowNode(context.getSourceAnchor());
-        // return true if source anchor isn't undefined
+        Node source = getNode(context.getSourceAnchor());
         if (source != null && !(source instanceof EndState)) {
             return true;
         }
@@ -38,44 +42,30 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
 
     @Override
     public boolean canCreate(ICreateConnectionContext context) {
-        Node source = getFlowNode(context.getSourceAnchor());
-        Node target = getFlowNode(context.getTargetAnchor());
-        if (source != null && target != null && source != target) {
-            return true;
-        }
-        return false;
+        Node source = getNode(context.getSourceAnchor());
+        Node target = getNode(context.getTargetAnchor());
+        return (source != null && target != null && source != target);
     }
 
     @Override
     public Connection create(ICreateConnectionContext context) {
-        Node source = getFlowNode(context.getSourceAnchor());
-        Node target = getFlowNode(context.getTargetAnchor());
-        if (source != null && target != null) {
-            // create new business object
-            Transition transition = transitionDefinition.createElement(source);
-            transition.setTarget(target);
-            transition.setName(source.getNextTransitionName());
-            source.addLeavingTransition(transition);
-            // add connection for business object
-            AddConnectionContext addConnectionContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
-            addConnectionContext.setNewObject(transition);
-            return (Connection) getFeatureProvider().addIfPossible(addConnectionContext);
-        }
-        return null;
+        Node source = getNode(context.getSourceAnchor());
+        Node target = getNode(context.getTargetAnchor());
+        // create new business object
+        Transition transition = transitionDefinition.createElement(source);
+        transition.setTarget(target);
+        transition.setName(source.getNextTransitionName());
+        source.addLeavingTransition(transition);
+        // add connection for business object
+        AddConnectionContext addConnectionContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
+        addConnectionContext.setNewObject(transition);
+        return (Connection) getFeatureProvider().addIfPossible(addConnectionContext);
     }
 
-    private Node getFlowNode(Anchor anchor) {
+    private Node getNode(Anchor anchor) {
         if (anchor != null) {
-            Object obj = getBusinessObjectForPictogramElement(anchor.getParent());
-            if (obj instanceof Node) {
-                return (Node) obj;
-            }
+            return (Node) getBusinessObjectForPictogramElement(anchor.getParent());
         }
         return null;
-    }
-
-    @Override
-    public String getCreateImageId() {
-        return transitionDefinition.getGEFPaletteEntry().getImageName();
     }
 }
