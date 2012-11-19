@@ -1,4 +1,4 @@
-package ru.runa.gpd.editor.gef.figure;
+package ru.runa.gpd.editor;
 
 public interface GEFConstants {
 

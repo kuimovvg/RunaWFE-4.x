@@ -1,4 +1,4 @@
-package ru.runa.gpd.editor.graphiti.delete;
+package ru.runa.gpd.editor.graphiti.update;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;

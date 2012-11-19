@@ -3,10 +3,8 @@ package ru.runa.gpd.editor.graphiti.add;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
@@ -15,9 +13,10 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import ru.runa.gpd.editor.graphiti.StyleUtil;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.Node;
-import ru.runa.gpd.lang.model.Subprocess;
 
-public class AddNodeFeature extends AbstractAddShapeFeature {
+public class AddNodeFeature extends AbstractAddNodeFeature {
+    private static final int minimumSize = GRID_SIZE * 3;
+
     public AddNodeFeature(IFeatureProvider provider) {
         super(provider);
     }
@@ -28,15 +27,15 @@ public class AddNodeFeature extends AbstractAddShapeFeature {
         ContainerShape parent = context.getTargetContainer();
         IPeCreateService createService = Graphiti.getPeCreateService();
         ContainerShape containerShape = createService.createContainerShape(parent, true);
-        int width = context.getWidth() <= 35 ? 35 : context.getWidth();
-        int height = context.getHeight() <= 35 ? 35 : context.getHeight();
+        int width = context.getWidth() < minimumSize ? minimumSize : context.getWidth();
+        int height = context.getHeight() < minimumSize ? minimumSize : context.getHeight();
         IGaService gaService = Graphiti.getGaService();
         Ellipse circle;
         {
             Ellipse invisibleCircle = gaService.createEllipse(containerShape);
             invisibleCircle.setFilled(false);
             invisibleCircle.setLineVisible(false);
-            gaService.setLocationAndSize(invisibleCircle, context.getX() - width / 2, context.getY() - height / 2, width, height);
+            gaService.setLocationAndSize(invisibleCircle, context.getX(), context.getY(), width, height);
             circle = gaService.createEllipse(invisibleCircle);
             circle.setParentGraphicsAlgorithm(invisibleCircle);
             circle.setStyle(StyleUtil.getStyleForEvent(getDiagram()));
@@ -74,16 +73,5 @@ public class AddNodeFeature extends AbstractAddShapeFeature {
         layoutPictogramElement(containerShape);
         node.setConstraint(new Rectangle(context.getX(), context.getY(), width, height));
         return containerShape;
-    }
-
-    @Override
-    public boolean canAdd(IAddContext context) {
-        if (context.getNewObject() instanceof Node) {
-            Object parentObject = getBusinessObjectForPictogramElement(context.getTargetContainer());
-            if (context.getTargetContainer() instanceof Diagram || parentObject instanceof Subprocess) {
-                return true;
-            }
-        }
-        return false;
     }
 }

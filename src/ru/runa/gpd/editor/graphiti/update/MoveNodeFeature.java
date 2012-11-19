@@ -1,5 +1,6 @@
-package ru.runa.gpd.editor.graphiti.move;
+package ru.runa.gpd.editor.graphiti.update;
 
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
@@ -21,7 +22,9 @@ public class MoveNodeFeature extends DefaultMoveShapeFeature {
     protected void postMoveShape(IMoveShapeContext context) {
         Shape shape = context.getShape();
         Node node = (Node) getBusinessObjectForPictogramElement(shape);
-        node.getConstraint().x = context.getX();
-        node.getConstraint().y = context.getY();
+        Rectangle newConstraint = node.getConstraint().getCopy();
+        newConstraint.x = context.getX();
+        newConstraint.y = context.getY();
+        node.setConstraint(newConstraint);
     }
 }

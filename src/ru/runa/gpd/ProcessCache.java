@@ -18,7 +18,6 @@ import ru.runa.gpd.util.ProjectFinder;
 public class ProcessCache {
     private static Map<IFile, ProcessDefinition> CACHE_BY_FILE = new HashMap<IFile, ProcessDefinition>();
     private static Map<String, ProcessDefinition> CACHE_BY_NAME = new HashMap<String, ProcessDefinition>();
-
     static {
         try {
             for (IFile file : ProjectFinder.getAllProcessDefinitionFiles()) {
@@ -86,7 +85,7 @@ public class ProcessCache {
                 ProcessDefinition definition = NodeRegistry.parseProcessDefinition(file);
                 cacheProcessDefinition(file, definition);
             } catch (Exception e) {
-            	throw new RuntimeException("Parsing process definition failed: " + file.toString(), e);
+                throw new RuntimeException("Parsing process definition failed: " + file.toString(), e);
             }
         }
         return CACHE_BY_FILE.get(file);
@@ -95,13 +94,10 @@ public class ProcessCache {
     public static ProcessDefinition getProcessDefinition(String name) {
         if (!CACHE_BY_NAME.containsKey(name)) {
             try {
-                for (IFile file : ProjectFinder.getAllProcessDefinitionFiles()) {
-                    String processName = file.getFullPath().segment(3);
-                    if (name.equals(processName)) {
-                        ProcessDefinition definition = NodeRegistry.parseProcessDefinition(file);
-                        cacheProcessDefinition(file, definition);
-                        break;
-                    }
+                IFile file = getProcessDefinitionFile(name);
+                if (file != null) {
+                    ProcessDefinition definition = NodeRegistry.parseProcessDefinition(file);
+                    cacheProcessDefinition(file, definition);
                 }
             } catch (Exception e) {
                 PluginLogger.logError("Parsing process definition failed: " + name, e);
@@ -111,4 +107,23 @@ public class ProcessCache {
         return CACHE_BY_NAME.get(name);
     }
 
+    /**
+     * Get process definition file or <code>null</code>.
+     */
+    public static IFile getProcessDefinitionFile(String name) {
+        if (!CACHE_BY_NAME.containsKey(name)) {
+            try {
+                for (IFile file : ProjectFinder.getAllProcessDefinitionFiles()) {
+                    String processName = file.getFullPath().segment(3);
+                    if (name.equals(processName)) {
+                        return file;
+                    }
+                }
+            } catch (Exception e) {
+                PluginLogger.logError("Parsing process definition failed: " + name, e);
+                return null;
+            }
+        }
+        return null;
+    }
 }

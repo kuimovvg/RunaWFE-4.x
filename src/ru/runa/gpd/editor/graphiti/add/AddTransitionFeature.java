@@ -27,60 +27,30 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.IColorConstant;
 
+import ru.runa.gpd.editor.graphiti.StyleUtil;
 import ru.runa.gpd.editor.graphiti.TextUtil;
 import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Transition;
 
 public class AddTransitionFeature extends AbstractAddFeature {
+    public static final String BENDPOINTS_PROPERTY = "bendpoints";
+    public static final String LABEL_PROPERTY = "label";
+
     public AddTransitionFeature(IFeatureProvider fp) {
         super(fp);
     }
 
     @Override
     public boolean canAdd(IAddContext context) {
-        if (context instanceof IAddConnectionContext && context.getNewObject() instanceof Transition) {
-            return true;
-        }
-        return false;
+        return (context instanceof IAddConnectionContext && context.getNewObject() instanceof Transition);
     }
 
     @Override
     public PictogramElement add(IAddContext context) {
-        IAddConnectionContext addConContext = (IAddConnectionContext) context;
+        IAddConnectionContext addConnectionContext = (IAddConnectionContext) context;
         Transition transition = (Transition) context.getNewObject();
-        Anchor sourceAnchor = null;
-        Anchor targetAnchor = null;
-        if (addConContext.getSourceAnchor() == null) {
-            //            EList<Shape> shapeList = getDiagram().getChildren();
-            //            for (Shape shape : shapeList) {
-            //                FlowNode flowNode = (FlowNode) getBusinessObjectForPictogramElement(shape.getGraphicsAlgorithm().getPictogramElement());
-            //                if (flowNode == null || flowNode.getId() == null || addedSequenceFlow.getSourceRef() == null
-            //                        || addedSequenceFlow.getTargetRef() == null) {
-            //                    continue;
-            //                }
-            //                if (flowNode.getId().equals(addedSequenceFlow.getSourceRef().getId())) {
-            //                    EList<Anchor> anchorList = ((ContainerShape) shape).getAnchors();
-            //                    for (Anchor anchor : anchorList) {
-            //                        if (anchor instanceof ChopboxAnchor) {
-            //                            sourceAnchor = anchor;
-            //                            break;
-            //                        }
-            //                    }
-            //                }
-            //                if (flowNode.getId().equals(addedSequenceFlow.getTargetRef().getId())) {
-            //                    EList<Anchor> anchorList = ((ContainerShape) shape).getAnchors();
-            //                    for (Anchor anchor : anchorList) {
-            //                        if (anchor instanceof ChopboxAnchor) {
-            //                            targetAnchor = anchor;
-            //                            break;
-            //                        }
-            //                    }
-            //                }
-            //            }
-        } else {
-            sourceAnchor = addConContext.getSourceAnchor();
-            targetAnchor = addConContext.getTargetAnchor();
-        }
+        Anchor sourceAnchor = addConnectionContext.getSourceAnchor();
+        Anchor targetAnchor = addConnectionContext.getTargetAnchor();
         if (sourceAnchor == null || targetAnchor == null) {
             return null;
         }
@@ -93,16 +63,13 @@ public class AddTransitionFeature extends AbstractAddFeature {
         targetAnchor.getIncomingConnections().add(connection);
         GraphicsAlgorithm sourceGraphics = getPictogramElement(transition.getSource()).getGraphicsAlgorithm();
         GraphicsAlgorithm targetGraphics = getPictogramElement(transition.getTarget()).getGraphicsAlgorithm();
-        List<Bendpoint> bendpoints = null;
-        if (addConContext.getProperty("org.activiti.designer.bendpoints") != null) {
-            bendpoints = (List<Bendpoint>) addConContext.getProperty("org.activiti.designer.bendpoints");
-        }
+        List<Bendpoint> bendpoints = (List<Bendpoint>) addConnectionContext.getProperty(BENDPOINTS_PROPERTY);
         if (bendpoints != null && bendpoints.size() >= 0) {
-            for (Bendpoint graphicInfo : bendpoints) {
-                Point bendPoint = StylesFactory.eINSTANCE.createPoint();
-                bendPoint.setX(graphicInfo.getX());
-                bendPoint.setY(graphicInfo.getY());
-                connection.getBendpoints().add(bendPoint);
+            for (Bendpoint bendpoint : bendpoints) {
+                Point point = StylesFactory.eINSTANCE.createPoint();
+                point.setX(bendpoint.getX());
+                point.setY(bendpoint.getY());
+                connection.getBendpoints().add(point);
             }
         } else {
             Shape sourceShape = (Shape) getPictogramElement(transition.getSource());
@@ -171,8 +138,8 @@ public class AddTransitionFeature extends AbstractAddFeature {
         // text.setStyle(StyleUtil.getStyleForTask((getDiagram())));
         text.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
         text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
-        if (addConContext.getProperty("org.activiti.designer.connectionlabel") != null) {
-            Rectangle labelLocation = (Rectangle) addConContext.getProperty("org.activiti.designer.connectionlabel");
+        if (addConnectionContext.getProperty(LABEL_PROPERTY) != null) {
+            Rectangle labelLocation = (Rectangle) addConnectionContext.getProperty(LABEL_PROPERTY);
             gaService.setLocation(text, labelLocation.x, labelLocation.y);
         } else {
             gaService.setLocation(text, 10, 0);
@@ -190,7 +157,7 @@ public class AddTransitionFeature extends AbstractAddFeature {
         int xy[] = new int[] { -10, -5, 0, 0, -10, 5, -8, 0 };
         int beforeAfter[] = new int[] { 3, 3, 0, 0, 3, 3, 3, 3 };
         Polygon polyline = Graphiti.getGaCreateService().createPolygon(gaContainer, xy, beforeAfter);
-        // polyline.setStyle(StyleUtil.getStyleForPolygon(getDiagram()));
+        polyline.setStyle(StyleUtil.getStyleForPolygon(getDiagram()));
         return polyline;
     }
 
