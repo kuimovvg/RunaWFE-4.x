@@ -69,8 +69,8 @@ public class BotServiceDelegate extends EJB3Delegate implements BotService {
     }
 
     @Override
-    public List<Bot> getBots(Long botStationId) throws AuthorizationException, AuthenticationException {
-        return getBotsService().getBots(botStationId);
+    public List<Bot> getBots(Subject subject, Long botStationId) throws AuthorizationException, AuthenticationException {
+        return getBotsService().getBots(subject, botStationId);
     }
 
     @Override

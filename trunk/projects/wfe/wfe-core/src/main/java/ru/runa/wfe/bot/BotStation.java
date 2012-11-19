@@ -44,8 +44,6 @@ public class BotStation implements Identifiable {
     private Long version;
     private String name;
     private String address;
-    private String username;
-    private String password;
 
     public BotStation() {
     }
@@ -108,24 +106,6 @@ public class BotStation implements Identifiable {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    @Column(name = "USERNAME")
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String bsUser) {
-        username = bsUser;
-    }
-
-    @Column(name = "PASSWORD")
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String bsPass) {
-        password = bsPass;
     }
 
 }

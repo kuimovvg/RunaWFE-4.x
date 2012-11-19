@@ -100,7 +100,7 @@ public interface BotService {
      * 
      * @return list, not <code>null</code>
      */
-    public List<Bot> getBots(Long botStationId);
+    public List<Bot> getBots(Subject subject, Long botStationId);
 
     /**
      * Gets bot by id.
