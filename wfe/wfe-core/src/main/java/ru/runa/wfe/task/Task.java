@@ -55,6 +55,7 @@ import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.user.Executor;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -234,6 +235,9 @@ public class Task implements Assignable {
 
     @Override
     public void assignExecutor(ExecutionContext executionContext, Executor executor, boolean cascadeUpdate) {
+        if (Objects.equal(this.executor, executor)) {
+            return;
+        }
         log.debug("assigning task '" + name + "' to '" + executor + "'");
         // log this assignment
         executionContext.addLog(new TaskAssignLog(this, executor));
