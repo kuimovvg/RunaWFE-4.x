@@ -134,7 +134,10 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
             if (botStation.getVersion() != configurationVersion) {
                 botTemplates = Lists.newArrayList();
                 log.info("Will update bots configuration.");
-                List<Bot> bots = botService.getBots(botStation.getId());
+                String username = BotStationResources.getSystemUsername();
+                String password = BotStationResources.getSystemPassword();
+                Subject botStationSubject = DelegateFactory.getAuthenticationService().authenticate(username, password);
+                List<Bot> bots = botService.getBots(botStationSubject, botStation.getId());
                 for (Bot bot : bots) {
                     log.info("Configuring " + bot.getUsername());
                     Subject subject = DelegateFactory.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
