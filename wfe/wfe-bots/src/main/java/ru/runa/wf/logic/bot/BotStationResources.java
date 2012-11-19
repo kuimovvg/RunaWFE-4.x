@@ -57,5 +57,13 @@ public class BotStationResources extends ResourceCommons {
             return 1;
         }
     }
+    
+    public static String getSystemUsername() {
+    	return readProperty("botstation.system.username", BUNDLE);
+    }
+
+    public static String getSystemPassword() {
+    	return readProperty("botstation.system.password", BUNDLE);
+    }
 
 }

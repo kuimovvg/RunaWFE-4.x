@@ -86,7 +86,7 @@ public class BotLogic extends CommonLogic {
 
     public void removeBotStation(Subject subject, Long id) throws AuthorizationException, BotStationDoesNotExistException {
         checkPermissionsOnBotStations(subject, BotStationPermission.BOT_STATION_CONFIGURE);
-        List<Bot> bots = getBots(id);
+        List<Bot> bots = getBots(subject, id);
         for (Bot bot : bots) {
             removeBot(subject, bot.getId());
         }
@@ -102,7 +102,8 @@ public class BotLogic extends CommonLogic {
         return botDAO.create(bot);
     }
 
-    public List<Bot> getBots(Long botStationId) throws AuthorizationException {
+    public List<Bot> getBots(Subject subject, Long botStationId) throws AuthorizationException {
+        checkPermissionsOnBotStations(subject, Permission.READ);
         BotStation botStation = getBotStationNotNull(botStationId);
         return botDAO.getAll(botStation);
     }

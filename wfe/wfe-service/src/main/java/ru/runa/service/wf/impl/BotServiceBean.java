@@ -113,9 +113,10 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
-    public List<Bot> getBots(Long botStationId) throws AuthorizationException, AuthenticationException {
+    public List<Bot> getBots(Subject subject, Long botStationId) throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(botStationId);
-        return botLogic.getBots(botStationId);
+        return botLogic.getBots(subject, botStationId);
     }
 
     @Override
@@ -205,7 +206,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
             zipStream.write(station.getName().getBytes());
             zipStream.write('\n');
             zipStream.write(station.getAddress().getBytes());
-            for (Bot bot : getBots(station.getId())) {
+            for (Bot bot : getBots(subject, station.getId())) {
                 zipStream.putNextEntry(new ZipEntry(bot.getUsername() + ".bot"));
                 byte[] botArchive = exportBot(subject, bot);
                 zipStream.write(botArchive);
