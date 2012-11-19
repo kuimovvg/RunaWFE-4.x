@@ -98,7 +98,7 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     @Override
     public <T extends Executor> T getExecutor(Subject subject, String name) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        return getExecutorService().getExecutor(subject, name);
+        return (T) getExecutorService().getExecutor(subject, name);
     }
 
     @Override
@@ -194,7 +194,7 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     @Override
     public <T extends Executor> T getExecutor(Subject subject, Long id) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        return getExecutorService().getExecutor(subject, id);
+        return (T) getExecutorService().getExecutor(subject, id);
     }
 
     @Override

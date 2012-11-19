@@ -42,7 +42,7 @@ public class BotListTag extends TitledFormTag {
     protected void fillFormElement(TD tdFormElement) throws JspException {
         tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botStationID)));
         try {
-            List<Bot> bots = DelegateFactory.getBotService().getBots(botStationID);
+            List<Bot> bots = DelegateFactory.getBotService().getBots(getSubject(), botStationID);
             tdFormElement.addElement(new BotTableBuilder(pageContext).buildBotTable(bots));
         } catch (Exception e) {
             handleException(e);

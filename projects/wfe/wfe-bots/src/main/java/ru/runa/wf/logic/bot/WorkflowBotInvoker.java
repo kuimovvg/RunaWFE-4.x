@@ -81,7 +81,10 @@ public class WorkflowBotInvoker implements BotInvoker {
             if (botStation.getVersion() != configurationVersion) {
                 log.info("updating bots configuration");
                 workflowBots = new ArrayList<MultitaskBotRunner>();
-                List<Bot> bots = botService.getBots(botStation.getId());
+                String username = BotStationResources.getSystemUsername();
+                String password = BotStationResources.getSystemPassword();
+                Subject botStationSubject = DelegateFactory.getAuthenticationService().authenticate(username, password);
+                List<Bot> bots = botService.getBots(botStationSubject, botStation.getId());
                 for (Bot bot : bots) {
                     Subject subject = DelegateFactory.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
                     MultitaskBotRunner wbot = new MultitaskBotRunner(subject, 150, bot.getLastInvoked());
