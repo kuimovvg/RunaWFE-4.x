@@ -1,4 +1,4 @@
-package ru.runa.gpd.editor.graphiti.edit;
+package ru.runa.gpd.editor.graphiti.update;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
@@ -11,16 +11,16 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 
 import ru.runa.gpd.lang.model.Node;
 
-public class DirectEditNodeFeature extends AbstractDirectEditingFeature {
-    private boolean isMultiLine = false;
+public class DirectEditNodeNameFeature extends AbstractDirectEditingFeature {
+    private boolean multiline = false;
 
-    public DirectEditNodeFeature(IFeatureProvider provider) {
+    public DirectEditNodeNameFeature(IFeatureProvider provider) {
         super(provider);
     }
 
     @Override
     public int getEditingType() {
-        if (isMultiLine) {
+        if (multiline) {
             return TYPE_MULTILINETEXT;
         } else {
             return TYPE_TEXT;
@@ -29,14 +29,12 @@ public class DirectEditNodeFeature extends AbstractDirectEditingFeature {
 
     @Override
     public boolean canDirectEdit(IDirectEditingContext context) {
-        PictogramElement pe = context.getPictogramElement();
-        Object bo = getBusinessObjectForPictogramElement(pe);
         GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-        if (bo instanceof Node && ga instanceof MultiText) {
-            isMultiLine = true;
+        if (ga instanceof MultiText) {
+            multiline = true;
             return true;
-        } else if (bo instanceof Node && ga instanceof Text) {
-            isMultiLine = false;
+        } else if (ga instanceof Text) {
+            multiline = false;
             return true;
         }
         // direct editing not supported in all other cases
@@ -53,10 +51,7 @@ public class DirectEditNodeFeature extends AbstractDirectEditingFeature {
 
     @Override
     public String checkValueValid(String value, IDirectEditingContext context) {
-        if (value.length() < 1) {
-            return "Please enter any text."; //$NON-NLS-1$
-        }
-        if (isMultiLine == false && value.contains("\n")) {
+        if (multiline == false && value.contains("\n")) {
             return "Line breakes are not allowed."; //$NON-NLS-1$
         }
         // null means, that the value is valid
@@ -65,10 +60,10 @@ public class DirectEditNodeFeature extends AbstractDirectEditingFeature {
 
     @Override
     public void setValue(String value, IDirectEditingContext context) {
-        // set the new name for the EClass
+        // set the new name
         PictogramElement pe = context.getPictogramElement();
-        Node flowElement = (Node) getBusinessObjectForPictogramElement(pe);
-        flowElement.setName(value);
+        Node node = (Node) getBusinessObjectForPictogramElement(pe);
+        node.setName(value);
         // Explicitly update the shape to display the new value in the diagram
         // Note, that this might not be necessary in future versions of the GFW
         // (currently in discussion)

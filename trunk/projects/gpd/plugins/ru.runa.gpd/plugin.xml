@@ -1689,6 +1689,9 @@
       <activityPatternBinding
             activityId="ru.runa.gpd.search"
             pattern="org.eclipse.*/.*goto.*"/>
+      <activityPatternBinding
+            activityId="ru.runa.gpd.search"
+            pattern="org.eclipse.graphiti.*"/>
    </extension>
    
    <extension

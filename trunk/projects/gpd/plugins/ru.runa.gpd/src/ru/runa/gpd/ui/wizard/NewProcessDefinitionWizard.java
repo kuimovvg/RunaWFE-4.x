@@ -13,7 +13,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
@@ -84,10 +83,6 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
         } catch (InterruptedException e) {
         }
         return true;
-    }
-
-    private IWorkbenchPage getActivePage() {
-        return getActiveWorkbenchWindow().getActivePage();
     }
 
     private IWorkbenchWindow getActiveWorkbenchWindow() {

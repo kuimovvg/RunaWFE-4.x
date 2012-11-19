@@ -310,7 +310,6 @@ public class JpdlSerializer extends ProcessSerializer {
         }
         List<Element> waitStates = root.elements(WAIT_STATE_NODE);
         for (Element node : waitStates) {
-            create(node, definition);
             WaitState state = create(node, definition);
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {

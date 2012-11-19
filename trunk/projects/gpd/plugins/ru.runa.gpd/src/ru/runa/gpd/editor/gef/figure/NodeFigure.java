@@ -21,23 +21,19 @@ import org.eclipse.swt.graphics.Color;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.lang.model.Swimlane;
 
 public abstract class NodeFigure extends Figure implements GEFConstants {
-
     protected static final Dimension DIM_RECTANGLE = new Dimension(10 * GRID_SIZE, 6 * GRID_SIZE);
     protected static final Dimension DIM_SQUARE = new Dimension(4 * GRID_SIZE, 4 * GRID_SIZE);
     protected static final Dimension DIM_SLIM = new Dimension(16 * GRID_SIZE, 5);
-
     protected static final Color veryLightBlue = new Color(null, 246, 247, 255);
     protected static final Color lightBlue = new Color(null, 3, 104, 154);
-
     protected TextFlow swimlaneLabel;
     protected TextFlow label;
     protected ActionsContainer actionsContainer;
-
     protected ConnectionAnchor connectionAnchor = null;
-
     protected boolean bpmnNotation = false;
 
     public void init(boolean bpmnNotation) {
@@ -107,16 +103,12 @@ public abstract class NodeFigure extends Figure implements GEFConstants {
         layout.setMajorAlignment(FlowLayout.ALIGN_CENTER);
         figure.setLayoutManager(layout);
         figure.setOpaque(false);
-
         label = new TextFlow();
-
         FlowPage fp = new FlowPage();
         fp.setLayoutManager(new PageFlowLayout(fp));
         fp.setHorizontalAligment(PositionConstants.CENTER);
         fp.add(label);
-
         figure.add(fp, FlowLayout.ALIGN_CENTER);
-
         GridData gridData = new GridData(GridData.FILL_BOTH);
         gridData.horizontalSpan = 2;
         add(figure, gridData);

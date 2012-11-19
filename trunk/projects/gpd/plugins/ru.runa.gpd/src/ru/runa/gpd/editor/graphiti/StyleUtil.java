@@ -71,19 +71,17 @@ public class StyleUtil {
         EList<GradientColoredArea> secondarySelectedGcas = secondarySelectedGradientColoredAreas.getGradientColor();
         addGradientColoredArea(secondarySelectedGcas, "E5E5C2", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "E5E5C2", 0, //$NON-NLS-1$ //$NON-NLS-2$
                 LocationType.LOCATION_TYPE_ABSOLUTE_END, diagram);
-        agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_SECONDARY_SELECTED,
-                secondarySelectedGradientColoredAreas);
+        agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_SECONDARY_SELECTED, secondarySelectedGradientColoredAreas);
         return agca;
     }
 
-    private static void addGradientColoredArea(EList<GradientColoredArea> gcas, String colorStart, int locationValueStart,
-            LocationType locationTypeStart, String colorEnd, int locationValueEnd, LocationType locationTypeEnd, Diagram diagram) {
+    private static void addGradientColoredArea(EList<GradientColoredArea> gcas, String colorStart, int locationValueStart, LocationType locationTypeStart, String colorEnd,
+            int locationValueEnd, LocationType locationTypeEnd, Diagram diagram) {
         GradientColoredArea gca = StylesFactory.eINSTANCE.createGradientColoredArea();
         gcas.add(gca);
         gca.setStart(StylesFactory.eINSTANCE.createGradientColoredLocation());
         IGaService gaService = Graphiti.getGaService();
-        Color startColor = gaService.manageColor(diagram, ColorUtil.getRedFromHex(colorStart), ColorUtil.getGreenFromHex(colorStart),
-                ColorUtil.getBlueFromHex(colorStart));
+        Color startColor = gaService.manageColor(diagram, ColorUtil.getRedFromHex(colorStart), ColorUtil.getGreenFromHex(colorStart), ColorUtil.getBlueFromHex(colorStart));
         gca.getStart().setColor(startColor);
         //    gca.getStart().setColor(StylesFactory.eINSTANCE.createColor());
         //    gca.getStart().getColor().setBlue(ColorUtil.getBlueFromHex(colorStart));
@@ -92,10 +90,22 @@ public class StyleUtil {
         gca.getStart().setLocationType(locationTypeStart);
         gca.getStart().setLocationValue(locationValueStart);
         gca.setEnd(StylesFactory.eINSTANCE.createGradientColoredLocation());
-        Color endColor = gaService.manageColor(diagram, ColorUtil.getRedFromHex(colorEnd), ColorUtil.getGreenFromHex(colorEnd),
-                ColorUtil.getBlueFromHex(colorEnd));
+        Color endColor = gaService.manageColor(diagram, ColorUtil.getRedFromHex(colorEnd), ColorUtil.getGreenFromHex(colorEnd), ColorUtil.getBlueFromHex(colorEnd));
         gca.getEnd().setColor(endColor);
         gca.getEnd().setLocationType(locationTypeEnd);
         gca.getEnd().setLocationValue(locationValueEnd);
+    }
+
+    public static Style getStyleForPolygon(Diagram diagram) {
+        final String styleId = "BPMN-POLYGON-ARROW"; //$NON-NLS-1$
+        Style style = findStyle(diagram, styleId);
+        if (style == null) { // style not found - create new style
+            IGaService gaService = Graphiti.getGaService();
+            style = gaService.createStyle(diagram, styleId);
+            style.setForeground(gaService.manageColor(diagram, IColorConstant.BLACK));
+            style.setBackground(gaService.manageColor(diagram, IColorConstant.BLACK));
+            style.setLineWidth(1);
+        }
+        return style;
     }
 }
