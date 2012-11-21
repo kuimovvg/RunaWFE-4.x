@@ -14,8 +14,8 @@ public class DateVariablePropertyDescriptor extends PropertyDescriptor {
     private final String noneItemValue;
     private final GraphElement element;
 
-    public DateVariablePropertyDescriptor(Object id, String displayName, GraphElement element, String noneItemValue) {
-        super(id, displayName);
+    public DateVariablePropertyDescriptor(Object id, String label, GraphElement element, String noneItemValue) {
+        super(id, label);
         this.element = element;
         this.noneItemValue = noneItemValue;
     }
@@ -26,7 +26,6 @@ public class DateVariablePropertyDescriptor extends PropertyDescriptor {
     }
 
     private class ChooseDateVariableDialogCellEditor extends DialogCellEditor {
-
         public ChooseDateVariableDialogCellEditor(Composite parent) {
             super(parent, SWT.NONE);
         }

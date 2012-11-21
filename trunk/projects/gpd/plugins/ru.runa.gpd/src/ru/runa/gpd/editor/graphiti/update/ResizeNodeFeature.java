@@ -3,6 +3,7 @@ package ru.runa.gpd.editor.graphiti.update;
 import java.util.List;
 
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
@@ -13,10 +14,12 @@ import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
+import ru.runa.gpd.editor.GEFConstants;
+import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
+import ru.runa.gpd.editor.graphiti.add.AddNodeFeature;
 import ru.runa.gpd.lang.model.Node;
-import ru.runa.gpd.lang.model.TaskState;
 
-public class ResizeNodeFeature extends DefaultResizeShapeFeature {
+public class ResizeNodeFeature extends DefaultResizeShapeFeature implements GEFConstants {
     public ResizeNodeFeature(IFeatureProvider provider) {
         super(provider);
     }
@@ -25,8 +28,11 @@ public class ResizeNodeFeature extends DefaultResizeShapeFeature {
     public boolean canResizeShape(IResizeShapeContext context) {
         Shape shape = context.getShape();
         Node node = (Node) getBusinessObjectForPictogramElement(shape);
-        if (node instanceof TaskState) {
-            return true;
+        if (node != null) {
+            IAddFeature addFeature = ((DiagramFeatureProvider) getFeatureProvider()).getAddFeature(node.getClass());
+            if (addFeature instanceof AddNodeFeature) {
+                return !((AddNodeFeature) addFeature).isFixedSize();
+            }
         }
         return false;
     }
@@ -47,8 +53,8 @@ public class ResizeNodeFeature extends DefaultResizeShapeFeature {
         context.getShape().getGraphicsAlgorithm().setHeight(height);
         context.getShape().getGraphicsAlgorithm().setWidth(width);
         for (GraphicsAlgorithm graphicsAlgorithm : context.getShape().getGraphicsAlgorithm().getGraphicsAlgorithmChildren()) {
-            graphicsAlgorithm.setHeight(height);
-            graphicsAlgorithm.setWidth(width);
+            graphicsAlgorithm.setHeight(height - GRID_SIZE);
+            graphicsAlgorithm.setWidth(width - GRID_SIZE);
         }
         List<Shape> shapes = ((ContainerShape) context.getShape()).getChildren();
         for (Shape shape : shapes) {

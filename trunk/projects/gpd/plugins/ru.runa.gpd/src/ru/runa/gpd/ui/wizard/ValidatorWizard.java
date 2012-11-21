@@ -234,7 +234,7 @@ public class ValidatorWizard extends Wizard {
                 Param param = defParams.get(name);
 
                 Label label = new Label(this, SWT.NONE);
-                label.setText(param.getDisplayName());
+                label.setText(param.getLabel());
                 label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
                 Combo combo = new Combo(this, SWT.READ_ONLY);

@@ -50,24 +50,43 @@
    <element name="element">
       <complexType>
          <sequence minOccurs="0" maxOccurs="1">
-            <element ref="gefEntry" minOccurs="0" maxOccurs="1"/>
+            <element ref="gef" minOccurs="0" maxOccurs="1"/>
             <element ref="onVariableRenamed" minOccurs="0" maxOccurs="1"/>
+            <element ref="graphiti" minOccurs="0" maxOccurs="1"/>
          </sequence>
-         <attribute name="name" type="string" use="required">
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="node">
+                  </enumeration>
+                  <enumeration value="connection">
+                  </enumeration>
+                  <enumeration value="artifact">
+                  </enumeration>
+                  <enumeration value="definition">
+                  </enumeration>
+                  <enumeration value="deprecated">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="bpmn" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="model" type="string" use="required">
+         <attribute name="jpdl" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="ru.runa.gpd.lang.model.GraphElement"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
@@ -80,14 +99,28 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="model" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="ru.runa.gpd.lang.model.GraphElement"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
-   <element name="gefEntry">
+   <element name="gef">
       <complexType>
-         <sequence>
-            <element ref="gefPaletteEntry" minOccurs="0" maxOccurs="1"/>
-         </sequence>
          <attribute name="graphicalEditPart" type="string">
             <annotation>
                <documentation>
@@ -136,42 +169,26 @@
       </complexType>
    </element>
 
-   <element name="gefPaletteEntry">
+   <element name="graphiti">
       <complexType>
-         <attribute name="id" type="string" use="required">
+         <attribute name="create" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.graphiti.features.ICreateFeature"/>
+               </appInfo>
             </annotation>
          </attribute>
-         <attribute name="category" type="string" use="required">
+         <attribute name="add" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="type" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="node">
-                  </enumeration>
-                  <enumeration value="connection">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="icon" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.graphiti.features.IAddFeature"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

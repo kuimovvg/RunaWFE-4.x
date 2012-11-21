@@ -154,7 +154,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                 int paramCounter = 0;
                 for (Param param : MethodTag.getTag(tagName).params) {
                     resultHtml.append("<tr><td class='leftParam'>");
-                    resultHtml.append(param.displayName);
+                    resultHtml.append(param.label);
                     resultHtml.append("</td><td class='rightParam'>");
                     if (param.isCombo() || param.isVarCombo()) {
                         resultHtml.append("<select id=\"pc_").append(paramCounter).append("\">");

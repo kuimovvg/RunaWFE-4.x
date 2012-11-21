@@ -26,6 +26,6 @@ public class GEFElementCreationFactory implements CreationFactory {
 
     @Override
     public Object getObjectType() {
-        return nodeTypeDefinition.getName();
+        return nodeTypeDefinition.getJpdlElementName();
     }
 }

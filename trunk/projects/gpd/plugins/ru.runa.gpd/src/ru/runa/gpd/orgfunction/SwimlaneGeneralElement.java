@@ -18,7 +18,7 @@ public class SwimlaneGeneralElement extends SwimlaneElement {
     private Control[] userInputControls;
 
     @Override
-    public String getDisplayName() {
+    public String getLabel() {
         return createNew().getName();
     }
 

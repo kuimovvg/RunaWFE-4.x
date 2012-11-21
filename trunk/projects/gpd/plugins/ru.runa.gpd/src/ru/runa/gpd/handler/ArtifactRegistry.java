@@ -52,15 +52,15 @@ public abstract class ArtifactRegistry<T extends Artifact> {
     }
 
     public List<T> getAll() {
-        List<T> sortedByDisplayNameList = Lists.newArrayList();
-        sortedByDisplayNameList.addAll(list);
-        Collections.sort(sortedByDisplayNameList, new Comparator<T>() {
+        List<T> sortedByLabelList = Lists.newArrayList();
+        sortedByLabelList.addAll(list);
+        Collections.sort(sortedByLabelList, new Comparator<T>() {
             @Override
             public int compare(T o1, T o2) {
-                return o1.getDisplayName().compareTo(o2.getDisplayName());
+                return o1.getLabel().compareTo(o2.getLabel());
             }
         });
-        return sortedByDisplayNameList;
+        return sortedByLabelList;
     }
 
     public T getArtifact(String name) {
@@ -80,19 +80,19 @@ public abstract class ArtifactRegistry<T extends Artifact> {
         return artifact;
     }
 
-    public T getArtifactByDisplayName(String displayName) {
+    public T getArtifactByLabel(String label) {
         for (T artifact : list) {
-            if (Objects.equal(displayName, artifact.getDisplayName())) {
+            if (Objects.equal(label, artifact.getLabel())) {
                 return artifact;
             }
         }
         return null;
     }
 
-    public T getArtifactNotNullByDisplayName(String displayName) {
-        T artifact = getArtifactByDisplayName(displayName);
+    public T getArtifactNotNullByLabel(String label) {
+        T artifact = getArtifactByLabel(label);
         if (artifact == null) {
-            throw new RuntimeException("Artifact displayName='" + displayName + "' does not exist");
+            throw new RuntimeException("Artifact label='" + label + "' does not exist");
         }
         return artifact;
     }

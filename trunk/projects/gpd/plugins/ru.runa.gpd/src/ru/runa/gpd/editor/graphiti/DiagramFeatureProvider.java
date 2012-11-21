@@ -1,5 +1,7 @@
 package ru.runa.gpd.editor.graphiti;
 
+import java.util.List;
+
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddBendpointFeature;
 import org.eclipse.graphiti.features.IAddFeature;
@@ -27,24 +29,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import ru.runa.gpd.ProcessCache;
-import ru.runa.gpd.editor.graphiti.add.AddMultiInstanceFeature;
-import ru.runa.gpd.editor.graphiti.add.AddNodeFeature;
-import ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature;
-import ru.runa.gpd.editor.graphiti.add.AddStateFeature;
-import ru.runa.gpd.editor.graphiti.add.AddSubProcessFeature;
 import ru.runa.gpd.editor.graphiti.add.AddTransitionBendpointFeature;
-import ru.runa.gpd.editor.graphiti.add.AddTransitionFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateDecisionFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateEndStateFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateForkFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateJoinFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateMultiInstanceFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateReceiveMessageFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateSendMessageFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateStartNodeFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateSubProcessFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateTaskStateFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateTransitionFeature;
 import ru.runa.gpd.editor.graphiti.update.DeleteElementFeature;
 import ru.runa.gpd.editor.graphiti.update.DirectEditNodeNameFeature;
 import ru.runa.gpd.editor.graphiti.update.MoveNodeFeature;
@@ -53,20 +38,14 @@ import ru.runa.gpd.editor.graphiti.update.ReconnectSequenceFlowFeature;
 import ru.runa.gpd.editor.graphiti.update.RemoveTransitionBendpointFeature;
 import ru.runa.gpd.editor.graphiti.update.ResizeNodeFeature;
 import ru.runa.gpd.editor.graphiti.update.UpdateNodeFeature;
-import ru.runa.gpd.lang.model.Decision;
-import ru.runa.gpd.lang.model.EndState;
-import ru.runa.gpd.lang.model.Fork;
-import ru.runa.gpd.lang.model.Join;
-import ru.runa.gpd.lang.model.MultiInstance;
+import ru.runa.gpd.lang.NodeRegistry;
+import ru.runa.gpd.lang.NodeTypeDefinition;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.ReceiveMessageNode;
-import ru.runa.gpd.lang.model.SendMessageNode;
-import ru.runa.gpd.lang.model.StartState;
-import ru.runa.gpd.lang.model.Subprocess;
-import ru.runa.gpd.lang.model.TaskState;
-import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.util.ProjectFinder;
+
+import com.google.common.collect.Lists;
 
 public class DiagramFeatureProvider extends DefaultFeatureProvider {
     public DiagramFeatureProvider(IDiagramTypeProvider dtp) {
@@ -80,34 +59,27 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public ICreateFeature[] getCreateFeatures() {
-        return new ICreateFeature[] { new CreateStartNodeFeature(this), new CreateTaskStateFeature(this), new CreateEndStateFeature(this), new CreateDecisionFeature(this),
-                new CreateForkFeature(this), new CreateJoinFeature(this), new CreateSendMessageFeature(this), new CreateReceiveMessageFeature(this),
-                new CreateSubProcessFeature(this), new CreateMultiInstanceFeature(this) };
+        List<ICreateFeature> list = Lists.newArrayList();
+        for (NodeTypeDefinition definition : NodeRegistry.getDefinitions()) {
+            if (definition.getGraphitiEntry() != null && NodeTypeDefinition.TYPE_NODE.equals(definition.getType())) {
+                list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
+            }
+        }
+        return list.toArray(new ICreateFeature[list.size()]);
     }
 
-    @Override
-    public IAddFeature getAddFeature(IAddContext context) {
-        if (context.getNewObject() instanceof TaskState) {
-            return new AddStateFeature(this);
-        }
-        if (context.getNewObject() instanceof Subprocess) {
-            return new AddSubProcessFeature(this);
-        }
-        if (context.getNewObject() instanceof MultiInstance) {
-            return new AddMultiInstanceFeature(this);
-        }
-        if (context.getNewObject() instanceof StartState || context.getNewObject() instanceof EndState || context.getNewObject() instanceof Decision
-                || context.getNewObject() instanceof Fork || context.getNewObject() instanceof Join || context.getNewObject() instanceof SendMessageNode
-                || context.getNewObject() instanceof ReceiveMessageNode) {
-            return new AddNodeWithImageFeature(this);
-        }
-        if (context.getNewObject() instanceof Node) {
-            return new AddNodeFeature(this);
-        }
-        if (context.getNewObject() instanceof Transition) {
-            return new AddTransitionFeature(this);
+    public IAddFeature getAddFeature(Class<? extends GraphElement> nodeClass) {
+        NodeTypeDefinition definition = NodeRegistry.getNodeTypeDefinition(nodeClass);
+        if (definition != null && definition.getGraphitiEntry() != null) {
+            return definition.getGraphitiEntry().createAddFeature(this);
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public IAddFeature getAddFeature(IAddContext context) {
+        return getAddFeature((Class<? extends GraphElement>) context.getNewObject().getClass());
     }
 
     @Override
@@ -127,7 +99,13 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
-        return new ICreateConnectionFeature[] { new CreateTransitionFeature(this) };
+        List<ICreateConnectionFeature> list = Lists.newArrayList();
+        for (NodeTypeDefinition definition : NodeRegistry.getDefinitions()) {
+            if (definition.getGraphitiEntry() != null && NodeTypeDefinition.TYPE_CONNECTION.equals(definition.getType())) {
+                list.add((ICreateConnectionFeature) definition.getGraphitiEntry().createCreateFeature(this));
+            }
+        }
+        return list.toArray(new ICreateConnectionFeature[list.size()]);
     }
 
     @Override

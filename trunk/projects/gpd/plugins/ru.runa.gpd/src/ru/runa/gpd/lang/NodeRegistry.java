@@ -3,8 +3,6 @@ package ru.runa.gpd.lang;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import org.dom4j.Document;
 import org.eclipse.core.resources.IFile;
@@ -19,12 +17,13 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.XmlUtil;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class NodeRegistry {
     private static Map<String, NodeTypeDefinition> typesByModelClass = Maps.newHashMap();
-    private static Map<String, NodeTypeDefinition> typesByName = Maps.newHashMap();
-    private static Map<String, Map<String, NodeTypeDefinition>> gefPalette = Maps.newTreeMap();
+    private static List<NodeTypeDefinition> definitions = Lists.newArrayList();
     static {
         processJpdlElements();
     }
@@ -48,34 +47,24 @@ public class NodeRegistry {
             throw new RuntimeException("unknown config element: " + configElement.getName());
         }
         NodeTypeDefinition type = new NodeTypeDefinition(configElement);
-        typesByName.put(type.getName(), type);
         typesByModelClass.put(configElement.getAttribute("model"), type);
-        GEFPaletteEntry entry = type.getGEFPaletteEntry();
-        if (entry == null) {
-            return;
-        }
-        String categoryId = entry.getCategoryId();
-        Map<String, NodeTypeDefinition> category = gefPalette.get(categoryId);
-        if (category == null) {
-            category = new TreeMap<String, NodeTypeDefinition>();
-            gefPalette.put(categoryId, category);
-        }
-        category.put(entry.getId(), type);
+        definitions.add(type);
     }
 
-    public static Set<String> getGEFPaletteCategories() {
-        return gefPalette.keySet();
+    public static List<NodeTypeDefinition> getDefinitions() {
+        return definitions;
     }
 
-    public static Map<String, NodeTypeDefinition> getGEFPaletteEntriesFor(String categoryName) {
-        return gefPalette.get(categoryName);
-    }
-
-    public static NodeTypeDefinition getNodeTypeDefinition(String name) {
-        if (!typesByName.containsKey(name)) {
-            throw new RuntimeException("No type found by name " + name);
+    public static NodeTypeDefinition getNodeTypeDefinition(Language language, String name) {
+        for (NodeTypeDefinition definition : typesByModelClass.values()) {
+            if (language == Language.JPDL && Objects.equal(definition.getJpdlElementName(), name)) {
+                return definition;
+            }
+            if (language == Language.BPMN && Objects.equal(definition.getBpmnElementName(), name)) {
+                return definition;
+            }
         }
-        return typesByName.get(name);
+        throw new RuntimeException("No type found by name " + name);
     }
 
     public static NodeTypeDefinition getNodeTypeDefinition(Class<? extends GraphElement> clazz) {

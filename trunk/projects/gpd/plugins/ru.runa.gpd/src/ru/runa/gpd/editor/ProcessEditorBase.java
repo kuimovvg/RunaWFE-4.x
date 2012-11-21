@@ -19,6 +19,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.SnapToGrid;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.viewers.ISelection;
@@ -90,7 +91,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
             if (definition != null && definition.isDirty()) {
                 ProcessCache.invalidateProcessDefinition(definitionFile);
             }
-            if (definitionFile.exists()) {
+            if (definitionFile != null && definitionFile.exists()) {
                 definitionFile.deleteMarkers(ValidationErrorsView.ID, true, IResource.DEPTH_INFINITE);
             }
         } catch (Exception e) {
@@ -213,10 +214,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
 
     public OutlineViewer getOutlineViewer() {
         if (outlineViewer == null && getGraphicalViewer() != null) {
-            //            RootEditPart rootEditPart = getGraphicalViewer().getRootEditPart();
-            //            if (rootEditPart instanceof ScalableFreeformRootEditPart) {
             outlineViewer = new OutlineViewer(this);
-            //            }
         }
         return outlineViewer;
     }
@@ -245,6 +243,8 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
             firePropertyChange(IEditorPart.PROP_DIRTY);
         }
         if (NotificationMessages.PROPERTY_SHOW_GRID.equals(evt.getPropertyName())) {
+            getGraphicalViewer().setProperty(SnapToGrid.PROPERTY_GRID_ENABLED, evt.getNewValue());
+            getGraphicalViewer().setProperty(SnapToGrid.PROPERTY_GRID_VISIBLE, evt.getNewValue());
             refresh();
         }
     }

@@ -14,8 +14,8 @@ import ru.runa.gpd.ui.dialog.EscalationActionEditDialog;
 public class EscalationActionPropertyDescriptor extends PropertyDescriptor {
     private final TaskState element;
 
-    public EscalationActionPropertyDescriptor(Object id, String displayName, TaskState element) {
-        super(id, displayName);
+    public EscalationActionPropertyDescriptor(Object id, String label, TaskState element) {
+        super(id, label);
         this.element = element;
     }
 
@@ -25,7 +25,6 @@ public class EscalationActionPropertyDescriptor extends PropertyDescriptor {
     }
 
     private class TimerActionDialogCellEditor extends DialogCellEditor {
-
         public TimerActionDialogCellEditor(Composite parent) {
             super(parent, SWT.NONE);
         }
