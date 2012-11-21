@@ -36,11 +36,15 @@ import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.bot.BotRunner;
 import ru.runa.wfe.bot.BotRunnerException;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 /**
  * Created on 03.03.2005
@@ -167,12 +171,21 @@ public class MultitaskBotRunner extends BotRunner {
         return tasksToDoSet;
     }
 
-    protected void doTask(WfTask task) throws TaskHandlerException {
+    private void doTask(WfTask task) throws Exception {
         TaskHandler taskHandler = taskHandlerMap.get(task.getName());
         if (taskHandler != null) {
             IVariableProvider variableProvider = new DelegateProcessVariableProvider(getSubject(), task.getProcessId());
-            taskHandler.handle(getSubject(), variableProvider, task);
-            log.debug("Handled task " + task + ", bot " + this);
+            Map<String, Object> variables = taskHandler.handle(getSubject(), variableProvider, task);
+            if (variables == null) {
+                variables = Maps.newHashMap();
+            }
+            Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
+            if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
+                log.info("Task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
+            } else {
+                DelegateFactory.getExecutionService().completeTask(getSubject(), task.getId(), variables);
+                log.info("Task '" + task + "' completed by task handler " + taskHandler.getClass() + ", bot = " + this);
+            }
         } else {
             log.warn("No handler for task " + task + ", bot " + this);
         }

@@ -24,9 +24,9 @@ public class LocalizationParser {
         try {
             Document document = XmlUtils.parseWithoutValidation(stream);
             Element root = document.getRootElement();
-            List<Element> elements = root.elements("message");
+            List<Element> elements = root.elements("artifact");
             for (Element element : elements) {
-                localizations.put(element.attributeValue("name"), element.attributeValue("value"));
+                localizations.put(element.attributeValue("name"), element.attributeValue("label"));
             }
         } catch (Exception e) {
             log.error("Unable parse localizations", e);

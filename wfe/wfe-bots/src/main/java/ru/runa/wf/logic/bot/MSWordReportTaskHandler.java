@@ -20,6 +20,7 @@ package ru.runa.wf.logic.bot;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,11 +29,11 @@ import javax.security.auth.Subject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilder;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilderFactory;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportTaskSettings;
 import ru.runa.wf.logic.bot.mswordreport.WordReportSettingsXmlParser;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -41,7 +42,8 @@ import com.google.common.io.ByteStreams;
 
 /**
  * 
- * Reads template word document. Replaces all bookmarks by rules provided in configuration.
+ * Reads template word document. Replaces all bookmarks by rules provided in
+ * configuration.
  * 
  * Created on 23.11.2006
  * 
@@ -54,17 +56,12 @@ public class MSWordReportTaskHandler implements TaskHandler {
     private MSWordReportTaskSettings settings;
 
     @Override
-    public void configure(String configurationPath) throws TaskHandlerException {
-        settings = WordReportSettingsXmlParser.read(configurationPath);
-    }
-
-    @Override
-    public void configure(byte[] configuration) throws TaskHandlerException {
+    public void setConfiguration(byte[] configuration) {
         settings = WordReportSettingsXmlParser.read(new ByteArrayInputStream(configuration));
     }
 
     @Override
-    public synchronized void handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws TaskHandlerException {
+    public synchronized Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws IOException {
         File reportTemporaryFile = null;
         try {
             log.info("Starting task " + wfTask.getName() + " in process " + wfTask.getProcessId());
@@ -78,11 +75,7 @@ public class MSWordReportTaskHandler implements TaskHandler {
             Map<String, Object> taskVariables = new HashMap<String, Object>();
             FileVariable fileVariable = new FileVariable(settings.getReportFileName(), fileContent, CONTENT_TYPE);
             taskVariables.put(settings.getReportVariableName(), fileVariable);
-            DelegateFactory.getExecutionService().completeTask(subject, wfTask.getId(), taskVariables);
-            log.info("Ended task " + wfTask.getName() + " in process " + wfTask.getProcessId());
-        } catch (Exception e) {
-            log.error("", e);
-            throw new TaskHandlerException(e);
+            return taskVariables;
         } finally {
             if (reportTemporaryFile != null) {
                 if (!reportTemporaryFile.delete()) {

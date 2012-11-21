@@ -45,7 +45,7 @@ public class OrgFunctionParser {
             Pattern functionNamePattern = Pattern.compile(functionNameRegexp);
             Matcher functionNameMatcher = functionNamePattern.matcher(configuration);
             if (!functionNameMatcher.matches()) {
-                throw new OrgFunctionException("Illegal configuration: " + configuration);
+                throw new OrgFunctionException("Illegal configuration: '" + configuration + "'");
             }
             String functionName = functionNameMatcher.group(1);
             if (functionName == null) {

@@ -13,6 +13,7 @@ import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
@@ -116,7 +117,8 @@ public class BpmnXmlReader {
                 swimlaneDefinition.setDisplayOrgFunction(conf);
                 String[] orgFunctionParts = conf.split("\\(");
                 if (orgFunctionParts.length == 2) {
-                    String localized = localizationDAO.getLocalized(orgFunctionParts[0].trim());
+                    String className = BackCompatibilityClassNames.getClassName(orgFunctionParts[0].trim());
+                    String localized = localizationDAO.getLocalized(className);
                     if (localized != null) {
                         swimlaneDefinition.setDisplayOrgFunction(localized + " (" + orgFunctionParts[1]);
                     }

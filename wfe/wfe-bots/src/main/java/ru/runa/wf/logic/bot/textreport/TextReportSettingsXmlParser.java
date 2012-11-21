@@ -30,8 +30,9 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.xml.PathEntityResolver;
 import ru.runa.wfe.commons.xml.XMLHelper;
 import ru.runa.wfe.var.format.FormatCommons;
-import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.VariableFormat;
+
+import com.google.common.base.Strings;
 
 /**
  * Created on 2006
@@ -118,17 +119,15 @@ public class TextReportSettingsXmlParser {
                 if (variableNode.getAttributes().getNamedItem(FORMAT_PATTERN_ATTRIBUTE_NAME) != null) {
                     formatPattern = variableNode.getAttributes().getNamedItem(FORMAT_PATTERN_ATTRIBUTE_NAME).getNodeValue();
                 }
-
-                if ((formatClassName == null) || (formatClassName.length() == 0)) {
-                    formatClassName = StringFormat.class.getName();
+                if (!Strings.isNullOrEmpty(formatClassName)) {
+                    VariableFormat<?> format;
+                    if ((formatPattern == null) || (formatPattern.length() == 0)) {
+                        format = FormatCommons.create(formatClassName, formatPattern);
+                    } else {
+                        format = FormatCommons.create(formatClassName);
+                    }
+                    textReportSettings.addVariableFormat(variableName, format);
                 }
-                VariableFormat format;
-                if ((formatPattern == null) || (formatPattern.length() == 0)) {
-                    format = FormatCommons.create(formatClassName, formatPattern);
-                } else {
-                    format = FormatCommons.create(formatClassName);
-                }
-                textReportSettings.addVariableFormat(variableName, format);
             }
 
             return textReportSettings;

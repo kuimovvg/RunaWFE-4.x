@@ -22,11 +22,9 @@ package ru.runa.wf.logic.bot.textreport;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ru.runa.wf.logic.bot.TaskHandlerException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.format.VariableFormat;
@@ -40,43 +38,37 @@ import com.google.common.io.ByteStreams;
 public class TextReportGenerator {
     private static final String VARIABLE_REGEXP = "\\$\\{(.*?[^\\\\])\\}";
 
-    public static synchronized byte[] getReportContent(TextReportSettings settings, IVariableProvider variableProvider) throws TaskHandlerException {
+    public static synchronized byte[] getReportContent(TextReportSettings settings, IVariableProvider variableProvider) throws IOException {
         String templateFileName = settings.getTemplateFileName();
         String templateEncoding = settings.getTemplateEncoding();
         String encoding = settings.getReportEncoding();
 
-        try {
-            InputStream inputStream = ClassLoaderUtil.getResourceAsStream(templateFileName, TextReportGenerator.class);
-            String content = new String(ByteStreams.toByteArray(inputStream), templateEncoding);
-            String[] symbols = settings.getContextSymbols();
-            String[] replacements = settings.getContextReplacements();
-            SymbolsReplacer symbolsReplacer = new SymbolsReplacer(symbols, replacements, settings.isXmlFormatSupport());
-            String currentRegexp;
-            if (settings.isApplyToRegexp()) {
-                currentRegexp = symbolsReplacer.replaceAll(VARIABLE_REGEXP);
-            } else {
-                currentRegexp = VARIABLE_REGEXP;
-            }
-
-            Pattern pattern = Pattern.compile(currentRegexp);
-            Matcher matcher = pattern.matcher(content);
-
-            StringBuffer buffer = new StringBuffer();
-            while (matcher.find()) {
-                String originalVarName = matcher.group(1);
-                String variableName = symbolsReplacer.replaceAllReverse(originalVarName);
-                VariableFormat format = settings.getFormat(variableName);
-                Object variable = variableProvider.getNotNull(variableName);
-                String formattedValue = format.format(variable);
-                String replacedFormattedValue = symbolsReplacer.replaceAll(formattedValue);
-                matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacedFormattedValue));
-            }
-            matcher.appendTail(buffer);
-            return buffer.toString().getBytes(encoding);
-        } catch (UnsupportedEncodingException e) {
-            throw new TaskHandlerException(e);
-        } catch (IOException e) {
-            throw new TaskHandlerException(e);
+        InputStream inputStream = ClassLoaderUtil.getResourceAsStream(templateFileName, TextReportGenerator.class);
+        String content = new String(ByteStreams.toByteArray(inputStream), templateEncoding);
+        String[] symbols = settings.getContextSymbols();
+        String[] replacements = settings.getContextReplacements();
+        SymbolsReplacer symbolsReplacer = new SymbolsReplacer(symbols, replacements, settings.isXmlFormatSupport());
+        String currentRegexp;
+        if (settings.isApplyToRegexp()) {
+            currentRegexp = symbolsReplacer.replaceAll(VARIABLE_REGEXP);
+        } else {
+            currentRegexp = VARIABLE_REGEXP;
         }
+
+        Pattern pattern = Pattern.compile(currentRegexp);
+        Matcher matcher = pattern.matcher(content);
+
+        StringBuffer buffer = new StringBuffer();
+        while (matcher.find()) {
+            String originalVarName = matcher.group(1);
+            String variableName = symbolsReplacer.replaceAllReverse(originalVarName);
+            Object variable = variableProvider.getNotNull(variableName);
+            VariableFormat format = settings.getFormat(variableName);
+            String formattedValue = format != null ? format.format(variable) : String.valueOf(variable);
+            String replacedFormattedValue = symbolsReplacer.replaceAll(formattedValue);
+            matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacedFormattedValue));
+        }
+        matcher.appendTail(buffer);
+        return buffer.toString().getBytes(encoding);
     }
 }

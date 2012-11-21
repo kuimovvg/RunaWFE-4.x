@@ -34,14 +34,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.security.auth.Subject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.ExecutionService;
-import ru.runa.wf.logic.bot.TaskHandler;
-import ru.runa.wf.logic.bot.TaskHandlerException;
-import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -50,9 +44,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 
 public class JcrRepositoryTaskHandler implements TaskHandler {
-
-    private static final Log log = LogFactory.getLog(JcrRepositoryTaskHandler.class);
-
     private static final String NT_FILE = "nt:file";
     private static final String NT_RESOURCE = "nt:resource";
     private static final String JCR_ENCODING = "jcr:encoding";
@@ -64,17 +55,12 @@ public class JcrRepositoryTaskHandler implements TaskHandler {
     private JcrTaskConfig config;
 
     @Override
-    public void configure(String bundleName) {
-        config = ConfigXmlParser.parse(ClassLoaderUtil.getResourceAsStream(bundleName, getClass()));
-    }
-
-    @Override
-    public void configure(byte[] configuration) throws TaskHandlerException {
+    public void setConfiguration(byte[] configuration) throws Exception {
         config = ConfigXmlParser.parse(new ByteArrayInputStream(configuration));
     }
 
     @Override
-    public void handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws TaskHandlerException {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
         Session session = null;
         try {
             Context context = new InitialContext();
@@ -82,7 +68,6 @@ public class JcrRepositoryTaskHandler implements TaskHandler {
             Credentials credentials = new SimpleCredentials(config.getUserName(), config.getPassword().toCharArray());
             session = repository.login(credentials);
 
-            ExecutionService executionService = DelegateFactory.getExecutionService();
             Map<String, Object> outputVariables = new HashMap<String, Object>();
 
             for (JcrTask jcrTask : config.getTasks()) {
@@ -98,10 +83,7 @@ public class JcrRepositoryTaskHandler implements TaskHandler {
                     deleteFile(session, jcrTask.getPath(), jcrTask.getFileName());
                 }
             }
-            executionService.completeTask(subject, wfTask.getId(), outputVariables);
-            log.info("JCR TaskHandler completed, task " + wfTask);
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
+            return outputVariables;
         } finally {
             if (session != null) {
                 try {

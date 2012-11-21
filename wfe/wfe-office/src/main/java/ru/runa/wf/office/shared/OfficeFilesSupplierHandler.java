@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.ConfigurationException;
+import ru.runa.wfe.handler.CommonHandler;
 
 import com.google.common.base.Throwables;
 

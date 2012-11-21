@@ -23,7 +23,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import ru.runa.wf.logic.bot.TaskHandlerException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.PathEntityResolver;
 import ru.runa.wfe.commons.xml.XMLHelper;
@@ -48,46 +47,34 @@ public class WordReportSettingsXmlParser {
     private WordReportSettingsXmlParser() {
     }
 
-    public static MSWordReportTaskSettings read(String configurationPath) throws TaskHandlerException {
-        try {
-            InputStream inputStream = ClassLoaderUtil.getResourceAsStream(configurationPath, WordReportSettingsXmlParser.class);
-            Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
-            return parse(document);
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
-        }
+    public static MSWordReportTaskSettings read(String configurationPath) {
+        InputStream inputStream = ClassLoaderUtil.getResourceAsStream(configurationPath, WordReportSettingsXmlParser.class);
+        Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
+        return parse(document);
     }
 
-    public static MSWordReportTaskSettings read(InputStream inputStream) throws TaskHandlerException {
-        try {
-            Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
-            return parse(document);
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
-        }
+    public static MSWordReportTaskSettings read(InputStream inputStream) {
+        Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
+        return parse(document);
     }
 
-    private static MSWordReportTaskSettings parse(Document document) throws TaskHandlerException {
-        try {
-            Element report = (Element) document.getElementsByTagName(REPORT_TASK_ELEMENT_NAME).item(0);
-            String templatePath = report.getAttribute(TEMPLATE_FILE_PATH_ELEMENT_NAME);
-            String fileName = report.getAttribute(OUTPUT_VARIABLE_FILE_ELEMENT_NAME);
-            String variableName = report.getAttribute(OUTPUT_VARIABLE_ELEMENT_NAME);
-            MSWordReportTaskSettings wordReportSettings = new MSWordReportTaskSettings(templatePath, fileName, variableName);
-            NodeList variablesNodeList = document.getElementsByTagName(MAPPING_ELEMENT_NAME);
-            for (int i = 0; i < variablesNodeList.getLength(); i++) {
-                Element variableElement = (Element) variablesNodeList.item(i);
-                String bookmark = variableElement.getAttribute(BOOKMARK_ATTRIBUTE_NAME);
-                String variable = variableElement.getAttribute(VARIABLE_ATTRIBUTE_NAME);
-                String formatClassName = variableElement.getAttribute(FORMAT_CLASS_ATTRIBUTE_NAME);
-                String format = variableElement.getAttribute(FORMAT_ATTRIBUTE_NAME);
-                BookmarkVariableMapping bookmarkVariableMapping = new BookmarkVariableMapping(bookmark, variable, formatClassName, format);
-                wordReportSettings.addBookmarkMapping(bookmarkVariableMapping);
-            }
-            return wordReportSettings;
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
+    private static MSWordReportTaskSettings parse(Document document) {
+        Element report = (Element) document.getElementsByTagName(REPORT_TASK_ELEMENT_NAME).item(0);
+        String templatePath = report.getAttribute(TEMPLATE_FILE_PATH_ELEMENT_NAME);
+        String fileName = report.getAttribute(OUTPUT_VARIABLE_FILE_ELEMENT_NAME);
+        String variableName = report.getAttribute(OUTPUT_VARIABLE_ELEMENT_NAME);
+        MSWordReportTaskSettings wordReportSettings = new MSWordReportTaskSettings(templatePath, fileName, variableName);
+        NodeList variablesNodeList = document.getElementsByTagName(MAPPING_ELEMENT_NAME);
+        for (int i = 0; i < variablesNodeList.getLength(); i++) {
+            Element variableElement = (Element) variablesNodeList.item(i);
+            String bookmark = variableElement.getAttribute(BOOKMARK_ATTRIBUTE_NAME);
+            String variable = variableElement.getAttribute(VARIABLE_ATTRIBUTE_NAME);
+            String formatClassName = variableElement.getAttribute(FORMAT_CLASS_ATTRIBUTE_NAME);
+            String format = variableElement.getAttribute(FORMAT_ATTRIBUTE_NAME);
+            BookmarkVariableMapping bookmarkVariableMapping = new BookmarkVariableMapping(bookmark, variable, formatClassName, format);
+            wordReportSettings.addBookmarkMapping(bookmarkVariableMapping);
         }
+        return wordReportSettings;
     }
 
 }

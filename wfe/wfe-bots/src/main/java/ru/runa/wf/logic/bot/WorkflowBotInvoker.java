@@ -35,6 +35,7 @@ import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.invoker.BotInvoker;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.handler.bot.TaskHandler;
 
 import com.google.common.collect.Sets;
 
@@ -75,6 +76,9 @@ public class WorkflowBotInvoker implements BotInvoker {
     private long configurationVersion = -1;
     private List<MultitaskBotRunner> workflowBots = null;
 
+    /**
+     * @param botStation
+     */
     public void updateConfig(BotStation botStation) {
         try {
             BotService botService = DelegateFactory.getBotService();
@@ -94,7 +98,7 @@ public class WorkflowBotInvoker implements BotInvoker {
                         BotTask task = i.next();
                         try {
                             TaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
-                            handler.configure(task.getConfiguration());
+                            handler.setConfiguration(task.getConfiguration());
                             wbot.addTask(task.getName(), handler, 0);
                             log.info("Configured task handler for " + task.getName());
                         } catch (Exception e) {

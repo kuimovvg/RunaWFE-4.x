@@ -19,21 +19,17 @@ package ru.runa.wf.logic.bot;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsSettings;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsXmlParser;
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.os.OrgFunctionException;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.security.Identifiable;
@@ -46,55 +42,45 @@ import ru.runa.wfe.var.IVariableProvider;
 import com.google.common.collect.Lists;
 
 /**
- * Created on 18.05.2006
+ * Sets permissions to current process.
  * 
+ * @author dofs
+ * @since 2.0
  */
 public class UpdatePermissionsTaskHandler implements TaskHandler {
-    private static final Log log = LogFactory.getLog(UpdatePermissionsTaskHandler.class);
 
     private UpdatePermissionsSettings settings;
 
     @Override
-    public void configure(String configurationName) throws TaskHandlerException {
-        settings = UpdatePermissionsXmlParser.read(ClassLoaderUtil.getResourceAsStream(configurationName, getClass()));
-    }
-
-    @Override
-    public void configure(byte[] configuration) throws TaskHandlerException {
+    public void setConfiguration(byte[] configuration) {
         settings = UpdatePermissionsXmlParser.read(new ByteArrayInputStream(configuration));
     }
 
     @Override
-    public void handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws TaskHandlerException {
-        try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
-            boolean allowed = true;
-            if (settings.isConditionExists()) {
-                String conditionVar = variableProvider.get(String.class, settings.getConditionVarName());
-                if (!settings.getConditionVarValue().equals(conditionVar)) {
-                    allowed = false;
-                }
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
+        boolean allowed = true;
+        if (settings.isConditionExists()) {
+            String conditionVar = variableProvider.get(String.class, settings.getConditionVarName());
+            if (!settings.getConditionVarValue().equals(conditionVar)) {
+                allowed = false;
             }
-            if (allowed) {
-                Long actorCode = SubjectPrincipalsHelper.getActor(subject).getCode();
-                List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions(), actorCode);
-                AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
-                List<Collection<Permission>> allPermissions = Lists.newArrayListWithExpectedSize(executors.size());
-                Identifiable identifiable = DelegateFactory.getExecutionService().getProcess(subject, wfTask.getProcessId());
-                String method = settings.getMethod();
-                List<Long> executorIds = Lists.newArrayList();
-                for (Executor executor : executors) {
-                    Collection<Permission> oldPermissions = authorizationService.getPermissions(subject, executor, identifiable);
-                    allPermissions.add(getNewPermissions(oldPermissions, settings.getPermissions(), method));
-                    executorIds.add(executor.getId());
-                }
-                authorizationService.setPermissions(subject, executorIds, allPermissions, identifiable);
-            }
-            executionService.completeTask(subject, wfTask.getId(), new HashMap<String, Object>());
-            log.debug("UpdatePermissionsTaskHandler finished task " + wfTask);
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
         }
+        if (allowed) {
+            Long actorCode = SubjectPrincipalsHelper.getActor(subject).getCode();
+            List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions(), actorCode);
+            AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
+            List<Collection<Permission>> allPermissions = Lists.newArrayListWithExpectedSize(executors.size());
+            Identifiable identifiable = DelegateFactory.getExecutionService().getProcess(subject, wfTask.getProcessId());
+            String method = settings.getMethod();
+            List<Long> executorIds = Lists.newArrayList();
+            for (Executor executor : executors) {
+                Collection<Permission> oldPermissions = authorizationService.getPermissions(subject, executor, identifiable);
+                allPermissions.add(getNewPermissions(oldPermissions, settings.getPermissions(), method));
+                executorIds.add(executor.getId());
+            }
+            authorizationService.setPermissions(subject, executorIds, allPermissions, identifiable);
+        }
+        return null;
     }
 
     private List<? extends Executor> evaluateOrgFunctions(IVariableProvider variableProvider, String[] orgFunctions, Long actorToSubstituteCode)
