@@ -10,7 +10,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.property.FormatClassPropertyDescriptor;
-import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.var.format.ExecutorFormat;
 
 public class Variable extends NamedGraphElement {
     private String format;
@@ -28,8 +28,8 @@ public class Variable extends NamedGraphElement {
         this(variable.getName(), variable.getFormat(), variable.isPublicVisibility(), variable.getDefaultValue());
     }
 
-    public Variable(String name) {
-        this(name, StringFormat.class.getName(), false, null);
+    public static Variable createForSwimlane(String swimlaneName) {
+        return new Variable(swimlaneName, ExecutorFormat.class.getName(), false, null);
     }
 
     @Override

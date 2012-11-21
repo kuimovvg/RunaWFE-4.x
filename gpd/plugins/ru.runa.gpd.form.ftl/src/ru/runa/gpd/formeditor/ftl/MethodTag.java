@@ -26,10 +26,10 @@ public class MethodTag {
     public final int height;
     public final List<Param> params = new ArrayList<Param>();
 
-    private MethodTag(Bundle bundle, String tagName, String displayName, int width, int height, String imagePath) {
+    private MethodTag(Bundle bundle, String tagName, String label, int width, int height, String imagePath) {
         this.bundle = bundle;
         this.id = tagName;
-        this.name = displayName;
+        this.name = label;
         this.width = width;
         this.height = height;
         this.imagePath = imagePath;
@@ -50,13 +50,13 @@ public class MethodTag {
         //private static final String TYPE_TEXT = "text";
         public final String typeName;
         public final VariableAccess variableAccess;
-        public final String displayName;
+        public final String label;
         public final List<OptionalValue> optionalValues = new ArrayList<OptionalValue>();
 
-        public Param(String typeName, VariableAccess variableAccess, String displayName) {
+        public Param(String typeName, VariableAccess variableAccess, String label) {
             this.typeName = typeName;
             this.variableAccess = variableAccess;
-            this.displayName = displayName;
+            this.label = label;
         }
 
         public boolean isCombo() {

@@ -350,7 +350,7 @@ public class VariableEditorPage extends EditorPartBase {
             case 0:
                 return variable.getName();
             case 1:
-                return LocalizationRegistry.getDisplayName(variable.getFormat());
+                return LocalizationRegistry.getLabel(variable.getFormat());
             case 2:
                 if (variable.getDefaultValue() == null) {
                     return "";

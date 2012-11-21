@@ -12,7 +12,6 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.NotificationMessages;
 
 public abstract class ElementGraphicalEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener, NotificationMessages {
-
     private static final Border TOOL_TIP_BORDER = new MarginBorder(0, 2, 0, 2);
 
     @Override
@@ -22,7 +21,7 @@ public abstract class ElementGraphicalEditPart extends AbstractGraphicalEditPart
 
     @Override
     protected IFigure createFigure() {
-        return getModel().getTypeDefinition().createFigure(getModel().getProcessDefinition());
+        return getModel().getTypeDefinition().getGefEntry().createFigure(getModel().getProcessDefinition());
     }
 
     @Override

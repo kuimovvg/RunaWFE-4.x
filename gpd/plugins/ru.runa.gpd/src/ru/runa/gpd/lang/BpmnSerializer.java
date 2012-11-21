@@ -107,12 +107,12 @@ public class BpmnSerializer extends ProcessSerializer {
         }
         List<Swimlane> swimlanes = definition.getSwimlanes();
         for (Swimlane swimlane : swimlanes) {
-            Element swimlaneElement = writeElement(process, swimlane, SWIMLANE_NODE);
+            Element swimlaneElement = writeElement(process, swimlane);
             writeDelegation(swimlaneElement, ASSIGNMENT_NODE, swimlane);
         }
         StartState startState = definition.getFirstChild(StartState.class);
         if (startState != null) {
-            writeTaskState(process, startState, START_STATE_NODE);
+            writeTaskState(process, startState);
             writeTransitions(process, startState);
         }
         //        List<Decision> decisions = definition.getChildren(Decision.class);
@@ -121,7 +121,7 @@ public class BpmnSerializer extends ProcessSerializer {
         //        }
         List<TaskState> states = definition.getChildren(TaskState.class);
         for (TaskState state : states) {
-            Element stateElement = writeTaskState(process, state, TASK_STATE_NODE);
+            Element stateElement = writeTaskState(process, state);
             if (state.timerExist()) {
                 Element timerElement = stateElement.addElement(TIMER_NODE);
                 if (state.getDuration() != null && state.getDuration().hasDuration()) {
@@ -213,7 +213,7 @@ public class BpmnSerializer extends ProcessSerializer {
         //        }
         EndState endState = definition.getFirstChild(EndState.class);
         if (endState != null) {
-            writeElement(process, endState, END_STATE_NODE);
+            writeElement(process, endState);
         }
         // as gpd.xml
         Element diagramElement = definitionsElement.addElement("bpmndi:BPMNDiagram");
@@ -228,8 +228,8 @@ public class BpmnSerializer extends ProcessSerializer {
     //        writeTransitions(nodeElement, node);
     //        return nodeElement;
     //    }
-    private Element writeTaskState(Element parent, SwimlanedNode state, String typeName) {
-        Element nodeElement = writeElement(parent, state, typeName);
+    private Element writeTaskState(Element parent, SwimlanedNode state) {
+        Element nodeElement = writeElement(parent, state);
         setAttribute(nodeElement, SWIMLANE_ATTR, state.getSwimlaneName());
         if (state instanceof State && ((State) state).isReassignmentEnabled()) {
             setAttribute(nodeElement, REASSIGN_ATTR, "true");
@@ -254,8 +254,8 @@ public class BpmnSerializer extends ProcessSerializer {
     //        setAttribute(timerElement, TRANSITION_ATTR, PluginConstants.TIMER_TRANSITION_NAME);
     //        return nodeElement;
     //    }
-    private Element writeElement(Element parent, GraphElement element, String typeName) {
-        Element result = parent.addElement(typeName);
+    private Element writeElement(Element parent, GraphElement element) {
+        Element result = parent.addElement(element.getTypeDefinition().getBpmnElementName());
         if (element instanceof Node) {
             setAttribute(result, ID_ATTR, ((Node) element).getNodeId());
         }
@@ -286,7 +286,7 @@ public class BpmnSerializer extends ProcessSerializer {
     }
 
     private void writeEvent(Element parent, Event event, ActionImpl action) {
-        Element eventElement = writeElement(parent, event, EVENT_NODE);
+        Element eventElement = writeElement(parent, event);
         setAttribute(eventElement, TYPE_ATTR, event.getType());
         writeDelegation(eventElement, ACTION_NODE, action);
     }
@@ -306,8 +306,8 @@ public class BpmnSerializer extends ProcessSerializer {
         //        } TODO
     }
 
-    private <T extends GraphElement> T create(Element node, GraphElement parent, Class<? extends GraphElement> nodeClass) {
-        GraphElement element = NodeRegistry.getNodeTypeDefinition(nodeClass).createElement(parent);
+    private <T extends GraphElement> T create(Element node, GraphElement parent) {
+        GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.BPMN, node.getName()).createElement(parent);
         if (parent != null) {
             parent.addChild(element);
         }
@@ -356,11 +356,11 @@ public class BpmnSerializer extends ProcessSerializer {
     public ProcessDefinition parseXML(Document document) {
         Element definitionsElement = document.getRootElement();
         Element process = definitionsElement.element(PROCESS_ELEMENT);
-        ProcessDefinition definition = create(process, null, ProcessDefinition.class);
+        ProcessDefinition definition = create(process, null);
         //definition.setDefaultTaskDuedate(root.attributeValue(DEFAULT_DUEDATE_ATTR));
         List<Element> swimlanes = process.elements(SWIMLANE_NODE);
         for (Element node : swimlanes) {
-            create(node, definition, Swimlane.class);
+            create(node, definition);
         }
         List<Element> startStates = process.elements(START_STATE_NODE);
         if (startStates.size() > 0) {
@@ -368,14 +368,14 @@ public class BpmnSerializer extends ProcessSerializer {
                 ErrorDialog.open(Localization.getString("model.validation.multipleStartStatesNotAllowed"));
             }
             Element node = startStates.get(0);
-            StartState startState = create(node, definition, StartState.class);
+            StartState startState = create(node, definition);
             String swimlaneName = node.attributeValue(SWIMLANE_ATTR);
             Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
             startState.setSwimlane(swimlane);
         }
         List<Element> states = process.elements(TASK_STATE_NODE);
         for (Element node : states) {
-            State state = create(node, definition, TaskState.class);
+            State state = create(node, definition);
             String swimlaneName = node.attributeValue(SWIMLANE_ATTR);
             if (swimlaneName != null && state instanceof SwimlanedNode) {
                 Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
@@ -443,7 +443,7 @@ public class BpmnSerializer extends ProcessSerializer {
         }
         List<Element> endStates = process.elements(END_STATE_NODE);
         for (Element node : endStates) {
-            create(node, definition, EndState.class);
+            create(node, definition);
         }
         List<Element> transitions = process.elements(TRANSITION_NODE);
         for (Element transitionElement : transitions) {

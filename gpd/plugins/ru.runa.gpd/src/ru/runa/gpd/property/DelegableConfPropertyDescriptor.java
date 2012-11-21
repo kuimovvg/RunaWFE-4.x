@@ -8,15 +8,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.lang.model.Delegable;
 
 public class DelegableConfPropertyDescriptor extends PropertyDescriptor {
     private final Delegable delegable;
 
-    public DelegableConfPropertyDescriptor(Object id, Delegable delegable, String displayName) {
-        super(id, displayName);
+    public DelegableConfPropertyDescriptor(Object id, Delegable delegable, String label) {
+        super(id, label);
         this.delegable = delegable;
     }
 
@@ -26,7 +26,6 @@ public class DelegableConfPropertyDescriptor extends PropertyDescriptor {
     }
 
     private class DelegableCellEditor extends DialogCellEditor {
-
         public DelegableCellEditor(Composite parent) {
             super(parent, SWT.NONE);
         }
@@ -47,7 +46,5 @@ public class DelegableConfPropertyDescriptor extends PropertyDescriptor {
             super.updateContents(value);
             getDefaultLabel().setToolTipText((String) value);
         }
-        
     }
-
 }

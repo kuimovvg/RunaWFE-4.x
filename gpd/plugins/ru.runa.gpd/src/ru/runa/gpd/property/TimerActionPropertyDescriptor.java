@@ -14,8 +14,8 @@ import ru.runa.gpd.ui.dialog.TimerActionEditDialog;
 public class TimerActionPropertyDescriptor extends PropertyDescriptor {
     private final ITimed element;
 
-    public TimerActionPropertyDescriptor(Object id, String displayName, ITimed element) {
-        super(id, displayName);
+    public TimerActionPropertyDescriptor(Object id, String label, ITimed element) {
+        super(id, label);
         this.element = element;
     }
 
@@ -25,7 +25,6 @@ public class TimerActionPropertyDescriptor extends PropertyDescriptor {
     }
 
     private class TimerActionDialogCellEditor extends DialogCellEditor {
-
         public TimerActionDialogCellEditor(Composite parent) {
             super(parent, SWT.NONE);
         }

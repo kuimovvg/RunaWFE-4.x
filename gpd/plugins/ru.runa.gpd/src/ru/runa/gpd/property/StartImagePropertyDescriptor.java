@@ -25,9 +25,8 @@ import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ProjectFinder;
 
 public class StartImagePropertyDescriptor extends PropertyDescriptor {
-
-    public StartImagePropertyDescriptor(Object id, String displayName) {
-        super(id, displayName);
+    public StartImagePropertyDescriptor(Object id, String label) {
+        super(id, label);
     }
 
     @Override

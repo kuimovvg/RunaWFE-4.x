@@ -325,7 +325,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
         @Override
         public String getColumnText(Object element, int index) {
             ValidatorDefinition variable = (ValidatorDefinition) element;
-            return variable.getDisplayName();
+            return variable.getLabel();
         }
 
         @Override

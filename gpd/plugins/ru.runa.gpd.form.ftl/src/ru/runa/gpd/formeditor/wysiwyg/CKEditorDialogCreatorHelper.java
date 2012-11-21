@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.List;
 
 import ru.runa.gpd.formeditor.ftl.FormatTag;
-import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
 import ru.runa.gpd.formeditor.ftl.FreemarkerUtil.TagParser;
+import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.MethodTagComparator;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
@@ -74,8 +74,8 @@ public class CKEditorDialogCreatorHelper {
             return this;
         }
 
-        public CKSelectElement addItem(String displayName, String itemId) {
-            selectItems.add("[" + displayName + ", " + itemId + "]");
+        public CKSelectElement addItem(String label, String itemId) {
+            selectItems.add("[" + label + ", " + itemId + "]");
             if (this.defaultValue == null) {
                 defaultValue = itemId;
             }
@@ -179,7 +179,7 @@ public class CKEditorDialogCreatorHelper {
             for (Param param : tagInfo.params) {
                 if (param.isCombo() || param.isRichCombo() || param.isVarCombo() /* TODO */) {
                     CKSelectElement selectElement = new CKSelectElement();
-                    selectElement.setId("'" + tagInfo.id + "_FtlTagParam_" + paramCounter + "'").setLabel("'" + param.displayName + "'");
+                    selectElement.setId("'" + tagInfo.id + "_FtlTagParam_" + paramCounter + "'").setLabel("'" + param.label + "'");
                     for (OptionalValue option : param.optionalValues) {
                         if (option.container) {
                             for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
@@ -208,7 +208,7 @@ public class CKEditorDialogCreatorHelper {
                             + "		data.element.setAttribute( 'ftltagparams', this.getValue() );\n" + "}\n");
                     box.addChildren(selectElement);
                 } else {
-                    CKTextElement text = new CKTextElement().setId("'" + tagInfo.id + "_FtlTagParam_" + paramCounter + "'").setLabel("'" + param.displayName + "'");
+                    CKTextElement text = new CKTextElement().setId("'" + tagInfo.id + "_FtlTagParam_" + paramCounter + "'").setLabel("'" + param.label + "'");
                     box.addChildren(text);
                 }
                 paramCounter++;
@@ -297,7 +297,7 @@ public class CKEditorDialogCreatorHelper {
             CKSelectElement selectElement = new CKSelectElement();
             selectElement.setId("TYPE_ATTR").setLabel("editor.lang.RunaVarTags.VarTagDlgType");
             for (VarTagInfo varTag : VarTagUtil.getVarTagsInfo().values()) {
-                selectElement.addItem("'" + varTag.displayName + "'", "'" + varTag.javaType + "'");
+                selectElement.addItem("'" + varTag.label + "'", "'" + varTag.javaType + "'");
             }
             selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
             "setup : function( element )\n" + "{\n" + "	this.setValue( element.getAttribute( TYPE_ATTR ) || '');\n" + "}\n");

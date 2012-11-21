@@ -1,77 +1,59 @@
 package ru.runa.gpd.editor.graphiti.add;
 
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.mm.algorithms.Ellipse;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.services.IGaService;
-import org.eclipse.graphiti.services.IPeCreateService;
+import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 
-import ru.runa.gpd.editor.graphiti.StyleUtil;
-import ru.runa.gpd.lang.model.EndState;
+import ru.runa.gpd.editor.GEFConstants;
+import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.lang.model.Node;
+import ru.runa.gpd.lang.model.Subprocess;
 
-public class AddNodeFeature extends AbstractAddNodeFeature {
-    private static final int minimumSize = GRID_SIZE * 3;
+public abstract class AddNodeFeature extends AbstractAddShapeFeature implements GEFConstants {
+    private DiagramFeatureProvider featureProvider;
 
-    public AddNodeFeature(IFeatureProvider provider) {
-        super(provider);
+    public AddNodeFeature() {
+        super(null);
+    }
+
+    public void setFeatureProvider(DiagramFeatureProvider featureProvider) {
+        this.featureProvider = featureProvider;
     }
 
     @Override
-    public PictogramElement add(IAddContext context) {
-        Node node = (Node) context.getNewObject();
-        ContainerShape parent = context.getTargetContainer();
-        IPeCreateService createService = Graphiti.getPeCreateService();
-        ContainerShape containerShape = createService.createContainerShape(parent, true);
-        int width = context.getWidth() < minimumSize ? minimumSize : context.getWidth();
-        int height = context.getHeight() < minimumSize ? minimumSize : context.getHeight();
-        IGaService gaService = Graphiti.getGaService();
-        Ellipse circle;
-        {
-            Ellipse invisibleCircle = gaService.createEllipse(containerShape);
-            invisibleCircle.setFilled(false);
-            invisibleCircle.setLineVisible(false);
-            gaService.setLocationAndSize(invisibleCircle, context.getX(), context.getY(), width, height);
-            circle = gaService.createEllipse(invisibleCircle);
-            circle.setParentGraphicsAlgorithm(invisibleCircle);
-            circle.setStyle(StyleUtil.getStyleForEvent(getDiagram()));
-            if (node instanceof EndState) {
-                circle.setLineWidth(3);
-            }
-            gaService.setLocationAndSize(circle, 0, 0, width, height);
-            link(containerShape, node);
+    public IFeatureProvider getFeatureProvider() {
+        return featureProvider;
+    }
+
+    public boolean isFixedSize() {
+        return false;
+    }
+
+    public abstract Dimension getDefaultSize();
+
+    protected Rectangle getFigureBounds(IAddContext context) {
+        Rectangle rectangle = new Rectangle(context.getX(), context.getY(), context.getWidth(), context.getHeight());
+        Dimension minSize = getDefaultSize();
+        if (rectangle.height < minSize.height) {
+            rectangle.height = minSize.height;
         }
-        // add a chopbox anchor to the shape
-        createService.createChopboxAnchor(containerShape);
-        //        if (!(addedEvent instanceof EndEvent)) {
-        //            // create an additional box relative anchor at middle-right
-        //            final BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
-        //            boxAnchor.setRelativeWidth(1.0);
-        //            boxAnchor.setRelativeHeight(0.51);
-        //            boxAnchor.setReferencedGraphicsAlgorithm(circle);
-        //            final Ellipse ellipse = ActivitiUiUtil.createInvisibleEllipse(boxAnchor, gaService);
-        //            gaService.setLocationAndSize(ellipse, 0, 0, 0, 0);
-        //        }
-        //        if (addedEvent instanceof StartEvent && ((StartEvent) addedEvent).getEventDefinitions().size() > 0) {
-        //            StartEvent startEvent = (StartEvent) addedEvent;
-        //            final Shape shape = peCreateService.createShape(containerShape, false);
-        //            Image image = null;
-        //            if (startEvent.getEventDefinitions().get(0) instanceof TimerEventDefinition) {
-        //                image = gaService.createImage(shape, PluginImage.IMG_BOUNDARY_TIMER.getImageKey());
-        //            } else if (startEvent.getEventDefinitions().get(0) instanceof MessageEventDefinition) {
-        //                image = gaService.createImage(shape, PluginImage.IMG_STARTEVENT_MESSAGE.getImageKey());
-        //            } else
-        //                image = gaService.createImage(shape, PluginImage.IMG_BOUNDARY_ERROR.getImageKey());
-        //            image.setWidth(IMAGE_SIZE);
-        //            image.setHeight(IMAGE_SIZE);
-        //            gaService.setLocationAndSize(image, (width - IMAGE_SIZE) / 2, (height - IMAGE_SIZE) / 2, IMAGE_SIZE, IMAGE_SIZE);
-        //        }
-        layoutPictogramElement(containerShape);
-        node.setConstraint(new Rectangle(context.getX(), context.getY(), width, height));
-        return containerShape;
+        if (rectangle.width < minSize.width) {
+            rectangle.width = minSize.width;
+        }
+        return rectangle;
+    }
+
+    @Override
+    public boolean canAdd(IAddContext context) {
+        if (context.getNewObject() instanceof Node) {
+            Object parentObject = getBusinessObjectForPictogramElement(context.getTargetContainer());
+            if (context.getTargetContainer() instanceof Diagram || parentObject instanceof Subprocess) {
+                return true;
+            }
+        }
+        return false;
     }
 }

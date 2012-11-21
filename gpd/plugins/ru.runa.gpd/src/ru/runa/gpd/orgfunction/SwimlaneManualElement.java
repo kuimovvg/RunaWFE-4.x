@@ -47,14 +47,14 @@ public class SwimlaneManualElement extends SwimlaneGroupElement {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    String displayName = combo.getItem(combo.getSelectionIndex());
-                    if (OrgFunctionDefinition.DEFAULT.getName().equals(displayName)) {
+                    String label = combo.getItem(combo.getSelectionIndex());
+                    if (OrgFunctionDefinition.DEFAULT.getName().equals(label)) {
                         currentDefinition = OrgFunctionDefinition.DEFAULT;
                     } else {
-                        if (currentDefinition != null && displayName.equals(currentDefinition.getName())) {
+                        if (currentDefinition != null && label.equals(currentDefinition.getName())) {
                             return;
                         }
-                        currentDefinition = OrgFunctionsRegistry.getInstance().getArtifactNotNullByDisplayName(displayName);
+                        currentDefinition = OrgFunctionsRegistry.getInstance().getArtifactNotNullByLabel(label);
                     }
                     if (classNameText != null) {
                         String className = currentDefinition != null ? currentDefinition.getName() : "";

@@ -73,7 +73,7 @@ public class ActiveActionsDelegate extends BaseActionDelegate implements IMenuCr
         boolean createSeparator = false;
         for (ru.runa.gpd.lang.model.Action action : active.getActions()) {
             Action menuAction = new ShowAction(action);
-            menuAction.setText(action.getDisplayName());
+            menuAction.setText(action.getLabel());
             ActionContributionItem item = new ActionContributionItem(menuAction);
             item.fill(menu, -1);
             createSeparator = true;
