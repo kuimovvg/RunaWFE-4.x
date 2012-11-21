@@ -75,14 +75,14 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
+         <attribute name="displayName" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="cellEditorProvider" type="string" use="required">
+         <attribute name="cellEditorProvider" type="string">
             <annotation>
                <documentation>
                   
@@ -90,6 +90,13 @@
                <appInfo>
                   <meta.attribute kind="java" basedOn="ru.runa.gpd.handler.DelegableProvider:"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="enabled" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

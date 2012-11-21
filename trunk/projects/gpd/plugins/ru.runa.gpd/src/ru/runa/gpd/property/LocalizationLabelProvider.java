@@ -2,14 +2,14 @@ package ru.runa.gpd.property;
 
 import org.eclipse.jface.viewers.LabelProvider;
 
-import ru.runa.gpd.util.LocalizationRegistry;
+import ru.runa.gpd.handler.LocalizationRegistry;
 
-public class MappingLabelProvider extends LabelProvider {
+public class LocalizationLabelProvider extends LabelProvider {
 
     @Override
     public String getText(Object element) {
         // space symbol used for alignment in properties view 
-        return " " + LocalizationRegistry.getTypeName(super.getText(element));
+        return " " + LocalizationRegistry.getDisplayName(super.getText(element));
     }
 
 }

@@ -9,6 +9,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
+import ru.runa.gpd.handler.HandlerArtifact;
 import ru.runa.gpd.orgfunction.OrgFunctionDefinition;
 import ru.runa.gpd.orgfunction.OrgFunctionsRegistry;
 import ru.runa.wfe.handler.assign.DefaultAssignmentHandler;
@@ -19,7 +20,7 @@ public class Swimlane extends NamedGraphElement implements Delegable {
 
     @Override
     public String getDelegationType() {
-        return ASSIGNMENT_HANDLER;
+        return HandlerArtifact.ASSIGNMENT;
     }
 
     @Override

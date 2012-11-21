@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.handler.CustomizationRegistry;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
 
@@ -34,7 +34,7 @@ public class DelegableConfPropertyDescriptor extends PropertyDescriptor {
         @Override
         protected Object openDialogBox(Control cellEditorWindow) {
             try {
-                DelegableProvider provider = CustomizationRegistry.getProvider(delegable.getDelegationClassName());
+                DelegableProvider provider = HandlerRegistry.getProvider(delegable.getDelegationClassName());
                 return provider.showConfigurationDialog(delegable);
             } catch (Exception e) {
                 PluginLogger.logError("Unable to open configuration dialog for " + delegable.getDelegationClassName(), e);
