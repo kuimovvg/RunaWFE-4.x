@@ -9,7 +9,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.handler.CustomizationRegistry;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TimerAction;
@@ -102,7 +102,7 @@ public class EscalationGlobalPreferencePage extends FieldEditorPreferencePage im
         @Override
         protected String changePressed() {
             try {
-                DelegableProvider provider = CustomizationRegistry.getProvider(timerAction.getDelegationClassName());
+                DelegableProvider provider = HandlerRegistry.getProvider(timerAction.getDelegationClassName());
                 String config = provider.showConfigurationDialog(timerAction);
                 if (config != null) {
                     timerAction.setDelegationConfiguration(config);

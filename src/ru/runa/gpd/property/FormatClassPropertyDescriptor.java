@@ -18,7 +18,7 @@ public class FormatClassPropertyDescriptor extends PropertyDescriptor {
     public FormatClassPropertyDescriptor(Object id, String displayName, Variable variable) {
         super(id, displayName);
         this.variable = variable;
-        setLabelProvider(new MappingLabelProvider());
+        setLabelProvider(new LocalizationLabelProvider());
     }
 
     @Override

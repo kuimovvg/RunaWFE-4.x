@@ -31,9 +31,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.handler.CustomizationRegistry;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ProjectClasspathContainer;
 
@@ -141,8 +140,6 @@ public class NewProcessProjectWizard extends Wizard implements INewWizard {
                         setClasspath(javaProject);
                         monitor.worked(1);
                         newProject.build(IncrementalProjectBuilder.FULL_BUILD, null);
-                        monitor.worked(1);
-                        CustomizationRegistry.init(javaProject);
                         monitor.worked(1);
                     } catch (Exception e) {
                         throw new InvocationTargetException(e);
