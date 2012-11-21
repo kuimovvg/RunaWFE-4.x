@@ -4,6 +4,7 @@ import org.eclipse.gef.commands.Command;
 
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.Action;
+import ru.runa.gpd.lang.model.ActionImpl;
 import ru.runa.gpd.lang.model.Active;
 import ru.runa.gpd.lang.model.GraphElement;
 
@@ -14,7 +15,7 @@ public class AddActionCommand extends Command {
 
     @Override
     public void execute() {
-        action = NodeRegistry.getNodeTypeDefinition(Action.class).createElement((GraphElement) target);
+        action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement((GraphElement) target);
         target.addAction(action, actionIndex);
     }
 

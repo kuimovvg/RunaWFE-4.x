@@ -3,7 +3,7 @@
 <schema targetNamespace="ru.runa.gpd" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="ru.runa.gpd" id="orgFunctions" name="OrgFunctionDefinitions"/>
+         <meta.schema plugin="ru.runa.gpd" id="formats" name="variable formats"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]
@@ -17,8 +17,8 @@
          </appInfo>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="orgfunction" minOccurs="1" maxOccurs="unbounded"/>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="format"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,11 +47,8 @@
       </complexType>
    </element>
 
-   <element name="orgfunction">
+   <element name="format">
       <complexType>
-         <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="parameter"/>
-         </sequence>
          <attribute name="className" type="string" use="required">
             <annotation>
                <documentation>
@@ -66,45 +63,14 @@
                </documentation>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="parameter">
-      <complexType>
-         <attribute name="name" type="string" use="required">
+         <attribute name="variableClassName" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="type" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="string">
-                  </enumeration>
-                  <enumeration value="long">
-                  </enumeration>
-                  <enumeration value="boolean">
-                  </enumeration>
-                  <enumeration value="double">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="value" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="multiple" type="boolean" use="default" value="false">
+         <attribute name="enabled" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
                   
@@ -113,15 +79,6 @@
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
@@ -138,6 +95,15 @@
       </appInfo>
       <documentation>
          [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
       </documentation>
    </annotation>
 

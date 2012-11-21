@@ -1,6 +1,6 @@
 package ru.runa.gpd.orgfunction;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,25 +12,39 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.handler.ArtifactContentProvider;
+import ru.runa.gpd.handler.ArtifactRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.validation.FormatMapping;
 import ru.runa.gpd.validation.FormatMappingParser;
 
-public class OrgFunctionsRegistry {
-    private static final List<OrgFunctionDefinition> definitions = new ArrayList<OrgFunctionDefinition>();
+public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition> {
+    private static final OrgFunctionsRegistry instance = new OrgFunctionsRegistry();
 
-    private static void init() {
-        if (definitions.size() > 0) {
-            return;
-        }
+    public static OrgFunctionsRegistry getInstance() {
+        return instance;
+    }
+
+    @Override
+    protected File getContentFile() {
+        return null;
+    }
+
+    public OrgFunctionsRegistry() {
+        super(new ArtifactContentProvider<OrgFunctionDefinition>());
+    }
+
+    @Override
+    protected void loadDefaults(List<OrgFunctionDefinition> list) {
         IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("ru.runa.gpd.orgFunctions").getExtensions();
         for (IExtension extension : extensions) {
             IConfigurationElement[] configElements = extension.getConfigurationElements();
             for (IConfigurationElement configElement : configElements) {
                 try {
-                    String nameKey = configElement.getAttribute("name");
-                    OrgFunctionDefinition orgFunctionDefinition = new OrgFunctionDefinition(nameKey, configElement.getAttribute("className"));
+                    String className = configElement.getAttribute("className");
+                    String displayName = configElement.getAttribute("displayName");
+                    OrgFunctionDefinition orgFunctionDefinition = new OrgFunctionDefinition(className, displayName);
                     IConfigurationElement[] parameterElements = configElement.getChildren();
                     for (IConfigurationElement paramElement : parameterElements) {
                         OrgFunctionParameter orgFunctionParameter = new OrgFunctionParameter(paramElement.getAttribute("name"), paramElement.getAttribute("type"),
@@ -42,7 +56,7 @@ public class OrgFunctionsRegistry {
                         orgFunctionDefinition.addParameter(orgFunctionParameter);
                     }
                     orgFunctionDefinition.checkMultipleParameters();
-                    definitions.add(orgFunctionDefinition);
+                    list.add(orgFunctionDefinition);
                 } catch (Exception e) {
                     PluginLogger.logError("Error processing 'orgFunctions' element", e);
                 }
@@ -50,46 +64,10 @@ public class OrgFunctionsRegistry {
         }
     }
 
-    public static List<OrgFunctionDefinition> getAllOrgFunctionDefinitions() {
-        init();
-        return definitions;
-    }
-
-    public static OrgFunctionDefinition getDefinitionByKey(String key) {
-        for (OrgFunctionDefinition definition : getAllOrgFunctionDefinitions()) {
-            if (key.equals(definition.getKey())) {
-                return definition.getCopy();
-            }
-        }
-        throw new RuntimeException("No OrgFunction found under key " + key);
-    }
-
-    public static OrgFunctionDefinition getDefinitionByName(String name) {
-        if (name == null) {
-            return OrgFunctionDefinition.DEFAULT.getCopy();
-        }
-        for (OrgFunctionDefinition definition : getAllOrgFunctionDefinitions()) {
-            if (name.equals(definition.getName())) {
-                return definition.getCopy();
-            }
-        }
-        throw new RuntimeException("No OrgFunction found under name " + name);
-    }
-
-    public static OrgFunctionDefinition getDefinitionByClassName(String orgFunctionClassName) {
-        for (OrgFunctionDefinition definition : getAllOrgFunctionDefinitions()) {
-            if (orgFunctionClassName.equals(definition.getClassName())) {
-                return definition.getCopy();
-            }
-        }
-        throw new RuntimeException(OrgFunctionDefinition.MISSED_DEFINITION + " for: " + orgFunctionClassName);
-    }
-
     public static OrgFunctionDefinition parseSwimlaneConfiguration(String swimlaneConfiguration) {
         if (swimlaneConfiguration.length() == 0) {
             return OrgFunctionDefinition.DEFAULT;
         }
-        init();
         int startIndex = 0;
         String relationName = null;
         if (swimlaneConfiguration.startsWith("@")) {
@@ -100,7 +78,7 @@ public class OrgFunctionsRegistry {
         int leftBracketIndex = swimlaneConfiguration.indexOf("(", startIndex);
         int rightBracketIndex = swimlaneConfiguration.indexOf(")");
         String orgFunctionName = swimlaneConfiguration.substring(startIndex, leftBracketIndex);
-        OrgFunctionDefinition definition = getDefinitionByClassName(orgFunctionName);
+        OrgFunctionDefinition definition = getInstance().getArtifactNotNull(orgFunctionName);
         definition.setRelationName(relationName);
         String parametersString = swimlaneConfiguration.substring(leftBracketIndex + 1, rightBracketIndex);
         String[] parameters = parametersString.split(",", -1);
@@ -121,6 +99,7 @@ public class OrgFunctionsRegistry {
         return definition;
     }
 
+    // TODO move to VariableFormatRegistry
     public static Set<String> getVariableNames(ProcessDefinition processDefinition, String typeName) {
         Map<String, FormatMapping> mappings = FormatMappingParser.getFormatMappings();
         Set<String> formats = new HashSet<String>();

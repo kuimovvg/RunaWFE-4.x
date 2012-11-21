@@ -148,12 +148,13 @@
       <import plugin="org.eclipse.emf.ecore.xmi" version="2.7.0"/>
    </requires>
 
-   <extension-point id="elements" name="Graph Element Extensions" schema="schema/elements.exsd"/>
-   <extension-point id="formtype" name="form type" schema="schema/formtype.exsd"/>
-   <extension-point id="orgFunctions" name="OrgFunctionDefinitions" schema="schema/orgFunctions.exsd"/>
-   <extension-point id="handlers" name="delegablePropertyDescriprors" schema="schema/handlers.exsd"/>
-   <extension-point id="swimlaneElements" name="swimlaneelements" schema="schema/swimlaneElements.exsd"/>
-   <extension-point id="validators" name="validators" schema="schema/validators.exsd"/>
+   <extension-point id="elements" name="Process elements" schema="schema/elements.exsd"/>
+   <extension-point id="formtype" name="Form types" schema="schema/formtype.exsd"/>
+   <extension-point id="orgFunctions" name="Org function definitions" schema="schema/orgFunctions.exsd"/>
+   <extension-point id="handlers" name="Handlers" schema="schema/handlers.exsd"/>
+   <extension-point id="formats" name="Variable formats" schema="schema/formats.exsd"/>
+   <extension-point id="swimlaneElements" name="Swimlane elements" schema="schema/swimlaneElements.exsd"/>
+   <extension-point id="validators" name="Variable validators" schema="schema/validators.exsd"/>
 
   <extension point = "org.eclipse.ui.editors">
     <editor
@@ -883,43 +884,43 @@
    <extension
          point="ru.runa.gpd.orgFunctions">
       <orgfunction
-            className="ru.runa.af.organizationfunction.ChiefFunction"
-            name="ChiefFunction">
+            className="ru.runa.wfe.os.func.ChiefFunction"
+            displayName="%ru.runa.wfe.os.func.ChiefFunction">
          <parameter
                name="OrgFunction.ActorCode"
                type="string"/>
       </orgfunction>
       <orgfunction
-            className="ru.runa.af.organizationfunction.DemoChiefFunction"
-            name="DemoChiefFunction">
+            className="ru.runa.wfe.os.func.DemoChiefFunction"
+            displayName="%ru.runa.wfe.os.func.DemoChiefFunction">
          <parameter
                name="OrgFunction.ActorCode"
                type="string"/>
       </orgfunction>
       <orgfunction
-            className="ru.runa.af.organizationfunction.ExecutorByCodeFunction"
-            name="ExecutorByCodeFunction">
+            className="ru.runa.wfe.os.func.ExecutorByCodeFunction"
+            displayName="%ru.runa.wfe.os.func.ExecutorByCodeFunction">
          <parameter
                name="OrgFunction.ActorCode"
                type="string"/>
       </orgfunction>
       <orgfunction
-            className="ru.runa.af.organizationfunction.DirectorFunction"
-            name="DirectorFunction">
+            className="ru.runa.wfe.os.func.DirectorFunction"
+            displayName="%ru.runa.wfe.os.func.DirectorFunction">
          <parameter
                name="OrgFunction.ActorCode"
                type="string"/>
       </orgfunction>
       <orgfunction
-            className="ru.runa.af.organizationfunction.ExecutorByNameFunction"
-            name="ExecutorByNameFunction">
+            className="ru.runa.wfe.os.func.ExecutorByNameFunction"
+            displayName="%ru.runa.wfe.os.func.ExecutorByNameFunction">
          <parameter
                name="OrgFunction.ExecutorName"
                type="string"/>
       </orgfunction>
       <orgfunction
-            className="ru.runa.af.organizationfunction.SQLFunction"
-            name="SQLFunction">
+            className="ru.runa.wfe.os.func.SQLFunction"
+            displayName="%ru.runa.wfe.os.func.SQLFunction">
          <parameter
                name="OrgFunction.SQLQuery"
                type="string"/>
@@ -934,84 +935,119 @@
       <handler
             cellEditorProvider="ru.runa.gpd.handler.decision.BSHDecisionProvider"
             className="ru.runa.wfe.handler.decision.BSHDecisionHandler"
-            name="BSFDecisionHandler"
+            displayName="%ru.runa.wfe.handler.decision.BSHDecisionHandler"
+            enabled="true"
             type="decisionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.decision.BSHDecisionProvider"
             className="ru.runa.wfe.handler.decision.GroovyDecisionHandler"
-            name="GroovyDecisionHandler"
+            displayName="%ru.runa.wfe.handler.decision.GroovyDecisionHandler"
+            enabled="true"
             type="decisionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.SQLHandlerCellEditorProvider"
-            className="ru.runa.wf.SQLActionHandler"
-            name="%ActionHandler.SQLActionHandler"
+            className="ru.runa.wfe.handler.action.SQLActionHandler"
+            displayName="%ru.runa.wfe.handler.action.SQLActionHandler"
+            enabled="true"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.assign.SwimlaneInitializerProvider"
             className="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"
-            name="AssignmentHandler"
+            displayName="%ru.runa.wfe.handler.assign.DefaultAssignmentHandler"
+            enabled="true"
             type="assignmentHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.FormulaCellEditorProvider"
-            className="ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler"
-            name="%ActionHandler.ExecuteFormulaActionHandler"
+            className="ru.runa.wfe.handler.action.var.FormulaActionHandler"
+            displayName="%ru.runa.wfe.handler.action.var.FormulaActionHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.SwimlaneAssignerCellEditorProvider"
-            className="ru.runa.wf.swimlane.AssignSwimlaneActionHandler"
-            name="%ActionHandler.AssignSwimlaneActionHandler"
+            className="ru.runa.wfe.handler.action.user.AssignSwimlaneActionHandler"
+            displayName="%ru.runa.wfe.handler.action.user.AssignSwimlaneActionHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.ActorNameEditorProvider"
-            className="ru.runa.wf.users.ActorNameActionHandler"
-            name="%ActionHandler.ActorNameActionHandler"
+            className="ru.runa.wfe.handler.action.user.ActorNameActionHandler"
+            displayName="%ru.runa.wfe.handler.action.user.ActorNameActionHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.BSHActionHandlerProvider"
-            className="ru.runa.wf.BSHActionHandler"
-            name="%ActionHandler.BSHActionHandler"
+            className="ru.runa.wfe.handler.action.BSHActionHandler"
+            displayName="%ru.runa.wfe.handler.action.BSHActionHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.SendEmailActionHandlerProvider"
-            className="ru.runa.wf.SendEmailActionHandler"
-            name="%ActionHandler.EmailActionHandler"
+            className="ru.runa.wfe.handler.action.SendEmailActionHandler"
+            displayName="%ru.runa.wfe.handler.action.SendEmailActionHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.EscalationActionHandlerProvider"
-            className="ru.runa.wf.EscalationActionHandler"
-            name="%ActionHandler.EscalationActionHandler"
+            className="ru.runa.wfe.handler.action.EscalationActionHandler"
+            displayName="%ru.runa.wfe.handler.action.EscalationActionHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wf.CreateOptionActionHandler"
-            name="%ActionHandler.CreateOptionActionHandler"
+            className="ru.runa.wfe.handler.action.CreateOptionActionHandler"
+            displayName="%ru.runa.wfe.handler.action.CreateOptionActionHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wf.var.RemoveObjectFromListActionHandler"
-            name="%ActionHandler.RemoveObjectFromListActionHandler"
+            className="ru.runa.wfe.handler.action.var.RemoveObjectFromListActionHandler"
+            displayName="%ru.runa.wfe.handler.action.var.RemoveObjectFromListActionHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wf.var.AddObjectToListActionHandler"
-            name="%ActionHandler.AddObjectToListActionHandler"
+            className="ru.runa.wfe.handler.action.var.AddObjectToListActionHandler"
+            displayName="%ru.runa.wfe.handler.action.var.AddObjectToListActionHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wf.var.SortListActionHandler"
-            name="%ActionHandler.SortListActionHandler"
+            className="ru.runa.wfe.handler.action.var.SortListActionHandler"
+            displayName="%ru.runa.wfe.handler.action.var.SortListActionHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
+      <handler
+            className="ru.runa.service.bot.handler.BotInvokerActionHandler"
+            displayName="%ru.runa.service.bot.handler.BotInvokerActionHandler"
+            enabled="true"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.BSHActionHandlerProvider"
+            className="ru.runa.wfe.handler.action.GroovyActionHandler"
+            displayName="%ru.runa.wfe.handler.action.GroovyActionHandler"
+            enabled="true"
+            type="actionHandler"/>
+      <handler
+            className="ru.runa.wfe.handler.action.DebugActionHandler"
+            displayName="%ru.runa.wfe.handler.action.DebugActionHandler"
+            enabled="true"
+            type="actionHandler"/>
+      <handler
+            className="ru.runa.wfe.handler.action.EmailTaskNotifierActionHandler"
+            displayName="%ru.runa.wfe.handler.action.EmailTaskNotifierActionHandler"
+            enabled="true"
+            type="actionHandler"/>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
@@ -1027,7 +1063,7 @@
                name="SwimlaneElement.ChiefFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
-                  value="ChiefFunction">
+                  value="ru.runa.wfe.os.func.ChiefFunction">
             </param>
          </element>
          <element
@@ -1035,7 +1071,7 @@
                name="SwimlaneElement.DirectorFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
-                  value="DirectorFunction">
+                  value="ru.runa.wfe.os.func.DirectorFunction">
             </param>
          </element>
          <element
@@ -1043,7 +1079,7 @@
                name="SwimlaneElement.DemoChiefFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
-                  value="DemoChiefFunction">
+                  value="ru.runa.wfe.os.func.DemoChiefFunction">
             </param>
          </element>
          <element
@@ -1051,7 +1087,7 @@
                name="SwimlaneElement.ExecutorByNameFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
-                  value="ExecutorByNameFunction">
+                  value="ru.runa.wfe.os.func.ExecutorByNameFunction">
             </param>
          </element>
       </element>
@@ -1411,6 +1447,17 @@
              id="gpd.pref.connection.ldap"
              name="%pref.connection.ldap">
        </page>
+       <page
+			 class="ru.runa.gpd.settings.EmptyPreferencePage"
+             id="gpd.pref.artifacts"
+             name="%pref.artifacts">
+       </page>
+       <page
+             category="gpd.pref.artifacts"
+             class="ru.runa.gpd.settings.LocalizationPreferencePage"
+             id="gpd.pref.artifacts.localization"
+             name="%pref.artifacts.localization">
+       </page>
     </extension>
    <extension
          point="org.eclipse.graphiti.ui.diagramTypes">
@@ -1654,12 +1701,6 @@
                label="%label.menu.properties.enableGrid"
                menubarPath="view/additions"
                style="toggle"/>
-         <action
-               class="ru.runa.gpd.ui.action.MappingAction"
-               id="ru.runa.gpd.mappingAction"
-               label="%label.menu.mapping"
-               menubarPath="properties/additions"
-               style="push"/>
       </actionSet>
    </extension>
 
@@ -1758,6 +1799,87 @@
             name="runa"
             parentId="org.eclipse.ui.contexts.window">
       </context>
+   </extension>
+   <extension
+         point="ru.runa.gpd.formats">
+      <format
+            className="ru.runa.wfe.var.format.ArrayListFormat"
+            displayName="%ru.runa.wfe.var.format.ArrayListFormat"
+            enabled="true"
+            variableClassName="java.util.List">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.BigDecimalFormat"
+            displayName="%ru.runa.wfe.var.format.BigDecimalFormat"
+            enabled="false"
+            variableClassName="java.math.BigDecimal">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.BooleanFormat"
+            displayName="%ru.runa.wfe.var.format.BooleanFormat"
+            enabled="true"
+            variableClassName="java.lang.Boolean">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.DateFormat"
+            displayName="%ru.runa.wfe.var.format.DateFormat"
+            enabled="true"
+            variableClassName="java.util.Date">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.DateTimeFormat"
+            displayName="%ru.runa.wfe.var.format.DateTimeFormat"
+            enabled="true"
+            variableClassName="java.util.Date">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.DoubleFormat"
+            displayName="%ru.runa.wfe.var.format.DoubleFormat"
+            enabled="true"
+            variableClassName="java.lang.Double">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.ExecutorFormat"
+            displayName="%ru.runa.wfe.var.format.ExecutorFormat"
+            enabled="true"
+            variableClassName="ru.runa.wfe.user.Executor">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.FileFormat"
+            displayName="%ru.runa.wfe.var.format.FileFormat"
+            enabled="true"
+            variableClassName="ru.runa.wfe.var.FileVariable">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.LongFormat"
+            displayName="%ru.runa.wfe.var.format.LongFormat"
+            enabled="true"
+            variableClassName="java.lang.Long">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.StringFormat"
+            displayName="%ru.runa.wfe.var.format.StringFormat"
+            enabled="true"
+            variableClassName="java.lang.String">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.TimeFormat"
+            displayName="%ru.runa.wfe.var.format.TimeFormat"
+            enabled="true"
+            variableClassName="java.util.Date">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.TimeWithSecondsFormat"
+            displayName="%ru.runa.wfe.var.format.TimeWithSecondsFormat"
+            enabled="false"
+            variableClassName="java.util.Date">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.StringArrayFormat"
+            displayName="%ru.runa.wfe.var.format.StringArrayFormat"
+            enabled="false"
+            variableClassName="java.lang.reflect.Array">
+      </format>
    </extension>
 
 
