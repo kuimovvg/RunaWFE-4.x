@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IFile;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
-import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.ActionImpl;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Describable;
@@ -346,7 +345,7 @@ public class BpmnSerializer extends ProcessSerializer {
     }
 
     private void parseAction(Element node, GraphElement parent, String eventType) {
-        ActionImpl action = NodeRegistry.getNodeTypeDefinition(Action.class).createElement(parent);
+        ActionImpl action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement(parent);
         action.setDelegationClassName(node.attributeValue(CLASS_ATTR));
         action.setDelegationConfiguration(node.getTextTrim());
         parent.addAction(action, -1);

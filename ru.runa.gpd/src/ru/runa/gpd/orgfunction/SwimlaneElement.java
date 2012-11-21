@@ -19,7 +19,6 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 
 public abstract class SwimlaneElement {
-
     private String name;
     private String description = "";
     private SwimlaneElement parent;
@@ -51,7 +50,7 @@ public abstract class SwimlaneElement {
     }
 
     protected OrgFunctionDefinition createNew() {
-        return OrgFunctionsRegistry.getDefinitionByKey(orgFunctionDefinitionName);
+        return new OrgFunctionDefinition(OrgFunctionsRegistry.getInstance().getArtifactNotNull(orgFunctionDefinitionName));
     }
 
     public void setDescription(String description) {
@@ -102,7 +101,7 @@ public abstract class SwimlaneElement {
         if (section != null && !section.isExpanded()) {
             section.setExpanded(true);
         }
-        if (currentDefinition != null && currentDefinition.getKey().equals(orgFunctionDefinitionName)) {
+        if (currentDefinition != null && currentDefinition.getName().equals(orgFunctionDefinitionName)) {
             this.currentDefinition = currentDefinition;
         } else {
             this.currentDefinition = null;
@@ -160,23 +159,18 @@ public abstract class SwimlaneElement {
         section.marginWidth = 5;
         section.setText(getDisplayName());
         section.setDescription(description);
-
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.verticalAlignment = GridData.BEGINNING;
         gridData.minimumHeight = 100;
         section.setLayoutData(gridData);
-
         Composite clientArea = new Composite(section, SWT.NONE);
         section.setClient(clientArea);
-
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         clientArea.setLayoutData(gridData);
-
         GridLayout layout = new GridLayout(numColumns, false);
         layout.marginBottom = 2;
         clientArea.setLayout(layout);
         section.addExpansionListener(new ExpansionAdapter() {
-
             @Override
             public void expansionStateChanged(ExpansionEvent e) {
                 if (e.getState()) {
@@ -185,22 +179,18 @@ public abstract class SwimlaneElement {
                     }
                 }
             }
-
         });
         return clientArea;
     }
 
     protected Composite createComposite(Composite parentComposite, int numColumns) {
         clientArea = new Composite(parentComposite, SWT.NONE);
-
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.verticalAlignment = GridData.BEGINNING;
         gridData.minimumHeight = 100;
         clientArea.setLayoutData(gridData);
-
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         clientArea.setLayoutData(gridData);
-
         GridLayout layout = new GridLayout(numColumns, false);
         layout.marginBottom = 2;
         clientArea.setLayout(layout);
@@ -218,5 +208,4 @@ public abstract class SwimlaneElement {
             listener.completed(calculatePath(), definition);
         }
     }
-
 }

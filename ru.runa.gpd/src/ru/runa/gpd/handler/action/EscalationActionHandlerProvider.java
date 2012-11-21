@@ -12,8 +12,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.handler.DelegableConfigurationDialog;
 import ru.runa.gpd.handler.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
@@ -22,7 +22,6 @@ import ru.runa.gpd.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
 
 public class EscalationActionHandlerProvider extends DelegableProvider {
-
     @Override
     protected DelegableConfigurationDialog createConfigurationDialog(Delegable delegable) {
         return new EscalationConfigurationDialog(delegable.getDelegationConfiguration());
@@ -31,7 +30,7 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
     @Override
     public boolean validateValue(Delegable delegable) {
         try {
-            OrgFunctionsRegistry.getDefinitionByClassName(delegable.getDelegationConfiguration());
+            OrgFunctionsRegistry.getInstance().getArtifact(delegable.getDelegationConfiguration());
             return true;
         } catch (Exception e) {
             PluginLogger.logErrorWithoutDialog("EscalationActionHandler; invalid configuration", e);
@@ -40,7 +39,6 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
     }
 
     public class EscalationConfigurationDialog extends DelegableConfigurationDialog {
-
         private Combo combo;
 
         public EscalationConfigurationDialog(String initialValue) {
@@ -57,27 +55,23 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
             Composite gui = new Composite(composite, SWT.NONE);
             gui.setLayout(new GridLayout(2, false));
             gui.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
             String orgFunctionDisplayName = "";
             try {
-                orgFunctionDisplayName = OrgFunctionsRegistry.getDefinitionByClassName(initialValue).getName();
+                orgFunctionDisplayName = OrgFunctionsRegistry.getInstance().getArtifact(initialValue).getName();
             } catch (Exception e) {
             }
-
             {
                 Label label = new Label(gui, SWT.NONE);
                 label.setText(Localization.getString("swimlane.initializer"));
             }
-
             combo = new Combo(gui, SWT.READ_ONLY);
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            List<OrgFunctionDefinition> definitions = OrgFunctionsRegistry.getAllOrgFunctionDefinitions();
+            List<OrgFunctionDefinition> definitions = OrgFunctionsRegistry.getInstance().getAll();
             for (OrgFunctionDefinition definition : definitions) {
                 combo.add(definition.getName());
             }
             combo.setText(orgFunctionDisplayName);
             combo.addSelectionListener(new SelectionAdapter() {
-
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     updateText();
@@ -87,13 +81,12 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
         }
 
         public void updateText() {
-            styledText.setText(OrgFunctionsRegistry.getDefinitionByName(combo.getText()).getClassName());
+            styledText.setText(OrgFunctionsRegistry.getInstance().getArtifactNotNullByDisplayName(combo.getText()).getName());
         }
 
         @Override
         protected void createDialogFooter(Composite composite) {
             styledText.addLineStyleListener(new XmlHighlightTextStyling());
         }
-
     }
 }

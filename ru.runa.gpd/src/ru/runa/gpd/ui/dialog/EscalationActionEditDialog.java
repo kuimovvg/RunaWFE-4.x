@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.handler.CustomizationRegistry;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TimerAction;
@@ -84,7 +84,7 @@ public class EscalationActionEditDialog extends Dialog {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     try {
-                        DelegableProvider provider = CustomizationRegistry.getProvider(editable.getDelegationClassName());
+                        DelegableProvider provider = HandlerRegistry.getProvider(editable.getDelegationClassName());
                         String config = provider.showConfigurationDialog(editable);
                         if (config != null) {
                             editable.setDelegationConfiguration(config);

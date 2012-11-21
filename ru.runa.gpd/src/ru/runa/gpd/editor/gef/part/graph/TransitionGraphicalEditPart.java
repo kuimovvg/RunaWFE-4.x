@@ -18,7 +18,7 @@ import ru.runa.gpd.editor.gef.policy.ActiveLayoutEditPolicy;
 import ru.runa.gpd.editor.gef.policy.TransitionConnectionBendpointEditPolicy;
 import ru.runa.gpd.editor.gef.policy.TransitionConnectionEditPolicy;
 import ru.runa.gpd.editor.gef.policy.TransitionConnectionEndpointsEditPolicy;
-import ru.runa.gpd.handler.CustomizationRegistry;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.decision.IDecisionProvider;
 import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Decision;
@@ -58,7 +58,7 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
         figure.setExclusive(exclusive);
         if (getModel().getSource() instanceof Decision) {
             Decision decision = (Decision) getModel().getSource();
-            IDecisionProvider provider = CustomizationRegistry.getProvider(decision);
+            IDecisionProvider provider = HandlerRegistry.getProvider(decision);
             if (transition.getName().equals(provider.getDefaultTransitionName(decision))) {
                 figure.setDefaultFlow(true);
             }
@@ -178,7 +178,7 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
                 getFigure().setLabelText(transition.getName());
                 // update decision configuration
                 Decision decision = (Decision) transition.getSource();
-                IDecisionProvider provider = CustomizationRegistry.getProvider(decision);
+                IDecisionProvider provider = HandlerRegistry.getProvider(decision);
                 provider.transitionRenamed(decision, (String) evt.getOldValue(), (String) evt.getNewValue());
             }
             if (transition.getSource() instanceof ITimed) {

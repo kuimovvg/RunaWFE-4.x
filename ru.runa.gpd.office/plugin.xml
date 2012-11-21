@@ -7,19 +7,22 @@
       <handler
             cellEditorProvider="ru.runa.gpd.office.excel.ReadHandlerCellEditorProvider"
             className="ru.runa.wf.office.excel.handlers.ReadHandler"
-            name="%ActionHandler.ReadHandler"
+            displayName="%ActionHandler.ReadHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.office.excel.SaveHandlerCellEditorProvider"
             className="ru.runa.wf.office.excel.handlers.SaveHandler"
-            name="%ActionHandler.SaveHandler"
+            displayName="%ActionHandler.SaveHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
       <handler
             cellEditorProvider="ru.runa.gpd.office.word.DocxHandlerCellEditorProvider"
             className="ru.runa.wf.office.doc.DocxHandler"
-            name="%ActionHandler.DocxHandler"
+            displayName="%ActionHandler.DocxHandler"
+            enabled="true"
             type="actionHandler">
       </handler>
    </extension>

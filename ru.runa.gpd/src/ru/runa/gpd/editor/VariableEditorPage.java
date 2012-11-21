@@ -43,6 +43,7 @@ import org.eclipse.ui.ide.IDE;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveVariablesCommand;
+import ru.runa.gpd.handler.LocalizationRegistry;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.NotificationMessages;
 import ru.runa.gpd.lang.model.Variable;
@@ -52,7 +53,6 @@ import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.GPDSearchQuery;
 import ru.runa.gpd.ui.dialog.CreateVariableDialog;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
-import ru.runa.gpd.util.LocalizationRegistry;
 
 public class VariableEditorPage extends EditorPartBase {
     private TableViewer tableViewer;
@@ -350,7 +350,7 @@ public class VariableEditorPage extends EditorPartBase {
             case 0:
                 return variable.getName();
             case 1:
-                return LocalizationRegistry.getTypeName(variable.getFormat());
+                return LocalizationRegistry.getDisplayName(variable.getFormat());
             case 2:
                 if (variable.getDefaultValue() == null) {
                     return "";

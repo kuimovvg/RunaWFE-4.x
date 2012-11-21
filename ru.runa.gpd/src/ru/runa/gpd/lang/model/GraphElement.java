@@ -15,8 +15,8 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
-import ru.runa.gpd.handler.CustomizationRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.lang.GEFPaletteEntry;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
@@ -58,15 +58,11 @@ public abstract class GraphElement implements IPropertySource, NotificationMessa
     protected void validate() {
         if (this instanceof Delegable) {
             Delegable d = (Delegable) this;
-            DelegableProvider provider = CustomizationRegistry.getProvider(delegationClassName);
+            DelegableProvider provider = HandlerRegistry.getProvider(delegationClassName);
             if (delegationClassName == null || delegationClassName.length() == 0) {
                 addError("delegationClassName.empty");
-            } else if (!CustomizationRegistry.isTypeRegisteredForType(d.getDelegationType(), delegationClassName)) {
-                if (!CustomizationRegistry.isTypeRegistered(delegationClassName)) {
-                    addWarning("delegationClassName.classNotFound");
-                } else {
-                    addError("delegationClassName.classCastError");
-                }
+            } else if (!HandlerRegistry.getInstance().isArtifactRegistered(d.getDelegationType(), delegationClassName)) {
+                addWarning("delegationClassName.classNotFound");
             } else if (!provider.validateValue(d)) {
                 addError("decision.invalidConfiguration");
             }

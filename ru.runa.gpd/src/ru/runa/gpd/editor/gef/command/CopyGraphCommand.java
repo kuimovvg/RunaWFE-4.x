@@ -23,6 +23,7 @@ import ru.runa.gpd.editor.gef.CopyBuffer.ExtraCopyAction;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.Action;
+import ru.runa.gpd.lang.model.ActionImpl;
 import ru.runa.gpd.lang.model.Active;
 import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Decision;
@@ -379,7 +380,7 @@ public class CopyGraphCommand extends Command {
         public AddActionHandlerAction(Active active, Action action) {
             super(CopyBuffer.GROUP_ACTION_HANDLERS, action.toString());
             this.active = active;
-            this.action = NodeRegistry.getNodeTypeDefinition(Action.class).createElement((GraphElement) active);
+            this.action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement((GraphElement) active);
             this.action.setDelegationClassName(action.getDelegationClassName());
             this.action.setDelegationConfiguration(action.getDelegationConfiguration());
         }
