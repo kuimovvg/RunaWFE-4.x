@@ -29,6 +29,7 @@ import org.apache.ecs.html.TR;
 
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.WebResources;
+import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.common.web.html.RowBuilder;
@@ -69,7 +70,7 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
         }
         String formattedValue;
         if (value == null) {
-            formattedValue = "null";
+            formattedValue = Messages.getMessage("label.unset_empty.value", pageContext);
         } else {
             try {
                 VariableFormat variableFormat = FormatCommons.create(wfVariable.getDefinition().getFormat());

@@ -15,7 +15,9 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wf.logic.bot;
+package ru.runa.wfe.handler.bot;
+
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
@@ -23,26 +25,33 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
 /**
- * Interface for all bots.
+ * Interface for bot task execution.
  */
 public interface TaskHandler {
     /**
-     * Configuring bot from file.
-     * @param configurationName File, to read configuration from.
+     * If this variable assigned to Boolean.TRUE then bot system will not
+     * complete task.
      */
-    public void configure(String configurationName) throws TaskHandlerException;
+    public static final String SKIP_TASK_COMPLETION_VARIABLE_NAME = "skipTaskCompletion";
 
     /**
-     * Configuring bot from database. 
-     * @param configuration Loaded from database configuration. 
+     * Configuring bot from database.
+     * 
+     * @param configuration
+     *            Loaded from database configuration.
      */
-    public void configure(byte[] configuration) throws TaskHandlerException;
+    public void setConfiguration(byte[] configuration) throws Exception;
 
     /**
-     * Handles task, assigned to bot. 
-     * @param subject Current bot subject.
-     * @param variableProvider TODO
-     * @param taskStub Task to be processed.
+     * Handles task, assigned to bot.
+     * 
+     * @param subject
+     *            Current bot subject.
+     * @param variableProvider
+     *            access process variables
+     * @param taskStub
+     *            Task to be processed.
+     * @return variables passed to process
      */
-    public void handle(Subject subject, IVariableProvider variableProvider, WfTask taskStub) throws TaskHandlerException;
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask taskStub) throws Exception;
 }

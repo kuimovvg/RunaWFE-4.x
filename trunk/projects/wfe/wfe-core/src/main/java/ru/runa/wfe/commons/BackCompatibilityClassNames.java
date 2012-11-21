@@ -34,7 +34,7 @@ public class BackCompatibilityClassNames {
         // decision handler renamed
         bcc.put("ru.runa.wf.jbpm.delegation.decision.BSFDecisionHandler", "ru.runa.wfe.handler.decision.BSFDecisionHandler");
         // action handlers renamed
-        bcc.put("ru.runa.wf.jbpm.delegation.action.SetSubProcessPermissionsActionHandler", "ru.runa.wfe.handler.action.EmptyActionHandler");
+        bcc.put("ru.runa.wf.jbpm.delegation.action.SetSubProcessPermissionsActionHandler", "ru.runa.wfe.handler.action.DebugActionHandler");
         bcc.put("ru.runa.wf.jbpm.delegation.action.BotInvokerActionHandler", "ru.runa.service.bot.handler.BotInvokerActionHandler");
         bcc.put("ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler", "ru.runa.wfe.handler.action.var.FormulaActionHandler");
         bcc.put("ru.runa.wf.swimlane.AssignSwimlaneActionHandler", "ru.runa.wfe.handler.action.user.AssignSwimlaneActionHandler");

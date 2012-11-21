@@ -37,7 +37,6 @@ import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.BooleanFormat;
 import ru.runa.wfe.var.format.FormatCommons;
-import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.collect.Maps;
@@ -48,7 +47,6 @@ import com.google.common.collect.Maps;
  */
 @SuppressWarnings("unchecked")
 class VariableExtractionHelper {
-    private static final String DEFAULT_FORMAT_CLASS_NAME = StringFormat.class.getName();
 
     private VariableExtractionHelper() {
     }
@@ -78,10 +76,11 @@ class VariableExtractionHelper {
             Map<String, Object> variablesMap = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
                 Object value = hashtable.get(variableDefinition.getName());
+                VariableFormat<?> format = FormatCommons.create(variableDefinition.getFormat());
                 // in case from contains not optional check box with boolean
                 // format we must add boolean value as variable manually since
                 // HTTP FORM doesn't pass unchecked variables.
-                if (BooleanFormat.class.getName().equals(variableDefinition.getFormat())) {
+                if (BooleanFormat.class == format.getClass()) {
                     if (value == null) {
                         value = new String[] { Boolean.FALSE.toString() };
                     }
@@ -103,11 +102,6 @@ class VariableExtractionHelper {
                 } else {
                     String[] valuesToFormat = (String[]) value;
                     try {
-                        String formatClassName = variableDefinition.getFormat();
-                        if (formatClassName.length() == 0) {
-                            formatClassName = DEFAULT_FORMAT_CLASS_NAME;
-                        }
-                        VariableFormat format = FormatCommons.create(formatClassName);
                         variableValue = format.parse(valuesToFormat);
                     } catch (Exception e) {
                         LogFactory.getLog(VariableExtractionHelper.class).warn(e);

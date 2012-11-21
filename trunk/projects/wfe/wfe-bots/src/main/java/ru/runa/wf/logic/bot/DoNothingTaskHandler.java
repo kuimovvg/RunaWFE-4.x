@@ -17,14 +17,11 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -33,25 +30,14 @@ import ru.runa.wfe.var.IVariableProvider;
  * 
  */
 public class DoNothingTaskHandler implements TaskHandler {
-    private static final Log log = LogFactory.getLog(DoNothingTaskHandler.class);
 
     @Override
-    public void configure(String bundleName) {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
+        return null;
     }
 
     @Override
-    public void handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws TaskHandlerException {
-        try {
-            DelegateFactory.getExecutionService().completeTask(subject, wfTask.getId(), new HashMap<String, Object>());
-            log.info("Do nothing task handler have done task : " + wfTask);
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
-        }
-
-    }
-
-    @Override
-    public void configure(byte[] configuration) throws TaskHandlerException {
+    public void setConfiguration(byte[] configuration) {
     }
 
 }

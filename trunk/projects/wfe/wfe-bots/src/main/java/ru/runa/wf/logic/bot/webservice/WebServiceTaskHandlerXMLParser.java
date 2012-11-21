@@ -27,7 +27,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ru.runa.wf.logic.bot.WebServiceTaskHandler;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.xml.PathEntityResolver;
 import ru.runa.wfe.commons.xml.XMLHelper;
 
@@ -109,21 +108,17 @@ public class WebServiceTaskHandlerXMLParser {
      *         according to XML.
      */
     public static WebServiceTaskHandlerSettings read(InputStream data) {
-        try {
-            Document document = XMLHelper.getDocument(data, PATH_ENTITY_RESOLVER);
-            Element configuration = document.getDocumentElement();
-            String url = getElementText(configuration, URL);
-            String soapAction = getElementText(configuration, SOAP_ACTION);
-            ErrorResponseProcessingResult errorAction = readErrorAction(configuration);
-            String authBase = getElementText(configuration, AUTH_BASE);
-            String requestMethod = getElementText(configuration, REQUEST_METHOD);
-            boolean isLoggingEnable = "true".equalsIgnoreCase(getElementText(configuration, LOGGING));
-            List<Interaction> interactions = readInteractions(configuration.getElementsByTagName(INTERACTION));
-            return new WebServiceTaskHandlerSettings(url, soapAction, interactions, document.getXmlEncoding(), authBase, requestMethod,
-                    isLoggingEnable, errorAction);
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
-        }
+        Document document = XMLHelper.getDocument(data, PATH_ENTITY_RESOLVER);
+        Element configuration = document.getDocumentElement();
+        String url = getElementText(configuration, URL);
+        String soapAction = getElementText(configuration, SOAP_ACTION);
+        ErrorResponseProcessingResult errorAction = readErrorAction(configuration);
+        String authBase = getElementText(configuration, AUTH_BASE);
+        String requestMethod = getElementText(configuration, REQUEST_METHOD);
+        boolean isLoggingEnable = "true".equalsIgnoreCase(getElementText(configuration, LOGGING));
+        List<Interaction> interactions = readInteractions(configuration.getElementsByTagName(INTERACTION));
+        return new WebServiceTaskHandlerSettings(url, soapAction, interactions, document.getXmlEncoding(), authBase, requestMethod, isLoggingEnable,
+                errorAction);
     }
 
     /**

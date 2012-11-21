@@ -23,7 +23,6 @@ package ru.runa.wf.logic.bot.textreport;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.VariableFormat;
 
 /**
@@ -134,10 +133,6 @@ public class TextReportSettings {
     }
 
     public VariableFormat getFormat(String var) {
-        VariableFormat format = varFormats.get(var);
-        if (format == null) {
-            format = new StringFormat();
-        }
-        return format;
+        return varFormats.get(var);
     }
 }
