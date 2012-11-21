@@ -25,7 +25,7 @@ import ru.runa.gpd.handler.Artifact;
 public class EditArtifactDialog extends TrayDialog {
     private final Artifact artifact;
     private Text classNameText;
-    private Text displayNameText;
+    private Text labelText;
     private Combo configuratorCombo;
     private boolean nameIsModifiable;
 
@@ -84,9 +84,9 @@ public class EditArtifactDialog extends TrayDialog {
         }
         classNameText.setEditable(nameIsModifiable);
         //
-        createLabel(parent, Localization.getString("property.displayName"));
-        displayNameText = createText(parent);
-        displayNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        createLabel(parent, Localization.getString("property.label"));
+        labelText = createText(parent);
+        labelText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         //
         createLabel(parent, Localization.getString("Variable.property.format"));
         configuratorCombo = new Combo(parent, SWT.READ_ONLY);
@@ -99,7 +99,7 @@ public class EditArtifactDialog extends TrayDialog {
         layout.marginHeight = 0;
         composite.setLayout(layout);
         composite.setLayoutData(new GridData());
-        displayNameText.setText(artifact.getDisplayName());
+        labelText.setText(artifact.getLabel());
         applyDialogFont(parent);
         return composite;
     }
@@ -108,7 +108,7 @@ public class EditArtifactDialog extends TrayDialog {
         if (w == classNameText) {
             updateButtons();
         } else if (w == configuratorCombo) {
-        } else if (w == displayNameText) {
+        } else if (w == labelText) {
             // oh, nothing
         }
     }
@@ -137,7 +137,7 @@ public class EditArtifactDialog extends TrayDialog {
     protected void okPressed() {
         String name = classNameText == null ? artifact.getName() : classNameText.getText();
         artifact.setName(name);
-        artifact.setDisplayName(displayNameText.getText());
+        artifact.setLabel(labelText.getText());
         super.okPressed();
     }
 

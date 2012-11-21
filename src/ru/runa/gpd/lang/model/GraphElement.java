@@ -17,7 +17,6 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.handler.DelegableProvider;
 import ru.runa.gpd.handler.HandlerRegistry;
-import ru.runa.gpd.lang.GEFPaletteEntry;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.property.DelegableClassPropertyDescriptor;
@@ -28,7 +27,6 @@ public abstract class GraphElement implements IPropertySource, NotificationMessa
     protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
     private GraphElement parent;
     private final List<GraphElement> childs = new ArrayList<GraphElement>();
-    private String typeName;
     private Rectangle constraint;
 
     public Rectangle getConstraint() {
@@ -75,14 +73,6 @@ public abstract class GraphElement implements IPropertySource, NotificationMessa
 
     public void addWarning(String messageKey, Object... params) {
         getProcessDefinition().addWarning(this, messageKey, params);
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
     }
 
     public NodeTypeDefinition getTypeDefinition() {
@@ -309,11 +299,12 @@ public abstract class GraphElement implements IPropertySource, NotificationMessa
         }
     }
 
+    @Override
+    public String toString() {
+        return getClass().getName();
+    }
+
     public Image getEntryImage() {
-        GEFPaletteEntry entry = getTypeDefinition().getGEFPaletteEntry();
-        if (entry != null) {
-            return entry.getImage(getProcessDefinition().getLanguage().getNotation());
-        }
-        return null;
+        return getTypeDefinition().getImage(getProcessDefinition().getLanguage().getNotation());
     }
 }

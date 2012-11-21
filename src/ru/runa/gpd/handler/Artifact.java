@@ -3,7 +3,7 @@ package ru.runa.gpd.handler;
 public class Artifact {
     private boolean enabled;
     private String name;
-    private String displayName;
+    private String label;
 
     public Artifact() {
     }
@@ -11,13 +11,13 @@ public class Artifact {
     public Artifact(Artifact artifact) {
         this.enabled = artifact.isEnabled();
         this.name = artifact.getName();
-        this.displayName = artifact.getDisplayName();
+        this.label = artifact.getLabel();
     }
 
-    public Artifact(boolean enabled, String name, String displayName) {
+    public Artifact(boolean enabled, String name, String label) {
         this.enabled = enabled;
         this.name = name;
-        this.displayName = displayName;
+        this.label = label;
     }
 
     public boolean isEnabled() {
@@ -36,11 +36,11 @@ public class Artifact {
         this.name = name;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getLabel() {
+        return label;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

@@ -48,7 +48,7 @@ public class HandlerRegistry extends ArtifactRegistry<HandlerArtifact> {
             for (IConfigurationElement configElement : configElements) {
                 boolean enabled = Boolean.valueOf(configElement.getAttribute("enabled"));
                 String className = configElement.getAttribute("className");
-                String displayName = configElement.getAttribute("displayName");
+                String label = configElement.getAttribute("label");
                 String type = configElement.getAttribute("type");
                 String providerClassName = configElement.getAttribute("cellEditorProvider");
                 try {
@@ -60,7 +60,7 @@ public class HandlerRegistry extends ArtifactRegistry<HandlerArtifact> {
                         }
                         customDelegableProviders.put(providerClassName, provider);
                     }
-                    list.add(new HandlerArtifact(enabled, className, displayName, type, providerClassName));
+                    list.add(new HandlerArtifact(enabled, className, label, type, providerClassName));
                 } catch (Exception e) {
                     PluginLogger.logError("Error processing 'handlers' extension for: " + className, e);
                 }

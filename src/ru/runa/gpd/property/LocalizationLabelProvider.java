@@ -9,7 +9,7 @@ public class LocalizationLabelProvider extends LabelProvider {
     @Override
     public String getText(Object element) {
         // space symbol used for alignment in properties view 
-        return " " + LocalizationRegistry.getDisplayName(super.getText(element));
+        return " " + LocalizationRegistry.getLabel(super.getText(element));
     }
 
 }

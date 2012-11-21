@@ -12,8 +12,8 @@ import ru.runa.gpd.ui.dialog.ChooseHandlerClassDialog;
 public class DelegableClassPropertyDescriptor extends PropertyDescriptor {
     private String type;
 
-    public DelegableClassPropertyDescriptor(Object id, String displayName, String type) {
-        super(id, displayName);
+    public DelegableClassPropertyDescriptor(Object id, String label, String type) {
+        super(id, label);
         this.type = type;
         setLabelProvider(new LocalizationLabelProvider());
     }
@@ -24,7 +24,6 @@ public class DelegableClassPropertyDescriptor extends PropertyDescriptor {
     }
 
     private class ChooseClassDialogCellEditor extends DialogCellEditor {
-
         public ChooseClassDialogCellEditor(Composite parent) {
             super(parent, SWT.NONE);
         }

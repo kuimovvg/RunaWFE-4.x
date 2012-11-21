@@ -37,10 +37,10 @@ public class LocalizationRegistry extends ArtifactRegistry<Artifact> {
         }
     }
 
-    public static String getDisplayName(String name) {
+    public static String getLabel(String name) {
         Artifact artifact = getInstance().getArtifact(name);
         if (artifact != null) {
-            return artifact.getDisplayName();
+            return artifact.getLabel();
         }
         return name;
     }

@@ -14,8 +14,8 @@ public class OrgFunctionDefinition extends Artifact {
     private String relationName;
     private final List<OrgFunctionParameter> parameters = new ArrayList<OrgFunctionParameter>();
 
-    public OrgFunctionDefinition(String className, String displayName) {
-        super(true, className, displayName);
+    public OrgFunctionDefinition(String className, String label) {
+        super(true, className, label);
     }
 
     public OrgFunctionDefinition(OrgFunctionDefinition artifact) {

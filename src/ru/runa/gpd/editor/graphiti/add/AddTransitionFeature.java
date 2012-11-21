@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.graphiti.datatypes.ILocation;
-import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
@@ -27,6 +26,7 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.IColorConstant;
 
+import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.editor.graphiti.StyleUtil;
 import ru.runa.gpd.editor.graphiti.TextUtil;
 import ru.runa.gpd.lang.model.Bendpoint;
@@ -35,9 +35,19 @@ import ru.runa.gpd.lang.model.Transition;
 public class AddTransitionFeature extends AbstractAddFeature {
     public static final String BENDPOINTS_PROPERTY = "bendpoints";
     public static final String LABEL_PROPERTY = "label";
+    private DiagramFeatureProvider featureProvider;
 
-    public AddTransitionFeature(IFeatureProvider fp) {
-        super(fp);
+    public AddTransitionFeature() {
+        super(null);
+    }
+
+    public void setFeatureProvider(DiagramFeatureProvider featureProvider) {
+        this.featureProvider = featureProvider;
+    }
+
+    @Override
+    public DiagramFeatureProvider getFeatureProvider() {
+        return featureProvider;
     }
 
     @Override

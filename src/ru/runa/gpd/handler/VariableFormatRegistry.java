@@ -34,9 +34,9 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
             for (IConfigurationElement configElement : configElements) {
                 boolean enabled = Boolean.valueOf(configElement.getAttribute("enabled"));
                 String className = configElement.getAttribute("className");
-                String displayName = configElement.getAttribute("displayName");
+                String label = configElement.getAttribute("label");
                 String variableClassName = configElement.getAttribute("variableClassName");
-                list.add(new VariableFormatArtifact(enabled, className, displayName, variableClassName));
+                list.add(new VariableFormatArtifact(enabled, className, label, variableClassName));
             }
         }
     }

@@ -29,6 +29,7 @@ import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -51,7 +52,9 @@ import ru.runa.gpd.editor.gef.command.CopyGraphCommand;
 import ru.runa.gpd.editor.gef.part.graph.ActionGraphicalEditPart;
 import ru.runa.gpd.editor.gef.part.graph.ProcessDefinitionGraphicalEditPart;
 import ru.runa.gpd.editor.gef.part.graph.TransitionGraphicalEditPart;
+import ru.runa.gpd.lang.action.AddTimerDelegate;
 import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.TaskState;
 
 public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalette {
     private KeyHandler commonKeyHandler;
@@ -92,7 +95,7 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
             @Override
             public DragTracker getDragTracker(Request req) {
                 MarqueeDragTracker tracker = (MarqueeDragTracker) super.getDragTracker(req);
-                tracker.setMarqueeBehavior(MarqueeSelectionTool.BEHAVIOR_NODES_AND_CONNECTIONS);
+                tracker.setMarqueeBehavior(MarqueeSelectionTool.BEHAVIOR_NODES_CONTAINED_AND_RELATED_CONNECTIONS);
                 return tracker;
             }
         });
@@ -103,8 +106,11 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
                     return null;
                 }
                 GraphElement element = (GraphElement) object;
-                EditPart editPart = element.getTypeDefinition().createGraphicalEditPart(element);
-                return editPart;
+                GefEntry gefEntry = element.getTypeDefinition().getGefEntry();
+                if (gefEntry != null) {
+                    return gefEntry.createGraphicalEditPart(element);
+                }
+                throw new RuntimeException("No graph part defined for " + element);
             }
         });
         KeyHandler keyHandler = new GraphicalViewerKeyHandler(getGraphicalViewer());
@@ -292,6 +298,26 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
             action = getActionRegistry().getAction(ActionFactory.DELETE.getId());
             if (action.isEnabled()) {
                 menu.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
+            }
+            List<EditPart> editParts = getGraphicalViewer().getSelectedEditParts();
+            if (editParts.size() == 1) {
+                GraphElement graphElement = (GraphElement) editParts.get(0).getModel();
+                if (graphElement instanceof TaskState) {
+                    action = new Action() {
+                        @Override
+                        public String getText() {
+                            return "test";
+                        }
+
+                        @Override
+                        public void run() {
+                            AddTimerDelegate delegate = new AddTimerDelegate();
+                            delegate.setActivePart(this, getEditorSite().getPart());
+                            delegate.run(this);
+                        }
+                    };
+                    menu.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
+                }
             }
         }
     }

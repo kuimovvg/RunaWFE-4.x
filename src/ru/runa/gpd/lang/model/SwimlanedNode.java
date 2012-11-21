@@ -26,6 +26,10 @@ public abstract class SwimlanedNode extends DescribableNode implements PropertyC
         return swimlane != null ? swimlane.getName() : null;
     }
 
+    public String getSwimlaneLabel() {
+        return swimlane != null ? "(" + swimlane.getName() + ")" : "";
+    }
+
     public void setSwimlane(Swimlane swimlane) {
         Swimlane old = this.swimlane;
         if (old != null) {
@@ -78,6 +82,7 @@ public abstract class SwimlanedNode extends DescribableNode implements PropertyC
         }
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String propertyName = evt.getPropertyName();
         if (PROPERTY_NAME.equals(propertyName) && evt.getSource() instanceof Swimlane) {

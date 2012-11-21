@@ -87,7 +87,7 @@ public class CreateVariableDialog extends Dialog {
         List<String> formats = new ArrayList<String>();
         for (VariableFormatArtifact artifact : artifacts) {
             if (artifact.isEnabled()) {
-                formats.add(artifact.getDisplayName());
+                formats.add(artifact.getLabel());
             }
         }
         final Combo typeCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
@@ -95,11 +95,11 @@ public class CreateVariableDialog extends Dialog {
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.minimumWidth = 200;
         typeCombo.setLayoutData(gridData);
-        typeCombo.setText(LocalizationRegistry.getDisplayName(type));
+        typeCombo.setText(LocalizationRegistry.getLabel(type));
         typeCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                type = VariableFormatRegistry.getInstance().getArtifactNotNullByDisplayName(typeCombo.getText()).getName();
+                type = VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText()).getName();
                 updateButtons();
             }
         });

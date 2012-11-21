@@ -73,7 +73,7 @@ public class StateGraphicalEditPart extends FormNodeEditPart implements ActionsH
     protected String getTooltipMessage() {
         String tooltip = null;
         if (getModel().isMinimizedView()) {
-            tooltip = "(" + getModel().getSwimlaneName() + ")";
+            tooltip = getModel().getSwimlaneLabel();
             tooltip += "\n" + getModel().getName();
         }
         return tooltip;

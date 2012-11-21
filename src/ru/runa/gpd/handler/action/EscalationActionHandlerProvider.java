@@ -55,9 +55,9 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
             Composite gui = new Composite(composite, SWT.NONE);
             gui.setLayout(new GridLayout(2, false));
             gui.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            String orgFunctionDisplayName = "";
+            String orgFunctionLabel = "";
             try {
-                orgFunctionDisplayName = OrgFunctionsRegistry.getInstance().getArtifact(initialValue).getName();
+                orgFunctionLabel = OrgFunctionsRegistry.getInstance().getArtifact(initialValue).getLabel();
             } catch (Exception e) {
             }
             {
@@ -70,7 +70,7 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
             for (OrgFunctionDefinition definition : definitions) {
                 combo.add(definition.getName());
             }
-            combo.setText(orgFunctionDisplayName);
+            combo.setText(orgFunctionLabel);
             combo.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
@@ -81,7 +81,7 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
         }
 
         public void updateText() {
-            styledText.setText(OrgFunctionsRegistry.getInstance().getArtifactNotNullByDisplayName(combo.getText()).getName());
+            styledText.setText(OrgFunctionsRegistry.getInstance().getArtifactNotNullByLabel(combo.getText()).getName());
         }
 
         @Override
