@@ -78,7 +78,6 @@ public interface ExecutionService {
 
     public List<WfVariable> getVariables(Subject subject, Long processId) throws ProcessDoesNotExistException;
 
-    // TODO check usage (not defined)
     public WfVariable getVariable(Subject subject, Long processId, String variableName) throws ProcessDoesNotExistException;
 
     public Map<Long, Object> getVariableValuesFromProcesses(Subject subject, List<Long> processIds, String variableName);

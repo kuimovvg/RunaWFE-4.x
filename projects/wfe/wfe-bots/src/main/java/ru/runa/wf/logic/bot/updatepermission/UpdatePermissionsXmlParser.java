@@ -24,12 +24,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import ru.runa.wf.logic.bot.TaskHandlerException;
 import ru.runa.wfe.commons.xml.PathEntityResolver;
 import ru.runa.wfe.commons.xml.XMLHelper;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.security.PermissionNotFoundException;
 
 import com.google.common.collect.Lists;
 
@@ -52,28 +50,24 @@ public class UpdatePermissionsXmlParser {
         // prevents direct object instantiation
     }
 
-    public static UpdatePermissionsSettings read(InputStream inputStream) throws TaskHandlerException {
-        try {
-            Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
+    public static UpdatePermissionsSettings read(InputStream inputStream) {
+        Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
 
-            String[] orgFunctions = getElementValues(document, ORGFUNCTION_ELEMENT_NAME);
-            String method = getElementValue(document, METHOD_ELEMENT_NAME);
-            List<Permission> permissions = getPermissions(getElementValues(document, PERMISSION_VARIABLE_ELEMENT_NAME));
-            UpdatePermissionsSettings settings = new UpdatePermissionsSettings(orgFunctions, method, permissions);
+        String[] orgFunctions = getElementValues(document, ORGFUNCTION_ELEMENT_NAME);
+        String method = getElementValue(document, METHOD_ELEMENT_NAME);
+        List<Permission> permissions = getPermissions(getElementValues(document, PERMISSION_VARIABLE_ELEMENT_NAME));
+        UpdatePermissionsSettings settings = new UpdatePermissionsSettings(orgFunctions, method, permissions);
 
-            NodeList nodeList = document.getElementsByTagName(CONDITION_ELEMENT_NAME);
-            if (nodeList.getLength() > 0) {
-                Element conditionNode = (Element) nodeList.item(0);
-                settings.setCondition(conditionNode.getAttribute(CONDITION_VAR_NAME_ATTRIBUTE_NAME),
-                        conditionNode.getAttribute(CONDITION_VAR_VALUE_ATTRIBUTE_NAME));
-            }
-            return settings;
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
+        NodeList nodeList = document.getElementsByTagName(CONDITION_ELEMENT_NAME);
+        if (nodeList.getLength() > 0) {
+            Element conditionNode = (Element) nodeList.item(0);
+            settings.setCondition(conditionNode.getAttribute(CONDITION_VAR_NAME_ATTRIBUTE_NAME),
+                    conditionNode.getAttribute(CONDITION_VAR_VALUE_ATTRIBUTE_NAME));
         }
+        return settings;
     }
 
-    private static List<Permission> getPermissions(String[] permissionNames) throws PermissionNotFoundException {
+    private static List<Permission> getPermissions(String[] permissionNames) {
         List<Permission> permissions = Lists.newArrayListWithExpectedSize(permissionNames.length);
         for (int i = 0; i < permissionNames.length; i++) {
             permissions.add(ProcessPermission.CANCEL_PROCESS.getPermission(permissionNames[i]));

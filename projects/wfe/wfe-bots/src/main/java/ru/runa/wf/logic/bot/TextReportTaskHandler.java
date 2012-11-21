@@ -21,52 +21,41 @@
 package ru.runa.wf.logic.bot;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wf.logic.bot.textreport.TextReportGenerator;
 import ru.runa.wf.logic.bot.textreport.TextReportSettings;
 import ru.runa.wf.logic.bot.textreport.TextReportSettingsXmlParser;
-import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 
 /**
- * @since 10.08.2006
+ * Plain text report generator.
+ * 
+ * @author dofs
+ * @since 2.0
  */
 public class TextReportTaskHandler implements TaskHandler {
-    private static final Log log = LogFactory.getLog(TextReportTaskHandler.class);
-
     private TextReportSettings settings;
 
     @Override
-    public void configure(String configurationName) throws TaskHandlerException {
-        settings = TextReportSettingsXmlParser.read(ClassLoaderUtil.getResourceAsStream(configurationName, getClass()));
-    }
-
-    @Override
-    public void handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws TaskHandlerException {
-        try {
-            byte[] fileContent = TextReportGenerator.getReportContent(settings, variableProvider);
-            Map<String, Object> vars = new HashMap<String, Object>();
-            FileVariable fileVariable = new FileVariable(settings.getReportFileName(), fileContent, settings.getReportContentType());
-            vars.put(settings.getReportVariableName(), fileVariable);
-            DelegateFactory.getExecutionService().completeTask(subject, wfTask.getId(), vars);
-            log.info("TextReportTaskHandler completed, task " + wfTask);
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
-        }
-    }
-
-    @Override
-    public void configure(byte[] configuration) throws TaskHandlerException {
+    public void setConfiguration(byte[] configuration) {
         settings = TextReportSettingsXmlParser.read(new ByteArrayInputStream(configuration));
     }
+
+    @Override
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws IOException {
+        byte[] fileContent = TextReportGenerator.getReportContent(settings, variableProvider);
+        Map<String, Object> vars = new HashMap<String, Object>();
+        FileVariable fileVariable = new FileVariable(settings.getReportFileName(), fileContent, settings.getReportContentType());
+        vars.put(settings.getReportVariableName(), fileVariable);
+        return vars;
+    }
+
 }

@@ -72,7 +72,6 @@ public class SQLActionHandler implements ActionHandler {
         this.configuration = configuration;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void execute(ExecutionContext executionContext) {
         try {

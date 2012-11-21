@@ -15,30 +15,30 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wf.logic.bot.startprocess;
+package ru.runa.wfe.handler.bot;
+
+import ru.runa.wfe.ApplicationException;
 
 /**
- * * added 9.06.2009 by  gavrusev_sergei from version 2
- *
+ * Created on 05.03.2005
  */
+public class TaskHandlerException extends ApplicationException {
 
-public class StartProcessTaskXmlParserException extends Exception {
+    private static final long serialVersionUID = 2950525668354388971L;
 
-    private static final long serialVersionUID = 1L;
-
-    public StartProcessTaskXmlParserException() {
+    public TaskHandlerException() {
         super();
     }
 
-    public StartProcessTaskXmlParserException(String message) {
+    public TaskHandlerException(String message) {
         super(message);
     }
 
-    public StartProcessTaskXmlParserException(String message, Throwable cause) {
+    public TaskHandlerException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public StartProcessTaskXmlParserException(Throwable cause) {
+    public TaskHandlerException(Throwable cause) {
         super(cause);
     }
 }

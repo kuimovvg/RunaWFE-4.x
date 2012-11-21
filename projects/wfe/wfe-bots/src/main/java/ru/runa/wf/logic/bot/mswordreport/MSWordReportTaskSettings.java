@@ -31,11 +31,8 @@ import ru.runa.wfe.var.IVariableProvider;
  * 
  */
 public class MSWordReportTaskSettings {
-
     private final String templateFileLocation;
-
     private final String reportFileName;
-
     private final String reportVariableName;
 
     public MSWordReportTaskSettings(String templateFileLocation, String reportFileName, String reportVariableName) {
@@ -72,12 +69,6 @@ public class MSWordReportTaskSettings {
         }
     }
 
-    public static void main(String[] args) {
-        File file = new File("C:/Program Files/RunaWFE/Simulation/server/default/conf/sample-template7.doc");
-        System.out.println(file.exists());
-        System.out.println(file.getAbsolutePath());
-    }
-
     private final Map<String, BookmarkVariableMapping> bookmarkMapping = new HashMap<String, BookmarkVariableMapping>();
 
     public void addBookmarkMapping(BookmarkVariableMapping bookmarkVariableMapping) {
@@ -90,7 +81,10 @@ public class MSWordReportTaskSettings {
             throw new IllegalArgumentException("bookmark " + bookmark + " is not defined in document " + templateFileLocation);
         }
         Object variableValue = variableProvider.getNotNull(bookmarkVariableMapping.getVariableName());
-        return bookmarkVariableMapping.getFormat().format(variableValue);
+        if (bookmarkVariableMapping.getFormat() != null) {
+            return bookmarkVariableMapping.getFormat().format(variableValue);
+        }
+        return String.valueOf(variableValue);
     }
 
 }

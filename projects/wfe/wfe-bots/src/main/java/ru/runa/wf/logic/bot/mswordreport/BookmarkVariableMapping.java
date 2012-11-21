@@ -18,8 +18,9 @@
 package ru.runa.wf.logic.bot.mswordreport;
 
 import ru.runa.wfe.var.format.FormatCommons;
-import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.VariableFormat;
+
+import com.google.common.base.Strings;
 
 public class BookmarkVariableMapping {
     private final String bookmarkName;
@@ -41,13 +42,12 @@ public class BookmarkVariableMapping {
     public BookmarkVariableMapping(String bookmarkName, String variableName, String formatClassName, String formatPattern) {
         this.bookmarkName = bookmarkName;
         this.variableName = variableName;
-        if (formatClassName == null || formatClassName.length() == 0) {
-            formatClassName = StringFormat.class.getName();
-        }
-        if (formatPattern != null && formatPattern.length() > 0) {
-            format = FormatCommons.create(formatClassName, formatPattern);
-        } else {
-            format = FormatCommons.create(formatClassName);
+        if (!Strings.isNullOrEmpty(formatClassName)) {
+            if (formatPattern != null && formatPattern.length() > 0) {
+                format = FormatCommons.create(formatClassName, formatPattern);
+            } else {
+                format = FormatCommons.create(formatClassName);
+            }
         }
     }
 }

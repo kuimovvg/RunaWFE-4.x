@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.handler.bot.TaskHandler;
 
 /**
  * User: stan79
@@ -40,7 +41,6 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 public class TaskHandlerClassesInformation {
     private static final Log log = LogFactory.getLog(TaskHandlerClassesInformation.class);
     private static final SortedSet<String> taskHandlerImplementationClasses = new TreeSet<String>();
-    private static final Class<?> TASK_HANDLER_INTERFACE = ClassLoaderUtil.loadClass("ru.runa.wf.logic.bot.TaskHandler");
 
     static {
         init();
@@ -56,28 +56,6 @@ public class TaskHandlerClassesInformation {
                     searchInJar(earStream);
                 }
             }
-            // Enumeration<JarEntry> entries = earFile.entries();
-            // while (entries.hasMoreElements()) {
-            // // If we can't load class - just move to next class.
-            // try {
-            // JarEntry entry = entries.nextElement();
-            // String entryName = entry.getName();
-            // if (entryName.endsWith(".jar")) {
-            // entry.
-            // int lastIndexOfDotSymbol = entryName.lastIndexOf('.');
-            // entryName = entryName.substring(0,
-            // lastIndexOfDotSymbol).replace('/', '.');
-            //
-            // Class<?> someClass = Class.forName(entryName);
-            // if (TASK_HANDLER_INTERFACE.isAssignableFrom(someClass)) {
-            // taskHandlerImplementationClasses.add(someClass.getCanonicalName());
-            // }
-            // }
-            // } catch (Throwable e) {
-            // log.warn("Error on loading task handlers list." +
-            // e.getMessage());
-            // }
-            // }
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
         }
@@ -94,7 +72,7 @@ public class TaskHandlerClassesInformation {
                     className = className.substring(0, lastIndexOfDotSymbol).replace('/', '.');
                     // If we can't load class - just move to next class.
                     Class<?> someClass = ClassLoaderUtil.loadClass(className);
-                    if (TASK_HANDLER_INTERFACE.isAssignableFrom(someClass)) {
+                    if (TaskHandler.class.isAssignableFrom(someClass)) {
                         taskHandlerImplementationClasses.add(someClass.getCanonicalName());
                     }
                 } catch (Throwable e) {

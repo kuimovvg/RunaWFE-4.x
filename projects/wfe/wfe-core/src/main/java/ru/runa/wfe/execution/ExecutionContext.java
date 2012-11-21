@@ -28,7 +28,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.VariableDeleteLog;
@@ -65,11 +64,6 @@ public class ExecutionContext {
     private ProcessLogDAO processLogDAO;
     @Autowired
     private VariableDAO variableDAO;
-
-    // TODO MOVE in single place
-    @Autowired
-    @Value(value = "${backwardCompatibility.variablesMode}")
-    private boolean backwardCompatibilityVariablesMode;
 
     public ExecutionContext(ProcessDefinition processDefinition, Token token) {
         this.processDefinition = processDefinition;
@@ -154,24 +148,21 @@ public class ExecutionContext {
         if (variable != null) {
             return variable.getValue();
         }
-        if (backwardCompatibilityVariablesMode) {
-            Swimlane swimlane = getProcess().getSwimlane(name);
-            if (swimlane != null) {
-                return swimlane.getExecutor();
-            }
+        Swimlane swimlane = getProcess().getSwimlane(name);
+        if (swimlane != null) {
+            return swimlane.getExecutor();
         }
         return null;
     }
 
     public void setVariable(String name, Object value) {
         Preconditions.checkNotNull(name, "name is null");
-        if (backwardCompatibilityVariablesMode) {
-            SwimlaneDefinition swimlaneDefinition = getProcessDefinition().getSwimlane(name);
-            if (swimlaneDefinition != null) {
-                Swimlane swimlane = getProcess().getSwimlaneNotNull(swimlaneDefinition);
-                swimlane.assignExecutor(this, TypeConversionUtil.convertTo(value, Executor.class), true);
-                return;
-            }
+        // backwardCompatibilityVariablesMode
+        SwimlaneDefinition swimlaneDefinition = getProcessDefinition().getSwimlane(name);
+        if (swimlaneDefinition != null) {
+            Swimlane swimlane = getProcess().getSwimlaneNotNull(swimlaneDefinition);
+            swimlane.assignExecutor(this, TypeConversionUtil.convertTo(value, Executor.class), true);
+            return;
         }
         Variable<?> variable = variableDAO.get(getProcess(), name);
         // if there is already a variable and it doesn't support the current

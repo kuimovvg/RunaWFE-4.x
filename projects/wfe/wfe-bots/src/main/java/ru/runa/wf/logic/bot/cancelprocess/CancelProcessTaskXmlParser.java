@@ -46,22 +46,14 @@ public class CancelProcessTaskXmlParser {
      * @param configurationPath
      * @return
      */
-    public static CancelProcessTask parse(String configurationPath) throws CancelProcessTaskXmlParserException {
-        try {
-            Document document = XMLHelper.getDocument(configurationPath, PATH_ENTITY_RESOLVER);
-            return parseDatabaseTasks(document);
-        } catch (Exception e) {
-            throw new CancelProcessTaskXmlParserException(e);
-        }
+    public static CancelProcessTask parse(String configurationPath) throws Exception {
+        Document document = XMLHelper.getDocument(configurationPath, PATH_ENTITY_RESOLVER);
+        return parseDatabaseTasks(document);
     }
 
-    public static CancelProcessTask parse(InputStream configurationInputStream) throws CancelProcessTaskXmlParserException {
-        try {
-            Document document = XMLHelper.getDocument(configurationInputStream, PATH_ENTITY_RESOLVER);
-            return parseDatabaseTasks(document);
-        } catch (Exception e) {
-            throw new CancelProcessTaskXmlParserException(e);
-        }
+    public static CancelProcessTask parse(InputStream configurationInputStream) throws Exception {
+        Document document = XMLHelper.getDocument(configurationInputStream, PATH_ENTITY_RESOLVER);
+        return parseDatabaseTasks(document);
     }
 
     private static CancelProcessTask parseDatabaseTasks(Document document) {

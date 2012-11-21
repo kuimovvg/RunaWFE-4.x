@@ -18,82 +18,59 @@
 package ru.runa.wf.logic.bot;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.DefinitionService;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTask;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTaskXmlParser;
-import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTaskXmlParserException;
+import ru.runa.wfe.ConfigurationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
-import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
 
 /**
- * Created on 18.04.2005
+ * Cancels process by id and executes arbitrary SQL.
  * 
+ * @author dofs
+ * @since 3.0
  */
 public class CancelProcessTaskHandler implements TaskHandler {
-    private static final Log log = LogFactory.getLog(CancelProcessTaskHandler.class);
-
     private CancelProcessTask processToCancelTask;
 
     @Override
-    public void configure(String configurationPath) throws TaskHandlerException {
-        try {
-            processToCancelTask = CancelProcessTaskXmlParser.parse(this.getClass().getResource(configurationPath).toString());
-        } catch (CancelProcessTaskXmlParserException e) {
-            throw new TaskHandlerException(e);
-        }
+    public void setConfiguration(byte[] configuration) throws Exception {
+        processToCancelTask = CancelProcessTaskXmlParser.parse(new ByteArrayInputStream(configuration));
     }
 
     @Override
-    public void configure(byte[] configuration) throws TaskHandlerException {
-        try {
-            processToCancelTask = CancelProcessTaskXmlParser.parse(new ByteArrayInputStream(configuration));
-        } catch (CancelProcessTaskXmlParserException e) {
-            throw new TaskHandlerException(e);
-        }
-    }
-
-    @Override
-    public void handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws TaskHandlerException {
-        try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
-            Map<String, Object> outputVariables = Maps.newHashMap();
-            Long processId = variableProvider.get(Long.class, processToCancelTask.getProcessIdVariableName());
-            if (processId == null) {
-                executionService.completeTask(subject, wfTask.getId(), outputVariables);
-                return;
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
+        Long processId = variableProvider.get(Long.class, processToCancelTask.getProcessIdVariableName());
+        if (processId != null && processId != 0) {
+            DelegateFactory.getExecutionService().cancelProcess(subject, processId);
+            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            WfDefinition definitionStub = definitionService.getProcessDefinitionByProcessId(subject, processId);
+            String processDefinitionName = definitionStub.getName();
+            String configurationName = processToCancelTask.getDatabaseTaskMap().get(processDefinitionName);
+            if (configurationName == null) {
+                throw new ConfigurationException("Record for '" + processDefinitionName + " missed in task handler configuration");
             }
-            if (processId != 0) {
-                executionService.cancelProcess(subject, processId);
-                DefinitionService definitionService = DelegateFactory.getDefinitionService();
-                WfDefinition definitionStub = definitionService.getProcessDefinitionByProcessId(subject, processId);
-                String processDefinitionName = definitionStub.getName();
-                Object configurationNameObject = processToCancelTask.getDatabaseTaskMap().get(processDefinitionName);
-                if (configurationNameObject == null) {
-                    throw new TaskHandlerException("Record for '" + processDefinitionName + " missed in task handler configuration");
-                }
-                String configurationName = (String) configurationNameObject;
-                DatabaseTaskHandler databaseTaskHandler = new DatabaseTaskHandler();
-                databaseTaskHandler.configure(configurationName);
-                databaseTaskHandler.handle(subject, variableProvider, wfTask);
-            } else {
-                log.warn("Process ID = 0");
-                executionService.completeTask(subject, wfTask.getId(), outputVariables);
+            InputStream inputStream = ClassLoaderUtil.getResourceAsStream(configurationName, DatabaseTaskHandler.class);
+            if (inputStream == null) {
+                throw new ConfigurationException("Unable to find configuration " + configurationName);
             }
-            log.info("CancelProcessTask completed, task name: " + wfTask.getName());
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
+            byte[] configuration = ByteStreams.toByteArray(inputStream);
+            DatabaseTaskHandler databaseTaskHandler = new DatabaseTaskHandler();
+            databaseTaskHandler.setConfiguration(configuration);
+            databaseTaskHandler.handle(subject, variableProvider, wfTask);
         }
+        return null;
     }
 }

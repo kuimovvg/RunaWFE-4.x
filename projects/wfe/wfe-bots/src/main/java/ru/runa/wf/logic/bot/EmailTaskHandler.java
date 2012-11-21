@@ -17,7 +17,7 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
@@ -26,34 +26,26 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.DefinitionService;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.definition.par.FileDataProvider;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
-
-import com.google.common.base.Charsets;
 
 /**
  * Created on 04.07.2005
  * 
  */
 public class EmailTaskHandler implements TaskHandler {
-
     private static final Log log = LogFactory.getLog(EmailTaskHandler.class);
 
     private EmailConfig config;
 
     @Override
-    public void configure(String configuration) {
-        configure(configuration.getBytes(Charsets.UTF_8));
-    }
-
-    @Override
-    public void configure(byte[] configuration) {
+    public void setConfiguration(byte[] configuration) {
         if (!EmailConfigParser.canParse(configuration)) {
             throw new IllegalArgumentException("invalid configuration");
         }
@@ -61,38 +53,32 @@ public class EmailTaskHandler implements TaskHandler {
     }
 
     @Override
-    public void handle(final Subject subject, IVariableProvider variableProvider, final WfTask wfTask) throws TaskHandlerException {
+    public Map<String, Object> handle(final Subject subject, IVariableProvider variableProvider, final WfTask wfTask) throws Exception {
+        final DefinitionService definitionService = DelegateFactory.getDefinitionService();
         try {
-            final DefinitionService definitionService = DelegateFactory.getDefinitionService();
-            ExecutionService executionService = DelegateFactory.getExecutionService();
-            try {
-                Interaction interaction = null;
-                if (config.isUseMessageFromTaskForm()) {
-                    interaction = definitionService.getTaskInteraction(subject, wfTask.getId());
-                }
-                FileDataProvider fileDataProvider = new FileDataProvider() {
-
-                    @Override
-                    public byte[] getFileData(String fileName) {
-                        try {
-                            return definitionService.getFile(subject, wfTask.getProcessDefinitionId(), fileName);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                };
-                EmailUtils.sendTaskMessage(subject, config, interaction, variableProvider, fileDataProvider);
-            } catch (Exception e) {
-                if (config.isThrowErrorOnFailure()) {
-                    throw e;
-                }
-                log.error("unable to send email", e);
+            Interaction interaction = null;
+            if (config.isUseMessageFromTaskForm()) {
+                interaction = definitionService.getTaskInteraction(subject, wfTask.getId());
             }
-            executionService.completeTask(subject, wfTask.getId(), new HashMap<String, Object>());
-            log.info("completed task: " + wfTask);
+            FileDataProvider fileDataProvider = new FileDataProvider() {
+
+                @Override
+                public byte[] getFileData(String fileName) {
+                    try {
+                        return definitionService.getFile(subject, wfTask.getProcessDefinitionId(), fileName);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            };
+            EmailUtils.sendTaskMessage(subject, config, interaction, variableProvider, fileDataProvider);
         } catch (Exception e) {
-            throw new TaskHandlerException(e);
+            if (config.isThrowErrorOnFailure()) {
+                throw e;
+            }
+            log.error("unable to send email", e);
         }
+        return null;
     }
 
 }

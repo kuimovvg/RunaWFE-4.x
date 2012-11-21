@@ -132,7 +132,10 @@ public class EmailUtils {
         config.applySubstitutions(variableProvider);
         byte[] formBytes;
         if (config.isUseMessageFromTaskForm()) {
-            formBytes = interaction.getFormDataNotNull();
+            if (!interaction.hasForm()) {
+                throw new Exception("Set property 'UseMessageFromTaskForm' but form does not exist");
+            }
+            formBytes = interaction.getFormData();
         } else {
             formBytes = config.getMessage().getBytes(Charsets.UTF_8);
         }
