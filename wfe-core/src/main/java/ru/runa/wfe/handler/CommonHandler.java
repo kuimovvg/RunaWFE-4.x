@@ -1,15 +1,14 @@
-package ru.runa.wf.office.shared;
+package ru.runa.wfe.handler;
 
 import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.wf.logic.bot.TaskHandler;
-import ru.runa.wf.logic.bot.TaskHandlerException;
 import ru.runa.wfe.ConfigurationException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -20,16 +19,12 @@ public abstract class CommonHandler implements ActionHandler, TaskHandler {
 
     protected abstract Map<String, Object> executeAction(IVariableProvider variableProvider) throws Exception;
 
+    @Override
     public abstract void setConfiguration(String configuration) throws ConfigurationException;
 
     @Override
-    public final void configure(byte[] config) throws TaskHandlerException {
+    public final void setConfiguration(byte[] config) {
         setConfiguration(new String(config, Charsets.UTF_8));
-    }
-
-    @Override
-    public void configure(String config) throws TaskHandlerException {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -43,13 +38,12 @@ public abstract class CommonHandler implements ActionHandler, TaskHandler {
     }
 
     @Override
-    public void handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws TaskHandlerException {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) {
         try {
-            Map<String, Object> result = executeAction(variableProvider);
-            DelegateFactory.getExecutionService().completeTask(subject, task.getId(), result);
-        } catch (Throwable e) {
-            Throwables.propagateIfPossible(e, TaskHandlerException.class);
-            Throwables.propagate(e);
+            return executeAction(variableProvider);
+        } catch (Exception e) {
+            Throwables.propagateIfPossible(e, RuntimeException.class);
+            throw new InternalApplicationException(e);
         }
     }
 

@@ -23,7 +23,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import ru.runa.wf.logic.bot.TaskHandlerException;
 import ru.runa.wfe.commons.xml.PathEntityResolver;
 import ru.runa.wfe.commons.xml.XMLHelper;
 
@@ -41,40 +40,36 @@ public class AssignerSettingsXmlParser {
         // prevents direct object instantiation
     }
 
-    public static AssignerSettings read(InputStream inputStream) throws TaskHandlerException {
-        try {
-            Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
+    public static AssignerSettings read(InputStream inputStream) throws Exception {
+        Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
 
-            AssignerSettings assignerSettings = new AssignerSettings();
-            NodeList nodeList = document.getElementsByTagName(CONDITION_ELEMENT_NAME);
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node conditionNode = nodeList.item(i);
+        AssignerSettings assignerSettings = new AssignerSettings();
+        NodeList nodeList = document.getElementsByTagName(CONDITION_ELEMENT_NAME);
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node conditionNode = nodeList.item(i);
 
-                String swimlaneName = null;
-                String functionClassName = null;
-                String variableName = null;
+            String swimlaneName = null;
+            String functionClassName = null;
+            String variableName = null;
 
-                NodeList childNodeList = conditionNode.getChildNodes();
-                for (int j = 0; j < childNodeList.getLength(); j++) {
-                    Node child = childNodeList.item(j);
-                    if (child.getNodeType() != Node.ELEMENT_NODE) {
-                        continue;
-                    }
-                    if (SWIMLANE_ELEMENT_NAME.equals(child.getNodeName())) {
-                        swimlaneName = child.getFirstChild().getNodeValue();
-                    } else if (FUNCTION_ELEMENT_NAME.equals(child.getNodeName())) {
-                        functionClassName = child.getFirstChild().getNodeValue();
-                    } else if (VARIABLE_ELEMENT_NAME.equals(child.getNodeName())) {
-                        variableName = child.getFirstChild().getNodeValue();
-                    } else {
-                        // ignore #text nodes
-                    }
+            NodeList childNodeList = conditionNode.getChildNodes();
+            for (int j = 0; j < childNodeList.getLength(); j++) {
+                Node child = childNodeList.item(j);
+                if (child.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
                 }
-                assignerSettings.addAssignerCondition(new AssignerSettings.Condition(swimlaneName, functionClassName, variableName));
+                if (SWIMLANE_ELEMENT_NAME.equals(child.getNodeName())) {
+                    swimlaneName = child.getFirstChild().getNodeValue();
+                } else if (FUNCTION_ELEMENT_NAME.equals(child.getNodeName())) {
+                    functionClassName = child.getFirstChild().getNodeValue();
+                } else if (VARIABLE_ELEMENT_NAME.equals(child.getNodeName())) {
+                    variableName = child.getFirstChild().getNodeValue();
+                } else {
+                    // ignore #text nodes
+                }
             }
-            return assignerSettings;
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
+            assignerSettings.addAssignerCondition(new AssignerSettings.Condition(swimlaneName, functionClassName, variableName));
         }
+        return assignerSettings;
     }
 }

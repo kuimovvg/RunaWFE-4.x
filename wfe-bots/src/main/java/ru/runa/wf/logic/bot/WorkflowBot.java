@@ -35,6 +35,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -42,6 +43,7 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 public class WorkflowBot implements Runnable {
     private final Log log = LogFactory.getLog(WorkflowBot.class);
@@ -89,7 +91,7 @@ public class WorkflowBot implements Runnable {
         for (BotTask task : tasks) {
             try {
                 TaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
-                handler.configure(task.getConfiguration());
+                handler.setConfiguration(task.getConfiguration());
                 handlers.put(task.getName(), handler);
                 log.info("Configured taskHandler for " + task.getName());
             } catch (Throwable th) {
@@ -168,15 +170,24 @@ public class WorkflowBot implements Runnable {
         return botDeplay;
     }
 
-    public void doHandle() throws Exception {
+    private void doHandle() throws Exception {
         TaskHandler taskHandler = taskHandlerMap.get(task.getName());
         if (taskHandler == null) {
             log.warn("No handler for task " + task + ", bot " + botName);
             return;
         }
         IVariableProvider variableProvider = new DelegateProcessVariableProvider(subject, task.getProcessId());
-        taskHandler.handle(subject, variableProvider, task);
-        log.debug("Handled task " + task + ", bot " + botName);
+        Map<String, Object> variables = taskHandler.handle(subject, variableProvider, task);
+        if (variables == null) {
+            variables = Maps.newHashMap();
+        }
+        Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
+        if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
+            log.info("Task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
+        } else {
+            DelegateFactory.getExecutionService().completeTask(subject, task.getId(), variables);
+            log.debug("Handled task " + task + ", bot " + botName + " by " + taskHandler.getClass());
+        }
     }
 
     @Override

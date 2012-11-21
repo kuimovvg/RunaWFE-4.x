@@ -26,21 +26,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.security.auth.Subject;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -55,18 +50,15 @@ import ru.runa.wf.logic.bot.webservice.Interaction;
 import ru.runa.wf.logic.bot.webservice.WebServiceTaskHandlerSettings;
 import ru.runa.wf.logic.bot.webservice.WebServiceTaskHandlerXMLParser;
 import ru.runa.wf.logic.bot.webservice.WebServiceTaskHandlerXSLTHelper;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.task.TaskDoesNotExistException;
+import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.task.dto.WfTask;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
-import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
 
+import com.google.common.collect.Maps;
 import com.google.common.io.NullOutputStream;
 
 /**
@@ -93,39 +85,31 @@ public class WebServiceTaskHandler implements TaskHandler {
     private WebServiceTaskHandlerSettings settings;
 
     @Override
-    public void configure(String configurationName) throws TaskHandlerException {
-        settings = WebServiceTaskHandlerXMLParser.read(ClassLoaderUtil.getResourceAsStream(configurationName, getClass()));
-    }
-
-    @Override
-    public void configure(byte[] configuration) throws TaskHandlerException {
+    public void setConfiguration(byte[] configuration) throws Exception {
         settings = WebServiceTaskHandlerXMLParser.read(new ByteArrayInputStream(configuration));
     }
 
     @Override
-    public void handle(Subject subject, IVariableProvider variableProvider, WfTask taskStub) throws TaskHandlerException {
-        try {
-            xsltHelper.set(new WebServiceTaskHandlerXSLTHelper(taskStub, subject));
-            URL url = getWebServiceUrl(subject, taskStub);
-            for (int index = getStartInteraction(subject, taskStub); index < settings.interactions.size(); ++index) {
-                Interaction interaction = settings.interactions.get(index);
-                byte[] soapData = prepareRequest(taskStub, interaction);
-                HttpURLConnection connection = sendRequest(url, soapData);
-                if (connection.getResponseCode() < 200 || connection.getResponseCode() >= 300) {
-                    // Something goes wrong
-                    if (!onErrorResponse(subject, taskStub, connection, interaction)) {
-                        return;
-                    }
-                } else {
-                    onResponse(taskStub, connection, interaction);
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
+        Map<String, Object> variables = Maps.newHashMap();
+        xsltHelper.set(new WebServiceTaskHandlerXSLTHelper(task, subject));
+        URL url = getWebServiceUrl(subject, task);
+        for (int index = getStartInteraction(subject, task); index < settings.interactions.size(); ++index) {
+            Interaction interaction = settings.interactions.get(index);
+            byte[] soapData = prepareRequest(task, interaction);
+            HttpURLConnection connection = sendRequest(url, soapData);
+            if (connection.getResponseCode() < 200 || connection.getResponseCode() >= 300) {
+                // Something goes wrong
+                if (!onErrorResponse(subject, task, connection, interaction)) {
+                    variables.put(SKIP_TASK_COMPLETION_VARIABLE_NAME, Boolean.TRUE);
+                    return variables;
                 }
+            } else {
+                onResponse(task, connection, interaction);
             }
-            completteTask(subject, taskStub);
-        } catch (MalformedURLException e) {
-            throw new InternalApplicationException("Can't get url for webservice call.", e);
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
         }
+        xsltHelper.get().MergeVariablesIn(variables);
+        return variables;
     }
 
     /**
@@ -166,22 +150,6 @@ public class WebServiceTaskHandler implements TaskHandler {
     }
 
     /**
-     * Completes current task with variables, stored in xsltHelper.
-     * 
-     * @param subject
-     *            Current bot subject
-     * @param wfTask
-     *            Current processing task.
-     */
-    private void completteTask(Subject subject, WfTask wfTask) throws TaskDoesNotExistException, AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException, ValidationException {
-        Map<String, Object> variables = new HashMap<String, Object>();
-        xsltHelper.get().MergeVariablesIn(variables);
-        ExecutionService executionService = DelegateFactory.getExecutionService();
-        executionService.completeTask(subject, wfTask.getId(), variables);
-    }
-
-    /**
      * Get web service URL. Tries to create URL from settings (URL parameter).
      * If URL creation failed, then read variable with name from URL parameter
      * and create URL with variable value.
@@ -191,8 +159,9 @@ public class WebServiceTaskHandler implements TaskHandler {
      * @param taskStub
      *            Current task instance to be processed.
      * @return URL of web service to send requests.
+     * @throws MalformedURLException
      */
-    private URL getWebServiceUrl(Subject subject, WfTask taskStub) throws TaskDoesNotExistException, AuthorizationException, MalformedURLException {
+    private URL getWebServiceUrl(Subject subject, WfTask taskStub) throws MalformedURLException {
         try {
             return new URL(settings.url);
         } catch (MalformedURLException e) {
@@ -212,8 +181,7 @@ public class WebServiceTaskHandler implements TaskHandler {
      *            Current interaction with web service.
      * @return Prepared web service request.
      */
-    private byte[] prepareRequest(WfTask taskStub, Interaction interaction) throws TransformerException, TransformerConfigurationException,
-            TransformerFactoryConfigurationError, UnsupportedEncodingException {
+    private byte[] prepareRequest(WfTask taskStub, Interaction interaction) throws Exception {
         ByteArrayOutputStream res2 = new ByteArrayOutputStream();
         Transformer transformer = TransformerFactory.newInstance().newTransformer(
                 new StreamSource(ClassLoaderUtil.getResourceAsStream("bot/webServiceTaskHandlerRequest.xslt", getClass())));
@@ -235,7 +203,7 @@ public class WebServiceTaskHandler implements TaskHandler {
      *            SOAP data length.
      * @return HTTP connection to communicate with web service.
      */
-    private HttpURLConnection sendRequest(URL url, byte[] soapData) throws IOException, ProtocolException {
+    private HttpURLConnection sendRequest(URL url, byte[] soapData) throws Exception {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestProperty("Content-Type", "text/xml; charset=" + settings.encoding);
         if (settings.authBase != null) {
@@ -270,8 +238,7 @@ public class WebServiceTaskHandler implements TaskHandler {
      * @return true, if next interaction must be processed and false if required
      *         to stop interaction processing.
      */
-    private boolean onErrorResponse(Subject subject, WfTask taskStub, HttpURLConnection connection, Interaction interaction) throws IOException,
-            TaskHandlerException, InternalApplicationException, AuthorizationException, AuthenticationException, TaskDoesNotExistException {
+    private boolean onErrorResponse(Subject subject, WfTask taskStub, HttpURLConnection connection, Interaction interaction) throws Exception {
         log.debug("Web service bot got error response with code " + connection.getResponseCode() + " for task " + taskStub.getId());
         if (interaction.responseVariable != null) {
             xsltHelper.get().setNewVariable(interaction.responseVariable, "Got error response: '" + connection.getResponseMessage() + "'");
@@ -290,8 +257,7 @@ public class WebServiceTaskHandler implements TaskHandler {
     /**
      * Saves current bot execution state.
      */
-    private void saveExecutionState(Subject subject, WfTask task, Interaction interaction) throws AuthorizationException, AuthenticationException,
-            TaskDoesNotExistException {
+    private void saveExecutionState(Subject subject, WfTask task, Interaction interaction) {
         ExecutionService executionService = DelegateFactory.getExecutionService();
         Map<String, Object> variables = new HashMap<String, Object>();
         xsltHelper.get().MergeVariablesIn(variables);
@@ -310,8 +276,7 @@ public class WebServiceTaskHandler implements TaskHandler {
      * @param interaction
      *            Current processing interaction.
      */
-    private void onResponse(WfTask taskStub, HttpURLConnection connection, Interaction interaction) throws UnsupportedEncodingException, IOException,
-            TransformerFactoryConfigurationError, TransformerException {
+    private void onResponse(WfTask taskStub, HttpURLConnection connection, Interaction interaction) throws Exception {
         if (interaction.responseXSLT == null && interaction.responseVariable == null) {
             return;
         }
@@ -395,7 +360,7 @@ public class WebServiceTaskHandler implements TaskHandler {
      *            Current task instance to be processed.
      * @return index of interaction.
      */
-    private int getStartInteraction(Subject subject, WfTask taskStub) throws TaskDoesNotExistException, AuthorizationException {
+    private int getStartInteraction(Subject subject, WfTask taskStub) {
         ExecutionService executionService = DelegateFactory.getExecutionService();
         WfVariable variable = executionService.getVariable(subject, taskStub.getProcessId(), "WS_ITERATION_" + taskStub.getId());
         return TypeConversionUtil.convertTo(variable.getValue(), int.class);

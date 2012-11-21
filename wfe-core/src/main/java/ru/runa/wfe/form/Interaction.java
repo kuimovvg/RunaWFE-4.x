@@ -23,7 +23,6 @@ import java.util.Map;
 
 import ru.runa.wfe.var.VariableDefinition;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -52,10 +51,7 @@ public class Interaction implements Serializable {
         this.cssData = cssData;
     }
 
-    public byte[] getFormDataNotNull() {
-        if (formData == null) {
-            return ("No form defined.").getBytes(Charsets.UTF_8);
-        }
+    public byte[] getFormData() {
         return formData;
     }
 

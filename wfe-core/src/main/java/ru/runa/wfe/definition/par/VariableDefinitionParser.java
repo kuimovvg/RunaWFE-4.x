@@ -6,12 +6,14 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.var.VariableDefinition;
 
+@SuppressWarnings("unchecked")
 public class VariableDefinitionParser implements ProcessArchiveParser {
     @Autowired
     private LocalizationDAO localizationDAO;
@@ -23,13 +25,17 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
         Element root = document.getRootElement();
         List<Element> elements = root.elements("variable");
         for (Element element : elements) {
-            VariableDefinition variable = new VariableDefinition();
-            variable.setName(element.attributeValue("name"));
-            variable.setFormat(element.attributeValue("format"));
-            variable.setPublicAccess(Boolean.parseBoolean(element.attributeValue("public", "false")));
-            variable.setDefaultValue(element.attributeValue("defaultValue"));
-            variable.setDisplayFormat(localizationDAO.getLocalized(variable.getFormat()));
-            processDefinition.addVariable(variable.getName(), variable);
+            boolean swimlane = Boolean.parseBoolean(element.attributeValue("swimlane", "false"));
+            if (!swimlane) {
+                VariableDefinition variable = new VariableDefinition();
+                variable.setName(element.attributeValue("name"));
+                variable.setFormat(element.attributeValue("format"));
+                variable.setPublicAccess(Boolean.parseBoolean(element.attributeValue("public", "false")));
+                variable.setDefaultValue(element.attributeValue("defaultValue"));
+                String className = BackCompatibilityClassNames.getClassName(variable.getFormat());
+                variable.setDisplayFormat(localizationDAO.getLocalized(className));
+                processDefinition.addVariable(variable.getName(), variable);
+            }
         }
     }
 

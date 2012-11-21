@@ -19,7 +19,7 @@ package ru.runa.wf.logic.bot.assigner;
 
 import java.util.List;
 
-import ru.runa.wf.logic.bot.TaskHandlerException;
+import ru.runa.wfe.ConfigurationException;
 
 import com.google.common.collect.Lists;
 
@@ -27,9 +27,9 @@ public class AssignerSettings {
 
     private final List<Condition> conditions = Lists.newArrayList();
 
-    public void addAssignerCondition(Condition condition) throws TaskHandlerException {
+    public void addAssignerCondition(Condition condition) {
         if (!condition.check()) {
-            throw new TaskHandlerException("Condition is not consistent");
+            throw new ConfigurationException("Condition is not consistent");
         }
         conditions.add(condition);
     }

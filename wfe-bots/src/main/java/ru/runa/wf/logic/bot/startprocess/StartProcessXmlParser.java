@@ -44,24 +44,16 @@ public class StartProcessXmlParser {
      * @param configurationPath
      * @return
      */
-    public static StartProcessTask[] parse(String configurationPath) throws StartProcessTaskXmlParserException {
-        try {
-            Document document = XMLHelper.getDocument(configurationPath, PATH_ENTITY_RESOLVER);
-            StartProcessTask[] startProcessTask = parseStartProcess(document);
-            return startProcessTask;
-        } catch (Exception e) {
-            throw new StartProcessTaskXmlParserException(e);
-        }
+    public static StartProcessTask[] parse(String configurationPath) {
+        Document document = XMLHelper.getDocument(configurationPath, PATH_ENTITY_RESOLVER);
+        StartProcessTask[] startProcessTask = parseStartProcess(document);
+        return startProcessTask;
     }
 
-    public static StartProcessTask[] parse(InputStream is) throws StartProcessTaskXmlParserException {
-        try {
-            Document document = XMLHelper.getDocument(is, PATH_ENTITY_RESOLVER);
-            StartProcessTask[] startProcessTask = parseStartProcess(document);
-            return startProcessTask;
-        } catch (Exception e) {
-            throw new StartProcessTaskXmlParserException(e);
-        }
+    public static StartProcessTask[] parse(InputStream is) {
+        Document document = XMLHelper.getDocument(is, PATH_ENTITY_RESOLVER);
+        StartProcessTask[] startProcessTask = parseStartProcess(document);
+        return startProcessTask;
     }
 
     private static String getStartedProcessIdName(Element processElement) {

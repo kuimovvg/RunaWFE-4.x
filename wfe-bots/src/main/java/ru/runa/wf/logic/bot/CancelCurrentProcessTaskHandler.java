@@ -17,44 +17,33 @@
  */
 package ru.runa.wf.logic.bot;
 
+import java.util.Map;
+
 import javax.security.auth.Subject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.ExecutionService;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
 /**
- * Cancels process instance task belongs to.
+ * Cancels process task belongs to.
  * 
  * Created on 09.11.2006
  * 
  * @author Vitaliy S
+ * @since 2.0
  */
 public class CancelCurrentProcessTaskHandler implements TaskHandler {
-    private static final Log log = LogFactory.getLog(CancelCurrentProcessTaskHandler.class);
 
     @Override
-    public void configure(String configurationName) throws TaskHandlerException {
+    public void setConfiguration(byte[] configuration) {
         // do nothing with configuration
     }
 
     @Override
-    public void configure(byte[] configuration) throws TaskHandlerException {
-        // do nothing with configuration
-    }
-
-    @Override
-    public void handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws TaskHandlerException {
-        try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
-            executionService.cancelProcess(subject, wfTask.getProcessId());
-            log.info("Process instance " + wfTask.getProcessId() + " was canceled");
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
-        }
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
+        DelegateFactory.getExecutionService().cancelProcess(subject, wfTask.getProcessId());
+        return null;
     }
 }
