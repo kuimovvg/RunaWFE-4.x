@@ -22,7 +22,7 @@ public class ValidatorDefinitionRegistry {
             IConfigurationElement[] configElements = extension.getConfigurationElements();
             for (IConfigurationElement configElement : configElements) {
                 try {
-                    ValidatorDefinition definition = new ValidatorDefinition(configElement.getAttribute("name"), configElement.getAttribute("displayName"),
+                    ValidatorDefinition definition = new ValidatorDefinition(configElement.getAttribute("name"), configElement.getAttribute("label"),
                             ValidatorDefinition.FIELD_TYPE, configElement.getAttribute("description"));
                     String applicableString = configElement.getAttribute("applicable");
                     if (applicableString != null && applicableString.length() > 0) {
@@ -32,7 +32,7 @@ public class ValidatorDefinitionRegistry {
                     }
                     IConfigurationElement[] paramElements = configElement.getChildren();
                     for (IConfigurationElement paramElement : paramElements) {
-                        Param param = new Param(paramElement.getAttribute("name"), paramElement.getAttribute("displayName"), paramElement.getAttribute("type"));
+                        Param param = new Param(paramElement.getAttribute("name"), paramElement.getAttribute("label"), paramElement.getAttribute("type"));
                         definition.addParam(param);
                     }
                     definitions.put(definition.getName(), definition);

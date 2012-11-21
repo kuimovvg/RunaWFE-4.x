@@ -14,8 +14,8 @@ import ru.runa.gpd.ui.dialog.TimerActionEditDialog;
 public class TimeOutActionPropertyDescriptor extends PropertyDescriptor {
     private final ITimeOut element;
 
-    public TimeOutActionPropertyDescriptor(Object id, String displayName, ITimeOut element) {
-        super(id, displayName);
+    public TimeOutActionPropertyDescriptor(Object id, String label, ITimeOut element) {
+        super(id, label);
         this.element = element;
     }
 
@@ -25,7 +25,6 @@ public class TimeOutActionPropertyDescriptor extends PropertyDescriptor {
     }
 
     private class TimerActionDialogCellEditor extends DialogCellEditor {
-
         public TimerActionDialogCellEditor(Composite parent) {
             super(parent, SWT.NONE);
         }

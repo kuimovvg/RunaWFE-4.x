@@ -75,7 +75,7 @@ public abstract class SwimlaneElement {
         this.name = name;
     }
 
-    public String getDisplayName() {
+    public String getLabel() {
         return Localization.getString(name);
     }
 
@@ -157,7 +157,7 @@ public abstract class SwimlaneElement {
         section = new Section(parentComposite, ExpandableComposite.COMPACT | ExpandableComposite.TWISTIE);
         section.marginHeight = 5;
         section.marginWidth = 5;
-        section.setText(getDisplayName());
+        section.setText(getLabel());
         section.setDescription(description);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.verticalAlignment = GridData.BEGINNING;

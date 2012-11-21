@@ -6,8 +6,8 @@ public class VariableFormatArtifact extends Artifact {
     public VariableFormatArtifact() {
     }
 
-    public VariableFormatArtifact(boolean enabled, String className, String displayName, String variableClassName) {
-        super(enabled, className, displayName);
+    public VariableFormatArtifact(boolean enabled, String className, String label, String variableClassName) {
+        super(enabled, className, label);
         setVariableClassName(variableClassName);
     }
 

@@ -247,7 +247,7 @@ public class ArtifactPreferencePage<T extends Artifact> extends PreferencePage i
         T artifact = (T) selection.getFirstElement();
         T newArtifact = editArtifact(artifact, true);
         if (newArtifact != null) {
-            artifact.setDisplayName(newArtifact.getDisplayName());
+            artifact.setLabel(newArtifact.getLabel());
             tableViewer.refresh(artifact);
             updateButtons();
             tableViewer.setChecked(artifact, artifact.isEnabled());
@@ -373,7 +373,7 @@ public class ArtifactPreferencePage<T extends Artifact> extends PreferencePage i
             case 0:
                 return artifact.getName();
             case 1:
-                return artifact.getDisplayName();
+                return artifact.getLabel();
             default:
                 return null;
             }

@@ -59,7 +59,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="displayName" type="string" use="required">
+         <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -116,15 +116,6 @@
 
    <annotation>
       <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -150,5 +141,14 @@
       </documentation>
    </annotation>
 
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
 
 </schema>

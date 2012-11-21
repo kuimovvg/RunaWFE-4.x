@@ -41,7 +41,7 @@ public abstract class ParamBasedProvider extends DelegableProvider {
                 definition.getVariableFormats(true), 
                 config.parseConfiguration(delegable.getDelegationConfiguration()), 
                 config, 
-                LocalizationRegistry.getDisplayName(delegable.getDelegationClassName()));
+                LocalizationRegistry.getLabel(delegable.getDelegationClassName()));
         final ConfigurationWizard wizard = new ConfigurationWizard(page);
         WizardDialog dialog = new WizardDialog(Display.getCurrent().getActiveShell(), wizard) {
 

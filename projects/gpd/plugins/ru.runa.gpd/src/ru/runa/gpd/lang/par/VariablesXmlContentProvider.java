@@ -13,7 +13,7 @@ import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
-import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.var.format.ExecutorFormat;
 
 public class VariablesXmlContentProvider extends AuxContentProvider {
     private static final String VARIABLES_XML_FILE_NAME = "variables.xml";
@@ -36,9 +36,9 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         for (Element element : elementsList) {
             String variableName = element.attributeValue(NAME_ATTRIBUTE_NAME);
             String formatName = element.attributeValue(FORMAT_ATTRIBUTE_NAME);
-            if (isEmptyOrNull(formatName)) {
-                formatName = StringFormat.class.getName();
-            }
+            //            if (isEmptyOrNull(formatName)) {
+            //                formatName = StringFormat.class.getName();
+            //            }
             formatName = BackCompatibilityClassNames.getClassName(formatName);
             String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
             String swimlaneName = element.attributeValue(SWIMLANE_ATTRIBUTE_NAME);
@@ -81,7 +81,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         for (Swimlane swimlane : definition.getSwimlanes()) {
             Element element = root.addElement(VARIABLE_ELEMENT_NAME);
             element.addAttribute(NAME_ATTRIBUTE_NAME, swimlane.getName());
-            element.addAttribute(FORMAT_ATTRIBUTE_NAME, StringFormat.class.getName());
+            element.addAttribute(FORMAT_ATTRIBUTE_NAME, ExecutorFormat.class.getName());
             element.addAttribute(SWIMLANE_ATTRIBUTE_NAME, "true");
             if (swimlane.isPublicVisibility()) {
                 element.addAttribute(PUBLUC_ATTRIBUTE_NAME, "true");

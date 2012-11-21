@@ -13,7 +13,7 @@ public class ActionTreeEditPart extends ElementTreeEditPart {
     }
 
     protected String getLabel() {
-        return ((Action) getModel()).getDisplayName();
+        return ((Action) getModel()).getLabel();
     }
 
     @Override

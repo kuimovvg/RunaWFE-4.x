@@ -25,7 +25,7 @@ import ru.runa.gpd.property.DefaultTaskDueDatePropertyDescriptor;
 import ru.runa.gpd.property.StartImagePropertyDescriptor;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
 import ru.runa.gpd.util.TimerDuration;
-import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.var.format.ExecutorFormat;
 
 import com.google.common.base.Objects;
 
@@ -245,12 +245,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
                 String msg = Localization.getString("model.validation." + messageKey);
                 String formatted = MessageFormat.format(msg, params);
                 marker.setAttribute(IMarker.MESSAGE, formatted);
-                String elementSource;
-                if (element instanceof NamedGraphElement) {
-                    elementSource = ((NamedGraphElement) element).getName();
-                } else {
-                    elementSource = element.getTypeName();
-                }
+                String elementSource = element.toString();
                 if (element instanceof Swimlane) {
                     marker.setAttribute(PluginConstants.SWIMLANE_LINK_KEY, elementSource);
                 } else if (element instanceof Action) {
@@ -263,7 +258,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
                         parentNodeTreePath = actionParent.getName();
                     }
                     marker.setAttribute(PluginConstants.PARENT_NODE_KEY, parentNodeTreePath);
-                    elementSource = element.getTypeName() + " (" + parentNodeTreePath + ")";
+                    elementSource = element.toString() + " (" + parentNodeTreePath + ")";
                 } else {
                     marker.setAttribute(PluginConstants.SELECTION_LINK_KEY, elementSource);
                 }
@@ -294,7 +289,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         }
         if (includeSwimlanes) {
             for (String swimlaneName : getSwimlaneNames()) {
-                map.put(swimlaneName, StringFormat.class.getName());
+                map.put(swimlaneName, ExecutorFormat.class.getName());
             }
         }
         return map;

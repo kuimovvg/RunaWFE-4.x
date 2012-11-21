@@ -41,7 +41,7 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
     @Override
     protected IFigure createFigure() {
         Transition transition = getModel();
-        final TransitionFigure figure = transition.getTypeDefinition().createFigure(getModel().getProcessDefinition());
+        TransitionFigure figure = transition.getTypeDefinition().getGefEntry().createFigure(getModel().getProcessDefinition());
         figure.setRoutingConstraint(constructFigureBendpointList());
         if (transition.getSource() instanceof Decision) {
             figure.setLabelText(transition.getName());

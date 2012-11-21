@@ -20,7 +20,7 @@ public class ChooseHandlerClassDialog extends ChooseItemDialog {
             setLabelProvider(new LabelProvider() {
                 @Override
                 public String getText(Object element) {
-                    return ((Artifact) element).getDisplayName();
+                    return ((Artifact) element).getLabel();
                 }
             });
             setItems(HandlerRegistry.getInstance().getAll(type, true));

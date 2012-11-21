@@ -121,7 +121,7 @@ public class SwimlaneConfigDialog extends Dialog implements ISwimlaneElementList
             }
 
             CTabItem tabItem = new CTabItem(orgFunctionsTabFolder, SWT.NONE);
-            tabItem.setText(swimlaneElement.getDisplayName());
+            tabItem.setText(swimlaneElement.getLabel());
             tabItem.setControl(composite);
         }
 

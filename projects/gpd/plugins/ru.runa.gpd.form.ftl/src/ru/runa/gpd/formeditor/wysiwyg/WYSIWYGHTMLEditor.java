@@ -108,8 +108,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusText
         }
         for (String swimlaneName : formNode.getProcessDefinition().getSwimlaneNames()) {
             if (onlyVariablesWithSpace || swimlaneName.indexOf(" ") == -1) {
-                variableWithSwimlanes.add(new Variable(swimlaneName)); // string
-                                                                       // type
+                variableWithSwimlanes.add(Variable.createForSwimlane(swimlaneName));
             }
         }
         return variableWithSwimlanes;
@@ -126,15 +125,13 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusText
             }
             for (String swimlaneName : formNode.getProcessDefinition().getSwimlaneNames()) {
                 if (includeVariablesWithSpace || swimlaneName.indexOf(" ") == -1) {
-                    variableWithSwimlanes.put(swimlaneName, new Variable(swimlaneName)); // string
-                                                                                         // type
+                    variableWithSwimlanes.put(swimlaneName, Variable.createForSwimlane(swimlaneName));
                 }
             }
         }
         return variableWithSwimlanes;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object getAdapter(Class adapter) {
         if (adapter == ITextEditor.class) {
