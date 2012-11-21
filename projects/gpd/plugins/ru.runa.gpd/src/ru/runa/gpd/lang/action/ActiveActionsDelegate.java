@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.editor.gef.command.AddActionCommand;
-import ru.runa.gpd.handler.CustomizationRegistry;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
 import ru.runa.gpd.lang.model.Active;
 
@@ -115,7 +115,7 @@ public class ActiveActionsDelegate extends BaseActionDelegate implements IMenuCr
         @Override
         public void run() {
             setFocus(action);
-            DelegableProvider provider = CustomizationRegistry.getProvider(action.getDelegationClassName());
+            DelegableProvider provider = HandlerRegistry.getProvider(action.getDelegationClassName());
             String newConfig = provider.showConfigurationDialog(action);
             if (newConfig != null) {
                 action.setDelegationConfiguration(newConfig);

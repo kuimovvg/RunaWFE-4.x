@@ -2,7 +2,8 @@ package ru.runa.gpd.lang.model;
 
 import java.util.Collection;
 
-import ru.runa.gpd.handler.CustomizationRegistry;
+import ru.runa.gpd.handler.HandlerArtifact;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.decision.IDecisionProvider;
 import ru.runa.wfe.handler.decision.GroovyDecisionHandler;
 
@@ -13,13 +14,13 @@ public class Decision extends DescribableNode implements Delegable, Active {
 
     @Override
     public String getDelegationType() {
-        return DECISION_HANDLER;
+        return HandlerArtifact.DECISION;
     }
 
     @Override
     protected void validate() {
         super.validate();
-        IDecisionProvider provider = CustomizationRegistry.getProvider(this);
+        IDecisionProvider provider = HandlerRegistry.getProvider(this);
         Collection<String> modelTransitionNames = provider.getTransitionNames(this);
         for (Transition transition : getLeavingTransitions()) {
             if (!modelTransitionNames.remove(transition.getName())) {

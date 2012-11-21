@@ -3,7 +3,6 @@ package ru.runa.gpd.orgfunction;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -17,27 +16,26 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.wfe.SyncUIHelper;
+import ru.runa.wfe.os.func.ExecutorByCodeFunction;
 
 public class SwimlaneRelationsElement extends SwimlaneElement {
-
     private Hyperlink chooseLink;
     private Text relationNameText;
     private Combo combo;
 
     public SwimlaneRelationsElement() {
-        setOrgFunctionDefinitionName("ExecutorByCodeFunction");
+        setOrgFunctionDefinitionName(ExecutorByCodeFunction.class.getName());
     }
 
     @Override
     public void createGUI(Composite parent) {
         Composite clientArea = createSection(parent, 1);
         SyncUIHelper.createHeader(clientArea, WFEServerRelationsImporter.getInstance(), WFEConnectionPreferencePage.class);
-
         Composite content1 = new Composite(clientArea, SWT.NONE);
         content1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         content1.setLayout(new GridLayout(2, false));
@@ -45,14 +43,13 @@ public class SwimlaneRelationsElement extends SwimlaneElement {
         relationNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         chooseLink = createLink(content1, Localization.getString("button.choose"));
         chooseLink.addHyperlinkListener(new HyperlinkAdapter() {
-
             @Override
             public void linkActivated(HyperlinkEvent e) {
                 try {
                     ChooseItemDialog dialog = new ChooseItemDialog(Localization.getString("RelationsDialog.Text"), null, true);
                     List<String> relations = WFEServerRelationsImporter.getInstance().loadCachedData();
                     dialog.setItems(relations);
-                    dialog.setLabelProvider(new LabelProvider());
+                    //dialog.setLabelProvider(new LabelProvider());
                     if (dialog.open() == IDialogConstants.OK_ID) {
                         relationNameText.setText((String) dialog.getSelectedItem());
                         updateSwimlane();
@@ -62,7 +59,6 @@ public class SwimlaneRelationsElement extends SwimlaneElement {
                 }
             }
         });
-
         Composite content2 = new Composite(clientArea, SWT.NONE);
         content2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         content2.setLayout(new GridLayout(2, false));
@@ -73,7 +69,6 @@ public class SwimlaneRelationsElement extends SwimlaneElement {
             combo.add(variableName);
         }
         combo.addSelectionListener(new SelectionAdapter() {
-
             @Override
             public void widgetSelected(SelectionEvent e) {
                 updateSwimlane();
@@ -116,5 +111,4 @@ public class SwimlaneRelationsElement extends SwimlaneElement {
             combo.setText(value);
         }
     }
-
 }

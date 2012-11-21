@@ -1,10 +1,7 @@
 package ru.runa.gpd.ui.dialog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -24,12 +21,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.handler.CustomizationRegistry;
+import ru.runa.gpd.handler.LocalizationRegistry;
+import ru.runa.gpd.handler.VariableFormatArtifact;
+import ru.runa.gpd.handler.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.util.LocalizationRegistry;
 import ru.runa.wfe.var.format.StringFormat;
-import ru.runa.wfe.var.format.VariableFormat;
 
 public class CreateVariableDialog extends Dialog {
     private String name;
@@ -83,29 +80,26 @@ public class CreateVariableDialog extends Dialog {
             nameField.setFocus();
             nameField.selectAll();
         }
-        final Label labelType = new Label(composite, SWT.NONE);
+        Label labelType = new Label(composite, SWT.NONE);
         labelType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         labelType.setText(Localization.getString("Variable.property.format") + ":");
-        Set<String> typeNames = CustomizationRegistry.getHandlerClasses("FORMAT");
-        List<String> typeMappingList = new ArrayList<String>();
-        final Map<String, String> reverseMapping = new HashMap<String, String>();
-        for (String typeName : typeNames) {
-            if (LocalizationRegistry.showType(typeName)) {
-                String typeMapping = LocalizationRegistry.getTypeName(typeName);
-                typeMappingList.add(typeMapping);
-                reverseMapping.put(typeMapping, typeName);
+        List<VariableFormatArtifact> artifacts = VariableFormatRegistry.getInstance().getAll();
+        List<String> formats = new ArrayList<String>();
+        for (VariableFormatArtifact artifact : artifacts) {
+            if (artifact.isEnabled()) {
+                formats.add(artifact.getDisplayName());
             }
         }
         final Combo typeCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-        typeCombo.setItems(typeMappingList.toArray(new String[typeMappingList.size()]));
+        typeCombo.setItems(formats.toArray(new String[formats.size()]));
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.minimumWidth = 200;
         typeCombo.setLayoutData(gridData);
-        typeCombo.setText(LocalizationRegistry.getTypeName(type));
+        typeCombo.setText(LocalizationRegistry.getDisplayName(type));
         typeCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                type = reverseMapping.get(typeCombo.getText());
+                type = VariableFormatRegistry.getInstance().getArtifactNotNullByDisplayName(typeCombo.getText()).getName();
                 updateButtons();
             }
         });
@@ -144,14 +138,6 @@ public class CreateVariableDialog extends Dialog {
         boolean allowCreation = !definition.getVariableNames(true).contains(name) && name.length() > 0;
         allowCreation = allowCreation || !createMode;
         allowCreation &= VariableNameChecker.isNameValid(name);
-        if (defaultValue != null && defaultValue.length() > 0) {
-            try {
-                VariableFormat format = (VariableFormat) Class.forName(type).newInstance();
-                format.parse(new String[] { defaultValue });
-            } catch (Exception e) {
-                allowCreation = false;
-            }
-        }
         getButton(IDialogConstants.OK_ID).setEnabled(allowCreation);
     }
 

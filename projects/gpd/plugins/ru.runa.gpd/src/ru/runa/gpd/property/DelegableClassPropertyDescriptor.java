@@ -15,7 +15,7 @@ public class DelegableClassPropertyDescriptor extends PropertyDescriptor {
     public DelegableClassPropertyDescriptor(Object id, String displayName, String type) {
         super(id, displayName);
         this.type = type;
-        setLabelProvider(new MappingLabelProvider());
+        setLabelProvider(new LocalizationLabelProvider());
     }
 
     @Override
