@@ -1,6 +1,5 @@
 package ru.runa.gpd.editor.gef;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef.palette.ConnectionCreationToolEntry;
@@ -13,12 +12,13 @@ import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.gef.requests.CreationFactory;
 
 import ru.runa.gpd.editor.ProcessEditorBase;
-import ru.runa.gpd.lang.GEFPaletteEntry;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
+import ru.runa.gpd.lang.model.ActionImpl;
 
 public class DesignerPaletteRoot extends PaletteRoot {
+    private static final String ACTION_IMPL_ENTRY_ID = "ActionImpl";
     private final ProcessEditorBase editor;
 
     public DesignerPaletteRoot(ProcessEditorBase editor) {
@@ -27,45 +27,35 @@ public class DesignerPaletteRoot extends PaletteRoot {
     }
 
     private void addControls() {
-        List<PaletteGroup> categories = new ArrayList<PaletteGroup>();
-        categories.add(createDefaultControls());
-        for (String name : NodeRegistry.getGEFPaletteCategories()) {
-            categories.add(createCategory(name));
-        }
-        addAll(categories);
-    }
-
-    private PaletteGroup createCategory(String categoryName) {
-        PaletteGroup controls = new PaletteGroup(categoryName);
-        controls.setId(categoryName);
-        for (NodeTypeDefinition type : NodeRegistry.getGEFPaletteEntriesFor(categoryName).values()) {
-            PaletteEntry entry = createEntry(type);
+        PaletteGroup controls = new PaletteGroup("jpdl");
+        controls.setId("jpdl");
+        int idCounter = 1;
+        for (NodeTypeDefinition type : NodeRegistry.getDefinitions()) {
+            CreationFactory factory = new GEFElementCreationFactory(type, editor.getDefinition());
+            PaletteEntry entry = null;
+            if (NodeTypeDefinition.TYPE_NODE.equals(type.getType())) {
+                entry = new CreationToolEntry(type.getLabel(), null, factory, type.getImageDescriptor(Language.JPDL.getNotation()), null);
+            }
+            if (NodeTypeDefinition.TYPE_CONNECTION.equals(type.getType())) {
+                entry = new ConnectionCreationToolEntry(type.getLabel(), null, factory, type.getImageDescriptor(Language.JPDL.getNotation()), null);
+            }
             if (entry != null) {
+                entry.setId(String.valueOf(idCounter++));
+                if (type.getModelClass() == ActionImpl.class) {
+                    entry.setId(ACTION_IMPL_ENTRY_ID);
+                }
                 controls.add(entry);
             }
         }
-        return controls;
-    }
-
-    private PaletteEntry createEntry(NodeTypeDefinition elementType) {
-        CreationFactory factory = new GEFElementCreationFactory(elementType, editor.getDefinition());
-        GEFPaletteEntry entry = elementType.getGEFPaletteEntry();
-        PaletteEntry paletteEntry = null;
-        if ("node".equals(entry.getType())) {
-            paletteEntry = new CreationToolEntry(elementType.getLabel(), null, factory, entry.getImageDescriptor(Language.JPDL.getNotation()), null);
-        }
-        if ("connection".equals(entry.getType())) {
-            paletteEntry = new ConnectionCreationToolEntry(elementType.getLabel(), null, factory, entry.getImageDescriptor(Language.JPDL.getNotation()), null);
-        }
-        paletteEntry.setId(entry.getId());
-        return paletteEntry;
+        add(createDefaultControls());
+        add(controls);
     }
 
     @SuppressWarnings("unchecked")
     public void refreshActionsVisibility() {
         for (PaletteGroup category : (List<PaletteGroup>) getChildren()) {
             for (PaletteEntry entry : (List<PaletteEntry>) category.getChildren()) {
-                if ("3.Action".equals(entry.getId())) {
+                if (ACTION_IMPL_ENTRY_ID.equals(entry.getId())) {
                     entry.setVisible(editor.getDefinition().isShowActions());
                     return;
                 }

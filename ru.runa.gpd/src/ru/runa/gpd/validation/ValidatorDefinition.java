@@ -17,15 +17,15 @@ public class ValidatorDefinition {
     public static final String GLOBAL_TYPE = "global";
     public static final String FIELD_TYPE = "field";
     private final String name;
-    private final String displayName;
+    private final String label;
     private final String type;
     private final List<String> applicable = new ArrayList<String>();
     private final String description;
     private final Map<String, Param> params = new HashMap<String, Param>();
 
-    public ValidatorDefinition(String name, String displayName, String type, String description) {
+    public ValidatorDefinition(String name, String label, String type, String description) {
         this.name = name;
-        this.displayName = displayName;
+        this.label = label;
         this.type = type;
         this.description = description;
     }
@@ -62,8 +62,8 @@ public class ValidatorDefinition {
         params.put(param.getName(), param);
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getLabel() {
+        return label;
     }
 
     public String getName() {
@@ -119,17 +119,17 @@ public class ValidatorDefinition {
         public static final String DATE_TYPE = "date";
         public static final String TIME_TYPE = "time";
         private final String name;
-        private final String displayName;
+        private final String label;
         private final String type;
 
-        public Param(String name, String displayName, String type) {
+        public Param(String name, String label, String type) {
             this.name = name;
-            this.displayName = displayName;
+            this.label = label;
             this.type = type;
         }
 
-        public String getDisplayName() {
-            return displayName;
+        public String getLabel() {
+            return label;
         }
 
         public String getName() {

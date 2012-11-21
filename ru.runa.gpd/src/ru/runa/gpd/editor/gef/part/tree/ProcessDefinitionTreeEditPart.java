@@ -23,15 +23,13 @@ public class ProcessDefinitionTreeEditPart extends ElementTreeEditPart {
     protected List<GraphElement> getModelChildren() {
         List<GraphElement> result = new ArrayList<GraphElement>();
         result.addAll(getModel().getChildren(StartState.class));
-        for (String categoryName : NodeRegistry.getGEFPaletteCategories()) {
-            for (NodeTypeDefinition type : NodeRegistry.getGEFPaletteEntriesFor(categoryName).values()) {
-                if ("start-state".equals(type.getName()) || "end-state".equals(type.getName())) {
-                    continue;
-                }
-                List<? extends GraphElement> elements = getModel().getChildren(type.getModelClass());
-                if (elements.size() > 0) {
-                    result.add(new GroupElement(getModel(), type));
-                }
+        for (NodeTypeDefinition type : NodeRegistry.getDefinitions()) {
+            if (StartState.class == type.getModelClass() || EndState.class == type.getModelClass()) {
+                continue;
+            }
+            List<? extends GraphElement> elements = getModel().getChildren(type.getModelClass());
+            if (elements.size() > 0) {
+                result.add(new GroupElement(getModel(), type));
             }
         }
         result.add(new GroupElement(getModel(), NodeRegistry.getNodeTypeDefinition(Variable.class)));

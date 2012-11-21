@@ -15,7 +15,7 @@ public class ShowGridAction extends BaseActionDelegate {
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         ProcessEditorBase editor = getActiveDesignerEditor();
-        action.setChecked(editor != null && editor.getDefinition().isShowGrid());
         action.setEnabled(editor != null);
+        action.setChecked(editor != null && editor.getDefinition().isShowGrid());
     }
 }

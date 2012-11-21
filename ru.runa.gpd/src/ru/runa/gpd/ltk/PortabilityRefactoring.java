@@ -59,7 +59,7 @@ public class PortabilityRefactoring extends Refactoring {
                 }
                 List<Action> actions = definition.getChildrenRecursive(Action.class);
                 for (Action action : actions) {
-                    cache.add(new DelegablePresentation(action, action.getDisplayName()));
+                    cache.add(new DelegablePresentation(action, action.getLabel()));
                 }
                 List<Decision> decisions = definition.getChildren(Decision.class);
                 for (Decision decision : decisions) {

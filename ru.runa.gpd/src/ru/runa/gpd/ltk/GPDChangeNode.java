@@ -5,11 +5,11 @@ import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
 import org.eclipse.swt.graphics.Image;
 
-import ru.runa.gpd.lang.GEFPaletteEntry;
+import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.GraphElement;
 
 public class GPDChangeNode extends TextEditChangeNode {
-    private final GEFPaletteEntry elementEntry;
+    private final NodeTypeDefinition definition;
     private final String notation;
     private String label;
 
@@ -17,10 +17,10 @@ public class GPDChangeNode extends TextEditChangeNode {
         super(change);
         if (element != null && element instanceof GraphElement) {
             GraphElement graphElement = (GraphElement) element;
-            elementEntry = graphElement.getTypeDefinition().getGEFPaletteEntry();
+            definition = graphElement.getTypeDefinition();
             notation = graphElement.getProcessDefinition().getLanguage().getNotation();
         } else {
-            elementEntry = null;
+            definition = null;
             notation = null;
         }
     }
@@ -32,15 +32,15 @@ public class GPDChangeNode extends TextEditChangeNode {
 
     @Override
     public ImageDescriptor getImageDescriptor() {
-        if (elementEntry != null) {
-            return elementEntry.getImageDescriptor(notation);
+        if (definition != null) {
+            return definition.getImageDescriptor(notation);
         }
         return super.getImageDescriptor();
     }
 
     public Image getImage() {
-        if (elementEntry != null) {
-            return elementEntry.getImage(notation);
+        if (definition != null) {
+            return definition.getImage(notation);
         }
         return null;
     }

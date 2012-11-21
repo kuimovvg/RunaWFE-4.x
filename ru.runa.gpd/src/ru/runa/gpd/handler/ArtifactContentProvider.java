@@ -18,7 +18,7 @@ public class ArtifactContentProvider<T extends Artifact> {
     private static final String ARTIFACT_NODE = "artifact";
     private static final String ENABLED_ATTR = "enabled";
     private static final String NAME_ATTR = "name";
-    private static final String DISPLAY_NAME_ATTR = "displayName";
+    private static final String DISPLAY_NAME_ATTR = "label";
 
     protected T createArtifact() {
         return ((T) new Artifact());
@@ -27,7 +27,7 @@ public class ArtifactContentProvider<T extends Artifact> {
     protected void loadArtifact(T artifact, Element element) {
         artifact.setEnabled(Boolean.valueOf(element.attributeValue(ENABLED_ATTR, "true")));
         artifact.setName(element.attributeValue(NAME_ATTR));
-        artifact.setDisplayName(element.attributeValue(DISPLAY_NAME_ATTR));
+        artifact.setLabel(element.attributeValue(DISPLAY_NAME_ATTR));
     }
 
     public List<T> load(InputStream is) {
@@ -46,7 +46,7 @@ public class ArtifactContentProvider<T extends Artifact> {
     protected void saveArtifact(T artifact, Element element) {
         element.addAttribute(ENABLED_ATTR, String.valueOf(artifact.isEnabled()));
         element.addAttribute(NAME_ATTR, artifact.getName());
-        element.addAttribute(DISPLAY_NAME_ATTR, artifact.getDisplayName());
+        element.addAttribute(DISPLAY_NAME_ATTR, artifact.getLabel());
     }
 
     public void save(List<T> list, OutputStream os) {

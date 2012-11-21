@@ -10,16 +10,16 @@ public class Action extends GraphElement implements Delegable {
         return HandlerArtifact.ACTION;
     }
 
-    public String getDisplayName() {
+    public String getLabel() {
         String className = getDelegationClassName();
         if (className == null || className.length() == 0) {
             className = Localization.getString("label.new");
         }
-        return LocalizationRegistry.getDisplayName(className);
+        return LocalizationRegistry.getLabel(className);
     }
 
     @Override
     public String toString() {
-        return getDisplayName();
+        return getLabel();
     }
 }

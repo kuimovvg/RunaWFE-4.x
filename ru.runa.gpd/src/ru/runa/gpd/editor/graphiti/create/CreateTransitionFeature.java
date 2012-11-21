@@ -15,10 +15,20 @@ import ru.runa.gpd.lang.model.Transition;
 
 public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
     private final NodeTypeDefinition transitionDefinition;
+    private IFeatureProvider featureProvider;
 
-    public CreateTransitionFeature(IFeatureProvider provider) {
-        super(provider, "", "");
+    public CreateTransitionFeature() {
+        super(null, "", "");
         this.transitionDefinition = NodeRegistry.getNodeTypeDefinition(Transition.class);
+    }
+
+    public void setFeatureProvider(IFeatureProvider featureProvider) {
+        this.featureProvider = featureProvider;
+    }
+
+    @Override
+    public IFeatureProvider getFeatureProvider() {
+        return featureProvider;
     }
 
     @Override
@@ -28,7 +38,7 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
 
     @Override
     public String getCreateImageId() {
-        return transitionDefinition.getGEFPaletteEntry().getImageName();
+        return transitionDefinition.getPaletteIcon();
     }
 
     @Override

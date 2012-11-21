@@ -10,7 +10,7 @@ public class DiagramImageProvider extends AbstractExtension implements IImagePro
     public void setPluginId(String pluginId) {
         this.pluginId = pluginId;
     }
-    
+
     @Override
     public String getPluginId() {
         return pluginId;
@@ -18,8 +18,6 @@ public class DiagramImageProvider extends AbstractExtension implements IImagePro
 
     @Override
     public String getImageFilePath(String imageId) {
-        return "icons/bpmn/palette/" + imageId;
+        return "icons/bpmn/" + imageId;
     }
-    
-    
 }

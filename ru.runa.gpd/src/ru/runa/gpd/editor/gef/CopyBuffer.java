@@ -76,7 +76,7 @@ public class CopyBuffer {
             return name;
         }
 
-        public String getDisplayName() {
+        public String getLabel() {
             return groupName + ": " + name;
         }
 
@@ -112,7 +112,7 @@ public class CopyBuffer {
 		
 		@Override
 		public String toString() {
-		    return getDisplayName();
+		    return getLabel();
 		}
 	}
 }

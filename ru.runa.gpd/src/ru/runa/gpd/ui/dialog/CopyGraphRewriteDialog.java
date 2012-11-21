@@ -53,7 +53,7 @@ public class CopyGraphRewriteDialog extends Dialog {
 
         for (ExtraCopyAction copyAction : actions) {
             final Button button = new Button(clientArea, SWT.CHECK);
-            button.setText(copyAction.getDisplayName());
+            button.setText(copyAction.getLabel());
             button.setSelection(copyAction.isEnabled());
             button.setData(copyAction);
             button.addSelectionListener(new SelectionAdapter() {

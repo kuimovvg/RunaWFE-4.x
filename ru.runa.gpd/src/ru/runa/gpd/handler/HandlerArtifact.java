@@ -14,8 +14,8 @@ public class HandlerArtifact extends Artifact {
         super(artifact);
     }
 
-    public HandlerArtifact(boolean enabled, String name, String displayName, String type, String configurerClassName) {
-        super(enabled, name, displayName);
+    public HandlerArtifact(boolean enabled, String name, String label, String type, String configurerClassName) {
+        super(enabled, name, label);
         setType(type);
         setConfigurerClassName(configurerClassName);
     }

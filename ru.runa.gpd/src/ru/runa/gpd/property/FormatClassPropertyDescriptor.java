@@ -12,11 +12,10 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.CreateVariableDialog;
 
 public class FormatClassPropertyDescriptor extends PropertyDescriptor {
-
     private final Variable variable;
 
-    public FormatClassPropertyDescriptor(Object id, String displayName, Variable variable) {
-        super(id, displayName);
+    public FormatClassPropertyDescriptor(Object id, String label, Variable variable) {
+        super(id, label);
         this.variable = variable;
         setLabelProvider(new LocalizationLabelProvider());
     }
@@ -27,7 +26,6 @@ public class FormatClassPropertyDescriptor extends PropertyDescriptor {
     }
 
     private class ChooseClassDialogCellEditor extends DialogCellEditor {
-
         public ChooseClassDialogCellEditor(Composite parent) {
             super(parent, SWT.NONE);
         }
@@ -39,7 +37,6 @@ public class FormatClassPropertyDescriptor extends PropertyDescriptor {
                 return dialog.getType();
             }
             return null;
-
         }
 
         @Override

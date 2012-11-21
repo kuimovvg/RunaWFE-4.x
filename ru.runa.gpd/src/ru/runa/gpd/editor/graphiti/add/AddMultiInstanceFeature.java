@@ -1,6 +1,6 @@
 package ru.runa.gpd.editor.graphiti.add;
 
-import org.eclipse.graphiti.features.IFeatureProvider;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
@@ -16,9 +16,10 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import ru.runa.gpd.editor.graphiti.StyleUtil;
 import ru.runa.gpd.lang.model.MultiInstance;
 
-public class AddMultiInstanceFeature extends AbstractAddNodeFeature {
-    public AddMultiInstanceFeature(IFeatureProvider provider) {
-        super(provider);
+public class AddMultiInstanceFeature extends AddNodeFeature {
+    @Override
+    public Dimension getDefaultSize() {
+        return new Dimension(10 * GRID_SIZE, 6 * GRID_SIZE);
     }
 
     @Override

@@ -2,15 +2,10 @@ package ru.runa.gpd.editor.graphiti.create;
 
 import org.eclipse.graphiti.features.context.ICreateContext;
 
-import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.Subprocess;
 
-public class CreateStartNodeFeature extends AbstractCreateNodeFeature {
-    public CreateStartNodeFeature(DiagramFeatureProvider provider) {
-        super(provider, StartState.class);
-    }
-
+public class CreateStartNodeFeature extends CreateNodeFeature {
     @Override
     public boolean canCreate(ICreateContext context) {
         Object parentObject = getBusinessObjectForPictogramElement(context.getTargetContainer());

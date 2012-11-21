@@ -43,8 +43,8 @@ public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition
             for (IConfigurationElement configElement : configElements) {
                 try {
                     String className = configElement.getAttribute("className");
-                    String displayName = configElement.getAttribute("displayName");
-                    OrgFunctionDefinition orgFunctionDefinition = new OrgFunctionDefinition(className, displayName);
+                    String label = configElement.getAttribute("label");
+                    OrgFunctionDefinition orgFunctionDefinition = new OrgFunctionDefinition(className, label);
                     IConfigurationElement[] parameterElements = configElement.getChildren();
                     for (IConfigurationElement paramElement : parameterElements) {
                         OrgFunctionParameter orgFunctionParameter = new OrgFunctionParameter(paramElement.getAttribute("name"), paramElement.getAttribute("type"),
