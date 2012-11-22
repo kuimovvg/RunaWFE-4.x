@@ -29,6 +29,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -52,14 +54,17 @@ import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Node;
+import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.task.Task;
 
 import com.google.common.collect.Lists;
 
 /**
- * represents one path of execution and maintains a pointer to a node in the {@link ru.runa.wfe.lang.ProcessDefinition}.
+ * represents one path of execution and maintains a pointer to a node in the
+ * {@link ru.runa.wfe.lang.ProcessDefinition}.
  */
 @Entity
 @Table(name = "BPM_TOKEN")
@@ -77,6 +82,7 @@ public class Token implements Serializable {
     private boolean ableToReactivateParent;
 
     private String nodeId;
+    private NodeType nodeType;
     private String transitionId;
 
     public Token() {
@@ -88,9 +94,11 @@ public class Token implements Serializable {
     public Token(ProcessDefinition processDefinition, Process process) {
         setStartDate(new Date());
         setProcess(process);
-        setNodeId(processDefinition.getStartStateNotNull().getNodeId());
+        StartState startState = processDefinition.getStartStateNotNull();
+        setNodeId(startState.getNodeId());
+        setNodeType(startState.getNodeType());
         setAbleToReactivateParent(true);
-        setName("/");
+        setName("");
         setChildren(new HashSet<Token>());
     }
 
@@ -102,6 +110,7 @@ public class Token implements Serializable {
         setProcess(parent.getProcess());
         setName(parent.getName() + "/" + name);
         setNodeId(parent.getNodeId());
+        setNodeType(parent.getNodeType());
         setTransitionId(parent.getTransitionId());
         setAbleToReactivateParent(true);
         setParent(parent);
@@ -149,6 +158,16 @@ public class Token implements Serializable {
         this.nodeId = nodeId;
     }
 
+    @Column(name = "NODE_TYPE")
+    @Enumerated(EnumType.STRING)
+    public NodeType getNodeType() {
+        return nodeType;
+    }
+
+    public void setNodeType(NodeType nodeType) {
+        this.nodeType = nodeType;
+    }
+
     @Column(name = "TRANSITION_ID")
     public String getTransitionId() {
         return transitionId;
@@ -164,7 +183,7 @@ public class Token implements Serializable {
     }
 
     public void setStartDate(Date start) {
-        this.startDate = start;
+        startDate = start;
     }
 
     @Column(name = "END_DATE")
@@ -173,7 +192,7 @@ public class Token implements Serializable {
     }
 
     public void setEndDate(Date end) {
-        this.endDate = end;
+        endDate = end;
     }
 
     @ManyToOne(targetEntity = Process.class)
@@ -249,8 +268,9 @@ public class Token implements Serializable {
     }
 
     /**
-     * ends this token and all of its children (if any). this is the last active (=not-ended) child of a parent token, the parent token will be ended as well and that verification
-     * will continue to propagate.
+     * ends this token and all of its children (if any). this is the last active
+     * (=not-ended) child of a parent token, the parent token will be ended as
+     * well and that verification will continue to propagate.
      */
     public void end(ExecutionContext executionContext) {
         end(executionContext, true);
@@ -260,8 +280,11 @@ public class Token implements Serializable {
      * ends this token with optional parent ending verification.
      * 
      * @param verifyParentTermination
-     *            specifies if the parent token should be checked for termination. if verifyParentTermination is set to true and this is the last non-ended child of a parent token,
-     *            the parent token will be ended as well and the verification will continue to propagate.
+     *            specifies if the parent token should be checked for
+     *            termination. if verifyParentTermination is set to true and
+     *            this is the last non-ended child of a parent token, the parent
+     *            token will be ended as well and the verification will continue
+     *            to propagate.
      */
     public void end(ExecutionContext executionContext, boolean verifyParentTermination) {
         // if not already ended
@@ -271,7 +294,7 @@ public class Token implements Serializable {
             // set the end date
             // the end date is also the flag that indicates that this token has
             // ended.
-            this.endDate = new Date();
+            endDate = new Date();
             // end all this token's children
             for (Token child : children) {
                 if (!child.hasEnded()) {
@@ -281,7 +304,8 @@ public class Token implements Serializable {
             for (Process subProcess : executionContext.getChildProcesses()) {
                 subProcess.end(executionContext);
             }
-            // if there are tasks associated to this token, remove signaling capabilities
+            // if there are tasks associated to this token, remove signaling
+            // capabilities
             process.removeActiveTasks(this);
             if (verifyParentTermination) {
                 // if this is the last active token of the parent,

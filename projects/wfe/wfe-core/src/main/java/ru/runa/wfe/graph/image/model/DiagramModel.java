@@ -37,6 +37,7 @@ public class DiagramModel {
     private int width;
     private boolean showActions;
     private String notation;
+    private String rendered;
     private final Map<String, NodeModel> nodes = Maps.newHashMap();
 
     private DiagramModel() {
@@ -66,6 +67,11 @@ public class DiagramModel {
         return "uml".equals(notation);
     }
 
+    public boolean isGraphiti() {
+        return "graphiti".equals(rendered);
+    }
+
+    @SuppressWarnings("unchecked")
     public static DiagramModel load(byte[] gpdBytes) throws Exception {
         DiagramModel diagramModel = new DiagramModel();
         Document document = XmlUtils.parseWithoutValidation(gpdBytes);
@@ -73,17 +79,18 @@ public class DiagramModel {
         diagramModel.width = Integer.parseInt(root.attributeValue("width"));
         diagramModel.height = Integer.parseInt(root.attributeValue("height"));
         diagramModel.notation = root.attributeValue("notation", "uml");
+        diagramModel.rendered = root.attributeValue("rendered", "gef");
         diagramModel.showActions = Boolean.parseBoolean(root.attributeValue("showActions", "true"));
         List<Element> nodeElements = root.elements(NODE_ELEMENT);
         for (Element nodeElement : nodeElements) {
             NodeModel nodeModel = new NodeModel();
-            nodeModel.setName(nodeElement.attributeValue("name"));
+            nodeModel.setNodeId(nodeElement.attributeValue("name"));
             nodeModel.setX(Integer.parseInt(nodeElement.attributeValue("x")));
             nodeModel.setY(Integer.parseInt(nodeElement.attributeValue("y")));
             nodeModel.setMinimizedView(Boolean.parseBoolean(nodeElement.attributeValue("minimizedView", "false")));
             nodeModel.setWidth(Integer.parseInt(nodeElement.attributeValue("width")));
             nodeModel.setHeight(Integer.parseInt(nodeElement.attributeValue("height")));
-            diagramModel.nodes.put(nodeModel.getName(), nodeModel);
+            diagramModel.nodes.put(nodeModel.getNodeId(), nodeModel);
             List<Element> transitionElements = nodeElement.elements(TRANSITION_ELEMENT);
             for (Element transitionElement : transitionElements) {
                 TransitionModel transitionModel = new TransitionModel();

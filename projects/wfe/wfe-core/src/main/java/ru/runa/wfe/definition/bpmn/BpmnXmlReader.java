@@ -8,6 +8,7 @@ import java.util.Map;
 import org.dom4j.CDATA;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.dom4j.QName;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +18,27 @@ import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
+import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EndNode;
+import ru.runa.wfe.lang.Fork;
 import ru.runa.wfe.lang.InteractionNode;
+import ru.runa.wfe.lang.MultiProcessState;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.ReceiveMessage;
+import ru.runa.wfe.lang.SendMessage;
 import ru.runa.wfe.lang.StartState;
+import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
+import ru.runa.wfe.lang.VariableContainerNode;
+import ru.runa.wfe.lang.bpmn2.Join;
+import ru.runa.wfe.var.VariableMapping;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings({ "unchecked" })
@@ -43,46 +54,65 @@ public class BpmnXmlReader {
         nodeTypes.put("startEvent", StartState.class);
         nodeTypes.put("userTask", TaskNode.class);
         nodeTypes.put("endEvent", EndNode.class);
+
+        // nodeTypes.put("wait-state", WaitState.class);
+        nodeTypes.put("forkGateway", Fork.class);
+        nodeTypes.put("joinGateway", Join.class);
+        nodeTypes.put("exclusiveGateway", Decision.class);
+        nodeTypes.put("subProcess", SubProcessState.class);
+        nodeTypes.put("multiProcess", MultiProcessState.class);
+        nodeTypes.put("sendTask", SendMessage.class);
+        nodeTypes.put("receiveTask", ReceiveMessage.class);
     }
 
     public BpmnXmlReader(Document document) {
         this.document = document;
     }
 
-    private static final String INVALID_ATTR = "invalid";
-    private static final String ACCESS_ATTR = "access";
-    private static final String VARIABLE_NODE = "variable";
+    private static final String RUNA_PREFIX = "runa";
+    private static final String RUNA_NAMESPACE = "http://runa.ru/wfe/xml";
     private static final String SUB_PROCESS_NODE = "sub-process";
-    private static final String MAPPED_NAME_ATTR = "mapped-name";
-    private static final String DECISION_NODE = "decision";
-    private static final String DUEDATE_ATTR = "duedate";
-    private static final String REPEAT_ATTR = "repeat";
-    private static final String TIMER_NODE = "timer";
-    private static final String ASSIGNMENT_NODE = "assignment";
-    private static final String ID_ATTR = "id";
-    private static final String SWIMLANE_ATTR = "swimlane";
-    private static final String TRANSITION_ATTR = "transition";
-    private static final String TASK_NODE = "task";
-    private static final String SWIMLANE_NODE = "swimlane";
-    private static final String REASSIGN_ATTR = "reassign";
-    private static final String CLASS_ATTR = "class";
-    private static final String EVENT_NODE = "event";
+    private static final String ROOT_ELEMENT = "definitions";
+    private static final String PROCESS_ELEMENT = "process";
+    private static final String EXTENSION_ELEMENT = "extensionElements";
+    private static final String INVALID_ATTR = "invalid";
+    private static final String ACCESS_ATTR = "access";//
+    private static final String VARIABLE_NODE = "variable";//
+    private static final String MAPPED_NAME_ATTR = "mapped-name";//
+    private static final String DUEDATE_ATTR = "duedate";//
+    private static final String DEFAULT_DUEDATE_ATTR = "default-task-duedate";//
+    private static final String REPEAT_ATTR = "repeat";//
+    private static final String TIMER_NODE = "timer";//
+    private static final String ASSIGNMENT_NODE = "assignment";//
+    private static final String SWIMLANE_NODE = "swimlane";//
+    private static final String REASSIGN_ATTR = "reassign";//
+    private static final String CLASS_ATTR = "class";//
+    private static final String ACTION_NODE = "action";//
+    private static final String EVENT_NODE = "event";//
     private static final String TRANSITION_NODE = "sequenceFlow";
     private static final String TRANSITION_FROM_ATTR = "sourceRef";
     private static final String TRANSITION_TO_ATTR = "targetRef";
-    private static final String HANDLER_NODE = "handler";
-    private static final String DESCRIPTION_NODE = "documentation";
+    private static final String HANDLER_NODE = "handler";//
+    private static final String DOCUMENTATION_NODE = "documentation";
     private static final String NAME_ATTR = "name";
     private static final String TYPE_ATTR = "type";
+    private static final String ID_ATTR = "id";
+    private static final String SWIMLANE_ATTR = "swimlane";
+    private static final String TRANSITION_ATTR = "transition";//
+    private static final String TIMER_GLOBAL_NAME = "__GLOBAL";//
+    private static final String TIMER_ESCALATION = "__ESCALATION";//
 
     public ProcessDefinition readProcessDefinition(ProcessDefinition processDefinition) {
         try {
             Element root = document.getRootElement();
-            Element process = root.element("process");
+            Element process = root.element(PROCESS_ELEMENT);
 
             // read the process name
+            if ("true".equals(process.attributeValue(INVALID_ATTR))) {
+                throw new InvalidDefinitionException("invalid process definition");
+            }
             processDefinition.setName(process.attributeValue(NAME_ATTR));
-            processDefinition.setDescription(process.elementTextTrim(DESCRIPTION_NODE));
+            processDefinition.setDescription(process.elementTextTrim(DOCUMENTATION_NODE));
 
             // 1: read most content
             readSwimlanes(processDefinition, process);
@@ -149,7 +179,7 @@ public class BpmnXmlReader {
             Node target = processDefinition.getNodeNotNull(to);
             transition.setTo(target);
             transition.setName(name);
-            transition.setDescription(element.elementTextTrim(DESCRIPTION_NODE));
+            transition.setDescription(element.elementTextTrim(DOCUMENTATION_NODE));
             transition.setProcessDefinition(processDefinition);
             // add the transition to the node
             source.addLeavingTransition(transition);
@@ -200,7 +230,7 @@ public class BpmnXmlReader {
         // readEvents(processDefinition, element, taskDefinition);
         node.addTask(taskDefinition);
         // assignment
-        String swimlaneName = element.attributeValue(SWIMLANE_ATTR);
+        String swimlaneName = element.attributeValue(QName.get(SWIMLANE_ATTR, RUNA_NAMESPACE));
         SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlaneNotNull(swimlaneName);
         taskDefinition.setSwimlane(swimlaneDefinition);
         String reassign = element.attributeValue(REASSIGN_ATTR);
@@ -210,34 +240,28 @@ public class BpmnXmlReader {
         }
     }
 
-    // private List<VariableMapping> readVariableMappings(Element parentElement)
-    // {
-    // List<VariableMapping> variableAccesses = Lists.newArrayList();
-    // List<Element> elements = parentElement.elements(VARIABLE_NODE);
-    // for (Element element : elements) {
-    // String variableName = element.attributeValue(NAME_ATTR);
-    // if (variableName == null) {
-    // throw new
-    // InvalidDefinitionException("the name attribute of a variable element is required: "
-    // + element.asXML());
-    // }
-    // String mappedName = element.attributeValue(MAPPED_NAME_ATTR);
-    // if (mappedName == null) {
-    // throw new
-    // InvalidDefinitionException("the mapped-name attribute of a variable element is required: "
-    // + element.asXML());
-    // }
-    // String access = element.attributeValue(ACCESS_ATTR, "read,write");
-    // variableAccesses.add(new VariableMapping(variableName, mappedName,
-    // access));
-    // }
-    // return variableAccesses;
-    // }
+    private List<VariableMapping> readVariableMappings(Element parentElement) {
+        List<VariableMapping> variableAccesses = Lists.newArrayList();
+        List<Element> elements = parentElement.elements(VARIABLE_NODE);
+        for (Element element : elements) {
+            String variableName = element.attributeValue(NAME_ATTR);
+            if (variableName == null) {
+                throw new InvalidDefinitionException("the name attribute of a variable element is required: " + element.asXML());
+            }
+            String mappedName = element.attributeValue(MAPPED_NAME_ATTR);
+            if (mappedName == null) {
+                throw new InvalidDefinitionException("the mapped-name attribute of a variable element is required: " + element.asXML());
+            }
+            String access = element.attributeValue(ACCESS_ATTR, "read,write");
+            variableAccesses.add(new VariableMapping(variableName, mappedName, access));
+        }
+        return variableAccesses;
+    }
 
     private void readNode(ProcessDefinition processDefinition, Element element, Node node) throws Exception {
         node.setNodeId(element.attributeValue(ID_ATTR));
         node.setName(element.attributeValue(NAME_ATTR));
-        node.setDescription(element.elementTextTrim(DESCRIPTION_NODE));
+        node.setDescription(element.elementTextTrim(DOCUMENTATION_NODE));
         processDefinition.addNode(node);
         // readEvents(processDefinition, element, node);
         // readNodeTimers(processDefinition, element, node);
@@ -255,6 +279,25 @@ public class BpmnXmlReader {
             taskNode.setSignal(TaskNode.parseSignal(element.attributeValue("signal", "first")));
             taskNode.setEndTasks(Boolean.valueOf(element.attributeValue("end-tasks", "true")));
             readTask(processDefinition, element, taskNode);
+        }
+        if (node instanceof VariableContainerNode) {
+            VariableContainerNode variableContainerNode = (VariableContainerNode) node;
+            variableContainerNode.setVariableMappings(readVariableMappings(element));
+        }
+        if (node instanceof SubProcessState) {
+            SubProcessState subProcessState = (SubProcessState) node;
+            Element subProcessElement = element.element(SUB_PROCESS_NODE);
+            if (subProcessElement != null) {
+                subProcessState.setSubProcessName(subProcessElement.attributeValue(NAME_ATTR));
+            }
+        }
+        if (node instanceof Decision) {
+            Decision decision = (Decision) node;
+            Element decisionHandlerElement = element.element(HANDLER_NODE);
+            if (decisionHandlerElement == null) {
+                throw new InvalidDefinitionException("No handler in decision found: " + node);
+            }
+            decision.setDelegation(readDelegation(processDefinition, decisionHandlerElement));
         }
     }
 
