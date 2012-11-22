@@ -106,8 +106,11 @@ public abstract class GenericDAO<T extends Object> extends CommonDAO {
 
     /**
      * Updates entity.
+     * 
+     * @param entity
+     *            detached entity
      */
-    public void update(T entity) {
+    public void merge(T entity) {
         getHibernateTemplate().merge(entity);
     }
 

@@ -69,7 +69,7 @@ public class BotLogic extends CommonLogic {
         if (botStationToCheck != null && !Objects.equal(botStationToCheck.getId(), botStation.getId())) {
             throw new BotStationAlreadyExistsException(botStation.getName());
         }
-        botStationDAO.update(botStation);
+        botStationDAO.merge(botStation);
     }
 
     public BotStation getBotStationNotNull(Long id) throws AuthorizationException, BotStationDoesNotExistException {
@@ -132,7 +132,7 @@ public class BotLogic extends CommonLogic {
         if (botToCheck != null && !Objects.equal(botToCheck.getId(), bot.getId())) {
             throw new BotAlreadyExistsException(bot.getUsername());
         }
-        botDAO.update(bot);
+        botDAO.merge(bot);
     }
 
     public void removeBot(Subject subject, Long id) throws AuthorizationException, BotDoesNotExistException {
@@ -187,7 +187,7 @@ public class BotLogic extends CommonLogic {
             BotTask botTaskFromDB = getBotTaskNotNull(subject, botTask.getId());
             botTask.setConfiguration(botTaskFromDB.getConfiguration());
         }
-        botTaskDAO.update(botTask);
+        botTaskDAO.merge(botTask);
     }
 
     public void removeBotTask(Subject subject, Long id) throws AuthorizationException, BotTaskDoesNotExistException {

@@ -75,7 +75,7 @@ public class GraphImageBuilder {
 
     public byte[] createDiagram(Process process, List<Transition> passedTransitions) throws Exception {
         DiagramModel diagramModel = DiagramModel.load(processDefinition.getFileDataNotNull(IFileDataProvider.GPD_XML_FILE_NAME));
-        FigureFactory factory = new FigureFactory(!diagramModel.isUmlNotation());
+        FigureFactory factory = new FigureFactory(!diagramModel.isUmlNotation(), diagramModel.isGraphiti());
         // Create all nodes
         for (Node node : processDefinition.getNodes()) {
             NodeModel nodeModel = diagramModel.getNode(node.getNodeId());
@@ -83,10 +83,12 @@ public class GraphImageBuilder {
                 nodeModel.setActionsCount(getNodeActionsCount(node));
             }
             setTypeToNode(node, nodeModel);
+            // nodeModel contains only id
+            nodeModel.setName(node.getName());
             setSwimlaneToNode(node, nodeModel);
-            allNodes.put(nodeModel.getName(), nodeModel);
+            allNodes.put(nodeModel.getNodeId(), nodeModel);
             AbstractFigure nodeFigure = factory.createFigure(nodeModel);
-            allNodeFigures.put(nodeModel.getName(), nodeFigure);
+            allNodeFigures.put(nodeModel.getNodeId(), nodeFigure);
         }
         for (Node node : processDefinition.getNodes()) {
             NodeModel nodeModel = allNodes.get(node.getNodeId());

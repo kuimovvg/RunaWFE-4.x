@@ -101,7 +101,7 @@ public class DefinitionLogic extends WFCommonLogic {
         if (processArchiveBytes == null) {
             // update only categories
             deployedDefinition.getDBImpl().setCategories(processType);
-            deploymentDAO.update(deployedDefinition.getDBImpl());
+            // TODO merge deploymentDAO.update(deployedDefinition.getDBImpl());
             return new WfDefinition(deployedDefinition);
         }
         ProcessDefinition definition = parseProcessDefinition(processArchiveBytes);
@@ -162,9 +162,13 @@ public class DefinitionLogic extends WFCommonLogic {
         List<Number> latestDefinitions = new BatchPresentationHibernateCompiler(batchPresentation).getIdentities(null, null, false);
         List<WfDefinition> result = Lists.newArrayListWithExpectedSize(latestDefinitions.size());
         for (Number definitionId : latestDefinitions) {
-            ProcessDefinition processDefinition = getDefinition(definitionId.longValue());
-            if (isPermissionAllowed(subject, processDefinition, Permission.READ)) {
-                result.add(new WfDefinition(processDefinition));
+            try {
+                ProcessDefinition processDefinition = getDefinition(definitionId.longValue());
+                if (isPermissionAllowed(subject, processDefinition, Permission.READ)) {
+                    result.add(new WfDefinition(processDefinition));
+                }
+            } catch (Exception e) {
+                log.error("Unable to parse process definition by id " + definitionId, e);
             }
         }
         return result;

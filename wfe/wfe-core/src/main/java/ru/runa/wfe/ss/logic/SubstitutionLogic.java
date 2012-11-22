@@ -107,7 +107,7 @@ public class SubstitutionLogic extends CommonLogic {
         for (Substitution existing : substitutions) {
             if (existing.getPosition() >= position) {
                 existing.setPosition(existing.getPosition() + 1);
-                substitutionDAO.update(existing);
+                // TODO merge substitutionDAO.update(existing);
             }
         }
         substitutionDAO.create(substitution);
@@ -144,7 +144,7 @@ public class SubstitutionLogic extends CommonLogic {
             Substitution substitution = actorSubstitutions.get(i);
             if (substitution.getPosition() != i) {
                 substitution.setPosition(i);
-                substitutionDAO.update(substitution);
+                // TODO merge substitutionDAO.update(substitution);
             }
         }
     }
@@ -170,8 +170,8 @@ public class SubstitutionLogic extends CommonLogic {
         substitutions.get(0).setPosition(substitutions.get(1).getPosition());
         substitutions.get(1).setId(null);
         substitutions.get(1).setPosition(pos0);
-        substitutionDAO.update(substitutions.get(0));
-        substitutionDAO.update(substitutions.get(1));
+        // TODO merge substitutionDAO.update(substitutions.get(0));
+        // TODO merge substitutionDAO.update(substitutions.get(1));
     }
 
     public void create(Subject subject, Substitution substitution) {

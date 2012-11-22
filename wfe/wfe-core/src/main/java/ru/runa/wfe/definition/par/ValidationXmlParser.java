@@ -20,7 +20,7 @@ public class ValidationXmlParser {
     private final static String TYPE_ATTRIBUTE_NAME = "type";
     private final static String REQUIRED_VALIDATOR_NAME = "required";
 
-    public static List<String> readVariableNames(byte[] xmlFileBytes) {
+    public static List<String> readVariableNames(String fileName, byte[] xmlFileBytes) {
         try {
             Document document = XMLHelper.getDocumentWithoutValidation(new ByteArrayInputStream(xmlFileBytes));
             NodeList fieldElementsList = document.getElementsByTagName(FIELD_ELEMENT_NAME);
@@ -33,7 +33,7 @@ public class ValidationXmlParser {
             }
             return varNames;
         } catch (Exception e) {
-            throw new InvalidDefinitionException("${form}.validation.xml", e);
+            throw new InvalidDefinitionException("Error in " + fileName, e);
         }
     }
 

@@ -31,6 +31,7 @@ public class TaskFigure extends AbstractFigure {
     private static final Color BORDER_COLOR = Color.BLUE;
     private final boolean drawTimer;
     private boolean minimized = false;
+    private boolean graphiti = false;
 
     public TaskFigure(boolean drawTimer) {
         this.drawTimer = drawTimer;
@@ -38,6 +39,10 @@ public class TaskFigure extends AbstractFigure {
 
     public void setMinimized(boolean minimized) {
         this.minimized = minimized;
+    }
+
+    public void setGraphiti(boolean graphiti) {
+        this.graphiti = graphiti;
     }
 
     @Override
@@ -108,7 +113,8 @@ public class TaskFigure extends AbstractFigure {
                 Point loc = ActionUtils.getActionLocationOnNode(i, getCoordsFromRectangle(getTextBoundsRectangle()), false);
                 graphics.setColor(DrawProperties.getBackgroundColor());
                 loc.translate(-1, -1);
-                // graphics.fillOval(loc.x, loc.y, ActionUtils.ACTION_SIZE-1, ActionUtils.ACTION_SIZE-1);
+                // graphics.fillOval(loc.x, loc.y, ActionUtils.ACTION_SIZE-1,
+                // ActionUtils.ACTION_SIZE-1);
                 if (failedActions.contains(i)) {
                     graphics.setColor(Color.RED);
                     graphics.drawString("x", loc.x + 3, loc.y + 3);
@@ -137,6 +143,9 @@ public class TaskFigure extends AbstractFigure {
         if (minimized) {
             return new Rectangle(coords[0] + DrawProperties.GRID_SIZE / 2, coords[1] + DrawProperties.GRID_SIZE / 2, coords[2]
                     - DrawProperties.GRID_SIZE, coords[3] - DrawProperties.GRID_SIZE);
+        }
+        if (graphiti) {
+            return super.getRectangle();
         }
         return new Rectangle(coords[0] + DrawProperties.GRID_SIZE, coords[1], coords[2] - DrawProperties.GRID_SIZE, coords[3]
                 - DrawProperties.GRID_SIZE);

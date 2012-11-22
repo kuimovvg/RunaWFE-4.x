@@ -45,7 +45,7 @@ public class BatchPresentationFactory {
     public static final BatchPresentationFactory RELATION_GROUPS = new BatchPresentationFactory(RelationGroupClassPresentation.class);
     public static final BatchPresentationFactory RELATIONS = new BatchPresentationFactory(RelationClassPresentation.class);
     public static final BatchPresentationFactory SYSTEM_LOGS = new BatchPresentationFactory(SystemLogClassPresentation.class);
-    public static final BatchPresentationFactory PROCESSES = new BatchPresentationFactory(ProcessClassPresentation.class);
+    public static final BatchPresentationFactory PROCESSES = new BatchPresentationFactory(ProcessClassPresentation.class, 100);
     public static final BatchPresentationFactory DEFINITIONS = new BatchPresentationFactory(DefinitionClassPresentation.class);
     public static final BatchPresentationFactory TASKS = new BatchPresentationFactory(TaskClassPresentation.class);
 

@@ -36,6 +36,7 @@ public class NodeModel {
     public static final int SEND_MESSAGE = 10;
     public static final int RECEIVE_MESSAGE = 11;
 
+    private String nodeId;
     private String name;
     private String swimlane;
     private int type;
@@ -82,6 +83,14 @@ public class NodeModel {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
     }
 
     public String getName() {
