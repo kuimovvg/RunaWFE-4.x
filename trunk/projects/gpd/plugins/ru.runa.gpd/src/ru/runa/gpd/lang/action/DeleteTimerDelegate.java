@@ -4,10 +4,10 @@ import org.eclipse.jface.action.IAction;
 
 import ru.runa.gpd.lang.model.ITimed;
 
-public class AddTimerDelegate extends BaseModelActionDelegate {
+public class DeleteTimerDelegate extends BaseModelActionDelegate {
     @Override
     public void run(IAction action) {
         ITimed timed = (ITimed) getSelection();
-        timed.createTimer();
+        timed.removeTimer();
     }
 }

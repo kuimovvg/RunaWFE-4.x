@@ -16,9 +16,25 @@ import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.util.TimerDuration;
 import ru.runa.wfe.handler.action.EscalationActionHandler;
 
+import com.google.common.base.Objects;
+
 public class TaskState extends State {
     private TimerAction timerAction = null;
     private TimerAction escalationAction = null;
+    private boolean ignoreSubstitution;
+    private boolean useEscalation = false;
+    private TimerDuration escalationTime = null;
+
+    @Override
+    public boolean testAttribute(Object target, String name, String value) {
+        if (super.testAttribute(target, name, value)) {
+            return true;
+        }
+        if ("escalationEnabled".equals(name)) {
+            return Objects.equal(value, String.valueOf(isUseEscalation()));
+        }
+        return false;
+    }
 
     public TimerAction getEscalationAction() {
         return escalationAction;
@@ -27,11 +43,6 @@ public class TaskState extends State {
     public void setEscalationAction(TimerAction escalationAction) {
         this.escalationAction = escalationAction;
     }
-
-    //private TimerAction timeOutAction = null;
-    private boolean ignoreSubstitution;
-    private boolean useEscalation = false;
-    private TimerDuration escalationTime = null;
 
     public TimerDuration getEscalationTime() {
         return escalationTime;

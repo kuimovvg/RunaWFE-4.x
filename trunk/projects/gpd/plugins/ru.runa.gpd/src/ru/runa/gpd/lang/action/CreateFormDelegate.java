@@ -8,17 +8,16 @@ import org.eclipse.ui.PlatformUI;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.FormNodeSetFileCommand;
-import ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.ui.dialog.ChooseFormTypeDialog;
 import ru.runa.gpd.util.IOUtils;
 
-public class CreateFormDelegate extends BaseActionDelegate {
+public class CreateFormDelegate extends BaseModelActionDelegate {
     @Override
     public void run(IAction action) {
         try {
-            FormNode formNode = ((FormNodeEditPart) selectedPart).getModel();
+            FormNode formNode = getSelection();
             ChooseFormTypeDialog chooseFormTypeDialog = new ChooseFormTypeDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell());
             if (chooseFormTypeDialog.open() != Window.OK) {
                 return;
@@ -41,8 +40,7 @@ public class CreateFormDelegate extends BaseActionDelegate {
             } else {
                 openFormEditorDelegate = new OpenVisualFormEditorDelegate();
             }
-            openFormEditorDelegate.targetPart = targetPart;
-            openFormEditorDelegate.selectedPart = selectedPart;
+            initModelActionDelegate(openFormEditorDelegate);
             openFormEditorDelegate.run(action);
         } catch (CoreException e) {
             PluginLogger.logError(e);

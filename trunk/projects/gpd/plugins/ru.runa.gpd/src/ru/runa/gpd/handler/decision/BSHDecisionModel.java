@@ -195,7 +195,7 @@ public class BSHDecisionModel {
         }
 
         public String generateCode() {
-            return "if ( " + operation.generateCode(variable, lexem2) + " ) {\n\treturn \"" + transition + "\";\n}\n";
+            return "if ( " + operation.generateCode(variable, lexem2) + " ) {\n\treturn \"" + transition + "\";\n};\n";
         }
 
         public Variable getVariable1() {

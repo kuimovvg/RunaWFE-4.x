@@ -9,7 +9,6 @@ import org.eclipse.gef.EditPolicy;
 import ru.runa.gpd.editor.gef.figure.TimerStateFigure;
 import ru.runa.gpd.editor.gef.policy.ActiveLayoutEditPolicy;
 import ru.runa.gpd.lang.model.State;
-import ru.runa.gpd.lang.model.TaskState;
 
 public class StateGraphicalEditPart extends FormNodeEditPart implements ActionsHost {
     @Override
@@ -39,34 +38,6 @@ public class StateGraphicalEditPart extends FormNodeEditPart implements ActionsH
     protected void createEditPolicies() {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.LAYOUT_ROLE, new ActiveLayoutEditPolicy());
-    }
-
-    @Override
-    public boolean testAttribute(Object target, String name, String value) {
-        if ("timerExists".equals(name)) {
-            return value.equals(String.valueOf(getModel().timerExist()));
-        }
-        if ("escalationEnableOn".equals(name)) {
-            if (!TaskState.class.isInstance(getModel())) {
-                return false;
-            }
-            TaskState state = (TaskState) getModel();
-            return value.equals(String.valueOf(!state.isUseEscalation()));
-        }
-        if ("escalationEnableOff".equals(name)) {
-            if (!TaskState.class.isInstance(getModel())) {
-                return false;
-            }
-            TaskState state = (TaskState) getModel();
-            return value.equals(String.valueOf(state.isUseEscalation()));
-        }
-        if ("enableMinimizeView".equals(name)) {
-            return !getModel().isMinimizedView();
-        }
-        if ("enableRestoreView".equals(name)) {
-            return getModel().isMinimizedView();
-        }
-        return super.testAttribute(target, name, value);
     }
 
     @Override

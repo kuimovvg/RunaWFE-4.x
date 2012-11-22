@@ -9,9 +9,9 @@ import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.NotificationMessages;
+import ru.runa.gpd.lang.model.PropertyNames;
 
-public abstract class ElementGraphicalEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener, NotificationMessages {
+public abstract class ElementGraphicalEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener, PropertyNames {
     private static final Border TOOL_TIP_BORDER = new MarginBorder(0, 2, 0, 2);
 
     @Override

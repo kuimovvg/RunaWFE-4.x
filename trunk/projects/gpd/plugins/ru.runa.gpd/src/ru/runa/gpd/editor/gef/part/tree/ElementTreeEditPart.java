@@ -7,9 +7,9 @@ import org.eclipse.gef.editparts.AbstractTreeEditPart;
 
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.NamedGraphElement;
-import ru.runa.gpd.lang.model.NotificationMessages;
+import ru.runa.gpd.lang.model.PropertyNames;
 
-public abstract class ElementTreeEditPart extends AbstractTreeEditPart implements PropertyChangeListener, NotificationMessages {
+public abstract class ElementTreeEditPart extends AbstractTreeEditPart implements PropertyChangeListener, PropertyNames {
 
     @Override
     public GraphElement getModel() {
