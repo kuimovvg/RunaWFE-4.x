@@ -20,7 +20,6 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.command.EnableReassignmentCommand;
 import ru.runa.gpd.editor.gef.command.IgnoreSubstitutionCommand;
-import ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -30,7 +29,7 @@ import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
 
-public class SwimlaneActionsDelegate extends BaseActionDelegate implements IMenuCreator {
+public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements IMenuCreator {
     private Swimlane selectedSwimlane;
     private ProcessDefinition currentDefinition;
     private FormNode currentNode;
@@ -78,14 +77,12 @@ public class SwimlaneActionsDelegate extends BaseActionDelegate implements IMenu
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (selectedPart == null) {
-            return;
+        if (action.isEnabled()) {
+            currentNode = getSelection();
+            selectedSwimlane = currentNode.getSwimlane();
+            currentDefinition = currentNode.getProcessDefinition();
+            action.setMenuCreator(this);
         }
-        selectedSwimlane = ((FormNodeEditPart) selectedPart).getModel().getSwimlane();
-        currentNode = (FormNode) selectedPart.getModel();
-        currentDefinition = (ProcessDefinition) selectedPart.getParent().getModel();
-        action.setMenuCreator(this);
-        action.setEnabled(true);
     }
 
     /**

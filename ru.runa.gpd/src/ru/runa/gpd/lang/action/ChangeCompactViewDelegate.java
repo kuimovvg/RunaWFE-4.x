@@ -2,14 +2,12 @@ package ru.runa.gpd.lang.action;
 
 import org.eclipse.jface.action.IAction;
 
-import ru.runa.gpd.editor.gef.part.graph.StateGraphicalEditPart;
+import ru.runa.gpd.lang.model.State;
 
-public class ChangeCompactViewDelegate extends BaseActionDelegate {
-
+public class ChangeCompactViewDelegate extends BaseModelActionDelegate {
+    @Override
     public void run(IAction action) {
-        StateGraphicalEditPart part = (StateGraphicalEditPart) selectedPart;
-        boolean mode = !part.getModel().isMinimizedView();
-        part.getModel().setMinimizedView(mode);
+        State state = getSelection();
+        state.setMinimizedView(!state.isMinimizedView());
     }
-
 }

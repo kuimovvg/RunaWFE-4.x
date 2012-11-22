@@ -46,7 +46,7 @@ import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.gef.part.graph.ElementGraphicalEditPart;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.NotificationMessages;
+import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
@@ -239,10 +239,10 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (NotificationMessages.PROPERTY_DIRTY.equals(evt.getPropertyName())) {
+        if (PropertyNames.PROPERTY_DIRTY.equals(evt.getPropertyName())) {
             firePropertyChange(IEditorPart.PROP_DIRTY);
         }
-        if (NotificationMessages.PROPERTY_SHOW_GRID.equals(evt.getPropertyName())) {
+        if (PropertyNames.PROPERTY_SHOW_GRID.equals(evt.getPropertyName())) {
             getGraphicalViewer().setProperty(SnapToGrid.PROPERTY_GRID_ENABLED, evt.getNewValue());
             getGraphicalViewer().setProperty(SnapToGrid.PROPERTY_GRID_VISIBLE, evt.getNewValue());
             refresh();

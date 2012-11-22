@@ -31,7 +31,8 @@ public class FtlFormType extends BaseHtmlFormType {
         cfg.setObjectWrapper(new DefaultObjectWrapper());
         cfg.setLocalizedLookup(false);
         cfg.setTemplateExceptionHandler(new MyTemplateExceptionHandler());
-        Template template = new Template("test", new StringReader(new String(formBytes, PluginConstants.UTF_ENCODING)), cfg, PluginConstants.UTF_ENCODING);
+        String string = new String(formBytes, PluginConstants.UTF_ENCODING);
+        Template template = new Template("test", new StringReader(string), cfg, PluginConstants.UTF_ENCODING);
         StringWriter out = new StringWriter();
         VariablesCollector validationHashModel = new VariablesCollector(formNode.getProcessDefinition().getVariableNames(true));
         template.process(validationHashModel, out);
@@ -88,7 +89,6 @@ public class FtlFormType extends BaseHtmlFormType {
                 MethodTag tag = MethodTag.getTag(tagId);
                 int paramsSize = tag.params.size();
                 if (paramsSize != args.size()) {
-                    // FIXME add error
                     if (args.size() < paramsSize) {
                         paramsSize = args.size();
                     }

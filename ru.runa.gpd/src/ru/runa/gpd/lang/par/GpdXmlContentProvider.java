@@ -10,6 +10,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -22,6 +23,7 @@ public class GpdXmlContentProvider extends AuxContentProvider {
     private static final String Y_ATTRIBUTE_NAME = "y";
     private static final String X_ATTRIBUTE_NAME = "x";
     private static final String NOTATION_ATTRIBUTE_NAME = "notation";
+    private static final String RENDERED_ATTRIBUTE_NAME = "rendered";
     private static final String HEIGHT_ATTRIBUTE_NAME = "height";
     private static final String WIDTH_ATTRIBUTE_NAME = "width";
     private static final String MIN_VIEW_ATTRIBUTE_NAME = "minimizedView";
@@ -90,6 +92,9 @@ public class GpdXmlContentProvider extends AuxContentProvider {
         Element root = document.getRootElement();
         addAttribute(root, NAME_ATTRIBUTE_NAME, definition.getName());
         addAttribute(root, NOTATION_ATTRIBUTE_NAME, definition.getLanguage().getNotation());
+        if (definition.getLanguage() == Language.BPMN) {
+            addAttribute(root, RENDERED_ATTRIBUTE_NAME, "graphiti");
+        }
         Dimension dimension = definition.getDimension();
         addAttribute(root, WIDTH_ATTRIBUTE_NAME, String.valueOf(dimension.width));
         addAttribute(root, HEIGHT_ATTRIBUTE_NAME, String.valueOf(dimension.height));

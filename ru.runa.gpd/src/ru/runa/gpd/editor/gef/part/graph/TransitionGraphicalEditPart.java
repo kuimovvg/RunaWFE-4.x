@@ -23,11 +23,11 @@ import ru.runa.gpd.handler.decision.IDecisionProvider;
 import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.ITimed;
-import ru.runa.gpd.lang.model.NotificationMessages;
+import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Transition;
 
-public class TransitionGraphicalEditPart extends AbstractConnectionEditPart implements NotificationMessages, PropertyChangeListener, ActionsHost {
+public class TransitionGraphicalEditPart extends AbstractConnectionEditPart implements PropertyNames, PropertyChangeListener, ActionsHost {
     @Override
     public Transition getModel() {
         return (Transition) super.getModel();

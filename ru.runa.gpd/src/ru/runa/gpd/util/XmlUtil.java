@@ -78,9 +78,19 @@ public class XmlUtil {
         return baos.toByteArray();
     }
 
+    public static byte[] writeXml(Document document, OutputFormat outputFormat) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        writeXml(document, baos, outputFormat);
+        return baos.toByteArray();
+    }
+
     public static void writeXml(Document document, OutputStream outputStream) {
+        writeXml(document, outputStream, OutputFormat.createPrettyPrint());
+    }
+
+    public static void writeXml(Document document, OutputStream outputStream, OutputFormat outputFormat) {
         try {
-            XMLWriter writer = new XMLWriter(outputStream, OutputFormat.createPrettyPrint());
+            XMLWriter writer = new XMLWriter(outputStream, outputFormat);
             writer.write(document);
             writer.flush();
         } catch (IOException e) {
@@ -90,6 +100,10 @@ public class XmlUtil {
 
     public static String toString(Document document) {
         return new String(writeXml(document), Charsets.UTF_8);
+    }
+
+    public static String toString(Document document, OutputFormat outputFormat) {
+        return new String(writeXml(document, outputFormat), Charsets.UTF_8);
     }
 
     public static Document createDocument(String rootElementName) {

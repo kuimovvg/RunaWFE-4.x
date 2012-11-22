@@ -6,12 +6,10 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.FormNodeSetValidationFileCommand;
-import ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.ui.wizard.ValidatorWizard;
 import ru.runa.gpd.util.IOUtils;
@@ -19,13 +17,13 @@ import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDialog;
 
-public class OpenFormValidationDelegate extends BaseActionDelegate {
+public class OpenFormValidationDelegate extends BaseModelActionDelegate {
     @Override
     public void run(IAction action) {
         try {
-            FormNode formNode = ((FormNodeEditPart) selectedPart).getModel();
+            FormNode formNode = getSelection();
             if (!formNode.hasFormValidation()) {
-                if (!MessageDialog.openQuestion(targetPart.getSite().getShell(), "", Localization.getString("OpenFormValidationDelegate.CreateEmptyValidation"))) {
+                if (!confirm("", Localization.getString("OpenFormValidationDelegate.CreateEmptyValidation"))) {
                     return;
                 }
                 String validationFileName = formNode.getNodeId() + "." + FormNode.VALIDATION_SUFFIX;
