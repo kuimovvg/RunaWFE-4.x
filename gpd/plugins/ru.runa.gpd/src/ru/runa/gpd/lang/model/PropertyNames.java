@@ -1,6 +1,6 @@
 package ru.runa.gpd.lang.model;
 
-public interface NotificationMessages {
+public interface PropertyNames {
     public static final String PROPERTY_ID = "id";
     public static final String PROPERTY_NAME = "name";
     public static final String PROPERTY_DESCRIPTION = "description";
@@ -8,6 +8,7 @@ public interface NotificationMessages {
     public static final String PROPERTY_CONFIGURATION = "configuration";
     public static final String PROPERTY_SWIMLANE = "swimlane";
     public static final String PROPERTY_SWIMLANE_REASSIGN = "swimlaneReassignment";
+    public static final String PROPERTY_MULTIPROCESS = "multiProcess";
     public static final String PROPERTY_MINIMAZED_VIEW = "minimazedView";
     public static final String PROPERTY_FORM_FILE = "formFile";
     public static final String PROPERTY_LANGUAGE = "language";

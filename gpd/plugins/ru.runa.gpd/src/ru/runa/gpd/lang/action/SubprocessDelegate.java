@@ -6,10 +6,10 @@ import org.eclipse.jface.window.Window;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.ui.dialog.SubprocessDialog;
 
-public class SubprocessDelegate extends BaseActionDelegate {
-
+public class SubprocessDelegate extends BaseModelActionDelegate {
+    @Override
     public void run(IAction action) {
-        Subprocess subprocess = (Subprocess) selectedPart.getModel();
+        Subprocess subprocess = getSelection();
         openDetails(subprocess);
     }
 

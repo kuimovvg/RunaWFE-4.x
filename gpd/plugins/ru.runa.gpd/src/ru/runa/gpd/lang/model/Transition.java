@@ -98,6 +98,6 @@ public class Transition extends NamedGraphElement implements Active {
         if (getParent() == null || target == null) {
             return "not_completed";
         }
-        return ((Node) getParent()).getName() + " -> " + target.getName();
+        return ((Node) getParent()).getName() + " -> (" + getName() + ") -> " + target.getName();
     }
 }

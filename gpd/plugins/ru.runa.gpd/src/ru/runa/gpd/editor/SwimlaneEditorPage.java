@@ -36,7 +36,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveSwimlaneCommand;
 import ru.runa.gpd.handler.assign.SwimlaneConfigDialog;
 import ru.runa.gpd.lang.NodeRegistry;
-import ru.runa.gpd.lang.model.NotificationMessages;
+import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
@@ -139,10 +139,10 @@ public class SwimlaneEditorPage extends EditorPartBase {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String type = evt.getPropertyName();
-        if (NotificationMessages.NODE_CHILDS_CHANGED.equals(type)) {
+        if (PropertyNames.NODE_CHILDS_CHANGED.equals(type)) {
             fillViewer();
         } else if (evt.getSource() instanceof Swimlane) {
-            if (NotificationMessages.PROPERTY_NAME.equals(type) || NotificationMessages.PROPERTY_CONFIGURATION.equals(type)) {
+            if (PropertyNames.PROPERTY_NAME.equals(type) || PropertyNames.PROPERTY_CONFIGURATION.equals(type)) {
                 tableViewer.refresh(evt.getSource());
             }
         }

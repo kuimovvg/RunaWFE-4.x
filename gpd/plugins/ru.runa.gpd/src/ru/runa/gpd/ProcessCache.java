@@ -111,18 +111,16 @@ public class ProcessCache {
      * Get process definition file or <code>null</code>.
      */
     public static IFile getProcessDefinitionFile(String name) {
-        if (!CACHE_BY_NAME.containsKey(name)) {
-            try {
-                for (IFile file : ProjectFinder.getAllProcessDefinitionFiles()) {
-                    String processName = file.getFullPath().segment(3);
-                    if (name.equals(processName)) {
-                        return file;
-                    }
+        try {
+            for (IFile file : ProjectFinder.getAllProcessDefinitionFiles()) {
+                String processName = file.getFullPath().segment(3);
+                if (name.equals(processName)) {
+                    return file;
                 }
-            } catch (Exception e) {
-                PluginLogger.logError("Parsing process definition failed: " + name, e);
-                return null;
             }
+        } catch (Exception e) {
+            PluginLogger.logError("Parsing process definition failed: " + name, e);
+            return null;
         }
         return null;
     }

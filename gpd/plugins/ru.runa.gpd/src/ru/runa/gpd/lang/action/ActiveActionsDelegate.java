@@ -14,22 +14,24 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.editor.gef.command.AddActionCommand;
-import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.lang.model.Active;
 
-public class ActiveActionsDelegate extends BaseActionDelegate implements IMenuCreator {
-
+public class ActiveActionsDelegate extends BaseModelActionDelegate implements IMenuCreator {
     private Active active;
 
+    @Override
     public void dispose() {
     }
 
+    @Override
     public Menu getMenu(Control parent) {
         // never called
         return null;
     }
 
+    @Override
     public Menu getMenu(Menu parent) {
         Menu menu = new Menu(parent);
         /**
@@ -51,16 +53,17 @@ public class ActiveActionsDelegate extends BaseActionDelegate implements IMenuCr
         return menu;
     }
 
+    @Override
     public void run(IAction action) {
     }
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (selectedPart == null) 
-            return;
-        active = (Active) selectedPart.getModel();
-        action.setMenuCreator(this);
+        active = (Active) getSelection();
+        if (active != null) {
+            action.setMenuCreator(this);
+        }
     }
 
     /**
@@ -87,7 +90,6 @@ public class ActiveActionsDelegate extends BaseActionDelegate implements IMenuCr
     }
 
     public class AddActionAction extends Action {
-
         public AddActionAction() {
             setText(Localization.getString("button.create"));
         }
@@ -100,7 +102,7 @@ public class ActiveActionsDelegate extends BaseActionDelegate implements IMenuCr
             setFocus(command.getAction());
         }
     }
-    
+
     private void setFocus(ru.runa.gpd.lang.model.Action action) {
         getActiveDesignerEditor().select(action);
     }
@@ -122,5 +124,4 @@ public class ActiveActionsDelegate extends BaseActionDelegate implements IMenuCr
             }
         }
     }
-
 }

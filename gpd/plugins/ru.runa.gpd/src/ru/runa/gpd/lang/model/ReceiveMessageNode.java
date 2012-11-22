@@ -12,8 +12,9 @@ import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 import ru.runa.gpd.util.TimerDuration;
 import ru.runa.gpd.util.VariableMapping;
 
-public class ReceiveMessageNode extends DescribableNode implements Active, ITimed {
+import com.google.common.base.Objects;
 
+public class ReceiveMessageNode extends DescribableNode implements Active, ITimed {
     private final List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
     private TimerDuration duration;
     private TimerAction timerAction;
@@ -31,10 +32,20 @@ public class ReceiveMessageNode extends DescribableNode implements Active, ITime
                 continue;
             }
         }
-        if (duration != null && duration.getVariableName() != null
-                && !getProcessDefinition().getVariableNames(false).contains(duration.getVariableName())) {
+        if (duration != null && duration.getVariableName() != null && !getProcessDefinition().getVariableNames(false).contains(duration.getVariableName())) {
             addError("timerState.invalidVariable");
         }
+    }
+
+    @Override
+    public boolean testAttribute(Object target, String name, String value) {
+        if (super.testAttribute(target, name, value)) {
+            return true;
+        }
+        if ("timerExists".equals(name)) {
+            return Objects.equal(value, String.valueOf(timerExist()));
+        }
+        return false;
     }
 
     public List<VariableMapping> getVariablesList() {
@@ -141,6 +152,7 @@ public class ReceiveMessageNode extends DescribableNode implements Active, ITime
         super.addLeavingTransition(transition);
     }
 
+    @Override
     public void createTimer() {
         if (!timerExist()) {
             setDueDate(TimerDuration.EMPTY);
@@ -149,6 +161,7 @@ public class ReceiveMessageNode extends DescribableNode implements Active, ITime
         }
     }
 
+    @Override
     public void removeTimer() {
         if (timerExist()) {
             this.duration = null;
@@ -160,5 +173,4 @@ public class ReceiveMessageNode extends DescribableNode implements Active, ITime
             setDirty();
         }
     }
-
 }

@@ -6,18 +6,13 @@ import org.eclipse.jface.window.Window;
 import ru.runa.gpd.lang.model.SendMessageNode;
 import ru.runa.gpd.ui.dialog.MessageNodeDialog;
 
-public class SendMessageConfAction extends BaseActionDelegate {
-
+public class SendMessageConfAction extends BaseModelActionDelegate {
+    @Override
     public void run(IAction action) {
-        SendMessageNode messageNode = (SendMessageNode) selectedPart.getModel();
-        openDetails(messageNode);
-    }
-
-    public void openDetails(SendMessageNode messageNode) {
+        SendMessageNode messageNode = getSelection();
         MessageNodeDialog dialog = new MessageNodeDialog(messageNode.getProcessDefinition(), messageNode.getVariablesList(), true);
         if (dialog.open() != Window.CANCEL) {
             messageNode.setVariablesList(dialog.getSubprocessVariables());
         }
     }
-
 }

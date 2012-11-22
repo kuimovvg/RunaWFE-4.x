@@ -34,7 +34,7 @@ public abstract class AddNodeFeature extends AbstractAddShapeFeature implements 
 
     public abstract Dimension getDefaultSize();
 
-    protected Rectangle getFigureBounds(IAddContext context) {
+    protected Rectangle adjustBounds(IAddContext context) {
         Rectangle rectangle = new Rectangle(context.getX(), context.getY(), context.getWidth(), context.getHeight());
         Dimension minSize = getDefaultSize();
         if (rectangle.height < minSize.height) {
@@ -43,6 +43,7 @@ public abstract class AddNodeFeature extends AbstractAddShapeFeature implements 
         if (rectangle.width < minSize.width) {
             rectangle.width = minSize.width;
         }
+        ((Node) context.getNewObject()).setConstraint(rectangle);
         return rectangle;
     }
 
