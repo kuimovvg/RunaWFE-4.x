@@ -40,9 +40,11 @@ import ru.runa.wfe.graph.image.model.TransitionModel;
 
 public class FigureFactory {
     private final boolean bpmn;
+    private final boolean graphiti;
 
-    public FigureFactory(boolean bpmn) {
+    public FigureFactory(boolean bpmn, boolean graphiti) {
         this.bpmn = bpmn;
+        this.graphiti = graphiti;
     }
 
     public AbstractFigure createFigure(NodeModel nodeModel) {
@@ -94,6 +96,9 @@ public class FigureFactory {
             if (figure instanceof TaskFigure) {
                 ((TaskFigure) figure).setMinimized(nodeModel.isMinimizedView());
             }
+        }
+        if (figure instanceof TaskFigure) {
+            ((TaskFigure) figure).setGraphiti(graphiti);
         }
         figure.initFigure(nodeModel);
         return figure;

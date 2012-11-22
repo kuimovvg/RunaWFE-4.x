@@ -90,7 +90,7 @@ public class InteractionsParser implements ProcessArchiveParser {
                 byte[] css = archive.getFileData(IFileDataProvider.FORM_CSS_FILE_NAME);
                 Interaction interaction = new Interaction(typeName, formCode, validationXml, jsValidationEnabled, scriptJs, css);
                 if (validationXml != null) {
-                    List<String> variableNames = ValidationXmlParser.readVariableNames(validationXml);
+                    List<String> variableNames = ValidationXmlParser.readVariableNames(validationFileName, validationXml);
                     List<String> requiredVarNames = ValidationXmlParser.readRequiredVariableNames(validationXml);
                     for (String varName : requiredVarNames) {
                         interaction.getRequiredVariableNames().add(varName);

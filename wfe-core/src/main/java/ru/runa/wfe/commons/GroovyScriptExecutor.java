@@ -15,6 +15,7 @@ import ru.runa.wfe.var.VariableDoesNotExistException;
 
 import com.google.common.base.Throwables;
 
+@SuppressWarnings("unchecked")
 public class GroovyScriptExecutor implements IScriptExecutor {
     private static final Log log = LogFactory.getLog(GroovyScriptExecutor.class);
 
@@ -28,7 +29,8 @@ public class GroovyScriptExecutor implements IScriptExecutor {
         } catch (Exception e) {
             log.error("Groovy", e);
             Throwables.propagateIfInstanceOf(e, VariableDoesNotExistException.class);
-            // This is because calling side has not Groovy generated classes and will unable to show exception
+            // This is because calling side has not Groovy generated classes and
+            // will unable to show exception
             throw new ApplicationException(e.getMessage());
         }
     }
@@ -42,7 +44,8 @@ public class GroovyScriptExecutor implements IScriptExecutor {
         } catch (Exception e) {
             log.error("Groovy", e);
             Throwables.propagateIfInstanceOf(e, VariableDoesNotExistException.class);
-            // This is because calling side has not Groovy generated classes and will unable to show exception
+            // This is because calling side has not Groovy generated classes and
+            // will unable to show exception
             throw new ApplicationException(e.getMessage());
         }
     }
@@ -59,7 +62,11 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             try {
                 return super.getVariable(name);
             } catch (MissingPropertyException e) {
-                return variableProvider.getNotNull(name);
+                Object value = variableProvider.get(name);
+                if (value == null) {
+                    log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
+                }
+                return value;
             }
         }
 

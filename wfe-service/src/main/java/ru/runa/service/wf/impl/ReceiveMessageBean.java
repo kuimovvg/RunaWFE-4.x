@@ -44,7 +44,7 @@ import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.dao.TokenDAO;
-import ru.runa.wfe.lang.Node;
+import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.ReceiveMessage;
 import ru.runa.wfe.var.VariableMapping;
@@ -71,49 +71,45 @@ public class ReceiveMessageBean implements MessageListener {
         try {
             String log = JMSUtil.toString(objectMessage);
             boolean handled = false;
-            // TODO performance
-            List<Token> tokens = tokenDAO.findAllActiveTokens();
+            List<Token> tokens = tokenDAO.findActiveTokens(NodeType.ReceiveMessage);
             for (Token token : tokens) {
                 ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(token.getProcess().getDefinition().getId());
-                Node node = token.getNode(processDefinition);
-                if (node instanceof ReceiveMessage) {
-                    ExecutionContext executionContext = new ExecutionContext(processDefinition, token);
-                    ReceiveMessage receiveMessage = (ReceiveMessage) node;
-                    boolean suitable = true;
+                ReceiveMessage receiveMessage = (ReceiveMessage) token.getNode(processDefinition);
+                ExecutionContext executionContext = new ExecutionContext(processDefinition, token);
+                boolean suitable = true;
+                for (VariableMapping variableMapping : receiveMessage.getVariableMappings()) {
+                    if (variableMapping.isPropertySelector()) {
+                        String selectorValue = objectMessage.getStringProperty(variableMapping.getName());
+                        String expectedValue = variableMapping.getMappedName();
+                        if ("${currentProcessId}".equals(expectedValue) || "${currentInstanceId}".equals(expectedValue)) {
+                            expectedValue = String.valueOf(token.getProcess().getId());
+                        }
+                        if ("${currentDefinitionName}".equals(expectedValue)) {
+                            expectedValue = token.getProcess().getDefinition().getName();
+                        }
+                        if ("${currentNodeName}".equals(expectedValue)) {
+                            expectedValue = receiveMessage.getName();
+                        }
+                        if ("${currentNodeId}".equals(expectedValue)) {
+                            expectedValue = receiveMessage.getNodeId();
+                        }
+                        if (!expectedValue.equals(selectorValue)) {
+                            suitable = false;
+                            break;
+                        }
+                    }
+                }
+                if (suitable) {
+                    HashMap<String, Object> map = (HashMap<String, Object>) objectMessage.getObject();
                     for (VariableMapping variableMapping : receiveMessage.getVariableMappings()) {
-                        if (variableMapping.isPropertySelector()) {
-                            String selectorValue = objectMessage.getStringProperty(variableMapping.getName());
-                            String expectedValue = variableMapping.getMappedName();
-                            if ("${currentProcessId}".equals(expectedValue) || "${currentInstanceId}".equals(expectedValue)) {
-                                expectedValue = String.valueOf(token.getProcess().getId());
-                            }
-                            if ("${currentDefinitionName}".equals(expectedValue)) {
-                                expectedValue = token.getProcess().getDefinition().getName();
-                            }
-                            if ("${currentNodeName}".equals(expectedValue)) {
-                                expectedValue = receiveMessage.getName();
-                            }
-                            if ("${currentNodeId}".equals(expectedValue)) {
-                                expectedValue = receiveMessage.getNodeId();
-                            }
-                            if (!expectedValue.equals(selectorValue)) {
-                                suitable = false;
-                                break;
-                            }
+                        if (!variableMapping.isPropertySelector()) {
+                            Object value = map.get(variableMapping.getMappedName());
+                            executionContext.setVariable(variableMapping.getName(), value);
                         }
                     }
-                    if (suitable) {
-                        HashMap<String, Object> map = (HashMap<String, Object>) objectMessage.getObject();
-                        for (VariableMapping variableMapping : receiveMessage.getVariableMappings()) {
-                            if (!variableMapping.isPropertySelector()) {
-                                Object value = map.get(variableMapping.getMappedName());
-                                executionContext.setVariable(variableMapping.getName(), value);
-                            }
-                        }
-                        executionContext.addLog(new ReceiveMessageLog(receiveMessage, log));
-                        receiveMessage.leave(executionContext);
-                        handled = true;
-                    }
+                    executionContext.addLog(new ReceiveMessageLog(receiveMessage, log));
+                    receiveMessage.leave(executionContext);
+                    handled = true;
                 }
             }
             if (!handled) {

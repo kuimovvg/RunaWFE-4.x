@@ -19,8 +19,8 @@
 package ru.runa.wfe.user;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -50,6 +50,7 @@ import ru.runa.wfe.presentation.BatchPresentations;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -64,7 +65,8 @@ public final class Profile implements Serializable {
     private Long id;
     private Long version;
     private Actor actor;
-    private Set<BatchPresentation> batchPresentations = new HashSet<BatchPresentation>();
+    private Set<BatchPresentation> batchPresentations = Sets.newHashSet();
+    private Map<String, BatchPresentation> defaultBatchPresentations = Maps.newHashMap();
 
     private final Set<String> visibleBlocks = Sets.newHashSet();
 
@@ -149,7 +151,10 @@ public final class Profile implements Serializable {
                 return batch;
             }
         }
-        return BatchPresentations.createDefault(batchPresentationId);
+        if (!defaultBatchPresentations.containsKey(batchPresentationId)) {
+            defaultBatchPresentations.put(batchPresentationId, BatchPresentations.createDefault(batchPresentationId));
+        }
+        return defaultBatchPresentations.get(batchPresentationId);
     }
 
     public void deleteBatchPresentation(BatchPresentation batchPresentation) {

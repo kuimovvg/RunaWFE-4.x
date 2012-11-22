@@ -65,7 +65,6 @@ public class ConstantDAO extends GenericDAO<Constant> {
             create(new Constant(name, value));
         } else {
             constant.setValue(value);
-            update(constant);
         }
     }
 

@@ -147,6 +147,7 @@ public abstract class Node extends GraphElement {
         Token token = executionContext.getToken();
         // update the runtime context information
         token.setNodeId(getNodeId());
+        token.setNodeType(getNodeType());
         // fire the leave-node event for this node
         fireEvent(executionContext, Event.EVENTTYPE_NODE_ENTER);
         executionContext.addLog(new NodeEnterLog(this));
@@ -180,6 +181,7 @@ public abstract class Node extends GraphElement {
             transition = getDefaultLeavingTransitionNotNull();
         }
         token.setNodeId(null);
+        token.setNodeType(null);
         // take the transition
         transition.take(executionContext);
     }
