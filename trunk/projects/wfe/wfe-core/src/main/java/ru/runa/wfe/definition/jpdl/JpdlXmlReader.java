@@ -59,31 +59,11 @@ public class JpdlXmlReader {
     // TODO move to Spring (or GPD process setting)
     private boolean waitStateCompatibility = true;
 
-    private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
-    static {
-        nodeTypes.put("start-state", StartState.class);
-        nodeTypes.put("end-state", EndNode.class);
-        nodeTypes.put("wait-state", WaitState.class);
-        nodeTypes.put("task-node", TaskNode.class);
-        nodeTypes.put("fork", Fork.class);
-        nodeTypes.put("join", Join.class);
-        nodeTypes.put("decision", Decision.class);
-        nodeTypes.put("process-state", SubProcessState.class);
-        nodeTypes.put("multiinstance-state", MultiProcessState.class);
-        nodeTypes.put("send-message", SendMessage.class);
-        nodeTypes.put("receive-message", ReceiveMessage.class);
-    }
-
-    public JpdlXmlReader(Document document) {
-        this.document = document;
-    }
-
     private static final String INVALID_ATTR = "invalid";
     private static final String ACCESS_ATTR = "access";
     private static final String VARIABLE_NODE = "variable";
     private static final String SUB_PROCESS_NODE = "sub-process";
     private static final String MAPPED_NAME_ATTR = "mapped-name";
-    private static final String DECISION_NODE = "decision";
     private static final String DUEDATE_ATTR = "duedate";
     private static final String DEFAULT_DUEDATE_ATTR = "default-task-duedate";
     private static final String REPEAT_ATTR = "repeat";
@@ -103,6 +83,25 @@ public class JpdlXmlReader {
     private static final String DESCRIPTION_NODE = "description";
     private static final String NAME_ATTR = "name";
     private static final String TYPE_ATTR = "type";
+
+    private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
+    static {
+        nodeTypes.put("start-state", StartState.class);
+        nodeTypes.put("end-state", EndNode.class);
+        nodeTypes.put("wait-state", WaitState.class);
+        nodeTypes.put("task-node", TaskNode.class);
+        nodeTypes.put("fork", Fork.class);
+        nodeTypes.put("join", Join.class);
+        nodeTypes.put("decision", Decision.class);
+        nodeTypes.put("process-state", SubProcessState.class);
+        nodeTypes.put("multiinstance-state", MultiProcessState.class);
+        nodeTypes.put("send-message", SendMessage.class);
+        nodeTypes.put("receive-message", ReceiveMessage.class);
+    }
+
+    public JpdlXmlReader(Document document) {
+        this.document = document;
+    }
 
     public ProcessDefinition readProcessDefinition(ProcessDefinition processDefinition) {
         try {

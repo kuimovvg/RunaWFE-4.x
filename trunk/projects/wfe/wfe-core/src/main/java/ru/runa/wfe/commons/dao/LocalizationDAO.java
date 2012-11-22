@@ -59,7 +59,6 @@ public class LocalizationDAO extends GenericDAO<Localization> {
             create(new Localization(name, value));
         } else if (rewrite) {
             localization.setValue(value);
-            update(localization);
         }
     }
 

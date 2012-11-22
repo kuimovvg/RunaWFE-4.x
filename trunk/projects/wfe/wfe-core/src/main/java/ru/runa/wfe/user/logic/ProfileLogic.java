@@ -51,7 +51,7 @@ public class ProfileLogic extends CommonLogic {
     public void updateProfiles(Subject subject, List<Profile> profiles) throws AuthorizationException {
         for (Profile profile : profiles) {
             checkPermissionAllowed(subject, profile.getActor(), ExecutorPermission.UPDATE);
-            profileDAO.update(profile);
+            profileDAO.merge(profile);
         }
     }
 
@@ -85,14 +85,12 @@ public class ProfileLogic extends CommonLogic {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
         Profile profile = profileDAO.get(actor);
         profile.setActiveBatchPresentation(batchPresentationId, newActiveBatchName);
-        profileDAO.update(profile);
     }
 
     public void deleteBatchPresentation(Subject subject, BatchPresentation batchPresentation) {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
         Profile profile = profileDAO.get(actor);
         profile.deleteBatchPresentation(batchPresentation);
-        profileDAO.update(profile);
     }
 
     public BatchPresentation createBatchPresentation(Subject subject, BatchPresentation batchPresentation) {
@@ -100,7 +98,6 @@ public class ProfileLogic extends CommonLogic {
         Profile profile = profileDAO.get(actor);
         profile.addBatchPresentation(batchPresentation);
         profile.setActiveBatchPresentation(batchPresentation.getCategory(), batchPresentation.getName());
-        profileDAO.update(profile);
         return batchPresentation;
     }
 
@@ -111,6 +108,5 @@ public class ProfileLogic extends CommonLogic {
             throw new InternalApplicationException("default batch presentation cannot be changed");
         }
         profile.addBatchPresentation(batchPresentation);
-        profileDAO.update(profile);
     }
 }
