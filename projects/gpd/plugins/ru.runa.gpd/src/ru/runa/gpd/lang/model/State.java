@@ -8,17 +8,32 @@ import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.util.TimerDuration;
 
+import com.google.common.base.Objects;
+
 public abstract class State extends FormNode implements Active, ITimed, ITimeOut {
-
-	private boolean hasTimer = false;
-    public void setHasTimer(boolean hasTimer) {
-		this.hasTimer = hasTimer;
-	}
-
-	private TimerDuration duration;
+    private boolean hasTimer = false;
+    private TimerDuration duration;
     private TimerDuration timeOutDuration;
     private boolean reassignmentEnabled = false;
     private boolean minimizedView = false;
+
+    @Override
+    public boolean testAttribute(Object target, String name, String value) {
+        if (super.testAttribute(target, name, value)) {
+            return true;
+        }
+        if ("timerExists".equals(name)) {
+            return Objects.equal(value, String.valueOf(timerExist()));
+        }
+        if ("minimizedView".equals(name)) {
+            return Objects.equal(value, isMinimizedView());
+        }
+        return false;
+    }
+
+    public void setHasTimer(boolean hasTimer) {
+        this.hasTimer = hasTimer;
+    }
 
     public boolean isReassignmentEnabled() {
         return reassignmentEnabled;
@@ -39,7 +54,9 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
     }
 
     public String getDueDate() {
-    	if (duration == null) return null;
+        if (duration == null) {
+            return null;
+        }
         return duration.getDuration();
     }
 
@@ -59,7 +76,9 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
     }
 
     public String getTimeOutDueDate() {
-    	if (timeOutDuration==null) return null;
+        if (timeOutDuration == null) {
+            return null;
+        }
         return timeOutDuration.getDuration();
     }
 
@@ -68,10 +87,12 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
         firePropertyChange(PROPERTY_TIMEOUT_DURATION, null, null);
     }
 
+    @Override
     public void setTimeOutDueDate(String timeOutDueDate) {
         setTimeOutDuration(new TimerDuration(timeOutDueDate));
     }
 
+    @Override
     public TimerDuration getTimeOutDuration() {
         return timeOutDuration;
     }
@@ -79,12 +100,11 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
     @Override
     public Object getPropertyValue(Object id) {
         if (PROPERTY_TIMER_DURATION.equals(id)) {
-        	if (duration==null || !duration.hasDuration()) return "";
+            if (duration == null || !duration.hasDuration()) {
+                return "";
+            }
             return duration;
         }
-        /*if (PROPERTY_TIMEOUT_DURATION.equals(id)) {
-            return timeOutDuration;
-        }*/
         return super.getPropertyValue(id);
     }
 
@@ -96,12 +116,6 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
                 return;
             }
             setDuration((TimerDuration) value);
-        /*} else if (PROPERTY_TIMEOUT_DURATION.equals(id)) {
-            if (value == null) {
-                // ignore, edit was canceled
-                return;
-            }
-            setTimeOutDuration((TimerDuration) value);*/
         } else {
             super.setPropertyValue(id, value);
         }
@@ -112,9 +126,7 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
         if (timerExist()) {
             list.add(new DurationPropertyDescriptor(PROPERTY_TIMER_DURATION, this));
-        }// else {
-         //   list.add(new TimeOutDurationPropertyDescriptor(PROPERTY_TIMEOUT_DURATION, this));
-        //}
+        }
         return list;
     }
 
@@ -126,10 +138,10 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
         return super.getNextTransitionName();
     }
 
+    @Override
     public void createTimer() {
         if (!timerExist()) {
-        	hasTimer = true;
-            //setDueDate(TimerDuration.EMPTY);
+            hasTimer = true;
             firePropertyChange(PROPERTY_TIMER, false, true);
             setDirty();
         }
@@ -137,16 +149,13 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
 
     @Override
     public boolean timerExist() {
-        return hasTimer; //duration != null;
+        return hasTimer;
     }
 
-/*    public boolean timeOutExist() {
-        return (timeOutDuration != null && timeOutDuration.hasDuration());
-    } */
-
+    @Override
     public void removeTimer() {
         if (timerExist()) {
-        	hasTimer = false;
+            hasTimer = false;
             this.duration = null;
             firePropertyChange(PROPERTY_TIMER, true, false);
             Transition timeoutTransition = getTransitionByName(PluginConstants.TIMER_TRANSITION_NAME);
@@ -160,8 +169,7 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
     @Override
     protected void validate() {
         super.validate();
-        if (timerExist() && duration!=null && duration.getVariableName() != null
-                && !getProcessDefinition().getVariableNames(false).contains(duration.getVariableName())) {
+        if (timerExist() && duration != null && duration.getVariableName() != null && !getProcessDefinition().getVariableNames(false).contains(duration.getVariableName())) {
             addError("timerState.invalidVariable");
         }
     }

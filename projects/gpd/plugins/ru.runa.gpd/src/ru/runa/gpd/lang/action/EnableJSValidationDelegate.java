@@ -4,31 +4,25 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
 import ru.runa.gpd.editor.gef.command.EnableJSValidationCommand;
-import ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart;
 import ru.runa.gpd.lang.model.FormNode;
 
-public class EnableJSValidationDelegate extends BaseActionDelegate {
-
+public class EnableJSValidationDelegate extends BaseModelActionDelegate {
+    @Override
     public void run(IAction action) {
-        FormNode formNode = ((FormNodeEditPart) selectedPart).getModel();
-        setJSValidation(formNode, action.isChecked());
+        FormNode formNode = getSelection();
+        EnableJSValidationCommand command = new EnableJSValidationCommand();
+        command.setFormNode(formNode);
+        command.setEnabled(action.isChecked());
+        executeCommand(command);
     }
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (selectedPart == null)
-            return;
-        FormNode formNode = ((FormNodeEditPart) selectedPart).getModel();
-        action.setEnabled(formNode.hasFormValidation());
-        action.setChecked(formNode.isUseJSValidation());
+        if (action.isEnabled()) {
+            FormNode formNode = getSelection();
+            action.setEnabled(formNode.hasFormValidation());
+            action.setChecked(formNode.isUseJSValidation());
+        }
     }
-
-    private void setJSValidation(FormNode formNode, boolean enabled) {
-        EnableJSValidationCommand command = new EnableJSValidationCommand();
-        command.setFormNode(formNode);
-        command.setEnabled(enabled);
-        executeCommand(command);
-    }
-
 }

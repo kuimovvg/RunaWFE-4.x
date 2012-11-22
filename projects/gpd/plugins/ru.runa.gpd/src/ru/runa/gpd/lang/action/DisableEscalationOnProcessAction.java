@@ -4,14 +4,13 @@ import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 
-import ru.runa.gpd.editor.ProcessEditorBase;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TaskState;
 
-public class EscalationOffAction extends BaseActionDelegate {
+public class DisableEscalationOnProcessAction extends BaseModelActionDelegate {
     @Override
     public void run(IAction action) {
-        ProcessEditorBase editor = getActiveDesignerEditor();
-        List<TaskState> states = editor.getDefinition().getChildren(TaskState.class);
+        List<TaskState> states = ((ProcessDefinition) getSelection()).getChildren(TaskState.class);
         for (TaskState state : states) {
             state.setUseEscalation(false);
         }

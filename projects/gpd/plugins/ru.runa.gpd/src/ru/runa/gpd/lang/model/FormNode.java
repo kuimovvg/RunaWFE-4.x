@@ -17,6 +17,8 @@ import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.validation.ValidatorParser;
 
+import com.google.common.base.Objects;
+
 public abstract class FormNode extends SwimlanedNode {
     public static final String EMPTY = "";
     public static final String VALIDATION_SUFFIX = "validation.xml";
@@ -26,6 +28,17 @@ public abstract class FormNode extends SwimlanedNode {
     private String validationFileName;
     private boolean useJSValidation;
     private String scriptFileName;
+
+    @Override
+    public boolean testAttribute(Object target, String name, String value) {
+        if (super.testAttribute(target, name, value)) {
+            return true;
+        }
+        if ("formExists".equals(name)) {
+            return Objects.equal(value, String.valueOf(hasForm()));
+        }
+        return false;
+    }
 
     public String getFormType() {
         return formType;

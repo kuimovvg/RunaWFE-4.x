@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 
 import ru.runa.gpd.util.XmlUtil;
 
@@ -107,7 +108,9 @@ public class ValidatorDefinition {
                 paramElement.addText(paramValue);
             }
         }
-        return XmlUtil.toString(document);
+        OutputFormat outputFormat = OutputFormat.createPrettyPrint();
+        outputFormat.setSuppressDeclaration(true);
+        return XmlUtil.toString(document, outputFormat);
     }
 
     public static class Param {

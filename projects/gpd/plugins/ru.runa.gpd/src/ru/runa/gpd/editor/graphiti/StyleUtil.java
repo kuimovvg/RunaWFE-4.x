@@ -21,7 +21,9 @@ import org.eclipse.graphiti.util.IGradientType;
 import org.eclipse.graphiti.util.IPredefinedRenderingStyle;
 
 public class StyleUtil {
-    private static final IColorConstant BPMN_CLASS_FOREGROUND = new ColorConstant(0, 0, 0);
+    public static final IColorConstant FOREGROUND = new ColorConstant(0, 0, 0);
+    public static final IColorConstant VERY_LIGHT_BLUE = new ColorConstant(246, 247, 255);
+    public static final IColorConstant LIGHT_BLUE = new ColorConstant(3, 104, 154);
 
     public static Style getStyleForEvent(Diagram diagram) {
         final String styleId = "EVENT"; //$NON-NLS-1$
@@ -29,7 +31,7 @@ public class StyleUtil {
         if (style == null) { // style not found - create new style
             IGaService gaService = Graphiti.getGaService();
             style = gaService.createStyle(diagram, styleId);
-            style.setForeground(gaService.manageColor(diagram, BPMN_CLASS_FOREGROUND));
+            style.setForeground(gaService.manageColor(diagram, FOREGROUND));
             gaService.setRenderingStyle(style, getDefaultEventColor(diagram));
             style.setLineWidth(20);
         }

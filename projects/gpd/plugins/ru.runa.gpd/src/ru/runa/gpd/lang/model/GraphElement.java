@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -22,12 +23,22 @@ import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.property.DelegableClassPropertyDescriptor;
 import ru.runa.gpd.property.DelegableConfPropertyDescriptor;
 
+import com.google.common.base.Objects;
+
 @SuppressWarnings("unchecked")
-public abstract class GraphElement implements IPropertySource, NotificationMessages {
+public abstract class GraphElement implements IPropertySource, PropertyNames, IActionFilter {
     protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
     private GraphElement parent;
     private final List<GraphElement> childs = new ArrayList<GraphElement>();
     private Rectangle constraint;
+
+    @Override
+    public boolean testAttribute(Object target, String name, String value) {
+        if ("language".equals(name)) {
+            return Objects.equal(value, getProcessDefinition().getLanguage().name().toLowerCase());
+        }
+        return false;
+    }
 
     public Rectangle getConstraint() {
         return constraint;
@@ -41,9 +52,11 @@ public abstract class GraphElement implements IPropertySource, NotificationMessa
     }
 
     public void setConstraint(Rectangle newConstraint) {
-        Rectangle oldConstraint = this.constraint;
-        this.constraint = newConstraint;
-        firePropertyChange(NODE_BOUNDS_RESIZED, oldConstraint, newConstraint);
+        if (!Objects.equal(this.constraint, newConstraint)) {
+            Rectangle oldConstraint = this.constraint;
+            this.constraint = newConstraint;
+            firePropertyChange(NODE_BOUNDS_RESIZED, oldConstraint, newConstraint);
+        }
     }
 
     public ProcessDefinition getProcessDefinition() {
@@ -105,14 +118,14 @@ public abstract class GraphElement implements IPropertySource, NotificationMessa
 
     public void swapChilds(GraphElement child1, GraphElement child2) {
         Collections.swap(childs, childs.indexOf(child1), childs.indexOf(child2));
-        firePropertyChange(NotificationMessages.NODE_CHILDS_CHANGED, null, null);
+        firePropertyChange(PropertyNames.NODE_CHILDS_CHANGED, null, null);
     }
 
     public void changeChildIndex(GraphElement child, GraphElement insertBefore) {
         if (insertBefore != null && child != null) {
             childs.remove(child);
             childs.add(childs.indexOf(insertBefore), child);
-            firePropertyChange(NotificationMessages.NODE_CHILDS_CHANGED, null, null);
+            firePropertyChange(PropertyNames.NODE_CHILDS_CHANGED, null, null);
         }
     }
 
@@ -192,7 +205,7 @@ public abstract class GraphElement implements IPropertySource, NotificationMessa
     public void setDelegationClassName(String delegationClassName) {
         String old = getDelegationClassName();
         this.delegationClassName = delegationClassName;
-        firePropertyChange(NotificationMessages.PROPERTY_CLASS, old, this.delegationClassName);
+        firePropertyChange(PropertyNames.PROPERTY_CLASS, old, this.delegationClassName);
     }
 
     public String getDelegationConfiguration() {

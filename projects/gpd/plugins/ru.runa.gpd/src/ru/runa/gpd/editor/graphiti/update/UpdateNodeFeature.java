@@ -5,13 +5,16 @@ import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.AbstractUpdateFeature;
 import org.eclipse.graphiti.features.impl.Reason;
+import org.eclipse.graphiti.mm.Property;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.MultiText;
 import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Shape;
 
+import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Node;
+import ru.runa.gpd.lang.model.PropertyNames;
+import ru.runa.gpd.lang.model.SwimlanedNode;
 
 import com.google.common.base.Objects;
 
@@ -28,48 +31,75 @@ public class UpdateNodeFeature extends AbstractUpdateFeature {
 
     @Override
     public IReason updateNeeded(IUpdateContext context) {
-        // retrieve name from pictogram model
-        String pictogramName = null;
-        PictogramElement pictogramElement = context.getPictogramElement();
-        if (pictogramElement instanceof ContainerShape) {
-            ContainerShape cs = (ContainerShape) pictogramElement;
-            for (Shape shape : cs.getChildren()) {
-                if (shape.getGraphicsAlgorithm() instanceof Text) {
-                    Text text = (Text) shape.getGraphicsAlgorithm();
-                    pictogramName = text.getValue();
-                }
+        // retrieve name from pictogram element
+        PictogramElement pe = context.getPictogramElement();
+        GraphicsAlgorithm ga = pe.getGraphicsAlgorithm();
+        // retrieve name from business model
+        Object bo = getBusinessObjectForPictogramElement(pe);
+        if (bo instanceof SwimlanedNode) {
+            String swimlaneName = findPropertyRecursive(ga, PropertyNames.PROPERTY_SWIMLANE);
+            if (!Objects.equal(swimlaneName, ((SwimlanedNode) bo).getSwimlaneName())) {
+                return Reason.createTrueReason();
             }
         }
-        // retrieve name from business model
-        Node node = (Node) getBusinessObjectForPictogramElement(pictogramElement);
-        if (!Objects.equal(pictogramName, node.getName())) {
-            return Reason.createTrueReason();
-        } else {
-            return Reason.createFalseReason();
+        if (bo instanceof NamedGraphElement) {
+            String nodeName = findPropertyRecursive(ga, PropertyNames.PROPERTY_NAME);
+            if (!Objects.equal(nodeName, ((NamedGraphElement) bo).getName())) {
+                return Reason.createTrueReason();
+            }
+        }
+        return Reason.createFalseReason();
+    }
+
+    private String findPropertyRecursive(GraphicsAlgorithm ga, String propertyName) {
+        ga = findGaRecursive(ga, propertyName);
+        if (ga instanceof Text) {
+            return ((Text) ga).getValue();
+        }
+        if (ga instanceof MultiText) {
+            return ((MultiText) ga).getValue();
+        }
+        return null;
+    }
+
+    private GraphicsAlgorithm findGaRecursive(GraphicsAlgorithm ga, String propertyName) {
+        for (Property property : ga.getProperties()) {
+            if (Objects.equal(propertyName, property.getKey())) {
+                return ga;
+            }
+        }
+        for (GraphicsAlgorithm childGa : ga.getGraphicsAlgorithmChildren()) {
+            GraphicsAlgorithm result = findGaRecursive(childGa, propertyName);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    private void setProperty(GraphicsAlgorithm ga, String propertyName, String value) {
+        ga = findGaRecursive(ga, propertyName);
+        if (ga instanceof Text) {
+            ((Text) ga).setValue(value);
+        }
+        if (ga instanceof MultiText) {
+            ((MultiText) ga).setValue(value);
         }
     }
 
     @Override
     public boolean update(IUpdateContext context) {
+        // retrieve name from pictogram element
+        PictogramElement pe = context.getPictogramElement();
+        GraphicsAlgorithm ga = pe.getGraphicsAlgorithm();
         // retrieve name from business model
-        PictogramElement pictogramElement = context.getPictogramElement();
-        Node node = (Node) getBusinessObjectForPictogramElement(pictogramElement);
-        // Set name in pictogram model
-        if (pictogramElement instanceof ContainerShape) {
-            ContainerShape cs = (ContainerShape) pictogramElement;
-            for (Shape shape : cs.getChildren()) {
-                if (shape.getGraphicsAlgorithm() instanceof Text) {
-                    Text text = (Text) shape.getGraphicsAlgorithm();
-                    text.setValue(node.getName());
-                    return true;
-                }
-                if (shape.getGraphicsAlgorithm() instanceof MultiText) {
-                    MultiText text = (MultiText) shape.getGraphicsAlgorithm();
-                    text.setValue(node.getName());
-                    return true;
-                }
-            }
+        Object bo = getBusinessObjectForPictogramElement(pe);
+        if (bo instanceof SwimlanedNode) {
+            setProperty(ga, PropertyNames.PROPERTY_SWIMLANE, ((SwimlanedNode) bo).getSwimlaneLabel());
         }
-        return false;
+        if (bo instanceof NamedGraphElement) {
+            setProperty(ga, PropertyNames.PROPERTY_NAME, ((NamedGraphElement) bo).getName());
+        }
+        return true;
     }
 }

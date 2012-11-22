@@ -29,11 +29,11 @@ import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.commands.ActionHandler;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -44,17 +44,17 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.ObjectActionContributorManager;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.SelectAllFiguresAction;
+import ru.runa.gpd.editor.StructuredSelectionProvider;
 import ru.runa.gpd.editor.gef.command.CopyGraphCommand;
 import ru.runa.gpd.editor.gef.part.graph.ActionGraphicalEditPart;
 import ru.runa.gpd.editor.gef.part.graph.ProcessDefinitionGraphicalEditPart;
 import ru.runa.gpd.editor.gef.part.graph.TransitionGraphicalEditPart;
-import ru.runa.gpd.lang.action.AddTimerDelegate;
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.TaskState;
 
 public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalette {
     private KeyHandler commonKeyHandler;
@@ -300,25 +300,14 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
                 menu.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
             }
             List<EditPart> editParts = getGraphicalViewer().getSelectedEditParts();
+            GraphElement graphElement = null;
             if (editParts.size() == 1) {
-                GraphElement graphElement = (GraphElement) editParts.get(0).getModel();
-                if (graphElement instanceof TaskState) {
-                    action = new Action() {
-                        @Override
-                        public String getText() {
-                            return "test";
-                        }
-
-                        @Override
-                        public void run() {
-                            AddTimerDelegate delegate = new AddTimerDelegate();
-                            delegate.setActivePart(this, getEditorSite().getPart());
-                            delegate.run(this);
-                        }
-                    };
-                    menu.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
-                }
+                graphElement = (GraphElement) editParts.get(0).getModel();
+            } else if (editParts.size() == 0) {
+                graphElement = editor.getDefinition();
             }
+            ISelectionProvider selectionProvider = new StructuredSelectionProvider(graphElement);
+            ObjectActionContributorManager.getManager().contributeObjectActions(editor, menu, selectionProvider);
         }
     }
 

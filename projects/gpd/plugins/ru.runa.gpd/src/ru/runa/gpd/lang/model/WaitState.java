@@ -11,7 +11,6 @@ import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 import ru.runa.gpd.util.TimerDuration;
 
 public class WaitState extends DescribableNode implements ITimed {
-
     private TimerDuration duration;
     private TimerAction timerAction = null;
 
@@ -44,6 +43,16 @@ public class WaitState extends DescribableNode implements ITimed {
     }
 
     @Override
+    public void createTimer() {
+        // do nothing
+    }
+
+    @Override
+    public void removeTimer() {
+        // do nothing
+    }
+
+    @Override
     public Object getPropertyValue(Object id) {
         if (PROPERTY_TIMER_DURATION.equals(id)) {
             return duration;
@@ -54,6 +63,7 @@ public class WaitState extends DescribableNode implements ITimed {
         return super.getPropertyValue(id);
     }
 
+    @Override
     public void setTimerAction(TimerAction timerAction) {
         if (timerAction == TimerAction.NONE) {
             timerAction = null;
@@ -63,6 +73,7 @@ public class WaitState extends DescribableNode implements ITimed {
         firePropertyChange(PROPERTY_TIMER_ACTION, old, this.timerAction);
     }
 
+    @Override
     public TimerAction getTimerAction() {
         return timerAction;
     }
