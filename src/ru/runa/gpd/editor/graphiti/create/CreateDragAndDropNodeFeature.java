@@ -3,23 +3,35 @@ package ru.runa.gpd.editor.graphiti.create;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
+import org.eclipse.graphiti.features.context.impl.AddContext;
+import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
+import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateConnectionFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.services.Graphiti;
 
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
+import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.Node;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Transition;
 
-public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
+public class CreateDragAndDropNodeFeature extends AbstractCreateConnectionFeature {
     private final NodeTypeDefinition transitionDefinition;
     private IFeatureProvider featureProvider;
+    private final ProcessDefinition processDefinition;
 
-    public CreateTransitionFeature() {
+    public CreateDragAndDropNodeFeature(ProcessDefinition processDefinition) {
         super(null, "", "");
         this.transitionDefinition = NodeRegistry.getNodeTypeDefinition(Transition.class);
+        this.processDefinition = processDefinition;
     }
 
     public void setFeatureProvider(IFeatureProvider featureProvider) {
@@ -52,18 +64,13 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
 
     @Override
     public boolean canCreate(ICreateConnectionContext context) {
-        Node source = getNode(context.getSourceAnchor());
-        Node target = getNode(context.getTargetAnchor());
-        if (source != null && target != null && source != target) {
-            return true;
-        }
-        return false;
+        return true;
     }
 
     @Override
     public Connection create(ICreateConnectionContext context) {
         Node source = getNode(context.getSourceAnchor());
-        Node target = getNode(context.getTargetAnchor());
+        Node target = createTarget(context);
         // create new business object
         Transition transition = transitionDefinition.createElement(source);
         transition.setTarget(target);
@@ -73,6 +80,29 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
         AddConnectionContext addConnectionContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
         addConnectionContext.setNewObject(transition);
         return (Connection) getFeatureProvider().addIfPossible(addConnectionContext);
+    }
+
+    private Node createTarget(ICreateConnectionContext context) {
+        CreateContext createContext = new CreateContext();
+        createContext.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
+        createContext.setSize(30, 30);
+        //createContext.setTargetConnection(targetConnection);
+        createContext.setTargetContainer(getDiagram());
+        Node node = NodeRegistry.getNodeTypeDefinition(Decision.class).createElement(processDefinition);
+        ContainerShape targetContainer = createContext.getTargetContainer();
+        if (targetContainer instanceof Diagram) {
+            processDefinition.addChild(node);
+        } else {
+            Object parent = getBusinessObjectForPictogramElement(targetContainer);
+            ((Node) parent).addChild(node);
+        }
+        PictogramElement element = getFeatureProvider().addIfPossible(new AddContext(createContext, node));
+        ((CreateConnectionContext) context).setTargetPictogramElement(element);
+        ((CreateConnectionContext) context).setTargetAnchor(Graphiti.getPeService().getChopboxAnchor((AnchorContainer) element));
+        //            CreateTransitionFeature createTransitionFeature = new CreateTransitionFeature();
+        //            createTransitionFeature.setFeatureProvider(featureProvider);
+        //            createTransitionFeature.create(connectionContext);
+        return node;
     }
 
     private Node getNode(Anchor anchor) {

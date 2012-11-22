@@ -175,40 +175,25 @@
   </extension> 
   	
   <extension
-        name="Tree actions"
-        point="org.eclipse.ui.popupMenus">
-    <objectContribution id="ru.runa.gpd.tree"
-  		objectClass="ru.runa.gpd.editor.gef.part.tree.ElementTreeEditPart">
-  		<visibility>
-  			<not>
-  				<objectClass name="ru.runa.gpd.editor.gef.part.tree.ProcessDefinitionTreeEditPart"/>
-  			</not>
-  		</visibility>
-  		<action
-  			class="ru.runa.gpd.lang.action.DeleteDelegate"
-  			id="delete"
-  			label="%label.action.delete"
-  			menubarPath="additions">
-  		</action>
-    </objectContribution>
-    <objectContribution id="ru.runa.gpd.tree.variable"
-  		objectClass="ru.runa.gpd.editor.gef.part.tree.VariableTreeEditPart">
-  		<action
-  			class="ru.runa.gpd.lang.action.DeleteDelegate"
-  			id="delete"
-  			label="%label.action.delete"
-  			menubarPath="additions">
-  		</action>
-    </objectContribution>
-  </extension> 
-  
-  <extension
         name="Graph actions"
         point="org.eclipse.ui.popupMenus">
+    <objectContribution id="graph.element"
+  		objectClass="ru.runa.gpd.lang.model.GraphElement">
+    <filter
+          name="language"
+          value="jpdl">
+    </filter>
+  		<action
+  			class="ru.runa.gpd.lang.action.DeleteGraphElementDelegate"
+  			id="delete"
+  			label="%label.action.delete"
+  			menubarPath="additions">
+  		</action>
+    </objectContribution>
      <objectContribution
            adaptable="false"
            id="graph.transition"
-           objectClass="ru.runa.gpd.editor.gef.part.graph.TransitionGraphicalEditPart">
+           objectClass="ru.runa.gpd.lang.model.Transition">
        <action
              class="ru.runa.gpd.lang.action.ActiveActionsDelegate"
              id="graph.actions"
@@ -219,20 +204,12 @@
     </objectContribution>
      <objectContribution
            adaptable="false"
-           id="graph.actionNode"
-           objectClass="ru.runa.gpd.editor.gef.part.graph.ActionNodeGraphicalEditPart">
-       <action
-             class="ru.runa.gpd.lang.action.ActiveActionsDelegate"
-             id="graph.actions1"
-             label="%label.action.actions"
-             menubarPath="additions"
-             style="pulldown">
-       </action>
-    </objectContribution>
-     <objectContribution
-           adaptable="false"
            id="graph.timerNode"
-           objectClass="ru.runa.gpd.editor.gef.part.graph.StateGraphicalEditPart">
+           objectClass="ru.runa.gpd.lang.model.State">
+        <filter
+              name="language"
+              value="jpdl">
+        </filter>
        <action
              class="ru.runa.gpd.lang.action.ActiveActionsDelegate"
              id="graph.actions"
@@ -244,10 +221,14 @@
     <objectContribution
           adaptable="false"
           id="graph.timerNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.StateGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.State">
        <filter
              name="timerExists"
              value="false"/>
+       <filter
+             name="language"
+             value="jpdl">
+       </filter>
        <action
              class="ru.runa.gpd.lang.action.AddTimerDelegate"
              id="addTimer"
@@ -258,12 +239,16 @@
     <objectContribution
           adaptable="false"
           id="graph.timerNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.StateGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.State">
        <filter
              name="timerExists"
              value="true"/>
+       <filter
+             name="language"
+             value="jpdl">
+       </filter>
        <action
-             class="ru.runa.gpd.lang.action.RemoveTimerDelegate"
+             class="ru.runa.gpd.lang.action.DeleteTimerDelegate"
              id="removeTimer"
              label="%label.action.removeTimer"
              menubarPath="additions">
@@ -271,13 +256,17 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.stateNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.StateGraphicalEditPart">
+          id="graph.taskStateNode"
+          objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
-             name="escalationEnableOn"
-             value="true"/>
+             name="escalationEnabled"
+             value="false"/>
+       <filter
+             name="language"
+             value="jpdl">
+       </filter>
        <action
-             class="ru.runa.gpd.lang.action.AddEscalationDelegate"
+             class="ru.runa.gpd.lang.action.EnableEscalationOnTaskDelegate"
              id="addEscalation"
              label="%label.action.addEscalation"
              menubarPath="additions">
@@ -285,13 +274,17 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.stateNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.StateGraphicalEditPart">
+          id="graph.taskStateNode"
+          objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
-             name="escalationEnableOff"
+             name="escalationEnabled"
              value="true"/>
+       <filter
+             name="language"
+             value="jpdl">
+       </filter>
        <action
-             class="ru.runa.gpd.lang.action.RemoveEscalationDelegate"
+             class="ru.runa.gpd.lang.action.DisableEscalationOnTaskDelegate"
              id="addEscalation"
              label="%label.action.removeEscalation"
              menubarPath="additions">
@@ -300,10 +293,10 @@
     <objectContribution
           adaptable="false"
           id="graph.stateNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.StateGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.State">
        <filter
-             name="enableMinimizeView"
-             value="true"/>
+             name="minimizedView"
+             value="false"/>
        <action
              class="ru.runa.gpd.lang.action.ChangeCompactViewDelegate"
              id="setCompactView"
@@ -314,9 +307,9 @@
     <objectContribution
           adaptable="false"
           id="graph.stateNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.StateGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.State">
        <filter
-             name="enableRestoreView"
+             name="minimizedView"
              value="true"/>
        <action
              class="ru.runa.gpd.lang.action.ChangeCompactViewDelegate"
@@ -328,7 +321,7 @@
     <objectContribution
           adaptable="false"
           id="graph.formNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart">
+          objectClass="ru.runa.gpd.lang.model.FormNode">
        <menu
              id="form"
              label="%label.action.form"
@@ -364,7 +357,7 @@
     <objectContribution
           adaptable="false"
           id="graph.formNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart">
+          objectClass="ru.runa.gpd.lang.model.FormNode">
        <filter
              name="formExists"
              value="false">
@@ -379,7 +372,7 @@
     <objectContribution
           adaptable="false"
           id="graph.formNode2"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart">
+          objectClass="ru.runa.gpd.lang.model.FormNode">
        <filter
              name="formExists"
              value="true">
@@ -411,8 +404,8 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.definition"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.ProcessDefinitionGraphicalEditPart">
+          id="graph.process"
+          objectClass="ru.runa.gpd.lang.model.ProcessDefinition">
        <action
              class="ru.runa.gpd.lang.action.OpenDescriptionEditorDelegate"
              id="editDescription"
@@ -422,13 +415,22 @@
              id="editFormCSS"
              label="%label.action.editFormCSS">
        </action>
+    </objectContribution>
+    <objectContribution
+          adaptable="false"
+          id="graph.process"
+          objectClass="ru.runa.gpd.lang.model.ProcessDefinition">
+       <filter
+             name="language"
+             value="jpdl">
+       </filter>
        <action
-             class="ru.runa.gpd.lang.action.EscalationOnAction"
+             class="ru.runa.gpd.lang.action.EnableEscalationOnProcessAction"
              id="turnEscalationOn"
              label="%label.action.turnEscalationOn">
        </action>
        <action
-             class="ru.runa.gpd.lang.action.EscalationOffAction"
+             class="ru.runa.gpd.lang.action.DisableEscalationOnProcessAction"
              id="turnEscalationOff"
              label="%label.action.turnEscalationOff">
        </action>
@@ -436,16 +438,7 @@
     <objectContribution
           adaptable="false"
           id="graph.decision"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.DecisionGraphicalEditPart">
-       <action
-             class="ru.runa.gpd.lang.action.OpenDelegableConfigurationDelegate"
-             id="editConfiguration"
-             label="%label.action.editConfiguration" />
-    </objectContribution>
-    <objectContribution
-          adaptable="false"
-          id="graph.action"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.ActionGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.Delegable">
        <action
              class="ru.runa.gpd.lang.action.OpenDelegableConfigurationDelegate"
              id="editConfiguration"
@@ -454,7 +447,7 @@
     <objectContribution
           adaptable="false"
           id="subprocessStateNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.SubprocessGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.Subprocess">
        <action
              class="ru.runa.gpd.lang.action.SubprocessDelegate"
              id="subprocess"
@@ -464,7 +457,17 @@
     <objectContribution
           adaptable="false"
           id="graph.slimNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.ForkJoinGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.Node">
+       <visibility>
+          <and>
+             <objectClass
+                   name="ru.runa.gpd.lang.model.Fork">
+             </objectClass>
+             <objectClass
+                   name="ru.runa.gpd.lang.model.Join">
+             </objectClass>
+          </and>
+       </visibility>
        <action
              class="ru.runa.gpd.lang.action.RotateForkJoinDelegate"
              id="rotateFigure"
@@ -475,7 +478,7 @@
     <objectContribution
           adaptable="false"
           id="multiInstanceStateNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.MultiInstanceGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.MultiInstance">
        <action
              class="ru.runa.gpd.lang.action.MultiInstanceDelegate"
              id="multiInstance"
@@ -485,7 +488,7 @@
     <objectContribution
           adaptable="false"
           id="sendMessageNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.SendMessageGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.SendMessageNode">
        <action
              class="ru.runa.gpd.lang.action.SendMessageConfAction"
              id="sendMessage"
@@ -496,7 +499,7 @@
     <objectContribution
           adaptable="false"
           id="receiveMessageNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.ReceiveMessageGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.ReceiveMessageNode">
        <action
              class="ru.runa.gpd.lang.action.ReceiveMessageConfAction"
              id="receiveMessage"
@@ -507,13 +510,17 @@
     <objectContribution
           adaptable="false"
           id="receiveMessageNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.ReceiveMessageGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.ReceiveMessageNode">
        <filter
              name="timerExists"
              value="true">
        </filter>
+       <filter
+             name="language"
+             value="jpdl">
+       </filter>
        <action
-             class="ru.runa.gpd.lang.action.RemoveTimerDelegate"
+             class="ru.runa.gpd.lang.action.DeleteTimerDelegate"
              id="removeTimer2"
              label="%label.action.removeTimer"
              menubarPath="additions">
@@ -522,26 +529,19 @@
     <objectContribution
           adaptable="false"
           id="receiveMessageNode"
-          objectClass="ru.runa.gpd.editor.gef.part.graph.ReceiveMessageGraphicalEditPart">
+          objectClass="ru.runa.gpd.lang.model.ReceiveMessageNode">
        <filter
              name="timerExists"
              value="false">
+       </filter>
+       <filter
+             name="language"
+             value="jpdl">
        </filter>
        <action
              class="ru.runa.gpd.lang.action.AddTimerDelegate"
              id="addTimer2"
              label="%label.action.addTimer"
-             menubarPath="additions">
-       </action>
-    </objectContribution>
-    <objectContribution
-          adaptable="false"
-          id="ru.runa.gpd.taskStateTest"
-          objectClass="ru.runa.gpd.lang.model.TaskState">
-       <action
-             class="ru.runa.gpd.lang.action.AddTimerDelegate"
-             id="ru.runa.gpd.action1"
-             label="taskStateTest"
              menubarPath="additions">
        </action>
     </objectContribution>
@@ -630,11 +630,11 @@
          </graphiti>
       </element>
       <element
-      		type="node"
-            model="ru.runa.gpd.lang.model.WaitState"
-            jpdl="wait-state"
             icon="waitstate.png"
-            label="%label.element.waitstate">
+            jpdl="wait-state"
+            label="%label.element.waitstate"
+            model="ru.runa.gpd.lang.model.WaitState"
+            type="node">
          <gef 
             figure="ru.runa.gpd.editor.gef.figure.WaitStateFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
@@ -663,11 +663,12 @@
          </graphiti>
       </element>
       <element
-      		type="node"
-            model="ru.runa.gpd.lang.model.Fork"
-            jpdl="fork"
+            bpmn="forkGateway"
             icon="fork.png"
-            label="%label.element.fork">
+            jpdl="fork"
+            label="%label.element.fork"
+            model="ru.runa.gpd.lang.model.Fork"
+            type="node">
          <gef 
             figure="ru.runa.gpd.editor.gef.figure.ForkJoinFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.ForkJoinGraphicalEditPart"
@@ -679,11 +680,12 @@
          </graphiti>
       </element>
       <element
-      		type="node"
-            model="ru.runa.gpd.lang.model.Join"
-            jpdl="join"
+            bpmn="joinGateway"
             icon="join.png"
-            label="%label.element.join">
+            jpdl="join"
+            label="%label.element.join"
+            model="ru.runa.gpd.lang.model.Join"
+            type="node">
          <gef 
             figure="ru.runa.gpd.editor.gef.figure.ForkJoinFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.ForkJoinGraphicalEditPart"
@@ -695,11 +697,12 @@
          </graphiti>
       </element>
       <element
-      		type="node"
-            model="ru.runa.gpd.lang.model.Decision"
-            jpdl="decision"
+            bpmn="exclusiveGateway"
             icon="decision.png"
-            label="%label.element.decision">
+            jpdl="decision"
+            label="%label.element.decision"
+            model="ru.runa.gpd.lang.model.Decision"
+            type="node">
          <gef
             figure="ru.runa.gpd.editor.gef.figure.DecisionFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.DecisionGraphicalEditPart"
@@ -754,11 +757,12 @@
          </gef>
       </element>
       <element
-      		type="node"
-            model="ru.runa.gpd.lang.model.Subprocess"
-            jpdl="process-state"
+            bpmn="subProcess"
             icon="subprocess.png"
-            label="%label.element.subprocess">
+            jpdl="process-state"
+            label="%label.element.subprocess"
+            model="ru.runa.gpd.lang.model.Subprocess"
+            type="node">
          <gef 
             figure="ru.runa.gpd.editor.gef.figure.SubprocessFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.SubprocessGraphicalEditPart"
@@ -770,11 +774,12 @@
          </graphiti>
       </element>
       <element
-      		type="node"
-            model="ru.runa.gpd.lang.model.MultiInstance"
-            jpdl="multiinstance-state"
+            bpmn="multiProcess"
             icon="multiinstance.png"
-            label="%label.element.multiinstance">
+            jpdl="multiinstance-state"
+            label="%label.element.multiinstance"
+            model="ru.runa.gpd.lang.model.MultiInstance"
+            type="node">
          <gef 
             figure="ru.runa.gpd.editor.gef.figure.MultiInstanceFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.MultiInstanceGraphicalEditPart"
@@ -786,11 +791,12 @@
          </graphiti>
       </element>
       <element
-      		type="node"
-            model="ru.runa.gpd.lang.model.SendMessageNode"
-            jpdl="send-message"
+            bpmn="sendTask"
             icon="sendmessage.png"
-            label="%label.element.sendmessage">
+            jpdl="send-message"
+            label="%label.element.sendmessage"
+            model="ru.runa.gpd.lang.model.SendMessageNode"
+            type="node">
          <gef 
             figure="ru.runa.gpd.editor.gef.figure.SendMessageFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.SendMessageGraphicalEditPart"
@@ -805,11 +811,12 @@
          </graphiti>
       </element>
       <element
-      		type="node"
-            model="ru.runa.gpd.lang.model.ReceiveMessageNode"
-            jpdl="receive-message"
+            bpmn="receiveTask"
             icon="receivemessage.png"
-            label="%label.element.receivemessage">
+            jpdl="receive-message"
+            label="%label.element.receivemessage"
+            model="ru.runa.gpd.lang.model.ReceiveMessageNode"
+            type="node">
          <gef
             figure="ru.runa.gpd.editor.gef.figure.ReceiveMessageFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.ReceiveMessageGraphicalEditPart"

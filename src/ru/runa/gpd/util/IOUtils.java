@@ -156,9 +156,9 @@ public class IOUtils {
             }
             if (!file.exists()) {
                 file.create(EMPTY_STREAM, true, null);
-                file.setCharset(PluginConstants.UTF_ENCODING, null);
             }
         }
+        file.setCharset(PluginConstants.UTF_ENCODING, null);
         return file;
     }
 

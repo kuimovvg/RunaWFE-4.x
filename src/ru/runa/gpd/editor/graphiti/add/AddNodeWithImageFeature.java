@@ -26,7 +26,7 @@ public class AddNodeWithImageFeature extends AddNodeFeature {
     @Override
     public PictogramElement add(IAddContext context) {
         Node node = (Node) context.getNewObject();
-        Rectangle bounds = getFigureBounds(context);
+        Rectangle bounds = adjustBounds(context);
         ContainerShape parent = context.getTargetContainer();
         IPeCreateService createService = Graphiti.getPeCreateService();
         ContainerShape containerShape = createService.createContainerShape(parent, true);
@@ -36,7 +36,6 @@ public class AddNodeWithImageFeature extends AddNodeFeature {
         link(containerShape, node);
         createService.createChopboxAnchor(containerShape);
         layoutPictogramElement(containerShape);
-        node.setConstraint(bounds);
         return containerShape;
     }
 }

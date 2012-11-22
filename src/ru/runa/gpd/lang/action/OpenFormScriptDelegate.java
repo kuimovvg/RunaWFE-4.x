@@ -9,17 +9,16 @@ import org.eclipse.ui.ide.IDE;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.FormNodeSetScriptFileCommand;
-import ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.util.IOUtils;
 
-public class OpenFormScriptDelegate extends BaseActionDelegate {
+public class OpenFormScriptDelegate extends BaseModelActionDelegate {
     private static final String EDITOR_ID = "tk.eclipse.plugin.jseditor.editors.JavaScriptEditor";
 
     @Override
     public void run(IAction action) {
         try {
-            FormNode formNode = ((FormNodeEditPart) selectedPart).getModel();
+            FormNode formNode = getSelection();
             String fileName;
             if (!formNode.hasFormScript()) {
                 fileName = formNode.getNodeId() + "." + FormNode.SCRIPT_SUFFIX;
@@ -40,7 +39,7 @@ public class OpenFormScriptDelegate extends BaseActionDelegate {
             if (!formNode.hasFormScript()) {
                 setNewScriptFormFile(formNode, file.getName());
             }
-            IDE.openEditor(targetPart.getSite().getPage(), file, EDITOR_ID, true);
+            IDE.openEditor(getWorkbenchPage(), file, EDITOR_ID, true);
         } catch (Exception e) {
             PluginLogger.logError(e);
         }

@@ -45,7 +45,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveVariablesCommand;
 import ru.runa.gpd.handler.LocalizationRegistry;
 import ru.runa.gpd.lang.model.FormNode;
-import ru.runa.gpd.lang.model.NotificationMessages;
+import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
@@ -156,10 +156,10 @@ public class VariableEditorPage extends EditorPartBase {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String type = evt.getPropertyName();
-        if (NotificationMessages.NODE_CHILDS_CHANGED.equals(type)) {
+        if (PropertyNames.NODE_CHILDS_CHANGED.equals(type)) {
             fillViewer();
         } else if (evt.getSource() instanceof Variable) {
-            if (NotificationMessages.PROPERTY_NAME.equals(type) || NotificationMessages.PROPERTY_FORMAT.equals(type) || NotificationMessages.PROPERTY_DEFAULT_VALUE.equals(type)) {
+            if (PropertyNames.PROPERTY_NAME.equals(type) || PropertyNames.PROPERTY_FORMAT.equals(type) || PropertyNames.PROPERTY_DEFAULT_VALUE.equals(type)) {
                 tableViewer.refresh(evt.getSource());
             }
         }

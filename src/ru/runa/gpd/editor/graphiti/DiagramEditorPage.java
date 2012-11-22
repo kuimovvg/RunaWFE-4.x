@@ -81,7 +81,7 @@ public class DiagramEditorPage extends DiagramEditor {
 
     @Override
     protected ContextMenuProvider createContextMenuProvider() {
-        return new DiagramContextMenuProvider(getGraphicalViewer(), getActionRegistry(), getDiagramTypeProvider());
+        return new DiagramContextMenuProvider(getGraphicalViewer(), getActionRegistry(), getDiagramTypeProvider(), editor.getDefinition());
     }
 
     //    @Override

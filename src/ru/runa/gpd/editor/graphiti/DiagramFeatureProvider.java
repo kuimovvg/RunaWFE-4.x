@@ -45,8 +45,10 @@ import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.util.ProjectFinder;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+@SuppressWarnings("unchecked")
 public class DiagramFeatureProvider extends DefaultFeatureProvider {
     public DiagramFeatureProvider(IDiagramTypeProvider dtp) {
         super(dtp);
@@ -62,7 +64,9 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
         List<ICreateFeature> list = Lists.newArrayList();
         for (NodeTypeDefinition definition : NodeRegistry.getDefinitions()) {
             if (definition.getGraphitiEntry() != null && NodeTypeDefinition.TYPE_NODE.equals(definition.getType())) {
-                list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
+                if (!Strings.isNullOrEmpty(definition.getBpmnElementName())) {
+                    list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
+                }
             }
         }
         return list.toArray(new ICreateFeature[list.size()]);
@@ -76,7 +80,6 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public IAddFeature getAddFeature(IAddContext context) {
         return getAddFeature((Class<? extends GraphElement>) context.getNewObject().getClass());
