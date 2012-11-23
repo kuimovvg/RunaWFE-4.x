@@ -45,6 +45,8 @@ import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 
+import com.google.common.base.Objects;
+
 public class ValidationErrorsView extends ViewPart implements ISelectionChangedListener {
     public static final String ID = "ru.runa.gpd.validationErrors";
     static final String[] COLUMN_NAMES = { Localization.getString("ValidationErrorsView.Source"), Localization.getString("ValidationErrorsView.Message"),
@@ -96,9 +98,15 @@ public class ValidationErrorsView extends ViewPart implements ISelectionChangedL
             IFile resource = (IFile) marker.getResource();
             ProcessEditorBase editor = (ProcessEditorBase) IDE.openEditor(getSite().getPage(), resource);
             GraphElement graphElement = null;
-            String elementName = marker.getAttribute(PluginConstants.SELECTION_LINK_KEY, null);
-            if (elementName != null) {
-                graphElement = findElement(editor.getDefinition(), NamedGraphElement.class, elementName);
+            String elementId = marker.getAttribute(PluginConstants.SELECTION_LINK_KEY, null);
+            if (elementId != null) {
+                List<? extends Node> elements = editor.getDefinition().getChildrenRecursive(Node.class);
+                for (Node element : elements) {
+                    if (Objects.equal(elementId, element.getNodeId())) {
+                        graphElement = element;
+                        break;
+                    }
+                }
             }
             String swimlaneName = marker.getAttribute(PluginConstants.SWIMLANE_LINK_KEY, null);
             if (swimlaneName != null) {
