@@ -102,22 +102,26 @@ public class GpdXmlContentProvider extends AuxContentProvider {
         addAttribute(root, SHOW_GRID_NAME, String.valueOf(definition.isShowGrid()));
         int xOffset = 0;
         int yOffset = 0;
+        int canvasShift = 0;
+        if (definition.getLanguage() == Language.BPMN) {
+            canvasShift = 5;
+        }
         // calculating negative offsets;
         for (Node node : definition.getNodes()) {
             Rectangle constraints = node.getConstraint();
-            if (constraints.x < xOffset) {
-                xOffset = constraints.x;
+            if (constraints.x - canvasShift < xOffset) {
+                xOffset = constraints.x - canvasShift;
             }
-            if (constraints.y < yOffset) {
-                yOffset = constraints.y;
+            if (constraints.y - canvasShift < yOffset) {
+                yOffset = constraints.y - canvasShift;
             }
             for (Transition transition : node.getLeavingTransitions()) {
                 for (Bendpoint bendpoint : transition.getBendpoints()) {
-                    if (bendpoint.getX() < xOffset) {
-                        xOffset = bendpoint.getX();
+                    if (bendpoint.getX() - canvasShift < xOffset) {
+                        xOffset = bendpoint.getX() - canvasShift;
                     }
-                    if (bendpoint.getY() < yOffset) {
-                        yOffset = bendpoint.getY();
+                    if (bendpoint.getY() - canvasShift < yOffset) {
+                        yOffset = bendpoint.getY() - canvasShift;
                     }
                 }
             }
