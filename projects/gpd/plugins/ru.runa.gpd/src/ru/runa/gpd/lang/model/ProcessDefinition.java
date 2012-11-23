@@ -245,9 +245,12 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
                 String msg = Localization.getString("model.validation." + messageKey);
                 String formatted = MessageFormat.format(msg, params);
                 marker.setAttribute(IMarker.MESSAGE, formatted);
-                String elementSource = element.toString();
+                String elementId = element.toString();
+                if (element instanceof Node) {
+                    elementId = ((Node) element).getNodeId();
+                }
                 if (element instanceof Swimlane) {
-                    marker.setAttribute(PluginConstants.SWIMLANE_LINK_KEY, elementSource);
+                    marker.setAttribute(PluginConstants.SWIMLANE_LINK_KEY, elementId);
                 } else if (element instanceof Action) {
                     NamedGraphElement actionParent = (NamedGraphElement) element.getParent();
                     marker.setAttribute(PluginConstants.ACTION_INDEX_KEY, actionParent.getActions().indexOf(element));
@@ -258,11 +261,11 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
                         parentNodeTreePath = actionParent.getName();
                     }
                     marker.setAttribute(PluginConstants.PARENT_NODE_KEY, parentNodeTreePath);
-                    elementSource = element.toString() + " (" + parentNodeTreePath + ")";
+                    elementId = element.toString() + " (" + parentNodeTreePath + ")";
                 } else {
-                    marker.setAttribute(PluginConstants.SELECTION_LINK_KEY, elementSource);
+                    marker.setAttribute(PluginConstants.SELECTION_LINK_KEY, elementId);
                 }
-                marker.setAttribute(IMarker.LOCATION, elementSource);
+                marker.setAttribute(IMarker.LOCATION, element.toString());
                 marker.setAttribute(IMarker.SEVERITY, severity);
                 marker.setAttribute(PluginConstants.PROCESS_NAME_KEY, getName());
             }

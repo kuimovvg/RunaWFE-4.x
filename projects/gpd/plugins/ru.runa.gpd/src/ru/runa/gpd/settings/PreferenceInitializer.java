@@ -18,7 +18,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
         store.setDefault(P_FORM_EXTERNAL_EDITOR_PATH, "");
         store.setDefault(P_FORM_USE_EXTERNAL_EDITOR, false);
         //store.setDefault(P_TASKS_TIMEOUT_ENABLED, false);
-        store.setDefault(P_CONNECTION_WFE_PROVIDER_URL, "localhost");
+        store.setDefault(P_CONNECTION_WFE_PROVIDER_URL, "localhost:10099");
         store.setDefault(P_CONNECTION_LOGIN_MODE, LOGIN_MODE_LOGIN_PASSWORD);
         store.setDefault(P_CONNECTION_LOGIN, "Administrator");
         store.setDefault(P_CONNECTION_PASSWORD, "wf");
