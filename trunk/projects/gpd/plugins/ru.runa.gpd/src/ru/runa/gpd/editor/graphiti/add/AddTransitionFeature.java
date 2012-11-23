@@ -2,18 +2,15 @@ package ru.runa.gpd.editor.graphiti.add;
 
 import java.util.List;
 
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.graphiti.datatypes.ILocation;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.MultiText;
 import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
-import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.algorithms.styles.StylesFactory;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -28,7 +25,6 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.editor.graphiti.StyleUtil;
-import ru.runa.gpd.editor.graphiti.TextUtil;
 import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Transition;
 
@@ -143,20 +139,20 @@ public class AddTransitionFeature extends AbstractAddFeature {
         // create link and wire it
         link(connection, transition);
         // add dynamic text decorator for the reference name
-        ConnectionDecorator textDecorator = peCreateService.createConnectionDecorator(connection, true, 0.5, true);
-        MultiText text = gaService.createDefaultMultiText(getDiagram(), textDecorator);
-        // text.setStyle(StyleUtil.getStyleForTask((getDiagram())));
-        text.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
-        text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
-        if (addConnectionContext.getProperty(LABEL_PROPERTY) != null) {
-            Rectangle labelLocation = (Rectangle) addConnectionContext.getProperty(LABEL_PROPERTY);
-            gaService.setLocation(text, labelLocation.x, labelLocation.y);
-        } else {
-            gaService.setLocation(text, 10, 0);
-        }
-        TextUtil.setTextSize(transition.getName(), text);
-        // set reference name in the text decorator
-        text.setValue(transition.getName());
+        //        ConnectionDecorator textDecorator = peCreateService.createConnectionDecorator(connection, true, 0.5, true);
+        //        MultiText text = gaService.createDefaultMultiText(getDiagram(), textDecorator);
+        //        // text.setStyle(StyleUtil.getStyleForTask((getDiagram())));
+        //        text.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
+        //        text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
+        //        if (addConnectionContext.getProperty(LABEL_PROPERTY) != null) {
+        //            Rectangle labelLocation = (Rectangle) addConnectionContext.getProperty(LABEL_PROPERTY);
+        //            gaService.setLocation(text, labelLocation.x, labelLocation.y);
+        //        } else {
+        //            gaService.setLocation(text, 10, 0);
+        //        }
+        //        TextUtil.setTextSize(transition.getName(), text);
+        //        // set reference name in the text decorator
+        //        text.setValue(transition.getName());
         // add static graphical decorators (composition and navigable)
         ConnectionDecorator cd = peCreateService.createConnectionDecorator(connection, false, 1.0, true);
         createArrow(cd);
