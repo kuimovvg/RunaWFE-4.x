@@ -16,7 +16,6 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.StyleUtil;
 import ru.runa.gpd.lang.model.Node;
-import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 
 public class AddStateNodeFeature extends AddNodeFeature {
@@ -46,12 +45,12 @@ public class AddStateNodeFeature extends AddNodeFeature {
         gaService.setLocationAndSize(border, GRID_SIZE / 2, GRID_SIZE / 2, borderWidth, borderHeight);
         if (node instanceof SwimlanedNode) {
             Text swimlaneText = gaService.createDefaultText(getDiagram(), border, ((SwimlanedNode) node).getSwimlaneLabel());
-            swimlaneText.getProperties().add(new GaProperty(PropertyNames.PROPERTY_SWIMLANE, ((SwimlanedNode) node).getSwimlaneLabel()));
+            swimlaneText.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.SWIMLANE_NAME));
             swimlaneText.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             gaService.setLocationAndSize(swimlaneText, 0, 0, borderWidth, 2 * GRID_SIZE);
         }
         Text nameText = gaService.createDefaultText(getDiagram(), border, node.getName());
-        nameText.getProperties().add(new GaProperty(PropertyNames.PROPERTY_NAME, node.getName()));
+        nameText.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.NAME));
         nameText.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
         gaService.setLocationAndSize(nameText, 0, 2 * GRID_SIZE, borderWidth, borderHeight - 3 * GRID_SIZE);
         //

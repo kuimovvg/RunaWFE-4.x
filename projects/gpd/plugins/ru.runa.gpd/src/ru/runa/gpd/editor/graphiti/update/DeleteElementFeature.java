@@ -24,6 +24,11 @@ public class DeleteElementFeature extends DefaultDeleteFeature {
                 transition.getSource().removeLeavingTransition(transition);
             }
         }
-        element.getParent().removeChild(element);
+        if (element instanceof Transition) {
+            Transition transition = (Transition) element;
+            transition.getSource().removeLeavingTransition(transition);
+        } else {
+            element.getParent().removeChild(element);
+        }
     }
 }

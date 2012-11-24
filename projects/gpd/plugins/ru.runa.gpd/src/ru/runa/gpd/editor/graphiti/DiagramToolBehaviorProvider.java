@@ -18,7 +18,6 @@ import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
 
 import ru.runa.gpd.editor.graphiti.create.CreateNodeFeature;
-import ru.runa.gpd.editor.graphiti.create.CreateDragAndDropNodeFeature;
 import ru.runa.gpd.editor.graphiti.update.OpenSubProcessFeature;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
@@ -53,7 +52,7 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
     public IContextButtonPadData getContextButtonPad(IPictogramElementContext context) {
         IContextButtonPadData data = super.getContextButtonPad(context);
         PictogramElement pe = context.getPictogramElement();
-        setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE | CONTEXT_BUTTON_UPDATE);
+        setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE);
         GraphElement element = (GraphElement) getFeatureProvider().getBusinessObjectForPictogramElement(pe);
         //
         CreateConnectionContext createConnectionContext = new CreateConnectionContext();
@@ -83,13 +82,13 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
         data.getDomainSpecificContextButtons().add(createTaskStateButton);
         //
         NodeTypeDefinition decisionDefinition = NodeRegistry.getNodeTypeDefinition(Decision.class);
-        CreateDragAndDropNodeFeature decisionFeature = new CreateDragAndDropNodeFeature(getFeatureProvider().getCurrentProcessDefinition());
-        //decisionFeature.setNodeDefinition(decisionDefinition);
+        CreateNodeFeature decisionFeature = new CreateNodeFeature();
+        decisionFeature.setNodeDefinition(decisionDefinition);
         decisionFeature.setFeatureProvider(getFeatureProvider());
-        ContextButtonEntry createDecisionButton = new ContextButtonEntry(null, null);
+        ContextButtonEntry createDecisionButton = new ContextButtonEntry(decisionFeature, createContext);
         createDecisionButton.setText(decisionDefinition.getLabel());
         createDecisionButton.setIconId(decisionDefinition.getPaletteIcon());
-        createDecisionButton.addDragAndDropFeature(decisionFeature);
+        //createDecisionButton.addDragAndDropFeature(decisionFeature);
         data.getDomainSpecificContextButtons().add(createDecisionButton);
         //
         NodeTypeDefinition endStateDefinition = NodeRegistry.getNodeTypeDefinition(EndState.class);

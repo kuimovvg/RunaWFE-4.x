@@ -1,5 +1,7 @@
 package ru.runa.gpd.editor.graphiti;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,11 +32,12 @@ import org.eclipse.ui.PartInitException;
 
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.graphiti.add.AddTransitionFeature;
+import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.Transition;
 
-public class DiagramEditorPage extends DiagramEditor {
+public class DiagramEditorPage extends DiagramEditor implements PropertyChangeListener {
     private final ProcessEditorBase editor;
 
     public DiagramEditorPage(ProcessEditorBase editor) {
@@ -45,6 +48,22 @@ public class DiagramEditorPage extends DiagramEditor {
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
         super.init(site, input);
         //getSite().setSelectionProvider(editor.getSite().getSelectionProvider());
+        editor.getDefinition().setDelegatedListener(this);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        PictogramElement pe = getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(evt.getSource());
+        if (pe != null) {
+            BOUpdateContext context = new BOUpdateContext(pe, evt.getSource());
+            getDiagramTypeProvider().getFeatureProvider().updateIfPossible(context);
+        }
+    }
+
+    @Override
+    public void dispose() {
+        editor.getDefinition().unsetDelegatedListener(this);
+        super.dispose();
     }
 
     @Override
@@ -52,19 +71,6 @@ public class DiagramEditorPage extends DiagramEditor {
         DiagramCreator creator = new DiagramCreator(editor.getDefinitionFile());
         input = creator.createDiagram(null);
         super.setInput(input);
-        //        if (input instanceof DiagramEditorInput) {
-        //            BasicCommandStack basicCommandStack = (BasicCommandStack) getEditingDomain().getCommandStack();
-        //            basicCommandStack.execute(new RecordingCommand(getEditingDomain()) {
-        //                @Override
-        //                protected void doExecute() {
-        //                    importDiagram();
-        //                }
-        //            });
-        //            basicCommandStack.saveIsDone();
-        //            basicCommandStack.flush();
-        //        } else {
-        //            
-        //        }
         importDiagram();
     }
 
