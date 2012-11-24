@@ -23,6 +23,7 @@ import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Transition;
 
+// bizagi behaviour, unused now
 public class CreateDragAndDropNodeFeature extends AbstractCreateConnectionFeature {
     private final NodeTypeDefinition transitionDefinition;
     private IFeatureProvider featureProvider;
