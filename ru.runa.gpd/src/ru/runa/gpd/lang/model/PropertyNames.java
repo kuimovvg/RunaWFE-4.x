@@ -40,6 +40,7 @@ public interface PropertyNames {
     public static final String NODE_ARRIVING_TRANSITION_REMOVED = "ARRIVING_TRANSITION_REMOVED";
     public static final String NODE_BOUNDS_RESIZED = "CONSTRAINT_CHANGED";
     public static final String TRANSITION_BENDPOINTS_CHANGED = "BENDPOINT_CHANGED";
+    public static final String TRANSITION_FLOW = "TRANSITION_FLOW";
     public static final String PROPERTY_SHOW_ACTIONS = "showActions";
     public static final String PROPERTY_SHOW_GRID = "showGrid";
     public static final String PROPERTY_DIRTY = "dirty";

@@ -43,6 +43,9 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private boolean invalid;
     private int nextNodeId;
 
+    public ProcessDefinition() {
+    }
+
     public String getDefaultTaskDuedate() {
         return defaultTaskDuration.getDuration();
     }

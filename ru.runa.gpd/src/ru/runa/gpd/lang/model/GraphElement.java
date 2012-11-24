@@ -28,6 +28,7 @@ import com.google.common.base.Objects;
 @SuppressWarnings("unchecked")
 public abstract class GraphElement implements IPropertySource, PropertyNames, IActionFilter {
     protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+    private PropertyChangeListener delegatedListener;
     private GraphElement parent;
     private final List<GraphElement> childs = new ArrayList<GraphElement>();
     private Rectangle constraint;
@@ -38,6 +39,26 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
             return Objects.equal(value, getProcessDefinition().getLanguage().name().toLowerCase());
         }
         return false;
+    }
+
+    public void setDelegatedListener(PropertyChangeListener delegatedListener) {
+        this.delegatedListener = delegatedListener;
+        if (delegatedListener != null) {
+            addPropertyChangeListener(delegatedListener);
+            for (GraphElement child : getChildren(GraphElement.class)) {
+                child.setDelegatedListener(delegatedListener);
+            }
+        }
+    }
+
+    public void unsetDelegatedListener(PropertyChangeListener delegatedListener) {
+        if (delegatedListener != null) {
+            removePropertyChangeListener(delegatedListener);
+            for (GraphElement child : getChildren(GraphElement.class)) {
+                child.unsetDelegatedListener(delegatedListener);
+            }
+        }
+        this.delegatedListener = null;
     }
 
     public Rectangle getConstraint() {
@@ -104,6 +125,9 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         childs.remove(child);
         firePropertyChange(NODE_REMOVED, child, null);
         firePropertyChange(NODE_CHILDS_CHANGED, null, null);
+        if (child.delegatedListener != null) {
+            child.removePropertyChangeListener(child.delegatedListener);
+        }
     }
 
     public void addChild(GraphElement child) {
@@ -113,6 +137,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
     public void addChild(GraphElement child, int index) {
         childs.add(index, child);
         child.setParent(this);
+        child.setDelegatedListener(delegatedListener);
         firePropertyChange(NODE_CHILDS_CHANGED, null, null);
     }
 

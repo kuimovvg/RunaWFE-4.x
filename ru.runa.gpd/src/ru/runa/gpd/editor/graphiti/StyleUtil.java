@@ -98,7 +98,7 @@ public class StyleUtil {
         gca.getEnd().setLocationValue(locationValueEnd);
     }
 
-    public static Style getStyleForPolygon(Diagram diagram) {
+    public static Style getStyleForPolygonArrow(Diagram diagram) {
         final String styleId = "BPMN-POLYGON-ARROW"; //$NON-NLS-1$
         Style style = findStyle(diagram, styleId);
         if (style == null) { // style not found - create new style
@@ -106,6 +106,19 @@ public class StyleUtil {
             style = gaService.createStyle(diagram, styleId);
             style.setForeground(gaService.manageColor(diagram, IColorConstant.BLACK));
             style.setBackground(gaService.manageColor(diagram, IColorConstant.BLACK));
+            style.setLineWidth(1);
+        }
+        return style;
+    }
+
+    public static Style getStyleForPolygonDiamond(Diagram diagram) {
+        final String styleId = "BPMN-POLYGON-DIAMOND";
+        Style style = findStyle(diagram, styleId);
+        if (style == null) { // style not found - create new style
+            IGaService gaService = Graphiti.getGaService();
+            style = gaService.createStyle(diagram, styleId);
+            style.setForeground(gaService.manageColor(diagram, IColorConstant.BLACK));
+            style.setBackground(gaService.manageColor(diagram, IColorConstant.WHITE));
             style.setLineWidth(1);
         }
         return style;

@@ -9,8 +9,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.ui.dialog.DurationEditDialog;
@@ -23,7 +23,7 @@ public class EscalationGlobalPreferencePage extends FieldEditorPreferencePage im
     public EscalationGlobalPreferencePage() {
         super(GRID);
         setPreferenceStore(Activator.getDefault().getPreferenceStore());
-        ProcessDefinition process = new ProcessDefinition();
+        ProcessDefinition process = new ProcessDefinition(); // TODO remove this!
         timerAction = new TimerAction(process);
         timerAction.setDelegationClassName(EscalationActionHandler.class.getName());
         {
