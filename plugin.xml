@@ -626,7 +626,8 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddTaskStateFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature">
          </graphiti>
       </element>
       <element
@@ -770,7 +771,8 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddSubProcessFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature">
          </graphiti>
       </element>
       <element
@@ -787,7 +789,8 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddMultiInstanceFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature">
          </graphiti>
       </element>
       <element

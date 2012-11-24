@@ -30,6 +30,7 @@ import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.editor.graphiti.add.AddTransitionBendpointFeature;
+import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
 import ru.runa.gpd.editor.graphiti.update.DeleteElementFeature;
 import ru.runa.gpd.editor.graphiti.update.DirectEditNodeNameFeature;
 import ru.runa.gpd.editor.graphiti.update.MoveNodeFeature;
@@ -37,7 +38,6 @@ import ru.runa.gpd.editor.graphiti.update.MoveTransitionBendpointFeature;
 import ru.runa.gpd.editor.graphiti.update.ReconnectSequenceFlowFeature;
 import ru.runa.gpd.editor.graphiti.update.RemoveTransitionBendpointFeature;
 import ru.runa.gpd.editor.graphiti.update.ResizeNodeFeature;
-import ru.runa.gpd.editor.graphiti.update.UpdateNodeFeature;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -143,13 +143,22 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public IUpdateFeature getUpdateFeature(IUpdateContext context) {
-        PictogramElement pictogramElement = context.getPictogramElement();
-        Object bo = getBusinessObjectForPictogramElement(pictogramElement);
-        if (bo instanceof Node) {
-            return new UpdateNodeFeature(this);
+        Object bo;
+        if (context instanceof BOUpdateContext) {
+            bo = ((BOUpdateContext) context).getModel();
+        } else {
+            PictogramElement pictogramElement = context.getPictogramElement();
+            bo = getBusinessObjectForPictogramElement(pictogramElement);
+        }
+        if (bo != null) {
+            NodeTypeDefinition definition = NodeRegistry.getNodeTypeDefinition((Class<? extends GraphElement>) bo.getClass());
+            if (definition != null && definition.getGraphitiEntry() != null) {
+                return definition.getGraphitiEntry().createUpdateFeature(this);
+            }
         }
         return super.getUpdateFeature(context);
     }
+    //
     //    @Override
     //    public IFeature[] getDragAndDropFeatures(IPictogramElementContext context) {
     //        // simply return all create connection features
