@@ -94,6 +94,7 @@ public abstract class Node extends NamedGraphElement {
         if (target != null) {
             target.firePropertyChange(NODE_ARRIVING_TRANSITION_ADDED, null, transition);
         }
+        updateLeavingTransitions();
     }
 
     public void removeLeavingTransition(Transition transition) {
@@ -102,6 +103,16 @@ public abstract class Node extends NamedGraphElement {
         Node target = transition.getTarget();
         if (target != null) {
             target.firePropertyChange(NODE_ARRIVING_TRANSITION_REMOVED, null, transition);
+        }
+        updateLeavingTransitions();
+    }
+
+    private void updateLeavingTransitions() {
+        if (isExclusive()) {
+            boolean exclusiveFlow = getLeavingTransitions().size() > 1;
+            for (Transition leavingTransition : getLeavingTransitions()) {
+                leavingTransition.setExclusiveFlow(exclusiveFlow);
+            }
         }
     }
 

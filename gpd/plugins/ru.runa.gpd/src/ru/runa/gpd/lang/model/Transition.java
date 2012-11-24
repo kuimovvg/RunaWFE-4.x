@@ -13,6 +13,8 @@ import com.google.common.base.Objects;
 public class Transition extends NamedGraphElement implements Active {
     private Node target;
     private List<Bendpoint> bendpoints = new ArrayList<Bendpoint>();
+    private boolean exclusiveFlow;
+    private boolean defaultFlow;
 
     public List<Bendpoint> getBendpoints() {
         return bendpoints;
@@ -36,6 +38,28 @@ public class Transition extends NamedGraphElement implements Active {
     public void setBendpoint(int index, Bendpoint bendpoint) {
         getBendpoints().set(index, bendpoint);
         firePropertyChange(TRANSITION_BENDPOINTS_CHANGED, null, index);
+    }
+
+    public boolean isExclusiveFlow() {
+        return exclusiveFlow;
+    }
+
+    public boolean isDefaultFlow() {
+        return defaultFlow;
+    }
+
+    public void setDefaultFlow(boolean defaultFlow) {
+        if (this.defaultFlow != defaultFlow) {
+            this.defaultFlow = defaultFlow;
+            firePropertyChange(TRANSITION_FLOW, !defaultFlow, defaultFlow);
+        }
+    }
+
+    public void setExclusiveFlow(boolean exclusiveFlow) {
+        if (this.exclusiveFlow != exclusiveFlow) {
+            this.exclusiveFlow = exclusiveFlow;
+            firePropertyChange(TRANSITION_FLOW, !exclusiveFlow, exclusiveFlow);
+        }
     }
 
     @Override
