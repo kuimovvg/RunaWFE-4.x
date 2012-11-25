@@ -157,7 +157,7 @@ public class DatabaseTaskXmlParser {
         Matcher matcher = pattern.matcher(sqlElement);
         if (matcher.matches()) {
             String variableName = matcher.group(1);
-            sql = variableProvider.getNotNull(String.class, variableName);
+            sql = variableProvider.getValueNotNull(String.class, variableName);
         }
         return sql;
     }

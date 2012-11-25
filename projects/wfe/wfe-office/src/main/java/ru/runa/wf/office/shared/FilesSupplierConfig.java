@@ -55,7 +55,7 @@ public abstract class FilesSupplierConfig {
 
     public InputStream getFileInputStream(IVariableProvider variableProvider, boolean required) {
         if (inputFileVariableName != null) {
-            Object value = variableProvider.get(inputFileVariableName);
+            Object value = variableProvider.getValue(inputFileVariableName);
             if (value instanceof FileVariable) {
                 FileVariable fileVariable = (FileVariable) value;
                 return new ByteArrayInputStream(fileVariable.getData());

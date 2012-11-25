@@ -52,7 +52,7 @@ public class CancelProcessTaskHandler implements TaskHandler {
 
     @Override
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
-        Long processId = variableProvider.get(Long.class, processToCancelTask.getProcessIdVariableName());
+        Long processId = variableProvider.getValue(Long.class, processToCancelTask.getProcessIdVariableName());
         if (processId != null && processId != 0) {
             DelegateFactory.getExecutionService().cancelProcess(subject, processId);
             DefinitionService definitionService = DelegateFactory.getDefinitionService();

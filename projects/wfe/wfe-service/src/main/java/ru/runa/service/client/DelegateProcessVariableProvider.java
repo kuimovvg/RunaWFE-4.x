@@ -4,9 +4,11 @@ import javax.security.auth.Subject;
 
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.var.AbstractVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
 
 /**
- * Implementation which uses service call for each variable retrieval (through RunaWFE delegates).
+ * Implementation which uses service call for each variable retrieval (through
+ * RunaWFE delegates).
  * 
  * @author Dofs
  * @since 4.0
@@ -21,8 +23,17 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
     }
 
     @Override
-    public Object get(String variableName) {
-        return DelegateFactory.getExecutionService().getVariable(subject, processId, variableName).getValue();
+    public Long getProcessId() {
+        return processId;
     }
 
+    @Override
+    public Object getValue(String variableName) {
+        return getVariable(variableName).getValue();
+    }
+
+    @Override
+    public WfVariable getVariable(String variableName) {
+        return DelegateFactory.getExecutionService().getVariable(subject, processId, variableName);
+    }
 }

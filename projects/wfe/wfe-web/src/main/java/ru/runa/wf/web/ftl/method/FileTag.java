@@ -32,21 +32,21 @@ public class FileTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String varName = getParameterAs(String.class, 0);
+        String variableName = getParameterAs(String.class, 0);
         String view = getParameterAs(String.class, 1);
 
-        FileVariable fv = getVariableAs(FileVariable.class, varName, false);
+        FileVariable fileVariable = variableProvider.getValueNotNull(FileVariable.class, variableName);
         if ("content".equals(view)) {
-            return new String(fv.getData(), Charsets.UTF_8);
+            return new String(fileVariable.getData(), Charsets.UTF_8);
         } else if ("contentlength".equals(view)) {
-            return fv.getData().length;
+            return fileVariable.getData().length;
         } else if ("contenttype".equals(view)) {
-            return fv.getContentType();
+            return fileVariable.getContentType();
         } else if ("raw".equals(view)) {
-            return fv;
+            return fileVariable;
         } else if ("drawimage".equals(view)) {
-            String fileName = fv.getName();
-            pageContext.getSession().setAttribute(fileName, fv.getData());
+            String fileName = fileVariable.getName();
+            pageContext.getSession().setAttribute(fileName, fileVariable.getData());
             String actionUrl = Commons.getActionUrl("/getSessionImage", "fileName", fileName, pageContext, PortletUrlType.Render);
             return "<img src='" + actionUrl + "' />";
         } else {

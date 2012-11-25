@@ -106,7 +106,7 @@ public class OrgFunctionHelper {
             } else if (matcher.matches()) {
                 String processVariableName = matcher.group(1);
                 Preconditions.checkNotNull(variableProvider, "variableProvider required for this orgfunction");
-                parameters[i] = variableProvider.get(processVariableName);
+                parameters[i] = variableProvider.getValue(processVariableName);
             } else {
                 parameters[i] = variableNames[i];
             }

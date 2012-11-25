@@ -34,7 +34,7 @@ public class MultipleSelectTag extends FreemarkerTag implements FtlTagVariableHa
         String outputVarName = getParameterAs(String.class, 0);
         registerVariableHandler(outputVarName);
         String inputVarName = getParameterAs(String.class, 1);
-        List<ISelectable> options = getVariableAs(List.class, inputVarName, false);
+        List<ISelectable> options = variableProvider.getValueNotNull(List.class, inputVarName);
         StringBuffer html = new StringBuffer();
         for (ISelectable option : options) {
             String id = outputVarName + "_" + option.getValue();
@@ -55,7 +55,7 @@ public class MultipleSelectTag extends FreemarkerTag implements FtlTagVariableHa
         if (source instanceof List) {
             List<String> valuesList = (List<String>) source;
             String inputVarName = getParameterAs(String.class, 1);
-            List<ISelectable> options = getVariableAs(List.class, inputVarName, false);
+            List<ISelectable> options = variableProvider.getValueNotNull(List.class, inputVarName);
             List<ISelectable> selectedOptions = new ArrayList<ISelectable>();
             for (String selectedValue : valuesList) {
                 for (ISelectable option : options) {

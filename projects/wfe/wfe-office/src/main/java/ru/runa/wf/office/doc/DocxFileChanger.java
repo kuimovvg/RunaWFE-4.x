@@ -112,7 +112,7 @@ public class DocxFileChanger {
                 int columns = tableConfig.getColumns().size();
                 List<List<?>> content = new ArrayList<List<?>>();
                 for (String variableName : tableConfig.getColumns()) {
-                    List<?> list = variableProvider.getNotNull(List.class, variableName);
+                    List<?> list = variableProvider.getValueNotNull(List.class, variableName);
                     if (list.size() > rows) {
                         rows = list.size();
                     }
@@ -141,7 +141,7 @@ public class DocxFileChanger {
                 }
                 // TODO document.insertTable(0, table);
             } else {
-                Object value = variableProvider.get(placeholder);
+                Object value = variableProvider.getValue(placeholder);
                 if (value == null) {
                     if (config.isStrictMode()) {
                         throw new InternalApplicationException("No template variable defined in process: '" + placeholder + "'");

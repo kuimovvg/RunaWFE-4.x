@@ -24,7 +24,7 @@ public abstract class FieldValidatorSupport extends ValidatorSupport implements 
     }
 
     protected Object getFieldValue() {
-        return validatorContext.getVariableProvider().getNotNull(fieldName);
+        return validatorContext.getVariableProvider().getValueNotNull(fieldName);
     }
 
     protected void addFieldError() {

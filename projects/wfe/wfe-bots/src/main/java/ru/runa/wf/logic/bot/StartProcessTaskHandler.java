@@ -79,7 +79,7 @@ public class StartProcessTaskHandler implements TaskHandler {
                 StartProcessVariableMapping startProcessVariableMapping = startProcessTask.getStartProcessVariableMapping(j);
                 String from = startProcessVariableMapping.getFromName();
                 String to = startProcessVariableMapping.getToName();
-                Object value = variableProvider.get(from);
+                Object value = variableProvider.getValue(from);
                 if (DatabaseTask.INSTANCE_ID_VARIABLE_NAME.equals(from)) {
                     value = wfTask.getProcessId();
                 }
