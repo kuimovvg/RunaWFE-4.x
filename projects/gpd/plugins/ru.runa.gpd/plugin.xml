@@ -592,7 +592,8 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddTransitionFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateTransitionFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateTransitionFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateTransitionFeature">
          </graphiti>
       </element>
       <element

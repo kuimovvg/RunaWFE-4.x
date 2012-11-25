@@ -28,7 +28,7 @@ public class UpdateTransitionFeature extends UpdateFeature {
             return Reason.createTrueReason();
         }
         String transitionName = findTextValueRecursive(pe, GaProperty.NAME);
-        if (!Objects.equal(transitionName, bo.getName())) {
+        if (transitionName != null && !Objects.equal(transitionName, bo.getName())) {
             return Reason.createTrueReason();
         }
         return Reason.createFalseReason();

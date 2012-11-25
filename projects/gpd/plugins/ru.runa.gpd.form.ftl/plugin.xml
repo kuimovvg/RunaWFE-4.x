@@ -78,6 +78,7 @@
    <extension
          point="ru.runa.gpd.form.ftl.tags">
       <tag
+            enabled="true"
             height="40"
             id="ChooseActor"
             image="metadata/icons/ChooseActor.png"
@@ -104,6 +105,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             id="ChooseGroup"
             name="%Method.ChooseGroup">
          <param
@@ -131,6 +133,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             height="40"
             id="InputDateTime"
             image="metadata/icons/InputDateTime.png"
@@ -161,6 +164,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             height="40"
             id="GroupMembers"
             image="metadata/icons/ChooseActor.png"
@@ -193,6 +197,21 @@
          </param>
       </tag>
       <tag
+            enabled="true"
+            height="40"
+            id="DisplayVariable"
+            image="metadata/icons/VariableValueDisplay.png"
+            name="%Method.DisplayVariable"
+            width="250">
+         <param
+               name="%Param.Variable"
+               type="combo"
+               values="any"
+               variableAccess="READ">
+         </param>
+      </tag>
+      <tag
+            enabled="false"
             height="40"
             id="DisplayActor"
             image="metadata/icons/DisplayFullActorName.png"
@@ -219,6 +238,7 @@
          </param>
       </tag>
       <tag
+            enabled="false"
             height="40"
             id="ViewFile"
             image="metadata/icons/VariableValueDisplay.png"
@@ -257,6 +277,7 @@
          </param>
       </tag>
       <tag
+            enabled="false"
             height="40"
             id="DownloadFile"
             image="metadata/icons/VariableValueDisplay.png"
@@ -270,6 +291,7 @@
          </param>
       </tag>
       <tag
+            enabled="false"
             id="DisplayExecutor"
             name="%Method.DisplayExecutor">
          <param
@@ -280,6 +302,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             height="45"
             id="AjaxGroupMembers"
             image="metadata/icons/AjaxGroupMembers.gif"
@@ -299,6 +322,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             height="40"
             id="RelationResult"
             image="metadata/icons/ChooseActor.png"
@@ -324,6 +348,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             id="MultipleSelect"
             name="%Method.MultipleSelect">
          <param
@@ -340,6 +365,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             id="ViewList"
             name="%Method.ViewList">
          <param
@@ -367,6 +393,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             id="EditStringList"
             name="%Method.EditStringList">
          <param
@@ -377,6 +404,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             id="DisplayLinkedListsInTable"
             name="%Method.DisplayLinkedListsInTable">
          <param
@@ -387,6 +415,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             id="DisplayFormattedText"
             name="%Method.DisplayFormattedText">
          <param
@@ -397,6 +426,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             id="ActorsMultiSelect"
             name="%Method.ActorsMultiSelect">
          <param

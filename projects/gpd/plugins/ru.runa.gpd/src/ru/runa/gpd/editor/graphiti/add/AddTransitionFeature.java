@@ -88,8 +88,8 @@ public class AddTransitionFeature extends AbstractAddFeature {
         // createLabel(connection, transition.getName(), (Rectangle) addConnectionContext.getProperty(LABEL_LOCATION_PROPERTY));
         // add static graphical decorators (composition and navigable)
         createArrow(connection);
-        //        boolean exclusive = transition.getSource().isExclusive() && transition.getSource().getLeavingTransitions().size() > 1;
-        //        createExclusiveDiamond(connection, exclusive);
+        boolean exclusive = transition.getSource().isExclusive() && transition.getSource().getLeavingTransitions().size() > 1;
+        createExclusiveDiamond(connection, exclusive);
         //createDefaultFlow(connection);
         return connection;
     }
