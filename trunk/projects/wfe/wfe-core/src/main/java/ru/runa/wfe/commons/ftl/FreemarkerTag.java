@@ -7,6 +7,7 @@ import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.var.IVariableProvider;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.TemplateMethodModelEx;
@@ -15,23 +16,17 @@ import freemarker.template.TemplateModelException;
 
 @SuppressWarnings("unchecked")
 public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializable {
-
     private static final long serialVersionUID = 1L;
     protected Subject subject;
     protected PageContext pageContext;
     protected IVariableProvider variableProvider;
-
+    protected WebHelper webHelper;
     private List<TemplateModel> arguments;
 
-    public void setPageContext(PageContext pageContext) {
-        this.pageContext = pageContext;
-    }
-
-    public void setSubject(Subject subject) {
+    public void init(Subject subject, PageContext pageContext, WebHelper webHelper, IVariableProvider variableProvider) {
         this.subject = subject;
-    }
-
-    public void setVariableProvider(IVariableProvider variableProvider) {
+        this.pageContext = pageContext;
+        this.webHelper = webHelper;
         this.variableProvider = variableProvider;
     }
 
@@ -56,15 +51,4 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
         return TypeConversionUtil.convertTo(paramValue, clazz);
     }
 
-    // TODO utilize variableprovider directly
-    protected <T> T getVariableAs(Class<T> clazz, String varName, boolean allowNullValue) throws TemplateModelException {
-        Object variable = variableProvider.get(varName);
-        if (variable == null) {
-            if (allowNullValue) {
-                return null;
-            }
-            throw new TemplateModelException("Variable '" + varName + "' is not defined.");
-        }
-        return TypeConversionUtil.convertTo(variable, clazz);
-    }
 }

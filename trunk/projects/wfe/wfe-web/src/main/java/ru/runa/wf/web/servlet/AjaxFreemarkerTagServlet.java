@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 
 public class AjaxFreemarkerTagServlet extends HttpServlet {
@@ -44,7 +43,6 @@ public class AjaxFreemarkerTagServlet extends HttpServlet {
             if (ajaxTag == null) {
                 throw new NullPointerException("No tag found in session: " + tagId);
             }
-            ajaxTag.setWebHelper(StrutsWebHelper.INSTANCE);
             ajaxTag.processAjaxRequest(req, resp);
         } catch (Exception e) {
             log.error("", e);

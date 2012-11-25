@@ -26,10 +26,10 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
-import ru.runa.wfe.commons.web.WebHelper;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
@@ -38,11 +38,6 @@ import freemarker.template.TemplateModelException;
 
 public abstract class AjaxFreemarkerTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
-    private WebHelper webHelper;
-
-    public void setWebHelper(WebHelper webHelper) {
-        this.webHelper = webHelper;
-    }
 
     @Override
     protected final Object executeTag() throws TemplateModelException {
@@ -88,25 +83,30 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
         return "<script type=\"text/javascript\">" + javascript + "</script>";
     }
 
-    protected String exportScript(String path, Map<String, String> substitutions) throws IOException {
-        if (pageContext == null || webHelper == null) {
-            return "";
-        }
-        InputStream is = ClassLoaderUtil.getResourceAsStream(path, getClass());
-        if (is == null) {
-            throw new NullPointerException("Script not found '" + path + "'");
-        }
-        String jsCode = new String(ByteStreams.toByteArray(is), Charsets.UTF_8);
+    protected String exportScript(String path, Map<String, String> substitutions) {
+        try {
+            if (pageContext == null || webHelper == null) {
+                return "";
+            }
+            InputStream is = ClassLoaderUtil.getResourceAsStream(path, getClass());
+            if (is == null) {
+                throw new NullPointerException("Script not found '" + path + "'");
+            }
+            byte[] data = ByteStreams.toByteArray(is);
+            String jsCode = new String(data, Charsets.UTF_8);
 
-        substitutions.put("jsonUrl", webHelper.getUrl("/form.fp?json=true", pageContext, PortletUrlType.Resource));
-        for (String sKey : substitutions.keySet()) {
-            String v = substitutions.get(sKey);
-            jsCode = jsCode.replaceAll(Pattern.quote(sKey), Matcher.quoteReplacement(v));
+            substitutions.put("jsonUrl", webHelper.getUrl("/form.fp?json=true", pageContext, PortletUrlType.Resource));
+            for (String sKey : substitutions.keySet()) {
+                String v = substitutions.get(sKey);
+                jsCode = jsCode.replaceAll(Pattern.quote(sKey), Matcher.quoteReplacement(v));
+            }
+            if (pageContext.getAttribute(path) == null) {
+                pageContext.setAttribute(path, Boolean.TRUE);
+                return "<script type=\"text/javascript\">" + jsCode + "</script>";
+            }
+            return "";
+        } catch (IOException e) {
+            throw new InternalApplicationException(e);
         }
-        if (pageContext.getAttribute(path) == null) {
-            pageContext.setAttribute(path, Boolean.TRUE);
-            return "<script type=\"text/javascript\">" + jsCode + "</script>";
-        }
-        return "";
     }
 }

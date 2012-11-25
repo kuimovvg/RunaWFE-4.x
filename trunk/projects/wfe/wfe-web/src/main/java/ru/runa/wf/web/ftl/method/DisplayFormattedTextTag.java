@@ -8,13 +8,17 @@ public class DisplayFormattedTextTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String stringVarName = getParameterAs(String.class, 0);
-        String string = getVariableAs(String.class, stringVarName, true);
-        if (string != null) {
-            string = string.replaceAll("\n", "<br>");
-            string = string.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
-            string = string.replaceAll(" ", "&nbsp;");
+        String variableName = getParameterAs(String.class, 0);
+        String string = variableProvider.getValue(String.class, variableName);
+        if (string == null) {
+            return "";
         }
+        string = string.replaceAll("\n", "<br>");
+        string = string.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+        string = string.replaceAll(" ", "&nbsp;");
+        // TODO
+        // "<div style='display: block; padding-left: 5px; background-color: #FFC; border-color: #FC6;'>"
+        // +
         return string;
     }
 

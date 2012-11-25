@@ -17,26 +17,15 @@
  */
 package ru.runa.wf.web.ftl.method;
 
-import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.user.Executor;
-import freemarker.template.TemplateModelException;
-
-public class DisplayExecutorTag extends FreemarkerTag {
+/**
+ * Display executor name.
+ * 
+ * @deprecated introduced new universal tag for displaying any variable based on
+ *             defining format
+ * @author dofs
+ * @since 3.3
+ */
+@Deprecated
+public class DisplayExecutorTag extends DisplayVariableTag {
     private static final long serialVersionUID = 1L;
-
-    @Override
-    protected Object executeTag() throws TemplateModelException {
-        String executorIdVarName = getParameterAs(String.class, 0);
-        Long executorId = getVariableAs(Long.class, executorIdVarName, true);
-
-        ExecutorService executorService = DelegateFactory.getExecutorService();
-        try {
-            Executor executor = executorService.getExecutor(subject, executorId);
-            return executor.getName();
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
-        }
-    }
 }

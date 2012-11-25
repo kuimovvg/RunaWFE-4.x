@@ -143,7 +143,7 @@ public class SQLActionHandler implements ActionHandler {
                 }
                 newValue = Long.toString(actor.getCode());
             } else if (result.isFieldSetup()) {
-                Object variableValue = in.get(result.getVariableName());
+                Object variableValue = in.getValue(result.getVariableName());
                 PropertyUtils.setProperty(variableValue, fieldName, newValue);
                 newValue = variableValue;
             }
@@ -155,7 +155,7 @@ public class SQLActionHandler implements ActionHandler {
     private void fillQueryParameters(PreparedStatement ps, IVariableProvider in, AbstractQuery query) throws Exception {
         for (int i = 0; i < query.getParameterCount(); i++) {
             Parameter parameter = query.getParameter(i);
-            Object value = in.get(parameter.getVariableName());
+            Object value = in.getValue(parameter.getVariableName());
             if (parameter instanceof SwimlaneParameter) {
                 Actor actor = executorDAO.getActorByCode(Long.parseLong((String) value));
                 value = PropertyUtils.getProperty(actor, ((SwimlaneParameter) parameter).getFieldName());

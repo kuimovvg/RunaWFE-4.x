@@ -66,7 +66,7 @@ public class JMSUtil {
         HashMap<String, Object> map = new HashMap<String, Object>();
         for (VariableMapping variableMapping : data) {
             if (!variableMapping.isPropertySelector()) {
-                map.put(variableMapping.getMappedName(), variableProvider.get(variableMapping.getName()));
+                map.put(variableMapping.getMappedName(), variableProvider.getValue(variableMapping.getName()));
             }
         }
         ObjectMessage message = session.createObjectMessage(map);
