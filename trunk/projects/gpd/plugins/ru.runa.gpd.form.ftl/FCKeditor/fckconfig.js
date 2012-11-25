@@ -104,7 +104,7 @@ FCKConfig.ToolbarSets["Default"] = [
 	['Cut','Copy','Paste','PasteText','PasteWord'],
 	['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	['Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField','UploadFile'],
-	['FreemarkerMethod','FreemarkerOutput'],
+	['FreemarkerMethod'],
 	'/',
 	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
 	['OrderedList','UnorderedList','-','Outdent','Indent','Blockquote'],
