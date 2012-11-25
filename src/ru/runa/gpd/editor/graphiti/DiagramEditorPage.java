@@ -56,7 +56,7 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
         PictogramElement pe = getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(evt.getSource());
         if (pe != null) {
             BOUpdateContext context = new BOUpdateContext(pe, evt.getSource());
-            getDiagramTypeProvider().getFeatureProvider().updateIfPossible(context);
+            getDiagramTypeProvider().getFeatureProvider().updateIfPossibleAndNeeded(context);
         }
     }
 
