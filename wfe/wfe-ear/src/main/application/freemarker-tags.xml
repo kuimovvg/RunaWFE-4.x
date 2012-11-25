@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml">
+	<ftltag name="DisplayVariable" class="ru.runa.wf.web.ftl.method.DisplayVariableTag" />
 	<ftltag name="ChooseActor" class="ru.runa.wf.web.ftl.method.ChooseActorTag" />
 	<ftltag name="DisplayActor" class="ru.runa.wf.web.ftl.method.DisplayActorTag" />
 	<ftltag name="GroupMembers" class="ru.runa.wf.web.ftl.method.GroupMembersTag" />

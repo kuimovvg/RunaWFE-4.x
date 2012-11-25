@@ -31,7 +31,7 @@ public class ExcelBindings extends FilesSupplierConfig {
 
     public boolean isInputFileXLSX(IVariableProvider variableProvider, boolean defaultValue) {
         if (inputFileVariableName != null) {
-            Object value = variableProvider.get(inputFileVariableName);
+            Object value = variableProvider.getValue(inputFileVariableName);
             if (value instanceof FileVariable) {
                 FileVariable fileVariable = (FileVariable) value;
                 return isFileNameBelongsToXLSX(fileVariable.getName(), defaultValue);

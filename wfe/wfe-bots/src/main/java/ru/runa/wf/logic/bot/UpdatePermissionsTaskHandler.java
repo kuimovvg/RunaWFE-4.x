@@ -60,7 +60,7 @@ public class UpdatePermissionsTaskHandler implements TaskHandler {
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
         boolean allowed = true;
         if (settings.isConditionExists()) {
-            String conditionVar = variableProvider.get(String.class, settings.getConditionVarName());
+            String conditionVar = variableProvider.getValue(String.class, settings.getConditionVarName());
             if (!settings.getConditionVarValue().equals(conditionVar)) {
                 allowed = false;
             }

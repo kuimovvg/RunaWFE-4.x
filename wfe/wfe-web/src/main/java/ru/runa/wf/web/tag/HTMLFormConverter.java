@@ -268,7 +268,7 @@ public class HTMLFormConverter {
     }
 
     private static String getVarAsString(IVariableProvider variableProvider, String name) {
-        Object value = variableProvider.get(name);
+        Object value = variableProvider.getValue(name);
         if (value instanceof Date) {
             // we don't know user format of date
             return null;
@@ -305,7 +305,7 @@ public class HTMLFormConverter {
                     node.setAttribute(VALUE_ATTR, stringValue);
                 } else if ("checkbox".equalsIgnoreCase(typeName)) {
                     String checkBoxValue = node.getAttribute(VALUE_ATTR);
-                    Object variableValue = variableProvider.get(inputName);
+                    Object variableValue = variableProvider.getValue(inputName);
                     if (variableValue instanceof String[]) {
                         List<String> selectedValues = TypeConversionUtil.convertTo(variableValue, List.class);
                         if (selectedValues.contains(checkBoxValue)) {

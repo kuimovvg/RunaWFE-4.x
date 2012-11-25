@@ -56,9 +56,9 @@ public class SetActorStatusTaskHandler implements TaskHandler {
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
         log.info("Executing task in process " + wfTask.getProcessId() + " with " + config);
         ExecutorService executorDelegate = DelegateFactory.getExecutorService();
-        Long actorCode = variableProvider.getNotNull(Long.class, config.actorVariableName);
+        Long actorCode = variableProvider.getValueNotNull(Long.class, config.actorVariableName);
         Actor actor = executorDelegate.getActorByCode(subject, actorCode);
-        boolean isActive = variableProvider.getNotNull(Boolean.class, config.statusVariableName);
+        boolean isActive = variableProvider.getValueNotNull(Boolean.class, config.statusVariableName);
         executorDelegate.setStatus(subject, actor.getId(), isActive);
         return null;
     }

@@ -62,7 +62,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             try {
                 return super.getVariable(name);
             } catch (MissingPropertyException e) {
-                Object value = variableProvider.get(name);
+                Object value = variableProvider.getValue(name);
                 if (value == null) {
                     log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
                 }

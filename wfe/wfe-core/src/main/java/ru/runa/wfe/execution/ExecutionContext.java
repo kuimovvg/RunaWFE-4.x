@@ -43,7 +43,6 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.VariableCreator;
-import ru.runa.wfe.var.dao.DAOVariableProvider;
 import ru.runa.wfe.var.dao.VariableDAO;
 
 import com.google.common.base.Objects;
@@ -201,7 +200,7 @@ public class ExecutionContext {
      * @return variable provider for this process.
      */
     public IVariableProvider getVariableProvider() {
-        return new DAOVariableProvider(variableDAO, getProcess());
+        return new ExecutionVariableProvider(this);
     }
 
     public void addLog(ProcessLog processLog) {

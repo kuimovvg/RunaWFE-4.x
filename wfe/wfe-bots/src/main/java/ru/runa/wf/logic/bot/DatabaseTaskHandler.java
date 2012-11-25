@@ -112,7 +112,7 @@ public class DatabaseTaskHandler implements TaskHandler {
             Result result = query.getResultVariable(i);
 
             Object newValue = resultSet.getObject(i + 1);
-            Object variableValue = variableProvider.get(result.getVariableName());
+            Object variableValue = variableProvider.getValue(result.getVariableName());
             if (result instanceof SwimlaneResult) {
                 String fieldName = result.getFieldName();
                 Actor actor = null;
@@ -139,7 +139,7 @@ public class DatabaseTaskHandler implements TaskHandler {
     private void fillQueryParameters(Subject subject, PreparedStatement ps, IVariableProvider variableProvider, AbstractQuery query) throws Exception {
         for (int i = 0; i < query.getParameterCount(); i++) {
             Parameter parameter = query.getParameter(i);
-            Object value = variableProvider.get(parameter.getVariableName());
+            Object value = variableProvider.getValue(parameter.getVariableName());
             if (parameter instanceof SwimlaneParameter) {
                 Actor actor = DelegateFactory.getExecutorService().getActorByCode(subject, Long.parseLong((String) value));
                 value = PropertyUtils.getProperty(actor, ((SwimlaneParameter) parameter).getFieldName());

@@ -76,7 +76,7 @@ public class JcrRepositoryTaskHandler implements TaskHandler {
                     outputVariables.put(jcrTask.getVariableName(), fileVariable);
                 }
                 if (JcrTask.PUT_FILE.equals(jcrTask.getOperationName())) {
-                    FileVariable fileVariable = variableProvider.get(FileVariable.class, jcrTask.getVariableName());
+                    FileVariable fileVariable = variableProvider.getValue(FileVariable.class, jcrTask.getVariableName());
                     putFile(session, fileVariable, jcrTask.getPath(), jcrTask.getFileName());
                 }
                 if (JcrTask.REMOVE_FILE.equals(jcrTask.getOperationName())) {

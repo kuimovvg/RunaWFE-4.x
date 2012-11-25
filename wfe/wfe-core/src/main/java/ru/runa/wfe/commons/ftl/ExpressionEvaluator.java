@@ -57,7 +57,7 @@ public class ExpressionEvaluator {
     public static Object evaluateVariable(IVariableProvider variableProvider, String expression) {
         if (expression.startsWith("${") && expression.endsWith("}")) {
             String variableName = expression.substring(2, expression.length() - 1);
-            return variableProvider.getNotNull(variableName);
+            return variableProvider.getValueNotNull(variableName);
         }
         return expression;
     }
@@ -85,7 +85,7 @@ public class ExpressionEvaluator {
         StringBuffer buffer = new StringBuffer();
         while (matcher.find()) {
             String variableName = matcher.group(1);
-            Object variable = variableProvider.getNotNull(variableName);
+            Object variable = variableProvider.getValueNotNull(variableName);
             matcher.appendReplacement(buffer, Matcher.quoteReplacement(variable.toString()));
         }
         matcher.appendTail(buffer);

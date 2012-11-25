@@ -23,6 +23,6 @@ public class TestAssignerFunction implements IEvaluationFunction {
 
     @Override
     public boolean evaluate(IVariableProvider variableProvider) {
-        return "test".equals(variableProvider.get("test"));
+        return "test".equals(variableProvider.getValue("test"));
     }
 }
