@@ -156,7 +156,7 @@ public class EmailUtils {
         // replacements.put(attachment.fileName, "cid:" + attachment.fileName);
         // } TODO images not supported
         for (String variableName : config.getAttachments()) {
-            FileVariable fileVariable = variableProvider.get(FileVariable.class, variableName);
+            FileVariable fileVariable = variableProvider.getValue(FileVariable.class, variableName);
             if (fileVariable != null) {
                 Attachment attachment = new Attachment();
                 attachment.fileName = fileVariable.getName();

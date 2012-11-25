@@ -49,7 +49,7 @@ public class AdvancedSwimlaneAssignerTaskHandler implements TaskHandler {
         List<Condition> conditions = settings.getAssignerConditions();
         for (Condition condition : conditions) {
             if (isAppliedCondition(condition.getFunctionClassName(), variableProvider)) {
-                String actor = variableProvider.get(String.class, condition.getVariableName());
+                String actor = variableProvider.getValue(String.class, condition.getVariableName());
                 outputVariables.put(condition.getSwimlaneName(), actor);
                 break;
             }

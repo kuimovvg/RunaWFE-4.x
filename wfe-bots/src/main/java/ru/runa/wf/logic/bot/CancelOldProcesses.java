@@ -49,7 +49,7 @@ public class CancelOldProcesses implements TaskHandler {
         BatchPresentation batchPresentation = BatchPresentationFactory.PROCESSES.createNonPaged();
         FilterCriteria filter = FilterCriteriaFactory.getFilterCriteria(batchPresentation, 3);
         Date lastDate = new Date();
-        long timeout = variableProvider.getNotNull(long.class, "timeout");
+        long timeout = variableProvider.getValueNotNull(long.class, "timeout");
         lastDate.setTime(System.currentTimeMillis() - timeout * 3600 * 1000);
         filter.applyFilterTemplates(new String[] { "", "" });
         Map<Integer, FilterCriteria> map = batchPresentation.getFilteredFields();
@@ -61,7 +61,7 @@ public class CancelOldProcesses implements TaskHandler {
                 executionService.cancelProcess(subject, process.getId());
             }
         }
-        Boolean periodic = variableProvider.getNotNull(Boolean.class, "isPeriodic");
+        Boolean periodic = variableProvider.getValueNotNull(Boolean.class, "isPeriodic");
         Map<String, Object> outVariables = Maps.newHashMap();
         outVariables.put(SKIP_TASK_COMPLETION_VARIABLE_NAME, periodic);
         return outVariables;

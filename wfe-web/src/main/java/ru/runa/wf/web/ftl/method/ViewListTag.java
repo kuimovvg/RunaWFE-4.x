@@ -30,7 +30,7 @@ public class ViewListTag extends FreemarkerTag {
     @Override
     protected Object executeTag() throws TemplateModelException {
         String optionsVarName = getParameterAs(String.class, 0);
-        List<Object> options = getVariableAs(List.class, optionsVarName, false);
+        List<Object> options = variableProvider.getValueNotNull(List.class, optionsVarName);
         String mode = getParameterAs(String.class, 1);
         if (mode == null) {
             mode = "ul";

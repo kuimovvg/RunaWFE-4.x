@@ -31,14 +31,14 @@ public class DateTimeInputTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String varName = getParameterAs(String.class, 0);
+        String variableName = getParameterAs(String.class, 0);
         String view = getParameterAs(String.class, 1);
 
-        Date varValue = getVariableAs(Date.class, varName, true);
+        Date varValue = variableProvider.getValue(Date.class, variableName);
 
         if ("time".equals(view)) {
             StringBuffer buffer = new StringBuffer();
-            buffer.append("<input type=\"text\" length=\"5\" name=\"").append(varName).append("\" ");
+            buffer.append("<input type=\"text\" length=\"5\" name=\"").append(variableName).append("\" ");
             if (varValue != null) {
                 buffer.append("value=\"").append(varValue).append("\" ");
             }
@@ -53,7 +53,7 @@ public class DateTimeInputTag extends FreemarkerTag {
             } else {
                 throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
             }
-            return calendarRenderer.getHtml(subject, varName, varValue, pageContext);
+            return calendarRenderer.getHtml(subject, variableName, varValue, pageContext);
         }
     }
 

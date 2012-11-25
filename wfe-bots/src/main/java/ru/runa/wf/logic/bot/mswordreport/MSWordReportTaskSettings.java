@@ -80,7 +80,7 @@ public class MSWordReportTaskSettings {
         if (bookmarkVariableMapping == null) {
             throw new IllegalArgumentException("bookmark " + bookmark + " is not defined in document " + templateFileLocation);
         }
-        Object variableValue = variableProvider.getNotNull(bookmarkVariableMapping.getVariableName());
+        Object variableValue = variableProvider.getValueNotNull(bookmarkVariableMapping.getVariableName());
         if (bookmarkVariableMapping.getFormat() != null) {
             return bookmarkVariableMapping.getFormat().format(variableValue);
         }

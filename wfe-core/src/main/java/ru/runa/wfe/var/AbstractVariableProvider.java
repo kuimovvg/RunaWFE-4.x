@@ -1,6 +1,7 @@
 package ru.runa.wfe.var;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.var.dto.WfVariable;
 
 /**
  * Base implementation of {@link IVariableProvider}.
@@ -11,8 +12,8 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 public abstract class AbstractVariableProvider implements IVariableProvider {
 
     @Override
-    public Object getNotNull(String variableName) throws VariableDoesNotExistException {
-        Object object = get(variableName);
+    public Object getValueNotNull(String variableName) throws VariableDoesNotExistException {
+        Object object = getValue(variableName);
         if (object == null) {
             throw new VariableDoesNotExistException(variableName);
         }
@@ -20,18 +21,26 @@ public abstract class AbstractVariableProvider implements IVariableProvider {
     }
 
     @Override
-    public <T> T get(Class<T> clazz, String variableName) {
-        Object object = get(variableName);
+    public <T> T getValue(Class<T> clazz, String variableName) {
+        Object object = getValue(variableName);
         return TypeConversionUtil.convertTo(object, clazz);
     }
 
     @Override
-    public <T> T getNotNull(Class<T> clazz, String variableName) throws VariableDoesNotExistException {
-        T object = get(clazz, variableName);
+    public <T> T getValueNotNull(Class<T> clazz, String variableName) throws VariableDoesNotExistException {
+        T object = getValue(clazz, variableName);
         if (object == null) {
             throw new VariableDoesNotExistException(variableName);
         }
         return object;
     }
 
+    @Override
+    public WfVariable getVariableNotNull(String variableName) throws VariableDoesNotExistException {
+        WfVariable variable = getVariable(variableName);
+        if (variable == null) {
+            throw new VariableDoesNotExistException(variableName);
+        }
+        return null;
+    }
 }

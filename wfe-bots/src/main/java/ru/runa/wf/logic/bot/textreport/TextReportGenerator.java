@@ -62,7 +62,7 @@ public class TextReportGenerator {
         while (matcher.find()) {
             String originalVarName = matcher.group(1);
             String variableName = symbolsReplacer.replaceAllReverse(originalVarName);
-            Object variable = variableProvider.getNotNull(variableName);
+            Object variable = variableProvider.getValueNotNull(variableName);
             VariableFormat format = settings.getFormat(variableName);
             String formattedValue = format != null ? format.format(variable) : String.valueOf(variable);
             String replacedFormattedValue = symbolsReplacer.replaceAll(formattedValue);

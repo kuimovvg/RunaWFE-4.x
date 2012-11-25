@@ -73,7 +73,7 @@ public abstract class ParamBasedActionHandler implements ActionHandler {
         }
         T result = null;
         if (paramDef.variableName != null) {
-            result = (T) variableProvider.get(paramDef.variableName);
+            result = (T) variableProvider.getValue(paramDef.variableName);
         }
         if (result == null && paramDef.value != null) {
             result = (T) paramDef.value;
@@ -95,7 +95,7 @@ public abstract class ParamBasedActionHandler implements ActionHandler {
     }
 
     protected <T> T getInputVariable(Class<T> clazz, String name, boolean required) {
-        Object object = variableProvider.get(name);
+        Object object = variableProvider.getValue(name);
         if (required && object == null) {
             throw new NullPointerException("Required variable '" + name + "' resolved as null, vars = " + variableProvider);
         }
