@@ -22,7 +22,7 @@ CKEDITOR.editorConfig = function( config )
 		['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print','SpellChecker','Scayt'],
 		['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 		['Form','Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField'],
-		['FreemarkerMethod', 'FreemarkerOutput'],
+		['FreemarkerMethod'],
 		'/',
 		['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
 		['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
