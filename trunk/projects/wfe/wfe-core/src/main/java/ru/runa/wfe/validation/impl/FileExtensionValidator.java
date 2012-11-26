@@ -29,7 +29,7 @@ public class FileExtensionValidator extends FieldValidatorSupport {
     @Override
     public void validate() {
         FileVariable fileVariable = (FileVariable) getFieldValue();
-        if ((fileVariable == null) || (extension == null)) {
+        if (fileVariable == null || extension == null) {
             // use a required validator for these
             return;
         }

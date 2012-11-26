@@ -35,9 +35,9 @@ import org.apache.ecs.html.TH;
 import org.apache.ecs.html.TR;
 
 import ru.runa.af.web.Native2AsciiHelper;
-import ru.runa.af.web.action.BotTaskConfigurationFileDownLoader;
+import ru.runa.af.web.action.BotTaskConfigurationDownloadAction;
 import ru.runa.af.web.action.UpdateBotTasksAction;
-import ru.runa.af.web.action.UpdateTaskHandlerConfiguration;
+import ru.runa.af.web.action.UpdateBotTaskConfigurationAction;
 import ru.runa.af.web.form.BotTasksForm;
 import ru.runa.af.web.system.TaskHandlerClassesInformation;
 import ru.runa.common.web.Commons;
@@ -55,8 +55,6 @@ import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.web.PortletUrlType;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 
 /**
  * @author petrmikheev
@@ -79,16 +77,8 @@ public class BotTaskListTag extends TitledFormTag {
 
     @Override
     public boolean isFormButtonEnabled() throws JspException {
-        boolean result = false;
-        try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
-            result = authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-        } catch (AuthorizationException e) {
-            throw new JspException(e);
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
-        }
-        return result;
+        AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+        return authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
     }
 
     @Override
@@ -96,25 +86,19 @@ public class BotTaskListTag extends TitledFormTag {
         tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botID)));
         BotService botService = DelegateFactory.getBotService();
         getForm().setEncType(Form.ENC_UPLOAD);
-        try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
-            boolean disabled = !authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-            List<BotTask> tasks = botService.getBotTasks(getSubject(), botID);
-            int nameSize = 1;
-            for (BotTask botTask : tasks) {
-                if (botTask.getName().length() > nameSize) {
-                    nameSize = botTask.getName().length();
-                }
+        AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+        boolean disabled = !authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
+        List<BotTask> tasks = botService.getBotTasks(getSubject(), botID);
+        int nameSize = 1;
+        for (BotTask botTask : tasks) {
+            if (botTask.getName().length() > nameSize) {
+                nameSize = botTask.getName().length();
             }
-            RowBuilder rowBuilder = new BotTaskRowBuilder(tasks, disabled, nameSize + 10, pageContext);
-            HeaderBuilder headerBuilder = new BotTaskHeaderBuilder(pageContext);
-            TableBuilder tableBuilder = new TableBuilder();
-            tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
-        } catch (AuthorizationException e) {
-            throw new JspException(e);
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
         }
+        RowBuilder rowBuilder = new BotTaskRowBuilder(tasks, disabled, nameSize + 10, pageContext);
+        HeaderBuilder headerBuilder = new BotTaskHeaderBuilder(pageContext);
+        TableBuilder tableBuilder = new TableBuilder();
+        tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
     }
 
     @Override
@@ -176,12 +160,10 @@ public class BotTaskListTag extends TitledFormTag {
         @Override
         public TR buildNext() {
             TR tr = new TR();
-
             BotTask task = iterator.next();
             tr.addElement(buildSelectTD(task));
             tr.addElement(buildNameTD(task));
             tr.addElement(buildHandlerTD(task));
-            // tr.addElement(buildConfigTD(task));
             tr.addElement(buildConfigurationUploadTD(task));
             return tr;
         }
@@ -243,7 +225,7 @@ public class BotTaskListTag extends TitledFormTag {
         Input fileUploadInput = new Input(Input.FILE, BotTasksForm.BOT_TASK_INPUT_NAME_PREFIX + task.getId() + BotTasksForm.CONFIG_FILE_INPUT_NAME);
         fileUploadTD.addElement(fileUploadInput);
         if (task.getConfiguration() != null && task.getConfiguration().length > 0) {
-            A link = new A(Commons.getActionUrl(BotTaskConfigurationFileDownLoader.DOWNLOAD_BOT_TASK_CONFIGURATION_ACTION_PATH, "id", task.getId(),
+            A link = new A(Commons.getActionUrl(BotTaskConfigurationDownloadAction.DOWNLOAD_BOT_TASK_CONFIGURATION_ACTION_PATH, "id", task.getId(),
                     pageContext, PortletUrlType.Action), Messages.getMessage(Messages.LABEL_BOT_TASK_CONFIG_DOWNLOAD, pageContext));
             link.setClass(Resources.CLASS_LINK);
             fileUploadTD.addElement(link);
@@ -260,10 +242,10 @@ public class BotTaskListTag extends TitledFormTag {
             parameterMap.put("id", task.getId());
             parameterMap.put("edit", "true");
             jsLink.append("openDocumentEditor('");
-            jsLink.append(Commons.getActionUrl(BotTaskConfigurationFileDownLoader.DOWNLOAD_BOT_TASK_CONFIGURATION_ACTION_PATH, parameterMap,
+            jsLink.append(Commons.getActionUrl(BotTaskConfigurationDownloadAction.DOWNLOAD_BOT_TASK_CONFIGURATION_ACTION_PATH, parameterMap,
                     pageContext, PortletUrlType.Action));
             jsLink.append("','");
-            jsLink.append(Commons.getActionUrl(UpdateTaskHandlerConfiguration.UPDATE_TASK_HANDLER_CONF_ACTION_PATH, "id", task.getId(), pageContext,
+            jsLink.append(Commons.getActionUrl(UpdateBotTaskConfigurationAction.UPDATE_TASK_HANDLER_CONF_ACTION_PATH, "id", task.getId(), pageContext,
                     PortletUrlType.Action));
             jsLink.append("','");
             jsLink.append(Messages.getMessage(Messages.BUTTON_SAVE, pageContext));

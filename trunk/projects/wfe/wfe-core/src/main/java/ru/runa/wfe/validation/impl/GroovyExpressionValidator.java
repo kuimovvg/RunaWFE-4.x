@@ -1,7 +1,6 @@
 package ru.runa.wfe.validation.impl;
 
 import groovy.lang.MissingPropertyException;
-import ru.runa.wfe.ApplicationException;
 import ru.runa.wfe.commons.GroovyScriptExecutor;
 
 public class GroovyExpressionValidator extends ValidatorSupport {
@@ -24,12 +23,14 @@ public class GroovyExpressionValidator extends ValidatorSupport {
                 addActionError();
             }
         } catch (MissingPropertyException e) {
-            // this means that some of the beans are null, we ignoring it due to required validator check
+            // this means that some of the beans are null, we ignoring it due to
+            // required validator check
             log.warn(e.getMessage());
         } catch (Exception e) {
             log.error("Groovy", e);
-            // This is because calling side has not Groovy generated classes and will unable to show exception
-            throw new ApplicationException(e.getMessage());
+            addActionError();
+            // This is because calling side has not Groovy generated classes and
+            // will unable to show exception
         }
     }
 

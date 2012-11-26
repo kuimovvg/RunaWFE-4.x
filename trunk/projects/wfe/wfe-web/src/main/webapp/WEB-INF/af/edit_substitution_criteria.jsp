@@ -12,7 +12,7 @@
 		id = Long.parseLong(idParameter);
 	}
 %>
-	<script type="text/javascript" src="<html:rewrite page="/substitutionCriteria.js" />"></script>
+	<script type="text/javascript" src="<html:rewrite page="/js/substitutionCriteria.js" />"></script>
 	<wf:updateSubstitutionCriteriaForm identifiableId="<%= id %>" />
 </tiles:put>
 <tiles:put name="messages" value="../common/messages.jsp" />

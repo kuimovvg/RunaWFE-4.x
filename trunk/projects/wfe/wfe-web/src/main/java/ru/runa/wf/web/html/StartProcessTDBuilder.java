@@ -71,7 +71,6 @@ public class StartProcessTDBuilder extends BaseTDBuilder {
         IMG startImg = new IMG(href);
         String startMessage = Messages.getMessage(Messages.LABEL_START_PROCESS, env.getPageContext());
         startImg.setAlt(startMessage);
-        startImg.setTitle(startMessage);
         startImg.setBorder(0);
         if (isEnabled(object, env)) {
             String url = new DefinitionUrlStrategy(env.getPageContext()).getUrl(WebResources.ACTION_MAPPING_START_PROCESS, definition);

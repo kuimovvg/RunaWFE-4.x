@@ -17,71 +17,49 @@
  */
 package ru.runa.wf.web.ftl.method;
 
-import java.text.DateFormat;
 import java.util.Date;
 
-import ru.runa.common.web.AbstractDateTimeInputRender;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.DateFormat;
+import ru.runa.wfe.var.format.DateTimeFormat;
+import ru.runa.wfe.var.format.TimeFormat;
 import freemarker.template.TemplateModelException;
 
 public class DateTimeInputTag extends FreemarkerTag {
-
     private static final long serialVersionUID = 1L;
+    private static final Log log = LogFactory.getLog(DateTimeInputTag.class);
 
     @Override
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
-        String view = getParameterAs(String.class, 1);
-
-        Date varValue = variableProvider.getValue(Date.class, variableName);
-
-        if ("time".equals(view)) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("<input type=\"text\" length=\"5\" name=\"").append(variableName).append("\" ");
-            if (varValue != null) {
-                buffer.append("value=\"").append(varValue).append("\" ");
+        WfVariable variable = variableProvider.getVariableNotNull(variableName);
+        String format = BackCompatibilityClassNames.getClassName(variable.getDefinition().getFormat());
+        Date date = (Date) variable.getValue();
+        String html = "";
+        if (DateFormat.class.getName().equals(format) || DateTimeFormat.class.getName().equals(format)) {
+            html += "<input type=\"text\" class=\"inputDate\" length=\"10\" name=\"" + variableName + "\" style=\"width: 100px;\" ";
+            if (date != null) {
+                html += "value=\"" + CalendarUtil.formatDate(date) + "\" ";
             }
-            buffer.append("/>");
-            return buffer.toString();
-        } else {
-            CalendarRenderer calendarRenderer;
-            if ("date".equals(view)) {
-                calendarRenderer = new CalendarRenderer(CalendarUtil.DATE_WITHOUT_TIME_FORMAT, "%d.%m.%Y", false);
-            } else if ("datetime".equals(view)) {
-                calendarRenderer = new CalendarRenderer(CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT, "%d.%m.%Y %H:%M", true);
-            } else {
-                throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
-            }
-            return calendarRenderer.getHtml(subject, variableName, varValue, pageContext);
+            html += "/>";
         }
+        if (TimeFormat.class.getName().equals(format) || DateTimeFormat.class.getName().equals(format)) {
+            html += "<input type=\"text\" class=\"inputTime\" length=\"5\" name=\"" + variableName + "\" style=\"width: 50px;\" ";
+            if (date != null) {
+                html += "value=\"" + CalendarUtil.formatTime(date) + "\" ";
+            }
+            html += "/>";
+        }
+        if (html.length() == 0) {
+            log.warn("No HTML built (" + variableName + ") for format " + variable.getDefinition().getFormat());
+        }
+        return html;
     }
 
-    static class CalendarRenderer extends AbstractDateTimeInputRender {
-        private final DateFormat format;
-        private final String pattern;
-        private final boolean showTime;
-
-        public CalendarRenderer(DateFormat format, String pattern, boolean showTime) {
-            this.format = format;
-            this.pattern = pattern;
-            this.showTime = showTime;
-        }
-
-        @Override
-        protected DateFormat getFormat() {
-            return format;
-        }
-
-        @Override
-        protected String getPattern() {
-            return pattern;
-        }
-
-        @Override
-        protected boolean isShowTime() {
-            return showTime;
-        }
-
-    }
 }

@@ -392,7 +392,7 @@ public class HTMLFormConverter {
             cssClasses += " ";
         }
         cssClasses += CSS_CLASS_REQUIRED;
-        element.setAttribute(CSS_CLASS_ATTR, CSS_CLASS_REQUIRED);
+        element.setAttribute(CSS_CLASS_ATTR, cssClasses);
     }
 
     private static String getString(String[] valueArray) {
@@ -433,7 +433,7 @@ public class HTMLFormConverter {
     }
 
     private static void handleErrors(Map<String, String> errors, String inputName, PageContext pageContext, Document document, Element node) {
-        if ((errors != null) && errors.containsKey(inputName)) {
+        if (errors != null && errors.containsKey(inputName)) {
             addError(pageContext, document, node, getErrorText(pageContext, errors, inputName), inputName);
             // avoiding multiple error labels
             errors.remove(inputName);
@@ -441,30 +441,10 @@ public class HTMLFormConverter {
     }
 
     private static void addError(PageContext pageContext, Document document, Element node, String errorText, String inputName) {
-        String toolTipId = inputName.concat("_tt");
-        Element errorToolTip = document.createElement("span");
-        errorToolTip.setAttribute("id", toolTipId);
-        errorToolTip.setAttribute("class", "field-hint");
-        errorToolTip.setAttribute("style", "display: none;");
-
-        Node parent = node.getParentNode();
-        parent.insertBefore(errorToolTip, node.getNextSibling());
-
-        Element innerDiv = document.createElement("div");
-        innerDiv.appendChild(document.createTextNode(errorText));
-        errorToolTip.appendChild(innerDiv);
-
-        // <span class="field-hint" style="display: none;" id="f1"><div>(my extended tip)</div></span>
-
-        // <img src="..." onmouseover="showTip(event, 'id');" onmouseout="hideTip('id')"/>
         Element errorImg = document.createElement("img");
-        // errorImg.setAttribute("alt", errorText);
-        // errorImg.setAttribute("title", errorText);
-        errorImg.setAttribute("onmouseover", "showTip(event, '" + toolTipId + "');");
-        errorImg.setAttribute("onmouseout", "hideTip('" + toolTipId + "');");
+        errorImg.setAttribute("title", errorText);
         errorImg.setAttribute("src", Commons.getUrl("/images/error.gif", pageContext, PortletUrlType.Resource));
-
-        parent = node.getParentNode();
+        Node parent = node.getParentNode();
         parent.insertBefore(errorImg, node.getNextSibling());
     }
 

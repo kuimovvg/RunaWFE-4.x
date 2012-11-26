@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.validation.impl;
 
-
 public class RequiredFieldValidator extends FieldValidatorSupport {
 
     @Override

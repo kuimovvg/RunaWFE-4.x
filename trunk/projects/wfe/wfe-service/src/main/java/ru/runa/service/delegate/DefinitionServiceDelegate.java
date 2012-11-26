@@ -18,7 +18,6 @@
 package ru.runa.service.delegate;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.security.auth.Subject;
 
@@ -29,6 +28,7 @@ import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.SuperProcessExistsException;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
+import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -65,8 +65,8 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
-    public WfDefinition getLatestProcessDefinition(Subject subject, String definitionName) throws AuthenticationException,
-            AuthorizationException, DefinitionDoesNotExistException {
+    public WfDefinition getLatestProcessDefinition(Subject subject, String definitionName) throws AuthenticationException, AuthorizationException,
+            DefinitionDoesNotExistException {
         return getDefinitionService().getLatestProcessDefinition(subject, definitionName);
     }
 
@@ -119,14 +119,14 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
-    public Set<String> getAllSwimlanesNamesFromAllDefinitions(Subject subject) throws AuthenticationException {
-        return getDefinitionService().getAllSwimlanesNamesFromAllDefinitions(subject);
+    public List<SwimlaneDefinition> getSwimlanes(Subject subject, Long definitionId) throws AuthorizationException, DefinitionDoesNotExistException {
+        return getDefinitionService().getSwimlanes(subject, definitionId);
     }
 
     @Override
-    public List<VariableDefinition> getProcessDefinitionVariables(Subject subject, Long definitionId) throws AuthorizationException,
-            AuthenticationException, DefinitionDoesNotExistException {
-        return getDefinitionService().getProcessDefinitionVariables(subject, definitionId);
+    public List<VariableDefinition> getVariables(Subject subject, Long definitionId) throws AuthorizationException, AuthenticationException,
+            DefinitionDoesNotExistException {
+        return getDefinitionService().getVariables(subject, definitionId);
     }
 
     @Override

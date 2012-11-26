@@ -122,6 +122,10 @@ public class CalendarUtil {
         return format(date, DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT);
     }
 
+    public static String formatTime(Date date) {
+        return format(date, HOURS_MINUTES_FORMAT);
+    }
+
     public static String format(Calendar calendar, DateFormat dateFormat) {
         if (calendar == null) {
             return null;
@@ -172,7 +176,8 @@ public class CalendarUtil {
      *            is a list of start - end pairs of calendar
      * @param two
      *            is a list of start - end pairs of calendar
-     * @return 0 if no intersection. Returns N milliseconds of total intersection time
+     * @return 0 if no intersection. Returns N milliseconds of total
+     *         intersection time
      */
     public static boolean isIntersectingStrong(Calendar oneStart, Calendar oneEnd, Calendar twoStart, Calendar twoEnd) {
         if (oneEnd.compareTo(twoStart) < 0 || twoEnd.compareTo(oneStart) < 0) {
