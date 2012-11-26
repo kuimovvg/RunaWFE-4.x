@@ -41,6 +41,6 @@ public abstract class AbstractVariableProvider implements IVariableProvider {
         if (variable == null) {
             throw new VariableDoesNotExistException(variableName);
         }
-        return null;
+        return variable;
     }
 }

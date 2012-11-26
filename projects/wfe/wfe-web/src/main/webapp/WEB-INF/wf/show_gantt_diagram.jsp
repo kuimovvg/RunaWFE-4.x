@@ -7,8 +7,8 @@
 <%@ page import="ru.runa.common.web.form.IdForm" %>
 
 <tiles:put name="head" type="string">
-	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/jsgantt.css" />" />
-	<script language="javascript" src="<html:rewrite page="/jsgantt.js" />"></script>
+	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/gantt.css" />" />
+	<script language="javascript" src="<html:rewrite page="/js/gantt.js" />"></script>
 </tiles:put>
 
 <tiles:put name="body" type="string">

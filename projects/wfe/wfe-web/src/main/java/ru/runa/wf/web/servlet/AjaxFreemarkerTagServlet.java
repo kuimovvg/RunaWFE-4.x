@@ -35,21 +35,26 @@ public class AjaxFreemarkerTagServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.debug("Got ajax request: " + req.getQueryString());
-        long startTime = System.currentTimeMillis();
         try {
-            String tagId = req.getParameter("tag");
-            AjaxFreemarkerTag ajaxTag = (AjaxFreemarkerTag) req.getSession().getAttribute(tagId);
-            if (ajaxTag == null) {
-                throw new NullPointerException("No tag found in session: " + tagId);
+            log.debug("Got ajax request: " + req.getQueryString());
+            long startTime = System.currentTimeMillis();
+            try {
+                String tagId = req.getParameter("tag");
+                AjaxFreemarkerTag ajaxTag = (AjaxFreemarkerTag) req.getSession().getAttribute(tagId);
+                if (ajaxTag == null) {
+                    throw new NullPointerException("No tag found in session: " + tagId);
+                }
+                ajaxTag.processAjaxRequest(req, resp);
+            } catch (Exception e) {
+                log.error("", e);
+                throw new ServletException(e);
             }
-            ajaxTag.processAjaxRequest(req, resp);
+            long endTime = System.currentTimeMillis();
+            log.debug("Request processed for (ms): " + (endTime - startTime));
         } catch (Exception e) {
-            log.error("", e);
+            log.error("ajax", e);
             throw new ServletException(e);
         }
-        long endTime = System.currentTimeMillis();
-        log.debug("Request processed for (ms): " + (endTime - startTime));
     }
 
     @Override

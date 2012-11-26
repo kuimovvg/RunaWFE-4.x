@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.security.auth.Subject;
 
@@ -52,6 +50,7 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.image.SubprocessPermissionVisitor;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
@@ -279,18 +278,10 @@ public class DefinitionLogic extends WFCommonLogic {
         return interaction;
     }
 
-    private static final String DEFINITION_NAME_SWIMLANE_NAME_SEPARATOR = ".";
-
-    public Set<String> getAllSwimlaneNamesForAllProcessDefinition(Subject subject) throws AuthenticationException {
-        Set<String> result = new TreeSet<String>();
-        for (ProcessDefinition definition : processDefinitionLoader.getLatestProcessDefinitions()) {
-            if (isPermissionAllowed(subject, definition, DefinitionPermission.READ)) {
-                for (String swimlaneName : definition.getSwimlanes().keySet()) {
-                    result.add(definition.getName() + DEFINITION_NAME_SWIMLANE_NAME_SEPARATOR + swimlaneName);
-                }
-            }
-        }
-        return result;
+    public List<SwimlaneDefinition> getSwimlanes(Subject subject, Long definitionId) throws AuthenticationException {
+        ProcessDefinition definition = processDefinitionLoader.getDefinition(definitionId);
+        checkPermissionAllowed(subject, definition, DefinitionPermission.READ);
+        return Lists.newArrayList(definition.getSwimlanes().values());
     }
 
     public List<VariableDefinition> getProcessDefinitionVariables(Subject subject, Long definitionId) throws DefinitionDoesNotExistException,

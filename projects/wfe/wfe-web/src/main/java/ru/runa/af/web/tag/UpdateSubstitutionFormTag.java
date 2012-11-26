@@ -136,14 +136,10 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
 
     @Override
     protected String getTitle() {
-        try {
-            SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
-            if (getIdentifiableId() != 0) {
-                substitution = substitutionService.getSubstitution(getSubject(), getIdentifiableId());
-                terminator = substitution instanceof TerminatorSubstitution;
-            }
-        } catch (Exception e) {
-            log.error("", e);
+        SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+        if (getIdentifiableId() != null) {
+            substitution = substitutionService.getSubstitution(getSubject(), getIdentifiableId());
+            terminator = substitution instanceof TerminatorSubstitution;
         }
         return Messages.getMessage((terminator ? "terminator.edit.title" : "substitution.edit.title"), pageContext);
     }

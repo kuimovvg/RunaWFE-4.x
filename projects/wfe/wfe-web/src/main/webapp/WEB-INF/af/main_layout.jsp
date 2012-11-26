@@ -20,16 +20,17 @@
   	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
   	<meta http-equiv="Cache-Control" content="no-cache">
   	<meta http-equiv="Pragma" content="no-cache">
-	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/main.css" />">
-	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/tooltip/tooltip.css" />">
-	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/ui/jquery-ui-1.7.2.custom.css" />">
-	<script type="text/javascript" src="<html:rewrite page="/jquery-1.3.2.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/jquery.cookie.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/confirm/confirm.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/xml_editor/js/codemirror.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/xml_editor/editor.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/ui/jquery-ui-1.7.2.custom.min.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/common.js" />">c=0;</script>
+	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/main.css" />">
+	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/jquery-ui-1.9.2.custom.css" />">
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery-1.8.3.min.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery-ui-1.9.2.custom.min.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery-ui-i18n.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery.ui.mask.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery.ui.timepicker.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery.ui.timepicker-i18n.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/common.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery.cookie.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/confirm.js" />">c=0;</script>
 	<tiles:insert attribute="head" ignore="true"/>
   </head>
 <body>
@@ -38,7 +39,7 @@
 		<tr>
 			<td width="15%">
 				<a href="http://wf.runa.ru/About" target="new">
-					<img hspace="10" border="0" src="<html:rewrite page="/images/big_logo.gif"/>" alt="Runa WFE">
+					<img hspace="10" border="0" src="<html:rewrite page="/images/big_logo.png"/>" alt="Runa WFE">
 				</a>
 			</td>
 			<td width="85%" >
