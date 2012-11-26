@@ -58,8 +58,8 @@ public class Resources {
     public static final String CLASS_TEXT = "text";
     public static final String HIDDEN_ALT = "[>]";
     public static final String VISIBLE_ALT = "[v]";
-    public static final String HIDDEN_IMAGE = "/images/view_setup_is_hiden.gif";
-    public static final String VISIBLE_IMAGE = "/images/view_setup_is_visible.gif";
+    public static final String HIDDEN_IMAGE = "/images/view_setup_hidden.gif";
+    public static final String VISIBLE_IMAGE = "/images/view_setup_visible.gif";
     public static final String SORT_DESC_ALT = "[v]";
     public static final String SORT_ASC_ALT = "[^]";
     public static final String SORT_DESC_IMAGE = "/images/sort-d.gif";

@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.validation.impl;
 
-
 /**
  * Base class for range based validators.
  */
@@ -25,11 +24,10 @@ public abstract class AbstractRangeValidator<T extends Object> extends FieldVali
 
     @Override
     public void validate() {
-        Object obj = getFieldValue();
-        Comparable<T> value = (Comparable<T>) obj;
-
+        Comparable<T> value = (Comparable<T>) getFieldValue();
         // if there is no value - don't do comparison
-        // if a value is required, a required validator should be added to the field
+        // if a value is required, a required validator should be added to the
+        // field
         if (value == null) {
             return;
         }

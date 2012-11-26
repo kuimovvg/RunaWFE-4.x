@@ -47,7 +47,9 @@ import ru.runa.wfe.validation.impl.ValidationException;
  * Created on 15.12.2005
  * 
  */
-abstract class BaseProcessFormAction extends Action {
+public abstract class BaseProcessFormAction extends Action {
+    public static final String USER_DEFINED_VARIABLES = "UserDefinedVariables";
+    public static final String USER_ERRORS = "UserErrors";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
@@ -70,9 +72,9 @@ abstract class BaseProcessFormAction extends Action {
             ActionExceptionHelper.addException(errors, e);
             saveErrors(request.getSession(), errors);
             // save in request user input
-            request.setAttribute("UserDefinedVariables", VariableExtractionHelper.extractAllAvailableVariables(form));
+            request.setAttribute(USER_DEFINED_VARIABLES, VariableExtractionHelper.extractAllAvailableVariables(form));
             // save in request user errors
-            request.setAttribute("UserErrors", userInputErrors);
+            request.setAttribute(USER_ERRORS, userInputErrors);
             return mapping.findForward(Resources.FORWARD_SUCCESS);
         } catch (ValidationException e) {
             userInputErrors = e.getConcatenatedFieldErrors();
@@ -93,9 +95,9 @@ abstract class BaseProcessFormAction extends Action {
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
             // save in request user input
-            request.setAttribute("UserDefinedVariables", VariableExtractionHelper.extractAllAvailableVariables(form));
+            request.setAttribute(USER_DEFINED_VARIABLES, VariableExtractionHelper.extractAllAvailableVariables(form));
             // save in request user errors
-            request.setAttribute("UserErrors", userInputErrors);
+            request.setAttribute(USER_ERRORS, userInputErrors);
             return getErrorForward(mapping, form);
         }
 

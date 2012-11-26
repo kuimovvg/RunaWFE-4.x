@@ -336,7 +336,7 @@
     </action>
     <action
       path="/download_bot_task_configuration"
-      type="ru.runa.af.web.action.BotTaskConfigurationFileDownLoader"
+      type="ru.runa.af.web.action.BotTaskConfigurationDownloadAction"
       name="idForm"
       scope="request"
       input="/WEB-INF/wf/bot.jsp"
@@ -366,7 +366,7 @@
     </action>
     <action
       path="/update_tasks_handler_conf"
-      type="ru.runa.af.web.action.UpdateTaskHandlerConfiguration"
+      type="ru.runa.af.web.action.UpdateBotTaskConfigurationAction"
       name="botTasksForm"
       scope="request"
       input="/WEB-INF/wf/bot.jsp"

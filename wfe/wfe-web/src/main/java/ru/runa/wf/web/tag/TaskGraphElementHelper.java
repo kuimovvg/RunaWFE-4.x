@@ -48,7 +48,8 @@ public class TaskGraphElementHelper {
      * 
      * @param element
      *            Graph element, to create tool tip.
-     * @return {@link Area} instance with tool tip or null, if {@link Area} not created.
+     * @return {@link Area} instance with tool tip or null, if {@link Area} not
+     *         created.
      */
     public Area createTaskTooltip(TaskGraphElementPresentation element) {
         if (!element.isMinimized()) {
@@ -60,7 +61,6 @@ public class TaskGraphElementHelper {
             name += "(" + element.getSwimlaneName() + ")\n";
         }
         name += element.getName();
-        area.setAlt(name);
         area.setTitle(name);
         map.addElement(area);
         return area;

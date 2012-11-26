@@ -22,7 +22,9 @@ import ru.runa.wfe.commons.CalendarUtil;
 /**
  * Created on 30.11.2004
  * 
+ * @deprecated remove it
  */
+@Deprecated
 public class TimeWithSecondsFormat extends AbstractDateFormat {
 
     public TimeWithSecondsFormat() {

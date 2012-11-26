@@ -64,7 +64,8 @@ public class SubprocessGraphElementPresentationHelper {
     private final String linkAction;
 
     /**
-     * Creates instance of helper class to create links to subprocesses in graph elements.
+     * Creates instance of helper class to create links to subprocesses in graph
+     * elements.
      * 
      * @param taskId
      *            Current task identity. May be <= 0 if not applicable.
@@ -87,7 +88,8 @@ public class SubprocessGraphElementPresentationHelper {
     }
 
     /**
-     * Creates links to subprocesses, forked in given multiple instance graph element.
+     * Creates links to subprocesses, forked in given multiple instance graph
+     * element.
      * 
      * @param element
      *            Multiple instance graph element to create links.
@@ -139,7 +141,6 @@ public class SubprocessGraphElementPresentationHelper {
         }
         Area area = new Area("RECT", element.getGraphConstraints());
         area.setHref(getSubprocessUrl(element.getSubprocessId()));
-        area.setAlt(element.getSubprocessName());
         area.setTitle(element.getSubprocessName());
         map.addElement(area);
         return area;

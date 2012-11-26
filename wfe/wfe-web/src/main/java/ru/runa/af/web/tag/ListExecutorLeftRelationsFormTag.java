@@ -107,13 +107,9 @@ public class ListExecutorLeftRelationsFormTag extends IdentifiableFormTag {
     }
 
     @Override
-    protected Executor getIdentifiable() throws JspException {
+    protected Executor getIdentifiable() {
         ExecutorService executorService = DelegateFactory.getExecutorService();
-        try {
-            return executorService.getExecutor(getSubject(), getIdentifiableId());
-        } catch (Exception e) {
-            throw new JspException(e);
-        }
+        return executorService.getExecutor(getSubject(), getIdentifiableId());
     }
 
     @Override

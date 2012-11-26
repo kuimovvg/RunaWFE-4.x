@@ -65,6 +65,7 @@ public class AjaxCommandServlet extends HttpServlet {
             }
             response.getOutputStream().write(result.toString().getBytes(Charsets.UTF_8));
         } catch (Exception e) {
+            log.error("command", e);
             throw new ServletException(e);
         }
     }

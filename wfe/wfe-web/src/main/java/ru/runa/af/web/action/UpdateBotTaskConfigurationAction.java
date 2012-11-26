@@ -30,7 +30,7 @@ import com.google.common.base.Charsets;
  *                validate="true" input = "/WEB-INF/wf/bot.jsp"
  * 
  */
-public class UpdateTaskHandlerConfiguration extends Action {
+public class UpdateBotTaskConfigurationAction extends Action {
 
     public static final String UPDATE_TASK_HANDLER_CONF_ACTION_PATH = "/update_tasks_handler_conf";
 
@@ -38,10 +38,8 @@ public class UpdateTaskHandlerConfiguration extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         IdForm idForm = (IdForm) form;
-
         BotService botService = DelegateFactory.getBotService();
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-
         try {
             Long botTaskId = idForm.getId();
             String parameter = request.getParameter("conf");

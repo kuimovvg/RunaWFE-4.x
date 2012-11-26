@@ -12,7 +12,7 @@
 <html:html lang="true">
   <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/main.css" />">
+	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/main.css" />">
     <html:base />
   </head>
 	<body>
@@ -28,7 +28,7 @@
 							<tr>
 								<td  align="left" colspan="2" target="new">
 									<a href="http://wf.runa.ru/About">
-										<img  border="0" src="<html:rewrite page="/images/big_logo.gif"/>" alt="Runa WFE">
+										<img  border="0" src="<html:rewrite page="/images/big_logo.png"/>" alt="Runa WFE">
 									</a>
 								</td>
 							</tr>

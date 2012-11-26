@@ -27,7 +27,8 @@ import ru.runa.wfe.security.Identifiable;
 /**
  * Created on 23.08.2004
  * 
- * @jsp.tag name = "listExecutorsWithoutPermissionsOnExecutorForm" body-content = "JSP"
+ * @jsp.tag name = "listExecutorsWithoutPermissionsOnExecutorForm" body-content
+ *          = "JSP"
  */
 public class ListExecutorsWithoutPermissionsOnExecutorFormTag extends ListExecutorsWithoutPermissionsBase {
 
@@ -40,11 +41,7 @@ public class ListExecutorsWithoutPermissionsOnExecutorFormTag extends ListExecut
 
     @Override
     protected Identifiable getIdentifiable() throws JspException {
-        try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
-            return executorService.getExecutor(getSubject(), getIdentifiableId());
-        } catch (Exception e) {
-            throw new JspException(e);
-        }
+        ExecutorService executorService = DelegateFactory.getExecutorService();
+        return executorService.getExecutor(getSubject(), getIdentifiableId());
     }
 }
