@@ -17,24 +17,19 @@
  */
 package ru.runa.common.web.html.format;
 
-import java.text.DateFormat;
-import java.util.Date;
-
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.Entities;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.form.TableViewSetupForm;
-import ru.runa.wf.web.html.DateTimeInputRenderer;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 
+import com.google.common.base.Strings;
+
 /**
- * Created on 14.09.2005
- * 
+ * Created on 14.09.2005 TODO only dates supported now
  */
 public class DateFilterTDFormatter extends FilterTDFormatter {
 
@@ -42,24 +37,16 @@ public class DateFilterTDFormatter extends FilterTDFormatter {
     public void formatTd(TD filterInputTd, PageContext pageContext, FilterCriteria filterCriteria, int fieldIndex) {
         int inputsCount = 2;
         String[] stringConditions = filterCriteria.getFilterTemplates();
-        DateTimeInputRenderer dateTimeInputRenderer = new DateTimeInputRenderer();
-
         for (int j = 0; j < inputsCount; j++) {
             if (j != 0) {
                 filterInputTd.addElement(Entities.NBSP);
             }
-
-            Date dateValue = null;
-            try {
-                if ((stringConditions[j] != null) && (stringConditions[j].length() != 0)) {
-                    DateFormat format = dateTimeInputRenderer.getFormat();
-                    dateValue = format.parse(stringConditions[j]);
-                }
-                filterInputTd.addElement(dateTimeInputRenderer.getHtml(SubjectHttpSessionHelper.getActorSubject(pageContext.getSession()),
-                        TableViewSetupForm.FILTER_CRITERIA, dateValue, pageContext));
-            } catch (Exception e) {
-                throw new InternalApplicationException(e);
+            String html = "<input class=\"inputDate\" name=\"" + TableViewSetupForm.FILTER_CRITERIA + "\" style=\"width: 100px;\" ";
+            if (!Strings.isNullOrEmpty(stringConditions[j])) {
+                html += "value=\"" + stringConditions[j] + "\" ";
             }
+            html += "/>";
+            filterInputTd.addElement(html);
             filterInputTd.addElement(new Input(Input.HIDDEN, TableViewSetupForm.FILTER_POSITIONS, String.valueOf(fieldIndex)));
         }
     }

@@ -18,7 +18,7 @@
 	}
 	boolean terminator = "true".equals(request.getParameter("terminator"));
 %>
-	<script type="text/javascript" src="<html:rewrite page="/substitution.js" />"></script>
+	<script type="text/javascript" src="<html:rewrite page="/js/substitution.js" />"></script>
 	<wf:updateSubstitutionForm identifiableId="<%= id %>" terminator="<%= terminator %>" actorId="<%= actorId %>" />
 </tiles:put>
 <tiles:put name="messages" value="../common/messages.jsp" />

@@ -35,7 +35,8 @@ import ru.runa.wfe.graph.view.TaskGraphElementPresentation;
 import com.google.common.collect.Maps;
 
 /**
- * Operation to create links to subprocess definitions and tool tips for minimized states.
+ * Operation to create links to subprocess definitions and tool tips for
+ * minimized states.
  */
 public class DefinitionGraphElementPresentationVisitor extends SubprocessesGraphElementAdapter {
 
@@ -55,7 +56,8 @@ public class DefinitionGraphElementPresentationVisitor extends SubprocessesGraph
     private final TaskGraphElementHelper helperTasks;
 
     /**
-     * Instantiates operation to create links to subprocess definitions and tool tips for minimized states.
+     * Instantiates operation to create links to subprocess definitions and tool
+     * tips for minimized states.
      * 
      * @param pageContext
      *            Rendered page context.
@@ -77,7 +79,6 @@ public class DefinitionGraphElementPresentationVisitor extends SubprocessesGraph
         String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, params, pageContext, PortletUrlType.Render);
         Area area = new Area("RECT", element.getGraphConstraints());
         area.setHref(url);
-        area.setAlt(element.getName());
         area.setTitle(element.getName());
         map.addElement(area);
     }
@@ -92,7 +93,6 @@ public class DefinitionGraphElementPresentationVisitor extends SubprocessesGraph
         String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, params, pageContext, PortletUrlType.Render);
         Area area = new Area("RECT", element.getGraphConstraints());
         area.setHref(url);
-        area.setAlt(element.getName());
         area.setTitle(element.getName());
         map.addElement(area);
     }

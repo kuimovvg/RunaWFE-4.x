@@ -106,7 +106,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
     @Override
     protected String getTitle() {
         SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
-        if (getIdentifiableId() != 0) {
+        if (getIdentifiableId() != null) {
             substitutionCriteria = substitutionService.getSubstitutionCriteria(getSubject(), getIdentifiableId());
         }
         return Messages.getMessage("substitutioncriteria.edit.title", pageContext);

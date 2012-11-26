@@ -13,27 +13,6 @@ END SNIPPET: supported-validators
 -->
 <#if ((parameters.validate?default(false) == true) && (parameters.performValidation?default(false) == true))>
 <script type="text/javascript">
-/*
-	function clearErrorMessages(form) {
-	    $("[errorFor]").each(function() {
-	    	$(this).remove();
-	    });
-	}
-	
-	function addError(field, errorText) {
-		var fe = $(field);
-	   	var toolTipId = fe.attr("name") + "_tt";
-
-		var errorImg = $("<img src='/wfe/images/error.gif' errorFor='yes'>");
-		errorImg.hover(function(event){ showTip(event, toolTipId) }, function(){ hideTip(toolTipId) });
-		fe.append(errorImg);
-
-		var toolTipDiv = $("<div id='"+toolTipId+"' class='field-hint' style='display: none;' errorFor='yes'>");
-		fe.append(toolTipDiv);
-	   	toolTipDiv.append("<div>"+errorText+"</div>");
-	}
-*/
-
     function validateForm_${parameters.id}() {
         form = document.getElementById("${parameters.id}");
         clearErrorMessages(form);

@@ -20,9 +20,7 @@ package ru.runa.wf.web.tag;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.Area;
-import org.apache.ecs.html.Div;
 import org.apache.ecs.html.Map;
-import org.apache.ecs.html.Span;
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.WebResources;
@@ -36,11 +34,6 @@ import ru.runa.wfe.graph.view.TaskGraphElementPresentation;
  * Operation to create tool tips on and links on process history graph.
  */
 public class GraphHistoryElementPresentationVisitor extends SubprocessesGraphElementAdapter {
-
-    /**
-     * Processed graph element index. Incremented to ensure unique id's.
-     */
-    private int elementIdx = 0;
 
     /**
      * Created map of elements, represents links and tool tips areas.
@@ -112,43 +105,15 @@ public class GraphHistoryElementPresentationVisitor extends SubprocessesGraphEle
      * @param element
      *            Process element to add tool tip.
      * @param area
-     *            {@link Area} element, to add tool tips, or null, if {@link Area} element must be created.
+     *            {@link Area} element, to add tool tips, or null, if
+     *            {@link Area} element must be created.
      */
     private Area addTooltip(BaseGraphElementPresentation element, Area area) {
-        ++elementIdx;
-        String toolTipId = "log_" + elementIdx + "_tt";
         if (area == null) {
             area = new Area("RECT", element.getGraphConstraints());
             map.addElement(area);
         }
-        area.setOnMouseOver("showTip(event, '" + toolTipId + "')");
-        area.setOnMouseOut("hideTip('" + toolTipId + "')");
-        Span span = new Span();
-        span.setID(toolTipId);
-        span.setClass("field-hint");
-        span.setStyle("display: none;");
-        addTooltipToSpan(span, element.getData());
-        formDataTD.addElement(span);
+        area.setTitle(String.valueOf(element.getData()));
         return area;
-    }
-
-    /**
-     * Add tool tip to span element.
-     * 
-     * @param span
-     *            Span element, to add tool tip.
-     * @param elementData
-     *            Tool tip data. Must be String or String[].
-     */
-    private void addTooltipToSpan(Span span, Object elementData) {
-        if (elementData instanceof String) {
-            span.addElement(new Div(elementData.toString()));
-        } else if (elementData instanceof String[]) {
-            for (String element : (String[]) elementData) {
-                span.addElement(new Div(element));
-            }
-        } else {
-            span.addElement(new Div("Unexpected data type: " + elementData == null ? "null" : elementData.getClass().getName()));
-        }
     }
 }

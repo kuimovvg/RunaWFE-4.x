@@ -35,12 +35,11 @@ import org.apache.struts.Globals;
 import org.apache.struts.taglib.html.Constants;
 
 import ru.runa.common.web.ActionExceptionHelper;
-import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wf.web.FormProcessingException;
-import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wf.web.action.BaseProcessFormAction;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -69,9 +68,10 @@ public abstract class WFFormTag extends TitledFormTag {
         try {
             Interaction interaction = getInteraction();
             String wfFormContent = buildForm(interaction);
-            Map<String, String[]> userDefinedVariables = (Map<String, String[]>) pageContext.getRequest().getAttribute("UserDefinedVariables");
+            Map<String, String[]> userDefinedVariables = (Map<String, String[]>) pageContext.getRequest().getAttribute(
+                    BaseProcessFormAction.USER_DEFINED_VARIABLES);
             if (userDefinedVariables != null) {
-                Map<String, String> userErrors = (Map<String, String>) pageContext.getRequest().getAttribute("UserErrors");
+                Map<String, String> userErrors = (Map<String, String>) pageContext.getRequest().getAttribute(BaseProcessFormAction.USER_ERRORS);
                 wfFormContent = HTMLFormConverter.fillForm(pageContext, wfFormContent, userDefinedVariables, userErrors);
             }
             if (interaction.getCssData() != null) {
@@ -82,9 +82,6 @@ public abstract class WFFormTag extends TitledFormTag {
             }
             if (interaction.isUseJSValidation()) {
                 log.debug("Using javascript validation.");
-                String commonValidationJsSrc = Commons.getUrl("/validation.js", pageContext, PortletUrlType.Resource);
-                tdFormElement.addElement(new StringElement("<script language=\"javascript\" src=\"".concat(commonValidationJsSrc).concat(
-                        "\">var c=0;</script>")));
                 String javaScript = XWorkJavascriptValidator.getJavascript(interaction.getValidationData());
                 getForm().setOnSubmit("return validateForm_".concat(FORM_NAME).concat("();"));
                 tdFormElement.addElement(new StringElement(javaScript));
@@ -142,6 +139,6 @@ public abstract class WFFormTag extends TitledFormTag {
 
     abstract protected Interaction getInteraction() throws AuthorizationException, AuthenticationException, TaskDoesNotExistException;
 
-    abstract protected String buildForm(Interaction interaction) throws AuthenticationException, FormProcessingException,
-            AuthorizationException, TaskDoesNotExistException;
+    abstract protected String buildForm(Interaction interaction) throws AuthenticationException, FormProcessingException, AuthorizationException,
+            TaskDoesNotExistException;
 }

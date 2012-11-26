@@ -19,12 +19,15 @@ package ru.runa.af.web.orgfunction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.security.auth.Subject;
 
 import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.wf.DefinitionService;
+import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.os.ParamRenderer;
+import ru.runa.wfe.presentation.BatchPresentationFactory;
 
 public class SwimlaneSubstitutionCriteriaRenderer implements ParamRenderer {
 
@@ -36,9 +39,14 @@ public class SwimlaneSubstitutionCriteriaRenderer implements ParamRenderer {
     @Override
     public List<String[]> loadJSEditorData(Subject subject) {
         List<String[]> result = new ArrayList<String[]>();
-        Set<String> swimlanes = DelegateFactory.getDefinitionService().getAllSwimlanesNamesFromAllDefinitions(subject);
-        for (String swimlaneName : swimlanes) {
-            result.add(new String[] { swimlaneName, swimlaneName });
+        DefinitionService definitionService = DelegateFactory.getDefinitionService();
+        List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(subject, BatchPresentationFactory.DEFINITIONS.createDefault());
+        for (WfDefinition definition : definitions) {
+            List<SwimlaneDefinition> swimlanes = definitionService.getSwimlanes(subject, definition.getId());
+            for (SwimlaneDefinition swimlaneDefinition : swimlanes) {
+                String swimlaneName = definition.getName() + "." + swimlaneDefinition.getName();
+                result.add(new String[] { swimlaneName, swimlaneName });
+            }
         }
         return result;
     }
