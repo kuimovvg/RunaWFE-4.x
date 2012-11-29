@@ -122,30 +122,31 @@
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.jdt.launching"/>
       <import plugin="org.eclipse.draw2d"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.ui.views.log"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.gef"/>
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
       <import plugin="org.eclipse.ltk.ui.refactoring"/>
       <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.graphiti" version="0.9.1"/>
-      <import plugin="org.eclipse.graphiti.mm" version="0.9.1"/>
-      <import plugin="org.eclipse.graphiti.pattern" version="0.9.1"/>
-      <import plugin="org.eclipse.graphiti.ui" version="0.9.1"/>
-      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.200"/>
-      <import plugin="org.eclipse.emf.edit" version="2.7.2"/>
-      <import plugin="org.eclipse.emf.transaction" version="1.4.0"/>
-      <import plugin="org.eclipse.emf.ecore.xmi" version="2.7.0"/>
+      <import plugin="org.eclipse.graphiti"/>
+      <import plugin="org.eclipse.graphiti.mm"/>
+      <import plugin="org.eclipse.graphiti.pattern"/>
+      <import plugin="org.eclipse.graphiti.ui"/>
+      <import plugin="org.eclipse.ui.views.properties.tabbed"/>
+      <import plugin="org.eclipse.emf.edit"/>
+      <import plugin="org.eclipse.emf.transaction"/>
+      <import plugin="org.eclipse.emf.ecore.xmi"/>
    </requires>
 
    <extension-point id="elements" name="Process elements" schema="schema/elements.exsd"/>
@@ -605,7 +606,7 @@
             label="%label.element.startState">
          <gef 
             figure="ru.runa.gpd.editor.gef.figure.StartStateFigure"
-            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.FormNodeEditPart"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.SwimlaneNodeEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.StartStateTreeEditPart">
          </gef>
          <graphiti
@@ -649,6 +650,18 @@
       </element>
       <element
       		type="node"
+            model="ru.runa.gpd.lang.model.EndTokenState"
+            jpdl="end-token-state"
+            icon="endtoken.png"
+            label="%label.element.endtoken">
+         <gef
+            figure="ru.runa.gpd.editor.gef.figure.EndTokenStateFigure"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
+            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
+         </gef>
+      </element>
+      <element
+      		type="node"
             model="ru.runa.gpd.lang.model.EndState"
             jpdl="end-state"
             bpmn="endEvent"
@@ -673,7 +686,7 @@
             type="node">
          <gef 
             figure="ru.runa.gpd.editor.gef.figure.ForkJoinFigure"
-            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.ForkJoinGraphicalEditPart"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.NodeGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <graphiti
@@ -690,7 +703,7 @@
             type="node">
          <gef 
             figure="ru.runa.gpd.editor.gef.figure.ForkJoinFigure"
-            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.ForkJoinGraphicalEditPart"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.NodeGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <graphiti

@@ -46,4 +46,5 @@ public interface PropertyNames {
     public static final String PROPERTY_DIRTY = "dirty";
     public static final String PROPERTY_TIMEOUT_DURATION = "TIMEOUT_DURATION";
     public static final String PROPERTY_TIMEOUT_ACTION = "timeOutAction";
+    public static final String PROPERTY_ASYNC = "async";
 }

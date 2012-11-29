@@ -18,12 +18,13 @@ import ru.runa.wfe.handler.action.EscalationActionHandler;
 
 import com.google.common.base.Objects;
 
-public class TaskState extends State {
-    private TimerAction timerAction = null;
-    private TimerAction escalationAction = null;
+public class TaskState extends State implements Synchronizable {
+    private TimerAction timerAction;
+    private TimerAction escalationAction;
     private boolean ignoreSubstitution;
-    private boolean useEscalation = false;
-    private TimerDuration escalationTime = null;
+    private boolean useEscalation;
+    private TimerDuration escalationTime;
+    private boolean async;
 
     @Override
     public boolean testAttribute(Object target, String name, String value) {
@@ -34,6 +35,19 @@ public class TaskState extends State {
             return Objects.equal(value, String.valueOf(isUseEscalation()));
         }
         return false;
+    }
+
+    @Override
+    public boolean isAsync() {
+        return async;
+    }
+
+    @Override
+    public void setAsync(boolean async) {
+        if (this.async != async) {
+            this.async = async;
+            firePropertyChange(PROPERTY_IGNORE_SUBSTITUTION, !async, async);
+        }
     }
 
     public TimerAction getEscalationAction() {
@@ -50,7 +64,7 @@ public class TaskState extends State {
 
     public void setEscalationTime(TimerDuration escalationTime) {
         this.escalationTime = escalationTime;
-        firePropertyChange(PROPERTY_ESCALATION, null, null);
+        firePropertyChange(PROPERTY_ESCALATION, null, escalationTime);
     }
 
     public boolean isUseEscalation() {
@@ -76,7 +90,7 @@ public class TaskState extends State {
             }
         }
         this.useEscalation = useEscalation;
-        firePropertyChange(PROPERTY_ESCALATION, null, null);
+        firePropertyChange(PROPERTY_ESCALATION, !useEscalation, useEscalation);
     }
 
     /**
@@ -143,15 +157,14 @@ public class TaskState extends State {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
         if (timerExist() && !hasTimeoutTransition()) {
             list.add(new TimerActionPropertyDescriptor(PROPERTY_TIMER_ACTION, Localization.getString("Timer.action"), this));
-        } /*else if (!timerExist()) {
-            list.add(new TimeOutActionPropertyDescriptor(PROPERTY_TIMEOUT_ACTION, Messages.getString("TimeOut.action"), this));
-          }*/
+        }
         list.add(new PropertyDescriptor(PROPERTY_IGNORE_SUBSTITUTION, Localization.getString("property.ignoreSubstitution")));
         list.add(new TimeOutDurationPropertyDescriptor(PROPERTY_TIMEOUT_DURATION, this));
         if (useEscalation) {
             list.add(new EscalationActionPropertyDescriptor(PROPERTY_ESCALATION_ACTION, Localization.getString("escalation.action"), this));
             list.add(new EscalationDurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, this));
         }
+        list.add(new PropertyDescriptor(PROPERTY_ASYNC, Localization.getString("property.execution.async")));
         return list;
     }
 
@@ -178,6 +191,9 @@ public class TaskState extends State {
         }
         if (PROPERTY_IGNORE_SUBSTITUTION.equals(id)) {
             return ignoreSubstitution ? Localization.getString("message.yes") : Localization.getString("message.no");
+        }
+        if (PROPERTY_ASYNC.equals(id)) {
+            return async ? Localization.getString("message.yes") : Localization.getString("message.no");
         }
         return super.getPropertyValue(id);
     }
