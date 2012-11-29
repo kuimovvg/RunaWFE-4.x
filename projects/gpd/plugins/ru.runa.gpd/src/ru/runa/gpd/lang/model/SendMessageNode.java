@@ -3,11 +3,9 @@ package ru.runa.gpd.lang.model;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import ru.runa.gpd.util.VariableMapping;
 
-public class SendMessageNode extends DescribableNode implements Active {
-
+public class SendMessageNode extends Node implements Active {
     protected List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
 
     @Override
@@ -41,5 +39,4 @@ public class SendMessageNode extends DescribableNode implements Active {
     protected boolean allowLeavingTransition(Node target, List<Transition> transitions) {
         return super.allowLeavingTransition(target, transitions) && transitions.size() == 0;
     }
-
 }

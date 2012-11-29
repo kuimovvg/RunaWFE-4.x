@@ -10,7 +10,7 @@ import ru.runa.gpd.editor.gef.figure.TimerStateFigure;
 import ru.runa.gpd.editor.gef.policy.ActiveLayoutEditPolicy;
 import ru.runa.gpd.lang.model.State;
 
-public class StateGraphicalEditPart extends FormNodeEditPart implements ActionsHost {
+public class StateGraphicalEditPart extends SwimlaneNodeEditPart implements ActionsHost {
     @Override
     public State getModel() {
         return (State) super.getModel();
