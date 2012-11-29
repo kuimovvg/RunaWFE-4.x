@@ -3,12 +3,13 @@ package ru.runa.gpd.editor.graphiti.add;
 import java.util.List;
 
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
-import org.eclipse.graphiti.mm.algorithms.MultiText;
 import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
@@ -21,12 +22,12 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
+import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.graphiti.util.IColorConstant;
 
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.StyleUtil;
-import ru.runa.gpd.editor.graphiti.TextUtil;
 import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Transition;
 
@@ -85,7 +86,8 @@ public class AddTransitionFeature extends AbstractAddFeature {
         // create link and wire it
         link(connection, transition);
         // add dynamic text decorator for the reference name
-        // createLabel(connection, transition.getName(), (Rectangle) addConnectionContext.getProperty(LABEL_LOCATION_PROPERTY));
+        boolean nameLabelVisible = transition.getSource().getLeavingTransitions().size() > 1;
+        createLabel(connection, transition.getName(), (Rectangle) addConnectionContext.getProperty(LABEL_LOCATION_PROPERTY), nameLabelVisible);
         // add static graphical decorators (composition and navigable)
         createArrow(connection);
         boolean exclusive = transition.getSource().isExclusive() && transition.getSource().getLeavingTransitions().size() > 1;
@@ -94,9 +96,9 @@ public class AddTransitionFeature extends AbstractAddFeature {
         return connection;
     }
 
-    private void createLabel(Connection connection, String transitionName, Rectangle location) {
+    private void createLabel(Connection connection, String transitionName, Rectangle location, boolean visible) {
         ConnectionDecorator connectionDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, true, 0.5, true);
-        MultiText text = Graphiti.getGaService().createDefaultMultiText(getDiagram(), connectionDecorator);
+        Text text = Graphiti.getGaService().createDefaultText(getDiagram(), connectionDecorator);
         // text.setStyle(StyleUtil.getStyleForTask((getDiagram())));
         text.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
         text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
@@ -105,9 +107,12 @@ public class AddTransitionFeature extends AbstractAddFeature {
         } else {
             Graphiti.getGaService().setLocation(text, 10, 0);
         }
-        TextUtil.setTextSize(transitionName, text);
+        //TextUtil.setTextSize(transitionName, text);
         text.setValue(transitionName);
+        IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(transitionName, text.getFont());
+        Graphiti.getGaService().setSize(text, textDimension.getWidth(), textDimension.getHeight());
         connectionDecorator.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.NAME));
+        connectionDecorator.setVisible(visible);
     }
 
     private void createArrow(Connection connection) {

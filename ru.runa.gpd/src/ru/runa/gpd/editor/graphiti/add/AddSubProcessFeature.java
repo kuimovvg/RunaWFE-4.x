@@ -7,7 +7,6 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 
 import ru.runa.gpd.editor.graphiti.GaProperty;
-import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Subprocess;
 
 public class AddSubProcessFeature extends AddStateNodeFeature {
@@ -17,7 +16,7 @@ public class AddSubProcessFeature extends AddStateNodeFeature {
         org.eclipse.draw2d.geometry.Rectangle bounds = subprocess.getConstraint();
         IGaService gaService = Graphiti.getGaService();
         Image image = gaService.createImage(container, "graph/subprocess.png");
-        image.getProperties().add(new GaProperty(PropertyNames.PROPERTY_SUBPROCESS, subprocess.getSubProcessName()));
+        image.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.SUBPROCESS));
         gaService.setLocationAndSize(image, bounds.width / 2 - 7, bounds.height - 2 * GRID_SIZE, 14, 14);
     }
 }
