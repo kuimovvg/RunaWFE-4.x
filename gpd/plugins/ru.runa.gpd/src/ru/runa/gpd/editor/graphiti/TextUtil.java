@@ -7,11 +7,12 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 public class TextUtil {
-    public static void setTextSize(String text, MultiText textComponent) {
-        IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(text, textComponent.getFont());
+    public static void setTextSize(MultiText multiText, String text, int containerWidth) {
+        IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(text, multiText.getFont());
         int lineCount = 1;
-        if (textDimension.getWidth() > 95) {
-            double width = textDimension.getWidth() / 95.0;
+        float testWidth = containerWidth - 5;
+        if (textDimension.getWidth() > testWidth) {
+            double width = textDimension.getWidth() / testWidth;
             lineCount = (int) Math.floor(width);
             if (lineCount < width) {
                 lineCount++;
@@ -19,6 +20,6 @@ public class TextUtil {
             lineCount++;
         }
         IGaService gaService = Graphiti.getGaService();
-        gaService.setSize(textComponent, 100, lineCount * textDimension.getHeight());
+        gaService.setSize(multiText, containerWidth, lineCount * textDimension.getHeight());
     }
 }
