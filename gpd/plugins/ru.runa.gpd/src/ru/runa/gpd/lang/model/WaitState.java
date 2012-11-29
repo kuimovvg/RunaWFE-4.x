@@ -10,7 +10,7 @@ import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 import ru.runa.gpd.util.TimerDuration;
 
-public class WaitState extends DescribableNode implements ITimed {
+public class WaitState extends Node implements ITimed {
     private TimerDuration duration;
     private TimerAction timerAction = null;
 

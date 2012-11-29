@@ -8,7 +8,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 
-public abstract class Node extends NamedGraphElement {
+public abstract class Node extends NamedGraphElement implements Describable {
     private String nodeId;
 
     public String getNodeId() {

@@ -1,4 +1,4 @@
 package ru.runa.gpd.lang.model;
 
-public class Fork extends Node {
+public class MultiTaskState {
 }

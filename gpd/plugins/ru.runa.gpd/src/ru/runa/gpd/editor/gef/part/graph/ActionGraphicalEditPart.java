@@ -19,17 +19,12 @@ import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.Active;
 
 public class ActionGraphicalEditPart extends ElementGraphicalEditPart {
-
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (PROPERTY_CLASS.equals(evt.getPropertyName()) || PROPERTY_CONFIGURATION.equals(evt.getPropertyName())) {
             updateTooltip(getFigure());
             refreshVisuals();
         }
-    }
-
-    @Override
-    public void refreshVisuals() {
-        super.refreshVisuals();
     }
 
     @Override
@@ -57,28 +52,30 @@ public class ActionGraphicalEditPart extends ElementGraphicalEditPart {
         if (getParent() instanceof TransitionGraphicalEditPart) {
             PolylineConnection connection = (PolylineConnection) ((TransitionGraphicalEditPart) getParent()).getConnectionFigure();
             connection.addRoutingListener(new RoutingListener() {
-
+                @Override
                 public void invalidate(Connection connection) {
                 }
 
+                @Override
                 public void postRoute(Connection connection) {
                     if (getParent() == null) {
                         return;
                     }
                     int index = ((Active) getParent().getModel()).getActions().indexOf(getModel());
-                    getFigure().setLocation(
-                            ActionGraphUtils.getActionFigureLocation(((TransitionGraphicalEditPart) getParent()).getConnectionFigure(), index, 0,
-                                    false));
+                    getFigure().setLocation(ActionGraphUtils.getActionFigureLocation(((TransitionGraphicalEditPart) getParent()).getConnectionFigure(), index, 0, false));
                     refreshVisuals();
                 }
 
+                @Override
                 public void remove(Connection connection) {
                 }
 
+                @Override
                 public boolean route(Connection connection) {
                     return false;
                 }
 
+                @Override
                 public void setConstraint(Connection connection, Object constraint) {
                 }
             });
@@ -93,7 +90,6 @@ public class ActionGraphicalEditPart extends ElementGraphicalEditPart {
     }
 
     static class WithConnectionLayerDragEditPartsTracker extends DragEditPartsTracker {
-
         public WithConnectionLayerDragEditPartsTracker(EditPart sourceEditPart) {
             super(sourceEditPart);
         }
