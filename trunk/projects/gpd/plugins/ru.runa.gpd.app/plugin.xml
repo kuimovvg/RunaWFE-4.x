@@ -6,7 +6,7 @@
    version="4.0"
    provider-name="Runa">
    <requires>
-      <import plugin="ru.runa.gpd" version="4.0.0"/>
+      <import plugin="ru.runa.gpd"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.resources"/>
    </requires>

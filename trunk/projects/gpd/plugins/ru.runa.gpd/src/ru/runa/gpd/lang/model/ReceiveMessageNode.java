@@ -14,7 +14,7 @@ import ru.runa.gpd.util.VariableMapping;
 
 import com.google.common.base.Objects;
 
-public class ReceiveMessageNode extends DescribableNode implements Active, ITimed {
+public class ReceiveMessageNode extends Node implements Active, ITimed {
     private final List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
     private TimerDuration duration;
     private TimerAction timerAction;

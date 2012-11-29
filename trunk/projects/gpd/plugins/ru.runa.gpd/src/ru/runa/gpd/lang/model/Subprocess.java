@@ -13,7 +13,7 @@ import ru.runa.gpd.validation.FormatMapping;
 import ru.runa.gpd.validation.FormatMappingParser;
 import ru.runa.wfe.var.format.StringFormat;
 
-public class Subprocess extends DescribableNode implements Active {
+public class Subprocess extends Node implements Active {
     protected String subProcessName = "";
     protected List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
 

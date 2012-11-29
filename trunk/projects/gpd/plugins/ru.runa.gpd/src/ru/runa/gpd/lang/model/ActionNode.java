@@ -3,7 +3,7 @@ package ru.runa.gpd.lang.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActionNode extends DescribableNode implements Active {
+public class ActionNode extends Node implements Active {
     @Override
     protected void validate() {
         super.validate();

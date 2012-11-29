@@ -18,6 +18,7 @@ import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Describable;
 import ru.runa.gpd.lang.model.EndState;
+import ru.runa.gpd.lang.model.EndTokenState;
 import ru.runa.gpd.lang.model.Event;
 import ru.runa.gpd.lang.model.Fork;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -86,6 +87,8 @@ public class JpdlSerializer extends ProcessSerializer {
     private static final String ACTION_NODE_NODE = "node";
     private static final String TIMER_GLOBAL_NAME = "__GLOBAL";
     private static final String TIMER_ESCALATION = "__ESCALATION";
+    private static final String END_TOKEN_NODE = "end-token-state";
+    private static final String ASYNC_ATTR = "async";
 
     @Override
     public boolean isSupported(Document document) {
@@ -228,13 +231,16 @@ public class JpdlSerializer extends ProcessSerializer {
                     transitionsCount++;
                 }
             }
+            // backCompatibility: waitState was persisted as taskState earlier
             GraphElement state;
             if (transitionsCount == 1 && hasTimeOutTransition) {
                 state = create(node, definition, WAIT_STATE_NODE);
             } else {
                 state = create(node, definition);
             }
-            // backCompatibility: waitState was persisted as taskState earlier
+            if (state instanceof TaskState) {
+                ((TaskState) state).setAsync(Boolean.parseBoolean(node.attributeValue(ASYNC_ATTR, "false")));
+            }
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
                 if (TASK_NODE.equals(stateNodeChild.getName())) {
@@ -434,6 +440,10 @@ public class JpdlSerializer extends ProcessSerializer {
             }
             messageNode.setVariablesList(variablesList);
         }
+        List<Element> endTokenStates = root.elements(END_TOKEN_NODE);
+        for (Element node : endTokenStates) {
+            create(node, definition);
+        }
         List<Element> endStates = root.elements(END_STATE_NODE);
         for (Element node : endStates) {
             create(node, definition);
@@ -489,6 +499,7 @@ public class JpdlSerializer extends ProcessSerializer {
         List<TaskState> states = definition.getChildren(TaskState.class);
         for (TaskState state : states) {
             Element stateElement = writeTaskStateWithDuedate(root, state);
+            stateElement.addAttribute(ASYNC_ATTR, String.valueOf(state.isAsync()));
             if (state.timerExist()) {
                 Element timerElement = stateElement.addElement(TIMER_NODE);
                 if (state.getDuration() != null && state.getDuration().hasDuration()) {
@@ -578,9 +589,13 @@ public class JpdlSerializer extends ProcessSerializer {
                 }
             }
         }
-        EndState endState = definition.getFirstChild(EndState.class);
-        if (endState != null) {
-            writeElement(root, endState);
+        List<EndTokenState> endTokenStates = definition.getChildren(EndTokenState.class);
+        for (EndTokenState state : endTokenStates) {
+            writeElement(root, state);
+        }
+        List<EndState> endStates = definition.getChildren(EndState.class);
+        for (EndState state : endStates) {
+            writeElement(root, state);
         }
     }
 
