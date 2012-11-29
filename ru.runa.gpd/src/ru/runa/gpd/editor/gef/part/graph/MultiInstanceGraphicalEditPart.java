@@ -2,18 +2,16 @@ package ru.runa.gpd.editor.gef.part.graph;
 
 import java.beans.PropertyChangeEvent;
 
-
 import ru.runa.gpd.lang.model.MultiInstance;
 
 public class MultiInstanceGraphicalEditPart extends LabeledNodeGraphicalEditPart {
-
     @Override
     public MultiInstance getModel() {
         return (MultiInstance) super.getModel();
     }
 
     @Override
-    protected String getTooltipMessage() {
+    protected String getTooltipMessage() { // TODO move tooltip to model
         return getModel().getSubProcessName();
     }
 
@@ -24,5 +22,4 @@ public class MultiInstanceGraphicalEditPart extends LabeledNodeGraphicalEditPart
             updateTooltip(getFigure());
         }
     }
-
 }

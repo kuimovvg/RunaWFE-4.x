@@ -7,7 +7,7 @@ import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.decision.IDecisionProvider;
 import ru.runa.wfe.handler.decision.GroovyDecisionHandler;
 
-public class Decision extends DescribableNode implements Delegable, Active {
+public class Decision extends Node implements Delegable, Active {
     public Decision() {
         setDelegationClassName(GroovyDecisionHandler.class.getName());
     }

@@ -9,7 +9,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 
-public abstract class SwimlanedNode extends DescribableNode implements PropertyChangeListener {
+public abstract class SwimlanedNode extends Node implements PropertyChangeListener {
     private Swimlane swimlane;
 
     @Override
