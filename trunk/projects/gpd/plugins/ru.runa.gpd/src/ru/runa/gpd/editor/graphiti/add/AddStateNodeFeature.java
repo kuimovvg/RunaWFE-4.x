@@ -3,6 +3,7 @@ package ru.runa.gpd.editor.graphiti.add;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
+import org.eclipse.graphiti.mm.algorithms.MultiText;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -49,10 +50,12 @@ public class AddStateNodeFeature extends AddNodeFeature {
             swimlaneText.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             gaService.setLocationAndSize(swimlaneText, 0, 0, borderWidth, 2 * GRID_SIZE);
         }
-        Text nameText = gaService.createDefaultText(getDiagram(), border, node.getName());
+        MultiText nameText = gaService.createDefaultMultiText(getDiagram(), border, node.getName());
         nameText.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.NAME));
         nameText.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
-        gaService.setLocationAndSize(nameText, 0, 2 * GRID_SIZE, borderWidth, borderHeight - 3 * GRID_SIZE);
+        //gaService.setLocation(nameText, 0, 2 * GRID_SIZE);
+        //TextUtil.setTextSize(nameText, node.getName(), borderWidth);
+        gaService.setLocationAndSize(nameText, 0, 2 * GRID_SIZE, borderWidth, borderHeight - 4 * GRID_SIZE);
         //
         drawCustom(context, main);
         // 

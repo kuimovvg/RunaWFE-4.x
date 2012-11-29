@@ -8,7 +8,6 @@ import org.eclipse.graphiti.services.IGaService;
 
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.lang.model.MultiInstance;
-import ru.runa.gpd.lang.model.PropertyNames;
 
 public class AddMultiInstanceFeature extends AddStateNodeFeature {
     @Override
@@ -17,7 +16,7 @@ public class AddMultiInstanceFeature extends AddStateNodeFeature {
         org.eclipse.draw2d.geometry.Rectangle bounds = multiInstance.getConstraint();
         IGaService gaService = Graphiti.getGaService();
         Image image = gaService.createImage(container, "graph/multiinstance.png");
-        image.getProperties().add(new GaProperty(PropertyNames.PROPERTY_MULTIPROCESS, multiInstance.getSubProcessName()));
+        image.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.MULTIPROCESS));
         gaService.setLocationAndSize(image, bounds.width / 2 - 8, bounds.height - 2 * GRID_SIZE, 16, 12);
     }
 }

@@ -4,6 +4,7 @@ import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 import ru.runa.gpd.editor.graphiti.GaProperty;
@@ -27,9 +28,15 @@ public class UpdateTransitionFeature extends UpdateFeature {
         if (exclusiveFlowGa != null && exclusiveFlowGa.getPictogramElement().isVisible() != bo.isExclusiveFlow()) {
             return Reason.createTrueReason();
         }
-        String transitionName = findTextValueRecursive(pe, GaProperty.NAME);
-        if (transitionName != null && !Objects.equal(transitionName, bo.getName())) {
-            return Reason.createTrueReason();
+        Text nameTextGa = (Text) findGaRecursiveByName(pe, GaProperty.NAME);
+        if (nameTextGa != null) {
+            boolean nameLabelVisible = bo.getSource().getLeavingTransitions().size() > 1;
+            if (nameTextGa.getPictogramElement().isVisible() != nameLabelVisible) {
+                return Reason.createTrueReason();
+            }
+            if (!Objects.equal(nameTextGa.getValue(), bo.getName())) {
+                return Reason.createTrueReason();
+            }
         }
         return Reason.createFalseReason();
     }
@@ -48,6 +55,11 @@ public class UpdateTransitionFeature extends UpdateFeature {
         GraphicsAlgorithm exclusiveFlowGa = findGaRecursiveByName(pe, GaProperty.EXCLUSIVE_FLOW);
         if (exclusiveFlowGa != null) {
             exclusiveFlowGa.getPictogramElement().setVisible(bo.isExclusiveFlow());
+        }
+        GraphicsAlgorithm nameTextGa = findGaRecursiveByName(pe, GaProperty.NAME);
+        if (nameTextGa != null) {
+            boolean nameLabelVisible = bo.getSource().getLeavingTransitions().size() > 1;
+            nameTextGa.getPictogramElement().setVisible(nameLabelVisible);
         }
         return true;
     }

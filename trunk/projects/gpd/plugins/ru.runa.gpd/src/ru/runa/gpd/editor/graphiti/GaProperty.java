@@ -8,6 +8,8 @@ public class GaProperty extends PropertyImpl {
     public static final String SWIMLANE_NAME = "swimlaneName";
     public static final String EXCLUSIVE_FLOW = "exclusiveFlow";
     public static final String DEFAULT_FLOW = "defaultFlow";
+    public static final String SUBPROCESS = "subProcess";
+    public static final String MULTIPROCESS = "multiProcess";
 
     public GaProperty(String name, String value) {
         setKey(name);
