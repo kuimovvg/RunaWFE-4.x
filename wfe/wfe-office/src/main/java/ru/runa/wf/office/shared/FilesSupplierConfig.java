@@ -105,13 +105,13 @@ public abstract class FilesSupplierConfig {
                 try {
                     file.createNewFile();
                 } catch (IOException e) {
-                    throw new InternalApplicationException("Unable to create new output file in location '" + file.getAbsolutePath() + "'");
+                    throw new InternalApplicationException("Unable to create new output file in location '" + file.getAbsolutePath() + "'", e);
                 }
             }
             try {
                 return Files.newOutputStreamSupplier(file).getOutput();
             } catch (IOException e) {
-                throw new InternalApplicationException("Unable to write output file to location '" + file.getAbsolutePath() + "'");
+                throw new InternalApplicationException("Unable to write output file to location '" + file.getAbsolutePath() + "'", e);
             }
         }
         if (required) {

@@ -22,15 +22,14 @@
   	<meta http-equiv="Pragma" content="no-cache">
 	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/main.css" />">
 	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/jquery-ui-1.9.2.custom.css" />">
-	<script type="text/javascript" src="<html:rewrite page="/js/jquery-1.8.3.min.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/js/jquery-ui-1.9.2.custom.min.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/js/jquery-ui-i18n.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/js/jquery.ui.mask.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/js/jquery.ui.timepicker.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/js/jquery.ui.timepicker-i18n.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/js/common.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery-1.7.1.min.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery.cookie.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/js/confirm.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery-ui-1.9.2.custom.min.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery.ui.mask.js" />">c=0;</script>
+	<script type="text/javascript" src="/wfe/js/i18n/jquery.ui.datepicker-<%= Commons.getLocale(pageContext).getLanguage() %>.js">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/jquery.ui.timepicker.js" />">c=0;</script>
+	<script type="text/javascript" src="/wfe/js/i18n/jquery.ui.timepicker-<%= Commons.getLocale(pageContext).getLanguage() %>.js">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/common.js" />">c=0;</script>
 	<tiles:insert attribute="head" ignore="true"/>
   </head>
 <body>
