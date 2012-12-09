@@ -34,19 +34,11 @@
 							</tr>
 							<tr>			
 								<td><bean:message key="login.page.login.message"/></td>
-      							<% if (userName==null) { %>
-	      							<td style="width:170px" ><html:text property="login"/></td>
-								<% } else { %>	
-									<td style="width:170px" ><input   type="text" name="login" value="<%= userName %>"></td>
-								<% } %>							
+								<td style="width:170px"><input type="text" name="login" value="<%= userName %>" style="width: 100%;"></td>
 				  			</tr>
 							<tr>
 		  						<td><bean:message key="login.page.password.message"/></td>
-      							<% if (userPwd==null) { %>
-    	      						<td style="width:170px"><input  type="password" name="password" value=""></td>
-								<% } else { %>	
-    	      						<td style="width:170px"><input  type="password" name="password" value="<%= userPwd %>"></td>
-								<% } %>							
+   	      						<td style="width:170px"><input type="password" name="password" value="<%= userPwd %>" style="width: 100%;"></td>
 			  				</tr>
 							<tr>
 								<td>

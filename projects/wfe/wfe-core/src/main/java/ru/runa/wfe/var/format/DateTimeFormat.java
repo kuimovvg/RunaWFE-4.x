@@ -17,10 +17,6 @@
  */
 package ru.runa.wfe.var.format;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-
 import ru.runa.wfe.commons.CalendarUtil;
 
 /**
@@ -33,16 +29,19 @@ public class DateTimeFormat extends AbstractDateFormat {
         super(CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
     }
 
-    @Override
-    public Date parse(String[] source) throws ParseException {
-        if (source.length == 2) {
-            Date date = CalendarUtil.convertToDate(source[0], CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
-            Date time = CalendarUtil.convertToDate(source[0], CalendarUtil.HOURS_MINUTES_FORMAT);
-            Calendar calendar = CalendarUtil.dateToCalendar(date);
-            CalendarUtil.setTimeFromCalendar(calendar, CalendarUtil.dateToCalendar(time));
-            return calendar.getTime();
-        }
-        return super.parse(source);
-    }
+    // @Override
+    // public Date parse(String[] source) throws ParseException {
+    // if (source.length == 2) {
+    // Date date = CalendarUtil.convertToDate(source[0],
+    // CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
+    // Date time = CalendarUtil.convertToDate(source[0],
+    // CalendarUtil.HOURS_MINUTES_FORMAT);
+    // Calendar calendar = CalendarUtil.dateToCalendar(date);
+    // CalendarUtil.setTimeFromCalendar(calendar,
+    // CalendarUtil.dateToCalendar(time));
+    // return calendar.getTime();
+    // }
+    // return super.parse(source);
+    // }
 
 }
