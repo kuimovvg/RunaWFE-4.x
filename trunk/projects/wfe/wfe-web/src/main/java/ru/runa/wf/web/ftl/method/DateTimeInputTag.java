@@ -41,18 +41,25 @@ public class DateTimeInputTag extends FreemarkerTag {
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String format = BackCompatibilityClassNames.getClassName(variable.getDefinition().getFormat());
         Date date = (Date) variable.getValue();
-        String html = "";
-        if (DateFormat.class.getName().equals(format) || DateTimeFormat.class.getName().equals(format)) {
-            html += "<input type=\"text\" class=\"inputDate\" length=\"10\" name=\"" + variableName + "\" style=\"width: 100px;\" ";
+        String html = ""; // TODO recfactor
+        if (DateFormat.class.getName().equals(format)) {
+            html += "<input type=\"text\" class=\"inputDate\" name=\"" + variableName + "\" style=\"width: 100px;\" ";
             if (date != null) {
                 html += "value=\"" + CalendarUtil.formatDate(date) + "\" ";
             }
             html += "/>";
         }
-        if (TimeFormat.class.getName().equals(format) || DateTimeFormat.class.getName().equals(format)) {
-            html += "<input type=\"text\" class=\"inputTime\" length=\"5\" name=\"" + variableName + "\" style=\"width: 50px;\" ";
+        if (TimeFormat.class.getName().equals(format)) {
+            html += "<input type=\"text\" class=\"inputTime\" name=\"" + variableName + "\" style=\"width: 50px;\" ";
             if (date != null) {
                 html += "value=\"" + CalendarUtil.formatTime(date) + "\" ";
+            }
+            html += "/>";
+        }
+        if (DateTimeFormat.class.getName().equals(format)) {
+            html += "<input type=\"text\" class=\"inputDateTime\" name=\"" + variableName + "\" style=\"width: 150px;\" ";
+            if (date != null) {
+                html += "value=\"" + CalendarUtil.formatDateTime(date) + "\" ";
             }
             html += "/>";
         }

@@ -13,3 +13,4 @@ $.timepicker.regional['ru'] = {
 	pmNames: ['PM', 'P'],
 	isRTL: false
 };
+$.timepicker.setDefaults($.timepicker.regional['ru']);
