@@ -46,12 +46,15 @@ public class TaskDefinition extends GraphElement {
     public void validate() {
         super.validate();
         Preconditions.checkNotNull(node, "node");
-        Preconditions.checkNotNull(swimlaneDefinition, "swimlane");
+        if (!(node instanceof MultiTaskNode)) {
+            Preconditions.checkNotNull(swimlaneDefinition, "swimlane");
+        }
     }
 
     /**
-     * sets the swimlane unidirectionally. Since a task can have max one of swimlane or assignmentHandler, this method removes the assignmentHandler and assignmentExpression if one
-     * of those isset.
+     * sets the swimlane unidirectionally. Since a task can have max one of
+     * swimlane or assignmentHandler, this method removes the assignmentHandler
+     * and assignmentExpression if one of those isset.
      */
     public void setSwimlane(SwimlaneDefinition swimlaneDefinition) {
         this.swimlaneDefinition = swimlaneDefinition;

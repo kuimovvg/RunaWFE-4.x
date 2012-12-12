@@ -25,7 +25,8 @@ import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
 
 /**
- * Substitution with this criteria applies when task process swimlane equals configuration.
+ * Substitution with this criteria applies when task process swimlane equals
+ * configuration.
  */
 @Entity
 @DiscriminatorValue(value = "swimlane")
@@ -40,6 +41,9 @@ public class SubstitutionCriteriaSwimlane extends SubstitutionCriteria {
     @Override
     public boolean isSatisfied(ExecutionContext executionContext, Task task, Actor asActor, Actor substitutorActor) {
         String processDefinitionName = executionContext.getProcessDefinition().getName();
+        if (task.getSwimlane() == null) {
+            return false;
+        }
         String taskSwimlaneName = task.getSwimlane().getName();
         String expectedSwimlaneName = processDefinitionName + "." + taskSwimlaneName;
         return expectedSwimlaneName.equals(getConf());

@@ -169,7 +169,7 @@ public class Process implements Identifiable {
         this.rootToken = rootToken;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, targetEntity = Swimlane.class)
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = Swimlane.class)
     @JoinColumn(name = "PROCESS_ID")
     @Cascade({ CascadeType.ALL, CascadeType.DELETE_ORPHAN })
     public Set<Swimlane> getSwimlanes() {
@@ -180,7 +180,7 @@ public class Process implements Identifiable {
         this.swimlanes = swimlanes;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, targetEntity = Task.class)
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = Task.class)
     @JoinColumn(name = "PROCESS_ID")
     @Cascade({ CascadeType.ALL, CascadeType.DELETE_ORPHAN })
     public Set<Task> getTasks() {
@@ -249,18 +249,6 @@ public class Process implements Identifiable {
     }
 
     /**
-     * removes all active tasks related to the given token.
-     */
-    public void removeActiveTasks(Token token) {
-        Preconditions.checkNotNull(token, "token");
-        for (Task task : tasks) {
-            if (token.equals(task.getToken())) {
-                task.setEndDate(new Date());
-            }
-        }
-    }
-
-    /**
      * instructs the main path of execution to continue by taking the default
      * transition on the current node.
      * 
@@ -277,6 +265,9 @@ public class Process implements Identifiable {
      */
     public void cancel(ExecutionContext executionContext, Actor actor) {
         if (!hasEnded()) {
+            for (Task task : tasks) {
+                task.setEndDate(new Date());
+            }
             endInternal(executionContext);
             executionContext.addLog(new ProcessCancelLog(actor));
         }

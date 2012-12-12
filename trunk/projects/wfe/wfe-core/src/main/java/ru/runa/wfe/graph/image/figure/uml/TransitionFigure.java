@@ -20,17 +20,16 @@ package ru.runa.wfe.graph.image.figure.uml;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import ru.runa.wfe.graph.image.figure.TransitionFigure;
+import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
 import ru.runa.wfe.graph.image.model.BendpointModel;
-import ru.runa.wfe.graph.image.model.NodeModel;
+import ru.runa.wfe.lang.NodeType;
 
-public class UMLTransition extends TransitionFigure {
+public class TransitionFigure extends TransitionFigureBase {
 
     @Override
     protected Point getCompatibleBendpoint(BendpointModel bendpointModel) {
-        // TODO Used for compatibility
         Point center = figureFrom.getBendpoint();
-        if ((center != null) && (figureFrom instanceof StateFigure)) {
+        if ((center != null) && (figureFrom instanceof TaskNodeFigure)) {
             return bendpointModel.getPointFrom(center);
         } else if ((figureFrom instanceof ForkJoinFigure) && (figureTo instanceof ForkJoinFigure)) {
             Point result = bendpointModel.getPointFrom(center);
@@ -54,7 +53,7 @@ public class UMLTransition extends TransitionFigure {
     protected double[] getReferencePoint(Rectangle rectFrom, Rectangle rectTo) {
         double x;
         double y;
-        if (figureTo.getType() == NodeModel.FORK_JOIN) {
+        if (figureTo.getType() == NodeType.Fork || figureTo.getType() == NodeType.Join) {
             ForkJoinFigure forkJoin = (ForkJoinFigure) figureTo;
             if (!forkJoin.isVertical() && rectTo.contains(rectFrom.getCenterX(), rectTo.getCenterY())) {
                 // horizontal ForkJoin

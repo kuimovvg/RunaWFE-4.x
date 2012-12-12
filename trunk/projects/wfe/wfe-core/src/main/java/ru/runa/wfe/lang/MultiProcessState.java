@@ -42,7 +42,7 @@ public class MultiProcessState extends SubProcessState {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.MultiInstance;
+        return NodeType.MultiSubprocess;
     }
 
     @Override

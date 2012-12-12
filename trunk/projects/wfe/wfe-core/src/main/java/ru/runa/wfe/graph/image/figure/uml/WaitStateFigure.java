@@ -28,11 +28,7 @@ import java.text.AttributedString;
 
 import ru.runa.wfe.graph.image.util.DrawProperties;
 
-public class WaitStateFigure extends StateFigure {
-
-    public WaitStateFigure() {
-        super(false);
-    }
+public class WaitStateFigure extends TaskNodeFigure {
 
     @Override
     public void draw(Graphics2D graphics, boolean cleanMode) {

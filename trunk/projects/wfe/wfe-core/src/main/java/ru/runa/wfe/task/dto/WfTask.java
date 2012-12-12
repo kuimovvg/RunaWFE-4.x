@@ -51,20 +51,20 @@ public final class WfTask implements Serializable {
     private final boolean firstOpen;
 
     public WfTask(Task task, Long processId, Deployment deployment, Date deadlineWarningDate, boolean groupAssigned, boolean escalated) {
-        this.id = task.getId();
-        this.name = task.getName();
-        this.description = task.getDescription();
-        this.owner = task.getExecutor();
+        id = task.getId();
+        name = task.getName();
+        description = task.getDescription();
+        owner = task.getExecutor();
         this.processId = processId;
-        this.processDefinitionId = deployment.getId();
-        this.processDefinitionName = deployment.getName();
-        this.swimlaneName = task.getSwimlane().getName();
-        this.creationDate = task.getCreateDate();
-        this.deadlineDate = task.getDeadlineDate();
+        processDefinitionId = deployment.getId();
+        processDefinitionName = deployment.getName();
+        swimlaneName = task.getSwimlane() != null ? task.getSwimlane().getName() : "";
+        creationDate = task.getCreateDate();
+        deadlineDate = task.getDeadlineDate();
         this.deadlineWarningDate = deadlineWarningDate;
         this.groupAssigned = groupAssigned;
         this.escalated = escalated;
-        this.firstOpen = task.isFirstOpen();
+        firstOpen = task.isFirstOpen();
     }
 
     public boolean isFirstOpen() {

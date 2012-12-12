@@ -259,12 +259,14 @@ public class Token implements Serializable {
     }
 
     public void signal(ExecutionContext executionContext, Transition transition) {
-        Node node = getNode(executionContext.getProcessDefinition());
-        // fire the event before-signal
-        node.fireEvent(executionContext, Event.EVENTTYPE_BEFORE_SIGNAL);
-        node.leave(executionContext, transition);
-        // fire the event after-signal
-        node.fireEvent(executionContext, Event.EVENTTYPE_AFTER_SIGNAL);
+        if (!hasEnded()) {
+            Node node = getNode(executionContext.getProcessDefinition());
+            // fire the event before-signal
+            node.fireEvent(executionContext, Event.EVENTTYPE_BEFORE_SIGNAL);
+            node.leave(executionContext, transition);
+            // fire the event after-signal
+            node.fireEvent(executionContext, Event.EVENTTYPE_AFTER_SIGNAL);
+        }
     }
 
     /**
@@ -304,9 +306,6 @@ public class Token implements Serializable {
             for (Process subProcess : executionContext.getChildProcesses()) {
                 subProcess.end(executionContext);
             }
-            // if there are tasks associated to this token, remove signaling
-            // capabilities
-            process.removeActiveTasks(this);
             if (verifyParentTermination) {
                 // if this is the last active token of the parent,
                 // the parent needs to be ended as well
@@ -333,6 +332,28 @@ public class Token implements Serializable {
         }
         return activeChildren;
     }
+
+    // public void reactivateIfAllChildrenArePassive(ExecutionContext
+    // executionContext, Node node) {
+    // boolean reactivateParent = true;
+    // for (Token token : children) {
+    // if (!token.hasEnded() && token.isAbleToReactivateParent()) {
+    // reactivateParent = false;
+    // break;
+    // }
+    // }
+    // if (reactivateParent) {
+    // // write to all child tokens that the parent is already
+    // // reactivated
+    // for (Token concurrentToken : children) {
+    // concurrentToken.setAbleToReactivateParent(false);
+    // }
+    // // write to all child tokens that the parent is already
+    // // reactivated
+    // node.leave(new ExecutionContext(executionContext.getProcessDefinition(),
+    // this));
+    // }
+    // }
 
     // TODO: token death example
     // public void checkImplicitTermination() {

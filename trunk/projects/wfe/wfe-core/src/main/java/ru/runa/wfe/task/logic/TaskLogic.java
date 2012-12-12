@@ -106,9 +106,11 @@ public class TaskLogic extends WFCommonLogic {
             }
             try {
                 ProcessDefinition processDefinition = getDefinition(task);
-                Delegation delegation = task.getSwimlane().getDefinition(processDefinition).getDelegation();
-                AssignmentHandler handler = delegation.getInstance();
-                handler.assign(new ExecutionContext(processDefinition, task), task);
+                if (task.getSwimlane() != null) {
+                    Delegation delegation = task.getSwimlane().getDefinition(processDefinition).getDelegation();
+                    AssignmentHandler handler = delegation.getInstance();
+                    handler.assign(new ExecutionContext(processDefinition, task), task);
+                }
             } catch (Exception e) {
                 log.warn(task.getSwimlane().getName(), e);
             }

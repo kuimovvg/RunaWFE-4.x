@@ -10,9 +10,11 @@ import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.graph.view.BaseGraphElementPresentation;
 import ru.runa.wfe.graph.view.DecisionGraphElementPresentation;
 import ru.runa.wfe.graph.view.EndStateGraphElementPresentation;
+import ru.runa.wfe.graph.view.EndTokenStateGraphElementPresentation;
 import ru.runa.wfe.graph.view.ForkGraphElementPresentation;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.graph.view.JoinGraphElementPresentation;
+import ru.runa.wfe.graph.view.MultiTaskGraphElementPresentation;
 import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.NodeGraphElementPresentation;
 import ru.runa.wfe.graph.view.ReceiveMessageGraphElementPresentation;
@@ -21,12 +23,12 @@ import ru.runa.wfe.graph.view.StartStateGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.TaskGraphElementPresentation;
 import ru.runa.wfe.graph.view.WaitStateGraphElementPresentation;
+import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.MultiProcessState;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.TaskDefinition;
-import ru.runa.wfe.lang.TaskNode;
 
 public class GraphElementPresentationBuilder {
 
@@ -44,14 +46,17 @@ public class GraphElementPresentationBuilder {
             NodeModel model = diagramModel.getNode(node.getNodeId());
             BaseGraphElementPresentation presentation;
             switch (node.getNodeType()) {
-            case SubProcess:
+            case Subprocess:
                 presentation = new SubprocessGraphElementPresentation(((SubProcessState) node).getSubProcessName());
                 break;
-            case MultiInstance:
+            case MultiSubprocess:
                 presentation = new MultiinstanceGraphElementPresentation(((MultiProcessState) node).getSubProcessName());
                 break;
-            case Task:
-                TaskDefinition taskDefinition = ((TaskNode) node).getFirstTaskNotNull();
+            case MultiTaskNode:
+                presentation = new MultiTaskGraphElementPresentation();
+                break;
+            case TaskNode:
+                TaskDefinition taskDefinition = ((InteractionNode) node).getFirstTaskNotNull();
                 presentation = new TaskGraphElementPresentation(taskDefinition.getSwimlane().getName(), model.isMinimizedView());
                 break;
             case WaitState:
@@ -60,7 +65,10 @@ public class GraphElementPresentationBuilder {
             case StartState:
                 presentation = new StartStateGraphElementPresentation();
                 break;
-            case EndState:
+            case EndToken:
+                presentation = new EndTokenStateGraphElementPresentation();
+                break;
+            case End:
                 presentation = new EndStateGraphElementPresentation();
                 break;
             case Fork:
