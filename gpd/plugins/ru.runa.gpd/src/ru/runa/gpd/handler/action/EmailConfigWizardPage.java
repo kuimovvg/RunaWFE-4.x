@@ -46,6 +46,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
 import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.var.format.FileFormat;
 
 public class EmailConfigWizardPage extends WizardPage implements MessageDisplay {
@@ -326,7 +327,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         summaryProperties.put("body", contentComposite.getMessage());
         Document document = summaryConfig.toConfigurationDocument(summaryProperties);
         EmailAttachmentsConfig.addAttachments(document, contentComposite.getAttachments());
-        String c = ParamDefConfig.writeDoc(document);
+        String c = XmlUtil.toString(document);
         styledText.setText(c);
         this.result = styledText.getText();
         return result;

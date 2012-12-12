@@ -77,7 +77,6 @@ public abstract class BaseHtmlFormType extends FormType {
                 } else if (!validationVariables.contains(formVarName) && formVars.get(formVarName) == FormType.WRITE_ACCESS) {
                     formNode.addWarning("formNode.formVariableOutOfValidation", formVarName);
                 } else if (!allVariableNames.contains(formVarName)) {
-                    // TODO addError("formNode.formVariableDoesNotExist", formVarName);
                     formNode.addWarning("formNode.formVariableDoesNotExist", formVarName);
                 }
             }

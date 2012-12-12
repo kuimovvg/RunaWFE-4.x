@@ -46,7 +46,7 @@ public class TaskState extends State implements Synchronizable {
     public void setAsync(boolean async) {
         if (this.async != async) {
             this.async = async;
-            firePropertyChange(PROPERTY_IGNORE_SUBSTITUTION, !async, async);
+            firePropertyChange(PROPERTY_ASYNC, !async, async);
         }
     }
 
@@ -76,7 +76,6 @@ public class TaskState extends State implements Synchronizable {
             escalationAction = new TimerAction(getProcessDefinition());
             escalationAction.setDelegationClassName(EscalationActionHandler.class.getName());
             String org_function = Activator.getPrefString(PrefConstants.P_ESCALATION_CONFIG);
-            //if (org_function==null || org_function=="") org_function = "ru.runa.af.organizationfunction.DemoChiefFunction";
             escalationAction.setDelegationConfiguration(org_function);
             String repeat = Activator.getPrefString(PrefConstants.P_ESCALATION_REPEAT);
             if (repeat != null && repeat != "" && (new TimerDuration(repeat).hasDuration())) {
@@ -129,17 +128,9 @@ public class TaskState extends State implements Synchronizable {
         return timerAction;
     }
 
-    /*public void setTimeOutAction(TimerAction timeOutAction) {
-        if (timeOutAction == TimerAction.NONE) {
-            timeOutAction = null;
-        }
-        TimerAction old = this.timeOutAction;
-        this.timeOutAction = timeOutAction;
-        firePropertyChange(PROPERTY_TIMEOUT_ACTION, old, this.timeOutAction);
-    }*/
     @Override
     public TimerAction getTimeOutAction() {
-        return null;//timeOutAction;
+        return null;
     }
 
     public boolean isIgnoreSubstitution() {

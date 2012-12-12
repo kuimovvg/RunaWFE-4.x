@@ -12,6 +12,21 @@ import ru.runa.gpd.Localization;
 public abstract class SwimlanedNode extends Node implements PropertyChangeListener {
     private Swimlane swimlane;
 
+    protected boolean isSwimlaneDisabled() {
+        return false;
+    }
+
+    @Override
+    public boolean testAttribute(Object target, String name, String value) {
+        if (super.testAttribute(target, name, value)) {
+            return true;
+        }
+        if ("disableSwimlaneSelection".equals(name)) {
+            return isSwimlaneDisabled() == Boolean.parseBoolean(value);
+        }
+        return false;
+    }
+
     @Override
     public void setParent(GraphElement parent) {
         super.setParent(parent);
@@ -45,7 +60,7 @@ public abstract class SwimlanedNode extends Node implements PropertyChangeListen
     @Override
     protected void validate() {
         super.validate();
-        if (getSwimlane() == null) {
+        if (getSwimlane() == null && !isSwimlaneDisabled()) {
             addError("swimlaneNotSet");
         }
     }

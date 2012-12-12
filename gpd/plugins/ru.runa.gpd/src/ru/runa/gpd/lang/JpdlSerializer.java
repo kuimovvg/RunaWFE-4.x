@@ -24,7 +24,8 @@ import ru.runa.gpd.lang.model.Fork;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.Join;
-import ru.runa.gpd.lang.model.MultiInstance;
+import ru.runa.gpd.lang.model.MultiSubprocess;
+import ru.runa.gpd.lang.model.MultiTaskState;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -35,6 +36,7 @@ import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
+import ru.runa.gpd.lang.model.Synchronizable;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.lang.model.Transition;
@@ -44,6 +46,7 @@ import ru.runa.gpd.util.TimerDuration;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
+import ru.runa.wfe.lang.TaskExecutionMode;
 
 @SuppressWarnings("unchecked")
 public class JpdlSerializer extends ProcessSerializer {
@@ -89,6 +92,9 @@ public class JpdlSerializer extends ProcessSerializer {
     private static final String TIMER_ESCALATION = "__ESCALATION";
     private static final String END_TOKEN_NODE = "end-token-state";
     private static final String ASYNC_ATTR = "async";
+    private static final String MULTI_TASK_NODE = "multi-task-node";
+    private static final String TASK_EXECUTORS_ATTR = "taskExecutors";
+    private static final String TASK_EXECUTION_MODE_ATTR = "taskExecutionMode";
 
     @Override
     public boolean isSupported(Document document) {
@@ -217,7 +223,8 @@ public class JpdlSerializer extends ProcessSerializer {
                 }
             }
         }
-        List<Element> states = root.elements(TASK_STATE_NODE);
+        List<Element> states = new ArrayList<Element>(root.elements(TASK_STATE_NODE));
+        states.addAll(root.elements(MULTI_TASK_NODE));
         for (Element node : states) {
             List<Element> nodeList = node.elements();
             int transitionsCount = 0;
@@ -238,8 +245,13 @@ public class JpdlSerializer extends ProcessSerializer {
             } else {
                 state = create(node, definition);
             }
-            if (state instanceof TaskState) {
-                ((TaskState) state).setAsync(Boolean.parseBoolean(node.attributeValue(ASYNC_ATTR, "false")));
+            if (state instanceof Synchronizable) {
+                ((Synchronizable) state).setAsync(Boolean.parseBoolean(node.attributeValue(ASYNC_ATTR, "false")));
+            }
+            if (state instanceof MultiTaskState) {
+                TaskExecutionMode mode = TaskExecutionMode.valueOf(node.attributeValue(TASK_EXECUTION_MODE_ATTR));
+                ((MultiTaskState) state).setTaskExecutionMode(mode);
+                ((MultiTaskState) state).setExecutorsVariableName(node.attributeValue(TASK_EXECUTORS_ATTR));
             }
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
@@ -254,9 +266,9 @@ public class JpdlSerializer extends ProcessSerializer {
                             ((State) state).setReassignmentEnabled(forceReassign);
                         }
                     }
-                    String duedate_attr = stateNodeChild.attributeValue(DUEDATE_ATTR);
-                    if (duedate_attr != null) {
-                        ((State) state).setTimeOutDueDate(duedate_attr);
+                    String duedateAttr = stateNodeChild.attributeValue(DUEDATE_ATTR);
+                    if (duedateAttr != null) {
+                        ((State) state).setTimeOutDueDate(duedateAttr);
                     }
                     List<Element> aaa = stateNodeChild.elements();
                     for (Element a : aaa) {
@@ -377,7 +389,7 @@ public class JpdlSerializer extends ProcessSerializer {
         }
         List<Element> multiInstanceStates = root.elements(MULTI_INSTANCE_STATE_NODE);
         for (Element node : multiInstanceStates) {
-            MultiInstance multiInstance = create(node, definition);
+            MultiSubprocess multiInstance = create(node, definition);
             List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
             List<Element> nodeList = node.elements();
             for (Element childNode : nodeList) {
@@ -500,6 +512,10 @@ public class JpdlSerializer extends ProcessSerializer {
         for (TaskState state : states) {
             Element stateElement = writeTaskStateWithDuedate(root, state);
             stateElement.addAttribute(ASYNC_ATTR, String.valueOf(state.isAsync()));
+            if (state instanceof MultiTaskState) {
+                stateElement.addAttribute(TASK_EXECUTION_MODE_ATTR, ((MultiTaskState) state).getTaskExecutionMode().name());
+                stateElement.addAttribute(TASK_EXECUTORS_ATTR, ((MultiTaskState) state).getExecutorsVariableName());
+            }
             if (state.timerExist()) {
                 Element timerElement = stateElement.addElement(TIMER_NODE);
                 if (state.getDuration() != null && state.getDuration().hasDuration()) {
