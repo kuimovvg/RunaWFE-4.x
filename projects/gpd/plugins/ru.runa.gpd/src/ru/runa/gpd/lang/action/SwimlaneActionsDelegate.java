@@ -21,18 +21,18 @@ import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.command.EnableReassignmentCommand;
 import ru.runa.gpd.editor.gef.command.IgnoreSubstitutionCommand;
 import ru.runa.gpd.lang.NodeRegistry;
-import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Swimlane;
+import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
 
 public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements IMenuCreator {
     private Swimlane selectedSwimlane;
     private ProcessDefinition currentDefinition;
-    private FormNode currentNode;
+    private SwimlanedNode currentNode;
 
     @Override
     public void dispose() {
@@ -211,11 +211,6 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
             EnableReassignmentCommand command = new EnableReassignmentCommand((State) currentNode);
             executeCommand(command);
         }
-
-        @Override
-        public void setChecked(boolean checked) {
-            super.setChecked(checked);
-        }
     }
 
     public class IgnoreSubstitutionAction extends Action {
@@ -227,11 +222,6 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
         public void run() {
             IgnoreSubstitutionCommand command = new IgnoreSubstitutionCommand((TaskState) currentNode);
             executeCommand(command);
-        }
-
-        @Override
-        public void setChecked(boolean checked) {
-            super.setChecked(checked);
         }
     }
 }

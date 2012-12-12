@@ -3,7 +3,7 @@ package ru.runa.gpd.lang.model;
 
 import ru.runa.gpd.util.VariableMapping;
 
-public class MultiInstance extends Subprocess {
+public class MultiSubprocess extends Subprocess {
 
     @Override
     protected void validate() {

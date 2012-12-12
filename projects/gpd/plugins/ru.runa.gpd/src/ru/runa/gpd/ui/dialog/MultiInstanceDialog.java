@@ -1,7 +1,6 @@
 package ru.runa.gpd.ui.dialog;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +34,10 @@ import org.eclipse.ui.PlatformUI;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.ProcessCache;
-import ru.runa.gpd.lang.model.MultiInstance;
+import ru.runa.gpd.lang.model.MultiSubprocess;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableMapping;
-import ru.runa.wfe.var.format.StringFormat;
 
 public class MultiInstanceDialog extends Dialog {
     private String subprocessName;
@@ -64,7 +62,7 @@ public class MultiInstanceDialog extends Dialog {
     private TableViewer tableViewer;
     private CTabFolder typeTabFolder;
 
-    public MultiInstanceDialog(MultiInstance multiInstance) {
+    public MultiInstanceDialog(MultiSubprocess multiInstance) {
         super(PlatformUI.getWorkbench().getDisplay().getActiveShell());
         this.subprocessVariables = multiInstance.getVariablesList();
         this.definition = multiInstance.getProcessDefinition();
@@ -698,17 +696,7 @@ public class MultiInstanceDialog extends Dialog {
     private List<String> getProcessVariablesNames(String name) {
         ProcessDefinition definition = ProcessCache.getProcessDefinition(name);
         if (definition != null) {
-            Map<String, String> mvars = definition.getVariableFormats(true);
-            Iterator<String> iter = mvars.values().iterator();
-            while (iter.hasNext()) {
-                String value = iter.next();
-                if (!StringFormat.class.getName().equals(value)) { // TODO why?
-                    iter.remove();
-                }
-            }
-            ArrayList<String> r = new ArrayList<String>(mvars.keySet());
-            Collections.sort(r);
-            return r;
+            return definition.getVariableNames(true);
         }
         return new ArrayList<String>();
     }

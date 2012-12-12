@@ -99,7 +99,7 @@ public abstract class ArtifactRegistry<T extends Artifact> {
 
     public boolean isEnabled(String name) {
         Artifact artifact = getArtifact(name);
-        return artifact == null || artifact.isEnabled(); // TODO
+        return artifact == null || artifact.isEnabled();
     }
 
     public void add(T artifact) {

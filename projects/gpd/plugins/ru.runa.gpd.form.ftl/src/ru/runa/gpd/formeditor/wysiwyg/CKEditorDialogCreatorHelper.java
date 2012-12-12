@@ -177,7 +177,7 @@ public class CKEditorDialogCreatorHelper {
             CKVboxElement box = new CKVboxElement().setId("'" + tagInfo.id + "FtlTagVBox'");
             int paramCounter = 0;
             for (Param param : tagInfo.params) {
-                if (param.isCombo() || param.isRichCombo() || param.isVarCombo() /* TODO */) {
+                if (param.isCombo() || param.isRichCombo() || param.isVarCombo()) {
                     CKSelectElement selectElement = new CKSelectElement();
                     selectElement.setId("'" + tagInfo.id + "_FtlTagParam_" + paramCounter + "'").setLabel("'" + param.label + "'");
                     for (OptionalValue option : param.optionalValues) {

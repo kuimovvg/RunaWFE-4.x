@@ -13,10 +13,11 @@ import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Describable;
 import ru.runa.gpd.lang.model.EndState;
+import ru.runa.gpd.lang.model.EndTokenState;
 import ru.runa.gpd.lang.model.Fork;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Join;
-import ru.runa.gpd.lang.model.MultiInstance;
+import ru.runa.gpd.lang.model.MultiSubprocess;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -44,6 +45,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String INVALID_ATTR = "invalid";
     private static final String ACCESS_ATTR = "access";//
     private static final String END_STATE_NODE = "endEvent";
+    private static final String END_TOKEN_STATE_NODE = "endPoint";
     private static final String VARIABLE_NODE = "variable";//
     private static final String SUB_PROCESS_NODE = "sub-process";
     private static final String MAPPED_NAME_ATTR = "mapped-name";//
@@ -221,6 +223,10 @@ public class BpmnSerializer extends ProcessSerializer {
             //                            setAttribute(timerElement, TRANSITION_ATTR, PluginConstants.TIMER_TRANSITION_NAME);
             //                        }
             //                    }
+        }
+        List<EndTokenState> endTokenStates = definition.getChildren(EndTokenState.class);
+        for (EndTokenState endTokenState : endTokenStates) {
+            writeElement(process, endTokenState);
         }
         List<EndState> endStates = definition.getChildren(EndState.class);
         for (EndState endState : endStates) {
@@ -489,7 +495,7 @@ public class BpmnSerializer extends ProcessSerializer {
         }
         List<Element> multiInstanceStates = process.elements(MULTI_INSTANCE_STATE_NODE);
         for (Element node : multiInstanceStates) {
-            MultiInstance multiInstance = create(node, definition);
+            MultiSubprocess multiInstance = create(node, definition);
             List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
             List<Element> nodeList = node.elements();
             for (Element childNode : nodeList) {
@@ -551,6 +557,10 @@ public class BpmnSerializer extends ProcessSerializer {
                 //                }
             }
             messageNode.setVariablesList(variablesList);
+        }
+        List<Element> endTokenStates = process.elements(END_TOKEN_STATE_NODE);
+        for (Element node : endTokenStates) {
+            create(node, definition);
         }
         List<Element> endStates = process.elements(END_STATE_NODE);
         for (Element node : endStates) {

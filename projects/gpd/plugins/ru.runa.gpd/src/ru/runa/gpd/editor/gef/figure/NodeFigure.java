@@ -2,6 +2,7 @@ package ru.runa.gpd.editor.gef.figure;
 
 import java.util.List;
 
+import org.eclipse.draw2d.Border;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FlowLayout;
@@ -9,6 +10,8 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.TreeSearch;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -22,28 +25,33 @@ import org.eclipse.swt.graphics.Color;
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.editor.GEFConstants;
-import ru.runa.gpd.lang.model.Swimlane;
+import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.NamedGraphElement;
+import ru.runa.gpd.lang.model.SwimlanedNode;
 
-public abstract class NodeFigure extends Figure implements GEFConstants {
+public abstract class NodeFigure<T extends GraphElement> extends Figure implements GEFConstants {
     protected static final Dimension DIM_RECTANGLE = new Dimension(10 * GRID_SIZE, 6 * GRID_SIZE);
-    protected static final Dimension DIM_SQUARE = new Dimension(4 * GRID_SIZE, 4 * GRID_SIZE);
     protected static final Dimension DIM_SLIM = new Dimension(16 * GRID_SIZE, 5);
     protected static final Color veryLightBlue = new Color(null, 246, 247, 255);
     protected static final Color lightBlue = new Color(null, 3, 104, 154);
     protected TextFlow swimlaneLabel;
     protected TextFlow label;
+    private static final Border TOOL_TIP_BORDER = new MarginBorder(0, 2, 0, 2);
     protected ActionsContainer actionsContainer;
     protected ConnectionAnchor connectionAnchor = null;
-    protected boolean bpmnNotation = false;
+    protected T model;
 
-    public void init(boolean bpmnNotation) {
-        this.bpmnNotation = bpmnNotation;
+    public void init() {
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = 2;
         layout.marginWidth = 2;
         layout.horizontalSpacing = 0;
         layout.verticalSpacing = 0;
         setLayoutManager(layout);
+    }
+
+    public void setModel(T model) {
+        this.model = model;
     }
 
     public ActionsContainer getActionsContainer() {
@@ -62,16 +70,7 @@ public abstract class NodeFigure extends Figure implements GEFConstants {
         return label;
     }
 
-    public void setName(String name) {
-        if (label != null) {
-            label.setText(name);
-        }
-    }
-
     public Dimension getDefaultSize() {
-        if (bpmnNotation) {
-            return DIM_SQUARE.getCopy();
-        }
         return DIM_RECTANGLE.getCopy();
     }
 
@@ -83,6 +82,10 @@ public abstract class NodeFigure extends Figure implements GEFConstants {
         super.setBounds(rect);
     }
 
+    /**
+     * 
+     * @return rectangle for anchor
+     */
     protected Rectangle getBox() {
         return getBounds();
     }
@@ -151,10 +154,30 @@ public abstract class NodeFigure extends Figure implements GEFConstants {
         return super.findFigureAt(x, y, search);
     }
 
-    public void setSwimlaneName(Swimlane swimlane) {
-        if (swimlaneLabel != null) {
-            swimlaneLabel.setText(swimlane != null ? "(" + swimlane.getName() + ")" : "");
+    protected String getTooltipMessage() {
+        return null;
+    }
+
+    public void update() {
+        if (label != null && model instanceof NamedGraphElement) {
+            label.setText(((NamedGraphElement) model).getName());
         }
+        if (swimlaneLabel != null && model instanceof SwimlanedNode) {
+            swimlaneLabel.setText(((SwimlanedNode) model).getSwimlaneLabel());
+        }
+        // update tooltip
+        String tooltipMessage = getTooltipMessage();
+        if (tooltipMessage == null || tooltipMessage.length() == 0) {
+            setToolTip(null);
+            return;
+        }
+        if (getToolTip() == null) {
+            Label tooltip = new Label();
+            tooltip.setBorder(TOOL_TIP_BORDER);
+            setToolTip(tooltip);
+        }
+        ((Label) getToolTip()).setText(tooltipMessage);
+        repaint();
     }
 
     @Override
@@ -166,32 +189,17 @@ public abstract class NodeFigure extends Figure implements GEFConstants {
         super.paint(graphics);
     }
 
+    protected void paintFigure(Graphics g, Dimension dim) {
+    }
+
     @Override
     protected final void paintFigure(Graphics graphics) {
         Rectangle r = getClientArea().getCopy();
-        if (bpmnNotation) {
-            graphics.setLineWidth(2);
-            Color foregroundColor = graphics.getForegroundColor();
-            Color backgroundColor = graphics.getBackgroundColor();
-            graphics.setBackgroundColor(veryLightBlue);
-            graphics.setForegroundColor(lightBlue);
-            paintBPMNFigure(graphics, r);
-            graphics.setBackgroundColor(backgroundColor);
-            graphics.setForegroundColor(foregroundColor);
-        } else {
-            paintUMLFigure(graphics, r);
-        }
+        graphics.translate(r.getLocation());
+        paintFigure(graphics, r.getSize());
     }
 
     public boolean isResizeable() {
         return true;
     }
-
-    public boolean isBpmnNotation() {
-        return bpmnNotation;
-    }
-
-    protected abstract void paintBPMNFigure(Graphics g, Rectangle r);
-
-    protected abstract void paintUMLFigure(Graphics g, Rectangle r);
 }

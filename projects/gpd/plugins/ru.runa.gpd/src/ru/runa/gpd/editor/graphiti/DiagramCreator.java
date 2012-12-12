@@ -13,11 +13,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -201,53 +199,6 @@ public class DiagramCreator {
             path = fullPath.makeAbsolute();
         }
         return ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-    }
-
-    /**
-     * Delete the temporary diagram file. If the containing folder hierarchy is
-     * empty, it will also be deleted.
-     * 
-     * @param file
-     *          - the temporary diagram file.
-     */
-    public static void dispose(IFile file) {
-        try {
-            IContainer container = file.getParent();
-            file.delete(true, null);
-            while (isEmptyFolder(container)) {
-                container.delete(true, null);
-                container = container.getParent();
-            }
-        } catch (CoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Check if the given folder is empty. This is true if it contains no files,
-     * or only empty folders.
-     * 
-     * @param container
-     *          - folder to check
-     * @return true if the folder is empty.
-     */
-    public static boolean isEmptyFolder(IContainer container) {
-        try {
-            IResource[] members = container.members();
-            for (IResource res : members) {
-                int type = res.getType();
-                if (type == IResource.FILE || type == IResource.PROJECT || type == IResource.ROOT) {
-                    return false;
-                }
-                if (!isEmptyFolder((IContainer) res)) {
-                    return false;
-                }
-            }
-        } catch (CoreException e) {
-            return false;
-        }
-        return true;
     }
 
     public static TransactionalEditingDomain createEmfFileForDiagram(URI diagramResourceUri, final Diagram diagram) {

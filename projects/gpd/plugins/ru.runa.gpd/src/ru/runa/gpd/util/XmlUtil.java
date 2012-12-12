@@ -85,7 +85,11 @@ public class XmlUtil {
     }
 
     public static void writeXml(Document document, OutputStream outputStream) {
-        writeXml(document, outputStream, OutputFormat.createPrettyPrint());
+        OutputFormat format = new OutputFormat("  ", true);
+        format.setPadText(true);
+        format.setSuppressDeclaration(true);
+        // OutputFormat.createPrettyPrint()
+        writeXml(document, outputStream, format);
     }
 
     public static void writeXml(Document document, OutputStream outputStream, OutputFormat outputFormat) {

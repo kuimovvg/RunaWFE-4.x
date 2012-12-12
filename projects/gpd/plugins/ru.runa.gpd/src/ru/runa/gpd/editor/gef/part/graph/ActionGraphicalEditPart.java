@@ -1,7 +1,7 @@
 package ru.runa.gpd.editor.gef.part.graph;
 
-import java.beans.PropertyChangeEvent;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.IFigure;
@@ -19,21 +19,18 @@ import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.Active;
 
 public class ActionGraphicalEditPart extends ElementGraphicalEditPart {
+    //    @Override
+    //    public void propertyChange(PropertyChangeEvent evt) {
+    //        if (.equals(evt.getPropertyName()) || PROPERTY_CONFIGURATION.equals(evt.getPropertyName())) {
+    //            updateTooltip(getFigure());
+    //            refreshVisuals();
+    //        }
+    //    }
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (PROPERTY_CLASS.equals(evt.getPropertyName()) || PROPERTY_CONFIGURATION.equals(evt.getPropertyName())) {
-            updateTooltip(getFigure());
-            refreshVisuals();
-        }
-    }
-
-    @Override
-    protected String getTooltipMessage() {
-        String tooltip = getModel().toString();
-        if (getModel().getDelegationConfiguration().length() > 0) {
-            tooltip += "\n" + getModel().getDelegationConfiguration();
-        }
-        return tooltip;
+    protected void fillFigureUpdatePropertyNames(List<String> list) {
+        super.fillFigureUpdatePropertyNames(list);
+        list.add(PROPERTY_CLASS);
+        list.add(PROPERTY_CONFIGURATION);
     }
 
     @Override
@@ -80,7 +77,6 @@ public class ActionGraphicalEditPart extends ElementGraphicalEditPart {
                 }
             });
         }
-        updateTooltip(figure);
         return figure;
     }
 

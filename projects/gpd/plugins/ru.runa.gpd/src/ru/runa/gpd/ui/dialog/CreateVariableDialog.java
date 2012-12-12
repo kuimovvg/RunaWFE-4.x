@@ -50,6 +50,10 @@ public class CreateVariableDialog extends Dialog {
         this.name = definition.getNextVariableName();
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public Control createDialogArea(Composite parent) {
         Composite area = (Composite) super.createDialogArea(parent);
