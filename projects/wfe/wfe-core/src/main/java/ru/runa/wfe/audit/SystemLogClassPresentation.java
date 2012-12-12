@@ -44,7 +44,7 @@ public class SystemLogClassPresentation extends ClassPresentation {
 
         @Override
         public String getJoinExpression(String alias) {
-            return ClassPresentation.classNameSQL + ".actorCode=" + alias + ".code";
+            return classNameSQL + ".actorCode=" + alias + ".code";
         }
     }
 
@@ -79,7 +79,8 @@ public class SystemLogClassPresentation extends ClassPresentation {
     private static final String SYSTEM_LOG_MESSAGE = "batch_presentation.system_log.message";
 
     /**
-     * Creates instance of presentation class to access {@link SystemLog} objects.
+     * Creates instance of presentation class to access {@link SystemLog}
+     * objects.
      */
     private SystemLogClassPresentation() {
         super(

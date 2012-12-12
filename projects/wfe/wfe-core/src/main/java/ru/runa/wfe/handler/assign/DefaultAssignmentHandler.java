@@ -35,7 +35,7 @@ public class DefaultAssignmentHandler implements AssignmentHandler {
     private static final char FUNCTION_SEPARATER = ';';
 
     // Function to calculate assigned actor
-    private String swimlaneInititalizer = null;
+    private String swimlaneInititalizer;
 
     @Autowired
     protected AssignmentHelper assignmentHelper;
@@ -70,7 +70,8 @@ public class DefaultAssignmentHandler implements AssignmentHandler {
                 return;
             }
             assignmentHelper.assignSwimlane(executionContext, assignable, orgFunctionExecutors);
-            // TODO check without this processDAO.saveProcess(executionContext.getToken().getProcess());
+            // TODO check without this
+            // processDAO.saveProcess(executionContext.getToken().getProcess());
         } catch (Exception e) {
             log.warn("Unable to assign in process id = " + executionContext.getProcess().getId(), e);
         }

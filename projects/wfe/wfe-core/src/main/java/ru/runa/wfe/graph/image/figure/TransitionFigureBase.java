@@ -28,13 +28,13 @@ import java.util.List;
 
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
 import ru.runa.wfe.graph.image.model.BendpointModel;
-import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.graph.image.model.TransitionModel;
 import ru.runa.wfe.graph.image.util.ActionUtils;
 import ru.runa.wfe.graph.image.util.DrawProperties;
+import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.Transition;
 
-public class TransitionFigure {
+public class TransitionFigureBase {
     protected String name;
     protected String timerInfo;
 
@@ -121,7 +121,7 @@ public class TransitionFigure {
             yPoints[i + 1] = bendPoint.y;
         }
         if (bendPoint == null) {
-            if ((figureFrom.getType() == NodeModel.FORK_JOIN) || Transition.TIMEOUT_TRANSITION_NAME.equals(name)) {
+            if (figureFrom.getType() == NodeType.Fork || figureFrom.getType() == NodeType.Join || Transition.TIMEOUT_TRANSITION_NAME.equals(name)) {
                 bendPoint = start;
             } else {
                 bendPoint = new Point((int) rectFrom.getCenterX(), (int) rectFrom.getCenterY());// start;

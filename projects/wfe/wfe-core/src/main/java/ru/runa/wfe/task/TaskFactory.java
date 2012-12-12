@@ -11,6 +11,7 @@ import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.lang.Event;
+import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.task.logic.ITaskNotifier;
@@ -46,14 +47,22 @@ public class TaskFactory {
         Token token = executionContext.getToken();
         task.setToken(token);
         task.setProcess(process);
-
         executionContext.addLog(new TaskCreateLog(task));
         task.setDeadlineDate(ExpressionEvaluator.evaluateDuration(executionContext, getDeadlineDuration(taskDefinition)));
         taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_CREATE);
+        process.getTasks().add(task);
+        return task;
+    }
+
+    /**
+     * assigns a task based on swimlane definition.
+     */
+    public void assign(ExecutionContext executionContext, TaskDefinition taskDefinition, Task task) {
+        Process process = executionContext.getProcess();
         SwimlaneDefinition swimlaneDefinition = taskDefinition.getSwimlane();
         Swimlane swimlane;
         // if this is a task assignment for a start-state
-        if (task.isStartTask(executionContext, taskDefinition)) {
+        if (taskDefinition.getNode() instanceof StartState) {
             swimlane = process.getSwimlane(swimlaneDefinition.getName());
             if (swimlane == null) {
                 // swimlane.setExecutor(executionContext,
@@ -66,6 +75,12 @@ public class TaskFactory {
         // copy the swimlane assignment into the task
         task.setSwimlane(swimlane);
         task.assignExecutor(executionContext, swimlane.getExecutor(), false);
+    }
+
+    /**
+     * invokes task notifier
+     */
+    public void notify(ExecutionContext executionContext, Task task) {
         try {
             if (taskNotifier != null) {
                 taskNotifier.onNewTask(new ExecutionContext(executionContext.getProcessDefinition(), task));
@@ -73,8 +88,6 @@ public class TaskFactory {
         } catch (Exception e) {
             log.info("Task notifier error", e);
         }
-        process.getTasks().add(task);
-        return task;
     }
 
 }

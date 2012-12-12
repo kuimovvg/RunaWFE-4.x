@@ -58,7 +58,7 @@ public class MultiinstanceGraphElementPresentation extends BaseGraphElementPrese
 
     @Override
     public void visit(GraphElementPresentationVisitor visitor) {
-        visitor.onMultiinstance(this);
+        visitor.onMultiSubprocess(this);
     }
 
     /**

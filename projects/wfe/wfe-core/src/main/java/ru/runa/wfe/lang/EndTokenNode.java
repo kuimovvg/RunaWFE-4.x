@@ -23,7 +23,7 @@ package ru.runa.wfe.lang;
 
 import ru.runa.wfe.execution.ExecutionContext;
 
-public class EndNode extends Node {
+public class EndTokenNode extends Node {
     private static final long serialVersionUID = 1L;
     private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_ENTER };
 
@@ -34,12 +34,13 @@ public class EndNode extends Node {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.End;
+        return NodeType.EndToken;
     }
 
     @Override
     public void execute(ExecutionContext executionContext) {
-        executionContext.getProcess().end(executionContext);
+        executionContext.getToken().end(executionContext, false);
+        // TODO in JPDL this is issue with Join.
     }
 
     @Override

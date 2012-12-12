@@ -19,35 +19,42 @@ package ru.runa.wfe.graph.image.model;
 
 import java.util.HashMap;
 
+import ru.runa.wfe.lang.NodeType;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 public class NodeModel {
-    public static final int STATE = 0;
-    public static final int DECISION = 1;
-    public static final int FORK_JOIN = 2;
-    public static final int START_STATE = 3;
-    public static final int END_STATE = 4;
-    public static final int STATE_WITH_TIMER = 5;
-    public static final int PROCESS_STATE = 6;
-    public static final int WAIT_STATE = 7;
-    public static final int ACTION_NODE = 8;
-    public static final int MULTI_PROCESS_STATE = 9;
-    public static final int SEND_MESSAGE = 10;
-    public static final int RECEIVE_MESSAGE = 11;
-
     private String nodeId;
     private String name;
     private String swimlane;
-    private int type;
+    private NodeType type;
     private int x;
     private int y;
     private int width;
     private int height;
     private int actionsCount = 0;
-    private boolean minimizedView = false;
+    private boolean minimizedView;
+    private boolean withTimer;
+    private boolean async;
 
     private final HashMap<String, TransitionModel> transitions = Maps.newHashMap();
+
+    public boolean isWithTimer() {
+        return withTimer;
+    }
+
+    public void setWithTimer(boolean withTimer) {
+        this.withTimer = withTimer;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
 
     public int getActionsCount() {
         return actionsCount;
@@ -101,11 +108,11 @@ public class NodeModel {
         this.name = name;
     }
 
-    public int getType() {
+    public NodeType getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(NodeType type) {
         this.type = type;
     }
 

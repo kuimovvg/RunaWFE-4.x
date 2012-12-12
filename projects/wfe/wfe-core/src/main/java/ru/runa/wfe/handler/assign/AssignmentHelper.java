@@ -37,6 +37,9 @@ public class AssignmentHelper {
                 assignable.assignExecutor(executionContext, aloneExecutor, true);
                 return;
             }
+            if (executionContext.getTask().getSwimlane() == null) {
+                return;
+            }
             Long processId = executionContext.getProcess().getId();
             String swimlaneName = executionContext.getTask().getSwimlane().getName();
             Group tmpGroup = TemporaryGroup.create(processId + "_" + swimlaneName);

@@ -50,8 +50,9 @@ import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.handler.assign.Assignable;
 import ru.runa.wfe.lang.Event;
+import ru.runa.wfe.lang.InteractionNode;
+import ru.runa.wfe.lang.MultiTaskNode;
 import ru.runa.wfe.lang.TaskDefinition;
-import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.user.Executor;
 
@@ -228,11 +229,6 @@ public class Task implements Assignable {
         this.executor = executor;
     }
 
-    @Transient
-    public boolean isStartTask(ExecutionContext executionContext, TaskDefinition taskDefinition) {
-        return taskDefinition.equals(executionContext.getProcessDefinition().getStartStateNotNull().getFirstTaskNotNull());
-    }
-
     @Override
     public void assignExecutor(ExecutionContext executionContext, Executor executor, boolean cascadeUpdate) {
         if (Objects.equal(this.executor, executor)) {
@@ -268,13 +264,21 @@ public class Task implements Assignable {
         executionContext.addLog(new TaskEndLog(this));
         // verify if the end of this task triggers continuation of execution
         // ending start tasks always leads to a signal
-        if (leaveNode && (isStartTask(executionContext, taskDefinition) || ((TaskNode) taskDefinition.getNode()).isCompletionTriggersSignal(this))) {
-            if (transition == null) {
-                transition = taskDefinition.getNode().getDefaultLeavingTransitionNotNull();
-            }
-            log.debug("completion of task '" + name + "' results in taking transition '" + transition + "'");
-            token.signal(executionContext, transition);
+        if (!leaveNode) {
+            return;
         }
+        if (!Objects.equal(nodeId, token.getNodeId())) {
+            return;
+        }
+        InteractionNode node = taskDefinition.getNode();
+        if (node instanceof MultiTaskNode && !((MultiTaskNode) node).isCompletionTriggersSignal(this)) {
+            return;
+        }
+        if (transition == null) {
+            transition = taskDefinition.getNode().getDefaultLeavingTransitionNotNull();
+        }
+        log.debug("completion of task '" + name + "' results in taking transition '" + transition + "'");
+        token.signal(executionContext, transition);
     }
 
     @Transient

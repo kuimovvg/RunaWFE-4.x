@@ -27,8 +27,10 @@ import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
-import ru.runa.wfe.graph.image.figure.FigureFactory;
-import ru.runa.wfe.graph.image.figure.TransitionFigure;
+import ru.runa.wfe.graph.image.figure.AbstractFigureFactory;
+import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
+import ru.runa.wfe.graph.image.figure.bpmn.BPMNFigureFactory;
+import ru.runa.wfe.graph.image.figure.uml.UMLFigureFactory;
 import ru.runa.wfe.graph.image.model.DiagramModel;
 import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.graph.image.model.TransitionModel;
@@ -43,6 +45,7 @@ import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubProcessState;
+import ru.runa.wfe.lang.Synchronizable;
 import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
@@ -61,7 +64,7 @@ public class GraphImageBuilder {
     private Token highlightedToken;
     private final Map<String, NodeModel> allNodes = Maps.newHashMap();
     private final Map<String, AbstractFigure> allNodeFigures = Maps.newHashMap();
-    private final Map<TransitionFigure, RenderHits> transitionFigures = Maps.newHashMap();
+    private final Map<TransitionFigureBase, RenderHits> transitionFigureBases = Maps.newHashMap();
     private final Map<AbstractFigure, RenderHits> nodeFigures = Maps.newHashMap();
 
     public GraphImageBuilder(WfTaskFactory taskObjectFactory, ProcessDefinition processDefinition) {
@@ -75,17 +78,19 @@ public class GraphImageBuilder {
 
     public byte[] createDiagram(Process process, List<Transition> passedTransitions) throws Exception {
         DiagramModel diagramModel = DiagramModel.load(processDefinition.getFileDataNotNull(IFileDataProvider.GPD_XML_FILE_NAME));
-        FigureFactory factory = new FigureFactory(!diagramModel.isUmlNotation(), diagramModel.isGraphiti());
+        AbstractFigureFactory factory;
+        if (diagramModel.isUmlNotation()) {
+            factory = new UMLFigureFactory();
+        } else {
+            factory = new BPMNFigureFactory(diagramModel.isGraphiti());
+        }
         // Create all nodes
         for (Node node : processDefinition.getNodes()) {
             NodeModel nodeModel = diagramModel.getNode(node.getNodeId());
             if (diagramModel.isShowActions()) {
                 nodeModel.setActionsCount(getNodeActionsCount(node));
             }
-            setTypeToNode(node, nodeModel);
-            // nodeModel contains only id
-            nodeModel.setName(node.getName());
-            setSwimlaneToNode(node, nodeModel);
+            initNodeModel(node, nodeModel);
             allNodes.put(nodeModel.getNodeId(), nodeModel);
             AbstractFigure nodeFigure = factory.createFigure(nodeModel);
             allNodeFigures.put(nodeModel.getNodeId(), nodeFigure);
@@ -106,17 +111,18 @@ public class GraphImageBuilder {
                     transitionModel.setActionsCount(getTransitionActionsCount(transition));
                 }
                 AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getNodeId());
-                TransitionFigure transitionFigure = factory.createTransitionFigure(transitionModel, nodeFigure, figureTo);
+                TransitionFigureBase transitionFigureBase = factory.createTransitionFigure(transitionModel, nodeFigure, figureTo);
+                transitionFigureBase.init(transitionModel, nodeFigure, figureTo);
                 if (!diagramModel.isUmlNotation()) {
-                    boolean exclusiveNode = (nodeFigure.getType() != NodeModel.FORK_JOIN);
-                    transitionFigure.setExclusive(exclusiveNode && leavingTransitionsCount > 1);
+                    boolean exclusiveNode = (nodeModel.getType() != NodeType.Fork && nodeModel.getType() != NodeType.Join);
+                    transitionFigureBase.setExclusive(exclusiveNode && leavingTransitionsCount > 1);
                 }
                 if (Transition.TIMEOUT_TRANSITION_NAME.equals(transitionModel.getName())) {
-                    transitionFigure.setTimerInfo(getTimerInfo(node));
+                    transitionFigureBase.setTimerInfo(getTimerInfo(node));
                 }
-                nodeFigure.addTransition(transition.getName(), transitionFigure);
+                nodeFigure.addTransition(transition.getName(), transitionFigureBase);
                 if (!DrawProperties.useEdgingOnly()) {
-                    transitionFigures.put(transitionFigure, new RenderHits(DrawProperties.getTransitionColor()));
+                    transitionFigureBases.put(transitionFigureBase, new RenderHits(DrawProperties.getTransitionColor()));
                 }
             }
         }
@@ -128,13 +134,13 @@ public class GraphImageBuilder {
             AbstractFigure nodeModelTo = allNodeFigures.get(transition.getTo().getNodeId());
             nodeFigures.put(nodeModelTo, new RenderHits(DrawProperties.getHighlightColor(), true));
             // Mark transition as PASSED
-            TransitionFigure transitionFigure = nodeModelFrom.getTransition(transition.getName());
-            transitionFigures.put(transitionFigure, new RenderHits(DrawProperties.getHighlightColor(), true));
+            TransitionFigureBase transitionFigureBase = nodeModelFrom.getTransition(transition.getName());
+            transitionFigureBases.put(transitionFigureBase, new RenderHits(DrawProperties.getHighlightColor(), true));
         }
         fillActiveSubprocesses(process.getRootToken());
         fillActiveTasks(process);
         fillExpiredTasks(process);
-        GraphImage graphImage = new GraphImage(processDefinition.getGraphImageBytes(), diagramModel, transitionFigures, nodeFigures);
+        GraphImage graphImage = new GraphImage(processDefinition.getGraphImageBytes(), diagramModel, transitionFigureBases, nodeFigures);
         return graphImage.getImageBytes();
     }
 
@@ -226,39 +232,16 @@ public class GraphImageBuilder {
         return 0;
     }
 
-    private static void setTypeToNode(Node node, NodeModel nodeModel) {
-        if (node.getNodeType() == NodeType.Decision) {
-            nodeModel.setType(NodeModel.DECISION);
-        } else if (node.getNodeType() == NodeType.Fork || node.getNodeType() == NodeType.Join) {
-            nodeModel.setType(NodeModel.FORK_JOIN);
-        } else if (node.getNodeType() == NodeType.EndState) {
-            nodeModel.setType(NodeModel.END_STATE);
-        } else if (node.getNodeType() == NodeType.StartState) {
-            nodeModel.setType(NodeModel.START_STATE);
-        } else if (node.getNodeType() == NodeType.SubProcess) {
-            nodeModel.setType(NodeModel.PROCESS_STATE);
-        } else if (node.getNodeType() == NodeType.MultiInstance) {
-            nodeModel.setType(NodeModel.MULTI_PROCESS_STATE);
-        } else if (node.getNodeType() == NodeType.ActionNode) {
-            nodeModel.setType(NodeModel.ACTION_NODE);
-        } else if (node.getNodeType() == NodeType.WaitState) {
-            nodeModel.setType(NodeModel.WAIT_STATE);
-        } else if (node.getNodeType() == NodeType.SendMessage) {
-            nodeModel.setType(NodeModel.SEND_MESSAGE);
-        } else if (node.getNodeType() == NodeType.ReceiveMessage) {
-            nodeModel.setType(NodeModel.RECEIVE_MESSAGE);
-        } else {
-            CreateTimerAction createTimerAction = getTimerActionIfExists(node);
-            boolean hasTimer = (createTimerAction != null && !"__ESCALATION".equals(createTimerAction.getName()));
-            if (!hasTimer) {
-                nodeModel.setType(NodeModel.STATE);
-            } else {
-                nodeModel.setType(NodeModel.STATE_WITH_TIMER);
-            }
+    private static void initNodeModel(Node node, NodeModel nodeModel) {
+        nodeModel.setType(node.getNodeType());
+        // nodeModel contains only id
+        nodeModel.setName(node.getName());
+        CreateTimerAction createTimerAction = getTimerActionIfExists(node);
+        boolean hasTimer = (createTimerAction != null && !"__ESCALATION".equals(createTimerAction.getName()));
+        nodeModel.setWithTimer(hasTimer);
+        if (node instanceof Synchronizable) {
+            nodeModel.setAsync(((Synchronizable) node).isAsync());
         }
-    }
-
-    private static void setSwimlaneToNode(Node node, NodeModel nodeModel) {
         TaskDefinition taskDefinition = null;
         if (node instanceof InteractionNode) {
             taskDefinition = ((InteractionNode) node).getFirstTaskNotNull();

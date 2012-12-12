@@ -4,10 +4,6 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.execution.NodeProcess;
@@ -25,8 +21,6 @@ import ru.runa.wfe.user.Actor;
  * Operation to add identities of started subprocesses to graph elements.
  */
 public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter {
-
-    private static final Log log = LogFactory.getLog(StartedSubprocessesVisitor.class);
 
     /**
      * Current subject.
@@ -53,36 +47,26 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
     }
 
     @Override
-    public void onMultiinstance(MultiinstanceGraphElementPresentation element) {
-        try {
-            for (NodeProcess subprocess : nodeProcesses) {
-                if (subprocess.getNodeId().equals(element.getNodeId())) {
-                    element.addSubprocessId(subprocess.getSubProcess().getId());
-                    if (checkPermission(subprocess.getSubProcess())) {
-                        element.setReadPermission(true);
-                    }
+    public void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
+        for (NodeProcess subprocess : nodeProcesses) {
+            if (subprocess.getNodeId().equals(element.getNodeId())) {
+                element.addSubprocessId(subprocess.getSubProcess().getId());
+                if (checkPermission(subprocess.getSubProcess())) {
+                    element.setReadPermission(true);
                 }
             }
-        } catch (Exception e) {
-            log.warn("Unable to draw diagram", e);
-            throw new InternalApplicationException(e);
         }
     }
 
     @Override
     public void onSubprocess(SubprocessGraphElementPresentation element) {
-        try {
-            for (NodeProcess subprocess : nodeProcesses) {
-                if (subprocess.getNodeId().equals(element.getNodeId())) {
-                    element.setSubprocessId(subprocess.getSubProcess().getId());
-                    if (checkPermission(subprocess.getSubProcess())) {
-                        element.setReadPermission(true);
-                    }
+        for (NodeProcess subprocess : nodeProcesses) {
+            if (subprocess.getNodeId().equals(element.getNodeId())) {
+                element.setSubprocessId(subprocess.getSubProcess().getId());
+                if (checkPermission(subprocess.getSubProcess())) {
+                    element.setReadPermission(true);
                 }
             }
-        } catch (Exception e) {
-            log.warn("Unable to draw diagram", e);
-            throw new InternalApplicationException(e);
         }
     }
 

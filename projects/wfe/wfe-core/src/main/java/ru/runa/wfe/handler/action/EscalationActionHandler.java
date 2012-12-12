@@ -78,9 +78,9 @@ public class EscalationActionHandler implements ActionHandler {
         }
         if (executionContext.getNode() instanceof TaskNode) {
             Task task = executionContext.getTask();
-            Executor swimlaneExecutor = task.getSwimlane().getExecutor();
+            Executor swimlaneExecutor = task.getSwimlane() != null ? task.getSwimlane().getExecutor() : null;
             if (swimlaneExecutor == null) {
-                log.warn("Task '" + task + "' is not assigned");
+                log.warn("Task swimlane '" + task + "' is not assigned");
                 return;
             }
             log.info("Escalation for '" + task + "' with current swimlane value '" + swimlaneExecutor + "'");

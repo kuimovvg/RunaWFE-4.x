@@ -88,27 +88,24 @@ public class ProcessGraphFormTag extends ProcessBaseFormTag {
     }
 
     /**
-     * Adds various actions to image: Links to subprocesses, tool tips for collapsed states and so on.
+     * Adds various actions to image: Links to subprocesses, tool tips for
+     * collapsed states and so on.
      * 
      * @param formDataTD
      *            Root form element
      * @param img
      *            Process graph image.
      */
-    private void addImageActions(final TD formDataTD, IMG img) throws JspException {
-        try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
-            List<GraphElementPresentation> elements = executionService.getProcessGraphElements(getSubject(), getIdentifiableId());
-            ProcessGraphElementPresentationVisitor operation = new ProcessGraphElementPresentationVisitor(taskId, pageContext, formDataTD);
-            for (GraphElementPresentation graphElementPresentation : elements) {
-                graphElementPresentation.visit(operation);
-            }
-            if (!operation.getResultMap().isEmpty()) {
-                formDataTD.addElement(operation.getResultMap());
-                img.setUseMap("#processMap");
-            }
-        } catch (Exception e) {
-            throw new JspException(e);
+    private void addImageActions(final TD formDataTD, IMG img) {
+        ExecutionService executionService = DelegateFactory.getExecutionService();
+        List<GraphElementPresentation> elements = executionService.getProcessGraphElements(getSubject(), getIdentifiableId());
+        ProcessGraphElementPresentationVisitor operation = new ProcessGraphElementPresentationVisitor(taskId, pageContext, formDataTD);
+        for (GraphElementPresentation graphElementPresentation : elements) {
+            graphElementPresentation.visit(operation);
+        }
+        if (!operation.getResultMap().isEmpty()) {
+            formDataTD.addElement(operation.getResultMap());
+            img.setUseMap("#processMap");
         }
     }
 

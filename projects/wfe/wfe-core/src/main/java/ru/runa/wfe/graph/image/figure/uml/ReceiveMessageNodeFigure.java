@@ -1,5 +1,6 @@
 package ru.runa.wfe.graph.image.figure.uml;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -10,8 +11,17 @@ import ru.runa.wfe.graph.image.util.AngleInfo;
 import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.graph.image.util.Line;
 import ru.runa.wfe.graph.image.util.LineUtils;
+import ru.runa.wfe.lang.Transition;
 
 public class ReceiveMessageNodeFigure extends AbstractFigure {
+
+    @Override
+    public Point getTransitionPoint(double x, double y, String transitionName) {
+        if (withTimer && Transition.TIMEOUT_TRANSITION_NAME.equals(transitionName)) {
+            return new Point(coords[0] + DrawProperties.GRID_SIZE, coords[1] + coords[3] - DrawProperties.GRID_SIZE);
+        }
+        return super.getTransitionPoint(x, y, transitionName);
+    }
 
     private Polygon createPolygon() {
         Rectangle r = getRectangle();
@@ -25,6 +35,10 @@ public class ReceiveMessageNodeFigure extends AbstractFigure {
     @Override
     public void fill(Graphics2D graphics) {
         graphics.fillPolygon(createPolygon());
+        if (!minimized && withTimer) {
+            graphics.fillOval(coords[0], coords[1] + coords[3] - DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2,
+                    DrawProperties.GRID_SIZE * 2);
+        }
     }
 
     @Override
@@ -33,6 +47,22 @@ public class ReceiveMessageNodeFigure extends AbstractFigure {
         if (!DrawProperties.useEdgingOnly()) {
             Rectangle r = getRectangle();
             drawTextInfo(graphics, (int) r.getHeight() / 2 - DrawProperties.getFontSize());
+        }
+        if (!minimized && withTimer) {
+            // Clean area for timer
+            Color orig = graphics.getColor();
+            graphics.setColor(DrawProperties.getBackgroundColor());
+            graphics.fillOval(coords[0], coords[1] + coords[3] - DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2,
+                    DrawProperties.GRID_SIZE * 2);
+            graphics.setColor(orig);
+
+            // Draw timer
+            graphics.drawOval(coords[0], coords[1] + coords[3] - DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2,
+                    DrawProperties.GRID_SIZE * 2);
+            graphics.drawLine(coords[0] + DrawProperties.GRID_SIZE, coords[1] + coords[3] - DrawProperties.GRID_SIZE, coords[0]
+                    + DrawProperties.GRID_SIZE, coords[1] + coords[3] - DrawProperties.GRID_SIZE + 5);
+            graphics.drawLine(coords[0] + DrawProperties.GRID_SIZE, coords[1] + coords[3] - DrawProperties.GRID_SIZE, coords[0]
+                    + DrawProperties.GRID_SIZE + 5, coords[1] + coords[3] - DrawProperties.GRID_SIZE - 5);
         }
     }
 
@@ -49,6 +79,21 @@ public class ReceiveMessageNodeFigure extends AbstractFigure {
             return LineUtils.createLine(new Point((int) r.getCenterX() - p, (int) r.getCenterY()), new Point((int) r.getMinX(), y));
         }
         return super.createBorderLine(angle);
+    }
+
+    @Override
+    public Rectangle getTextBoundsRectangle() {
+        return getRectangle();
+    }
+
+    @Override
+    public Rectangle getRectangle() {
+        if (minimized) {
+            return new Rectangle(coords[0] + DrawProperties.GRID_SIZE / 2, coords[1] + DrawProperties.GRID_SIZE / 2, DrawProperties.GRID_SIZE,
+                    DrawProperties.GRID_SIZE);
+        }
+        return new Rectangle(coords[0] + DrawProperties.GRID_SIZE, coords[1], coords[2] - DrawProperties.GRID_SIZE, coords[3]
+                - DrawProperties.GRID_SIZE);
     }
 
 }
