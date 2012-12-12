@@ -36,7 +36,7 @@ public interface GraphElementPresentationVisitor {
      * @param element
      *            Element to handle.
      */
-    void onMultiinstance(MultiinstanceGraphElementPresentation element);
+    void onMultiSubprocess(MultiinstanceGraphElementPresentation element);
 
     /**
      * Calling to handle task state graph element.
@@ -45,6 +45,14 @@ public interface GraphElementPresentationVisitor {
      *            Element to handle.
      */
     void onTaskState(TaskGraphElementPresentation element);
+
+    /**
+     * Calling to handle multi task state graph element.
+     * 
+     * @param element
+     *            Element to handle.
+     */
+    void onMultiTaskState(MultiTaskGraphElementPresentation element);
 
     /**
      * Calling to handle state graph element.
@@ -61,6 +69,14 @@ public interface GraphElementPresentationVisitor {
      *            Element to handle.
      */
     void onStartState(StartStateGraphElementPresentation element);
+
+    /**
+     * Calling to handle end state graph element.
+     * 
+     * @param element
+     *            Element to handle.
+     */
+    void onEndTokenState(EndTokenStateGraphElementPresentation element);
 
     /**
      * Calling to handle end state graph element.

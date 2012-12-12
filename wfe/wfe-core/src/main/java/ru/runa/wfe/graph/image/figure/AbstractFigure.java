@@ -43,25 +43,29 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
-import ru.runa.wfe.graph.image.figure.uml.StateFigure;
+import ru.runa.wfe.graph.image.figure.uml.TaskNodeFigure;
 import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.graph.image.util.ActionUtils;
 import ru.runa.wfe.graph.image.util.AngleInfo;
 import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.graph.image.util.Line;
 import ru.runa.wfe.graph.image.util.LineUtils;
+import ru.runa.wfe.lang.NodeType;
 
 public abstract class AbstractFigure {
     private final static Log log = LogFactory.getLog(AbstractFigure.class);
 
     protected int[] coords;
-    protected int type;
+    protected NodeType type;
     protected String name;
     protected String swimlane;
     protected int actionsCount;
     protected List<Integer> failedActions = new ArrayList<Integer>();
+    protected boolean async;
+    protected boolean minimized;
+    protected boolean withTimer;
 
-    protected Map<String, TransitionFigure> transitions = new HashMap<String, TransitionFigure>();
+    protected Map<String, TransitionFigureBase> transitions = new HashMap<String, TransitionFigureBase>();
     protected RenderHits renderHits;
 
     public void initFigure(NodeModel model) {
@@ -70,6 +74,9 @@ public abstract class AbstractFigure {
         name = model.getName();
         swimlane = model.getSwimlane();
         actionsCount = model.getActionsCount();
+        async = model.isAsync();
+        minimized = model.isMinimizedView();
+        withTimer = model.isWithTimer();
     }
 
     public int[] getCoords() {
@@ -80,7 +87,7 @@ public abstract class AbstractFigure {
         return name;
     }
 
-    public int getType() {
+    public NodeType getType() {
         return type;
     }
 
@@ -92,15 +99,15 @@ public abstract class AbstractFigure {
         failedActions.add(index);
     }
 
-    public Map<String, TransitionFigure> getTransitions() {
+    public Map<String, TransitionFigureBase> getTransitions() {
         return transitions;
     }
 
-    public void addTransition(String name, TransitionFigure transition) {
+    public void addTransition(String name, TransitionFigureBase transition) {
         transitions.put(name, transition);
     }
 
-    public TransitionFigure getTransition(String name) {
+    public TransitionFigureBase getTransition(String name) {
         return transitions.get(name);
     }
 
@@ -115,7 +122,7 @@ public abstract class AbstractFigure {
                         shiftX, shiftY);
             }
             for (int i = 0; i < actionsCount; i++) {
-                Point loc = ActionUtils.getActionLocationOnNode(i, coords, getClass() == StateFigure.class);
+                Point loc = ActionUtils.getActionLocationOnNode(i, coords, getClass() == TaskNodeFigure.class);
                 loc.translate(-1, -1);
                 if (failedActions.contains(i)) {
                     graphics.setColor(Color.RED);
@@ -165,10 +172,14 @@ public abstract class AbstractFigure {
     }
 
     protected void drawImage(Graphics2D graphics, String name) {
+        drawImage(graphics, name, coords[0], coords[1]);
+    }
+
+    protected void drawImage(Graphics2D graphics, String name, double x, double y) {
         try {
             if (!DrawProperties.useEdgingOnly()) {
                 BufferedImage image = ImageIO.read(ClassLoaderUtil.getResourceAsStream(name, getClass()));
-                graphics.drawRenderedImage(image, AffineTransform.getTranslateInstance(coords[0], coords[1]));
+                graphics.drawRenderedImage(image, AffineTransform.getTranslateInstance(x, y));
             }
         } catch (IOException e) {
             log.error("Unable to paint image", e);

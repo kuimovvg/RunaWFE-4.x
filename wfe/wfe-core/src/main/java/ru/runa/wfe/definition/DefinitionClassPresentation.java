@@ -39,8 +39,8 @@ public class DefinitionClassPresentation extends ClassPresentation {
     private static final ClassPresentation INSTANCE = new DefinitionClassPresentation();
 
     private DefinitionClassPresentation() {
-        super(Deployment.class, ClassPresentation.classNameSQL + ".version=(select max(temp.version) from " + Deployment.class.getName()
-                + " as temp where " + ClassPresentation.classNameSQL + ".name=temp.name)", false, new FieldDescriptor[] {
+        super(Deployment.class, classNameSQL + ".version=(select max(temp.version) from " + Deployment.class.getName() + " as temp where "
+                + classNameSQL + ".name=temp.name)", false, new FieldDescriptor[] {
                 // display name field type DB source isSort filter mode
                 // get value/show in web getter parameters
                 new FieldDescriptor(PROCESS_DEFINITION_BATCH_PRESENTATION_NAME, String.class.getName(),

@@ -53,7 +53,7 @@ public class TaskClassPresentation extends ClassPresentation {
 
         @Override
         public String getJoinExpression(String alias) {
-            return ClassPresentation.classNameSQL + ".process=" + alias + ".process";
+            return classNameSQL + ".process=" + alias + ".process";
         }
     }
 
@@ -65,8 +65,10 @@ public class TaskClassPresentation extends ClassPresentation {
         // @Override
         // public String getValueDBPath(String alias) {
         // Dialect dialect = ApplicationContextFactory.getDialect();
-        // String typeName = dialect.getCastTypeName(Hibernate.STRING.sqlType());
-        // return alias == null ? valueDBPath : "CAST(" + alias + "." + valueDBPath + " AS " + typeName + ")";
+        // String typeName =
+        // dialect.getCastTypeName(Hibernate.STRING.sqlType());
+        // return alias == null ? valueDBPath : "CAST(" + alias + "." +
+        // valueDBPath + " AS " + typeName + ")";
         // }
 
     }
@@ -78,7 +80,7 @@ public class TaskClassPresentation extends ClassPresentation {
 
         @Override
         public String getJoinExpression(String alias) {
-            return ClassPresentation.classNameSQL + ".token=" + alias + ".token";
+            return classNameSQL + ".token=" + alias + ".token";
         }
     }
 
@@ -88,7 +90,7 @@ public class TaskClassPresentation extends ClassPresentation {
     public static final String TASK_BATCH_PRESENTATION_PROCESS_ID = "batch_presentation.task.process_id";
     public static final String TASK_OWNER = "batch_presentation.task.owner";
     public static final String TASK_SWIMLINE = "batch_presentation.task.swimlane";
-    public static final String TASK_VARIABLE = ClassPresentation.editable_prefix + "name:batch_presentation.task.variable";
+    public static final String TASK_VARIABLE = editable_prefix + "name:batch_presentation.task.variable";
     public static final String TASK_DEADLINE = "batch_presentation.task.deadline";
 
     private static final DBSource[] variableClasses;
@@ -96,16 +98,16 @@ public class TaskClassPresentation extends ClassPresentation {
     static {
         variableClasses = new DBSource[] { new VariableDBSource(Variable.class, null), new VariableDBSource(DateVariable.class),
                 new VariableDBSource(DoubleVariable.class), new VariableDBSource(LongVariable.class),
-
                 new StringVariableDBSource(StringVariable.class) };
     }
 
     private static final ClassPresentation INSTANCE = new TaskClassPresentation();
 
     private TaskClassPresentation() {
-        super(Task.class, ClassPresentation.classNameSQL + ".endDate is null and " + classNameSQL + ".process.endDate is null", false,
+        super(Task.class, classNameSQL + ".endDate is null", false,
                 new FieldDescriptor[] {
-                        // display name field type DB source isSort filter mode get value/show in web getter parameters
+                        // display name field type DB source isSort filter mode
+                        // get value/show in web getter parameters
                         new FieldDescriptor(TASK_BATCH_PRESENTATION_NAME, String.class.getName(), new DefaultDBSource(Task.class, "name"), true,
                                 FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "name" }),
                         new FieldDescriptor(TASK_BATCH_PRESENTATION_DESCRIPTION, String.class.getName(), new SubstringDBSource(Task.class,
@@ -122,7 +124,12 @@ public class TaskClassPresentation extends ClassPresentation {
                         new FieldDescriptor(TASK_SWIMLINE, String.class.getName(), new DefaultDBSource(Task.class, "swimlane.name"), true,
                                 FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskRoleTDBuilder", new Object[] {}),
                         new FieldDescriptor(TASK_VARIABLE, Variable.class.getName(), variableClasses, true, FieldFilterMode.DATABASE,
-                                "ru.runa.wf.web.html.TaskVariableTDBuilder", new Object[] {}, true/* THIS FIELD IS WEAK */),
+                                "ru.runa.wf.web.html.TaskVariableTDBuilder", new Object[] {}, true/*
+                                                                                                   * THIS
+                                                                                                   * FIELD
+                                                                                                   * IS
+                                                                                                   * WEAK
+                                                                                                   */),
                         new FieldDescriptor(TASK_DEADLINE, Date.class.getName(),
                                 new DeadlineDBSource[] { new DeadlineDBSource(Job.class, "dueDate") }, true, FieldFilterMode.DATABASE,
                                 "ru.runa.wf.web.html.TaskDeadlineTDBuilder", new Object[] {}, true) });

@@ -53,7 +53,7 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
         String hint = request.getParameter("hint");
         List<Executor> executors = getActors(subject, byLogin, hint);
         if (executors.size() == 0) {
-            json.append("{code: '', name: ''}");
+            json.append("{\"code\": \"\", \"name\": \"\"}");
         }
         for (Executor executor : executors) {
             if (executor instanceof Actor) {
@@ -71,13 +71,13 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
                 } else {
                     data = actor.getCode();
                 }
-                json.append("{code: '").append(data).append("', name: '");
+                json.append("{\"code\": \"").append(data).append("\", \"name\": \"");
                 if (byLogin) {
                     json.append(actor.getName());
                 } else {
                     json.append(actor.getFullName());
                 }
-                json.append("'}");
+                json.append("\"}");
             }
         }
         json.append("]");

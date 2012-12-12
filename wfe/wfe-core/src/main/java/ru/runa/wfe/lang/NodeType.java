@@ -1,5 +1,5 @@
 package ru.runa.wfe.lang;
 
 public enum NodeType {
-    StartState, ActionNode, EndState, WaitState, Task, Fork, Join, Decision, SubProcess, MultiInstance, SendMessage, ReceiveMessage
+    StartState, ActionNode, End, WaitState, TaskNode, Fork, Join, Decision, Subprocess, MultiSubprocess, SendMessage, ReceiveMessage, EndToken, MultiTaskNode
 }

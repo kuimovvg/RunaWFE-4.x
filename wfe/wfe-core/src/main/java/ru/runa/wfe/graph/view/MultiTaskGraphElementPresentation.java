@@ -15,14 +15,18 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wfe.graph.image.figure.uml;
+package ru.runa.wfe.graph.view;
 
-import java.awt.Rectangle;
+/**
+ * Represents an multi task state graph element.
+ */
+public class MultiTaskGraphElementPresentation extends BaseGraphElementPresentation {
 
-public class ActionNodeFigure extends TaskNodeFigure {
+    private static final long serialVersionUID = 1L;
 
     @Override
-    public Rectangle getRectangle() {
-        return new Rectangle(coords[0], coords[1], coords[2], coords[3]);
+    public void visit(GraphElementPresentationVisitor visitor) {
+        visitor.onMultiTaskState(this);
     }
+
 }

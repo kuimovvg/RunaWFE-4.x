@@ -18,12 +18,13 @@
 package ru.runa.wfe.graph.view;
 
 /**
- * Adopts simple interface for subprocess elements visiting to {@link GraphElementPresentationVisitor}.
+ * Adopts simple interface for subprocess elements visiting to
+ * {@link GraphElementPresentationVisitor}.
  */
 public abstract class SubprocessesGraphElementAdapter implements GraphElementPresentationVisitor {
 
     @Override
-    public abstract void onMultiinstance(MultiinstanceGraphElementPresentation element);
+    public abstract void onMultiSubprocess(MultiinstanceGraphElementPresentation element);
 
     @Override
     public abstract void onSubprocess(SubprocessGraphElementPresentation element);
@@ -33,7 +34,15 @@ public abstract class SubprocessesGraphElementAdapter implements GraphElementPre
     }
 
     @Override
+    public void onMultiTaskState(MultiTaskGraphElementPresentation element) {
+    }
+
+    @Override
     public void onDecision(DecisionGraphElementPresentation element) {
+    }
+
+    @Override
+    public void onEndTokenState(EndTokenStateGraphElementPresentation element) {
     }
 
     @Override

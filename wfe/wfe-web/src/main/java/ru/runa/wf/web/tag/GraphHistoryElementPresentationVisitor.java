@@ -73,7 +73,7 @@ public class GraphHistoryElementPresentationVisitor extends SubprocessesGraphEle
     }
 
     @Override
-    public void onMultiinstance(MultiinstanceGraphElementPresentation element) {
+    public void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
         helperSubprocess.createMultiinstanceLinks(element);
         addTooltip(element, null);
     }

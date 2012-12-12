@@ -23,11 +23,8 @@ import java.awt.Rectangle;
 
 import ru.runa.wfe.graph.image.util.DrawProperties;
 
-public class MultiInstanceStateFigure extends StateFigure {
-
-    public MultiInstanceStateFigure() {
-        super(false);
-    }
+public class MultiSubprocessFigure extends TaskNodeFigure {
+    protected boolean drawSubprocessImage = true;
 
     @Override
     public Rectangle getRectangle() {
@@ -51,10 +48,12 @@ public class MultiInstanceStateFigure extends StateFigure {
                 3 * DrawProperties.GRID_SIZE);
         graphics.setColor(orig);
 
-        graphics.drawLine(b.x + b.width - 20, b.y + b.height - 10, b.x + b.width - 10, b.y + b.height - 10);
-        graphics.drawLine(b.x + b.width - 20, b.y + b.height - 10, b.x + b.width - 20, b.y + b.height - 5);
-        graphics.drawLine(b.x + b.width - 15, b.y + b.height - 15, b.x + b.width - 15, b.y + b.height - 5);
-        graphics.drawLine(b.x + b.width - 10, b.y + b.height - 10, b.x + b.width - 10, b.y + b.height - 5);
+        if (drawSubprocessImage) {
+            graphics.drawLine(b.x + b.width - 20, b.y + b.height - 10, b.x + b.width - 10, b.y + b.height - 10);
+            graphics.drawLine(b.x + b.width - 20, b.y + b.height - 10, b.x + b.width - 20, b.y + b.height - 5);
+            graphics.drawLine(b.x + b.width - 15, b.y + b.height - 15, b.x + b.width - 15, b.y + b.height - 5);
+            graphics.drawLine(b.x + b.width - 10, b.y + b.height - 10, b.x + b.width - 10, b.y + b.height - 5);
+        }
 
         graphics.drawRect(b.x - DrawProperties.GRID_SIZE / 2, yCenter - 3 * DrawProperties.GRID_SIZE / 2, DrawProperties.GRID_SIZE,
                 DrawProperties.GRID_SIZE);

@@ -33,7 +33,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
-import ru.runa.wfe.graph.image.figure.TransitionFigure;
+import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
 import ru.runa.wfe.graph.image.model.DiagramModel;
 import ru.runa.wfe.graph.image.util.DrawProperties;
 
@@ -44,11 +44,11 @@ public class GraphImage {
 
     private final DiagramModel diagramModel;
 
-    private final Map<TransitionFigure, RenderHits> transitions;
+    private final Map<TransitionFigureBase, RenderHits> transitions;
 
     private final Map<AbstractFigure, RenderHits> nodes;
 
-    public GraphImage(byte[] graphBytes, DiagramModel diagramModel, Map<TransitionFigure, RenderHits> transitions,
+    public GraphImage(byte[] graphBytes, DiagramModel diagramModel, Map<TransitionFigureBase, RenderHits> transitions,
             Map<AbstractFigure, RenderHits> nodes) throws IOException {
         if (graphBytes != null) {
             origImage = ImageIO.read(new ByteArrayInputStream(graphBytes));
@@ -74,10 +74,10 @@ public class GraphImage {
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
-        for (TransitionFigure transitionFigure : transitions.keySet()) {
-            RenderHits hits = transitions.get(transitionFigure);
-            transitionFigure.setRenderHits(hits);
-            transitionFigure.draw(graphics, hits.getColor());
+        for (TransitionFigureBase transitionFigureBase : transitions.keySet()) {
+            RenderHits hits = transitions.get(transitionFigureBase);
+            transitionFigureBase.setRenderHits(hits);
+            transitionFigureBase.draw(graphics, hits.getColor());
         }
         for (AbstractFigure nodeFigure : nodes.keySet()) {
             RenderHits hits = nodes.get(nodeFigure);

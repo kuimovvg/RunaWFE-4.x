@@ -84,7 +84,7 @@ public class DefinitionGraphElementPresentationVisitor extends SubprocessesGraph
     }
 
     @Override
-    public void onMultiinstance(MultiinstanceGraphElementPresentation element) {
+    public void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
         if (!element.isReadPermission()) {
             return;
         }

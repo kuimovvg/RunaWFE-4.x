@@ -5,7 +5,6 @@ import javax.security.auth.Subject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
@@ -52,7 +51,7 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
     }
 
     @Override
-    public void onMultiinstance(MultiinstanceGraphElementPresentation element) {
+    public void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
         try {
             ProcessDefinition def = loader.getLatestDefinition(element.getSubprocessName());
             if (checkPermission(def)) {
@@ -61,9 +60,6 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
             element.addSubprocessId(def.getId());
         } catch (DefinitionDoesNotExistException e) {
             log.warn("ProcessDefinitionDoesNotExistException", e);
-        } catch (Exception e) {
-            log.warn("Unable to draw diagram", e);
-            throw new InternalApplicationException(e);
         }
     }
 
@@ -77,9 +73,6 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
             element.setSubprocessId(def.getId());
         } catch (DefinitionDoesNotExistException e) {
             log.warn("ProcessDefinitionDoesNotExistException", e);
-        } catch (AuthenticationException e) {
-            log.warn("Unable to draw diagram", e);
-            throw new InternalApplicationException(e);
         }
     }
 
@@ -88,7 +81,8 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
      * 
      * @param processDefinition
      *            Process definition to check READ permission.
-     * @return true, if current actor can read process definition and false otherwise.
+     * @return true, if current actor can read process definition and false
+     *         otherwise.
      */
     private boolean checkPermission(ProcessDefinition processDefinition) throws DefinitionDoesNotExistException, AuthenticationException {
         Actor actor = SubjectPrincipalsHelper.getActor(subject);
