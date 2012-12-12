@@ -450,7 +450,7 @@ public class XPDLImporter {
             Fork forkNode = null;
             Join joinNode = null;
             ProcessState processStateNode = null;
-            // TODO never null
+            // never null
             if ((taskName == null) || (taskName.length() == 0)) {
                 taskName = activityType.getId();
             }
@@ -463,7 +463,7 @@ public class XPDLImporter {
                 processDefinition.getDescriptionOrSwimlaneOrStartState().add(processStateNode);
                 ru.runa.xpdl.generated.jpdl32.ProcessStateType.SubProcess subProcess = new ProcessStateTypeImpl.SubProcessImpl();
                 subProcess.setName(subProcessId); // Временно, при установке перекресных ссылок тут надо будет проставлять реальное имя процесса
-                subProcess.setBinding("late"); // TODO проверить - может зависеть от значения параметра Execution
+                subProcess.setBinding("late"); // проверить - может зависеть от значения параметра Execution
                 processStateNode.getSubProcessOrVariableOrDescription().add(subProcess);
                 {
                     List dataMappings = null;

@@ -3,44 +3,33 @@ package ru.runa.gpd.editor.gef.figure;
 import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 
-import ru.runa.gpd.SharedImages;
-
 public class SendMessageFigure extends MessageNodeFigure {
-
     @Override
-    public void init(boolean bpmnNotation) {
-        super.init(bpmnNotation);
-        if (!bpmnNotation) {
-            this.connectionAnchor = new SendMessageNodeAnchor(this);
-            addEmptySpace(1, GRID_SIZE);
-        }
+    public void init() {
+        super.init();
+        this.connectionAnchor = new SendMessageNodeAnchor(this);
+        addEmptySpace(1, GRID_SIZE);
     }
 
     @Override
-    protected void paintBPMNFigure(Graphics g, Rectangle r) {
-        g.drawImage(SharedImages.getImage("icons/bpmn/graph/sendmessage.png"), r.getLocation());
-    }
-
-    @Override
-    protected void paintUMLFigure(Graphics g, Rectangle r) {
-        g.translate(getLocation());
-        int halfHeight = Math.round(getSize().height / 2);
-        int xRight = (int) ((getSize().width - 1) - halfHeight * Math.tan(Math.PI / 6));
+    protected void paintFigure(Graphics g, Dimension dim) {
+        int halfHeight = dim.height / 2;
+        int xRight = (int) ((dim.width - 1) - halfHeight * Math.tan(Math.PI / 6));
         PointList points = new PointList(5);
         points.addPoint(xRight, 0);
         points.addPoint(0, 0);
-        points.addPoint(0, getSize().height - 1);
-        points.addPoint(xRight, getSize().height - 1);
-        points.addPoint(getSize().width - 1, halfHeight);
+        points.addPoint(0, dim.height - 1);
+        points.addPoint(xRight, dim.height - 1);
+        points.addPoint(dim.width - 1, halfHeight);
         g.drawPolygon(points);
     }
 
     static class SendMessageNodeAnchor extends ChopboxAnchor {
-
         public SendMessageNodeAnchor(IFigure owner) {
             super(owner);
         }
@@ -65,11 +54,10 @@ public class SendMessageFigure extends MessageNodeFigure {
                     double b2 = -r.width * k2 / 2;
                     double dx = (b2 - b1) / (k1 - k2);
                     double dy = dx * k1 + b1;
-                    return new Point(Math.round(r.getCenter().x + dx), Math.round(r.getCenter().y + dy));
+                    return new Point((int) Math.round(r.getCenter().x + dx), (int) Math.round(r.getCenter().y + dy));
                 }
             }
             return super.getLocation(reference);
         }
     }
-
 }

@@ -16,7 +16,6 @@ import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.Transition;
 
 public class NodeGraphicalEditPart extends ElementGraphicalEditPart implements NodeEditPart {
-
     @Override
     public Node getModel() {
         return (Node) super.getModel();
@@ -33,18 +32,22 @@ public class NodeGraphicalEditPart extends ElementGraphicalEditPart implements N
         return (NodeFigure) super.getFigure();
     }
 
+    @Override
     public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart editPart) {
         return getFigure().getLeavingConnectionAnchor();
     }
 
+    @Override
     public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart editPart) {
         return getFigure().getArrivingConnectionAnchor();
     }
 
+    @Override
     public ConnectionAnchor getSourceConnectionAnchor(Request request) {
         return getFigure().getLeavingConnectionAnchor();
     }
 
+    @Override
     public ConnectionAnchor getTargetConnectionAnchor(Request request) {
         return getFigure().getArrivingConnectionAnchor();
     }
@@ -58,26 +61,21 @@ public class NodeGraphicalEditPart extends ElementGraphicalEditPart implements N
     protected List<Transition> getModelTargetConnections() {
         return getModel().getArrivingTransitions();
     }
-    
+
     @Override
     protected void refreshVisuals() {
         getFigure().setBounds(getModel().getConstraint());
         getFigure().revalidate();
     }
-    
-    @SuppressWarnings("unchecked")
-	public void propertyChange(PropertyChangeEvent evt) {
-        String messageId = evt.getPropertyName();
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        super.propertyChange(event);
+        String messageId = event.getPropertyName();
         if (NODE_ARRIVING_TRANSITION_ADDED.equals(messageId) || NODE_ARRIVING_TRANSITION_REMOVED.equals(messageId)) {
             refreshTargetConnections();
         } else if (NODE_LEAVING_TRANSITION_ADDED.equals(messageId) || NODE_LEAVING_TRANSITION_REMOVED.equals(messageId) || PROPERTY_CONFIGURATION.equals(messageId)) {
             refreshSourceConnections();
-        	boolean exclusive = getModel().isExclusive() && getModel().getLeavingTransitions().size() > 1; 
-        	for (TransitionGraphicalEditPart part : (List<TransitionGraphicalEditPart>) getSourceConnections()) {
-        		if (part.getFigure().setExclusive(exclusive)) {
-        		    part.refreshVisuals();
-        		}
-    		}
         } else if (NODE_BOUNDS_RESIZED.equals(messageId)) {
             refreshVisuals();
         } else if (NODE_CHILDS_CHANGED.equals(messageId)) {

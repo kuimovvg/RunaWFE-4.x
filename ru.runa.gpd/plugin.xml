@@ -205,7 +205,7 @@
     </objectContribution>
      <objectContribution
            adaptable="false"
-           id="graph.timerNode"
+           id="graph.stateNode1"
            objectClass="ru.runa.gpd.lang.model.State">
         <filter
               name="language"
@@ -221,7 +221,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.timerNode"
+          id="graph.stateNodeAddTimer"
           objectClass="ru.runa.gpd.lang.model.State">
        <filter
              name="timerExists"
@@ -239,7 +239,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.timerNode"
+          id="graph.stateNodeDeleteTimer"
           objectClass="ru.runa.gpd.lang.model.State">
        <filter
              name="timerExists"
@@ -257,7 +257,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.taskStateNode"
+          id="graph.taskStateNode1"
           objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
              name="escalationEnabled"
@@ -275,7 +275,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.taskStateNode"
+          id="graph.taskStateNode2"
           objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
              name="escalationEnabled"
@@ -286,8 +286,23 @@
        </filter>
        <action
              class="ru.runa.gpd.lang.action.DisableEscalationOnTaskDelegate"
-             id="addEscalation"
+             id="removeEscalation"
              label="%label.action.removeEscalation"
+             menubarPath="additions">
+       </action>
+    </objectContribution>
+    <objectContribution
+          adaptable="false"
+          id="graph.Synchronizable"
+          objectClass="ru.runa.gpd.lang.model.Synchronizable">
+       <filter
+             name="language"
+             value="jpdl">
+       </filter>
+       <action
+             class="ru.runa.gpd.lang.action.EnableAsyncOnTaskDelegate"
+             id="addAsync"
+             label="%label.action.async"
              menubarPath="additions">
        </action>
     </objectContribution>
@@ -321,7 +336,42 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.formNode"
+          id="graph.swimlanedNode"
+          objectClass="ru.runa.gpd.lang.model.SwimlanedNode">
+       <filter
+             name="disableSwimlaneSelection"
+             value="false">
+       </filter>
+       <action
+             class="ru.runa.gpd.lang.action.SwimlaneActionsDelegate"
+             id="setSwimlanes"
+             label="%label.action.swimlanes"
+             menubarPath="additions"
+             style="pulldown"
+             />
+    </objectContribution>
+    <objectContribution
+          adaptable="false"
+          id="graph.multiTaskNode"
+          objectClass="ru.runa.gpd.lang.model.MultiTaskState">
+       <action
+             class="ru.runa.gpd.lang.action.MultiTaskExecutorsActionsDelegate"
+             id="setMultiTaskExecutors"
+             label="%label.action.executors"
+             menubarPath="additions"
+             style="pulldown"
+             />
+       <action
+             class="ru.runa.gpd.lang.action.MultiTaskExecutionModeDelegate"
+             id="setTaskExecutionMode"
+             label="%label.action.tasksExecutionMode"
+             menubarPath="additions"
+             style="pulldown"
+             />
+    </objectContribution>
+    <objectContribution
+          adaptable="false"
+          id="graph.formNode1"
           objectClass="ru.runa.gpd.lang.model.FormNode">
        <menu
              id="form"
@@ -347,17 +397,10 @@
              label="%label.action.validationOfForm"
              menubarPath="form/sp2"
              />
-       <action
-             class="ru.runa.gpd.lang.action.SwimlaneActionsDelegate"
-             id="setSwimlanes"
-             label="%label.action.swimlanes"
-             menubarPath="additions"
-             style="pulldown"
-             />
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.formNode"
+          id="graph.formNode2"
           objectClass="ru.runa.gpd.lang.model.FormNode">
        <filter
              name="formExists"
@@ -372,7 +415,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.formNode2"
+          id="graph.formNode3"
           objectClass="ru.runa.gpd.lang.model.FormNode">
        <filter
              name="formExists"
@@ -447,7 +490,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="subprocessStateNode"
+          id="subprocessNode"
           objectClass="ru.runa.gpd.lang.model.Subprocess">
        <action
              class="ru.runa.gpd.lang.action.SubprocessDelegate"
@@ -475,16 +518,6 @@
              label="%label.action.rotate"
              menubarPath="additions">
        </action>
-    </objectContribution>
-    <objectContribution
-          adaptable="false"
-          id="multiInstanceStateNode"
-          objectClass="ru.runa.gpd.lang.model.MultiInstance">
-       <action
-             class="ru.runa.gpd.lang.action.MultiInstanceDelegate"
-             id="multiInstance"
-             label="%label.element.multiinstance"
-             menubarPath="additions"/>
     </objectContribution>
     <objectContribution
           adaptable="false"
@@ -622,7 +655,7 @@
             icon="state.png"
             label="%label.element.state">
          <gef 
-            figure="ru.runa.gpd.editor.gef.figure.TimerStateFigure"
+            figure="ru.runa.gpd.editor.gef.figure.TaskStateFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.TaskStateGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
@@ -633,11 +666,23 @@
          </graphiti>
       </element>
       <element
-            icon="waitstate.png"
-            jpdl="wait-state"
-            label="%label.element.waitstate"
+      		type="node"
+            model="ru.runa.gpd.lang.model.MultiTaskState"
+            jpdl="multi-task-node"
+            icon="multitaskstate.png"
+            label="%label.element.multitaskstate">
+         <gef 
+            figure="ru.runa.gpd.editor.gef.figure.MultiTaskStateFigure"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.TaskStateGraphicalEditPart"
+            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
+         </gef>
+      </element>
+      <element
+      		type="node"
             model="ru.runa.gpd.lang.model.WaitState"
-            type="node">
+            jpdl="wait-state"
+            icon="waitstate.png"
+            label="%label.element.waitstate">
          <gef 
             figure="ru.runa.gpd.editor.gef.figure.WaitStateFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
@@ -650,18 +695,6 @@
       </element>
       <element
       		type="node"
-            model="ru.runa.gpd.lang.model.EndTokenState"
-            jpdl="end-token-state"
-            icon="endtoken.png"
-            label="%label.element.endtoken">
-         <gef
-            figure="ru.runa.gpd.editor.gef.figure.EndTokenStateFigure"
-            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
-            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
-         </gef>
-      </element>
-      <element
-      		type="node"
             model="ru.runa.gpd.lang.model.EndState"
             jpdl="end-state"
             bpmn="endEvent"
@@ -669,6 +702,23 @@
             label="%label.element.end">
          <gef
             figure="ru.runa.gpd.editor.gef.figure.EndStateFigure"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
+            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
+         </gef>
+         <graphiti
+               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
+         </graphiti>
+      </element>
+      <element
+            bpmn="endPoint"
+            icon="endtoken.png"
+            jpdl="end-token-state"
+            label="%label.element.endtoken"
+            model="ru.runa.gpd.lang.model.EndTokenState"
+            type="node">
+         <gef
+            figure="ru.runa.gpd.editor.gef.figure.EndTokenStateFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
@@ -793,11 +843,11 @@
             bpmn="multiProcess"
             icon="multiinstance.png"
             jpdl="multiinstance-state"
-            label="%label.element.multiinstance"
-            model="ru.runa.gpd.lang.model.MultiInstance"
+            label="%label.element.multisubprocess"
+            model="ru.runa.gpd.lang.model.MultiSubprocess"
             type="node">
          <gef 
-            figure="ru.runa.gpd.editor.gef.figure.MultiInstanceFigure"
+            figure="ru.runa.gpd.editor.gef.figure.MultiSubprocessFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.MultiInstanceGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
