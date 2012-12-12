@@ -20,11 +20,9 @@ import ru.runa.gpd.util.ProjectFinder;
  * @author Nana
  */
 public class ResourcesContentProvider implements ITreeContentProvider {
-
     @Override
     public Object[] getChildren(Object parentElement) {
         if (parentElement instanceof IProject) {
-            // TODO comparator file.getParent().getName()
             List<IFile> definitionFiles = ProjectFinder.getProcessDefinitionFiles((IProject) parentElement);
             IContainer[] elements = new IContainer[definitionFiles.size()];
             for (int i = 0; i < definitionFiles.size(); i++) {
@@ -65,5 +63,4 @@ public class ResourcesContentProvider implements ITreeContentProvider {
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }
-
 }

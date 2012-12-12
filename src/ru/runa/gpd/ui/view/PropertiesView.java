@@ -37,7 +37,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
 import ru.runa.gpd.lang.model.GraphElement;
 
@@ -193,11 +192,11 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         boolean propFound = false;
-        if (tree.isDisposed()) {
-            // TODO remove; seems like bug already is fixed
-            PluginLogger.logErrorWithoutDialog("tree is disposed in part.propertyChange", new Exception());
-            return;
-        }
+        //        if (tree.isDisposed()) {
+        //            // TODO remove; seems like bug already is fixed
+        //            PluginLogger.logErrorWithoutDialog("tree is disposed in part.propertyChange", new Exception());
+        //            return;
+        //        }
         for (TreeItem item : tree.getItems()) {
             IPropertyDescriptor descriptor = (IPropertyDescriptor) item.getData(PROPERTY_DESCRIPTOR_KEY);
             if (descriptor != null && descriptor.getId().equals(evt.getPropertyName())) {

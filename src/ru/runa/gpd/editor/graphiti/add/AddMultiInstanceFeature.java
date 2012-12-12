@@ -7,12 +7,12 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 
 import ru.runa.gpd.editor.graphiti.GaProperty;
-import ru.runa.gpd.lang.model.MultiInstance;
+import ru.runa.gpd.lang.model.MultiSubprocess;
 
 public class AddMultiInstanceFeature extends AddStateNodeFeature {
     @Override
     protected void drawCustom(IAddContext context, GraphicsAlgorithmContainer container) {
-        MultiInstance multiInstance = (MultiInstance) context.getNewObject();
+        MultiSubprocess multiInstance = (MultiSubprocess) context.getNewObject();
         org.eclipse.draw2d.geometry.Rectangle bounds = multiInstance.getConstraint();
         IGaService gaService = Graphiti.getGaService();
         Image image = gaService.createImage(container, "graph/multiinstance.png");

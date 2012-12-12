@@ -5,33 +5,20 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 
-import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.gef.figure.uml.ForkJoinConnectionAnchor;
 
 public class ForkJoinFigure extends NodeFigure {
+    @Override
+    public void init() {
+        super.init();
+        connectionAnchor = new ForkJoinConnectionAnchor(this);
+    }
 
     @Override
-    public void init(boolean bpmnNotation) {
-        super.init(bpmnNotation);
-        if (bpmnNotation) {
-            connectionAnchor = new DiamondAnchor(this);
-        } else {
-            connectionAnchor = new ForkJoinConnectionAnchor(this);
-        }
-    }
-    
-    @Override
-    public boolean isResizeable() {
-        return !bpmnNotation;
-    }
-    
-    @Override
     public Dimension getDefaultSize() {
-        if (!bpmnNotation)
-            return DIM_SLIM.getCopy();
-        return DIM_SQUARE.getCopy();
+        return DIM_SLIM.getCopy();
     }
-    
+
     @Override
     public void setBounds(Rectangle rect) {
         if (rect.width < rect.height) {
@@ -43,15 +30,8 @@ public class ForkJoinFigure extends NodeFigure {
     }
 
     @Override
-    protected void paintBPMNFigure(Graphics g, Rectangle r) {
-        g.drawImage(SharedImages.getImage("icons/bpmn/graph/fork_join.png"), r.getLocation());
-    }
-    
-    @Override
-    protected void paintUMLFigure(Graphics g, Rectangle r) {
-        g.translate(r.getLocation());
+    protected void paintFigure(Graphics g, Dimension dim) {
         g.setBackgroundColor(ColorConstants.black);
-        g.fillRectangle(0, 0, r.width, r.height);
+        g.fillRectangle(0, 0, dim.width, dim.height);
     }
-    
 }

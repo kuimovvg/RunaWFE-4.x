@@ -1,43 +1,33 @@
 package ru.runa.gpd.editor.gef.figure;
 
 import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.PointList;
-import org.eclipse.draw2d.geometry.Rectangle;
 
-import ru.runa.gpd.SharedImages;
+import ru.runa.gpd.lang.model.Decision;
 
-public class DecisionFigure extends NodeFigure {
-
+public class DecisionFigure extends NodeFigure<Decision> {
     @Override
-    public void init(boolean bpmnNotation) {
-        super.init(bpmnNotation);
-        if (!bpmnNotation) {
-            addLabel();
-        }
+    public void init() {
+        super.init();
+        addLabel();
         connectionAnchor = new DiamondAnchor(this);
     }
 
     @Override
-    public boolean isResizeable() {
-        return !bpmnNotation;
+    protected String getTooltipMessage() {
+        return model.getDelegationConfiguration();
     }
 
     @Override
-    protected void paintBPMNFigure(Graphics g, Rectangle r) {
-        g.drawImage(SharedImages.getImage("icons/bpmn/graph/decision.png"), r.getLocation());
-    }
-
-    @Override
-    protected void paintUMLFigure(Graphics g, Rectangle r) {
-        g.translate(getLocation());
-        int halfWidth = Math.round(getSize().width / 2);
-        int halfHeight = Math.round(getSize().height / 2);
+    protected void paintFigure(Graphics g, Dimension dim) {
+        int halfWidth = dim.width / 2;
+        int halfHeight = dim.height / 2;
         PointList points = new PointList(4);
         points.addPoint(halfWidth, 0);
-        points.addPoint(getSize().width - 1, halfHeight);
-        points.addPoint(halfWidth, getSize().height - 1);
+        points.addPoint(dim.width - 1, halfHeight);
+        points.addPoint(halfWidth, dim.height - 1);
         points.addPoint(0, halfHeight);
         g.drawPolygon(points);
     }
-
 }

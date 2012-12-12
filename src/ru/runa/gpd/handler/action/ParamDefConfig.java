@@ -1,7 +1,5 @@
 package ru.runa.gpd.handler.action;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,17 +10,13 @@ import java.util.regex.Pattern;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
 
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.util.XmlUtil;
 
 @SuppressWarnings("unchecked")
 public class ParamDefConfig {
-
     private static final Pattern VARIABLE_REGEXP = Pattern.compile("\\$\\{(.*?[^\\\\])\\}");
-
     private final String name;
     private final List<ParamDefGroup> groups = new ArrayList<ParamDefGroup>();
 
@@ -157,7 +151,7 @@ public class ParamDefConfig {
     }
 
     public String toConfiguration(Map<String, String> properties) {
-        return writeDoc(toConfigurationDocument(properties));
+        return XmlUtil.toString(toConfigurationDocument(properties));
     }
 
     public Document toConfigurationDocument(Map<String, String> properties) {
@@ -221,21 +215,4 @@ public class ParamDefConfig {
         matcher.appendTail(buffer);
         return buffer.toString();
     }
-
-    // TODO move to utils
-    public static String writeDoc(Document doc) {
-        try {
-            OutputFormat format = new OutputFormat("  ", true);
-            format.setPadText(true);
-            format.setSuppressDeclaration(true);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            XMLWriter writer = new XMLWriter(baos, format);
-            writer.write(doc);
-            writer.flush();
-            return new String(baos.toByteArray(), PluginConstants.UTF_ENCODING);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

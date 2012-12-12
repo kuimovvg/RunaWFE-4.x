@@ -1,27 +1,38 @@
 package ru.runa.gpd.editor.gef.part.graph;
 
-import java.beans.PropertyChangeEvent;
+import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.gef.Request;
+import org.eclipse.gef.RequestConstants;
+
+import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.util.WorkspaceOperations;
 
 public class SubprocessGraphicalEditPart extends LabeledNodeGraphicalEditPart {
-
     @Override
     public Subprocess getModel() {
         return (Subprocess) super.getModel();
     }
-    
-    @Override
-    protected String getTooltipMessage() {
-        return getModel().getSubProcessName();
-    }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        super.propertyChange(evt);
-        if (PROPERTY_SUBPROCESS.equals(evt.getPropertyName())) {
-            updateTooltip(getFigure());
+    public void performRequest(Request request) {
+        if (request.getType() == RequestConstants.REQ_OPEN) {
+            String subprocessName = getModel().getSubProcessName();
+            if (subprocessName != null) {
+                IFile definitionFile = ProcessCache.getProcessDefinitionFile(subprocessName);
+                WorkspaceOperations.openProcessDefinition((IFolder) definitionFile.getParent());
+            }
+        } else {
+            super.performRequest(request);
         }
     }
 
+    @Override
+    protected void fillFigureUpdatePropertyNames(List<String> list) {
+        super.fillFigureUpdatePropertyNames(list);
+        list.add(PROPERTY_SUBPROCESS);
+    }
 }

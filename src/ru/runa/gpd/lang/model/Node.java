@@ -42,7 +42,7 @@ public abstract class Node extends NamedGraphElement implements Describable {
                 addError("noInputTransitions");
             }
         }
-        if (!(this instanceof EndState)) {
+        if (!(this instanceof EndState) && !(this instanceof EndTokenState)) {
             if (getLeavingTransitions().size() == 0) {
                 addError("noOutputTransitions");
             }
@@ -56,10 +56,6 @@ public abstract class Node extends NamedGraphElement implements Describable {
             uniqueNames.add(transition.getName());
         }
         */
-        if (getName() != null && getName().contains("/")) {
-            // for jbpm
-            addError("invalidNameCharacters");
-        }
     }
 
     public String getNextTransitionName() {
