@@ -53,7 +53,7 @@ public class ProcessClassPresentation extends ClassPresentation {
 
         @Override
         public String getJoinExpression(String alias) {
-            return ClassPresentation.classNameSQL + ".id=" + alias + ".process";
+            return classNameSQL + ".id=" + alias + ".process";
         }
     }
 
@@ -75,7 +75,7 @@ public class ProcessClassPresentation extends ClassPresentation {
 
         @Override
         public String getJoinExpression(String alias) {
-            return ClassPresentation.classNameSQL + ".id=" + alias + ".process";
+            return classNameSQL + ".id=" + alias + ".process";
         }
     }
 
@@ -89,7 +89,7 @@ public class ProcessClassPresentation extends ClassPresentation {
 
     public static final String PROCESS_DEFINITION_BATCH_PRESENTATION_VERSION = "batch_presentation.process.definition_version";
 
-    public static final String TASK_VARIABLE = ClassPresentation.editable_prefix + "name:batch_presentation.process.variable";
+    public static final String TASK_VARIABLE = editable_prefix + "name:batch_presentation.process.variable";
 
     private static final DBSource[] variableClasses;
 
@@ -103,7 +103,8 @@ public class ProcessClassPresentation extends ClassPresentation {
 
     private ProcessClassPresentation() {
         super(Process.class, "", true, new FieldDescriptor[] {
-                // display name field type DB source isSort filter mode get value/show in web getter param
+                // display name field type DB source isSort filter mode get
+                // value/show in web getter param
                 new FieldDescriptor(PROCESS_BATCH_PRESENTATION_ID, Integer.class.getName(), new DefaultDBSource(Process.class, "id"), true,
                         FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "id" }),
                 new FieldDescriptor(PROCESS_DEFINITION_BATCH_PRESENTATION_NAME, String.class.getName(), new DefaultDBSource(Process.class,
@@ -116,11 +117,16 @@ public class ProcessClassPresentation extends ClassPresentation {
                 new FieldDescriptor(PROCESS_DEFINITION_BATCH_PRESENTATION_VERSION, Integer.class.getName(), new DefaultDBSource(Process.class,
                         "processDefinition.version"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
                         new Permission(), "version" }),
-                new FieldDescriptor(ClassPresentation.filterable_prefix + "batch_presentation.process.id",
-                        AnywhereStringFilterCriteria.class.getName(), new DefaultDBSource(Process.class, "hierarchySubProcess"), true,
-                        FieldFilterMode.DATABASE, "ru.runa.wf.web.html.RootProcessTDBuilder", new Object[] {}, true),
+                new FieldDescriptor(filterable_prefix + "batch_presentation.process.id", AnywhereStringFilterCriteria.class.getName(),
+                        new DefaultDBSource(Process.class, "hierarchySubProcess"), true, FieldFilterMode.DATABASE,
+                        "ru.runa.wf.web.html.RootProcessTDBuilder", new Object[] {}, true),
                 new FieldDescriptor(TASK_VARIABLE, Variable.class.getName(), variableClasses, true, FieldFilterMode.DATABASE,
-                        "ru.runa.wf.web.html.ProcessVariableTDBuilder", new Object[] {}, true/* THIS FIELD IS WEAK */) });
+                        "ru.runa.wf.web.html.ProcessVariableTDBuilder", new Object[] {}, true/*
+                                                                                              * THIS
+                                                                                              * FIELD
+                                                                                              * IS
+                                                                                              * WEAK
+                                                                                              */) });
     }
 
     public static final ClassPresentation getInstance() {

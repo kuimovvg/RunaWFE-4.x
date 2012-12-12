@@ -55,7 +55,8 @@ public class Timer extends Job {
         Event event = executionContext.getNode().getEvent(Event.EVENTTYPE_TIMER);
         if (event != null) {
             for (Action timerAction : event.getActions()) {
-                // in case of multiple timers on node we discriminate actions by name
+                // in case of multiple timers on node we discriminate actions by
+                // name
                 if (getName().equals(timerAction.getName())) {
                     executionContext.getNode().executeAction(timerAction, executionContext);
                 }
@@ -66,7 +67,9 @@ public class Timer extends Job {
             if (task != null) {
                 AssignmentHelper assignmentHelper = ApplicationContextFactory.getAssignmentHelper();
                 Swimlane swimlane = task.getSwimlane();
-                assignmentHelper.reassignTask(executionContext, task, swimlane.getExecutor());
+                if (swimlane != null) {
+                    assignmentHelper.reassignTask(executionContext, task, swimlane.getExecutor());
+                }
             } else {
                 log.warn("Task is null in timer node '" + getToken().getNodeId() + "' when leaving by transition: " + outTransitionName);
             }

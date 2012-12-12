@@ -24,11 +24,13 @@ import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EndNode;
+import ru.runa.wfe.lang.EndTokenNode;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Fork;
 import ru.runa.wfe.lang.GraphElement;
 import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.MultiProcessState;
+import ru.runa.wfe.lang.MultiTaskNode;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.ReceiveMessage;
@@ -37,6 +39,7 @@ import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.TaskDefinition;
+import ru.runa.wfe.lang.TaskExecutionMode;
 import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.lang.VariableContainerNode;
@@ -83,13 +86,18 @@ public class JpdlXmlReader {
     private static final String DESCRIPTION_NODE = "description";
     private static final String NAME_ATTR = "name";
     private static final String TYPE_ATTR = "type";
+    private static final String ASYNC_ATTR = "async";
+    private static final String TASK_EXECUTORS_ATTR = "taskExecutors";
+    private static final String TASK_EXECUTION_MODE_ATTR = "taskExecutionMode";
 
     private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
     static {
         nodeTypes.put("start-state", StartState.class);
+        nodeTypes.put("end-token-state", EndTokenNode.class);
         nodeTypes.put("end-state", EndNode.class);
         nodeTypes.put("wait-state", WaitState.class);
         nodeTypes.put("task-node", TaskNode.class);
+        nodeTypes.put("multi-task-node", MultiTaskNode.class);
         nodeTypes.put("fork", Fork.class);
         nodeTypes.put("join", Join.class);
         nodeTypes.put("decision", Decision.class);
@@ -178,7 +186,7 @@ public class JpdlXmlReader {
         }
     }
 
-    private void readTasks(ProcessDefinition processDefinition, Element parentElement, TaskNode taskNode) throws Exception {
+    private void readTasks(ProcessDefinition processDefinition, Element parentElement, InteractionNode taskNode) throws Exception {
         List<Element> elements = parentElement.elements(TASK_NODE);
         for (Element element : elements) {
             readTask(processDefinition, element, taskNode);
@@ -211,7 +219,8 @@ public class JpdlXmlReader {
         // assignment
         String swimlaneName = element.attributeValue(SWIMLANE_ATTR);
         if (swimlaneName == null) {
-            if (waitStateCompatibility) {
+            if (node instanceof MultiTaskNode) {
+            } else if (waitStateCompatibility) {
                 processDefinition.getNodes().remove(node);
                 WaitState waitState = new WaitState();
                 waitState.setProcessDefinition(processDefinition);
@@ -278,15 +287,17 @@ public class JpdlXmlReader {
             VariableContainerNode variableContainerNode = (VariableContainerNode) node;
             variableContainerNode.setVariableMappings(readVariableMappings(element));
         }
-        if (node instanceof EndNode) {
-            EndNode endNode = (EndNode) node;
-            endNode.setEndCompleteProcess(Boolean.valueOf(element.attributeValue("end-complete-process", "false")));
-        }
         if (node instanceof TaskNode) {
             TaskNode taskNode = (TaskNode) node;
-            taskNode.setSignal(TaskNode.parseSignal(element.attributeValue("signal", "first")));
-            taskNode.setEndTasks(Boolean.valueOf(element.attributeValue("end-tasks", "true")));
+            taskNode.setAsync(Boolean.valueOf(element.attributeValue(ASYNC_ATTR, "false")));
             readTasks(processDefinition, element, taskNode);
+        }
+        if (node instanceof MultiTaskNode) {
+            MultiTaskNode multiTaskNode = (MultiTaskNode) node;
+            multiTaskNode.setAsync(Boolean.valueOf(element.attributeValue(ASYNC_ATTR, "false")));
+            multiTaskNode.setMode(TaskExecutionMode.valueOf(element.attributeValue(TASK_EXECUTION_MODE_ATTR, TaskExecutionMode.last.name())));
+            multiTaskNode.setExecutorsVariableName(element.attributeValue(TASK_EXECUTORS_ATTR));
+            readTasks(processDefinition, element, multiTaskNode);
         }
         if (node instanceof SubProcessState) {
             SubProcessState subProcessState = (SubProcessState) node;

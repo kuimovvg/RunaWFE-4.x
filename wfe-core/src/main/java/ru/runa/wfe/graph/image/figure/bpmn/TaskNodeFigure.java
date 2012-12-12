@@ -27,19 +27,9 @@ import ru.runa.wfe.graph.image.util.ActionUtils;
 import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.lang.Transition;
 
-public class TaskFigure extends AbstractFigure {
+public class TaskNodeFigure extends AbstractFigure {
     private static final Color BORDER_COLOR = Color.BLUE;
-    private final boolean drawTimer;
-    private boolean minimized = false;
     private boolean graphiti = false;
-
-    public TaskFigure(boolean drawTimer) {
-        this.drawTimer = drawTimer;
-    }
-
-    public void setMinimized(boolean minimized) {
-        this.minimized = minimized;
-    }
 
     public void setGraphiti(boolean graphiti) {
         this.graphiti = graphiti;
@@ -47,7 +37,7 @@ public class TaskFigure extends AbstractFigure {
 
     @Override
     public Point getTransitionPoint(double x, double y, String transitionName) {
-        if (drawTimer && Transition.TIMEOUT_TRANSITION_NAME.equals(transitionName)) {
+        if (withTimer && Transition.TIMEOUT_TRANSITION_NAME.equals(transitionName)) {
             return new Point(coords[0] + DrawProperties.GRID_SIZE, coords[1] + coords[3] - DrawProperties.GRID_SIZE);
         }
         return super.getTransitionPoint(x, y, transitionName);
@@ -74,7 +64,7 @@ public class TaskFigure extends AbstractFigure {
         } else {
             graphics.drawRoundRect(rect.x, rect.y, rect.width, rect.height, 20, 20);
         }
-        if (drawTimer && !minimized) {
+        if (withTimer && !minimized) {
             // Clean area for timer
             Color orig = graphics.getColor();
             graphics.setColor(DrawProperties.getBackgroundColor());

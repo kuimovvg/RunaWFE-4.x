@@ -32,7 +32,7 @@ public class SubProcessState extends VariableContainerNode {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.SubProcess;
+        return NodeType.Subprocess;
     }
 
     @Override

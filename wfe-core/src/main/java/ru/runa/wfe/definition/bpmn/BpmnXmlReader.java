@@ -21,6 +21,7 @@ import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EndNode;
+import ru.runa.wfe.lang.EndTokenNode;
 import ru.runa.wfe.lang.Fork;
 import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.MultiProcessState;
@@ -53,6 +54,7 @@ public class BpmnXmlReader {
     static {
         nodeTypes.put("startEvent", StartState.class);
         nodeTypes.put("userTask", TaskNode.class);
+        nodeTypes.put("endPoint", EndTokenNode.class);
         nodeTypes.put("endEvent", EndNode.class);
 
         // nodeTypes.put("wait-state", WaitState.class);
@@ -270,14 +272,8 @@ public class BpmnXmlReader {
             StartState startState = (StartState) node;
             readTask(processDefinition, element, startState);
         }
-        if (node instanceof EndNode) {
-            EndNode endNode = (EndNode) node;
-            endNode.setEndCompleteProcess(Boolean.valueOf(element.attributeValue("end-complete-process", "false")));
-        }
         if (node instanceof TaskNode) {
             TaskNode taskNode = (TaskNode) node;
-            taskNode.setSignal(TaskNode.parseSignal(element.attributeValue("signal", "first")));
-            taskNode.setEndTasks(Boolean.valueOf(element.attributeValue("end-tasks", "true")));
             readTask(processDefinition, element, taskNode);
         }
         if (node instanceof VariableContainerNode) {

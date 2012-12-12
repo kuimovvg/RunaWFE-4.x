@@ -66,7 +66,7 @@ public class ProcessGraphElementPresentationVisitor extends SubprocessesGraphEle
     }
 
     @Override
-    public void onMultiinstance(MultiinstanceGraphElementPresentation element) {
+    public void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
         helperSubprocess.createMultiinstanceLinks(element);
     }
 
