@@ -16,7 +16,6 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 
 public class RenameRefactoringWizard extends RefactoringWizard {
-
     public RenameRefactoringWizard(PortabilityRefactoring refactoring) {
         super(refactoring, WIZARD_BASED_USER_INTERFACE);
     }
@@ -43,7 +42,6 @@ public class RenameRefactoringWizard extends RefactoringWizard {
     }
 
     private static class ChangeElementLabelProvider extends LabelProvider {
-
         @Override
         public Image getImage(Object object) {
             if (object instanceof CompositeChangeNode) {
@@ -60,6 +58,5 @@ public class RenameRefactoringWizard extends RefactoringWizard {
         public String getText(Object object) {
             return ((AbstractChangeNode) object).getText();
         }
-
     }
 }

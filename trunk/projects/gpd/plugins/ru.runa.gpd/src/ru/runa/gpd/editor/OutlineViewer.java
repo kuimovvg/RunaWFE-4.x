@@ -76,7 +76,7 @@ public class OutlineViewer extends ContentOutlinePage implements ISelectionListe
             return;
         }
         EditPart source = (EditPart) selectedObject;
-        if (source.getModel() instanceof GraphElement) { // TODO
+        if (source.getModel() instanceof GraphElement) {
             select((GraphElement) source.getModel());
         }
     }

@@ -1,18 +1,37 @@
 package ru.runa.gpd.editor.gef.part.graph;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
-import org.eclipse.draw2d.Border;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
+import ru.runa.gpd.editor.gef.figure.NodeFigure;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.PropertyNames;
 
+import com.google.common.collect.Lists;
+
 public abstract class ElementGraphicalEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener, PropertyNames {
-    private static final Border TOOL_TIP_BORDER = new MarginBorder(0, 2, 0, 2);
+    private final List<String> propertyNamesToCauseFigureUpdate = Lists.newArrayList();
+
+    public ElementGraphicalEditPart() {
+        fillFigureUpdatePropertyNames(propertyNamesToCauseFigureUpdate);
+    }
+
+    protected void fillFigureUpdatePropertyNames(List<String> list) {
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        if (propertyNamesToCauseFigureUpdate.contains(event.getPropertyName())) {
+            IFigure figure = getFigure();
+            if (figure instanceof NodeFigure) {
+                ((NodeFigure) figure).update();
+            }
+        }
+    }
 
     @Override
     public GraphElement getModel() {
@@ -21,7 +40,13 @@ public abstract class ElementGraphicalEditPart extends AbstractGraphicalEditPart
 
     @Override
     protected IFigure createFigure() {
-        return getModel().getTypeDefinition().getGefEntry().createFigure(getModel().getProcessDefinition());
+        IFigure figure = getModel().getTypeDefinition().getGefEntry().createFigure(getModel().getProcessDefinition());
+        if (figure instanceof NodeFigure) {
+            NodeFigure nodeFigure = (NodeFigure) figure;
+            nodeFigure.setModel(getModel());
+            nodeFigure.update();
+        }
+        return figure;
     }
 
     @Override
@@ -38,24 +63,6 @@ public abstract class ElementGraphicalEditPart extends AbstractGraphicalEditPart
             getModel().removePropertyChangeListener(this);
             super.deactivate();
         }
-    }
-
-    protected String getTooltipMessage() {
-        return null;
-    }
-
-    protected void updateTooltip(IFigure figure) {
-        String tooltipMessage = getTooltipMessage();
-        if (tooltipMessage == null || tooltipMessage.length() == 0) {
-            figure.setToolTip(null);
-            return;
-        }
-        if (figure.getToolTip() == null) {
-            Label tooltip = new Label();
-            tooltip.setBorder(TOOL_TIP_BORDER);
-            figure.setToolTip(tooltip);
-        }
-        ((Label) figure.getToolTip()).setText(tooltipMessage);
     }
 
     @SuppressWarnings("unchecked")

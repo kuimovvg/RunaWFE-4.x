@@ -3,18 +3,11 @@ package ru.runa.gpd.editor.gef.figure;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.GridData;
 
-
 public abstract class MessageNodeFigure extends NodeFigure {
-
     @Override
-    public void init(boolean bpmnNotation) {
-        super.init(bpmnNotation);
-        if (!bpmnNotation) {
-            addLabel();
-        }
-        if (bpmnNotation) {
-            connectionAnchor = new CircleAnchor(this);
-        }
+    public void init() {
+        super.init();
+        addLabel();
     }
 
     // TODO: update on size change
@@ -25,10 +18,4 @@ public abstract class MessageNodeFigure extends NodeFigure {
         data.widthHint = width;
         add(new Figure(), data, position);
     }
-
-    @Override
-    public boolean isResizeable() {
-        return !bpmnNotation;
-    }
-
 }

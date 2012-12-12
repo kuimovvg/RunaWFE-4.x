@@ -54,15 +54,6 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
                 figure.setLabelText("");
             }
         }
-        boolean exclusive = getModel().getSource().isExclusive() && getModel().getSource().getLeavingTransitions().size() > 1;
-        figure.setExclusive(exclusive);
-        if (getModel().getSource() instanceof Decision) {
-            Decision decision = (Decision) getModel().getSource();
-            IDecisionProvider provider = HandlerRegistry.getProvider(decision);
-            if (transition.getName().equals(provider.getDefaultTransitionName(decision))) {
-                figure.setDefaultFlow(true);
-            }
-        }
         figure.addRoutingListener(new RoutingListener() {
             @Override
             public void invalidate(Connection connection) {
@@ -116,11 +107,6 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
         }
         TransitionFigure f = getFigure();
         f.setRoutingConstraint(constructFigureBendpointList());
-        decorateFigure(f);
-    }
-
-    private void decorateFigure(TransitionFigure f) {
-        f.updateSourceDecoration();
     }
 
     @Override

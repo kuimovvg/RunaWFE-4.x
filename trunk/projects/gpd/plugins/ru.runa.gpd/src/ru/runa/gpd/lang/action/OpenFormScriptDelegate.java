@@ -32,10 +32,6 @@ public class OpenFormScriptDelegate extends BaseModelActionDelegate {
                 file.setContents(new ByteArrayInputStream(template), true, false, null);
                 file.setCharset(PluginConstants.UTF_ENCODING, null);
             }
-            if (!PluginConstants.UTF_ENCODING.equalsIgnoreCase(file.getCharset())) {
-                // TODO bug for old processes fixed in ExportParWizard now
-                file.setCharset(PluginConstants.UTF_ENCODING, null);
-            }
             if (!formNode.hasFormScript()) {
                 setNewScriptFormFile(formNode, file.getName());
             }

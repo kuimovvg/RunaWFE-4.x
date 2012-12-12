@@ -50,10 +50,10 @@ public class GefEntry {
     public <T extends IFigure> T createFigure(ProcessDefinition definition) {
         T figure = createExecutableExtension("figure");
         if (figure instanceof NodeFigure) {
-            ((NodeFigure) figure).init(definition.isBPMNNotation());
+            ((NodeFigure) figure).init();
         }
         if (figure instanceof TransitionFigure) {
-            ((TransitionFigure) figure).init(definition.isBPMNNotation());
+            ((TransitionFigure) figure).init();
         }
         if (figure instanceof GridSupportLayer) {
             ((GridSupportLayer) figure).setDefinition(definition);
