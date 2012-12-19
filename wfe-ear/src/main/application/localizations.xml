@@ -34,13 +34,12 @@
   <artifact enabled="true" name="ru.runa.wfe.os.func.SQLFunction" label="Функция SQL"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.BooleanFormat" label="Флаг"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.TimeFormat" label="Время (часы:минуты)"/>
-  <artifact enabled="false" name="ru.runa.wfe.var.format.TimeWithSecondsFormat" label="Время (часы:минуты:секунды)"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.DateFormat" label="Дата"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.DateTimeFormat" label="Дата со временем"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.DoubleFormat" label="Дробное число"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.ExecutorFormat" label="Исполнитель"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.StringArrayFormat" label="Массив строк"/>
-  <artifact enabled="true" name="ru.runa.wfe.var.format.ArrayListFormat" label="Список строк"/>
+  <artifact enabled="true" name="ru.runa.wfe.var.format.ListFormat" label="Список"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.StringFormat" label="Строка"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.FileFormat" label="Файл"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.LongFormat" label="Целое число"/>

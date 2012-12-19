@@ -22,7 +22,6 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -39,9 +38,9 @@ public class DateTimeInputTag extends FreemarkerTag {
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String format = BackCompatibilityClassNames.getClassName(variable.getDefinition().getFormat());
+        String format = variable.getDefinition().getFormat();
         Date date = (Date) variable.getValue();
-        String html = ""; // TODO recfactor
+        String html = ""; // TODO refactor
         if (DateFormat.class.getName().equals(format)) {
             html += "<input type=\"text\" class=\"inputDate\" name=\"" + variableName + "\" style=\"width: 100px;\" ";
             if (date != null) {
