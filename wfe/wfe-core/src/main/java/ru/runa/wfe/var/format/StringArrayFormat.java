@@ -20,7 +20,7 @@ package ru.runa.wfe.var.format;
 import java.util.Arrays;
 
 /**
- * @deprecated Use {@link ArrayListFormat}
+ * @deprecated Use {@link ListFormat}
  */
 @Deprecated
 public class StringArrayFormat implements VariableFormat<String[]> {

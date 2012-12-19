@@ -29,11 +29,12 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
             if (!swimlane) {
                 VariableDefinition variable = new VariableDefinition();
                 variable.setName(element.attributeValue("name"));
-                variable.setFormat(element.attributeValue("format"));
+                String format = element.attributeValue("format");
+                format = BackCompatibilityClassNames.getClassName(format);
+                variable.setFormat(format);
+                variable.setDisplayFormat(localizationDAO.getLocalized(format));
                 variable.setPublicAccess(Boolean.parseBoolean(element.attributeValue("public", "false")));
                 variable.setDefaultValue(element.attributeValue("defaultValue"));
-                String className = BackCompatibilityClassNames.getClassName(variable.getFormat());
-                variable.setDisplayFormat(localizationDAO.getLocalized(className));
                 processDefinition.addVariable(variable.getName(), variable);
             }
         }
