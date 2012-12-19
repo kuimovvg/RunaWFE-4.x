@@ -133,7 +133,7 @@
          </param>
       </tag>
       <tag
-            enabled="true"
+            enabled="false"
             height="40"
             id="InputDateTime"
             image="metadata/icons/InputDateTime.png"
@@ -145,22 +145,18 @@
                values="date"
                variableAccess="WRITE">
          </param>
+      </tag>
+      <tag
+            enabled="true"
+            height="40"
+            id="InputVariable"
+            image="metadata/icons/DefaultTag.png"
+            name="%Method.InputVariable"
+            width="180">
          <param
-               name="%Param.InputPresentation"
+               name="%Param.Variable"
                type="combo"
-               variableAccess="NONE">
-            <paramValue
-                  name="%Format.Date.AsDate"
-                  value="date">
-            </paramValue>
-            <paramValue
-                  name="%Format.Date.AsDatetime"
-                  value="datetime">
-            </paramValue>
-            <paramValue
-                  name="%Format.Date.AsTime"
-                  value="time">
-            </paramValue>
+               variableAccess="WRITE">
          </param>
       </tag>
       <tag

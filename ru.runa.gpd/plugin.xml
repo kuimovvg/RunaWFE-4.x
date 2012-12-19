@@ -1896,8 +1896,8 @@
    <extension
          point="ru.runa.gpd.formats">
       <format
-            className="ru.runa.wfe.var.format.ArrayListFormat"
-            label="%ru.runa.wfe.var.format.ArrayListFormat"
+            className="ru.runa.wfe.var.format.ListFormat"
+            label="%ru.runa.wfe.var.format.ListFormat"
             enabled="true"
             variableClassName="java.util.List">
       </format>
@@ -1962,10 +1962,10 @@
             variableClassName="java.util.Date">
       </format>
       <format
-            className="ru.runa.wfe.var.format.TimeWithSecondsFormat"
-            label="%ru.runa.wfe.var.format.TimeWithSecondsFormat"
-            enabled="false"
-            variableClassName="java.util.Date">
+            className="ru.runa.wfe.var.format.TextFormat"
+            label="%ru.runa.wfe.var.format.TextFormat"
+            enabled="true"
+            variableClassName="java.lang.String">
       </format>
       <format
             className="ru.runa.wfe.var.format.StringArrayFormat"
