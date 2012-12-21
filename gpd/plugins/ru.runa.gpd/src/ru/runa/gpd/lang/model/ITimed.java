@@ -1,22 +1,11 @@
 package ru.runa.gpd.lang.model;
 
-import ru.runa.gpd.Localization;
-import ru.runa.gpd.util.TimerDuration;
-
+/**
+ * Interface for model classes which can have timers.
+ * 
+ * @author Dofs
+ * @since 4.0
+ */
 public interface ITimed {
-    public static final String CURRENT_DATE_MESSAGE = Localization.getString("duration.baseDateNow");
-
-    public boolean timerExist();
-
-    public void createTimer();
-
-    public void removeTimer();
-
-    public TimerDuration getDuration();
-
-    public void setDueDate(String dueDate);
-
-    public void setTimerAction(TimerAction timerAction);
-
-    public TimerAction getTimerAction();
+    public Timer getTimer();
 }

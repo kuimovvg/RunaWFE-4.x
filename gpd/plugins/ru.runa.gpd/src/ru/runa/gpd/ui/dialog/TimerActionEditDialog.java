@@ -22,28 +22,41 @@ import ru.runa.gpd.handler.HandlerArtifact;
 import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TimerAction;
-import ru.runa.gpd.util.TimerDuration;
+import ru.runa.gpd.util.Delay;
 
 public class TimerActionEditDialog extends Dialog {
-    private static final int DELETE_ID = 111;
-    private final TimerAction editable;
-    private final ProcessDefinition definition;
-    private Button editConfigButton;
-    private Text classNameField;
-    private Text configField;
-    private Text repeatField;
-    private final boolean deleteEnabled;
+    protected static final int DELETE_ID = 111;
+    protected final TimerAction editable;
+    protected final ProcessDefinition definition;
+    protected Button editConfigButton;
+    protected Text classNameField;
+    protected Text configField;
+    protected Text repeatField;
+    protected boolean deleteButtonEnabled;
 
     public TimerActionEditDialog(ProcessDefinition definition, TimerAction timerAction) {
         super(Display.getCurrent().getActiveShell());
         this.definition = definition;
-        editable = new TimerAction(definition);
-        deleteEnabled = timerAction != null;
+        editable = new TimerAction();
+        editable.setDefinition(definition);
+        deleteButtonEnabled = timerAction != null;
         if (timerAction != null) {
             editable.setDelegationClassName(timerAction.getDelegationClassName());
             editable.setDelegationConfiguration(timerAction.getDelegationConfiguration());
-            editable.setRepeat(timerAction.getRepeat().getDuration());
+            editable.setRepeatDuration(timerAction.getRepeatDelay().getDuration());
         }
+    }
+
+    protected boolean isClassNameFieldEnabled() {
+        return true;
+    }
+
+    protected String getConfigurationLabel() {
+        return Localization.getString("property.delegation.configuration");
+    }
+
+    protected boolean isDeleteButtonEnabled() {
+        return deleteButtonEnabled;
     }
 
     @Override
@@ -63,8 +76,10 @@ public class TimerActionEditDialog extends Dialog {
             GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
             gridData.minimumWidth = 200;
             classNameField.setLayoutData(gridData);
+            classNameField.setEnabled(isClassNameFieldEnabled());
             Button button = new Button(area, SWT.PUSH);
             button.setText("...");
+            button.setEnabled(isClassNameFieldEnabled());
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
@@ -82,7 +97,7 @@ public class TimerActionEditDialog extends Dialog {
             GridData data = new GridData();
             data.horizontalSpan = 2;
             label.setLayoutData(data);
-            label.setText(Localization.getString("property.delegation.configuration"));
+            label.setText(getConfigurationLabel());
         }
         {
             configField = new Text(area, SWT.MULTI | SWT.BORDER);
@@ -130,10 +145,10 @@ public class TimerActionEditDialog extends Dialog {
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    DurationEditDialog dialog = new DurationEditDialog(definition, editable.getRepeat());
-                    TimerDuration duration = (TimerDuration) dialog.openDialog();
+                    DurationEditDialog dialog = new DurationEditDialog(definition, editable.getRepeatDelay());
+                    Delay duration = (Delay) dialog.openDialog();
                     if (duration != null) {
-                        editable.setRepeat(duration.getDuration());
+                        editable.setRepeatDuration(duration.getDuration());
                         updateGUI();
                     }
                 }
@@ -143,10 +158,10 @@ public class TimerActionEditDialog extends Dialog {
     }
 
     private void updateGUI() {
-        classNameField.setText(editable.getDelegationClassName());
-        configField.setText(editable.getDelegationConfiguration());
-        if (editable.getRepeat().hasDuration()) {
-            repeatField.setText(editable.getRepeat().toString());
+        classNameField.setText(editable.getDelegationClassName() != null ? editable.getDelegationClassName() : "");
+        configField.setText(editable.getDelegationConfiguration() != null ? editable.getDelegationConfiguration() : "");
+        if (editable.getRepeatDelay().hasDuration()) {
+            repeatField.setText(editable.getRepeatDelay().toString());
         } else {
             repeatField.setText(Localization.getString("duration.norepeat"));
         }
@@ -163,17 +178,19 @@ public class TimerActionEditDialog extends Dialog {
 
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        Button button = createButton(parent, DELETE_ID, Localization.getString("button.delete"), false);
-        button.setEnabled(deleteEnabled);
+        if (isDeleteButtonEnabled()) {
+            Button button = createButton(parent, DELETE_ID, Localization.getString("button.delete"), false);
+            //            button.setEnabled(deleteButtonEnabled);
+            button.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    setReturnCode(DELETE_ID);
+                    close();
+                }
+            });
+        }
         super.createButtonsForButtonBar(parent);
         getButton(IDialogConstants.OK_ID).setEnabled(false);
-        button.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                setReturnCode(DELETE_ID);
-                close();
-            }
-        });
         updateGUI();
     }
 

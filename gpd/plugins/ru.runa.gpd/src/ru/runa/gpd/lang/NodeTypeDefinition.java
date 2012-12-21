@@ -13,6 +13,7 @@ import ru.runa.gpd.editor.gef.GefEntry;
 import ru.runa.gpd.editor.graphiti.GraphitiEntry;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.NamedGraphElement;
+import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.ltk.VariableRenameProvider;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
 
@@ -130,8 +131,12 @@ public class NodeTypeDefinition {
     public <T extends GraphElement> T createElement(GraphElement parent) {
         GraphElement element = createExecutableExtension("model");
         element.setParent(parent);
+        String name = label;
+        if (element instanceof Swimlane) {
+            name = element.getProcessDefinition().getNextSwimlaneName();
+        }
         if (element instanceof NamedGraphElement) {
-            ((NamedGraphElement) element).setName(label);
+            ((NamedGraphElement) element).setName(name);
         }
         return (T) element;
     }

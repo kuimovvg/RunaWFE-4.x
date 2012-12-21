@@ -22,11 +22,10 @@ public interface PropertyNames {
     public static final String PROPERTY_PUBLIC_VISIBILITY = "publicVisibility";
     public static final String PROPERTY_DEFAULT_VALUE = "defaultValue";
     public static final String PROPERTY_EVENT_TYPE = "eventType";
-    public static final String PROPERTY_TIMER = "timer";
     public static final String PROPERTY_ESCALATION = "escalation";
     public static final String PROPERTY_ESCALATION_DURATION = "escalationDuration";
     public static final String PROPERTY_ESCALATION_ACTION = "escalationAction";
-    public static final String PROPERTY_TIMER_DURATION = "TIMER_DURATION";
+    public static final String PROPERTY_TIMER_DELAY = "timerDelay";
     public static final String PROPERTY_TIMER_ACTION = "timerAction";
     public static final String PROPERTY_IGNORE_SUBSTITUTION = "ignoreSubstitution";
     public static final String PROPERTY_SUBPROCESS = "subprocess";
@@ -44,7 +43,7 @@ public interface PropertyNames {
     public static final String PROPERTY_SHOW_ACTIONS = "showActions";
     public static final String PROPERTY_SHOW_GRID = "showGrid";
     public static final String PROPERTY_DIRTY = "dirty";
-    public static final String PROPERTY_TIMEOUT_DURATION = "TIMEOUT_DURATION";
+    public static final String PROPERTY_TIMEOUT_DELAY = "timeOutDelay";
     public static final String PROPERTY_TIMEOUT_ACTION = "timeOutAction";
     public static final String PROPERTY_ASYNC = "async";
     public static final String PROPERTY_TASK_EXECUTION_MODE = "taskExecutionMode";

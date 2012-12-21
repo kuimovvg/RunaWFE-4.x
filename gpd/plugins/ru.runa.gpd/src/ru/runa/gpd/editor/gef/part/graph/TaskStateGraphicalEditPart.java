@@ -15,7 +15,7 @@ public class TaskStateGraphicalEditPart extends StateGraphicalEditPart {
     @Override
     protected void fillFigureUpdatePropertyNames(List<String> list) {
         super.fillFigureUpdatePropertyNames(list);
-        list.add(PROPERTY_TIMER);
+        list.add(NODE_CHILDS_CHANGED);
         list.add(PROPERTY_ASYNC);
     }
 
@@ -40,7 +40,7 @@ public class TaskStateGraphicalEditPart extends StateGraphicalEditPart {
 
     @Override
     public ConnectionAnchor getSourceConnectionAnchor(Request request) {
-        if (getModel().timerExist() && getModel().getLeavingTransitions().size() == 1 && getModel().getTransitionByName(PluginConstants.TIMER_TRANSITION_NAME) == null) {
+        if (getModel().getTimer() != null && getModel().getLeavingTransitions().size() == 1 && getModel().getTransitionByName(PluginConstants.TIMER_TRANSITION_NAME) == null) {
             return getFigure().getTimerConnectionAnchor();
         } else {
             return getFigure().getLeavingConnectionAnchor();

@@ -13,11 +13,14 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
+import org.apache.xerces.dom.DOMInputImpl;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 
 import ru.runa.wfe.InternalApplicationException;
 
@@ -45,6 +48,10 @@ public class XmlUtil {
         return parse(in, true, null);
     }
 
+    public static Document parseWithXSDValidation(InputStream in, InputStream xsdInputStream) {
+        return parse(in, true, xsdInputStream);
+    }
+
     private static Document parse(InputStream in, boolean xsdValidation, InputStream xsdInputStream) {
         try {
             SAXReader reader;
@@ -52,6 +59,16 @@ public class XmlUtil {
                 SAXParserFactory factory = SAXParserFactory.newInstance();
                 if (xsdInputStream != null) {
                     SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+                    schemaFactory.setResourceResolver(new LSResourceResolver() {
+                        @Override
+                        public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
+                            InputStream xsd = getClass().getResourceAsStream("/schema/" + systemId);
+                            if (xsd != null) {
+                                return new DOMInputImpl(publicId, systemId, baseURI, xsd, Charsets.UTF_8.name());
+                            }
+                            return null;
+                        }
+                    });
                     factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(xsdInputStream) }));
                 } else {
                     factory.setValidating(true);

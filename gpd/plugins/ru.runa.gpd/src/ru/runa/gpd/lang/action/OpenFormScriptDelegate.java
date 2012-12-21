@@ -21,7 +21,7 @@ public class OpenFormScriptDelegate extends BaseModelActionDelegate {
             FormNode formNode = getSelection();
             String fileName;
             if (!formNode.hasFormScript()) {
-                fileName = formNode.getNodeId() + "." + FormNode.SCRIPT_SUFFIX;
+                fileName = formNode.getId() + "." + FormNode.SCRIPT_SUFFIX;
             } else {
                 fileName = formNode.getScriptFileName();
             }

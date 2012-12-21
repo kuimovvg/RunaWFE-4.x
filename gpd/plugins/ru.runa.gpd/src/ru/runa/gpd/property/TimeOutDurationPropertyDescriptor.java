@@ -33,7 +33,7 @@ public class TimeOutDurationPropertyDescriptor extends PropertyDescriptor {
 
         @Override
         protected Object openDialogBox(Control cellEditorWindow) {
-            DurationEditDialog dialog = new DurationEditDialog(((GraphElement) timeOut).getProcessDefinition(), timeOut.getTimeOutDuration());
+            DurationEditDialog dialog = new DurationEditDialog(((GraphElement) timeOut).getProcessDefinition(), timeOut.getTimeOutDelay());
             return dialog.openDialog();
         }
     }

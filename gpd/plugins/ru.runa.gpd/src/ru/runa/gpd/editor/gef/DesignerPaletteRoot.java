@@ -32,6 +32,9 @@ public class DesignerPaletteRoot extends PaletteRoot {
         int idCounter = 1;
         for (NodeTypeDefinition type : NodeRegistry.getDefinitions()) {
             CreationFactory factory = new GEFElementCreationFactory(type, editor.getDefinition());
+            if (type.getJpdlElementName() == null) {
+                continue;
+            }
             PaletteEntry entry = null;
             if (NodeTypeDefinition.TYPE_NODE.equals(type.getType())) {
                 entry = new CreationToolEntry(type.getLabel(), null, factory, type.getImageDescriptor(Language.JPDL.getNotation()), null);

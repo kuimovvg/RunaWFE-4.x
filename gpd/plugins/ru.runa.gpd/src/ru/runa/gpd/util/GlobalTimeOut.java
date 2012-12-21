@@ -4,10 +4,10 @@ import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.settings.PrefConstants;
 
 public class GlobalTimeOut implements PrefConstants {
-    //private final TimerDuration timeOutDuration;
+    //private final Delay timeOutDuration;
     //private final TimerAction timeOutAction;
     public GlobalTimeOut() {
-        /*        timeOutDuration = new TimerDuration(TimerDuration.EMPTY);
+        /*        timeOutDuration = new Delay(Delay.EMPTY);
                 String stringDuration = DesignerPlugin.getPrefString(P_TASKS_TIMEOUT_DURATION);
                 if (stringDuration != null && !stringDuration.isEmpty()) {
                     timeOutDuration.setDuration(stringDuration);
@@ -37,7 +37,7 @@ public class GlobalTimeOut implements PrefConstants {
         return null;
     }
 
-    public TimerDuration getTimeOutDuration() {
+    public Delay getTimeOutDuration() {
         //return timeOutDuration;
         return null;
     }

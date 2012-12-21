@@ -24,6 +24,7 @@ public class StyleUtil {
     public static final IColorConstant FOREGROUND = new ColorConstant(0, 0, 0);
     public static final IColorConstant VERY_LIGHT_BLUE = new ColorConstant(246, 247, 255);
     public static final IColorConstant LIGHT_BLUE = new ColorConstant(3, 104, 154);
+    public static final IColorConstant BPMN_CLASS_FOREGROUND = new ColorConstant(0, 0, 0);
 
     public static Style getStyleForEvent(Diagram diagram) {
         final String styleId = "EVENT"; //$NON-NLS-1$
@@ -36,6 +37,44 @@ public class StyleUtil {
             style.setLineWidth(20);
         }
         return style;
+    }
+
+    public static Style getStyleForTask(Diagram diagram) {
+        final String styleId = "TASK"; //$NON-NLS-1$
+        Style style = findStyle(diagram, styleId);
+        if (style == null) { // style not found - create new style
+            IGaService gaService = Graphiti.getGaService();
+            style = gaService.createStyle(diagram, styleId);
+            style.setForeground(gaService.manageColor(diagram, BPMN_CLASS_FOREGROUND));
+            gaService.setRenderingStyle(style, getDefaultTaskColor(diagram));
+            style.setLineWidth(20);
+        }
+        return style;
+    }
+
+    private static AdaptedGradientColoredAreas getDefaultTaskColor(final Diagram diagram) {
+        final AdaptedGradientColoredAreas agca = StylesFactory.eINSTANCE.createAdaptedGradientColoredAreas();
+        agca.setDefinedStyleId("bpmnTaskStyle");
+        agca.setGradientType(IGradientType.VERTICAL);
+        final GradientColoredAreas defaultGradientColoredAreas = StylesFactory.eINSTANCE.createGradientColoredAreas();
+        defaultGradientColoredAreas.setStyleAdaption(IPredefinedRenderingStyle.STYLE_ADAPTATION_DEFAULT);
+        final EList<GradientColoredArea> gcas = defaultGradientColoredAreas.getGradientColor();
+        addGradientColoredArea(gcas, "FAFBFC", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "FFFFCC", 0, //$NON-NLS-1$ //$NON-NLS-2$
+                LocationType.LOCATION_TYPE_ABSOLUTE_END, diagram);
+        agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_DEFAULT, defaultGradientColoredAreas);
+        final GradientColoredAreas primarySelectedGradientColoredAreas = StylesFactory.eINSTANCE.createGradientColoredAreas();
+        primarySelectedGradientColoredAreas.setStyleAdaption(IPredefinedRenderingStyle.STYLE_ADAPTATION_DEFAULT);
+        final EList<GradientColoredArea> selectedGcas = primarySelectedGradientColoredAreas.getGradientColor();
+        addGradientColoredArea(selectedGcas, "E5E5C2", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "E5E5C2", 0, //$NON-NLS-1$ //$NON-NLS-2$
+                LocationType.LOCATION_TYPE_ABSOLUTE_END, diagram);
+        agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_PRIMARY_SELECTED, primarySelectedGradientColoredAreas);
+        final GradientColoredAreas secondarySelectedGradientColoredAreas = StylesFactory.eINSTANCE.createGradientColoredAreas();
+        secondarySelectedGradientColoredAreas.setStyleAdaption(IPredefinedRenderingStyle.STYLE_ADAPTATION_DEFAULT);
+        final EList<GradientColoredArea> secondarySelectedGcas = secondarySelectedGradientColoredAreas.getGradientColor();
+        addGradientColoredArea(secondarySelectedGcas, "E5E5C2", 0, LocationType.LOCATION_TYPE_ABSOLUTE_START, "E5E5C2", 0, //$NON-NLS-1$ //$NON-NLS-2$
+                LocationType.LOCATION_TYPE_ABSOLUTE_END, diagram);
+        agca.getAdaptedGradientColoredAreas().add(IPredefinedRenderingStyle.STYLE_ADAPTATION_SECONDARY_SELECTED, secondarySelectedGradientColoredAreas);
+        return agca;
     }
 
     // find the style with a given id in the style-container, can return null

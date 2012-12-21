@@ -28,11 +28,13 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 public class NewProcessDefinitionWizardPage extends WizardPage {
     private Combo projectCombo;
     private Text processText;
     private Combo languageCombo;
+    private Combo bpmnDisplaySwimlaneCombo;
     private final IWorkspaceRoot workspaceRoot;
     private final IStructuredSelection selection;
 
@@ -55,7 +57,8 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         composite.setLayout(layout);
         createProjectField(composite);
         createProcessNameField(composite);
-        createJpdlVersionCombo(composite);
+        createLanguageCombo(composite);
+        createBpmnDisplaySwimlaneCombo(composite);
         setControl(composite);
         Dialog.applyDialogFont(composite);
         setPageComplete(false);
@@ -95,15 +98,37 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         processText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
-    private void createJpdlVersionCombo(Composite parent) {
+    private void createLanguageCombo(Composite parent) {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("label.language"));
         languageCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
         for (Language language : Language.values()) {
             languageCombo.add(language.name());
         }
-        languageCombo.select(1);
+        languageCombo.select(0);
         languageCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        languageCombo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                boolean enabled = languageCombo.getSelectionIndex() == 1;
+                bpmnDisplaySwimlaneCombo.setEnabled(enabled);
+                if (!enabled) {
+                    bpmnDisplaySwimlaneCombo.select(0);
+                }
+            }
+        });
+    }
+
+    private void createBpmnDisplaySwimlaneCombo(Composite parent) {
+        Label label = new Label(parent, SWT.NONE);
+        label.setText(Localization.getString("label.bpmn.display.swimlane"));
+        bpmnDisplaySwimlaneCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+        bpmnDisplaySwimlaneCombo.setEnabled(false);
+        for (SwimlaneDisplayMode mode : SwimlaneDisplayMode.values()) {
+            bpmnDisplaySwimlaneCombo.add(mode.getLabel());
+        }
+        bpmnDisplaySwimlaneCombo.select(0);
+        bpmnDisplaySwimlaneCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     private IProject getInitialJavaElement(IStructuredSelection selection) {

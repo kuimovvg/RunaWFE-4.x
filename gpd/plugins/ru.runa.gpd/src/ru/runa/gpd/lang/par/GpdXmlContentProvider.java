@@ -107,7 +107,7 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             canvasShift = 5;
         }
         // calculating negative offsets;
-        for (Node node : definition.getNodes()) {
+        for (Node node : definition.getNodesRecursive()) {
             Rectangle constraints = node.getConstraint();
             if (constraints.x - canvasShift < xOffset) {
                 xOffset = constraints.x - canvasShift;
@@ -128,7 +128,7 @@ public class GpdXmlContentProvider extends AuxContentProvider {
         }
         for (Node node : definition.getNodes()) {
             Element element = root.addElement(NODE_ELEMENT_NAME);
-            addAttribute(element, NAME_ATTRIBUTE_NAME, node.getNodeId());
+            addAttribute(element, NAME_ATTRIBUTE_NAME, node.getId());
             Rectangle constraint = node.getConstraint();
             if (constraint.width == 0 || constraint.height == 0) {
                 throw new Exception("Invalid figure size: " + constraint.getSize());
