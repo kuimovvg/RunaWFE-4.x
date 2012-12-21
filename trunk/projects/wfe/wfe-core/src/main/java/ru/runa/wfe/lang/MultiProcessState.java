@@ -56,7 +56,7 @@ public class MultiProcessState extends SubProcessState {
             String varName = null, groupName = null, relationName = null;
             String varSubName = null, groupSubName = null, relationSubName = null;
             for (VariableMapping vm : variableMappings) {
-                if ("multiinstance-vars".equals(vm.getAccess())) {
+                if (vm.isMultiinstanceVariable()) {
                     if ("tabVariableProcessVariable".equals(vm.getName())) {
                         varName = vm.getMappedName();
                     } else if ("tabVariableSubProcessVariable".equals(vm.getName())) {
@@ -166,8 +166,10 @@ public class MultiProcessState extends SubProcessState {
             Executor executor = executorDAO.getExecutor(rightExecutorName);
             executorRightList.add(executor);
             // if (executor instanceof Actor) {
-            // BatchPresentation batchPresentation = AFProfileStrategy.EXECUTOR_DEAFAULT_BATCH_PRESENTATOIN_FACTORY.getDefaultBatchPresentation();
-            // executorRightList.addAll(executorDAO.getExecutorGroups(executor, batchPresentation));
+            // BatchPresentation batchPresentation =
+            // AFProfileStrategy.EXECUTOR_DEAFAULT_BATCH_PRESENTATOIN_FACTORY.getDefaultBatchPresentation();
+            // executorRightList.addAll(executorDAO.getExecutorGroups(executor,
+            // batchPresentation));
             // }
             List<RelationPair> relationPairList = relationDAO.getExecutorsRelationPairsRight(relationName, executorRightList);
             Set<Actor> actorList = new HashSet<Actor>();
