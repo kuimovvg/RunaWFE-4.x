@@ -38,9 +38,11 @@ import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
+import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.CopyGraphRewriteDialog;
+import ru.runa.gpd.util.Delay;
 import ru.runa.gpd.util.VariableMapping;
 
 public class CopyGraphCommand extends Command {
@@ -83,7 +85,7 @@ public class CopyGraphCommand extends Command {
                     definition = NodeRegistry.getNodeTypeDefinition(StartState.class);
                 } else if (node instanceof EndState && targetDefinition.getChildren(EndState.class).size() == 0) {
                     definition = NodeRegistry.getNodeTypeDefinition(EndState.class);
-                } else if (targetDefinition.getNodeById(node.getNodeId()) == null) {
+                } else if (targetDefinition.getNodeById(node.getId()) == null) {
                     definition = NodeRegistry.getNodeTypeDefinition(node.getClass());
                 }
                 if (definition != null) {
@@ -91,13 +93,18 @@ public class CopyGraphCommand extends Command {
                     copy.setName(node.getName());
                     copy.setDescription(node.getDescription());
                     copy.setConstraint(node.getConstraint());
-                    if (node instanceof ITimed && ((ITimed) node).timerExist()) {
-                        ((ITimed) copy).setDueDate(((ITimed) node).getDuration().getDuration());
-                        String variableName = ((ITimed) node).getDuration().getVariableName();
-                        if (variableName != null) {
-                            Variable variable = copyBuffer.getSourceDefinition().getVariablesMap().get(variableName);
-                            CopyVariableAction copyAction = new CopyVariableAction(variable);
-                            elements.add(copyAction);
+                    if (node instanceof ITimed) {
+                        Timer timer = ((ITimed) node).getTimer();
+                        if (timer != null) {
+                            Timer copyTimer = new Timer();
+                            copyTimer.setDelay(new Delay(timer.getDelay()));
+                            String variableName = timer.getDelay().getVariableName();
+                            if (variableName != null) {
+                                Variable variable = copyBuffer.getSourceDefinition().getVariablesMap().get(variableName);
+                                CopyVariableAction copyAction = new CopyVariableAction(variable);
+                                elements.add(copyAction);
+                            }
+                            copy.addChild(copyTimer);
                         }
                     }
                     if (node instanceof State) {
@@ -199,7 +206,7 @@ public class CopyGraphCommand extends Command {
             // set swimlanes
             for (Node node : targetNodeList.values()) {
                 if (node instanceof SwimlanedNode) {
-                    SwimlanedNode sourceNode = copyBuffer.getSourceDefinition().getNodeByIdNotNull(node.getNodeId());
+                    SwimlanedNode sourceNode = copyBuffer.getSourceDefinition().getNodeByIdNotNull(node.getId());
                     Swimlane swimlane = targetDefinition.getSwimlaneByName(sourceNode.getSwimlaneName());
                     ((SwimlanedNode) node).setSwimlane(swimlane);
                 }

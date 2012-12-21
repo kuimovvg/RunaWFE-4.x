@@ -20,7 +20,8 @@ import org.eclipse.graphiti.services.Graphiti;
 import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.editor.graphiti.GaProperty;
-import ru.runa.gpd.editor.graphiti.add.AddStateNodeFeature;
+import ru.runa.gpd.editor.graphiti.add.AddGraphElementFeature;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 
 import com.google.common.base.Objects;
@@ -33,12 +34,11 @@ public class ResizeNodeFeature extends DefaultResizeShapeFeature implements GEFC
     @Override
     public boolean canResizeShape(IResizeShapeContext context) {
         Shape shape = context.getShape();
-        Node node = (Node) getBusinessObjectForPictogramElement(shape);
-        if (node != null) {
-            IAddFeature addFeature = ((DiagramFeatureProvider) getFeatureProvider()).getAddFeature(node.getClass());
-            if (addFeature instanceof AddStateNodeFeature) {
-                //return !((AddNodeFeature) addFeature).isFixedSize();
-                return true;
+        GraphElement element = (GraphElement) getBusinessObjectForPictogramElement(shape);
+        if (element != null) {
+            IAddFeature addFeature = ((DiagramFeatureProvider) getFeatureProvider()).getAddFeature(element.getClass());
+            if (addFeature instanceof AddGraphElementFeature) {
+                return !((AddGraphElementFeature) addFeature).isFixedSize();
             }
         }
         return false;

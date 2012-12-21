@@ -1,19 +1,20 @@
 package ru.runa.gpd.lang.model;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.util.TimerDuration;
+import ru.runa.gpd.util.Delay;
+
+import com.google.common.base.Strings;
 
 public class TimerAction extends Action {
-    public final static TimerAction NONE = new TimerAction(null);
-    private TimerDuration repeat = new TimerDuration(TimerDuration.EMPTY);
-    private final ProcessDefinition definition;
+    public final static TimerAction NONE = new TimerAction();
+    private Delay repeatDelay = new Delay();
+    private ProcessDefinition definition;
 
-    public TimerAction(ProcessDefinition definition) {
-        this.definition = definition;
+    public TimerAction() {
     }
 
-    public TimerDuration getRepeat() {
-        return repeat;
+    public Delay getRepeatDelay() {
+        return repeatDelay;
     }
 
     @Override
@@ -26,24 +27,28 @@ public class TimerAction extends Action {
         return definition;
     }
 
-    public void setRepeat(String repeat) {
-        if (repeat != null) {
-            this.repeat = new TimerDuration(repeat);
+    public void setDefinition(ProcessDefinition definition) {
+        this.definition = definition;
+    }
+
+    public void setRepeatDuration(String duration) {
+        if (!Strings.isNullOrEmpty(duration)) {
+            this.repeatDelay = new Delay(duration);
         }
     }
 
     public boolean isValid() {
-        return getDelegationClassName().length() > 0;
+        return !Strings.isNullOrEmpty(getDelegationClassName());
     }
 
     @Override
     public String toString() {
-        if (getDelegationClassName().length() == 0) {
+        if (Strings.isNullOrEmpty(getDelegationClassName())) {
             return "";
         }
         StringBuffer buffer = new StringBuffer(getDelegationClassName());
         buffer.append(" | ");
-        buffer.append(repeat.hasDuration() ? repeat : Localization.getString("duration.norepeat"));
+        buffer.append(repeatDelay.hasDuration() ? repeatDelay : Localization.getString("duration.norepeat"));
         return buffer.toString();
     }
 }

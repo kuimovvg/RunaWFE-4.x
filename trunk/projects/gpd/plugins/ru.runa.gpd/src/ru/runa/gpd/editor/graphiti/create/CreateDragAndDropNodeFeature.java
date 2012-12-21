@@ -10,8 +10,6 @@ import org.eclipse.graphiti.features.impl.AbstractCreateConnectionFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 
@@ -90,13 +88,8 @@ public class CreateDragAndDropNodeFeature extends AbstractCreateConnectionFeatur
         //createContext.setTargetConnection(targetConnection);
         createContext.setTargetContainer(getDiagram());
         Node node = NodeRegistry.getNodeTypeDefinition(Decision.class).createElement(processDefinition);
-        ContainerShape targetContainer = createContext.getTargetContainer();
-        if (targetContainer instanceof Diagram) {
-            processDefinition.addChild(node);
-        } else {
-            Object parent = getBusinessObjectForPictogramElement(targetContainer);
-            ((Node) parent).addChild(node);
-        }
+        Object parent = getBusinessObjectForPictogramElement(createContext.getTargetContainer());
+        ((Node) parent).addChild(node);
         PictogramElement element = getFeatureProvider().addIfPossible(new AddContext(createContext, node));
         ((CreateConnectionContext) context).setTargetPictogramElement(element);
         ((CreateConnectionContext) context).setTargetAnchor(Graphiti.getPeService().getChopboxAnchor((AnchorContainer) element));

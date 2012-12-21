@@ -25,6 +25,7 @@ import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.TaskState;
+import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 
 public class TransitionGraphicalEditPart extends AbstractConnectionEditPart implements PropertyNames, PropertyChangeListener, ActionsHost {
@@ -47,12 +48,9 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
             figure.setLabelText(transition.getName());
         }
         if (transition.getSource() instanceof ITimed && transition.getName().equals(PluginConstants.TIMER_TRANSITION_NAME)) {
-            ITimed state = (ITimed) transition.getSource();
-            if (state.getDuration() != null) {
-                figure.setLabelText(state.getDuration().toString());
-            } else {
-                figure.setLabelText("");
-            }
+            Timer timer = ((ITimed) transition.getSource()).getTimer();
+            String labelText = timer != null ? timer.getDelay().toString() : "";
+            figure.setLabelText(labelText);
         }
         figure.addRoutingListener(new RoutingListener() {
             @Override
@@ -168,16 +166,16 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
                 provider.transitionRenamed(decision, (String) evt.getOldValue(), (String) evt.getNewValue());
             }
             if (transition.getSource() instanceof ITimed) {
-                ITimed state = (ITimed) transition.getSource();
-                String labelText = state.timerExist() ? state.getDuration().toString() : "";
+                Timer timer = ((ITimed) transition.getSource()).getTimer();
+                String labelText = timer != null ? timer.getDelay().toString() : "";
                 getFigure().setLabelText(labelText);
             }
             refreshVisuals();
-        } else if (PROPERTY_TIMER_DURATION.equals(messageId)) {
+        } else if (PROPERTY_TIMER_DELAY.equals(messageId)) {
             Transition transition = getModel();
             if (transition.getName().equals(PluginConstants.TIMER_TRANSITION_NAME)) {
-                ITimed state = (ITimed) transition.getSource();
-                getFigure().setLabelText(state.getDuration().toString());
+                Timer timer = ((ITimed) transition.getSource()).getTimer();
+                getFigure().setLabelText(timer != null ? timer.getDelay().toString() : "");
                 refreshVisuals();
             }
         } else if (NODE_CHILDS_CHANGED.equals(messageId)) {

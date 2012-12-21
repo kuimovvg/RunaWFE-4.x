@@ -3,6 +3,7 @@ package ru.runa.gpd.editor.graphiti.add;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.ITargetContext;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -19,7 +20,7 @@ public class AddNodeWithImageFeature extends AddNodeFeature {
     }
 
     @Override
-    public Dimension getDefaultSize() {
+    public Dimension getDefaultSize(ITargetContext context) {
         return new Dimension(4 * GRID_SIZE, 4 * GRID_SIZE);
     }
 

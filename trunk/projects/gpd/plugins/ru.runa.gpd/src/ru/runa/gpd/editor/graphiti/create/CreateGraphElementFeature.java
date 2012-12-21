@@ -6,24 +6,23 @@ import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 
 import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
-import ru.runa.gpd.editor.graphiti.add.AddNodeFeature;
+import ru.runa.gpd.editor.graphiti.add.AddGraphElementFeature;
 import ru.runa.gpd.lang.NodeTypeDefinition;
-import ru.runa.gpd.lang.model.Node;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Swimlane;
 
-public class CreateNodeFeature extends AbstractCreateFeature implements GEFConstants {
+public class CreateGraphElementFeature extends AbstractCreateFeature implements GEFConstants {
     public static final String CONNECTION_PROPERTY = "connectionContext";
     private NodeTypeDefinition nodeDefinition;
     private DiagramFeatureProvider featureProvider;
 
-    public CreateNodeFeature() {
+    public CreateGraphElementFeature() {
         super(null, "", "");
     }
 
@@ -60,21 +59,15 @@ public class CreateNodeFeature extends AbstractCreateFeature implements GEFConst
 
     @Override
     public boolean canCreate(ICreateContext context) {
-        //        Object parentObject = getBusinessObjectForPictogramElement(context.getTargetContainer());
-        //        return (context.getTargetContainer() instanceof Diagram || parentObject instanceof Subprocess);
-        return true;
+        Object parentObject = getBusinessObjectForPictogramElement(context.getTargetContainer());
+        return (parentObject instanceof ProcessDefinition || parentObject instanceof Swimlane);
     }
 
     @Override
     public Object[] create(ICreateContext context) {
-        Node node = getNodeDefinition().createElement(getProcessDefinition());
-        ContainerShape targetContainer = context.getTargetContainer();
-        if (targetContainer instanceof Diagram) {
-            getProcessDefinition().addChild(node);
-        } else {
-            Object parent = getBusinessObjectForPictogramElement(targetContainer);
-            ((Node) parent).addChild(node);
-        }
+        GraphElement node = getNodeDefinition().createElement(getProcessDefinition());
+        Object parent = getBusinessObjectForPictogramElement(context.getTargetContainer());
+        ((GraphElement) parent).addChild(node);
         CreateConnectionContext connectionContext = (CreateConnectionContext) context.getProperty(CONNECTION_PROPERTY);
         setLocation(node, (CreateContext) context, connectionContext);
         PictogramElement element = addGraphicalRepresentation(context, node);
@@ -88,12 +81,11 @@ public class CreateNodeFeature extends AbstractCreateFeature implements GEFConst
         return new Object[] { node };
     }
 
-    private void setLocation(Node target, CreateContext context, CreateConnectionContext connectionContext) {
+    private void setLocation(GraphElement target, CreateContext context, CreateConnectionContext connectionContext) {
         if (connectionContext != null) {
             PictogramElement sourceElement = connectionContext.getSourcePictogramElement();
             int xRight = sourceElement.getGraphicsAlgorithm().getX() + sourceElement.getGraphicsAlgorithm().getWidth();
-            //int yCenter = sourceElement.getGraphicsAlgorithm().getY() + sourceElement.getGraphicsAlgorithm().getHeight() / 2;
-            Dimension targetSize = ((AddNodeFeature) getFeatureProvider().getAddFeature(target.getClass())).getDefaultSize();
+            Dimension targetSize = ((AddGraphElementFeature) getFeatureProvider().getAddFeature(target.getClass())).getDefaultSize(context);
             int yDelta = (targetSize.height - sourceElement.getGraphicsAlgorithm().getHeight()) / 2;
             context.setLocation(xRight + 100, sourceElement.getGraphicsAlgorithm().getY() - yDelta);
         }

@@ -2,6 +2,7 @@ package ru.runa.gpd.editor.graphiti.add;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.ITargetContext;
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.algorithms.MultiText;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
@@ -21,7 +22,7 @@ import ru.runa.gpd.lang.model.SwimlanedNode;
 
 public class AddStateNodeFeature extends AddNodeFeature {
     @Override
-    public Dimension getDefaultSize() {
+    public Dimension getDefaultSize(ITargetContext context) {
         return new Dimension(11 * GRID_SIZE, 7 * GRID_SIZE);
     }
 
