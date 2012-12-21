@@ -1,27 +1,22 @@
 package ru.runa.gpd.lang.model;
 
-
 import ru.runa.gpd.util.VariableMapping;
 
 public class MultiSubprocess extends Subprocess {
-
     @Override
     protected void validate() {
         super.validate();
         boolean readMultiinstanceLinkExists = false;
         boolean needTest = true;
         for (VariableMapping variableMapping : variablesList) {
-            if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(variableMapping.getUsage())
-                    && variableMapping.getProcessVariable().equals("typeMultiInstance")) {
+            if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(variableMapping.getUsage()) && variableMapping.getProcessVariable().equals("typeMultiInstance")) {
                 needTest = false;
             }
-            if (variableMapping.getUsage().contains(VariableMapping.USAGE_MULTIINSTANCE_LINK)
-                    && variableMapping.getUsage().contains(VariableMapping.USAGE_READ)
+            if (variableMapping.getUsage().contains(VariableMapping.USAGE_MULTIINSTANCE_LINK) && variableMapping.getUsage().contains(VariableMapping.USAGE_READ)
                     && !variableMapping.getUsage().contains(VariableMapping.USAGE_WRITE)) {
                 readMultiinstanceLinkExists = true;
             }
         }
-
         if (needTest && !readMultiinstanceLinkExists) {
             addError("multiinstance.noMultiinstanceLink");
             return;
@@ -35,5 +30,4 @@ public class MultiSubprocess extends Subprocess {
         }
         return super.isCompatibleTypes(processVarFormat, subProcessVarFormat);
     }
-
 }

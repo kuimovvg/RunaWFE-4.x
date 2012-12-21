@@ -32,6 +32,7 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.editor.graphiti.add.AddTransitionBendpointFeature;
 import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
 import ru.runa.gpd.editor.graphiti.update.DeleteElementFeature;
+import ru.runa.gpd.editor.graphiti.update.DirectEditDescriptionFeature;
 import ru.runa.gpd.editor.graphiti.update.DirectEditNodeNameFeature;
 import ru.runa.gpd.editor.graphiti.update.MoveNodeFeature;
 import ru.runa.gpd.editor.graphiti.update.MoveTransitionBendpointFeature;
@@ -43,6 +44,7 @@ import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.TextAnnotation;
 import ru.runa.gpd.util.ProjectFinder;
 
 import com.google.common.base.Strings;
@@ -63,10 +65,18 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
     public ICreateFeature[] getCreateFeatures() {
         List<ICreateFeature> list = Lists.newArrayList();
         for (NodeTypeDefinition definition : NodeRegistry.getDefinitions()) {
-            if (definition.getGraphitiEntry() != null && NodeTypeDefinition.TYPE_NODE.equals(definition.getType())) {
-                if (!Strings.isNullOrEmpty(definition.getBpmnElementName())) {
+            if (definition.getGraphitiEntry() != null && !Strings.isNullOrEmpty(definition.getBpmnElementName())) {
+                if (NodeTypeDefinition.TYPE_NODE.equals(definition.getType())) {
                     list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
                 }
+                if (NodeTypeDefinition.TYPE_ARTIFACT.equals(definition.getType())) {
+                    list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
+                }
+                //    TODO            if ("lane".equals(definition.getBpmnElementName())) {
+                //                                        if (SwimlaneDisplayMode.none != getCurrentProcessDefinition().getSwimlaneDisplayMode()) {
+                //                    list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
+                //                                        }
+                //                }
             }
         }
         return list.toArray(new ICreateFeature[list.size()]);
@@ -137,6 +147,9 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
         Object bo = getBusinessObjectForPictogramElement(pe);
         if (bo instanceof Node) {
             return new DirectEditNodeNameFeature(this);
+        }
+        if (bo instanceof TextAnnotation) {
+            return new DirectEditDescriptionFeature(this);
         }
         return null;
     }

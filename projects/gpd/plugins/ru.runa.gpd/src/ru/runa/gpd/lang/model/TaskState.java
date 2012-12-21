@@ -11,19 +11,18 @@ import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
 import ru.runa.gpd.property.EscalationDurationPropertyDescriptor;
 import ru.runa.gpd.property.TimeOutDurationPropertyDescriptor;
-import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 import ru.runa.gpd.settings.PrefConstants;
-import ru.runa.gpd.util.TimerDuration;
+import ru.runa.gpd.util.Delay;
 import ru.runa.wfe.handler.action.EscalationActionHandler;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 
 public class TaskState extends State implements Synchronizable {
-    private TimerAction timerAction;
     private TimerAction escalationAction;
     private boolean ignoreSubstitution;
     private boolean useEscalation;
-    private TimerDuration escalationTime;
+    private Delay escalationDelay = new Delay();
     private boolean async;
 
     @Override
@@ -58,34 +57,32 @@ public class TaskState extends State implements Synchronizable {
         this.escalationAction = escalationAction;
     }
 
-    public TimerDuration getEscalationTime() {
-        return escalationTime;
+    public Delay getEscalationDelay() {
+        return escalationDelay;
     }
 
-    public void setEscalationTime(TimerDuration escalationTime) {
-        this.escalationTime = escalationTime;
-        firePropertyChange(PROPERTY_ESCALATION, null, escalationTime);
+    public void setEscalationDelay(Delay escalationDelay) {
+        this.escalationDelay = escalationDelay;
+        firePropertyChange(PROPERTY_ESCALATION, null, escalationDelay);
     }
 
     public boolean isUseEscalation() {
         return useEscalation;
     }
 
-    public void setUseEscalation(boolean useEscalation) {
+    public void setUseEscalation(boolean useEscalation) { // TODO refactor
         if (escalationAction == null || !this.useEscalation) {
-            escalationAction = new TimerAction(getProcessDefinition());
+            escalationAction = new TimerAction();
             escalationAction.setDelegationClassName(EscalationActionHandler.class.getName());
             String org_function = Activator.getPrefString(PrefConstants.P_ESCALATION_CONFIG);
             escalationAction.setDelegationConfiguration(org_function);
             String repeat = Activator.getPrefString(PrefConstants.P_ESCALATION_REPEAT);
-            if (repeat != null && repeat != "" && (new TimerDuration(repeat).hasDuration())) {
-                escalationAction.setRepeat(repeat);
+            if (!Strings.isNullOrEmpty(repeat)) {
+                escalationAction.setRepeatDuration(repeat);
             }
             String expirationTime = Activator.getPrefString(PrefConstants.P_ESCALATION_DURATION);
-            if (expirationTime != null && expirationTime != "" && (new TimerDuration(expirationTime).hasDuration())) {
-                escalationTime = new TimerDuration(expirationTime);
-            } else {
-                escalationTime = null;
+            if (!Strings.isNullOrEmpty(expirationTime)) {
+                escalationDelay = new Delay(expirationTime);
             }
         }
         this.useEscalation = useEscalation;
@@ -114,21 +111,6 @@ public class TaskState extends State implements Synchronizable {
     }
 
     @Override
-    public void setTimerAction(TimerAction timerAction) {
-        if (timerAction == TimerAction.NONE) {
-            timerAction = null;
-        }
-        TimerAction old = this.timerAction;
-        this.timerAction = timerAction;
-        firePropertyChange(PROPERTY_TIMER_ACTION, old, this.timerAction);
-    }
-
-    @Override
-    public TimerAction getTimerAction() {
-        return timerAction;
-    }
-
-    @Override
     public TimerAction getTimeOutAction() {
         return null;
     }
@@ -146,11 +128,8 @@ public class TaskState extends State implements Synchronizable {
     @Override
     public List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
-        if (timerExist() && !hasTimeoutTransition()) {
-            list.add(new TimerActionPropertyDescriptor(PROPERTY_TIMER_ACTION, Localization.getString("Timer.action"), this));
-        }
         list.add(new PropertyDescriptor(PROPERTY_IGNORE_SUBSTITUTION, Localization.getString("property.ignoreSubstitution")));
-        list.add(new TimeOutDurationPropertyDescriptor(PROPERTY_TIMEOUT_DURATION, this));
+        list.add(new TimeOutDurationPropertyDescriptor(PROPERTY_TIMEOUT_DELAY, this));
         if (useEscalation) {
             list.add(new EscalationActionPropertyDescriptor(PROPERTY_ESCALATION_ACTION, Localization.getString("escalation.action"), this));
             list.add(new EscalationDurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, this));
@@ -161,17 +140,14 @@ public class TaskState extends State implements Synchronizable {
 
     @Override
     public Object getPropertyValue(Object id) {
-        if (PROPERTY_TIMER_ACTION.equals(id)) {
-            return timerAction;
-        }
         if (PROPERTY_ESCALATION_DURATION.equals(id)) {
-            if (escalationTime == null || !escalationTime.hasDuration()) {
-                return "";
+            if (escalationDelay.hasDuration()) {
+                return escalationDelay;
             }
-            return escalationTime;
+            return "";
         }
-        if (PROPERTY_TIMEOUT_DURATION.equals(id)) {
-            TimerDuration d = getTimeOutDuration();
+        if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
+            Delay d = getTimeOutDelay();
             if (d == null || !d.hasDuration()) {
                 return "";
             }
@@ -191,18 +167,10 @@ public class TaskState extends State implements Synchronizable {
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        if (PROPERTY_TIMER_ACTION.equals(id)) {
-            setTimerAction((TimerAction) value);
-        } else if (PROPERTY_TIMEOUT_DURATION.equals(id)) {
-            if (value == null) {
-                // ignore, edit was canceled
-                return;
-            }
-            setTimeOutDuration((TimerDuration) value);
-        } else if (PROPERTY_ESCALATION_ACTION.equals(id)) {
+        if (PROPERTY_ESCALATION_ACTION.equals(id)) {
             setEscalationAction((TimerAction) value);
         } else if (PROPERTY_ESCALATION_DURATION.equals(id)) {
-            setEscalationTime((TimerDuration) value);
+            setEscalationDelay((Delay) value);
         } else {
             super.setPropertyValue(id, value);
         }

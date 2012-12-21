@@ -72,6 +72,8 @@
                   </enumeration>
                   <enumeration value="deprecated">
                   </enumeration>
+                  <enumeration value="behaviour">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>
@@ -206,6 +208,15 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -231,14 +242,5 @@
       </documentation>
    </annotation>
 
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
 
 </schema>

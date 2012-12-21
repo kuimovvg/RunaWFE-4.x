@@ -26,7 +26,7 @@ public class CreateFormDelegate extends BaseModelActionDelegate {
             if (!FormTypeProvider.getFormType(formNode.getFormType()).isCreationAllowed()) {
                 throw new UnsupportedOperationException("DEPRACATED. Creation does not allowed.");
             }
-            String fileName = formNode.getNodeId().concat(".").concat(formNode.getFormType());
+            String fileName = formNode.getId().concat(".").concat(formNode.getFormType());
             IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), fileName);
             if (!file.exists()) {
                 file = IOUtils.createFileSafely(file);
