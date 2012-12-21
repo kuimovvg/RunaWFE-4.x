@@ -38,7 +38,6 @@
   <artifact enabled="true" name="ru.runa.wfe.var.format.DateTimeFormat" label="Дата со временем"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.DoubleFormat" label="Дробное число"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.ExecutorFormat" label="Исполнитель"/>
-  <artifact enabled="true" name="ru.runa.wfe.var.format.StringArrayFormat" label="Массив строк"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.ListFormat" label="Список"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.StringFormat" label="Строка"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.FileFormat" label="Файл"/>

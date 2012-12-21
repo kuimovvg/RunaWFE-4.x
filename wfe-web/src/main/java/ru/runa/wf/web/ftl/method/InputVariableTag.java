@@ -85,7 +85,7 @@ public class InputVariableTag extends FreemarkerTag {
             html += "/>";
         }
         if (html.length() == 0) {
-            log.warn("No HTML built (" + variableName + ") for format " + variable.getDefinition().getFormat());
+            log.warn("No HTML built (" + variableName + ") for format " + format);
         }
         return html;
     }
