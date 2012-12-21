@@ -23,65 +23,56 @@ package ru.runa.wfe.var;
 
 import java.io.Serializable;
 
-/**
- * specifies access to a variable. Variable access is used in 3 situations: 1) process-state 2) script 3) task controllers
- */
 public class VariableMapping implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static final String ACCESS_SELECTOR = "selector";
-    public static final String ACCESS_MULTIINSTANCELINK = "multiinstancelink";
-    public static final String ACCESS_REQUIRED = "required";
-    public static final String ACCESS_WRITE = "write";
-    public static final String ACCESS_READ = "read";
+    public static final String USAGE_READ = "read";
+    public static final String USAGE_WRITE = "write";
+    public static final String USAGE_MULTIINSTANCE_LINK = "multiinstancelink";
+    public static final String USAGE_MULTIINSTANCE_VARS = "multiinstance-vars";
+    public static final String USAGE_SELECTOR = "selector";
 
-    protected String name;
-    protected String mappedName;
-    protected String access;
+    private String name;
+    private String mappedName;
+    private String usage;
 
-    public VariableMapping(String variableName, String mappedName, String access) {
-        this.name = variableName;
+    public VariableMapping(String name, String mappedName, String usage) {
+        this.name = name;
         this.mappedName = mappedName;
-        this.access = access;
+        this.usage = usage;
     }
 
     public boolean isReadable() {
-        return hasAccess(ACCESS_READ);
+        return hasUsage(USAGE_READ);
     }
 
     public boolean isWritable() {
-        return hasAccess(ACCESS_WRITE);
-    }
-
-    public boolean isRequired() {
-        return hasAccess(ACCESS_REQUIRED);
+        return hasUsage(USAGE_WRITE);
     }
 
     public boolean isMultiinstanceLink() {
-        return hasAccess(ACCESS_MULTIINSTANCELINK);
+        return hasUsage(USAGE_MULTIINSTANCE_LINK);
+    }
+
+    public boolean isMultiinstanceVariable() {
+        return hasUsage(USAGE_MULTIINSTANCE_VARS);
     }
 
     public boolean isPropertySelector() {
-        return hasAccess(ACCESS_SELECTOR);
+        return hasUsage(USAGE_SELECTOR);
     }
 
-    /**
-     * verifies if the given accessLiteral is included in the access text.
-     */
-    public boolean hasAccess(String accessLiteral) {
-        if (access == null) {
+    private boolean hasUsage(String accessLiteral) {
+        if (usage == null) {
             return false;
         }
-        return access.indexOf(accessLiteral) != -1;
+        return usage.indexOf(accessLiteral) != -1;
     }
 
-    public String getAccess() {
-        return access;
+    public String getUsage() {
+        return usage;
     }
 
-    /**
-     * the mapped name. The mappedName defaults to the variableName in case no mapped name is specified.
-     */
     public String getMappedName() {
         return mappedName;
     }
@@ -92,7 +83,7 @@ public class VariableMapping implements Serializable {
 
     @Override
     public String toString() {
-        return name + ":" + mappedName + ":" + access;
+        return name + ":" + mappedName + ":" + usage;
     }
 
 }
