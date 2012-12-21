@@ -1,6 +1,8 @@
 package ru.runa.gpd.lang.model;
 
+
 public abstract class NamedGraphElement extends GraphElement {
+    private String id;
     private String name;
 
     public NamedGraphElement() {
@@ -8,6 +10,14 @@ public abstract class NamedGraphElement extends GraphElement {
 
     protected NamedGraphElement(String name) {
         this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String nodeId) {
+        this.id = nodeId;
     }
 
     public String getName() {
@@ -26,6 +36,9 @@ public abstract class NamedGraphElement extends GraphElement {
 
     @Override
     public Object getPropertyValue(Object id) {
+        if (PROPERTY_ID.equals(id)) {
+            return getId();
+        }
         if (PROPERTY_NAME.equals(id)) {
             return safeStringValue(name);
         }

@@ -147,6 +147,7 @@
       <import plugin="org.eclipse.emf.edit"/>
       <import plugin="org.eclipse.emf.transaction"/>
       <import plugin="org.eclipse.emf.ecore.xmi"/>
+      <import plugin="org.apache.xerces"/>
    </requires>
 
    <extension-point id="elements" name="Process elements" schema="schema/elements.exsd"/>
@@ -661,7 +662,7 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddTaskStateFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature"
                update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature">
          </graphiti>
       </element>
@@ -679,22 +680,6 @@
       </element>
       <element
       		type="node"
-            model="ru.runa.gpd.lang.model.WaitState"
-            jpdl="wait-state"
-            icon="waitstate.png"
-            label="%label.element.waitstate">
-         <gef 
-            figure="ru.runa.gpd.editor.gef.figure.WaitStateFigure"
-            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
-            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
-         </gef>
-         <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
-         </graphiti>
-      </element>
-      <element
-      		type="node"
             model="ru.runa.gpd.lang.model.EndState"
             jpdl="end-state"
             bpmn="endEvent"
@@ -707,7 +692,7 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
          </graphiti>
       </element>
       <element
@@ -724,11 +709,10 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
          </graphiti>
       </element>
       <element
-            bpmn="forkGateway"
             icon="fork.png"
             jpdl="fork"
             label="%label.element.fork"
@@ -739,13 +723,8 @@
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.NodeGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
-         <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
-         </graphiti>
       </element>
       <element
-            bpmn="joinGateway"
             icon="join.png"
             jpdl="join"
             label="%label.element.join"
@@ -756,9 +735,16 @@
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.NodeGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
+      </element>
+      <element
+            bpmn="parallelGateway"
+            icon="parallelGateway.png"
+            label="%label.element.parallelGateway"
+            model="ru.runa.gpd.lang.model.ParallelGateway"
+            type="node">
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
          </graphiti>
       </element>
       <element
@@ -775,7 +761,7 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
          </graphiti>
       </element>
       <element
@@ -791,14 +777,30 @@
          </gef>
       </element>
       <element
-            bpmn="swimlane"
+            bpmn="lane"
             jpdl="swimlane"
             label="%default.swimlane.name"
+            icon="swimlane.png" 
             model="ru.runa.gpd.lang.model.Swimlane"
             type="artifact">
          <gef 
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.SwimlaneTreeEditPart">
          </gef>
+         <graphiti
+               add="ru.runa.gpd.editor.graphiti.add.AddSwimlaneFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateSwimlaneFeature">
+         </graphiti>
+      </element>
+      <element
+            bpmn="textAnnotation"
+            label="%label.element.textAnnotation"
+            icon="textAnnotation.png"
+            model="ru.runa.gpd.lang.model.TextAnnotation"
+            type="artifact">
+         <graphiti
+               add="ru.runa.gpd.editor.graphiti.add.AddTextAnnotationFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
+         </graphiti>
       </element>
       <element
       		type="artifact"
@@ -835,7 +837,7 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddSubProcessFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature"
                update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature">
          </graphiti>
       </element>
@@ -853,7 +855,7 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddMultiInstanceFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature"
                update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature">
          </graphiti>
       </element>
@@ -874,7 +876,7 @@
          </onVariableRenamed>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
          </graphiti>
       </element>
       <element
@@ -894,7 +896,7 @@
          </onVariableRenamed>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateNodeFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
          </graphiti>
       </element>
       <element
@@ -907,6 +909,23 @@
                graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.ActionNodeGraphicalEditPart"
                treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
+      </element>
+      <element
+            bpmn="timerEventDefinition"
+            jpdl="wait-state"
+            icon="timer.png"
+            label="%label.element.timer"
+            model="ru.runa.gpd.lang.model.Timer"
+            type="node">
+         <gef 
+            figure="ru.runa.gpd.editor.gef.figure.WaitStateFigure"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
+            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
+         </gef>
+         <graphiti
+               add="ru.runa.gpd.editor.graphiti.add.AddTimerFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateTimerFeature">
+         </graphiti>
       </element>
    </extension>
    
@@ -1082,7 +1101,7 @@
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.BSHActionHandlerProvider"
+            cellEditorProvider="ru.runa.gpd.handler.action.GroovyActionHandlerProvider"
             className="ru.runa.wfe.handler.action.BSHActionHandler"
             label="%ru.runa.wfe.handler.action.BSHActionHandler"
             enabled="true"
@@ -1136,7 +1155,7 @@
             enabled="true"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.BSHActionHandlerProvider"
+            cellEditorProvider="ru.runa.gpd.handler.action.GroovyActionHandlerProvider"
             className="ru.runa.wfe.handler.action.GroovyActionHandler"
             label="%ru.runa.wfe.handler.action.GroovyActionHandler"
             enabled="true"
@@ -1966,12 +1985,6 @@
             label="%ru.runa.wfe.var.format.TextFormat"
             enabled="true"
             variableClassName="java.lang.String">
-      </format>
-      <format
-            className="ru.runa.wfe.var.format.StringArrayFormat"
-            label="%ru.runa.wfe.var.format.StringArrayFormat"
-            enabled="false"
-            variableClassName="java.lang.reflect.Array">
       </format>
    </extension>
 

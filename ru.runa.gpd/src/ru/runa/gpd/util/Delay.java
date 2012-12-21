@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.lang.model.ITimed;
 
-public class TimerDuration {
-    public static final String EMPTY = "0 minutes";
+public class Delay {
+    public static final String CURRENT_DATE_MESSAGE = Localization.getString("duration.baseDateNow");
     private static Pattern PATTERN_VAR = Pattern.compile("#\\{(.*)}");
     private static final List<Unit> units = new ArrayList<Unit>();
     static {
@@ -28,19 +26,18 @@ public class TimerDuration {
         units.add(new Unit("business years"));
         units.add(new Unit("seconds"));
     }
-
     private String delay;
     private Unit unit;
     private String variableName;
 
-    public TimerDuration(String duration) {
+    public Delay() {
+        this("0 minutes");
+    }
+
+    public Delay(String duration) {
         if (duration == null) {
             throw new NullPointerException("duration is null");
         }
-        setDuration(duration);
-    }
-    
-    public void setDuration(String duration) {
         Matcher matcher = PATTERN_VAR.matcher(duration);
         String sign = "";
         if (matcher.find()) {
@@ -58,10 +55,20 @@ public class TimerDuration {
                 break;
             }
         }
+        delay = delay.trim();
+    }
+
+    public Delay(Delay delay) {
+        this.delay = delay.getDelay();
+        this.unit = delay.getUnit();
+        this.variableName = delay.getVariableName();
+    }
+
+    public boolean hasDuration() {
+        return !"0".equals(delay) && variableName == null;
     }
 
     public String getDuration() {
-        delay = delay.trim();
         String duration = "";
         if (variableName != null) {
             duration = "#{" + variableName + "} ";
@@ -77,8 +84,7 @@ public class TimerDuration {
         return duration;
     }
 
-    public String getDurationLabel() {
-        delay = delay.trim();
+    public String getDisplayLabel() {
         String duration = "";
         if (variableName != null) {
             duration = "#{" + variableName + "} ";
@@ -90,9 +96,9 @@ public class TimerDuration {
         } else {
             delay = delay.replaceAll(" ", "");
         }
-        PhraseDecliner aaa = PhraseDecliner.getDecliner();
-        if (aaa != null) {
-            duration += aaa.declineDuration(delay, unit.label);
+        PhraseDecliner decliner = PhraseDecliner.getDecliner();
+        if (decliner != null) {
+            duration += decliner.declineDuration(delay, unit.label);
         } else {
             duration += delay + " " + unit.label;
         }
@@ -120,7 +126,7 @@ public class TimerDuration {
     }
 
     public void setVariableName(String variableName) {
-        if (ITimed.CURRENT_DATE_MESSAGE.equals(variableName)) {
+        if (CURRENT_DATE_MESSAGE.equals(variableName)) {
             variableName = null;
         }
         this.variableName = variableName;
@@ -129,24 +135,21 @@ public class TimerDuration {
     public static List<Unit> getUnits() {
         return units;
     }
-    
+
     @Override
     public String toString() {
-        return getDurationLabel();
-    }
-    
-    public boolean hasDuration() {
-        return !"0".equals(delay);
+        return getDisplayLabel();
     }
 
     public static class Unit {
         private final String value;
         private final String label;
+
         public Unit(String value) {
             this.value = value;
             this.label = Localization.getString("unit." + value.replaceAll(" ", ""));
         }
-        
+
         @Override
         public String toString() {
             return label;

@@ -102,7 +102,7 @@ public class ValidationErrorsView extends ViewPart implements ISelectionChangedL
             if (elementId != null) {
                 List<? extends Node> elements = editor.getDefinition().getChildrenRecursive(Node.class);
                 for (Node element : elements) {
-                    if (Objects.equal(elementId, element.getNodeId())) {
+                    if (Objects.equal(elementId, element.getId())) {
                         graphElement = element;
                         break;
                     }

@@ -49,7 +49,7 @@ public abstract class BaseHtmlFormType extends FormType {
                     String op = "create";
                     try {
                         if (!formNode.hasFormValidation()) {
-                            String validationFileName = formNode.getNodeId() + "." + FormNode.VALIDATION_SUFFIX;
+                            String validationFileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
                             IFile validationFile = ValidationUtil.createNewValidationUsingForm(formFile, validationFileName, formNode);
                             formNode.setValidationFileName(validationFile.getName());
                         } else {

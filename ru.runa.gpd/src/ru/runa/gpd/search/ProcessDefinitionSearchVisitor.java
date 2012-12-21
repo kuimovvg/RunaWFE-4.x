@@ -33,14 +33,13 @@ import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.SwimlanedNode;
+import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableMapping;
 
 public class ProcessDefinitionSearchVisitor {
-
     private final GPDSearchQuery query;
     private IProgressMonitor progressMonitor;
-
     private int numberOfScannedElements;
     private int numberOfElementsToScan;
     private GraphElement currentElement = null;
@@ -61,9 +60,7 @@ public class ProcessDefinitionSearchVisitor {
         progressMonitor = monitor == null ? new NullProgressMonitor() : monitor;
         numberOfScannedElements = 0;
         numberOfElementsToScan = query.getProcessDefinition().getChildrenRecursive(GraphElement.class).size();
-
         Job monitorUpdateJob = new Job(SearchMessages.TextSearchVisitor_progress_updating_job) {
-
             private int lastNumberOfScannedElements = 0;
 
             @Override
@@ -86,7 +83,6 @@ public class ProcessDefinitionSearchVisitor {
                 return Status.OK_STATUS;
             }
         };
-
         try {
             String taskName = SearchMessages.TextSearchVisitor_filesearch_task_label;
             progressMonitor.beginTask(taskName, numberOfElementsToScan);
@@ -139,7 +135,6 @@ public class ProcessDefinitionSearchVisitor {
         if (progressMonitor.isCanceled()) {
             throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
         }
-
         return true;
     }
 
@@ -154,10 +149,11 @@ public class ProcessDefinitionSearchVisitor {
     }
 
     private void processTimedNode(IFile definitionFile, ITimed timedNode) throws Exception {
-        if (!timedNode.timerExist()) {
+        Timer timer = timedNode.getTimer();
+        if (timer == null) {
             return;
         }
-        if (query.getSearchText().equals(timedNode.getDuration().getVariableName())) {
+        if (query.getSearchText().equals(timer.getDelay().getVariableName())) {
             ElementMatch elementMatch = new ElementMatch((GraphElement) timedNode, definitionFile, ElementMatch.CONTEXT_TIMED_VARIABLE);
             elementMatch.setMatchesCount(1);
             query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
@@ -252,5 +248,4 @@ public class ProcessDefinitionSearchVisitor {
         }
         return matches;
     }
-
 }

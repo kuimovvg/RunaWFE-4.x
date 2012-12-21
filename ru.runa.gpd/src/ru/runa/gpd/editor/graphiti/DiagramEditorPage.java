@@ -132,11 +132,11 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
 
     private void importDiagram() {
         final Diagram diagram = getDiagramTypeProvider().getDiagram();
-        //diagram.setActive(true);
         getEditingDomain().getCommandStack().execute(new RecordingCommand(getEditingDomain()) {
             @Override
             protected void doExecute() {
-                drawFlowElements(editor.getDefinition().getChildren(Node.class), diagram);
+                getDiagramTypeProvider().getFeatureProvider().link(diagram, editor.getDefinition());
+                drawFlowElements(editor.getDefinition().getNodes(), diagram);
                 //drawSequenceFlows(model.getProcesses());
                 drawTransitions();
             }
@@ -201,20 +201,19 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
                 return;
             }
             context.setNewObject(node);
-            context.setSize(node.getConstraint().width, node.getConstraint().height);
             context.setTargetContainer(parentShape);
-            if (parentShape instanceof Diagram) {
-                context.setLocation(node.getConstraint().x, node.getConstraint().y);
-            } else {
-                Point location = getLocation(parentShape);
-                context.setLocation(node.getConstraint().x - location.x, node.getConstraint().y - location.y);
+            if (node.getConstraint() != null) {
+                context.setSize(node.getConstraint().width, node.getConstraint().height);
+                if (parentShape instanceof Diagram) {
+                    context.setLocation(node.getConstraint().x, node.getConstraint().y);
+                } else {
+                    Point location = getLocation(parentShape);
+                    context.setLocation(node.getConstraint().x - location.x, node.getConstraint().y - location.y);
+                }
             }
             if (addFeature.canAdd(context)) {
-                PictogramElement newContainer = addFeature.add(context);
-                featureProvider.link(newContainer, new Object[] { node });
-                //                    if (node instanceof SubProcess) {
-                //                        drawFlowElements(((SubProcess) node).getFlowElements(), locationMap, (ContainerShape) newContainer, process);
-                //                    }
+                PictogramElement childContainer = addFeature.add(context);
+                drawFlowElements(node.getNodes(), (ContainerShape) childContainer);
                 //                if (node instanceof Activity) {
                 //                    Activity activity = (Activity) node;
                 //                    for (BoundaryEvent boundaryEvent : activity.getBoundaryEvents()) {

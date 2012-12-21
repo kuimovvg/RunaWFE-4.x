@@ -22,7 +22,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.ui.dialog.JavaHighlightTextStyling;
 
-public class BSHActionHandlerProvider extends DelegableProvider {
+public class GroovyActionHandlerProvider extends DelegableProvider {
 
     @Override
     protected DelegableConfigurationDialog createConfigurationDialog(Delegable delegable) {

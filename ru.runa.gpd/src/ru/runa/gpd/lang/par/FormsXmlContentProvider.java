@@ -71,7 +71,7 @@ public class FormsXmlContentProvider extends AuxContentProvider {
                 FormNode formNode = (FormNode) node;
                 if (formNode.hasForm() || formNode.hasFormValidation()) {
                     Element formElement = root.addElement(FORM_ELEMENT_NAME);
-                    formElement.addAttribute(STATE_ATTRIBUTE_NAME, formNode.getNodeId());
+                    formElement.addAttribute(STATE_ATTRIBUTE_NAME, formNode.getId());
                     if (formNode.hasForm()) {
                         formElement.addAttribute(FILE_ATTRIBUTE_NAME, formNode.getFormFileName());
                         formElement.addAttribute(TYPE_ATTRIBUTE_NAME, formNode.getFormType());

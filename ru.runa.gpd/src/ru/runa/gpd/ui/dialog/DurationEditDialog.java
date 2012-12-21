@@ -16,23 +16,32 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.util.TimerDuration;
-import ru.runa.gpd.util.TimerDuration.Unit;
+import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Delay.Unit;
+
+import com.google.common.base.Strings;
 
 public class DurationEditDialog extends Dialog {
     private static final int CLEAR_ID = 111;
-    private final TimerDuration editable;
+    private Delay editable;
     private final ProcessDefinition definition;
     private Text baseDateField;
     private Text delayField;
     private Text unitField;
-    
-    public DurationEditDialog(ProcessDefinition definition, TimerDuration duration) {
+
+    public DurationEditDialog(ProcessDefinition definition, String duration) {
         super(Display.getCurrent().getActiveShell());
         this.definition = definition;
-        editable = new TimerDuration(duration != null ? duration.getDuration() : TimerDuration.EMPTY);
+        if (!Strings.isNullOrEmpty(duration)) {
+            editable = new Delay(duration);
+        } else {
+            editable = new Delay();
+        }
+    }
+
+    public DurationEditDialog(ProcessDefinition definition, Delay delay) {
+        this(definition, delay.getDuration());
     }
 
     @Override
@@ -52,19 +61,17 @@ public class DurationEditDialog extends Dialog {
             GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
             gridData.minimumWidth = 200;
             baseDateField.setLayoutData(gridData);
-
             Button button = new Button(area, SWT.PUSH);
             button.setText("...");
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    ChooseDateVariableDialog dialog = new ChooseDateVariableDialog(definition, ITimed.CURRENT_DATE_MESSAGE);
+                    ChooseDateVariableDialog dialog = new ChooseDateVariableDialog(definition, Delay.CURRENT_DATE_MESSAGE);
                     editable.setVariableName(dialog.openDialog());
                     updateGUI();
                 }
             });
         }
-
         {
             Label label = new Label(area, SWT.NO_BACKGROUND);
             GridData data = new GridData();
@@ -79,7 +86,6 @@ public class DurationEditDialog extends Dialog {
             gridData.minimumWidth = 200;
             gridData.minimumHeight = 200;
             delayField.setLayoutData(gridData);
-
             Button button = new Button(area, SWT.PUSH);
             button.setText("...");
             gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
@@ -95,7 +101,6 @@ public class DurationEditDialog extends Dialog {
                 }
             });
         }
-
         {
             final Label label = new Label(area, SWT.NO_BACKGROUND);
             GridData data = new GridData();
@@ -107,14 +112,13 @@ public class DurationEditDialog extends Dialog {
             GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
             gridData.minimumWidth = 200;
             unitField.setLayoutData(gridData);
-
             Button button = new Button(area, SWT.PUSH);
             button.setText("...");
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     ChooseItemDialog dialog = new ChooseItemDialog(label.getText(), "", false);
-                    dialog.setItems(TimerDuration.getUnits());
+                    dialog.setItems(Delay.getUnits());
                     if (dialog.open() == IDialogConstants.OK_ID) {
                         editable.setUnit((Unit) dialog.getSelectedItem());
                         updateGUI();
@@ -129,13 +133,13 @@ public class DurationEditDialog extends Dialog {
         if (editable.getVariableName() != null) {
             baseDateField.setText(editable.getVariableName());
         } else {
-            baseDateField.setText(ITimed.CURRENT_DATE_MESSAGE);
+            baseDateField.setText(Delay.CURRENT_DATE_MESSAGE);
         }
         delayField.setText(editable.getDelay());
         unitField.setText(editable.getUnit().toString());
         boolean valid = false;
         try {
-            new TimerDuration(editable.getDuration());
+            new Delay(editable.getDuration());
             valid = true;
         } catch (Throwable th) {
         }
@@ -156,7 +160,7 @@ public class DurationEditDialog extends Dialog {
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                editable.setDuration(TimerDuration.EMPTY);
+                editable = new Delay();
                 updateGUI();
             }
         });
@@ -169,5 +173,4 @@ public class DurationEditDialog extends Dialog {
         }
         return null;
     }
-
 }

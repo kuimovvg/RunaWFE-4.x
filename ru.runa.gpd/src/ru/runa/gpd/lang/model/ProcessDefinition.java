@@ -24,7 +24,8 @@ import ru.runa.gpd.orgfunction.SwimlaneGUIConfiguration;
 import ru.runa.gpd.property.DefaultTaskDueDatePropertyDescriptor;
 import ru.runa.gpd.property.StartImagePropertyDescriptor;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
-import ru.runa.gpd.util.TimerDuration;
+import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.wfe.var.format.ExecutorFormat;
 
 import com.google.common.base.Objects;
@@ -37,35 +38,31 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private boolean dirty;
     private boolean showActions;
     private boolean showGrid;
-    private TimerDuration defaultTaskDuration = null;
-    private TimerDuration timeOutDuration;
+    private Delay defaultTaskTimeoutDelay = new Delay();
+    private Delay timeOutDelay = new Delay();
     private TimerAction timeOutAction = null;
     private boolean invalid;
-    private int nextNodeId;
+    protected int nextNodeId;
+    private SwimlaneDisplayMode swimlaneDisplayMode;
 
     public ProcessDefinition() {
     }
 
-    public String getDefaultTaskDuedate() {
-        return defaultTaskDuration.getDuration();
+    public SwimlaneDisplayMode getSwimlaneDisplayMode() {
+        return swimlaneDisplayMode;
     }
 
-    public TimerDuration getDefaultTaskDuration() {
-        if (defaultTaskDuration == null) {
-            defaultTaskDuration = new TimerDuration(TimerDuration.EMPTY);
-        }
-        return defaultTaskDuration;
+    public void setSwimlaneDisplayMode(SwimlaneDisplayMode swimlaneDisplayMode) {
+        this.swimlaneDisplayMode = swimlaneDisplayMode;
     }
 
-    public void setDefaultTaskDuration(TimerDuration d) {
-        defaultTaskDuration = d;
+    public Delay getDefaultTaskTimeoutDelay() {
+        return defaultTaskTimeoutDelay;
     }
 
-    public void setDefaultTaskDuedate(String defaultTaskDuedate) {
-        if (defaultTaskDuedate == null || defaultTaskDuedate.equals("")) {
-            defaultTaskDuedate = TimerDuration.EMPTY;
-        }
-        getDefaultTaskDuration().setDuration(defaultTaskDuedate);
+    public void setDefaultTaskTimeoutDelay(Delay defaultTaskTimeoutDelay) {
+        this.defaultTaskTimeoutDelay = defaultTaskTimeoutDelay;
+        firePropertyChange(PROPERTY_TIMEOUT_DELAY, null, defaultTaskTimeoutDelay);
     }
 
     public boolean isShowActions() {
@@ -74,26 +71,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
 
     public boolean isInvalid() {
         return invalid;
-    }
-
-    @Override
-    public void addChild(GraphElement child, int index) {
-        super.addChild(child, index);
-        if (child instanceof Node) {
-            try {
-                String nodeId = ((Node) child).getNodeId();
-                if (nodeId == null) {
-                    ((Node) child).setNodeId(String.valueOf(nextNodeId));
-                    nextNodeId++;
-                } else {
-                    int nodeIdInt = Integer.parseInt(((Node) child).getNodeId());
-                    if (nodeIdInt > nextNodeId) {
-                        nextNodeId = nodeIdInt + 1;
-                    }
-                }
-            } catch (NumberFormatException e) {
-            }
-        }
     }
 
     public void setShowActions(boolean showActions) {
@@ -250,7 +227,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
                 marker.setAttribute(IMarker.MESSAGE, formatted);
                 String elementId = element.toString();
                 if (element instanceof Node) {
-                    elementId = ((Node) element).getNodeId();
+                    elementId = ((Node) element).getId();
                 }
                 if (element instanceof Swimlane) {
                     marker.setAttribute(PluginConstants.SWIMLANE_LINK_KEY, elementId);
@@ -380,9 +357,8 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     }
 
     public <T extends Node> T getNodeById(String nodeId) {
-        List<Node> nodes = getNodes();
-        for (Node node : nodes) {
-            if (Objects.equal(nodeId, node.getNodeId())) {
+        for (Node node : getNodesRecursive()) {
+            if (Objects.equal(nodeId, node.getId())) {
                 return (T) node;
             }
         }
@@ -400,15 +376,15 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
             //            }
             List<String> nodeIds = new ArrayList<String>();
             for (Node childNode : getChildren(Node.class)) {
-                nodeIds.add(childNode.getNodeId());
+                nodeIds.add(childNode.getId());
             }
             throw new RuntimeException("Node not found in process definition: " + nodeId + ", all nodes: " + nodeIds);
         }
         return node;
     }
 
-    public List<Node> getNodes() {
-        return getChildren(Node.class);
+    public List<Node> getNodesRecursive() {
+        return getChildrenRecursive(Node.class);
     }
 
     @Override
@@ -425,14 +401,13 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         if (PROPERTY_LANGUAGE.equals(id)) {
             return language;
         } else if (PROPERTY_DEFAULT_TASK_DURATION.equals(id)) {
-            if (defaultTaskDuration == null || !defaultTaskDuration.hasDuration()) {
-                return "";
-            } else {
-                return defaultTaskDuration;
+            if (defaultTaskTimeoutDelay.hasDuration()) {
+                return defaultTaskTimeoutDelay;
             }
+            return "";
         }
-        if (PROPERTY_TIMEOUT_DURATION.equals(id)) {
-            return timeOutDuration;
+        if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
+            return timeOutDelay;
         }
         if (PROPERTY_TIMEOUT_ACTION.equals(id)) {
             return timeOutAction;
@@ -443,14 +418,14 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (PROPERTY_DEFAULT_TASK_DURATION.equals(id)) {
-            setDefaultTaskDuration((TimerDuration) value);
+            setDefaultTaskTimeoutDelay((Delay) value);
             firePropertyChange(PROPERTY_DEFAULT_TASK_DURATION, null, null);
-        } else if (PROPERTY_TIMEOUT_DURATION.equals(id)) {
+        } else if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
             if (value == null) {
                 // ignore, edit was canceled
                 return;
             }
-            setTimeOutDuration((TimerDuration) value);
+            setTimeOutDelay((Delay) value);
         } else if (PROPERTY_TIMEOUT_ACTION.equals(id)) {
             setTimeOutAction((TimerAction) value);
         } else {
@@ -469,8 +444,8 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     }
 
     @Override
-    public TimerDuration getTimeOutDuration() {
-        return timeOutDuration;
+    public Delay getTimeOutDelay() {
+        return timeOutDelay;
     }
 
     public void setTimeOutAction(TimerAction timeOutAction) {
@@ -480,16 +455,8 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         this.timeOutAction = timeOutAction;
     }
 
-    public void setTimeOutDuration(TimerDuration timeOutDuration) {
-        this.timeOutDuration = timeOutDuration;
-    }
-
     @Override
-    public void setTimeOutDueDate(String timeOutDueDate) {
-        setTimeOutDuration(new TimerDuration(timeOutDueDate));
-    }
-
-    public boolean timeOutExist() {
-        return (timeOutDuration != null && timeOutDuration.hasDuration());
+    public void setTimeOutDelay(Delay delay) {
+        this.timeOutDelay = delay;
     }
 }

@@ -40,7 +40,7 @@ public class TaskStateFigure extends StateFigure<TaskState> {
             if (model.isAsync()) {
                 g.drawImage(SharedImages.getImage("icons/uml/async.png"), dim.width - GRID_SIZE / 2 - 20, dim.height - GRID_SIZE - 20);
             }
-            if (model.timerExist()) {
+            if (model.getTimer() != null) {
                 Utils.paintTimer(g, dim);
             }
         }
