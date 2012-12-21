@@ -3,6 +3,7 @@ package ru.runa.gpd.editor.graphiti.add;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.ITargetContext;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -18,7 +19,7 @@ public class AddActionNodeFeature extends AddNodeFeature {
     private static final int minimumSize = GRID_SIZE * 3;
 
     @Override
-    public Dimension getDefaultSize() {
+    public Dimension getDefaultSize(ITargetContext context) {
         return new Dimension(3 * GRID_SIZE, 3 * GRID_SIZE);
     }
 

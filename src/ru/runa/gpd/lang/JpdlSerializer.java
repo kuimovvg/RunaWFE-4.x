@@ -38,15 +38,17 @@ import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Synchronizable;
 import ru.runa.gpd.lang.model.TaskState;
+import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.lang.model.Transition;
-import ru.runa.gpd.lang.model.WaitState;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
-import ru.runa.gpd.util.TimerDuration;
+import ru.runa.gpd.util.Delay;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.lang.TaskExecutionMode;
+
+import com.google.common.base.Strings;
 
 @SuppressWarnings("unchecked")
 public class JpdlSerializer extends ProcessSerializer {
@@ -109,12 +111,245 @@ public class JpdlSerializer extends ProcessSerializer {
     }
 
     @Override
+    public void saveToXML(ProcessDefinition definition, Document document) {
+        Element root = document.getRootElement();
+        root.addAttribute(NAME_ATTR, definition.getName());
+        if (definition.getDefaultTaskTimeoutDelay().hasDuration()) {
+            root.addAttribute(DEFAULT_DUEDATE_ATTR, definition.getDefaultTaskTimeoutDelay().getDuration());
+        }
+        if (definition.isInvalid()) {
+            root.addAttribute(INVALID_ATTR, String.valueOf(definition.isInvalid()));
+        }
+        if (definition.getDescription() != null && definition.getDescription().length() > 0) {
+            Element desc = root.addElement(DESCRIPTION_NODE);
+            setNodeValue(desc, definition.getDescription());
+        }
+        List<Swimlane> swimlanes = definition.getSwimlanes();
+        for (Swimlane swimlane : swimlanes) {
+            Element swimlaneElement = writeElement(root, swimlane);
+            writeDelegation(swimlaneElement, ASSIGNMENT_NODE, swimlane);
+        }
+        StartState startState = definition.getFirstChild(StartState.class);
+        if (startState != null) {
+            Element startStateElement = writeTaskState(root, startState);
+            writeTransitions(startStateElement, startState);
+        }
+        // back compatibility
+        List<ActionNode> actionNodeNodes = definition.getChildren(ActionNode.class);
+        for (ActionNode actionNode : actionNodeNodes) {
+            Element actionNodeElement = writeNode(root, actionNode, null);
+            for (Action action : actionNode.getActions()) {
+                ActionImpl actionImpl = (ActionImpl) action;
+                if (!Event.NODE_ACTION.equals(actionImpl.getEventType())) {
+                    writeEvent(actionNodeElement, new Event(actionImpl.getEventType()), actionImpl);
+                }
+            }
+        }
+        List<Decision> decisions = definition.getChildren(Decision.class);
+        for (Decision decision : decisions) {
+            writeNode(root, decision, HANDLER_NODE);
+        }
+        List<TaskState> states = definition.getChildren(TaskState.class);
+        for (TaskState state : states) {
+            Element stateElement = writeTaskStateWithDuedate(root, state);
+            stateElement.addAttribute(ASYNC_ATTR, String.valueOf(state.isAsync()));
+            if (state instanceof MultiTaskState) {
+                stateElement.addAttribute(TASK_EXECUTION_MODE_ATTR, ((MultiTaskState) state).getTaskExecutionMode().name());
+                stateElement.addAttribute(TASK_EXECUTORS_ATTR, ((MultiTaskState) state).getExecutorsVariableName());
+            }
+            writeTimer(stateElement, state.getTimer());
+            if (state.isUseEscalation()) {
+                String timerName = TIMER_ESCALATION;
+                Delay escalationDuration = state.getEscalationDelay();
+                Element timerElement = stateElement.addElement(TIMER_NODE);
+                setAttribute(timerElement, NAME_ATTR, timerName);
+                if (escalationDuration != null && escalationDuration.hasDuration()) {
+                    setAttribute(timerElement, DUEDATE_ATTR, escalationDuration.getDuration());
+                }
+                TimerAction escalationAction = state.getEscalationAction();
+                if (escalationAction != null) {
+                    if (escalationAction.getRepeatDelay().hasDuration()) {
+                        setAttribute(timerElement, REPEAT_ATTR, escalationAction.getRepeatDelay().getDuration());
+                    }
+                    writeDelegation(timerElement, ACTION_NODE, escalationAction);
+                }
+            }
+            writeTransitions(stateElement, state);
+        }
+        List<Timer> timers = definition.getChildren(Timer.class);
+        for (Timer timer : timers) {
+            Element stateElement = writeWaitState(root, timer);
+            writeTransitions(stateElement, timer);
+        }
+        List<Fork> forks = definition.getChildren(Fork.class);
+        for (ru.runa.gpd.lang.model.Node node : forks) {
+            writeNode(root, node, null);
+        }
+        List<Join> joins = definition.getChildren(Join.class);
+        for (ru.runa.gpd.lang.model.Node node : joins) {
+            writeNode(root, node, null);
+        }
+        List<Subprocess> subprocesses = definition.getChildren(Subprocess.class);
+        for (Subprocess subprocess : subprocesses) {
+            Element processStateElement = writeNode(root, subprocess, null);
+            Element subProcessElement = processStateElement.addElement(SUB_PROCESS_NODE);
+            setAttribute(subProcessElement, NAME_ATTR, subprocess.getSubProcessName());
+            for (VariableMapping variable : subprocess.getVariablesList()) {
+                Element variableElement = processStateElement.addElement(VARIABLE_NODE);
+                setAttribute(variableElement, NAME_ATTR, variable.getProcessVariable());
+                setAttribute(variableElement, MAPPED_NAME_ATTR, variable.getSubprocessVariable());
+                setAttribute(variableElement, ACCESS_ATTR, variable.getUsage());
+            }
+        }
+        List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
+        for (SendMessageNode messageNode : sendMessageNodes) {
+            Element messageElement = writeNode(root, messageNode, null);
+            for (VariableMapping variable : messageNode.getVariablesList()) {
+                Element variableElement = messageElement.addElement(VARIABLE_NODE);
+                setAttribute(variableElement, NAME_ATTR, variable.getProcessVariable());
+                setAttribute(variableElement, MAPPED_NAME_ATTR, variable.getSubprocessVariable());
+                setAttribute(variableElement, ACCESS_ATTR, variable.getUsage());
+            }
+        }
+        List<ReceiveMessageNode> receiveMessageNodes = definition.getChildren(ReceiveMessageNode.class);
+        for (ReceiveMessageNode messageNode : receiveMessageNodes) {
+            Element messageElement = writeNode(root, messageNode, null);
+            for (VariableMapping variable : messageNode.getVariablesList()) {
+                Element variableElement = messageElement.addElement(VARIABLE_NODE);
+                setAttribute(variableElement, NAME_ATTR, variable.getProcessVariable());
+                setAttribute(variableElement, MAPPED_NAME_ATTR, variable.getSubprocessVariable());
+                setAttribute(variableElement, ACCESS_ATTR, variable.getUsage());
+            }
+            writeTimer(messageElement, messageNode.getTimer());
+        }
+        List<EndTokenState> endTokenStates = definition.getChildren(EndTokenState.class);
+        for (EndTokenState state : endTokenStates) {
+            writeElement(root, state);
+        }
+        List<EndState> endStates = definition.getChildren(EndState.class);
+        for (EndState state : endStates) {
+            writeElement(root, state);
+        }
+    }
+
+    private Element writeNode(Element parent, Node node, String delegationNodeName) {
+        Element nodeElement = writeElement(parent, node);
+        if (delegationNodeName != null) {
+            writeDelegation(nodeElement, delegationNodeName, (Delegable) node);
+        }
+        writeTransitions(nodeElement, node);
+        return nodeElement;
+    }
+
+    private Element writeTaskStateWithDuedate(Element parent, TaskState state) {
+        Element nodeElement = writeElement(parent, state);
+        Element taskElement = nodeElement.addElement(TASK_NODE);
+        setAttribute(taskElement, DUEDATE_ATTR, state.getTimeOutDueDate());
+        setAttribute(taskElement, NAME_ATTR, state.getName());
+        setAttribute(taskElement, SWIMLANE_ATTR, state.getSwimlaneName());
+        if (state instanceof State && ((State) state).isReassignmentEnabled()) {
+            setAttribute(taskElement, REASSIGN_ATTR, "true");
+        }
+        for (Action action : state.getActions()) {
+            ActionImpl actionImpl = (ActionImpl) action;
+            writeEvent(taskElement, new Event(actionImpl.getEventType()), actionImpl);
+        }
+        return nodeElement;
+    }
+
+    private Element writeTaskState(Element parent, SwimlanedNode state) {
+        Element nodeElement = writeElement(parent, state);
+        Element taskElement = nodeElement.addElement(TASK_NODE);
+        setAttribute(taskElement, NAME_ATTR, state.getName());
+        setAttribute(taskElement, SWIMLANE_ATTR, state.getSwimlaneName());
+        if (state instanceof State && ((State) state).isReassignmentEnabled()) {
+            setAttribute(taskElement, REASSIGN_ATTR, "true");
+        }
+        for (Action action : state.getActions()) {
+            ActionImpl actionImpl = (ActionImpl) action;
+            writeEvent(taskElement, new Event(actionImpl.getEventType()), actionImpl);
+        }
+        return nodeElement;
+    }
+
+    private Element writeWaitState(Element parent, Timer timer) {
+        Element nodeElement = writeElement(parent, timer, WAIT_STATE_NODE);
+        writeTimer(nodeElement, timer);
+        return nodeElement;
+    }
+
+    private void writeTimer(Element parent, Timer timer) {
+        if (timer == null) {
+            return;
+        }
+        Element timerElement = parent.addElement(TIMER_NODE);
+        setAttribute(timerElement, DUEDATE_ATTR, timer.getDelay().getDuration());
+        if (timer.getAction() != null) {
+            if (timer.getAction().getRepeatDelay().hasDuration()) {
+                setAttribute(timerElement, REPEAT_ATTR, timer.getAction().getRepeatDelay().getDuration());
+            }
+            writeDelegation(timerElement, ACTION_NODE, timer.getAction());
+        }
+        setAttribute(timerElement, TRANSITION_ATTR, PluginConstants.TIMER_TRANSITION_NAME);
+    }
+
+    private Element writeElement(Element parent, GraphElement element) {
+        return writeElement(parent, element, element.getTypeDefinition().getJpdlElementName());
+    }
+
+    private Element writeElement(Element parent, GraphElement element, String typeName) {
+        Element result = parent.addElement(typeName);
+        if (element instanceof Node) {
+            setAttribute(result, ID_ATTR, ((Node) element).getId());
+        }
+        if (element instanceof NamedGraphElement) {
+            setAttribute(result, NAME_ATTR, ((NamedGraphElement) element).getName());
+        }
+        if (element instanceof Describable) {
+            String description = ((Describable) element).getDescription();
+            if (description != null && description.length() > 0) {
+                Element desc = result.addElement(DESCRIPTION_NODE);
+                setNodeValue(desc, description);
+            }
+        }
+        return result;
+    }
+
+    private void writeTransitions(Element parent, Node node) {
+        List<Transition> transitions = node.getLeavingTransitions();
+        for (Transition transition : transitions) {
+            Element transitionElement = writeElement(parent, transition);
+            transitionElement.addAttribute(TO_ATTR, transition.getTarget().getId());
+            for (Action action : transition.getActions()) {
+                writeDelegation(transitionElement, ACTION_NODE, action);
+            }
+        }
+    }
+
+    private void writeEvent(Element parent, Event event, ActionImpl action) {
+        Element eventElement = writeElement(parent, event, EVENT_NODE);
+        setAttribute(eventElement, TYPE_ATTR, event.getType());
+        writeDelegation(eventElement, ACTION_NODE, action);
+    }
+
+    private void writeDelegation(Element parent, String elementName, Delegable delegable) {
+        Element delegationElement = parent.addElement(elementName);
+        setAttribute(delegationElement, CLASS_ATTR, delegable.getDelegationClassName());
+        setNodeValue(delegationElement, delegable.getDelegationConfiguration());
+    }
+
+    private void setDelegableClassName(Delegable delegable, String className) {
+        className = BackCompatibilityClassNames.getClassName(className);
+        delegable.setDelegationClassName(className);
+    }
+
+    @Override
     public void validateProcessDefinitionXML(IFile file) {
-        //        try {
-        //            XmlUtil.parseWithXSDValidation(getClass().getResourceAsStream("/schema/" + XSD_FILE_NAME));
-        //        } catch (Exception e) {
-        //            throw new RuntimeException(e);
-        //        } TODO
+        try {
+            XmlUtil.parseWithXSDValidation(getClass().getResourceAsStream("/schema/jpdl-4.0.xsd"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private <T extends GraphElement> T create(Element node, GraphElement parent) {
@@ -134,7 +369,7 @@ public class JpdlSerializer extends ProcessSerializer {
             if (nodeId == null) {
                 nodeId = ((Node) element).getName();
             }
-            ((Node) element).setNodeId(nodeId);
+            ((Node) element).setId(nodeId);
         }
         List<Element> nodeList = node.elements();
         for (Element childNode : nodeList) {
@@ -185,7 +420,10 @@ public class JpdlSerializer extends ProcessSerializer {
         TRANSITION_TARGETS.clear();
         Element root = document.getRootElement();
         ProcessDefinition definition = create(root, null);
-        definition.setDefaultTaskDuedate(root.attributeValue(DEFAULT_DUEDATE_ATTR));
+        String defaultTaskTimeoutDuration = root.attributeValue(DEFAULT_DUEDATE_ATTR);
+        if (!Strings.isNullOrEmpty(defaultTaskTimeoutDuration)) {
+            definition.setDefaultTaskTimeoutDelay(new Delay(defaultTaskTimeoutDuration));
+        }
         List<Element> swimlanes = root.elements(SWIMLANE_NODE);
         for (Element node : swimlanes) {
             create(node, definition);
@@ -239,9 +477,9 @@ public class JpdlSerializer extends ProcessSerializer {
                 }
             }
             // backCompatibility: waitState was persisted as taskState earlier
-            GraphElement state;
+            Node state;
             if (transitionsCount == 1 && hasTimeOutTransition) {
-                state = create(node, definition, WAIT_STATE_NODE);
+                state = create(node, definition, TIMER_NODE);
             } else {
                 state = create(node, definition);
             }
@@ -267,8 +505,8 @@ public class JpdlSerializer extends ProcessSerializer {
                         }
                     }
                     String duedateAttr = stateNodeChild.attributeValue(DUEDATE_ATTR);
-                    if (duedateAttr != null) {
-                        ((State) state).setTimeOutDueDate(duedateAttr);
+                    if (!Strings.isNullOrEmpty(duedateAttr)) {
+                        ((State) state).setTimeOutDelay(new Delay(duedateAttr));
                     }
                     List<Element> aaa = stateNodeChild.elements();
                     for (Element a : aaa) {
@@ -288,38 +526,38 @@ public class JpdlSerializer extends ProcessSerializer {
                     String dueDate = stateNodeChild.attributeValue(DUEDATE_ATTR);
                     if (TIMER_ESCALATION.equals(nameTimer)) {
                         ((TaskState) state).setUseEscalation(true);
-                        if (dueDate != null) {
-                            ((TaskState) state).setEscalationTime(new TimerDuration(dueDate));
+                        if (!Strings.isNullOrEmpty(dueDate)) {
+                            ((TaskState) state).setEscalationDelay(new Delay(dueDate));
                         }
-                    } else if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
-                        definition.setTimeOutDueDate(dueDate);
+                    } else if (TIMER_GLOBAL_NAME.equals(nameTimer) && !Strings.isNullOrEmpty(dueDate)) {
+                        definition.setTimeOutDelay(new Delay(dueDate));
                     } else {
                         if (State.class.isInstance(state)) {
-                            ((State) state).setHasTimer(true);
+                            Timer timer = new Timer();
                             if (dueDate != null) {
-                                ((State) state).setDueDate(dueDate);
+                                timer.setDelay(new Delay(dueDate));
                             }
-                        } else if (WaitState.class.isInstance(state)) {
+                            state.addChild(timer);
+                        }
+                        if (Timer.class.isInstance(state)) {
                             if (dueDate != null) {
-                                ((WaitState) state).setDueDate(dueDate);
-                            } else {
-                                ((WaitState) state).setDueDate(TimerDuration.EMPTY);
+                                ((Timer) state).setDelay(new Delay(dueDate));
                             }
                         }
                     }
                     List<Element> actionNodes = stateNodeChild.elements();
                     for (Element aa : actionNodes) {
                         if (ACTION_NODE.equals(aa.getName())) {
-                            TimerAction timerAction = new TimerAction(null);
+                            TimerAction timerAction = new TimerAction();
                             setDelegableClassName(timerAction, aa.attributeValue(CLASS_ATTR));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
-                            timerAction.setRepeat(stateNodeChild.attributeValue(REPEAT_ATTR));
+                            timerAction.setRepeatDuration(stateNodeChild.attributeValue(REPEAT_ATTR));
                             if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
                                 definition.setTimeOutAction(timerAction);
                             } else if (TIMER_ESCALATION.equals(nameTimer)) {
                                 ((TaskState) state).setEscalationAction(timerAction);
                             } else {
-                                ((ITimed) state).setTimerAction(timerAction);
+                                ((ITimed) state).getTimer().setAction(timerAction);
                             }
                         }
                     }
@@ -328,29 +566,22 @@ public class JpdlSerializer extends ProcessSerializer {
         }
         List<Element> waitStates = root.elements(WAIT_STATE_NODE);
         for (Element node : waitStates) {
-            WaitState state = create(node, definition);
+            Timer state = create(node, definition);
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
                 if (TIMER_NODE.equals(stateNodeChild.getName())) {
-                    String nameTimer = stateNodeChild.attributeValue(NAME_ATTR);
                     String dueDate = stateNodeChild.attributeValue(DUEDATE_ATTR);
                     if (dueDate != null) {
-                        state.setDueDate(dueDate);
-                    } else {
-                        state.setDueDate(TimerDuration.EMPTY);
+                        state.setDelay(new Delay(dueDate));
                     }
                     List<Element> actionNodes = stateNodeChild.elements();
                     for (Element aa : actionNodes) {
                         if (ACTION_NODE.equals(aa.getName())) {
-                            TimerAction timerAction = new TimerAction(null);
+                            TimerAction timerAction = new TimerAction();
                             setDelegableClassName(timerAction, aa.attributeValue(CLASS_ATTR));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
-                            timerAction.setRepeat(stateNodeChild.attributeValue(REPEAT_ATTR));
-                            if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
-                                definition.setTimeOutAction(timerAction);
-                            } else {
-                                ((ITimed) state).setTimerAction(timerAction);
-                            }
+                            timerAction.setRepeatDuration(stateNodeChild.attributeValue(REPEAT_ATTR));
+                            state.setAction(timerAction);
                         }
                     }
                 }
@@ -436,16 +667,16 @@ public class JpdlSerializer extends ProcessSerializer {
                     variablesList.add(variable);
                 }
                 if (TIMER_NODE.equals(childNode.getName())) {
-                    String dueDate = childNode.attributeValue(DUEDATE_ATTR);
-                    messageNode.setDueDate(dueDate);
+                    Timer timer = new Timer();
+                    timer.setDelay(new Delay(childNode.attributeValue(DUEDATE_ATTR)));
                     List<Element> actionNodes = childNode.elements();
                     for (Element aa : actionNodes) {
                         if (ACTION_NODE.equals(aa.getName())) {
-                            TimerAction timerAction = new TimerAction(null);
+                            TimerAction timerAction = new TimerAction();
                             setDelegableClassName(timerAction, aa.attributeValue(CLASS_ATTR));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
-                            timerAction.setRepeat(childNode.attributeValue(REPEAT_ATTR));
-                            messageNode.setTimerAction(timerAction);
+                            timerAction.setRepeatDuration(childNode.attributeValue(REPEAT_ATTR));
+                            timer.setAction(timerAction);
                         }
                     }
                 }
@@ -467,255 +698,5 @@ public class JpdlSerializer extends ProcessSerializer {
             transition.setTarget(target);
         }
         return definition;
-    }
-
-    @Override
-    public void saveToXML(ProcessDefinition definition, Document document) {
-        Element root = document.getRootElement();
-        root.addAttribute(NAME_ATTR, definition.getName());
-        if (!definition.getDefaultTaskDuedate().startsWith("0 ")) {
-            root.addAttribute(DEFAULT_DUEDATE_ATTR, definition.getDefaultTaskDuedate());
-        }
-        if (definition.isInvalid()) {
-            root.addAttribute(INVALID_ATTR, String.valueOf(definition.isInvalid()));
-        }
-        if (definition.getDescription() != null && definition.getDescription().length() > 0) {
-            Element desc = root.addElement(DESCRIPTION_NODE);
-            setNodeValue(desc, definition.getDescription());
-        }
-        List<Swimlane> swimlanes = definition.getSwimlanes();
-        for (Swimlane swimlane : swimlanes) {
-            Element swimlaneElement = writeElement(root, swimlane);
-            writeDelegation(swimlaneElement, ASSIGNMENT_NODE, swimlane);
-        }
-        StartState startState = definition.getFirstChild(StartState.class);
-        if (startState != null) {
-            Element startStateElement = writeTaskState(root, startState);
-            writeTransitions(startStateElement, startState);
-        }
-        // back compatibility
-        List<ActionNode> actionNodeNodes = definition.getChildren(ActionNode.class);
-        for (ActionNode actionNode : actionNodeNodes) {
-            Element actionNodeElement = writeNode(root, actionNode, null);
-            for (Action action : actionNode.getActions()) {
-                ActionImpl actionImpl = (ActionImpl) action;
-                if (!Event.NODE_ACTION.equals(actionImpl.getEventType())) {
-                    writeEvent(actionNodeElement, new Event(actionImpl.getEventType()), actionImpl);
-                }
-            }
-        }
-        List<Decision> decisions = definition.getChildren(Decision.class);
-        for (Decision decision : decisions) {
-            writeNode(root, decision, HANDLER_NODE);
-        }
-        List<TaskState> states = definition.getChildren(TaskState.class);
-        for (TaskState state : states) {
-            Element stateElement = writeTaskStateWithDuedate(root, state);
-            stateElement.addAttribute(ASYNC_ATTR, String.valueOf(state.isAsync()));
-            if (state instanceof MultiTaskState) {
-                stateElement.addAttribute(TASK_EXECUTION_MODE_ATTR, ((MultiTaskState) state).getTaskExecutionMode().name());
-                stateElement.addAttribute(TASK_EXECUTORS_ATTR, ((MultiTaskState) state).getExecutorsVariableName());
-            }
-            if (state.timerExist()) {
-                Element timerElement = stateElement.addElement(TIMER_NODE);
-                if (state.getDuration() != null && state.getDuration().hasDuration()) {
-                    setAttribute(timerElement, DUEDATE_ATTR, state.getDuration().getDuration());
-                }
-                if (!state.hasTimeoutTransition() && state.getTimerAction() != null) {
-                    if (state.getTimerAction().getRepeat().hasDuration()) {
-                        setAttribute(timerElement, REPEAT_ATTR, state.getTimerAction().getRepeat().getDuration());
-                    }
-                    writeDelegation(timerElement, ACTION_NODE, state.getTimerAction());
-                } else {
-                    setAttribute(timerElement, TRANSITION_ATTR, PluginConstants.TIMER_TRANSITION_NAME);
-                }
-            }
-            if (state.isUseEscalation()) {
-                String timerName = TIMER_ESCALATION;
-                TimerDuration escalationDuration = state.getEscalationTime();
-                Element timerElement = stateElement.addElement(TIMER_NODE);
-                setAttribute(timerElement, NAME_ATTR, timerName);
-                if (escalationDuration != null && escalationDuration.hasDuration()) {
-                    setAttribute(timerElement, DUEDATE_ATTR, escalationDuration.getDuration());
-                }
-                TimerAction escalationAction = state.getEscalationAction();
-                if (escalationAction != null) {
-                    if (escalationAction.getRepeat().hasDuration()) {
-                        setAttribute(timerElement, REPEAT_ATTR, escalationAction.getRepeat().getDuration());
-                    }
-                    writeDelegation(timerElement, ACTION_NODE, escalationAction);
-                }
-            }
-            writeTransitions(stateElement, state);
-        }
-        List<WaitState> waitStates = definition.getChildren(WaitState.class);
-        for (WaitState waitState : waitStates) {
-            Element stateElement = writeWaitState(root, waitState);
-            writeTransitions(stateElement, waitState);
-        }
-        List<Fork> forks = definition.getChildren(Fork.class);
-        for (ru.runa.gpd.lang.model.Node node : forks) {
-            writeNode(root, node, null);
-        }
-        List<Join> joins = definition.getChildren(Join.class);
-        for (ru.runa.gpd.lang.model.Node node : joins) {
-            writeNode(root, node, null);
-        }
-        List<Subprocess> subprocesses = definition.getChildren(Subprocess.class);
-        for (Subprocess subprocess : subprocesses) {
-            Element processStateElement = writeNode(root, subprocess, null);
-            Element subProcessElement = processStateElement.addElement(SUB_PROCESS_NODE);
-            setAttribute(subProcessElement, NAME_ATTR, subprocess.getSubProcessName());
-            for (VariableMapping variable : subprocess.getVariablesList()) {
-                Element variableElement = processStateElement.addElement(VARIABLE_NODE);
-                setAttribute(variableElement, NAME_ATTR, variable.getProcessVariable());
-                setAttribute(variableElement, MAPPED_NAME_ATTR, variable.getSubprocessVariable());
-                setAttribute(variableElement, ACCESS_ATTR, variable.getUsage());
-            }
-        }
-        List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
-        for (SendMessageNode messageNode : sendMessageNodes) {
-            Element messageElement = writeNode(root, messageNode, null);
-            for (VariableMapping variable : messageNode.getVariablesList()) {
-                Element variableElement = messageElement.addElement(VARIABLE_NODE);
-                setAttribute(variableElement, NAME_ATTR, variable.getProcessVariable());
-                setAttribute(variableElement, MAPPED_NAME_ATTR, variable.getSubprocessVariable());
-                setAttribute(variableElement, ACCESS_ATTR, variable.getUsage());
-            }
-        }
-        List<ReceiveMessageNode> receiveMessageNodes = definition.getChildren(ReceiveMessageNode.class);
-        for (ReceiveMessageNode messageNode : receiveMessageNodes) {
-            Element messageElement = writeNode(root, messageNode, null);
-            for (VariableMapping variable : messageNode.getVariablesList()) {
-                Element variableElement = messageElement.addElement(VARIABLE_NODE);
-                setAttribute(variableElement, NAME_ATTR, variable.getProcessVariable());
-                setAttribute(variableElement, MAPPED_NAME_ATTR, variable.getSubprocessVariable());
-                setAttribute(variableElement, ACCESS_ATTR, variable.getUsage());
-            }
-            if (messageNode.timerExist()) {
-                Element timerElement = messageElement.addElement(TIMER_NODE);
-                setAttribute(timerElement, DUEDATE_ATTR, messageNode.getDuration().getDuration());
-                if (messageNode.getTimerAction() != null) {
-                    if (messageNode.getTimerAction().getRepeat().hasDuration()) {
-                        setAttribute(timerElement, REPEAT_ATTR, messageNode.getTimerAction().getRepeat().getDuration());
-                    }
-                    writeDelegation(timerElement, ACTION_NODE, messageNode.getTimerAction());
-                } else {
-                    setAttribute(timerElement, TRANSITION_ATTR, PluginConstants.TIMER_TRANSITION_NAME);
-                }
-            }
-        }
-        List<EndTokenState> endTokenStates = definition.getChildren(EndTokenState.class);
-        for (EndTokenState state : endTokenStates) {
-            writeElement(root, state);
-        }
-        List<EndState> endStates = definition.getChildren(EndState.class);
-        for (EndState state : endStates) {
-            writeElement(root, state);
-        }
-    }
-
-    private Element writeNode(Element parent, Node node, String delegationNodeName) {
-        Element nodeElement = writeElement(parent, node);
-        if (delegationNodeName != null) {
-            writeDelegation(nodeElement, delegationNodeName, (Delegable) node);
-        }
-        writeTransitions(nodeElement, node);
-        return nodeElement;
-    }
-
-    private Element writeTaskStateWithDuedate(Element parent, TaskState state) {
-        Element nodeElement = writeElement(parent, state);
-        Element taskElement = nodeElement.addElement(TASK_NODE);
-        setAttribute(taskElement, DUEDATE_ATTR, state.getTimeOutDueDate());
-        setAttribute(taskElement, NAME_ATTR, state.getName());
-        setAttribute(taskElement, SWIMLANE_ATTR, state.getSwimlaneName());
-        if (state instanceof State && ((State) state).isReassignmentEnabled()) {
-            setAttribute(taskElement, REASSIGN_ATTR, "true");
-        }
-        for (Action action : state.getActions()) {
-            ActionImpl actionImpl = (ActionImpl) action;
-            writeEvent(taskElement, new Event(actionImpl.getEventType()), actionImpl);
-        }
-        return nodeElement;
-    }
-
-    private Element writeTaskState(Element parent, SwimlanedNode state) {
-        Element nodeElement = writeElement(parent, state);
-        Element taskElement = nodeElement.addElement(TASK_NODE);
-        setAttribute(taskElement, NAME_ATTR, state.getName());
-        setAttribute(taskElement, SWIMLANE_ATTR, state.getSwimlaneName());
-        if (state instanceof State && ((State) state).isReassignmentEnabled()) {
-            setAttribute(taskElement, REASSIGN_ATTR, "true");
-        }
-        for (Action action : state.getActions()) {
-            ActionImpl actionImpl = (ActionImpl) action;
-            writeEvent(taskElement, new Event(actionImpl.getEventType()), actionImpl);
-        }
-        return nodeElement;
-    }
-
-    private Element writeWaitState(Element parent, WaitState state) {
-        Element nodeElement = writeElement(parent, state, WAIT_STATE_NODE);
-        Element timerElement = nodeElement.addElement(TIMER_NODE);
-        setAttribute(timerElement, DUEDATE_ATTR, state.getDueDate());
-        if (state.getTimerAction() != null) {
-            if (state.getTimerAction().getRepeat().hasDuration()) {
-                setAttribute(timerElement, REPEAT_ATTR, state.getTimerAction().getRepeat().getDuration());
-            }
-            writeDelegation(timerElement, ACTION_NODE, state.getTimerAction());
-        }
-        setAttribute(timerElement, TRANSITION_ATTR, PluginConstants.TIMER_TRANSITION_NAME);
-        return nodeElement;
-    }
-
-    private Element writeElement(Element parent, GraphElement element) {
-        return writeElement(parent, element, element.getTypeDefinition().getJpdlElementName());
-    }
-
-    private Element writeElement(Element parent, GraphElement element, String typeName) {
-        Element result = parent.addElement(typeName);
-        if (element instanceof Node) {
-            setAttribute(result, ID_ATTR, ((Node) element).getNodeId());
-        }
-        if (element instanceof NamedGraphElement) {
-            setAttribute(result, NAME_ATTR, ((NamedGraphElement) element).getName());
-        }
-        if (element instanceof Describable) {
-            String description = ((Describable) element).getDescription();
-            if (description != null && description.length() > 0) {
-                Element desc = result.addElement(DESCRIPTION_NODE);
-                setNodeValue(desc, description);
-            }
-        }
-        return result;
-    }
-
-    private void writeTransitions(Element parent, Node node) {
-        List<Transition> transitions = node.getLeavingTransitions();
-        for (Transition transition : transitions) {
-            Element transitionElement = writeElement(parent, transition);
-            transitionElement.addAttribute(TO_ATTR, transition.getTarget().getNodeId());
-            for (Action action : transition.getActions()) {
-                writeDelegation(transitionElement, ACTION_NODE, action);
-            }
-        }
-    }
-
-    private void writeEvent(Element parent, Event event, ActionImpl action) {
-        Element eventElement = writeElement(parent, event, EVENT_NODE);
-        setAttribute(eventElement, TYPE_ATTR, event.getType());
-        writeDelegation(eventElement, ACTION_NODE, action);
-    }
-
-    private void writeDelegation(Element parent, String elementName, Delegable delegable) {
-        Element delegationElement = parent.addElement(elementName);
-        setAttribute(delegationElement, CLASS_ATTR, delegable.getDelegationClassName());
-        setNodeValue(delegationElement, delegable.getDelegationConfiguration());
-    }
-
-    private void setDelegableClassName(Delegable delegable, String className) {
-        className = BackCompatibilityClassNames.getClassName(className);
-        delegable.setDelegationClassName(className);
     }
 }

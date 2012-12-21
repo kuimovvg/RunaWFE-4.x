@@ -26,7 +26,7 @@ public class OpenFormValidationDelegate extends BaseModelActionDelegate {
                 if (!confirm("", Localization.getString("OpenFormValidationDelegate.CreateEmptyValidation"))) {
                     return;
                 }
-                String validationFileName = formNode.getNodeId() + "." + FormNode.VALIDATION_SUFFIX;
+                String validationFileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
                 IFile file = ValidationUtil.rewriteValidation(getDefinitionFile(), validationFileName, new HashMap<String, Map<String, ValidatorConfig>>());
                 setNewValidationFormFile(formNode, file.getName());
             }

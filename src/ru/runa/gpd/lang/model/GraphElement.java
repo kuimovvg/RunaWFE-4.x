@@ -18,10 +18,13 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.handler.DelegableProvider;
 import ru.runa.gpd.handler.HandlerRegistry;
+import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.property.DelegableClassPropertyDescriptor;
 import ru.runa.gpd.property.DelegableConfPropertyDescriptor;
+import ru.runa.gpd.property.DurationPropertyDescriptor;
+import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 
 import com.google.common.base.Objects;
 
@@ -37,6 +40,12 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
     public boolean testAttribute(Object target, String name, String value) {
         if ("language".equals(name)) {
             return Objects.equal(value, getProcessDefinition().getLanguage().name().toLowerCase());
+        }
+        if ("timerExists".equals(name)) {
+            if (this instanceof ITimed) {
+                boolean timerExists = ((ITimed) this).getTimer() != null;
+                return Objects.equal(value, String.valueOf(timerExists));
+            }
         }
         return false;
     }
@@ -138,7 +147,23 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         childs.add(index, child);
         child.setParent(this);
         child.setDelegatedListener(delegatedListener);
-        firePropertyChange(NODE_CHILDS_CHANGED, null, null);
+        firePropertyChange(NODE_CHILDS_CHANGED, null, 1);
+        if (child instanceof NamedGraphElement) {
+            try {
+                String nodeId = ((NamedGraphElement) child).getId();
+                if (nodeId == null) {
+                    ((NamedGraphElement) child).setId("ID" + getProcessDefinition().nextNodeId);
+                    getProcessDefinition().nextNodeId++;
+                } else {
+                    nodeId = nodeId.substring(2);
+                    int nodeIdInt = Integer.parseInt(nodeId);
+                    if (nodeIdInt > getProcessDefinition().nextNodeId) {
+                        getProcessDefinition().nextNodeId = nodeIdInt + 1;
+                    }
+                }
+            } catch (NumberFormatException e) {
+            }
+        }
     }
 
     public void swapChilds(GraphElement child1, GraphElement child2) {
@@ -162,6 +187,10 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
             }
         }
         return items;
+    }
+
+    public List<Node> getNodes() {
+        return getChildren(Node.class);
     }
 
     public <T extends GraphElement> List<T> getChildrenRecursive(Class<T> type) {
@@ -288,6 +317,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
     public final IPropertyDescriptor[] getPropertyDescriptors() {
         List<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
         if (this instanceof NamedGraphElement) {
+            descriptors.add(new PropertyDescriptor(PROPERTY_ID, Localization.getString("Node.property.id")));
             if (((NamedGraphElement) this).canNameBeSetFromProperties()) {
                 descriptors.add(new TextPropertyDescriptor(PROPERTY_NAME, Localization.getString("property.name")));
             } else {
@@ -301,6 +331,13 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
             String type = ((Delegable) this).getDelegationType();
             descriptors.add(new DelegableClassPropertyDescriptor(PROPERTY_CLASS, Localization.getString("property.delegation.class"), type));
             descriptors.add(new DelegableConfPropertyDescriptor(PROPERTY_CONFIGURATION, (Delegable) this, Localization.getString("property.delegation.configuration")));
+        }
+        if (this instanceof ITimed && getProcessDefinition().getLanguage() == Language.JPDL) {
+            Timer timer = ((ITimed) this).getTimer();
+            if (timer != null) {
+                descriptors.add(new DurationPropertyDescriptor(PROPERTY_TIMER_DELAY, timer));
+                descriptors.add(new TimerActionPropertyDescriptor(PROPERTY_TIMER_ACTION, Localization.getString("Timer.action"), timer));
+            }
         }
         descriptors.addAll(getCustomPropertyDescriptors());
         return descriptors.toArray(new IPropertyDescriptor[descriptors.size()]);
@@ -323,6 +360,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         } else if (PROPERTY_DESCRIPTION.equals(id)) {
             return safeStringValue(getDescription());
         }
+        //if ()
         return null;
     }
 

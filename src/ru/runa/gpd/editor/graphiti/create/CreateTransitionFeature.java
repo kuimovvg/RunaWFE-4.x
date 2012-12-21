@@ -9,7 +9,6 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
-import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.Transition;
 
@@ -44,7 +43,7 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
     @Override
     public boolean canStartConnection(ICreateConnectionContext context) {
         Node source = getNode(context.getSourceAnchor());
-        if (source != null && !(source instanceof EndState)) {
+        if (source != null && source.canAddLeavingTransition(null /*TODO*/)) {
             return true;
         }
         return false;
@@ -77,7 +76,10 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
 
     private Node getNode(Anchor anchor) {
         if (anchor != null) {
-            return (Node) getBusinessObjectForPictogramElement(anchor.getParent());
+            Object object = getBusinessObjectForPictogramElement(anchor.getParent());
+            if (object instanceof Node) {
+                return (Node) object;
+            }
         }
         return null;
     }

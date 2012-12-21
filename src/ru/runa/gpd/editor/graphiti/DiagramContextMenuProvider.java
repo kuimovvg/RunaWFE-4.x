@@ -4,7 +4,6 @@ import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorContextMenuProvider;
@@ -38,8 +37,6 @@ public class DiagramContextMenuProvider extends DiagramEditorContextMenuProvider
 
     @Override
     protected void addDefaultMenuGroupUndo(IMenuManager manager) {
-        //        addActionToMenu(manager, ActionFactory.UNDO.getId(), GEFActionConstants.GROUP_UNDO);
-        //        addActionToMenu(manager, ActionFactory.REDO.getId(), GEFActionConstants.GROUP_UNDO);
     }
 
     @Override
@@ -58,15 +55,9 @@ public class DiagramContextMenuProvider extends DiagramEditorContextMenuProvider
 
     @Override
     protected void addDefaultMenuGroupRest(IMenuManager manager) {
-        //addActionToMenuIfAvailable(manager, DeleteAction.ACTION_ID, GEFActionConstants.GROUP_REST);
         PictogramElement pes[] = getEditor().getSelectedPictogramElements();
         if (pes.length == 1) {
-            Object object;
-            if (pes[0] instanceof Diagram) {
-                object = definition;
-            } else {
-                object = getDiagramTypeProvider().getFeatureProvider().getBusinessObjectForPictogramElement(pes[0]);
-            }
+            Object object = getDiagramTypeProvider().getFeatureProvider().getBusinessObjectForPictogramElement(pes[0]);
             ISelectionProvider selectionProvider = new StructuredSelectionProvider(object);
             ObjectActionContributorManager.getManager().contributeObjectActions(getEditor(), manager, selectionProvider);
         }

@@ -19,21 +19,20 @@ public class EscalationDurationPropertyDescriptor extends PropertyDescriptor {
         super(id, Localization.getString("escalation.duration"));
         this.timed = timed;
     }
-    
+
     @Override
     public CellEditor createPropertyEditor(Composite parent) {
         return new DurationDialogCellEditor(parent);
     }
 
     private class DurationDialogCellEditor extends DialogCellEditor {
-
         public DurationDialogCellEditor(Composite parent) {
             super(parent, SWT.NONE);
         }
 
         @Override
         protected Object openDialogBox(Control cellEditorWindow) {
-            DurationEditDialog dialog = new DurationEditDialog(((GraphElement) timed).getProcessDefinition(), timed.getEscalationTime());
+            DurationEditDialog dialog = new DurationEditDialog(((GraphElement) timed).getProcessDefinition(), timed.getEscalationDelay());
             return dialog.openDialog();
         }
     }

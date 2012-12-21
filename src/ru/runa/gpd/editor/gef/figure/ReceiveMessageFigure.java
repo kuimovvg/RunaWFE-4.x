@@ -58,7 +58,7 @@ public class ReceiveMessageFigure extends MessageNodeFigure {
         points.addPoint(0, dim.height - 1);
         points.addPoint(xLeft, halfHeight);
         g.drawPolygon(points);
-        if (((ReceiveMessageNode) model).timerExist()) {
+        if (((ReceiveMessageNode) model).getTimer() != null) {
             Utils.paintTimer(g, dim);
         }
     }

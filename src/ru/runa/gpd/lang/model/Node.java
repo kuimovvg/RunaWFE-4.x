@@ -3,41 +3,51 @@ package ru.runa.gpd.lang.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
-
-import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.util.Delay;
 
 public abstract class Node extends NamedGraphElement implements Describable {
-    private String nodeId;
-
-    public String getNodeId() {
-        return nodeId;
-    }
-
-    public void setNodeId(String nodeId) {
-        this.nodeId = nodeId;
-    }
-
-    @Override
-    protected List<IPropertyDescriptor> getCustomPropertyDescriptors() {
-        List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
-        list.add(new PropertyDescriptor(PROPERTY_ID, Localization.getString("Node.property.id")));
-        return list;
-    }
-
     @Override
     public Object getPropertyValue(Object id) {
-        if (PROPERTY_ID.equals(id)) {
-            return nodeId != null ? nodeId : "";
+        if (PROPERTY_TIMER_DELAY.equals(id)) {
+            return ((ITimed) this).getTimer().getDelay();
+        }
+        if (PROPERTY_TIMER_ACTION.equals(id)) {
+            return ((ITimed) this).getTimer().getAction();
         }
         return super.getPropertyValue(id);
     }
 
     @Override
+    public void setPropertyValue(Object id, Object value) {
+        if (PROPERTY_TIMER_DELAY.equals(id)) {
+            if (value == null) {
+                // ignore, edit was canceled
+                return;
+            }
+            ((ITimed) this).getTimer().setDelay((Delay) value);
+        } else if (PROPERTY_TIMER_ACTION.equals(id)) {
+            ((ITimed) this).getTimer().setAction((TimerAction) value);
+        } else {
+            super.setPropertyValue(id, value);
+        }
+    }
+
+    @Override
+    public void removeChild(GraphElement child) {
+        super.removeChild(child);
+        if (child instanceof Timer) {
+            Transition timeoutTransition = getTransitionByName(PluginConstants.TIMER_TRANSITION_NAME);
+            if (timeoutTransition != null) {
+                removeLeavingTransition(timeoutTransition);
+            }
+        }
+    }
+
+    @Override
     protected void validate() {
         super.validate();
-        if (!(this instanceof StartState)) {
+        if (!(this instanceof StartState) && !(this instanceof Timer && getParent() instanceof ITimed)) {
             if (getArrivingTransitions().size() == 0) {
                 addError("noInputTransitions");
             }
@@ -47,15 +57,12 @@ public abstract class Node extends NamedGraphElement implements Describable {
                 addError("noOutputTransitions");
             }
         }
-        /* allow duplicated transitions to attach different action handlers
-        Set<String> uniqueNames = new HashSet<String>();
-        for (Transition transition : getLeavingTransitions()) {
-            if (uniqueNames.contains(transition.getName())) {
-                addError("model.validation.duplicatedTransitionName", transition.getName());
-            }
-            uniqueNames.add(transition.getName());
-        }
-        */
+        //        if (this instanceof ITimed) {
+        //            Timer timer = ((ITimed) this).getTimer();
+        //            if (timer != null) {
+        //                timer.validate();
+        //            }
+        //        }
     }
 
     public String getNextTransitionName() {
@@ -118,7 +125,7 @@ public abstract class Node extends NamedGraphElement implements Describable {
 
     public List<Transition> getArrivingTransitions() {
         List<Transition> arrivingTransitions = new ArrayList<Transition>();
-        List<Node> allNodes = getProcessDefinition().getNodes();
+        List<Node> allNodes = getProcessDefinition().getNodesRecursive();
         for (Node node : allNodes) {
             List<Transition> leaving = node.getLeavingTransitions();
             for (Transition transition : leaving) {
@@ -161,13 +168,6 @@ public abstract class Node extends NamedGraphElement implements Describable {
     }
 
     protected boolean allowLeavingTransition(Node target, List<Transition> transitions) {
-        /* allow duplicated transitions to attach different action handlers
-        for (Transition transition : transitions) {
-            if (transition.getTarget().equals(target)) {
-                return false;
-            }
-        }
-        */
         return true;
     }
 
