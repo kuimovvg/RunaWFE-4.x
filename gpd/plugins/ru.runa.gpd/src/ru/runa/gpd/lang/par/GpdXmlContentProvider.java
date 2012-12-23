@@ -9,7 +9,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -35,6 +34,7 @@ public class GpdXmlContentProvider extends AuxContentProvider {
     private static final String TRANSITION_ELEMENT_NAME = "transition";
     private static final String BENDPOINT_ELEMENT_NAME = "bendpoint";
 
+    //private static final String PARENT_CONTAINER_ID_ATTRIBUTE_NAME = "parentContainerId";
     private void addProcessDiagramInfo(ProcessDefinition definition, Element processDiagramInfo) {
         int width = getIntAttribute(processDiagramInfo, WIDTH_ATTRIBUTE_NAME, 0);
         int height = getIntAttribute(processDiagramInfo, HEIGHT_ATTRIBUTE_NAME, 0);
@@ -50,7 +50,16 @@ public class GpdXmlContentProvider extends AuxContentProvider {
         addProcessDiagramInfo(definition, processDiagramInfo);
         List<Element> children = processDiagramInfo.elements(NODE_ELEMENT_NAME);
         for (Element element : children) {
-            GraphElement graphElement = definition.getGraphElementByIdNotNull(element.attributeValue(NAME_ATTRIBUTE_NAME));
+            String nodeId = element.attributeValue(NAME_ATTRIBUTE_NAME);
+            GraphElement graphElement = definition.getGraphElementByIdNotNull(nodeId);
+            //            String parentContainerId = element.attributeValue(PARENT_CONTAINER_ID_ATTRIBUTE_NAME);
+            //            GraphElement parentContainer;
+            //            if (parentContainerId != null) {
+            //                parentContainer = definition.getGraphElementByIdNotNull(parentContainerId);
+            //            } else {
+            //                parentContainer = definition;
+            //            }
+            //            graphElement.setParentContainer(parentContainer);
             Rectangle constraint = new Rectangle();
             constraint.x = getIntAttribute(element, X_ATTRIBUTE_NAME, 0);
             constraint.y = getIntAttribute(element, Y_ATTRIBUTE_NAME, 0);
@@ -72,13 +81,9 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                             List<Bendpoint> bendpoints = new ArrayList<Bendpoint>();
                             List<Element> bendpointInfoList = transitionElement.elements(BENDPOINT_ELEMENT_NAME);
                             for (Element bendpointElement : bendpointInfoList) {
-                                try {
-                                    int x = getIntAttribute(bendpointElement, X_ATTRIBUTE_NAME, 0);
-                                    int y = getIntAttribute(bendpointElement, Y_ATTRIBUTE_NAME, 0);
-                                    bendpoints.add(new Bendpoint(x, y));
-                                } catch (NumberFormatException e) {
-                                    PluginLogger.logErrorWithoutDialog("Unable to parce bendpoint info for element " + bendpointElement, e);
-                                }
+                                int x = getIntAttribute(bendpointElement, X_ATTRIBUTE_NAME, 0);
+                                int y = getIntAttribute(bendpointElement, Y_ATTRIBUTE_NAME, 0);
+                                bendpoints.add(new Bendpoint(x, y));
                             }
                             transition.setBendpoints(bendpoints);
                             break;
@@ -141,6 +146,9 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             }
             Element element = root.addElement(NODE_ELEMENT_NAME);
             addAttribute(element, NAME_ATTRIBUTE_NAME, graphElement.getId());
+            //            if (graphElement.getParentContainer() != null && !graphElement.getParentContainer().equals(definition)) {
+            //                addAttribute(element, PARENT_CONTAINER_ID_ATTRIBUTE_NAME, graphElement.getParentContainer().getId());
+            //            }
             Rectangle constraint = graphElement.getConstraint();
             if (constraint.width == 0 || constraint.height == 0) {
                 throw new Exception("Invalid figure size: " + constraint.getSize());

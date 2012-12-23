@@ -80,6 +80,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String START_EVENT = "startEvent";
     private static final String SWIMLANE_SET = "laneSet";
     private static final String SWIMLANE = "lane";
+    private static final String FLOW_NODE_REF = "flowNodeRef";
     public static final String SWIMLANE_DISPLAY_MODE = "showSwimlane";
     private static final String REASSIGN = "reassign";//
     private static final String CLASS = "class";
@@ -145,11 +146,15 @@ public class BpmnSerializer extends ProcessSerializer {
             Element desc = process.addElement(DOCUMENTATION);
             setNodeValue(desc, definition.getDescription());
         }
+        Element laneSetElement = process.addElement(SWIMLANE_SET).addAttribute(ID, "laneSet1");
         List<Swimlane> swimlanes = definition.getSwimlanes();
         for (Swimlane swimlane : swimlanes) {
-            Element laneSetElement = process.addElement(SWIMLANE_SET).addAttribute(ID, "laneSet1");
             Element swimlaneElement = writeElement(laneSetElement, swimlane);
             writeDelegation(swimlaneElement, swimlane);
+            List<GraphElement> swimlaneElements = definition.getContainerElements(swimlane);
+            for (GraphElement child : swimlaneElements) {
+                swimlaneElement.addElement(FLOW_NODE_REF).addText(child.getId());
+            }
         }
         StartState startState = definition.getFirstChild(StartState.class);
         if (startState != null) {
@@ -476,6 +481,7 @@ public class BpmnSerializer extends ProcessSerializer {
         if (swimlaneDisplayModeName != null) {
             definition.setSwimlaneDisplayMode(SwimlaneDisplayMode.valueOf(swimlaneDisplayModeName));
         }
+        Map<Swimlane, List<String>> swimlaneElementIds = Maps.newHashMap();
         Element swimlaneSetElement = process.element(SWIMLANE_SET);
         if (swimlaneSetElement != null) {
             List<Element> swimlanes = swimlaneSetElement.elements(SWIMLANE);
@@ -484,6 +490,12 @@ public class BpmnSerializer extends ProcessSerializer {
                 Map<String, String> swimlaneProperties = parseExtensionProperties(swimlaneElement);
                 swimlane.setDelegationClassName(swimlaneProperties.get(CLASS));
                 swimlane.setDelegationConfiguration(swimlaneProperties.get(CONFIG));
+                List<Element> flowNodeRefElements = swimlaneElement.elements(FLOW_NODE_REF);
+                List<String> flowNodeIds = Lists.newArrayList();
+                for (Element flowNodeRefElement : flowNodeRefElements) {
+                    flowNodeIds.add(flowNodeRefElement.getTextTrim());
+                }
+                swimlaneElementIds.put(swimlane, flowNodeIds);
             }
         }
         List<Element> startStates = process.elements(START_EVENT);
@@ -633,6 +645,11 @@ public class BpmnSerializer extends ProcessSerializer {
             transition.setName(transitionElement.attributeValue(NAME));
             transition.setTarget(target);
             source.addLeavingTransition(transition);
+        }
+        for (Map.Entry<Swimlane, List<String>> entry : swimlaneElementIds.entrySet()) {
+            for (String nodeId : entry.getValue()) {
+                definition.getGraphElementByIdNotNull(nodeId).setParentContainer(entry.getKey());
+            }
         }
         return definition;
     }
