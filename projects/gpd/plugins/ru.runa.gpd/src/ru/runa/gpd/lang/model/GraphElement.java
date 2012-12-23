@@ -33,6 +33,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
     protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
     private PropertyChangeListener delegatedListener;
     private GraphElement parent;
+    private GraphElement parentContainer;
     private final List<GraphElement> childs = new ArrayList<GraphElement>();
     private Rectangle constraint;
     private String id;
@@ -43,6 +44,14 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
 
     public void setId(String nodeId) {
         this.id = nodeId;
+    }
+
+    public GraphElement getParentContainer() {
+        return parentContainer;
+    }
+
+    public void setParentContainer(GraphElement parentContainer) {
+        this.parentContainer = parentContainer;
     }
 
     @Override

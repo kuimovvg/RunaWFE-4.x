@@ -68,7 +68,7 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             List<OrgFunctionDefinition> definitions = OrgFunctionsRegistry.getInstance().getAll();
             for (OrgFunctionDefinition definition : definitions) {
-                combo.add(definition.getName());
+                combo.add(definition.getLabel());
             }
             combo.setText(orgFunctionLabel);
             combo.addSelectionListener(new SelectionAdapter() {
