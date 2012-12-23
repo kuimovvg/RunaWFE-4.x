@@ -10,8 +10,8 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.Timer;
 
-public class MoveNodeFeature extends DefaultMoveShapeFeature {
-    public MoveNodeFeature(IFeatureProvider provider) {
+public class MoveElementFeature extends DefaultMoveShapeFeature {
+    public MoveElementFeature(IFeatureProvider provider) {
         super(provider);
     }
 
@@ -22,7 +22,7 @@ public class MoveNodeFeature extends DefaultMoveShapeFeature {
         if (element instanceof Timer && element.getParent() instanceof ITimed) {
             return false;
         }
-        return true;
+        return element != null;
     }
 
     @Override

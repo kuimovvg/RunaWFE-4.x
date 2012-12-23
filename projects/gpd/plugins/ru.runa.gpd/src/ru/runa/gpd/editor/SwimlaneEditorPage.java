@@ -281,7 +281,6 @@ public class SwimlaneEditorPage extends EditorPartBase {
             if (dialog.open() == IDialogConstants.OK_ID) {
                 Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(getDefinition());
                 newSwimlane.setName(dialog.getName());
-                newSwimlane.setDelegationClassName(Swimlane.DELEGATION_CLASS_NAME);
                 getDefinition().addSwimlane(newSwimlane);
                 tableViewer.setSelection(new StructuredSelection(newSwimlane));
             }

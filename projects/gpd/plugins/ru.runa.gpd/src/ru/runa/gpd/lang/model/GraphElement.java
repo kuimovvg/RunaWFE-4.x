@@ -35,6 +35,15 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
     private GraphElement parent;
     private final List<GraphElement> childs = new ArrayList<GraphElement>();
     private Rectangle constraint;
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String nodeId) {
+        this.id = nodeId;
+    }
 
     @Override
     public boolean testAttribute(Object target, String name, String value) {
@@ -191,6 +200,10 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
 
     public List<Node> getNodes() {
         return getChildren(Node.class);
+    }
+
+    public List<GraphElement> getElements() {
+        return getChildren(GraphElement.class);
     }
 
     public <T extends GraphElement> List<T> getChildrenRecursive(Class<T> type) {
@@ -353,7 +366,9 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
 
     @Override
     public Object getPropertyValue(Object id) {
-        if (PROPERTY_CLASS.equals(id)) {
+        if (PROPERTY_ID.equals(id)) {
+            return getId();
+        } else if (PROPERTY_CLASS.equals(id)) {
             return safeStringValue(getDelegationClassName());
         } else if (PROPERTY_CONFIGURATION.equals(id)) {
             return safeStringValue(getDelegationConfiguration());

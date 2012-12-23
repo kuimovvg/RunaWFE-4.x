@@ -138,7 +138,6 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
             String swimlaneName = newSwimlaneDialog.getName();
             Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(currentDefinition);
             newSwimlane.setName(swimlaneName);
-            newSwimlane.setDelegationClassName(Swimlane.DELEGATION_CLASS_NAME);
             currentDefinition.addSwimlane(newSwimlane);
             setSwimlane(swimlaneName);
         }

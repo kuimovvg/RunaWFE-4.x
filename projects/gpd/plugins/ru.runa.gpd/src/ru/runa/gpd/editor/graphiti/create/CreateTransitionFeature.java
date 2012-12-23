@@ -7,6 +7,7 @@ import org.eclipse.graphiti.features.impl.AbstractCreateConnectionFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 
+import ru.runa.gpd.editor.graphiti.GraphUtil;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.Node;
@@ -42,45 +43,50 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
 
     @Override
     public boolean canStartConnection(ICreateConnectionContext context) {
-        Node source = getNode(context.getSourceAnchor());
-        if (source != null && source.canAddLeavingTransition(null /*TODO*/)) {
-            return true;
+        Object source = getBusinessObjectForPictogramElement(context.getSourcePictogramElement());
+        if (source instanceof Node) {
+            Node sourceNode = (Node) source;
+            return sourceNode.canAddLeavingTransition(null /*TODO*/);
         }
         return false;
     }
 
     @Override
     public boolean canCreate(ICreateConnectionContext context) {
-        Node source = getNode(context.getSourceAnchor());
-        Node target = getNode(context.getTargetAnchor());
-        if (source != null && target != null && source != target) {
-            return true;
-        }
-        return false;
+        Object source = getBusinessObjectForPictogramElement(context.getSourcePictogramElement());
+        Object target = getBusinessObjectForPictogramElement(context.getTargetPictogramElement());
+        return (target != null && source != target);
     }
 
     @Override
     public Connection create(ICreateConnectionContext context) {
-        Node source = getNode(context.getSourceAnchor());
-        Node target = getNode(context.getTargetAnchor());
+        Node source = (Node) getBusinessObjectForPictogramElement(context.getSourcePictogramElement());
+        Node target = (Node) getBusinessObjectForPictogramElement(context.getTargetPictogramElement());
         // create new business object
         Transition transition = transitionDefinition.createElement(source);
         transition.setTarget(target);
         transition.setName(source.getNextTransitionName());
         source.addLeavingTransition(transition);
         // add connection for business object
-        AddConnectionContext addConnectionContext = new AddConnectionContext(context.getSourceAnchor(), context.getTargetAnchor());
+        Anchor sourceAnchor = context.getSourceAnchor();
+        if (sourceAnchor == null) {
+            sourceAnchor = GraphUtil.getChopboxAnchor(context.getSourcePictogramElement());
+        }
+        Anchor targetAnchor = context.getTargetAnchor();
+        if (targetAnchor == null) {
+            targetAnchor = GraphUtil.getChopboxAnchor(context.getTargetPictogramElement());
+        }
+        AddConnectionContext addConnectionContext = new AddConnectionContext(sourceAnchor, targetAnchor);
         addConnectionContext.setNewObject(transition);
         return (Connection) getFeatureProvider().addIfPossible(addConnectionContext);
     }
-
-    private Node getNode(Anchor anchor) {
-        if (anchor != null) {
-            Object object = getBusinessObjectForPictogramElement(anchor.getParent());
-            if (object instanceof Node) {
-                return (Node) object;
-            }
-        }
-        return null;
-    }
+    //    private Node getNode(Anchor anchor) {
+    //        if (anchor != null) {
+    //            Object object = getBusinessObjectForPictogramElement(anchor.getParent());
+    //            if (object instanceof Node) {
+    //                return (Node) object;
+    //            }
+    //        }
+    //        return null;
+    //    }
 }
