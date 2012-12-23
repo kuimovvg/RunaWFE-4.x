@@ -137,7 +137,7 @@ public class WorkspaceOperations {
 
     public static void saveProcessDefinition(IFile definitionFile, ProcessDefinition definition) throws Exception {
         ProcessSerializer serializer = definition.getLanguage().getSerializer();
-        Document document = serializer.getInitialProcessDefinitionDocument(definition.getName());
+        Document document = serializer.getInitialProcessDefinitionDocument(definition.getName(), null);
         serializer.saveToXML(definition, document);
         byte[] bytes = XmlUtil.writeXml(document);
         ParContentProvider.saveAuxInfo(definitionFile, definition);

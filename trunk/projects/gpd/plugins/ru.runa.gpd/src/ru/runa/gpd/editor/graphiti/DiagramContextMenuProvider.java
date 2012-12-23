@@ -13,11 +13,9 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ObjectActionContributorManager;
 
 import ru.runa.gpd.editor.StructuredSelectionProvider;
-import ru.runa.gpd.lang.model.ProcessDefinition;
 
 public class DiagramContextMenuProvider extends DiagramEditorContextMenuProvider {
     private final IDiagramTypeProvider diagramTypeProvider;
-    private final ProcessDefinition definition;
 
     /**
      * @param viewer
@@ -29,10 +27,9 @@ public class DiagramContextMenuProvider extends DiagramEditorContextMenuProvider
      * @param configurationProvider
      *            the configuration provider
      */
-    public DiagramContextMenuProvider(EditPartViewer viewer, ActionRegistry registry, IDiagramTypeProvider diagramTypeProvider, ProcessDefinition definition) {
+    public DiagramContextMenuProvider(EditPartViewer viewer, ActionRegistry registry, IDiagramTypeProvider diagramTypeProvider) {
         super(viewer, registry, diagramTypeProvider);
         this.diagramTypeProvider = diagramTypeProvider;
-        this.definition = definition;
     }
 
     @Override

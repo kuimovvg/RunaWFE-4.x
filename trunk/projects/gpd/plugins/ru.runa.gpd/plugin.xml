@@ -628,7 +628,10 @@
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddTransitionFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateTransitionFeature"
-               update="ru.runa.gpd.editor.graphiti.update.UpdateTransitionFeature">
+               fixedSize="false"
+               height="1"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateTransitionFeature"
+               width="1">
          </graphiti>
       </element>
       <element
@@ -644,8 +647,12 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.StartStateTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateStartNodeFeature">
+               add="ru.runa.gpd.editor.graphiti.add.AddStartNodeFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateStartNodeFeature"
+               fixedSize="false"
+               height="7"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateStartNodeFeature"
+               width="10">
          </graphiti>
       </element>
       <element
@@ -661,9 +668,13 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddTaskStateFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature"
-               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature">
+               add="ru.runa.gpd.editor.graphiti.add.AddStateNodeFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               fixedSize="false"
+               height="7"
+               layout="ru.runa.gpd.editor.graphiti.layout.LayoutStateNodeFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature"
+               width="11">
          </graphiti>
       </element>
       <element
@@ -692,7 +703,10 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               fixedSize="true"
+               height="4"
+               width="4">
          </graphiti>
       </element>
       <element
@@ -709,7 +723,10 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               fixedSize="true"
+               height="4"
+               width="4">
          </graphiti>
       </element>
       <element
@@ -744,7 +761,10 @@
             type="node">
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               fixedSize="true"
+               height="4"
+               width="4">
          </graphiti>
       </element>
       <element
@@ -761,7 +781,10 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               fixedSize="true"
+               height="4"
+               width="4">
          </graphiti>
       </element>
       <element
@@ -788,7 +811,12 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddSwimlaneFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateSwimlaneFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateSwimlaneFeature"
+               fixedSize="false"
+               height="15"
+               layout="ru.runa.gpd.editor.graphiti.layout.LayoutSwimlaneFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateSwimlaneFeature"
+               width="40">
          </graphiti>
       </element>
       <element
@@ -799,7 +827,12 @@
             type="artifact">
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddTextAnnotationFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               fixedSize="false"
+               height="3"
+               layout="ru.runa.gpd.editor.graphiti.layout.LayoutTextAnnotationFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateTextAnnotationFeature"
+               width="8">
          </graphiti>
       </element>
       <element
@@ -837,8 +870,12 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddSubProcessFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature"
-               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               fixedSize="false"
+               height="7"
+               layout="ru.runa.gpd.editor.graphiti.layout.LayoutStateNodeFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature"
+               width="11">
          </graphiti>
       </element>
       <element
@@ -854,9 +891,13 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddMultiInstanceFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature"
-               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature">
+               add="ru.runa.gpd.editor.graphiti.add.AddMultiSubprocessFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               fixedSize="false"
+               height="7"
+               layout="ru.runa.gpd.editor.graphiti.layout.LayoutStateNodeFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature"
+               width="11">
          </graphiti>
       </element>
       <element
@@ -876,7 +917,10 @@
          </onVariableRenamed>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               height="4"
+               fixedSize="true"
+               width="4">
          </graphiti>
       </element>
       <element
@@ -896,7 +940,10 @@
          </onVariableRenamed>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               height="4"
+               fixedSize="true"
+               width="4">
          </graphiti>
       </element>
       <element
@@ -924,7 +971,10 @@
          </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddTimerFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateTimerFeature">
+               create="ru.runa.gpd.editor.graphiti.create.CreateTimerFeature"
+               height="4"
+               fixedSize="true"
+               width="4">
          </graphiti>
       </element>
    </extension>

@@ -104,7 +104,7 @@ public class JpdlSerializer extends ProcessSerializer {
     }
 
     @Override
-    public Document getInitialProcessDefinitionDocument(String processName) {
+    public Document getInitialProcessDefinitionDocument(String processName, Map<String, String> properties) {
         Document document = XmlUtil.createDocument(ROOT_ELEMENT);
         document.getRootElement().addAttribute(NAME_ATTR, processName);
         return document;
@@ -694,7 +694,7 @@ public class JpdlSerializer extends ProcessSerializer {
         List<Transition> tmpTransitions = new ArrayList<Transition>(TRANSITION_TARGETS.keySet());
         for (Transition transition : tmpTransitions) {
             String targetNodeId = TRANSITION_TARGETS.remove(transition);
-            Node target = definition.getNodeByIdNotNull(targetNodeId);
+            Node target = definition.getGraphElementByIdNotNull(targetNodeId);
             transition.setTarget(target);
         }
         return definition;

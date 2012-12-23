@@ -356,17 +356,17 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         firePropertyChange(ELEMENT_SWIMLANE_REMOVED, null, swimlane);
     }
 
-    public <T extends Node> T getNodeById(String nodeId) {
-        for (Node node : getNodesRecursive()) {
-            if (Objects.equal(nodeId, node.getId())) {
-                return (T) node;
+    public <T extends GraphElement> T getGraphElementById(String nodeId) {
+        for (GraphElement graphElement : getElementsRecursive()) {
+            if (Objects.equal(nodeId, graphElement.getId())) {
+                return (T) graphElement;
             }
         }
         return null;
     }
 
-    public <T extends Node> T getNodeByIdNotNull(String nodeId) {
-        T node = ((T) getNodeById(nodeId));
+    public <T extends GraphElement> T getGraphElementByIdNotNull(String nodeId) {
+        T node = ((T) getGraphElementById(nodeId));
         if (node == null) {
             // back compatibility: search by name
             //            for (Node testNode : getNodes()) {
@@ -385,6 +385,10 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
 
     public List<Node> getNodesRecursive() {
         return getChildrenRecursive(Node.class);
+    }
+
+    public List<GraphElement> getElementsRecursive() {
+        return getChildrenRecursive(GraphElement.class);
     }
 
     @Override

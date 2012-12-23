@@ -22,7 +22,7 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
-import ru.runa.gpd.lang.model.WaitState;
+import ru.runa.gpd.lang.model.Timer;
 
 public class PortabilityRefactoring extends Refactoring {
     private final List<VariableRenameProvider<?>> cache = new ArrayList<VariableRenameProvider<?>>();
@@ -53,9 +53,9 @@ public class PortabilityRefactoring extends Refactoring {
                 for (State stateNode : stateNodes) {
                     cache.add(new TimedPresentation(stateNode));
                 }
-                List<WaitState> waitStateNodes = definition.getChildren(WaitState.class);
-                for (WaitState waitStateNode : waitStateNodes) {
-                    cache.add(new TimedPresentation(waitStateNode));
+                List<Timer> timers = definition.getChildren(Timer.class);
+                for (Timer timer : timers) {
+                    cache.add(new TimerPresentation(timer));
                 }
                 List<Action> actions = definition.getChildrenRecursive(Action.class);
                 for (Action action : actions) {

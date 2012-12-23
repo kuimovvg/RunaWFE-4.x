@@ -28,7 +28,7 @@ public class SubstitutionExceptionsXmlContentProvider extends AuxContentProvider
         for (Element element : elementsList) {
             String taskId = element.attributeValue(NAME_ATTRIBUTE_NAME);
             try {
-                TaskState taskState = definition.getNodeByIdNotNull(taskId);
+                TaskState taskState = definition.getGraphElementByIdNotNull(taskId);
                 taskState.setIgnoreSubstitution(true);
             } catch (Exception e) {
                 PluginLogger.logErrorWithoutDialog("No swimlane found for " + taskId, e);

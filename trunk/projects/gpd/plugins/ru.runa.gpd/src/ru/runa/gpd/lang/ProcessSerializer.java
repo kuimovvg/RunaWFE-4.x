@@ -1,5 +1,7 @@
 package ru.runa.gpd.lang;
 
+import java.util.Map;
+
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.eclipse.core.resources.IFile;
@@ -9,7 +11,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 public abstract class ProcessSerializer {
     public abstract boolean isSupported(Document document);
 
-    public abstract Document getInitialProcessDefinitionDocument(String processName);
+    public abstract Document getInitialProcessDefinitionDocument(String processName, Map<String, String> properties);
 
     public abstract ProcessDefinition parseXML(Document document);
 
