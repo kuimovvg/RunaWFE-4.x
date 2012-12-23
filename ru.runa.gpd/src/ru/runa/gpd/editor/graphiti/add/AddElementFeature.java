@@ -1,10 +1,10 @@
 package ru.runa.gpd.editor.graphiti.add;
 
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.context.ITargetContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
 
 import ru.runa.gpd.editor.GEFConstants;
@@ -12,10 +12,10 @@ import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 
-public abstract class AddGraphElementFeature extends AbstractAddShapeFeature implements GEFConstants {
+public abstract class AddElementFeature extends AbstractAddShapeFeature implements GEFConstants {
     private DiagramFeatureProvider featureProvider;
 
-    public AddGraphElementFeature() {
+    public AddElementFeature() {
         super(null);
     }
 
@@ -28,26 +28,25 @@ public abstract class AddGraphElementFeature extends AbstractAddShapeFeature imp
         return featureProvider;
     }
 
-    public boolean isFixedSize() {
-        return false;
-    }
-
     protected ProcessDefinition getProcessDefinition() {
         return (ProcessDefinition) getBusinessObjectForPictogramElement(getDiagram());
     }
 
-    protected Rectangle adjustBounds(IAddContext context) {
-        Rectangle rectangle = new Rectangle(context.getX(), context.getY(), context.getWidth(), context.getHeight());
-        Dimension minSize = getDefaultSize(context);
-        if (rectangle.height < minSize.height) {
-            rectangle.height = minSize.height;
+    protected Dimension adjustBounds(IAddContext context) {
+        Dimension dimension = new Dimension(context.getWidth(), context.getHeight());
+        GraphElement element = (GraphElement) context.getNewObject();
+        Dimension min = getDefaultSize(element, context);
+        if (dimension.height < min.height) {
+            dimension.height = min.height;
         }
-        if (rectangle.width < minSize.width) {
-            rectangle.width = minSize.width;
+        if (dimension.width < min.width) {
+            dimension.width = min.width;
         }
-        ((GraphElement) context.getNewObject()).setConstraint(rectangle);
-        return rectangle;
+        element.setConstraint(new Rectangle(new Point(context.getX(), context.getY()), dimension));
+        return dimension;
     }
 
-    public abstract Dimension getDefaultSize(ITargetContext context);
+    public Dimension getDefaultSize(GraphElement element, IAddContext context) {
+        return element.getTypeDefinition().getGraphitiEntry().getDefaultSize();
+    }
 }

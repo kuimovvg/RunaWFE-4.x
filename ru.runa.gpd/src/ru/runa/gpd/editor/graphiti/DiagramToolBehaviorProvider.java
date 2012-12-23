@@ -8,16 +8,13 @@ import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
-import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.ContextButtonEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
 
-import ru.runa.gpd.editor.graphiti.create.CreateGraphElementFeature;
+import ru.runa.gpd.editor.graphiti.create.CreateElementFeature;
 import ru.runa.gpd.editor.graphiti.update.OpenSubProcessFeature;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
@@ -59,29 +56,22 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
         PictogramElement pe = context.getPictogramElement();
         setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE);
         GraphElement element = (GraphElement) getFeatureProvider().getBusinessObjectForPictogramElement(pe);
+        if (element == null) {
+            return null;
+        }
         //
         CreateConnectionContext createConnectionContext = new CreateConnectionContext();
         createConnectionContext.setSourcePictogramElement(pe);
-        Anchor connectionAnchor = null;
-        if (pe instanceof Anchor) {
-            connectionAnchor = (Anchor) pe;
-        } else if (pe instanceof AnchorContainer) {
-            connectionAnchor = Graphiti.getPeService().getChopboxAnchor((AnchorContainer) pe);
-        }
-        createConnectionContext.setSourceAnchor(connectionAnchor);
-        if (!(pe.eContainer() instanceof ContainerShape)) {
-            return data;
-        }
         boolean allowTargetNodeCreation = !(element instanceof EndState) && !(element instanceof EndTokenState)
                 && !(element instanceof Timer && element.getParent() instanceof ITimed) && !(element instanceof Swimlane) && !(element instanceof TextAnnotation);
         //
         CreateContext createContext = new CreateContext();
         createContext.setTargetContainer((ContainerShape) pe.eContainer());
-        createContext.putProperty(CreateGraphElementFeature.CONNECTION_PROPERTY, createConnectionContext);
+        createContext.putProperty(CreateElementFeature.CONNECTION_PROPERTY, createConnectionContext);
         if (allowTargetNodeCreation) {
             //
             NodeTypeDefinition taskStateDefinition = NodeRegistry.getNodeTypeDefinition(TaskState.class);
-            CreateGraphElementFeature createTaskStateFeature = new CreateGraphElementFeature();
+            CreateElementFeature createTaskStateFeature = new CreateElementFeature();
             createTaskStateFeature.setNodeDefinition(taskStateDefinition);
             createTaskStateFeature.setFeatureProvider(getFeatureProvider());
             ContextButtonEntry createTaskStateButton = new ContextButtonEntry(createTaskStateFeature, createContext);
@@ -90,7 +80,7 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
             data.getDomainSpecificContextButtons().add(createTaskStateButton);
             //
             NodeTypeDefinition decisionDefinition = NodeRegistry.getNodeTypeDefinition(Decision.class);
-            CreateGraphElementFeature decisionFeature = new CreateGraphElementFeature();
+            CreateElementFeature decisionFeature = new CreateElementFeature();
             decisionFeature.setNodeDefinition(decisionDefinition);
             decisionFeature.setFeatureProvider(getFeatureProvider());
             ContextButtonEntry createDecisionButton = new ContextButtonEntry(decisionFeature, createContext);
@@ -100,7 +90,7 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
             data.getDomainSpecificContextButtons().add(createDecisionButton);
             //
             NodeTypeDefinition endStateDefinition = NodeRegistry.getNodeTypeDefinition(EndState.class);
-            CreateGraphElementFeature endFeature = new CreateGraphElementFeature();
+            CreateElementFeature endFeature = new CreateElementFeature();
             endFeature.setNodeDefinition(endStateDefinition);
             endFeature.setFeatureProvider(getFeatureProvider());
             ContextButtonEntry createEndStateButton = new ContextButtonEntry(endFeature, createContext);
@@ -130,10 +120,10 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
             createElementButton.setIconId("?.png");
             data.getDomainSpecificContextButtons().add(createElementButton);
             for (ICreateFeature feature : getFeatureProvider().getCreateFeatures()) {
-                if (feature instanceof CreateGraphElementFeature && feature.canCreate(createContext)) {
-                    CreateGraphElementFeature createGraphElementFeature = (CreateGraphElementFeature) feature;
+                if (feature instanceof CreateElementFeature && feature.canCreate(createContext)) {
+                    CreateElementFeature createElementFeature = (CreateElementFeature) feature;
                     ContextButtonEntry createButton = new ContextButtonEntry(feature, createContext);
-                    NodeTypeDefinition typeDefinition = createGraphElementFeature.getNodeDefinition();
+                    NodeTypeDefinition typeDefinition = createElementFeature.getNodeDefinition();
                     createButton.setText(typeDefinition.getLabel());
                     createButton.setIconId(typeDefinition.getPaletteIcon());
                     createElementButton.getContextButtonMenuEntries().add(createButton);

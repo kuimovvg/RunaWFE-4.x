@@ -3,6 +3,7 @@ package ru.runa.gpd.ui.wizard;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.eclipse.core.resources.IFile;
@@ -19,10 +20,14 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.lang.BpmnSerializer;
+import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.par.GpdXmlContentProvider;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.gpd.util.XmlUtil;
+
+import com.google.common.collect.Maps;
 
 public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
     private IStructuredSelection selection;
@@ -60,7 +65,12 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
                         monitor.worked(1);
                         IFile definitionFile = ProjectFinder.getProcessDefinitionFile(folder);
                         String processName = page.getProcessFolder().getName();
-                        Document document = page.getLanguage().getSerializer().getInitialProcessDefinitionDocument(processName);
+                        Language language = page.getLanguage();
+                        Map<String, String> properties = Maps.newHashMap();
+                        if (language == Language.BPMN) {
+                            properties.put(BpmnSerializer.SWIMLANE_DISPLAY_MODE, page.getSwimlaneDisplayMode().name());
+                        }
+                        Document document = language.getSerializer().getInitialProcessDefinitionDocument(processName, properties);
                         byte[] bytes = XmlUtil.writeXml(document);
                         definitionFile.create(new ByteArrayInputStream(bytes), true, null);
                         monitor.worked(1);
