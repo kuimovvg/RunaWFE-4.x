@@ -29,6 +29,7 @@ import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.wfe.var.format.ExecutorFormat;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 @SuppressWarnings("unchecked")
 public class ProcessDefinition extends NamedGraphElement implements Active, Describable, ITimeOut {
@@ -389,6 +390,19 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
 
     public List<GraphElement> getElementsRecursive() {
         return getChildrenRecursive(GraphElement.class);
+    }
+
+    public List<GraphElement> getContainerElements(GraphElement parentContainer) {
+        List<GraphElement> list = Lists.newArrayList();
+        for (GraphElement graphElement : getElementsRecursive()) {
+            if (Objects.equal(parentContainer, graphElement.getParentContainer())) {
+                list.add(graphElement);
+            }
+            if (parentContainer == this && graphElement.getParentContainer() == null) {
+                list.add(graphElement);
+            }
+        }
+        return list;
     }
 
     @Override

@@ -35,23 +35,23 @@ public class SwimlaneManualElement extends SwimlaneGroupElement {
         label.setLayoutData(createLayoutData(1, false));
         combo = new Combo(getClientArea(), SWT.READ_ONLY);
         combo.setVisibleItemCount(10);
-        combo.add(OrgFunctionDefinition.DEFAULT.getName());
+        combo.add(OrgFunctionDefinition.DEFAULT.getLabel());
         List<OrgFunctionDefinition> definitions = OrgFunctionsRegistry.getInstance().getAll();
         for (OrgFunctionDefinition definition : definitions) {
-            combo.add(definition.getName());
+            combo.add(definition.getLabel());
         }
         if (currentDefinition != null) {
-            combo.setText(currentDefinition.getName());
+            combo.setText(currentDefinition.getLabel());
         }
         combo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
                     String label = combo.getItem(combo.getSelectionIndex());
-                    if (OrgFunctionDefinition.DEFAULT.getName().equals(label)) {
+                    if (OrgFunctionDefinition.DEFAULT.getLabel().equals(label)) {
                         currentDefinition = OrgFunctionDefinition.DEFAULT;
                     } else {
-                        if (currentDefinition != null && label.equals(currentDefinition.getName())) {
+                        if (currentDefinition != null && label.equals(currentDefinition.getLabel())) {
                             return;
                         }
                         currentDefinition = OrgFunctionsRegistry.getInstance().getArtifactNotNullByLabel(label);
@@ -89,7 +89,7 @@ public class SwimlaneManualElement extends SwimlaneGroupElement {
         super.open(path, swimlaneName, currentDefinition);
         this.currentDefinition = currentDefinition;
         if (currentDefinition != null) {
-            combo.setText(currentDefinition.getName());
+            combo.setText(currentDefinition.getLabel());
             classNameText.setText(currentDefinition.getName());
             reloadParametersUI();
         } else {
