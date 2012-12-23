@@ -19,13 +19,12 @@ public class SwimlaneGeneralElement extends SwimlaneElement {
 
     @Override
     public String getLabel() {
-        return createNew().getName();
+        return createNew().getLabel();
     }
 
     @Override
     public void createGUI(Composite parent) {
         Composite clientArea = createSection(parent, 2);
-
         if (currentDefinition == null) {
             currentDefinition = createNew();
         }
@@ -37,7 +36,6 @@ public class SwimlaneGeneralElement extends SwimlaneElement {
             Label label = new Label(clientArea, SWT.NONE);
             label.setText(message);
             label.setLayoutData(createLayoutData(false));
-
             final Combo combo = new Combo(clientArea, SWT.READ_ONLY);
             combo.setVisibleItemCount(10);
             Set<String> variableNames = OrgFunctionsRegistry.getVariableNames(processDefinition, parameter.getType());
@@ -66,8 +64,9 @@ public class SwimlaneGeneralElement extends SwimlaneElement {
         currentDefinition.getParameter(paramName).setVariableValue(value);
         boolean fireEvent = true;
         for (OrgFunctionParameter parameter : currentDefinition.getParameters()) {
-            if (parameter.getValue().length() == 0)
+            if (parameter.getValue().length() == 0) {
                 fireEvent = false;
+            }
         }
         if (fireEvent) {
             fireCompletedEvent(currentDefinition);
@@ -93,5 +92,4 @@ public class SwimlaneGeneralElement extends SwimlaneElement {
             }
         }
     }
-
 }

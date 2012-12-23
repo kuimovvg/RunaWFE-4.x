@@ -2,7 +2,6 @@ package ru.runa.gpd.editor.graphiti;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,12 +36,7 @@ import ru.runa.gpd.editor.graphiti.add.AddTransitionFeature;
 import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.Swimlane;
-import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Transition;
-import ru.runa.gpd.util.SwimlaneDisplayMode;
-
-import com.google.common.base.Objects;
 
 public class DiagramEditorPage extends DiagramEditor implements PropertyChangeListener {
     private final ProcessEditorBase editor;
@@ -180,17 +174,18 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
     }
 
     private void drawElements(ContainerShape parentShape) {
-        List<GraphElement> graphElements;
-        if (getDefinition().getSwimlaneDisplayMode() == SwimlaneDisplayMode.none) {
-            graphElements = getDefinition().getElements();
-        } else {
-            graphElements = new ArrayList<GraphElement>(getDefinition().getSwimlanes());
-            for (SwimlanedNode swimlanedNode : getDefinition().getChildren(SwimlanedNode.class)) {
-                if (swimlanedNode.getSwimlane() == null) {
-                    graphElements.add(swimlanedNode);
-                }
-            }
-        }
+        //        List<GraphElement> graphElements;
+        //        if (getDefinition().getSwimlaneDisplayMode() == SwimlaneDisplayMode.none) {
+        //            graphElements = getDefinition().getElements();
+        //        } else {
+        //            graphElements = new ArrayList<GraphElement>(getDefinition().getSwimlanes());
+        //            for (SwimlanedNode swimlanedNode : getDefinition().getChildren(SwimlanedNode.class)) {
+        //                if (swimlanedNode.getSwimlane() == null) {
+        //                    graphElements.add(swimlanedNode);
+        //                }
+        //            }
+        //        }
+        List<GraphElement> graphElements = getDefinition().getContainerElements(getDefinition());
         drawElements(parentShape, graphElements);
     }
 
@@ -217,14 +212,14 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
             //            }
             if (addFeature.canAdd(context)) {
                 PictogramElement childContainer = addFeature.add(context);
-                List<GraphElement> children = graphElement.getElements();
-                if (graphElement instanceof Swimlane) {
-                    for (SwimlanedNode swimlanedNode : getDefinition().getChildren(SwimlanedNode.class)) {
-                        if (Objects.equal(swimlanedNode.getSwimlane(), graphElement)) {
-                            children.add(swimlanedNode);
-                        }
-                    }
-                }
+                List<GraphElement> children = getDefinition().getContainerElements(graphElement);
+                //                if (graphElement instanceof Swimlane) {
+                //                    for (SwimlanedNode swimlanedNode : getDefinition().getChildren(SwimlanedNode.class)) {
+                //                        if (Objects.equal(swimlanedNode.getSwimlane(), graphElement)) {
+                //                            children.add(swimlanedNode);
+                //                        }
+                //                    }
+                //                }
                 if (childContainer instanceof ContainerShape && children.size() > 0) {
                     drawElements((ContainerShape) childContainer, children);
                     //                if (node instanceof Activity) {

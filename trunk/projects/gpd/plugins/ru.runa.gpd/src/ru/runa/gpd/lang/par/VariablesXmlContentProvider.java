@@ -36,9 +36,6 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         for (Element element : elementsList) {
             String variableName = element.attributeValue(NAME_ATTRIBUTE_NAME);
             String formatName = element.attributeValue(FORMAT_ATTRIBUTE_NAME);
-            //            if (isEmptyOrNull(formatName)) {
-            //                formatName = StringFormat.class.getName();
-            //            }
             formatName = BackCompatibilityClassNames.getClassName(formatName);
             String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
             String swimlaneName = element.attributeValue(SWIMLANE_ATTRIBUTE_NAME);
