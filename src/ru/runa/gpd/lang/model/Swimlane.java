@@ -15,8 +15,12 @@ import ru.runa.gpd.orgfunction.OrgFunctionsRegistry;
 import ru.runa.wfe.handler.assign.DefaultAssignmentHandler;
 
 public class Swimlane extends NamedGraphElement implements Delegable {
-    public static final String DELEGATION_CLASS_NAME = DefaultAssignmentHandler.class.getName();
+    private static final String DELEGATION_CLASS_NAME = DefaultAssignmentHandler.class.getName();
     private boolean publicVisibility;
+
+    public Swimlane() {
+        setDelegationClassName(DELEGATION_CLASS_NAME);
+    }
 
     @Override
     public String getDelegationType() {

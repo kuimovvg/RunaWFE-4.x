@@ -12,6 +12,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.Bendpoint;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.State;
@@ -47,39 +48,41 @@ public class GpdXmlContentProvider extends AuxContentProvider {
         Document document = XmlUtil.parseWithoutValidation(folder.getFile(GPD_FILE_NAME).getContents());
         Element processDiagramInfo = document.getRootElement();
         addProcessDiagramInfo(definition, processDiagramInfo);
-        List<Element> children = getNamedChildren(processDiagramInfo, NODE_ELEMENT_NAME);
+        List<Element> children = processDiagramInfo.elements(NODE_ELEMENT_NAME);
         for (Element element : children) {
-            Node node = definition.getNodeByIdNotNull(element.attributeValue(NAME_ATTRIBUTE_NAME));
+            GraphElement graphElement = definition.getGraphElementByIdNotNull(element.attributeValue(NAME_ATTRIBUTE_NAME));
             Rectangle constraint = new Rectangle();
             constraint.x = getIntAttribute(element, X_ATTRIBUTE_NAME, 0);
             constraint.y = getIntAttribute(element, Y_ATTRIBUTE_NAME, 0);
             constraint.width = getIntAttribute(element, WIDTH_ATTRIBUTE_NAME, 0);
             constraint.height = getIntAttribute(element, HEIGHT_ATTRIBUTE_NAME, 0);
-            if (node instanceof State) {
+            if (graphElement instanceof State) {
                 boolean minimizedView = getBooleanAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, false);
-                ((State) node).setMinimizedView(minimizedView);
+                ((State) graphElement).setMinimizedView(minimizedView);
             }
-            node.setConstraint(constraint);
-            List<Transition> leavingTransitions = node.getLeavingTransitions();
-            List<Element> transitionInfoList = getNamedChildren(element, TRANSITION_ELEMENT_NAME);
-            for (int i = 0; i < leavingTransitions.size(); i++) {
-                Element transitionElement = transitionInfoList.get(i);
-                String transitionName = transitionElement.attributeValue(NAME_ATTRIBUTE_NAME);
-                for (Transition transition : leavingTransitions) {
-                    if (transition.getName().equals(transitionName)) {
-                        List<Bendpoint> bendpoints = new ArrayList<Bendpoint>();
-                        List<Element> bendpointInfoList = getNamedChildren(transitionElement, BENDPOINT_ELEMENT_NAME);
-                        for (Element bendpointElement : bendpointInfoList) {
-                            try {
-                                int x = getIntAttribute(bendpointElement, X_ATTRIBUTE_NAME, 0);
-                                int y = getIntAttribute(bendpointElement, Y_ATTRIBUTE_NAME, 0);
-                                bendpoints.add(new Bendpoint(x, y));
-                            } catch (NumberFormatException e) {
-                                PluginLogger.logErrorWithoutDialog("Unable to parce bendpoint info for element " + bendpointElement, e);
+            graphElement.setConstraint(constraint);
+            if (graphElement instanceof Node) {
+                List<Transition> leavingTransitions = ((Node) graphElement).getLeavingTransitions();
+                List<Element> transitionInfoList = element.elements(TRANSITION_ELEMENT_NAME);
+                for (int i = 0; i < leavingTransitions.size(); i++) {
+                    Element transitionElement = transitionInfoList.get(i);
+                    String transitionName = transitionElement.attributeValue(NAME_ATTRIBUTE_NAME);
+                    for (Transition transition : leavingTransitions) {
+                        if (transition.getName().equals(transitionName)) {
+                            List<Bendpoint> bendpoints = new ArrayList<Bendpoint>();
+                            List<Element> bendpointInfoList = transitionElement.elements(BENDPOINT_ELEMENT_NAME);
+                            for (Element bendpointElement : bendpointInfoList) {
+                                try {
+                                    int x = getIntAttribute(bendpointElement, X_ATTRIBUTE_NAME, 0);
+                                    int y = getIntAttribute(bendpointElement, Y_ATTRIBUTE_NAME, 0);
+                                    bendpoints.add(new Bendpoint(x, y));
+                                } catch (NumberFormatException e) {
+                                    PluginLogger.logErrorWithoutDialog("Unable to parce bendpoint info for element " + bendpointElement, e);
+                                }
                             }
+                            transition.setBendpoints(bendpoints);
+                            break;
                         }
-                        transition.setBendpoints(bendpoints);
-                        break;
                     }
                 }
             }
@@ -107,29 +110,38 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             canvasShift = 5;
         }
         // calculating negative offsets;
-        for (Node node : definition.getNodesRecursive()) {
-            Rectangle constraints = node.getConstraint();
+        for (GraphElement graphElement : definition.getElementsRecursive()) {
+            if (graphElement.getConstraint() == null) {
+                continue;
+            }
+            Rectangle constraints = graphElement.getConstraint();
             if (constraints.x - canvasShift < xOffset) {
                 xOffset = constraints.x - canvasShift;
             }
             if (constraints.y - canvasShift < yOffset) {
                 yOffset = constraints.y - canvasShift;
             }
-            for (Transition transition : node.getLeavingTransitions()) {
-                for (Bendpoint bendpoint : transition.getBendpoints()) {
-                    if (bendpoint.getX() - canvasShift < xOffset) {
-                        xOffset = bendpoint.getX() - canvasShift;
-                    }
-                    if (bendpoint.getY() - canvasShift < yOffset) {
-                        yOffset = bendpoint.getY() - canvasShift;
+            if (graphElement instanceof Node) {
+                Node node = (Node) graphElement;
+                for (Transition transition : node.getLeavingTransitions()) {
+                    for (Bendpoint bendpoint : transition.getBendpoints()) {
+                        if (bendpoint.getX() - canvasShift < xOffset) {
+                            xOffset = bendpoint.getX() - canvasShift;
+                        }
+                        if (bendpoint.getY() - canvasShift < yOffset) {
+                            yOffset = bendpoint.getY() - canvasShift;
+                        }
                     }
                 }
             }
         }
-        for (Node node : definition.getNodes()) {
+        for (GraphElement graphElement : definition.getElementsRecursive()) {
+            if (graphElement.getConstraint() == null) {
+                continue;
+            }
             Element element = root.addElement(NODE_ELEMENT_NAME);
-            addAttribute(element, NAME_ATTRIBUTE_NAME, node.getId());
-            Rectangle constraint = node.getConstraint();
+            addAttribute(element, NAME_ATTRIBUTE_NAME, graphElement.getId());
+            Rectangle constraint = graphElement.getConstraint();
             if (constraint.width == 0 || constraint.height == 0) {
                 throw new Exception("Invalid figure size: " + constraint.getSize());
             }
@@ -137,20 +149,23 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             addAttribute(element, Y_ATTRIBUTE_NAME, String.valueOf(constraint.y - yOffset));
             addAttribute(element, WIDTH_ATTRIBUTE_NAME, String.valueOf(constraint.width));
             addAttribute(element, HEIGHT_ATTRIBUTE_NAME, String.valueOf(constraint.height));
-            if (node instanceof State) {
-                boolean minimizedView = ((State) node).isMinimizedView();
+            if (graphElement instanceof State) {
+                boolean minimizedView = ((State) graphElement).isMinimizedView();
                 addAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, String.valueOf(minimizedView));
             }
-            for (Transition transition : node.getLeavingTransitions()) {
-                Element transitionElement = element.addElement(TRANSITION_ELEMENT_NAME);
-                String name = transition.getName();
-                if (name != null) {
-                    addAttribute(transitionElement, NAME_ATTRIBUTE_NAME, name);
-                }
-                for (Bendpoint bendpoint : transition.getBendpoints()) {
-                    Element bendpointElement = transitionElement.addElement(BENDPOINT_ELEMENT_NAME);
-                    addAttribute(bendpointElement, X_ATTRIBUTE_NAME, String.valueOf(bendpoint.getX() - xOffset));
-                    addAttribute(bendpointElement, Y_ATTRIBUTE_NAME, String.valueOf(bendpoint.getY() - yOffset));
+            if (graphElement instanceof Node) {
+                Node node = (Node) graphElement;
+                for (Transition transition : node.getLeavingTransitions()) {
+                    Element transitionElement = element.addElement(TRANSITION_ELEMENT_NAME);
+                    String name = transition.getName();
+                    if (name != null) {
+                        addAttribute(transitionElement, NAME_ATTRIBUTE_NAME, name);
+                    }
+                    for (Bendpoint bendpoint : transition.getBendpoints()) {
+                        Element bendpointElement = transitionElement.addElement(BENDPOINT_ELEMENT_NAME);
+                        addAttribute(bendpointElement, X_ATTRIBUTE_NAME, String.valueOf(bendpoint.getX() - xOffset));
+                        addAttribute(bendpointElement, Y_ATTRIBUTE_NAME, String.valueOf(bendpoint.getY() - yOffset));
+                    }
                 }
             }
         }
