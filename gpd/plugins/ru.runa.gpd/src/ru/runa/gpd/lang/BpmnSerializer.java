@@ -33,6 +33,7 @@ import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
 import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
 
@@ -79,7 +80,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String START_EVENT = "startEvent";
     private static final String SWIMLANE_SET = "laneSet";
     private static final String SWIMLANE = "lane";
-    private static final String SWIMLANE_DISPLAY_MODE = "showSwimlane";
+    public static final String SWIMLANE_DISPLAY_MODE = "showSwimlane";
     private static final String REASSIGN = "reassign";//
     private static final String CLASS = "class";
     private static final String SEQUENCE_FLOW = "sequenceFlow";
@@ -107,7 +108,7 @@ public class BpmnSerializer extends ProcessSerializer {
     }
 
     @Override
-    public Document getInitialProcessDefinitionDocument(String processName) {
+    public Document getInitialProcessDefinitionDocument(String processName, Map<String, String> properties) {
         Document document = XmlUtil.createDocument(DEFINITIONS);
         Element definitionsElement = document.getRootElement();
         definitionsElement.addNamespace(BPMN_PREFIX, BPMN_NAMESPACE);
@@ -118,6 +119,9 @@ public class BpmnSerializer extends ProcessSerializer {
         definitionsElement.addAttribute("targetNamespace", RUNA_NAMESPACE);
         Element process = definitionsElement.addElement(PROCESS, BPMN_NAMESPACE);
         process.addAttribute(NAME, processName);
+        if (properties != null) {
+            writeExtensionElements(process, properties);
+        }
         return document;
     }
 
@@ -296,9 +300,7 @@ public class BpmnSerializer extends ProcessSerializer {
 
     private Element writeElement(Element parent, GraphElement element) {
         Element result = parent.addElement(element.getTypeDefinition().getBpmnElementName());
-        if (element instanceof Node) {
-            setAttribute(result, ID, ((Node) element).getId());
-        }
+        setAttribute(result, ID, element.getId());
         if (element instanceof NamedGraphElement) {
             setAttribute(result, NAME, ((NamedGraphElement) element).getName());
         }
@@ -377,13 +379,11 @@ public class BpmnSerializer extends ProcessSerializer {
         if (parent != null) {
             parent.addChild(element);
         }
-        if (element instanceof Node) {
-            String nodeId = node.attributeValue(ID);
-            if (nodeId == null) {
-                nodeId = ((Node) element).getName();
-            }
-            ((Node) element).setId(nodeId);
+        String nodeId = node.attributeValue(ID);
+        if (element instanceof Node && nodeId == null) {
+            nodeId = ((Node) element).getName();
         }
+        element.setId(nodeId);
         if (element instanceof NamedGraphElement) {
             ((NamedGraphElement) element).setName(node.attributeValue(NAME));
         }
@@ -467,18 +467,23 @@ public class BpmnSerializer extends ProcessSerializer {
         Element definitionsElement = document.getRootElement();
         Element process = definitionsElement.element(PROCESS);
         ProcessDefinition definition = create(process, null);
-        String defaultTaskTimeout = parseExtensionProperties(process).get(DEFAULT_TASK_TIMOUT);
+        Map<String, String> processProperties = parseExtensionProperties(process);
+        String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMOUT);
         if (!Strings.isNullOrEmpty(defaultTaskTimeout)) {
             definition.setDefaultTaskTimeoutDelay(new Delay(defaultTaskTimeout));
+        }
+        String swimlaneDisplayModeName = processProperties.get(SWIMLANE_DISPLAY_MODE);
+        if (swimlaneDisplayModeName != null) {
+            definition.setSwimlaneDisplayMode(SwimlaneDisplayMode.valueOf(swimlaneDisplayModeName));
         }
         Element swimlaneSetElement = process.element(SWIMLANE_SET);
         if (swimlaneSetElement != null) {
             List<Element> swimlanes = swimlaneSetElement.elements(SWIMLANE);
             for (Element swimlaneElement : swimlanes) {
                 Swimlane swimlane = create(swimlaneElement, definition);
-                Map<String, String> properties = parseExtensionProperties(swimlaneElement);
-                swimlane.setDelegationClassName(properties.get(CLASS));
-                swimlane.setDelegationConfiguration(properties.get(CONFIG));
+                Map<String, String> swimlaneProperties = parseExtensionProperties(swimlaneElement);
+                swimlane.setDelegationClassName(swimlaneProperties.get(CLASS));
+                swimlane.setDelegationConfiguration(swimlaneProperties.get(CONFIG));
             }
         }
         List<Element> startStates = process.elements(START_EVENT);
@@ -599,7 +604,7 @@ public class BpmnSerializer extends ProcessSerializer {
         for (Element boundaryEventElement : boundaryEventElements) {
             List<Element> eventElements = boundaryEventElement.elements();
             String parentNodeId = boundaryEventElement.attributeValue(ATTACHED_TO_REF);
-            GraphElement parent = definition.getNodeByIdNotNull(parentNodeId);
+            GraphElement parent = definition.getGraphElementByIdNotNull(parentNodeId);
             for (Element eventElement : eventElements) {
                 Timer timer = create(eventElement, parent);
                 timer.setId(boundaryEventElement.attributeValue(ID));
@@ -621,8 +626,8 @@ public class BpmnSerializer extends ProcessSerializer {
         }
         List<Element> transitions = process.elements(SEQUENCE_FLOW);
         for (Element transitionElement : transitions) {
-            Node source = definition.getNodeByIdNotNull(transitionElement.attributeValue(SOURCE_REF));
-            Node target = definition.getNodeByIdNotNull(transitionElement.attributeValue(TARGET_REF));
+            Node source = definition.getGraphElementByIdNotNull(transitionElement.attributeValue(SOURCE_REF));
+            Node target = definition.getGraphElementByIdNotNull(transitionElement.attributeValue(TARGET_REF));
             Transition transition = NodeRegistry.getNodeTypeDefinition(Transition.class).createElement(source);
             transition.setId(transitionElement.attributeValue(ID));
             transition.setName(transitionElement.attributeValue(NAME));

@@ -9,6 +9,7 @@ import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IDirectEditingFeature;
+import org.eclipse.graphiti.features.ILayoutFeature;
 import org.eclipse.graphiti.features.IMoveBendpointFeature;
 import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IReconnectionFeature;
@@ -19,6 +20,7 @@ import org.eclipse.graphiti.features.context.IAddBendpointContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveBendpointContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IReconnectionContext;
@@ -34,11 +36,10 @@ import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
 import ru.runa.gpd.editor.graphiti.update.DeleteElementFeature;
 import ru.runa.gpd.editor.graphiti.update.DirectEditDescriptionFeature;
 import ru.runa.gpd.editor.graphiti.update.DirectEditNodeNameFeature;
-import ru.runa.gpd.editor.graphiti.update.MoveNodeFeature;
+import ru.runa.gpd.editor.graphiti.update.MoveElementFeature;
 import ru.runa.gpd.editor.graphiti.update.MoveTransitionBendpointFeature;
 import ru.runa.gpd.editor.graphiti.update.ReconnectSequenceFlowFeature;
 import ru.runa.gpd.editor.graphiti.update.RemoveTransitionBendpointFeature;
-import ru.runa.gpd.editor.graphiti.update.ResizeNodeFeature;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -46,6 +47,7 @@ import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TextAnnotation;
 import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -63,6 +65,7 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public ICreateFeature[] getCreateFeatures() {
+        ProcessDefinition processDefinition = ((DiagramEditorPage) getDiagramTypeProvider().getDiagramEditor()).getDefinition();
         List<ICreateFeature> list = Lists.newArrayList();
         for (NodeTypeDefinition definition : NodeRegistry.getDefinitions()) {
             if (definition.getGraphitiEntry() != null && !Strings.isNullOrEmpty(definition.getBpmnElementName())) {
@@ -70,13 +73,13 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
                     list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
                 }
                 if (NodeTypeDefinition.TYPE_ARTIFACT.equals(definition.getType())) {
+                    if ("lane".equals(definition.getBpmnElementName())) {
+                        if (SwimlaneDisplayMode.none == processDefinition.getSwimlaneDisplayMode()) {
+                            continue;
+                        }
+                    }
                     list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
                 }
-                //    TODO            if ("lane".equals(definition.getBpmnElementName())) {
-                //                                        if (SwimlaneDisplayMode.none != getCurrentProcessDefinition().getSwimlaneDisplayMode()) {
-                //                    list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
-                //                                        }
-                //                }
             }
         }
         return list.toArray(new ICreateFeature[list.size()]);
@@ -96,13 +99,26 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
     }
 
     @Override
+    public ILayoutFeature getLayoutFeature(ILayoutContext context) {
+        GraphElement bo = (GraphElement) getBusinessObjectForPictogramElement(context.getPictogramElement());
+        if (bo == null) {
+            return null;
+        }
+        return bo.getTypeDefinition().getGraphitiEntry().createLayoutFeature(this);
+    }
+
+    @Override
     public IMoveShapeFeature getMoveShapeFeature(IMoveShapeContext context) {
-        return new MoveNodeFeature(this);
+        return new MoveElementFeature(this);
     }
 
     @Override
     public IResizeShapeFeature getResizeShapeFeature(IResizeShapeContext context) {
-        return new ResizeNodeFeature(this);
+        GraphElement bo = (GraphElement) getBusinessObjectForPictogramElement(context.getPictogramElement());
+        if (bo == null || bo.getTypeDefinition().getGraphitiEntry().isFixedSize()) {
+            return null;
+        }
+        return super.getResizeShapeFeature(context);
     }
 
     @Override

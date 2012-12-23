@@ -85,7 +85,7 @@ public class CopyGraphCommand extends Command {
                     definition = NodeRegistry.getNodeTypeDefinition(StartState.class);
                 } else if (node instanceof EndState && targetDefinition.getChildren(EndState.class).size() == 0) {
                     definition = NodeRegistry.getNodeTypeDefinition(EndState.class);
-                } else if (targetDefinition.getNodeById(node.getId()) == null) {
+                } else if (targetDefinition.getGraphElementById(node.getId()) == null) {
                     definition = NodeRegistry.getNodeTypeDefinition(node.getClass());
                 }
                 if (definition != null) {
@@ -206,7 +206,7 @@ public class CopyGraphCommand extends Command {
             // set swimlanes
             for (Node node : targetNodeList.values()) {
                 if (node instanceof SwimlanedNode) {
-                    SwimlanedNode sourceNode = copyBuffer.getSourceDefinition().getNodeByIdNotNull(node.getId());
+                    SwimlanedNode sourceNode = copyBuffer.getSourceDefinition().getGraphElementByIdNotNull(node.getId());
                     Swimlane swimlane = targetDefinition.getSwimlaneByName(sourceNode.getSwimlaneName());
                     ((SwimlanedNode) node).setSwimlane(swimlane);
                 }

@@ -202,6 +202,10 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         return Language.valueOf(languageCombo.getText());
     }
 
+    public SwimlaneDisplayMode getSwimlaneDisplayMode() {
+        return SwimlaneDisplayMode.values()[bpmnDisplaySwimlaneCombo.getSelectionIndex()];
+    }
+
     public IFolder getProcessFolder() {
         IPath path = getProcessFolderPath().append(getProcessName());
         return workspaceRoot.getFolder(path);

@@ -6,7 +6,7 @@ import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 
-public abstract class AddNodeFeature extends AddGraphElementFeature {
+public abstract class AddNodeFeature extends AddElementFeature {
     @Override
     public boolean canAdd(IAddContext context) {
         if (context.getNewObject() instanceof Node) {

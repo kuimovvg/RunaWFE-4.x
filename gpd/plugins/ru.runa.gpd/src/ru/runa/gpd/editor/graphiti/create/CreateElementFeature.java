@@ -11,18 +11,18 @@ import org.eclipse.graphiti.services.Graphiti;
 
 import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
-import ru.runa.gpd.editor.graphiti.add.AddGraphElementFeature;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
+import ru.runa.gpd.lang.model.SwimlanedNode;
 
-public class CreateGraphElementFeature extends AbstractCreateFeature implements GEFConstants {
+public class CreateElementFeature extends AbstractCreateFeature implements GEFConstants {
     public static final String CONNECTION_PROPERTY = "connectionContext";
     private NodeTypeDefinition nodeDefinition;
     private DiagramFeatureProvider featureProvider;
 
-    public CreateGraphElementFeature() {
+    public CreateElementFeature() {
         super(null, "", "");
     }
 
@@ -65,12 +65,20 @@ public class CreateGraphElementFeature extends AbstractCreateFeature implements 
 
     @Override
     public Object[] create(ICreateContext context) {
-        GraphElement node = getNodeDefinition().createElement(getProcessDefinition());
-        Object parent = getBusinessObjectForPictogramElement(context.getTargetContainer());
-        ((GraphElement) parent).addChild(node);
+        GraphElement graphElement = getNodeDefinition().createElement(getProcessDefinition());
+        GraphElement parent = (GraphElement) getBusinessObjectForPictogramElement(context.getTargetContainer());
+        Swimlane swimlane = null;
+        if (parent instanceof Swimlane) {
+            swimlane = (Swimlane) parent;
+            parent = parent.getParent();
+        }
+        if (graphElement instanceof SwimlanedNode) {
+            ((SwimlanedNode) graphElement).setSwimlane(swimlane);
+        }
+        parent.addChild(graphElement);
         CreateConnectionContext connectionContext = (CreateConnectionContext) context.getProperty(CONNECTION_PROPERTY);
-        setLocation(node, (CreateContext) context, connectionContext);
-        PictogramElement element = addGraphicalRepresentation(context, node);
+        setLocation(graphElement, (CreateContext) context, connectionContext);
+        PictogramElement element = addGraphicalRepresentation(context, graphElement);
         if (connectionContext != null) {
             connectionContext.setTargetPictogramElement(element);
             connectionContext.setTargetAnchor(Graphiti.getPeService().getChopboxAnchor((AnchorContainer) element));
@@ -78,14 +86,14 @@ public class CreateGraphElementFeature extends AbstractCreateFeature implements 
             createTransitionFeature.setFeatureProvider(featureProvider);
             createTransitionFeature.create(connectionContext);
         }
-        return new Object[] { node };
+        return new Object[] { graphElement };
     }
 
     private void setLocation(GraphElement target, CreateContext context, CreateConnectionContext connectionContext) {
         if (connectionContext != null) {
             PictogramElement sourceElement = connectionContext.getSourcePictogramElement();
             int xRight = sourceElement.getGraphicsAlgorithm().getX() + sourceElement.getGraphicsAlgorithm().getWidth();
-            Dimension targetSize = ((AddGraphElementFeature) getFeatureProvider().getAddFeature(target.getClass())).getDefaultSize(context);
+            Dimension targetSize = target.getTypeDefinition().getGraphitiEntry().getDefaultSize();
             int yDelta = (targetSize.height - sourceElement.getGraphicsAlgorithm().getHeight()) / 2;
             context.setLocation(xRight + 100, sourceElement.getGraphicsAlgorithm().getY() - yDelta);
         }

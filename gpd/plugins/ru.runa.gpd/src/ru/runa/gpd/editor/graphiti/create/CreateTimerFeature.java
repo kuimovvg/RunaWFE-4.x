@@ -5,7 +5,7 @@ import org.eclipse.graphiti.features.context.ICreateContext;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 
-public class CreateTimerFeature extends CreateGraphElementFeature {
+public class CreateTimerFeature extends CreateElementFeature {
     @Override
     public boolean canCreate(ICreateContext context) {
         Object parentObject = getBusinessObjectForPictogramElement(context.getTargetContainer());
