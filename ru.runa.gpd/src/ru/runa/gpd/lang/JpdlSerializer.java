@@ -299,9 +299,7 @@ public class JpdlSerializer extends ProcessSerializer {
 
     private Element writeElement(Element parent, GraphElement element, String typeName) {
         Element result = parent.addElement(typeName);
-        if (element instanceof Node) {
-            setAttribute(result, ID_ATTR, ((Node) element).getId());
-        }
+        setAttribute(result, ID_ATTR, element.getId());
         if (element instanceof NamedGraphElement) {
             setAttribute(result, NAME_ATTR, ((NamedGraphElement) element).getName());
         }
@@ -345,11 +343,11 @@ public class JpdlSerializer extends ProcessSerializer {
 
     @Override
     public void validateProcessDefinitionXML(IFile file) {
-        try {
-            XmlUtil.parseWithXSDValidation(getClass().getResourceAsStream("/schema/jpdl-4.0.xsd"));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        //        try { TODO
+        //            XmlUtil.parseWithXSDValidation(file.getContents(), getClass().getResourceAsStream("/schema/jpdl-4.0.xsd"));
+        //        } catch (Exception e) {
+        //            throw new RuntimeException(e);
+        //        }
     }
 
     private <T extends GraphElement> T create(Element node, GraphElement parent) {
@@ -364,13 +362,11 @@ public class JpdlSerializer extends ProcessSerializer {
         if (element instanceof NamedGraphElement) {
             ((NamedGraphElement) element).setName(node.attributeValue(NAME_ATTR));
         }
-        if (element instanceof Node) {
-            String nodeId = node.attributeValue(ID_ATTR);
-            if (nodeId == null) {
-                nodeId = ((Node) element).getName();
-            }
-            ((Node) element).setId(nodeId);
+        String nodeId = node.attributeValue(ID_ATTR);
+        if (element instanceof NamedGraphElement && nodeId == null) {
+            nodeId = ((NamedGraphElement) element).getName();
         }
+        element.setId(nodeId);
         List<Element> nodeList = node.elements();
         for (Element childNode : nodeList) {
             if (DESCRIPTION_NODE.equals(childNode.getName())) {
