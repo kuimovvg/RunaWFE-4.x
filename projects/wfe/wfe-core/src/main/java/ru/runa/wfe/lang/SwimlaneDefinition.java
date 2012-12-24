@@ -21,6 +21,8 @@
  */
 package ru.runa.wfe.lang;
 
+import java.util.List;
+
 /**
  * is a process role (aka participant).
  */
@@ -28,6 +30,7 @@ public class SwimlaneDefinition extends GraphElement {
     private static final long serialVersionUID = 1L;
     private Delegation delegation;
     private String displayOrgFunction;
+    private List<String> flowNodeIds;
 
     @Override
     public String[] getSupportedEventTypes() {
@@ -48,6 +51,14 @@ public class SwimlaneDefinition extends GraphElement {
 
     public void setDisplayOrgFunction(String displayOrgFunction) {
         this.displayOrgFunction = displayOrgFunction;
+    }
+
+    public List<String> getFlowNodeIds() {
+        return flowNodeIds;
+    }
+
+    public void setFlowNodeIds(List<String> flowNodeIds) {
+        this.flowNodeIds = flowNodeIds;
     }
 
 }
