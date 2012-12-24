@@ -15,13 +15,13 @@ import org.eclipse.graphiti.services.Graphiti;
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.StyleUtil;
 import ru.runa.gpd.editor.graphiti.layout.LayoutStateNodeFeature;
-import ru.runa.gpd.lang.model.State;
+import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 
 public class AddStateNodeFeature extends AddNodeFeature {
     @Override
     public PictogramElement add(IAddContext context) {
-        State state = (State) context.getNewObject();
+    	Node node = (Node) context.getNewObject();
         Dimension bounds = adjustBounds(context);
         //
         ContainerShape containerShape = Graphiti.getPeCreateService().createContainerShape(context.getTargetContainer(), true);
@@ -34,24 +34,24 @@ public class AddStateNodeFeature extends AddNodeFeature {
         border.setForeground(Graphiti.getGaService().manageColor(getDiagram(), StyleUtil.LIGHT_BLUE));
         border.setBackground(Graphiti.getGaService().manageColor(getDiagram(), StyleUtil.VERY_LIGHT_BLUE));
         border.setStyle(StyleUtil.getStyleForEvent(getDiagram()));
-        if (state instanceof SwimlanedNode) {
-            Text swimlaneText = Graphiti.getGaService().createDefaultText(getDiagram(), border, ((SwimlanedNode) state).getSwimlaneLabel());
+        if (node instanceof SwimlanedNode) {
+            Text swimlaneText = Graphiti.getGaService().createDefaultText(getDiagram(), border, ((SwimlanedNode) node).getSwimlaneLabel());
             swimlaneText.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.SWIMLANE_NAME));
             swimlaneText.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
         }
-        MultiText nameText = Graphiti.getGaService().createDefaultMultiText(getDiagram(), border, state.getName());
+        MultiText nameText = Graphiti.getGaService().createDefaultMultiText(getDiagram(), border, node.getName());
         nameText.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.NAME));
         nameText.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
         //
-        addCustomGraphics(state, context, main);
+        addCustomGraphics(node, context, main);
         // 
-        link(containerShape, state);
+        link(containerShape, node);
         //
         Graphiti.getPeCreateService().createChopboxAnchor(containerShape);
         layoutPictogramElement(containerShape);
         return containerShape;
     }
 
-    protected void addCustomGraphics(State state, IAddContext context, GraphicsAlgorithmContainer container) {
+    protected void addCustomGraphics(Node node, IAddContext context, GraphicsAlgorithmContainer container) {
     }
 }
