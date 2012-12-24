@@ -147,7 +147,6 @@
       <import plugin="org.eclipse.emf.edit"/>
       <import plugin="org.eclipse.emf.transaction"/>
       <import plugin="org.eclipse.emf.ecore.xmi"/>
-      <import plugin="org.apache.xerces"/>
    </requires>
 
    <extension-point id="elements" name="Process elements" schema="schema/elements.exsd"/>
@@ -647,12 +646,11 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.StartStateTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddStartNodeFeature"
+               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateStartNodeFeature"
-               fixedSize="false"
-               height="7"
-               update="ru.runa.gpd.editor.graphiti.update.UpdateStartNodeFeature"
-               width="10">
+               fixedSize="true"
+               height="4"
+               width="4">
          </graphiti>
       </element>
       <element

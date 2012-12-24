@@ -38,6 +38,7 @@ import ru.runa.gpd.lang.model.MultiSubprocess;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableMapping;
+import ru.runa.wfe.var.format.ListFormat;
 
 public class MultiInstanceDialog extends Dialog {
     private String subprocessName;
@@ -708,7 +709,7 @@ public class MultiInstanceDialog extends Dialog {
             Iterator<String> iter = mvars.values().iterator();
             while (iter.hasNext()) {
                 String value = iter.next();
-                if (!value.contains("StringArrayFormat") && !value.contains("ArrayListFormat")) {
+                if (!ListFormat.class.getName().equals(value)) {
                     iter.remove();
                 }
             }

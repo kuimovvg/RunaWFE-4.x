@@ -6,13 +6,13 @@ import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.services.Graphiti;
 
 import ru.runa.gpd.editor.graphiti.GaProperty;
-import ru.runa.gpd.lang.model.State;
+import ru.runa.gpd.lang.model.Node;
 
 public class AddMultiSubprocessFeature extends AddStateNodeFeature {
     @Override
-    protected void addCustomGraphics(State state, IAddContext context, GraphicsAlgorithmContainer container) {
+    protected void addCustomGraphics(Node node, IAddContext context, GraphicsAlgorithmContainer container) {
         Image image = Graphiti.getGaService().createImage(container, "graph/multiinstance.png");
         image.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.MULTIPROCESS));
-        Graphiti.getGaService().setLocation(image, state.getConstraint().width / 2 - 8, state.getConstraint().height - 2 * GRID_SIZE);
+        Graphiti.getGaService().setLocation(image, node.getConstraint().width / 2 - 8, node.getConstraint().height - 2 * GRID_SIZE);
     }
 }

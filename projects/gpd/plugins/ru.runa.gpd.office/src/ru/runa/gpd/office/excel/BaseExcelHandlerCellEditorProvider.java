@@ -266,7 +266,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
             }
 
             public boolean isImportant(Variable v) {
-                return v.getFormat().equals("ru.runa.wf.web.forms.format.ArrayListFormat");
+                return v.getFormat().equals("ru.runa.wfe.var.format.ListFormat");
             }
 
             public abstract String getTitle();
@@ -287,7 +287,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
 
             @Override
             public boolean isImportant(Variable v) {
-                return !v.getFormat().equals("ru.runa.wf.web.forms.format.ArrayListFormat");
+                return !v.getFormat().equals("ru.runa.wfe.var.format.ListFormat");
             }
 
             @Override

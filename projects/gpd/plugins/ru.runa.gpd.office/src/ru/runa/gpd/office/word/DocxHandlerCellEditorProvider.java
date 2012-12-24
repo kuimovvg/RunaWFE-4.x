@@ -205,7 +205,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
             final Combo combo = new Combo(parent, SWT.READ_ONLY);
             List<Variable> vars = definition.getVariablesList();
             for (Variable variable : vars) {
-                if (variable.getFormat().equals("ru.runa.wf.web.forms.format.ArrayListFormat")) {
+                if (variable.getFormat().equals("ru.runa.wfe.var.format.ListFormat")) {
                     combo.add(variable.getName());
                 }
             }
