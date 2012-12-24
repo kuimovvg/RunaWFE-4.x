@@ -1,28 +1,28 @@
 package ru.runa.wfe.definition.bpmn;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
-import org.dom4j.CDATA;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.QName;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
-import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
+import ru.runa.wfe.execution.Swimlane;
+import ru.runa.wfe.job.CancelTimerAction;
+import ru.runa.wfe.job.CreateTimerAction;
+import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EndNode;
 import ru.runa.wfe.lang.EndTokenNode;
+import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Fork;
+import ru.runa.wfe.lang.GraphElement;
 import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.MultiProcessState;
 import ru.runa.wfe.lang.Node;
@@ -36,14 +36,75 @@ import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.lang.VariableContainerNode;
+import ru.runa.wfe.lang.WaitState;
 import ru.runa.wfe.lang.bpmn2.Join;
 import ru.runa.wfe.var.VariableMapping;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings({ "unchecked" })
 public class BpmnXmlReader {
+    private static final String BPMN_PREFIX = "";
+    private static final String BPMN_NAMESPACE = "http://www.omg.org/spec/BPMN/20100524/MODEL";
+    private static final String RUNA_PREFIX = "runa";
+    private static final String RUNA_NAMESPACE = "http://runa.ru/wfe/xml";
+    private static final String DEFINITIONS = "definitions";
+    private static final String PROCESS = "process";
+    private static final String EXTENSION_ELEMENTS = "extensionElements";
+    private static final String EXECUTABLE = "isExecutable";
+    private static final String PROPERTY = "property";
+    private static final String END_STATE = "endEvent";
+    private static final String TEXT_ANNOTATION = "textAnnotation";
+    private static final String TEXT = "text";
+    private static final String END_TOKEN_STATE = "endPoint";
+    private static final String IO_SPECIFICATION = "ioSpecification";
+    private static final String DATA_INPUT = "dataInput";
+    private static final String DATA_OUTPUT = "dataOutput";
+    private static final String INPUT_SET = "inputSet";
+    private static final String OUTPUT_SET = "outputSet";
+    private static final String DATA_INPUT_REFS = "dataInputRefs";
+    private static final String DATA_OUTPUT_REFS = "dataOutputRefs";
+    private static final String DATA_INPUT_ASSOCIATION = "dataInputAssociation";
+    private static final String DATA_OUTPUT_ASSOCIATION = "dataOutputAssociation";
+    private static final String VARIABLES = "variables";
+    private static final String VARIABLE = "variable";
+    private static final String SOURCE_REF = "sourceRef";
+    private static final String TARGET_REF = "targetRef";
+    private static final String SUBPROCESS = "subProcess";
+    private static final String MULTI_SUBPROCESS = "multiProcess";
+    private static final String DECISION = "exclusiveGateway";
+    private static final String PARALLEL_GATEWAY = "parallelGateway";
+    private static final String DEFAULT_TASK_TIMOUT = "default-task-timeout";
+    private static final String REPEAT = "repeat";//
+    private static final String USER_TASK = "userTask";
+    private static final String START_EVENT = "startEvent";
+    private static final String SWIMLANE_SET = "laneSet";
+    private static final String SWIMLANE = "lane";
+    private static final String FLOW_NODE_REF = "flowNodeRef";
+    public static final String SWIMLANE_DISPLAY_MODE = "showSwimlane";
+    private static final String REASSIGN = "reassign";//
+    private static final String CLASS = "class";
+    private static final String SEQUENCE_FLOW = "sequenceFlow";
+    private static final String DOCUMENTATION = "documentation";
+    private static final String CONFIG = "config";
+    private static final String NAME = "name";
+    private static final String VALUE = "value";
+    private static final String MAPPED_NAME = "mappedName";
+    private static final String USAGE = "usage";
+    private static final String ID = "id";
+    private static final String SEND_MESSAGE = "sendTask";
+    private static final String RECEIVE_MESSAGE = "receiveTask";
+    private static final String TIMER_GLOBAL = "__GLOBAL";//
+    private static final String TIMER_ESCALATION = "__ESCALATION";//
+    private static final String BOUNDARY_EVENT = "boundaryEvent";
+    private static final String INTERMEDIATE_EVENT = "intermediateCatchEvent";
+    private static final String CANCEL_ACTIVITY = "cancelActivity";
+    private static final String ATTACHED_TO_REF = "attachedToRef";
+    private static final String TIMER_EVENT = "timerEventDefinition";
+    private static final String TIMER_DURATION = "timeDuration";
 
     @Autowired
     private LocalizationDAO localizationDAO;
@@ -52,69 +113,41 @@ public class BpmnXmlReader {
 
     private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
     static {
-        nodeTypes.put("startEvent", StartState.class);
-        nodeTypes.put("userTask", TaskNode.class);
-        nodeTypes.put("endPoint", EndTokenNode.class);
-        nodeTypes.put("endEvent", EndNode.class);
-
-        // nodeTypes.put("wait-state", WaitState.class);
-        nodeTypes.put("forkGateway", Fork.class);
-        nodeTypes.put("joinGateway", Join.class);
-        nodeTypes.put("exclusiveGateway", Decision.class);
-        nodeTypes.put("subProcess", SubProcessState.class);
-        nodeTypes.put("multiProcess", MultiProcessState.class);
-        nodeTypes.put("sendTask", SendMessage.class);
-        nodeTypes.put("receiveTask", ReceiveMessage.class);
+        nodeTypes.put(START_EVENT, StartState.class);
+        nodeTypes.put(USER_TASK, TaskNode.class);
+        nodeTypes.put(END_TOKEN_STATE, EndTokenNode.class);
+        nodeTypes.put(END_STATE, EndNode.class);
+        nodeTypes.put(INTERMEDIATE_EVENT, WaitState.class);
+        nodeTypes.put(DECISION, Decision.class);
+        nodeTypes.put(SUBPROCESS, SubProcessState.class);
+        nodeTypes.put(MULTI_SUBPROCESS, MultiProcessState.class);
+        nodeTypes.put(SEND_MESSAGE, SendMessage.class);
+        nodeTypes.put(RECEIVE_MESSAGE, ReceiveMessage.class);
     }
 
     public BpmnXmlReader(Document document) {
         this.document = document;
     }
 
-    private static final String RUNA_PREFIX = "runa";
-    private static final String RUNA_NAMESPACE = "http://runa.ru/wfe/xml";
-    private static final String SUB_PROCESS_NODE = "sub-process";
-    private static final String ROOT_ELEMENT = "definitions";
-    private static final String PROCESS_ELEMENT = "process";
-    private static final String EXTENSION_ELEMENT = "extensionElements";
-    private static final String INVALID_ATTR = "invalid";
-    private static final String ACCESS_ATTR = "access";//
-    private static final String VARIABLE_NODE = "variable";//
-    private static final String MAPPED_NAME_ATTR = "mapped-name";//
-    private static final String DUEDATE_ATTR = "duedate";//
-    private static final String DEFAULT_DUEDATE_ATTR = "default-task-duedate";//
-    private static final String REPEAT_ATTR = "repeat";//
-    private static final String TIMER_NODE = "timer";//
-    private static final String ASSIGNMENT_NODE = "assignment";//
-    private static final String SWIMLANE_NODE = "swimlane";//
-    private static final String REASSIGN_ATTR = "reassign";//
-    private static final String CLASS_ATTR = "class";//
-    private static final String ACTION_NODE = "action";//
-    private static final String EVENT_NODE = "event";//
-    private static final String TRANSITION_NODE = "sequenceFlow";
-    private static final String TRANSITION_FROM_ATTR = "sourceRef";
-    private static final String TRANSITION_TO_ATTR = "targetRef";
-    private static final String HANDLER_NODE = "handler";//
-    private static final String DOCUMENTATION_NODE = "documentation";
-    private static final String NAME_ATTR = "name";
-    private static final String TYPE_ATTR = "type";
-    private static final String ID_ATTR = "id";
-    private static final String SWIMLANE_ATTR = "swimlane";
-    private static final String TRANSITION_ATTR = "transition";//
-    private static final String TIMER_GLOBAL_NAME = "__GLOBAL";//
-    private static final String TIMER_ESCALATION = "__ESCALATION";//
-
     public ProcessDefinition readProcessDefinition(ProcessDefinition processDefinition) {
         try {
-            Element root = document.getRootElement();
-            Element process = root.element(PROCESS_ELEMENT);
-
-            // read the process name
-            if ("true".equals(process.attributeValue(INVALID_ATTR))) {
-                throw new InvalidDefinitionException("invalid process definition");
+            Element definitionsElement = document.getRootElement();
+            Element process = definitionsElement.element(PROCESS);
+            processDefinition.setName(process.attributeValue(NAME));
+            processDefinition.setDescription(process.elementTextTrim(DOCUMENTATION));
+            Map<String, String> processProperties = parseExtensionProperties(process);
+            String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMOUT);
+            if (!Strings.isNullOrEmpty(defaultTaskTimeout)) {
+                // processDefinition.setDefaultTaskTimeoutDelay(new
+                // Delay(defaultTaskTimeout));
             }
-            processDefinition.setName(process.attributeValue(NAME_ATTR));
-            processDefinition.setDescription(process.elementTextTrim(DOCUMENTATION_NODE));
+            String swimlaneDisplayModeName = processProperties.get(SWIMLANE_DISPLAY_MODE);
+            if (swimlaneDisplayModeName != null) {
+                // definition.setSwimlaneDisplayMode(SwimlaneDisplayMode.valueOf(swimlaneDisplayModeName));
+            }
+            if (!"true".equals(process.attributeValue(EXECUTABLE))) {
+                throw new InvalidDefinitionException("invalid process definition " + processDefinition.getName());
+            }
 
             // 1: read most content
             readSwimlanes(processDefinition, process);
@@ -131,57 +164,189 @@ public class BpmnXmlReader {
         return processDefinition;
     }
 
-    private void readSwimlanes(ProcessDefinition processDefinition, Element processDefinitionElement) {
-        List<Element> elements = processDefinitionElement.elements(SWIMLANE_NODE);
-        for (Element element : elements) {
-            String swimlaneName = element.attributeValue(NAME_ATTR);
-            if (swimlaneName == null) {
-                throw new InvalidDefinitionException("there's a swimlane without a name");
-            }
-            SwimlaneDefinition swimlaneDefinition = new SwimlaneDefinition();
-            swimlaneDefinition.setName(swimlaneName);
-            Element assignmentElement = element.element(ASSIGNMENT_NODE);
-            if (assignmentElement != null) {
-                swimlaneDefinition.setDelegation(readDelegation(processDefinition, assignmentElement));
-            }
-            if (swimlaneDefinition.getDelegation() != null && swimlaneDefinition.getDelegation().getConfiguration() != null) {
-                String conf = swimlaneDefinition.getDelegation().getConfiguration();
-                swimlaneDefinition.setDisplayOrgFunction(conf);
-                String[] orgFunctionParts = conf.split("\\(");
-                if (orgFunctionParts.length == 2) {
-                    String className = BackCompatibilityClassNames.getClassName(orgFunctionParts[0].trim());
-                    String localized = localizationDAO.getLocalized(className);
-                    if (localized != null) {
-                        swimlaneDefinition.setDisplayOrgFunction(localized + " (" + orgFunctionParts[1]);
-                    }
+    private void readSwimlanes(ProcessDefinition processDefinition, Element processElement) {
+        Map<Swimlane, List<String>> swimlaneElementIds = Maps.newHashMap();
+        Element swimlaneSetElement = processElement.element(SWIMLANE_SET);
+        if (swimlaneSetElement != null) {
+            List<Element> swimlanes = swimlaneSetElement.elements(SWIMLANE);
+            for (Element swimlaneElement : swimlanes) {
+                String swimlaneName = swimlaneElement.attributeValue(NAME);
+                if (swimlaneName == null) {
+                    throw new InvalidDefinitionException("there's a swimlane without a name");
                 }
+                SwimlaneDefinition swimlaneDefinition = new SwimlaneDefinition();
+                swimlaneDefinition.setName(swimlaneName);
+                swimlaneDefinition.setDelegation(readDelegation(swimlaneElement));
+                List<Element> flowNodeRefElements = swimlaneElement.elements(FLOW_NODE_REF);
+                List<String> flowNodeIds = Lists.newArrayList();
+                for (Element flowNodeRefElement : flowNodeRefElements) {
+                    flowNodeIds.add(flowNodeRefElement.getTextTrim());
+                }
+                swimlaneDefinition.setFlowNodeIds(flowNodeIds);
             }
-            processDefinition.addSwimlane(swimlaneDefinition);
         }
     }
 
-    private void readTransitions(ProcessDefinition processDefinition, Element processDefinitionElement) {
-        List<Element> elements = processDefinitionElement.elements(TRANSITION_NODE);
+    private void readNodes(ProcessDefinition processDefinition, Element parentElement) {
+        List<Element> elements = parentElement.elements();
         for (Element element : elements) {
-            String name = element.attributeValue(ID_ATTR);
-            if (name == null) {
-                throw new InvalidDefinitionException("transition without an '" + ID_ATTR + "'-attribute");
+            String nodeName = element.getName();
+            try {
+                Node node = null;
+                if (nodeTypes.containsKey(nodeName)) {
+                    node = ApplicationContextFactory.createAutowiredBean(nodeTypes.get(nodeName));
+                } else if (PARALLEL_GATEWAY.equals(nodeName)) {
+                    String nodeId = element.attributeValue(ID);
+                    int outgoingTransitionsCount = getOutgoingTransitionsCount(parentElement, nodeId);
+                    if (outgoingTransitionsCount > 1) {
+                        node = ApplicationContextFactory.createAutowiredBean(Join.class);
+                    } else {
+                        node = ApplicationContextFactory.createAutowiredBean(Fork.class);
+                    }
+                }
+                if (node != null) {
+                    node.setProcessDefinition(processDefinition);
+                    readNode(processDefinition, element, node);
+                }
+            } catch (Exception e) {
+                throw new InvalidDefinitionException("couldn't instantiate node '" + nodeName + "'", e);
             }
-            String from = element.attributeValue(TRANSITION_FROM_ATTR);
+        }
+    }
+
+    private void readNode(ProcessDefinition processDefinition, Element element, Node node) throws Exception {
+        node.setNodeId(element.attributeValue(ID));
+        node.setName(element.attributeValue(NAME));
+        node.setDescription(element.elementTextTrim(DOCUMENTATION));
+        processDefinition.addNode(node);
+
+        if (node instanceof StartState) {
+            StartState startState = (StartState) node;
+            readTask(processDefinition, element, startState);
+        }
+        if (node instanceof TaskNode) {
+            TaskNode taskNode = (TaskNode) node;
+            readTask(processDefinition, element, taskNode);
+            List<Element> boundaryEventElements = element.getParent().elements(BOUNDARY_EVENT);
+            for (Element boundaryEventElement : boundaryEventElements) {
+                readTimer(processDefinition, boundaryEventElement, taskNode);
+            }
+        }
+        if (node instanceof VariableContainerNode) {
+            VariableContainerNode variableContainerNode = (VariableContainerNode) node;
+            variableContainerNode.setVariableMappings(readVariableMappings(element));
+        }
+        if (node instanceof SubProcessState) {
+            SubProcessState subprocess = (SubProcessState) node;
+            subprocess.setSubProcessName(element.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
+        }
+        if (node instanceof Decision) {
+            Decision decision = (Decision) node;
+            decision.setDelegation(readDelegation(element));
+        }
+        if (node instanceof WaitState) {
+            WaitState waitState = (WaitState) node;
+            List<Element> intermediateEventElements = element.getParent().elements(INTERMEDIATE_EVENT);
+            for (Element intermediateEventElement : intermediateEventElements) {
+                readTimer(processDefinition, intermediateEventElement, waitState);
+            }
+        }
+    }
+
+    private void readTimer(ProcessDefinition processDefinition, Element eventElement, GraphElement node) throws Exception {
+        Element timerElement = eventElement.element(TIMER_EVENT);
+        CreateTimerAction createTimerAction = ApplicationContextFactory.createAutowiredBean(CreateTimerAction.class);
+        createTimerAction.setNodeId(timerElement.attributeValue(ID));
+        createTimerAction.setName(timerElement.attributeValue(NAME));
+        // if (TIMER_DURATION.equals(childNode.getName())) {
+        // ((Timer) element).setDelay(new Delay(childNode.getTextTrim()));
+        // }
+        String duration = timerElement.elementTextTrim(TIMER_DURATION);
+        createTimerAction.setTransitionName(Transition.TIMEOUT_TRANSITION_NAME); // TODO
+        createTimerAction.setDueDate(duration);
+        // createTimerAction.setRepeatDurationString(element.attributeValue(REPEAT_ATTR));
+        String createEventType = node instanceof TaskNode ? Event.EVENTTYPE_TASK_CREATE : Event.EVENTTYPE_NODE_ENTER;
+        addAction(node, createEventType, createTimerAction);
+        // Action timerAction = readSingleAction(processDefinition, element);
+        // if (timerAction != null) {
+        // timerAction.setName(createTimerAction.getName());
+        // addAction(node, Event.EVENTTYPE_TIMER, timerAction);
+        // }
+
+        CancelTimerAction cancelTimerAction = ApplicationContextFactory.createAutowiredBean(CancelTimerAction.class);
+        cancelTimerAction.setName(createTimerAction.getName());
+        String cancelEventType = node instanceof TaskDefinition ? Event.EVENTTYPE_TASK_END : Event.EVENTTYPE_NODE_LEAVE;
+        addAction(node, cancelEventType, cancelTimerAction);
+    }
+
+    private void addAction(GraphElement graphElement, String eventType, Action action) {
+        Event event = graphElement.getEvent(eventType);
+        if (event == null) {
+            event = new Event(eventType);
+            graphElement.addEvent(event);
+        }
+        action.setParent(graphElement);
+        event.addAction(action);
+    }
+
+    private Map<String, String> parseExtensionProperties(Element element) {
+        Map<String, String> map = Maps.newHashMap();
+        Element extensionsElement = element.element(EXTENSION_ELEMENTS);
+        if (extensionsElement != null) {
+            List<Element> propertyElements = extensionsElement.elements(QName.get(PROPERTY, RUNA_NAMESPACE));
+            for (Element propertyElement : propertyElements) {
+                String name = propertyElement.attributeValue(NAME);
+                String value = propertyElement.attributeValue(VALUE);
+                if (value == null) {
+                    value = propertyElement.getTextTrim();
+                }
+                map.put(name, value);
+            }
+        }
+        return map;
+    }
+
+    private List<VariableMapping> readVariableMappings(Element element) {
+        List<VariableMapping> list = Lists.newArrayList();
+        Element extensionsElement = element.element(EXTENSION_ELEMENTS);
+        if (extensionsElement != null) {
+            Element variablesElement = extensionsElement.element(QName.get(VARIABLES, RUNA_NAMESPACE));
+            if (variablesElement != null) {
+                List<Element> variableElements = variablesElement.elements(QName.get(VARIABLE, RUNA_NAMESPACE));
+                for (Element variableElement : variableElements) {
+                    VariableMapping variableMapping = new VariableMapping(variableElement.attributeValue(NAME),
+                            variableElement.attributeValue(MAPPED_NAME), variableElement.attributeValue(USAGE));
+                    list.add(variableMapping);
+                }
+            }
+        }
+        return list;
+    }
+
+    private void readTransitions(ProcessDefinition processDefinition, Element processElement) {
+        List<Element> elements = processElement.elements(SEQUENCE_FLOW);
+        for (Element element : elements) {
+            String id = element.attributeValue(ID);
+            if (id == null) {
+                throw new InvalidDefinitionException("transition without an '" + ID + "'-attribute");
+            }
+            String name = element.attributeValue(NAME);
+            String from = element.attributeValue(SOURCE_REF);
             if (from == null) {
-                throw new InvalidDefinitionException("transition '" + name + "' without a '" + TRANSITION_FROM_ATTR + "'-attribute");
+                throw new InvalidDefinitionException("transition '" + id + "' without a '" + SOURCE_REF + "'-attribute");
             }
-            String to = element.attributeValue(TRANSITION_TO_ATTR);
+            String to = element.attributeValue(TARGET_REF);
             if (to == null) {
-                throw new InvalidDefinitionException("transition '" + name + "' without a '" + TRANSITION_TO_ATTR + "'-attribute");
+                throw new InvalidDefinitionException("transition '" + id + "' without a '" + TARGET_REF + "'-attribute");
             }
             Transition transition = new Transition();
+            transition.setNodeId(id);
+            transition.setName(name);
             Node source = processDefinition.getNodeNotNull(from);
             transition.setFrom(source);
             Node target = processDefinition.getNodeNotNull(to);
             transition.setTo(target);
-            transition.setName(name);
-            transition.setDescription(element.elementTextTrim(DOCUMENTATION_NODE));
+            transition.setDescription(element.elementTextTrim(DOCUMENTATION));
             transition.setProcessDefinition(processDefinition);
             // add the transition to the node
             source.addLeavingTransition(transition);
@@ -193,237 +358,44 @@ public class BpmnXmlReader {
         }
     }
 
-    private void readNodes(ProcessDefinition processDefinition, Element parentElement) {
-        List<Element> elements = parentElement.elements();
+    private int getOutgoingTransitionsCount(Element processDefinitionElement, String sourceNodeId) {
+        int count = 0;
+        List<Element> elements = processDefinitionElement.elements(SEQUENCE_FLOW);
         for (Element element : elements) {
-            String nodeName = element.getName();
-            try {
-                if (nodeTypes.containsKey(nodeName)) {
-                    Node node = ApplicationContextFactory.createAutowiredBean(nodeTypes.get(nodeName));
-                    node.setProcessDefinition(processDefinition);
-                    readNode(processDefinition, element, node);
-                }
-            } catch (Exception e) {
-                throw new InvalidDefinitionException("couldn't instantiate node '" + nodeName + "'", e);
+            String from = element.attributeValue(SOURCE_REF);
+            if (Objects.equal(from, sourceNodeId)) {
+                count++;
             }
         }
+        return count;
     }
 
     private void readTask(ProcessDefinition processDefinition, Element element, InteractionNode node) throws Exception {
         TaskDefinition taskDefinition = new TaskDefinition();
         taskDefinition.setNodeId(node.getNodeId());
         taskDefinition.setProcessDefinition(processDefinition);
-        // get the task name
-        // String name = element.attributeValue(NAME_ATTR);
-        // if (name != null) {
-        // taskDefinition.setName(name);
-        // } else {
         taskDefinition.setName(node.getName());
-        // }
-        // get the task description
-        // String description = element.elementTextTrim(DESCRIPTION_NODE);
-        // if (description != null) {
-        // taskDefinition.setDescription(description);
-        // } else {
         taskDefinition.setDescription(node.getDescription());
-        // }
-        // parse common subelements
-        // readNodeTimers(processDefinition, element, taskDefinition);
-        // readEvents(processDefinition, element, taskDefinition);
         node.addTask(taskDefinition);
         // assignment
-        String swimlaneName = element.attributeValue(QName.get(SWIMLANE_ATTR, RUNA_NAMESPACE));
+        Map<String, String> properties = parseExtensionProperties(element);
+        String swimlaneName = properties.get(SWIMLANE);
         SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlaneNotNull(swimlaneName);
         taskDefinition.setSwimlane(swimlaneDefinition);
-        String reassign = element.attributeValue(REASSIGN_ATTR);
+        String reassign = properties.get(REASSIGN);
         if (reassign != null) {
-            // if there is a reassign attribute specified
-            taskDefinition.setReassignSwimlane(Boolean.valueOf(reassign));
+            boolean forceReassign = Boolean.parseBoolean(reassign);
+            taskDefinition.setReassignSwimlane(forceReassign);
         }
     }
 
-    private List<VariableMapping> readVariableMappings(Element parentElement) {
-        List<VariableMapping> variableAccesses = Lists.newArrayList();
-        List<Element> elements = parentElement.elements(VARIABLE_NODE);
-        for (Element element : elements) {
-            String variableName = element.attributeValue(NAME_ATTR);
-            if (variableName == null) {
-                throw new InvalidDefinitionException("the name attribute of a variable element is required: " + element.asXML());
-            }
-            String mappedName = element.attributeValue(MAPPED_NAME_ATTR);
-            if (mappedName == null) {
-                throw new InvalidDefinitionException("the mapped-name attribute of a variable element is required: " + element.asXML());
-            }
-            String access = element.attributeValue(ACCESS_ATTR, "read,write");
-            variableAccesses.add(new VariableMapping(variableName, mappedName, access));
-        }
-        return variableAccesses;
-    }
-
-    private void readNode(ProcessDefinition processDefinition, Element element, Node node) throws Exception {
-        node.setNodeId(element.attributeValue(ID_ATTR));
-        node.setName(element.attributeValue(NAME_ATTR));
-        node.setDescription(element.elementTextTrim(DOCUMENTATION_NODE));
-        processDefinition.addNode(node);
-        // readEvents(processDefinition, element, node);
-        // readNodeTimers(processDefinition, element, node);
-
-        if (node instanceof StartState) {
-            StartState startState = (StartState) node;
-            readTask(processDefinition, element, startState);
-        }
-        if (node instanceof TaskNode) {
-            TaskNode taskNode = (TaskNode) node;
-            readTask(processDefinition, element, taskNode);
-        }
-        if (node instanceof VariableContainerNode) {
-            VariableContainerNode variableContainerNode = (VariableContainerNode) node;
-            variableContainerNode.setVariableMappings(readVariableMappings(element));
-        }
-        if (node instanceof SubProcessState) {
-            SubProcessState subProcessState = (SubProcessState) node;
-            Element subProcessElement = element.element(SUB_PROCESS_NODE);
-            if (subProcessElement != null) {
-                subProcessState.setSubProcessName(subProcessElement.attributeValue(NAME_ATTR));
-            }
-        }
-        if (node instanceof Decision) {
-            Decision decision = (Decision) node;
-            Element decisionHandlerElement = element.element(HANDLER_NODE);
-            if (decisionHandlerElement == null) {
-                throw new InvalidDefinitionException("No handler in decision found: " + node);
-            }
-            decision.setDelegation(readDelegation(processDefinition, decisionHandlerElement));
-        }
-    }
-
-    //
-    // private void readNodeTimers(ProcessDefinition processDefinition, Element
-    // parentElement, GraphElement node) throws Exception {
-    // List<Element> elements = parentElement.elements(TIMER_NODE);
-    // int timerNumber = 1;
-    // for (Element element : elements) {
-    // String name = node.getNodeId() + "/timer-" + (timerNumber++);
-    // CreateTimerAction createTimerAction =
-    // ApplicationContextFactory.createAutowiredBean(CreateTimerAction.class);
-    // createTimerAction.setName(name);
-    // createTimerAction.setTransitionName(element.attributeValue(TRANSITION_ATTR));
-    // createTimerAction.setDueDate(element.attributeValue(DUEDATE_ATTR));
-    // createTimerAction.setRepeatDurationString(element.attributeValue(REPEAT_ATTR));
-    // if (node instanceof TaskDefinition) {
-    // throw new UnsupportedOperationException("task/timer");
-    // }
-    // String createEventType = node instanceof TaskNode ?
-    // Event.EVENTTYPE_TASK_CREATE : Event.EVENTTYPE_NODE_ENTER;
-    // addAction(node, createEventType, createTimerAction);
-    // Action timerAction = readSingleAction(processDefinition, element);
-    // if (timerAction != null) {
-    // timerAction.setName(name);
-    // addAction(node, Event.EVENTTYPE_TIMER, timerAction);
-    // }
-    //
-    // CancelTimerAction cancelTimerAction =
-    // ApplicationContextFactory.createAutowiredBean(CancelTimerAction.class);
-    // cancelTimerAction.setName(name);
-    // String cancelEventType = node instanceof TaskDefinition ?
-    // Event.EVENTTYPE_TASK_END : Event.EVENTTYPE_NODE_LEAVE;
-    // addAction(node, cancelEventType, cancelTimerAction);
-    // }
-    // }
-    //
-    // private void readEvents(ProcessDefinition processDefinition, Element
-    // parentElement, GraphElement graphElement) {
-    // List<Element> elements = parentElement.elements(EVENT_NODE);
-    // for (Element eventElement : elements) {
-    // String eventType = eventElement.attributeValue(TYPE_ATTR);
-    // readActions(processDefinition, eventElement, graphElement, eventType);
-    // }
-    // }
-
-    // private void readActions(ProcessDefinition processDefinition, Element
-    // eventElement, GraphElement graphElement, String eventType) {
-    // // for all the elements in the event element
-    // List<Element> elements = eventElement.elements();
-    // for (Element actionElement : elements) {
-    // Action action = createAction(processDefinition, actionElement);
-    // addAction(graphElement, eventType, action);
-    // }
-    // }
-
-    // private void addAction(GraphElement graphElement, String eventType,
-    // Action action) {
-    // Event event = graphElement.getEvent(eventType);
-    // if (event == null) {
-    // event = new Event(eventType);
-    // graphElement.addEvent(event);
-    // }
-    // action.setParent(graphElement);
-    // event.addAction(action);
-    // }
-
-    //
-    // private Action readSingleAction(ProcessDefinition processDefinition,
-    // Element nodeElement) {
-    // Action action = null;
-    // // search for the first action element in the node
-    // Iterator iter = nodeElement.elementIterator();
-    // while (iter.hasNext() && (action == null)) {
-    // Element candidate = (Element) iter.next();
-    // // parse the action and assign it to this node
-    // action = createAction(processDefinition, candidate);
-    // }
-    // return action;
-    // }
-    //
-    // private Action createAction(ProcessDefinition processDefinition, Element
-    // element) {
-    // String actionName = element.getName();
-    // try {
-    // Action action = new Action();
-    // action.setName(element.attributeValue(NAME_ATTR));
-    // action.setDelegation(readDelegation(processDefinition, element));
-    // String acceptPropagatedEvents =
-    // element.attributeValue("accept-propagated-events");
-    // if ("false".equalsIgnoreCase(acceptPropagatedEvents)) {
-    // action.setPropagationAllowed(false);
-    // }
-    // return action;
-    // } catch (Exception e) {
-    // throw new InvalidDefinitionException("couldn't create action '" +
-    // actionName + "'", e);
-    // }
-    // }
-
-    private Delegation readDelegation(ProcessDefinition processDefinition, Element element) {
-        String className = element.attributeValue(CLASS_ATTR);
+    private Delegation readDelegation(Element element) {
+        Map<String, String> swimlaneProperties = parseExtensionProperties(element);
+        String className = swimlaneProperties.get(CLASS);
         if (className == null) {
             throw new InvalidDefinitionException("no className specified in " + element.asXML());
         }
-        String configuration;
-        if (element.hasContent()) {
-            try {
-                List<Node> nodes = element.content();
-                if (nodes.size() == 1 && nodes.get(0) instanceof CDATA) {
-                    CDATA cdata = (CDATA) nodes.get(0);
-                    configuration = cdata.getText();
-                    configuration = configuration.trim();
-                } else {
-                    StringWriter stringWriter = new StringWriter();
-                    // when parsing, it could be to store the config in the
-                    // database, so we want to make the configuration compact
-                    XMLWriter xmlWriter = new XMLWriter(stringWriter, OutputFormat.createCompactFormat());
-                    for (Node node : nodes) {
-                        xmlWriter.write(node);
-                    }
-                    xmlWriter.flush();
-                    configuration = stringWriter.toString();
-                }
-            } catch (IOException e) {
-                throw new InvalidDefinitionException("io problem while parsing the configuration of " + element.asXML());
-            }
-        } else {
-            configuration = "";
-        }
+        String configuration = swimlaneProperties.get(CONFIG);
         return new Delegation(className, configuration);
     }
 
