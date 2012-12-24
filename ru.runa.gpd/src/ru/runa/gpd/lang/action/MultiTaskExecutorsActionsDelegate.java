@@ -19,7 +19,7 @@ import ru.runa.gpd.lang.model.MultiTaskState;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.CreateVariableDialog;
-import ru.runa.wfe.var.format.ArrayListFormat;
+import ru.runa.wfe.var.format.ListFormat;
 
 import com.google.common.base.Objects;
 
@@ -87,7 +87,7 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelActionDelegate i
      */
     protected void fillMenu(Menu menu) {
         for (Variable variable : currentDefinition.getVariablesList()) {
-            if (ArrayListFormat.class.getName().equals(variable.getFormat())) {
+            if (ListFormat.class.getName().equals(variable.getFormat())) {
                 Action action = new SetVariableAction();
                 action.setText(variable.getName());
                 if (Objects.equal(selectedVariable, variable.getName())) {
@@ -114,7 +114,7 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelActionDelegate i
 
     private void createVariable() {
         CreateVariableDialog dialog = new CreateVariableDialog(currentDefinition, null);
-        dialog.setType(ArrayListFormat.class.getName());
+        dialog.setType(ListFormat.class.getName());
         if (dialog.open() == IDialogConstants.OK_ID) {
             Variable variable = new Variable(dialog.getName(), dialog.getType(), dialog.isPublicVisibility(), dialog.getDefaultValue());
             currentDefinition.addVariable(variable);
