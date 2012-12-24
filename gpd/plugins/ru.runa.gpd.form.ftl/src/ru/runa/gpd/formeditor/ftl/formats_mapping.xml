@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <formats>
-    <format className="org.jbpm.web.formgen.format.DefaultFormat" name="string" />
-    <format className="org.jbpm.web.formgen.format.DoubleFormat" name="double" />
-    <format className="ru.runa.wf.web.forms.format.BooleanFormat" name="boolean" />
-    <format className="ru.runa.wf.web.forms.format.DateFormat" name="date" />
-    <format className="ru.runa.wf.web.forms.format.LongFormat" name="long" />
-    <format className="ru.runa.wf.web.forms.format.DateTimeFormat" name="date" />
-    <format className="ru.runa.wf.web.forms.format.StringFormat" name="string" />
-    <format className="ru.runa.wf.web.forms.format.TimeFormat" name="date" />
-    <format className="ru.runa.wf.web.forms.format.TimeWithSecondsFormat" name="date" />
-    <format className="ru.runa.wf.web.forms.format.FileFormat" name="file" />
-    <format className="ru.runa.wf.web.forms.format.ArrayListFormat" name="list" />
     <format className="ru.runa.wfe.var.format.DoubleFormat" name="double" />
     <format className="ru.runa.wfe.var.format.BooleanFormat" name="boolean" />
     <format className="ru.runa.wfe.var.format.DateFormat" name="date" />
@@ -21,5 +10,5 @@
     <format className="ru.runa.wfe.var.format.TimeFormat" name="date" />
     <format className="ru.runa.wfe.var.format.TimeWithSecondsFormat" name="date" />
     <format className="ru.runa.wfe.var.format.FileFormat" name="file" />
-    <format className="ru.runa.wfe.var.format.ArrayListFormat" name="list" />
+    <format className="ru.runa.wfe.var.format.ListFormat" name="list" />
 </formats>
