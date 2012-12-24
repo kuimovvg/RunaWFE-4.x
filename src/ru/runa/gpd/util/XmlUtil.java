@@ -13,7 +13,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.xerces.dom.DOMInputImpl;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
@@ -64,7 +63,7 @@ public class XmlUtil {
                         public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
                             InputStream xsd = getClass().getResourceAsStream("/schema/" + systemId);
                             if (xsd != null) {
-                                return new DOMInputImpl(publicId, systemId, baseURI, xsd, Charsets.UTF_8.name());
+                                return new LSInputImpl(publicId, systemId, baseURI, xsd, Charsets.UTF_8.name());
                             }
                             return null;
                         }
