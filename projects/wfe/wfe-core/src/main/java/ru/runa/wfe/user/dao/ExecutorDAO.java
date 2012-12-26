@@ -688,7 +688,7 @@ public class ExecutorDAO extends CommonDAO {
     }
 
     private void checkAndAddExecutorToGroup(Executor executor, Group group) throws ExecutorAlreadyInGroupException {
-        if (getRelationExecutorWithGroup(group, executor) != null) {
+        if (getRelationExecutorWithGroup(group, executor) != null) { // TODO silently add
             throw new ExecutorAlreadyInGroupException(executor.getName(), group.getName());
         }
         getHibernateTemplate().save(new ExecutorGroupRelation(group, executor));

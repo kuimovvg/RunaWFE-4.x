@@ -117,7 +117,6 @@ public class Process implements Identifiable {
         this.version = version;
     }
 
-    // TODO (if possible) delete TREE_PATH
     @Column(name = "TREE_PATH")
     public String getHierarchySubProcess() {
         return hierarchySubProcess;

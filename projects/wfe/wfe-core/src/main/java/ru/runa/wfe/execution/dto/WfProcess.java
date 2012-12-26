@@ -38,18 +38,12 @@ public class WfProcess implements Identifiable {
     public static final String SELECTED_TRANSITION_KEY = "_SELECTED_TRANSITION_";
 
     private Long id;
-
     private String name;
-
     private Date startDate;
-
     private Date endDate;
-
     private int version;
-
     private Long processDefinitionId;
-
-    protected String hierarchySubProcess;
+    private String hierarchySubProcess;
 
     public WfProcess() {
     }
