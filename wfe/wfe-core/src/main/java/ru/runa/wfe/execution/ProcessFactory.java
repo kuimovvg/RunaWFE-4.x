@@ -103,7 +103,7 @@ public class ProcessFactory {
         Process parentProcess = parentExecutionContext.getProcess();
         Node subProcessNode = parentExecutionContext.getNode();
         Process subProcess = startProcessInternal(processDefinition, variables, null, null);
-        subProcess.setHierarchySubProcess(parentProcess.getHierarchySubProcess() + "/" + subProcess.getId());
+        subProcess.setHierarchySubProcess(ProcessHierarchyUtils.createHierarchy(parentProcess.getHierarchySubProcess(), subProcess.getId()));
         nodeProcessDAO.create(new NodeProcess(parentExecutionContext.getToken(), subProcess, subProcessNode));
         parentExecutionContext.addLog(new SubprocessStartLog(subProcessNode, subProcess));
         grantSubprocessPermissions(processDefinition, subProcess, parentProcess);
@@ -156,7 +156,7 @@ public class ProcessFactory {
         if (transitionName != null) {
             transition = processDefinition.getStartStateNotNull().getLeavingTransitionNotNull(transitionName);
         }
-        process.setHierarchySubProcess("" + process.getId());
+        process.setHierarchySubProcess(ProcessHierarchyUtils.createHierarchy(null, process.getId()));
         startState.leave(executionContext, transition);
         return process;
     }
