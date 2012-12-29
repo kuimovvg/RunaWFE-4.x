@@ -368,6 +368,10 @@ public class CalendarUtil {
         return ((double) minutes / (24 * 60));
     }
 
+    public static double getDaysBetween(Date from, Date to) {
+        return daysBetween(dateToCalendar(from), dateToCalendar(to));
+    }
+
     public static int minutesBetween(Calendar from, Calendar to) {
         if (to == null || from == null) {
             return 0;

@@ -49,9 +49,9 @@ public interface TaskHandler {
      *            Current bot subject.
      * @param variableProvider
      *            access process variables
-     * @param taskStub
+     * @param task
      *            Task to be processed.
      * @return variables passed to process
      */
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask taskStub) throws Exception;
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception;
 }

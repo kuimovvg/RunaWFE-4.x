@@ -26,7 +26,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ru.runa.wfe.InternalApplicationException;
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
@@ -106,7 +107,8 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
             }
             return "";
         } catch (IOException e) {
-            throw new InternalApplicationException(e);
+            LogFactory.getLog(getClass()).error("Tag execution error", e);
+            return "<p style='color: red;'>Tag error: Script not found at </p><b>" + e.getMessage() + "</b>";
         }
     }
 }
