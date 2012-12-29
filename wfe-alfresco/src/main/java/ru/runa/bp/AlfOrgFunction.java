@@ -2,43 +2,25 @@ package ru.runa.bp;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ru.runa.alfresco.AlfSession;
 import ru.runa.alfresco.AlfSessionWrapper;
-import ru.runa.wfe.os.OrgFunction;
+import ru.runa.wfe.os.OrgFunctionBase;
 import ru.runa.wfe.os.OrgFunctionException;
-import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.dao.ExecutorDAO;
-
-import com.google.common.collect.Lists;
 
 /**
  * Base class for RunaWFE organization function.
  * 
  * @author dofs
  */
-public abstract class AlfOrgFunction implements OrgFunction {
-    protected Log log = LogFactory.getLog(getClass());
-
-    @Autowired
-    protected ExecutorDAO executorDAO;
+public abstract class AlfOrgFunction extends OrgFunctionBase {
 
     @Override
-    public List<? extends Executor> getExecutors(final Object... parameters) throws OrgFunctionException {
+    protected List<Long> getExecutorCodes(final Object... parameters) {
         try {
-            return new AlfSessionWrapper<List<Actor>>() {
+            return new AlfSessionWrapper<List<Long>>() {
                 @Override
-                protected List<Actor> code() throws Exception {
-                    List<Actor> actors = Lists.newArrayList();
-                    Long[] codes = getExecutorCodes(session, parameters);
-                    for (Long code : codes) {
-                        actors.add(executorDAO.getActorByCode(code));
-                    }
-                    return actors;
+                protected List<Long> code() throws Exception {
+                    return getExecutorCodes(session, parameters);
                 }
             }.runInSession();
         } catch (Throwable e) {
@@ -46,6 +28,6 @@ public abstract class AlfOrgFunction implements OrgFunction {
         }
     }
 
-    public abstract Long[] getExecutorCodes(AlfSession session, Object[] parameters) throws Exception;
+    public abstract List<Long> getExecutorCodes(AlfSession session, Object[] parameters) throws Exception;
 
 }
