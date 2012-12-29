@@ -6,7 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.alfresco.AlfSession;
 import ru.runa.alfresco.AlfSessionWrapper;
 import ru.runa.wfe.validation.impl.FieldValidatorSupport;
-import ru.runa.wfe.validation.impl.ValidationException;
 
 /**
  * Base class for RunaWFE validator.
@@ -16,10 +15,10 @@ import ru.runa.wfe.validation.impl.ValidationException;
 public abstract class AlfValidator extends FieldValidatorSupport {
     protected Log log = LogFactory.getLog(getClass());
 
-    protected abstract void validate(AlfSession session) throws ValidationException;
+    protected abstract void validate(AlfSession session) throws Exception;
 
     @Override
-    public final void validate() throws ValidationException {
+    public final void validate() throws Exception {
         new AlfSessionWrapper<Object>() {
 
             @Override
