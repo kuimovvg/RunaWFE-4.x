@@ -25,7 +25,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -50,6 +49,7 @@ public class BotStation implements Identifiable {
 
     public BotStation(String name) {
         this.name = name;
+        version = 0L;
     }
 
     public BotStation(String name, String address) {
@@ -80,7 +80,6 @@ public class BotStation implements Identifiable {
         this.id = id;
     }
 
-    @Version
     @Column(name = "VERSION", nullable = false)
     public Long getVersion() {
         return version;

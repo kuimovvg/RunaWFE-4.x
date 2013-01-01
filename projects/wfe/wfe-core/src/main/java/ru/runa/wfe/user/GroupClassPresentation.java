@@ -31,7 +31,6 @@ import ru.runa.wfe.security.Permission;
  */
 public class GroupClassPresentation extends ClassPresentation {
     public static final String EXECUTOR_BATCH_PRESENTATION_NAME = "batch_presentation.group.name";
-    public static final String EXECUTOR_BATCH_PRESENTATION_FULL_NAME = "batch_presentation.group.full_name";
     public static final String EXECUTOR_BATCH_PRESENTATION_DESCRIPTION = "batch_presentation.group.description";
 
     private static final ClassPresentation INSTANCE = new GroupClassPresentation();
@@ -41,9 +40,6 @@ public class GroupClassPresentation extends ClassPresentation {
                 new FieldDescriptor[] {
                         new FieldDescriptor(EXECUTOR_BATCH_PRESENTATION_NAME, String.class.getName(), new DefaultDBSource(Group.class, "name"), true,
                                 FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "name" }),
-                        new FieldDescriptor(EXECUTOR_BATCH_PRESENTATION_FULL_NAME, String.class.getName(), new DefaultDBSource(Group.class,
-                                "fullName"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
-                                new Permission(), "fullName" }),
                         new FieldDescriptor(EXECUTOR_BATCH_PRESENTATION_DESCRIPTION, String.class.getName(), new DefaultDBSource(Group.class,
                                 "description"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
                                 new Permission(), "description" }) });

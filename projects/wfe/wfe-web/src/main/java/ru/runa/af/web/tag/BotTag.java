@@ -48,7 +48,7 @@ public class BotTag extends TitledFormTag {
         Table table = new Table();
         ActorSelectTD actorSelect = new ActorSelectTD(getSubject(), BotForm.USER_NAME, bot.getUsername());
         Input botPasswordInput = new Input(Input.PASSWORD, BotForm.PASSWORD, bot.getPassword());
-        Input botTimeoutInput = new Input(Input.TEXT, BotForm.BOT_TIMEOUT, String.valueOf(bot.getLastInvoked()));
+        Input botTimeoutInput = new Input(Input.TEXT, BotForm.BOT_TIMEOUT, String.valueOf(bot.getStartTimeout()));
 
         Input hiddenBotStationID = new Input(Input.HIDDEN, BotForm.BOT_STATION_ID, bot.getBotStation().getId().intValue());
         Input hiddenBotID = new Input(Input.HIDDEN, BotForm.BOT_ID, String.valueOf(botID));

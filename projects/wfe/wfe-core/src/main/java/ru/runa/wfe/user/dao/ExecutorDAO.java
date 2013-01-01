@@ -406,9 +406,7 @@ public class ExecutorDAO extends CommonDAO {
                 }
             }
         }
-        newExecutor.setVersion(oldExecutor.getVersion());
-        getHibernateTemplate().update(newExecutor);
-        return newExecutor;
+        return getHibernateTemplate().merge(newExecutor);
     }
 
     /**
@@ -688,7 +686,9 @@ public class ExecutorDAO extends CommonDAO {
     }
 
     private void checkAndAddExecutorToGroup(Executor executor, Group group) throws ExecutorAlreadyInGroupException {
-        if (getRelationExecutorWithGroup(group, executor) != null) { // TODO silently add
+        if (getRelationExecutorWithGroup(group, executor) != null) { // TODO
+                                                                     // silently
+                                                                     // add
             throw new ExecutorAlreadyInGroupException(executor.getName(), group.getName());
         }
         getHibernateTemplate().save(new ExecutorGroupRelation(group, executor));
