@@ -1,8 +1,9 @@
 package ru.runa.wf.office.shared;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+
+import ru.runa.wfe.commons.xml.XmlUtils;
 
 public abstract class FilesSupplierConfigParser<T extends FilesSupplierConfig> {
 
@@ -12,7 +13,7 @@ public abstract class FilesSupplierConfigParser<T extends FilesSupplierConfig> {
 
     public final T parse(String xml) throws Exception {
         T config = instantiate();
-        Document document = DocumentHelper.parseText(xml);
+        Document document = XmlUtils.parseWithoutValidation(xml);
         Element root = document.getRootElement();
         Element inputElement = root.element("input");
         if (inputElement != null) {

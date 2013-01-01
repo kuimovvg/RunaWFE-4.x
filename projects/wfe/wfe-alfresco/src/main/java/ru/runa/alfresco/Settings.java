@@ -5,12 +5,9 @@ import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 
 import ru.runa.wfe.ApplicationException;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.ByteStreams;
+import ru.runa.wfe.commons.xml.XmlUtils;
 
 /**
  * Base class for configurable items. Configuration of the system is extendible
@@ -27,8 +24,7 @@ public class Settings {
         if (is == null) {
             throw new ApplicationException("No resource found in " + CONFIG_RESOURCE);
         }
-        String xml = new String(ByteStreams.toByteArray(is), Charsets.UTF_8);
-        return DocumentHelper.parseText(xml);
+        return XmlUtils.parseWithoutValidation(is);
     }
 
     protected static boolean parseBoolean(String value, boolean defaultValue) {
