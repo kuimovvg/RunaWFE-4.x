@@ -422,7 +422,14 @@ public class JpdlSerializer extends ProcessSerializer {
         }
         List<Element> swimlanes = root.elements(SWIMLANE_NODE);
         for (Element node : swimlanes) {
-            create(node, definition);
+            Swimlane swimlane = create(node, definition);
+            if (!Strings.isNullOrEmpty(swimlane.getDelegationConfiguration())) {
+                String[] orgFunctionParts = swimlane.getDelegationConfiguration().split("\\(");
+                if (orgFunctionParts.length == 2) {
+                    String className = BackCompatibilityClassNames.getClassName(orgFunctionParts[0].trim());
+                    swimlane.setDelegationConfiguration(className + "(" + orgFunctionParts[1]);
+                }
+            }
         }
         List<Element> startStates = root.elements(START_STATE_NODE);
         if (startStates.size() > 0) {
