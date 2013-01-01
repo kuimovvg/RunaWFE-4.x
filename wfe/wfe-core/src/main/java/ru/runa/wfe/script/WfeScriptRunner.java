@@ -936,7 +936,7 @@ public class WfeScriptRunner {
         bot.setUsername(name);
         bot.setPassword(pass);
         if (!Strings.isNullOrEmpty(timeout)) {
-            bot.setLastInvoked(Long.parseLong(timeout));
+            bot.setStartTimeout(Long.parseLong(timeout));
         }
         botLogic.createBot(subject, bot);
     }
@@ -955,7 +955,7 @@ public class WfeScriptRunner {
             bot.setPassword(pass);
         }
         if (timeout != null) {
-            bot.setLastInvoked(Long.parseLong(timeout));
+            bot.setStartTimeout(Long.parseLong(timeout));
         }
         String newBotStationName = element.getAttribute(NEW_BOTSTATION_ATTRIBUTE_NAME);
         if (newBotStationName != null) {

@@ -20,6 +20,7 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotTask;
+import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.base.Charsets;
 
@@ -37,14 +38,20 @@ public class BotTaskConfigurationDownloadAction extends Action {
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         try {
             IdForm form = (IdForm) actionForm;
-            String parameter = request.getParameter("edit");
+            boolean editAction = request.getParameter("edit") != null;
             BotService botService = DelegateFactory.getBotService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             BotTask botTask = botService.getBotTask(subject, form.getId());
             String fileName = botTask.getName() + "_" + botTask.getId() + ".xml";
             byte[] configuration = botTask.getConfiguration();
+            boolean configurationIsXml = true;
+            try {
+                XmlUtils.parseWithoutValidation(configuration);
+            } catch (Exception e) {
+                configurationIsXml = false;
+            }
             String tempConfiguration = new String(configuration, Charsets.UTF_8);
-            if (parameter != null && !Native2AsciiHelper.isXMLfile(tempConfiguration) && Native2AsciiHelper.isNeedConvert(tempConfiguration)) {
+            if (editAction && !configurationIsXml && Native2AsciiHelper.isNeedConvert(tempConfiguration)) {
                 configuration = Native2AsciiHelper.asciiToNative(tempConfiguration).getBytes(Charsets.UTF_8);
                 fileName = botTask.getName() + "_" + botTask.getId() + ".properties";
             }

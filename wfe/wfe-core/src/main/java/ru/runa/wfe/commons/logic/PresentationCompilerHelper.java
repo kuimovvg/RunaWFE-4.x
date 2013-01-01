@@ -37,14 +37,16 @@ import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 /**
- * Contains method to create {@linkplain BatchPresentationHibernateCompiler}'s, used to load object list.
+ * Contains method to create {@linkplain BatchPresentationHibernateCompiler}'s,
+ * used to load object list.
  * 
  * @author Konstantinov Aleksey 27.02.2012
  */
 public final class PresentationCompilerHelper {
 
     /**
-     * Classes, loaded by queries for loading all executors (all, group children and so on).
+     * Classes, loaded by queries for loading all executors (all, group children
+     * and so on).
      */
     private static final SecuredObjectType[] ALL_EXECUTORS_CLASSES = { SecuredObjectType.ACTOR, SecuredObjectType.GROUP };
 
@@ -54,13 +56,15 @@ public final class PresentationCompilerHelper {
     }
 
     /**
-     * Create {@linkplain BatchPresentationHibernateCompiler} for loading all executors. <b>Paging is enabled on executors loading.</b>
+     * Create {@linkplain BatchPresentationHibernateCompiler} for loading all
+     * executors. <b>Paging is enabled on executors loading.</b>
      * 
      * @param subject
      *            Current actor {@linkplain Subject}.
      * @param batchPresentation
      *            {@linkplain BatchPresentation} for loading all executors.
-     * @return {@linkplain BatchPresentationHibernateCompiler} for loading all executors.
+     * @return {@linkplain BatchPresentationHibernateCompiler} for loading all
+     *         executors.
      */
     public static BatchPresentationHibernateCompiler createAllExecutorsCompiler(Subject subject, BatchPresentation batchPresentation)
             throws AuthenticationException {
@@ -71,8 +75,10 @@ public final class PresentationCompilerHelper {
     }
 
     /**
-     * Create {@linkplain BatchPresentationHibernateCompiler} for loading group children's (or executors, which not children's for now). Only first level children are loading, not
-     * recursive. <b>Paging is enabled on executors loading.</b>
+     * Create {@linkplain BatchPresentationHibernateCompiler} for loading group
+     * children's (or executors, which not children's for now). Only first level
+     * children are loading, not recursive. <b>Paging is enabled on executors
+     * loading.</b>
      * 
      * @param subject
      *            Current actor {@linkplain Subject}.
@@ -83,8 +89,10 @@ public final class PresentationCompilerHelper {
      * @param daoHolder
      *            Helper object for DAO level access.
      * @param hasExecutor
-     *            Flag, equals true, if loading executors already in group; false to load executors not in group.
-     * @return {@linkplain BatchPresentationHibernateCompiler} for loading group children's.
+     *            Flag, equals true, if loading executors already in group;
+     *            false to load executors not in group.
+     * @return {@linkplain BatchPresentationHibernateCompiler} for loading group
+     *         children's.
      */
     public static BatchPresentationHibernateCompiler createGroupChildrenCompiler(Subject subject, Group group, BatchPresentation batchPresentation,
             boolean hasExecutor) throws AuthenticationException {
@@ -99,7 +107,9 @@ public final class PresentationCompilerHelper {
     }
 
     /**
-     * Create {@linkplain BatchPresentationHibernateCompiler} for loading executor groups. Loaded first level groups, not recursive. <b>Paging is enabled on executors loading.</b>
+     * Create {@linkplain BatchPresentationHibernateCompiler} for loading
+     * executor groups. Loaded first level groups, not recursive. <b>Paging is
+     * enabled on executors loading.</b>
      * 
      * @param subject
      *            Current actor {@linkplain Subject}.
@@ -110,36 +120,45 @@ public final class PresentationCompilerHelper {
      * @param daoHolder
      *            Helper object for DAO level access.
      * @param hasGroup
-     *            Flag equals true, if loading groups, which already contains executor; false to load groups, which doesn't contains executor.
-     * @return {@linkplain BatchPresentationHibernateCompiler} for loading executor groups.
+     *            Flag equals true, if loading groups, which already contains
+     *            executor; false to load groups, which doesn't contains
+     *            executor.
+     * @return {@linkplain BatchPresentationHibernateCompiler} for loading
+     *         executor groups.
      */
     public static BatchPresentationHibernateCompiler createExecutorGroupsCompiler(Subject subject, Executor executor,
-            BatchPresentation batchPresentation, boolean hasGroup) throws AuthenticationException {
+            BatchPresentation batchPresentation, boolean hasGroup) {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
         List<Long> executorIds = executorDAO.getActorAndGroupsIds(SubjectPrincipalsHelper.getActor(subject));
         String inClause = hasGroup ? "IN" : "NOT IN";
         String inRestriction = inClause + " (SELECT relation.group.id FROM " + ExecutorGroupRelation.class.getName()
                 + " as relation WHERE relation.executor.id=" + executor.getId() + ")";
         String[] idRestrictions = { inRestriction, "<> " + executor.getId() };
-        compiler.setParameters(Executor.class, null, null, true, executorIds, ExecutorPermission.READ,
+        compiler.setParameters(Group.class, null, null, true, executorIds, ExecutorPermission.READ,
                 new SecuredObjectType[] { SecuredObjectType.GROUP }, idRestrictions);
         return compiler;
     }
 
     /**
-     * Create {@linkplain BatchPresentationHibernateCompiler} for loading executor's which already has (or not has) some permission on specified identifiable.
+     * Create {@linkplain BatchPresentationHibernateCompiler} for loading
+     * executor's which already has (or not has) some permission on specified
+     * identifiable.
      * 
      * @param subject
      *            Current actor {@linkplain Subject}.
      * @param identifiable
-     *            {@linkplain Identifiable} to load executors, which has (or not) permission on this identifiable.
+     *            {@linkplain Identifiable} to load executors, which has (or
+     *            not) permission on this identifiable.
      * @param batchPresentation
      *            {@linkplain BatchPresentation} for loading executors.
      * @param daoHolder
      *            Helper object for DAO level access.
      * @param hasPermission
-     *            Flag equals true to load executors with permissions on {@linkplain Identifiable}; false to load executors without permissions.
-     * @return {@linkplain BatchPresentationHibernateCompiler} for loading executors.
+     *            Flag equals true to load executors with permissions on
+     *            {@linkplain Identifiable}; false to load executors without
+     *            permissions.
+     * @return {@linkplain BatchPresentationHibernateCompiler} for loading
+     *         executors.
      */
     public static BatchPresentationHibernateCompiler createExecutorWithPermissionCompiler(Subject subject, Identifiable identifiable,
             BatchPresentation batchPresentation, boolean hasPermission) throws AuthenticationException {

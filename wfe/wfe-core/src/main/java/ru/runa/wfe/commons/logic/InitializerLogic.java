@@ -192,7 +192,7 @@ public class InitializerLogic {
 
     private void insertInitialData() {
         // create privileged Executors
-        Actor admin = new Actor(administratorName, administratorDescription);
+        Actor admin = new Actor(administratorName, administratorDescription, administratorDescription);
         admin = executorDAO.create(admin);
         executorDAO.setPassword(admin, administratorPassword);
         Group adminGroup = new Group(administratorGroupName, administratorGroupDescription);

@@ -91,7 +91,7 @@ public class WorkflowBotInvoker implements BotInvoker {
                 List<Bot> bots = botService.getBots(botStationSubject, botStation.getId());
                 for (Bot bot : bots) {
                     Subject subject = DelegateFactory.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
-                    MultitaskBotRunner wbot = new MultitaskBotRunner(subject, 150, bot.getLastInvoked());
+                    MultitaskBotRunner wbot = new MultitaskBotRunner(subject, 150, bot.getStartTimeout());
                     List<BotTask> tasks = botService.getBotTasks(subject, bot.getId());
                     Iterator<BotTask> i = tasks.iterator();
                     while (i.hasNext()) {

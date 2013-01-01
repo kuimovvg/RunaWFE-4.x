@@ -77,13 +77,6 @@ public class Native2AsciiHelper {
         return buffer.toString();
     }
 
-    public static boolean isXMLfile(String configuration) {
-        if (configuration.indexOf("<xml ") != -1 || configuration.indexOf("<?xml ") != -1) {
-            return true;
-        }
-        return false;
-    }
-
     public static boolean isNeedConvert(String configuration) {
         return configuration.indexOf("\\u") != -1;
     }

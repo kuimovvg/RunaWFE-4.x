@@ -99,7 +99,7 @@ public class BotTask implements Serializable {
     }
 
     public void setTaskHandlerClassName(String clazz) {
-        this.taskHandlerClassName = clazz;
+        taskHandlerClassName = clazz;
     }
 
     @Lob
