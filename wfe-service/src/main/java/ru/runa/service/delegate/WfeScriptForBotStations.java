@@ -64,7 +64,7 @@ public class WfeScriptForBotStations extends WfeScriptRunner {
         Element createBotElement = script.createElement("createBot");
         createBotElement.setAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
         createBotElement.setAttribute(PASSWORD_ATTRIBUTE_NAME, "");
-        createBotElement.setAttribute(STARTTIMEOUT_ATTRIBUTE_NAME, "" + bot.getLastInvoked());
+        createBotElement.setAttribute(STARTTIMEOUT_ATTRIBUTE_NAME, "" + bot.getStartTimeout());
         rootElement.appendChild(createBotElement);
 
         if (tasks.size() > 0) {

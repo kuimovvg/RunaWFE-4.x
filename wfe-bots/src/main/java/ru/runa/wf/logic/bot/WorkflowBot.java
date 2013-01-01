@@ -102,7 +102,7 @@ public class WorkflowBot implements Runnable {
         task = null;
         parent = null;
         botName = bot.getUsername();
-        botDeplay = bot.getLastInvoked();
+        botDeplay = bot.getStartTimeout();
         existingBots = new HashSet<WorkflowBot>();
     }
 

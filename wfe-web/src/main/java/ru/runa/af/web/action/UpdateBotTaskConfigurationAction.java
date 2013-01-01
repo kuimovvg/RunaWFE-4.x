@@ -19,6 +19,7 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotTask;
+import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.base.Charsets;
 
@@ -42,17 +43,22 @@ public class UpdateBotTaskConfigurationAction extends Action {
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
         try {
             Long botTaskId = idForm.getId();
-            String parameter = request.getParameter("conf");
-            byte[] configuration = parameter.getBytes(Charsets.UTF_8);
-            if (!Native2AsciiHelper.isXMLfile(parameter)) {
-                configuration = Native2AsciiHelper.nativeToAscii(parameter).getBytes(Charsets.UTF_8);
+            String configuration = request.getParameter("conf");
+            boolean configurationIsXml = true;
+            try {
+                XmlUtils.parseWithoutValidation(configuration);
+            } catch (Exception e) {
+                configurationIsXml = false;
+            }
+            if (!configurationIsXml) {
+                configuration = Native2AsciiHelper.nativeToAscii(configuration);
             }
             BotTask botTask = botService.getBotTask(subject, botTaskId);
-            botTask.setConfiguration(configuration);
+            botTask.setConfiguration(configuration.getBytes(Charsets.UTF_8));
             botService.updateBotTask(subject, botTask);
 
             PrintWriter out = response.getWriter();
-            response.setContentType("text/xml");
+            response.setContentType("application/xml");
             response.setHeader("Cache-Control", "no-cache");
             out.println("<response>");
             out.println("</response>");

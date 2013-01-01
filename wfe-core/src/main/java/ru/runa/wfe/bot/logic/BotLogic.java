@@ -23,6 +23,7 @@ import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotAlreadyExistsException;
 import ru.runa.wfe.bot.BotDoesNotExistException;
@@ -99,7 +100,9 @@ public class BotLogic extends CommonLogic {
         if (getBot(subject, bot.getBotStation().getId(), bot.getUsername()) != null) {
             throw new BotAlreadyExistsException(bot.getUsername());
         }
-        return botDAO.create(bot);
+        bot = botDAO.create(bot);
+        incrementBotStationVersion(bot);
+        return bot;
     }
 
     public List<Bot> getBots(Subject subject, Long botStationId) throws AuthorizationException {
@@ -132,7 +135,8 @@ public class BotLogic extends CommonLogic {
         if (botToCheck != null && !Objects.equal(botToCheck.getId(), bot.getId())) {
             throw new BotAlreadyExistsException(bot.getUsername());
         }
-        botDAO.merge(bot);
+        bot = botDAO.merge(bot);
+        incrementBotStationVersion(bot);
     }
 
     public void removeBot(Subject subject, Long id) throws AuthorizationException, BotDoesNotExistException {
@@ -150,7 +154,9 @@ public class BotLogic extends CommonLogic {
         if (getBotTask(subject, botTask.getBot().getId(), botTask.getName()) != null) {
             throw new BotTaskAlreadyExistsException(botTask.getName());
         }
-        return botTaskDAO.create(botTask);
+        botTask = botTaskDAO.create(botTask);
+        incrementBotStationVersion(botTask);
+        return botTask;
     }
 
     public List<BotTask> getBotTasks(Subject subject, Long id) throws AuthorizationException {
@@ -187,15 +193,34 @@ public class BotLogic extends CommonLogic {
             BotTask botTaskFromDB = getBotTaskNotNull(subject, botTask.getId());
             botTask.setConfiguration(botTaskFromDB.getConfiguration());
         }
-        botTaskDAO.merge(botTask);
+        botTask = botTaskDAO.merge(botTask);
+        incrementBotStationVersion(botTask);
     }
 
     public void removeBotTask(Subject subject, Long id) throws AuthorizationException, BotTaskDoesNotExistException {
         checkPermissionsOnBotStations(subject, BotStationPermission.BOT_STATION_CONFIGURE);
+        BotTask botTask = getBotTaskNotNull(subject, id);
         botTaskDAO.delete(id);
+        incrementBotStationVersion(botTask);
     }
 
     private void checkPermissionsOnBotStations(Subject subject, Permission permission) throws AuthorizationException {
         checkPermissionAllowed(subject, BotStation.INSTANCE, permission);
     }
+
+    private void incrementBotStationVersion(Object entity) {
+        BotStation botStation;
+        if (entity instanceof BotStation) {
+            botStation = (BotStation) entity;
+        } else if (entity instanceof Bot) {
+            botStation = ((Bot) entity).getBotStation();
+        } else if (entity instanceof BotTask) {
+            botStation = ((BotTask) entity).getBot().getBotStation();
+        } else {
+            throw new InternalApplicationException("Unexpected entity class " + entity);
+        }
+        botStation.setVersion(botStation.getVersion() + 1);
+        botStationDAO.merge(botStation);
+    }
+
 }
