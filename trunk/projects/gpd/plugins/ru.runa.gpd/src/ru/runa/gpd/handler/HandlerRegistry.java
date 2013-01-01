@@ -58,7 +58,7 @@ public class HandlerRegistry extends ArtifactRegistry<HandlerArtifact> {
                         if (HandlerArtifact.DECISION.equals(type) && !(provider instanceof IDecisionProvider)) {
                             throw new Exception("Custom decision provider should implement IDecisionProvider interface.");
                         }
-                        customDelegableProviders.put(providerClassName, provider);
+                        customDelegableProviders.put(className, provider);
                     }
                     list.add(new HandlerArtifact(enabled, className, label, type, providerClassName));
                 } catch (Exception e) {
@@ -69,12 +69,8 @@ public class HandlerRegistry extends ArtifactRegistry<HandlerArtifact> {
     }
 
     private static DelegableProvider getProvider(String className, DelegableProvider defaultProvider) {
-        HandlerArtifact artifact = getInstance().getArtifact(className);
-        if (artifact != null) {
-            String configurerClassName = artifact.getConfigurerClassName();
-            if (customDelegableProviders.containsKey(configurerClassName)) {
-                return customDelegableProviders.get(configurerClassName);
-            }
+        if (customDelegableProviders.containsKey(className)) {
+            return customDelegableProviders.get(className);
         }
         return defaultProvider;
     }
