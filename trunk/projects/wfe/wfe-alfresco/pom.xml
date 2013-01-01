@@ -53,12 +53,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.alfresco</groupId>
-			<artifactId>alfresco-web-service-client</artifactId>
+			<artifactId>alfresco-repository</artifactId>
+			<classifier>community</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.alfresco</groupId>
-			<artifactId>alfresco-repository</artifactId>
-			<classifier>community</classifier>
+			<artifactId>alfresco-web-service-client</artifactId>
 		</dependency>
 	</dependencies>
 

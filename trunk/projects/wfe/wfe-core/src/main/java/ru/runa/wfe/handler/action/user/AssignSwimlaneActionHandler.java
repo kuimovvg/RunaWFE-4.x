@@ -21,13 +21,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.handler.action.ActionHandler;
@@ -46,18 +45,14 @@ public class AssignSwimlaneActionHandler implements ActionHandler {
 
     @Override
     public void setConfiguration(String configuration) throws ConfigurationException {
-        try {
-            Element root = DocumentHelper.parseText(configuration).getRootElement();
-            swimlaneName = root.attributeValue("swimlaneName");
-            if (swimlaneName == null) {
-                swimlaneName = root.elementTextTrim("swimlaneName");
-            }
-            swimlaneInititalizer = root.attributeValue("swimlaneInititalizer");
-            if (swimlaneInititalizer == null) {
-                swimlaneInititalizer = root.elementTextTrim("swimlaneInititalizer");
-            }
-        } catch (DocumentException e) {
-            throw new ConfigurationException("Invalid XML for " + getClass(), e);
+        Element root = XmlUtils.parseWithoutValidation(configuration).getRootElement();
+        swimlaneName = root.attributeValue("swimlaneName");
+        if (swimlaneName == null) {
+            swimlaneName = root.elementTextTrim("swimlaneName");
+        }
+        swimlaneInititalizer = root.attributeValue("swimlaneInititalizer");
+        if (swimlaneInititalizer == null) {
+            swimlaneInititalizer = root.elementTextTrim("swimlaneInititalizer");
         }
     }
 
