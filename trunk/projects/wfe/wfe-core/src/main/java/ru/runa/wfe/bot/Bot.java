@@ -47,8 +47,7 @@ public class Bot implements Serializable {
     private BotStation botStation;
     private String username;
     private String password;
-    private Long maxPeriod;
-    private Long lastInvoked;
+    private long startTimeout;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
@@ -92,8 +91,8 @@ public class Bot implements Serializable {
         return username;
     }
 
-    public void setUsername(String wfeUser) {
-        this.username = wfeUser;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Column(name = "PASSWORD")
@@ -101,33 +100,20 @@ public class Bot implements Serializable {
         return password;
     }
 
-    public void setPassword(String wfePass) {
-        this.password = wfePass;
-    }
-
-    /**
-     * Used for periodic bot invocation. If set to 0, periodic invocation on
-     * this bot is disabled.
-     */
-    @Column(name = "MAX_PERIOD")
-    public Long getMaxPeriod() {
-        return maxPeriod;
-    }
-
-    public void setMaxPeriod(Long maxPeriod) {
-        this.maxPeriod = maxPeriod;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
      * Last time when this bot was invoked successfully. Used for periodic bot
      * invocation.
      */
-    @Column(name = "LAST_INVOKED")
-    public Long getLastInvoked() {
-        return lastInvoked;
+    @Column(name = "START_TIMEOUT")
+    public long getStartTimeout() {
+        return startTimeout;
     }
 
-    public void setLastInvoked(Long lastInvoked) {
-        this.lastInvoked = lastInvoked;
+    public void setStartTimeout(long lastInvoked) {
+        startTimeout = lastInvoked;
     }
 }

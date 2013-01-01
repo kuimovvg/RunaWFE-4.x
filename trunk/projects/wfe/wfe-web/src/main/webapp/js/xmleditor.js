@@ -25,15 +25,9 @@ function openDocumentEditor(url, saveUrl, saveButton, cancelButton) {
 	    type: 'POST',
 	    url: url,
 	    data: '',
-	    dataType: 'text/xml',
-	    success: function(msg) { $('#documentArea').val(msg); initEditor(); },
-		error: function(error) {
-	    	if (error.readyState == 4 && error.status == 200) {
-	    		$('#documentArea').val(error.responseText); 
-	    		initEditor();
-	    	} else if(error.readyState == 4 && error.status == 500) {
-	    		alert('Internal server error');
-	    	}
+		dataType: 'html',
+	    success: function(msg) { 
+	    	$('#documentArea').val(msg); initEditor(); 
 	    }
     }); 
 }
@@ -57,12 +51,8 @@ function saveDocument(saveUrl) {
 	jQuery.ajax({
 		type: 'POST',
 		url: saveUrl,
-		data: {conf : xmleditor.getCode() },
-		dataType: 'text/xml',
-		success: function(msg) {},
-		error: function(error) {
-			alert('Internal server error');
-		}
+		dataType: 'html',
+		data: {conf : xmleditor.getCode() }
 	});
 }
 

@@ -36,8 +36,8 @@ import org.apache.ecs.html.TR;
 
 import ru.runa.af.web.Native2AsciiHelper;
 import ru.runa.af.web.action.BotTaskConfigurationDownloadAction;
-import ru.runa.af.web.action.UpdateBotTasksAction;
 import ru.runa.af.web.action.UpdateBotTaskConfigurationAction;
+import ru.runa.af.web.action.UpdateBotTasksAction;
 import ru.runa.af.web.form.BotTasksForm;
 import ru.runa.af.web.system.TaskHandlerClassesInformation;
 import ru.runa.common.web.Commons;
@@ -55,6 +55,7 @@ import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wfe.commons.xml.XmlUtils;
 
 /**
  * @author petrmikheev
@@ -230,11 +231,16 @@ public class BotTaskListTag extends TitledFormTag {
             link.setClass(Resources.CLASS_LINK);
             fileUploadTD.addElement(link);
 
-            String strConfiguration = new String(task.getConfiguration());
             StringBuffer str = new StringBuffer();
             str.append("&nbsp;");
             str.append(Messages.getMessage(Messages.LABEL_BOT_TASK_CONFIG_EDIT, pageContext));
-            if (!Native2AsciiHelper.isXMLfile(strConfiguration) && !Native2AsciiHelper.isNeedConvert(strConfiguration)) {
+            boolean configurationIsXml = true;
+            try {
+                XmlUtils.parseWithoutValidation(task.getConfiguration());
+            } catch (Exception e) {
+                configurationIsXml = false;
+            }
+            if (!configurationIsXml && !Native2AsciiHelper.isNeedConvert(new String(task.getConfiguration()))) {
                 str.append("*");
             }
             StringBuffer jsLink = new StringBuffer("javascript:");
@@ -245,8 +251,8 @@ public class BotTaskListTag extends TitledFormTag {
             jsLink.append(Commons.getActionUrl(BotTaskConfigurationDownloadAction.DOWNLOAD_BOT_TASK_CONFIGURATION_ACTION_PATH, parameterMap,
                     pageContext, PortletUrlType.Action));
             jsLink.append("','");
-            jsLink.append(Commons.getActionUrl(UpdateBotTaskConfigurationAction.UPDATE_TASK_HANDLER_CONF_ACTION_PATH, "id", task.getId(), pageContext,
-                    PortletUrlType.Action));
+            jsLink.append(Commons.getActionUrl(UpdateBotTaskConfigurationAction.UPDATE_TASK_HANDLER_CONF_ACTION_PATH, "id", task.getId(),
+                    pageContext, PortletUrlType.Action));
             jsLink.append("','");
             jsLink.append(Messages.getMessage(Messages.BUTTON_SAVE, pageContext));
             jsLink.append("','");

@@ -131,7 +131,7 @@ public class BotBean {
         bot.setBotStation(botLogic.getBotStationNotNull(botStationName));
         bot.setUsername(name);
         bot.setPassword(password);
-        bot.setLastInvoked(startTimeout);
+        bot.setStartTimeout(startTimeout);
         botLogic.createBot(subject, bot);
     }
 
@@ -153,7 +153,7 @@ public class BotBean {
         if (password != null) {
             bot.setPassword(password);
         }
-        bot.setLastInvoked(startTimeout);
+        bot.setStartTimeout(startTimeout);
         if (newBotStationName != null) {
             bot.setBotStation(botLogic.getBotStationNotNull(newBotStationName));
         }
