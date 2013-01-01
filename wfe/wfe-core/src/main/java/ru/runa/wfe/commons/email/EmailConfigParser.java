@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -43,7 +43,7 @@ public class EmailConfigParser {
     public static EmailConfig parse(String configuration, boolean loadPropertiesFromBaseFile) {
         try {
             EmailConfig config = new EmailConfig();
-            Element root = DocumentHelper.parseText(configuration).getRootElement();
+            Element root = XmlUtils.parseWithoutValidation(configuration).getRootElement();
             Element commonElement = root.element("common");
             if (commonElement != null) {
                 List<Element> commonParamElements = commonElement.elements(PARAM_ELEMENT);

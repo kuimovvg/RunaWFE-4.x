@@ -10,13 +10,13 @@ import org.apache.commons.codec.Charsets;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import ru.runa.alfresco.AlfSession;
 import ru.runa.alfresco.AlfSessionWrapper;
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.TimeMeasurer;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
 import ru.runa.wfe.handler.bot.TaskHandler;
@@ -108,7 +108,7 @@ public abstract class AlfHandler implements ActionHandler, TaskHandler {
             return;
         }
         try {
-            Document doc = DocumentHelper.parseText(configuration);
+            Document doc = XmlUtils.parseWithoutValidation(configuration);
             Element inputElement = doc.getRootElement().element("input");
             if (inputElement != null) {
                 List<Element> inputParamElements = inputElement.elements("param");
@@ -178,9 +178,9 @@ public abstract class AlfHandler implements ActionHandler, TaskHandler {
         public final String value;
 
         public ParamDef(Element element) {
-            this.name = element.attributeValue("name");
-            this.variableName = element.attributeValue("variable");
-            this.value = element.attributeValue("value");
+            name = element.attributeValue("name");
+            variableName = element.attributeValue("variable");
+            value = element.attributeValue("value");
         }
 
         public String getVariableName() {

@@ -42,6 +42,7 @@ import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.BotTaskAlreadyExistsException;
 import ru.runa.wfe.bot.BotTaskDoesNotExistException;
 import ru.runa.wfe.bot.logic.BotLogic;
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 
@@ -237,6 +238,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
             }
             InputStream script = new ByteArrayInputStream(files.get("script.xml"));
             WfeScriptForBotStations wfeScriptForBotStations = new WfeScriptForBotStations(subject, replace);
+            ApplicationContextFactory.autowireBean(wfeScriptForBotStations);
             wfeScriptForBotStations.setBotStation(station);
             wfeScriptForBotStations.setConfigs(files);
             wfeScriptForBotStations.runScript(script);

@@ -24,11 +24,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -145,7 +145,7 @@ public abstract class ParamBasedActionHandler implements ActionHandler {
             return;
         }
         try {
-            Document doc = DocumentHelper.parseText(configuration);
+            Document doc = XmlUtils.parseWithoutValidation(configuration);
             Element inputElement = doc.getRootElement().element("input");
             if (inputElement != null) {
                 List<Element> inputParamElements = inputElement.elements("param");
