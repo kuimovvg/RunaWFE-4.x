@@ -411,6 +411,16 @@
          </param>
       </tag>
       <tag
+            id="DisplayLinkedMapsInTable"
+            name="%Method.DisplayLinkedMapsInTable">
+         <param
+               name="%Param.MapVariable"
+               type="combo"
+               values="map"
+               variableAccess="READ">
+         </param>
+      </tag>
+      <tag
             enabled="true"
             id="DisplayFormattedText"
             name="%Method.DisplayFormattedText">
@@ -464,6 +474,44 @@
                   name="%Param.Value.email"
                   value="email">
             </paramValue>
+         </param>
+         <param
+               name="%Param.GroupVariable"
+               type="richcombo"
+               values="string"
+               variableAccess="READ">
+         </param>
+      </tag>
+      <tag
+            id="DisplayListElement"
+            name="%Method.DisplayListElement">
+         <param
+               name="%Param.ListVariable"
+               type="combo"
+               values="list"
+               variableAccess="READ">
+         </param>
+         <param
+               name="%Param.ListIndex"
+               type="richcombo"
+               values="long"
+               variableAccess="READ">
+         </param>
+      </tag>
+      <tag
+            id="DisplayMapElement"
+            name="%Method.DisplayMapElement">
+         <param
+               name="%Param.ListVariable"
+               type="combo"
+               values="map"
+               variableAccess="READ">
+         </param>
+         <param
+               name="%Param.MapKey"
+               type="richcombo"
+               values="any"
+               variableAccess="READ">
          </param>
       </tag>
    </extension>
