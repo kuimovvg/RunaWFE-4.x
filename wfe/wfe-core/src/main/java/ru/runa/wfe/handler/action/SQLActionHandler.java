@@ -17,13 +17,20 @@
  */
 package ru.runa.wfe.handler.action;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.Context;
@@ -49,6 +56,7 @@ import ru.runa.wfe.commons.sqltask.SwimlaneResult;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.dao.ExecutorDAO;
+import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
@@ -79,7 +87,7 @@ public class SQLActionHandler implements ActionHandler {
             Map<String, Object> in = Maps.newHashMap();
             in.put(DatabaseTask.INSTANCE_ID_VARIABLE_NAME, executionContext.getToken().getProcess().getId());
             in.put(DatabaseTask.CURRENT_DATE_VARIABLE_NAME, new Date());
-            IVariableProvider variableProvider = new MapDelegableVariableProvider(in, executionContext.getVariableProvider());
+            MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(in, executionContext.getVariableProvider());
             DatabaseTask[] databaseTasks = DatabaseTaskXmlParser.parse(configuration.getBytes(Charsets.UTF_8), variableProvider);
             log.debug("all variables: " + in);
             Map<String, Object> out = new HashMap<String, Object>();
@@ -106,10 +114,31 @@ public class SQLActionHandler implements ActionHandler {
                         fillQueryParameters(ps, variableProvider, query);
                         if (ps.execute()) {
                             ResultSet resultSet = ps.getResultSet();
-                            if (!resultSet.next()) {
-                                throw new Exception("No results in rowset for query " + query);
+                            boolean first = true;
+                            while (resultSet.next()) {
+                                Map<String, Object> result = extractResults(variableProvider, resultSet, query);
+                                if (first) {
+                                    out.putAll(result);
+                                } else {
+                                    for (Map.Entry<String, Object> entry : result.entrySet()) {
+                                        Object object = out.get(entry.getKey());
+                                        if (!(object instanceof List)) {
+                                            ArrayList list = new ArrayList();
+                                            list.add(object);
+                                            out.put(entry.getKey(), list);
+                                            object = list;
+                                        }
+                                        ((List) object).add(entry.getValue());
+                                    }
+                                }
+                                first = false;
                             }
-                            out.putAll(extractResultsToProcessVariables(variableProvider, resultSet, query));
+                            // if (!resultSet.next()) {
+                            // throw new
+                            // Exception("No results in rowset for query " +
+                            // query);
+                            // }
+                            out.putAll(extractResults(variableProvider, resultSet, query));
                         }
                     }
                 } finally {
@@ -125,7 +154,7 @@ public class SQLActionHandler implements ActionHandler {
         }
     }
 
-    private Map<String, Object> extractResultsToProcessVariables(IVariableProvider in, ResultSet resultSet, AbstractQuery query) throws Exception {
+    private Map<String, Object> extractResults(MapDelegableVariableProvider in, ResultSet resultSet, AbstractQuery query) throws Exception {
         Map<String, Object> out = new HashMap<String, Object>();
         for (int i = 0; i < query.getResultVariableCount(); i++) {
             Result result = query.getResultVariable(i);
@@ -144,9 +173,25 @@ public class SQLActionHandler implements ActionHandler {
                 newValue = Long.toString(actor.getCode());
             } else if (result.isFieldSetup()) {
                 Object variableValue = in.getValue(result.getVariableName());
+                if (variableValue == null) {
+                    if ("name".equals(result.getFieldName()) || "data".equals(result.getFieldName()) || "contentType".equals(result.getFieldName())) {
+                        variableValue = new FileVariable("file", "application/octet-stream");
+                        in.addValue(result.getVariableName(), variableValue);
+                    }
+                }
                 PropertyUtils.setProperty(variableValue, fieldName, newValue);
                 newValue = variableValue;
             }
+            if (newValue instanceof Blob) {
+                ObjectInputStream ois = new ObjectInputStream(((Blob) newValue).getBinaryStream());
+                newValue = ois.readObject();
+            }
+            if (newValue instanceof byte[]) {
+                ByteArrayInputStream bais = new ByteArrayInputStream((byte[]) newValue);
+                ObjectInputStream ois = new ObjectInputStream(bais);
+                newValue = ois.readObject();
+            }
+            in.addValue(result.getVariableName(), newValue);
             out.put(result.getVariableName(), newValue);
         }
         return out;
@@ -164,6 +209,22 @@ public class SQLActionHandler implements ActionHandler {
             }
             if (value instanceof Date) {
                 value = convertDate((Date) value);
+            }
+            if (value instanceof FileVariable) {
+                FileVariable fileVariable = (FileVariable) value;
+                if ("name".equals(parameter.getFieldName())) {
+                    value = fileVariable.getName();
+                } else if ("data".equals(parameter.getFieldName())) {
+                    value = fileVariable.getData();
+                } else if ("contentType".equals(parameter.getFieldName())) {
+                    value = fileVariable.getContentType();
+                } else {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(baos);
+                    oos.writeObject(fileVariable);
+                    oos.close();
+                    value = baos.toByteArray();
+                }
             }
             int paramIndex = i + 1;
             log.debug("Setting parameter " + paramIndex + " to (" + parameter.getVariableName() + ") = " + value);

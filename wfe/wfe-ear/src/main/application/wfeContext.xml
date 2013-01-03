@@ -297,7 +297,7 @@
 	<bean class="ru.runa.wfe.task.logic.TaskLogic" />
 	<bean class="ru.runa.wfe.var.logic.VariableLogic" />
 	<bean class="ru.runa.wfe.handler.assign.AssignmentHelper" />
-	<bean class="ru.runa.wfe.script.WfeScriptRunner" />
+	<bean class="ru.runa.wfe.script.AdminScriptRunner" />
 
 	<bean class="ru.runa.wfe.commons.logic.InitializerLogic">
 		<property name="administratorName" value="${default.administrator.name}" />

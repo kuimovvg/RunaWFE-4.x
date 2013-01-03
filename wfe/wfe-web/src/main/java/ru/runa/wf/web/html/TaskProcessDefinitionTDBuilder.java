@@ -46,8 +46,8 @@ public class TaskProcessDefinitionTDBuilder implements TDBuilder {
         TD td = new TD();
         td.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
         String definitionName = getValue(object, env);
-        if (env.hasProcessDefinitionPermission(DefinitionPermission.READ, task.getProcessDefinitionId())) {
-            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, IdForm.ID_INPUT_NAME, task.getProcessDefinitionId(),
+        if (env.hasProcessDefinitionPermission(DefinitionPermission.READ, task.getDefinitionId())) {
+            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, IdForm.ID_INPUT_NAME, task.getDefinitionId(),
                     env.getPageContext(), PortletUrlType.Render);
             A definitionNameLink = new A(url, definitionName);
             td.addElement(definitionNameLink);
@@ -61,7 +61,7 @@ public class TaskProcessDefinitionTDBuilder implements TDBuilder {
 
     @Override
     public String getValue(Object object, Env env) {
-        return ((WfTask) object).getProcessDefinitionName();
+        return ((WfTask) object).getDefinitionName();
     }
 
     private TD addDisabledDefinitionName(TD td, String name) {

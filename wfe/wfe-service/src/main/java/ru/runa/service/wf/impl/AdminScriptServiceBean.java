@@ -28,31 +28,21 @@ import javax.security.auth.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import ru.runa.service.af.AuthenticationService;
-import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.service.wf.AdminScriptService;
-import ru.runa.wfe.script.WfeScriptException;
-import ru.runa.wfe.script.WfeScriptRunner;
-import ru.runa.wfe.security.AuthenticationException;
-
-import com.google.common.base.Preconditions;
+import ru.runa.wfe.script.AdminScriptException;
+import ru.runa.wfe.script.AdminScriptRunner;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 public class AdminScriptServiceBean implements AdminScriptService {
     @Autowired
-    private WfeScriptRunner runner;
+    private AdminScriptRunner runner;
 
     @Override
-    public void run(String login, String password, byte[] configData, byte[][] processDefinitionsBytes) throws WfeScriptException,
-            AuthenticationException {
-        Preconditions.checkNotNull(configData);
-        Preconditions.checkNotNull(processDefinitionsBytes);
-        AuthenticationService delegate = DelegateFactory.getAuthenticationService();
-        Subject subject = delegate.authenticate(login, password);
+    public void run(Subject subject, byte[] configData, byte[][] processDefinitionsBytes) throws AdminScriptException {
         runner.setSubject(subject);
         runner.setProcessDefinitionsBytes(processDefinitionsBytes);
         runner.runScript(new ByteArrayInputStream(configData));

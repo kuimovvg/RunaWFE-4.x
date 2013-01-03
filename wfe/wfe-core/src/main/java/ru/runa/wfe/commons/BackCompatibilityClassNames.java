@@ -39,6 +39,17 @@ public class BackCompatibilityClassNames {
         bcc.put("ru.runa.wf.swimlane.AssignSwimlaneActionHandler", "ru.runa.wfe.handler.action.user.AssignSwimlaneActionHandler");
         bcc.put("ru.runa.wf.users.ActorNameActionHandler", "ru.runa.wfe.handler.action.user.ActorNameActionHandler");
         bcc.put("ru.runa.wf.var.AddObjectToListActionHandler", "ru.runa.wfe.handler.action.var.AddObjectToListActionHandler");
+        bcc.put("ru.runa.wf.var.SetObjectToListActionHandler", "ru.runa.wfe.handler.action.var.SetObjectToListActionHandler");
+        bcc.put("ru.runa.wf.var.GetObjectFromListActionHandler", "ru.runa.wfe.handler.action.var.GetObjectFromListActionHandler");
+        bcc.put("ru.runa.wf.var.ListAggregateFunctionActionHandler", "ru.runa.wfe.handler.action.var.ListAggregateFunctionActionHandler");
+        bcc.put("ru.runa.wf.var.GetObjectFromMapActionHandler", "ru.runa.wfe.handler.action.var.GetObjectFromMapActionHandler");
+        bcc.put("ru.runa.wf.var.PutObjectToMapActionHandler", "ru.runa.wfe.handler.action.var.PutObjectToMapActionHandler");
+        bcc.put("ru.runa.wf.var.RemoveObjectFromMapActionHandler", "ru.runa.wfe.handler.action.var.RemoveObjectFromMapActionHandler");
+        bcc.put("ru.runa.wf.var.MapAggregateFunctionActionHandler", "ru.runa.wfe.handler.action.var.MapAggregateFunctionActionHandler");
+        bcc.put("ru.runa.wf.var.ConvertMapKeysToListActionHandler", "ru.runa.wfe.handler.action.var.ConvertMapKeysToListActionHandler");
+        bcc.put("ru.runa.wf.var.ConvertMapValuesToListActionHandler", "ru.runa.wfe.handler.action.var.ConvertMapValuesToListActionHandler");
+        bcc.put("ru.runa.wf.var.MergeMapsActionHandler", "ru.runa.wfe.handler.action.var.MergeMapsActionHandler");
+        bcc.put("ru.runa.wf.var.ClearVariableActionHandler", "ru.runa.wfe.handler.action.var.ClearVariableActionHandler");
         bcc.put("ru.runa.wf.var.FormulaActionHandler", "ru.runa.wfe.handler.action.var.FormulaActionHandler");
         bcc.put("ru.runa.wf.var.RemoveObjectFromListActionHandler", "ru.runa.wfe.handler.action.var.RemoveObjectFromListActionHandler");
         bcc.put("ru.runa.wf.var.SortListActionHandler", "ru.runa.wfe.handler.action.var.SortListActionHandler");

@@ -233,11 +233,11 @@ public class FormulaActionHandlerOperations {
             Date date = (Date) o;
             Calendar calendar = new GregorianCalendar();
             calendar.setTime(date);
-            if (calendar.get(Calendar.HOUR) == 0 && calendar.get(Calendar.MINUTE) == 0 && calendar.get(Calendar.SECOND) == 0) {
-                return CalendarUtil.format(date, CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
-            }
             if (calendar.get(Calendar.YEAR) == 1970 && calendar.get(Calendar.MONTH) == Calendar.JANUARY && calendar.get(Calendar.DAY_OF_MONTH) == 1) {
                 return CalendarUtil.format(date, CalendarUtil.HOURS_MINUTES_FORMAT);
+            }
+            if (calendar.get(Calendar.HOUR) == 0 && calendar.get(Calendar.MINUTE) == 0 && calendar.get(Calendar.SECOND) == 0) {
+                return CalendarUtil.format(date, CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
             }
             return CalendarUtil.format(date, CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
         }

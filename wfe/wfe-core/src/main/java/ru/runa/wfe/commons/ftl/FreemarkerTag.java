@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.security.auth.Subject;
-import javax.servlet.jsp.PageContext;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
@@ -18,14 +17,12 @@ import freemarker.template.TemplateModelException;
 public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializable {
     private static final long serialVersionUID = 1L;
     protected Subject subject;
-    protected PageContext pageContext;
     protected IVariableProvider variableProvider;
     protected WebHelper webHelper;
     private List<TemplateModel> arguments;
 
-    public void init(Subject subject, PageContext pageContext, WebHelper webHelper, IVariableProvider variableProvider) {
+    public void init(Subject subject, WebHelper webHelper, IVariableProvider variableProvider) {
         this.subject = subject;
-        this.pageContext = pageContext;
         this.webHelper = webHelper;
         this.variableProvider = variableProvider;
     }
@@ -38,7 +35,7 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
     }
 
     protected void registerVariableHandler(String variableName) {
-        pageContext.getSession().setAttribute(FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableName, this);
+        webHelper.getSession().setAttribute(FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableName, this);
     }
 
     protected abstract Object executeTag() throws TemplateModelException;

@@ -1,12 +1,11 @@
 package ru.runa.service.wf;
 
 import javax.ejb.Remote;
+import javax.security.auth.Subject;
 
-import ru.runa.wfe.script.WfeScriptException;
-import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.script.AdminScriptException;
 
 @Remote
 public interface AdminScriptService {
-    public void run(String login, String password, byte[] configData, byte[][] processDefinitionsBytes) throws WfeScriptException,
-            AuthenticationException;
+    public void run(Subject subject, byte[] configData, byte[][] processDefinitionsBytes) throws AdminScriptException;
 }

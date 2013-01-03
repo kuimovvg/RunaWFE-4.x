@@ -6659,5 +6659,10 @@
       </attribute>
 
    </tag>
+   <tag>
+      <name>viewAdminkitScripts</name>
+      <tag-class>ru.runa.common.web.tag.AdminkitScriptsTag</tag-class>
+      <body-content>JSP</body-content>
+   </tag>
 
 </taglib>

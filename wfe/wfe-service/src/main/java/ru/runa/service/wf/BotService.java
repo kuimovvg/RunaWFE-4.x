@@ -181,4 +181,12 @@ public interface BotService {
      */
     public void removeBotTask(Subject subject, Long id) throws BotTaskDoesNotExistException;
 
+    /**
+     * Exports bot task to archive.
+     * 
+     * @return archive
+     * @throws BotDoesNotExistException
+     */
+    public byte[] exportBotTask(Subject subject, Bot bot, String botTaskName) throws BotDoesNotExistException;
+
 }

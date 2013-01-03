@@ -65,7 +65,7 @@ public class EmailTaskHandler implements TaskHandler {
                 @Override
                 public byte[] getFileData(String fileName) {
                     try {
-                        return definitionService.getFile(subject, wfTask.getProcessDefinitionId(), fileName);
+                        return definitionService.getFile(subject, wfTask.getDefinitionId(), fileName);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

@@ -183,7 +183,7 @@ public class PermissionDAO extends CommonDAO {
         }
         List<PermissionMapping> permissions = new ArrayList<PermissionMapping>();
         for (int i = 0; i <= identifiables.size() / 1000; ++i) {
-            int start = i * 1000;
+            int start = i * 1000; // TODO fails on 2000
             int end = (i + 1) * 1000 > identifiables.size() ? identifiables.size() : (i + 1) * 1000;
             final List<Long> identifiableIds = new ArrayList<Long>(end - start);
             for (int j = start; j < end; j++) {
