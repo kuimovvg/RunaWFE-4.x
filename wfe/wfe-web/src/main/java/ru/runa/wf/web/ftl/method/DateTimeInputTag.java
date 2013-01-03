@@ -25,9 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.DateFormat;
-import ru.runa.wfe.var.format.DateTimeFormat;
-import ru.runa.wfe.var.format.TimeFormat;
 import freemarker.template.TemplateModelException;
 
 public class DateTimeInputTag extends FreemarkerTag {
@@ -37,25 +34,26 @@ public class DateTimeInputTag extends FreemarkerTag {
     @Override
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
+        String view = getParameterAs(String.class, 1);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String format = variable.getDefinition().getFormat();
+        // String format = variable.getDefinition().getFormat();
         Date date = (Date) variable.getValue();
         String html = ""; // TODO refactor
-        if (DateFormat.class.getName().equals(format)) {
+        if ("date".equals(view)) {
             html += "<input type=\"text\" class=\"inputDate\" name=\"" + variableName + "\" style=\"width: 100px;\" ";
             if (date != null) {
                 html += "value=\"" + CalendarUtil.formatDate(date) + "\" ";
             }
             html += "/>";
         }
-        if (TimeFormat.class.getName().equals(format)) {
+        if ("time".equals(view)) {
             html += "<input type=\"text\" class=\"inputTime\" name=\"" + variableName + "\" style=\"width: 50px;\" ";
             if (date != null) {
                 html += "value=\"" + CalendarUtil.formatTime(date) + "\" ";
             }
             html += "/>";
         }
-        if (DateTimeFormat.class.getName().equals(format)) {
+        if ("datetime".equals(view)) {
             html += "<input type=\"text\" class=\"inputDateTime\" name=\"" + variableName + "\" style=\"width: 150px;\" ";
             if (date != null) {
                 html += "value=\"" + CalendarUtil.formatDateTime(date) + "\" ";

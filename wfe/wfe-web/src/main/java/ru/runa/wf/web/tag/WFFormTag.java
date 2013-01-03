@@ -38,7 +38,6 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.wf.web.FormProcessingException;
 import ru.runa.wf.web.action.BaseProcessFormAction;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.security.AuthenticationException;
@@ -96,14 +95,6 @@ public abstract class WFFormTag extends TitledFormTag {
 
             tdFormElement.addElement(new StringElement(wfFormContent));
             isButtonVisible = true;
-        } catch (FormProcessingException e) {
-            log.error("WorkflowFormProcessingException", e.getCause());
-            UL ul = new UL();
-            tdFormElement.addElement(ul);
-            ul.setClass(Resources.CLASS_ERROR);
-            String taskCanNotBeShownLocolizedMessage = Messages.getMessage(Messages.TASK_FORM_ERROR, pageContext);
-            LI li = new LI(taskCanNotBeShownLocolizedMessage + " " + ActionExceptionHelper.getErrorMessage(e.getCause(), pageContext));
-            ul.addElement(li);
         } catch (TaskDoesNotExistException e) {
             log.error(e.getMessage());
             P p = new P();
@@ -112,7 +103,12 @@ public abstract class WFFormTag extends TitledFormTag {
             String message = ActionExceptionHelper.getErrorMessage(e, pageContext);
             p.addElement(message);
         } catch (Exception e) {
-            handleException(e);
+            log.error("task form error", e.getCause());
+            UL ul = new UL();
+            tdFormElement.addElement(ul);
+            ul.setClass(Resources.CLASS_ERROR);
+            ul.addElement(new LI(Messages.getMessage(Messages.TASK_FORM_ERROR, pageContext) + " "
+                    + ActionExceptionHelper.getErrorMessage(e.getCause(), pageContext)));
         }
         getForm().setEncType(Form.ENC_UPLOAD);
         getForm().setAcceptCharset(Charsets.UTF_8.name());
@@ -139,6 +135,5 @@ public abstract class WFFormTag extends TitledFormTag {
 
     abstract protected Interaction getInteraction() throws AuthorizationException, AuthenticationException, TaskDoesNotExistException;
 
-    abstract protected String buildForm(Interaction interaction) throws AuthenticationException, FormProcessingException, AuthorizationException,
-            TaskDoesNotExistException;
+    abstract protected String buildForm(Interaction interaction) throws Exception;
 }
