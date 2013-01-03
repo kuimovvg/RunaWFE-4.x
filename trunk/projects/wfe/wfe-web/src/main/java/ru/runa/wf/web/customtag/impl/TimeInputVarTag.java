@@ -15,20 +15,25 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wf.web.html;
+package ru.runa.wf.web.customtag.impl;
+
+import java.util.Date;
 
 import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
-import ru.runa.wf.web.FormProcessingException;
-import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wf.web.customtag.VarTag;
+import ru.runa.wfe.commons.CalendarUtil;
 
-/**
- * Created on 17.11.2004
- */
-public interface TaskFormBuilder {
+public class TimeInputVarTag implements VarTag {
 
-    String build(Subject subject, Long taskId, PageContext pageContext, Interaction interaction) throws AuthenticationException,
-            FormProcessingException;
+    @Override
+    public String getHtml(Subject subject, String varName, Object var, PageContext pageContext) {
+        String html = "<input type=\"text\" class=\"inputTime\" name=\"" + varName + "\" style=\"width: 50px;\" ";
+        if (var instanceof Date) {
+            html += "value=\"" + CalendarUtil.formatTime((Date) var) + "\" ";
+        }
+        html += "/>";
+        return html;
+    }
 }

@@ -6,7 +6,7 @@ $(document).ready(function() {
 	$(".inputTime").timepicker({ ampm: false, seconds: false });
 	// http://docs.jquery.com/UI/Datepicker
 	$(".inputDate").datepicker({ dateFormat: "dd.mm.yy", buttonImage: "/wfe/images/calendar.gif" });
-	$(".inputDateTime").datetimepicker();
+	$(".inputDateTime").datetimepicker({ dateFormat: "dd.mm.yy" });
 	// confirmation dialog
 	$.confirmDialog = $("<div></div>").dialog({
 		minWidth: 400, minHeight: 200, modal: true, autoOpen: false
