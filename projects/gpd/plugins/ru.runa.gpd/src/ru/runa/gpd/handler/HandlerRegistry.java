@@ -40,7 +40,7 @@ public class HandlerRegistry extends ArtifactRegistry<HandlerArtifact> {
     }
 
     @Override
-    protected void loadDefaults(List<HandlerArtifact> list) {
+    protected void loadDefaults(List<HandlerArtifact> list) { // TODO load task handlers
         IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("ru.runa.gpd.handlers").getExtensions();
         for (IExtension extension : extensions) {
             Bundle bundle = Platform.getBundle(extension.getNamespaceIdentifier());

@@ -173,6 +173,12 @@
           id="ru.runa.gpd.GEFDesignerEditor"
           name="GEFEditor">
     </editor>
+    <editor
+          class="ru.runa.gpd.editor.BotTaskEditor"
+          icon="icons/bot_task.gif"
+          id="ru.runa.gpd.editor.BotTaskEditor"
+          name="bot task editor">
+    </editor>
   </extension> 
   	
   <extension
@@ -290,6 +296,22 @@
              label="%label.action.removeEscalation"
              menubarPath="additions">
        </action>
+    </objectContribution>
+    <objectContribution
+          adaptable="false"
+          id="graph.taskStateNode3"
+          objectClass="ru.runa.gpd.lang.model.TaskState">
+       <filter
+             name="org.jbpm.ui.bindSwimlaneExists"
+             value="true">
+       </filter>
+       <action
+             class="ru.runa.gpd.lang.action.BotTaskActionsDelegate"
+             id="botTaskActions"
+             label="%label.bottask.action"
+             menubarPath="additions"
+             style="pulldown"
+             />
     </objectContribution>
     <objectContribution
           adaptable="false"
@@ -1023,6 +1045,11 @@
                ratio="0.8"
                relationship="right"
                relative="org.eclipse.ui.editorss"/>
+         <view
+               id="ru.runa.gpd.botExplorerView"
+               ratio="0.2"
+               relationship="stack"
+               relative="ru.runa.gpd.explorerView" />
          <viewShortcut id="ru.runa.gpd.explorerView"/>
          <newWizardShortcut id="wizard.new.process.definition"/>
          <newWizardShortcut id="wizard.new.project"/>
@@ -1050,6 +1077,13 @@
             icon="icons/properties_view.gif"
             id="ru.runa.gpd.propertiesView"
             name="%label.view.properties"/>
+      <view
+            category="ru.runa.gpd.view.category"
+            class="ru.runa.gpd.ui.view.BotExplorerTreeView"
+            icon="icons/bot_station.gif"
+            id="ru.runa.gpd.botExplorerView"
+            name="%label.view.botDesignerExplorer">
+      </view>
    </extension>
    <extension
          point="ru.runa.gpd.orgFunctions">
@@ -1218,6 +1252,61 @@
             label="%ru.runa.wfe.handler.action.EmailTaskNotifierActionHandler"
             enabled="true"
             type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.SetObjectToListActionHandler"
+            label="%ru.runa.wfe.handler.action.var.SetObjectToListActionHandler"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.GetObjectFromListActionHandler"
+            label="%ru.runa.wfe.handler.action.var.GetObjectFromListActionHandler"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.ListAggregateFunctionActionHandler"
+            label="%ru.runa.wfe.handler.action.var.ListAggregateFunctionActionHandler"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.ClearVariableActionHandler"
+            label="%ru.runa.wfe.handler.action.var.ClearVariableActionHandler"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.RemoveObjectFromMapActionHandler"
+            label="%ru.runa.wfe.handler.action.var.RemoveObjectFromMapActionHandler"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.PutObjectToMapActionHandler"
+            label="%ru.runa.wfe.handler.action.var.PutObjectToMapActionHandler"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.GetObjectFromMapActionHandler"
+            label="%ru.runa.wfe.handler.action.var.GetObjectFromMapActionHandler"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.MapAggregateFunctionActionHandler"
+            label="%ru.runa.wfe.handler.action.var.MapAggregateFunctionActionHandler"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.ConvertMapKeysToListActionHandler"
+            label="%ru.runa.wfe.handler.action.var.ConvertMapKeysToListActionHandler"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.ConvertMapValuesToListActionHandler"
+            label="%ru.runa.wfe.handler.action.var.ConvertMapValuesToListActionHandler"
+            type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            className="ru.runa.wfe.handler.action.var.MergeMapsActionHandler"
+            label="%ru.runa.wfe.handler.action.var.MergeMapsActionHandler"
+            type="actionHandler"/>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
@@ -1304,6 +1393,10 @@
       <element
             className="ru.runa.gpd.orgfunction.SwimlaneManualElement"
             name="SwimlaneElement.ManualLabel">
+      </element>
+      <element
+            className="ru.runa.gpd.orgfunction.SwimlaneBotElement"
+            name="SwimlaneElement.BotLabel">
       </element>
    </extension>
    <extension
@@ -1716,6 +1809,42 @@
                toolbarPath="normal/processes"
                tooltip="%tooltip.menu.newProject"/>
          <action
+         		class="ru.runa.gpd.ui.action.NewBotTaskWithFormalAction"
+         		icon="icons/bot_task_formal.gif"
+         		id="ru.runa.gpd.ui.newBotTaskWithFormal"
+         		label="%label.menu.newBotTaskWithFormal"
+         		menubarPath="file/newFile/common"
+         		style="push"
+                toolbarPath="normal/bots"
+                tooltip="%tooltip.menu.newBotTaskWithFormal"/>
+         <action
+         		class="ru.runa.gpd.ui.action.NewBotTaskAction"
+         		icon="icons/bot_task.gif"
+         		id="ru.runa.gpd.ui.action.newBotTask"
+         		label="%label.menu.newBotTask"
+         		menubarPath="file/newFile/common"
+         		style="push"
+                toolbarPath="normal/bots"
+                tooltip="%tooltip.menu.newBotTask"/>
+         <action
+         		class="ru.runa.gpd.ui.action.NewBotAction"
+         		icon="icons/add_bot.gif"
+         		id="ru.runa.gpd.ui.action.newBot"
+         		label="%label.menu.newBot"
+         		menubarPath="file/newFile/common"
+         		style="push"
+                toolbarPath="normal/bots"
+                tooltip="%tooltip.menu.newBot"/>
+         <action
+         		class="ru.runa.gpd.ui.action.NewBotStationAction"
+         		icon="icons/add_bot_station.gif"
+         		id="ru.runa.gpd.ui.action.newBotStation"
+         		label="%label.menu.newBotStation"
+         		menubarPath="file/newFile/common"
+         		style="push"
+                toolbarPath="normal/bots"
+                tooltip="%tooltip.menu.newBotStation"/>
+         <action
                class="ru.runa.gpd.ui.action.DeleteAction"
                definitionId="ru.runa.gpd.commands.delete"
                icon="icons/delete_edit.gif"
@@ -1723,7 +1852,7 @@
                label="%label.menu.delete"
                menubarPath="file/saves"
                style="push"
-               toolbarPath="normal/common"
+               toolbarPath="normal/commons"
                tooltip="%tooltip.menu.delete"/>
          <action
                class="ru.runa.gpd.ui.action.SaveAll"
@@ -1733,7 +1862,7 @@
                label="%label.menu.saveAll"
                menubarPath="file/saves"
                style="push"
-               toolbarPath="normal/save"
+               toolbarPath="normal/commons"
                tooltip="%tooltip.menu.saveAll"/>
          <action
                class="ru.runa.gpd.ui.action.Save"
@@ -1744,26 +1873,44 @@
                label="%label.menu.save"
                menubarPath="file/saves"
                style="push"
-               toolbarPath="normal/save"
+               toolbarPath="normal/commons"
                tooltip="%tooltip.menu.save">
          </action>
          <action
+               class="ru.runa.gpd.ui.action.ExportBotElementAction"
+               icon="icons/export_bot.gif"
+               id="ru.runa.gpd.ui.action.exportBot"
+               label="%label.menu.exportBotElement"
+               menubarPath="file/export"
+               style="push"
+               toolbarPath="normal/syncbots"
+               tooltip="%tooltip.menu.exportBotElement"/>
+         <action
+               class="ru.runa.gpd.ui.action.ImportBotElementAction"
+               icon="icons/import_bot.gif"
+               id="ru.runa.gpd.ui.action.importBot"
+               label="%label.menu.importBotElement"
+               menubarPath="file/export"
+               style="push"
+               toolbarPath="normal/syncbots"
+               tooltip="%tooltip.menu.importBotElement"/>
+         <action
                class="ru.runa.gpd.ui.action.ExportAction"
                icon="icons/export_wiz.gif"
-               id="ru.runa.gpd.export"
+               id="ru.runa.gpd.exportProcess"
                label="%label.menu.export"
                menubarPath="file/export"
                style="push"
-               toolbarPath="normal/save"
+               toolbarPath="normal/syncproc"
                tooltip="%tooltip.menu.export"/>
          <action
                class="ru.runa.gpd.ui.action.ImportAction"
                icon="icons/import_wiz.gif"
-               id="ru.runa.gpd.import"
+               id="ru.runa.gpd.importProcess"
                label="%label.menu.import"
                menubarPath="file/export"
                style="push"
-               toolbarPath="normal/save"/>
+               toolbarPath="normal/syncproc"/>
          <action
                class="ru.runa.gpd.ui.action.ExitAction"
                id="ru.runa.gpd.exit"
@@ -1828,6 +1975,13 @@
                icon="icons/filenav_nav.gif"
                id="openExplorer"
                label="%label.menu.view.explorer"
+               menubarPath="window/additions"
+               style="push"/>
+         <action
+               class="ru.runa.gpd.ui.action.OpenBotExplorer"
+               icon="icons/filenav_nav.gif"
+               id="ru.runa.gpd.ui.action.openBotExplorer"
+               label="%label.view.botDesignerExplorer"
                menubarPath="window/additions"
                style="push"/>
          <action
@@ -2035,6 +2189,11 @@
             variableClassName="java.lang.String">
       </format>
    </extension>
+	<extension id="botStationNature" name="specific nature for bot station project" point="org.eclipse.core.resources.natures">
+	      <runtime>
+	         <run class="ru.runa.gpd.BotStationNature"></run>
+	      </runtime>
+	</extension>	
 
 
 </plugin>

@@ -19,6 +19,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import ru.runa.gpd.BotStationNature;
 import ru.runa.gpd.lang.par.ParContentProvider;
 
 /**
@@ -26,6 +27,20 @@ import ru.runa.gpd.lang.par.ParContentProvider;
  */
 public class ProjectFinder {
     public static IProject[] getAllProjects() {
+        List<IProject> returnList = new ArrayList<IProject>();
+        try {
+            for (IProject project : getWorkspaceProjects()) {
+                if (project.getNature(BotStationNature.NATURE_ID) == null) {
+                    returnList.add(project);
+                }
+            }
+        } catch (CoreException e) {
+            return new IProject[] {};
+        }
+        return returnList.toArray(new IProject[0]);
+    }
+
+    private static IProject[] getWorkspaceProjects() {
         return ResourcesPlugin.getWorkspace().getRoot().getProjects();
     }
 
@@ -63,7 +78,7 @@ public class ProjectFinder {
 
     public static List<IFile> getAllProcessDefinitionFiles() {
         List<IFile> fileList = new ArrayList<IFile>();
-        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+        IProject[] projects = getAllProjects();
         for (int i = 0; i < projects.length; i++) {
             if (projects[i].isOpen()) {
                 fileList.addAll(getProcessDefinitionFiles(projects[i]));
@@ -124,5 +139,86 @@ public class ProjectFinder {
 
     public static IFile getProcessDefinitionFile(IFolder folder) {
         return folder.getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+    }
+
+    public static IProject[] getAllBotStations() {
+        List<IProject> returnList = new ArrayList<IProject>();
+        try {
+            for (IProject project : getWorkspaceProjects()) {
+                if (project.getNature(BotStationNature.NATURE_ID) != null) {
+                    returnList.add(project);
+                }
+            }
+        } catch (CoreException e) {
+            return new IProject[] {};
+        }
+        return returnList.toArray(new IProject[0]);
+    }
+
+    public static List<IFolder> getAllBotFolders() {
+        List<IFolder> folderList = new ArrayList<IFolder>();
+        for (IProject botStation : getAllBotStations()) {
+            folderList.addAll(getBotFolders(botStation));
+        }
+        return folderList;
+    }
+
+    public static List<IFolder> getBotFolders(IProject project) {
+        try {
+            List<IFolder> folderList = new ArrayList<IFolder>();
+            IFolder processFolder = getBotStationFolder(project);
+            IResource[] resources = processFolder.members();
+            for (int i = 0; i < resources.length; i++) {
+                if (resources[i] instanceof IFolder) {
+                    folderList.add((IFolder) resources[i]);
+                }
+            }
+            return folderList;
+        } catch (JavaModelException e) {
+            throw new RuntimeException(e);
+        } catch (CoreException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static IFolder getBotStationFolder(IProject project) {
+        try {
+            IFolder srcFolder = project.getFolder("src");
+            if (!srcFolder.exists()) {
+                srcFolder.create(true, true, null);
+            }
+            IFolder botStationFolder = srcFolder.getFolder("botstation");
+            if (!botStationFolder.exists()) {
+                botStationFolder.create(true, true, null);
+            }
+            return botStationFolder;
+        } catch (JavaModelException e) {
+            throw new RuntimeException(e);
+        } catch (CoreException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<IFile> getBotTaskFiles(IFolder folder) {
+        List<IFile> fileList = new ArrayList<IFile>();
+        try {
+            IResource[] resources = folder.members();
+            for (int i = 0; i < resources.length; i++) {
+                if (resources[i] instanceof IFile && resources[i].getFileExtension() == null) {
+                    fileList.add((IFile) resources[i]);
+                }
+            }
+        } catch (CoreException e) {
+            throw new RuntimeException(e);
+        }
+        return fileList;
+    }
+
+    public static List<IFile> getAllBotTask() {
+        List<IFile> fileList = new ArrayList<IFile>();
+        for (IFolder folder : getAllBotFolders()) {
+            fileList.addAll(getBotTaskFiles(folder));
+        }
+        return fileList;
     }
 }

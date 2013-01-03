@@ -11,6 +11,8 @@ import org.dom4j.Element;
 
 import ru.runa.gpd.util.XmlUtil;
 
+import com.google.common.base.Strings;
+
 public class SQLTasksModel extends Observable {
     public List<SQLTaskModel> tasks = new ArrayList<SQLTaskModel>();
 
@@ -21,6 +23,15 @@ public class SQLTasksModel extends Observable {
         SQLTasksModel model = new SQLTasksModel();
         model.addNewTask(new SQLTaskModel());
         return model;
+    }
+
+    public boolean hasFields() {
+        for (SQLTaskModel model : tasks) {
+            if (model.hasFields()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -70,6 +81,15 @@ public class SQLTasksModel extends Observable {
         public void notifyObservers() {
             setChanged();
             super.notifyObservers();
+        }
+
+        public boolean hasFields() {
+            for (SQLQueryModel model : queries) {
+                if (model.hasFields()) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void deleteQuery(int index) {
@@ -139,6 +159,20 @@ public class SQLTasksModel extends Observable {
         public List<SQLQueryParameterModel> params = new ArrayList<SQLQueryParameterModel>();
         public List<SQLQueryParameterModel> results = new ArrayList<SQLQueryParameterModel>();
 
+        public boolean hasFields() {
+            for (SQLQueryParameterModel model : params) {
+                if (model.fieldName != null) {
+                    return true;
+                }
+            }
+            for (SQLQueryParameterModel model : results) {
+                if (model.fieldName != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void serialize(Document document, Element parent) {
             Element queryElement = parent.addElement("query");
             queryElement.addAttribute("sql", query);
@@ -170,6 +204,7 @@ public class SQLTasksModel extends Observable {
         public boolean result;
         public boolean swimlaneVar;
         public String varName = "";
+        public String fieldName;
 
         public SQLQueryParameterModel() {
         }
@@ -187,6 +222,9 @@ public class SQLTasksModel extends Observable {
             }
             Element paramElement = parent.addElement(elementName);
             paramElement.addAttribute("var", varName);
+            if (fieldName != null) {
+                paramElement.addAttribute("field", fieldName);
+            }
             if (swimlaneVar) {
                 paramElement.addAttribute("field", "code");
             }
@@ -212,6 +250,12 @@ public class SQLTasksModel extends Observable {
                 model.swimlaneVar = false;
             }
             model.varName = element.attributeValue("var");
+            if (!model.swimlaneVar) {
+                String fieldName = element.attributeValue("field");
+                if (!Strings.isNullOrEmpty(fieldName)) {
+                    model.fieldName = fieldName;
+                }
+            }
             return model;
         }
     }

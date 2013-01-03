@@ -6,8 +6,11 @@ import org.osgi.framework.Bundle;
 import ru.runa.gpd.lang.model.Delegable;
 
 public class DelegableProvider {
-
     protected Bundle bundle;
+
+    public Bundle getBundle() {
+        return bundle;
+    }
 
     public void setBundle(Bundle bundle) {
         this.bundle = bundle;
