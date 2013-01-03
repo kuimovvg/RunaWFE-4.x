@@ -15,21 +15,24 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wf.web.html;
+package ru.runa.wf.web.customtag.impl;
+
+import java.util.Date;
 
 import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
-import ru.runa.wf.web.FormProcessingException;
-import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wf.web.customtag.VarTag;
+import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.TypeConversionUtil;
 
-/**
- * Created on 17.11.2004
- */
-public interface StartFormBuilder {
+public class DateValueDisplayVarTag implements VarTag {
 
-    String build(Subject subject, Long processDefinitionId, PageContext pageContext, Interaction interaction) throws AuthenticationException,
-            FormProcessingException, AuthorizationException;
+    @Override
+    public String getHtml(Subject subject, String varName, Object var, PageContext pageContext) {
+        if (var == null) {
+            return "<p class='error'>null</p>";
+        }
+        return CalendarUtil.formatDate(TypeConversionUtil.convertTo(var, Date.class));
+    }
 }

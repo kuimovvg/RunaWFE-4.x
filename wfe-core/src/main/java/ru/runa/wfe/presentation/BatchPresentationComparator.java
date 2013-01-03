@@ -24,8 +24,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import ru.runa.wfe.user.Executor;
 
-/**
- */
 public class BatchPresentationComparator implements Comparator<Executor> {
 
     private final BatchPresentation batchPresentation;
