@@ -45,7 +45,7 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
     }
 
     public String getTimeOutDueDate() {
-        if (timeOutDelay == null) {
+        if (timeOutDelay == null || !timeOutDelay.hasDuration()) {
             return null;
         }
         return timeOutDelay.getDuration();

@@ -4,6 +4,7 @@ public class HandlerArtifact extends Artifact {
     public static final String ACTION = "actionHandler";
     public static final String DECISION = "decisionHandler";
     public static final String ASSIGNMENT = "assignmentHandler";
+    public static final String TASK_HANDLER = "taskHandler";
     private String type;
     private String configurerClassName;
 

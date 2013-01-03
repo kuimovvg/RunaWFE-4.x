@@ -2,6 +2,7 @@ package ru.runa.gpd.handler.action;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -27,19 +28,38 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.handler.DelegableProvider;
+import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
 import ru.runa.gpd.util.XmlUtil;
 
+import com.google.common.collect.Lists;
+
 public abstract class XmlBasedConstructorProvider<T extends Observable> extends DelegableProvider {
     protected ProcessDefinition definition;
     protected T model;
+    protected final List<String> variableNames = Lists.newArrayList();
+    protected boolean formalVariable = false;
 
     @Override
     public String showConfigurationDialog(Delegable delegable) {
-        this.definition = ((GraphElement) delegable).getProcessDefinition();
+        variableNames.clear();
+        if (delegable instanceof GraphElement) {
+            this.definition = ((GraphElement) delegable).getProcessDefinition();
+            formalVariable = true;
+            variableNames.addAll(definition.getVariableNames(true));
+        } else {
+            BotTask botTask = ((BotTask) delegable);
+            this.definition = botTask.getProcessDefinition();
+            ParamDefConfig paramDefConfig = botTask.getParamDefConfig();
+            for (ParamDefGroup paramDefGroup : paramDefConfig.getGroups()) {
+                for (ParamDef paramDef : paramDefGroup.getParameters()) {
+                    variableNames.add(paramDef.getName());
+                }
+            }
+        }
         XmlBasedConstructorDialog dialog = new XmlBasedConstructorDialog(delegable.getDelegationConfiguration());
         if (dialog.open() == Window.OK) {
             return dialog.getResult();
@@ -69,6 +89,10 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
     protected abstract T createDefault();
 
     protected abstract T fromXml(String xml) throws Exception;
+
+    protected int getSelectedTabIndex() {
+        return 0;
+    }
 
     private class XmlBasedConstructorDialog extends Dialog {
         private TabFolder tabFolder;
@@ -105,11 +129,11 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
             try {
                 if (initialValue.trim().length() != 0) {
                     model = fromXml(initialValue);
+                } else {
+                    model = createDefault();
                 }
             } catch (Exception ex) {
                 PluginLogger.logError(Localization.getString("config.error.parse"), ex);
-            }
-            if (model == null) {
                 model = createDefault();
             }
             constructorView = createConstructorView(scrolledComposite);
@@ -125,6 +149,7 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
             TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
             tabItem2.setText(" XML ");
             tabItem2.setControl(xmlContentView);
+            tabFolder.setSelection(getSelectedTabIndex());
             tabFolder.addSelectionListener(new TabSelectionHandler());
             return tabFolder;
         }

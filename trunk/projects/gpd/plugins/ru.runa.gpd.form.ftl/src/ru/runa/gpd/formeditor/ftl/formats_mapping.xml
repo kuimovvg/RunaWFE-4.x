@@ -11,4 +11,5 @@
     <format className="ru.runa.wfe.var.format.TimeWithSecondsFormat" name="date" />
     <format className="ru.runa.wfe.var.format.FileFormat" name="file" />
     <format className="ru.runa.wfe.var.format.ListFormat" name="list" />
+    <format className="ru.runa.wfe.var.format.MapFormat" name="map" />
 </formats>

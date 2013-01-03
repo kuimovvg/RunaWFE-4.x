@@ -33,6 +33,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.util.WorkspaceOperations;
 
@@ -112,7 +113,10 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
         final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
         final Object selectedObject = selection.getFirstElement();
         final List<IResource> resources = selection.toList();
-        if (!selection.isEmpty() && selectedObject instanceof IFolder) {
+        boolean menuOnProject = selectedObject instanceof IProject;
+        boolean menuOnProcess = selectedObject instanceof IFolder;
+        //
+        if (menuOnProcess) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.openProcess")) {
                 @Override
                 public void run() {
@@ -120,54 +124,54 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
                 }
             });
         }
-        manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newProject")) {
+        manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newProject"), SharedImages.getImageDescriptor("icons/add_project.gif")) {
             @Override
             public void run() {
                 WorkspaceOperations.createNewProject();
             }
         });
-        if (!selection.isEmpty() && selectedObject instanceof IProject) {
-            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newProcess")) {
+        if (menuOnProject) {
+            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newProcess"), SharedImages.getImageDescriptor("icons/process.gif")) {
                 @Override
                 public void run() {
                     WorkspaceOperations.createNewProcessDefinition(selection);
                 }
             });
-            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.importProcess")) {
+            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.importProcess"), SharedImages.getImageDescriptor("icons/import.gif")) {
                 @Override
                 public void run() {
                     WorkspaceOperations.importProcessDefinition(selection);
                 }
             });
         }
-        if (!selection.isEmpty() && selectedObject instanceof IFolder) {
-            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.copyProcess")) {
+        if (menuOnProcess) {
+            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.copyProcess"), SharedImages.getImageDescriptor("icons/copy.gif")) {
                 @Override
                 public void run() {
                     WorkspaceOperations.copyProcessDefinition(selection);
                 }
             });
-            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.exportProcess")) {
+            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.exportProcess"), SharedImages.getImageDescriptor("icons/export.gif")) {
                 @Override
                 public void run() {
                     WorkspaceOperations.exportProcessDefinition(selection);
                 }
             });
-            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.renameProcess")) {
+            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.renameProcess"), SharedImages.getImageDescriptor("icons/rename.gif")) {
                 @Override
                 public void run() {
                     WorkspaceOperations.renameProcessDefinition(selection);
                 }
             });
         }
-        if (!selection.isEmpty()) {
-            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.refresh")) {
+        if (menuOnProject || menuOnProcess) {
+            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.refresh"), SharedImages.getImageDescriptor("icons/refresh.gif")) {
                 @Override
                 public void run() {
                     WorkspaceOperations.refreshResources(resources);
                 }
             });
-            manager.add(new Action(Localization.getString("button.delete")) {
+            manager.add(new Action(Localization.getString("button.delete"), SharedImages.getImageDescriptor("icons/delete.gif")) {
                 @Override
                 public void run() {
                     WorkspaceOperations.deleteResources(resources);
