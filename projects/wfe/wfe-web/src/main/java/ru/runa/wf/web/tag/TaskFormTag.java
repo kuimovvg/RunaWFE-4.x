@@ -28,15 +28,14 @@ import ru.runa.common.WebResources;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.wf.web.FormProcessingException;
+import ru.runa.wf.web.TaskFormBuilder;
 import ru.runa.wf.web.html.FormBuilderFactory;
-import ru.runa.wf.web.html.TaskFormBuilder;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
+import ru.runa.wfe.task.dto.WfTask;
 
 /**
  * Created on 17.11.2004
@@ -52,7 +51,7 @@ public class TaskFormTag extends WFFormTag {
     /**
      * @jsp.attribute required = "true" rtexprvalue = "true"
      */
-    private Long getTaskId() {
+    public Long getTaskId() {
         return taskId;
     }
 
@@ -68,20 +67,12 @@ public class TaskFormTag extends WFFormTag {
 
     @Override
     protected List<String> getFormButtonNames() {
-        try {
-            return getTransitionNames();
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
-        }
+        return getTransitionNames();
     }
 
     @Override
     protected boolean isMultipleSubmit() {
-        try {
-            return getTransitionNames().size() > 1;
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
-        }
+        return getTransitionNames().size() > 1;
     }
 
     @Override
@@ -95,10 +86,10 @@ public class TaskFormTag extends WFFormTag {
     }
 
     @Override
-    protected String buildForm(Interaction interaction) throws AuthenticationException, FormProcessingException, AuthorizationException,
-            TaskDoesNotExistException {
+    protected String buildForm(Interaction interaction) throws Exception {
         TaskFormBuilder taskFormBuilder = FormBuilderFactory.createTaskFormBuilder(interaction.getType());
-        return taskFormBuilder.build(getSubject(), getTaskId(), pageContext, interaction);
+        WfTask task = DelegateFactory.getExecutionService().getTask(getSubject(), taskId);
+        return taskFormBuilder.build(getSubject(), pageContext, interaction, task);
     }
 
     @Override

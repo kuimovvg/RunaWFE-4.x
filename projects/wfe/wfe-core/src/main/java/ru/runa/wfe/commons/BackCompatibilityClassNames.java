@@ -70,6 +70,22 @@ public class BackCompatibilityClassNames {
         bcc.put("ru.runa.af.organizationfunction.SQLFunction", "ru.runa.wfe.os.func.SQLFunction");
         bcc.put("ru.runa.af.organizationfunction.SubordinateFunction", "ru.runa.wfe.os.func.SubordinateFunction");
         bcc.put("ru.runa.af.organizationfunction.SubordinateRecursiveFunction", "ru.runa.wfe.os.func.SubordinateRecursiveFunction");
+        // custom html tags
+        bcc.put("ru.runa.wf.web.html.vartag.GroupMembersAutoCompletionVarTag", "ru.runa.wf.web.customtag.impl.GroupMembersAutoCompletionVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.DemoSubordinateAutoCompletingComboboxVarTag",
+                "ru.runa.wf.web.customtag.impl.DemoSubordinateAutoCompletingComboboxVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.ActorComboboxVarTag", "ru.runa.wf.web.customtag.impl.ActorComboboxVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.GroupMembersComboboxVarTag", "ru.runa.wf.web.customtag.impl.GroupMembersComboboxVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.ActorFullNameDisplayVarTag", "ru.runa.wf.web.customtag.impl.ActorFullNameDisplayVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.ActorNameDisplayVarTag", "ru.runa.wf.web.customtag.impl.ActorNameDisplayVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.DateInputVarTag", "ru.runa.wf.web.customtag.impl.DateInputVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.DateTimeInputVarTag", "ru.runa.wf.web.customtag.impl.DateTimeInputVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.DateTimeValueDisplayVarTag", "ru.runa.wf.web.customtag.impl.DateTimeValueDisplayVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.DateValueDisplayVarTag", "ru.runa.wf.web.customtag.impl.DateValueDisplayVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.FileVariableValueDownloadVarTag", "ru.runa.wf.web.customtag.impl.FileVariableValueDownloadVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.TimeValueDisplayVarTag", "ru.runa.wf.web.customtag.impl.TimeValueDisplayVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.TimeInputVarTag", "ru.runa.wf.web.customtag.impl.TimeInputVarTag");
+        bcc.put("ru.runa.wf.web.html.vartag.VariableValueDisplayVarTag", "ru.runa.wf.web.customtag.impl.VariableValueDisplayVarTag");
     }
 
     /**

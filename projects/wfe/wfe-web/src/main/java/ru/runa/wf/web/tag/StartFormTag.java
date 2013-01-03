@@ -28,9 +28,8 @@ import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.wf.web.FormProcessingException;
+import ru.runa.wf.web.StartFormBuilder;
 import ru.runa.wf.web.html.FormBuilderFactory;
-import ru.runa.wf.web.html.StartFormBuilder;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.form.Interaction;
@@ -61,18 +60,9 @@ public class StartFormTag extends WFFormTag {
     }
 
     @Override
-    protected String buildForm(Interaction interaction) throws AuthenticationException, FormProcessingException, AuthorizationException,
-            TaskDoesNotExistException {
-        try {
-            StartFormBuilder startFormBuilder = FormBuilderFactory.createStartFormBuilder(interaction.getType());
-            return startFormBuilder.build(getSubject(), getDefinitionId(), pageContext, interaction);
-        } catch (AuthenticationException e) {
-            throw e;
-        } catch (FormProcessingException e) {
-            throw e;
-        } catch (RuntimeException e) {
-            throw new FormProcessingException(e);
-        }
+    protected String buildForm(Interaction interaction) throws Exception {
+        StartFormBuilder startFormBuilder = FormBuilderFactory.createStartFormBuilder(interaction.getType());
+        return startFormBuilder.build(getSubject(), getDefinitionId(), pageContext, interaction);
     }
 
     @Override
