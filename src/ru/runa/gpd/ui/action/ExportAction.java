@@ -7,14 +7,13 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.util.WorkspaceOperations;
 
 public class ExportAction extends BaseActionDelegate {
-
+    @Override
     public void run(IAction action) {
         WorkspaceOperations.exportProcessDefinition(getStructuredSelection());
     }
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
-        action.setEnabled(ProcessCache.getAllProcessDefinitions().size() > 0);
+        action.setEnabled(ProcessCache.getAllProcessDefinitions().size() > 0 && !isBotStructuredSelection(selection));
     }
-
 }

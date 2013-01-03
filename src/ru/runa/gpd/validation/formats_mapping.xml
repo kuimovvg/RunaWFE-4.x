@@ -11,5 +11,6 @@
     <format className="ru.runa.wfe.var.format.TimeFormat" name="time" javaType="java.util.Date" />
     <format className="ru.runa.wfe.var.format.FileFormat" name="file" javaType="byte[]" />
     <format className="ru.runa.wfe.var.format.StringArrayFormat" name="stringArray" javaType="java.lang.String[]" />
-    <format className="ru.runa.wfe.var.format.ListFormat" name="list" javaType="java.util.ArrayList" />
+    <format className="ru.runa.wfe.var.format.ListFormat" name="list" javaType="java.util.List" />
+    <format className="ru.runa.wfe.var.format.MapFormat" name="map" javaType="java.util.Map" />
 </formats>

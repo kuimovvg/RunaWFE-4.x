@@ -27,6 +27,7 @@ import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.gpd.util.XmlUtil;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 
 public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
@@ -105,6 +106,6 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
         buffer.append("\n");
         buffer.append("\n");
         buffer.append("<process-diagram notation=\"").append(notation).append("\" showActions=\"true\"></process-diagram>");
-        return new ByteArrayInputStream(buffer.toString().getBytes());
+        return new ByteArrayInputStream(buffer.toString().getBytes(Charsets.UTF_8));
     }
 }

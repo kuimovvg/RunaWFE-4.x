@@ -1,7 +1,7 @@
 package ru.runa.gpd.ui.view;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -10,12 +10,8 @@ import ru.runa.gpd.SharedImages;
 public class ResourcesLabelProvider extends LabelProvider {
     @Override
     public String getText(Object element) {
-        if (element instanceof IProject) {
-            IProject project = (IProject) element;
-            return project.getName();
-        } else if (element instanceof IFolder) {
-            IFolder folder = (IFolder) element;
-            return folder.getName();
+        if (element instanceof IResource) {
+            return ((IResource) element).getName();
         }
         return super.getText(element);
     }
