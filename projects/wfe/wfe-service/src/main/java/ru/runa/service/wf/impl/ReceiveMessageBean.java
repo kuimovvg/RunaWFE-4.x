@@ -69,7 +69,8 @@ public class ReceiveMessageBean implements MessageListener {
         log.info("Got message: " + message);
         ObjectMessage objectMessage = (ObjectMessage) message;
         try {
-            String log = JMSUtil.toString(objectMessage);
+            log.debug(JMSUtil.toString(objectMessage, false));
+            String loggedMessage = JMSUtil.toString(objectMessage, false);
             boolean handled = false;
             List<Token> tokens = tokenDAO.findActiveTokens(NodeType.ReceiveMessage);
             for (Token token : tokens) {
@@ -107,13 +108,13 @@ public class ReceiveMessageBean implements MessageListener {
                             executionContext.setVariable(variableMapping.getName(), value);
                         }
                     }
-                    executionContext.addLog(new ReceiveMessageLog(receiveMessage, log));
+                    executionContext.addLog(new ReceiveMessageLog(receiveMessage, loggedMessage));
                     receiveMessage.leave(executionContext);
                     handled = true;
                 }
             }
             if (!handled) {
-                throw new MessagePostponedException(log);
+                throw new MessagePostponedException(loggedMessage);
             }
             CachingLogic.onTaskChange(null, null, null, null, null);
         } catch (JMSException e) {

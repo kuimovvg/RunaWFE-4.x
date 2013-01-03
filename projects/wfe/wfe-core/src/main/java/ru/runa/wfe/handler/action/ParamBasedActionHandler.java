@@ -114,9 +114,7 @@ public abstract class ParamBasedActionHandler implements ActionHandler {
         if (value == null) {
             throw new NullPointerException("Trying to set null for parameter " + paramDef);
         }
-        if (value != null) {
-            outputVariables.put(paramDef.variableName, value);
-        }
+        outputVariables.put(paramDef.variableName, value);
     }
 
     protected abstract void executeAction() throws Exception;

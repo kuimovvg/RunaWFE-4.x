@@ -30,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.commons.web.PortletUrlType;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
@@ -51,7 +50,7 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
 
     @SuppressWarnings("unchecked")
     protected <T extends Object> T getSavedValue(Class<T> clazz, String varName) {
-        Map<String, String[]> map = (Map<String, String[]>) pageContext.getRequest().getAttribute("UserDefinedVariables");
+        Map<String, String[]> map = (Map<String, String[]>) webHelper.getRequest().getAttribute("UserDefinedVariables");
         Object o = null;
         if (map != null && map.containsKey(varName)) {
             if (clazz.isArray()) {
@@ -69,24 +68,24 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
     }
 
     protected String exportExternalScript(String src) {
-        if (pageContext == null || webHelper == null) {
+        if (webHelper == null || webHelper.getPageContext().getAttribute(src) != null) {
             return "";
         }
-        if (pageContext.getAttribute(src) == null) {
-            pageContext.setAttribute(src, Boolean.TRUE);
-            String url = webHelper.getUrl(src, pageContext, PortletUrlType.Resource);
-            return "<script type=\"text/javascript\" src=\"" + url + "\"></script>";
-        }
-        return "";
+        webHelper.getPageContext().setAttribute(src, Boolean.TRUE);
+        String url = webHelper.getUrl(src);
+        return "<script type=\"text/javascript\" src=\"" + url + "\"></script>";
     }
 
     protected String exportScriptCode(String javascript) {
         return "<script type=\"text/javascript\">" + javascript + "</script>";
     }
 
-    protected String exportScript(String path, Map<String, String> substitutions) {
+    protected String exportScript(String path, Map<String, String> substitutions, boolean uniqueScript) {
         try {
-            if (pageContext == null || webHelper == null) {
+            if (webHelper == null) {
+                return "";
+            }
+            if (uniqueScript && webHelper.getPageContext().getAttribute(path) != null) {
                 return "";
             }
             InputStream is = ClassLoaderUtil.getResourceAsStream(path, getClass());
@@ -96,16 +95,13 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
             byte[] data = ByteStreams.toByteArray(is);
             String jsCode = new String(data, Charsets.UTF_8);
 
-            substitutions.put("jsonUrl", webHelper.getUrl("/form.fp?json=true", pageContext, PortletUrlType.Resource));
+            substitutions.put("jsonUrl", webHelper.getUrl("/form.fp?json=true"));
             for (String sKey : substitutions.keySet()) {
                 String v = substitutions.get(sKey);
                 jsCode = jsCode.replaceAll(Pattern.quote(sKey), Matcher.quoteReplacement(v));
             }
-            if (pageContext.getAttribute(path) == null) {
-                pageContext.setAttribute(path, Boolean.TRUE);
-                return "<script type=\"text/javascript\">" + jsCode + "</script>";
-            }
-            return "";
+            webHelper.getPageContext().setAttribute(path, Boolean.TRUE);
+            return "<script type=\"text/javascript\">" + jsCode + "</script>";
         } catch (IOException e) {
             LogFactory.getLog(getClass()).error("Tag execution error", e);
             return "<p style='color: red;'>Tag error: Script not found at </p><b>" + e.getMessage() + "</b>";

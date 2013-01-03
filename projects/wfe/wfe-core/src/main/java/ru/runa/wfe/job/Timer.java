@@ -65,10 +65,10 @@ public class Timer extends Job {
         if (outTransitionName != null) {
             Task task = executionContext.getTask();
             if (task != null) {
-                AssignmentHelper assignmentHelper = ApplicationContextFactory.getAssignmentHelper();
                 Swimlane swimlane = task.getSwimlane();
                 if (swimlane != null) {
-                    assignmentHelper.reassignTask(executionContext, task, swimlane.getExecutor());
+                    AssignmentHelper assignmentHelper = ApplicationContextFactory.getAssignmentHelper();
+                    assignmentHelper.reassignTask(executionContext, task, swimlane.getExecutor(), false);
                 }
             } else {
                 log.warn("Task is null in timer node '" + getToken().getNodeId() + "' when leaving by transition: " + outTransitionName);

@@ -20,9 +20,7 @@ package ru.runa.wfe.var.format;
 import java.util.HashMap;
 
 import javax.security.auth.Subject;
-import javax.servlet.jsp.PageContext;
 
-import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.var.FileVariable;
 
@@ -44,11 +42,21 @@ public class FileFormat implements VariableFormat<FileVariable>, VariableDisplay
     }
 
     @Override
-    public String getHtml(Subject subject, PageContext pageContext, WebHelper webHelper, Long processId, String name, FileVariable value) {
+    public String getHtml(Subject subject, WebHelper webHelper, Long processId, String name, FileVariable value) {
+        return getHtml(value, subject, webHelper, processId, name, 0, null);
+    }
+
+    public static String getHtml(FileVariable value, Subject subject, WebHelper webHelper, Long processId, String name, int listIndex, Object mapKey) {
         HashMap<String, Object> params = Maps.newHashMap();
         params.put("id", processId);
         params.put("variableName", name);
-        String href = webHelper.getActionUrl("/variableDownloader", params, pageContext, PortletUrlType.Render);
+        if (listIndex != 0) {
+            params.put("listIndex", String.valueOf(listIndex));
+        }
+        if (mapKey != null) {
+            params.put("mapKey", String.valueOf(mapKey));
+        }
+        String href = webHelper.getActionUrl("/variableDownloader", params);
         return "<a href=\"" + href + "\">" + value.getName() + "</>";
     }
 }

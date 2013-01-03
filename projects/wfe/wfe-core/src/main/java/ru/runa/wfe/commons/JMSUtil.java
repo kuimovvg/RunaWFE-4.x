@@ -23,14 +23,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSender;
-import javax.jms.QueueSession;
+import javax.jms.Session;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -44,51 +44,75 @@ import ru.runa.wfe.var.VariableMapping;
 public class JMSUtil {
     private static Log log = LogFactory.getLog(JMSUtil.class);
 
-    private static QueueConnection connection;
-    private static QueueSession session;
+    private static ConnectionFactory connectionFactory;
     private static Queue queue;
 
     private static synchronized void init() throws JMSException, NamingException {
-        if (session == null) {
+        if (connectionFactory == null) {
             InitialContext iniCtx = new InitialContext();
-            Object tmp = iniCtx.lookup("ConnectionFactory");
-            QueueConnectionFactory qcf = (QueueConnectionFactory) tmp;
-            connection = qcf.createQueueConnection();
+            connectionFactory = (ConnectionFactory) iniCtx.lookup("java:/JmsXA");
             queue = (Queue) iniCtx.lookup("queue/jbpmQueue");
-            session = connection.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
-            connection.start();
         }
     }
 
     public static ObjectMessage sendMessage(List<VariableMapping> data, IVariableProvider variableProvider) throws JMSException, NamingException {
         init();
-        QueueSender sender = session.createSender(queue);
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        for (VariableMapping variableMapping : data) {
-            if (!variableMapping.isPropertySelector()) {
-                map.put(variableMapping.getMappedName(), variableProvider.getValue(variableMapping.getName()));
+        Connection connection = null;
+        Session session = null;
+        MessageProducer sender = null;
+        try {
+            connection = connectionFactory.createConnection();
+            session = connection.createSession(true, 0);
+            sender = session.createProducer(queue);
+
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            for (VariableMapping variableMapping : data) {
+                if (!variableMapping.isPropertySelector()) {
+                    map.put(variableMapping.getMappedName(), variableProvider.getValue(variableMapping.getName()));
+                }
+            }
+            ObjectMessage message = session.createObjectMessage(map);
+            for (VariableMapping variableMapping : data) {
+                if (variableMapping.isPropertySelector()) {
+                    String value = variableMapping.getMappedName();
+                    Object v = ExpressionEvaluator.evaluateVariable(variableProvider, value);
+                    message.setObjectProperty(variableMapping.getName(), v);
+                }
+            }
+            long ttl = 24 * 60 * 60 * 1000; // TODO get from process
+            sender.send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, ttl);
+            sender.close();
+            log.info("message sent: " + message);
+            log.debug(JMSUtil.toString(message, false));
+            return message;
+        } finally {
+            if (sender != null) {
+                try {
+                    sender.close();
+                } catch (Exception ignore) {
+                }
+            }
+            if (session != null) {
+                try {
+                    session.close();
+                } catch (Exception ignore) {
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (Exception ignore) {
+                }
             }
         }
-        ObjectMessage message = session.createObjectMessage(map);
-        for (VariableMapping variableMapping : data) {
-            if (variableMapping.isPropertySelector()) {
-                String value = variableMapping.getMappedName();
-                Object v = ExpressionEvaluator.evaluateVariable(variableProvider, value);
-                message.setObjectProperty(variableMapping.getName(), v);
-            }
-        }
-        long ttl = 24 * 60 * 60 * 1000; // TODO get from process
-        sender.send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, ttl);
-        sender.close();
-        log.info("message sent: " + message);
-        return message;
     }
 
     @SuppressWarnings("unchecked")
-    public static String toString(ObjectMessage message) throws JMSException {
+    public static String toString(ObjectMessage message, boolean html) throws JMSException {
         StringBuffer buffer = new StringBuffer();
         if (message.getJMSExpiration() != 0) {
-            buffer.append("{JMSExpiration=").append(new Date(message.getJMSExpiration())).append("}; ");
+            buffer.append("{JMSExpiration=").append(new Date(message.getJMSExpiration())).append("}");
+            buffer.append(html ? "<br>" : "\n");
         }
         Enumeration<String> propertyNames = message.getPropertyNames();
         Map<String, String> propertyMap = new HashMap<String, String>();
@@ -101,15 +125,9 @@ public class JMSUtil {
             propertyMap.put(propertyName, propertyValue.toString());
         }
         buffer.append(propertyMap);
-        buffer.append("; ");
+        buffer.append(html ? "<br>" : "\n");
         buffer.append(message.getObject());
         return buffer.toString();
-    }
-
-    public static void stop() throws JMSException {
-        connection.stop();
-        session.close();
-        connection.close();
     }
 
 }

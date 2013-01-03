@@ -17,12 +17,13 @@
  */
 package ru.runa.wf.web.ftl.method;
 
-import ru.runa.common.web.Commons;
+import java.util.Map;
+
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.var.FileVariable;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
 
 import freemarker.template.TemplateModelException;
 
@@ -46,8 +47,10 @@ public class FileTag extends FreemarkerTag {
             return fileVariable;
         } else if ("drawimage".equals(view)) {
             String fileName = fileVariable.getName();
-            pageContext.getSession().setAttribute(fileName, fileVariable.getData());
-            String actionUrl = Commons.getActionUrl("/getSessionImage", "fileName", fileName, pageContext, PortletUrlType.Render);
+            webHelper.getSession().setAttribute(fileName, fileVariable);
+            Map<String, String> params = Maps.newHashMap();
+            params.put("fileName", fileName);
+            String actionUrl = webHelper.getActionUrl("/getSessionImage", params);
             return "<img src='" + actionUrl + "' />";
         } else {
             throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);

@@ -139,7 +139,7 @@ public class EmailUtils {
         } else {
             formBytes = config.getMessage().getBytes(Charsets.UTF_8);
         }
-        FormHashModel model = new FormHashModel(subject, null, variableProvider, null);
+        FormHashModel model = new FormHashModel(subject, variableProvider, null);
         String formMessage = FreemarkerProcessor.process(formBytes, model);
 
         Map<String, String> replacements = new HashMap<String, String>();

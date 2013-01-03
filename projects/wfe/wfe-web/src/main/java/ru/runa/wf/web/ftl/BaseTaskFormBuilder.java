@@ -2,6 +2,8 @@ package ru.runa.wf.web.ftl;
 
 import java.util.List;
 
+import javax.servlet.jsp.PageContext;
+
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Messages;
 import ru.runa.wf.web.FormProcessingException;
@@ -23,11 +25,18 @@ abstract class BaseTaskFormBuilder {
                 if (WebResources.isHighlightRequiredFields()) {
                     requiredVariableNames = interaction.getRequiredVariableNames();
                 }
-                byte[] b = HTMLFormConverter.changeUrls(model.getPageContext(), definitionId, "form.ftl", out.getBytes(Charsets.UTF_8));
-                return new String(HTMLFormConverter.setInputValues(model.getPageContext(), b, model.getVariableProvider(), requiredVariableNames),
-                        Charsets.UTF_8);
+                PageContext pageContext = null;
+                if (model.getWebHelper() != null) {
+                    pageContext = model.getWebHelper().getPageContext();
+                }
+                byte[] b = HTMLFormConverter.changeUrls(pageContext, definitionId, "form.ftl", out.getBytes(Charsets.UTF_8));
+                return new String(HTMLFormConverter.setInputValues(b, model.getVariableProvider(), requiredVariableNames), Charsets.UTF_8);
             } else {
-                return Messages.getMessage("task.form.not.defined.error", model.getPageContext());
+                String message = "Task form is not defined";
+                if (model.getWebHelper() != null) {
+                    message = Messages.getMessage("task.form.not.defined.error", model.getWebHelper().getPageContext());
+                }
+                return message;
             }
         } catch (Exception e) {
             throw new FormProcessingException(e);

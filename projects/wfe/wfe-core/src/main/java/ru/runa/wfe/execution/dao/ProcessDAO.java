@@ -51,7 +51,7 @@ public class ProcessDAO extends GenericDAO<Process> {
                 Map<Long, Object> result = Maps.newHashMap();
                 if (!processIds.isEmpty()) {
                     for (int i = 0; i <= processIds.size() / 1000; ++i) {
-                        int start = i * 1000;
+                        int start = i * 1000; // TODO fails on 2000
                         int end = (i + 1) * 1000 > processIds.size() ? processIds.size() : (i + 1) * 1000;
                         Set<Long> requested = new HashSet<Long>(end - start);
                         for (int j = start; j < end; j++) {

@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import javax.security.auth.Subject;
 
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.logic.CommonLogic;
@@ -98,7 +99,7 @@ public class SubstitutionLogic extends CommonLogic {
     }
 
     public void insertSubstitution(Subject subject, Long actorId, Substitution substitution, int position) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException {
+            ExecutorDoesNotExistException {
         Actor actor = executorDAO.getActor(actorId);
         checkPermissionsOnExecutor(subject, actor, ExecutorPermission.UPDATE);
         substitution.setActorId(actorId);
@@ -121,7 +122,14 @@ public class SubstitutionLogic extends CommonLogic {
 
     public List<Substitution> getAllSubstitutions(Subject subject) {
         List<Actor> actors = executorDAO.getAllActors(BatchPresentationFactory.ACTORS.createNonPaged());
-        checkPermissionsOnExecutors(subject, actors, Permission.READ);
+        // this is workaround for n*1000 records
+        try {
+            checkPermissionsOnExecutors(subject, actors, Permission.READ);
+        } catch (AuthorizationException e) {
+            throw e;
+        } catch (Exception e) {
+            LogFactory.getLog(getClass()).error("", e);
+        }
         return substitutionDAO.getAll();
     }
 

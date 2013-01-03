@@ -25,16 +25,16 @@ import ru.runa.wfe.ApplicationException;
 /**
  * Created on 30.09.2005
  */
-public class WfeScriptException extends ApplicationException {
+public class AdminScriptException extends ApplicationException {
     private static final long serialVersionUID = 1L;
     private static final String FAILED_TO_HANDLE_ELEMENT = "Failed to handle element ";
     private static final String BECAUSE_OF_ERROR_MESSAGE = "Because of error: ";
 
-    public WfeScriptException(String msg) {
+    public AdminScriptException(String msg) {
         super(msg);
     }
 
-    public WfeScriptException(Element element, Throwable cause) {
+    public AdminScriptException(Element element, Throwable cause) {
         super(FAILED_TO_HANDLE_ELEMENT + getTextForElement(element) + " " + BECAUSE_OF_ERROR_MESSAGE + cause.getMessage(), cause);
     }
 

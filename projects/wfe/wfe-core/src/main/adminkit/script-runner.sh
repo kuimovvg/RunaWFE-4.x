@@ -14,4 +14,4 @@ else
 	JAVA=java
 fi
 
-$JAVA -cp ${CLASSPATH} ru.runa.service.client..WfeScriptClient ${SCRIPT_PATH} ${LOGIN} ${PASSWORD}
+$JAVA -cp ${CLASSPATH} ru.runa.service.client.AdminScriptClient ${SCRIPT_PATH} ${LOGIN} ${PASSWORD}

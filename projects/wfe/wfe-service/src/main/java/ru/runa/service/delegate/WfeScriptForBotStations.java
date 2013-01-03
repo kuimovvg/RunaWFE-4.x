@@ -32,9 +32,9 @@ import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.xml.SimpleErrorHandler;
 import ru.runa.wfe.commons.xml.XMLHelper;
-import ru.runa.wfe.script.WfeScriptRunner;
+import ru.runa.wfe.script.AdminScriptRunner;
 
-public class WfeScriptForBotStations extends WfeScriptRunner {
+public class WfeScriptForBotStations extends AdminScriptRunner {
 
     private final boolean replace;
     private BotStation botStation = null;

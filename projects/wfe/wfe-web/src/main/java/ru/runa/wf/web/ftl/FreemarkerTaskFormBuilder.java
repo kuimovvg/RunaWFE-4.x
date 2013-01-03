@@ -21,9 +21,9 @@ public class FreemarkerTaskFormBuilder extends BaseTaskFormBuilder implements Ta
             FormProcessingException {
         try {
             WfTask task = DelegateFactory.getExecutionService().getTask(subject, taskId);
-            FormHashModel model = new FormHashModel(subject, pageContext, new DelegateProcessVariableProvider(subject, task.getProcessId()),
-                    StrutsWebHelper.INSTANCE);
-            return build(interaction, model, task.getProcessDefinitionId());
+            FormHashModel model = new FormHashModel(subject, new DelegateProcessVariableProvider(subject, task.getProcessId()), new StrutsWebHelper(
+                    pageContext));
+            return build(interaction, model, task.getDefinitionId());
         } catch (Exception e) {
             throw new InternalApplicationException(e);
         }
