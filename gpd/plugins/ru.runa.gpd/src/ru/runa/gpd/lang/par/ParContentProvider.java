@@ -17,15 +17,10 @@ import ru.runa.gpd.validation.ValidatorParser;
 
 public class ParContentProvider {
     public static final String PROCESS_DEFINITION_FILE_NAME = "processdefinition.xml";
-
     public static final String PROCESS_DEFINITION_DESCRIPTION_FILE_NAME = "index.html";
-
     public static final String FORM_CSS_FILE_NAME = "form.css";
-
     public static final String PROCESS_IMAGE_FILE_NAME = "processimage.jpg";
-
     public static final String PROCESS_INSTANCE_START_IMAGE_FILE_NAME = "start.png";
-
     private static final List<AuxContentProvider> contentProviders = new ArrayList<AuxContentProvider>();
     static {
         contentProviders.add(new VariablesXmlContentProvider());
@@ -34,6 +29,7 @@ public class ParContentProvider {
         contentProviders.add(new SwimlaneGUIContentProvider());
         contentProviders.add(new ActionDescriptionContentProvider());
         contentProviders.add(new SubstitutionExceptionsXmlContentProvider());
+        contentProviders.add(new BotsXmlContentProvider());
     }
 
     // Writing the auxiliary info.
@@ -52,7 +48,7 @@ public class ParContentProvider {
     public static void readAuxInfo(IFile definitionFile, ProcessDefinition definition) throws Exception {
         IFolder folder = (IFolder) definitionFile.getParent();
         for (AuxContentProvider contentProvider : contentProviders) {
-           contentProvider.readFromFile(folder, definition);
+            contentProvider.readFromFile(folder, definition);
         }
     }
 

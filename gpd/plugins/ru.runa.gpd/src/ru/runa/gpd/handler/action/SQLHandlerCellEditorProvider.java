@@ -25,14 +25,13 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.handler.action.SQLTasksModel.SQLQueryModel;
 import ru.runa.gpd.handler.action.SQLTasksModel.SQLQueryParameterModel;
 import ru.runa.gpd.handler.action.SQLTasksModel.SQLTaskModel;
 
 public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQLTasksModel> {
-
     private static final List<String> PREDEFINED_VARIABLES = new ArrayList<String>();
     static {
         PREDEFINED_VARIABLES.add("instanceId");
@@ -59,8 +58,12 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
         return Localization.getString("SQLActionHandlerConfig.title");
     }
 
-    private class ConstructorView extends Composite implements Observer {
+    @Override
+    protected int getSelectedTabIndex() {
+        return model.hasFields() ? 1 : 0;
+    }
 
+    private class ConstructorView extends Composite implements Observer {
         private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
 
         public ConstructorView(Composite parent, int style) {
@@ -95,7 +98,7 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             final Text text = new Text(this, SWT.BORDER);
             text.setText(taskModel.dsName);
             text.addModifyListener(new ModifyListener() {
-
+                @Override
                 public void modifyText(ModifyEvent event) {
                     model.getFirstTask().dsName = text.getText();
                 }
@@ -107,7 +110,6 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             hl.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
             hl.setText(Localization.getString("button.add") + " " + Localization.getString("label.SQLQuery"));
             hl.addHyperlinkListener(new HyperlinkAdapter() {
-
                 @Override
                 public void linkActivated(HyperlinkEvent e) {
                     model.getFirstTask().addQuery();
@@ -127,28 +129,24 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             data.horizontalSpan = 3;
             group.setLayoutData(data);
             group.setLayout(new GridLayout(2, false));
-
             final Text text = new Text(group, SWT.BORDER);
             text.setText(queryModel.query);
             text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             text.addModifyListener(new ModifyListener() {
-
+                @Override
                 public void modifyText(ModifyEvent event) {
                     model.getFirstTask().queries.get(queryIndex).query = text.getText();
                 }
             });
-
             Hyperlink hl1 = new Hyperlink(group, SWT.NONE);
             hl1.setText("[X]");
             hl1.addHyperlinkListener(new HyperlinkAdapter() {
-
                 @Override
                 public void linkActivated(HyperlinkEvent e) {
                     model.getFirstTask().deleteQuery(queryIndex);
                 }
             });
             hyperlinkGroup.add(hl1);
-
             Composite paramsComposite = createParametersComposite(group, "label.SQLParams", queryIndex, false);
             for (SQLQueryParameterModel parameterModel : queryModel.params) {
                 addParamSection(paramsComposite, parameterModel, queryIndex, queryModel.params.indexOf(parameterModel), true);
@@ -165,28 +163,22 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             GridData data = new GridData(GridData.FILL_HORIZONTAL);
             data.horizontalSpan = 3;
             composite.setLayoutData(data);
-
             Composite strokeComposite = new Composite(composite, SWT.NONE);
             data = new GridData(GridData.FILL_HORIZONTAL);
             data.horizontalSpan = 3;
             strokeComposite.setLayoutData(data);
             strokeComposite.setLayout(new GridLayout(4, false));
-
             Label strokeLabel = new Label(strokeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
             data = new GridData();
             data.widthHint = 50;
             strokeLabel.setLayoutData(data);
-
             Label headerLabel = new Label(strokeComposite, SWT.NONE);
             headerLabel.setText(Localization.getString(labelKey));
-
             strokeLabel = new Label(strokeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
             strokeLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
             Hyperlink hl2 = new Hyperlink(strokeComposite, SWT.NONE);
             hl2.setText(Localization.getString("button.add"));
             hl2.addHyperlinkListener(new HyperlinkAdapter() {
-
                 @Override
                 public void linkActivated(HyperlinkEvent e) {
                     model.getFirstTask().addQueryParameter(queryIndex, result);
@@ -196,14 +188,12 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             return composite;
         }
 
-        private void addParamSection(Composite parent, final SQLQueryParameterModel parameterModel, final int queryIndex, final int paramIndex,
-                boolean input) {
+        private void addParamSection(Composite parent, final SQLQueryParameterModel parameterModel, final int queryIndex, final int paramIndex, boolean input) {
             final Combo combo = new Combo(parent, SWT.READ_ONLY);
-            List<String> vars = definition.getVariableNames(true);
-            for (String variableName : vars) {
+            for (String variableName : variableNames) {
                 combo.add(variableName);
             }
-            if (input) {
+            if (input && formalVariable) {
                 for (String variableName : PREDEFINED_VARIABLES) {
                     combo.add(variableName);
                 }
@@ -211,19 +201,16 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             combo.setText(parameterModel.varName);
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             combo.addSelectionListener(new SelectionAdapter() {
-
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     parameterModel.varName = combo.getText();
                     parameterModel.swimlaneVar = definition.getSwimlaneByName(parameterModel.varName) != null;
                 }
             });
-
             if (paramIndex != 0) {
                 Hyperlink hl0 = new Hyperlink(parent, SWT.NONE);
                 hl0.setText(Localization.getString("button.up"));
                 hl0.addHyperlinkListener(new HyperlinkAdapter() {
-
                     @Override
                     public void linkActivated(HyperlinkEvent e) {
                         model.getFirstTask().moveUpQueryParameter(queryIndex, parameterModel.result, paramIndex);
@@ -233,11 +220,9 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             } else {
                 new Label(parent, SWT.NONE);
             }
-
             Hyperlink hl1 = new Hyperlink(parent, SWT.NONE);
             hl1.setText("[X]");
             hl1.addHyperlinkListener(new HyperlinkAdapter() {
-
                 @Override
                 public void linkActivated(HyperlinkEvent e) {
                     model.getFirstTask().deleteQueryParameter(queryIndex, parameterModel.result, paramIndex);
@@ -245,7 +230,5 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             });
             hyperlinkGroup.add(hl1);
         }
-
     }
-
 }
