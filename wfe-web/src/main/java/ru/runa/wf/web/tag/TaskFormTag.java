@@ -86,7 +86,7 @@ public class TaskFormTag extends WFFormTag {
 
     @Override
     protected Long getDefinitionId() throws AuthorizationException, AuthenticationException {
-        return DelegateFactory.getExecutionService().getTask(getSubject(), taskId).getProcessDefinitionId();
+        return DelegateFactory.getExecutionService().getTask(getSubject(), taskId).getDefinitionId();
     }
 
     @Override

@@ -21,9 +21,9 @@ public class AssignmentHelper {
     @Autowired
     private ExecutorLogic executorLogic;
 
-    public void reassignTask(ExecutionContext executionContext, Task task, Executor newExecutor) {
+    public void reassignTask(ExecutionContext executionContext, Task task, Executor newExecutor, boolean reassignSwimlane) {
         Executor oldExecutor = task.getExecutor();
-        task.assignExecutor(executionContext, newExecutor, false);
+        task.assignExecutor(executionContext, newExecutor, reassignSwimlane);
         if (oldExecutor instanceof TemporaryGroup) {
             executorLogic.remove(oldExecutor);
         }

@@ -75,7 +75,7 @@ public class TaskLogic extends WFCommonLogic {
         checkCanParticipate(subject, task, actor);
         actor = checkPermissionsOnExecutor(subject, actor, ActorPermission.READ);
 
-        assignmentHelper.reassignTask(executionContext, task, actor);
+        assignmentHelper.reassignTask(executionContext, task, actor, true);
 
         validateVariables(processDefinition, task.getNodeId(), new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
         executionContext.setVariables(variables);
@@ -170,7 +170,7 @@ public class TaskLogic extends WFCommonLogic {
             throw new TaskAlreadyAcceptedException(task.getName());
         }
         ProcessDefinition processDefinition = getDefinition(task);
-        assignmentHelper.reassignTask(new ExecutionContext(processDefinition, task), task, actor);
+        assignmentHelper.reassignTask(new ExecutionContext(processDefinition, task), task, actor, false);
     }
 
 }

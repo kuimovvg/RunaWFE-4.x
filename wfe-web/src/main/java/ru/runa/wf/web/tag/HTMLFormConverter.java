@@ -283,7 +283,7 @@ public class HTMLFormConverter {
         return null;
     }
 
-    public static byte[] setInputValues(PageContext pageContext, byte[] formBytes, IVariableProvider variableProvider, List<String> requiredVarNames) {
+    public static byte[] setInputValues(byte[] formBytes, IVariableProvider variableProvider, List<String> requiredVarNames) {
         try {
             Document document = HTMLUtils.readHtml(formBytes);
 

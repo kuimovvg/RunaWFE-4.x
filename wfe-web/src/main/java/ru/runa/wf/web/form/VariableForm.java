@@ -39,16 +39,8 @@ public class VariableForm extends IdForm {
     public static final String VARIABLE_NAME_INPUT_NAME = "variableName";
 
     private String variableName;
-
-    private String identityType;
-
-    public String getIdentityType() {
-        return identityType;
-    }
-
-    public void setIdentityType(String identityType) {
-        this.identityType = identityType;
-    }
+    private int listIndex;
+    private String mapKey;
 
     public String getVariableName() {
         return variableName;
@@ -56,6 +48,22 @@ public class VariableForm extends IdForm {
 
     public void setVariableName(String variableName) {
         this.variableName = variableName;
+    }
+
+    public int getListIndex() {
+        return listIndex;
+    }
+
+    public void setListIndex(int listIndex) {
+        this.listIndex = listIndex;
+    }
+
+    public String getMapKey() {
+        return mapKey;
+    }
+
+    public void setMapKey(String mapKey) {
+        this.mapKey = mapKey;
     }
 
     @Override

@@ -20,6 +20,7 @@ package ru.runa.af.web.system;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -53,6 +54,7 @@ public class TaskHandlerClassesInformation {
             ZipEntry entry;
             while ((entry = earStream.getNextEntry()) != null) {
                 if (entry.getName().endsWith(".jar")) {
+                    log.debug("Searching in " + entry.getName());
                     searchInJar(earStream);
                 }
             }
@@ -72,7 +74,7 @@ public class TaskHandlerClassesInformation {
                     className = className.substring(0, lastIndexOfDotSymbol).replace('/', '.');
                     // If we can't load class - just move to next class.
                     Class<?> someClass = ClassLoaderUtil.loadClass(className);
-                    if (TaskHandler.class.isAssignableFrom(someClass)) {
+                    if (TaskHandler.class.isAssignableFrom(someClass) && !Modifier.isAbstract(someClass.getModifiers())) {
                         taskHandlerImplementationClasses.add(someClass.getCanonicalName());
                     }
                 } catch (Throwable e) {

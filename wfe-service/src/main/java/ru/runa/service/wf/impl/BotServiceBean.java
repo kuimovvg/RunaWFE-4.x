@@ -34,19 +34,15 @@ import ru.runa.service.wf.BotServiceRemote;
 import ru.runa.wfe.ApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotAlreadyExistsException;
-import ru.runa.wfe.bot.BotDoesNotExistException;
 import ru.runa.wfe.bot.BotStation;
-import ru.runa.wfe.bot.BotStationAlreadyExistsException;
-import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.BotTask;
-import ru.runa.wfe.bot.BotTaskAlreadyExistsException;
-import ru.runa.wfe.bot.BotTaskDoesNotExistException;
 import ru.runa.wfe.bot.logic.BotLogic;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -60,21 +56,20 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     private BotLogic botLogic;
 
     @Override
-    public BotStation createBotStation(Subject subject, BotStation bs) throws AuthorizationException, AuthenticationException,
-            BotStationAlreadyExistsException {
+    public BotStation createBotStation(Subject subject, BotStation bs) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(bs);
         return botLogic.createBotStation(subject, bs);
     }
 
     @Override
-    public BotStation getBotStation(Long id) throws AuthorizationException, AuthenticationException {
+    public BotStation getBotStation(Long id) {
         Preconditions.checkNotNull(id);
         return botLogic.getBotStationNotNull(id);
     }
 
     @Override
-    public BotStation getBotStation(String name) throws AuthorizationException, AuthenticationException {
+    public BotStation getBotStation(String name) {
         Preconditions.checkNotNull(name);
         return botLogic.getBotStation(name);
     }
@@ -85,43 +80,42 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
-    public void removeBotStation(Subject subject, Long id) throws AuthorizationException, AuthenticationException, BotStationDoesNotExistException {
+    public void removeBotStation(Subject subject, Long id) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(id);
         botLogic.removeBotStation(subject, id);
     }
 
     @Override
-    public void updateBotStation(Subject subject, BotStation bs) throws AuthorizationException, AuthenticationException,
-            BotStationAlreadyExistsException {
+    public void updateBotStation(Subject subject, BotStation bs) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(bs);
         botLogic.updateBotStation(subject, bs);
     }
 
     @Override
-    public Bot getBot(Subject subject, Long id) throws AuthorizationException, AuthenticationException {
+    public Bot getBot(Subject subject, Long id) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(id);
         return botLogic.getBotNotNull(subject, id);
     }
 
     @Override
-    public void removeBot(Subject subject, Long id) throws AuthorizationException, AuthenticationException, BotDoesNotExistException {
+    public void removeBot(Subject subject, Long id) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(id);
         botLogic.removeBot(subject, id);
     }
 
     @Override
-    public List<Bot> getBots(Subject subject, Long botStationId) throws AuthorizationException, AuthenticationException {
+    public List<Bot> getBots(Subject subject, Long botStationId) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(botStationId);
         return botLogic.getBots(subject, botStationId);
     }
 
     @Override
-    public Bot createBot(Subject subject, Bot bot) throws AuthorizationException, AuthenticationException, BotAlreadyExistsException {
+    public Bot createBot(Subject subject, Bot bot) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(bot);
         return botLogic.createBot(subject, bot);
@@ -135,49 +129,53 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
-    public List<BotTask> getBotTasks(Subject subject, Long id) throws AuthorizationException, AuthenticationException {
+    public List<BotTask> getBotTasks(Subject subject, Long id) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(id);
         return botLogic.getBotTasks(subject, id);
     }
 
     @Override
-    public BotTask createBotTask(Subject subject, BotTask task) throws AuthorizationException, AuthenticationException, BotTaskAlreadyExistsException {
+    public BotTask createBotTask(Subject subject, BotTask task) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(task);
         return botLogic.createBotTask(subject, task);
     }
 
     @Override
-    public void updateBotTask(Subject subject, BotTask task) throws AuthorizationException, AuthenticationException, BotTaskAlreadyExistsException {
+    public void updateBotTask(Subject subject, BotTask task) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(task);
         botLogic.updateBotTask(subject, task);
     }
 
     @Override
-    public void removeBotTask(Subject subject, Long id) throws AuthorizationException, AuthenticationException, BotTaskDoesNotExistException {
+    public void removeBotTask(Subject subject, Long id) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(id);
         botLogic.removeBotTask(subject, id);
     }
 
     @Override
-    public BotTask getBotTask(Subject subject, Long id) throws AuthorizationException, AuthenticationException {
+    public BotTask getBotTask(Subject subject, Long id) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(id);
         return botLogic.getBotTaskNotNull(subject, id);
     }
 
     @Override
-    public byte[] exportBot(Subject subject, Bot bot) throws BotDoesNotExistException {
+    public byte[] exportBot(Subject subject, Bot bot) {
         Preconditions.checkNotNull(subject);
         Preconditions.checkNotNull(bot);
+        List<BotTask> tasks = botLogic.getBotTasks(subject, bot.getId());
+        return exportBotWithTasks(bot, tasks);
+    }
+
+    private byte[] exportBotWithTasks(Bot bot, List<BotTask> tasks) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ZipOutputStream zipStream = new ZipOutputStream(baos);
             zipStream.putNextEntry(new ZipEntry("script.xml"));
-            List<BotTask> tasks = botLogic.getBotTasks(subject, bot.getId());
             Document script = WfeScriptForBotStations.createScriptForBotLoading(bot, tasks);
             TransformerFactory.newInstance().newTransformer().transform(new DOMSource(script), new StreamResult(zipStream));
             for (BotTask task : tasks) {
@@ -197,7 +195,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
-    public byte[] exportBotStation(Subject subject, BotStation station) throws BotStationDoesNotExistException {
+    public byte[] exportBotStation(Subject subject, BotStation station) {
         try {
             Preconditions.checkNotNull(subject);
             Preconditions.checkNotNull(station);
@@ -221,7 +219,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
-    public void importBot(Subject subject, BotStation station, byte[] archive, boolean replace) throws BotStationDoesNotExistException {
+    public void importBot(Subject subject, BotStation station, byte[] archive, boolean replace) {
         try {
             Preconditions.checkNotNull(subject);
             Preconditions.checkNotNull(station);
@@ -275,4 +273,15 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
             throw new ApplicationException(e);
         }
     }
+
+    @Override
+    public byte[] exportBotTask(Subject subject, Bot bot, String botTaskName) {
+        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(bot);
+        Preconditions.checkNotNull(botTaskName);
+        List<BotTask> tasks = Lists.newArrayList();
+        tasks.add(botLogic.getBotTaskNotNull(subject, bot.getId(), botTaskName));
+        return exportBotWithTasks(bot, tasks);
+    }
+
 }

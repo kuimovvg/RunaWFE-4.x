@@ -76,7 +76,7 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
                 VariableFormat variableFormat = FormatCommons.create(wfVariable.getDefinition().getFormat());
                 if (variableFormat instanceof VariableDisplaySupport) {
                     Subject subject = SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
-                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(subject, pageContext, StrutsWebHelper.INSTANCE, processId,
+                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(subject, new StrutsWebHelper(pageContext), processId,
                             wfVariable.getDefinition().getName(), value);
                 } else {
                     formattedValue = variableFormat.format(value);

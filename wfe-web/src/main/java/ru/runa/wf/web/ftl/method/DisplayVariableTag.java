@@ -16,11 +16,11 @@ public class DisplayVariableTag extends FreemarkerTag {
         WfVariable variable = variableProvider.getVariable(variableName);
         VariableFormat<Object> format = FormatCommons.create(variable.getDefinition().getFormat());
         if (format instanceof VariableDisplaySupport) {
-            if (pageContext == null || webHelper == null || variableProvider.getProcessId() == null) {
+            if (webHelper == null || variableProvider.getProcessId() == null) {
                 return "";
             }
             VariableDisplaySupport<Object> displaySupport = (VariableDisplaySupport<Object>) format;
-            return displaySupport.getHtml(subject, pageContext, webHelper, variableProvider.getProcessId(), variableName, variable.getValue());
+            return displaySupport.getHtml(subject, webHelper, variableProvider.getProcessId(), variableName, variable.getValue());
         } else {
             return format.format(variable.getValue());
         }

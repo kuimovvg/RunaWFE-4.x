@@ -18,6 +18,8 @@
 package ru.runa.wf.web.action;
 
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
@@ -49,13 +51,9 @@ public class VariableDownloaderAction extends Action {
     public static final String ACTION_PATH = "/variableDownloader";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         try {
-            VariableForm form = (VariableForm) actionForm;
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            ExecutionService executionService = DelegateFactory.getExecutionService();
-            FileVariable fileVariable = (FileVariable) executionService.getVariable(subject, form.getId(), form.getVariableName()).getValue();
+            FileVariable fileVariable = getVariable(actionForm, request);
 
             response.setContentType(fileVariable.getContentType());
             // http://forum.java.sun.com/thread.jspa?forumID=45&threadID=233446
@@ -71,6 +69,28 @@ public class VariableDownloaderAction extends Action {
             log.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    private FileVariable getVariable(ActionForm actionForm, HttpServletRequest request) {
+        VariableForm form = (VariableForm) actionForm;
+        Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
+        ExecutionService executionService = DelegateFactory.getExecutionService();
+        Object object = executionService.getVariable(subject, form.getId(), form.getVariableName()).getValue();
+        if (object == null) {
+            return null;
+        }
+        if (object instanceof FileVariable) {
+            return (FileVariable) object;
+        }
+        if (object instanceof List<?>) {
+            List<FileVariable> list = (List<FileVariable>) object;
+            return list.get(form.getListIndex());
+        }
+        if (object instanceof Map<?, ?>) {
+            Map<?, FileVariable> map = (Map) object;
+            return map.get(form.getMapKey());
+        }
+        throw new IllegalArgumentException("Unexpected variable type: " + object.getClass());
     }
 
 }

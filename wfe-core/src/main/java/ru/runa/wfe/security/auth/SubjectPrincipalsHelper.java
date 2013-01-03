@@ -17,17 +17,12 @@
  */
 package ru.runa.wfe.security.auth;
 
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Set;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import javax.security.auth.Subject;
 
 import org.apache.commons.logging.Log;
@@ -56,6 +51,9 @@ public class SubjectPrincipalsHelper {
         }
     }
 
+    private SubjectPrincipalsHelper() {
+    }
+
     private static byte[] getActorKey(Actor actor) {
         return (actor.getCode() + actor.getName()).getBytes();
     }
@@ -78,35 +76,10 @@ public class SubjectPrincipalsHelper {
             if (!Arrays.equals(getActorKey(actorPrincipal.getActor()), cipher.doFinal(actorPrincipal.getKey()))) {
                 throw new AuthenticationException("Incorrect actor principal at subject received");
             }
-        } catch (NoSuchPaddingException e) {
-            if (actorPrincipal.getKey() == null) {
-                return;
-            }
-            throw new AuthenticationException("Error in subject decryption");
-        } catch (NoSuchAlgorithmException e) {
-            if (actorPrincipal.getKey() == null) {
-                return;
-            }
-            throw new AuthenticationException("Error in subject decryption");
-        } catch (InvalidKeyException e) {
-            if (actorPrincipal.getKey() == null) {
-                return;
-            }
-            throw new AuthenticationException("Error in subject decryption");
-        } catch (BadPaddingException e) {
-            if (actorPrincipal.getKey() == null) {
-                return;
-            }
-            throw new AuthenticationException("Error in subject decryption");
-        } catch (IllegalBlockSizeException e) {
-            if (actorPrincipal.getKey() == null) {
-                return;
-            }
+        } catch (Exception e) {
+            log.error("Error in subject decryption", e);
             throw new AuthenticationException("Error in subject decryption");
         }
-    }
-
-    private SubjectPrincipalsHelper() {
     }
 
     public static Actor getActor(Subject subject) throws AuthenticationException {
@@ -121,7 +94,8 @@ public class SubjectPrincipalsHelper {
         throw new AuthenticationException("Subject does not contain actor principal");
     }
 
-    // private static Actor getActorById(long id) throws AuthenticationException {
+    // private static Actor getActorById(long id) throws AuthenticationException
+    // {
     // AFDaoHolder daoHolder = new AFDaoHolder();
     // try {
     // return daoHolder.getExecutorDAO().getActor(id);
