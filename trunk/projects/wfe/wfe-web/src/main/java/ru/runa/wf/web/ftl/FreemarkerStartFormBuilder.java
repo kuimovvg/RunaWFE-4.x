@@ -24,8 +24,8 @@ public class FreemarkerStartFormBuilder extends BaseTaskFormBuilder implements S
             FormProcessingException {
         try {
             List<VariableDefinition> variableDefinitions = DelegateFactory.getDefinitionService().getVariables(subject, definitionId);
-            FormHashModel model = new FormHashModel(subject, pageContext, new MapDelegableVariableProvider(interaction.getDefaultVariableValues(),
-                    new DefinitionVariableProvider(variableDefinitions)), StrutsWebHelper.INSTANCE);
+            FormHashModel model = new FormHashModel(subject, new MapDelegableVariableProvider(interaction.getDefaultVariableValues(),
+                    new DefinitionVariableProvider(variableDefinitions)), new StrutsWebHelper(pageContext));
             return build(interaction, model, definitionId);
         } catch (Exception e) {
             throw new InternalApplicationException(e);

@@ -90,8 +90,8 @@ import com.google.common.io.Files;
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
  */
-public class WfeScriptRunner {
-    private final static Log log = LogFactory.getLog(WfeScriptRunner.class);
+public class AdminScriptRunner {
+    private final static Log log = LogFactory.getLog(AdminScriptRunner.class);
     private final static String EXECUTOR_ELEMENT_NAME = "executor";
     private final static String IDENTITY_ELEMENT_NAME = "identity";
     private final static String NAMED_IDENTITY_ELEMENT_NAME = "namedIdentitySet";
@@ -151,7 +151,7 @@ public class WfeScriptRunner {
         this.processDefinitionsBytes = processDefinitionsBytes;
     }
 
-    public void runScript(InputStream inputStream) throws WfeScriptException {
+    public void runScript(InputStream inputStream) throws AdminScriptException {
         try {
             processDeployed = 0;
             namedProcessDefinitionIdentities.clear();
@@ -167,17 +167,17 @@ public class WfeScriptRunner {
                 }
             }
         } catch (Exception e) {
-            Throwables.propagateIfInstanceOf(e, WfeScriptException.class);
-            throw new WfeScriptException(e.getMessage());
+            Throwables.propagateIfInstanceOf(e, AdminScriptException.class);
+            throw new AdminScriptException(e.getMessage());
         }
     }
 
-    private void handleElement(Element element) throws WfeScriptException {
+    private void handleElement(Element element) throws AdminScriptException {
         try {
             String name = element.getNodeName();
             log.info("Processing element " + name + ".");
             if ("custom".equals(name)) {
-                CustomWfeScriptJob job = ClassLoaderUtil.instantiate(element.getAttribute("job"));
+                CustomAdminScriptJob job = ClassLoaderUtil.instantiate(element.getAttribute("job"));
                 job.execute(subject, element);
             } else {
                 Method method = this.getClass().getMethod(name, new Class[] { Element.class });
@@ -192,13 +192,10 @@ public class WfeScriptRunner {
         }
     }
 
-    private void throwWfeScriptException(Element element, Throwable e) throws WfeScriptException {
-        // if (e instanceof InvocationTargetException) {
-        // e = ((InvocationTargetException) e).getTargetException();
-        // }
+    private void throwWfeScriptException(Element element, Throwable e) throws AdminScriptException {
         Throwable th = Throwables.getRootCause(e);
-        Throwables.propagateIfInstanceOf(th, WfeScriptException.class);
-        throw new WfeScriptException(element, th);
+        Throwables.propagateIfInstanceOf(th, AdminScriptException.class);
+        throw new AdminScriptException(element, th);
     }
 
     public Set<String> namedIdentitySet(Element element) {
@@ -568,7 +565,7 @@ public class WfeScriptRunner {
         }
     }
 
-    private Collection<Permission> getPermissions(Element element, Identifiable identifiable) throws WfeScriptException {
+    private Collection<Permission> getPermissions(Element element, Identifiable identifiable) throws AdminScriptException {
         Permission noPermission = identifiable.getSecuredObjectType().getNoPermission();
         NodeList permissionNodeList = element.getElementsByTagName(PERMISSION_ELEMENT_NAME);
         Set<Permission> permissions = Sets.newHashSet();
@@ -702,7 +699,7 @@ public class WfeScriptRunner {
             String name = batchElement.getAttribute(NAME_ATTRIBUTE_NAME);
             if (name.equals("source")) {
                 if (srcBatch != null) {
-                    throw new WfeScriptException("Only one source batchPresentation is allowed inside replicateBatchPresentation.");
+                    throw new AdminScriptException("Only one source batchPresentation is allowed inside replicateBatchPresentation.");
                 }
                 srcBatch = readBatchPresentation(batchElement);
                 continue;
@@ -711,10 +708,10 @@ public class WfeScriptRunner {
                 replaceableBatchPresentations.add(readBatchPresentation(batchElement));
                 continue;
             }
-            throw new WfeScriptException("BatchPresentation with name '" + name + "' is not allowed inside replicateBatchPresentation.");
+            throw new AdminScriptException("BatchPresentation with name '" + name + "' is not allowed inside replicateBatchPresentation.");
         }
         if (srcBatch == null) {
-            throw new WfeScriptException("No source BatchPresentation in replicateBatchPresentation found.");
+            throw new AdminScriptException("No source BatchPresentation in replicateBatchPresentation found.");
         }
         if (batchPresentationNewName == null || batchPresentationNewName.equals("")) {
             batchPresentationNewName = srcBatch.getName();
@@ -948,13 +945,13 @@ public class WfeScriptRunner {
         String botStationName = element.getAttribute(BOTSTATION_ATTRIBUTE_NAME);
         String timeout = element.getAttribute(STARTTIMEOUT_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), name);
-        if (newName != null) {
+        if (!Strings.isNullOrEmpty(newName)) {
             bot.setUsername(newName);
         }
-        if (pass != null) {
+        if (!Strings.isNullOrEmpty(pass)) {
             bot.setPassword(pass);
         }
-        if (timeout != null) {
+        if (!Strings.isNullOrEmpty(timeout)) {
             bot.setStartTimeout(Long.parseLong(timeout));
         }
         String newBotStationName = element.getAttribute(NEW_BOTSTATION_ATTRIBUTE_NAME);
@@ -969,10 +966,10 @@ public class WfeScriptRunner {
         String newName = element.getAttribute(NEW_NAME_ATTRIBUTE_NAME);
         String address = element.getAttribute(ADDRESS_ATTRIBUTE_NAME);
         BotStation station = botLogic.getBotStationNotNull(name);
-        if (newName != null) {
+        if (!Strings.isNullOrEmpty(newName)) {
             station.setName(newName);
         }
-        if (address != null) {
+        if (!Strings.isNullOrEmpty(address)) {
             station.setAddress(address);
         }
         botLogic.updateBotStation(subject, station);

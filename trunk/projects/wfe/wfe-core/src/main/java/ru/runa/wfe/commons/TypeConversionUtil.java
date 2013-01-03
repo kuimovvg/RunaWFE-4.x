@@ -21,6 +21,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -94,34 +95,28 @@ public class TypeConversionUtil {
                     return (T) new Float(n.floatValue());
                 }
             }
-            if (object.getClass().isArray() && classConvertTo == List.class) {
-                int len = Array.getLength(object);
-                List<Object> result = new ArrayList<Object>(len);
-                for (int i = 0; i < len; i++) {
-                    result.add(Array.get(object, i));
-                }
-                return (T) result;
-            }
-            if (List.class.isAssignableFrom(object.getClass()) && classConvertTo == String[].class) {
+            if (List.class.isAssignableFrom(object.getClass()) && classConvertTo.isArray()) {
                 List<?> list = (List<?>) object;
-                String[] result = new String[list.size()];
+                Object array = Array.newInstance(classConvertTo.getComponentType(), list.size());
                 for (int i = 0; i < list.size(); i++) {
-                    result[i] = list.get(i).toString();
+                    Array.set(array, i, list.get(i));
+                }
+                return (T) array;
+            }
+            if (List.class.isAssignableFrom(classConvertTo)) {
+                List result = new ArrayList();
+                if (object.getClass().isArray()) {
+                    int len = Array.getLength(object);
+                    for (int i = 0; i < len; i++) {
+                        result.add(Array.get(object, i));
+                    }
+                } else if (object instanceof Collection<?>) {
+                    result.addAll((Collection<?>) object);
+                } else {
+                    result.add(object);
                 }
                 return (T) result;
             }
-            // if (classConvertTo == List.class) {
-            // List result = new ArrayList();
-            // if (object.getClass().isArray()) {
-            // int len = Array.getLength(object);
-            // for (int i = 0; i < len; i++) {
-            // result.add(Array.get(object, i));
-            // }
-            // } else {
-            // result.add(object);
-            // }
-            // return (T) result;
-            // }
             if (object instanceof Date && classConvertTo == Calendar.class) {
                 return (T) CalendarUtil.dateToCalendar((Date) object);
             }

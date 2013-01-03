@@ -31,7 +31,7 @@ public interface AuthenticationService {
 
     public Subject authenticate(byte[] token) throws AuthenticationException;
 
-    public Subject authenticate(String name, String password) throws AuthenticationException;
+    public Subject authenticate(String login, String password) throws AuthenticationException;
 
     public Actor getActor(Subject subject) throws AuthenticationException;
 }

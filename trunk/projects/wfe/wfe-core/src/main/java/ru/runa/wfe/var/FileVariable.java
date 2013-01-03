@@ -28,8 +28,8 @@ import java.io.Serializable;
 public class FileVariable implements Serializable {
     private static final long serialVersionUID = -5664995254436423315L;
     private byte[] data;
-    private final String name;
-    private final String contentType;
+    private String name;
+    private String contentType;
 
     public FileVariable(String name, byte[] data, String contentType) {
         this.data = data;
@@ -53,8 +53,15 @@ public class FileVariable implements Serializable {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getContentType() {
         return contentType;
     }
 
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 }

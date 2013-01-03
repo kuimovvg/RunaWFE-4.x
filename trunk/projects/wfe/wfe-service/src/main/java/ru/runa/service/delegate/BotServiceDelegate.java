@@ -23,109 +23,114 @@ public class BotServiceDelegate extends EJB3Delegate implements BotService {
         super(BotService.class);
     }
 
-    private BotService getBotsService() {
+    private BotService getBotService() {
         return (BotService) getService();
     }
 
     @Override
     public BotStation createBotStation(Subject subject, BotStation bs) throws AuthorizationException, AuthenticationException,
             BotStationAlreadyExistsException {
-        return getBotsService().createBotStation(subject, bs);
+        return getBotService().createBotStation(subject, bs);
     }
 
     @Override
     public BotStation getBotStation(Long id) throws AuthorizationException, AuthenticationException {
-        return getBotsService().getBotStation(id);
+        return getBotService().getBotStation(id);
     }
 
     @Override
     public BotStation getBotStation(String name) throws AuthorizationException, AuthenticationException {
-        return getBotsService().getBotStation(name);
+        return getBotService().getBotStation(name);
     }
 
     @Override
     public Bot getBot(Subject subject, Long id) throws AuthorizationException, AuthenticationException {
-        return getBotsService().getBot(subject, id);
+        return getBotService().getBot(subject, id);
     }
 
     @Override
     public List<BotStation> getBotStations() {
-        return getBotsService().getBotStations();
+        return getBotService().getBotStations();
     }
 
     @Override
     public void removeBotStation(Subject subject, Long id) throws AuthorizationException, AuthenticationException, BotStationDoesNotExistException {
-        getBotsService().removeBotStation(subject, id);
+        getBotService().removeBotStation(subject, id);
     }
 
     @Override
     public void removeBot(Subject subject, Long id) throws AuthorizationException, AuthenticationException, BotDoesNotExistException {
-        getBotsService().removeBot(subject, id);
+        getBotService().removeBot(subject, id);
     }
 
     @Override
     public void updateBotStation(Subject subject, BotStation bs) throws AuthorizationException, BotStationAlreadyExistsException {
-        getBotsService().updateBotStation(subject, bs);
+        getBotService().updateBotStation(subject, bs);
     }
 
     @Override
     public List<Bot> getBots(Subject subject, Long botStationId) throws AuthorizationException, AuthenticationException {
-        return getBotsService().getBots(subject, botStationId);
+        return getBotService().getBots(subject, botStationId);
     }
 
     @Override
     public Bot createBot(Subject subject, Bot bot) throws AuthorizationException, AuthenticationException, BotAlreadyExistsException {
-        return getBotsService().createBot(subject, bot);
+        return getBotService().createBot(subject, bot);
     }
 
     @Override
     public void updateBot(Subject subject, Bot bot) throws AuthorizationException, AuthenticationException, BotAlreadyExistsException {
-        getBotsService().updateBot(subject, bot);
+        getBotService().updateBot(subject, bot);
     }
 
     @Override
     public List<BotTask> getBotTasks(Subject subject, Long id) throws AuthorizationException, AuthenticationException {
-        return getBotsService().getBotTasks(subject, id);
+        return getBotService().getBotTasks(subject, id);
     }
 
     @Override
     public BotTask createBotTask(Subject subject, BotTask task) throws AuthorizationException, AuthenticationException, BotTaskAlreadyExistsException {
-        return getBotsService().createBotTask(subject, task);
+        return getBotService().createBotTask(subject, task);
     }
 
     @Override
     public void updateBotTask(Subject subject, BotTask task) throws AuthorizationException, AuthenticationException, BotTaskAlreadyExistsException {
-        getBotsService().updateBotTask(subject, task);
+        getBotService().updateBotTask(subject, task);
     }
 
     @Override
     public void removeBotTask(Subject subject, Long id) throws AuthorizationException, AuthenticationException, BotTaskDoesNotExistException {
-        getBotsService().removeBotTask(subject, id);
+        getBotService().removeBotTask(subject, id);
     }
 
     @Override
     public BotTask getBotTask(Subject subject, Long id) throws AuthorizationException, AuthenticationException {
-        return getBotsService().getBotTask(subject, id);
+        return getBotService().getBotTask(subject, id);
     }
 
     @Override
     public byte[] exportBot(Subject subject, Bot bot) throws AuthorizationException, AuthenticationException, BotDoesNotExistException {
-        return getBotsService().exportBot(subject, bot);
+        return getBotService().exportBot(subject, bot);
     }
 
     @Override
     public byte[] exportBotStation(Subject subject, BotStation station) throws AuthorizationException, BotStationDoesNotExistException {
-        return getBotsService().exportBotStation(subject, station);
+        return getBotService().exportBotStation(subject, station);
+    }
+
+    @Override
+    public byte[] exportBotTask(Subject subject, Bot bot, String botTaskName) throws BotDoesNotExistException {
+        return getBotService().exportBotTask(subject, bot, botTaskName);
     }
 
     @Override
     public void importBot(Subject subject, BotStation station, byte[] archive, boolean replace) throws AuthorizationException,
             BotStationDoesNotExistException {
-        getBotsService().importBot(subject, station, archive, replace);
+        getBotService().importBot(subject, station, archive, replace);
     }
 
     @Override
     public void importBotStation(Subject subject, byte[] archive, boolean replace) throws AuthorizationException {
-        getBotsService().importBotStation(subject, archive, replace);
+        getBotService().importBotStation(subject, archive, replace);
     }
 }

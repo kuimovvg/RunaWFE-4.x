@@ -2,11 +2,19 @@ package ru.runa.wfe.commons.web;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 public interface WebHelper {
 
-    String getUrl(String relativeUrl, PageContext pageContext, PortletUrlType portletUrlType);
+    PageContext getPageContext();
 
-    String getActionUrl(String relativeUrl, Map<String, ? extends Object> params, PageContext pageContext, PortletUrlType portletUrlType);
+    HttpSession getSession();
+
+    HttpServletRequest getRequest();
+
+    String getUrl(String relativeUrl);
+
+    String getActionUrl(String relativeUrl, Map<String, ? extends Object> params);
 }

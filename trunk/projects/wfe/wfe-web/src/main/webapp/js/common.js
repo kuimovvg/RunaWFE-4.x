@@ -1,11 +1,5 @@
 
 $(document).ready(function() {
-	$(document).ajaxError(function(e, xhr, settings, exception) {
-		$("#ajaxErrorsDiv").text("Ошибка Ajax запроса (" + settings.url + "): " + xhr.status + " (" + exception + ")");
-	});
-	$(document).ajaxSend(function(event, request, settings) {
-		$("#ajaxErrorsDiv").text("");
-	});
 	// http://jqueryui.com/tooltip/
 	$(document).tooltip();
 	// http://trentrichardson.com/examples/timepicker/

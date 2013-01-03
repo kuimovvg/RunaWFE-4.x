@@ -1,7 +1,6 @@
 package ru.runa.wfe.var.format;
 
 import javax.security.auth.Subject;
-import javax.servlet.jsp.PageContext;
 
 import ru.runa.wfe.commons.web.WebHelper;
 
@@ -15,6 +14,6 @@ public interface VariableDisplaySupport<T> {
     /**
      * Generates HTML for variable value display.
      */
-    public String getHtml(Subject subject, PageContext pageContext, WebHelper webHelper, Long processId, String name, T value);
+    public String getHtml(Subject subject, WebHelper webHelper, Long processId, String name, T value);
 
 }

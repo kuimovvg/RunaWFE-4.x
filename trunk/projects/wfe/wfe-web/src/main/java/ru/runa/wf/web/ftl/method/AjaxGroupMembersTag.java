@@ -53,7 +53,7 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
             substitutions.put("groupSelectorId", groupVarName);
             substitutions.put("userSelectorId", userVarName);
             StringBuffer html = new StringBuffer();
-            html.append(exportScript("scripts/AjaxGroupMembersTag.js", substitutions));
+            html.append(exportScript("scripts/AjaxGroupMembersTag.js", substitutions, true));
             html.append("<div style=\"border: solid 1px green; background-color: #ffeeff; padding: 5px;\">");
             html.append("Choose user from group&nbsp;&nbsp;&nbsp;");
             html.append("<select id=\"").append(groupVarName).append("\" name=\"").append(groupVarName).append("\">");

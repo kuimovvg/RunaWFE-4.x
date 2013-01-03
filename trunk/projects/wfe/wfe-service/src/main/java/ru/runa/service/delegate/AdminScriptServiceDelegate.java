@@ -17,8 +17,10 @@
  */
 package ru.runa.service.delegate;
 
+import javax.security.auth.Subject;
+
 import ru.runa.service.wf.AdminScriptService;
-import ru.runa.wfe.script.WfeScriptException;
+import ru.runa.wfe.script.AdminScriptException;
 import ru.runa.wfe.security.AuthenticationException;
 
 /**
@@ -35,8 +37,8 @@ public class AdminScriptServiceDelegate extends EJB3Delegate implements AdminScr
     }
 
     @Override
-    public void run(String login, String password, byte[] configData, byte[][] processFiles) throws WfeScriptException, AuthenticationException {
-        getWfeScriptService().run(login, password, configData, processFiles);
+    public void run(Subject subject, byte[] configData, byte[][] processFiles) throws AdminScriptException, AuthenticationException {
+        getWfeScriptService().run(subject, configData, processFiles);
     }
 
 }

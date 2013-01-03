@@ -48,7 +48,7 @@ public class wfeTask {
         description = task.getDescription();
         owner = task.getOwner();
         processId = task.getProcessId();
-        processDefinitionId = task.getProcessDefinitionId();
+        processDefinitionId = task.getDefinitionId();
     }
 
     /**

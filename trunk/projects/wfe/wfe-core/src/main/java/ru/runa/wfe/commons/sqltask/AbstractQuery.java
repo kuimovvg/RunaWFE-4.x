@@ -18,7 +18,8 @@
 package ru.runa.wfe.commons.sqltask;
 
 /**
- * Represents Queury in {@link ru.runa.commons.sqltask.DatabaseTask} Created on 01.04.2005 ;-)
+ * Represents Queury in {@link ru.runa.commons.sqltask.DatabaseTask} Created on
+ * 01.04.2005 ;-)
  * 
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
@@ -58,5 +59,10 @@ public abstract class AbstractQuery {
 
     public int getResultVariableCount() {
         return results.length;
+    }
+
+    @Override
+    public String toString() {
+        return sql;
     }
 }

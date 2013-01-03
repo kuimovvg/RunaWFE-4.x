@@ -20,7 +20,6 @@ package ru.runa.wf.web.ftl.method;
 import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.var.ISelectable;
 import freemarker.template.TemplateModelException;
 
 public class ViewListTag extends FreemarkerTag {
@@ -29,8 +28,8 @@ public class ViewListTag extends FreemarkerTag {
     @SuppressWarnings("unchecked")
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String optionsVarName = getParameterAs(String.class, 0);
-        List<Object> options = variableProvider.getValueNotNull(List.class, optionsVarName);
+        String listVarName = getParameterAs(String.class, 0);
+        List<Object> list = variableProvider.getValueNotNull(List.class, listVarName);
         String mode = getParameterAs(String.class, 1);
         if (mode == null) {
             mode = "ul";
@@ -39,13 +38,9 @@ public class ViewListTag extends FreemarkerTag {
         if ("ul".equals(mode) || "ol".equals(mode)) {
             html.append("<").append(mode).append(">");
         }
-        for (Object option : options) {
-            String value;
-            if (option instanceof ISelectable) {
-                value = ((ISelectable) option).getDisplayName();
-            } else {
-                value = option.toString();
-            }
+        for (int i = 0; i < list.size(); i++) {
+            Object object = list.get(i);
+            String value = ViewUtil.getVarOut(object, subject, webHelper, variableProvider.getProcessId(), listVarName, i, null);
             if ("ul".equals(mode) || "ol".equals(mode)) {
                 html.append("<li>").append(value);
             } else if ("raw".equals(mode)) {

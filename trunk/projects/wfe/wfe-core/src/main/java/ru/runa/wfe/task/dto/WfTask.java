@@ -39,8 +39,8 @@ public final class WfTask implements Serializable {
     private final String description;
     private final String swimlaneName;
     private final Executor owner;
-    private final Long processDefinitionId;
-    private final String processDefinitionName;
+    private final Long definitionId;
+    private final String definitionName;
     private final Long processId;
 
     private final Date creationDate;
@@ -56,8 +56,8 @@ public final class WfTask implements Serializable {
         description = task.getDescription();
         owner = task.getExecutor();
         this.processId = processId;
-        processDefinitionId = deployment.getId();
-        processDefinitionName = deployment.getName();
+        definitionId = deployment.getId();
+        definitionName = deployment.getName();
         swimlaneName = task.getSwimlane() != null ? task.getSwimlane().getName() : "";
         creationDate = task.getCreateDate();
         deadlineDate = task.getDeadlineDate();
@@ -91,12 +91,12 @@ public final class WfTask implements Serializable {
         return owner;
     }
 
-    public Long getProcessDefinitionId() {
-        return processDefinitionId;
+    public Long getDefinitionId() {
+        return definitionId;
     }
 
-    public String getProcessDefinitionName() {
-        return processDefinitionName;
+    public String getDefinitionName() {
+        return definitionName;
     }
 
     public Long getProcessId() {
@@ -125,7 +125,7 @@ public final class WfTask implements Serializable {
 
     @Override
     public String toString() {
-        return processDefinitionName + "(" + processDefinitionId + ", " + processId + ", " + id + "): " + name;
+        return definitionName + "(" + definitionId + ", " + processId + ", " + id + "): " + name;
     }
 
 }

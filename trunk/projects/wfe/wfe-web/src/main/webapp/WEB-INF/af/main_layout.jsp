@@ -30,6 +30,19 @@
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery.ui.timepicker.js" />">c=0;</script>
 	<script type="text/javascript" src="/wfe/js/i18n/jquery.ui.timepicker-<%= Commons.getLocale(pageContext).getLanguage() %>.js">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/common.js" />">c=0;</script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		  $(document).ajaxError(function(event, request, settings, exception) {
+		    $("#ajaxErrorsDiv").html("<bean:message key="ajax.request.error" />");
+		  });
+		  $(document).ajaxSend(function(event, request, settings) {
+		    $("#ajaxErrorsDiv").html("<img src=\"/wfe/images/loading.gif\" align=\"absmiddle\">&nbsp;&nbsp;&nbsp;<bean:message key="ajax.request.inprogress" />");
+		  });
+		  $(document).ajaxSuccess(function(event, request, settings) {
+		    $("#ajaxErrorsDiv").html("");
+		  });
+		});
+	</script>
 	<tiles:insert attribute="head" ignore="true"/>
   </head>
 <body>

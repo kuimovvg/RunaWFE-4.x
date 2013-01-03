@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.security.auth.Subject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -50,7 +51,7 @@ import com.google.common.io.Files;
  * Created on 12.12.2005
  * 
  */
-public class WfeScriptClient {
+public class AdminScriptClient {
     public static void main(String[] args) {
         if (args.length != 3) {
             System.out.println("Usage: AdminScriptRunner <scriptpath> <username> <password>");
@@ -64,14 +65,22 @@ public class WfeScriptClient {
         }
         try {
             byte[] scriptBytes = Files.toByteArray(file);
-            run(args[1], args[2], scriptBytes);
+            Subject subject = DelegateFactory.getAuthenticationService().authenticate(args[1], args[2]);
+            run(subject, scriptBytes, new Handler() {
+
+                @Override
+                public void onTransactionException(Exception e) {
+                    System.out.println(e.getMessage());
+                }
+
+            });
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.exit(-1);
         }
     }
 
-    private static void run(String login, String password, byte[] scriptBytes) throws Exception {
+    public static void run(Subject subject, byte[] scriptBytes, Handler handler) throws Exception {
         AdminScriptService delegate = DelegateFactory.getAdminScriptService();
         InputStream scriptInputStream = new ByteArrayInputStream(scriptBytes);
         Document allDocument = XMLHelper.getDocument(scriptInputStream, PATH_ENTITY_RESOLVER);
@@ -80,7 +89,7 @@ public class WfeScriptClient {
         String defaultTransactionScope = allDocument.getDocumentElement().getAttribute("defaultTransactionScope");
         if (transactionScopeNodeList.getLength() == 0 && "all".equals(defaultTransactionScope)) {
             byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(allDocument);
-            delegate.run(login, password, scriptBytes, processDefinitionsBytes);
+            delegate.run(subject, scriptBytes, processDefinitionsBytes);
         } else {
             if (transactionScopeNodeList.getLength() > 0) {
                 System.out.println("multiple docs [by <transactionScope>]: " + transactionScopeNodeList.getLength());
@@ -97,9 +106,11 @@ public class WfeScriptClient {
                     byte[] bs = writeDocument(document);
                     byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document);
                     try {
-                        delegate.run(login, password, bs, processDefinitionsBytes);
+                        handler.onStartTransaction(bs);
+                        delegate.run(subject, bs, processDefinitionsBytes);
+                        handler.onEndTransaction();
                     } catch (Exception e) {
-                        System.out.println(e.getMessage());
+                        handler.onTransactionException(e);
                     }
                 }
             } else {
@@ -113,9 +124,11 @@ public class WfeScriptClient {
                         byte[] bs = writeDocument(document);
                         byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document);
                         try {
-                            delegate.run(login, password, bs, processDefinitionsBytes);
+                            handler.onStartTransaction(bs);
+                            delegate.run(subject, bs, processDefinitionsBytes);
+                            handler.onEndTransaction();
                         } catch (Exception e) {
-                            System.out.println(e.getMessage());
+                            handler.onTransactionException(e);
                         }
                     }
                 }
@@ -177,4 +190,21 @@ public class WfeScriptClient {
         }
         return fileNames;
     }
+
+    public static class Handler {
+
+        public void onStartTransaction(byte[] script) {
+
+        }
+
+        public void onEndTransaction() {
+
+        }
+
+        public void onTransactionException(Exception e) {
+
+        }
+
+    }
+
 }
