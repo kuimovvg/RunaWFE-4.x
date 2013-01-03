@@ -8,11 +8,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import ru.runa.gpd.util.WorkspaceOperations;
 
 public class DeleteAction extends BaseActionDelegate {
-
+    @Override
     @SuppressWarnings("unchecked")
-	public void run(IAction action) {
+    public void run(IAction action) {
         IStructuredSelection selection = getStructuredSelection();
-        if (selection != null) {
+        if (isBotStructuredSelection(selection)) {
+            WorkspaceOperations.deleteBotResources(selection.toList());
+        } else {
             WorkspaceOperations.deleteResources(selection.toList());
         }
     }

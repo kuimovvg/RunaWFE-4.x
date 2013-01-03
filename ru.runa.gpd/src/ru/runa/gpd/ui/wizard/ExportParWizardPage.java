@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -210,6 +211,11 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
             }
             // TODO getContainer().run
             if (exportToFile) {
+                if (definition.isInvalid()
+                        && !MessageDialog.openConfirm(getShell(), Localization.getString("message.confirm.operation"),
+                                Localization.getString("ExportParWizardPage.confirm.export.invalid.process"))) {
+                    return false;
+                }
                 new ParExportOperation(resourcesToExport, new FileOutputStream(getDestinationValue())).run(null);
             } else {
                 new ParDeployOperation(resourcesToExport, definition.getName()).run(null);

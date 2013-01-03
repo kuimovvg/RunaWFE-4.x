@@ -1,0 +1,9 @@
+<config>
+  <input>
+    <param name="list" formatFilter="list" label.key="Param.List" />
+    <param name="index" formatFilter="long" label.key="Param.ListIndex" />
+  </input>
+  <output>
+    <param name="object" label.key="Param.Result" />
+  </output>
+</config>

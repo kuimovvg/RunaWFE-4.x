@@ -21,9 +21,8 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.util.ProjectFinder;
 
 public abstract class ImportWizardPage extends WizardPage {
-
-    private final IProject project;
-    private ListViewer projectViewer;
+    protected final IProject project;
+    protected ListViewer projectViewer;
 
     public ImportWizardPage(String pageName, IStructuredSelection selection) {
         super(pageName);
@@ -65,7 +64,6 @@ public abstract class ImportWizardPage extends WizardPage {
         gridData.heightHint = 100;
         projectViewer.getControl().setLayoutData(gridData);
         projectViewer.setLabelProvider(new LabelProvider() {
-
             @Override
             public String getText(Object element) {
                 return ((IProject) element).getName();
@@ -86,5 +84,4 @@ public abstract class ImportWizardPage extends WizardPage {
         }
         return project;
     }
-
 }

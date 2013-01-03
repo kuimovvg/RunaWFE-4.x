@@ -1,0 +1,8 @@
+<config>
+  <input>
+    <param name="map" formatFilter="map" label.key="Param.Map" />
+  </input>
+  <output>
+    <param name="list" formatFilter="list" label.key="Param.Result" />
+  </output>
+</config>
