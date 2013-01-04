@@ -196,7 +196,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
         } else {
             message.append(Localization.getString("Swimlane.NotUsed"));
         }
-        if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("ConfirmDelete"), message.toString())) {
+        if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), message.toString())) {
             ProcessDefinitionRemoveSwimlaneCommand command = new ProcessDefinitionRemoveSwimlaneCommand();
             command.setProcessDefinition(getDefinition());
             command.setSwimlane(swimlane);

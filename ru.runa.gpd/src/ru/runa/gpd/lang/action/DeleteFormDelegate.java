@@ -8,7 +8,7 @@ import ru.runa.gpd.lang.model.FormNode;
 public class DeleteFormDelegate extends BaseModelActionDelegate {
     @Override
     public void run(IAction action) {
-        if (confirm(Localization.getString("ConfirmDelete"), Localization.getString("Form.WillBeDeleted"))) {
+        if (confirm(Localization.getString("message.confirm.operation"), Localization.getString("Form.WillBeDeleted"))) {
             FormNode formNode = getSelection();
             formNode.setFormFileName(FormNode.EMPTY);
             formNode.setValidationFileName(FormNode.EMPTY);

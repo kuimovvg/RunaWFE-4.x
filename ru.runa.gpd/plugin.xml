@@ -184,7 +184,7 @@
   <extension
         name="Graph actions"
         point="org.eclipse.ui.popupMenus">
-    <objectContribution id="graph.element"
+    <objectContribution id="graph.deleteElement"
   		objectClass="ru.runa.gpd.lang.model.GraphElement">
     <filter
           name="language"
@@ -199,7 +199,7 @@
     </objectContribution>
      <objectContribution
            adaptable="false"
-           id="graph.transition"
+           id="graph.transitionHandlers"
            objectClass="ru.runa.gpd.lang.model.Transition">
         <filter
               name="language"
@@ -228,7 +228,7 @@
     </objectContribution>
     <objectContribution
            adaptable="false"
-           id="graph.stateNode1"
+           id="graph.stateHandlers"
            objectClass="ru.runa.gpd.lang.model.State">
         <filter
               name="language"
@@ -244,7 +244,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.taskStateNode1"
+          id="graph.escalation"
           objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
              name="language"
@@ -259,7 +259,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.taskStateNode3"
+          id="graph.botTask"
           objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
              name="bindSwimlaneExists"
@@ -275,7 +275,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.Synchronizable"
+          id="graph.async"
           objectClass="ru.runa.gpd.lang.model.Synchronizable">
        <action
              class="ru.runa.gpd.lang.action.AsyncFeatureDelegate"
@@ -286,7 +286,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.stateNode"
+          id="graph.compactView"
           objectClass="ru.runa.gpd.lang.model.State">
        <action
              class="ru.runa.gpd.lang.action.CompactViewFeatureDelegate"
@@ -297,7 +297,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.swimlanedNode"
+          id="graph.swimlane"
           objectClass="ru.runa.gpd.lang.model.SwimlanedNode">
        <filter
              name="disableSwimlaneSelection"
@@ -332,11 +332,11 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.formNode1"
+          id="graph.formdata"
           objectClass="ru.runa.gpd.lang.model.FormNode">
        <menu
              id="form"
-             label="%label.action.form"
+             label="%label.action.formdata"
              path="additions">
           <separator
                 name="sp1">
@@ -361,7 +361,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.formNode2"
+          id="graph.formNotExist"
           objectClass="ru.runa.gpd.lang.model.FormNode">
        <filter
              name="formExists"
@@ -376,7 +376,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.formNode3"
+          id="graph.formExist"
           objectClass="ru.runa.gpd.lang.model.FormNode">
        <filter
              name="formExists"
@@ -455,7 +455,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="subprocessNode"
+          id="graph.subprocess"
           objectClass="ru.runa.gpd.lang.model.Subprocess">
        <action
              class="ru.runa.gpd.lang.action.SubprocessDelegate"
@@ -465,7 +465,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.slimNode"
+          id="graph.rotateForkJoin"
           objectClass="ru.runa.gpd.lang.model.Node">
        <visibility>
           <and>
@@ -486,7 +486,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="sendMessageNode"
+          id="graph.sendMessage"
           objectClass="ru.runa.gpd.lang.model.SendMessageNode">
        <action
              class="ru.runa.gpd.lang.action.SendMessageConfAction"
@@ -497,7 +497,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="receiveMessageNode"
+          id="graph.receiveMessage"
           objectClass="ru.runa.gpd.lang.model.ReceiveMessageNode">
        <action
              class="ru.runa.gpd.lang.action.ReceiveMessageConfAction"
@@ -508,7 +508,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="timed"
+          id="graph.timed"
           objectClass="ru.runa.gpd.lang.model.ITimed">
        <filter
              name="language"

@@ -36,11 +36,9 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableMapping;
 
 public class SubprocessDialog extends Dialog {
-
     private String subprocessName;
     private final ProcessDefinition definition;
     private final List<VariableMapping> subprocessVariables;
-
     private TableViewer tableViewer;
 
     public SubprocessDialog(Subprocess subprocess) {
@@ -55,7 +53,6 @@ public class SubprocessDialog extends Dialog {
         Composite area = (Composite) super.createDialogArea(parent);
         GridLayout layout = new GridLayout(1, false);
         area.setLayout(layout);
-
         Label label = new Label(area, SWT.NO_BACKGROUND);
         label.setLayoutData(new GridData());
         label.setText(Localization.getString("Subprocess.Name"));
@@ -75,6 +72,7 @@ public class SubprocessDialog extends Dialog {
             }
         });
         namesCombo.addModifyListener(new ModifyListener() {
+            @Override
             public void modifyText(ModifyEvent e) {
                 subprocessName = namesCombo.getText();
             }
@@ -84,7 +82,6 @@ public class SubprocessDialog extends Dialog {
         label1.setText(Localization.getString("Subprocess.VariablesList"));
         createTableViewer(area);
         addButtons(area);
-
         return area;
     }
 
@@ -96,8 +93,8 @@ public class SubprocessDialog extends Dialog {
         final Table table = tableViewer.getTable();
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
-        String[] columnNames = new String[] { Localization.getString("Subprocess.ProcessVariableName"),
-                Localization.getString("Subprocess.SubprocessVariableName"), Localization.getString("Subprocess.Usage") };
+        String[] columnNames = new String[] { Localization.getString("Subprocess.ProcessVariableName"), Localization.getString("Subprocess.SubprocessVariableName"),
+                Localization.getString("Subprocess.Usage") };
         int[] columnWidths = new int[] { 200, 200, 120 };
         int[] columnAlignments = new int[] { SWT.LEFT, SWT.LEFT, SWT.LEFT };
         for (int i = 0; i < columnNames.length; i++) {
@@ -105,7 +102,6 @@ public class SubprocessDialog extends Dialog {
             tableColumn.setText(columnNames[i]);
             tableColumn.setWidth(columnWidths[i]);
         }
-
         tableViewer.setLabelProvider(new VariableMappingTableLabelProvider());
         tableViewer.setContentProvider(new ArrayContentProvider());
         setTableInput();
@@ -113,12 +109,10 @@ public class SubprocessDialog extends Dialog {
 
     private void addButtons(Composite parent) {
         final Composite par = parent;
-
         Composite composite = new Composite(par, SWT.NONE);
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 4;
         composite.setLayout(gridLayout);
-
         Button addButton = new Button(composite, SWT.BUTTON1);
         addButton.setText(Localization.getString("button.add"));
         addButton.addSelectionListener(new SelectionAdapter() {
@@ -127,7 +121,6 @@ public class SubprocessDialog extends Dialog {
                 editVariableMapping(null);
             }
         });
-
         Button updateButton = new Button(composite, SWT.BUTTON1);
         updateButton.setText(Localization.getString("button.edit"));
         updateButton.addSelectionListener(new SelectionAdapter() {
@@ -140,7 +133,6 @@ public class SubprocessDialog extends Dialog {
                 }
             }
         });
-
         Button removeButton = new Button(composite, SWT.BUTTON1);
         final Composite comp = composite;
         removeButton.setText(Localization.getString("button.delete"));
@@ -150,10 +142,7 @@ public class SubprocessDialog extends Dialog {
                 IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
                 if (!selection.isEmpty()) {
                     VariableMapping mapping = (VariableMapping) selection.getFirstElement();
-                    if (MessageDialog.openQuestion(
-                    		comp.getShell(), 
-                    		Localization.getString("Mapping.Remove.title"), 
-                    		Localization.getString("Mapping.Remove.message"))) {
+                    if (MessageDialog.openQuestion(comp.getShell(), Localization.getString("message.confirm.operation"), Localization.getString("confirm.delete"))) {
                         subprocessVariables.remove(mapping);
                         tableViewer.refresh();
                         setTableInput();
@@ -161,21 +150,16 @@ public class SubprocessDialog extends Dialog {
                 }
             }
         });
-
     }
-    
+
     private void editVariableMapping(VariableMapping oldMapping) {
-        SubprocessVariableDialog dialog = new SubprocessVariableDialog(
-                getProcessVariablesNames(definition.getName()), 
-                getProcessVariablesNames(getSubprocessName()), 
-                oldMapping);
+        SubprocessVariableDialog dialog = new SubprocessVariableDialog(getProcessVariablesNames(definition.getName()), getProcessVariablesNames(getSubprocessName()), oldMapping);
         if (dialog.open() != IDialogConstants.CANCEL_ID) {
             VariableMapping mapping = new VariableMapping();
             mapping.setProcessVariable(dialog.getProcessVariable());
             mapping.setSubprocessVariable(dialog.getSubprocessVariable());
             String usage = dialog.getAccess();
-            if (isArrayVariable(definition.getName(), mapping.getProcessVariable())
-                    && !isArrayVariable(getSubprocessName(), mapping.getSubprocessVariable())) {
+            if (isArrayVariable(definition.getName(), mapping.getProcessVariable()) && !isArrayVariable(getSubprocessName(), mapping.getSubprocessVariable())) {
                 usage += "," + VariableMapping.USAGE_MULTIINSTANCE_LINK;
             }
             mapping.setUsage(usage);
@@ -200,7 +184,7 @@ public class SubprocessDialog extends Dialog {
     }
 
     private static class VariableMappingTableLabelProvider extends LabelProvider implements ITableLabelProvider {
-
+        @Override
         public String getColumnText(Object element, int index) {
             VariableMapping mapping = (VariableMapping) element;
             switch (index) {
@@ -215,10 +199,10 @@ public class SubprocessDialog extends Dialog {
             }
         }
 
+        @Override
         public Image getColumnImage(Object element, int columnIndex) {
             return null;
         }
-
     }
 
     private String[] getNameProcessDefinitions() {
@@ -248,5 +232,4 @@ public class SubprocessDialog extends Dialog {
     public String getSubprocessName() {
         return subprocessName;
     }
-
 }
