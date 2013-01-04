@@ -28,11 +28,14 @@ import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
+
+import com.google.common.base.Objects;
 
 public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements IMenuCreator {
     private Swimlane selectedSwimlane;
-    private ProcessDefinition currentDefinition;
-    private SwimlanedNode currentNode;
+    private ProcessDefinition definition;
+    private SwimlanedNode node;
 
     @Override
     public void dispose() {
@@ -78,9 +81,9 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
         if (action.isEnabled()) {
-            currentNode = getSelection();
-            selectedSwimlane = currentNode.getSwimlane();
-            currentDefinition = currentNode.getProcessDefinition();
+            node = getSelection();
+            selectedSwimlane = node.getSwimlane();
+            definition = node.getProcessDefinition();
             action.setMenuCreator(this);
         }
     }
@@ -92,13 +95,14 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
      *            The menu to fill
      */
     protected void fillMenu(Menu menu) {
-        List<Swimlane> swimlanes = currentDefinition.getSwimlanes();
+        List<Swimlane> swimlanes = definition.getSwimlanes();
         for (Swimlane swimlane : swimlanes) {
             Action action = new SetSwimlaneAction();
             action.setText(swimlane.getName());
-            if ((selectedSwimlane != null) && (selectedSwimlane.equals(swimlane))) {
+            if (Objects.equal(selectedSwimlane, swimlane)) {
                 action.setChecked(true);
             }
+            action.setEnabled(definition.getSwimlaneDisplayMode() == SwimlaneDisplayMode.none);
             ActionContributionItem item = new ActionContributionItem(action);
             item.fill(menu, -1);
         }
@@ -108,24 +112,24 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
         action = new GotoSwimlaneAction();
         item = new ActionContributionItem(action);
         item.fill(menu, -1);
-        if (currentNode instanceof StartState && selectedSwimlane == null) {
+        if (node instanceof StartState && selectedSwimlane == null && definition.getSwimlaneDisplayMode() == SwimlaneDisplayMode.none) {
             action = new CreateSwimlaneAction();
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
         }
-        if (currentNode instanceof State && selectedSwimlane != null) {
+        if (node instanceof State && selectedSwimlane != null) {
             action = new EnableReassignmentAction();
-            action.setChecked(((State) currentNode).isReassignmentEnabled());
+            action.setChecked(((State) node).isReassignmentEnabled());
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
         }
-        if (currentNode instanceof TaskState) {
+        if (node instanceof TaskState) {
             action = new IgnoreSubstitutionAction();
-            action.setChecked(((TaskState) currentNode).isIgnoreSubstitution());
+            action.setChecked(((TaskState) node).isIgnoreSubstitution());
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
         }
-        if (selectedSwimlane != null) {
+        if (selectedSwimlane != null && definition.getSwimlaneDisplayMode() == SwimlaneDisplayMode.none) {
             action = new ClearSwimlaneAction();
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
@@ -133,30 +137,30 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
     }
 
     private void createSwimlane() {
-        UpdateSwimlaneNameDialog newSwimlaneDialog = new UpdateSwimlaneNameDialog(currentDefinition, true);
+        UpdateSwimlaneNameDialog newSwimlaneDialog = new UpdateSwimlaneNameDialog(definition, true);
         if (newSwimlaneDialog.open() == IDialogConstants.OK_ID) {
             String swimlaneName = newSwimlaneDialog.getName();
-            Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(currentDefinition);
+            Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(definition);
             newSwimlane.setName(swimlaneName);
-            currentDefinition.addSwimlane(newSwimlane);
+            definition.addSwimlane(newSwimlane);
             setSwimlane(swimlaneName);
         }
     }
 
     private void setSwimlane(String swimlaneName) {
         if (swimlaneName != null) {
-            Swimlane swimlane = currentDefinition.getSwimlaneByName(swimlaneName);
-            currentNode.setSwimlane(swimlane);
+            Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
+            node.setSwimlane(swimlane);
         } else {
-            currentNode.setSwimlane(null);
+            node.setSwimlane(null);
         }
     }
 
     private void editSwimlane() {
         ProcessEditorBase editor = getActiveDesignerEditor();
         editor.openPage(1);
-        if (currentNode.getSwimlane() != null) {
-            editor.select(currentNode.getSwimlane());
+        if (node.getSwimlane() != null) {
+            editor.select(node.getSwimlane());
         }
     }
 
@@ -207,7 +211,7 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
 
         @Override
         public void run() {
-            EnableReassignmentCommand command = new EnableReassignmentCommand((State) currentNode);
+            EnableReassignmentCommand command = new EnableReassignmentCommand((State) node);
             executeCommand(command);
         }
     }
@@ -219,7 +223,7 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
 
         @Override
         public void run() {
-            IgnoreSubstitutionCommand command = new IgnoreSubstitutionCommand((TaskState) currentNode);
+            IgnoreSubstitutionCommand command = new IgnoreSubstitutionCommand((TaskState) node);
             executeCommand(command);
         }
     }

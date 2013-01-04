@@ -3,6 +3,7 @@ package ru.runa.gpd.formeditor.ftl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ public class MethodTag {
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 40;
     private final Bundle bundle;
+    private final boolean enabled;
     private final String imagePath;
     public final String id;
     public final String name;
@@ -26,8 +28,9 @@ public class MethodTag {
     public final int height;
     public final List<Param> params = new ArrayList<Param>();
 
-    private MethodTag(Bundle bundle, String tagName, String label, int width, int height, String imagePath) {
+    private MethodTag(Bundle bundle, boolean enabled, String tagName, String label, int width, int height, String imagePath) {
         this.bundle = bundle;
+        this.enabled = enabled;
         this.id = tagName;
         this.name = label;
         this.width = width;
@@ -94,7 +97,7 @@ public class MethodTag {
         }
     }
 
-    public static class MethodTagComparator implements Comparator<MethodTag> {
+    private static class MethodTagComparator implements Comparator<MethodTag> {
         @Override
         public int compare(MethodTag t1, MethodTag t2) {
             return t1.name.compareTo(t2.name);
@@ -121,6 +124,17 @@ public class MethodTag {
         return ftlMethods;
     }
 
+    public static List<MethodTag> getEnabled() {
+        List<MethodTag> tags = new ArrayList<MethodTag>();
+        for (MethodTag tag : getAll().values()) {
+            if (tag.enabled) {
+                tags.add(tag);
+            }
+        }
+        Collections.sort(tags, new MethodTagComparator());
+        return tags;
+    }
+
     private static void loadInternal() {
         try {
             ftlMethods = new HashMap<String, MethodTag>();
@@ -134,7 +148,8 @@ public class MethodTag {
                     String image = tagElement.getAttribute("image");
                     int width = getIntAttr(tagElement, "width", DEFAULT_WIDTH);
                     int height = getIntAttr(tagElement, "height", DEFAULT_HEIGHT);
-                    MethodTag tag = new MethodTag(bundle, id, name, width, height, image);
+                    boolean enabled = getBooleanAttr(tagElement, "enabled", false);
+                    MethodTag tag = new MethodTag(bundle, enabled, id, name, width, height, image);
                     IConfigurationElement[] paramElements = tagElement.getChildren();
                     for (IConfigurationElement paramElement : paramElements) {
                         String paramName = paramElement.getAttribute("name");
@@ -167,5 +182,13 @@ public class MethodTag {
             return defaultValue;
         }
         return Integer.parseInt(attr);
+    }
+
+    private static boolean getBooleanAttr(IConfigurationElement element, String attrName, boolean defaultValue) {
+        String attr = element.getAttribute(attrName);
+        if (attr == null) {
+            return defaultValue;
+        }
+        return Boolean.parseBoolean(attr);
     }
 }

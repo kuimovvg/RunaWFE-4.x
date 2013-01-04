@@ -78,7 +78,7 @@
    <extension
          point="ru.runa.gpd.form.ftl.tags">
       <tag
-            enabled="true"
+            enabled="false"
             height="40"
             id="ChooseActor"
             image="metadata/icons/ChooseActor.png"
@@ -105,7 +105,7 @@
          </param>
       </tag>
       <tag
-            enabled="true"
+            enabled="false"
             id="ChooseGroup"
             name="%Method.ChooseGroup">
          <param
@@ -145,6 +145,23 @@
                values="date"
                variableAccess="WRITE">
          </param>
+         <param
+               name="%Param.DisplayFormat"
+               type="combo"
+               variableAccess="NONE">
+            <paramValue
+                  name="%Format.Date.AsDate"
+                  value="date">
+            </paramValue>
+            <paramValue
+                  name="%Format.Date.AsDatetime"
+                  value="datetime">
+            </paramValue>
+            <paramValue
+                  name="%Format.Date.AsTime"
+                  value="time">
+            </paramValue>
+         </param>
       </tag>
       <tag
             enabled="true"
@@ -156,6 +173,7 @@
          <param
                name="%Param.Variable"
                type="combo"
+               values="any"
                variableAccess="WRITE">
          </param>
       </tag>
@@ -234,7 +252,7 @@
          </param>
       </tag>
       <tag
-            enabled="false"
+            enabled="true"
             height="40"
             id="ViewFile"
             image="metadata/icons/VariableValueDisplay.png"
@@ -361,7 +379,7 @@
          </param>
       </tag>
       <tag
-            enabled="true"
+            enabled="false"
             id="ViewList"
             name="%Method.ViewList">
          <param
@@ -389,7 +407,7 @@
          </param>
       </tag>
       <tag
-            enabled="true"
+            enabled="false"
             id="EditStringList"
             name="%Method.EditStringList">
          <param
@@ -411,6 +429,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             id="DisplayLinkedMapsInTable"
             name="%Method.DisplayLinkedMapsInTable">
          <param
@@ -421,7 +440,7 @@
          </param>
       </tag>
       <tag
-            enabled="true"
+            enabled="false"
             id="DisplayFormattedText"
             name="%Method.DisplayFormattedText">
          <param
@@ -483,6 +502,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             id="DisplayListElement"
             name="%Method.DisplayListElement">
          <param
@@ -499,6 +519,7 @@
          </param>
       </tag>
       <tag
+            enabled="true"
             id="DisplayMapElement"
             name="%Method.DisplayMapElement">
          <param

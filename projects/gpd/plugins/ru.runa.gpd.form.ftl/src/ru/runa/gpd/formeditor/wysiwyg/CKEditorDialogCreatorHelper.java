@@ -2,14 +2,12 @@ package ru.runa.gpd.formeditor.wysiwyg;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ru.runa.gpd.formeditor.ftl.FormatTag;
 import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
 import ru.runa.gpd.formeditor.ftl.FreemarkerUtil.TagParser;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
-import ru.runa.gpd.formeditor.ftl.MethodTag.MethodTagComparator;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
 import ru.runa.gpd.formeditor.vartag.VarTagInfo;
@@ -148,8 +146,7 @@ public class CKEditorDialogCreatorHelper {
     public static String createFtlMethodDialog() throws IOException {
         StringBuilder result = new StringBuilder();
         result.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ckeditor.ftl.method.dialog.start")));
-        List<MethodTag> tagsList = new ArrayList<MethodTag>(MethodTag.getAll().values());
-        Collections.sort(tagsList, new MethodTagComparator());
+        List<MethodTag> tagsList = MethodTag.getEnabled();
         {
             CKSelectElement selectElement = new CKSelectElement();
             selectElement.setId("ELEMENT_TAG_TYPE").setLabel("editor.lang.FreemarkerTags.MethodTitle").setDefaultValue(tagsList.isEmpty() ? null : "'" + tagsList.get(0).id + "'");
