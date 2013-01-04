@@ -1,30 +1,53 @@
 package ru.runa.wf.web.ftl.method;
 
-import java.util.Date;
+import java.util.List;
 
 import javax.security.auth.Subject;
 
-import ru.runa.wfe.commons.CalendarUtil;
-import ru.runa.wfe.commons.web.WebHelper;
-import ru.runa.wfe.var.FileVariable;
-import ru.runa.wfe.var.ISelectable;
-import ru.runa.wfe.var.format.FileFormat;
+import ru.runa.service.af.ExecutorService;
+import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.ActorFormat;
+import ru.runa.wfe.var.format.ExecutorFormat;
+import ru.runa.wfe.var.format.GroupFormat;
+
+import com.google.common.base.Objects;
 
 public class ViewUtil {
 
-    public static String getVarOut(Object object, Subject subject, WebHelper webHelper, Long instanceId, String name, int listIndex, Object mapKey) {
-        String value;
-        if (object instanceof ISelectable) {
-            value = ((ISelectable) object).getDisplayName();
-        } else if (object instanceof Date) {
-            value = CalendarUtil.formatDate((Date) object);
-        } else if (object instanceof FileVariable) {
-            value = FileFormat.getHtml((FileVariable) object, subject, webHelper, instanceId, name, listIndex, mapKey);
-        } else if (object == null) {
-            value = "";
+    public static String createExecutorSelect(Subject subject, WfVariable variable) {
+        ExecutorService executorService = DelegateFactory.getExecutorService();
+        BatchPresentation batchPresentation;
+        if (ActorFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
+            batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
+        } else if (ExecutorFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
+        } else if (GroupFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
+            batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
         } else {
-            value = String.valueOf(object);
+            throw new InternalApplicationException("Unexpected format " + variable.getDefinition().getFormatClassName());
         }
-        return value;
+        int[] sortIds = { 1 };
+        boolean[] sortOrder = { true };
+        batchPresentation.setFieldsToSort(sortIds, sortOrder);
+        List<Executor> executors = executorService.getAll(subject, batchPresentation);
+
+        String html = "<select name=\"" + variable.getDefinition().getName() + "\">";
+        for (Executor executor : executors) {
+            html += "<option value=\"ID" + executor.getId() + "\"";
+            if (Objects.equal(executor, variable.getValue())) {
+                html += " selected";
+            }
+            String value = executor instanceof Actor ? executor.getFullName() : executor.getName();
+            html += ">" + value + "</option>";
+        }
+        html += "</select>";
+        return html;
     }
+
 }

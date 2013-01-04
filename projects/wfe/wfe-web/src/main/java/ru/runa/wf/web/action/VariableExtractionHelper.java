@@ -76,7 +76,7 @@ class VariableExtractionHelper {
             Map<String, Object> variablesMap = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
                 Object value = hashtable.get(variableDefinition.getName());
-                VariableFormat<?> format = FormatCommons.create(variableDefinition.getFormat());
+                VariableFormat<?> format = FormatCommons.create(variableDefinition);
                 // in case from contains not optional check box with boolean
                 // format we must add boolean value as variable manually since
                 // HTTP FORM doesn't pass unchecked variables.

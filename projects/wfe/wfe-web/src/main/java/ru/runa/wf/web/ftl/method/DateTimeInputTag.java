@@ -27,6 +27,13 @@ import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
 import freemarker.template.TemplateModelException;
 
+/**
+ * @deprecated code moved to {@link InputVariableTag}.
+ * 
+ * @author dofs
+ * @since 4.0
+ */
+@Deprecated
 public class DateTimeInputTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(DateTimeInputTag.class);
@@ -61,7 +68,7 @@ public class DateTimeInputTag extends FreemarkerTag {
             html += "/>";
         }
         if (html.length() == 0) {
-            log.warn("No HTML built (" + variableName + ") for format " + variable.getDefinition().getFormat());
+            log.warn("No HTML built (" + variableName + ") for format " + variable.getDefinition().getFormatClassName());
         }
         return html;
     }

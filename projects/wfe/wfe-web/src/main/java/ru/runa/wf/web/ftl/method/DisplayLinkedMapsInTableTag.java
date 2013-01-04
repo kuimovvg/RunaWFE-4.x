@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.var.format.FormatCommons;
 import freemarker.template.TemplateModelException;
 
 public class DisplayLinkedMapsInTableTag extends FreemarkerTag {
@@ -31,7 +32,7 @@ public class DisplayLinkedMapsInTableTag extends FreemarkerTag {
                 for (i = 0; i < maps.size(); i++) {
                     String headerVariableName = getParameterAs(String.class, i) + "_header";
                     Object o = variableProvider.getValue(headerVariableName);
-                    String value = ViewUtil.getVarOut(o, subject, webHelper, variableProvider.getProcessId(), headerVariableName, 0, null);
+                    String value = FormatCommons.getVarOut(o, subject, webHelper, variableProvider.getProcessId(), headerVariableName, 0, null);
                     buffer.append("<td>").append(value).append("</td>");
                 }
                 buffer.append("</tr>");
@@ -40,8 +41,8 @@ public class DisplayLinkedMapsInTableTag extends FreemarkerTag {
                     for (i = 0; i < maps.size(); i++) {
                         Map<?, ?> map = maps.get(i);
                         Object o = map.get(entry.getKey());
-                        String value = ViewUtil.getVarOut(o, subject, webHelper, variableProvider.getProcessId(), getParameterAs(String.class, i), 0,
-                                entry.getKey());
+                        String value = FormatCommons.getVarOut(o, subject, webHelper, variableProvider.getProcessId(),
+                                getParameterAs(String.class, i), 0, entry.getKey());
                         buffer.append("<td>").append(value).append("</td>");
                     }
                     buffer.append("</tr>");

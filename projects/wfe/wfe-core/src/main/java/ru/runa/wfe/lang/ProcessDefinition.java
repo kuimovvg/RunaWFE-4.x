@@ -24,7 +24,6 @@ package ru.runa.wfe.lang;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -185,12 +184,13 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
         for (VariableDefinition variableDefinition : variables) {
             if (variableDefinition.getDefaultValue() != null) {
                 try {
-                    VariableFormat variableFormat = FormatCommons.create(variableDefinition.getFormat());
+                    VariableFormat variableFormat = FormatCommons.create(variableDefinition);
                     Object value = variableFormat.parse(new String[] { variableDefinition.getDefaultValue() });
                     result.put(variableDefinition.getName(), value);
                 } catch (Exception e) {
-                    log.warn("Unable to get default value '" + variableDefinition.getDefaultValue() + "' of type " + variableDefinition.getFormat()
-                            + " to " + variableDefinition.getName(), e);
+                    log.warn(
+                            "Unable to get default value '" + variableDefinition.getDefaultValue() + "' of type "
+                                    + variableDefinition.getFormatClassName() + " to " + variableDefinition.getName(), e);
                 }
             }
         }
@@ -228,25 +228,25 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
         throw new InternalApplicationException("node '" + id + "' not found");
     }
 
-    /**
-     * Unused
-     * 
-     * @param id
-     * @return
-     */
-    public Action getActionNotNull(String id) {
+    public GraphElement getGraphElement(String id) {
         for (Node node : nodes) {
-            if (id.startsWith(node.getNodeId() + "/")) {
-                for (Entry<String, Event> entry : node.getEvents().entrySet()) {
-                    for (Action action : entry.getValue().getActions()) {
-                        if (id.equals(action.getName())) {
-                            return action;
-                        }
-                    }
-                }
+            if (id.equals(node.getNodeId())) {
+                return node;
+            }
+            Action action = node.getAction(id);
+            if (action != null) {
+                return action;
             }
         }
-        throw new InternalApplicationException("action '" + id + "' not found");
+        return null;
+    }
+
+    public GraphElement getGraphElementNotNull(String id) {
+        GraphElement graphElement = getGraphElement(id);
+        if (graphElement == null) {
+            throw new InternalApplicationException("element '" + id + "' not found");
+        }
+        return graphElement;
     }
 
     @Override
@@ -302,7 +302,7 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 
 }

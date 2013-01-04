@@ -14,7 +14,7 @@ public class DisplayVariableTag extends FreemarkerTag {
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariable(variableName);
-        VariableFormat<Object> format = FormatCommons.create(variable.getDefinition().getFormat());
+        VariableFormat<Object> format = FormatCommons.create(variable);
         if (format instanceof VariableDisplaySupport) {
             if (webHelper == null || variableProvider.getProcessId() == null) {
                 return "";

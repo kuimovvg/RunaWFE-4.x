@@ -8,11 +8,12 @@ import org.dom4j.Element;
 import org.dom4j.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.ApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
-import ru.runa.wfe.execution.Swimlane;
+import ru.runa.wfe.definition.logic.SwimlaneUtils;
 import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
 import ru.runa.wfe.lang.Action;
@@ -37,6 +38,8 @@ import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.lang.VariableContainerNode;
 import ru.runa.wfe.lang.WaitState;
+import ru.runa.wfe.lang.bpmn2.ExclusiveDecision;
+import ru.runa.wfe.lang.bpmn2.ExclusiveMerge;
 import ru.runa.wfe.lang.bpmn2.Join;
 import ru.runa.wfe.var.VariableMapping;
 
@@ -75,7 +78,7 @@ public class BpmnXmlReader {
     private static final String TARGET_REF = "targetRef";
     private static final String SUBPROCESS = "subProcess";
     private static final String MULTI_SUBPROCESS = "multiProcess";
-    private static final String DECISION = "exclusiveGateway";
+    private static final String EXCLUSIVE_GATEWAY = "exclusiveGateway";
     private static final String PARALLEL_GATEWAY = "parallelGateway";
     private static final String DEFAULT_TASK_TIMOUT = "default-task-timeout";
     private static final String REPEAT = "repeat";//
@@ -118,7 +121,6 @@ public class BpmnXmlReader {
         nodeTypes.put(END_TOKEN_STATE, EndTokenNode.class);
         nodeTypes.put(END_STATE, EndNode.class);
         nodeTypes.put(INTERMEDIATE_EVENT, WaitState.class);
-        nodeTypes.put(DECISION, Decision.class);
         nodeTypes.put(SUBPROCESS, SubProcessState.class);
         nodeTypes.put(MULTI_SUBPROCESS, MultiProcessState.class);
         nodeTypes.put(SEND_MESSAGE, SendMessage.class);
@@ -145,7 +147,7 @@ public class BpmnXmlReader {
             if (swimlaneDisplayModeName != null) {
                 // definition.setSwimlaneDisplayMode(SwimlaneDisplayMode.valueOf(swimlaneDisplayModeName));
             }
-            if (!"true".equals(process.attributeValue(EXECUTABLE))) {
+            if ("false".equals(process.attributeValue(EXECUTABLE))) {
                 throw new InvalidDefinitionException("invalid process definition " + processDefinition.getName());
             }
 
@@ -165,7 +167,6 @@ public class BpmnXmlReader {
     }
 
     private void readSwimlanes(ProcessDefinition processDefinition, Element processElement) {
-        Map<Swimlane, List<String>> swimlaneElementIds = Maps.newHashMap();
         Element swimlaneSetElement = processElement.element(SWIMLANE_SET);
         if (swimlaneSetElement != null) {
             List<Element> swimlanes = swimlaneSetElement.elements(SWIMLANE);
@@ -177,12 +178,14 @@ public class BpmnXmlReader {
                 SwimlaneDefinition swimlaneDefinition = new SwimlaneDefinition();
                 swimlaneDefinition.setName(swimlaneName);
                 swimlaneDefinition.setDelegation(readDelegation(swimlaneElement));
+                SwimlaneUtils.setOrgFunctionLabel(swimlaneDefinition, localizationDAO);
                 List<Element> flowNodeRefElements = swimlaneElement.elements(FLOW_NODE_REF);
                 List<String> flowNodeIds = Lists.newArrayList();
                 for (Element flowNodeRefElement : flowNodeRefElements) {
                     flowNodeIds.add(flowNodeRefElement.getTextTrim());
                 }
                 swimlaneDefinition.setFlowNodeIds(flowNodeIds);
+                processDefinition.addSwimlane(swimlaneDefinition);
             }
         }
     }
@@ -202,6 +205,14 @@ public class BpmnXmlReader {
                         node = ApplicationContextFactory.createAutowiredBean(Join.class);
                     } else {
                         node = ApplicationContextFactory.createAutowiredBean(Fork.class);
+                    }
+                } else if (EXCLUSIVE_GATEWAY.equals(nodeName)) {
+                    String nodeId = element.attributeValue(ID);
+                    int outgoingTransitionsCount = getOutgoingTransitionsCount(parentElement, nodeId);
+                    if (outgoingTransitionsCount > 1) {
+                        node = ApplicationContextFactory.createAutowiredBean(ExclusiveDecision.class);
+                    } else {
+                        node = ApplicationContextFactory.createAutowiredBean(ExclusiveMerge.class);
                     }
                 }
                 if (node != null) {
@@ -256,8 +267,8 @@ public class BpmnXmlReader {
     private void readTimer(ProcessDefinition processDefinition, Element eventElement, GraphElement node) throws Exception {
         Element timerElement = eventElement.element(TIMER_EVENT);
         CreateTimerAction createTimerAction = ApplicationContextFactory.createAutowiredBean(CreateTimerAction.class);
-        createTimerAction.setNodeId(timerElement.attributeValue(ID));
-        createTimerAction.setName(timerElement.attributeValue(NAME));
+        createTimerAction.setNodeId(eventElement.attributeValue(ID));
+        createTimerAction.setName(eventElement.attributeValue(NAME));
         // if (TIMER_DURATION.equals(childNode.getName())) {
         // ((Timer) element).setDelay(new Delay(childNode.getTextTrim()));
         // }
@@ -341,11 +352,19 @@ public class BpmnXmlReader {
             }
             Transition transition = new Transition();
             transition.setNodeId(id);
-            transition.setName(name);
-            Node source = processDefinition.getNodeNotNull(from);
+            GraphElement sourceElement = processDefinition.getGraphElementNotNull(from);
+            Node source;
+            if (sourceElement instanceof Node) {
+                source = (Node) sourceElement;
+            } else if (sourceElement instanceof Action) {
+                source = (Node) ((Action) sourceElement).getParent();
+            } else {
+                throw new ApplicationException("Unexpected source element " + sourceElement);
+            }
             transition.setFrom(source);
             Node target = processDefinition.getNodeNotNull(to);
             transition.setTo(target);
+            transition.setName(name);
             transition.setDescription(element.elementTextTrim(DOCUMENTATION));
             transition.setProcessDefinition(processDefinition);
             // add the transition to the node

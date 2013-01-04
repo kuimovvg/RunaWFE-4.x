@@ -23,13 +23,16 @@ package ru.runa.wfe.lang;
 
 import java.util.List;
 
+import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.format.ExecutorFormat;
+
 /**
  * is a process role (aka participant).
  */
 public class SwimlaneDefinition extends GraphElement {
     private static final long serialVersionUID = 1L;
     private Delegation delegation;
-    private String displayOrgFunction;
+    private String orgFunctionLabel;
     private List<String> flowNodeIds;
 
     @Override
@@ -45,12 +48,12 @@ public class SwimlaneDefinition extends GraphElement {
         this.delegation = delegation;
     }
 
-    public String getDisplayOrgFunction() {
-        return displayOrgFunction;
+    public String getOrgFunctionLabel() {
+        return orgFunctionLabel;
     }
 
-    public void setDisplayOrgFunction(String displayOrgFunction) {
-        this.displayOrgFunction = displayOrgFunction;
+    public void setOrgFunctionLabel(String displayOrgFunction) {
+        this.orgFunctionLabel = displayOrgFunction;
     }
 
     public List<String> getFlowNodeIds() {
@@ -61,4 +64,11 @@ public class SwimlaneDefinition extends GraphElement {
         this.flowNodeIds = flowNodeIds;
     }
 
+    public VariableDefinition toVariableDefinition() {
+        VariableDefinition variableDefinition = new VariableDefinition();
+        variableDefinition.setName(name);
+        variableDefinition.setFormatClassName(ExecutorFormat.class.getName());
+        variableDefinition.setFormatLabel("TODO:displayFormat");
+        return variableDefinition;
+    }
 }

@@ -1,25 +1,24 @@
 package ru.runa.wf.web.ftl.method;
 
-import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.FormatCommons;
 import freemarker.template.TemplateModelException;
 
-public class DisplayFormattedTextTag extends FreemarkerTag {
+/**
+ * @deprecated code moved to {@link DisplayVariableTag}.
+ * 
+ * @author dofs
+ * @since 3.3
+ */
+@Deprecated
+public class DisplayFormattedTextTag extends DisplayVariableTag {
     private static final long serialVersionUID = 1L;
 
     @Override
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
-        String string = variableProvider.getValue(String.class, variableName);
-        if (string == null) {
-            return "";
-        }
-        string = string.replaceAll("\n", "<br>");
-        string = string.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
-        string = string.replaceAll(" ", "&nbsp;");
-        // TODO
-        // "<div style='display: block; padding-left: 5px; background-color: #FFC; border-color: #FC6;'>"
-        // +
-        return string;
+        WfVariable variable = variableProvider.getVariableNotNull(variableName);
+        return FormatCommons.create(variable).format(variable.getValue());
     }
 
 }

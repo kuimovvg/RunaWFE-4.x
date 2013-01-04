@@ -31,8 +31,8 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
                 variable.setName(element.attributeValue("name"));
                 String format = element.attributeValue("format");
                 format = BackCompatibilityClassNames.getClassName(format);
-                variable.setFormat(format);
-                variable.setDisplayFormat(localizationDAO.getLocalized(format));
+                variable.setFormatClassName(format);
+                variable.setFormatLabel(localizationDAO.getLocalized(format));
                 variable.setPublicAccess(Boolean.parseBoolean(element.attributeValue("public", "false")));
                 variable.setDefaultValue(element.attributeValue("defaultValue"));
                 processDefinition.addVariable(variable.getName(), variable);
