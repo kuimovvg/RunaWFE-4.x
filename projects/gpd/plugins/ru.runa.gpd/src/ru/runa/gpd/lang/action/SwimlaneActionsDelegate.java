@@ -5,18 +5,13 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.command.EnableReassignmentCommand;
 import ru.runa.gpd.editor.gef.command.IgnoreSubstitutionCommand;
@@ -32,50 +27,10 @@ import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 import com.google.common.base.Objects;
 
-public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements IMenuCreator {
+public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
     private Swimlane selectedSwimlane;
     private ProcessDefinition definition;
     private SwimlanedNode node;
-
-    @Override
-    public void dispose() {
-    }
-
-    @Override
-    public Menu getMenu(Control parent) {
-        // never called
-        return null;
-    }
-
-    @Override
-    public Menu getMenu(Menu parent) {
-        Menu menu = new Menu(parent);
-        /**
-         * Add listener to re-populate the menu each time it is shown because
-         * MenuManager.update(boolean, boolean) doesn't dispose pull-down
-         * ActionContribution items for each popup menu.
-         */
-        menu.addMenuListener(new MenuAdapter() {
-            @Override
-            public void menuShown(MenuEvent e) {
-                try {
-                    Menu m = (Menu) e.widget;
-                    MenuItem[] items = m.getItems();
-                    for (int i = 0; i < items.length; i++) {
-                        items[i].dispose();
-                    }
-                    fillMenu(m);
-                } catch (Exception ex) {
-                    PluginLogger.logError(ex);
-                }
-            }
-        });
-        return menu;
-    }
-
-    @Override
-    public void run(IAction action) {
-    }
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
@@ -84,7 +39,6 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
             node = getSelection();
             selectedSwimlane = node.getSwimlane();
             definition = node.getProcessDefinition();
-            action.setMenuCreator(this);
         }
     }
 
@@ -94,6 +48,7 @@ public class SwimlaneActionsDelegate extends BaseModelActionDelegate implements 
      * @param menu
      *            The menu to fill
      */
+    @Override
     protected void fillMenu(Menu menu) {
         List<Swimlane> swimlanes = definition.getSwimlanes();
         for (Swimlane swimlane : swimlanes) {

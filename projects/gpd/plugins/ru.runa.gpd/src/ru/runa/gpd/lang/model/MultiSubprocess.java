@@ -2,7 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import ru.runa.gpd.util.VariableMapping;
 
-public class MultiSubprocess extends Subprocess {
+public class MultiSubprocess extends Subprocess implements IMultiInstancesContainer {
     @Override
     protected void validate() {
         super.validate();

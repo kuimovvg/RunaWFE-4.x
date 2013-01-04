@@ -2,7 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import ru.runa.wfe.lang.TaskExecutionMode;
 
-public class MultiTaskState extends TaskState {
+public class MultiTaskState extends TaskState implements IMultiInstancesContainer {
     private String executorsVariableName;
     private TaskExecutionMode taskExecutionMode = TaskExecutionMode.last;
 

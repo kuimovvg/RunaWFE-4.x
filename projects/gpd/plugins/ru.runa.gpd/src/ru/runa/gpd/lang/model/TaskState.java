@@ -27,7 +27,12 @@ public class TaskState extends State implements Synchronizable {
     private boolean useEscalation;
     private Delay escalationDelay = new Delay();
     private boolean async;
+    private boolean asyncTaskCompleteOnProcessComplete;
     private BotTask botTask;
+
+    public boolean isAsyncTaskCompleteOnProcessComplete() {
+        return asyncTaskCompleteOnProcessComplete; // TODO
+    }
 
     @Override
     public boolean testAttribute(Object target, String name, String value) {
