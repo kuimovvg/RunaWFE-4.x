@@ -17,11 +17,12 @@ import ru.runa.gpd.editor.graphiti.StyleUtil;
 import ru.runa.gpd.editor.graphiti.layout.LayoutStateNodeFeature;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.SwimlanedNode;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 public class AddStateNodeFeature extends AddNodeFeature {
     @Override
     public PictogramElement add(IAddContext context) {
-    	Node node = (Node) context.getNewObject();
+        Node node = (Node) context.getNewObject();
         Dimension bounds = adjustBounds(context);
         //
         ContainerShape containerShape = Graphiti.getPeCreateService().createContainerShape(context.getTargetContainer(), true);
@@ -34,7 +35,7 @@ public class AddStateNodeFeature extends AddNodeFeature {
         border.setForeground(Graphiti.getGaService().manageColor(getDiagram(), StyleUtil.LIGHT_BLUE));
         border.setBackground(Graphiti.getGaService().manageColor(getDiagram(), StyleUtil.VERY_LIGHT_BLUE));
         border.setStyle(StyleUtil.getStyleForEvent(getDiagram()));
-        if (node instanceof SwimlanedNode) {
+        if (node instanceof SwimlanedNode && node.getProcessDefinition().getSwimlaneDisplayMode() == SwimlaneDisplayMode.none) {
             Text swimlaneText = Graphiti.getGaService().createDefaultText(getDiagram(), border, ((SwimlanedNode) node).getSwimlaneLabel());
             swimlaneText.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.SWIMLANE_NAME));
             swimlaneText.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);

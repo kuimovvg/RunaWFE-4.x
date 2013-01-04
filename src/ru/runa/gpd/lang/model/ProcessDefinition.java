@@ -43,7 +43,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private Delay timeOutDelay = new Delay();
     private TimerAction timeOutAction = null;
     private boolean invalid;
-    protected int nextNodeId;
+    private int nextNodeId;
     private SwimlaneDisplayMode swimlaneDisplayMode;
 
     public ProcessDefinition() {
@@ -129,6 +129,16 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
             dimension = new Dimension(0, 0);
         }
         return dimension;
+    }
+
+    public void setNextNodeIdIfApplicable(int nextNodeId) {
+        if (nextNodeId > this.nextNodeId) {
+            this.nextNodeId = nextNodeId;
+        }
+    }
+
+    public int getNextNodeId() {
+        return nextNodeId++;
     }
 
     public SwimlaneGUIConfiguration getSwimlaneGUIConfiguration() {
