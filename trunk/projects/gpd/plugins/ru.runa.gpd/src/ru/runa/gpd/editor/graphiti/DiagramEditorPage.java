@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.gef.ContextMenuProvider;
@@ -174,17 +173,6 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
     }
 
     private void drawElements(ContainerShape parentShape) {
-        //        List<GraphElement> graphElements;
-        //        if (getDefinition().getSwimlaneDisplayMode() == SwimlaneDisplayMode.none) {
-        //            graphElements = getDefinition().getElements();
-        //        } else {
-        //            graphElements = new ArrayList<GraphElement>(getDefinition().getSwimlanes());
-        //            for (SwimlanedNode swimlanedNode : getDefinition().getChildren(SwimlanedNode.class)) {
-        //                if (swimlanedNode.getSwimlane() == null) {
-        //                    graphElements.add(swimlanedNode);
-        //                }
-        //            }
-        //        }
         List<GraphElement> graphElements = getDefinition().getContainerElements(getDefinition());
         drawElements(parentShape, graphElements);
     }
@@ -204,61 +192,15 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
             context.setNewObject(graphElement);
             context.setTargetContainer(parentShape);
             context.setSize(graphElement.getConstraint().width, graphElement.getConstraint().height);
-            //            if (parentShape instanceof Diagram) {
             context.setLocation(graphElement.getConstraint().x, graphElement.getConstraint().y);
-            //            } else {
-            //                Point location = getLocation(parentShape);
-            //                context.setLocation(graphElement.getConstraint().x - location.x, graphElement.getConstraint().y - location.y);
-            //            }
             if (addFeature.canAdd(context)) {
                 PictogramElement childContainer = addFeature.add(context);
                 List<GraphElement> children = getDefinition().getContainerElements(graphElement);
-                //                if (graphElement instanceof Swimlane) {
-                //                    for (SwimlanedNode swimlanedNode : getDefinition().getChildren(SwimlanedNode.class)) {
-                //                        if (Objects.equal(swimlanedNode.getSwimlane(), graphElement)) {
-                //                            children.add(swimlanedNode);
-                //                        }
-                //                    }
-                //                }
                 if (childContainer instanceof ContainerShape && children.size() > 0) {
                     drawElements((ContainerShape) childContainer, children);
-                    //                if (node instanceof Activity) {
-                    //                    Activity activity = (Activity) node;
-                    //                    for (BoundaryEvent boundaryEvent : activity.getBoundaryEvents()) {
-                    //                        AddContext boundaryContext = new AddContext(new AreaContext(), boundaryEvent);
-                    //                        IAddFeature boundaryAddFeature = featureProvider.getAddFeature(boundaryContext);
-                    //                        if (boundaryAddFeature == null) {
-                    //                            System.out.println("Element not supported: " + boundaryEvent);
-                    //                            return;
-                    //                        }
-                    //                        context.setNewObject(boundaryEvent);
-                    //                        context.setSize(node.getConstraint().width, node.getConstraint().height);
-                    //                        if (boundaryEvent.getAttachedToRef() != null) {
-                    //                            ContainerShape container = (ContainerShape) featureProvider.getPictogramElementForBusinessObject(boundaryEvent
-                    //                                    .getAttachedToRef());
-                    //                            if (container != null) {
-                    //                                boundaryContext.setTargetContainer(container);
-                    //                                Point location = getLocation(container);
-                    //                                boundaryContext.setLocation(node.getConstraint().x - location.x, node.getConstraint().y - location.y);
-                    //                                if (boundaryAddFeature.canAdd(boundaryContext)) {
-                    //                                    PictogramElement newBoundaryContainer = boundaryAddFeature.add(boundaryContext);
-                    //                                    featureProvider.link(newBoundaryContainer, new Object[] { boundaryEvent });
-                    //                                }
-                    //                            }
-                    //                        }
-                    //                    }
-                    //                }
                 }
             }
         }
-    }
-
-    private Point getLocation(ContainerShape containerShape) {
-        if (containerShape instanceof Diagram == true) {
-            return new Point(containerShape.getGraphicsAlgorithm().getX(), containerShape.getGraphicsAlgorithm().getY());
-        }
-        Point location = getLocation(containerShape.getContainer());
-        return new Point(location.x + containerShape.getGraphicsAlgorithm().getX(), location.y + containerShape.getGraphicsAlgorithm().getY());
     }
 
     private void drawTransitions() {

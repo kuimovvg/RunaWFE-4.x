@@ -201,6 +201,10 @@
            adaptable="false"
            id="graph.transition"
            objectClass="ru.runa.gpd.lang.model.Transition">
+        <filter
+              name="language"
+              value="jpdl">
+        </filter>
        <action
              class="ru.runa.gpd.lang.action.ActiveActionsDelegate"
              id="graph.actions"
@@ -209,7 +213,20 @@
              style="pulldown">
        </action>
     </objectContribution>
-     <objectContribution
+    <objectContribution
+           adaptable="false"
+           id="graph.features"
+           objectClass="ru.runa.gpd.lang.model.GraphElement">
+       <menu
+             id="features"
+             label="%label.features"
+             path="additions">
+          <separator
+                name="sp1">
+          </separator>
+       </menu>
+    </objectContribution>
+    <objectContribution
            adaptable="false"
            id="graph.stateNode1"
            objectClass="ru.runa.gpd.lang.model.State">
@@ -227,74 +244,17 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.stateNodeAddTimer"
-          objectClass="ru.runa.gpd.lang.model.State">
-       <filter
-             name="timerExists"
-             value="false"/>
-       <filter
-             name="language"
-             value="jpdl">
-       </filter>
-       <action
-             class="ru.runa.gpd.lang.action.AddTimerDelegate"
-             id="addTimer"
-             label="%label.action.addTimer"
-             menubarPath="additions">
-       </action>
-    </objectContribution>
-    <objectContribution
-          adaptable="false"
-          id="graph.stateNodeDeleteTimer"
-          objectClass="ru.runa.gpd.lang.model.State">
-       <filter
-             name="timerExists"
-             value="true"/>
-       <filter
-             name="language"
-             value="jpdl">
-       </filter>
-       <action
-             class="ru.runa.gpd.lang.action.DeleteTimerDelegate"
-             id="removeTimer"
-             label="%label.action.removeTimer"
-             menubarPath="additions">
-       </action>
-    </objectContribution>
-    <objectContribution
-          adaptable="false"
           id="graph.taskStateNode1"
           objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
-             name="escalationEnabled"
-             value="false"/>
-       <filter
              name="language"
              value="jpdl">
        </filter>
        <action
-             class="ru.runa.gpd.lang.action.EnableEscalationOnTaskDelegate"
+             class="ru.runa.gpd.lang.action.EscalationTaskFeatureDelegate"
              id="addEscalation"
-             label="%label.action.addEscalation"
-             menubarPath="additions">
-       </action>
-    </objectContribution>
-    <objectContribution
-          adaptable="false"
-          id="graph.taskStateNode2"
-          objectClass="ru.runa.gpd.lang.model.TaskState">
-       <filter
-             name="escalationEnabled"
-             value="true"/>
-       <filter
-             name="language"
-             value="jpdl">
-       </filter>
-       <action
-             class="ru.runa.gpd.lang.action.DisableEscalationOnTaskDelegate"
-             id="removeEscalation"
-             label="%label.action.removeEscalation"
-             menubarPath="additions">
+             label="%label.action.feature.escalation"
+             menubarPath="features/sp1">
        </action>
     </objectContribution>
     <objectContribution
@@ -302,14 +262,14 @@
           id="graph.taskStateNode3"
           objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
-             name="org.jbpm.ui.bindSwimlaneExists"
+             name="bindSwimlaneExists"
              value="true">
        </filter>
        <action
              class="ru.runa.gpd.lang.action.BotTaskActionsDelegate"
              id="botTaskActions"
              label="%label.bottask.action"
-             menubarPath="additions"
+             menubarPath="features/sp1"
              style="pulldown"
              />
     </objectContribution>
@@ -317,43 +277,22 @@
           adaptable="false"
           id="graph.Synchronizable"
           objectClass="ru.runa.gpd.lang.model.Synchronizable">
-       <filter
-             name="language"
-             value="jpdl">
-       </filter>
        <action
-             class="ru.runa.gpd.lang.action.EnableAsyncOnTaskDelegate"
-             id="addAsync"
-             label="%label.action.async"
-             menubarPath="additions">
+             class="ru.runa.gpd.lang.action.AsyncFeatureDelegate"
+             id="feature.async"
+             label="%label.action.feature.async"
+             menubarPath="features/sp1">
        </action>
     </objectContribution>
     <objectContribution
           adaptable="false"
           id="graph.stateNode"
           objectClass="ru.runa.gpd.lang.model.State">
-       <filter
-             name="minimizedView"
-             value="false"/>
        <action
-             class="ru.runa.gpd.lang.action.ChangeCompactViewDelegate"
-             id="setCompactView"
-             label="%label.action.minimizeFigureView"
-             menubarPath="additions">
-       </action>
-    </objectContribution>
-    <objectContribution
-          adaptable="false"
-          id="graph.stateNode"
-          objectClass="ru.runa.gpd.lang.model.State">
-       <filter
-             name="minimizedView"
-             value="true"/>
-       <action
-             class="ru.runa.gpd.lang.action.ChangeCompactViewDelegate"
-             id="unsetCompactView"
-             label="%label.action.restoreFigureView"
-             menubarPath="additions">
+             class="ru.runa.gpd.lang.action.CompactViewFeatureDelegate"
+             id="feature.compactView"
+             label="%label.action.feature.compactView"
+             menubarPath="features/sp1">
        </action>
     </objectContribution>
     <objectContribution
@@ -503,8 +442,12 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.decision"
+          id="graph.delegable"
           objectClass="ru.runa.gpd.lang.model.Delegable">
+       <filter
+             name="delegable"
+             value="true">
+       </filter>
        <action
              class="ru.runa.gpd.lang.action.OpenDelegableConfigurationDelegate"
              id="editConfiguration"
@@ -565,40 +508,17 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="receiveMessageNode"
-          objectClass="ru.runa.gpd.lang.model.ReceiveMessageNode">
-       <filter
-             name="timerExists"
-             value="true">
-       </filter>
+          id="timed"
+          objectClass="ru.runa.gpd.lang.model.ITimed">
        <filter
              name="language"
              value="jpdl">
        </filter>
        <action
-             class="ru.runa.gpd.lang.action.DeleteTimerDelegate"
-             id="removeTimer2"
-             label="%label.action.removeTimer"
-             menubarPath="additions">
-       </action>
-    </objectContribution>
-    <objectContribution
-          adaptable="false"
-          id="receiveMessageNode"
-          objectClass="ru.runa.gpd.lang.model.ReceiveMessageNode">
-       <filter
-             name="timerExists"
-             value="false">
-       </filter>
-       <filter
-             name="language"
-             value="jpdl">
-       </filter>
-       <action
-             class="ru.runa.gpd.lang.action.AddTimerDelegate"
-             id="addTimer2"
-             label="%label.action.addTimer"
-             menubarPath="additions">
+             class="ru.runa.gpd.lang.action.TimerFeatureDelegate"
+             id="feature.timer"
+             label="%label.action.feature.timer"
+             menubarPath="features/sp1">
        </action>
     </objectContribution>
   </extension>
@@ -774,6 +694,18 @@
          </gef>
       </element>
       <element
+            icon="decision.png"
+            jpdl="decision"
+            label="%label.element.decision"
+            model="ru.runa.gpd.lang.model.Decision"
+            type="node">
+         <gef
+            figure="ru.runa.gpd.editor.gef.figure.DecisionFigure"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.DecisionGraphicalEditPart"
+            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
+         </gef>
+      </element>
+      <element
             bpmn="parallelGateway"
             icon="parallelGateway.png"
             label="%label.element.parallelGateway"
@@ -789,16 +721,10 @@
       </element>
       <element
             bpmn="exclusiveGateway"
-            icon="decision.png"
-            jpdl="decision"
-            label="%label.element.decision"
-            model="ru.runa.gpd.lang.model.Decision"
+            icon="exclusiveGateway.png"
+            label="%label.element.exclusiveGateway"
+            model="ru.runa.gpd.lang.model.ExclusiveGateway"
             type="node">
-         <gef
-            figure="ru.runa.gpd.editor.gef.figure.DecisionFigure"
-            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.DecisionGraphicalEditPart"
-            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
-         </gef>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"

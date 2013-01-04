@@ -8,6 +8,8 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
+import ru.runa.gpd.lang.model.Swimlane;
+import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Timer;
 
 public class MoveElementFeature extends DefaultMoveShapeFeature {
@@ -33,5 +35,16 @@ public class MoveElementFeature extends DefaultMoveShapeFeature {
         newConstraint.x = context.getX();
         newConstraint.y = context.getY();
         element.setConstraint(newConstraint);
+        if (context.getSourceContainer() != context.getTargetContainer()) {
+            GraphElement parent = (GraphElement) getBusinessObjectForPictogramElement(context.getTargetContainer());
+            element.setParentContainer(parent);
+            if (element instanceof SwimlanedNode) {
+                Swimlane swimlane = null;
+                if (parent instanceof Swimlane) {
+                    swimlane = (Swimlane) parent;
+                }
+                ((SwimlanedNode) element).setSwimlane(swimlane);
+            }
+        }
     }
 }

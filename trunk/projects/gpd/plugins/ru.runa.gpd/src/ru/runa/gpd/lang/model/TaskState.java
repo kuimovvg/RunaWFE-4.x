@@ -19,7 +19,6 @@ import ru.runa.gpd.util.Delay;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.wfe.handler.action.EscalationActionHandler;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
 public class TaskState extends State implements Synchronizable {
@@ -35,10 +34,7 @@ public class TaskState extends State implements Synchronizable {
         if (super.testAttribute(target, name, value)) {
             return true;
         }
-        if ("escalationEnabled".equals(name)) {
-            return Objects.equal(value, String.valueOf(isUseEscalation()));
-        }
-        if ("org.jbpm.ui.bindSwimlaneExists".equals(name)) {
+        if ("bindSwimlaneExists".equals(name)) {
             if (getSwimlane() != null && getSwimlane().getDelegationConfiguration() != null) {
                 OrgFunctionDefinition definition = OrgFunctionsRegistry.parseSwimlaneConfiguration(getSwimlane().getDelegationConfiguration());
                 if (definition != null && BotTask.BOT_EXECUTOR_SWIMLANE_NAME.equals(definition.getName())) {

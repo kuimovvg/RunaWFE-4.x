@@ -53,6 +53,8 @@ import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
 
+import com.google.common.base.Throwables;
+
 public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
     private final Map<String, IFile> definitionNameFileMap;
     private ListViewer definitionListViewer;
@@ -221,11 +223,10 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                 new ParDeployOperation(resourcesToExport, definition.getName()).run(null);
             }
             return true;
-        } catch (Exception e) {
-            if (e.getMessage() != null) {
-                setErrorMessage(e.getMessage());
-            }
-            PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), e);
+        } catch (Throwable th) {
+            th = Throwables.getRootCause(th);
+            setErrorMessage(th.getMessage() != null ? th.getMessage() : th.getClass().getName());
+            PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), th);
             return false;
         }
     }
@@ -284,18 +285,14 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                 return;
             }
             String destinationName = fileResource.getName();
-            //progressMonitor.subTask(destinationName);
             exporter.write(fileResource, destinationName);
-            //progressMonitor.worked(1);
         }
 
         protected void exportResources(IProgressMonitor progressMonitor) throws InvocationTargetException {
             try {
                 ParFileExporter exporter = new ParFileExporter(outputStream);
-                //progressMonitor.beginTask("", totalWork);
                 for (IFile resource : resourcesToExport) {
                     exportResource(exporter, resource, progressMonitor);
-                    //ModalContext.checkCanceled(progressMonitor);
                 }
                 exporter.finished();
                 outputStream.flush();
@@ -306,11 +303,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
 
         @Override
         public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
-            //            try {
             exportResources(progressMonitor);
-            //            } finally {
-            //                progressMonitor.done();
-            //            }
         }
     }
 
@@ -324,31 +317,21 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
 
         @Override
         public void run(final IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
+            exportResources(progressMonitor);
+            final ByteArrayOutputStream baos = (ByteArrayOutputStream) outputStream;
             try {
-                exportResources(progressMonitor);
-                final ByteArrayOutputStream baos = (ByteArrayOutputStream) outputStream;
-                try {
-                    Display.getDefault().syncExec(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                WFEServerProcessDefinitionImporter.getInstance().uploadPar(definitionName, baos.toByteArray());
-                            } catch (Exception e) {
-                                //progressMonitor.setCanceled(true);
-                                PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), e);
-                                ExportParWizardPage.this.setErrorMessage(e.getMessage());
-                            }
+                Display.getDefault().syncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            WFEServerProcessDefinitionImporter.getInstance().uploadPar(definitionName, baos.toByteArray());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
                         }
-                    });
-                } catch (Exception e) {
-                    throw new InvocationTargetException(e);
-                }
-            } finally {
-                //                if (progressMonitor.isCanceled()) {
-                //                    throw new InterruptedException();
-                //                } else {
-                //                    progressMonitor.done();
-                //                }
+                    }
+                });
+            } catch (Exception e) {
+                throw new InvocationTargetException(e);
             }
         }
     }

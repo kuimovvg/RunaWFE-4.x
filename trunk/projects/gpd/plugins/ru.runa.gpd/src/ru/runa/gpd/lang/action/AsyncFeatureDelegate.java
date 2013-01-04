@@ -5,7 +5,7 @@ import org.eclipse.jface.viewers.ISelection;
 
 import ru.runa.gpd.lang.model.Synchronizable;
 
-public class EnableAsyncOnTaskDelegate extends BaseModelActionDelegate {
+public class AsyncFeatureDelegate extends BaseModelActionDelegate {
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);

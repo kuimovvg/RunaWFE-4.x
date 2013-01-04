@@ -9,11 +9,11 @@ import org.dom4j.QName;
 import org.eclipse.core.resources.IFile;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Describable;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.EndTokenState;
+import ru.runa.gpd.lang.model.ExclusiveGateway;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.MultiSubprocess;
 import ru.runa.gpd.lang.model.NamedGraphElement;
@@ -72,7 +72,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String TARGET_REF = "targetRef";
     private static final String SUBPROCESS = "subProcess";
     private static final String MULTI_SUBPROCESS = "multiProcess";
-    private static final String DECISION = "exclusiveGateway";
+    private static final String EXCLUSIVE_GATEWAY = "exclusiveGateway";
     private static final String PARALLEL_GATEWAY = "parallelGateway";
     private static final String DEFAULT_TASK_TIMOUT = "default-task-timeout";
     private static final String REPEAT = "repeat";//
@@ -161,9 +161,9 @@ public class BpmnSerializer extends ProcessSerializer {
             writeTaskState(process, startState);
             writeTransitions(process, startState);
         }
-        List<Decision> decisions = definition.getChildren(Decision.class);
-        for (Decision decision : decisions) {
-            writeNode(process, decision);
+        List<ExclusiveGateway> exclusiveGateways = definition.getChildren(ExclusiveGateway.class);
+        for (ExclusiveGateway gateway : exclusiveGateways) {
+            writeNode(process, gateway);
         }
         List<TaskState> states = definition.getChildren(TaskState.class);
         for (TaskState state : states) {
@@ -260,7 +260,7 @@ public class BpmnSerializer extends ProcessSerializer {
 
     private Element writeNode(Element parent, Node node) {
         Element nodeElement = writeElement(parent, node);
-        if (node instanceof Delegable) {
+        if (node.isDelegable()) {
             writeDelegation(nodeElement, (Delegable) node);
         }
         writeTransitions(parent, node);
@@ -421,6 +421,11 @@ public class BpmnSerializer extends ProcessSerializer {
             //                parseAction(childNode, element, eventType);
             //            }
         }
+        if (element instanceof Delegable) {
+            Map<String, String> properties = parseExtensionProperties(node);
+            element.setDelegationClassName(properties.get(CLASS));
+            element.setDelegationConfiguration(properties.get(CONFIG));
+        }
         return (T) element;
     }
 
@@ -487,9 +492,9 @@ public class BpmnSerializer extends ProcessSerializer {
             List<Element> swimlanes = swimlaneSetElement.elements(SWIMLANE);
             for (Element swimlaneElement : swimlanes) {
                 Swimlane swimlane = create(swimlaneElement, definition);
-                Map<String, String> swimlaneProperties = parseExtensionProperties(swimlaneElement);
-                swimlane.setDelegationClassName(swimlaneProperties.get(CLASS));
-                swimlane.setDelegationConfiguration(swimlaneProperties.get(CONFIG));
+                //                Map<String, String> swimlaneProperties = parseExtensionProperties(swimlaneElement);
+                //                swimlane.setDelegationClassName(swimlaneProperties.get(CLASS));
+                //                swimlane.setDelegationConfiguration(swimlaneProperties.get(CONFIG));
                 List<Element> flowNodeRefElements = swimlaneElement.elements(FLOW_NODE_REF);
                 List<String> flowNodeIds = Lists.newArrayList();
                 for (Element flowNodeRefElement : flowNodeRefElements) {
@@ -577,8 +582,8 @@ public class BpmnSerializer extends ProcessSerializer {
         for (Element node : parallelGatewayElements) {
             create(node, definition);
         }
-        List<Element> decisions = process.elements(DECISION);
-        for (Element node : decisions) {
+        List<Element> exclusiveGatewayElements = process.elements(EXCLUSIVE_GATEWAY);
+        for (Element node : exclusiveGatewayElements) {
             create(node, definition);
         }
         List<Element> subprocessElements = process.elements(SUBPROCESS);
@@ -621,6 +626,7 @@ public class BpmnSerializer extends ProcessSerializer {
                 Timer timer = create(eventElement, parent);
                 timer.setId(boundaryEventElement.attributeValue(ID));
                 timer.setName(boundaryEventElement.attributeValue(NAME));
+                timer.setParentContainer(parent);
             }
         }
         List<Element> endTokenStates = process.elements(END_TOKEN_STATE);

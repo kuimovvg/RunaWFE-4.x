@@ -21,8 +21,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.form.FormTypeProvider;
-import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.handler.DelegableProvider;
+import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.lang.action.OpenFormValidationDelegate;
 import ru.runa.gpd.lang.action.SubprocessDelegate;
 import ru.runa.gpd.lang.model.Delegable;
@@ -85,7 +85,7 @@ public class GPDSearchPage extends AbstractTextSearchViewPage {
             FormNode formNode = (FormNode) elementMatch.getGraphElement();
             OpenFormValidationDelegate delegate = new OpenFormValidationDelegate();
             delegate.openValidationFile(formNode, elementMatch.getFile());
-        } else if (elementMatch.getGraphElement() instanceof Delegable) {
+        } else if (elementMatch.getGraphElement().isDelegable()) {
             Delegable delegable = (Delegable) elementMatch.getGraphElement();
             DelegableProvider provider = HandlerRegistry.getProvider(delegable.getDelegationClassName());
             String newConfig = provider.showConfigurationDialog(delegable);
