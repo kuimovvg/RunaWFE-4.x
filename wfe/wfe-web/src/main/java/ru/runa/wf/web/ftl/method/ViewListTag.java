@@ -20,8 +20,16 @@ package ru.runa.wf.web.ftl.method;
 import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.var.format.FormatCommons;
 import freemarker.template.TemplateModelException;
 
+/**
+ * @deprecated code moved to {@link DisplayVariableTag}.
+ * 
+ * @author dofs
+ * @since 4.0
+ */
+@Deprecated
 public class ViewListTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
@@ -40,7 +48,7 @@ public class ViewListTag extends FreemarkerTag {
         }
         for (int i = 0; i < list.size(); i++) {
             Object object = list.get(i);
-            String value = ViewUtil.getVarOut(object, subject, webHelper, variableProvider.getProcessId(), listVarName, i, null);
+            String value = FormatCommons.getVarOut(object, subject, webHelper, variableProvider.getProcessId(), listVarName, i, null);
             if ("ul".equals(mode) || "ol".equals(mode)) {
                 html.append("<li>").append(value);
             } else if ("raw".equals(mode)) {

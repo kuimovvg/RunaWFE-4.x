@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.graph.image.model.DiagramModel;
 import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.graph.view.BaseGraphElementPresentation;
@@ -40,7 +39,7 @@ public class GraphElementPresentationBuilder {
      * @return List of graph elements for nodes.
      */
     public static List<GraphElementPresentation> createElements(ProcessDefinition definition) throws Exception {
-        DiagramModel diagramModel = DiagramModel.load(definition.getFileDataNotNull(IFileDataProvider.GPD_XML_FILE_NAME));
+        DiagramModel diagramModel = DiagramModel.load(definition);
         List<GraphElementPresentation> result = new ArrayList<GraphElementPresentation>();
         for (Node node : definition.getNodes()) {
             NodeModel model = diagramModel.getNode(node.getNodeId());

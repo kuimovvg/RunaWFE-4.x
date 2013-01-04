@@ -3,6 +3,7 @@ package ru.runa.wf.web.ftl.method;
 import java.util.Map;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.var.format.FormatCommons;
 import freemarker.template.TemplateModelException;
 
 public class DisplayMapElementTag extends FreemarkerTag {
@@ -14,7 +15,7 @@ public class DisplayMapElementTag extends FreemarkerTag {
         Map<?, ?> map = variableProvider.getValueNotNull(Map.class, mapVarName);
         Object key = getParameterAs(Object.class, 1);
         Object object = map.get(key);
-        return ViewUtil.getVarOut(object, subject, webHelper, variableProvider.getProcessId(), mapVarName, 0, key);
+        return FormatCommons.getVarOut(object, subject, webHelper, variableProvider.getProcessId(), mapVarName, 0, key);
     }
 
 }

@@ -3,6 +3,7 @@ package ru.runa.wf.web.ftl.method;
 import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.var.format.FormatCommons;
 import freemarker.template.TemplateModelException;
 
 public class DisplayListElementTag extends FreemarkerTag {
@@ -18,7 +19,7 @@ public class DisplayListElementTag extends FreemarkerTag {
         if (index < list.size()) {
             object = list.get(index);
         }
-        return ViewUtil.getVarOut(object, subject, webHelper, variableProvider.getProcessId(), listVarName, index, null);
+        return FormatCommons.getVarOut(object, subject, webHelper, variableProvider.getProcessId(), listVarName, index, null);
     }
 
 }

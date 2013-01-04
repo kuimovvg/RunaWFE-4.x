@@ -11,6 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import freemarker.template.TemplateModelException;
 
+/**
+ * @deprecated code moved to {@link InputVariableTag}.
+ * 
+ * @author dofs
+ * @since 3.5
+ */
+@Deprecated
 public class EditStringListTag extends AjaxFreemarkerTag {
     private static final long serialVersionUID = 1L;
 

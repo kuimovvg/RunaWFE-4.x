@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.var.format.FormatCommons;
 import freemarker.template.TemplateModelException;
 
 public class DisplayLinkedListsInTableTag extends FreemarkerTag {
@@ -33,7 +34,7 @@ public class DisplayLinkedListsInTableTag extends FreemarkerTag {
             for (i = 0; i < lists.size(); i++) {
                 String headerVariableName = getParameterAs(String.class, i) + "_header";
                 Object o = variableProvider.getValue(headerVariableName);
-                String value = ViewUtil.getVarOut(o, subject, webHelper, variableProvider.getProcessId(), headerVariableName, 0, null);
+                String value = FormatCommons.getVarOut(o, subject, webHelper, variableProvider.getProcessId(), headerVariableName, 0, null);
                 buffer.append("<td>").append(value).append("</td>");
             }
             buffer.append("</tr>");
@@ -42,7 +43,7 @@ public class DisplayLinkedListsInTableTag extends FreemarkerTag {
                 for (List<?> list : lists) {
                     Object o = (list.size() > i) ? list.get(i) : "";
                     String listVarName = getParameterAs(String.class, i);
-                    String value = ViewUtil.getVarOut(o, subject, webHelper, variableProvider.getProcessId(), listVarName, i, null);
+                    String value = FormatCommons.getVarOut(o, subject, webHelper, variableProvider.getProcessId(), listVarName, i, null);
                     buffer.append("<td>").append(value).append("</td>");
                     buffer.append("<td>").append(o).append("</td>");
                 }

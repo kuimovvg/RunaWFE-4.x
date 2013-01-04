@@ -214,8 +214,13 @@ public class TypeConversionUtil {
             return null;
         }
         try {
-            Long actorCode = convertTo(object, Long.class);
-            return (T) executorDAO.getActorByCode(actorCode);
+            if (object.toString().startsWith("ID")) {
+                Long executorId = Long.parseLong(object.toString().substring(2));
+                return (T) executorDAO.getExecutor(executorId);
+            } else {
+                Long actorCode = convertTo(object, Long.class);
+                return (T) executorDAO.getActorByCode(actorCode);
+            }
         } catch (Exception e1) {
             String executorIdentity = object.toString();
             if (executorDAO.isExecutorExist(executorIdentity)) {
