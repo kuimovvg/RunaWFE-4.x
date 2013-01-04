@@ -29,6 +29,7 @@ import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.task.TaskDoesNotExistException;
@@ -65,6 +66,15 @@ public class VariableLogic extends WFCommonLogic {
             // TODO checkReadToVariablesAllowed(subject, task);
         }
         VariableDefinition variableDefinition = processDefinition.getVariable(variableName);
+        if (variableDefinition == null) {
+            SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlane(variableName);
+            if (swimlaneDefinition != null) {
+                variableDefinition = swimlaneDefinition.toVariableDefinition();
+            } else {
+                variableDefinition = new VariableDefinition();
+                variableDefinition.setName(variableName);
+            }
+        }
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         Object variableValue = executionContext.getVariable(variableName);
         return new WfVariable(variableDefinition, variableValue);

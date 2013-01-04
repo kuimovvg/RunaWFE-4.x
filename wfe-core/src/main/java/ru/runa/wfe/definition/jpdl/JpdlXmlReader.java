@@ -14,10 +14,10 @@ import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
-import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
+import ru.runa.wfe.definition.logic.SwimlaneUtils;
 import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
 import ru.runa.wfe.lang.Action;
@@ -154,18 +154,7 @@ public class JpdlXmlReader {
             if (assignmentElement != null) {
                 swimlaneDefinition.setDelegation(readDelegation(processDefinition, assignmentElement));
             }
-            if (swimlaneDefinition.getDelegation() != null && swimlaneDefinition.getDelegation().getConfiguration() != null) {
-                String conf = swimlaneDefinition.getDelegation().getConfiguration();
-                swimlaneDefinition.setDisplayOrgFunction(conf);
-                String[] orgFunctionParts = conf.split("\\(");
-                if (orgFunctionParts.length == 2) {
-                    String className = BackCompatibilityClassNames.getClassName(orgFunctionParts[0].trim());
-                    String localized = localizationDAO.getLocalized(className);
-                    if (localized != null) {
-                        swimlaneDefinition.setDisplayOrgFunction(localized + " (" + orgFunctionParts[1]);
-                    }
-                }
-            }
+            SwimlaneUtils.setOrgFunctionLabel(swimlaneDefinition, localizationDAO);
             processDefinition.addSwimlane(swimlaneDefinition);
         }
     }

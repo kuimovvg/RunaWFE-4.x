@@ -21,9 +21,10 @@ import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 /**
- * Created on 05.05.2005
- * 
+ * @since 1.0
+ * @deprecated Use Freemarker forms
  */
+@Deprecated
 public interface VarTag {
     public String getHtml(Subject subject, String varName, Object varValue, PageContext pageContext) throws Exception;
 }
