@@ -9,17 +9,11 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.BotTaskConfigHelper;
 import ru.runa.gpd.handler.DelegableProvider;
 import ru.runa.gpd.handler.HandlerRegistry;
@@ -35,50 +29,11 @@ import ru.runa.gpd.util.BotTaskContentUtil;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.WorkspaceOperations;
 
-public class BotTaskActionsDelegate extends BaseModelActionDelegate implements IMenuCreator {
+public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
     private Swimlane selectedSwimlane;
     private ProcessDefinition currentDefinition;
     private TaskState currentNode;
     private IFolder botFolder;
-
-    @Override
-    public void dispose() {
-    }
-
-    @Override
-    public Menu getMenu(Control parent) {
-        return null;
-    }
-
-    @Override
-    public Menu getMenu(Menu parent) {
-        Menu menu = new Menu(parent);
-        /**
-         * Add listener to re-populate the menu each time it is shown because
-         * MenuManager.update(boolean, boolean) doesn't dispose pull-down
-         * ActionContribution items for each popup menu.
-         */
-        menu.addMenuListener(new MenuAdapter() {
-            @Override
-            public void menuShown(MenuEvent e) {
-                try {
-                    Menu m = (Menu) e.widget;
-                    MenuItem[] items = m.getItems();
-                    for (int i = 0; i < items.length; i++) {
-                        items[i].dispose();
-                    }
-                    fillMenu(m);
-                } catch (Exception ex) {
-                    PluginLogger.logError(ex);
-                }
-            }
-        });
-        return menu;
-    }
-
-    @Override
-    public void run(IAction action) {
-    }
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
@@ -102,10 +57,9 @@ public class BotTaskActionsDelegate extends BaseModelActionDelegate implements I
                 }
             }
         }
-        action.setMenuCreator(this);
-        action.setEnabled(true);
     }
 
+    @Override
     protected void fillMenu(Menu menu) {
         Action action;
         ActionContributionItem item;
