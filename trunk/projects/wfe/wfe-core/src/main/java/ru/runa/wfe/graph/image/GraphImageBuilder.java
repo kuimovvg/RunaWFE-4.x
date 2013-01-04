@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
@@ -77,7 +76,7 @@ public class GraphImageBuilder {
     }
 
     public byte[] createDiagram(Process process, List<Transition> passedTransitions) throws Exception {
-        DiagramModel diagramModel = DiagramModel.load(processDefinition.getFileDataNotNull(IFileDataProvider.GPD_XML_FILE_NAME));
+        DiagramModel diagramModel = DiagramModel.load(processDefinition);
         AbstractFigureFactory factory;
         if (diagramModel.isUmlNotation()) {
             factory = new UMLFigureFactory();

@@ -32,6 +32,6 @@ public class StringFormat implements VariableFormat<String> {
 
     @Override
     public String format(String obj) {
-        return obj.toString();
+        return obj;
     }
 }

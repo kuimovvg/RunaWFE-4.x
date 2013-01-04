@@ -11,36 +11,29 @@ import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.dao.PermissionDAO;
-import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.collect.Maps;
 
-public class ExecutorFormat implements VariableFormat<Executor>, VariableDisplaySupport<Executor> {
+public class ActorFormat implements VariableFormat<Actor>, VariableDisplaySupport<Actor> {
     @Autowired
     private ExecutorDAO executorDAO;
     @Autowired
     private PermissionDAO permissionDAO;
 
     @Override
-    public Executor parse(String[] source) throws Exception {
+    public Actor parse(String[] source) throws Exception {
         return TypeConversionUtil.toExecutor(executorDAO, source[0]);
-        // return
-        // executorDAO.getActorByCode(TypeConversionUtil.convertTo(source[0],
-        // Long.class));
-        // TODO tmp
-        // return
-        // executorDAO.getExecutor(TypeConversionUtil.convertTo(source[0],
-        // Long.class));
     }
 
     @Override
-    public String format(Executor object) {
+    public String format(Actor object) {
         return object.getFullName();
     }
 
     @Override
-    public String getHtml(Subject subject, WebHelper webHelper, Long processId, String name, Executor value) {
+    public String getHtml(Subject subject, WebHelper webHelper, Long processId, String name, Actor value) {
         if (permissionDAO.isAllowed(SubjectPrincipalsHelper.getActor(subject), Permission.READ, value)) {
             HashMap<String, Object> params = Maps.newHashMap();
             params.put("id", value.getId());

@@ -24,6 +24,7 @@ package ru.runa.wfe.lang;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -111,6 +112,17 @@ public abstract class GraphElement implements Serializable {
         Preconditions.checkArgument(event.getEventType() != null, "can't add an event without type to graph element");
         events.put(event.getEventType(), event);
         return event;
+    }
+
+    public Action getAction(String id) {
+        for (Entry<String, Event> entry : getEvents().entrySet()) {
+            for (Action action : entry.getValue().getActions()) {
+                if (id.equals(action.getName())) {
+                    return action;
+                }
+            }
+        }
+        return null;
     }
 
     public void fireEvent(ExecutionContext executionContext, String eventType) {

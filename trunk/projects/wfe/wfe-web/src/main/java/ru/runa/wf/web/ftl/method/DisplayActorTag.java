@@ -27,6 +27,13 @@ import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 import freemarker.template.TemplateModelException;
 
+/**
+ * @deprecated code moved to {@link InputVariableTag}.
+ * 
+ * @author dofs
+ * @since 4.0
+ */
+@Deprecated
 public class DisplayActorTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
     @Autowired

@@ -42,28 +42,28 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
     private static final Log log = LogFactory.getLog(ProcessVariablesRowBuilder.class);
 
     private int idx = 0;
-    private final List<WfVariable> wfVariables;
+    private final List<WfVariable> variables;
     private final PageContext pageContext;
     private final Long processId;
 
-    public ProcessVariablesRowBuilder(Long processId, List<WfVariable> wfVariables, PageContext pageContext) {
-        this.wfVariables = wfVariables;
+    public ProcessVariablesRowBuilder(Long processId, List<WfVariable> variables, PageContext pageContext) {
+        this.variables = variables;
         this.processId = processId;
         this.pageContext = pageContext;
     }
 
     @Override
     public boolean hasNext() {
-        return idx < wfVariables.size();
+        return idx < variables.size();
     }
 
     @Override
     public TR buildNext() {
-        WfVariable wfVariable = wfVariables.get(idx);
-        Object value = wfVariable.getValue();
+        WfVariable variable = variables.get(idx);
+        Object value = variable.getValue();
         TR tr = new TR();
-        tr.addElement(new TD(wfVariable.getDefinition().getName()).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(wfVariable.getDefinition().getDisplayFormat()).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(variable.getDefinition().getName()).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(variable.getDefinition().getFormatLabel()).setClass(Resources.CLASS_LIST_TABLE_TD));
         if (WebResources.isDisplayVariablesJavaType()) {
             String className = value != null ? value.getClass().getName() : "";
             tr.addElement(new TD(className).setClass(Resources.CLASS_LIST_TABLE_TD));
@@ -73,16 +73,16 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
             formattedValue = Messages.getMessage("label.unset_empty.value", pageContext);
         } else {
             try {
-                VariableFormat variableFormat = FormatCommons.create(wfVariable.getDefinition().getFormat());
+                VariableFormat variableFormat = FormatCommons.create(variable);
                 if (variableFormat instanceof VariableDisplaySupport) {
                     Subject subject = SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
-                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(subject, new StrutsWebHelper(pageContext), processId,
-                            wfVariable.getDefinition().getName(), value);
+                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(subject, new StrutsWebHelper(pageContext), processId, variable
+                            .getDefinition().getName(), value);
                 } else {
                     formattedValue = variableFormat.format(value);
                 }
             } catch (Exception e) {
-                log.warn("Unable to format value " + value + " of decl " + wfVariable.getDefinition() + " in " + processId, e);
+                log.warn("Unable to format value " + value + " of decl " + variable.getDefinition() + " in " + processId, e);
                 formattedValue = value.toString() + " <span class=\"error\">(" + e.getMessage() + ")</span>";
             }
         }

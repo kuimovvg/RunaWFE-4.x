@@ -17,19 +17,21 @@
  */
 package ru.runa.wf.web.ftl.method;
 
-import java.util.List;
-
-import org.apache.ecs.html.Option;
-import org.apache.ecs.html.Select;
-
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.var.dto.WfVariable;
 import freemarker.template.TemplateModelException;
 
+/**
+ * @deprecated code moved to {@link InputVariableTag}.
+ * 
+ * @author dofs
+ * @since 4.0
+ */
+@Deprecated
 public class ChooseActorTag extends FreemarkerTag {
 
     private static final long serialVersionUID = 1L;
@@ -38,29 +40,18 @@ public class ChooseActorTag extends FreemarkerTag {
     protected Object executeTag() throws TemplateModelException {
         String actorVarName = getParameterAs(String.class, 0);
         String view = getParameterAs(String.class, 1);
-        try {
+        if ("all".equals(view)) {
+            WfVariable variable = variableProvider.getVariableNotNull(actorVarName);
+            return ViewUtil.createExecutorSelect(subject, variable);
+        } else if ("raw".equals(view)) {
             ExecutorService executorService = DelegateFactory.getExecutorService();
             BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
             int[] sortIds = { 1 };
             boolean[] sortOrder = { true };
             batchPresentation.setFieldsToSort(sortIds, sortOrder);
-            List<Actor> actors = executorService.getActors(subject, batchPresentation);
-
-            if ("all".equals(view)) {
-                Select select = new Select();
-                select.setName(actorVarName);
-                for (Actor actor : actors) {
-                    Option option = new Option(String.valueOf(actor.getCode())).addElement(actor.getFullName());
-                    select.addElement(option);
-                }
-                return select.toString();
-            } else if ("raw".equals(view)) {
-                return actors;
-            } else {
-                throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
-            }
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
+            return executorService.getActors(subject, batchPresentation);
+        } else {
+            throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
         }
     }
 

@@ -19,16 +19,19 @@ package ru.runa.wfe.var;
 
 import java.io.Serializable;
 
+import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.VariableFormat;
+
 /**
  * Created on 17.11.2004
  */
 public class VariableDefinition implements Serializable {
     private static final long serialVersionUID = 1L;
     private String name;
-    private String format;
+    private String formatClassName;
+    private String formatLabel;
     private boolean publicAccess;
     private String defaultValue;
-    private String displayFormat;
 
     public String getName() {
         return name;
@@ -38,12 +41,12 @@ public class VariableDefinition implements Serializable {
         this.name = name;
     }
 
-    public String getFormat() {
-        return format;
+    public String getFormatClassName() {
+        return formatClassName;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public void setFormatClassName(String formatClassName) {
+        this.formatClassName = formatClassName;
     }
 
     public boolean isPublicAccess() {
@@ -62,20 +65,23 @@ public class VariableDefinition implements Serializable {
         this.defaultValue = defaultValue;
     }
 
-    public String getDisplayFormat() {
-        if (displayFormat != null) {
-            return displayFormat;
+    public String getFormatLabel() {
+        if (formatLabel != null) {
+            return formatLabel;
         }
-        return format;
+        return formatClassName;
     }
 
-    public void setDisplayFormat(String displayFormat) {
-        this.displayFormat = displayFormat;
+    public void setFormatLabel(String displayFormat) {
+        formatLabel = displayFormat;
     }
 
     @Override
     public String toString() {
-        return name + " (" + format + ")";
+        return name + " (" + formatClassName + ")";
     }
 
+    public VariableFormat<Object> getFormat() {
+        return FormatCommons.create(formatClassName);
+    }
 }

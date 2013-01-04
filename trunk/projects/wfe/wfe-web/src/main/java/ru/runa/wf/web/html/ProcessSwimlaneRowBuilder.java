@@ -43,42 +43,42 @@ import com.google.common.collect.Maps;
 public class ProcessSwimlaneRowBuilder implements RowBuilder {
     private final PageContext pageContext;
 
-    private final List<WfSwimlane> wfSwimlanes;
+    private final List<WfSwimlane> swimlanes;
 
     private int currentIndex = 0;
 
     private final Long processId;
 
-    public ProcessSwimlaneRowBuilder(Long processId, List<WfSwimlane> wfSwimlanes, PageContext pageContext) {
+    public ProcessSwimlaneRowBuilder(Long processId, List<WfSwimlane> swimlanes, PageContext pageContext) {
         this.processId = processId;
-        this.wfSwimlanes = wfSwimlanes;
+        this.swimlanes = swimlanes;
         this.pageContext = pageContext;
     }
 
     @Override
     public boolean hasNext() {
-        return currentIndex < wfSwimlanes.size();
+        return currentIndex < swimlanes.size();
     }
 
     @Override
     public TR buildNext() {
         TR tr = new TR();
-        WfSwimlane wfSwimlane = wfSwimlanes.get(currentIndex++);
+        WfSwimlane swimlane = swimlanes.get(currentIndex++);
 
-        TD nameTD = new TD(wfSwimlane.getDefinition().getName());
+        TD nameTD = new TD(swimlane.getDefinition().getName());
         tr.addElement(nameTD);
         nameTD.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
 
         TD assignedToActorTD = new TD();
         tr.addElement(assignedToActorTD);
         assignedToActorTD.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
-        if (wfSwimlane.getExecutor() == null) {
-        } else if (Actor.UNAUTHORIZED_ACTOR.getName().equals(wfSwimlane.getExecutor().getName())) {
+        if (swimlane.getExecutor() == null) {
+        } else if (Actor.UNAUTHORIZED_ACTOR.getName().equals(swimlane.getExecutor().getName())) {
             assignedToActorTD.addElement(Messages.getMessage(ru.runa.common.WebResources.UNAUTHORIZED_EXECUTOR_NAME, pageContext));
         } else {
-            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME,
-                    wfSwimlane.getExecutor().getId(), pageContext, PortletUrlType.Render);
-            assignedToActorTD.addElement(new A(url, ExecutorNameConverter.getName(wfSwimlane.getExecutor(), pageContext)));
+            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, swimlane.getExecutor().getId(),
+                    pageContext, PortletUrlType.Render);
+            assignedToActorTD.addElement(new A(url, ExecutorNameConverter.getName(swimlane.getExecutor(), pageContext)));
         }
 
         TD organizationFunctionTD = new TD();
@@ -86,9 +86,9 @@ public class ProcessSwimlaneRowBuilder implements RowBuilder {
         organizationFunctionTD.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
         Map<String, Object> params = Maps.newHashMap();
         params.put(IdForm.ID_INPUT_NAME, processId);
-        params.put(SwimlaneForm.SWIMLANE_NAME_INPUT_NAME, wfSwimlane.getDefinition().getName());
+        params.put(SwimlaneForm.SWIMLANE_NAME_INPUT_NAME, swimlane.getDefinition().getName());
         String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_DISPLAY_SWIMLANE, params, pageContext, PortletUrlType.Action);
-        String swimlaneInitializer = wfSwimlane.getDefinition().getDisplayOrgFunction();
+        String swimlaneInitializer = swimlane.getDefinition().getOrgFunctionLabel();
         if (Strings.isNullOrEmpty(swimlaneInitializer)) {
             swimlaneInitializer = Messages.getMessage("label.unset_empty.value", pageContext);
         }
@@ -97,6 +97,6 @@ public class ProcessSwimlaneRowBuilder implements RowBuilder {
     }
 
     public int getEnabledRowsCount() {
-        return wfSwimlanes.size();
+        return swimlanes.size();
     }
 }

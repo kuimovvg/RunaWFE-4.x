@@ -25,6 +25,10 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
+import ru.runa.wfe.definition.IFileDataProvider;
+import ru.runa.wfe.lang.Action;
+import ru.runa.wfe.lang.GraphElement;
+import ru.runa.wfe.lang.ProcessDefinition;
 
 import com.google.common.collect.Maps;
 
@@ -72,7 +76,8 @@ public class DiagramModel {
     }
 
     @SuppressWarnings("unchecked")
-    public static DiagramModel load(byte[] gpdBytes) throws Exception {
+    public static DiagramModel load(ProcessDefinition definition) throws Exception {
+        byte[] gpdBytes = definition.getFileDataNotNull(IFileDataProvider.GPD_XML_FILE_NAME);
         DiagramModel diagramModel = new DiagramModel();
         Document document = XmlUtils.parseWithoutValidation(gpdBytes);
         Element root = document.getRootElement();
@@ -92,10 +97,15 @@ public class DiagramModel {
             nodeModel.setHeight(Integer.parseInt(nodeElement.attributeValue("height")));
             diagramModel.nodes.put(nodeModel.getNodeId(), nodeModel);
             List<Element> transitionElements = nodeElement.elements(TRANSITION_ELEMENT);
+            NodeModel transitionSource = nodeModel;
+            if (definition.getGraphElement(nodeModel.getNodeId()) instanceof Action) {
+                GraphElement parent = definition.getGraphElementNotNull(nodeModel.getNodeId()).getParent();
+                transitionSource = diagramModel.nodes.get(parent.getNodeId());
+            }
             for (Element transitionElement : transitionElements) {
                 TransitionModel transitionModel = new TransitionModel();
                 transitionModel.setName(transitionElement.attributeValue("name"));
-                nodeModel.addTransition(transitionModel);
+                transitionSource.addTransition(transitionModel);
                 List<Element> bendpointElements = transitionElement.elements(BENDPOINT_ELEMENT);
                 for (Element bendpointElement : bendpointElements) {
                     BendpointModel bendpointModel = new BendpointModel();

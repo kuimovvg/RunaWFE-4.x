@@ -104,11 +104,9 @@ public class InteractionsParser implements ProcessArchiveParser {
                                         + "' but not defined in " + processDefinition);
                             }
                             variableDefinition = new VariableDefinition();
-                            variableDefinition.setDisplayFormat("displayFormat"); // TODO
-                                                                                  // delete
-                                                                                  // line
-                            variableDefinition.setFormat(ExecutorFormat.class.getName());
                             variableDefinition.setName(name);
+                            variableDefinition.setFormatClassName(ExecutorFormat.class.getName());
+                            variableDefinition.setFormatLabel("TODO:displayFormat");
                         }
                         interaction.getVariables().put(name, variableDefinition);
                     }

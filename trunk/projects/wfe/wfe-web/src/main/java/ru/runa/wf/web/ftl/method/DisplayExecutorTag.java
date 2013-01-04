@@ -20,10 +20,10 @@ package ru.runa.wf.web.ftl.method;
 /**
  * Display executor name.
  * 
- * @deprecated introduced new universal tag for displaying any variable based on
- *             defining format
+ * @deprecated code moved to {@link DisplayVariableTag}.
  * @author dofs
  * @since 3.3
+ * 
  */
 @Deprecated
 public class DisplayExecutorTag extends DisplayVariableTag {
