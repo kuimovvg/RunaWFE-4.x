@@ -18,6 +18,12 @@ import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.util.XmlUtil;
 
+/**
+ * Information saved in absolute coordinates for all elements.
+ * 
+ * @author Dofs
+ * @since 4.0
+ */
 public class GpdXmlContentProvider extends AuxContentProvider {
     public static final String GPD_FILE_NAME = "gpd.xml";
     private static final String Y_ATTRIBUTE_NAME = "y";
@@ -34,13 +40,101 @@ public class GpdXmlContentProvider extends AuxContentProvider {
     private static final String TRANSITION_ELEMENT_NAME = "transition";
     private static final String BENDPOINT_ELEMENT_NAME = "bendpoint";
 
-    //private static final String PARENT_CONTAINER_ID_ATTRIBUTE_NAME = "parentContainerId";
-    private void addProcessDiagramInfo(ProcessDefinition definition, Element processDiagramInfo) {
-        int width = getIntAttribute(processDiagramInfo, WIDTH_ATTRIBUTE_NAME, 0);
-        int height = getIntAttribute(processDiagramInfo, HEIGHT_ATTRIBUTE_NAME, 0);
-        definition.setDimension(new Dimension(width, height));
-        definition.setShowActions(getBooleanAttribute(processDiagramInfo, SHOW_ACTIONS_NAME, false));
-        definition.setShowGrid(getBooleanAttribute(processDiagramInfo, SHOW_GRID_NAME, false));
+    @Override
+    public void saveToFile(IFolder folder, ProcessDefinition definition) throws Exception {
+        Document document = XmlUtil.createDocument(PROCESS_DIAGRAM_ELEMENT_NAME);
+        Element root = document.getRootElement();
+        addAttribute(root, NAME_ATTRIBUTE_NAME, definition.getName());
+        addAttribute(root, NOTATION_ATTRIBUTE_NAME, definition.getLanguage().getNotation());
+        if (definition.getLanguage() == Language.BPMN) {
+            addAttribute(root, RENDERED_ATTRIBUTE_NAME, "graphiti");
+        }
+        Dimension dimension = definition.getDimension();
+        addAttribute(root, WIDTH_ATTRIBUTE_NAME, String.valueOf(dimension.width));
+        addAttribute(root, HEIGHT_ATTRIBUTE_NAME, String.valueOf(dimension.height));
+        addAttribute(root, SHOW_ACTIONS_NAME, String.valueOf(definition.isShowActions()));
+        addAttribute(root, SHOW_GRID_NAME, String.valueOf(definition.isShowGrid()));
+        int xOffset = 0;
+        int yOffset = 0;
+        int canvasShift = 0;
+        if (definition.getLanguage() == Language.BPMN) {
+            canvasShift = 5;
+        }
+        // calculating negative offsets;
+        for (GraphElement graphElement : definition.getElementsRecursive()) {
+            if (graphElement.getConstraint() == null) {
+                continue;
+            }
+            Rectangle constraint = graphElement.getConstraint();
+            if (constraint.x - canvasShift < xOffset) {
+                xOffset = constraint.x - canvasShift;
+            }
+            if (constraint.y - canvasShift < yOffset) {
+                yOffset = constraint.y - canvasShift;
+            }
+            if (graphElement instanceof Node) {
+                Node node = (Node) graphElement;
+                for (Transition transition : node.getLeavingTransitions()) {
+                    for (Bendpoint bendpoint : transition.getBendpoints()) {
+                        if (bendpoint.getX() - canvasShift < xOffset) {
+                            xOffset = bendpoint.getX() - canvasShift;
+                        }
+                        if (bendpoint.getY() - canvasShift < yOffset) {
+                            yOffset = bendpoint.getY() - canvasShift;
+                        }
+                    }
+                }
+            }
+        }
+        for (GraphElement graphElement : definition.getElementsRecursive()) {
+            if (graphElement.getConstraint() == null) {
+                continue;
+            }
+            Element element = root.addElement(NODE_ELEMENT_NAME);
+            addAttribute(element, NAME_ATTRIBUTE_NAME, graphElement.getId());
+            Rectangle constraint = graphElement.getConstraint().getCopy();
+            GraphElement parentGraphElement = graphElement.getParentContainer();
+            Rectangle parentConstraint = null;
+            if (parentGraphElement != null && !parentGraphElement.equals(definition)) {
+                parentConstraint = parentGraphElement.getConstraint();
+                constraint.x += parentConstraint.x;
+                constraint.y += parentConstraint.y;
+            }
+            if (constraint.isEmpty()) {
+                throw new Exception("Invalid figure size: " + constraint.getSize());
+            }
+            addAttribute(element, X_ATTRIBUTE_NAME, String.valueOf(constraint.x - xOffset));
+            addAttribute(element, Y_ATTRIBUTE_NAME, String.valueOf(constraint.y - yOffset));
+            addAttribute(element, WIDTH_ATTRIBUTE_NAME, String.valueOf(constraint.width));
+            addAttribute(element, HEIGHT_ATTRIBUTE_NAME, String.valueOf(constraint.height));
+            if (graphElement instanceof State) {
+                boolean minimizedView = ((State) graphElement).isMinimizedView();
+                addAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, String.valueOf(minimizedView));
+            }
+            if (graphElement instanceof Node) {
+                Node node = (Node) graphElement;
+                for (Transition transition : node.getLeavingTransitions()) {
+                    Element transitionElement = element.addElement(TRANSITION_ELEMENT_NAME);
+                    String name = transition.getName();
+                    if (name != null) {
+                        addAttribute(transitionElement, NAME_ATTRIBUTE_NAME, name);
+                    }
+                    for (Bendpoint bendpoint : transition.getBendpoints()) {
+                        Element bendpointElement = transitionElement.addElement(BENDPOINT_ELEMENT_NAME);
+                        int x = bendpoint.getX() - xOffset;
+                        int y = bendpoint.getY() - yOffset;
+                        //                        if (parentConstraint != null) {
+                        //                            x += parentConstraint.x;
+                        //                            y += parentConstraint.y;
+                        //                        }
+                        addAttribute(bendpointElement, X_ATTRIBUTE_NAME, String.valueOf(x));
+                        addAttribute(bendpointElement, Y_ATTRIBUTE_NAME, String.valueOf(y));
+                    }
+                }
+            }
+        }
+        byte[] bytes = XmlUtil.writeXml(document);
+        updateFile(folder.getFile(GPD_FILE_NAME), bytes);
     }
 
     @Override
@@ -52,14 +146,6 @@ public class GpdXmlContentProvider extends AuxContentProvider {
         for (Element element : children) {
             String nodeId = element.attributeValue(NAME_ATTRIBUTE_NAME);
             GraphElement graphElement = definition.getGraphElementByIdNotNull(nodeId);
-            //            String parentContainerId = element.attributeValue(PARENT_CONTAINER_ID_ATTRIBUTE_NAME);
-            //            GraphElement parentContainer;
-            //            if (parentContainerId != null) {
-            //                parentContainer = definition.getGraphElementByIdNotNull(parentContainerId);
-            //            } else {
-            //                parentContainer = definition;
-            //            }
-            //            graphElement.setParentContainer(parentContainer);
             Rectangle constraint = new Rectangle();
             constraint.x = getIntAttribute(element, X_ATTRIBUTE_NAME, 0);
             constraint.y = getIntAttribute(element, Y_ATTRIBUTE_NAME, 0);
@@ -92,92 +178,22 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                 }
             }
         }
+        for (GraphElement graphElement : definition.getElementsRecursive()) {
+            GraphElement parentGraphElement = graphElement.getParentContainer();
+            if (parentGraphElement != null && !parentGraphElement.equals(definition)) {
+                Rectangle parentConstraint = parentGraphElement.getConstraint();
+                Rectangle constraint = graphElement.getConstraint();
+                constraint.x -= parentConstraint.x;
+                constraint.y -= parentConstraint.y;
+            }
+        }
     }
 
-    @Override
-    public void saveToFile(IFolder folder, ProcessDefinition definition) throws Exception {
-        Document document = XmlUtil.createDocument(PROCESS_DIAGRAM_ELEMENT_NAME);
-        Element root = document.getRootElement();
-        addAttribute(root, NAME_ATTRIBUTE_NAME, definition.getName());
-        addAttribute(root, NOTATION_ATTRIBUTE_NAME, definition.getLanguage().getNotation());
-        if (definition.getLanguage() == Language.BPMN) {
-            addAttribute(root, RENDERED_ATTRIBUTE_NAME, "graphiti");
-        }
-        Dimension dimension = definition.getDimension();
-        addAttribute(root, WIDTH_ATTRIBUTE_NAME, String.valueOf(dimension.width));
-        addAttribute(root, HEIGHT_ATTRIBUTE_NAME, String.valueOf(dimension.height));
-        addAttribute(root, SHOW_ACTIONS_NAME, String.valueOf(definition.isShowActions()));
-        addAttribute(root, SHOW_GRID_NAME, String.valueOf(definition.isShowGrid()));
-        int xOffset = 0;
-        int yOffset = 0;
-        int canvasShift = 0;
-        if (definition.getLanguage() == Language.BPMN) {
-            canvasShift = 5;
-        }
-        // calculating negative offsets;
-        for (GraphElement graphElement : definition.getElementsRecursive()) {
-            if (graphElement.getConstraint() == null) {
-                continue;
-            }
-            Rectangle constraints = graphElement.getConstraint();
-            if (constraints.x - canvasShift < xOffset) {
-                xOffset = constraints.x - canvasShift;
-            }
-            if (constraints.y - canvasShift < yOffset) {
-                yOffset = constraints.y - canvasShift;
-            }
-            if (graphElement instanceof Node) {
-                Node node = (Node) graphElement;
-                for (Transition transition : node.getLeavingTransitions()) {
-                    for (Bendpoint bendpoint : transition.getBendpoints()) {
-                        if (bendpoint.getX() - canvasShift < xOffset) {
-                            xOffset = bendpoint.getX() - canvasShift;
-                        }
-                        if (bendpoint.getY() - canvasShift < yOffset) {
-                            yOffset = bendpoint.getY() - canvasShift;
-                        }
-                    }
-                }
-            }
-        }
-        for (GraphElement graphElement : definition.getElementsRecursive()) {
-            if (graphElement.getConstraint() == null) {
-                continue;
-            }
-            Element element = root.addElement(NODE_ELEMENT_NAME);
-            addAttribute(element, NAME_ATTRIBUTE_NAME, graphElement.getId());
-            //            if (graphElement.getParentContainer() != null && !graphElement.getParentContainer().equals(definition)) {
-            //                addAttribute(element, PARENT_CONTAINER_ID_ATTRIBUTE_NAME, graphElement.getParentContainer().getId());
-            //            }
-            Rectangle constraint = graphElement.getConstraint();
-            if (constraint.width == 0 || constraint.height == 0) {
-                throw new Exception("Invalid figure size: " + constraint.getSize());
-            }
-            addAttribute(element, X_ATTRIBUTE_NAME, String.valueOf(constraint.x - xOffset));
-            addAttribute(element, Y_ATTRIBUTE_NAME, String.valueOf(constraint.y - yOffset));
-            addAttribute(element, WIDTH_ATTRIBUTE_NAME, String.valueOf(constraint.width));
-            addAttribute(element, HEIGHT_ATTRIBUTE_NAME, String.valueOf(constraint.height));
-            if (graphElement instanceof State) {
-                boolean minimizedView = ((State) graphElement).isMinimizedView();
-                addAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, String.valueOf(minimizedView));
-            }
-            if (graphElement instanceof Node) {
-                Node node = (Node) graphElement;
-                for (Transition transition : node.getLeavingTransitions()) {
-                    Element transitionElement = element.addElement(TRANSITION_ELEMENT_NAME);
-                    String name = transition.getName();
-                    if (name != null) {
-                        addAttribute(transitionElement, NAME_ATTRIBUTE_NAME, name);
-                    }
-                    for (Bendpoint bendpoint : transition.getBendpoints()) {
-                        Element bendpointElement = transitionElement.addElement(BENDPOINT_ELEMENT_NAME);
-                        addAttribute(bendpointElement, X_ATTRIBUTE_NAME, String.valueOf(bendpoint.getX() - xOffset));
-                        addAttribute(bendpointElement, Y_ATTRIBUTE_NAME, String.valueOf(bendpoint.getY() - yOffset));
-                    }
-                }
-            }
-        }
-        byte[] bytes = XmlUtil.writeXml(document);
-        updateFile(folder.getFile(GPD_FILE_NAME), bytes);
+    private void addProcessDiagramInfo(ProcessDefinition definition, Element processDiagramInfo) {
+        int width = getIntAttribute(processDiagramInfo, WIDTH_ATTRIBUTE_NAME, 0);
+        int height = getIntAttribute(processDiagramInfo, HEIGHT_ATTRIBUTE_NAME, 0);
+        definition.setDimension(new Dimension(width, height));
+        definition.setShowActions(getBooleanAttribute(processDiagramInfo, SHOW_ACTIONS_NAME, false));
+        definition.setShowGrid(getBooleanAttribute(processDiagramInfo, SHOW_GRID_NAME, false));
     }
 }

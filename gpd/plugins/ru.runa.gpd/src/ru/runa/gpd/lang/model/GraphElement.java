@@ -59,11 +59,8 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         if ("language".equals(name)) {
             return Objects.equal(value, getProcessDefinition().getLanguage().name().toLowerCase());
         }
-        if ("timerExists".equals(name)) {
-            if (this instanceof ITimed) {
-                boolean timerExists = ((ITimed) this).getTimer() != null;
-                return Objects.equal(value, String.valueOf(timerExists));
-            }
+        if ("delegable".equals(name)) {
+            return Objects.equal(value, String.valueOf(isDelegable()));
         }
         return false;
     }
@@ -115,7 +112,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
     }
 
     protected void validate() {
-        if (this instanceof Delegable) {
+        if (isDelegable()) {
             Delegable d = (Delegable) this;
             DelegableProvider provider = HandlerRegistry.getProvider(delegationClassName);
             if (delegationClassName == null || delegationClassName.length() == 0) {
@@ -166,21 +163,20 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         child.setParent(this);
         child.setDelegatedListener(delegatedListener);
         firePropertyChange(NODE_CHILDS_CHANGED, null, 1);
-        if (child instanceof NamedGraphElement) {
-            try {
-                String nodeId = ((NamedGraphElement) child).getId();
-                if (nodeId == null) {
-                    ((NamedGraphElement) child).setId("ID" + getProcessDefinition().nextNodeId);
-                    getProcessDefinition().nextNodeId++;
+        try {
+            String nodeId = child.getId();
+            if (nodeId == null) {
+                if (child instanceof NamedGraphElement) {
+                    child.setId(((NamedGraphElement) child).getName());
                 } else {
-                    nodeId = nodeId.substring(2);
-                    int nodeIdInt = Integer.parseInt(nodeId);
-                    if (nodeIdInt > getProcessDefinition().nextNodeId) {
-                        getProcessDefinition().nextNodeId = nodeIdInt + 1;
-                    }
+                    child.setId("ID" + getProcessDefinition().getNextNodeId());
                 }
-            } catch (NumberFormatException e) {
+            } else {
+                nodeId = nodeId.substring(2);
+                int nodeIdInt = Integer.parseInt(nodeId);
+                getProcessDefinition().setNextNodeIdIfApplicable(nodeIdInt + 1);
             }
+        } catch (NumberFormatException e) {
         }
     }
 
@@ -335,6 +331,10 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
     public void resetPropertyValue(Object id) {
     }
 
+    public boolean isDelegable() {
+        return this instanceof Delegable;
+    }
+
     @Override
     public final IPropertyDescriptor[] getPropertyDescriptors() {
         List<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
@@ -349,7 +349,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         // if (this instanceof Describable) {
         descriptors.add(new TextPropertyDescriptor(PROPERTY_DESCRIPTION, Localization.getString("property.description")));
         // }
-        if (this instanceof Delegable) {
+        if (isDelegable()) {
             String type = ((Delegable) this).getDelegationType();
             descriptors.add(new DelegableClassPropertyDescriptor(PROPERTY_CLASS, Localization.getString("property.delegation.class"), type));
             descriptors.add(new DelegableConfPropertyDescriptor(PROPERTY_CONFIGURATION, (Delegable) this, Localization.getString("property.delegation.configuration")));

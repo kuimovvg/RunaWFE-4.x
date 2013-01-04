@@ -2,10 +2,7 @@ package ru.runa.gpd.formeditor.wysiwyg;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
@@ -21,7 +18,6 @@ import ru.runa.gpd.formeditor.ftl.FormatTag;
 import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
 import ru.runa.gpd.formeditor.ftl.FreemarkerUtil.TagParser;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
-import ru.runa.gpd.formeditor.ftl.MethodTag.MethodTagComparator;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
 import ru.runa.gpd.lang.model.Variable;
@@ -137,9 +133,7 @@ public class FtlTagSupportServlet extends HttpServlet {
             response.setHeader("Cache-Control", "no-cache");
             if ("GetAllMethods".equals(commandStr)) {
                 resultHtml.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ftl.method.dialog.start")));
-                List<MethodTag> tagsList = new ArrayList<MethodTag>(MethodTag.getAll().values());
-                Collections.sort(tagsList, new MethodTagComparator());
-                for (MethodTag tagInfo : tagsList) {
+                for (MethodTag tagInfo : MethodTag.getEnabled()) {
                     resultHtml.append("<option value=\"" + tagInfo.id + "\">" + tagInfo.name + "</option>");
                 }
                 resultHtml.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ftl.method.dialog.end")));

@@ -57,12 +57,6 @@ public abstract class Node extends NamedGraphElement implements Describable {
                 addError("noOutputTransitions");
             }
         }
-        //        if (this instanceof ITimed) {
-        //            Timer timer = ((ITimed) this).getTimer();
-        //            if (timer != null) {
-        //                timer.validate();
-        //            }
-        //        }
     }
 
     public String getNextTransitionName() {
