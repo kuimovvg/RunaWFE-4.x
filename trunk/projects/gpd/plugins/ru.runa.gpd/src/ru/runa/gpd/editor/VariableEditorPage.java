@@ -212,7 +212,7 @@ public class VariableEditorPage extends EditorPartBase {
         } else {
             formNames.append(Localization.getString("Variable.NoFormsUsed"));
         }
-        if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("ConfirmDelete"), formNames.toString())) {
+        if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), formNames.toString())) {
             // remove variable from form validations
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, variable);
             // remove variable from definition
