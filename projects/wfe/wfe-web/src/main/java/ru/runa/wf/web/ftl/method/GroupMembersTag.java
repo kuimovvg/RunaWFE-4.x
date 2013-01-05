@@ -19,15 +19,12 @@ package ru.runa.wf.web.ftl.method;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 
-import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.DelegateFactory;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
 import freemarker.template.TemplateModelException;
@@ -38,13 +35,12 @@ public class GroupMembersTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String varName = getParameterAs(String.class, 0);
-        String groupName = getParameterAs(String.class, 1);
+        String actorVarName = getParameterAs(String.class, 0);
+        Group group = getParameterAs(Group.class, 1);
         String view = getParameterAs(String.class, 2);
-
-        List<Actor> actors = getActors(subject, groupName);
+        List<Actor> actors = DelegateFactory.getExecutorService().getGroupActors(subject, group);
         if ("all".equals(view)) {
-            return getHtml(actors, varName);
+            return createSelect(actorVarName, actors).toString();
         } else if ("raw".equals(view)) {
             return actors;
         } else {
@@ -52,17 +48,8 @@ public class GroupMembersTag extends FreemarkerTag {
         }
     }
 
-    private List<Actor> getActors(Subject subject, String groupName) throws TemplateModelException {
-        try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
-            Group group = executorService.getExecutor(subject, groupName);
-            return executorService.getGroupActors(subject, group);
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
-        }
-    }
-
-    protected Select createSelect(String selectName, List<Actor> actors, Actor defaultSelectedActor) {
+    protected Select createSelect(String selectName, List<Actor> actors) {
+        Actor defaultSelectedActor = SubjectPrincipalsHelper.getActor(subject);
         Select select = new Select();
         select.setName(selectName);
         for (Actor actor : actors) {
@@ -75,14 +62,4 @@ public class GroupMembersTag extends FreemarkerTag {
         return select;
     }
 
-    public String getHtml(List<Actor> actors, String varName) throws TemplateModelException {
-        try {
-            StringBuilder htmlContent = new StringBuilder();
-            Actor defaultActor = DelegateFactory.getAuthenticationService().getActor(subject);
-            htmlContent.append(createSelect(varName, actors, defaultActor).toString());
-            return htmlContent.toString();
-        } catch (AuthenticationException e) {
-            throw new TemplateModelException(e);
-        }
-    }
 }

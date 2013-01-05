@@ -17,9 +17,11 @@
  */
 package ru.runa.wfe.validation.impl;
 
-import ru.runa.wfe.commons.TypeConversionUtil;
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Map;
 
-public class ArraySizeValidator extends FieldValidatorSupport {
+public class ContainerSizeValidator extends FieldValidatorSupport {
     private int minLength = -1;
     private int maxLength = -1;
 
@@ -41,15 +43,25 @@ public class ArraySizeValidator extends FieldValidatorSupport {
 
     @Override
     public void validate() {
-        String[] var = TypeConversionUtil.convertTo(getFieldValue(), String[].class);
-        if (var == null) {
+        Object container = getFieldValue();
+        if (container == null) {
             // use a required validator for these
             return;
         }
-        int arraySize = var.length;
-        if ((minLength > -1) && (arraySize < minLength)) {
+        int size;
+        if (container instanceof Collection) {
+            size = ((Collection<?>) container).size();
+        } else if (container.getClass().isArray()) {
+            size = Array.getLength(container);
+        } else if (container instanceof Map<?, ?>) {
+            size = ((Map<?, ?>) container).size();
+        } else {
             addFieldError();
-        } else if ((maxLength > -1) && (arraySize > maxLength)) {
+            return;
+        }
+        if ((minLength > -1) && (size < minLength)) {
+            addFieldError();
+        } else if ((maxLength > -1) && (size > maxLength)) {
             addFieldError();
         }
     }

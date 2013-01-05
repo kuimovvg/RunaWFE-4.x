@@ -19,6 +19,7 @@ package ru.runa.wfe.commons.logic;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.transaction.Status;
@@ -149,7 +150,10 @@ public class InitializerLogic {
                 log.info("database is initialized. skipping initialization ...");
                 applyPatches(transaction);
             }
-            InputStream stream = ClassLoaderUtil.getResourceAsStream("localizations.xml", getClass());
+            InputStream stream = ClassLoaderUtil.getResourceAsStream("localizations_" + Locale.getDefault().getLanguage() + ".xml", getClass());
+            if (stream == null) {
+                stream = ClassLoaderUtil.getResourceAsStream("localizations.xml", getClass());
+            }
             if (stream != null) {
                 Map<String, String> localizations = LocalizationParser.parseLocalizations(stream);
                 localizationDAO.saveLocalizations(localizations, false);

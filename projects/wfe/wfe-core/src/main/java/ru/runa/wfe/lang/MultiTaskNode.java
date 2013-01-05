@@ -90,7 +90,7 @@ public class MultiTaskNode extends InteractionNode implements Synchronizable {
         List<Object> executorIds = executionContext.getVariableProvider().getValueNotNull(List.class, executorsVariableName);
         boolean tasksCreated = false;
         for (Object executorId : executorIds) {
-            Executor executor = TypeConversionUtil.toExecutor(executorDAO, executorId);
+            Executor executor = TypeConversionUtil.convertTo(executorId, Executor.class);
             Task task = taskFactory.create(executionContext, taskDefinition);
             task.assignExecutor(executionContext, executor, false);
             taskFactory.notify(executionContext, task);
