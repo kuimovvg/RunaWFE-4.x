@@ -21,21 +21,21 @@ function updateDialogContent() {
     $("#dialogContent").html("");
     $.getJSON(
         "jsonUrl",
-        {tag: "ActorsMultiSelect", hint: $("#dialogFilter").val()},
+        {tag: "LegacyActorsMultiSelect", hint: $("#dialogFilter").val()},
         function(data) {
             $.each(data, function(i, item) {
-                $("#dialogContent").append("<div><a href='javascript:addActor(\""+item.id+"\", \""+item.name+"\");'>"+item.name+"</a></div>");
+                $("#dialogContent").append("<div><a href='javascript:addActor(\""+item.code+"\", \""+item.name+"\");'>"+item.name+"</a></div>");
             });
         }
     );
     $.editDialog.dialog('open');
 }
 
-function addActor(id, name) {
+function addActor(code, name) {
     numCounterVARIABLE++;
     var divId = "divVARIABLE" + numCounterVARIABLE;
     var e = "<div id='" + divId + "'>";
-    e += "<input type='hidden' name='VARIABLE' value='"+id+"' /> " + name;
+    e += "<input type='hidden' name='VARIABLE' value='"+code+"' /> " + name;
     e += " <a href='javascript:{}' onclick='$(\"#"+divId+"\").remove();'>[ X ]</a>";
     e += "</div>";
     $('#actorsMultiSelectCntVARIABLE').append(e);

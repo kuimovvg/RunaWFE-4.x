@@ -17,5 +17,5 @@
     <validator name="dateInThisMonth" class="ru.runa.wfe.validation.impl.InThisMonthDateFieldValidator"/>
     <validator name="dateInThisYear" class="ru.runa.wfe.validation.impl.InThisYearDateFieldValidator"/>
     <validator name="dateRelativeToCurrent" class="ru.runa.wfe.validation.impl.RelativeToCurrentDateRangeFieldValidator"/>
-    <validator name="arraySize" class="ru.runa.wfe.validation.impl.ArraySizeValidator"/>
+    <validator name="containerSize" class="ru.runa.wfe.validation.impl.ContainerSizeValidator"/>
 </validators>

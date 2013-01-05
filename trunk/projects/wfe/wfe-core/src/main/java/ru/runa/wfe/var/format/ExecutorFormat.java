@@ -12,26 +12,16 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.collect.Maps;
 
 public class ExecutorFormat implements VariableFormat<Executor>, VariableDisplaySupport<Executor> {
     @Autowired
-    private ExecutorDAO executorDAO;
-    @Autowired
     private PermissionDAO permissionDAO;
 
     @Override
     public Executor parse(String[] source) throws Exception {
-        return TypeConversionUtil.toExecutor(executorDAO, source[0]);
-        // return
-        // executorDAO.getActorByCode(TypeConversionUtil.convertTo(source[0],
-        // Long.class));
-        // TODO tmp
-        // return
-        // executorDAO.getExecutor(TypeConversionUtil.convertTo(source[0],
-        // Long.class));
+        return TypeConversionUtil.convertTo(source[0], Executor.class);
     }
 
     @Override

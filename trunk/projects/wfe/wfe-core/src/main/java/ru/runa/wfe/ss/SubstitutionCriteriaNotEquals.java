@@ -34,7 +34,8 @@ import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 /**
- * Substitution with this criteria applies when substitutor not in actor list. Actor list contains executors from process variable with 'conf' name.
+ * Substitution with this criteria applies when substitutor not in actor list.
+ * Actor list contains executors from process variable with 'conf' name.
  */
 @Entity
 @DiscriminatorValue(value = "not_equals")
@@ -64,7 +65,7 @@ public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
             if (variableValue == null) {
                 return true;
             }
-            executor = TypeConversionUtil.toExecutor(executorDAO, variableValue);
+            executor = TypeConversionUtil.convertTo(variableValue, Executor.class);
         }
         Set<Executor> confActors = new HashSet<Executor>();
         if (executor instanceof Group) {

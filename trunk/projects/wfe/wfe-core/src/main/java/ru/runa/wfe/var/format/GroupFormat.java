@@ -12,24 +12,21 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Group;
-import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.collect.Maps;
 
 public class GroupFormat implements VariableFormat<Group>, VariableDisplaySupport<Group> {
     @Autowired
-    private ExecutorDAO executorDAO;
-    @Autowired
     private PermissionDAO permissionDAO;
 
     @Override
     public Group parse(String[] source) throws Exception {
-        return TypeConversionUtil.toExecutor(executorDAO, source[0]);
+        return TypeConversionUtil.convertTo(source[0], Group.class);
     }
 
     @Override
     public String format(Group object) {
-        return object.getFullName();
+        return object.getName();
     }
 
     @Override

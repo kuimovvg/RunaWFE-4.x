@@ -30,49 +30,34 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
 
     @Override
     protected String renderRequest() throws TemplateModelException {
-        try {
-            String variableName = getParameterAs(String.class, 0);
-            Map<String, String> substitutions = new HashMap<String, String>();
-            substitutions.put("VARIABLE", variableName);
-            StringBuffer html = new StringBuffer();
-            html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions, true));
+        String variableName = getParameterAs(String.class, 0);
+        Map<String, String> substitutions = new HashMap<String, String>();
+        substitutions.put("VARIABLE", variableName);
+        StringBuffer html = new StringBuffer();
+        html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions, true));
 
-            html.append("<div id=\"actorsMultiSelect").append(variableName).append("\"><div id=\"actorsMultiSelectCnt").append(variableName)
-                    .append("\"></div><div id=\"actorsMultiSelectAddButton\"><a href=\"javascript:{}\" id=\"btnAdd").append(variableName)
-                    .append("\">[ + ]</a></div></div>");
-            return html.toString();
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
-        }
+        html.append("<div id=\"actorsMultiSelect").append(variableName).append("\"><div id=\"actorsMultiSelectCnt").append(variableName)
+                .append("\"></div><div id=\"actorsMultiSelectAddButton\"><a href=\"javascript:{}\" id=\"btnAdd").append(variableName)
+                .append("\">[ + ]</a></div></div>");
+        return html.toString();
     }
 
     @Override
     public void processAjaxRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String displayFormat = getParameterAs(String.class, 1);
-        String resultFormat = getParameterAs(String.class, 2);
-        String groupName = getParameterAs(String.class, 3);
+        Group group = getParameterAs(Group.class, 2);
         boolean byLogin = "login".equals(displayFormat);
         StringBuffer json = new StringBuffer("[");
         String hint = request.getParameter("hint");
-        List<Actor> actors = getActors(subject, groupName, byLogin, hint);
+        List<Actor> actors = getActors(subject, group, byLogin, hint);
         if (actors.size() == 0) {
-            json.append("{\"code\": \"\", \"name\": \"\"}");
+            json.append("{\"id\": \"\", \"name\": \"\"}");
         }
         for (Actor actor : actors) {
             if (json.length() > 10) {
                 json.append(", ");
             }
-            Object data;
-            if ("login".equals(resultFormat)) {
-                data = actor.getName();
-            } else if ("email".equals(resultFormat)) {
-                data = actor.getEmail();
-            } else if ("fio".equals(resultFormat)) {
-                data = actor.getFullName();
-            } else {
-                data = actor.getCode();
-            }
-            json.append("{\"code\": \"").append(data).append("\", \"name\": \"");
+            json.append("{\"id\": \"ID").append(actor.getId()).append("\", \"name\": \"");
             if (byLogin) {
                 json.append(actor.getName());
             } else {
@@ -84,50 +69,45 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
         response.getOutputStream().write(json.toString().getBytes(Charsets.UTF_8));
     }
 
-    private List<Actor> getActors(Subject subject, String groupName, boolean byLogin, String hint) throws TemplateModelException {
-        try {
-            int rangeSize = 50;
-            List<Actor> actors = Lists.newArrayListWithExpectedSize(rangeSize);
-            ExecutorService executorService = DelegateFactory.getExecutorService();
-            if (groupName != null && groupName.length() > 0) {
-                Group group = executorService.getExecutor(subject, groupName);
-                List<Actor> groupActors = executorService.getGroupActors(subject, group);
-                for (Actor actor : groupActors) {
-                    if (byLogin) {
-                        if (actor.getName().startsWith(hint)) {
-                            actors.add(actor);
-                        }
-                    } else {
-                        if (actor.getFullName().startsWith(hint)) {
-                            actors.add(actor);
-                        }
+    private List<Actor> getActors(Subject subject, Group group, boolean byLogin, String hint) {
+        int rangeSize = 50;
+        List<Actor> actors = Lists.newArrayListWithExpectedSize(rangeSize);
+        ExecutorService executorService = DelegateFactory.getExecutorService();
+        if (group != null) {
+            List<Actor> groupActors = executorService.getGroupActors(subject, group);
+            for (Actor actor : groupActors) {
+                if (byLogin) {
+                    if (actor.getName().startsWith(hint)) {
+                        actors.add(actor);
                     }
-                }
-            } else {
-                BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
-                batchPresentation.setRangeSize(rangeSize);
-                batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
-                if (hint.length() > 0) {
-                    int filterIndex = byLogin ? 0 : 1;
-                    Map<Integer, FilterCriteria> filterFieldsMap = batchPresentation.getFilteredFields();
-                    StringFilterCriteria filterCriteriaEnd = (StringFilterCriteria) FilterCriteriaFactory.getFilterCriteria(batchPresentation,
-                            filterIndex);
-                    filterCriteriaEnd.applyFilterTemplates(new String[] { hint + "%" });
-                    filterFieldsMap.put(filterIndex, filterCriteriaEnd);
-                }
-                // thid method used instead of getActors due to lack paging in
-                // that
-                // method
-                for (Executor executor : executorService.getAll(subject, batchPresentation)) {
-                    if (executor instanceof Actor) {
-                        actors.add((Actor) executor);
+                } else {
+                    if (actor.getFullName().startsWith(hint)) {
+                        actors.add(actor);
                     }
                 }
             }
-            return actors;
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
+        } else {
+            BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
+            batchPresentation.setRangeSize(rangeSize);
+            batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
+            if (hint.length() > 0) {
+                int filterIndex = byLogin ? 0 : 1;
+                Map<Integer, FilterCriteria> filterFieldsMap = batchPresentation.getFilteredFields();
+                StringFilterCriteria filterCriteriaEnd = (StringFilterCriteria) FilterCriteriaFactory.getFilterCriteria(batchPresentation,
+                        filterIndex);
+                filterCriteriaEnd.applyFilterTemplates(new String[] { hint + "%" });
+                filterFieldsMap.put(filterIndex, filterCriteriaEnd);
+            }
+            // thid method used instead of getActors due to lack paging in
+            // that
+            // method
+            for (Executor executor : executorService.getAll(subject, batchPresentation)) {
+                if (executor instanceof Actor) {
+                    actors.add((Actor) executor);
+                }
+            }
         }
+        return actors;
     }
 
 }

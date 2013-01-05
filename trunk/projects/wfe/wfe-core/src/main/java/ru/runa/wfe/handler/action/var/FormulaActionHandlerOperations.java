@@ -44,23 +44,14 @@ public class FormulaActionHandlerOperations {
     private static final Log log = LogFactory.getLog(FormulaActionHandlerOperations.class);
 
     public Object sum(Object o1, Object o2) {
-        if (Double.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() + ((Double) o2).doubleValue());
+        if (Double.class.isInstance(o1) && Number.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() + ((Number) o2).doubleValue());
         }
-        if (Double.class.isInstance(o1) && Long.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() + ((Long) o2).doubleValue());
+        if (Long.class.isInstance(o1) && Number.class.isInstance(o2)) {
+            return new Long((long) (((Long) o1).doubleValue() + ((Number) o2).doubleValue()));
         }
-        if (Long.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Double(((Long) o1).doubleValue() + ((Double) o2).doubleValue());
-        }
-        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
-            return new Long(((Long) o1).longValue() + ((Long) o2).longValue());
-        }
-        if (Date.class.isInstance(o1) && Long.class.isInstance(o2)) {
-            return new Date(((Date) o1).getTime() + ((Long) o2).longValue() * 60 * 1000);
-        }
-        if (Date.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Date(((Date) o1).getTime() + (long) (((Double) o2).doubleValue() * 60 * 1000));
+        if (Date.class.isInstance(o1) && Number.class.isInstance(o2)) {
+            return new Date(((Date) o1).getTime() + (long) (((Number) o2).doubleValue() * 60 * 1000));
         }
         if (Date.class.isInstance(o1) && Date.class.isInstance(o2)) {
             Date date2 = (Date) o2;
@@ -80,60 +71,42 @@ public class FormulaActionHandlerOperations {
     }
 
     public Object sub(Object o1, Object o2) {
-        if (Double.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() - ((Double) o2).doubleValue());
+        if (Double.class.isInstance(o1) && Number.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() - ((Number) o2).doubleValue());
         }
-        if (Double.class.isInstance(o1) && Long.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() - ((Long) o2).doubleValue());
+        if (Long.class.isInstance(o1) && Number.class.isInstance(o2)) {
+            return new Long((long) (((Long) o1).doubleValue() - ((Number) o2).doubleValue()));
         }
-        if (Long.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Double(((Long) o1).doubleValue() - ((Double) o2).doubleValue());
-        }
-        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
-            return new Long(((Long) o1).longValue() - ((Long) o2).longValue());
-        }
-        if (Date.class.isInstance(o1) && Long.class.isInstance(o2)) {
-            return new Date(((Date) o1).getTime() - ((Long) o2).longValue() * 60000);
-        }
-        if (Date.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Date(((Date) o1).getTime() - (long) (((Double) o2).doubleValue() * 60 * 1000));
+        if (Date.class.isInstance(o1) && Number.class.isInstance(o2)) {
+            return new Date(((Date) o1).getTime() - (long) (((Number) o2).doubleValue() * 60 * 1000));
         }
         if (Date.class.isInstance(o1) && Date.class.isInstance(o2)) {
-            return new Double((double) (((Date) o1).getTime() - ((Date) o2).getTime()) / 60000);
+            return new Long((((Date) o1).getTime() - ((Date) o2).getTime()) / 60000);
         }
         log.error("Cannot make sub for " + o1.getClass() + " with " + o2.getClass());
         return null;
     }
 
     public Object mul(Object o1, Object o2) {
-        if (Double.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() * ((Double) o2).doubleValue());
+        if (Double.class.isInstance(o1) && Number.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() * ((Number) o2).doubleValue());
         }
         if (Double.class.isInstance(o1) && Long.class.isInstance(o2)) {
             return new Double(((Double) o1).doubleValue() * ((Long) o2).doubleValue());
         }
-        if (Long.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Double(((Long) o1).doubleValue() * ((Double) o2).doubleValue());
-        }
-        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
-            return new Long(((Long) o1).longValue() * ((Long) o2).longValue());
+        if (Long.class.isInstance(o1) && Number.class.isInstance(o2)) {
+            return new Long((long) (((Long) o1).doubleValue() * ((Number) o2).doubleValue()));
         }
         log.error("Cannot make mul for " + (o1 != null ? o1.getClass() : "null") + " with " + (o2 != null ? o2.getClass() : "null"));
         return null;
     }
 
     public Object div(Object o1, Object o2) {
-        if (Double.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() / ((Double) o2).doubleValue());
+        if (Double.class.isInstance(o1) && Number.class.isInstance(o2)) {
+            return new Double(((Double) o1).doubleValue() / ((Number) o2).doubleValue());
         }
-        if (Double.class.isInstance(o1) && Long.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() / ((Long) o2).doubleValue());
-        }
-        if (Long.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Double(((Long) o1).doubleValue() / ((Double) o2).doubleValue());
-        }
-        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
-            return new Long(((Long) o1).longValue() / ((Long) o2).longValue());
+        if (Long.class.isInstance(o1) && Number.class.isInstance(o2)) {
+            return new Long((long) (((Long) o1).doubleValue() / ((Number) o2).doubleValue()));
         }
         log.error("Cannot make div for " + o1.getClass() + " with " + o2.getClass());
         return null;

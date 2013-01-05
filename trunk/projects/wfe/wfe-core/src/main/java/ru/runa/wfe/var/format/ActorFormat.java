@@ -12,19 +12,16 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.collect.Maps;
 
 public class ActorFormat implements VariableFormat<Actor>, VariableDisplaySupport<Actor> {
     @Autowired
-    private ExecutorDAO executorDAO;
-    @Autowired
     private PermissionDAO permissionDAO;
 
     @Override
     public Actor parse(String[] source) throws Exception {
-        return TypeConversionUtil.toExecutor(executorDAO, source[0]);
+        return TypeConversionUtil.convertTo(source[0], Actor.class);
     }
 
     @Override
@@ -38,9 +35,9 @@ public class ActorFormat implements VariableFormat<Actor>, VariableDisplaySuppor
             HashMap<String, Object> params = Maps.newHashMap();
             params.put("id", value.getId());
             String href = webHelper.getActionUrl("/manage_executor", params);
-            return "<a href=\"" + href + "\">" + value.getName() + "</>";
+            return "<a href=\"" + href + "\">" + value.getFullName() + "</>";
         } else {
-            return value.getName();
+            return value.getFullName();
         }
     }
 
