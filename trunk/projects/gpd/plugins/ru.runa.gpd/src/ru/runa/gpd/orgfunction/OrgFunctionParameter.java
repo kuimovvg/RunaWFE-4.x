@@ -1,17 +1,10 @@
 package ru.runa.gpd.orgfunction;
 
 public class OrgFunctionParameter {
-    public static final String TEXT_INPUT = "string";
-    public static final String NUMBER_INPUT = "long";
-
     private final String name;
-
     private final String type;
-
     private String value = "";
-
     private final boolean multiple;
-
     private boolean transientParam = false;
     private boolean useVariable = false;
 
@@ -27,7 +20,7 @@ public class OrgFunctionParameter {
 
     public String getVariableName() {
         if (value.length() > 3) {
-            return value.substring(2, value.length()-1);
+            return value.substring(2, value.length() - 1);
         }
         return "";
     }
@@ -35,16 +28,16 @@ public class OrgFunctionParameter {
     public void setValue(String value) {
         this.value = value;
         useVariable = (value.length() > 3 && "${".equals(value.substring(0, 2)) && value.endsWith("}"));
-        if (value.length() > 0 && NUMBER_INPUT.equals(type) && !useVariable) {
-        	//check type
-        	Long.parseLong(value);
+        if (value.length() > 0 && Long.class.getName().equals(type) && !useVariable) {
+            //check type
+            Long.parseLong(value);
         }
     }
 
-	public void setVariableValue(String variableName) {
-		this.value = "${" + variableName + "}";
-		this.useVariable = true;
-	}
+    public void setVariableValue(String variableName) {
+        this.value = "${" + variableName + "}";
+        this.useVariable = true;
+    }
 
     public String getName() {
         return name;
@@ -63,10 +56,10 @@ public class OrgFunctionParameter {
     }
 
     public boolean isUseVariable() {
-		return useVariable;
-	}
+        return useVariable;
+    }
 
-	public void setTransientParam(boolean transientParam) {
+    public void setTransientParam(boolean transientParam) {
         this.transientParam = transientParam;
     }
 

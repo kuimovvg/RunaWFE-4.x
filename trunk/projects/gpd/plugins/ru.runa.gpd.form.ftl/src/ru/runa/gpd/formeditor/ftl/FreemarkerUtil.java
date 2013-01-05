@@ -3,18 +3,12 @@ package ru.runa.gpd.formeditor.ftl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -24,7 +18,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -217,7 +210,6 @@ public class FreemarkerUtil {
             }
 
             @Override
-            @SuppressWarnings("unchecked")
             public Object exec(List args) throws TemplateModelException {
                 stageRenderingParams = false;
                 StringBuffer buffer = new StringBuffer("<").append(METHOD_ELEMENT_NAME()).append(" ");
@@ -250,53 +242,5 @@ public class FreemarkerUtil {
         buffer.append("width: ").append(w).append("px; ");
         buffer.append("height: ").append(h).append("px; ");
         return buffer.toString();
-    }
-
-    public static class TagParser {
-        private static Map<String, FormatMapping> formatMappings;
-
-        public static FormatMapping getFormatMapping(String key) {
-            if (key == null || key.length() == 0) {
-                key = "ru.runa.wfe.var.format.StringFormat";
-            }
-            if (!getFormatMappings().containsKey(key)) {
-                return new FormatMapping(key, key);
-            }
-            return getFormatMappings().get(key);
-        }
-
-        private static Map<String, FormatMapping> getFormatMappings() {
-            if (formatMappings == null) {
-                formatMappings = parseFormatMappingsInternal();
-            }
-            return formatMappings;
-        }
-
-        private static Document getDocument(InputStream is) throws SAXException, IOException, ParserConfigurationException {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setValidating(false);
-            factory.setNamespaceAware(true);
-            factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
-            DocumentBuilder documentBuilder = factory.newDocumentBuilder();
-            return documentBuilder.parse(is);
-        }
-
-        private static Map<String, FormatMapping> parseFormatMappingsInternal() {
-            try {
-                Map<String, FormatMapping> formatMappings = new HashMap<String, FormatMapping>();
-                Document doc = getDocument(FreemarkerUtil.class.getResourceAsStream("formats_mapping.xml"));
-                NodeList nodes = doc.getElementsByTagName("format");
-                for (int i = 0; i < nodes.getLength(); i++) {
-                    Element validatorElement = (Element) nodes.item(i);
-                    String typeName = validatorElement.getAttribute("className");
-                    String name = validatorElement.getAttribute("name");
-                    FormatMapping formatMapping = new FormatMapping(typeName, name);
-                    formatMappings.put(typeName, formatMapping);
-                }
-                return formatMappings;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 }

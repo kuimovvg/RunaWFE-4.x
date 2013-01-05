@@ -13,6 +13,7 @@ import ru.runa.gpd.handler.HandlerArtifact;
 import ru.runa.gpd.orgfunction.OrgFunctionDefinition;
 import ru.runa.gpd.orgfunction.OrgFunctionsRegistry;
 import ru.runa.wfe.handler.assign.DefaultAssignmentHandler;
+import ru.runa.wfe.var.format.ExecutorFormat;
 
 public class Swimlane extends NamedGraphElement implements Delegable {
     private static final String DELEGATION_CLASS_NAME = DefaultAssignmentHandler.class.getName();
@@ -88,5 +89,9 @@ public class Swimlane extends NamedGraphElement implements Delegable {
     @Override
     public Image getEntryImage() {
         return SharedImages.getImage("icons/obj/swimlane.gif");
+    }
+
+    public Variable toVariable() {
+        return new Variable(getName(), ExecutorFormat.class.getName(), true, "");
     }
 }

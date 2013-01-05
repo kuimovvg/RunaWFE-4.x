@@ -76,7 +76,7 @@
          <attribute name="applicable" type="string">
             <annotation>
                <documentation>
-                  valid values (comma-separated): string long double date datetime time file
+                  FQN of java classes (comma-separated)
                </documentation>
             </annotation>
          </attribute>
@@ -107,19 +107,15 @@
             </annotation>
             <simpleType>
                <restriction base="string">
-                  <enumeration value="string">
+                  <enumeration value="java.lang.Object">
                   </enumeration>
-                  <enumeration value="number">
+                  <enumeration value="java.lang.String">
                   </enumeration>
-                  <enumeration value="date">
+                  <enumeration value="java.lang.Number">
                   </enumeration>
-                  <enumeration value="boolean">
+                  <enumeration value="java.lang.Boolean">
                   </enumeration>
-                  <enumeration value="time">
-                  </enumeration>
-                  <enumeration value="bshCode">
-                  </enumeration>
-                  <enumeration value="regex">
+                  <enumeration value="java.util.Date">
                   </enumeration>
                </restriction>
             </simpleType>

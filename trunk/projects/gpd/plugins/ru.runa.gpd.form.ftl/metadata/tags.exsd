@@ -128,39 +128,6 @@
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="values">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="any">
-                  </enumeration>
-                  <enumeration value="string">
-                  </enumeration>
-                  <enumeration value="file">
-                  </enumeration>
-                  <enumeration value="date">
-                  </enumeration>
-                  <enumeration value="double">
-                  </enumeration>
-                  <enumeration value="long">
-                  </enumeration>
-                  <enumeration value="time">
-                  </enumeration>
-                  <enumeration value="boolean">
-                  </enumeration>
-                  <enumeration value="stringarray">
-                  </enumeration>
-                  <enumeration value="list">
-                  </enumeration>
-                  <enumeration value="map">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
          <attribute name="variableAccess" use="required">
             <annotation>
                <documentation>
@@ -174,6 +141,45 @@
                   <enumeration value="WRITE">
                   </enumeration>
                   <enumeration value="READ">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="variableTypeFilter">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="java.lang.Object">
+                  </enumeration>
+                  <enumeration value="java.lang.String">
+                  </enumeration>
+                  <enumeration value="java.lang.Number">
+                  </enumeration>
+                  <enumeration value="java.lang.Long">
+                  </enumeration>
+                  <enumeration value="java.lang.Double">
+                  </enumeration>
+                  <enumeration value="java.math.BigDecimal">
+                  </enumeration>
+                  <enumeration value="java.lang.Boolean">
+                  </enumeration>
+                  <enumeration value="java.util.Date">
+                  </enumeration>
+                  <enumeration value="ru.runa.wfe.var.FileVariable">
+                  </enumeration>
+                  <enumeration value="java.util.List">
+                  </enumeration>
+                  <enumeration value="java.util.Map">
+                  </enumeration>
+                  <enumeration value="ru.runa.wfe.user.Executor">
+                  </enumeration>
+                  <enumeration value="ru.runa.wfe.user.Actor">
+                  </enumeration>
+                  <enumeration value="ru.runa.wfe.user.Group">
                   </enumeration>
                </restriction>
             </simpleType>
@@ -202,6 +208,15 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -227,14 +242,5 @@
       </documentation>
    </annotation>
 
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
 
 </schema>

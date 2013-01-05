@@ -8,14 +8,15 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.handler.VariableFormatArtifact;
+import ru.runa.gpd.handler.VariableFormatRegistry;
 import ru.runa.gpd.util.VariableMapping;
-import ru.runa.gpd.validation.FormatMapping;
-import ru.runa.gpd.validation.FormatMappingParser;
-import ru.runa.wfe.var.format.StringFormat;
+
+import com.google.common.collect.Lists;
 
 public class Subprocess extends Node implements Active {
     protected String subProcessName = "";
-    protected List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
+    protected List<VariableMapping> variableMappings = new ArrayList<VariableMapping>();
 
     @Override
     protected void validate() {
@@ -24,66 +25,45 @@ public class Subprocess extends Node implements Active {
             addError("subprocess.empty");
             return;
         }
-        ProcessDefinition definition = ProcessCache.getProcessDefinition(subProcessName);
-        if (definition == null) {
+        ProcessDefinition subprocessDefinition = ProcessCache.getProcessDefinition(subProcessName);
+        if (subprocessDefinition == null) {
             addWarning("subprocess.notFound");
             return;
         }
-        List<Variable> subProcessVariables = definition.getVariablesList();
-        List<Variable> processVariables = getProcessDefinition().getVariablesList();
-        for (VariableMapping variableMapping : variablesList) {
+        for (VariableMapping variableMapping : variableMappings) {
             if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(variableMapping.getUsage())) {
                 continue;
             }
-            String processVarName = variableMapping.getProcessVariable();
-            String processVarFormat = getVariableFormat(processVarName, processVariables, getProcessDefinition());
-            if (processVarFormat == null) {
-                addError("subprocess.processVariableDoesNotExist", processVarName);
+            Variable processVariable = getProcessDefinition().getVariable(variableMapping.getProcessVariable(), true);
+            if (processVariable == null) {
+                addError("subprocess.processVariableDoesNotExist", variableMapping.getProcessVariable());
                 continue;
             }
-            String subProcessVarName = variableMapping.getSubprocessVariable();
-            String subProcessVarFormat = getVariableFormat(subProcessVarName, subProcessVariables, definition);
-            if (subProcessVarFormat == null) {
-                addError("subprocess.subProcessVariableDoesNotExist", subProcessVarName);
+            Variable subprocessVariable = subprocessDefinition.getVariable(variableMapping.getSubprocessVariable(), true);
+            if (subprocessVariable == null) {
+                addError("subprocess.subProcessVariableDoesNotExist", variableMapping.getSubprocessVariable());
                 continue;
             }
-            if (!isCompatibleTypes(processVarFormat, subProcessVarFormat)) {
-                addError("subprocess.variableMappingIncompatibleTypes", processVarName, processVarFormat, subProcessVarName, subProcessVarFormat);
+            VariableFormatArtifact artifact1 = VariableFormatRegistry.getInstance().getArtifactNotNull(processVariable.getFormat());
+            VariableFormatArtifact artifact2 = VariableFormatRegistry.getInstance().getArtifactNotNull(subprocessVariable.getFormat());
+            if (!isCompatibleTypes(artifact1, artifact1)) {
+                addError("subprocess.variableMappingIncompatibleTypes", processVariable.getName(), artifact1.getLabel(), subprocessVariable.getName(), artifact2.getLabel());
             }
         }
     }
 
-    protected boolean isCompatibleTypes(String processVarFormat, String subProcessVarFormat) {
-        FormatMapping mapping1 = FormatMappingParser.getFormatMappings().get(processVarFormat);
-        String processVarType = mapping1 != null ? mapping1.getJavaType() : Object.class.getName();
-        FormatMapping mapping2 = FormatMappingParser.getFormatMappings().get(subProcessVarFormat);
-        String subProcessVarType = mapping2 != null ? mapping2.getJavaType() : Object.class.getName();
-        return processVarType.equals(subProcessVarType);
+    protected boolean isCompatibleTypes(VariableFormatArtifact artifact1, VariableFormatArtifact artifact2) {
+        return VariableFormatRegistry.isAssignableFrom(artifact1.getVariableClassName(), artifact2.getVariableClassName())
+                || VariableFormatRegistry.isAssignableFrom(artifact2.getVariableClassName(), artifact1.getVariableClassName());
     }
 
-    private String getVariableFormat(String varName, List<Variable> variables, ProcessDefinition definition) {
-        String processVarFormat = null;
-        for (Variable processVariable : variables) {
-            if (processVariable.getName().equals(varName)) {
-                processVarFormat = processVariable.getFormat();
-                break;
-            }
-        }
-        if (processVarFormat == null && definition.getSwimlaneByName(varName) != null) {
-            processVarFormat = StringFormat.class.getName();
-        }
-        return processVarFormat;
+    public List<VariableMapping> getVariableMappings() {
+        return Lists.newArrayList(variableMappings);
     }
 
-    public List<VariableMapping> getVariablesList() {
-        List<VariableMapping> result = new ArrayList<VariableMapping>();
-        result.addAll(variablesList);
-        return result;
-    }
-
-    public void setVariablesList(List<VariableMapping> variablesList) {
-        this.variablesList.clear();
-        this.variablesList.addAll(variablesList);
+    public void setVariableMappings(List<VariableMapping> variablesList) {
+        this.variableMappings.clear();
+        this.variableMappings.addAll(variablesList);
         setDirty();
     }
 

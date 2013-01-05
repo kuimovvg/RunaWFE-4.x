@@ -11,6 +11,7 @@ import ru.runa.gpd.editor.gef.command.FormNodeSetFileCommand;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.ui.dialog.ChooseFormTypeDialog;
+import ru.runa.gpd.ui.dialog.ErrorDialog;
 import ru.runa.gpd.util.IOUtils;
 
 public class CreateFormDelegate extends BaseModelActionDelegate {
@@ -24,7 +25,8 @@ public class CreateFormDelegate extends BaseModelActionDelegate {
             }
             formNode.setFormType(chooseFormTypeDialog.getType());
             if (!FormTypeProvider.getFormType(formNode.getFormType()).isCreationAllowed()) {
-                throw new UnsupportedOperationException("DEPRACATED. Creation does not allowed.");
+                ErrorDialog.open("DEPRACATED. Creation does not allowed.");
+                return;
             }
             String fileName = formNode.getId().concat(".").concat(formNode.getFormType());
             IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), fileName);

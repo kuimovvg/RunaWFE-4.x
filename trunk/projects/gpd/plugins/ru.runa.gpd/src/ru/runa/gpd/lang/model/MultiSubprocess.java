@@ -1,6 +1,10 @@
 package ru.runa.gpd.lang.model;
 
+import ru.runa.gpd.handler.VariableFormatArtifact;
 import ru.runa.gpd.util.VariableMapping;
+import ru.runa.wfe.var.format.ListFormat;
+
+import com.google.common.base.Objects;
 
 public class MultiSubprocess extends Subprocess implements IMultiInstancesContainer {
     @Override
@@ -8,7 +12,7 @@ public class MultiSubprocess extends Subprocess implements IMultiInstancesContai
         super.validate();
         boolean readMultiinstanceLinkExists = false;
         boolean needTest = true;
-        for (VariableMapping variableMapping : variablesList) {
+        for (VariableMapping variableMapping : variableMappings) {
             if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(variableMapping.getUsage()) && variableMapping.getProcessVariable().equals("typeMultiInstance")) {
                 needTest = false;
             }
@@ -24,10 +28,10 @@ public class MultiSubprocess extends Subprocess implements IMultiInstancesContai
     }
 
     @Override
-    protected boolean isCompatibleTypes(String processVarFormat, String subProcessVarFormat) {
-        if (processVarFormat.contains("Array")) {
+    protected boolean isCompatibleTypes(VariableFormatArtifact artifact1, VariableFormatArtifact artifact2) {
+        if (Objects.equal(ListFormat.class.getName(), artifact1.getName())) {
             return true;
         }
-        return super.isCompatibleTypes(processVarFormat, subProcessVarFormat);
+        return super.isCompatibleTypes(artifact1, artifact2);
     }
 }

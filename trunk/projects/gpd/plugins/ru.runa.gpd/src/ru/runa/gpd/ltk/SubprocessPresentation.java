@@ -25,7 +25,7 @@ public class SubprocessPresentation implements VariableRenameProvider<Subprocess
 
     public List<Change> getChanges(String variableName, String replacement) throws Exception {
         List<VariableMapping> mappingsToChange = new ArrayList<VariableMapping>();
-        for (VariableMapping mapping : subprocess.getVariablesList()) {
+        for (VariableMapping mapping : subprocess.getVariableMappings()) {
             if (mapping.getProcessVariable().equals(variableName)) {
                 mappingsToChange.add(mapping);
             }

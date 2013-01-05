@@ -203,7 +203,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
 
         private void addColumnSection(Composite parent, final DocxColumnModel columnModel, final int tableIndex, final int columnIndex) {
             final Combo combo = new Combo(parent, SWT.READ_ONLY);
-            List<Variable> vars = definition.getVariablesList();
+            List<Variable> vars = definition.getVariables();
             for (Variable variable : vars) {
                 if (variable.getFormat().equals("ru.runa.wfe.var.format.ListFormat")) {
                     combo.add(variable.getName());

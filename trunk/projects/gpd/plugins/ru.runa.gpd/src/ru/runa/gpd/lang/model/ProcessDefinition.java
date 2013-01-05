@@ -2,9 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -26,7 +24,6 @@ import ru.runa.gpd.property.StartImagePropertyDescriptor;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
 import ru.runa.gpd.util.Delay;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
-import ru.runa.wfe.var.format.ExecutorFormat;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -44,7 +41,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private TimerAction timeOutAction = null;
     private boolean invalid;
     private int nextNodeId;
-    private SwimlaneDisplayMode swimlaneDisplayMode;
+    private SwimlaneDisplayMode swimlaneDisplayMode = SwimlaneDisplayMode.none;
 
     public ProcessDefinition() {
     }
@@ -267,38 +264,37 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
 
     public List<String> getVariableNames(boolean includeSwimlanes) {
         List<String> names = new ArrayList<String>();
-        for (Variable variable : getVariablesList()) {
+        for (Variable variable : getVariablesWithSwimlanes()) {
             names.add(variable.getName());
-        }
-        if (includeSwimlanes) {
-            names.addAll(getSwimlaneNames());
         }
         return names;
     }
 
-    public Map<String, String> getVariableFormats(boolean includeSwimlanes) {
-        Map<String, String> map = new HashMap<String, String>();
-        for (Variable variable : getVariablesList()) {
-            map.put(variable.getName(), variable.getFormat());
+    public List<Variable> getVariables() {
+        return getChildren(Variable.class);
+    }
+
+    public List<Variable> getVariablesWithSwimlanes() {
+        List<Variable> list = getVariables();
+        for (Swimlane swimlane : getSwimlanes()) {
+            list.add(swimlane.toVariable());
         }
-        if (includeSwimlanes) {
-            for (String swimlaneName : getSwimlaneNames()) {
-                map.put(swimlaneName, ExecutorFormat.class.getName());
+        return list;
+    }
+
+    public Variable getVariable(String name, boolean searchInSwimlanes) {
+        for (Variable variable : getVariables()) {
+            if (Objects.equal(variable.getName(), name)) {
+                return variable;
             }
         }
-        return map;
-    }
-
-    public Map<String, Variable> getVariablesMap() {
-        Map<String, Variable> map = new HashMap<String, Variable>();
-        for (Variable variable : getVariablesList()) {
-            map.put(variable.getName(), variable);
+        if (searchInSwimlanes) {
+            Swimlane swimlane = getSwimlaneByName(name);
+            if (swimlane != null) {
+                return swimlane.toVariable();
+            }
         }
-        return map;
-    }
-
-    public List<Variable> getVariablesList() {
-        return getChildren(Variable.class);
+        return null;
     }
 
     public void addVariable(Variable variable) {

@@ -41,7 +41,7 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
      */
     @Override
     protected void fillMenu(Menu menu) {
-        for (Variable variable : currentDefinition.getVariablesList()) {
+        for (Variable variable : currentDefinition.getVariables()) {
             if (ListFormat.class.getName().equals(variable.getFormat())) {
                 Action action = new SetVariableAction();
                 action.setText(variable.getName());

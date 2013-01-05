@@ -128,9 +128,9 @@ public class InputOutputComposite extends Composite {
             }
             final Combo combo = new Combo(composite, SWT.READ_ONLY);
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            List<Variable> vars = definition.getVariablesList();
+            List<Variable> vars = definition.getVariables();
             for (Variable var : vars) {
-                if ("ru.runa.wf.web.forms.format.FileFormat".equals(var.getFormat())) {
+                if ("ru.runa.wfe.var.format.FileFormat".equals(var.getFormat())) {
                     combo.add(var.getName());
                 }
             }

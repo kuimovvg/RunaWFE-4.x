@@ -194,7 +194,7 @@ public class JpdlSerializer extends ProcessSerializer {
             Element processStateElement = writeNode(root, subprocess, null);
             Element subProcessElement = processStateElement.addElement(SUB_PROCESS_NODE);
             setAttribute(subProcessElement, NAME_ATTR, subprocess.getSubProcessName());
-            for (VariableMapping variable : subprocess.getVariablesList()) {
+            for (VariableMapping variable : subprocess.getVariableMappings()) {
                 Element variableElement = processStateElement.addElement(VARIABLE_NODE);
                 setAttribute(variableElement, NAME_ATTR, variable.getProcessVariable());
                 setAttribute(variableElement, MAPPED_NAME_ATTR, variable.getSubprocessVariable());
@@ -619,7 +619,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     variablesList.add(variable);
                 }
             }
-            subprocess.setVariablesList(variablesList);
+            subprocess.setVariableMappings(variablesList);
         }
         List<Element> multiInstanceStates = root.elements(MULTI_INSTANCE_STATE_NODE);
         for (Element node : multiInstanceStates) {
@@ -638,7 +638,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     variablesList.add(variable);
                 }
             }
-            multiInstance.setVariablesList(variablesList);
+            multiInstance.setVariableMappings(variablesList);
         }
         List<Element> sendMessageNodes = root.elements(SEND_MESSAGE_NODE);
         for (Element node : sendMessageNodes) {

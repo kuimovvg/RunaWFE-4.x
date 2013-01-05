@@ -100,7 +100,7 @@ public class CopyGraphCommand extends Command {
                             copyTimer.setDelay(new Delay(timer.getDelay()));
                             String variableName = timer.getDelay().getVariableName();
                             if (variableName != null) {
-                                Variable variable = copyBuffer.getSourceDefinition().getVariablesMap().get(variableName);
+                                Variable variable = copyBuffer.getSourceDefinition().getVariable(variableName, false);
                                 CopyVariableAction copyAction = new CopyVariableAction(variable);
                                 elements.add(copyAction);
                             }
@@ -116,10 +116,10 @@ public class CopyGraphCommand extends Command {
                     }
                     if (node instanceof Subprocess) {
                         ((Subprocess) copy).setSubProcessName(((Subprocess) node).getSubProcessName());
-                        List<VariableMapping> variables = ((Subprocess) node).getVariablesList();
-                        ((Subprocess) copy).setVariablesList(variables);
+                        List<VariableMapping> variables = ((Subprocess) node).getVariableMappings();
+                        ((Subprocess) copy).setVariableMappings(variables);
                         for (VariableMapping varMapping : variables) {
-                            Variable variable = copyBuffer.getSourceDefinition().getVariablesMap().get(varMapping.getProcessVariable());
+                            Variable variable = copyBuffer.getSourceDefinition().getVariable(varMapping.getProcessVariable(), false);
                             if (variable != null) {
                                 CopyVariableAction copyAction = new CopyVariableAction(variable);
                                 elements.add(copyAction);
@@ -139,7 +139,7 @@ public class CopyGraphCommand extends Command {
                         }
                         Map<String, Integer> variables = formNode.getFormVariables(copyBuffer.getSourceFolder());
                         for (String varName : variables.keySet()) {
-                            Variable variable = copyBuffer.getSourceDefinition().getVariablesMap().get(varName);
+                            Variable variable = copyBuffer.getSourceDefinition().getVariable(varName, false);
                             if (variable != null) {
                                 CopyVariableAction copyAction = new CopyVariableAction(variable);
                                 elements.add(copyAction);
@@ -364,7 +364,7 @@ public class CopyGraphCommand extends Command {
 
         @Override
         public void execute() {
-            this.oldVariable = targetDefinition.getVariablesMap().get(variable.getName());
+            this.oldVariable = targetDefinition.getVariable(variable.getName(), false);
             if (oldVariable != null) {
                 targetDefinition.removeVariable(oldVariable);
             }

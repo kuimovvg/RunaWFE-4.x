@@ -132,7 +132,7 @@ public class NodeTypeDefinition {
         GraphElement element = createExecutableExtension("model");
         element.setParent(parent);
         if (parent != null) {
-            element.setId(parent.getProcessDefinition().getNextVariableName());
+            element.setId("ID" + parent.getProcessDefinition().getNextNodeId());
         }
         String name = label;
         if (element instanceof Swimlane) {

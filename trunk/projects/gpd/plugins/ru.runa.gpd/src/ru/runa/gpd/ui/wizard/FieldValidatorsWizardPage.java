@@ -1,9 +1,7 @@
 package ru.runa.gpd.ui.wizard;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -31,18 +29,17 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
+import ru.runa.gpd.handler.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.DefaultParamsComposite;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.ValidatorInfoControl;
 import ru.runa.gpd.util.ValidationUtil;
-import ru.runa.gpd.validation.FormatMapping;
-import ru.runa.gpd.validation.FormatMappingParser;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
 import ru.runa.gpd.validation.ValidatorDefinitionRegistry;
-import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.user.Executor;
 
 public class FieldValidatorsWizardPage extends WizardPage {
     private TabFolder tabFolder;
@@ -239,24 +236,14 @@ public class FieldValidatorsWizardPage extends WizardPage {
 
     private void updateValidatorsInput(NamedGraphElement variableOrSwimlane) {
         if (variableOrSwimlane != null) {
-            String varFormat;
+            String varType;
             if (variableOrSwimlane instanceof Variable) {
-                varFormat = ((Variable) variableOrSwimlane).getFormat();
-                if (varFormat == null || varFormat.length() == 0) {
-                    varFormat = StringFormat.class.getName();
-                }
+                varType = VariableFormatRegistry.getInstance().getArtifactNotNull(((Variable) variableOrSwimlane).getFormat()).getVariableClassName();
             } else {
                 // swimlane
-                varFormat = StringFormat.class.getName();
+                varType = Executor.class.getName();
             }
-            FormatMapping formatMapping = FormatMappingParser.getFormatMappings().get(varFormat);
-            Collection<ValidatorDefinition> defs;
-            if (formatMapping != null) {
-                defs = ValidationUtil.getFieldValidatorDefinitions(formatMapping.getName());
-            } else {
-                defs = new HashSet<ValidatorDefinition>();
-            }
-            validatorsTableViewer.setInput(defs);
+            validatorsTableViewer.setInput(ValidationUtil.getFieldValidatorDefinitions(varType));
         }
     }
 

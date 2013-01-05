@@ -24,34 +24,27 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.DateInputDialog;
 import ru.runa.gpd.ui.dialog.NumberInputDialog;
-import ru.runa.gpd.ui.dialog.RegexInputDialog;
-import ru.runa.gpd.ui.dialog.TimeInputDialog;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
 import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
+import ru.runa.gpd.validation.ValidatorDefinition.Param;
 import ru.runa.gpd.validation.ValidatorDialog;
 import ru.runa.gpd.validation.ValidatorParser;
-import ru.runa.gpd.validation.ValidatorDefinition.Param;
 
 public class ValidatorWizard extends Wizard {
-
     protected FieldValidatorsWizardPage fieldValidatorsPage;
-
     protected GlobalValidatorsWizardPage globalValidatorsPage;
-
     private final IFile validationFile;
-
     private final FormNode formNode;
-
     private Map<String, Map<String, ValidatorConfig>> fieldConfigs;
 
     public ValidatorWizard(IFile validationFile, FormNode formNode) {
@@ -69,7 +62,6 @@ public class ValidatorWizard extends Wizard {
             ((ValidatorDialog) getContainer()).getResetToDefaultsButton().setEnabled(false);
         }
         ((ValidatorDialog) getContainer()).getResetToDefaultsButton().addSelectionListener(new SelectionAdapter() {
-
             @Override
             public void widgetSelected(SelectionEvent event) {
                 try {
@@ -114,7 +106,7 @@ public class ValidatorWizard extends Wizard {
 
     @Override
     public void addPages() {
-        List<Variable> allVariables = formNode.getProcessDefinition().getVariablesList();
+        List<Variable> allVariables = formNode.getProcessDefinition().getVariables();
         List<Swimlane> swimlanes = formNode.getProcessDefinition().getSwimlanes();
         fieldValidatorsPage = new FieldValidatorsWizardPage("Field validators", allVariables, swimlanes);
         globalValidatorsPage = new GlobalValidatorsWizardPage("Global validators", allVariables, swimlanes);
@@ -124,7 +116,6 @@ public class ValidatorWizard extends Wizard {
     }
 
     public static abstract class ParametersComposite extends Composite {
-
         public ParametersComposite(Composite parent, int style) {
             super(parent, style);
         }
@@ -134,33 +125,24 @@ public class ValidatorWizard extends Wizard {
         protected abstract void build(Map<String, Param> defParams, Map<String, String> configParams);
 
         protected abstract void updateConfigParams(Collection<String> paramNames, ValidatorConfig config);
-
     }
 
     public static abstract class ValidatorInfoControl extends Composite {
-
         protected ValidatorDefinition definition;
-
         protected ValidatorConfig config;
-
         protected ParametersComposite parametersComposite;
-
         private final Label descriptionLabel;
-
         protected Text errorMessageText;
 
         public ValidatorInfoControl(Composite parent) {
             super(parent, SWT.BORDER);
-
             this.setLayout(new GridLayout(1, true));
             descriptionLabel = new Label(this, SWT.NONE);
             descriptionLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             descriptionLabel.setText("_\n_");
-
             Label errorLabel = new Label(this, SWT.NONE);
             errorLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             errorLabel.setText(Localization.getString("ValidatorsWizardPage.ErrorMessage"));
-
             errorMessageText = new Text(this, SWT.BORDER);
             errorMessageText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         }
@@ -173,10 +155,8 @@ public class ValidatorWizard extends Wizard {
                 saveConfig();
                 this.config = config;
                 this.definition = definition;
-
                 descriptionLabel.setText(definition.getDescription());
                 errorMessageText.setText(config.getMessage());
-
                 parametersComposite.clear();
                 parametersComposite.build(definition.getParams(), config.getParams());
                 errorMessageText.setFocus();
@@ -195,21 +175,14 @@ public class ValidatorWizard extends Wizard {
     }
 
     public static class DefaultParamsComposite extends ParametersComposite implements SelectionListener {
-
         private static final String DATA_KEY = "userInput";
-
         private static final String TYPE_KEY = "inputType";
-
         private static final String INPUT_VALUE = Localization.getString("BSH.InputValue");
-
         private final Map<String, Combo> inputCombos = new HashMap<String, Combo>();
-
         private static Map<String, UserInputDialog> dialogClassesForTypes = new HashMap<String, UserInputDialog>();
         static {
             dialogClassesForTypes.put(Param.STRING_TYPE, new UserInputDialog(INPUT_VALUE, ""));
-            dialogClassesForTypes.put(Param.REGEX_TYPE, new RegexInputDialog(""));
             dialogClassesForTypes.put(Param.DATE_TYPE, new DateInputDialog(""));
-            dialogClassesForTypes.put(Param.TIME_TYPE, new TimeInputDialog(""));
             dialogClassesForTypes.put(Param.NUMBER_TYPE, new NumberInputDialog(""));
         }
 
@@ -232,16 +205,12 @@ public class ValidatorWizard extends Wizard {
         protected void build(Map<String, Param> defParams, Map<String, String> configParams) {
             for (String name : defParams.keySet()) {
                 Param param = defParams.get(name);
-
                 Label label = new Label(this, SWT.NONE);
                 label.setText(param.getLabel());
                 label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
                 Combo combo = new Combo(this, SWT.READ_ONLY);
                 combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
                 combo.addSelectionListener(this);
-
                 String textData = configParams.get(name);
                 if (Param.BOOLEAN_TYPE.equals(param.getType())) {
                     combo.add(""); // default
@@ -259,7 +228,6 @@ public class ValidatorWizard extends Wizard {
                     combo.setText(textData);
                 }
                 combo.setData(TYPE_KEY, param.getType());
-
                 inputCombos.put(name, combo);
             }
             this.pack(true);
@@ -278,9 +246,11 @@ public class ValidatorWizard extends Wizard {
             }
         }
 
+        @Override
         public void widgetDefaultSelected(SelectionEvent e) {
         }
 
+        @Override
         public void widgetSelected(SelectionEvent e) {
             Combo combo = (Combo) e.widget;
             if (!INPUT_VALUE.equals(combo.getItem(combo.getSelectionIndex()))) {
@@ -301,5 +271,4 @@ public class ValidatorWizard extends Wizard {
             combo.select(0);
         }
     }
-
 }

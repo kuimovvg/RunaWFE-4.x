@@ -2,7 +2,6 @@ package ru.runa.gpd.ui.wizard;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
@@ -18,10 +17,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.handler.VariableFormatArtifact;
+import ru.runa.gpd.handler.VariableFormatRegistry;
 import ru.runa.gpd.handler.action.ParamDef;
 import ru.runa.gpd.handler.action.ParamDefGroup;
-import ru.runa.gpd.validation.FormatMapping;
-import ru.runa.gpd.validation.FormatMappingParser;
 
 public class ParamDefWizardPage extends WizardPage {
     private ParamDefGroup paramDefGroup;
@@ -101,13 +100,12 @@ public class ParamDefWizardPage extends WizardPage {
     private void createVariableTypeField(Composite parent) {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("ParamDefWizardPage.page.varType"));
-        List<String> typeMappingList = new ArrayList<String>();
-        Map<String, FormatMapping> formatMappings = FormatMappingParser.getFormatMappings();
-        for (FormatMapping mapping : formatMappings.values()) {
-            typeMappingList.add(mapping.getName());
+        List<String> types = new ArrayList<String>();
+        for (VariableFormatArtifact artifact : VariableFormatRegistry.getInstance().getAll()) {
+            types.add(artifact.getVariableClassName());
         }
         typeCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-        typeCombo.setItems(typeMappingList.toArray(new String[typeMappingList.size()]));
+        typeCombo.setItems(types.toArray(new String[types.size()]));
         typeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
