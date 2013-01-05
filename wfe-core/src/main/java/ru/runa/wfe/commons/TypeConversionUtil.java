@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import ru.runa.wfe.ApplicationException;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -149,6 +148,30 @@ public class TypeConversionUtil {
                 }
                 return (T) date;
             }
+            if (Executor.class.isAssignableFrom(classConvertTo)) {
+                ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
+                try {
+                    String s = object.toString();
+                    if (s.length() == 0) {
+                        return null;
+                    }
+                    if (s.startsWith("ID")) {
+                        Long executorId = convertTo(s.substring(2), Long.class);
+                        return (T) executorDAO.getExecutor(executorId);
+                    } else if (s.startsWith("G")) {
+                        Long executorId = convertTo(s.substring(1), Long.class);
+                        return (T) executorDAO.getExecutor(executorId);
+                    } else {
+                        Long actorCode = convertTo(object, Long.class);
+                        return (T) executorDAO.getActorByCode(actorCode);
+                    }
+                } catch (NumberFormatException nfe) {
+                    String executorIdentity = object.toString();
+                    if (executorDAO.isExecutorExist(executorIdentity)) {
+                        return (T) executorDAO.getExecutor(executorIdentity);
+                    }
+                }
+            }
             if (object instanceof Actor) {
                 // compatibility: client code expecting 'actorCode'
                 Long actorCode = ((Actor) object).getCode();
@@ -158,19 +181,6 @@ public class TypeConversionUtil {
                 // compatibility: client code expecting 'groupCode'
                 String groupCode = "G" + ((Group) object).getId();
                 return convertTo(groupCode, classConvertTo);
-            }
-            if (object instanceof String && Executor.class.isAssignableFrom(classConvertTo)) {
-                String s = (String) object;
-                if (s.startsWith("G")) {
-                    Long id = Long.valueOf(((String) object).substring(1));
-                    return (T) ApplicationContextFactory.getExecutorDAO().getExecutor(id);
-                }
-                try {
-                    Long code = convertTo(object, Long.class);
-                    return (T) ApplicationContextFactory.getExecutorDAO().getActorByCode(code);
-                } catch (Exception e) {
-                    return (T) ApplicationContextFactory.getExecutorDAO().getExecutor(s);
-                }
             }
         } catch (Exception e) {
             throw new InternalApplicationException(e);
@@ -209,28 +219,4 @@ public class TypeConversionUtil {
         }
     }
 
-    public static <T extends Executor> T toExecutor(ExecutorDAO executorDAO, Object object) {
-        if (object == null) {
-            return null;
-        }
-        try {
-            if (object.toString().startsWith("ID")) {
-                Long executorId = Long.parseLong(object.toString().substring(2));
-                return (T) executorDAO.getExecutor(executorId);
-            } else {
-                Long actorCode = convertTo(object, Long.class);
-                return (T) executorDAO.getActorByCode(actorCode);
-            }
-        } catch (Exception e1) {
-            String executorIdentity = object.toString();
-            if (executorDAO.isExecutorExist(executorIdentity)) {
-                return (T) executorDAO.getExecutor(executorIdentity);
-            }
-            if (executorIdentity.startsWith("G")) {
-                Long executorId = convertTo(executorIdentity.substring(1), Long.class);
-                return (T) executorDAO.getExecutor(executorId);
-            }
-        }
-        throw new ApplicationException("Unable to convert '" + object + "' to executor");
-    }
 }

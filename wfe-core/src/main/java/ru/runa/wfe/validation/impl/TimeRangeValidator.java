@@ -17,14 +17,19 @@
  */
 package ru.runa.wfe.validation.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 
 public class TimeRangeValidator extends AbstractRangeValidator<Date> {
 
     public Date getParam(String name) {
-        return TypeConversionUtil.convertTo(getParameter(name), Date.class);
+        Calendar baseDate = TypeConversionUtil.convertTo(getFieldValue(), Calendar.class);
+        Calendar param = TypeConversionUtil.convertTo(getParameter(name), Calendar.class);
+        CalendarUtil.setDateFromCalendar(param, baseDate);
+        return param.getTime();
     }
 
     @Override
