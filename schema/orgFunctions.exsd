@@ -86,13 +86,15 @@
             </annotation>
             <simpleType>
                <restriction base="string">
-                  <enumeration value="string">
+                  <enumeration value="java.lang.Object">
                   </enumeration>
-                  <enumeration value="long">
+                  <enumeration value="java.lang.String">
                   </enumeration>
-                  <enumeration value="boolean">
+                  <enumeration value="java.lang.Number">
                   </enumeration>
-                  <enumeration value="double">
+                  <enumeration value="java.lang.Boolean">
+                  </enumeration>
+                  <enumeration value="java.util.Date">
                   </enumeration>
                </restriction>
             </simpleType>

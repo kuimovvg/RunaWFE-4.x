@@ -1,9 +1,7 @@
 package ru.runa.gpd.orgfunction;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -14,10 +12,9 @@ import org.eclipse.core.runtime.Platform;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.handler.ArtifactContentProvider;
 import ru.runa.gpd.handler.ArtifactRegistry;
+import ru.runa.gpd.handler.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.validation.FormatMapping;
-import ru.runa.gpd.validation.FormatMappingParser;
 
 public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition> {
     private static final OrgFunctionsRegistry instance = new OrgFunctionsRegistry();
@@ -101,21 +98,11 @@ public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition
 
     // TODO move to VariableFormatRegistry
     public static Set<String> getVariableNames(ProcessDefinition processDefinition, String typeName) {
-        Map<String, FormatMapping> mappings = FormatMappingParser.getFormatMappings();
-        Set<String> formats = new HashSet<String>();
-        for (FormatMapping mapping : mappings.values()) {
-            if (typeName.equals(mapping.getName())) {
-                formats.add(mapping.getTypeName());
-            }
-        }
         Set<String> variableNames = new TreeSet<String>();
-        for (Variable variable : processDefinition.getVariablesList()) {
-            if (formats.contains(variable.getFormat())) {
+        for (Variable variable : processDefinition.getVariables()) { // TODO include swiml
+            if (VariableFormatRegistry.isApplicable(variable, typeName)) {
                 variableNames.add(variable.getName());
             }
-        }
-        if (OrgFunctionParameter.TEXT_INPUT.equals(typeName)) {
-            variableNames.addAll(processDefinition.getSwimlaneNames());
         }
         return variableNames;
     }

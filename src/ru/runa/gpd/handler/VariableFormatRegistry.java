@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 
 import ru.runa.gpd.Activator;
+import ru.runa.gpd.lang.model.Variable;
 
 public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtifact> {
     private static final String XML_FILE_NAME = "variableFormats.xml";
@@ -39,5 +40,19 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
                 list.add(new VariableFormatArtifact(enabled, className, label, variableClassName));
             }
         }
+    }
+
+    public static boolean isAssignableFrom(String superClassName, String className) {
+        try {
+            return Class.forName(superClassName).isAssignableFrom(Class.forName(className));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean isApplicable(Variable variable, String classNameFilter) {
+        String className = getInstance().getArtifact(variable.getFormat()).getVariableClassName();
+        return isAssignableFrom(classNameFilter, className);
     }
 }

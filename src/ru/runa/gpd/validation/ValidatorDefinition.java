@@ -1,15 +1,14 @@
 package ru.runa.gpd.validation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
 
-import ru.runa.gpd.util.XmlUtil;
+import ru.runa.gpd.handler.VariableFormatRegistry;
 
 public class ValidatorDefinition {
     public static final String REQUIRED_VALIDATOR_NAME = "required";
@@ -48,11 +47,16 @@ public class ValidatorDefinition {
         return REQUIRED_VALIDATOR_NAME.equals(name);
     }
 
-    public boolean isApplicable(String formatName) {
+    public boolean isApplicable(String className) {
         if (applicable.isEmpty()) {
             return true;
         }
-        return applicable.contains(formatName);
+        for (String appClassName : applicable) {
+            if (VariableFormatRegistry.isAssignableFrom(appClassName, className)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getDescription() {
@@ -79,7 +83,7 @@ public class ValidatorDefinition {
         return params;
     }
 
-    public String formatConfig(ValidatorConfig config) {
+    public void writeConfig(Element parentElement, ValidatorConfig config) {
         if (!name.equals(config.getType())) {
             throw new IllegalArgumentException("Invalid type: " + config.getType() + " for vd: " + name);
         }
@@ -91,10 +95,9 @@ public class ValidatorDefinition {
         } else {
             throw new IllegalArgumentException("Unknown definition type: " + type);
         }
-        Document document = XmlUtil.createDocument(validatorTag);
-        Element root = document.getRootElement();
-        root.addAttribute("type", name);
-        Element messageElement = root.addElement("message");
+        Element validatorElement = parentElement.addElement(validatorTag);
+        validatorElement.addAttribute("type", name);
+        Element messageElement = validatorElement.addElement("message");
         messageElement.addCDATA(config.getMessage());
         for (String paramName : config.getParams().keySet()) {
             String paramValue = config.getParams().get(paramName);
@@ -103,24 +106,18 @@ public class ValidatorDefinition {
                 if (param == null) {
                     throw new NullPointerException("Parameter not registered in validator definition: " + paramName);
                 }
-                Element paramElement = root.addElement("param");
+                Element paramElement = validatorElement.addElement("param");
                 paramElement.addAttribute("name", paramName);
                 paramElement.addText(paramValue);
             }
         }
-        OutputFormat outputFormat = OutputFormat.createPrettyPrint();
-        outputFormat.setSuppressDeclaration(true);
-        return XmlUtil.toString(document, outputFormat);
     }
 
     public static class Param {
-        public static final String STRING_TYPE = "string";
-        public static final String NUMBER_TYPE = "number";
-        public static final String BOOLEAN_TYPE = "boolean";
-        public static final String REGEX_TYPE = "regex";
-        public static final String BSH_TYPE = "bshCode";
-        public static final String DATE_TYPE = "date";
-        public static final String TIME_TYPE = "time";
+        public static final String STRING_TYPE = String.class.getName();
+        public static final String NUMBER_TYPE = Number.class.getName();
+        public static final String BOOLEAN_TYPE = Boolean.class.getName();
+        public static final String DATE_TYPE = Date.class.getName();
         private final String name;
         private final String label;
         private final String type;

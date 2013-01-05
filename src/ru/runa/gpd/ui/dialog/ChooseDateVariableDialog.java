@@ -1,11 +1,13 @@
 package ru.runa.gpd.ui.dialog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.handler.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 
@@ -23,14 +25,12 @@ public class ChooseDateVariableDialog extends ChooseItemDialog {
         try {
             List<String> dateVariableNames = new ArrayList<String>();
             dateVariableNames.add(noneItemValue);
-            for (Variable variable : definition.getVariablesList()) {
-                if ("ru.runa.wf.web.forms.format.DateTimeFormat".equals(variable.getFormat())
-                        || "ru.runa.wf.web.forms.format.DateFormat".equals(variable.getFormat())) {
+            for (Variable variable : definition.getVariables()) {
+                if (VariableFormatRegistry.isApplicable(variable, Date.class.getName())) {
                     dateVariableNames.add(variable.getName());
                 }
             }
             setItems(dateVariableNames);
-
             if (open() != IDialogConstants.CANCEL_ID) {
                 return (String) getSelectedItem();
             }

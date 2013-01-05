@@ -1,7 +1,6 @@
 package ru.runa.gpd.validation;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,11 +9,12 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.eclipse.core.resources.IFile;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.util.XmlUtil;
+
+import com.google.common.base.Strings;
 
 public class ValidatorParser {
     public static Map<String, Map<String, ValidatorConfig>> parseValidatorConfigs(IFile validationFile) {
@@ -41,31 +41,25 @@ public class ValidatorParser {
 
     public static void writeValidatorXml(IFile validationFile, Map<String, Map<String, ValidatorConfig>> fieldConfigs) {
         try {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("<validators>\n");
-            for (String fieldName : fieldConfigs.keySet()) {
-                Map<String, ValidatorConfig> configs = fieldConfigs.get(fieldName);
-                if (fieldName.length() > 0) {
-                    buffer.append("\n<field name=\"").append(fieldName).append("\">\n");
+            Document document = XmlUtil.createDocument("validators");
+            for (Map.Entry<String, Map<String, ValidatorConfig>> config : fieldConfigs.entrySet()) {
+                Element parentElement = document.getRootElement();
+                if (!Strings.isNullOrEmpty(config.getKey())) {
+                    parentElement = parentElement.addElement("field");
+                    parentElement.addAttribute("name", config.getKey());
                 }
-                for (ValidatorConfig config : configs.values()) {
-                    ValidatorDefinition definition = ValidationUtil.getValidatorDefinition(config.getType());
+                for (ValidatorConfig validatorConfig : config.getValue().values()) {
+                    ValidatorDefinition definition = ValidationUtil.getValidatorDefinition(validatorConfig.getType());
                     if (definition != null) {
-                        String xmlConfig = definition.formatConfig(config);
-                        buffer.append(xmlConfig);
+                        definition.writeConfig(parentElement, validatorConfig);
                     }
                 }
-                if (fieldName.length() > 0) {
-                    buffer.append("\n</field>\n");
-                }
             }
-            buffer.append("\n</validators>");
-            byte[] bytes = buffer.toString().getBytes(PluginConstants.UTF_ENCODING);
-            InputStream is = new ByteArrayInputStream(bytes);
             if (!validationFile.exists()) {
                 validationFile = IOUtils.createFileSafely(validationFile);
             }
-            validationFile.setContents(is, true, false, null);
+            byte[] bytes = XmlUtil.writeXml(document);
+            validationFile.setContents(new ByteArrayInputStream(bytes), true, false, null);
         } catch (Exception e) {
             PluginLogger.logError("Validation file update error", e);
         }

@@ -463,10 +463,9 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         }
         List<String[]> input = new ArrayList<String[]>(paramDefs.size());
         for (ParamDef paramDef : paramDefs) {
-            String[] filters = paramDef.getFormatFilters().toArray(new String[0]);
             String defFormat = "";
-            if (filters.length > 0) {
-                defFormat = filters[0];
+            if (paramDef.getFormatFilters().size() > 0) {
+                defFormat = paramDef.getFormatFilters().iterator().next();
             }
             input.add(new String[] { paramDef.getName(), paramDef.getLabel(), defFormat, paramDef.getDefaultValue(), "" + paramDef.isOptional() });
         }

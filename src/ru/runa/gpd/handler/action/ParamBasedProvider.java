@@ -1,5 +1,6 @@
 package ru.runa.gpd.handler.action;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -23,6 +24,7 @@ import ru.runa.gpd.handler.LocalizationRegistry;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Variable;
 
 public abstract class ParamBasedProvider extends DelegableProvider {
     protected abstract ParamDefConfig getParamConfig(Delegable delegable);
@@ -35,8 +37,8 @@ public abstract class ParamBasedProvider extends DelegableProvider {
     public String showConfigurationDialog(Delegable delegable) {
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
         ParamDefConfig config = getParamConfig(delegable);
-        ConfigurationWizardPage page = new ConfigurationWizardPage(definition.getVariableFormats(true), config.parseConfiguration(delegable.getDelegationConfiguration()), config,
-                LocalizationRegistry.getLabel(delegable.getDelegationClassName()));
+        ConfigurationWizardPage page = new ConfigurationWizardPage(definition.getVariablesWithSwimlanes(), config.parseConfiguration(delegable.getDelegationConfiguration()),
+                config, LocalizationRegistry.getLabel(delegable.getDelegationClassName()));
         final ConfigurationWizard wizard = new ConfigurationWizard(page);
         WizardDialog dialog = new WizardDialog(Display.getCurrent().getActiveShell(), wizard) {
             @Override
@@ -97,19 +99,19 @@ public abstract class ParamBasedProvider extends DelegableProvider {
     public class ConfigurationWizardPage extends WizardPage {
         private ParamDefComposite paramDefComposite;
         private final ParamDefConfig config;
-        private final Map<String, String> variableNames;
+        private final List<Variable> variables;
         private final Map<String, String> properties;
 
-        protected ConfigurationWizardPage(Map<String, String> variableNames, Map<String, String> properties, ParamDefConfig config, String headerText) {
+        protected ConfigurationWizardPage(List<Variable> variables, Map<String, String> properties, ParamDefConfig config, String headerText) {
             super("config", headerText, getLogo());
-            this.variableNames = variableNames;
+            this.variables = variables;
             this.properties = properties;
             this.config = config;
         }
 
         @Override
         public void createControl(Composite parent) {
-            paramDefComposite = new ParamDefComposite(parent, config, properties, variableNames);
+            paramDefComposite = new ParamDefComposite(parent, config, properties, variables);
             setControl(paramDefComposite);
             paramDefComposite.createUI();
         }
