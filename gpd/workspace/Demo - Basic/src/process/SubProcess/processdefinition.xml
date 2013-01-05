@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="SubProcess">
+  <description><![CDATA[SubProcess for subprocess demonstration]]></description>
+  <swimlane id="startedrole" name="startedrole">
+    <assignment class="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <swimlane id="role1" name="role1">
+    <assignment class="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state id="start" name="start">
+    <task name="start" swimlane="startedrole"/>
+    <transition id="tr1" name="tr1" to="fork1"/>
+  </start-state>
+  <task-node id="state1" name="state1" async="false">
+    <description><![CDATA[state1 of subprocess]]></description>
+    <task name="state1" swimlane="role1"/>
+    <transition id="tr1" name="tr1" to="join1"/>
+  </task-node>
+  <task-node id="state2" name="state2" async="false">
+    <description><![CDATA[state2 of subprocess]]></description>
+    <task name="state2" swimlane="role1"/>
+    <transition id="tr1" name="tr1" to="join1"/>
+  </task-node>
+  <fork id="fork1" name="fork1">
+    <transition id="tr1" name="tr1" to="state2"/>
+    <transition id="tr2" name="tr2" to="state1"/>
+  </fork>
+  <join id="join1" name="join1">
+    <transition id="tr1" name="tr1" to="end"/>
+  </join>
+  <end-state id="end" name="end"/>
+</process-definition>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<forms>
+  <form state="state1" file="state1.ftl" type="ftl" validationFile="state1.validation.xml" jsValidation="false"/>
+  <form state="state2" file="state2.ftl" type="ftl" validationFile="state2.validation.xml" jsValidation="false"/>
+</forms>
