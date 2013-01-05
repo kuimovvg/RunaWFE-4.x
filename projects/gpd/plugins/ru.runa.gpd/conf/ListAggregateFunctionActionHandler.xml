@@ -1,6 +1,6 @@
 <config>
   <input>
-    <param name="list" formatFilter="list" label.key="Param.List" />
+    <param name="list" formatFilter="java.util.List" label.key="Param.List" />
     <param name="function" variable="false" options="SUM,AVERAGE,COUNT,MIN,MAX" label.key="Param.Function" />
   </input>
   <output>

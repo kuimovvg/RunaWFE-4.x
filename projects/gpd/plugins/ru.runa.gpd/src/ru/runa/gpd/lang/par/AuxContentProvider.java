@@ -20,11 +20,17 @@ public abstract class AuxContentProvider {
     public abstract void readFromFile(IFolder folder, ProcessDefinition definition) throws Exception;
 
     protected void updateFile(IFile file, byte[] contentBytes) throws CoreException {
-        InputStream content = new ByteArrayInputStream(contentBytes);
-        if (!file.exists()) {
-            file.create(content, true, null);
+        if (contentBytes != null) {
+            InputStream content = new ByteArrayInputStream(contentBytes);
+            if (!file.exists()) {
+                file.create(content, true, null);
+            } else {
+                file.setContents(content, true, true, null);
+            }
         } else {
-            file.setContents(content, true, true, null);
+            if (file.exists()) {
+                file.delete(true, null);
+            }
         }
     }
 

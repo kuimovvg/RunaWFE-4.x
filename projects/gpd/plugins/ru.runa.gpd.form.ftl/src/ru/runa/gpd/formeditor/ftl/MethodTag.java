@@ -90,7 +90,7 @@ public class MethodTag {
             this.name = name;
             this.value = value;
             this.container = container;
-            this.useFilter = container && !"any".equals(name);
+            this.useFilter = container && !Object.class.getName().equals(name);
             if (container && useFilter) {
                 filterType = name;
             }
@@ -156,7 +156,7 @@ public class MethodTag {
                         String paramType = paramElement.getAttribute("type");
                         VariableAccess variableAccess = VariableAccess.valueOf(paramElement.getAttribute("variableAccess"));
                         Param param = new Param(paramType, variableAccess, paramName);
-                        String paramValues = paramElement.getAttribute("values");
+                        String paramValues = paramElement.getAttribute("variableTypeFilter");
                         if (paramValues != null && paramValues.length() > 0) {
                             param.optionalValues.add(new OptionalValue(paramValues, null, true));
                         }

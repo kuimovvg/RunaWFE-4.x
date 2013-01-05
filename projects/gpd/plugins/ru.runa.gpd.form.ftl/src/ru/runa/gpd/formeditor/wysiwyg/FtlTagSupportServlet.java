@@ -2,8 +2,6 @@ package ru.runa.gpd.formeditor.wysiwyg;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,12 +12,11 @@ import org.eclipse.core.runtime.Path;
 
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
-import ru.runa.gpd.formeditor.ftl.FormatTag;
 import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
-import ru.runa.gpd.formeditor.ftl.FreemarkerUtil.TagParser;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
+import ru.runa.gpd.handler.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.IOUtils;
 
@@ -47,31 +44,15 @@ public class FtlTagSupportServlet extends HttpServlet {
                     fileContent = fileContent.substring(idx + 11);
                     idx = fileContent.indexOf("'default':''");
                     newContent.append(fileContent.substring(0, idx));
-                    String elementType = "hidden";
-                    if (dialogPath.contains("select.js")) {
-                        elementType = "select";
-                    }
-                    if (dialogPath.contains("textfield.js")) {
-                        elementType = "text";
-                    }
-                    if (dialogPath.contains("radio.js")) {
-                        elementType = "radio";
-                    }
-                    if (dialogPath.contains("textarea.js")) {
-                        elementType = "textarea";
-                    }
+                    String filterClassName = Object.class.getName();
                     if (dialogPath.contains("checkbox.js")) {
-                        elementType = "checkbox";
-                    }
-                    if (!ELEMENT_TYPE_FILTERS.containsKey(elementType)) {
-                        WYSIWYGPlugin.logInfo("Invalid param: elementType = " + elementType);
+                        filterClassName = Boolean.class.getName();
                     }
                     newContent.append("items:[");
                     boolean needComma = false;
                     String defaultChoise = "";
                     for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
-                        String formatAlias = TagParser.getFormatMapping(variable.getFormat()).getName();
-                        if (ELEMENT_TYPE_FILTERS.get(elementType).contains(formatAlias)) {
+                        if (VariableFormatRegistry.isApplicable(variable, filterClassName)) {
                             newContent.append(needComma ? "," : "").append("['").append(variable.getName()).append("','").append(variable.getName()).append("']");
                             if (!needComma) {
                                 defaultChoise = variable.getName();
@@ -90,12 +71,6 @@ public class FtlTagSupportServlet extends HttpServlet {
                 response.setContentType("text/html; charset=UTF-8");
                 response.setHeader("Cache-Control", "no-cache");
                 IOUtils.writeToStream(response.getOutputStream(), CKEditorDialogCreatorHelper.createFtlMethodDialog());
-                return;
-            }
-            if ("GetOutputDialog".equals(commandStr)) {
-                response.setContentType("text/html; charset=UTF-8");
-                response.setHeader("Cache-Control", "no-cache");
-                IOUtils.writeToStream(response.getOutputStream(), CKEditorDialogCreatorHelper.createFtlOutputDialog());
                 return;
             }
             if ("GetTagImage".equals(commandStr)) {
@@ -155,8 +130,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                         for (OptionalValue option : param.optionalValues) {
                             if (option.container) {
                                 for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
-                                    String formatAlias = TagParser.getFormatMapping(variable.getFormat()).getName();
-                                    if (option.useFilter && !option.filterType.equals(formatAlias)) {
+                                    if (option.useFilter && !VariableFormatRegistry.isApplicable(variable, option.filterType)) {
                                         continue;
                                     }
                                     resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
@@ -172,8 +146,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                         for (OptionalValue option : param.optionalValues) {
                             if (option.container) {
                                 for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
-                                    String formatAlias = TagParser.getFormatMapping(variable.getFormat()).getName();
-                                    if (option.useFilter && !option.filterType.equals(formatAlias)) {
+                                    if (option.useFilter && !VariableFormatRegistry.isApplicable(variable, option.filterType)) {
                                         continue;
                                     }
                                     resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
@@ -192,18 +165,6 @@ public class FtlTagSupportServlet extends HttpServlet {
                     paramCounter++;
                 }
                 resultHtml.append("</table>");
-            } else if ("GetFormats".equals(commandStr)) {
-                Variable variable = WYSIWYGHTMLEditor.getCurrent().getVariablesMap(false).get(tagName);
-                resultHtml.append("<select id=\"tagFormat\">");
-                if (variable != null) {
-                    String format = TagParser.getFormatMapping(variable.getFormat()).getName();
-                    // It may not exist variables at all.
-                    FormatTag formatTag = FormatTag.getTag(format);
-                    for (String f : formatTag.formats.keySet()) {
-                        resultHtml.append("<option value=\"" + f + "\">" + formatTag.formats.get(f).name + "</option>");
-                    }
-                }
-                resultHtml.append("</select>");
             } else if ("GetTagImage".equals(commandStr)) {
                 // resultHtml.append(MethodTag.getTag(tagName).image);
             } else if ("GetVarTagWidth".equals(commandStr)) {
@@ -214,13 +175,15 @@ public class FtlTagSupportServlet extends HttpServlet {
                 resultHtml.append(WYSIWYGHTMLEditor.getCurrent().isFtlFormat());
                 WYSIWYGHTMLEditor.getCurrent().setBrowserLoaded(true);
             } else if ("GetVariableNames".equals(commandStr)) {
-                String elementType = request.getParameter("elementType");
-                if (!ELEMENT_TYPE_FILTERS.containsKey(elementType)) {
-                    WYSIWYGPlugin.logInfo("Invalid param: elementType = " + elementType);
+                String filterType = Object.class.getName();
+                if ("checkbox".equals(request.getParameter("elementType"))) {
+                    filterType = Boolean.class.getName();
+                }
+                if ("file".equals(request.getParameter("elementType"))) {
+                    filterType = "ru.runa.wfe.var.FileVariable";
                 }
                 for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
-                    String formatAlias = TagParser.getFormatMapping(variable.getFormat()).getName();
-                    if (ELEMENT_TYPE_FILTERS.get(elementType).contains(formatAlias)) {
+                    if (VariableFormatRegistry.isApplicable(variable, filterType)) {
                         if (resultHtml.length() > 0) {
                             resultHtml.append("|");
                         }
@@ -235,16 +198,5 @@ public class FtlTagSupportServlet extends HttpServlet {
             WYSIWYGPlugin.logError("-- JS command error", th);
             response.setStatus(500);
         }
-    }
-
-    static Map<String, String> ELEMENT_TYPE_FILTERS = new HashMap<String, String>();
-    static {
-        ELEMENT_TYPE_FILTERS.put("hidden", "string|double|long|date|time|boolean");
-        ELEMENT_TYPE_FILTERS.put("text", "string|double|long");
-        ELEMENT_TYPE_FILTERS.put("textarea", "string");
-        ELEMENT_TYPE_FILTERS.put("checkbox", "boolean");
-        ELEMENT_TYPE_FILTERS.put("file", "file");
-        ELEMENT_TYPE_FILTERS.put("radio", "string|double|long|boolean");
-        ELEMENT_TYPE_FILTERS.put("select", "string|double|long");
     }
 }

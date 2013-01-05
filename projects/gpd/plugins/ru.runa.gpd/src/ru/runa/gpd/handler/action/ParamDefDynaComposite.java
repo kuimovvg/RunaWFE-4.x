@@ -27,17 +27,17 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.EditPropertyDialog;
 
 public class ParamDefDynaComposite extends ParamDefComposite {
-
     private TableViewer tableViewer;
     private final Map<String, String> aProperties;
     private final String dynaParamsDescription;
 
-    public ParamDefDynaComposite(Composite parent, ParamDefConfig config, Map<String, String> properties, Map<String, String> variableNames,
-            ParamDefGroup group, String dynaParamsDescription) {
-        super(parent, config, properties, variableNames);
+    public ParamDefDynaComposite(Composite parent, ParamDefConfig config, Map<String, String> properties, List<Variable> variables, ParamDefGroup group,
+            String dynaParamsDescription) {
+        super(parent, config, properties, variables);
         aProperties = group.getDynaProperties();
         this.dynaParamsDescription = dynaParamsDescription;
     }
@@ -45,20 +45,17 @@ public class ParamDefDynaComposite extends ParamDefComposite {
     @Override
     public void createUI() {
         super.createUI();
-
         Composite dynaComposite = new Composite(this, SWT.NONE);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = 3;
         data.minimumHeight = 200;
         dynaComposite.setLayoutData(data);
         dynaComposite.setLayout(new GridLayout(2, false));
-
         Label descriptionLabel = new Label(dynaComposite, SWT.NONE);
         descriptionLabel.setText(dynaParamsDescription);
         data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
         data.horizontalSpan = 2;
         descriptionLabel.setLayoutData(data);
-
         tableViewer = new TableViewer(dynaComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
         data = new GridData(GridData.FILL_BOTH);
         tableViewer.getControl().setLayoutData(data);
@@ -73,11 +70,9 @@ public class ParamDefDynaComposite extends ParamDefComposite {
             tableColumn.setText(columnNames[i]);
             tableColumn.setWidth(columnWidths[i]);
         }
-
         tableViewer.setLabelProvider(new TableLabelProvider());
         tableViewer.setContentProvider(new ArrayContentProvider());
         setTableInput();
-
         Composite buttonsBar = new Composite(dynaComposite, SWT.NONE);
         data = new GridData(GridData.FILL_VERTICAL);
         buttonsBar.setLayoutData(data);
@@ -87,14 +82,12 @@ public class ParamDefDynaComposite extends ParamDefComposite {
         final Button deleteButton = createButton(buttonsBar, Localization.getString("button.delete"), new DeleteSelectionAdapter());
         editButton.setEnabled(false);
         deleteButton.setEnabled(false);
-
         tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
+            @Override
             public void selectionChanged(SelectionChangedEvent event) {
                 editButton.setEnabled(!tableViewer.getSelection().isEmpty());
                 deleteButton.setEnabled(!tableViewer.getSelection().isEmpty());
             }
-
         });
     }
 
@@ -121,7 +114,6 @@ public class ParamDefDynaComposite extends ParamDefComposite {
     }
 
     private class AddSelectionAdapter extends SelectionAdapter {
-
         @Override
         public void widgetSelected(SelectionEvent e) {
             EditPropertyDialog dialog = new EditPropertyDialog(Display.getCurrent().getActiveShell(), false);
@@ -130,11 +122,9 @@ public class ParamDefDynaComposite extends ParamDefComposite {
                 setTableInput();
             }
         }
-
     }
 
     private class EditSelectionAdapter extends SelectionAdapter {
-
         @Override
         public void widgetSelected(SelectionEvent e) {
             String[] data = (String[]) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
@@ -146,31 +136,27 @@ public class ParamDefDynaComposite extends ParamDefComposite {
                 setTableInput();
             }
         }
-
     }
 
     private class DeleteSelectionAdapter extends SelectionAdapter {
-
         @Override
         public void widgetSelected(SelectionEvent e) {
             String[] data = (String[]) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
             aProperties.remove(data[0]);
             setTableInput();
         }
-
     }
 
     private static class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
-
+        @Override
         public String getColumnText(Object element, int index) {
             String[] data = (String[]) element;
             return data[index];
         }
 
+        @Override
         public Image getColumnImage(Object element, int columnIndex) {
             return null;
         }
-
     }
-
 }

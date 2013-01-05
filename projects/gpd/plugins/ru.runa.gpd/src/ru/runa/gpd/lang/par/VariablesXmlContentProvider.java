@@ -61,7 +61,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
     public void saveToFile(IFolder folder, ProcessDefinition definition) throws Exception {
         Document document = XmlUtil.createDocument(VARIABLES_ELEMENT_NAME);
         Element root = document.getRootElement();
-        for (Variable variable : definition.getVariablesList()) {
+        for (Variable variable : definition.getVariables()) {
             Element element = root.addElement(VARIABLE_ELEMENT_NAME);
             element.addAttribute(NAME_ATTRIBUTE_NAME, variable.getName());
             element.addAttribute(FORMAT_ATTRIBUTE_NAME, variable.getFormat());
