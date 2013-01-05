@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -41,7 +42,6 @@ import com.google.common.base.Objects;
 import freemarker.template.TemplateModelException;
 
 public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
-
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -54,31 +54,30 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
             substitutions.put("userSelectorId", userVarName);
             StringBuffer html = new StringBuffer();
             html.append(exportScript("scripts/AjaxGroupMembersTag.js", substitutions, true));
-            html.append("<div style=\"border: solid 1px green; background-color: #ffeeff; padding: 5px;\">");
-            html.append("Choose user from group&nbsp;&nbsp;&nbsp;");
+            html.append("<span class=\"ajaxGroupMembers\" id=\"ajaxGroupMembers_").append(groupVarName).append("\">");
             html.append("<select id=\"").append(groupVarName).append("\" name=\"").append(groupVarName).append("\">");
             List<Group> groups = getGroups();
-            Long defaultGroupId = getSavedValue(Long.class, groupVarName);
-            if (defaultGroupId == null && groups.size() > 0) {
-                defaultGroupId = groups.get(0).getId();
+            Group defaultGroup = getSavedValue(Group.class, groupVarName);
+            if (defaultGroup == null && groups.size() > 0) {
+                defaultGroup = groups.get(0);
             }
             if (groups.size() == 0) {
                 html.append("<option value=\"\">No groups</option>");
             }
             for (Group group : groups) {
-                html.append("<option value=\"").append(group.getId()).append("\"");
-                if (Objects.equal(defaultGroupId, group.getId())) {
+                html.append("<option value=\"ID").append(group.getId()).append("\"");
+                if (Objects.equal(defaultGroup, group)) {
                     html.append(" selected");
                 }
                 html.append(">").append(group.getName()).append("</option>");
             }
             html.append("</select>");
             html.append("<select id=\"").append(userVarName).append("\" name=\"").append(userVarName).append("\">");
-            if (defaultGroupId != null) {
-                List<Actor> actors = getActors(subject, defaultGroupId);
-                Long defaultActorCode = getSavedValue(Long.class, groupVarName);
-                if (defaultActorCode == null && actors.size() > 0) {
-                    defaultActorCode = actors.get(0).getCode();
+            if (defaultGroup != null) {
+                List<Actor> actors = getActors(subject, defaultGroup);
+                Actor defaultActor = getSavedValue(Actor.class, userVarName);
+                if (defaultActor == null && actors.size() > 0) {
+                    defaultActor = actors.get(0);
                 }
                 if (actors.size() == 0) {
                     html.append("<option value=\"\">No users in this group</option>");
@@ -86,8 +85,8 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
                     html.append("<option value=\"\">None</option>");
                 }
                 for (Actor actor : actors) {
-                    html.append("<option value=\"").append(actor.getCode()).append("\"");
-                    if (Objects.equal(defaultActorCode, actor.getCode())) {
+                    html.append("<option value=\"ID").append(actor.getId()).append("\"");
+                    if (Objects.equal(defaultActor, actor)) {
                         html.append(" selected");
                     }
                     html.append(">").append(actor.getFullName()).append("</option>");
@@ -95,8 +94,8 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
             } else {
                 html.append("<option value=\"\"></option>");
             }
-            html.append("</select><br/>");
-            html.append("<div id=\"forErrors\"></div>");
+            html.append("</select>");
+            html.append("</span>");
             return html.toString();
         } catch (Exception e) {
             throw new TemplateModelException(e);
@@ -106,48 +105,38 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
     @Override
     public void processAjaxRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         StringBuffer json = new StringBuffer("[");
-        Long groupId = new Long(request.getParameter("groupId"));
-        List<Actor> actors = getActors(subject, groupId);
+        Group group = TypeConversionUtil.convertTo(request.getParameter("groupId"), Group.class);
+        List<Actor> actors = getActors(subject, group);
         if (actors.size() == 0) {
-            json.append("{\"code\": \"\", \"name\": \"No users in this group\"}");
+            json.append("{\"id\": \"\", \"name\": \"No users in this group\"}");
         } else {
-            json.append("{\"code\": \"\", \"name\": \"None\"}");
+            json.append("{\"id\": \"\", \"name\": \"None\"}");
         }
         for (Actor actor : actors) {
             if (json.length() > 10) {
                 json.append(", ");
             }
-            json.append("{\"code\":").append(actor.getCode()).append(", \"name\": \"").append(actor.getFullName()).append("\"}");
+            json.append("{\"id\": \"ID").append(actor.getId()).append("\", \"name\": \"").append(actor.getFullName()).append("\"}");
         }
         json.append("]");
         response.getOutputStream().write(json.toString().getBytes(Charsets.UTF_8));
     }
 
-    private List<Actor> getActors(Subject subject, Long groupId) throws TemplateModelException {
-        try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
-            Group group = executorService.getExecutor(subject, groupId);
-            return executorService.getGroupActors(subject, group);
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
-        }
+    private List<Actor> getActors(Subject subject, Group group) throws TemplateModelException {
+        return DelegateFactory.getExecutorService().getGroupActors(subject, group);
     }
 
     private List<Group> getGroups() throws TemplateModelException {
-        try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
-            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-            // TODO add executorService.getAllGroups
-            List<Executor> executors = executorService.getAll(subject, batchPresentation);
-            List<Group> groupList = new ArrayList<Group>();
-            for (Executor executor : executors) {
-                if (executor instanceof Group) {
-                    groupList.add((Group) executor);
-                }
+        ExecutorService executorService = DelegateFactory.getExecutorService();
+        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
+        // TODO add executorService.getAllGroups
+        List<Executor> executors = executorService.getAll(subject, batchPresentation);
+        List<Group> groupList = new ArrayList<Group>();
+        for (Executor executor : executors) {
+            if (executor instanceof Group) {
+                groupList.add((Group) executor);
             }
-            return groupList;
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
         }
+        return groupList;
     }
 }

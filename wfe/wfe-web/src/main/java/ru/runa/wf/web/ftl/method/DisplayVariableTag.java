@@ -15,15 +15,18 @@ public class DisplayVariableTag extends FreemarkerTag {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariable(variableName);
         VariableFormat<Object> format = FormatCommons.create(variable);
+        String html = "<span class=\"displayVariable\">";
         if (format instanceof VariableDisplaySupport) {
             if (webHelper == null || variableProvider.getProcessId() == null) {
                 return "";
             }
             VariableDisplaySupport<Object> displaySupport = (VariableDisplaySupport<Object>) format;
-            return displaySupport.getHtml(subject, webHelper, variableProvider.getProcessId(), variableName, variable.getValue());
+            html += displaySupport.getHtml(subject, webHelper, variableProvider.getProcessId(), variableName, variable.getValue());
         } else {
-            return format.format(variable.getValue());
+            html += format.format(variable.getValue());
         }
+        html += "</span>";
+        return html;
     }
 
 }

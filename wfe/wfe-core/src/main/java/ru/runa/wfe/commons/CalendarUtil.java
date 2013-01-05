@@ -281,7 +281,7 @@ public class CalendarUtil {
         return result;
     }
 
-    public static void changeDateInCalendar(Calendar changeDateIn, Calendar takeDateFrom) {
+    public static void setDateFromCalendar(Calendar changeDateIn, Calendar takeDateFrom) {
         changeDateIn.set(takeDateFrom.get(Calendar.YEAR), takeDateFrom.get(Calendar.MONTH), takeDateFrom.get(Calendar.DAY_OF_MONTH));
     }
 

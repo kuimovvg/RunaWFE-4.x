@@ -12,12 +12,9 @@ $(document).ready(function(){
 	  function(data) {
 	    $("#userSelectorId option").remove();
 		$.each (data, function(i, item) { 
-		  $("#userSelectorId").append("<option value='"+item.code+"'>"+item.name+"</option>");
+		  $("#userSelectorId").append("<option value='"+item.id+"'>"+item.name+"</option>");
 	  });
       $("#userSelectorId").removeAttr("disabled");
 	});
-  });
-  $("#forErrors").ajaxError(function(event, request, settings){
-    $(this).append("<b>Error requesting page " + settings.url + "</b><br>");
   });
 });
