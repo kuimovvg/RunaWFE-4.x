@@ -166,7 +166,7 @@ public class VariableEditorPage extends EditorPartBase {
     }
 
     private void fillViewer() {
-        List<Variable> variables = getDefinition().getVariablesList();
+        List<Variable> variables = getDefinition().getVariables();
         tableViewer.setInput(variables);
         for (Variable var : variables) {
             var.addPropertyChangeListener(this);
@@ -176,7 +176,7 @@ public class VariableEditorPage extends EditorPartBase {
 
     @Override
     public void dispose() {
-        for (Variable var : getDefinition().getVariablesList()) {
+        for (Variable var : getDefinition().getVariables()) {
             var.removePropertyChangeListener(this);
         }
         super.dispose();
@@ -193,7 +193,7 @@ public class VariableEditorPage extends EditorPartBase {
         public void widgetSelected(SelectionEvent e) {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
-            List<Variable> children = getDefinition().getVariablesList();
+            List<Variable> children = getDefinition().getVariables();
             int index = children.indexOf(variable);
             getDefinition().swapChilds(variable, up ? children.get(index - 1) : children.get(index + 1));
             tableViewer.setSelection(selection);
@@ -331,7 +331,7 @@ public class VariableEditorPage extends EditorPartBase {
         public void widgetSelected(SelectionEvent e) {
             List<Variable> newVariables = (List<Variable>) Clipboard.getDefault().getContents();
             for (Variable variable : newVariables) {
-                Variable newVariable = getDefinition().getVariablesMap().get(variable.getName());
+                Variable newVariable = getDefinition().getVariable(variable.getName(), false);
                 if (newVariable == null) {
                     newVariable = new Variable(variable);
                     getDefinition().addVariable(newVariable);
@@ -397,7 +397,7 @@ public class VariableEditorPage extends EditorPartBase {
 
         @Override
         public void drop(DropTargetEvent event) {
-            Variable variable1 = getDefinition().getVariablesMap().get(event.data);
+            Variable variable1 = getDefinition().getVariable((String) event.data, false);
             Variable beforeVariable = (Variable) determineTarget(event);
             getDefinition().changeChildIndex(variable1, beforeVariable);
             super.drop(event);

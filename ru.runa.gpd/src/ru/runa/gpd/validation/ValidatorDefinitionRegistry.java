@@ -10,6 +10,8 @@ import org.eclipse.core.runtime.Platform;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.validation.ValidatorDefinition.Param;
 
+import com.google.common.base.Strings;
+
 public class ValidatorDefinitionRegistry {
     private static final Map<String, ValidatorDefinition> definitions = new HashMap<String, ValidatorDefinition>();
 
@@ -25,7 +27,7 @@ public class ValidatorDefinitionRegistry {
                     ValidatorDefinition definition = new ValidatorDefinition(configElement.getAttribute("name"), configElement.getAttribute("label"),
                             ValidatorDefinition.FIELD_TYPE, configElement.getAttribute("description"));
                     String applicableString = configElement.getAttribute("applicable");
-                    if (applicableString != null && applicableString.length() > 0) {
+                    if (!Strings.isNullOrEmpty(applicableString)) {
                         for (String string : applicableString.split(",")) {
                             definition.addApplicableType(string.trim());
                         }
@@ -42,7 +44,7 @@ public class ValidatorDefinitionRegistry {
             }
         }
         ValidatorDefinition global = new ValidatorDefinition(ValidatorDefinition.GLOBAL_VALIDATOR_NAME, "BSH", ValidatorDefinition.GLOBAL_TYPE, "BSH code");
-        global.addParam(new Param(ValidatorDefinition.EXPRESSION_PARAM_NAME, "", Param.BSH_TYPE));
+        global.addParam(new Param(ValidatorDefinition.EXPRESSION_PARAM_NAME, "", Param.STRING_TYPE));
         definitions.put(ValidatorDefinition.GLOBAL_VALIDATOR_NAME, global);
     }
 

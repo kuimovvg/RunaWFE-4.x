@@ -65,7 +65,7 @@ public class SwimlaneRelationsElement extends SwimlaneElement {
         Label label = new Label(content2, SWT.NONE);
         label.setText(Localization.getString("OrgFunction.ActorCode"));
         combo = new Combo(content2, SWT.READ_ONLY);
-        for (String variableName : OrgFunctionsRegistry.getVariableNames(processDefinition, "string")) {
+        for (String variableName : OrgFunctionsRegistry.getVariableNames(processDefinition, String.class.getName())) {
             combo.add(variableName);
         }
         combo.addSelectionListener(new SelectionAdapter() {

@@ -503,7 +503,7 @@ public class XPDLImporter {
                             variable.setAccess(direction.equalsIgnoreCase("IN") ? ("read") : (direction.equalsIgnoreCase("OUT") ? ("write") : ("read,write")));
                             processStateNode.getSubProcessOrVariableOrDescription().add(variable);
                             if (!processVarMap.containsKey(actualVarName)) {
-                                processVarMap.put(actualVarName, new VariableDescription("\"ru.runa.wf.web.forms.format.LongFormat\"", true, "\"0\"", null));
+                                processVarMap.put(actualVarName, new VariableDescription("\"ru.runa.wfe.var.format.LongFormat\"", true, "\"0\"", null));
                             }
                         }
                     }
@@ -545,7 +545,7 @@ public class XPDLImporter {
                             if (processSwimlaneMap.get(performer.getValue()) == null) {
                                 processSwimlaneMap.put(performer.getValue(), swimlane);
                                 processDefinition.getDescriptionOrSwimlaneOrStartState().add(swimlane);
-                                processVarMap.put(swimlane.getName(), new VariableDescription("\"ru.runa.wf.web.forms.format.StringFormat\"", null, null, true));
+                                processVarMap.put(swimlane.getName(), new VariableDescription("\"ru.runa.wfe.var.format.StringFormat\"", null, null, true));
                             }
                         }
                     }
@@ -568,7 +568,7 @@ public class XPDLImporter {
                         if (processSwimlaneMap.get(nodeGraphicsInfo.getLaneId()) == null) {
                             processSwimlaneMap.put(nodeGraphicsInfo.getLaneId(), swimlane);
                             processDefinition.getDescriptionOrSwimlaneOrStartState().add(swimlane);
-                            processVarMap.put(swimlane.getName(), new VariableDescription("\"ru.runa.wf.web.forms.format.StringFormat\"", null, null, true));
+                            processVarMap.put(swimlane.getName(), new VariableDescription("\"ru.runa.wfe.var.format.StringFormat\"", null, null, true));
                         }
                     }
                 }
@@ -934,8 +934,8 @@ public class XPDLImporter {
         String varName = Helper.generateVariableName(artefactId);
         if (!processVarMap.containsKey(varName)) {
             processVarMap.put(varName,
-                    new VariableDescription("\"ru.runa.wf.web.forms.format.StringFormat\"", true, "\"" + Messages.getString("XPDLConnector.formValidator.EnterDataToTextField")
-                            + "\"", null));
+                    new VariableDescription("\"ru.runa.wfe.var.format.StringFormat\"", true, "\"" + Messages.getString("XPDLConnector.formValidator.EnterDataToTextField") + "\"",
+                            null));
         }
         formDescription.addDataObject(dataObjectName, varName);
     }
@@ -976,7 +976,7 @@ public class XPDLImporter {
         handler.setConfigType("configuration-property");
         String varName = Helper.generateVariableName(taskName);
         if (!processVarMap.containsKey(varName)) {
-            processVarMap.put(varName, new VariableDescription("\"ru.runa.wf.web.forms.format.LongFormat\"", true, "\"0\"", null));
+            processVarMap.put(varName, new VariableDescription("\"ru.runa.wfe.var.format.LongFormat\"", true, "\"0\"", null));
         }
         handler.getContent().add(new String("<![CDATA[]]>"));
         decisionNode.getDescriptionOrHandlerOrEvent().add(handler);

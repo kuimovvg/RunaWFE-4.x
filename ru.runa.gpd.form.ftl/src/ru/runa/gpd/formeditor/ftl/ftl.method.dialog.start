@@ -10,6 +10,7 @@
 var oEditor = window.parent.InnerDialogLoaded() ;
 var FCKLang = oEditor.FCKLang ;
 var varTags = oEditor.FreemarkerTags;
+var tagName;
 
 window.onload = function () {
 	// First of all, translate the dialog box texts
@@ -31,8 +32,8 @@ function LoadSelected() {
 		eSelected == null;
 		return false;
 	}
-
-	$("tagName").value = eSelected.getAttribute("ftltagname");
+	tagName = eSelected.getAttribute("ftltagname");
+	$("tagName").value = tagName;
 	refreshExtra();
 
 	var paramsStr = eSelected.getAttribute("ftltagparams");
@@ -44,17 +45,21 @@ function LoadSelected() {
 			if (combo.value != paramsArray[i]) {
 				combo = null;
 			}
-		} 
-		if (combo == null) {
-			$("pt_"+i).value = paramsArray[i];
+		} else { 
+			var text = $("pc_"+i);
+			if (text != null) {
+				text.value = paramsArray[i];
+			}
 		}
 	}
 	return true;
 }
 
 function refreshExtra() {
-	var tagType = $("tagName").value;
-	var text = varTags.GetParameters(tagType);
+	if ($("tagName").value.length > 0) {
+		tagName = $("tagName").value;
+	}
+	var text = varTags.GetParameters(tagName);
 	$("extra").update(text);
 }
 

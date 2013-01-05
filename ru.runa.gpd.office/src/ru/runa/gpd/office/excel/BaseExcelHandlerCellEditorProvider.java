@@ -153,7 +153,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 Label l = new Label(group, SWT.NONE);
                 l.setText(Messages.getString("label.variable"));
                 final Combo combo = new Combo(group, SWT.READ_ONLY);
-                List<Variable> vars = definition.getVariablesList();
+                List<Variable> vars = definition.getVariables();
                 for (Variable variable : vars) {
                     if (isImportant(variable)) {
                         combo.add(variable.getName());

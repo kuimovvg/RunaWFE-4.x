@@ -208,7 +208,7 @@ public class BpmnSerializer extends ProcessSerializer {
         for (Subprocess subprocess : subprocesses) {
             Element processStateElement = writeNode(process, subprocess);
             processStateElement.addAttribute(RUNA_PREFIX + ":" + PROCESS, subprocess.getSubProcessName());
-            writeVariables(processStateElement, subprocess.getVariablesList());
+            writeVariables(processStateElement, subprocess.getVariableMappings());
         }
         List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
         for (SendMessageNode messageNode : sendMessageNodes) {
@@ -590,13 +590,13 @@ public class BpmnSerializer extends ProcessSerializer {
         for (Element subprocessElement : subprocessElements) {
             Subprocess subprocess = create(subprocessElement, definition);
             subprocess.setSubProcessName(subprocessElement.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
-            subprocess.setVariablesList(parseVariableMappings(subprocessElement));
+            subprocess.setVariableMappings(parseVariableMappings(subprocessElement));
         }
         List<Element> multiSubprocessElements = process.elements(MULTI_SUBPROCESS);
         for (Element subprocessElement : multiSubprocessElements) {
             MultiSubprocess multiSubprocess = create(subprocessElement, definition);
             multiSubprocess.setSubProcessName(subprocessElement.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
-            multiSubprocess.setVariablesList(parseVariableMappings(subprocessElement));
+            multiSubprocess.setVariableMappings(parseVariableMappings(subprocessElement));
         }
         List<Element> sendMessageElements = process.elements(SEND_MESSAGE);
         for (Element messageElement : sendMessageElements) {
