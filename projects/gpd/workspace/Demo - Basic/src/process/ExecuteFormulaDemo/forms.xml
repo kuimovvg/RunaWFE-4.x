@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<forms>
+  <form state="state2" file="state2.ftl" type="ftl" validationFile="state2.validation.xml" jsValidation="false"/>
+  <form state="state3" file="state3.ftl" type="ftl" validationFile="state3.validation.xml" jsValidation="false"/>
+  <form state="state4" file="state4.ftl" type="ftl" validationFile="state4.validation.xml" jsValidation="false"/>
+  <form state="state5" file="state5.ftl" type="ftl" validationFile="state5.validation.xml" jsValidation="false"/>
+  <form state="state6" file="state6.ftl" type="ftl" validationFile="state6.validation.xml" jsValidation="false"/>
+  <form state="state1" file="state1.ftl" type="ftl" validationFile="state1.validation.xml" jsValidation="false"/>
+  <form state="state7" file="state7.ftl" type="ftl" validationFile="state7.validation.xml" jsValidation="false"/>
+  <form state="state8" file="state8.ftl" type="ftl" validationFile="state8.validation.xml" jsValidation="false"/>
+  <form state="state9" file="state9.ftl" type="ftl" validationFile="state9.validation.xml" jsValidation="false"/>
+</forms>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-diagram name="SimpleMessageReceive" notation="uml" width="1069" height="479" showActions="true" showGrid="false">
+  <node name="Start" x="324" y="24" width="120" height="48">
+    <transition name="tr1"/>
+  </node>
+  <node name="Output data" x="312" y="240" width="132" height="84" minimizedView="false">
+    <transition name="tr1"/>
+  </node>
+  <node name="ID8" x="132" y="240" width="132" height="84" minimizedView="false">
+    <transition name="tr1">
+      <bendpoint x="204" y="396"/>
+    </transition>
+  </node>
+  <node name="Receive data" x="312" y="120" width="132" height="72">
+    <transition name="tr1"/>
+    <transition name="time-out-transition">
+      <bendpoint x="204" y="180"/>
+    </transition>
+  </node>
+  <node name="End" x="348" y="384" width="72" height="48"/>
+</process-diagram>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-diagram name="SubProcess" notation="uml" width="1069" height="479" showActions="true" showGrid="false">
+  <node name="start" x="156" y="36" width="72" height="60">
+    <transition name="tr1"/>
+  </node>
+  <node name="state1" x="72" y="180" width="108" height="72" minimizedView="false">
+    <transition name="tr1"/>
+  </node>
+  <node name="state2" x="216" y="180" width="108" height="72" minimizedView="false">
+    <transition name="tr1"/>
+  </node>
+  <node name="fork1" x="84" y="144" width="240" height="5">
+    <transition name="tr1"/>
+    <transition name="tr2"/>
+  </node>
+  <node name="join1" x="84" y="288" width="240" height="5">
+    <transition name="tr1"/>
+  </node>
+  <node name="end" x="192" y="348" width="48" height="36"/>
+</process-diagram>

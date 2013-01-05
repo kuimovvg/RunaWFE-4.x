@@ -1,0 +1,2 @@
+<P><SPAN style="background-color: #ffff99"><SPAN style="color: #ff0000"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">str = "date = " + date</SPAN></SPAN></SPAN></SPAN></P>
+<P><SPAN style="background-color: #ffff99"><SPAN style="color: #ff0000"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">str = ${DisplayVariable("str")}</SPAN></SPAN></SPAN></SPAN></P>
