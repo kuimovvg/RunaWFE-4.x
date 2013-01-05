@@ -36,8 +36,8 @@ public class BotConfigBasedProvider extends ConfigBasedProvider {
         if (config == null || BotTaskConfigHelper.isParamDefConfigEmpty(config)) {
             config = getParamConfig(delegable);
         }
-        ConfigurationWizardPage page = new ConfigurationWizardPage(definition.getVariableFormats(true), config.parseConfiguration(delegable.getDelegationConfiguration()), config,
-                LocalizationRegistry.getLabel(delegable.getDelegationClassName()));
+        ConfigurationWizardPage page = new ConfigurationWizardPage(definition.getVariablesWithSwimlanes(), config.parseConfiguration(delegable.getDelegationConfiguration()),
+                config, LocalizationRegistry.getLabel(delegable.getDelegationClassName()));
         final ConfigurationWizard wizard = new ConfigurationWizard(page);
         WizardDialog dialog = new WizardDialog(Display.getCurrent().getActiveShell(), wizard) {
             @Override

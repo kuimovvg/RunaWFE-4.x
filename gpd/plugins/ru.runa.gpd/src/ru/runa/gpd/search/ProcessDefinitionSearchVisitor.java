@@ -161,7 +161,7 @@ public class ProcessDefinitionSearchVisitor {
     }
 
     private void processSubprocessNode(IFile definitionFile, Subprocess subprocessNode) throws Exception {
-        List<VariableMapping> mappings = subprocessNode.getVariablesList();
+        List<VariableMapping> mappings = subprocessNode.getVariableMappings();
         int matchesCount = 0;
         for (VariableMapping mapping : mappings) {
             if (mapping.getProcessVariable().equals(query.getSearchText())) {

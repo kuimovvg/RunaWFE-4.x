@@ -54,6 +54,9 @@ public abstract class Node extends NamedGraphElement implements Describable {
         }
         if (!(this instanceof EndState) && !(this instanceof EndTokenState)) {
             if (getLeavingTransitions().size() == 0) {
+                if (this instanceof Timer) {
+                    return; // TODO current in jpdl
+                }
                 addError("noOutputTransitions");
             }
         }

@@ -34,6 +34,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableMapping;
+import ru.runa.wfe.var.format.ListFormat;
 
 public class SubprocessDialog extends Dialog {
     private String subprocessName;
@@ -43,7 +44,7 @@ public class SubprocessDialog extends Dialog {
 
     public SubprocessDialog(Subprocess subprocess) {
         super(PlatformUI.getWorkbench().getDisplay().getActiveShell());
-        this.subprocessVariables = subprocess.getVariablesList();
+        this.subprocessVariables = subprocess.getVariableMappings();
         this.definition = subprocess.getProcessDefinition();
         this.subprocessName = subprocess.getSubProcessName();
     }
@@ -221,9 +222,9 @@ public class SubprocessDialog extends Dialog {
     private boolean isArrayVariable(String name, String variableName) {
         ProcessDefinition definition = ProcessCache.getProcessDefinition(name);
         if (definition != null) {
-            Variable variable = definition.getVariablesMap().get(variableName);
+            Variable variable = definition.getVariable(variableName, false);
             if (variable != null) {
-                return variable.getFormat().contains("Array");
+                return ListFormat.class.getName().equals(variable.getFormat());
             }
         }
         return false;

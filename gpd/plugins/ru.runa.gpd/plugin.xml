@@ -1018,46 +1018,46 @@
             label="%ru.runa.wfe.os.func.ChiefFunction">
          <parameter
                name="OrgFunction.ActorCode"
-               type="string"/>
+               type="java.lang.Object"/>
       </orgfunction>
       <orgfunction
             className="ru.runa.wfe.os.func.DemoChiefFunction"
             label="%ru.runa.wfe.os.func.DemoChiefFunction">
          <parameter
                name="OrgFunction.ActorCode"
-               type="string"/>
+               type="java.lang.Object"/>
       </orgfunction>
       <orgfunction
             className="ru.runa.wfe.os.func.ExecutorByCodeFunction"
             label="%ru.runa.wfe.os.func.ExecutorByCodeFunction">
          <parameter
                name="OrgFunction.ActorCode"
-               type="string"/>
+               type="java.lang.Object"/>
       </orgfunction>
       <orgfunction
             className="ru.runa.wfe.os.func.DirectorFunction"
             label="%ru.runa.wfe.os.func.DirectorFunction">
          <parameter
                name="OrgFunction.ActorCode"
-               type="string"/>
+               type="java.lang.Object"/>
       </orgfunction>
       <orgfunction
             className="ru.runa.wfe.os.func.ExecutorByNameFunction"
             label="%ru.runa.wfe.os.func.ExecutorByNameFunction">
          <parameter
                name="OrgFunction.ExecutorName"
-               type="string"/>
+               type="java.lang.String"/>
       </orgfunction>
       <orgfunction
             className="ru.runa.wfe.os.func.SQLFunction"
             label="%ru.runa.wfe.os.func.SQLFunction">
          <parameter
                name="OrgFunction.SQLQuery"
-               type="string"/>
+               type="java.lang.String"/>
          <parameter
                multiple="true"
                name="OrgFunction.SQLQueryParameter"
-               type="string"/>
+               type="java.lang.String"/>
       </orgfunction>
    </extension>
    <extension
@@ -1406,192 +1406,192 @@
              name="required">
        </validator>
        <validator
-             applicable="long,double"
+             applicable="java.lang.Number"
              description="%validator.number.desc"
              label="%validator.number.name"
              name="number">
           <param
                 label="%validator.number.param.min"
                 name="min"
-                type="number">
+                type="java.lang.Number">
           </param>
           <param
                 label="%validator.number.param.max"
                 name="max"
-                type="number">
+                type="java.lang.Number">
           </param>
           <param
                 label="%validator.number.param.inclusive"
                 name="inclusive"
-                type="boolean">
+                type="java.lang.Boolean">
           </param>
        </validator>
        <validator
-             applicable="date,datetime"
+             applicable="java.util.Date"
              description="%validator.date.desc"
              label="%validator.date.name"
              name="date">
           <param
                 label="%validator.date.param.min"
                 name="min"
-                type="date">
+                type="java.util.Date">
           </param>
           <param
                 label="%validator.date.param.max"
                 name="max"
-                type="date">
+                type="java.util.Date">
           </param>
        </validator>
        <validator
-             applicable="date,datetime"
+             applicable="java.util.Date"
              description="%validator.dateInThisMonth.desc"
              label="%validator.dateInThisMonth.name"
              name="dateInThisMonth">
        </validator>
        <validator
-             applicable="date,datetime"
+             applicable="java.util.Date"
              description="%validator.dateInThisYear.desc"
              label="%validator.dateInThisYear.name"
              name="dateInThisYear">
        </validator>
        <validator
-             applicable="date,datetime"
+             applicable="java.util.Date"
              description="%validator.dateRelativeToCurrent.desc"
              label="%validator.dateRelativeToCurrent.name"
              name="dateRelativeToCurrent">
           <param
                 label="%validator.dateRelativeToCurrent.param.min"
                 name="min"
-                type="number">
+                type="java.lang.Number">
           </param>
           <param
                 label="%validator.dateRelativeToCurrent.param.max"
                 name="max"
-                type="number">
+                type="java.lang.Number">
           </param>
        </validator>
        <validator
-             applicable="string"
+             applicable="java.lang.String"
              description="%validator.email.desc"
              label="%validator.email.name"
              name="email">
        </validator>
        <validator
-             applicable="string"
+             applicable="java.lang.String"
              description="%validator.url.desc"
              label="%validator.url.name"
              name="url">
        </validator>
        <validator
-             applicable="string"
+             applicable="java.lang.String"
              description="%validator.stringlength.desc"
              label="%validator.stringlength.name"
              name="stringlength">
           <param
                 label="%validator.stringlength.param.minLength"
                 name="minLength"
-                type="number">
+                type="java.lang.Number">
           </param>
           <param
                 label="%validator.stringlength.param.maxLength"
                 name="maxLength"
-                type="number">
+                type="java.lang.Number">
           </param>
           <param
                 label="%validator.stringlength.param.doTrim"
                 name="doTrim"
-                type="boolean">
+                type="java.lang.Boolean">
           </param>
        </validator>
        <validator
-             applicable="string"
+             applicable="java.lang.String"
              description="%validator.regex.desc"
              label="%validator.regex.name"
              name="regex">
           <param
                 label="%validator.regex.param.expression"
                 name="expression"
-                type="string">
+                type="java.lang.String">
           </param>
           <param
                 label="%validator.regex.param.caseSensitive"
                 name="caseSensitive"
-                type="boolean">
+                type="java.lang.Boolean">
           </param>
           <param
                 label="%validator.regex.param.trim"
                 name="trim"
-                type="boolean">
+                type="java.lang.Boolean">
           </param>
        </validator>
        <validator
-             applicable="file"
+             applicable="ru.runa.wfe.var.FileVariable"
              description="%validator.fileSize.desc"
              label="%validator.fileSize.name"
              name="fileSize">
           <param
                 label="%validator.fileSize.param.minLength"
                 name="minLength"
-                type="number">
+                type="java.lang.Number">
           </param>
           <param
                 label="%validator.fileSize.param.maxLength"
                 name="maxLength"
-                type="number">
+                type="java.lang.Number">
           </param>
        </validator>
        <validator
-             applicable="file"
+             applicable="ru.runa.wfe.var.FileVariable"
              description="%validator.fileContentType.desc"
              label="%validator.fileContentType.name"
              name="fileContentType">
           <param
                 label="%validator.fileContentType.param.contentType"
                 name="contentType"
-                type="string">
+                type="java.lang.String">
           </param>
        </validator>
        <validator
-             applicable="file"
+             applicable="ru.runa.wfe.var.FileVariable"
              description="%validator.fileExtension.desc"
              label="%validator.fileExtension.name"
              name="fileExtension">
           <param
                 label="%validator.fileExtension.param.extension"
                 name="extension"
-                type="string">
+                type="java.lang.String">
           </param>
        </validator>
        <validator
-             applicable="time"
+             applicable="java.util.Date"
              description="%validator.time.desc"
              label="%validator.time.name"
              name="time">
           <param
                 label="%validator.time.param.min"
                 name="min"
-                type="time">
+                type="java.util.Date">
           </param>
           <param
                 label="%validator.time.param.max"
                 name="max"
-                type="time">
+                type="java.util.Date">
           </param>
        </validator>
        <validator
-             applicable="stringArray"
-             description="%validator.arraySize.desc"
-             label="%validator.arraySize.name"
-             name="arraySize">
+             applicable="java.util.List,java.util.Map"
+             description="%validator.containerSize.desc"
+             label="%validator.containerSize.name"
+             name="containerSize">
           <param
-                label="%validator.arraySize.param.minLength"
+                label="%validator.param.minSize"
                 name="minLength"
-                type="number">
+                type="java.lang.Number">
           </param>
           <param
-                label="%validator.arraySize.param.maxLength"
+                label="%validator.param.maxSize"
                 name="maxLength"
-                type="number">
+                type="java.lang.Number">
           </param>
        </validator>
     </extension>
@@ -2043,10 +2043,28 @@
    <extension
          point="ru.runa.gpd.formats">
       <format
-            className="ru.runa.wfe.var.format.ListFormat"
-            label="%ru.runa.wfe.var.format.ListFormat"
+            className="ru.runa.wfe.var.format.StringFormat"
+            label="%ru.runa.wfe.var.format.StringFormat"
             enabled="true"
-            variableClassName="java.util.List">
+            variableClassName="java.lang.String">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.TextFormat"
+            label="%ru.runa.wfe.var.format.TextFormat"
+            enabled="true"
+            variableClassName="java.lang.String">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.LongFormat"
+            label="%ru.runa.wfe.var.format.LongFormat"
+            enabled="true"
+            variableClassName="java.lang.Long">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.DoubleFormat"
+            label="%ru.runa.wfe.var.format.DoubleFormat"
+            enabled="true"
+            variableClassName="java.lang.Double">
       </format>
       <format
             className="ru.runa.wfe.var.format.BigDecimalFormat"
@@ -2073,16 +2091,10 @@
             variableClassName="java.util.Date">
       </format>
       <format
-            className="ru.runa.wfe.var.format.DoubleFormat"
-            label="%ru.runa.wfe.var.format.DoubleFormat"
+            className="ru.runa.wfe.var.format.TimeFormat"
+            label="%ru.runa.wfe.var.format.TimeFormat"
             enabled="true"
-            variableClassName="java.lang.Double">
-      </format>
-      <format
-            className="ru.runa.wfe.var.format.ExecutorFormat"
-            label="%ru.runa.wfe.var.format.ExecutorFormat"
-            enabled="true"
-            variableClassName="ru.runa.wfe.user.Executor">
+            variableClassName="java.util.Date">
       </format>
       <format
             className="ru.runa.wfe.var.format.FileFormat"
@@ -2091,28 +2103,34 @@
             variableClassName="ru.runa.wfe.var.FileVariable">
       </format>
       <format
-            className="ru.runa.wfe.var.format.LongFormat"
-            label="%ru.runa.wfe.var.format.LongFormat"
+            className="ru.runa.wfe.var.format.ListFormat"
+            label="%ru.runa.wfe.var.format.ListFormat"
             enabled="true"
-            variableClassName="java.lang.Long">
+            variableClassName="java.util.List">
       </format>
       <format
-            className="ru.runa.wfe.var.format.StringFormat"
-            label="%ru.runa.wfe.var.format.StringFormat"
+            className="ru.runa.wfe.var.format.MapFormat"
             enabled="true"
-            variableClassName="java.lang.String">
+            label="%ru.runa.wfe.var.format.MapFormat"
+            variableClassName="java.util.Map">
       </format>
       <format
-            className="ru.runa.wfe.var.format.TimeFormat"
-            label="%ru.runa.wfe.var.format.TimeFormat"
+            className="ru.runa.wfe.var.format.ExecutorFormat"
+            label="%ru.runa.wfe.var.format.ExecutorFormat"
             enabled="true"
-            variableClassName="java.util.Date">
+            variableClassName="ru.runa.wfe.user.Executor">
       </format>
       <format
-            className="ru.runa.wfe.var.format.TextFormat"
-            label="%ru.runa.wfe.var.format.TextFormat"
+            className="ru.runa.wfe.var.format.ActorFormat"
             enabled="true"
-            variableClassName="java.lang.String">
+            label="%ru.runa.wfe.var.format.ActorFormat"
+            variableClassName="ru.runa.wfe.user.Actor">
+      </format>
+      <format
+            className="ru.runa.wfe.var.format.GroupFormat"
+            enabled="true"
+            label="%ru.runa.wfe.var.format.GroupFormat"
+            variableClassName="ru.runa.wfe.user.Group">
       </format>
    </extension>
 	<extension id="botStationNature" name="specific nature for bot station project" point="org.eclipse.core.resources.natures">

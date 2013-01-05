@@ -3,7 +3,6 @@ package ru.runa.gpd.ui.dialog;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -40,6 +39,8 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.wfe.var.format.ListFormat;
 
+import com.google.common.collect.Lists;
+
 public class MultiInstanceDialog extends Dialog {
     private String subprocessName;
     private final ProcessDefinition definition;
@@ -65,7 +66,7 @@ public class MultiInstanceDialog extends Dialog {
 
     public MultiInstanceDialog(MultiSubprocess multiInstance) {
         super(PlatformUI.getWorkbench().getDisplay().getActiveShell());
-        this.subprocessVariables = multiInstance.getVariablesList();
+        this.subprocessVariables = multiInstance.getVariableMappings();
         this.definition = multiInstance.getProcessDefinition();
         this.subprocessName = multiInstance.getSubProcessName();
         Iterator<VariableMapping> iter = this.subprocessVariables.iterator();
@@ -705,25 +706,23 @@ public class MultiInstanceDialog extends Dialog {
     private List<String> getSelectorVariableNames(String name) {
         ProcessDefinition definition = ProcessCache.getProcessDefinition(name);
         if (definition != null) {
-            Map<String, String> mvars = definition.getVariableFormats(false);
-            Iterator<String> iter = mvars.values().iterator();
-            while (iter.hasNext()) {
-                String value = iter.next();
-                if (!ListFormat.class.getName().equals(value)) {
-                    iter.remove();
+            List<String> result = Lists.newArrayList();
+            for (Variable variable : definition.getVariables()) {
+                if (ListFormat.class.getName().equals(variable.getFormat())) {
+                    result.add(variable.getName());
                 }
             }
-            return new ArrayList<String>(mvars.keySet());
+            return result;
         }
         return new ArrayList<String>();
     }
 
-    private boolean isArrayVariable(String name, String variableName) {
-        ProcessDefinition definition = ProcessCache.getProcessDefinition(name);
+    private boolean isArrayVariable(String processName, String variableName) {
+        ProcessDefinition definition = ProcessCache.getProcessDefinition(processName);
         if (definition != null) {
-            Variable variable = definition.getVariablesMap().get(variableName);
+            Variable variable = definition.getVariable(variableName, false);
             if (variable != null) {
-                return variable.getFormat().contains("Array");
+                return ListFormat.class.getName().equals(variable.getFormat());
             }
         }
         return false;

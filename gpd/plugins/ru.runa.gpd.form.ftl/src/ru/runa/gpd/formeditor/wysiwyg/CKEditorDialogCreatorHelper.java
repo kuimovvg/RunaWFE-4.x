@@ -4,14 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.runa.gpd.formeditor.ftl.FormatTag;
 import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
-import ru.runa.gpd.formeditor.ftl.FreemarkerUtil.TagParser;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
-import ru.runa.gpd.formeditor.vartag.VarTagInfo;
-import ru.runa.gpd.formeditor.vartag.VarTagUtil;
+import ru.runa.gpd.handler.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.IOUtils;
 
@@ -180,8 +177,7 @@ public class CKEditorDialogCreatorHelper {
                     for (OptionalValue option : param.optionalValues) {
                         if (option.container) {
                             for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
-                                String formatAlias = TagParser.getFormatMapping(variable.getFormat()).getName();
-                                if (option.useFilter && !option.filterType.equals(formatAlias)) {
+                                if (option.useFilter && !VariableFormatRegistry.isApplicable(variable, option.filterType)) {
                                     continue;
                                 }
                                 selectElement.addItem("'" + variable.getName() + "'", "'" + variable.getName() + "'");
@@ -214,99 +210,6 @@ public class CKEditorDialogCreatorHelper {
             box.write(result, 4);
         }
         result.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ckeditor.ftl.method.dialog.end")));
-        return result.toString();
-    }
-
-    public static String createFtlOutputDialog() throws IOException {
-        StringBuilder result = new StringBuilder();
-        result.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ckeditor.ftl.format.dialog.start")));
-        {
-            CKSelectElement selectElement = new CKSelectElement();
-            List<Variable> variables = WYSIWYGHTMLEditor.getCurrent().getVariablesList(false);
-            selectElement.setId("ELEMENT_TAG_TYPE").setLabel("editor.lang.FreemarkerTags.FtlVariable")
-                    .setDefaultValue(variables.isEmpty() ? null : "'" + variables.get(0).getName() + "'");
-            for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(false)) {
-                selectElement.addItem("'" + variable.getName() + "'", "'" + variable.getName() + "'");
-            }
-            selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
-            "setup : function( element ){	\n" + "	this.setValue( element.getAttribute( 'ftltagname' ) || '' );\n" + "}\n");
-            selectElement.addCallback(/*
-                                       * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
-                                       * element)
-                                       */
-            "commit : function( data ){\n" + "	if( this.getValue() )\n" + "		data.element.setAttribute( 'ftltagname', this.getValue() );\n" + "	else\n"
-                    + "		data.element.removeAttribute( 'ftltagname' );\n" + "}\n");
-            selectElement.addCallback(/*
-                                       * onChange is called if selection is changed. We need to show appriciate parameters for currently selected
-                                       * freemarker function
-                                       */
-            "onChange : function(){\n" + "    var test = function(e){\n" + "        if(e.id.indexOf('FtlTagVBox') == e.id.length-10){\n"
-                    + "            e.getElement().getParent().getParent().hide();\n" + "        };\n" + "    };\n" + "    this.getDialog().foreach(test);\n"
-                    + "    this.getDialog().getContentElement( 'mainTab', this.getValue() + 'FtlTagVBox' ).getElement().getParent().getParent().show();\n" + "}\n");
-            selectElement.write(result, 4);
-        }
-        for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(false)) {
-            CKVboxElement box = new CKVboxElement().setId("'" + variable.getName() + "FtlTagVBox'");
-            CKSelectElement selectElement = new CKSelectElement().setId("'" + variable.getName() + "tagFormat'").setLabel("editor.lang.FreemarkerTags.FtlFormat");
-            String format = TagParser.getFormatMapping(variable.getFormat()).getName();
-            // It may not exist variables at all.
-            FormatTag formatTag = FormatTag.getTag(format);
-            for (String f : formatTag.formats.keySet()) {
-                selectElement.addItem("'" + formatTag.formats.get(f).name + "'", "'" + f + "'");
-            }
-            selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
-            "setup : function( element ){	\n" + "	if (this.id.indexOf(element.getAttribute( 'ftltagname' )) == 0){\n"
-                    + "		this.setValue( element.getAttribute( 'ftltagformat' ));\n" + "	}\n" + "}\n");
-            selectElement.addCallback(/*
-                                       * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
-                                       * element)
-                                       */
-            "commit : function( data ){\n" + "	if(!this.isVisible()) return;" + "	data.element.setAttribute( 'ftltagformat', this.getValue() );\n" + "}\n");
-            box.addChildren(selectElement);
-            result.append(",\n");
-            box.write(result, 4);
-        }
-        result.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ckeditor.ftl.format.dialog.end")));
-        return result.toString();
-    }
-
-    public static String createVarTagDialog() throws IOException {
-        StringBuilder result = new StringBuilder();
-        result.append(IOUtils.readStream(VarTagUtil.class.getResourceAsStream("ckeditor.dialog.start")));
-        {
-            CKSelectElement selectElement = new CKSelectElement();
-            selectElement.setId("NAME_ATTR").setLabel("editor.lang.RunaVarTags.VarTagDlgName");
-            for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(false)) {
-                selectElement.addItem("'" + variable.getName() + "'", "'" + variable.getName() + "'");
-            }
-            selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
-            "setup : function( element )\n" + "{\n" + "	this.setValue( element.getAttribute( NAME_ATTR ) || '');\n" + "}\n");
-            selectElement.addCallback(/*
-                                       * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
-                                       * element)
-                                       */
-            "commit : function( data )\n" + "{\n" + "	if ( this.getValue() )\n" + "		data.element.setAttribute( NAME_ATTR, this.getValue() );\n" + "	else\n"
-                    + "		data.element.removeAttribute( NAME_ATTR );\n" + "}");
-            selectElement.write(result, 4);
-        }
-        result.append(",\n");
-        {
-            CKSelectElement selectElement = new CKSelectElement();
-            selectElement.setId("TYPE_ATTR").setLabel("editor.lang.RunaVarTags.VarTagDlgType");
-            for (VarTagInfo varTag : VarTagUtil.getVarTagsInfo().values()) {
-                selectElement.addItem("'" + varTag.label + "'", "'" + varTag.javaType + "'");
-            }
-            selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
-            "setup : function( element )\n" + "{\n" + "	this.setValue( element.getAttribute( TYPE_ATTR ) || '');\n" + "}\n");
-            selectElement.addCallback(/*
-                                       * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
-                                       * element)
-                                       */
-            "commit : function( data )\n" + "{\n" + "	if ( this.getValue() )\n" + "		data.element.setAttribute( TYPE_ATTR, this.getValue() );\n" + "	else\n"
-                    + "		data.element.removeAttribute( TYPE_ATTR );\n" + "}");
-            selectElement.write(result, 4);
-        }
-        result.append(IOUtils.readStream(VarTagUtil.class.getResourceAsStream("ckeditor.dialog.end")));
         return result.toString();
     }
 }

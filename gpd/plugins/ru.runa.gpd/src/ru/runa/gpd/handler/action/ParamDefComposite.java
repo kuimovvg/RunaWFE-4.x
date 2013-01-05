@@ -26,25 +26,24 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.handler.VariableFormatRegistry;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
-import ru.runa.gpd.validation.FormatMapping;
-import ru.runa.gpd.validation.FormatMappingParser;
 
 public class ParamDefComposite extends Composite {
-
     protected final ParamDefConfig config;
     private final Map<String, List<String>> comboItems = new HashMap<String, List<String>>();
     private final Map<String, String> properties;
-    private final Map<String, String> variableNames;
+    private final List<Variable> variables;
     private MessageDisplay messageDisplay;
     private boolean helpInlined = false;
     private boolean menuForSettingVariable = false;
 
-    public ParamDefComposite(Composite parent, ParamDefConfig config, Map<String, String> properties, Map<String, String> variableNames) {
+    public ParamDefComposite(Composite parent, ParamDefConfig config, Map<String, String> properties, List<Variable> variables) {
         super(parent, SWT.NONE);
         this.config = config;
         this.properties = properties != null ? properties : new HashMap<String, String>();
-        this.variableNames = variableNames;
+        this.variables = variables;
         GridLayout layout = new GridLayout(2, false);
         setLayout(layout);
     }
@@ -89,16 +88,20 @@ public class ParamDefComposite extends Composite {
         this.menuForSettingVariable = menuForSettingVariable;
     }
 
-    private List<String> getVariableNames(Set<String> formatFilters) {
-        if (formatFilters.size() == 0) {
-            return new ArrayList<String>(variableNames.keySet());
-        }
+    private List<String> getVariableNames(Set<String> typeFilters) {
         List<String> result = new ArrayList<String>();
-        for (String varName : variableNames.keySet()) {
-            String varType = variableNames.get(varName);
-            FormatMapping mapping = FormatMappingParser.getFormatMappings().get(varType);
-            if (mapping == null || formatFilters.contains(mapping.getName())) {
-                result.add(varName);
+        for (Variable variable : variables) {
+            boolean applicable = typeFilters.size() == 0;
+            if (!applicable) {
+                for (String typeFilter : typeFilters) {
+                    if (VariableFormatRegistry.isApplicable(variable, typeFilter)) {
+                        applicable = true;
+                        break;
+                    }
+                }
+            }
+            if (applicable) {
+                result.add(variable.getName());
             }
         }
         return result;
@@ -110,12 +113,10 @@ public class ParamDefComposite extends Composite {
         gridData.minimumWidth = 200;
         label.setLayoutData(gridData);
         label.setText(getLabelText(paramDef));
-
         final Text textInput = new Text(this, SWT.BORDER);
         textInput.setData(paramDef.getName());
         if (!helpInlined) {
             textInput.addFocusListener(new FocusAdapter() {
-
                 @Override
                 public void focusGained(FocusEvent e) {
                     setMessages(paramDef.getHelp(), null);
@@ -125,7 +126,6 @@ public class ParamDefComposite extends Composite {
         GridData typeComboData = new GridData(GridData.FILL_HORIZONTAL);
         typeComboData.minimumWidth = 200;
         textInput.setLayoutData(typeComboData);
-
         String selectedValue = properties.get(paramDef.getName());
         if (selectedValue == null) {
             selectedValue = paramDef.getDefaultValue();
@@ -133,17 +133,16 @@ public class ParamDefComposite extends Composite {
         textInput.setText(selectedValue != null ? selectedValue : "");
         if (menuForSettingVariable) {
             textInput.addMenuDetectListener(new MenuDetectListener() {
-
+                @Override
                 public void menuDetected(MenuDetectEvent e) {
                     if (textInput.getMenu() == null) {
                         MenuManager menuManager = new MenuManager();
                         Menu menu = menuManager.createContextMenu(getShell());
                         menuManager.add(new Action(Localization.getString("button.insert_variable")) {
-
                             @Override
                             public void run() {
                                 Set<String> formatFilters = new HashSet<String>();
-                                formatFilters.add("string");
+                                formatFilters.add(String.class.getName());
                                 ChooseVariableDialog dialog = new ChooseVariableDialog(getVariableNames(formatFilters));
                                 String variableName = dialog.openDialog();
                                 if (variableName != null) {
@@ -151,12 +150,10 @@ public class ParamDefComposite extends Composite {
                                     textInput.setText(r);
                                 }
                             }
-
                         });
                         textInput.setMenu(menu);
                     }
                 }
-
             });
         }
         return textInput;
@@ -183,13 +180,11 @@ public class ParamDefComposite extends Composite {
             variableNames.add(0, "");
         }
         comboItems.put(paramDef.getName(), variableNames);
-
         Label label = new Label(this, SWT.NONE);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.minimumWidth = 200;
         label.setLayoutData(gridData);
         label.setText(getLabelText(paramDef));
-
         Combo combo = new Combo(this, SWT.BORDER | SWT.READ_ONLY);
         combo.setData(paramDef.getName());
         combo.setVisibleItemCount(10);
@@ -198,7 +193,6 @@ public class ParamDefComposite extends Composite {
         }
         if (!helpInlined) {
             combo.addFocusListener(new FocusAdapter() {
-
                 @Override
                 public void focusGained(FocusEvent e) {
                     setMessages(paramDef.getHelp(), null);
@@ -208,7 +202,6 @@ public class ParamDefComposite extends Composite {
         GridData typeComboData = new GridData(GridData.FILL_HORIZONTAL);
         typeComboData.minimumWidth = 200;
         combo.setLayoutData(typeComboData);
-
         String selectedValue = properties.get(paramDef.getName());
         if (selectedValue == null) {
             selectedValue = paramDef.getDefaultValue();
@@ -225,12 +218,10 @@ public class ParamDefComposite extends Composite {
         gridData.minimumWidth = 200;
         label.setLayoutData(gridData);
         label.setText(getLabelText(paramDef));
-
         Button button = new Button(this, SWT.CHECK);
         button.setData(paramDef.getName());
         if (!helpInlined) {
             button.addFocusListener(new FocusAdapter() {
-
                 @Override
                 public void focusGained(FocusEvent e) {
                     setMessages(paramDef.getHelp(), null);
@@ -240,7 +231,6 @@ public class ParamDefComposite extends Composite {
         GridData gridData2 = new GridData(GridData.FILL_HORIZONTAL);
         gridData2.minimumWidth = 200;
         button.setLayoutData(gridData2);
-
         String selectedValue = properties.get(paramDef.getName());
         if (selectedValue == null) {
             selectedValue = paramDef.getDefaultValue();
@@ -302,8 +292,6 @@ public class ParamDefComposite extends Composite {
     }
 
     public interface MessageDisplay {
-
         void setMessages(String message, String errorMessage);
     }
-
 }

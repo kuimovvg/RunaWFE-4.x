@@ -29,7 +29,7 @@ public class BSHDecisionProvider extends DelegableProvider implements IDecisionP
         for (Transition transition : transitions) {
             transitionNames.add(transition.getName());
         }
-        BSHEditorDialog dialog = new BSHEditorDialog(delegable.getDelegationConfiguration(), transitionNames, definition.getVariablesList());
+        BSHEditorDialog dialog = new BSHEditorDialog(delegable.getDelegationConfiguration(), transitionNames, definition.getVariables());
         if (dialog.open() == Window.OK) {
             return dialog.getResult();
         }
@@ -53,7 +53,7 @@ public class BSHDecisionProvider extends DelegableProvider implements IDecisionP
     @Override
     public Set<String> getTransitionNames(Decision decision) {
         try {
-            BSHDecisionModel model = new BSHDecisionModel(decision.getDelegationConfiguration(), decision.getProcessDefinition().getVariablesList());
+            BSHDecisionModel model = new BSHDecisionModel(decision.getDelegationConfiguration(), decision.getProcessDefinition().getVariables());
             return new HashSet<String>(model.getTransitionNames());
         } catch (Exception e) {
         }
@@ -63,7 +63,7 @@ public class BSHDecisionProvider extends DelegableProvider implements IDecisionP
     @Override
     public String getDefaultTransitionName(Decision decision) {
         try {
-            BSHDecisionModel model = new BSHDecisionModel(decision.getDelegationConfiguration(), decision.getProcessDefinition().getVariablesList());
+            BSHDecisionModel model = new BSHDecisionModel(decision.getDelegationConfiguration(), decision.getProcessDefinition().getVariables());
             return model.getDefaultTransitionName();
         } catch (Exception e) {
         }

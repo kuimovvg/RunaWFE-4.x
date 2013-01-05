@@ -23,10 +23,10 @@ public class ValidationUtil {
         return ValidatorDefinitionRegistry.getValidatorDefinitions().get(name);
     }
 
-    public static List<ValidatorDefinition> getFieldValidatorDefinitions(String formatName) {
+    public static List<ValidatorDefinition> getFieldValidatorDefinitions(String className) {
         List<ValidatorDefinition> result = new ArrayList<ValidatorDefinition>();
         for (ValidatorDefinition def : ValidatorDefinitionRegistry.getValidatorDefinitions().values()) {
-            if (!def.isGlobal() && def.isApplicable(formatName)) {
+            if (!def.isGlobal() && def.isApplicable(className)) {
                 result.add(def);
             }
         }

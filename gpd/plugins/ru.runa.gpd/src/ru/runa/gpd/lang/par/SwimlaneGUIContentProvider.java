@@ -39,12 +39,15 @@ public class SwimlaneGUIContentProvider extends AuxContentProvider {
         Document document = XmlUtil.createDocument(SWIMLANES_ELEMENT_NAME);
         Element root = document.getRootElement();
         Map<String, String> swimlanePaths = definition.getSwimlaneGUIConfiguration().getSwimlanePaths();
-        for (String swimlaneName : swimlanePaths.keySet()) {
-            Element element = root.addElement(SWIMLANE_ELEMENT_NAME);
-            element.addAttribute(NAME_ATTRIBUTE_NAME, swimlaneName);
-            element.addAttribute(PATH_ATTRIBUTE_NAME, swimlanePaths.get(swimlaneName));
+        byte[] bytes = null;
+        if (swimlanePaths.size() > 0) {
+            for (String swimlaneName : swimlanePaths.keySet()) {
+                Element element = root.addElement(SWIMLANE_ELEMENT_NAME);
+                element.addAttribute(NAME_ATTRIBUTE_NAME, swimlaneName);
+                element.addAttribute(PATH_ATTRIBUTE_NAME, swimlanePaths.get(swimlaneName));
+            }
+            bytes = XmlUtil.writeXml(document);
         }
-        byte[] bytes = XmlUtil.writeXml(document);
         updateFile(folder.getFile(XML_FILE_NAME), bytes);
     }
 }

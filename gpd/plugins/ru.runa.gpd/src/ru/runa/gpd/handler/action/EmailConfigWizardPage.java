@@ -43,6 +43,7 @@ import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
 import ru.runa.gpd.util.IOUtils;
@@ -63,7 +64,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
     private final ParamDefConfig connectionConfig;
     private final ParamDefConfig messageConfig;
     private final ParamDefConfig contentConfig;
-    private final Map<String, String> variables;
+    private final List<Variable> variables;
     private final List<String> ftlVariableNames = new ArrayList<String>();
     private final List<String> fileVariableNames = new ArrayList<String>();
     private String result;
@@ -83,7 +84,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         super("email", Localization.getString("EmailDialog.title"), SharedImages.getImageDescriptor("/icons/send_email.png"));
         this.initValue = delegable.getDelegationConfiguration();
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
-        this.variables = definition.getVariableFormats(true);
+        this.variables = definition.getVariablesWithSwimlanes();
         GraphElement parent = ((GraphElement) delegable).getParent();
         this.bodyInlinedEnabled = (parent instanceof FormNode) && ((FormNode) parent).hasForm();
         this.commonConfig = getParamConfig(bundle, "/conf/email.common.xml");
@@ -94,12 +95,12 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         summaryConfig.getGroups().addAll(connectionConfig.getGroups());
         summaryConfig.getGroups().addAll(messageConfig.getGroups());
         summaryConfig.getGroups().addAll(contentConfig.getGroups());
-        for (String variableName : variables.keySet()) {
-            if (variableName.indexOf(" ") == -1) {
-                ftlVariableNames.add(variableName);
+        for (Variable variable : variables) {
+            if (variable.getName().indexOf(" ") == -1) {
+                ftlVariableNames.add(variable.getName());
             }
-            if (FileFormat.class.getName().equals(variables.get(variableName))) {
-                fileVariableNames.add(variableName);
+            if (FileFormat.class.getName().equals(variable.getFormat())) {
+                fileVariableNames.add(variable.getName());
             }
         }
     }

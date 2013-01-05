@@ -101,7 +101,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusText
             return new ArrayList<Variable>();
         }
         List<Variable> variableWithSwimlanes = new ArrayList<Variable>();
-        for (Variable variable : formNode.getProcessDefinition().getVariablesList()) {
+        for (Variable variable : formNode.getProcessDefinition().getVariables()) {
             if (onlyVariablesWithSpace || variable.getName().indexOf(" ") == -1) {
                 variableWithSwimlanes.add(variable);
             }
@@ -118,7 +118,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusText
         Map<String, Variable> variableWithSwimlanes = new HashMap<String, Variable>();
         // This is because earlier access from web page (not user request)
         if (formNode != null) {
-            for (Variable variable : formNode.getProcessDefinition().getVariablesList()) {
+            for (Variable variable : formNode.getProcessDefinition().getVariables()) {
                 if (includeVariablesWithSpace || variable.getName().indexOf(" ") == -1) {
                     variableWithSwimlanes.put(variable.getName(), variable);
                 }
