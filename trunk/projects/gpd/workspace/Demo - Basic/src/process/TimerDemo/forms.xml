@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<forms>
+  <form state="Before timer triggered" file="Before timer triggered.ftl" type="ftl" validationFile="Before timer triggered.validation.xml" jsValidation="false"/>
+  <form state="After timer triggered" file="After timer triggered.ftl" type="ftl" validationFile="After timer triggered.validation.xml" jsValidation="false"/>
+</forms>

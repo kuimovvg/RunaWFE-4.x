@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-diagram name="MainProcess" notation="uml" width="1069" height="479" showActions="false" showGrid="false">
+  <node name="start" x="84" y="24" width="120" height="48">
+    <transition name="tr1"/>
+  </node>
+  <node name="before subprocess" x="72" y="96" width="132" height="72" minimizedView="false">
+    <transition name="tr1"/>
+  </node>
+  <node name="after subprocess" x="72" y="312" width="132" height="72" minimizedView="false">
+    <transition name="tr1"/>
+  </node>
+  <node name="process-state" x="84" y="204" width="120" height="60">
+    <transition name="tr1"/>
+  </node>
+  <node name="end" x="108" y="408" width="72" height="48"/>
+</process-diagram>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="AjaxFormDemo">
+  <description><![CDATA[AJAX support demo]]></description>
+  <swimlane id="Swimlane" name="Swimlane">
+    <assignment class="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state id="Start" name="Start">
+    <task name="Start" swimlane="Swimlane"/>
+    <transition id="tr1" name="tr1" to="Display user input"/>
+  </start-state>
+  <task-node id="Display user input" name="Display user input" async="false">
+    <task name="Display user input" swimlane="Swimlane"/>
+    <transition id="tr1" name="tr1" to="End"/>
+  </task-node>
+  <end-state id="End" name="End"/>
+</process-definition>
