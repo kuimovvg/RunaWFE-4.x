@@ -1,43 +1,43 @@
 
-var numCounterVARIABLE = 0;
+var numCounter_VARIABLE = 0;
 $(document).ready(function() {
-    $('#btnAddVARIABLE').click(function() {
-        updateDialogContent();
+    $('#btnAdd_VARIABLE').click(function() {
+        updateDialogContent_VARIABLE();
     });
-    $.editDialog = $('<div></div>').dialog({
+    $.editDialog_VARIABLE = $('<div></div>').dialog({
         width: 300, modal:true, autoOpen: false, 
         overlay: {backgroundColor: '#000', opacity: 0.5}
     });
-    $.editDialog.html("<input id='dialogFilter' style='width: 100%;'><div id='dialogContent' style='height: 300px; overflow-y: scroll;'></div>");
-    $("#dialogFilter").change(function() {
-        updateDialogContent();
+    $.editDialog_VARIABLE.html("<input id='dialogFilter_VARIABLE' style='width: 100%;'><div id='dialogContent_VARIABLE' style='height: 300px; overflow-y: scroll;'></div>");
+    $("#dialogFilter_VARIABLE").change(function() {
+        updateDialogContent_VARIABLE();
     });
-    $("#dialogFilter").keyup(function() {
-        updateDialogContent();
+    $("#dialogFilter_VARIABLE").keyup(function() {
+        updateDialogContent_VARIABLE();
     });
 });
 
-function updateDialogContent() {
-    $("#dialogContent").html("");
+function updateDialogContent_VARIABLE() {
+    $("#dialogContent_VARIABLE").html("");
     $.getJSON(
         "jsonUrl",
-        {tag: "ActorsMultiSelect", hint: $("#dialogFilter").val()},
+        {tag: "ActorsMultiSelect", hint: $("#dialogFilter_VARIABLE").val()},
         function(data) {
             $.each(data, function(i, item) {
-                $("#dialogContent").append("<div><a href='javascript:addActor(\""+item.id+"\", \""+item.name+"\");'>"+item.name+"</a></div>");
+                $("#dialogContent_VARIABLE").append("<div><a href='javascript:addActor_VARIABLE(\""+item.code+"\", \""+item.name+"\");'>"+item.name+"</a></div>");
             });
         }
     );
-    $.editDialog.dialog('open');
+    $.editDialog_VARIABLE.dialog('open');
 }
 
-function addActor(id, name) {
-    numCounterVARIABLE++;
-    var divId = "divVARIABLE" + numCounterVARIABLE;
+function addActor_VARIABLE(code, name) {
+    numCounter_VARIABLE++;
+    var divId = "div_VARIABLE" + numCounter_VARIABLE;
     var e = "<div id='" + divId + "'>";
-    e += "<input type='hidden' name='VARIABLE' value='"+id+"' /> " + name;
+    e += "<input type='hidden' name='VARIABLE' value='"+code+"' /> " + name;
     e += " <a href='javascript:{}' onclick='$(\"#"+divId+"\").remove();'>[ X ]</a>";
     e += "</div>";
-    $('#actorsMultiSelectCntVARIABLE').append(e);
-    $.editDialog.dialog("close");
+    $('#actorsMultiSelectCnt_VARIABLE').append(e);
+    $.editDialog_VARIABLE.dialog("close");
 }
