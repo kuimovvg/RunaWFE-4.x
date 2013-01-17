@@ -5,14 +5,14 @@
     <extension
          point="ru.runa.gpd.handlers">
       <handler
-            cellEditorProvider="ru.runa.gpd.office.excel.ReadHandlerCellEditorProvider"
+            cellEditorProvider="ru.runa.gpd.office.excel.ReadExcelHandlerCellEditorProvider"
             className="ru.runa.wf.office.excel.handlers.ReadHandler"
             label="%ActionHandler.ReadHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.office.excel.SaveHandlerCellEditorProvider"
+            cellEditorProvider="ru.runa.gpd.office.excel.SaveExcelHandlerCellEditorProvider"
             className="ru.runa.wf.office.excel.handlers.SaveHandler"
             label="%ActionHandler.SaveHandler"
             enabled="true"
