@@ -3,7 +3,7 @@ package ru.runa.gpd.office.excel;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.resource.Messages;
 
-public class ReadHandlerCellEditorProvider extends BaseExcelHandlerCellEditorProvider {
+public class ReadExcelHandlerCellEditorProvider extends BaseExcelHandlerCellEditorProvider {
 
     @Override
     protected String getTitle() {
