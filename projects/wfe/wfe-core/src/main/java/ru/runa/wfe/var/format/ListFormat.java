@@ -1,6 +1,6 @@
 package ru.runa.wfe.var.format;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.security.auth.Subject;
@@ -11,7 +11,11 @@ public class ListFormat implements VariableFormat<List<?>>, VariableDisplaySuppo
 
     @Override
     public List<?> parse(String[] source) {
-        return Arrays.asList(source);
+        ArrayList list = new ArrayList(source.length);
+        for (String string : source) {
+            list.add(string);
+        }
+        return list;
     }
 
     @Override

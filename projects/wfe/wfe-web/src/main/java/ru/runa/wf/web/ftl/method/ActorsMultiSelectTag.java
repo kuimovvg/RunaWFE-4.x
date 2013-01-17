@@ -34,7 +34,7 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
         StringBuffer html = new StringBuffer();
-        html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions, true));
+        html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions, false));
 
         html.append("<div id=\"actorsMultiSelect").append(variableName).append("\"><div id=\"actorsMultiSelectCnt").append(variableName)
                 .append("\"></div><div id=\"actorsMultiSelectAddButton\"><a href=\"javascript:{}\" id=\"btnAdd").append(variableName)
