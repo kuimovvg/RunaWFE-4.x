@@ -6,10 +6,17 @@ import java.beans.PropertyChangeListener;
 import org.eclipse.gef.editparts.AbstractTreeEditPart;
 
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.PropertyNames;
 
-public abstract class ElementTreeEditPart extends AbstractTreeEditPart implements PropertyChangeListener, PropertyNames {
+public class ElementTreeEditPart extends AbstractTreeEditPart implements PropertyChangeListener, PropertyNames {
+
+    public ElementTreeEditPart() {
+
+    }
+
+    public ElementTreeEditPart(GraphElement element) {
+        setModel(element);
+    }
 
     @Override
     public GraphElement getModel() {
@@ -34,9 +41,7 @@ public abstract class ElementTreeEditPart extends AbstractTreeEditPart implement
 
     @Override
     protected void refreshVisuals() {
-        if (getModel() instanceof NamedGraphElement) {
-            setWidgetText(((NamedGraphElement) getModel()).getName());
-        }
+        setWidgetText(getModel().toString());
         setWidgetImage(getModel().getEntryImage());
     }
 

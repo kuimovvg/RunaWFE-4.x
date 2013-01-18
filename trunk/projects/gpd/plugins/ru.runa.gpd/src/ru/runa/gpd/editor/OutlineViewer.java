@@ -27,6 +27,7 @@ import org.eclipse.ui.part.PageBook;
 
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.gef.GefEntry;
+import ru.runa.gpd.editor.gef.part.tree.ElementTreeEditPart;
 import ru.runa.gpd.editor.gef.part.tree.GroupElementTreeEditPart;
 import ru.runa.gpd.editor.gef.part.tree.OutlineRootTreeEditPart;
 import ru.runa.gpd.editor.gef.part.tree.VariableTreeEditPart;
@@ -177,7 +178,8 @@ public class OutlineViewer extends ContentOutlinePage implements ISelectionListe
             if (gefEntry != null) {
                 return gefEntry.createTreeEditPart(element);
             }
-            throw new RuntimeException("No tree part defined for " + element);
+            // TODO throw new RuntimeException("No tree part defined for " + element);
+            return new ElementTreeEditPart(element);
         }
     }
 

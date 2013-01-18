@@ -356,17 +356,18 @@ public class JpdlSerializer extends ProcessSerializer {
 
     private <T extends GraphElement> T create(Element node, GraphElement parent, String typeName) {
         GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.JPDL, typeName).createElement(parent);
+        String nodeId = node.attributeValue(ID_ATTR);
+        String name = node.attributeValue(NAME_ATTR);
+        if (element instanceof Node && nodeId == null) {
+            nodeId = name;
+        }
+        element.setId(nodeId);
         if (parent != null) {
             parent.addChild(element);
         }
         if (element instanceof NamedGraphElement) {
-            ((NamedGraphElement) element).setName(node.attributeValue(NAME_ATTR));
+            ((NamedGraphElement) element).setName(name);
         }
-        String nodeId = node.attributeValue(ID_ATTR);
-        if (element instanceof NamedGraphElement && nodeId == null) {
-            nodeId = ((NamedGraphElement) element).getName();
-        }
-        element.setId(nodeId);
         List<Element> nodeList = node.elements();
         for (Element childNode : nodeList) {
             if (DESCRIPTION_NODE.equals(childNode.getName())) {

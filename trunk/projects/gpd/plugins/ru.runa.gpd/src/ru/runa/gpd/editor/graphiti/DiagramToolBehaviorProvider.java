@@ -78,25 +78,24 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
             createTaskStateButton.setText(taskStateDefinition.getLabel());
             createTaskStateButton.setIconId(taskStateDefinition.getPaletteIcon());
             data.getDomainSpecificContextButtons().add(createTaskStateButton);
-            //
-            NodeTypeDefinition decisionDefinition = NodeRegistry.getNodeTypeDefinition(Decision.class);
-            CreateElementFeature decisionFeature = new CreateElementFeature();
-            decisionFeature.setNodeDefinition(decisionDefinition);
-            decisionFeature.setFeatureProvider(getFeatureProvider());
-            ContextButtonEntry createDecisionButton = new ContextButtonEntry(decisionFeature, createContext);
-            createDecisionButton.setText(decisionDefinition.getLabel());
-            createDecisionButton.setIconId(decisionDefinition.getPaletteIcon());
-            //createDecisionButton.addDragAndDropFeature(decisionFeature);
-            data.getDomainSpecificContextButtons().add(createDecisionButton);
-            //
-            NodeTypeDefinition endStateDefinition = NodeRegistry.getNodeTypeDefinition(EndState.class);
-            CreateElementFeature endFeature = new CreateElementFeature();
-            endFeature.setNodeDefinition(endStateDefinition);
-            endFeature.setFeatureProvider(getFeatureProvider());
-            ContextButtonEntry createEndStateButton = new ContextButtonEntry(endFeature, createContext);
-            createEndStateButton.setText(endStateDefinition.getLabel());
-            createEndStateButton.setIconId(endStateDefinition.getPaletteIcon());
-            data.getDomainSpecificContextButtons().add(createEndStateButton);
+//            //
+//            NodeTypeDefinition decisionDefinition = NodeRegistry.getNodeTypeDefinition(Decision.class);
+//            CreateElementFeature decisionFeature = new CreateElementFeature();
+//            decisionFeature.setNodeDefinition(decisionDefinition);
+//            decisionFeature.setFeatureProvider(getFeatureProvider());
+//            ContextButtonEntry createExclusiveGatewayButton = new ContextButtonEntry(decisionFeature, createContext);
+//            createExclusiveGatewayButton.setText(decisionDefinition.getLabel());
+//            createExclusiveGatewayButton.setIconId(decisionDefinition.getPaletteIcon());
+//            data.getDomainSpecificContextButtons().add(createExclusiveGatewayButton);
+//            //
+//            NodeTypeDefinition endStateDefinition = NodeRegistry.getNodeTypeDefinition(EndState.class);
+//            CreateElementFeature endFeature = new CreateElementFeature();
+//            endFeature.setNodeDefinition(endStateDefinition);
+//            endFeature.setFeatureProvider(getFeatureProvider());
+//            ContextButtonEntry createEndStateButton = new ContextButtonEntry(endFeature, createContext);
+//            createEndStateButton.setText(endStateDefinition.getLabel());
+//            createEndStateButton.setIconId(endStateDefinition.getPaletteIcon());
+//            data.getDomainSpecificContextButtons().add(createEndStateButton);
         }
         //
         ContextButtonEntry createTransitionButton = new ContextButtonEntry(null, context);
