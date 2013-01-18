@@ -22,7 +22,7 @@ import java.util.Map;
 
 import ru.runa.common.web.html.TDBuilder.Env;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
@@ -49,9 +49,9 @@ public abstract class EnvBaseImpl implements Env {
             if (result != null) {
                 return result;
             }
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             WfDefinition processDef = definitionService.getProcessDefinition(getSubject(), processDefinitionId);
-            AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
             result = authorizationService.isAllowed(getSubject(), permission, processDef);
             processDefPermissionCache.put(processDefinitionId, result);
             return result;

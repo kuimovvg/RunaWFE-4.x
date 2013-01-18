@@ -42,7 +42,7 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.SubstitutionCriteriasForm;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.af.SubstitutionService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.ss.Substitution;
@@ -92,7 +92,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             ArrayList<Long> ids = arrayFromString(substitutionCriteriaIDs);
             ArrayList<Substitution> substitutions = new ArrayList<Substitution>();
             try {
-                SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+                SubstitutionService substitutionService = Delegates.getSubstitutionService();
                 for (Long id : ids) {
                     SubstitutionCriteria substitutionCriteria = substitutionService.getSubstitutionCriteria(getSubject(), id);
                     substitutions.addAll(substitutionService.getBySubstitutionCriteria(getSubject(), substitutionCriteria));
@@ -101,7 +101,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
                 handleException(e);
             }
             for (Substitution substitution : substitutions) {
-                ExecutorService executorService = DelegateFactory.getExecutorService();
+                ExecutorService executorService = Delegates.getExecutorService();
                 try {
                     Actor actor = executorService.getExecutor(getSubject(), substitution.getActorId());
                     message += "<li>" + actor.getFullName() + " (" + actor.getName() + ")</li>";
@@ -158,7 +158,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             table.addElement(createTableHeaderTR());
             List<SubstitutionCriteria> substitutionCriterias = null;
             try {
-                SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+                SubstitutionService substitutionService = Delegates.getSubstitutionService();
                 substitutionCriterias = substitutionService.getSubstitutionCriteriaAll(getSubject());
             } catch (Exception e) {
                 return null;

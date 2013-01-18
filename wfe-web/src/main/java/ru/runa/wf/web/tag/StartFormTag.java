@@ -27,7 +27,7 @@ import org.apache.ecs.html.TD;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.StartFormBuilder;
 import ru.runa.wf.web.html.FormBuilderFactory;
 import ru.runa.wfe.InternalApplicationException;
@@ -68,14 +68,14 @@ public class StartFormTag extends WFFormTag {
     @Override
     protected Interaction getInteraction() throws AuthorizationException, AuthenticationException {
         try {
-            return DelegateFactory.getDefinitionService().getStartInteraction(getSubject(), definitionId);
+            return Delegates.getDefinitionService().getStartInteraction(getSubject(), definitionId);
         } catch (DefinitionDoesNotExistException e) {
             throw new InternalApplicationException(e);
         }
     }
 
     public List<String> getTransitionNames() throws AuthenticationException, TaskDoesNotExistException {
-        return DelegateFactory.getDefinitionService().getOutputTransitionNames(getSubject(), definitionId, null);
+        return Delegates.getDefinitionService().getOutputTransitionNames(getSubject(), definitionId, null);
     }
 
     @Override

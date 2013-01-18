@@ -33,7 +33,7 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.SubstitutionService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
@@ -57,7 +57,7 @@ public class SwitchSubstitutionsPositionsAction extends Action {
         IdsForm form = (IdsForm) actionForm;
         String errorForwardName = Resources.FORWARD_FAILURE;
         try {
-            SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+            SubstitutionService substitutionService = Delegates.getSubstitutionService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             substitutionService.switchSubstitutionsPositions(subject, form.getIds()[0], form.getIds()[1]);
         } catch (ExecutorDoesNotExistException e) {

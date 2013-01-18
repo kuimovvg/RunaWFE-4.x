@@ -34,7 +34,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.UpdatePermissionsOnIdentifiableForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
@@ -52,7 +52,7 @@ abstract public class UpdatePermissionOnIdentifiableAction extends IdentifiableA
         ActionMessages errors = new ActionMessages();
         UpdatePermissionsOnIdentifiableForm permissionsForm = (UpdatePermissionsOnIdentifiableForm) form;
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             Identifiable identifiable = getIdentifiable(subject, permissionsForm.getId(), errors);
             if (identifiable != null) {

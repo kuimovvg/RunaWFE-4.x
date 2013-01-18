@@ -28,7 +28,7 @@ import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.StringsHeaderBuilder;
 import ru.runa.common.web.html.TableBuilder;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.html.ProcessSwimlaneRowBuilder;
 import ru.runa.wfe.execution.ProcessPermission;
@@ -55,7 +55,7 @@ public class ProcessSwimlaneMonitorTag extends ProcessBaseFormTag {
     @Override
     protected void fillFormData(TD tdFormElement) throws JspException {
         try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             List<WfSwimlane> swimlanes = executionService.getSwimlanes(getSubject(), getIdentifiableId());
             List<String> headerNames = Lists.newArrayList();
             headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_NAME, pageContext));

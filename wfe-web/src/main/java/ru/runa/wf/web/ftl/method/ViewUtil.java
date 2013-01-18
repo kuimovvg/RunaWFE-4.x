@@ -5,7 +5,7 @@ import java.util.List;
 import javax.security.auth.Subject;
 
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -21,7 +21,7 @@ import com.google.common.base.Objects;
 public class ViewUtil {
 
     public static String createExecutorSelect(Subject subject, WfVariable variable) {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         BatchPresentation batchPresentation;
         if (ActorFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
             batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();

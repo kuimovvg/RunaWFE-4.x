@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.client.DelegateProcessVariableProvider;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.bot.BotRunner;
 import ru.runa.wfe.bot.BotRunnerException;
@@ -164,7 +164,7 @@ public class MultitaskBotRunner extends BotRunner {
     }
 
     private Set<WfTask> getTasks() throws AuthorizationException, AuthenticationException {
-        ExecutionService executionService = DelegateFactory.getExecutionService();
+        ExecutionService executionService = Delegates.getExecutionService();
         List<WfTask> receivedTasks = executionService.getTasks(getSubject(), BatchPresentationFactory.TASKS.createNonPaged());
         Set<WfTask> tasksToDoSet = new HashSet<WfTask>();
         tasksToDoSet.addAll(receivedTasks);
@@ -183,7 +183,7 @@ public class MultitaskBotRunner extends BotRunner {
             if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
                 log.info("Task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
             } else {
-                DelegateFactory.getExecutionService().completeTask(getSubject(), task.getId(), variables);
+                Delegates.getExecutionService().completeTask(getSubject(), task.getId(), variables);
                 log.info("Task '" + task + "' completed by task handler " + taskHandler.getClass() + ", bot = " + this);
             }
         } else {

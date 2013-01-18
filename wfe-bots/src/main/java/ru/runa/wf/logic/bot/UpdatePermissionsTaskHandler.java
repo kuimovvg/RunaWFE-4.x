@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.security.auth.Subject;
 
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsSettings;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsXmlParser;
 import ru.runa.wfe.InternalApplicationException;
@@ -68,9 +68,9 @@ public class UpdatePermissionsTaskHandler implements TaskHandler {
         if (allowed) {
             Long actorCode = SubjectPrincipalsHelper.getActor(subject).getCode();
             List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions(), actorCode);
-            AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
             List<Collection<Permission>> allPermissions = Lists.newArrayListWithExpectedSize(executors.size());
-            Identifiable identifiable = DelegateFactory.getExecutionService().getProcess(subject, wfTask.getProcessId());
+            Identifiable identifiable = Delegates.getExecutionService().getProcess(subject, wfTask.getProcessId());
             String method = settings.getMethod();
             List<Long> executorIds = Lists.newArrayList();
             for (Executor executor : executors) {

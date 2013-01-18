@@ -24,7 +24,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ActorPermission;
 
@@ -52,9 +52,9 @@ public class AddSubstitutionLinkTag extends IdLinkBaseTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             Subject subject = getSubject();
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             Actor actor = executorService.getExecutor(subject, getIdentifiableId());
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getSubject(), ActorPermission.UPDATE, actor);
         } catch (Exception e) {
             throw new JspException(e);

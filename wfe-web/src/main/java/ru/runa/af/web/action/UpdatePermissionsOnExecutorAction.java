@@ -29,7 +29,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.UpdatePermissionOnIdentifiableAction;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
@@ -55,7 +55,7 @@ public class UpdatePermissionsOnExecutorAction extends UpdatePermissionOnIdentif
         executorExists = false;
         Identifiable result = null;
         try {
-            result = DelegateFactory.getExecutorService().getExecutor(subject, identifiableId);
+            result = Delegates.getExecutorService().getExecutor(subject, identifiableId);
             executorExists = true;
         } catch (ExecutorDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);

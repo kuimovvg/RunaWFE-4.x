@@ -6,7 +6,7 @@ import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.common.web.StrutsWebHelper;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.StartFormBuilder;
 import ru.runa.wfe.commons.ftl.FormHashModel;
 import ru.runa.wfe.definition.DefinitionVariableProvider;
@@ -18,7 +18,7 @@ public class FreemarkerStartFormBuilder extends BaseTaskFormBuilder implements S
 
     @Override
     public String build(Subject subject, Long definitionId, PageContext pageContext, Interaction interaction) throws Exception {
-        List<VariableDefinition> variableDefinitions = DelegateFactory.getDefinitionService().getVariables(subject, definitionId);
+        List<VariableDefinition> variableDefinitions = Delegates.getDefinitionService().getVariables(subject, definitionId);
         FormHashModel model = new FormHashModel(subject, new MapDelegableVariableProvider(interaction.getDefaultVariableValues(),
                 new DefinitionVariableProvider(variableDefinitions)), new StrutsWebHelper(pageContext));
         return build(interaction, model, definitionId);

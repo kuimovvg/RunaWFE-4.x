@@ -28,7 +28,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.UpdatePermissionOnIdentifiableAction;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -53,7 +53,7 @@ public class UpdatePermissionOnProcessDefinitionAction extends UpdatePermissionO
         definitionExists = false;
         Identifiable result = null;
         try {
-            result = DelegateFactory.getDefinitionService().getProcessDefinition(subject, identifiableId);
+            result = Delegates.getDefinitionService().getProcessDefinition(subject, identifiableId);
             definitionExists = true;
         } catch (DefinitionDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);

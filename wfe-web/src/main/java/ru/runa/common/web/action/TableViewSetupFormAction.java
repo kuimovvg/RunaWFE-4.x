@@ -37,7 +37,7 @@ import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.TableViewSetupForm;
 import ru.runa.common.web.html.format.FilterFormatsFactory;
 import ru.runa.service.af.ProfileService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ArraysCommons;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.ClassPresentation;
@@ -169,7 +169,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             tableViewSetupForm = (TableViewSetupForm) form;
             BatchPresentation batchPresentation = getActiveBatchPresentation(profile, tableViewSetupForm.getBatchPresentationId());
             applyBatchPresentation(batchPresentation, tableViewSetupForm);
-            ProfileService profileService = DelegateFactory.getProfileService();
+            ProfileService profileService = Delegates.getProfileService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             profileService.saveBatchPresentation(subject, batchPresentation);
         } catch (Exception e) {
@@ -195,7 +195,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             BatchPresentation batchPresentationClone = presentation.clone();
             batchPresentationClone.setName(newName);
             applyBatchPresentation(batchPresentationClone, tableViewSetupForm);
-            ProfileService profileService = DelegateFactory.getProfileService();
+            ProfileService profileService = Delegates.getProfileService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             profileService.createBatchPresentation(subject, batchPresentationClone);
             profile.addBatchPresentation(batchPresentationClone);
@@ -216,7 +216,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
             BatchPresentation batchPresentation = getActiveBatchPresentation(profile, tableViewSetupForm.getBatchPresentationId());
-            ProfileService profileService = DelegateFactory.getProfileService();
+            ProfileService profileService = Delegates.getProfileService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             profileService.deleteBatchPresentation(subject, batchPresentation);
             profile.deleteBatchPresentation(batchPresentation);

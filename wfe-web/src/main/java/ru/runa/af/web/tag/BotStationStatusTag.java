@@ -13,7 +13,7 @@ import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 
@@ -42,8 +42,8 @@ public class BotStationStatusTag extends TitledFormTag {
 
     private void renewValues() throws JspException {
         try {
-            BotStation botStation = DelegateFactory.getBotService().getBotStation(botStationID);
-            periodicInvocationOn = DelegateFactory.getBotInvokerService(botStation.getAddress()).isRunning();
+            BotStation botStation = Delegates.getBotService().getBotStation(botStationID);
+            periodicInvocationOn = Delegates.getBotInvokerService(botStation.getAddress()).isRunning();
             stationOn = true;
         } catch (Exception e) {
             stationOn = false;
@@ -102,7 +102,7 @@ public class BotStationStatusTag extends TitledFormTag {
     public boolean isFormButtonEnabled() throws JspException {
         boolean result = false;
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             result = authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         } catch (Exception e) {
             throw new JspException(e);

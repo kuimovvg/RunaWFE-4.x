@@ -34,7 +34,7 @@ import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.service.af.SystemService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.security.ASystem;
 
@@ -54,7 +54,7 @@ public class LogoutAction extends Action {
         try {
             HttpSession session = request.getSession();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(session);
-            SystemService systemService = DelegateFactory.getSystemService();
+            SystemService systemService = Delegates.getSystemService();
             systemService.logout(subject, ASystem.INSTANCE);
             SubjectHttpSessionHelper.removeActorSubject(session);
             ProfileHttpSessionHelper.removeProfile(session);

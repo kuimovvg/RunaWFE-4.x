@@ -36,7 +36,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.security.AuthenticationException;
@@ -64,8 +64,8 @@ public class StartProcessAction extends Action {
         ActionMessages messages = new ActionMessages();
         try {
             saveToken(request);
-            ExecutionService executionService = DelegateFactory.getExecutionService();
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            ExecutionService executionService = Delegates.getExecutionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             if (definitionService.getStartInteraction(subject, definitionId).hasForm()
                     || definitionService.getOutputTransitionNames(subject, definitionId, null).size() > 1) {

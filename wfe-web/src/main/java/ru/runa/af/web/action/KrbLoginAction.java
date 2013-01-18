@@ -41,7 +41,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.service.af.ProfileService;
 import ru.runa.service.af.SystemService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
@@ -78,17 +78,17 @@ public class KrbLoginAction extends Action {
                 throw new LoginException("Invalid domain name '" + domainActorName + "'");
             }
             String actorName = domainActorName.substring(0, atIndex);
-            Actor actor = DelegateFactory.getExecutorService().getActorCaseInsensitive(actorName);
+            Actor actor = Delegates.getExecutorService().getActorCaseInsensitive(actorName);
             ActorPrincipal ap = new ActorPrincipal(actor, SubjectPrincipalsHelper.encodeActor(actor));
 
             HashSet<Principal> princ = new HashSet<Principal>();
             princ.add(ap);
             Subject subject = new Subject(false, princ, new HashSet<Object>(), new HashSet<Object>());
 
-            SystemService systemService = DelegateFactory.getSystemService();
+            SystemService systemService = Delegates.getSystemService();
             systemService.login(subject, ASystem.INSTANCE);
             HttpSession session = request.getSession();
-            ProfileService profileService = DelegateFactory.getProfileService();
+            ProfileService profileService = Delegates.getProfileService();
             Profile profile = profileService.getProfile(subject);
             ProfileHttpSessionHelper.setProfile(profile, session);
             SubjectHttpSessionHelper.addActorSubject(subject, session);

@@ -1,7 +1,7 @@
 package ru.runa.service.client;
 
 import ru.runa.service.bot.BotInvokerService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 
 /**
@@ -16,11 +16,11 @@ public class BotInvokerClient {
 
     public static void main(String[] args) throws Exception {
         try {
-            BotInvokerService botInvokerService = DelegateFactory.getBotInvokerService();
+            BotInvokerService botInvokerService = Delegates.getBotInvokerService();
             if (args.length == 1) {
                 if (START_ARGUMENT.equals(args[0])) {
                     String botStationName = args[1];
-                    BotStation botStation = DelegateFactory.getBotService().getBotStation(botStationName);
+                    BotStation botStation = Delegates.getBotService().getBotStation(botStationName);
                     if (botStation == null) {
                         System.err.println("No botstation could not be found '" + botStationName + "'");
                     }

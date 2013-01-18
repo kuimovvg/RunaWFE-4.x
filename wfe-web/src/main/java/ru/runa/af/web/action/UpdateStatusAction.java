@@ -33,7 +33,7 @@ import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
@@ -57,7 +57,7 @@ public class UpdateStatusAction extends Action {
         String errorForwardName = Resources.FORWARD_FAILURE;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             executorService.setStatus(subject, form.getId(), form.isActive());
         } catch (ExecutorDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);

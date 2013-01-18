@@ -17,7 +17,7 @@
  */
 package ru.runa.service.client;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 
 /**
  * Created on 19.04.2006
@@ -41,6 +41,6 @@ public class LDAPImporterClient {
     }
 
     private static void importExecutors(String username, String password) {
-        DelegateFactory.getLDAPSynchronizerService().importExecutorsFromLDAP(username, password);
+        Delegates.getLDAPSynchronizerService().importExecutorsFromLDAP(username, password);
     }
 }

@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
@@ -38,7 +38,7 @@ public class GroupMembersTag extends FreemarkerTag {
         String actorVarName = getParameterAs(String.class, 0);
         Group group = getParameterAs(Group.class, 1);
         String view = getParameterAs(String.class, 2);
-        List<Actor> actors = DelegateFactory.getExecutorService().getGroupActors(subject, group);
+        List<Actor> actors = Delegates.getExecutorService().getGroupActors(subject, group);
         if ("all".equals(view)) {
             return createSelect(actorVarName, actors).toString();
         } else if ("raw".equals(view)) {

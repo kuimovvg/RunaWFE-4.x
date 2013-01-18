@@ -13,7 +13,7 @@ import org.apache.struts.action.ActionMessages;
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
@@ -34,7 +34,7 @@ public class CreateBotTaskAction extends Action {
         IdForm form = (IdForm) actionForm;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotService botService = DelegateFactory.getBotService();
+            BotService botService = Delegates.getBotService();
             Bot bot = botService.getBot(subject, form.getId());
             BotTask task = new BotTask();
             task.setBot(bot);

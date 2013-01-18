@@ -35,7 +35,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
@@ -62,7 +62,7 @@ public class RemoveExecutorFromGroupsAction extends Action {
         IdsForm form = (IdsForm) actionForm;
         boolean executorExists = true;
         try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             executorService.removeExecutorFromGroups(subject, form.getId(), Lists.newArrayList(form.getIds()));
         } catch (ExecutorDoesNotExistException e) {

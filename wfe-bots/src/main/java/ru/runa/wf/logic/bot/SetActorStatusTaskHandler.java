@@ -27,7 +27,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.handler.bot.TaskHandler;
@@ -55,7 +55,7 @@ public class SetActorStatusTaskHandler implements TaskHandler {
     @Override
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
         log.info("Executing task in process " + wfTask.getProcessId() + " with " + config);
-        ExecutorService executorDelegate = DelegateFactory.getExecutorService();
+        ExecutorService executorDelegate = Delegates.getExecutorService();
         Long actorCode = variableProvider.getValueNotNull(Long.class, config.actorVariableName);
         Actor actor = executorDelegate.getActorByCode(subject, actorCode);
         boolean isActive = variableProvider.getValueNotNull(Boolean.class, config.statusVariableName);

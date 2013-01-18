@@ -49,7 +49,7 @@ import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
@@ -78,16 +78,16 @@ public class BotTaskListTag extends TitledFormTag {
 
     @Override
     public boolean isFormButtonEnabled() throws JspException {
-        AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+        AuthorizationService authorizationService = Delegates.getAuthorizationService();
         return authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
     }
 
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
         tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botID)));
-        BotService botService = DelegateFactory.getBotService();
+        BotService botService = Delegates.getBotService();
         getForm().setEncType(Form.ENC_UPLOAD);
-        AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+        AuthorizationService authorizationService = Delegates.getAuthorizationService();
         boolean disabled = !authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         List<BotTask> tasks = botService.getBotTasks(getSubject(), botID);
         int nameSize = 1;

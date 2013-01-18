@@ -32,7 +32,7 @@ import ru.runa.af.web.form.SubstitutionCriteriaForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.service.af.SubstitutionService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.ss.SubstitutionCriteria;
@@ -53,7 +53,7 @@ public class UpdateSubstitutionCriteriaAction extends Action {
         ActionMessages errors = new ActionMessages();
         try {
             SubstitutionCriteriaForm form = (SubstitutionCriteriaForm) actionForm;
-            SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+            SubstitutionService substitutionService = Delegates.getSubstitutionService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             SubstitutionCriteria substitutionCriteria;
             if (form.getId() == 0) {

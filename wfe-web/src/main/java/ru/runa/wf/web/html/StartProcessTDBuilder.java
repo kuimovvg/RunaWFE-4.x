@@ -29,7 +29,7 @@ import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.html.BaseTDBuilder;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.web.action.StartDisabledImageProcessAction;
 import ru.runa.wf.web.action.StartImageProcessAction;
@@ -77,7 +77,7 @@ public class StartProcessTDBuilder extends BaseTDBuilder {
             startLink = new A(url).addElement(startImg);
             if (ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_PARAMETER)
                     || ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER)) {
-                DefinitionService definitionService = DelegateFactory.getDefinitionService();
+                DefinitionService definitionService = Delegates.getDefinitionService();
                 String actionParameter = null;
                 if (!(definitionService.getStartInteraction(env.getSubject(), definition.getId()).hasForm() || definitionService
                         .getOutputTransitionNames(env.getSubject(), definition.getId(), null).size() > 1)) {

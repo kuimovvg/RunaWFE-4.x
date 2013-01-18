@@ -36,7 +36,7 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.service.af.RelationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 
 /**
@@ -53,7 +53,7 @@ public class RemoveRelationAction extends Action {
         ActionMessages errors = new ActionMessages();
         RelationIdsForm relationForm = (RelationIdsForm) form;
         try {
-            RelationService relationService = DelegateFactory.getRelationService();
+            RelationService relationService = Delegates.getRelationService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             for (Long relationId : relationForm.getIds()) {
                 relationService.removeRelationPair(subject, relationId);

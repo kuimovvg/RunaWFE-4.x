@@ -12,7 +12,7 @@ import ru.runa.af.web.form.BotForm;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
@@ -72,7 +72,7 @@ public class BotTag extends TitledFormTag {
     }
 
     private Bot findBot() {
-        return DelegateFactory.getBotService().getBot(getSubject(), botID);
+        return Delegates.getBotService().getBot(getSubject(), botID);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class BotTag extends TitledFormTag {
     public boolean isFormButtonEnabled() throws JspException {
         boolean result = false;
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             result = authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         } catch (AuthorizationException e) {
             throw new JspException(e);

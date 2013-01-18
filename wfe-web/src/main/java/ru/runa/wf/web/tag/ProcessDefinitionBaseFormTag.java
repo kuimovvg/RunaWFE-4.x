@@ -21,7 +21,7 @@ import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import ru.runa.common.web.tag.IdentifiableFormTag;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.security.Identifiable;
@@ -41,7 +41,7 @@ public abstract class ProcessDefinitionBaseFormTag extends IdentifiableFormTag {
 
     protected WfDefinition getDefinition() {
         try {
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             Subject subject = getSubject();
             return definitionService.getProcessDefinition(subject, getIdentifiableId());
         } catch (Exception e) {

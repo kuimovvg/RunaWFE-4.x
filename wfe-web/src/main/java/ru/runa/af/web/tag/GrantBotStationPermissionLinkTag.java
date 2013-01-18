@@ -22,7 +22,7 @@ import javax.servlet.jsp.JspException;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.security.Permission;
 
@@ -35,7 +35,7 @@ public class GrantBotStationPermissionLinkTag extends LinkTag {
     @Override
     protected boolean isLinkEnabled() throws JspException {
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getSubject(), Permission.UPDATE_PERMISSIONS, BotStation.INSTANCE);
         } catch (Exception e) {
             return false;

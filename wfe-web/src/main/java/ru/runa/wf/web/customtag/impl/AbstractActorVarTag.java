@@ -23,7 +23,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.customtag.VarTag;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.user.Actor;
@@ -49,7 +49,7 @@ public abstract class AbstractActorVarTag implements VarTag {
     public abstract String actorToString(Actor actor);
 
     private Actor getActor(Subject subject, long code) {
-        return DelegateFactory.getExecutorService().getActorByCode(subject, code);
+        return Delegates.getExecutorService().getActorByCode(subject, code);
     }
 
 }

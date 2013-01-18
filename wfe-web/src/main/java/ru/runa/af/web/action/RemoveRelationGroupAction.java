@@ -31,7 +31,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.RelationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 
 /**
@@ -47,7 +47,7 @@ public class RemoveRelationGroupAction extends Action {
             throws AuthenticationException {
         ActionMessages errors = new ActionMessages();
         try {
-            RelationService relationService = DelegateFactory.getRelationService();
+            RelationService relationService = Delegates.getRelationService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             IdsForm listAllForm = (IdsForm) form;
             for (Long groupId : listAllForm.getIds()) {

@@ -13,7 +13,7 @@ public class DisplayVariableTag extends FreemarkerTag {
     @Override
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
-        WfVariable variable = variableProvider.getVariable(variableName);
+        WfVariable variable = variableProvider.getVariableNotNull(variableName);
         VariableFormat<Object> format = FormatCommons.create(variable);
         String html = "<span class=\"displayVariable\">";
         if (format instanceof VariableDisplaySupport) {

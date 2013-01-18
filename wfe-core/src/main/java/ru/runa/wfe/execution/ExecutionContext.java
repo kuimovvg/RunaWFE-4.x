@@ -174,8 +174,10 @@ public class ExecutionContext {
             variable = null;
         }
         if (variable == null) {
-            variable = variableCreator.create(this, name, value);
-            variableDAO.create(variable);
+            if (value != null) {
+                variable = variableCreator.create(this, name, value);
+                variableDAO.create(variable);
+            }
         } else {
             if (Objects.equal(variable.getValue(), value)) {
                 return;
