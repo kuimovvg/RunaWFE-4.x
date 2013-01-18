@@ -48,7 +48,7 @@ public class Actor extends Executor {
     private Long code;
 
     @XmlElement(namespace = "http://runa.ru/workflow/webservices")
-    private boolean isActive = true;
+    private boolean active = true;
 
     @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private String email;
@@ -65,7 +65,8 @@ public class Actor extends Executor {
      * @param name
      *            {@link Actor}name
      * @param description
-     *            {@link Actor}description. If description is null, constructor changes it to empty String value
+     *            {@link Actor}description. If description is null, constructor
+     *            changes it to empty String value
      * @throws NullPointerException
      *             if {@link Actor}name is null
      */
@@ -118,11 +119,11 @@ public class Actor extends Executor {
 
     @Column(name = "IS_ACTIVE")
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Column(name = "E_MAIL")

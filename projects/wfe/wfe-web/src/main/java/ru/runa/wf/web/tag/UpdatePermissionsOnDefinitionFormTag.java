@@ -26,7 +26,7 @@ import org.apache.ecs.html.Table;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.PermissionTableBuilder;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.action.UpdatePermissionOnProcessDefinitionAction;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
@@ -49,7 +49,7 @@ public class UpdatePermissionsOnDefinitionFormTag extends ProcessDefinitionBaseF
             WfDefinition defintion = getDefinition();
             PermissionTableBuilder tableBuilder = new PermissionTableBuilder(defintion, getSubject(), pageContext);
             Table table = tableBuilder.buildTable();
-            Actor starter = DelegateFactory.getExecutorService().getExecutor(getSubject(), SystemExecutors.PROCESS_STARTER_NAME);
+            Actor starter = Delegates.getExecutorService().getExecutor(getSubject(), SystemExecutors.PROCESS_STARTER_NAME);
             table.addElement(tableBuilder.createTR(starter, getUnmodifiablePermissions(), false));
             tdFormElement.addElement(table);
         } catch (Exception e) {

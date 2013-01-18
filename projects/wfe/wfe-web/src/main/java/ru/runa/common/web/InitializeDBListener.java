@@ -6,7 +6,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 
 public class InitializeDBListener implements ServletContextListener {
     public static Log log = LogFactory.getLog(InitializeDBListener.class);
@@ -14,7 +14,7 @@ public class InitializeDBListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent event) {
         log.info("initializing database");
-        DelegateFactory.getInitializerService().init(false);
+        Delegates.getInitializerService().init(false);
         log.info("initialization done");
     }
 

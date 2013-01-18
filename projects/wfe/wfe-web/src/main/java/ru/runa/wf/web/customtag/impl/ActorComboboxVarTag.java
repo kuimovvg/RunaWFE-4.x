@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
@@ -38,7 +38,7 @@ public class ActorComboboxVarTag extends AbstractActorComboBoxVarTag {
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
-        return DelegateFactory.getExecutorService().getActors(subject, batchPresentation);
+        return Delegates.getExecutorService().getActors(subject, batchPresentation);
     }
 
     @Override

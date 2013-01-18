@@ -34,7 +34,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.service.af.ProfileService;
 import ru.runa.service.af.SystemService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.user.Profile;
 
@@ -57,13 +57,13 @@ public class LoginAction extends Action {
         String login = loginForm.getLogin();
         String password = loginForm.getPassword();
 
-        SystemService systemService = DelegateFactory.getSystemService();
-        Subject subject = DelegateFactory.getAuthenticationService().authenticate(login, password);
+        SystemService systemService = Delegates.getSystemService();
+        Subject subject = Delegates.getAuthenticationService().authenticate(login, password);
         systemService.login(subject, ASystem.INSTANCE);
 
         HttpSession session = request.getSession();
 
-        ProfileService profileService = DelegateFactory.getProfileService();
+        ProfileService profileService = Delegates.getProfileService();
         Profile profile = profileService.getProfile(subject);
         ProfileHttpSessionHelper.setProfile(profile, session);
         SubjectHttpSessionHelper.addActorSubject(subject, session);

@@ -36,7 +36,7 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.StrIdsForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
@@ -85,7 +85,7 @@ public class ProcessTaskAssignmentAction extends Action {
             }
         }
         try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             Actor actor = SubjectPrincipalsHelper.getActor(subject);
             ProfileHttpSessionHelper.getProfile(request.getSession());
             for (int i = 0; i < taskIds.size(); i++) {
@@ -115,6 +115,6 @@ public class ProcessTaskAssignmentAction extends Action {
         if (idString == null || "null".equals(idString)) {
             return null;
         }
-        return DelegateFactory.getExecutorService().getExecutor(subject, Long.parseLong(idString));
+        return Delegates.getExecutorService().getExecutor(subject, Long.parseLong(idString));
     }
 }

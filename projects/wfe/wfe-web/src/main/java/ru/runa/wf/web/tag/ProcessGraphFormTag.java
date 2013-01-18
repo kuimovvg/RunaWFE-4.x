@@ -28,7 +28,7 @@ import org.apache.ecs.html.TD;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.action.ProcessGraphImageAction;
 import ru.runa.wf.web.form.TaskIdForm;
@@ -97,7 +97,7 @@ public class ProcessGraphFormTag extends ProcessBaseFormTag {
      *            Process graph image.
      */
     private void addImageActions(final TD formDataTD, IMG img) {
-        ExecutionService executionService = DelegateFactory.getExecutionService();
+        ExecutionService executionService = Delegates.getExecutionService();
         List<GraphElementPresentation> elements = executionService.getProcessGraphElements(getSubject(), getIdentifiableId());
         ProcessGraphElementPresentationVisitor operation = new ProcessGraphElementPresentationVisitor(taskId, pageContext, formDataTD);
         for (GraphElementPresentation graphElementPresentation : elements) {

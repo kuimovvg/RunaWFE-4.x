@@ -24,7 +24,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
@@ -41,7 +41,7 @@ public class ManagePermissionOnGroupsOfRelationsLinkTag extends LinkTag {
     @Override
     protected boolean isLinkEnabled() throws JspException {
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             Subject subject = getSubject();
             return authorizationService.isAllowed(subject, RelationPermission.UPDATE_PERMISSIONS, RelationsGroupSecure.INSTANCE);
         } catch (Exception e) {

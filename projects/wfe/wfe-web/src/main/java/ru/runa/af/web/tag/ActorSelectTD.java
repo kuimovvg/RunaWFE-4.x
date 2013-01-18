@@ -31,7 +31,7 @@ import org.apache.ecs.html.Select;
 import org.apache.ecs.html.TD;
 
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -76,7 +76,7 @@ public class ActorSelectTD extends TD {
         Select select = new Select();
         select.setName(name);
         boolean exist = false;
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         List<Executor> executors = executorService.getAll(subject, BatchPresentationFactory.EXECUTORS.createNonPaged());
         ArrayList<Option> options = new ArrayList<Option>();
         for (Executor executor : executors) {

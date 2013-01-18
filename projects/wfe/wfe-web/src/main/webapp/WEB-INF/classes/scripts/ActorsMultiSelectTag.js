@@ -24,18 +24,18 @@ function updateDialogContent_VARIABLE() {
         {tag: "ActorsMultiSelect", hint: $("#dialogFilter_VARIABLE").val()},
         function(data) {
             $.each(data, function(i, item) {
-                $("#dialogContent_VARIABLE").append("<div><a href='javascript:addActor_VARIABLE(\""+item.code+"\", \""+item.name+"\");'>"+item.name+"</a></div>");
+                $("#dialogContent_VARIABLE").append("<div><a href='javascript:addActor_VARIABLE(\""+item.id+"\", \""+item.name+"\");'>"+item.name+"</a></div>");
             });
         }
     );
     $.editDialog_VARIABLE.dialog('open');
 }
 
-function addActor_VARIABLE(code, name) {
+function addActor_VARIABLE(id, name) {
     numCounter_VARIABLE++;
     var divId = "div_VARIABLE" + numCounter_VARIABLE;
     var e = "<div id='" + divId + "'>";
-    e += "<input type='hidden' name='VARIABLE' value='"+code+"' /> " + name;
+    e += "<input type='hidden' name='VARIABLE' value='"+id+"' /> " + name;
     e += " <a href='javascript:{}' onclick='$(\"#"+divId+"\").remove();'>[ X ]</a>";
     e += "</div>";
     $('#actorsMultiSelectCnt_VARIABLE').append(e);

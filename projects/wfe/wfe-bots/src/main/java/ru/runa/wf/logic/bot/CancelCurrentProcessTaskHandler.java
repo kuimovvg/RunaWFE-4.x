@@ -21,7 +21,7 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
@@ -43,7 +43,7 @@ public class CancelCurrentProcessTaskHandler implements TaskHandler {
 
     @Override
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
-        DelegateFactory.getExecutionService().cancelProcess(subject, wfTask.getProcessId());
+        Delegates.getExecutionService().cancelProcess(subject, wfTask.getProcessId());
         return null;
     }
 }

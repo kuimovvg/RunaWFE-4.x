@@ -20,7 +20,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.SubstitutionCriteriasForm;
 import ru.runa.service.af.SubstitutionService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
@@ -43,7 +43,7 @@ public class DeleteSubstitutionCriteriasAction extends Action {
             throws AuthenticationException {
         ActionMessages errors = new ActionMessages();
         try {
-            SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+            SubstitutionService substitutionService = Delegates.getSubstitutionService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             ArrayList<Substitution> substitutions = new ArrayList<Substitution>();
             Long ids[] = ((SubstitutionCriteriasForm) form).getIds();

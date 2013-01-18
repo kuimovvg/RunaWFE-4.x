@@ -38,7 +38,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.AdminScriptService;
 import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.commons.xml.PathEntityResolver;
@@ -65,7 +65,7 @@ public class AdminScriptClient {
         }
         try {
             byte[] scriptBytes = Files.toByteArray(file);
-            Subject subject = DelegateFactory.getAuthenticationService().authenticate(args[1], args[2]);
+            Subject subject = Delegates.getAuthenticationService().authenticate(args[1], args[2]);
             run(subject, scriptBytes, new Handler() {
 
                 @Override
@@ -81,7 +81,7 @@ public class AdminScriptClient {
     }
 
     public static void run(Subject subject, byte[] scriptBytes, Handler handler) throws Exception {
-        AdminScriptService delegate = DelegateFactory.getAdminScriptService();
+        AdminScriptService delegate = Delegates.getAdminScriptService();
         InputStream scriptInputStream = new ByteArrayInputStream(scriptBytes);
         Document allDocument = XMLHelper.getDocument(scriptInputStream, PATH_ENTITY_RESOLVER);
 

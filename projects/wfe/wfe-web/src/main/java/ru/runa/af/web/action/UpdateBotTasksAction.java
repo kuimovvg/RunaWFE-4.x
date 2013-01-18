@@ -34,7 +34,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.BotTasksForm;
 import ru.runa.af.web.system.TaskHandlerClassesInformation;
 import ru.runa.common.web.ActionExceptionHelper;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotTask;
 
@@ -55,7 +55,7 @@ public class UpdateBotTasksAction extends Action {
         ActionMessages errors = new ActionMessages();
         BotTasksForm form = (BotTasksForm) actionForm;
         try {
-            BotService botService = DelegateFactory.getBotService();
+            BotService botService = Delegates.getBotService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             List<BotTask> tasks = botService.getBotTasks(subject, form.getId());
 

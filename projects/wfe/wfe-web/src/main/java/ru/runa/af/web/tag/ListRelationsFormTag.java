@@ -38,7 +38,7 @@ import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.af.RelationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPermission;
@@ -58,8 +58,8 @@ public class ListRelationsFormTag extends BatchReturningTitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
         try {
-            RelationService relationService = DelegateFactory.getRelationService();
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            RelationService relationService = Delegates.getRelationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             isFormButtonVisible = authorizationService.isAllowed(getSubject(), RelationPermission.UPDATE_RELATION, RelationsGroupSecure.INSTANCE);
             List<Relation> relationGroups = relationService.getRelations(getSubject(), getBatchPresentation());
 

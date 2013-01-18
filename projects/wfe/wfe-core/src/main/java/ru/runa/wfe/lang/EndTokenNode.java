@@ -39,8 +39,7 @@ public class EndTokenNode extends Node {
 
     @Override
     public void execute(ExecutionContext executionContext) {
-        executionContext.getToken().end(executionContext, false);
-        // TODO in JPDL this is issue with Join.
+        executionContext.getToken().end(executionContext);
     }
 
     @Override

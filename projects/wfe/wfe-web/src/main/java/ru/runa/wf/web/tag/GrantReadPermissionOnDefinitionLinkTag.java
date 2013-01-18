@@ -22,7 +22,7 @@ import javax.servlet.jsp.JspException;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Permission;
 
 /**
@@ -37,8 +37,8 @@ public class GrantReadPermissionOnDefinitionLinkTag extends IdLinkBaseTag {
     @Override
     protected boolean isLinkEnabled() throws JspException {
         try {
-            AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
-            return authorizationService.isAllowed(getSubject(), Permission.UPDATE_PERMISSIONS, DelegateFactory.getDefinitionService()
+            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
+            return authorizationService.isAllowed(getSubject(), Permission.UPDATE_PERMISSIONS, Delegates.getDefinitionService()
                     .getProcessDefinition(getSubject(), getIdentifiableId()));
         } catch (Exception e) {
             return false;

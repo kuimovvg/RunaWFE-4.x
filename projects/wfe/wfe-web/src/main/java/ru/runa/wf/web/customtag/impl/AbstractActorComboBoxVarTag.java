@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.customtag.VarTag;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
@@ -63,7 +63,7 @@ public abstract class AbstractActorComboBoxVarTag implements VarTag {
         Actor defaultActor = null;
         if (varValue != null) {
             try {
-                defaultActor = DelegateFactory.getExecutorService().getActorByCode(subject, Long.valueOf((String) varValue));
+                defaultActor = Delegates.getExecutorService().getActorByCode(subject, Long.valueOf((String) varValue));
             } catch (Throwable e) {
                 log.warn("Unable to fetch actor value", e);
             }

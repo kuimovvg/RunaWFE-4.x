@@ -41,7 +41,7 @@ import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.af.RelationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -69,8 +69,8 @@ public class ListExecutorLeftRelationsFormTag extends IdentifiableFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) throws JspException {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
-        RelationService relationService = DelegateFactory.getRelationService();
+        ExecutorService executorService = Delegates.getExecutorService();
+        RelationService relationService = Delegates.getRelationService();
         try {
             List<Executor> executors = new ArrayList<Executor>();
             executors.add(getIdentifiable());
@@ -108,7 +108,7 @@ public class ListExecutorLeftRelationsFormTag extends IdentifiableFormTag {
 
     @Override
     protected Executor getIdentifiable() {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         return executorService.getExecutor(getSubject(), getIdentifiableId());
     }
 

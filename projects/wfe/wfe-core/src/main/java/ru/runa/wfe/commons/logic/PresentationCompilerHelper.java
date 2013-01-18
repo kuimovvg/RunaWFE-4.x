@@ -66,11 +66,10 @@ public final class PresentationCompilerHelper {
      * @return {@linkplain BatchPresentationHibernateCompiler} for loading all
      *         executors.
      */
-    public static BatchPresentationHibernateCompiler createAllExecutorsCompiler(Subject subject, BatchPresentation batchPresentation)
-            throws AuthenticationException {
+    public static BatchPresentationHibernateCompiler createAllExecutorsCompiler(Subject subject, BatchPresentation batchPresentation) {
         List<Long> executorIds = executorDAO.getActorAndGroupsIds(SubjectPrincipalsHelper.getActor(subject));
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        compiler.setParameters(Executor.class, null, null, true, executorIds, ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, null);
+        compiler.setParameters(batchPresentation.getClassPresentation().getPresentationClass(), null, null, true, executorIds, ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, null);
         return compiler;
     }
 

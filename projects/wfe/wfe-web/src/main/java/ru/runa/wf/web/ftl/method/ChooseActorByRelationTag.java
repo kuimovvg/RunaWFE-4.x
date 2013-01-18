@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -60,7 +60,7 @@ public class ChooseActorByRelationTag extends FreemarkerTag {
         List<Executor> result = new ArrayList<Executor>();
         result.add(param);
         BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-        result.addAll(DelegateFactory.getExecutorService().getExecutorGroups(subject, param, batchPresentation, false));
+        result.addAll(Delegates.getExecutorService().getExecutorGroups(subject, param, batchPresentation, false));
         return result;
     }
 
@@ -75,17 +75,17 @@ public class ChooseActorByRelationTag extends FreemarkerTag {
      */
     private List<Actor> getActors(String relationName, Executor relationParam) throws TemplateModelException {
         List<Executor> executorRightList = getExecutors(relationParam);
-        List<RelationPair> relationPairList = DelegateFactory.getRelationService().getExecutorsRelationPairsRight(subject, relationName,
+        List<RelationPair> relationPairList = Delegates.getRelationService().getExecutorsRelationPairsRight(subject, relationName,
                 executorRightList);
         HashSet<Actor> result = new HashSet<Actor>();
         for (RelationPair relationPair : relationPairList) {
             Executor executorLeft = relationPair.getLeft();
             try {
-                DelegateFactory.getExecutorService().getExecutor(subject, executorLeft.getId());
+                Delegates.getExecutorService().getExecutor(subject, executorLeft.getId());
                 if (executorLeft instanceof Actor) {
                     result.add((Actor) executorLeft);
                 } else if (executorLeft instanceof Group) {
-                    result.addAll(DelegateFactory.getExecutorService().getGroupActors(subject, (Group) executorLeft));
+                    result.addAll(Delegates.getExecutorService().getGroupActors(subject, (Group) executorLeft));
                 }
             } catch (AuthorizationException e) {
                 // TODO may be filter executors in logic?

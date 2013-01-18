@@ -43,7 +43,7 @@ import ru.runa.af.web.orgfunction.SubstitutionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.service.af.SubstitutionService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.os.ParamRenderer;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
@@ -105,7 +105,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
 
     @Override
     protected String getTitle() {
-        SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+        SubstitutionService substitutionService = Delegates.getSubstitutionService();
         if (getIdentifiableId() != null) {
             substitutionCriteria = substitutionService.getSubstitutionCriteria(getSubject(), getIdentifiableId());
         }

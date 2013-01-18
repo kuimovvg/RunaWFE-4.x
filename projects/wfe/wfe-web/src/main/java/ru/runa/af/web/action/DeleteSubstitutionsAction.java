@@ -14,7 +14,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.SubstitutionService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 
 import com.google.common.collect.Lists;
@@ -35,7 +35,7 @@ public class DeleteSubstitutionsAction extends Action {
             throws AuthenticationException {
         ActionMessages errors = new ActionMessages();
         try {
-            SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+            SubstitutionService substitutionService = Delegates.getSubstitutionService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             substitutionService.delete(subject, Lists.newArrayList(((IdsForm) form).getIds()));
         } catch (Exception e) {

@@ -24,7 +24,7 @@ import javax.security.auth.Subject;
 
 import org.apache.commons.codec.binary.Base64;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.WebServiceTaskHandler;
 import ru.runa.wfe.InternalApplicationException;
@@ -77,7 +77,7 @@ public class WebServiceTaskHandlerXSLTHelper {
      * @return Variable value converted to string.
      */
     public String getVariable(String name) throws TaskDoesNotExistException, AuthorizationException, AuthenticationException {
-        ExecutionService executionService = DelegateFactory.getExecutionService();
+        ExecutionService executionService = Delegates.getExecutionService();
         WfVariable var = executionService.getVariable(subject, task.getProcessId(), name);
         if (var.getValue() != null) {
             return var.getValue().toString();
@@ -94,7 +94,7 @@ public class WebServiceTaskHandlerXSLTHelper {
      */
     public String getProcessGraph(String processIdVariable) throws TaskDoesNotExistException, AuthorizationException, AuthenticationException,
             ProcessDoesNotExistException {
-        ExecutionService executionService = DelegateFactory.getExecutionService();
+        ExecutionService executionService = Delegates.getExecutionService();
         WfVariable var = executionService.getVariable(subject, task.getProcessId(), processIdVariable);
         if (var.getValue() != null) {
             return Base64.encodeBase64String(executionService.getProcessDiagram(subject, (Long) var.getValue(), null, null));

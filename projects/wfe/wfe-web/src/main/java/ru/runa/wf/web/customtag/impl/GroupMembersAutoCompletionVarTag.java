@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
@@ -39,8 +39,8 @@ public class GroupMembersAutoCompletionVarTag extends AbstractAutoCompletionComb
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
 
-        Group group = DelegateFactory.getExecutorService().getExecutor(subject, varName);
-        List<Executor> executors = DelegateFactory.getExecutorService().getGroupChildren(subject, group, batchPresentation, false);
+        Group group = Delegates.getExecutorService().getExecutor(subject, varName);
+        List<Executor> executors = Delegates.getExecutorService().getGroupChildren(subject, group, batchPresentation, false);
         List<Actor> actors = Lists.newArrayList();
         for (Executor executor : executors) {
             actors.add((Actor) executor);

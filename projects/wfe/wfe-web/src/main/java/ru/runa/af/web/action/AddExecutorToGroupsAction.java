@@ -35,7 +35,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
@@ -61,7 +61,7 @@ public class AddExecutorToGroupsAction extends Action {
         IdsForm groupsForm = (IdsForm) form;
         boolean executorExists = true;
         try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             executorService.addExecutorToGroups(subject, groupsForm.getId(), Lists.newArrayList(groupsForm.getIds()));
         } catch (ExecutorDoesNotExistException e) {

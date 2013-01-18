@@ -27,7 +27,7 @@ import org.apache.ecs.html.TD;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.TaskFormBuilder;
 import ru.runa.wf.web.html.FormBuilderFactory;
 import ru.runa.wfe.form.Interaction;
@@ -60,7 +60,7 @@ public class TaskFormTag extends WFFormTag {
     }
 
     public List<String> getTransitionNames() throws AuthenticationException, TaskDoesNotExistException {
-        List<String> result = DelegateFactory.getDefinitionService().getOutputTransitionNames(getSubject(), null, taskId);
+        List<String> result = Delegates.getDefinitionService().getOutputTransitionNames(getSubject(), null, taskId);
         result.remove(Transition.TIMEOUT_TRANSITION_NAME);
         return result;
     }
@@ -77,18 +77,18 @@ public class TaskFormTag extends WFFormTag {
 
     @Override
     protected Long getDefinitionId() throws AuthorizationException, AuthenticationException {
-        return DelegateFactory.getExecutionService().getTask(getSubject(), taskId).getDefinitionId();
+        return Delegates.getExecutionService().getTask(getSubject(), taskId).getDefinitionId();
     }
 
     @Override
     protected Interaction getInteraction() throws AuthorizationException, AuthenticationException, TaskDoesNotExistException {
-        return DelegateFactory.getDefinitionService().getTaskInteraction(getSubject(), taskId);
+        return Delegates.getDefinitionService().getTaskInteraction(getSubject(), taskId);
     }
 
     @Override
     protected String buildForm(Interaction interaction) throws Exception {
         TaskFormBuilder taskFormBuilder = FormBuilderFactory.createTaskFormBuilder(interaction.getType());
-        WfTask task = DelegateFactory.getExecutionService().getTask(getSubject(), taskId);
+        WfTask task = Delegates.getExecutionService().getTask(getSubject(), taskId);
         return taskFormBuilder.build(getSubject(), pageContext, interaction, task);
     }
 

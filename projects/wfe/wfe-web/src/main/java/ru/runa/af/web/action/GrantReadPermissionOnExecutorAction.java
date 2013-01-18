@@ -32,7 +32,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.GrantPermisionOnIdentifiableAction;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
@@ -71,7 +71,7 @@ public class GrantReadPermissionOnExecutorAction extends GrantPermisionOnIdentif
     protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) throws AuthorizationException,
             AuthenticationException {
         isExecutorExist = false;
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         Identifiable result = null;
         try {
             result = executorService.getExecutor(subject, identifiableId);

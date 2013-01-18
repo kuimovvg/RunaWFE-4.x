@@ -30,7 +30,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
@@ -52,7 +52,7 @@ public class RedeployProcessDefinitionAction extends BaseDeployProcessDefinition
 
     @Override
     protected void doAction(Subject subject, FileForm fileForm, List<String> processType, ActionMessages errors) {
-        DefinitionService definitionService = DelegateFactory.getDefinitionService();
+        DefinitionService definitionService = Delegates.getDefinitionService();
         try {
             WfDefinition processDefinitionDescriptor = definitionService.getProcessDefinition(subject, fileForm.getId());
             definitionService.redeployProcessDefinition(subject, fileForm.getId(), "".equals(fileForm.getFile().getFileName()) ? null : fileForm

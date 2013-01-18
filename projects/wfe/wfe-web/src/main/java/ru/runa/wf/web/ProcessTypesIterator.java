@@ -26,7 +26,7 @@ import java.util.TreeSet;
 
 import javax.security.auth.Subject;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -40,7 +40,7 @@ public class ProcessTypesIterator implements Iterator<String[]> {
     private int curIdx = 0;
 
     public ProcessTypesIterator(Subject subject) throws AuthenticationException, AuthorizationException {
-        DefinitionService definitionService = DelegateFactory.getDefinitionService();
+        DefinitionService definitionService = Delegates.getDefinitionService();
         BatchPresentation batchPresentation = BatchPresentationFactory.DEFINITIONS.createNonPaged();
         List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(subject, batchPresentation);
         SortedSet<String[]> processTypesSet = new TreeSet<String[]>(new Comparator<String[]>() {

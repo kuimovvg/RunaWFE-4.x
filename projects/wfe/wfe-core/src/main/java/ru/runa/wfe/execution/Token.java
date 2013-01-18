@@ -270,25 +270,9 @@ public class Token implements Serializable {
     }
 
     /**
-     * ends this token and all of its children (if any). this is the last active
-     * (=not-ended) child of a parent token, the parent token will be ended as
-     * well and that verification will continue to propagate.
+     * ends this token and all of its children (if any).
      */
     public void end(ExecutionContext executionContext) {
-        end(executionContext, true);
-    }
-
-    /**
-     * ends this token with optional parent ending verification.
-     * 
-     * @param verifyParentTermination
-     *            specifies if the parent token should be checked for
-     *            termination. if verifyParentTermination is set to true and
-     *            this is the last non-ended child of a parent token, the parent
-     *            token will be ended as well and the verification will continue
-     *            to propagate.
-     */
-    public void end(ExecutionContext executionContext, boolean verifyParentTermination) {
         // if not already ended
         if (endDate == null) {
             // ended tokens cannot reactivate parents
@@ -305,15 +289,6 @@ public class Token implements Serializable {
             }
             for (Process subProcess : executionContext.getChildProcesses()) {
                 subProcess.end(executionContext);
-            }
-            if (verifyParentTermination) {
-                // if this is the last active token of the parent,
-                // the parent needs to be ended as well
-                if (parent == null) {
-                    process.end(executionContext);
-                } else if (parent.getActiveChildren().size() == 0) {
-                    parent.end(executionContext);
-                }
             }
         }
     }

@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.logic.bot.assigner.AssignerResources;
 import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.handler.bot.TaskHandlerException;
@@ -54,7 +54,7 @@ public class SwimlaneAssignerTaskHandler implements TaskHandler {
         if (executors.size() != 1) {
             throw new TaskHandlerException("assigner (organization) function return more than 1 actor to be assigned in swimlane");
         }
-        DelegateFactory.getExecutionService().assignSwimlane(subject, wfTask.getProcessId(), swimlaneName, executors.get(0));
+        Delegates.getExecutionService().assignSwimlane(subject, wfTask.getProcessId(), swimlaneName, executors.get(0));
         return null;
     }
 }

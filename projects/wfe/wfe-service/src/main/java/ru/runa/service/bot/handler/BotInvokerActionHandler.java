@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -45,7 +45,7 @@ public class BotInvokerActionHandler implements ActionHandler {
     @Override
     public void execute(ExecutionContext executionContext) {
         try {
-            List<BotStation> botStations = DelegateFactory.getBotService().getBotStations();
+            List<BotStation> botStations = Delegates.getBotService().getBotStations();
             BotStation botStation = null;
             if (configuration != null) {
                 // old way: search by address
@@ -56,7 +56,7 @@ public class BotInvokerActionHandler implements ActionHandler {
                     }
                 }
                 if (botStation == null) {
-                    botStation = DelegateFactory.getBotService().getBotStation(configuration);
+                    botStation = Delegates.getBotService().getBotStation(configuration);
                 }
             } else {
                 if (botStations.size() > 0) {
@@ -67,7 +67,7 @@ public class BotInvokerActionHandler implements ActionHandler {
                 log.warn("No botstation can be found for invocation " + configuration);
                 return;
             }
-            DelegateFactory.getBotInvokerService(botStation.getAddress()).invokeBots(botStation);
+            Delegates.getBotInvokerService(botStation.getAddress()).invokeBots(botStation);
         } catch (Throwable e) {
             log.warn("BotRunner invoker can't invoke bots.", e);
         }

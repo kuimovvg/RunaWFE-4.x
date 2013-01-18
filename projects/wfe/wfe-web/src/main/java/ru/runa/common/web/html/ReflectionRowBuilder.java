@@ -47,7 +47,7 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.ReturnActionForm;
 import ru.runa.common.web.form.SetSortingForm;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.InternalApplicationException;
@@ -96,7 +96,7 @@ public class ReflectionRowBuilder implements RowBuilder {
             if (basePartOfUrlToObject.equals(ru.runa.common.WebResources.ACTION_MAPPING_START_PROCESS)
                     && ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_PARAMETER)
                     || ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER)) {
-                DefinitionService definitionService = DelegateFactory.getDefinitionService();
+                DefinitionService definitionService = Delegates.getDefinitionService();
                 try {
                     if (!(definitionService.getStartInteraction(getSubject(), pid).hasForm() || definitionService.getOutputTransitionNames(
                             getSubject(), pid, null).size() > 1)) {
@@ -115,7 +115,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) throws AuthorizationException, AuthenticationException {
             boolean[] retVal = isAllowedCache.get(new Pair(permission, extractor));
             if (retVal == null) {
-                AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+                AuthorizationService authorizationService = Delegates.getAuthorizationService();
                 if (extractor == null) {
                     retVal = authorizationService.isAllowed(getSubject(), permission, (List<Identifiable>) items);
                 } else {
@@ -140,7 +140,7 @@ public class ReflectionRowBuilder implements RowBuilder {
                 for (int i = 0; i < items.size(); ++i) {
                     ids.add(processIdExtractor.getIdentifiable(items.get(i), this).getId());
                 }
-                ExecutionService executionService = DelegateFactory.getExecutionService();
+                ExecutionService executionService = Delegates.getExecutionService();
                 Map<Long, Object> variables = executionService.getVariableValuesFromProcesses(getSubject(), ids, variableName);
                 cache.putAll(variables);
             }

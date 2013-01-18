@@ -33,7 +33,7 @@ import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.form.ProcessForm;
@@ -64,8 +64,8 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
     @Override
     protected ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Subject subject,
             Profile profile) throws Exception {
-        ExecutionService executionService = DelegateFactory.getExecutionService();
-        DefinitionService definitionService = DelegateFactory.getDefinitionService();
+        ExecutionService executionService = Delegates.getExecutionService();
+        DefinitionService definitionService = Delegates.getDefinitionService();
         ProcessForm form = (ProcessForm) actionForm;
         Long taskId = form.getId();
         Interaction wfForm = definitionService.getTaskInteraction(subject, taskId);

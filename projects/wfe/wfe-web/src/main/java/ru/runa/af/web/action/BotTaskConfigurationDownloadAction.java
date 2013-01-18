@@ -17,7 +17,7 @@ import ru.runa.af.web.Native2AsciiHelper;
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.xml.XmlUtils;
@@ -39,7 +39,7 @@ public class BotTaskConfigurationDownloadAction extends Action {
         try {
             IdForm form = (IdForm) actionForm;
             boolean editAction = request.getParameter("edit") != null;
-            BotService botService = DelegateFactory.getBotService();
+            BotService botService = Delegates.getBotService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             BotTask botTask = botService.getBotTask(subject, form.getId());
             String fileName = botTask.getName() + "_" + botTask.getId() + ".xml";

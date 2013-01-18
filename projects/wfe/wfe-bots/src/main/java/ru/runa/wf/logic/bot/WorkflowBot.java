@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.client.DelegateProcessVariableProvider;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
@@ -86,7 +86,7 @@ public class WorkflowBot implements Runnable {
 
     // Creating WorkflowBot template object
     public WorkflowBot(Bot bot, List<BotTask> tasks) throws AuthenticationException {
-        subject = DelegateFactory.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
+        subject = Delegates.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
         HashMap<String, TaskHandler> handlers = new HashMap<String, TaskHandler>();
         for (BotTask task : tasks) {
             try {
@@ -139,7 +139,7 @@ public class WorkflowBot implements Runnable {
     }
 
     public Set<WfTask> getNewTasks() throws AuthenticationException, AuthorizationException {
-        List<WfTask> currentTasks = DelegateFactory.getExecutionService().getTasks(subject, BatchPresentationFactory.TASKS.createNonPaged());
+        List<WfTask> currentTasks = Delegates.getExecutionService().getTasks(subject, BatchPresentationFactory.TASKS.createNonPaged());
         Set<WfTask> result = new HashSet<WfTask>();
         Set<WorkflowBot> failedBotsToRestart = new HashSet<WorkflowBot>();
         for (Iterator<WorkflowBot> botIterator = existingBots.iterator(); botIterator.hasNext();) {
@@ -185,7 +185,7 @@ public class WorkflowBot implements Runnable {
         if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
             log.info("Task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
         } else {
-            DelegateFactory.getExecutionService().completeTask(subject, task.getId(), variables);
+            Delegates.getExecutionService().completeTask(subject, task.getId(), variables);
             log.debug("Handled task " + task + ", bot " + botName + " by " + taskHandler.getClass());
         }
     }

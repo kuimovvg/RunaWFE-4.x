@@ -13,7 +13,7 @@ import org.apache.struts.action.ActionMessages;
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.DeployBotForm;
 import ru.runa.common.web.ActionExceptionHelper;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 
@@ -30,7 +30,7 @@ public class DeployBotAction extends Action {
         DeployBotForm form = (DeployBotForm) actionForm;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotService botService = DelegateFactory.getBotService();
+            BotService botService = Delegates.getBotService();
             BotStation station = botService.getBotStation(form.getId());
             botService.importBot(subject, station, form.getFile().getFileData(), form.isReplace());
         } catch (Exception e) {

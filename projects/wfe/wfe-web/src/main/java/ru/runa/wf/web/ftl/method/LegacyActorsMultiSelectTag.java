@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -88,7 +88,7 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
         try {
             int rangeSize = 50;
             List<Actor> actors = Lists.newArrayListWithExpectedSize(rangeSize);
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             if (groupName != null && groupName.length() > 0) {
                 Group group = executorService.getExecutor(subject, groupName);
                 List<Actor> groupActors = executorService.getGroupActors(subject, group);

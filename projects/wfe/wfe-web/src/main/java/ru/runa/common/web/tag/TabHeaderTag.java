@@ -36,7 +36,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.relation.RelationsGroupSecure;
@@ -137,7 +137,7 @@ public class TabHeaderTag extends TagSupport {
     private boolean isMenuForwardVisible(Identifiable menuSecuredObject) {
         if (menuSecuredObject != null) {
             try {
-                AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+                AuthorizationService authorizationService = Delegates.getAuthorizationService();
                 return authorizationService.isAllowed(getSubject(), Permission.READ, menuSecuredObject);
             } catch (Exception e) {
                 return false;

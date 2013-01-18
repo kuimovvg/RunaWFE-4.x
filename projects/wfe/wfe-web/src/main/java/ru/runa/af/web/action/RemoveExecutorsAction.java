@@ -33,7 +33,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 
 import com.google.common.collect.Lists;
@@ -54,7 +54,7 @@ public class RemoveExecutorsAction extends Action {
             throws AuthenticationException {
         ActionMessages errors = new ActionMessages();
         try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             List<Long> ids = Lists.newArrayList(((IdsForm) form).getIds());
             executorService.remove(subject, ids);

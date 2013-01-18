@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.common.web.html.TDBuilder.Env;
 import ru.runa.common.web.html.TDBuilder.Env.IdentifiableExtractor;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.user.Actor;
@@ -48,7 +48,7 @@ public class SystemLogActorExtractor implements IdentifiableExtractor {
             if (cache.containsKey(systemLog.getActorId())) {
                 return cache.get(systemLog.getActorId());
             }
-            Actor actor = DelegateFactory.getExecutorService().getActorByCode(env.getSubject(), systemLog.getActorId());
+            Actor actor = Delegates.getExecutorService().getActorByCode(env.getSubject(), systemLog.getActorId());
             // Actor may be null, but it is correct result (if deleted).
             cache.put(systemLog.getActorId(), actor);
             return actor;

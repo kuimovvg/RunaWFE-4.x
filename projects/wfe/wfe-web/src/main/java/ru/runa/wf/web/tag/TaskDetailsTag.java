@@ -30,7 +30,7 @@ import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.TaskDoesNotExistException;
@@ -65,7 +65,7 @@ public class TaskDetailsTag extends BatchReturningTitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
         try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             Subject subject = getSubject();
             BatchPresentation batchPresentation = getProfile().getActiveBatchPresentation("listTasksForm").clone();
             batchPresentation.setFieldsToGroup(new int[0]);

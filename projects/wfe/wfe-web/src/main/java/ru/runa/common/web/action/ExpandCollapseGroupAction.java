@@ -31,7 +31,7 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.GroupForm;
 import ru.runa.service.af.ProfileService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.user.Profile;
 
@@ -49,7 +49,7 @@ public class ExpandCollapseGroupAction extends Action {
         GroupForm groupForm = (GroupForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
-            ProfileService profileService = DelegateFactory.getProfileService();
+            ProfileService profileService = Delegates.getProfileService();
             BatchPresentation batchPresentation = profile.getActiveBatchPresentation(groupForm.getBatchPresentationId());
             String groupId = groupForm.getGroupId();
             batchPresentation.setGroupBlockStatus(groupId, !batchPresentation.isGroupBlockExpanded(groupId));

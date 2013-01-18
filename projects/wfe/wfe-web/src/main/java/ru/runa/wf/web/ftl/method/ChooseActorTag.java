@@ -18,7 +18,7 @@
 package ru.runa.wf.web.ftl.method;
 
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -44,7 +44,7 @@ public class ChooseActorTag extends FreemarkerTag {
             WfVariable variable = variableProvider.getVariableNotNull(actorVarName);
             return ViewUtil.createExecutorSelect(subject, variable);
         } else if ("raw".equals(view)) {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
             int[] sortIds = { 1 };
             boolean[] sortOrder = { true };
