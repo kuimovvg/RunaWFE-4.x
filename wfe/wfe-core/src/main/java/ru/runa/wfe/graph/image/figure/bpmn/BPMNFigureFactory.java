@@ -41,6 +41,7 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
             break;
         // TODO MultiTaskNode
         case Decision:
+        case Merge:
             figure = new Rhomb("decision.png");
             break;
         case Fork:
