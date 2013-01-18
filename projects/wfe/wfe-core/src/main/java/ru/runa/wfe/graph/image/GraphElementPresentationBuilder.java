@@ -77,6 +77,7 @@ public class GraphElementPresentationBuilder {
                 presentation = new JoinGraphElementPresentation();
                 break;
             case Decision:
+            case Merge:
                 presentation = new DecisionGraphElementPresentation();
                 break;
             case ActionNode:
