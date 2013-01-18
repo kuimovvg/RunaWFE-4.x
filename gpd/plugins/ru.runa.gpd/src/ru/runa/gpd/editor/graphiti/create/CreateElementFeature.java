@@ -13,6 +13,7 @@ import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
@@ -80,7 +81,7 @@ public class CreateElementFeature extends AbstractCreateFeature implements GEFCo
         CreateConnectionContext connectionContext = (CreateConnectionContext) context.getProperty(CONNECTION_PROPERTY);
         setLocation(graphElement, (CreateContext) context, connectionContext);
         PictogramElement element = addGraphicalRepresentation(context, graphElement);
-        if (connectionContext != null) {
+        if (connectionContext != null && graphElement instanceof Node) {
             connectionContext.setTargetPictogramElement(element);
             connectionContext.setTargetAnchor(Graphiti.getPeService().getChopboxAnchor((AnchorContainer) element));
             CreateTransitionFeature createTransitionFeature = new CreateTransitionFeature();

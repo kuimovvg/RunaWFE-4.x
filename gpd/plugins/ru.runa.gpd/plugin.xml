@@ -782,10 +782,11 @@
          </graphiti>
       </element>
       <element
-      		type="artifact"
+            bpmn="ioSpecification"
+            jpdl="variable"
             label="%default.variable.name"
             model="ru.runa.gpd.lang.model.Variable"
-            jpdl="variable">
+            type="artifact">
          <gef
                treeEditPart="ru.runa.gpd.editor.gef.part.tree.VariableTreeEditPart">
          </gef>

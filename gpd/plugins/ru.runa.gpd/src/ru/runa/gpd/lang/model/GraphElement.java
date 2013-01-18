@@ -166,15 +166,15 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         try {
             String nodeId = child.getId();
             if (nodeId == null) {
-                if (child instanceof NamedGraphElement) {
-                    child.setId(((NamedGraphElement) child).getName());
-                } else {
+//                if (child instanceof NamedGraphElement) {
+//                    child.setId(((NamedGraphElement) child).getName());
+//                } else {
                     child.setId("ID" + getProcessDefinition().getNextNodeId());
-                }
+//                }
             } else {
                 nodeId = nodeId.substring(2);
                 int nodeIdInt = Integer.parseInt(nodeId);
-                getProcessDefinition().setNextNodeIdIfApplicable(nodeIdInt + 1);
+                getProcessDefinition().setNextNodeIdIfApplicable(nodeIdInt);
             }
         } catch (NumberFormatException e) {
         }
@@ -384,7 +384,6 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         } else if (PROPERTY_DESCRIPTION.equals(id)) {
             return safeStringValue(getDescription());
         }
-        //if ()
         return null;
     }
 
@@ -401,7 +400,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
 
     @Override
     public String toString() {
-        return getClass().getName();
+        return getClass().getName() + " (" + getId() + ")";
     }
 
     public Image getEntryImage() {
