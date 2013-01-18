@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.handler.bot.TaskHandler;
@@ -151,7 +151,7 @@ public abstract class ParamMappedTaskHandler implements TaskHandler {
 
     @Override
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
-        byte[] botXmlFile = DelegateFactory.getDefinitionService().getFile(subject, task.getDefinitionId(), BOTS_XML_FILE);
+        byte[] botXmlFile = Delegates.getDefinitionService().getFile(subject, task.getDefinitionId(), BOTS_XML_FILE);
         Document doc = XmlUtils.parseWithoutValidation(botXmlFile);
         List<Element> taskElements = doc.getRootElement().elements(TASK_PARAM);
         for (Element taskElement : taskElements) {

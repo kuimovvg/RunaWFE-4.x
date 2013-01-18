@@ -21,7 +21,7 @@ import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import ru.runa.common.web.tag.IdentifiableFormTag;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.Identifiable;
@@ -37,7 +37,7 @@ public abstract class ProcessBaseFormTag extends IdentifiableFormTag {
 
     protected WfProcess getProcess() throws JspException {
         try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             Subject subject = getSubject();
             return executionService.getProcess(subject, getIdentifiableId());
         } catch (Exception e) {

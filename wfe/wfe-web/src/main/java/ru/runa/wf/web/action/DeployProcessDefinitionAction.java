@@ -28,7 +28,7 @@ import org.apache.struts.action.ActionMessages;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 
 /**
@@ -43,7 +43,7 @@ public class DeployProcessDefinitionAction extends BaseDeployProcessDefinitionAc
 
     @Override
     protected void doAction(Subject subject, FileForm fileForm, List<String> processType, ActionMessages errors) {
-        DefinitionService definitionService = DelegateFactory.getDefinitionService();
+        DefinitionService definitionService = Delegates.getDefinitionService();
         try {
             definitionService.deployProcessDefinition(subject, fileForm.getFile().getFileData(), processType);
         } catch (Exception e) {

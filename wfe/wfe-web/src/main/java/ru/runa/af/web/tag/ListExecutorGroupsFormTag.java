@@ -23,7 +23,7 @@ import ru.runa.af.web.action.RemoveExecutorFromGroupsAction;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.GroupPermission;
@@ -49,13 +49,13 @@ public class ListExecutorGroupsFormTag extends ListExecutorsBaseFormTag {
 
     @Override
     protected List<? extends Executor> getExecutors() {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         return executorService.getExecutorGroups(getSubject(), getExecutor(), getBatchPresentation(), false);
     }
 
     @Override
     protected int getExecutorsCount() {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         return executorService.getExecutorGroupsCount(getSubject(), getExecutor(), getBatchPresentation(), false);
     }
 

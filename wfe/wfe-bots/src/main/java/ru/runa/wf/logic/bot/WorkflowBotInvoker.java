@@ -27,7 +27,7 @@ import javax.security.auth.Subject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotRunnerException;
@@ -81,16 +81,16 @@ public class WorkflowBotInvoker implements BotInvoker {
      */
     public void updateConfig(BotStation botStation) {
         try {
-            BotService botService = DelegateFactory.getBotService();
+            BotService botService = Delegates.getBotService();
             if (botStation.getVersion() != configurationVersion) {
                 log.info("updating bots configuration");
                 workflowBots = new ArrayList<MultitaskBotRunner>();
                 String username = BotStationResources.getSystemUsername();
                 String password = BotStationResources.getSystemPassword();
-                Subject botStationSubject = DelegateFactory.getAuthenticationService().authenticate(username, password);
+                Subject botStationSubject = Delegates.getAuthenticationService().authenticate(username, password);
                 List<Bot> bots = botService.getBots(botStationSubject, botStation.getId());
                 for (Bot bot : bots) {
-                    Subject subject = DelegateFactory.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
+                    Subject subject = Delegates.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
                     MultitaskBotRunner wbot = new MultitaskBotRunner(subject, 150, bot.getStartTimeout());
                     List<BotTask> tasks = botService.getBotTasks(subject, bot.getId());
                     Iterator<BotTask> i = tasks.iterator();

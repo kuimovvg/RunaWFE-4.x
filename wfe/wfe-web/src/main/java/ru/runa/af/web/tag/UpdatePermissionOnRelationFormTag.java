@@ -26,7 +26,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.PermissionTableBuilder;
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.service.af.RelationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -48,7 +48,7 @@ public class UpdatePermissionOnRelationFormTag extends IdentifiableFormTag {
     @Override
     protected Identifiable getIdentifiable() throws JspException {
         try {
-            RelationService relationService = DelegateFactory.getRelationService();
+            RelationService relationService = Delegates.getRelationService();
             return relationService.getRelation(getSubject(), getRelationName());
         } catch (Exception e) {
             return null;

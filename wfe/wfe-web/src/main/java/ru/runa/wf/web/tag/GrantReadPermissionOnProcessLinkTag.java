@@ -22,7 +22,7 @@ import javax.servlet.jsp.JspException;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.Permission;
@@ -37,8 +37,8 @@ public class GrantReadPermissionOnProcessLinkTag extends IdLinkBaseTag {
     @Override
     protected boolean isLinkEnabled() throws JspException {
         try {
-            AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
+            ExecutionService executionService = Delegates.getExecutionService();
             WfProcess process = executionService.getProcess(getSubject(), getIdentifiableId());
             return authorizationService.isAllowed(getSubject(), Permission.UPDATE_PERMISSIONS, process);
         } catch (Exception e) {

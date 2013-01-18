@@ -16,7 +16,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 
@@ -35,7 +35,7 @@ public class SaveBotStationAction extends Action {
         IdForm form = (IdForm) actionForm;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotService botService = DelegateFactory.getBotService();
+            BotService botService = Delegates.getBotService();
             BotStation station = botService.getBotStation(form.getId());
             String fileName = station.getName() + ".botstation";
             fileName = HTMLUtils.encodeFileName(fileName, request.getHeader("User-Agent"));

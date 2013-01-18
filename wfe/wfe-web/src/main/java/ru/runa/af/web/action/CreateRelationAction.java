@@ -37,7 +37,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.af.RelationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Executor;
 
@@ -57,8 +57,8 @@ public class CreateRelationAction extends Action {
         CreateRelationForm relationForm = (CreateRelationForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            ExecutorService executorService = DelegateFactory.getExecutorService();
-            RelationService relationService = DelegateFactory.getRelationService();
+            ExecutorService executorService = Delegates.getExecutorService();
+            RelationService relationService = Delegates.getRelationService();
             Executor executorFrom = executorService.getExecutor(subject, relationForm.getRelationFrom());
             Executor executorTo = executorService.getExecutor(subject, relationForm.getRelationTo());
             relationService.addRelationPair(subject, relationForm.getRelationName(), executorFrom, executorTo);

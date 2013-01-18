@@ -43,7 +43,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.webservice.ErrorResponseProcessingResult;
 import ru.runa.wf.logic.bot.webservice.Interaction;
@@ -165,7 +165,7 @@ public class WebServiceTaskHandler implements TaskHandler {
         try {
             return new URL(settings.url);
         } catch (MalformedURLException e) {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             WfVariable var = executionService.getVariable(subject, taskStub.getProcessId(), settings.url);
             return new URL(var.getValue() != null ? var.getValue().toString() : "");
         }
@@ -258,7 +258,7 @@ public class WebServiceTaskHandler implements TaskHandler {
      * Saves current bot execution state.
      */
     private void saveExecutionState(Subject subject, WfTask task, Interaction interaction) {
-        ExecutionService executionService = DelegateFactory.getExecutionService();
+        ExecutionService executionService = Delegates.getExecutionService();
         Map<String, Object> variables = new HashMap<String, Object>();
         xsltHelper.get().MergeVariablesIn(variables);
         variables.put("WS_ITERATION_" + task.getId(), settings.interactions.indexOf(interaction));
@@ -361,7 +361,7 @@ public class WebServiceTaskHandler implements TaskHandler {
      * @return index of interaction.
      */
     private int getStartInteraction(Subject subject, WfTask taskStub) {
-        ExecutionService executionService = DelegateFactory.getExecutionService();
+        ExecutionService executionService = Delegates.getExecutionService();
         WfVariable variable = executionService.getVariable(subject, taskStub.getProcessId(), "WS_ITERATION_" + taskStub.getId());
         return TypeConversionUtil.convertTo(variable.getValue(), int.class);
     }

@@ -32,7 +32,7 @@ import ru.runa.af.web.action.CreateRelationAction;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.FormTag;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Identifiable;
@@ -127,7 +127,7 @@ public class CreateRelationLeftExecutorFormTag extends FormTag {
     private Collection<Executor> getExecutors() throws JspException {
         Set<Executor> result = new HashSet<Executor>();
         try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             Executor ex = executorService.getExecutor(getSubject(), executorId);
             result.add(ex);
             BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
@@ -142,7 +142,7 @@ public class CreateRelationLeftExecutorFormTag extends FormTag {
 
     private String getExecutorName() throws JspException {
         try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             return executorService.getExecutor(getSubject(), executorId).getName();
         } catch (Exception e) {
             return e.getMessage();

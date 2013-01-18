@@ -23,7 +23,7 @@ import java.util.List;
 import javax.security.auth.Subject;
 
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Permission;
@@ -35,7 +35,7 @@ public class BatchExecutorPermissionHelper {
 
     public static boolean[] getEnabledCheckboxes(Subject subject, List<? extends Executor> executors, BatchPresentation batchPresentation,
             Permission permission) throws AuthenticationException {
-        AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+        AuthorizationService authorizationService = Delegates.getAuthorizationService();
         // boolean[] enabledCheckboxed = authorizationServiceDelegate.isAllowed(subject, ExecutorPermission.UPDATE, executors);
         HashSet<Executor> executorsWithUpdatePermissionSet = new HashSet<Executor>(authorizationService.getPersistentObjects(subject,
                 batchPresentation, Executor.class, permission, ACTOR_GROUP_CLASSESS, false));

@@ -32,7 +32,7 @@ import ru.runa.common.web.html.SortingHeaderBuilder;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -50,7 +50,7 @@ public class ShowSystemLogFormTag extends BatchReturningTitledFormTag {
     protected void fillFormElement(TD tdFormElement) throws JspException {
         try {
             BatchPresentation batchPresentation = getBatchPresentation();
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
 
             int instanceCount = (int) executionService.getSystemLogsCount(getSubject(), batchPresentation);
             // we must call getSystemLogs before obtaining current page number since it can be changed after getSystemLogs call

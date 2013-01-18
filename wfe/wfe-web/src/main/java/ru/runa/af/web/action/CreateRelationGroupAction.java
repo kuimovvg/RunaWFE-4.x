@@ -32,7 +32,7 @@ import ru.runa.af.web.form.CreateRelationGroupForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.service.af.RelationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 
 /**
  * @struts:action path="/createRelationGroup" name="createRelationGroupForm" validate="true" input = "/WEB-INF/af/create_relation_group.jsp"
@@ -49,7 +49,7 @@ public class CreateRelationGroupAction extends Action {
         CreateRelationGroupForm relationForm = (CreateRelationGroupForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            RelationService relationService = DelegateFactory.getRelationService();
+            RelationService relationService = Delegates.getRelationService();
             relationService.createRelation(subject, relationForm.getRelationName(), relationForm.getRelationDescription());
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);

@@ -22,7 +22,7 @@ import javax.servlet.jsp.JspException;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.WorkflowSystemPermission;
 import ru.runa.wfe.security.ASystem;
 
@@ -38,7 +38,7 @@ public class DeployDefinitionLinkTag extends LinkTag {
     @Override
     protected boolean isLinkEnabled() throws JspException {
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getSubject(), WorkflowSystemPermission.DEPLOY_DEFINITION, ASystem.INSTANCE);
         } catch (Exception e) {
             return false;

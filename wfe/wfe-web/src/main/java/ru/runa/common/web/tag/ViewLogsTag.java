@@ -12,7 +12,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.action.ViewLogsAction;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.ASystem;
@@ -45,7 +45,7 @@ public class ViewLogsTag extends TagSupport {
             String html = "";
             File dirFile = new File(logDirPath);
             if (dirFile.exists() && dirFile.isDirectory()) {
-                AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+                AuthorizationService authorizationService = Delegates.getAuthorizationService();
                 if (authorizationService.isAllowed(getSubject(), SystemPermission.VIEW_LOGS, ASystem.INSTANCE)) {
                     for (File file : dirFile.listFiles()) {
                         if (file.isFile()) {

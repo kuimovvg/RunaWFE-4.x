@@ -28,7 +28,7 @@ import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.StringsHeaderBuilder;
 import ru.runa.common.web.html.TableBuilder;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.html.ProcessSwimlaneAssignmentRowBuilder;
 import ru.runa.wfe.execution.ProcessPermission;
@@ -47,7 +47,7 @@ public class ProcessActiveTaskMonitorTag extends ProcessBaseFormTag {
     @Override
     protected void fillFormData(TD tdFormElement) throws JspException {
         try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             List<WfTask> activeTasks = executionService.getActiveTasks(getSubject(), getIdentifiableId());
             HeaderBuilder headerBuilder = new StringsHeaderBuilder(new String[] { Messages.getMessage(Messages.LABEL_STATE_NAME, pageContext),
                     Messages.getMessage(Messages.LABEL_SWIMLANE_ASSIGNMENT, pageContext) });

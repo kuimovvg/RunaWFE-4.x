@@ -34,7 +34,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.action.CancelProcessAction;
@@ -103,7 +103,7 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
 
         Element processDefinitionHref;
         try {
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             WfDefinition definitionStub = definitionService.getProcessDefinition(getSubject(), process.getProcessDefinitionId());
             String url = Commons.getActionUrl(ru.runa.common.WebResources.ACTION_MAPPING_MANAGE_DEFINITION, IdForm.ID_INPUT_NAME,
                     definitionStub.getId(), pageContext, PortletUrlType.Render);
@@ -142,7 +142,7 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
             endedTR.addElement(new TD(dateTimeFormat.format(process.getEndDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
         }
 
-        ExecutionService executionService = DelegateFactory.getExecutionService();
+        ExecutionService executionService = Delegates.getExecutionService();
         try {
             WfProcess parentProcess = executionService.getParentProcess(getSubject(), getIdentifiableId());
             if (parentProcess != null) {
@@ -173,7 +173,7 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
     }
 
     private boolean checkReadable(WfProcess parentProcess) throws AuthorizationException, AuthenticationException {
-        AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
+        AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
         return authorizationService.isAllowed(getSubject(), ProcessPermission.READ, parentProcess);
     }
 

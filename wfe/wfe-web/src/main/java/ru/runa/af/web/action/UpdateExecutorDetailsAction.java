@@ -35,7 +35,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -64,7 +64,7 @@ public class UpdateExecutorDetailsAction extends Action {
         UpdateExecutorDetailsForm form = (UpdateExecutorDetailsForm) actionForm;
         boolean executorExists = true;
         try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             Executor executor = executorService.getExecutor(subject, form.getId());
             executor.setDescription(form.getDescription());

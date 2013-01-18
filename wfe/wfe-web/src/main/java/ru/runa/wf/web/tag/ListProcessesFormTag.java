@@ -38,7 +38,7 @@ import ru.runa.common.web.html.SortingHeaderBuilder;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wfe.execution.dto.WfProcess;
@@ -62,7 +62,7 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
     protected void fillFormElement(TD tdFormElement) throws JspException {
         try {
             BatchPresentation batchPresentation = getBatchPresentation();
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
 
             int instanceCount = executionService.getAllProcessesCount(getSubject(), batchPresentation);
             // we must call getProcesses before obtaining current page number since it can be changed after getProcesses call

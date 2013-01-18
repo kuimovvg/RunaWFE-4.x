@@ -32,7 +32,7 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 
 /**
@@ -50,7 +50,7 @@ abstract class LoadProcessDefinitionFileAction extends Action {
         String fileName = null;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             fileName = getFileName(request);
             byte[] bytes = definitionService.getFile(subject, idForm.getId(), fileName);
             String contentType = getContentType();

@@ -21,7 +21,7 @@ import javax.servlet.jsp.JspException;
 
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.user.Executor;
 
@@ -40,7 +40,7 @@ public abstract class UpdateExecutorBaseFormTag extends IdentifiableFormTag {
 
     protected Executor getExecutor() {
         try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             return executorService.getExecutor(getSubject(), getIdentifiableId());
         } catch (Exception e) {
             return null;

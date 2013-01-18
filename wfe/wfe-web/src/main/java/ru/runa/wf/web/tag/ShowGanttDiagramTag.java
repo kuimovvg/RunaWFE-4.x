@@ -10,7 +10,7 @@ import org.apache.ecs.html.Script;
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.Messages;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.action.CancelProcessAction;
 import ru.runa.wfe.audit.ProcessLog;
@@ -41,7 +41,7 @@ public class ShowGanttDiagramTag extends ProcessBaseFormTag {
     protected void fillFormData(TD tdFormElement) throws JspException {
         String js = "";
         try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             WfProcess process = executionService.getProcess(getSubject(), getIdentifiableId());
             ProcessLogFilter filter = new ProcessLogFilter(process.getId());
             filter.setIncludeSubprocessLogs(true);

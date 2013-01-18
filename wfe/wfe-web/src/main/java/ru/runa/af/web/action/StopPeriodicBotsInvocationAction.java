@@ -26,7 +26,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.af.web.form.BotStationForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 
@@ -42,9 +42,9 @@ public class StopPeriodicBotsInvocationAction extends Action {
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Long id = ((BotStationForm) form).getBotStationID();
-        BotService botService = DelegateFactory.getBotService();
+        BotService botService = Delegates.getBotService();
         BotStation botStation = botService.getBotStation(id);
-        DelegateFactory.getBotInvokerService(botStation.getAddress()).cancelPeriodicBotsInvocation();
+        Delegates.getBotInvokerService(botStation.getAddress()).cancelPeriodicBotsInvocation();
         return new ActionForward("/bot_station.do?botStationID=" + id);
     }
 }

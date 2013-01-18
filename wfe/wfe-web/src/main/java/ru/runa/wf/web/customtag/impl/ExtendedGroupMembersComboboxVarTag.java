@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
@@ -39,7 +39,7 @@ public class ExtendedGroupMembersComboboxVarTag extends AbstractActorComboBoxVar
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
 
-        Group group = DelegateFactory.getExecutorService().getExecutor(subject, varName);
+        Group group = Delegates.getExecutorService().getExecutor(subject, varName);
         List<Actor> actors = Lists.newArrayList();
         addActorsRecursive(subject, group, batchPresentation, actors);
         return actors;
@@ -50,7 +50,7 @@ public class ExtendedGroupMembersComboboxVarTag extends AbstractActorComboBoxVar
             actors.add((Actor) executor);
         } else {
             Group group = (Group) executor;
-            List<Executor> executors = DelegateFactory.getExecutorService().getGroupChildren(subject, group, batchPresentation, false);
+            List<Executor> executors = Delegates.getExecutorService().getGroupChildren(subject, group, batchPresentation, false);
             for (Executor child : executors) {
                 addActorsRecursive(subject, child, batchPresentation, actors);
             }

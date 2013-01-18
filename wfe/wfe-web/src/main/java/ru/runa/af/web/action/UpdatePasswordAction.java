@@ -35,7 +35,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
@@ -64,7 +64,7 @@ public class UpdatePasswordAction extends Action {
         boolean executorExists = true;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             Actor actor = executorService.getExecutor(subject, form.getId());
             executorService.setPassword(subject, actor, form.getPassword());
         } catch (ExecutorDoesNotExistException e) {

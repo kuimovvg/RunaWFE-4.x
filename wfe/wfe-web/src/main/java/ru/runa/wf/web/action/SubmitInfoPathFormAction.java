@@ -35,7 +35,7 @@ import org.apache.struts.action.ActionMessage;
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.form.Interaction;
@@ -51,8 +51,8 @@ public class SubmitInfoPathFormAction extends Action {
             throws IOException {
         boolean hasErrors = false;
         try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            ExecutionService executionService = Delegates.getExecutionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
 
             ActionMessage userMessage;

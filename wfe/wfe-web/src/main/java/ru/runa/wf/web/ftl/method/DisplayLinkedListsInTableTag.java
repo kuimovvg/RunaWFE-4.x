@@ -45,7 +45,6 @@ public class DisplayLinkedListsInTableTag extends FreemarkerTag {
                     String listVarName = getParameterAs(String.class, i);
                     String value = FormatCommons.getVarOut(o, subject, webHelper, variableProvider.getProcessId(), listVarName, i, null);
                     buffer.append("<td>").append(value).append("</td>");
-                    buffer.append("<td>").append(o).append("</td>");
                 }
                 buffer.append("</tr>");
             }

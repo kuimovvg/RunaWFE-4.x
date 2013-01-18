@@ -28,7 +28,7 @@ import org.apache.ecs.html.TD;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.web.action.ProcessDefinitionGraphImageAction;
 import ru.runa.wfe.commons.web.PortletUrlType;
@@ -56,7 +56,7 @@ public class DefinitionGraphFormTag extends ProcessDefinitionBaseFormTag {
         processGraphImage.setBorder(0);
 
         try {
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             List<GraphElementPresentation> elements = definitionService.getProcessDefinitionGraphElements(getSubject(), getIdentifiableId());
             DefinitionGraphElementPresentationVisitor operation = new DefinitionGraphElementPresentationVisitor(pageContext);
             for (GraphElementPresentation graphElementPresentation : elements) {

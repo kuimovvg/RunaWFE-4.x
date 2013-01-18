@@ -54,11 +54,11 @@ public class Join extends Node {
             for (Token arrivedToken : tokenSet) {
                 arrivedToken.setAbleToReactivateParent(false);
             }
-            Token parentToken = token.getParent(); // TODO who is parent?
+            Token parentToken = token.getParent(); // got first parent
             leave(new ExecutionContext(executionContext.getProcessDefinition(), parentToken));
         }
 
-        token.end(executionContext, false);
+        token.end(executionContext);
     }
 
 }

@@ -27,7 +27,7 @@ import org.apache.ecs.html.TD;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.web.action.ProcessDefinitionDescriptionAction;
 import ru.runa.wfe.commons.web.PortletUrlType;
@@ -56,7 +56,7 @@ public class ProcessDefinitionDescriptionFormTag extends ProcessDefinitionBaseFo
     protected boolean isVisible() throws JspException {
         boolean result = false;
         try {
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             result = definitionService.getFile(getSubject(), getIdentifiableId(), ProcessDefinitionDescriptionAction.DESCRIPTION_FILE_NAME) != null;
         } catch (Exception e) {
             log.error(e.toString());

@@ -43,7 +43,8 @@ public class BatchPresentationHibernateCompiler {
     private final BatchPresentation batchPresentation;
 
     /**
-     * Parameters, used to create last hibernate query or set explicitly to compiler.
+     * Parameters, used to create last hibernate query or set explicitly to
+     * compiler.
      */
     private HibernateCompilerParameters parameters;
 
@@ -61,7 +62,8 @@ public class BatchPresentationHibernateCompiler {
      * Creates query to load data according to {@link BatchPresentation}.
      * 
      * @param enablePaging
-     *            Flag, equals true, if paging must be used in query; false otherwise.
+     *            Flag, equals true, if paging must be used in query; false
+     *            otherwise.
      * @return {@link Query} to load data.
      */
     public <T extends Object> List<T> getBatch() {
@@ -84,7 +86,8 @@ public class BatchPresentationHibernateCompiler {
      * @param session
      *            {@link Session} for query creation.
      * @param enablePaging
-     *            Flag, equals true, if paging must be used in query; false otherwise.
+     *            Flag, equals true, if paging must be used in query; false
+     *            otherwise.
      * @return {@link Query} to load data.
      */
     public <T extends Object> List<T> getBatch(boolean enablePaging) {
@@ -93,14 +96,17 @@ public class BatchPresentationHibernateCompiler {
     }
 
     /**
-     * Creates query to load data according to {@link BatchPresentation}. Restrictions may not be set (if null).
+     * Creates query to load data according to {@link BatchPresentation}.
+     * Restrictions may not be set (if null).
      * 
      * @param owners
      *            Collection of owners id (Long for example).
      * @param ownersDBPath
-     *            HQL path from root object to calculate object owner (actorId for {@link Task} for example).
+     *            HQL path from root object to calculate object owner (actorId
+     *            for {@link Task} for example).
      * @param enablePaging
-     *            Flag, equals true, if paging must be used in query; false otherwise.
+     *            Flag, equals true, if paging must be used in query; false
+     *            otherwise.
      * @return {@link Query} to load data.
      */
     public <T extends Object> List<T> getBatch(Collection<?> owners, String ownersDBPath, boolean enablePaging) {
@@ -109,14 +115,17 @@ public class BatchPresentationHibernateCompiler {
     }
 
     /**
-     * Creates query to load data according to {@link BatchPresentation}. Restrictions may not be set (if null).
+     * Creates query to load data according to {@link BatchPresentation}.
+     * Restrictions may not be set (if null).
      * 
      * @param owners
      *            Collection of owners id (Long for example).
      * @param ownersDBPath
-     *            HQL path from root object to calculate object owner (actorId for {@link Task} for example).
+     *            HQL path from root object to calculate object owner (actorId
+     *            for {@link Task} for example).
      * @param enablePaging
-     *            Flag, equals true, if paging must be used in query; false otherwise.
+     *            Flag, equals true, if paging must be used in query; false
+     *            otherwise.
      * @return {@link Query} to load data.
      */
     public List<Number> getIdentities(Collection<?> owners, String ownersDBPath, boolean enablePaging) {
@@ -125,14 +134,17 @@ public class BatchPresentationHibernateCompiler {
     }
 
     /**
-     * Creates query to load data according to {@link BatchPresentation} with owners and permission restriction.
+     * Creates query to load data according to {@link BatchPresentation} with
+     * owners and permission restriction.
      * 
      * @param enablePaging
-     *            Flag, equals true, if paging must be used in query; false otherwise.
+     *            Flag, equals true, if paging must be used in query; false
+     *            otherwise.
      * @param executorIds
      *            Executors, which must has permission on queried objects.
      * @param permission
-     *            Permission, which at least one executors must has on queried objects.
+     *            Permission, which at least one executors must has on queried
+     *            objects.
      * @param securedObjectTypes
      *            Type of secured object for queried objects.
      * @return {@link Query} to load data.
@@ -144,12 +156,14 @@ public class BatchPresentationHibernateCompiler {
     }
 
     /**
-     * Creates query to load data count according to {@link BatchPresentation} with owners and permission restriction.
+     * Creates query to load data count according to {@link BatchPresentation}
+     * with owners and permission restriction.
      * 
      * @param executorIds
      *            Executors, which must has permission on queried objects.
      * @param permission
-     *            Permission, which at least one executors must has on queried objects.
+     *            Permission, which at least one executors must has on queried
+     *            objects.
      * @param securedObjectTypes
      *            Type of secured object for queried objects.
      * @return {@link Query} to load data.
@@ -161,111 +175,50 @@ public class BatchPresentationHibernateCompiler {
     }
 
     /**
-     * Creates query to load data according to {@link BatchPresentation}. Restrictions may not be set (if null).
+     * Creates query to load data according to {@link BatchPresentation}.
+     * Restrictions may not be set (if null).
      * 
      * @param concretteClass
      *            Subclass of root persistent class to be loaded by query.
      * @param enablePaging
-     *            Flag, equals true, if paging must be used in query; false otherwise.
+     *            Flag, equals true, if paging must be used in query; false
+     *            otherwise.
      * @return {@link Query} to load data.
      */
     public <T extends Object> List<T> getBatch(Class<T> concretteClass, boolean enablePaging) {
+        // TODO get concretteClass from batchPresentation, check usage
         parameters = new HibernateCompilerParameters(null, null, enablePaging, false, concretteClass);
         return getBatchQuery(parameters).list();
     }
 
     /**
-     * Creates query to load data count according to {@link BatchPresentation}. Restrictions may not be set (if null).
-     * 
-     * @param concretteClass
-     *            Subclass of root persistent class to be loaded by query.
-     * @return {@link Query} to load data.
-     */
-    public int getCount(Class<?> concretteClass) {
-        parameters = new HibernateCompilerParameters(null, null, false, true, concretteClass);
-        Number number = (Number) getBatchQuery(parameters).uniqueResult();
-        return number.intValue();
-    }
-
-    /**
-     * Creates query to load data according to {@link BatchPresentation} with owners and permission restriction. Restrictions may not be set (if null). This method got all query
-     * parameters.
+     * Save compiler parameters. It would be used for creating queries with
+     * *Saved* methods.
      * 
      * @param concretteClass
      *            Subclass of root persistent class to be loaded by query.
      * @param owners
      *            Collection of owners id (Long for example).
      * @param ownersDBPath
-     *            HQL path from root object to calculate object owner (actorId for {@link Task} for example).
+     *            HQL path from root object to calculate object owner (actorId
+     *            for {@link Task} for example).
      * @param enablePaging
-     *            Flag, equals true, if paging must be used in query; false otherwise.
+     *            Flag, equals true, if paging must be used in query; false
+     *            otherwise.
      * @param executorIds
      *            Executors, which must has permission on queried objects.
      * @param permission
-     *            Permission, which at least one executors must has on queried objects.
+     *            Permission, which at least one executors must has on queried
+     *            objects.
      * @param securedObjectTypes
      *            Type of secured object for queried objects.
      * @param idRestrictions
-     *            Restrictions, applied to object identity. Must be HQL query string or null.
-     * @return {@link Query} to load data.
-     */
-    public <T extends Object> List<T> getBatch(Class<T> concretteClass, Collection<?> owners, String ownersDBPath, boolean enablePaging,
-            List<Long> executorIds, Permission permission, SecuredObjectType[] securedObjectTypes, String[] idRestrictions) {
-        parameters = new HibernateCompilerParameters(owners, ownersDBPath, enablePaging, false, executorIds, permission, securedObjectTypes,
-                concretteClass, idRestrictions);
-        return getBatchQuery(parameters).list();
-    }
-
-    /**
-     * Creates query to load data count according to {@link BatchPresentation} with owners and permission restriction. Restrictions may not be set (if null). This method got all
-     * query parameters.
-     * 
-     * @param concreteClass
-     *            Subclass of root persistent class to be loaded by query.
-     * @param owners
-     *            Collection of owners id (Long for example).
-     * @param ownersDBPath
-     *            HQL path from root object to calculate object owner (actorId for {@link Task} for example).
-     * @param executorIds
-     *            Executors, which must has permission on queried objects.
-     * @param permission
-     *            Permission, which at least one executors must has on queried objects.
-     * @param securedObjectTypes
-     *            Type of secured object for queried objects.
-     * @param idRestrictions
-     *            Restrictions, applied to object identity. Must be HQL query string or null.
-     * @return {@link Query} to load data.
-     */
-    public int getCount(Class<?> concreteClass, Collection<?> owners, String ownersDBPath, List<Long> executorIds, Permission permission,
-            SecuredObjectType[] securedObjectTypes, String[] idRestrictions) {
-        parameters = new HibernateCompilerParameters(owners, ownersDBPath, false, true, executorIds, permission, securedObjectTypes, concreteClass,
-                idRestrictions);
-        Number number = (Number) getBatchQuery(parameters).uniqueResult();
-        return number.intValue();
-    }
-
-    /**
-     * Save compiler parameters. It would be used for creating queries with *Saved* methods.
-     * 
-     * @param concretteClass
-     *            Subclass of root persistent class to be loaded by query.
-     * @param owners
-     *            Collection of owners id (Long for example).
-     * @param ownersDBPath
-     *            HQL path from root object to calculate object owner (actorId for {@link Task} for example).
-     * @param enablePaging
-     *            Flag, equals true, if paging must be used in query; false otherwise.
-     * @param executorIds
-     *            Executors, which must has permission on queried objects.
-     * @param permission
-     *            Permission, which at least one executors must has on queried objects.
-     * @param securedObjectTypes
-     *            Type of secured object for queried objects.
-     * @param idRestrictions
-     *            Restrictions, applied to object identity. Must be HQL query string or null.
+     *            Restrictions, applied to object identity. Must be HQL query
+     *            string or null.
      */
     public void setParameters(Class<?> concretteClass, Collection<?> owners, String ownersDBPath, boolean enablePaging, List<Long> executorIds,
             Permission permission, SecuredObjectType[] securedObjectTypes, String[] idRestrictions) {
+        // TODO get concretteClass from batchPresentation, check usage
         parameters = new HibernateCompilerParameters(owners, ownersDBPath, enablePaging, false, executorIds, permission, securedObjectTypes,
                 concretteClass, idRestrictions);
     }

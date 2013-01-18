@@ -13,7 +13,7 @@ import org.apache.struts.action.ActionMessages;
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.BotForm;
 import ru.runa.common.web.ActionExceptionHelper;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
 
@@ -32,7 +32,7 @@ public class UpdateBotAction extends Action {
         BotForm botForm = (BotForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotService botService = DelegateFactory.getBotService();
+            BotService botService = Delegates.getBotService();
             Bot bot = botService.getBot(subject, botForm.getBotID());
             bot.setUsername(botForm.getWfeUser());
             bot.setPassword(botForm.getWfePassword());

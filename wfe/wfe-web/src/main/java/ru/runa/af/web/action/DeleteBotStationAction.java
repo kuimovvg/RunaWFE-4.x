@@ -29,7 +29,7 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 
 /**
@@ -53,7 +53,7 @@ public class DeleteBotStationAction extends Action {
             return mapping.findForward(Resources.FORWARD_SUCCESS);
         }
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-        BotService botService = DelegateFactory.getBotService();
+        BotService botService = Delegates.getBotService();
         for (Long botStationId : botStationToDeleteIds) {
             botService.removeBotStation(subject, botStationId);
         }

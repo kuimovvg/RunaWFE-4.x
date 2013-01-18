@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -36,9 +36,9 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
         StringBuffer html = new StringBuffer();
         html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions, false));
 
-        html.append("<div id=\"actorsMultiSelect").append(variableName).append("\"><div id=\"actorsMultiSelectCnt").append(variableName)
-                .append("\"></div><div id=\"actorsMultiSelectAddButton\"><a href=\"javascript:{}\" id=\"btnAdd").append(variableName)
-                .append("\">[ + ]</a></div></div>");
+        html.append("<div id=\"actorsMultiSelect_").append(variableName).append("\"><div id=\"actorsMultiSelectCnt_").append(variableName)
+                .append("\"></div><div id=\"actorsMultiSelectAddButton_").append(variableName).append("\"><a href=\"javascript:{}\" id=\"btnAdd_")
+                .append(variableName).append("\">[ + ]</a></div></div>");
         return html.toString();
     }
 
@@ -72,7 +72,7 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
     private List<Actor> getActors(Subject subject, Group group, boolean byLogin, String hint) {
         int rangeSize = 50;
         List<Actor> actors = Lists.newArrayListWithExpectedSize(rangeSize);
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         if (group != null) {
             List<Actor> groupActors = executorService.getGroupActors(subject, group);
             for (Actor actor : groupActors) {

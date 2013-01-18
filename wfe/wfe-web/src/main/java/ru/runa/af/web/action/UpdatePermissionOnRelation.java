@@ -30,7 +30,7 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.UpdatePermissionOnIdentifiableAction;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.security.Identifiable;
 
@@ -45,7 +45,7 @@ public class UpdatePermissionOnRelation extends UpdatePermissionOnIdentifiableAc
     @Override
     protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) {
         try {
-            return DelegateFactory.getRelationService().getRelation(subject, identifiableId);
+            return Delegates.getRelationService().getRelation(subject, identifiableId);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
             return null;
@@ -65,7 +65,7 @@ public class UpdatePermissionOnRelation extends UpdatePermissionOnIdentifiableAc
     @Override
     protected ActionForward getErrorForward(Subject subject, ActionMapping mapping, Long identifiableId) {
         try {
-            Relation relation = DelegateFactory.getRelationService().getRelation(subject, identifiableId);
+            Relation relation = Delegates.getRelationService().getRelation(subject, identifiableId);
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("relationName", relation.getName());
             params.put("id", identifiableId);
@@ -78,7 +78,7 @@ public class UpdatePermissionOnRelation extends UpdatePermissionOnIdentifiableAc
     @Override
     protected ActionForward getSuccessForward(Subject subject, ActionMapping mapping, Long identifiableId) {
         try {
-            Relation relation = DelegateFactory.getRelationService().getRelation(subject, identifiableId);
+            Relation relation = Delegates.getRelationService().getRelation(subject, identifiableId);
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("relationName", relation.getName());
             params.put("id", identifiableId);

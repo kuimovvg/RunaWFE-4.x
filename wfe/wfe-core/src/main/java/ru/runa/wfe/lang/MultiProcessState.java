@@ -26,6 +26,8 @@ import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.var.ISelectable;
 import ru.runa.wfe.var.VariableMapping;
+import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.ListFormat;
 
 import com.google.common.collect.Maps;
 
@@ -205,30 +207,22 @@ public class MultiProcessState extends SubProcessState {
             for (VariableMapping variableMapping : variableMappings) {
                 // if this variable access is writable
                 if (variableMapping.isWritable()) {
-                    if (variableMapping.isMultiinstanceLink()) {
-                        String mappedName = variableMapping.getMappedName();
+                    String subprocessVariableName = variableMapping.getMappedName();
+                    String processVariableName = variableMapping.getName();
+                    WfVariable variable = executionContext.getVariableProvider().getVariable(processVariableName);
+                    if (variable == null || ListFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
                         List<Object> value = new ArrayList<Object>();
                         for (Process subprocess : subprocesses) {
                             ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocess);
-                            value.add(subExecutionContext.getVariable(mappedName));
+                            value.add(subExecutionContext.getVariable(subprocessVariableName));
                         }
-                        String variableName = variableMapping.getName();
-                        log.debug("copying sub process var '" + mappedName + "' to super process var '" + variableName + "': " + value);
-                        if (value != null) {
-                            executionContext.setVariable(variableName, value);
-                        }
+                        log.debug("copying sub process var '" + subprocessVariableName + "' to process var '" + processVariableName + "': " + value);
+                        executionContext.setVariable(processVariableName, value);
                     } else {
-                        // the variable is copied from the sub process mapped
-                        // name
-                        // to the super process variable name
-                        String mappedName = variableMapping.getMappedName();
                         ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocesses.get(0));
-                        Object value = subExecutionContext.getVariable(mappedName);
-                        String variableName = variableMapping.getName();
-                        log.debug("copying sub process var '" + mappedName + "' to super process var '" + variableName + "': " + value);
-                        if (value != null) {
-                            executionContext.setVariable(variableName, value);
-                        }
+                        Object value = subExecutionContext.getVariable(subprocessVariableName);
+                        log.debug("copying sub process var '" + subprocessVariableName + "' to process var '" + processVariableName + "': " + value);
+                        executionContext.setVariable(processVariableName, value);
                     }
                 }
             }

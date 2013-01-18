@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.startprocess.StartProcessTask;
 import ru.runa.wf.logic.bot.startprocess.StartProcessVariableMapping;
@@ -66,7 +66,7 @@ public class StartProcessTaskHandler implements TaskHandler {
 
     @Override
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
-        ExecutionService executionService = DelegateFactory.getExecutionService();
+        ExecutionService executionService = Delegates.getExecutionService();
         Map<String, Object> outputVariables = Maps.newHashMap();
 
         Map<String, Object> variablesMap = Maps.newHashMap();
@@ -98,7 +98,7 @@ public class StartProcessTaskHandler implements TaskHandler {
             }
 
             try {
-                AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
+                AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
                 WfProcess wfProcess = executionService.getProcess(subject, startedProcessId);
                 WfProcess superWfProcess = executionService.getProcess(subject, wfTask.getProcessId());
                 BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();

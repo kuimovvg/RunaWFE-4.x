@@ -23,7 +23,7 @@ import javax.servlet.jsp.JspException;
 
 import ru.runa.af.web.action.GrantPermissionOnRelationAction;
 import ru.runa.service.af.RelationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 
 import com.google.common.collect.Maps;
@@ -49,7 +49,7 @@ public class ListExecutorsWithoutPermissionsOnRelationFormTag extends ListExecut
     @Override
     protected Identifiable getIdentifiable() throws JspException {
         try {
-            RelationService relationService = DelegateFactory.getRelationService();
+            RelationService relationService = Delegates.getRelationService();
             return relationService.getRelation(getSubject(), getRelationName());
         } catch (Exception e) {
             throw new JspException(e);
