@@ -483,7 +483,7 @@ public class JpdlSerializer extends ProcessSerializer {
             // backCompatibility: waitState was persisted as taskState earlier
             Node state;
             if (transitionsCount == 1 && hasTimeOutTransition) {
-                state = create(node, definition, TIMER_NODE);
+                state = create(node, definition, WAIT_STATE_NODE);
             } else {
                 state = create(node, definition);
             }
@@ -570,13 +570,13 @@ public class JpdlSerializer extends ProcessSerializer {
         }
         List<Element> waitStates = root.elements(WAIT_STATE_NODE);
         for (Element node : waitStates) {
-            Timer state = create(node, definition);
+            Timer timer = create(node, definition);
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
                 if (TIMER_NODE.equals(stateNodeChild.getName())) {
                     String dueDate = stateNodeChild.attributeValue(DUEDATE_ATTR);
                     if (dueDate != null) {
-                        state.setDelay(new Delay(dueDate));
+                        timer.setDelay(new Delay(dueDate));
                     }
                     List<Element> actionNodes = stateNodeChild.elements();
                     for (Element aa : actionNodes) {
@@ -585,7 +585,7 @@ public class JpdlSerializer extends ProcessSerializer {
                             setDelegableClassName(timerAction, aa.attributeValue(CLASS_ATTR));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
                             timerAction.setRepeatDuration(stateNodeChild.attributeValue(REPEAT_ATTR));
-                            state.setAction(timerAction);
+                            timer.setAction(timerAction);
                         }
                     }
                 }
@@ -671,7 +671,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     variablesList.add(variable);
                 }
                 if (TIMER_NODE.equals(childNode.getName())) {
-                    Timer timer = new Timer();
+                    Timer timer = create(childNode, messageNode, WAIT_STATE_NODE);
                     timer.setDelay(new Delay(childNode.attributeValue(DUEDATE_ATTR)));
                     List<Element> actionNodes = childNode.elements();
                     for (Element aa : actionNodes) {
