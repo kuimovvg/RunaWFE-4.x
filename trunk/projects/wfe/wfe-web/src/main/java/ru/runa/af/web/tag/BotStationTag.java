@@ -12,7 +12,7 @@ import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.security.AuthenticationException;
@@ -40,7 +40,7 @@ public class BotStationTag extends TitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
-        BotStation botStation = DelegateFactory.getBotService().getBotStation(botStationID);
+        BotStation botStation = Delegates.getBotService().getBotStation(botStationID);
         Table table = new Table();
         Input nameInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_NAME, botStation.getName());
         String address = botStation.getAddress() != null ? botStation.getAddress() : "";
@@ -84,7 +84,7 @@ public class BotStationTag extends TitledFormTag {
     public boolean isFormButtonEnabled() throws JspException {
         boolean result = false;
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             result = authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         } catch (AuthorizationException e) {
             throw new JspException(e);

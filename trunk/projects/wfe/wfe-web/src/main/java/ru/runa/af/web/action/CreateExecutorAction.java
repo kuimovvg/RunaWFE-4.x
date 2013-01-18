@@ -33,7 +33,7 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
 
@@ -54,7 +54,7 @@ public class CreateExecutorAction extends Action {
         CreateExecutorForm createFrom = (CreateExecutorForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             if (CreateExecutorForm.TYPE_ACTOR.equals(createFrom.getExecutorType())) {
                 Long code = null;
                 if (createFrom.getCode() != 0) {

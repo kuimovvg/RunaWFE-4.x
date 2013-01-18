@@ -22,7 +22,7 @@ import java.util.List;
 import ru.runa.af.web.action.AddMembersToGroupAction;
 import ru.runa.common.web.Messages;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
@@ -51,7 +51,7 @@ public class ListNotGroupMembersFormTag extends ListExecutorsBaseFormTag {
 
     @Override
     protected List<? extends Executor> getExecutors() {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         Executor executor = getExecutor();
         if (!(executor instanceof Group)) {
             throw new InternalApplicationException("Executor type missmatch, Group expected but Actor found.");
@@ -62,7 +62,7 @@ public class ListNotGroupMembersFormTag extends ListExecutorsBaseFormTag {
 
     @Override
     protected int getExecutorsCount() {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         Executor executor = getExecutor();
         if (!(executor instanceof Group)) {
             throw new InternalApplicationException("Executor type missmatch, Group expected but Actor found.");

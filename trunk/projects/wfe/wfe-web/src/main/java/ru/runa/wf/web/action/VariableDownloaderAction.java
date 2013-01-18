@@ -34,7 +34,7 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.HTMLUtils;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.form.VariableForm;
 import ru.runa.wfe.var.FileVariable;
@@ -74,7 +74,7 @@ public class VariableDownloaderAction extends Action {
     private FileVariable getVariable(ActionForm actionForm, HttpServletRequest request) {
         VariableForm form = (VariableForm) actionForm;
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-        ExecutionService executionService = DelegateFactory.getExecutionService();
+        ExecutionService executionService = Delegates.getExecutionService();
         Object object = executionService.getVariable(subject, form.getId(), form.getVariableName()).getValue();
         if (object == null) {
             return null;

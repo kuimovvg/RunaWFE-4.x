@@ -32,7 +32,7 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.IFileDataProvider;
 
@@ -47,7 +47,7 @@ public class LoadProcessDefinitionArchiveAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         IdForm idForm = (IdForm) form;
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-        DefinitionService definitionService = DelegateFactory.getDefinitionService();
+        DefinitionService definitionService = Delegates.getDefinitionService();
         String parFileName = definitionService.getProcessDefinition(subject, idForm.getId()).getName() + ".par";
         byte[] bytes = definitionService.getFile(subject, idForm.getId(), IFileDataProvider.PAR_FILE);
         response.setContentType("application/zip");

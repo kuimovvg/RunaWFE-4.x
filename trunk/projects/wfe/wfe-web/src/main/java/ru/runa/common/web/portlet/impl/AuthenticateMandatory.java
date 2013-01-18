@@ -28,7 +28,7 @@ import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.portlet.PortletAuthenticator;
 import ru.runa.service.af.ProfileService;
 import ru.runa.service.af.SystemService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.user.Profile;
 
@@ -39,7 +39,7 @@ public class AuthenticateMandatory implements PortletAuthenticator {
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             if (session.getAttribute(ProfileHttpSessionHelper.PROFILE_ATTRIBUTE_NAME) == null) {
-                ProfileService profileService = DelegateFactory.getProfileService();
+                ProfileService profileService = Delegates.getProfileService();
                 Profile profile = profileService.getProfile(subject);
                 ProfileHttpSessionHelper.setProfile(profile, session);
                 SubjectHttpSessionHelper.addActorSubject(subject, session);
@@ -47,10 +47,10 @@ public class AuthenticateMandatory implements PortletAuthenticator {
             }
         } catch (Exception e) {
             try {
-                SystemService systemService = DelegateFactory.getSystemService();
-                Subject subject = DelegateFactory.getAuthenticationService().authenticate();
+                SystemService systemService = Delegates.getSystemService();
+                Subject subject = Delegates.getAuthenticationService().authenticate();
                 systemService.login(subject, ASystem.INSTANCE);
-                ProfileService profileService = DelegateFactory.getProfileService();
+                ProfileService profileService = Delegates.getProfileService();
                 Profile profile = profileService.getProfile(subject);
                 ProfileHttpSessionHelper.setProfile(profile, session);
                 ProfileHttpSessionHelper.setProfile(profile, request.getSession());

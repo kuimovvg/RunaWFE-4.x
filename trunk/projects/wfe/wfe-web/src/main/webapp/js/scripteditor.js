@@ -48,9 +48,6 @@ function editScript(fileName, saveButtonText, executeButtonText, cancelButtonTex
 		    success: function(msg) {
 		    	initEditor(msg); 
 		    }
-		    error: function(msg) {
-		    	initEditor(""); 
-		    }
 	    });
     } else {
     	initEditor(""); 

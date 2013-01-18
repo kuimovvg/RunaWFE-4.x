@@ -28,7 +28,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.tag.MessageTag;
 import ru.runa.service.af.AuthenticationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.user.Actor;
 
@@ -45,7 +45,7 @@ public class LoginAsMessageTag extends MessageTag {
     public String getMessage() throws JspException {
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
-            AuthenticationService authenticationService = DelegateFactory.getAuthenticationService();
+            AuthenticationService authenticationService = Delegates.getAuthenticationService();
             Actor actor = authenticationService.getActor(subject);
             String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, actor.getId(), pageContext,
                     PortletUrlType.Render);

@@ -26,7 +26,7 @@ import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorPermission;
@@ -55,7 +55,7 @@ public class ListGroupMembersFormTag extends ListExecutorsBaseFormTag {
     @Override
     protected boolean isVisible() throws JspException {
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return getExecutor() instanceof Group && authorizationService.isAllowed(getSubject(), GroupPermission.LIST_GROUP, getExecutor());
         } catch (Exception e) {
             return false;
@@ -64,13 +64,13 @@ public class ListGroupMembersFormTag extends ListExecutorsBaseFormTag {
 
     @Override
     protected List<? extends Executor> getExecutors() {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         return executorService.getGroupChildren(getSubject(), (Group) getExecutor(), getBatchPresentation(), false);
     }
 
     @Override
     protected int getExecutorsCount() {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         return executorService.getGroupChildrenCount(getSubject(), (Group) getExecutor(), getBatchPresentation(), false);
     }
 

@@ -30,7 +30,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.SQLCommons;
 import ru.runa.wfe.commons.sqltask.AbstractQuery;
 import ru.runa.wfe.commons.sqltask.DatabaseTask;
@@ -117,11 +117,11 @@ public class DatabaseTaskHandler implements TaskHandler {
                 String fieldName = result.getFieldName();
                 Actor actor = null;
                 if ("code".equals(fieldName)) {
-                    actor = DelegateFactory.getExecutorService().getActorByCode(subject, ((Long) newValue).longValue());
+                    actor = Delegates.getExecutorService().getActorByCode(subject, ((Long) newValue).longValue());
                 } else if ("id".equals(fieldName)) {
-                    actor = DelegateFactory.getExecutorService().getExecutor(subject, ((Long) newValue).longValue());
+                    actor = Delegates.getExecutorService().getExecutor(subject, ((Long) newValue).longValue());
                 } else {
-                    actor = DelegateFactory.getExecutorService().getExecutor(subject, (String) newValue);
+                    actor = Delegates.getExecutorService().getExecutor(subject, (String) newValue);
                 }
                 newValue = Long.toString(actor.getCode());
             } else if (result.isFieldSetup()) {
@@ -141,7 +141,7 @@ public class DatabaseTaskHandler implements TaskHandler {
             Parameter parameter = query.getParameter(i);
             Object value = variableProvider.getValue(parameter.getVariableName());
             if (parameter instanceof SwimlaneParameter) {
-                Actor actor = DelegateFactory.getExecutorService().getActorByCode(subject, Long.parseLong((String) value));
+                Actor actor = Delegates.getExecutorService().getActorByCode(subject, Long.parseLong((String) value));
                 value = PropertyUtils.getProperty(actor, ((SwimlaneParameter) parameter).getFieldName());
             } else if (parameter.isFieldSetup()) {
                 value = PropertyUtils.getProperty(value, parameter.getFieldName());

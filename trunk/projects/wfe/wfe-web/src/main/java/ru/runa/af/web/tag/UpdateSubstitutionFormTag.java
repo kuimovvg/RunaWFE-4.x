@@ -45,7 +45,7 @@ import ru.runa.af.web.orgfunction.SubstitutionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.service.af.SubstitutionService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.os.ParamRenderer;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
@@ -136,7 +136,7 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
 
     @Override
     protected String getTitle() {
-        SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+        SubstitutionService substitutionService = Delegates.getSubstitutionService();
         if (getIdentifiableId() != null) {
             substitution = substitutionService.getSubstitution(getSubject(), getIdentifiableId());
             terminator = substitution instanceof TerminatorSubstitution;
@@ -205,7 +205,7 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
         }
 
         private Option[] getCriteriaOptions(String selectedValue) throws AuthenticationException {
-            SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+            SubstitutionService substitutionService = Delegates.getSubstitutionService();
             try {
                 List<SubstitutionCriteria> criterias = substitutionService.getSubstitutionCriteriaAll(getSubject());
                 Option[] options = new Option[criterias.size() + 1];

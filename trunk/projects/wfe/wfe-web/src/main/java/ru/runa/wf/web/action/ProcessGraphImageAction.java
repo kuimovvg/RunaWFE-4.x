@@ -31,7 +31,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.af.web.SubjectHttpSessionHelper;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.form.TaskIdForm;
 
@@ -48,7 +48,7 @@ public class ProcessGraphImageAction extends Action {
         TaskIdForm idForm = (TaskIdForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             byte[] diagramBytes = executionService.getProcessDiagram(subject, idForm.getId(), idForm.getTaskId(), idForm.getChildProcessId());
             response.setContentType("image/png");
             OutputStream os = response.getOutputStream();

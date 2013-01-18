@@ -31,7 +31,7 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.IFileDataProvider;
 
@@ -50,7 +50,7 @@ public class ProcessDefinitionGraphImageAction extends Action {
         IdForm idForm = (IdForm) form;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             byte[] bytes = definitionService.getFile(subject, idForm.getId(), IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME);
             if (bytes == null) {
                 bytes = definitionService.getFile(subject, idForm.getId(), IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME);

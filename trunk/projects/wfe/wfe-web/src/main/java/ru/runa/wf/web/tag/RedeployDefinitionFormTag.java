@@ -146,7 +146,7 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
 
     @Override
     protected boolean isVisible() throws JspException {
-        AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
+        AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
         try {
             return authorizationService.isAllowed(getSubject(), DefinitionPermission.REDEPLOY_DEFINITION, getIdentifiable());
         } catch (AuthorizationException e) {

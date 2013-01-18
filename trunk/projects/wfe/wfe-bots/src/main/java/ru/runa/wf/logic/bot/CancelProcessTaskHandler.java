@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTask;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTaskXmlParser;
@@ -54,8 +54,8 @@ public class CancelProcessTaskHandler implements TaskHandler {
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
         Long processId = variableProvider.getValue(Long.class, processToCancelTask.getProcessIdVariableName());
         if (processId != null && processId != 0) {
-            DelegateFactory.getExecutionService().cancelProcess(subject, processId);
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            Delegates.getExecutionService().cancelProcess(subject, processId);
+            DefinitionService definitionService = Delegates.getDefinitionService();
             WfDefinition definitionStub = definitionService.getProcessDefinitionByProcessId(subject, processId);
             String processDefinitionName = definitionStub.getName();
             String configurationName = processToCancelTask.getDatabaseTaskMap().get(processDefinitionName);

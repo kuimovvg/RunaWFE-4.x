@@ -40,7 +40,7 @@ import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.af.RelationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.FieldDescriptor;
@@ -70,9 +70,9 @@ public class ListExecutorLeftRelationMembersFormTag extends TitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
         try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
-            RelationService relationService = DelegateFactory.getRelationService();
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            ExecutorService executorService = Delegates.getExecutorService();
+            RelationService relationService = Delegates.getRelationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             Relation currentRelation = relationService.getRelation(getSubject(), getRelationName());
             isFormButtonVisible = authorizationService.isAllowed(getSubject(), RelationPermission.UPDATE_RELATION, currentRelation);
             List<Executor> executors = new ArrayList<Executor>();

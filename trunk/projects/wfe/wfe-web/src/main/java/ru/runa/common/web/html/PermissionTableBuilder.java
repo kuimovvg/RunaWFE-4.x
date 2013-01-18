@@ -43,7 +43,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -81,7 +81,7 @@ public class PermissionTableBuilder {
         this.subject = subject;
         this.pageContext = pageContext;
         try {
-            authorizationService = DelegateFactory.getAuthorizationService();
+            authorizationService = Delegates.getAuthorizationService();
             allowedPermission = identifiable.getSecuredObjectType().getAllPermissions();
             isDisabled = !authorizationService.isAllowed(subject, Permission.UPDATE_PERMISSIONS, identifiable);
         } catch (AuthorizationException e) {

@@ -44,7 +44,7 @@ import com.google.common.collect.Maps;
  * 
  * @since 4.0
  */
-public class DelegateFactory {
+public class Delegates {
     private static final Properties PROPERTIES = ClassLoaderUtil.getProperties("wfe.delegate.properties");
     private static Map<Class<?>, Object> delegates = Maps.newHashMap();
 

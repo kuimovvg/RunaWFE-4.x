@@ -34,7 +34,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Resources;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.web.form.DefinitionFileForm;
 
@@ -64,7 +64,7 @@ public class LoadProcessDefinitionHtmlFileAction extends Action {
         ActionForward successForward = null;
         try {
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             byte[] bytes = definitionService.getFile(subject, id, fileName);
 
             if (fileName.endsWith(".html")) {

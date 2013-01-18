@@ -31,7 +31,7 @@ import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.security.AuthenticationException;
 
@@ -52,7 +52,7 @@ public class UndeployProcessDefinitionAction extends Action {
         ActionMessages errors = getErrors(request);
         IdsForm idsForm = (IdsForm) form;
         try {
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             for (Long id : idsForm.getIds()) {
                 try {

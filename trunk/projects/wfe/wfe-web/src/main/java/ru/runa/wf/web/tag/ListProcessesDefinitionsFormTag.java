@@ -41,7 +41,7 @@ import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.web.action.UndeployProcessDefinitionAction;
 import ru.runa.wf.web.html.DefinitionUrlStrategy;
@@ -70,7 +70,7 @@ public class ListProcessesDefinitionsFormTag extends BatchReturningTitledFormTag
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
         try {
-            DefinitionService definitionService = DelegateFactory.getDefinitionService();
+            DefinitionService definitionService = Delegates.getDefinitionService();
             BatchPresentation batchPresentation = getBatchPresentation();
             List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(getSubject(), batchPresentation);
             PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, definitions.size());
@@ -101,7 +101,7 @@ public class ListProcessesDefinitionsFormTag extends BatchReturningTitledFormTag
     }
 
     private boolean isUndeployAllowed(List<WfDefinition> definitions) throws AuthenticationException {
-        AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
+        AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
         for (boolean undeploy : authorizationService.isAllowed(getSubject(), DefinitionPermission.UNDEPLOY_DEFINITION, definitions)) {
             if (undeploy) {
                 return true;

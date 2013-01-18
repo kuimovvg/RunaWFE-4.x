@@ -24,7 +24,7 @@ import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
@@ -71,7 +71,7 @@ public abstract class IdentifiableFormTag extends TitledFormTag {
     @Override
     protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) throws JspException {
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return (permission == null || authorizationService.isAllowed(getSubject(), permission, identifiable));
         } catch (AuthorizationException e) {
             throw new JspException(e);

@@ -39,7 +39,7 @@ import ru.runa.common.web.html.SortingHeaderBuilder;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.action.ProcessTaskAssignmentAction;
 import ru.runa.wf.web.html.AssignTaskCheckboxTDBuilder;
@@ -67,7 +67,7 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) throws JspException {
         try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             Subject subject = getSubject();
             BatchPresentation batchPresentation = getBatchPresentation();
             boolean isTaskTableBuild = false;

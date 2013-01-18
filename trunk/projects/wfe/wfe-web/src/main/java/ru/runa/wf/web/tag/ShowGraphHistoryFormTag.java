@@ -28,7 +28,7 @@ import org.apache.ecs.html.TD;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.action.HistoryGraphImageAction;
 import ru.runa.wf.web.form.TaskIdForm;
@@ -80,7 +80,7 @@ public class ShowGraphHistoryFormTag extends ProcessBaseFormTag {
         params.put(TaskIdForm.TASK_ID_INPUT_NAME, taskId);
         String href = Commons.getActionUrl(HistoryGraphImageAction.ACTION_PATH, params, pageContext, PortletUrlType.Resource);
         try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             List<GraphElementPresentation> logElements = executionService.getProcessUIHistoryData(getSubject(), getIdentifiableId(), taskId);
 
             GraphHistoryElementPresentationVisitor operation = new GraphHistoryElementPresentationVisitor(taskId, pageContext, formDataTD);

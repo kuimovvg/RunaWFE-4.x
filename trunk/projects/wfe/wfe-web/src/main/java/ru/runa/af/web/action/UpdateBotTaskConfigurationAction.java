@@ -16,7 +16,7 @@ import ru.runa.af.web.Native2AsciiHelper;
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.xml.XmlUtils;
@@ -39,7 +39,7 @@ public class UpdateBotTaskConfigurationAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         IdForm idForm = (IdForm) form;
-        BotService botService = DelegateFactory.getBotService();
+        BotService botService = Delegates.getBotService();
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
         try {
             Long botTaskId = idForm.getId();

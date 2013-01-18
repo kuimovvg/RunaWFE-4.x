@@ -23,7 +23,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.GroupPermission;
 
@@ -39,9 +39,9 @@ public class AddGroupMembersLinkTag extends IdLinkBaseTag {
     @Override
     protected boolean isLinkEnabled() throws JspException {
         try {
-            ExecutorService executorService = DelegateFactory.getExecutorService();
+            ExecutorService executorService = Delegates.getExecutorService();
             Executor executor = executorService.getExecutor(getSubject(), getIdentifiableId());
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getSubject(), GroupPermission.ADD_TO_GROUP, executor);
         } catch (Exception e) {
             return false;

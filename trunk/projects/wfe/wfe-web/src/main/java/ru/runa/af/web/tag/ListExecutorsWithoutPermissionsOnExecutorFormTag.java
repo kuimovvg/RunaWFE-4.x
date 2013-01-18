@@ -21,7 +21,7 @@ import javax.servlet.jsp.JspException;
 
 import ru.runa.af.web.action.GrantReadPermissionOnExecutorAction;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 
 /**
@@ -41,7 +41,7 @@ public class ListExecutorsWithoutPermissionsOnExecutorFormTag extends ListExecut
 
     @Override
     protected Identifiable getIdentifiable() throws JspException {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         return executorService.getExecutor(getSubject(), getIdentifiableId());
     }
 }

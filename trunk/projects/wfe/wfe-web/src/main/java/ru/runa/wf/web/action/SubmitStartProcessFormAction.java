@@ -32,7 +32,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.form.CommonProcessForm;
@@ -55,8 +55,8 @@ public class SubmitStartProcessFormAction extends BaseProcessFormAction {
     @Override
     protected ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Subject subject,
             Profile profile) throws Exception {
-        ExecutionService executionService = DelegateFactory.getExecutionService();
-        DefinitionService definitionService = DelegateFactory.getDefinitionService();
+        ExecutionService executionService = Delegates.getExecutionService();
+        DefinitionService definitionService = Delegates.getDefinitionService();
         Long definitionId = ((CommonProcessForm) actionForm).getId();
         Interaction interaction = definitionService.getStartInteraction(subject, definitionId);
         Map<String, Object> variables = getFormVariables(request, actionForm, interaction);

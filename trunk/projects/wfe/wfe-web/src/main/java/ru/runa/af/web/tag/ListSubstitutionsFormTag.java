@@ -47,7 +47,7 @@ import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.af.SubstitutionService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.ss.Substitution;
@@ -79,12 +79,12 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
 
     @Override
     protected void fillFormData(TD formTd) throws JspException {
-        SubstitutionService substitutionService = DelegateFactory.getSubstitutionService();
+        SubstitutionService substitutionService = Delegates.getSubstitutionService();
         try {
             Actor actor = (Actor) getExecutor();
             Subject subject = getSubject();
             List<Substitution> substitutions = substitutionService.get(subject, actor.getId());
-            AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
             boolean disabled = !authorizationService.isAllowed(subject, ExecutorPermission.UPDATE, actor);
             RowBuilder substitutionRowBuilder = new SubstitutionRowBuilder(substitutions, disabled);
             HeaderBuilder substitutionHeaderBuilder = new SubstitutionHeaderBuilder();

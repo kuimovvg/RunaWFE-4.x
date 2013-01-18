@@ -33,7 +33,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.security.AuthenticationException;
@@ -57,7 +57,7 @@ public class CancelProcessAction extends Action {
         IdForm form = (IdForm) actionForm;
         boolean processExists = true;
         try {
-            ExecutionService executionService = DelegateFactory.getExecutionService();
+            ExecutionService executionService = Delegates.getExecutionService();
             executionService.cancelProcess(SubjectHttpSessionHelper.getActorSubject(request.getSession()), form.getId());
         } catch (ProcessDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);

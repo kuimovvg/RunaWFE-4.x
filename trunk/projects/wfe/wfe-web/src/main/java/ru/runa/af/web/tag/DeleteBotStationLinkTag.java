@@ -35,7 +35,7 @@ public class DeleteBotStationLinkTag extends LinkTag {
     @Override
     protected boolean isLinkEnabled() throws JspException {
         try {
-            AuthorizationService authorizationService = ru.runa.service.delegate.DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         } catch (Exception e) {
             return false;

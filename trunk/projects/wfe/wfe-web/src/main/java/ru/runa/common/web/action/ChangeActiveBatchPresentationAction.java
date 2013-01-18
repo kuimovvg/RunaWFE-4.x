@@ -32,7 +32,7 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.BatchPresentationForm;
 import ru.runa.service.af.ProfileService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 
 /**
@@ -49,7 +49,7 @@ public class ChangeActiveBatchPresentationAction extends Action {
         BatchPresentationForm batchPresentationForm = (BatchPresentationForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
-            ProfileService profileService = DelegateFactory.getProfileService();
+            ProfileService profileService = Delegates.getProfileService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             profileService.setActiveBatchPresentation(subject, batchPresentationForm.getBatchPresentationId(),
                     batchPresentationForm.getBatchPresentationName());

@@ -38,7 +38,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.IdentifiableAction;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.af.RelationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.AuthenticationException;
@@ -72,8 +72,8 @@ public class GrantPermissionOnRelationAction extends IdentifiableAction {
         RelationIdsForm relationForm = (RelationIdsForm) form;
         List<Long> selectedIds = Lists.newArrayList(relationForm.getIds());
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
-            RelationService relationService = DelegateFactory.getRelationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
+            RelationService relationService = Delegates.getRelationService();
             Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             Identifiable identifiable = relationService.getRelation(subject, relationForm.getRelationName());
             if (identifiable != null) {

@@ -28,7 +28,7 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 
 /**
@@ -48,7 +48,7 @@ public class DeleteBotAction extends Action {
             return new ActionForward("/bot_station.do?botStationID=" + idsForm.getId());
         }
         Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-        BotService botService = DelegateFactory.getBotService();
+        BotService botService = Delegates.getBotService();
         for (Long botId : botToDeleteIds) {
             botService.removeBot(subject, botId);
         }

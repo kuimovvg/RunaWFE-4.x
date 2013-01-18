@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -123,11 +123,11 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
     }
 
     private List<Actor> getActors(Subject subject, Group group) throws TemplateModelException {
-        return DelegateFactory.getExecutorService().getGroupActors(subject, group);
+        return Delegates.getExecutorService().getGroupActors(subject, group);
     }
 
     private List<Group> getGroups() throws TemplateModelException {
-        ExecutorService executorService = DelegateFactory.getExecutorService();
+        ExecutorService executorService = Delegates.getExecutorService();
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         // TODO add executorService.getAllGroups
         List<Executor> executors = executorService.getAll(subject, batchPresentation);

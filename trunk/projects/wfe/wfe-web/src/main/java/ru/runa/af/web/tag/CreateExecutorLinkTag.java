@@ -21,7 +21,7 @@ import javax.servlet.jsp.JspException;
 
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.SystemPermission;
 
@@ -34,7 +34,7 @@ abstract public class CreateExecutorLinkTag extends LinkTag {
     @Override
     protected boolean isLinkEnabled() throws JspException {
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getSubject(), SystemPermission.CREATE_EXECUTOR, ASystem.INSTANCE);
         } catch (Exception e) {
             return false;

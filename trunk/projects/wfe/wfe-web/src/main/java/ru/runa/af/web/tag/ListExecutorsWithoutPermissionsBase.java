@@ -38,7 +38,7 @@ import ru.runa.common.web.tag.BatchedTag;
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.common.web.tag.ReturningTag;
 import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
@@ -56,7 +56,7 @@ public abstract class ListExecutorsWithoutPermissionsBase extends IdentifiableFo
     @Override
     protected void fillFormData(TD tdFormElement) throws JspException {
         try {
-            AuthorizationService authorizationService = DelegateFactory.getAuthorizationService();
+            AuthorizationService authorizationService = Delegates.getAuthorizationService();
             BatchPresentation batchPresentation = getBatchPresentation();
             List<Executor> executors = authorizationService.getExecutorsWithPermission(getSubject(), getIdentifiable(), batchPresentation, false);
             int executorsCount = authorizationService.getExecutorsWithPermissionCount(getSubject(), getIdentifiable(), batchPresentation, false);

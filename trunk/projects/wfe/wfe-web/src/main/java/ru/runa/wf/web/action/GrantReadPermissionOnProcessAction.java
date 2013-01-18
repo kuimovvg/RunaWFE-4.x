@@ -30,7 +30,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.GrantPermisionOnIdentifiableAction;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -65,7 +65,7 @@ public class GrantReadPermissionOnProcessAction extends GrantPermisionOnIdentifi
         processExists = false;
         Identifiable result = null;
         try {
-            result = DelegateFactory.getExecutionService().getProcess(subject, identifiableId);
+            result = Delegates.getExecutionService().getProcess(subject, identifiableId);
             processExists = true;
         } catch (ProcessDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);

@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.handler.bot.TaskHandler;
@@ -45,7 +45,7 @@ public class CancelOldProcesses implements TaskHandler {
 
     @Override
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
-        ExecutionService executionService = DelegateFactory.getExecutionService();
+        ExecutionService executionService = Delegates.getExecutionService();
         BatchPresentation batchPresentation = BatchPresentationFactory.PROCESSES.createNonPaged();
         FilterCriteria filter = FilterCriteriaFactory.getFilterCriteria(batchPresentation, 3);
         Date lastDate = new Date();
