@@ -381,16 +381,17 @@ public class BpmnSerializer extends ProcessSerializer {
 
     private <T extends GraphElement> T create(Element node, GraphElement parent) {
         GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.BPMN, node.getName()).createElement(parent);
+        String nodeId = node.attributeValue(ID);
+        String name = node.attributeValue(NAME);
+        if (element instanceof Node && nodeId == null) {
+            nodeId = name;
+        }
+        element.setId(nodeId);
         if (parent != null) {
             parent.addChild(element);
         }
-        String nodeId = node.attributeValue(ID);
-        if (element instanceof Node && nodeId == null) {
-            nodeId = ((Node) element).getName();
-        }
-        element.setId(nodeId);
         if (element instanceof NamedGraphElement) {
-            ((NamedGraphElement) element).setName(node.attributeValue(NAME));
+            ((NamedGraphElement) element).setName(name);
         }
         List<Element> nodeList = node.elements();
         for (Element childNode : nodeList) {
