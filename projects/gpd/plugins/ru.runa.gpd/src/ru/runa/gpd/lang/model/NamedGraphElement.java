@@ -43,6 +43,6 @@ public abstract class NamedGraphElement extends GraphElement {
 
     @Override
     public String toString() {
-        return name;
+        return name + " (" + getId() + ")";
     }
 }
