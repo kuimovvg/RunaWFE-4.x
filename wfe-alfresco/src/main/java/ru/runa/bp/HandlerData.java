@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.bp.AlfHandler.ParamDef;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.ProcessHierarchyUtils;
@@ -39,21 +39,21 @@ public class HandlerData {
     public HandlerData(Map<String, ParamDef> inputParams, Map<String, ParamDef> outputParams, ExecutionContext context) {
         this.inputParams = inputParams;
         this.outputParams = outputParams;
-        this.processId = context.getProcess().getId();
-        this.taskName = getClass().getSimpleName();
-        this.variableProvider = context.getVariableProvider();
-        this.processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(context.getProcess().getHierarchySubProcess());
+        processId = context.getProcess().getId();
+        taskName = getClass().getSimpleName();
+        variableProvider = context.getVariableProvider();
+        processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(context.getProcess().getHierarchySubProcess());
     }
 
     public HandlerData(Map<String, ParamDef> inputParams, Map<String, ParamDef> outputParams, Subject subject, IVariableProvider variableProvider,
             WfTask task) {
         this.inputParams = inputParams;
         this.outputParams = outputParams;
-        this.processId = task.getProcessId();
-        this.taskName = task.getName();
+        processId = task.getProcessId();
+        taskName = task.getName();
         this.variableProvider = variableProvider;
-        WfProcess process = DelegateFactory.getExecutionService().getProcess(subject, processId);
-        this.processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(process.getHierarchySubProcess());
+        WfProcess process = Delegates.getExecutionService().getProcess(subject, processId);
+        processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(process.getHierarchySubProcess());
     }
 
     public List<Long> getProcessIdsHierarchy() {
