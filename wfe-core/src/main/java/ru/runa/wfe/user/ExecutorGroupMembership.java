@@ -33,6 +33,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.google.common.base.Objects;
@@ -42,27 +43,25 @@ import com.google.common.base.Objects;
  * 
  */
 @Entity
-@Table(name = "EXECUTOR_GROUP_RELATION", uniqueConstraints = @UniqueConstraint(columnNames = { "EXECUTOR_ID", "GROUP_ID" }))
+@Table(name = "EXECUTOR_GROUP_MEMBER", uniqueConstraints = @UniqueConstraint(columnNames = { "EXECUTOR_ID", "GROUP_ID" }))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ExecutorGroupRelation {
+public class ExecutorGroupMembership {
     private Long id;
-
     private Long version;
-
     private Group group;
-
     private Executor executor;
 
-    public ExecutorGroupRelation() {
+    public ExecutorGroupMembership() {
     }
 
-    public ExecutorGroupRelation(Group group, Executor executor) {
+    public ExecutorGroupMembership(Group group, Executor executor) {
         this.group = group;
         this.executor = executor;
     }
 
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false, insertable = true, updatable = false)
+    @ForeignKey(name = "FK_EGM_EXECUTOR")
     @Index(name = "EXEC_GROUP_REL_EXEC_ID_IDX")
     @Fetch(FetchMode.JOIN)
     public Executor getExecutor() {
@@ -75,6 +74,7 @@ public class ExecutorGroupRelation {
 
     @ManyToOne(targetEntity = Group.class)
     @JoinColumn(name = "GROUP_ID", nullable = false, insertable = true, updatable = false)
+    @ForeignKey(name = "FK_EGM_GROUP")
     @Index(name = "EXEC_GROUP_REL_GROUP_ID_IDX")
     @Fetch(FetchMode.JOIN)
     public Group getGroup() {
@@ -87,7 +87,7 @@ public class ExecutorGroupRelation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_EXECUTOR_GROUP_RELATION")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_EXECUTOR_GROUP_MEMBER")
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;
@@ -115,10 +115,10 @@ public class ExecutorGroupRelation {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof ExecutorGroupRelation)) {
+        if (!(obj instanceof ExecutorGroupMembership)) {
             return false;
         }
-        ExecutorGroupRelation r = (ExecutorGroupRelation) obj;
+        ExecutorGroupMembership r = (ExecutorGroupMembership) obj;
         return Objects.equal(executor, r.executor) && Objects.equal(group, r.group);
     }
 

@@ -43,13 +43,10 @@ import com.google.common.base.Objects;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 class ActorPassword {
     private static final String DIGEST_ALGORITHM = "MD5";
-
     private Long actorId;
-
     private byte[] password;
 
-    @SuppressWarnings("unused")
-    private ActorPassword() {
+    public ActorPassword() {
     }
 
     public ActorPassword(Actor actor, String password) {
@@ -71,7 +68,7 @@ class ActorPassword {
      * @return encrypted password for an actor
      */
     @Lob
-    @Column(name = "PASSWD", nullable = false)
+    @Column(name = "PASSWORD", nullable = false)
     protected byte[] getPassword() {
         return password;
     }
@@ -90,10 +87,6 @@ class ActorPassword {
 
     @Override
     public int hashCode() {
-        // final int prime = 31;
-        // int result = 1;
-        // result = prime * result + (int) (actorId ^ (actorId >>> 32));
-        // result = prime * result + Arrays.hashCode(password);
         return Objects.hashCode(actorId, password);
     }
 

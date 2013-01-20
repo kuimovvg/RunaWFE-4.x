@@ -43,7 +43,7 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
-import ru.runa.wfe.user.ExecutorGroupRelation;
+import ru.runa.wfe.user.ExecutorGroupMembership;
 import ru.runa.wfe.user.ExecutorNotInGroupException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.cache.ExecutorCache;
@@ -418,7 +418,7 @@ public class ExecutorDAO extends CommonDAO {
      */
     public void clearGroup(Long groupId) throws ExecutorDoesNotExistException {
         Group group = getGroup(groupId);
-        List<ExecutorGroupRelation> list = getRelationGroupWithExecutors(group);
+        List<ExecutorGroupMembership> list = getRelationGroupWithExecutors(group);
         getHibernateTemplate().deleteAll(list);
     }
 
@@ -552,22 +552,22 @@ public class ExecutorDAO extends CommonDAO {
             return result;
         }
         result = new HashSet<Executor>();
-        for (ExecutorGroupRelation relation : getRelationGroupWithExecutors(group)) {
+        for (ExecutorGroupMembership relation : getRelationGroupWithExecutors(group)) {
             result.add(relation.getExecutor());
         }
         return result;
     }
 
-    private List<ExecutorGroupRelation> getRelationGroupWithExecutors(Group group) {
-        return getHibernateTemplate().find("from ExecutorGroupRelation where group=?", group);
+    private List<ExecutorGroupMembership> getRelationGroupWithExecutors(Group group) {
+        return getHibernateTemplate().find("from ExecutorGroupMembership where group=?", group);
     }
 
-    private List<ExecutorGroupRelation> getRelationExecutorWithGroups(Executor executor) {
-        return getHibernateTemplate().find("from ExecutorGroupRelation where executor=?", executor);
+    private List<ExecutorGroupMembership> getRelationExecutorWithGroups(Executor executor) {
+        return getHibernateTemplate().find("from ExecutorGroupMembership where executor=?", executor);
     }
 
-    private ExecutorGroupRelation getRelationExecutorWithGroup(Group group, Executor executor) {
-        List<ExecutorGroupRelation> list = getHibernateTemplate().find("from ExecutorGroupRelation where group=? and executor=?", group, executor);
+    private ExecutorGroupMembership getRelationExecutorWithGroup(Group group, Executor executor) {
+        List<ExecutorGroupMembership> list = getHibernateTemplate().find("from ExecutorGroupMembership where group=? and executor=?", group, executor);
         if (list.size() > 0) {
             return list.get(0);
         }
@@ -691,11 +691,11 @@ public class ExecutorDAO extends CommonDAO {
                                                                      // add
             throw new ExecutorAlreadyInGroupException(executor.getName(), group.getName());
         }
-        getHibernateTemplate().save(new ExecutorGroupRelation(group, executor));
+        getHibernateTemplate().save(new ExecutorGroupMembership(group, executor));
     }
 
     private void checkAndRemoveExecutorFromGroup(Executor executor, Group group) throws ExecutorNotInGroupException {
-        ExecutorGroupRelation mapping = getRelationExecutorWithGroup(group, executor);
+        ExecutorGroupMembership mapping = getRelationExecutorWithGroup(group, executor);
         if (mapping == null) {
             throw new ExecutorNotInGroupException(executor.getName(), group.getName());
         }
@@ -726,8 +726,8 @@ public class ExecutorDAO extends CommonDAO {
         Set<Group> result = executorCache.getExecutorParents(executor);
         if (result == null) {
             result = new HashSet<Group>();
-            List<ExecutorGroupRelation> relations = getHibernateTemplate().find("from ExecutorGroupRelation where executor=?", executor);
-            for (ExecutorGroupRelation relation : relations) {
+            List<ExecutorGroupMembership> relations = getHibernateTemplate().find("from ExecutorGroupMembership where executor=?", executor);
+            for (ExecutorGroupMembership relation : relations) {
                 result.add(relation.getGroup());
             }
         }

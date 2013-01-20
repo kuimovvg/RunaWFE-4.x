@@ -35,6 +35,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 @Entity
@@ -74,6 +75,7 @@ public class BotTask implements Serializable {
 
     @ManyToOne(targetEntity = Bot.class)
     @JoinColumn(name = "BOT_ID", nullable = false, updatable = true, insertable = true)
+    @ForeignKey(name = "FK_BOT_TASK_BOT")
     @Index(name = "BT_B_IDX")
     @Fetch(FetchMode.JOIN)
     public Bot getBot() {

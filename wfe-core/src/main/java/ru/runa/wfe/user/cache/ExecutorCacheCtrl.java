@@ -28,7 +28,7 @@ import ru.runa.wfe.commons.cache.ExecutorChangeListener;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorGroupRelation;
+import ru.runa.wfe.user.ExecutorGroupMembership;
 import ru.runa.wfe.user.Group;
 
 public class ExecutorCacheCtrl extends BaseCacheCtrl<ExecutorCacheImpl> implements ExecutorChangeListener, ExecutorCache {
@@ -79,9 +79,9 @@ public class ExecutorCacheCtrl extends BaseCacheCtrl<ExecutorCacheImpl> implemen
             if (!cleared) {
                 uninitialize(object);
             }
-        } else if (object instanceof ExecutorGroupRelation) {
+        } else if (object instanceof ExecutorGroupMembership) {
             boolean cleared = true;
-            ExecutorGroupRelation relation = (ExecutorGroupRelation) object;
+            ExecutorGroupMembership relation = (ExecutorGroupMembership) object;
             cleared = cleared && cache.onExecutorInGroupChange(relation.getExecutor());
             cleared = cleared && cache.onGroupMembersChange(relation.getGroup());
             if (!cleared) {

@@ -31,7 +31,7 @@ import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.dao.PermissionMapping;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorGroupRelation;
+import ru.runa.wfe.user.ExecutorGroupMembership;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
@@ -97,7 +97,7 @@ public final class PresentationCompilerHelper {
             boolean hasExecutor) throws AuthenticationException {
         List<Long> executorIds = executorDAO.getActorAndGroupsIds(SubjectPrincipalsHelper.getActor(subject));
         String inClause = hasExecutor ? "IN" : "NOT IN";
-        String notInRestriction = inClause + " (SELECT relation.executor.id FROM " + ExecutorGroupRelation.class.getName()
+        String notInRestriction = inClause + " (SELECT relation.executor.id FROM " + ExecutorGroupMembership.class.getName()
                 + " as relation WHERE relation.group.id=" + group.getId() + ")";
         String[] idRestrictions = { notInRestriction, "<> " + group.getId() };
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
@@ -130,7 +130,7 @@ public final class PresentationCompilerHelper {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
         List<Long> executorIds = executorDAO.getActorAndGroupsIds(SubjectPrincipalsHelper.getActor(subject));
         String inClause = hasGroup ? "IN" : "NOT IN";
-        String inRestriction = inClause + " (SELECT relation.group.id FROM " + ExecutorGroupRelation.class.getName()
+        String inRestriction = inClause + " (SELECT relation.group.id FROM " + ExecutorGroupMembership.class.getName()
                 + " as relation WHERE relation.executor.id=" + executor.getId() + ")";
         String[] idRestrictions = { inRestriction, "<> " + executor.getId() };
         compiler.setParameters(Group.class, null, null, true, executorIds, ExecutorPermission.READ,

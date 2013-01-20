@@ -13,40 +13,33 @@ public class AddHierarchyProcess extends DBPatch {
     @Override
     protected List<String> getDDLQueriesBefore() {
         List<String> sql = super.getDDLQueriesBefore();
-        sql.add(getDDLAddColumn("JBPM_PROCESSINSTANCE", new ColumnDef("TREE_PATH", dialect.getTypeName(Types.VARCHAR, 1024, 1024, 1024))));
+        sql.add(getDDLCreateColumn("JBPM_PROCESSINSTANCE", new ColumnDef("TREE_PATH", dialect.getTypeName(Types.VARCHAR, 1024, 1024, 1024))));
         return sql;
     }
 
     @Override
     public void applyPatch(Session session) {
-        // List<Number> results = session.createSQLQuery("SELECT ID_ FROM JBPM_PROCESSINSTANCE").list();
-        // for (Number id : results) {
-        // Long processId = id.longValue();
-        // Process process = (Process) session.load(Process.class, processId);
-        // if (process != null) {
-        // StringBuilder hierarchy = new StringBuilder();
-        // hierarchy.append(process.getId());
-        // appendParentsProcessId(process.getSuperProcessToken(), hierarchy);
-        // String q = "UPDATE JBPM_PROCESSINSTANCE SET HIERARCHYSUBPROCESS_ = '" + hierarchy.toString() + "' WHERE ID_ = " + processId;
-        // session.createSQLQuery(q).executeUpdate();
-        // log.debug("updated process instance " + processId);
-        // }
-        // }
+        List<Object[]> list = session.createSQLQuery("SELECT ID_, SUPERPROCESSTOKEN_ FROM JBPM_PROCESSINSTANCE").list();
+        for (Object[] results : list) {
+            Long processId = ((Number) results[0]).longValue();
+            StringBuilder hierarchy = new StringBuilder();
+            hierarchy.append(processId);
+            appendParentsProcessId(session, results[1], hierarchy);
+            String q = "UPDATE JBPM_PROCESSINSTANCE SET TREE_PATH = '" + hierarchy.toString() + "' WHERE ID_ = " + processId;
+            session.createSQLQuery(q).executeUpdate();
+            log.debug("updated process instance " + processId);
+        }
     }
 
-    // private void appendParentsProcessId(Token superToken, StringBuilder hierarchy) {
-    // if (superToken != null) {
-    // insertProcessIdToHierarchy(hierarchy, superToken.getProcess().getId());
-    // while (superToken.getProcess().getSuperProcessToken() != null) {
-    // superToken = superToken.getProcess().getSuperProcessToken();
-    // insertProcessIdToHierarchy(hierarchy, superToken.getProcess().getId());
-    // }
-    // }
-    // }
-    //
-    // private void insertProcessIdToHierarchy(StringBuilder hierarchy, Long id) {
-    // hierarchy.insert(0, DELIM);
-    // hierarchy.insert(0, id);
-    // }
+    private void appendParentsProcessId(Session session, Object superProcessTokenId, StringBuilder hierarchy) {
+        if (superProcessTokenId != null) {
+            Number processId = (Number) session.createSQLQuery("SELECT PROCESSINSTANCE_ FROM JBPM_TOKEN WHERE ID_=" + superProcessTokenId)
+                    .uniqueResult();
+            hierarchy.insert(0, DELIM);
+            hierarchy.insert(0, processId);
+            superProcessTokenId = session.createSQLQuery("SELECT SUPERPROCESSTOKEN_ FROM JBPM_PROCESSINSTANCE WHERE ID_=" + processId).uniqueResult();
+            appendParentsProcessId(session, superProcessTokenId, hierarchy);
+        }
+    }
 
 }
