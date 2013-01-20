@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
@@ -73,7 +74,7 @@ public class PrivelegedMapping {
 
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false)
-    @ForeignKey(name = "FK_PRIV_EXECUTOR")
+    @ForeignKey(name = "FK_PM_EXECUTOR")
     public Executor getExecutor() {
         return executor;
     }
@@ -83,6 +84,7 @@ public class PrivelegedMapping {
     }
 
     @Column(name = "TYPE", nullable = false)
+    @Index(name = "IDX_TYPE")
     @Enumerated(value = EnumType.STRING)
     public SecuredObjectType getType() {
         return type;

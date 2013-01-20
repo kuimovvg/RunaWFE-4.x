@@ -51,7 +51,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * Presentation of objects collection, contains sorting rules, filter rules and so on.
+ * Presentation of objects collection, contains sorting rules, filter rules and
+ * so on.
  */
 @Entity
 @Table(name = "BATCH_PRESENTATION")
@@ -76,7 +77,8 @@ public final class BatchPresentation implements Cloneable, Serializable {
     private Integer classPresentationId;
 
     /**
-     * Presentation group identity. Such as tasksList, processLists and so on. Each group refers to some page in web interface.
+     * Presentation group identity. Such as tasksList, processLists and so on.
+     * Each group refers to some page in web interface.
      */
     private String category;
 
@@ -135,7 +137,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
             boolean[] fieldsToSortModes, int[] fieldsToDisplayIds, Map<Integer, FilterCriteria> fieldsToFilterMap, int[] fieldsToGroupIds) {
         setName(batchPresentationName);
         setCategory(batchPresentationId);
-        this.classPresentationId = ClassPresentations.getClassPresentationId(classPresentation);
+        classPresentationId = ClassPresentations.getClassPresentationId(classPresentation);
         fields = new Fields();
         fields.sortIds = fieldsToSortIds;
         fields.sortModes = fieldsToSortModes;
@@ -175,7 +177,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
         this.classPresentationId = classPresentationId;
     }
 
-    @Column(name = "CATEGORY", length = 128, nullable = false)
+    @Column(name = "CATEGORY", nullable = false)
     public String getCategory() {
         return category;
     }
@@ -184,7 +186,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
         category = tagName;
     }
 
-    @Column(name = "NAME", length = 128, nullable = false)
+    @Column(name = "NAME", nullable = false)
     public String getName() {
         return name;
     }
@@ -213,8 +215,8 @@ public final class BatchPresentation implements Cloneable, Serializable {
 
     public void setFieldsData(byte[] data) {
         try {
-            this.fieldsData = data;
-            this.fields = FieldsSerializer.fromData(data);
+            fieldsData = data;
+            fields = FieldsSerializer.fromData(data);
             storage = null;
         } catch (Exception e) {
             log.error("Unable to load batch presentation state", e);
@@ -451,7 +453,8 @@ public final class BatchPresentation implements Cloneable, Serializable {
     }
 
     /**
-     * Get helper to hold fields set (such us fields to display, sort and so on).
+     * Get helper to hold fields set (such us fields to display, sort and so
+     * on).
      * 
      * @return Helper to current {@link BatchPresentation}.
      */
@@ -477,12 +480,14 @@ public final class BatchPresentation implements Cloneable, Serializable {
         int[] displayIds;
 
         /**
-         * Sorting fields indexes in correct order. Size of array is equals to fieldsToSortModes size.
+         * Sorting fields indexes in correct order. Size of array is equals to
+         * fieldsToSortModes size.
          */
         int[] sortIds;
 
         /**
-         * Sorting fields modes. Size of array is equals to fieldsToSortIds size.
+         * Sorting fields modes. Size of array is equals to fieldsToSortIds
+         * size.
          */
         boolean[] sortModes;
 
@@ -497,7 +502,8 @@ public final class BatchPresentation implements Cloneable, Serializable {
         final Map<Integer, FilterCriteria> filters = Maps.newHashMap();
 
         /**
-         * Removable fields, created for editable fields (with values, inserted by user).
+         * Removable fields, created for editable fields (with values, inserted
+         * by user).
          */
         final List<DynamicField> dynamics = Lists.newArrayList();
 
@@ -524,8 +530,8 @@ public final class BatchPresentation implements Cloneable, Serializable {
             if (fieldsToSortIds.length != sortingModes.length) {
                 throw new IllegalArgumentException("Arrays size differs");
             }
-            this.sortIds = fieldsToSortIds;
-            this.sortModes = sortingModes;
+            sortIds = fieldsToSortIds;
+            sortModes = sortingModes;
             setFieldsToGroup(groupIds, allFields);
         }
 
@@ -568,11 +574,11 @@ public final class BatchPresentation implements Cloneable, Serializable {
                 displayIds[i] = displayIds[i] + 1;
             }
             Map<Integer, FilterCriteria> filteredFieldsMap = new HashMap<Integer, FilterCriteria>();
-            for (Map.Entry<Integer, FilterCriteria> entry : this.filters.entrySet()) {
+            for (Map.Entry<Integer, FilterCriteria> entry : filters.entrySet()) {
                 filteredFieldsMap.put(entry.getKey() + 1, entry.getValue());
             }
-            this.filters.clear();
-            this.filters.putAll(filteredFieldsMap);
+            filters.clear();
+            filters.putAll(filteredFieldsMap);
         }
 
         public void removeDynamicField(long fieldIdx) {
@@ -606,13 +612,13 @@ public final class BatchPresentation implements Cloneable, Serializable {
                 }
             }
             Map<Integer, FilterCriteria> filteredFieldsMap = new HashMap<Integer, FilterCriteria>();
-            for (Map.Entry<Integer, FilterCriteria> entry : this.filters.entrySet()) {
+            for (Map.Entry<Integer, FilterCriteria> entry : filters.entrySet()) {
                 if (entry.getKey() > fieldIdx) {
                     filteredFieldsMap.put(entry.getKey() - 1, entry.getValue());
                 }
             }
-            this.filters.clear();
-            this.filters.putAll(filteredFieldsMap);
+            filters.clear();
+            filters.putAll(filteredFieldsMap);
         }
 
         public void setFieldsToGroup(int[] fieldsToGroupIds, FieldDescriptor[] allFields) {
@@ -649,8 +655,8 @@ public final class BatchPresentation implements Cloneable, Serializable {
                 newSortingModes[i] = (pos < 0) ? BatchPresentationConsts.ASC : sortModes[pos];
             }
             // end of calculation of newSortingModes
-            this.sortIds = ArraysCommons.createIntArray(newSortingIdList);
-            this.sortModes = newSortingModes;
+            sortIds = ArraysCommons.createIntArray(newSortingIdList);
+            sortModes = newSortingModes;
 
             // calculate newGroupingIds
             List<Integer> newGroupingIdList = new ArrayList<Integer>(sortingAndGroupingIdList.size() + groupingNotSortingIdList.size());
@@ -660,15 +666,15 @@ public final class BatchPresentation implements Cloneable, Serializable {
 
             // calculate new displayPositionIds
             List<Integer> newDisplayIdList = ArraysCommons.createIntegerList(displayIds);
-            List<Integer> oldGroupIdList = ArraysCommons.createIntegerList(this.groupIds);
+            List<Integer> oldGroupIdList = ArraysCommons.createIntegerList(groupIds);
             for (Integer newGroupingId : newGroupingIdList) {
                 if (!oldGroupIdList.contains(newGroupingId)) {
                     newDisplayIdList.remove(newGroupingId);
                 }
             }
-            this.displayIds = ArraysCommons.createIntArray(newDisplayIdList);
+            displayIds = ArraysCommons.createIntArray(newDisplayIdList);
             // end of calculate new displayPositionIds
-            this.groupIds = ArraysCommons.createIntArray(newGroupingIdList);
+            groupIds = ArraysCommons.createIntArray(newGroupingIdList);
         }
 
         @Override

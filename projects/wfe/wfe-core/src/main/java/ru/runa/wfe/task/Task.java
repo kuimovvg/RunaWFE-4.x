@@ -183,8 +183,7 @@ public class Task implements Assignable {
 
     @ManyToOne(targetEntity = Token.class)
     @JoinColumn(name = "TOKEN_ID")
-    @ForeignKey(name = "FK_TASKINST_TOKEN")
-    @Index(name = "IDX_TASKINST_TOKN")
+    @ForeignKey(name = "FK_TASK_TOKEN")
     public Token getToken() {
         return token;
     }
@@ -195,8 +194,7 @@ public class Task implements Assignable {
 
     @ManyToOne(targetEntity = Swimlane.class)
     @JoinColumn(name = "SWIMLANE_ID")
-    @ForeignKey(name = "FK_TASKINST_SLINST")
-    @Index(name = "IDX_TSKINST_SLINST")
+    @ForeignKey(name = "FK_TASK_SWIMLANE")
     public Swimlane getSwimlane() {
         return swimlane;
     }
@@ -207,8 +205,8 @@ public class Task implements Assignable {
 
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PROCESS_ID")
-    @ForeignKey(name = "FK_TSKINS_PRCINS")
-    @Index(name = "IDX_TASKINST_TSK")
+    @ForeignKey(name = "FK_TASK_PROCESS")
+    @Index(name = "IDX_PROCESS")
     public Process getProcess() {
         return process;
     }
@@ -219,8 +217,8 @@ public class Task implements Assignable {
 
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_ID")
-    @ForeignKey(name = "FK_TSKINS_EXECUTOR")
-    @Index(name = "IDX_TASK_EXECUTOR")
+    @ForeignKey(name = "FK_TASK_EXECUTOR")
+    @Index(name = "IDX_EXECUTOR")
     public Executor getExecutor() {
         return executor;
     }

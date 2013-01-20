@@ -34,7 +34,7 @@ import ru.runa.wfe.commons.cache.Cache;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorGroupRelation;
+import ru.runa.wfe.user.ExecutorGroupMembership;
 import ru.runa.wfe.user.Group;
 
 /**
@@ -74,7 +74,7 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
         executorToAllParentGroupsCache = createCache(allExecutorGroupsName);
         batchAllExecutors = createCache(allExecutorsListsName);
         List<Executor> executorsList = getAllExecutors();
-        List<ExecutorGroupRelation> relationsList = getAllRelations();
+        List<ExecutorGroupMembership> relationsList = getAllRelations();
         for (Executor executor : executorsList) {
             addExecutorToCaches(executor);
         }
@@ -227,23 +227,23 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
         return retVal;
     }
 
-    private void fillMapGroupToMembers(List<ExecutorGroupRelation> relationsList) {
-        for (ExecutorGroupRelation relation : relationsList) {
+    private void fillMapGroupToMembers(List<ExecutorGroupMembership> relationsList) {
+        for (ExecutorGroupMembership relation : relationsList) {
             Executor ex = relation.getExecutor();
             Group gr = relation.getGroup();
             getCollectionFromMap(groupToMembersCache, gr.getId()).add(nameToExecutorCache.get(ex.getName()));
         }
     }
 
-    private void fillMapExecutorToParents(List<ExecutorGroupRelation> relationsList) {
-        for (ExecutorGroupRelation relation : relationsList) {
+    private void fillMapExecutorToParents(List<ExecutorGroupMembership> relationsList) {
+        for (ExecutorGroupMembership relation : relationsList) {
             Executor ex = relation.getExecutor();
             Group gr = relation.getGroup();
             getCollectionFromMap(executorToParentGroupsCache, ex.getId()).add((Group) (nameToExecutorCache.get(gr.getName())));
         }
     }
 
-    private void fillRelationsCaches(List<ExecutorGroupRelation> relationsList, List<Executor> executors) {
+    private void fillRelationsCaches(List<ExecutorGroupMembership> relationsList, List<Executor> executors) {
         fillMapGroupToMembers(relationsList);
         fillMapExecutorToParents(relationsList);
         for (Executor executor : executors) {
@@ -304,8 +304,8 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
         return criteria.list();
     }
 
-    private List<ExecutorGroupRelation> getAllRelations() {
-        return getAll(ExecutorGroupRelation.class);
+    private List<ExecutorGroupMembership> getAllRelations() {
+        return getAll(ExecutorGroupMembership.class);
     }
 
     private List<Executor> getAllExecutors() {

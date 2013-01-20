@@ -38,6 +38,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.PolymorphismType;
 
@@ -146,6 +147,7 @@ public class Substitution implements Cloneable, Serializable {
 
     @ManyToOne(targetEntity = SubstitutionCriteria.class)
     @JoinColumn(name = "CRITERIA_ID")
+    @ForeignKey(name = "FK_SUBSTITUTION_CRITERIA")
     @Index(name = "CRITERIA_ID_IDX")
     @Fetch(FetchMode.JOIN)
     public SubstitutionCriteria getCriteria() {

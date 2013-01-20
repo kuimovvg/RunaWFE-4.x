@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.DBType;
 
@@ -24,7 +25,8 @@ public abstract class DBPatch {
     protected final DBType dbType = ApplicationContextFactory.getDBType();
 
     /**
-     * Execute patch DDL statements before DML (non-transacted mode in most databases).
+     * Execute patch DDL statements before DML (non-transacted mode in most
+     * databases).
      */
     public final void executeDDLBefore(boolean inTransaction) throws Exception {
         executeDDL("[DDLBefore]", getDDLQueriesBefore(), inTransaction);
@@ -46,7 +48,8 @@ public abstract class DBPatch {
     protected abstract void applyPatch(Session session) throws Exception;
 
     /**
-     * Execute patch DDL statements after DML (non-transacted mode in most databases).
+     * Execute patch DDL statements after DML (non-transacted mode in most
+     * databases).
      */
     public final void executeDDLAfter(boolean inTransaction) throws Exception {
         executeDDL("[DDLAfter]", getDDLQueriesAfter(), inTransaction);
@@ -57,15 +60,13 @@ public abstract class DBPatch {
     }
 
     private void executeDDL(String category, List<String> queries, boolean inTransaction) throws Exception {
-        if (queries.size() > 0) {
-            for (String query : queries) {
-                if (!Strings.isNullOrEmpty(query)) {
-                    log.info(category + ": " + query);
-                    if (inTransaction) {
-                        ApplicationContextFactory.getCurrentSession().createSQLQuery(query).executeUpdate();
-                    } else {
-                        ApplicationContextFactory.getDataSource().getConnection().createStatement().executeUpdate(query);
-                    }
+        for (String query : queries) {
+            if (!Strings.isNullOrEmpty(query)) {
+                log.info(category + ": " + query);
+                if (inTransaction) {
+                    ApplicationContextFactory.getCurrentSession().createSQLQuery(query).executeUpdate();
+                } else {
+                    ApplicationContextFactory.getDataSource().getConnection().createStatement().executeUpdate(query);
                 }
             }
         }
@@ -90,7 +91,7 @@ public abstract class DBPatch {
                 switch (dbType) {
                 case HSQL:
                 case MSSQL:
-                    primaryKeyModifier = "IDENTOTY NOT NULL PRIMARY KEY";
+                    primaryKeyModifier = "IDENTITY NOT NULL PRIMARY KEY";
                     break;
                 case Oracle:
                     primaryKeyModifier = "NOT NULL PRIMARY KEY";
@@ -119,28 +120,6 @@ public abstract class DBPatch {
         return query;
     }
 
-    protected final String getDDLCreateIndex(String indexName, String tableName, String columnName) {
-        return "CREATE INDEX " + indexName + " ON " + tableName + " (" + columnName + ")";
-    }
-
-    protected final String getDDLCreateForeignKey(String keyName, String tableName, String columnName, String refTableName, String refColumnName) {
-        return "ALTER TABLE " + tableName + " ADD CONSTRAINT " + keyName + " FOREIGN KEY (" + columnName + ") REFERENCES " + refTableName + " ("
-                + refColumnName + ")";
-    }
-
-    protected final String getDDLRemoveForeignKey(String tableName, String keyName) {
-        String constraint;
-        switch (dbType) {
-        case MySQL:
-            constraint = "FOREIGN KEY";
-            break;
-        default:
-            constraint = "CONSTRAINT";
-            break;
-        }
-        return "ALTER TABLE " + tableName + " DROP " + constraint + " " + keyName;
-    }
-
     protected final String getDDLRenameTable(String oldTableName, String newTableName) {
         String query;
         switch (dbType) {
@@ -161,7 +140,63 @@ public abstract class DBPatch {
         return "DROP TABLE " + tableName; // TODO IF EXISTS
     }
 
-    protected final String getDDLAddColumn(String tableName, ColumnDef columnDef) {
+    protected final String getDDLCreateIndex(String tableName, String indexName, String columnName) {
+        return "CREATE INDEX " + indexName + " ON " + tableName + " (" + columnName + ")";
+    }
+
+    protected final String getDDLRenameIndex(String tableName, String indexName, String newIndexName) {
+        String query;
+        switch (dbType) {
+        case MSSQL:
+            query = "sp_rename '" + tableName + "." + indexName + "', '" + newIndexName + "'";
+            break;
+        default:
+            throw new InternalApplicationException("TODO");
+        }
+        return query;
+    }
+
+    protected final String getDDLRemoveIndex(String tableName, String indexName) {
+        switch (dbType) {
+        case Oracle:
+        case PostgreSQL:
+            return "DROP INDEX " + indexName;
+        default:
+            return "DROP INDEX " + indexName + " ON " + tableName;
+        }
+    }
+
+    protected final String getDDLCreateForeignKey(String tableName, String keyName, String columnName, String refTableName, String refColumnName) {
+        return "ALTER TABLE " + tableName + " ADD CONSTRAINT " + keyName + " FOREIGN KEY (" + columnName + ") REFERENCES " + refTableName + " ("
+                + refColumnName + ")";
+    }
+
+    protected final String getDDLRenameForeignKey(String keyName, String newKeyName) {
+        String query;
+        switch (dbType) {
+        case MSSQL:
+            query = "sp_rename '" + keyName + "', '" + newKeyName + "'";
+            break;
+        default:
+            throw new InternalApplicationException("TODO");
+        }
+        return query;
+    }
+
+    protected final String getDDLRemoveForeignKey(String tableName, String keyName) {
+        String constraint;
+        switch (dbType) {
+        case MySQL:
+            constraint = "FOREIGN KEY";
+            break;
+        default:
+            constraint = "CONSTRAINT";
+            break;
+        }
+        return "ALTER TABLE " + tableName + " DROP " + constraint + " " + keyName;
+    }
+
+    protected final String getDDLCreateColumn(String tableName, ColumnDef columnDef) {
         String lBraced = "";
         String rBraced = "";
         if (dbType == DBType.Oracle) {
@@ -223,6 +258,14 @@ public abstract class DBPatch {
         return "ALTER TABLE " + tableName + " DROP COLUMN " + columnName;
     }
 
+    protected final String getDDLTruncateTable(String tableName) {
+        return "TRUNCATE TABLE " + tableName;
+    }
+
+    protected final String getDDLTruncateTableUsingDelete(String tableName) {
+        return "DELETE FROM " + tableName;
+    }
+
     public static class ColumnDef {
         private boolean primaryKey;
         private String name;
@@ -265,7 +308,7 @@ public abstract class DBPatch {
         }
 
         public ColumnDef setPrimaryKey() {
-            this.primaryKey = true;
+            primaryKey = true;
             return this;
         }
 

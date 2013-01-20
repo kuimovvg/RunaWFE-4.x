@@ -28,6 +28,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
@@ -49,12 +50,8 @@ public class SubstitutionCriteria implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-
     private String name;
-
     private String conf;
-
-    private String DISPLAY_TYPE = "";
 
     public SubstitutionCriteria() {
     }
@@ -67,7 +64,6 @@ public class SubstitutionCriteria implements Serializable {
         return id;
     }
 
-    // This is need by hibernate.
     protected void setId(Long id) {
         this.id = id;
     }
@@ -103,7 +99,8 @@ public class SubstitutionCriteria implements Serializable {
         return false;
     }
 
-    public String displayType() {
-        return DISPLAY_TYPE;
+    @Transient
+    public String getLabelKey() {
+        return "";
     }
 }
