@@ -26,7 +26,7 @@ public class EscalationGroup extends TemporaryGroup {
 
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "ESCALATION_EXECUTOR_ID")
-    @ForeignKey(name = "FK_GROUP_EEXECUTOR")
+    @ForeignKey(name = "FK_GROUP_ESCALATION_EXECUTOR")
     public Executor getOriginalExecutor() {
         return originalExecutor;
     }

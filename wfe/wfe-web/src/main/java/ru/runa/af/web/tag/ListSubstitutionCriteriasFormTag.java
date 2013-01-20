@@ -192,7 +192,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
                 editHref.addElement(substitutionCriteria.getName());
                 tr.addElement(new TD(editHref).setClass(Resources.CLASS_LIST_TABLE_TD));
             }
-            tr.addElement(new TD(Messages.getMessage(substitutionCriteria.displayType(), pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
+            tr.addElement(new TD(Messages.getMessage(substitutionCriteria.getLabelKey(), pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
             tr.addElement(new TD(substitutionCriteria.getConf()).setClass(Resources.CLASS_LIST_TABLE_TD));
             return tr;
         }

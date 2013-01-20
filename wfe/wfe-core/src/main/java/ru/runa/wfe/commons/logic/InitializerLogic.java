@@ -40,7 +40,7 @@ import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
-import ru.runa.wfe.commons.dbpatch.impl.CleanupJbpmPatch;
+import ru.runa.wfe.commons.dbpatch.impl.JbpmRefactoringPatch;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Actor;
@@ -84,10 +84,10 @@ public class InitializerLogic {
         dbPatches.add(UnsupportedPatch.class);
         dbPatches.add(UnsupportedPatch.class);
         dbPatches.add(UnsupportedPatch.class);
-        dbPatches.add(UnsupportedPatch.class);
+        dbPatches.add(UnsupportedPatch.class); // 20
         // 4.x
         dbPatches.add(AddHierarchyProcess.class);
-        dbPatches.add(CleanupJbpmPatch.class);
+        dbPatches.add(JbpmRefactoringPatch.class);
     };
 
     @Autowired

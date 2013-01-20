@@ -197,8 +197,8 @@ public class Token implements Serializable {
 
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PROCESS_ID")
-    @ForeignKey(name = "FK_TOKEN_PROCINST")
-    @Index(name = "IDX_TOKEN_PROCIN")
+    @ForeignKey(name = "FK_TOKEN_PROCESS")
+    @Index(name = "IDX_PROCESS")
     @Fetch(FetchMode.JOIN)
     public Process getProcess() {
         return process;

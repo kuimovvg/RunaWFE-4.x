@@ -42,6 +42,8 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
@@ -67,7 +69,6 @@ public final class Profile implements Serializable {
     private Actor actor;
     private Set<BatchPresentation> batchPresentations = Sets.newHashSet();
     private Map<String, BatchPresentation> defaultBatchPresentations = Maps.newHashMap();
-
     private final Set<String> visibleBlocks = Sets.newHashSet();
 
     public Profile() {
@@ -97,6 +98,7 @@ public final class Profile implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = Actor.class)
     @JoinColumn(name = "ACTOR_ID", nullable = false, updatable = false, unique = true)
+    @ForeignKey(name = "FK_PROFILE_ACTOR")
     @Fetch(FetchMode.JOIN)
     public Actor getActor() {
         return actor;
@@ -109,6 +111,8 @@ public final class Profile implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, targetEntity = BatchPresentation.class)
     @Sort(type = SortType.UNSORTED)
     @JoinColumn(name = "PROFILE_ID")
+    @ForeignKey(name = "FK_BATCH_PRESENTATION_PROFILE")
+    @Index(name = "PROFILE_ID_IDX")
     @Cascade({ CascadeType.ALL, CascadeType.DELETE_ORPHAN })
     public Set<BatchPresentation> getBatchPresentations() {
         return batchPresentations;

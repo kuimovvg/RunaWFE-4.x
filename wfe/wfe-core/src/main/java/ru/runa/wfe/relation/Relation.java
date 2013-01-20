@@ -35,16 +35,18 @@ import ru.runa.wfe.security.SecuredObjectType;
 import com.google.common.base.Objects;
 
 /**
- * Relation between executors. Each relation contains some RelationPair, which describe executors relation.
+ * Relation between executors. Each relation contains some RelationPair, which
+ * describe executors relation.
  */
 @Entity
-@Table(name = "RELATION_GROUP")
+@Table(name = "EXECUTOR_RELATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Relation implements Identifiable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Identity of relation. This field is set, then relation is stored in database.
+     * Identity of relation. This field is set, then relation is stored in
+     * database.
      */
     private Long id;
 

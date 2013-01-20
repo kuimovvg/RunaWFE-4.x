@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
@@ -82,7 +83,8 @@ public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
     }
 
     @Override
-    public String displayType() {
+    @Transient
+    public String getLabelKey() {
         return DISPLAY_TYPE;
     }
 }

@@ -35,6 +35,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.security.Identifiable;
@@ -48,15 +49,10 @@ import com.google.common.base.Objects;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PermissionMapping {
     private Long id;
-
     private Long version;
-
     private Executor executor;
-
     private Long mask;
-
     private Long identifiableId;
-
     private SecuredObjectType type;
 
     protected PermissionMapping() {
@@ -102,6 +98,7 @@ public class PermissionMapping {
 
     @Column(name = "TYPE", nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @Index(name = "IDX_TYPE")
     public SecuredObjectType getType() {
         return type;
     }
@@ -112,7 +109,8 @@ public class PermissionMapping {
 
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false)
-    @Index(name = "PERM_MAPPINGS_EXEC_ID_IDX")
+    @ForeignKey(name = "FK_PERMISSION_EXECUTOR")
+    @Index(name = "IDX_EXECUTOR")
     @Fetch(FetchMode.JOIN)
     public Executor getExecutor() {
         return executor;
