@@ -31,7 +31,7 @@ import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorGroupRelation;
+import ru.runa.wfe.user.ExecutorGroupMembership;
 
 public class WFRunaHibernateInterceptor extends EmptyInterceptor {
     private static final long serialVersionUID = 1L;
@@ -47,7 +47,7 @@ public class WFRunaHibernateInterceptor extends EmptyInterceptor {
             CachingLogic.onSubstitutionChange(entity, currentState, previousState, propertyNames, types);
         } else if (entity instanceof Executor) {
             CachingLogic.onExecutorChange(entity, currentState, previousState, propertyNames, types);
-        } else if (entity instanceof ExecutorGroupRelation) {
+        } else if (entity instanceof ExecutorGroupMembership) {
             CachingLogic.onExecutorChange(entity, currentState, previousState, propertyNames, types);
         } else if (entity instanceof Deployment) {
             CachingLogic.onProcessDefChange(entity, currentState, previousState, propertyNames, types);

@@ -32,6 +32,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.security.Identifiable;
@@ -39,26 +40,30 @@ import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
 
 /**
- * Describes relation between two executor. If relation contains pair of executors {left, right}, then left=@relation(right)
+ * Describes relation between two executor. If relation contains pair of
+ * executors {left, right}, then left=@relation(right)
  */
 @Entity
-@Table(name = "EXECUTOR_RELATION")
+@Table(name = "EXECUTOR_RELATION_PAIR")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class RelationPair implements Identifiable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Identity of relation pair. This field is set then relation pair is stored in database.
+     * Identity of relation pair. This field is set then relation pair is stored
+     * in database.
      */
     private Long id;
 
     /**
-     * Left part of relation (Boss, and so on). If relation contains pair of executors {left, right}, then left=@relation(right)
+     * Left part of relation (Boss, and so on). If relation contains pair of
+     * executors {left, right}, then left=@relation(right)
      */
     private Executor left;
 
     /**
-     * Right part of relation (Employer, and so on). If relation contains pair of executors {left, right}, then left=@relation(right)
+     * Right part of relation (Employer, and so on). If relation contains pair
+     * of executors {left, right}, then left=@relation(right)
      */
     private Executor right;
 
@@ -71,7 +76,8 @@ public class RelationPair implements Identifiable {
     }
 
     /**
-     * Create relation pair instance for relation {@link #relation} and executor {@link #left} as left, and {@link #right} as right part of relation.
+     * Create relation pair instance for relation {@link #relation} and executor
+     * {@link #left} as left, and {@link #right} as right part of relation.
      * 
      * @param relation
      *            Relation, which belongs this pair.
@@ -113,6 +119,7 @@ public class RelationPair implements Identifiable {
      */
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_FROM", nullable = false, insertable = true, updatable = false)
+    @ForeignKey(name = "FK_ERP_EXECUTOR_FROM")
     @Index(name = "EXEC_REL_FROM_ID_IDX")
     @Fetch(FetchMode.JOIN)
     public Executor getLeft() {
@@ -131,6 +138,7 @@ public class RelationPair implements Identifiable {
      */
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_TO", nullable = false, insertable = true, updatable = false)
+    @ForeignKey(name = "FK_ERP_EXECUTOR_TO")
     @Index(name = "EXEC_REL_TO_ID_IDX")
     @Fetch(FetchMode.JOIN)
     public Executor getRight() {
@@ -148,7 +156,8 @@ public class RelationPair implements Identifiable {
      * @return Relation, to which belongs this executors pair.
      */
     @ManyToOne(targetEntity = Relation.class)
-    @JoinColumn(name = "RELATION_GROUP", nullable = false, insertable = true, updatable = false)
+    @JoinColumn(name = "RELATION_ID", nullable = false, insertable = true, updatable = false)
+    @ForeignKey(name = "FK_ERP_RELATION")
     @Index(name = "EXEC_REL_GROUP_ID_IDX")
     @Fetch(FetchMode.JOIN)
     public Relation getRelation() {

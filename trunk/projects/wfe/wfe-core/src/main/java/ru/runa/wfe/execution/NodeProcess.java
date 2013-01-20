@@ -35,10 +35,10 @@ public class NodeProcess {
     }
 
     public NodeProcess(Token parentToken, Process child, Node processStateNode) {
-        this.process = parentToken.getProcess();
+        process = parentToken.getProcess();
         this.parentToken = parentToken;
-        this.nodeId = processStateNode.getNodeId();
-        this.subProcess = child;
+        nodeId = processStateNode.getNodeId();
+        subProcess = child;
     }
 
     @Id
@@ -55,8 +55,8 @@ public class NodeProcess {
 
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PARENT_PROCESS_ID", nullable = false)
-    @ForeignKey(name = "FK_NODE_SUBPROC_PROCINST")
-    @Index(name = "IDX_NODE_SUBPROC_PROCINST")
+    @ForeignKey(name = "FK_SUBPROCESS_PARENT_PROCESS")
+    @Index(name = "IDX_PARENT_PROCESS")
     public Process getProcess() {
         return process;
     }
@@ -67,8 +67,7 @@ public class NodeProcess {
 
     @ManyToOne(targetEntity = Token.class)
     @JoinColumn(name = "PARENT_TOKEN_ID")
-    @ForeignKey(name = "FK_NODE_SUBPROC_TOKEN")
-    @Index(name = "IDX_NODE_SUBPROC_TOKEN")
+    @ForeignKey(name = "FK_SUBPROCESS_TOKEN")
     @Fetch(FetchMode.JOIN)
     public Token getParentToken() {
         return parentToken;
@@ -80,8 +79,8 @@ public class NodeProcess {
 
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PROCESS_ID", nullable = false)
-    @ForeignKey(name = "FK_NODE_SUBPROC_SUBPROCINST")
-    @Index(name = "IDX_NODE_SUBPROC_SUBPROCINST")
+    @ForeignKey(name = "FK_SUBPROCESS_PROCESS")
+    @Index(name = "IDX_PROCESS")
     @Cascade({ CascadeType.ALL })
     public Process getSubProcess() {
         return subProcess;

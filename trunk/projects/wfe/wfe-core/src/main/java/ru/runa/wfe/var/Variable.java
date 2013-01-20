@@ -115,7 +115,7 @@ public abstract class Variable<T extends Object> {
     @ManyToOne(targetEntity = Process.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PROCESS_ID", nullable = false)
     @ForeignKey(name = "FK_VARINST_PRCINST")
-    @Index(name = "IDX_VARINST_PRCINS")
+    @Index(name = "IDX_PROCESS")
     public Process getProcess() {
         return process;
     }

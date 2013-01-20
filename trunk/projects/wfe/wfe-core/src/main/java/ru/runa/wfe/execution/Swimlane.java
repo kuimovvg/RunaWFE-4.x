@@ -39,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.SwimlaneAssignLog;
 import ru.runa.wfe.handler.assign.Assignable;
@@ -116,7 +117,8 @@ public class Swimlane implements Serializable, Assignable {
 
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PROCESS_ID")
-    @ForeignKey(name = "FK_SWIMLANE_PI")
+    @ForeignKey(name = "FK_SWIMLANE_PROCESS")
+    @Index(name = "IDX_PROCESS")
     public Process getProcess() {
         return process;
     }

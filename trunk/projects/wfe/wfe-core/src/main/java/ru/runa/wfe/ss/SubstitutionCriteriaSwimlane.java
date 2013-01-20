@@ -19,6 +19,7 @@ package ru.runa.wfe.ss;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
@@ -55,7 +56,8 @@ public class SubstitutionCriteriaSwimlane extends SubstitutionCriteria {
     }
 
     @Override
-    public String displayType() {
+    @Transient
+    public String getLabelKey() {
         return DISPLAY_TYPE;
     }
 }
