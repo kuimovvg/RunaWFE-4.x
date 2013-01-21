@@ -187,20 +187,16 @@ public class WFCommonLogic extends CommonLogic {
 
     protected void deleteProcess(Process process) {
         log.debug("deleting process " + process);
-        // delete subprocessees
         List<Process> subProcesses = nodeProcessDAO.getSubprocesses(process);
+        nodeProcessDAO.deleteByProcess(process);
         for (Process subProcess : subProcesses) {
             log.debug("deleting sub process " + subProcess.getId());
             deleteProcess(subProcess);
         }
         processLogDAO.deleteAll(process.getId());
-        jobDAO.deleteJobs(process);
+        jobDAO.deleteAll(process);
         variableDAO.deleteAll(process);
-
-        // delete started subprocesses
-        log.debug("deleting started subprocesses for process " + process.getId());
-        nodeProcessDAO.deleteByProcess(process.getId());
-        processDAO.delete(process.getId());
+        processDAO.delete(process);
     }
 
     /**

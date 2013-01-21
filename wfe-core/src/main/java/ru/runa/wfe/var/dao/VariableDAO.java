@@ -39,13 +39,7 @@ public class VariableDAO extends GenericDAO<Variable> {
 
     public void deleteAll(Process process) {
         log.debug("deleting variables for process " + process.getId());
-        List<Variable<?>> variables = getHibernateTemplate().find("from Variable where process=?", process);
-        getHibernateTemplate().deleteAll(variables);
-    }
-
-    public void delete(Variable<?> variable) {
-        log.debug("deleting variable " + variable.getName());
-        delete(variable.getId());
+        getHibernateTemplate().bulkUpdate("delete from Variable where process=?", process);
     }
 
 }
