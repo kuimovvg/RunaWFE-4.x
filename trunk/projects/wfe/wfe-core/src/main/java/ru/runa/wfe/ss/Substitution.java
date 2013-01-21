@@ -24,6 +24,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,8 +37,6 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.PolymorphismType;
@@ -145,11 +144,10 @@ public class Substitution implements Cloneable, Serializable {
         this.actorId = actorId;
     }
 
-    @ManyToOne(targetEntity = SubstitutionCriteria.class)
+    @ManyToOne(targetEntity = SubstitutionCriteria.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CRITERIA_ID")
     @ForeignKey(name = "FK_SUBSTITUTION_CRITERIA")
     @Index(name = "IX_SUBSTITUTION_CRITERIA")
-    @Fetch(FetchMode.JOIN)
     public SubstitutionCriteria getCriteria() {
         return criteria;
     }

@@ -2,6 +2,7 @@ package ru.runa.wfe.execution;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,8 +13,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -51,7 +50,7 @@ public class NodeProcess {
         this.id = id;
     }
 
-    @ManyToOne(targetEntity = Process.class)
+    @ManyToOne(targetEntity = Process.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_PROCESS_ID", nullable = false)
     @ForeignKey(name = "FK_SUBPROCESS_PARENT_PROCESS")
     @Index(name = "IX_SUBPROCESS_PARENT_PROCESS")
@@ -63,10 +62,9 @@ public class NodeProcess {
         this.process = process;
     }
 
-    @ManyToOne(targetEntity = Token.class)
+    @ManyToOne(targetEntity = Token.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_TOKEN_ID")
     @ForeignKey(name = "FK_SUBPROCESS_TOKEN")
-    @Fetch(FetchMode.JOIN)
     public Token getParentToken() {
         return parentToken;
     }
@@ -75,11 +73,10 @@ public class NodeProcess {
         this.parentToken = parentToken;
     }
 
-    @ManyToOne(targetEntity = Process.class)
+    @ManyToOne(targetEntity = Process.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PROCESS_ID", nullable = false)
     @ForeignKey(name = "FK_SUBPROCESS_PROCESS")
     @Index(name = "IX_SUBPROCESS_PROCESS")
-    // @Cascade({ CascadeType.ALL })
     public Process getSubProcess() {
         return subProcess;
     }

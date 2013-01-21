@@ -46,7 +46,9 @@ public class FormulaActionHandler implements ActionHandler {
     private boolean quo = false;
     private String nextToken = null;
 
-    private String nextStringToken(char limitingSymbol) { // return string, limited by 'limitingSymbol'
+    private String nextStringToken(char limitingSymbol) { // return string,
+                                                          // limited by
+                                                          // 'limitingSymbol'
         if (formula[nowPosition] != limitingSymbol) {
             return null;
         }
@@ -184,7 +186,9 @@ public class FormulaActionHandler implements ActionHandler {
         }
 
         /*
-         * StringTokenizer st = new StringTokenizer(inputData, ";\n"); while (st.hasMoreTokens()) { formula = st.nextToken().toCharArray(); if (formula.length>0) parseFormula(); }
+         * StringTokenizer st = new StringTokenizer(inputData, ";\n"); while
+         * (st.hasMoreTokens()) { formula = st.nextToken().toCharArray(); if
+         * (formula.length>0) parseFormula(); }
          */
     }
 
@@ -438,7 +442,7 @@ public class FormulaActionHandler implements ActionHandler {
 
     private Object tryParseFunction(String s) {
         nextToken();
-        if (s.equals("get_instance_id")) {
+        if (s.equals("get_instance_id") || s.equals("get_process_id")) {
             if (!nextToken().equals(")")) {
                 incorrectParameters(s);
                 return null;
