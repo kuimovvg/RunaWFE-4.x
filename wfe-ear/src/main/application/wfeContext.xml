@@ -29,11 +29,8 @@
 	<tx:annotation-driven proxy-target-class="true" />
 	<context:annotation-config />
 
-	<!-- jee:jndi-lookup id="dataSource" jndi-name="java:/runawfe-ds" / -->
-
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-		<!-- property name="dataSource" ref="dataSource" / -->
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
 		<property name="entityInterceptor">
 			<bean class="ru.runa.wfe.commons.hibernate.WFRunaHibernateInterceptor" />

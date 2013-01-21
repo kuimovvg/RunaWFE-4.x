@@ -25,6 +25,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,6 +43,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.SwimlaneAssignLog;
+import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.handler.assign.Assignable;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -104,18 +106,18 @@ public class Swimlane implements Serializable, Assignable {
         this.name = name;
     }
 
-    @ManyToOne(targetEntity = Executor.class)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "EXECUTOR_ID")
     @ForeignKey(name = "FK_SWIMLANE_EXECUTOR")
     public Executor getExecutor() {
-        return executor;
+        return Proxies.getImplementation(executor);
     }
 
     public void setExecutor(Executor executor) {
         this.executor = executor;
     }
 
-    @ManyToOne(targetEntity = Process.class)
+    @ManyToOne(targetEntity = Process.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PROCESS_ID")
     @ForeignKey(name = "FK_SWIMLANE_PROCESS")
     @Index(name = "IX_SWIMLANE_PROCESS")

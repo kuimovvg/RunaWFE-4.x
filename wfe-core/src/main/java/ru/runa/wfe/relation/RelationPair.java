@@ -19,6 +19,7 @@ package ru.runa.wfe.relation;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,11 +31,10 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
@@ -117,13 +117,12 @@ public class RelationPair implements Identifiable {
      * 
      * @return Left part of relation pair.
      */
-    @ManyToOne(targetEntity = Executor.class)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "EXECUTOR_FROM", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_ERP_EXECUTOR_FROM")
     @Index(name = "IX_ERP_EXECUTOR_FROM")
-    @Fetch(FetchMode.JOIN)
     public Executor getLeft() {
-        return left;
+        return Proxies.getImplementation(left);
     }
 
     // This is need by hibernate.
@@ -136,13 +135,12 @@ public class RelationPair implements Identifiable {
      * 
      * @return Right part of relation pair.
      */
-    @ManyToOne(targetEntity = Executor.class)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "EXECUTOR_TO", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_ERP_EXECUTOR_TO")
     @Index(name = "IX_ERP_EXECUTOR_TO")
-    @Fetch(FetchMode.JOIN)
     public Executor getRight() {
-        return right;
+        return Proxies.getImplementation(right);
     }
 
     // This is need by hibernate.
@@ -155,11 +153,10 @@ public class RelationPair implements Identifiable {
      * 
      * @return Relation, to which belongs this executors pair.
      */
-    @ManyToOne(targetEntity = Relation.class)
+    @ManyToOne(targetEntity = Relation.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "RELATION_ID", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_ERP_RELATION")
     @Index(name = "IX_ERP_RELATION")
-    @Fetch(FetchMode.JOIN)
     public Relation getRelation() {
         return relation;
     }

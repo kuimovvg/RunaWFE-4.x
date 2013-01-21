@@ -47,8 +47,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -195,11 +193,10 @@ public class Token implements Serializable {
         endDate = end;
     }
 
-    @ManyToOne(targetEntity = Process.class)
+    @ManyToOne(targetEntity = Process.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PROCESS_ID")
     @ForeignKey(name = "FK_TOKEN_PROCESS")
     @Index(name = "IX_TOKEN_PROCESS")
-    @Fetch(FetchMode.JOIN)
     public Process getProcess() {
         return process;
     }
@@ -208,11 +205,10 @@ public class Token implements Serializable {
         this.process = process;
     }
 
-    @ManyToOne(targetEntity = Token.class)
+    @ManyToOne(targetEntity = Token.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_ID")
     @ForeignKey(name = "FK_TOKEN_PARENT")
     @Index(name = "IX_TOKEN_PARENT")
-    @Fetch(FetchMode.JOIN)
     public Token getParent() {
         return parent;
     }
@@ -221,7 +217,7 @@ public class Token implements Serializable {
         this.parent = parent;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = Token.class)
+    @OneToMany(targetEntity = Token.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_ID")
     @Cascade({ CascadeType.ALL, CascadeType.DELETE_ORPHAN })
     public Set<Token> getChildren() {
