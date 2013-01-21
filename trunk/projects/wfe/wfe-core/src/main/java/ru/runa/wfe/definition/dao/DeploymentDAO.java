@@ -29,7 +29,6 @@ import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
@@ -96,11 +95,6 @@ public class DeploymentDAO extends GenericDAO<Deployment> {
      */
     public List<Deployment> findAllDeploymentVersions(String name) {
         return getHibernateTemplate().find("from Deployment where name=? order by version desc", name);
-    }
-
-    public void delete(Deployment deployment) {
-        Preconditions.checkNotNull(deployment, "deployment is null");
-        delete(deployment.getId());
     }
 
 }

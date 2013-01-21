@@ -19,8 +19,9 @@ public class NodeProcessDAO extends GenericDAO<NodeProcess> {
         return getHibernateTemplate().find("from NodeProcess where process.id = ? order by id", processId);
     }
 
-    public void deleteByProcess(Long processId) {
-        getHibernateTemplate().deleteAll(getNodeProcesses(processId));
+    public void deleteByProcess(Process process) {
+        log.debug("deleting subprocess nodes for process " + process.getId());
+        getHibernateTemplate().bulkUpdate("delete from NodeProcess where process=?", process);
     }
 
     public void saveNodeProcess(NodeProcess nodeProcess) {

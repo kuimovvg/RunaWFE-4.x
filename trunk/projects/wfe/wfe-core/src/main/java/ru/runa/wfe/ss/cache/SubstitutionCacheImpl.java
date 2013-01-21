@@ -139,7 +139,7 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                     actor = executorDAO.getActor(substitution.getActorId());
                 } catch (ExecutorDoesNotExistException e) {
                     // TODO auto-deletion?
-                    substitutionDAO.delete(substitution.getId());
+                    substitutionDAO.delete(substitution);
                     continue;
                 }
                 if (!substitution.isEnabled()) {

@@ -304,7 +304,7 @@ public class Process implements Identifiable {
         // make sure all the timers for this process are canceled
         // after the process end updates are posted to the database
         JobDAO jobDAO = ApplicationContextFactory.getJobDAO();
-        jobDAO.deleteJobs(this);
+        jobDAO.deleteAll(this);
     }
 
     /**
