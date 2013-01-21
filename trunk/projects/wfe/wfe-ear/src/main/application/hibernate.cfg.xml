@@ -98,7 +98,7 @@
 		<mapping class="ru.runa.wfe.user.Executor" />
 		<mapping class="ru.runa.wfe.user.Actor" />
 		<mapping class="ru.runa.wfe.user.Group" />
-		<mapping class="ru.runa.wfe.user.ExecutorGroupRelation" />
+		<mapping class="ru.runa.wfe.user.ExecutorGroupMembership" />
 		<mapping class="ru.runa.wfe.user.Profile" />
 		<mapping class="ru.runa.wfe.user.TemporaryGroup" />
 		<mapping class="ru.runa.wfe.user.EscalationGroup" />
