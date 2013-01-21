@@ -45,7 +45,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 
@@ -90,7 +90,7 @@ public abstract class ProcessLog implements IAttributes, Serializable {
     }
 
     @Column(name = "PROCESS_ID")
-    @ForeignKey(name = "FK_LOG_PROCESS")
+    @Index(name = "IX_LOG_PROCESS")
     public Long getProcessId() {
         return processId;
     }

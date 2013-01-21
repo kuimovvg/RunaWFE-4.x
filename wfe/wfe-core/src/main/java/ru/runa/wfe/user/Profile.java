@@ -112,7 +112,7 @@ public final class Profile implements Serializable {
     @Sort(type = SortType.UNSORTED)
     @JoinColumn(name = "PROFILE_ID")
     @ForeignKey(name = "FK_BATCH_PRESENTATION_PROFILE")
-    @Index(name = "PROFILE_ID_IDX")
+    @Index(name = "IX_BATCH_PRESENTATION_PROFILE")
     @Cascade({ CascadeType.ALL, CascadeType.DELETE_ORPHAN })
     public Set<BatchPresentation> getBatchPresentations() {
         return batchPresentations;

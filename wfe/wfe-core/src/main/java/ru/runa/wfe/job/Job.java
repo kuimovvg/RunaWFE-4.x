@@ -48,7 +48,7 @@ public abstract class Job {
 
     public Job(Token token) {
         this.token = token;
-        this.process = token.getProcess();
+        process = token.getProcess();
     }
 
     @Id
@@ -94,7 +94,7 @@ public abstract class Job {
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PROCESS_ID", nullable = false)
     @ForeignKey(name = "FK_JOB_PROCESS")
-    @Index(name = "IDX_JOB_PROCESS")
+    @Index(name = "IX_JOB_PROCESS")
     public Process getProcess() {
         return process;
     }

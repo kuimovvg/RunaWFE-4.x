@@ -120,7 +120,7 @@ public class RelationPair implements Identifiable {
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_FROM", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_ERP_EXECUTOR_FROM")
-    @Index(name = "EXEC_REL_FROM_ID_IDX")
+    @Index(name = "IX_ERP_EXECUTOR_FROM")
     @Fetch(FetchMode.JOIN)
     public Executor getLeft() {
         return left;
@@ -139,7 +139,7 @@ public class RelationPair implements Identifiable {
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_TO", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_ERP_EXECUTOR_TO")
-    @Index(name = "EXEC_REL_TO_ID_IDX")
+    @Index(name = "IX_ERP_EXECUTOR_TO")
     @Fetch(FetchMode.JOIN)
     public Executor getRight() {
         return right;
@@ -158,7 +158,7 @@ public class RelationPair implements Identifiable {
     @ManyToOne(targetEntity = Relation.class)
     @JoinColumn(name = "RELATION_ID", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_ERP_RELATION")
-    @Index(name = "EXEC_REL_GROUP_ID_IDX")
+    @Index(name = "IX_ERP_RELATION")
     @Fetch(FetchMode.JOIN)
     public Relation getRelation() {
         return relation;

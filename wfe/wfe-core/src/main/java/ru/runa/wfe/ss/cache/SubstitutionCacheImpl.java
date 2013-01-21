@@ -31,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.cache.BaseCacheImpl;
 import ru.runa.wfe.commons.cache.Cache;
-import ru.runa.wfe.os.OrgFunctionException;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.ss.Substitution;
@@ -176,9 +175,7 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                     }
                 }
                 subDescr.put(substitution, substitutorIds);
-            } catch (ExecutorDoesNotExistException e) {
-                logError(substitution);
-            } catch (OrgFunctionException e) {
+            } catch (Exception e) {
                 logError(substitution);
             }
         }
