@@ -84,7 +84,7 @@ public class PrivelegedMapping {
     }
 
     @Column(name = "TYPE", nullable = false)
-    @Index(name = "IDX_TYPE")
+    @Index(name = "IX_PRIVELEGE_TYPE")
     @Enumerated(value = EnumType.STRING)
     public SecuredObjectType getType() {
         return type;

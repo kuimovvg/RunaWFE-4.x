@@ -108,7 +108,7 @@ public class Actor extends Executor {
     }
 
     @Column(name = "CODE")
-    @Index(name = "EXECUTORS_CODE_IDX")
+    @Index(name = "IX_EXECUTOR_CODE")
     public Long getCode() {
         return code;
     }

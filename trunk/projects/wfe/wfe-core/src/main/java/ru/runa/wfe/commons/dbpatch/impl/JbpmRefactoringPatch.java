@@ -1,15 +1,23 @@
 package ru.runa.wfe.commons.dbpatch.impl;
 
+import java.sql.Blob;
 import java.sql.Types;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
+import ru.runa.wfe.lang.NodeType;
+import ru.runa.wfe.security.SecuredObjectType;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
 
 public class JbpmRefactoringPatch extends DBPatch {
     private boolean jbpmIdTablesExist;
@@ -50,7 +58,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLCreateColumn("BATCH_PRESENTATION", new ColumnDef("IS_ACTIVE", Types.TINYINT)));
         sql.add(getDDLCreateColumn("BATCH_PRESENTATION", new ColumnDef("FIELDS", Types.VARBINARY)));
         sql.add(getDDLRemoveIndex("BATCH_PRESENTATION", "PRESENTATION_NAME_ID_IDX"));
-        sql.add(getDDLCreateIndex("BATCH_PRESENTATION", "PROFILE_ID_IDX", "PROFILE_ID"));
+        sql.add(getDDLCreateIndex("BATCH_PRESENTATION", "IX_BATCH_PRESENTATION_PROFILE", "PROFILE_ID"));
         // ru.runa.wfe.user.dao.ActorPassword
         sql.add(getDDLRenameTable("PASSWORDS", "ACTOR_PASSWORD"));
         sql.add(getDDLRenameColumn("ACTOR_PASSWORD", "PASSWD", new ColumnDef("PASSWORD", Types.VARBINARY)));
@@ -65,18 +73,24 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameColumn("BOT", "WFE_USER", new ColumnDef("USERNAME", Types.VARCHAR)));
         sql.add(getDDLRenameColumn("BOT", "WFE_PASS", new ColumnDef("PASSWORD", Types.VARCHAR)));
         sql.add(getDDLCreateColumn("BOT", new ColumnDef("VERSION", Types.BIGINT)));
+        sql.add(getDDLRenameIndex("BOT", "B_BS_IDX", "IX_BOT_STATION"));
         // ru.runa.wfe.bot.BotTask
         sql.add(getDDLRenameTable("BOT_TASKS", "BOT_TASK"));
         sql.add(getDDLRemoveColumn("BOT_TASK", "CONFIG"));
         sql.add(getDDLRenameColumn("BOT_TASK", "CLAZZ", new ColumnDef("TASK_HANDLER", Types.VARCHAR)));
+        sql.add(getDDLRenameIndex("BOT_TASK", "BT_B_IDX", "IX_BOT_TASK_BOT"));
         // ru.runa.wfe.user.Executor
         sql.add(getDDLRenameTable("EXECUTORS", "EXECUTOR"));
         sql.add(getDDLRenameColumn("EXECUTOR", "IS_GROUP", new ColumnDef("DISCRIMINATOR", Types.VARCHAR)));
         sql.add(getDDLCreateColumn("EXECUTOR", new ColumnDef("ESCALATION_LEVEL", Types.INTEGER)));
         sql.add(getDDLCreateColumn("EXECUTOR", new ColumnDef("ESCALATION_EXECUTOR_ID", Types.BIGINT)));
         sql.add(getDDLCreateForeignKey("EXECUTOR", "FK_GROUP_ESCALATION_EXECUTOR", "ESCALATION_EXECUTOR_ID", "EXECUTOR", "ID"));
+        // ru.runa.wfe.user.Actor
+        sql.add(getDDLRenameIndex("EXECUTOR", "EXECUTORS_CODE_IDX", "IX_EXECUTOR_CODE"));
         // ru.runa.wfe.user.ExecutorGroupMembership
         sql.add(getDDLRenameTable("EXECUTOR_GROUP_RELATIONS", "EXECUTOR_GROUP_MEMBER"));
+        sql.add(getDDLRenameIndex("EXECUTOR_GROUP_MEMBER", "EXEC_GROUP_REL_EXEC_ID_IDX", "IX_MEMBER_EXECUTOR"));
+        sql.add(getDDLRenameIndex("EXECUTOR_GROUP_MEMBER", "EXEC_GROUP_REL_GROUP_ID_IDX", "IX_MEMBER_GROUP"));
         // ru.runa.wfe.relation.Relation
         sql.add(getDDLRenameTable("RELATION_GROUPS", "EXECUTOR_RELATION"));
         // ru.runa.wfe.relation.RelationPair
@@ -85,6 +99,9 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameForeignKey("FK_RELATION_TO_EXECUTOR", "FK_ERP_EXECUTOR_TO"));
         sql.add(getDDLRenameForeignKey("FK_RELATION_GROUP_ID", "FK_ERP_RELATION"));
         sql.add(getDDLRenameColumn("EXECUTOR_RELATION_PAIR", "RELATION_GROUP", new ColumnDef("RELATION_ID", Types.BIGINT)));
+        sql.add(getDDLRenameIndex("EXECUTOR_RELATION_PAIR", "IDX_RELATION_FROM_EXECUTOR", "IX_ERP_EXECUTOR_FROM"));
+        sql.add(getDDLRenameIndex("EXECUTOR_RELATION_PAIR", "IDX_RELATION_GROUP_ID", "IX_ERP_RELATION"));
+        sql.add(getDDLRenameIndex("EXECUTOR_RELATION_PAIR", "IDX_RELATION_TO_EXECUTOR", "IX_ERP_EXECUTOR_TO"));
         // ru.runa.wfe.commons.dao.Localization
         List<ColumnDef> lColumns = Lists.newArrayList();
         lColumns.add(new ColumnDef("ID", Types.BIGINT, false).setPrimaryKey());
@@ -99,7 +116,9 @@ public class JbpmRefactoringPatch extends DBPatch {
         privColumns.add(new ColumnDef("EXECUTOR_ID", Types.BIGINT, false));
         sql.add(getDDLCreateTable("PRIVELEGED_MAPPING", privColumns, null));
         sql.add(getDDLCreateForeignKey("PRIVELEGED_MAPPING", "FK_PM_EXECUTOR", "EXECUTOR_ID", "EXECUTOR", "ID"));
-        sql.add(getDDLCreateIndex("PRIVELEGED_MAPPING", "IDX_TYPE", "TYPE"));
+        sql.add(getDDLCreateIndex("PRIVELEGED_MAPPING", "IX_PRIVELEGE_TYPE", "TYPE")); // TODO
+        // naming:
+        // privilege
         // ru.runa.wfe.security.dao.PermissionMapping
         List<ColumnDef> permColumns = Lists.newArrayList();
         permColumns.add(new ColumnDef("ID", Types.BIGINT, false).setPrimaryKey());
@@ -108,10 +127,27 @@ public class JbpmRefactoringPatch extends DBPatch {
         permColumns.add(new ColumnDef("MASK", Types.BIGINT, false));
         permColumns.add(new ColumnDef("IDENTIFIABLE_ID", Types.BIGINT, false));
         permColumns.add(new ColumnDef("EXECUTOR_ID", Types.BIGINT, false));
-        sql.add(getDDLCreateTable("PERMISSION_MAPPING", permColumns, null));
+        sql.add(getDDLCreateTable("PERMISSION_MAPPING", permColumns, null)); // TODO
+                                                                             // naming:
+                                                                             // PERMISSION
         sql.add(getDDLCreateForeignKey("PERMISSION_MAPPING", "FK_PERMISSION_EXECUTOR", "EXECUTOR_ID", "EXECUTOR", "ID"));
-        sql.add(getDDLCreateIndex("PERMISSION_MAPPING", "IDX_EXECUTOR", "EXECUTOR_ID"));
-        sql.add(getDDLCreateIndex("PERMISSION_MAPPING", "IDX_TYPE", "TYPE"));
+        sql.add(getDDLCreateIndex("PERMISSION_MAPPING", "IX_PERMISSION_EXECUTOR", "EXECUTOR_ID"));
+        sql.add(getDDLCreateIndex("PERMISSION_MAPPING", "IX_PERMISSION_TYPE", "TYPE"));
+
+        // ru.runa.wfe.ss.SubstitutionCriteria
+        sql.add(getDDLRenameTable("SUBSTITUTION_CRITERIAS", "SUBSTITUTION_CRITERIA"));
+        sql.add(getDDLRenameColumn("SUBSTITUTION_CRITERIA", "TYPE", new ColumnDef("DISCRIMINATOR", Types.VARCHAR)));
+        // ru.runa.wfe.ss.Substitution
+        sql.add(getDDLRenameTable("SUBSTITUTIONS", "SUBSTITUTION"));
+        sql.add(getDDLRenameColumn("SUBSTITUTION", "IS_TERMINATOR", new ColumnDef("DISCRIMINATOR", Types.VARCHAR)));
+        sql.add(getDDLCreateIndex("SUBSTITUTION", "IX_SUBSTITUTION_CRITERIA", "CRITERIA_ID"));
+        sql.add(getDDLCreateIndex("SUBSTITUTION", "IX_SUBSTITUTION_ACTOR", "ACTOR_ID"));
+        sql.add(getDDLCreateForeignKey("SUBSTITUTION", "FK_SUBSTITUTION_CRITERIA", "CRITERIA_ID", "SUBSTITUTION_CRITERIA", "ID"));
+        // ru.runa.wfe.audit.SystemLog
+        sql.add(getDDLTruncateTable("SYSTEM_LOG"));
+        sql.add(getDDLRenameColumn("SYSTEM_LOG", "LOG_TYPE", new ColumnDef("DISCRIMINATOR", Types.VARCHAR)));
+        sql.add(getDDLRenameColumn("SYSTEM_LOG", "ACTOR_CODE", new ColumnDef("ACTOR_ID", Types.BIGINT)));
+        sql.add(getDDLRenameColumn("SYSTEM_LOG", "PROCESS_INSTANCE", new ColumnDef("PROCESS_ID", Types.BIGINT)));
 
         // ru.runa.wfe.definition.Deployment
         sql.add(getDDLRenameTable("JBPM_PROCESSDEFINITION", "BPM_PROCESS_DEFINITION"));
@@ -138,10 +174,10 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameColumn("BPM_PROCESS", "START_", new ColumnDef("START_DATE", Types.DATE)));
         sql.add(getDDLRenameColumn("BPM_PROCESS", "END_", new ColumnDef("END_DATE", Types.DATE)));
         sql.add(getDDLRenameColumn("BPM_PROCESS", "PROCESSDEFINITION_", new ColumnDef("DEFINITION_ID", Types.BIGINT)));
-        sql.add(getDDLRenameIndex("BPM_PROCESS", "IDX_PROCIN_PROCDEF", "IDX_PROCESS_DEFINITION"));
+        sql.add(getDDLRenameIndex("BPM_PROCESS", "IDX_PROCIN_PROCDEF", "IX_PROCESS_DEFINITION"));
         sql.add(getDDLRenameForeignKey("FK_PROCIN_PROCDEF", "FK_PROCESS_DEFINITION"));
         sql.add(getDDLRenameColumn("BPM_PROCESS", "ROOTTOKEN_", new ColumnDef("ROOT_TOKEN_ID", Types.BIGINT)));
-        sql.add(getDDLRenameIndex("BPM_PROCESS", "IDX_PROCIN_ROOTTK", "IDX_PROCESS_ROOT_TOKEN"));
+        sql.add(getDDLRenameIndex("BPM_PROCESS", "IDX_PROCIN_ROOTTK", "IX_PROCESS_ROOT_TOKEN"));
         sql.add(getDDLRenameForeignKey("FK_PROCIN_ROOTTKN", "FK_PROCESS_ROOT_TOKEN"));
         sql.add(getDDLRemoveForeignKey("BPM_PROCESS", "FK_PROCIN_SPROCTKN"));
         sql.add(getDDLRemoveIndex("BPM_PROCESS", "IDX_PROCIN_SPROCTK"));
@@ -164,9 +200,10 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameColumn("BPM_TOKEN", "START_", new ColumnDef("START_DATE", Types.DATE)));
         sql.add(getDDLRenameColumn("BPM_TOKEN", "END_", new ColumnDef("END_DATE", Types.DATE)));
         sql.add(getDDLRenameColumn("BPM_TOKEN", "PROCESSINSTANCE_", new ColumnDef("PROCESS_ID", Types.BIGINT)));
-        sql.add(getDDLRenameIndex("BPM_TOKEN", "IDX_TOKEN_PROCIN", "IDX_PROCESS"));
+        sql.add(getDDLRenameIndex("BPM_TOKEN", "IDX_TOKEN_PROCIN", "IX_TOKEN_PROCESS"));
         sql.add(getDDLRenameForeignKey("FK_TOKEN_PROCINST", "FK_TOKEN_PROCESS"));
         sql.add(getDDLRenameColumn("BPM_TOKEN", "PARENT_", new ColumnDef("PARENT_ID", Types.BIGINT)));
+        sql.add(getDDLRenameIndex("BPM_TOKEN", "IDX_TOKEN_PARENT", "IX_TOKEN_PARENT"));
         sql.add(getDDLRenameColumn("BPM_TOKEN", "ISABLETOREACTIVATEPARENT_", new ColumnDef("REACTIVATE_PARENT", Types.VARCHAR)));
         sql.add(getDDLCreateColumn("BPM_TOKEN", new ColumnDef("NODE_TYPE", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
         sql.add(getDDLCreateColumn("BPM_TOKEN", new ColumnDef("NODE_ID", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
@@ -183,7 +220,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameColumn("BPM_SWIMLANE", "VERSION_", new ColumnDef("VERSION", Types.BIGINT)));
         sql.add(getDDLCreateColumn("BPM_SWIMLANE", new ColumnDef("PROCESS_ID", Types.BIGINT)));
         sql.add(getDDLCreateForeignKey("BPM_SWIMLANE", "FK_SWIMLANE_PROCESS", "PROCESS_ID", "BPM_PROCESS", "ID"));
-        sql.add(getDDLCreateIndex("BPM_SWIMLANE", "IDX_PROCESS", "PROCESS_ID"));
+        sql.add(getDDLCreateIndex("BPM_SWIMLANE", "IX_SWIMLANE_PROCESS", "PROCESS_ID"));
         sql.add(getDDLCreateColumn("BPM_SWIMLANE", new ColumnDef("EXECUTOR_ID", Types.BIGINT)));
         sql.add(getDDLCreateForeignKey("BPM_SWIMLANE", "FK_SWIMLANE_EXECUTOR", "EXECUTOR_ID", "EXECUTOR", "ID"));
 
@@ -216,12 +253,12 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TSKINST_SLINST"));
         sql.add(getDDLRenameColumn("BPM_TASK", "PROCINST_", new ColumnDef("PROCESS_ID", Types.BIGINT)));
         sql.add(getDDLRenameForeignKey("FK_TSKINS_PRCINS", "FK_TASK_PROCESS"));
-        sql.add(getDDLCreateIndex("BPM_TASK", "IDX_PROCESS", "PROCESS_ID"));
+        sql.add(getDDLCreateIndex("BPM_TASK", "IX_TASK_PROCESS", "PROCESS_ID"));
         sql.add(getDDLCreateColumn("BPM_TASK", new ColumnDef("FIRST_OPEN", Types.TINYINT)));
         sql.add(getDDLCreateColumn("BPM_TASK", new ColumnDef("NODE_ID", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
         sql.add(getDDLCreateColumn("BPM_TASK", new ColumnDef("EXECUTOR_ID", Types.BIGINT)));
         sql.add(getDDLCreateForeignKey("BPM_TASK", "FK_TASK_EXECUTOR", "EXECUTOR_ID", "EXECUTOR", "ID"));
-        sql.add(getDDLCreateIndex("BPM_TASK", "IDX_EXECUTOR", "EXECUTOR_ID"));
+        sql.add(getDDLCreateIndex("BPM_TASK", "IX_TASK_EXECUTOR", "EXECUTOR_ID"));
 
         // ru.runa.wfe.audit.ProcessLog
         sql.add(getDDLTruncateTable("JBPM_LOG"));
@@ -275,10 +312,10 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveColumn("BPM_LOG", "TASKOLDACTORID_"));
         sql.add(getDDLRemoveForeignKey("BPM_LOG", "FK_LOG_SWIMINST"));
         sql.add(getDDLRemoveColumn("BPM_LOG", "SWIMLANEINSTANCE_"));
-        sql.add(getDDLCreateColumn("BPM_LOG", new ColumnDef("BYTES", Types.BIGINT)));
+        sql.add(getDDLCreateColumn("BPM_LOG", new ColumnDef("BYTES", Types.VARBINARY)));
         sql.add(getDDLCreateColumn("BPM_LOG", new ColumnDef("CONTENT", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
         sql.add(getDDLCreateColumn("BPM_LOG", new ColumnDef("PROCESS_ID", Types.BIGINT)));
-        sql.add(getDDLCreateForeignKey("BPM_LOG", "FK_LOG_PROCESS", "PROCESS_ID", "BPM_PROCESS", "ID"));
+        sql.add(getDDLCreateIndex("BPM_LOG", "IX_LOG_PROCESS", "PROCESS_ID"));
         sql.add(getDDLCreateColumn("BPM_LOG", new ColumnDef("SEVERITY", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
 
         // ru.runa.wfe.job.Job
@@ -304,7 +341,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameColumn("BPM_JOB", "VERSION_", new ColumnDef("VERSION", Types.BIGINT)));
         sql.add(getDDLRenameColumn("BPM_JOB", "DUEDATE_", new ColumnDef("DUE_DATE", Types.DATE)));
         sql.add(getDDLRenameColumn("BPM_JOB", "PROCESSINSTANCE_", new ColumnDef("PROCESS_ID", Types.BIGINT)));
-        sql.add(getDDLRenameIndex("BPM_JOB", "IDX_JOB_PRINST", "IDX_JOB_PROCESS"));
+        sql.add(getDDLRenameIndex("BPM_JOB", "IDX_JOB_PRINST", "IX_JOB_PROCESS"));
         sql.add(getDDLRemoveIndex("BPM_JOB", "IDX_JOB_TOKEN"));
         sql.add(getDDLRenameColumn("BPM_JOB", "TOKEN_", new ColumnDef("TOKEN_ID", Types.BIGINT)));
         sql.add(getDDLRenameColumn("BPM_JOB", "TRANSITIONNAME_", new ColumnDef("TRANSITION_NAME", Types.VARCHAR)));
@@ -329,7 +366,8 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameColumn("BPM_VARIABLE", "VERSION_", new ColumnDef("VERSION", Types.BIGINT)));
         sql.add(getDDLRenameColumn("BPM_VARIABLE", "CONVERTER_", new ColumnDef("CONVERTER", Types.CHAR)));
         sql.add(getDDLRenameColumn("BPM_VARIABLE", "PROCESSINSTANCE_", new ColumnDef("PROCESS_ID", Types.BIGINT)));
-        sql.add(getDDLRenameIndex("BPM_VARIABLE", "IDX_VARINST_PRCINS", "IDX_PROCESS"));
+        sql.add(getDDLRenameIndex("BPM_VARIABLE", "IDX_VARINST_PRCINS", "IX_VARIABLE_PROCESS"));
+        sql.add(getDDLRenameForeignKey("FK_VARINST_PRCINST", "FK_VARIABLE_PROCESS"));
         sql.add(getDDLRenameColumn("BPM_VARIABLE", "LONGVALUE_", new ColumnDef("LONGVALUE", Types.BIGINT)));
         sql.add(getDDLRenameColumn("BPM_VARIABLE", "STRINGVALUE_", new ColumnDef("STRINGVALUE", Types.VARCHAR)));
         sql.add(getDDLRenameColumn("BPM_VARIABLE", "DATEVALUE_", new ColumnDef("DATEVALUE", Types.DATE)));
@@ -339,32 +377,19 @@ public class JbpmRefactoringPatch extends DBPatch {
 
         // ru.runa.wfe.execution.NodeProcess
         sql.add(getDDLRenameTable("JBPM_NODE_SUBPROC", "BPM_SUBPROCESS"));
+        sql.add(getDDLRemoveIndex("BPM_SUBPROCESS", "IDX_NODE_SUBPROC_NODE"));
         sql.add(getDDLRenameColumn("BPM_SUBPROCESS", "ID_", new ColumnDef("ID", Types.BIGINT)));
         sql.add(getDDLRenameColumn("BPM_SUBPROCESS", "PROCESSINSTANCE_", new ColumnDef("PARENT_PROCESS_ID", Types.BIGINT)));
-        sql.add(getDDLRenameIndex("BPM_SUBPROCESS", "IDX_NODE_SUBPROC_PROCINST", "IDX_PARENT_PROCESS"));
+        sql.add(getDDLRenameIndex("BPM_SUBPROCESS", "IDX_NODE_SUBPROC_PROCINST", "IX_SUBPROCESS_PARENT_PROCESS"));
         sql.add(getDDLRenameForeignKey("FK_NODE_SUBPROC_SUBPROCINST", "FK_SUBPROCESS_PROCESS"));
         sql.add(getDDLRenameColumn("BPM_SUBPROCESS", "SUBPROCESSINSTANCE_", new ColumnDef("PROCESS_ID", Types.BIGINT)));
-        sql.add(getDDLRenameIndex("BPM_SUBPROCESS", "IDX_NODE_SUBPROC_SUBPROCINST", "IDX_PROCESS"));
+        sql.add(getDDLRenameIndex("BPM_SUBPROCESS", "IDX_NODE_SUBPROC_SUBPROCINST", "IX_SUBPROCESS_PROCESS"));
         sql.add(getDDLRenameForeignKey("FK_NODE_SUBPROC_PROCINST", "FK_SUBPROCESS_PARENT_PROCESS"));
         sql.add(getDDLCreateColumn("BPM_SUBPROCESS", new ColumnDef("PARENT_TOKEN_ID", Types.BIGINT)));
         sql.add(getDDLCreateForeignKey("BPM_SUBPROCESS", "FK_SUBPROCESS_TOKEN", "PARENT_TOKEN_ID", "BPM_TOKEN", "ID"));
         sql.add(getDDLCreateColumn("BPM_SUBPROCESS", new ColumnDef("PARENT_NODE_ID", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
 
-        // ru.runa.wfe.ss.SubstitutionCriteria
-        sql.add(getDDLRenameTable("SUBSTITUTION_CRITERIAS", "SUBSTITUTION_CRITERIA"));
-        sql.add(getDDLRenameColumn("SUBSTITUTION_CRITERIA", "TYPE", new ColumnDef("DISCRIMINATOR", Types.VARCHAR)));
-        // ru.runa.wfe.ss.Substitution
-        sql.add(getDDLRenameTable("SUBSTITUTIONS", "SUBSTITUTION"));
-        sql.add(getDDLRenameColumn("SUBSTITUTION", "IS_TERMINATOR", new ColumnDef("DISCRIMINATOR", Types.VARCHAR)));
-        sql.add(getDDLCreateIndex("SUBSTITUTION", "CRITERIA_ID_IDX", "CRITERIA_ID"));
-        sql.add(getDDLCreateIndex("SUBSTITUTION", "ACTOR_ID_IDX", "ACTOR_ID"));
-        sql.add(getDDLCreateForeignKey("SUBSTITUTION", "FK_SUBSTITUTION_CRITERIA", "CRITERIA_ID", "SUBSTITUTION_CRITERIA", "ID"));
-        // ru.runa.wfe.audit.SystemLog
-        sql.add(getDDLTruncateTable("SYSTEM_LOG"));
-        sql.add(getDDLRenameColumn("SYSTEM_LOG", "LOG_TYPE", new ColumnDef("DISCRIMINATOR", Types.VARCHAR)));
-        sql.add(getDDLRenameColumn("SYSTEM_LOG", "ACTOR_CODE", new ColumnDef("ACTOR_ID", Types.BIGINT)));
-        sql.add(getDDLRenameColumn("SYSTEM_LOG", "PROCESS_INSTANCE", new ColumnDef("PROCESS_ID", Types.BIGINT)));
-
+        sql.add(getDDLRemoveTable("EXECUTOR_OPEN_TASKS"));
         return sql;
     }
 
@@ -382,8 +407,11 @@ public class JbpmRefactoringPatch extends DBPatch {
         }
         sql.add(getDDLRemoveColumn("BPM_SWIMLANE", "TASKMGMTINSTANCE_"));
         sql.add(getDDLRemoveColumn("BPM_SWIMLANE", "ACTORID_"));
+        sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TASK_ACTORID"));
+        sql.add(getDDLRemoveColumn("BPM_TASK", "ACTORID_"));
+        sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TSKINST_TMINST"));
+        sql.add(getDDLRemoveColumn("BPM_TASK", "TASKMGMTINSTANCE_"));
 
-        // removed jbpm definition layer persistance
         sql.add(getDDLRemoveForeignKey("JBPM_NODE", "FK_NODE_ACTION"));
         sql.add(getDDLRemoveForeignKey("JBPM_NODE", "FK_NODE_SCRIPT"));
         sql.add(getDDLRemoveForeignKey("JBPM_VARIABLEACCESS", "FK_VARACC_PROCST"));
@@ -413,7 +441,6 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveTable("JBPM_TASK"));
         sql.add(getDDLRemoveTable("JBPM_SWIMLANE"));
 
-        sql.add(getDDLRemoveTable("EXECUTOR_OPEN_TASKS"));
         sql.add(getDDLRemoveTable("PERMISSION_MAPPINGS"));
         sql.add(getDDLRemoveTable("SECURED_OBJECT_TYPES"));
         sql.add(getDDLRemoveTable("SECURED_OBJECTS"));
@@ -424,19 +451,28 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveTable("JBPM_TRANSITION"));
 
         sql.add(getDDLRemoveTable("JBPM_MODULEINSTANCE"));
-
         sql.add(getDDLRemoveTable("JBPM_MODULEDEFINITION"));
 
         sql.add(getDDLRemoveColumn("BPM_TOKEN", "NODE_"));
         sql.add(getDDLRemoveColumn("BPM_TOKEN", "SUBPROCESSINSTANCE_"));
 
-        sql.add(getDDLRemoveColumn("JBPM_TASKINSTANCE", "TASK_"));
-
+        sql.add(getDDLRemoveColumn("BPM_TASK", "TASK_"));
         sql.add(getDDLRemoveColumn("BPM_JOB", "LOCKOWNER_"));
-
         sql.add(getDDLRemoveColumn("BPM_SUBPROCESS", "NODE_"));
-
         return sql;
+    }
+
+    static final Map<String, NodeType> nodeTypes = Maps.newHashMap();
+    static {
+        nodeTypes.put("C", NodeType.Subprocess);
+        nodeTypes.put("D", NodeType.Decision);
+        nodeTypes.put("E", NodeType.End);
+        nodeTypes.put("F", NodeType.Fork);
+        nodeTypes.put("J", NodeType.Join);
+        nodeTypes.put("K", NodeType.TaskNode);
+        nodeTypes.put("W", NodeType.MultiSubprocess);
+        nodeTypes.put("X", NodeType.SendMessage);
+        nodeTypes.put("Y", NodeType.ReceiveMessage);
     }
 
     @Override
@@ -447,16 +483,121 @@ public class JbpmRefactoringPatch extends DBPatch {
         } catch (Exception e) {
             // may be missed
         }
-        // fillPRIVELEGED_MAPPING
-        //
+        try {
+            session.createSQLQuery("SELECT COUNT(*) FROM JBPM_COMMENT").uniqueResult();
+            jbpmCommentTableExists = true;
+        } catch (Exception e) {
+            // may be missed
+        }
+        String q;
+        List<Object[]> list;
+
+        log.info("Cleaned keepAlive jobs: " + session.createSQLQuery("DELETE FROM BPM_JOB WHERE LOCKOWNER_ = 'keepAlive'").executeUpdate());
+        // update process definition PAR file
+        q = "SELECT md.PROCESSDEFINITION_, f.BYTES_ FROM JBPM_PROCESSFILES f, JBPM_MODULEDEFINITION md WHERE f.DEFINITION_ID_=md.ID_ AND f.NAME_='par'";
+        list = session.createSQLQuery(q).list();
+        for (Object[] objects : list) {
+            Blob blob = (Blob) objects[1];
+            SQLQuery query = session.createSQLQuery("UPDATE BPM_PROCESS_DEFINITION SET BYTES=:par WHERE ID=:id");
+            query.setParameter("id", objects[0]);
+            query.setParameter("par", ByteStreams.toByteArray(blob.getBinaryStream()));
+            query.executeUpdate();
+        }
+        // update process definition type
+        q = "SELECT PROCESS_NAME, SORT_COLUMN FROM PROCESS_DEFINITION_INFO";
+        list = session.createSQLQuery(q).list();
+        for (Object[] objects : list) {
+            SQLQuery query = session.createSQLQuery("UPDATE BPM_PROCESS_DEFINITION SET CATEGORY=:category WHERE NAME=:name");
+            query.setParameter("name", objects[0]);
+            query.setParameter("category", objects[1]);
+            query.executeUpdate();
+        }
+        // tokens
+        q = "SELECT t.ID, n.CLASS_, n.NAME_ FROM BPM_TOKEN t, JBPM_NODE n WHERE t.NODE_= n.ID_";
+        list = session.createSQLQuery(q).list();
+        for (Object[] objects : list) {
+            SQLQuery query = session.createSQLQuery("UPDATE BPM_TOKEN SET NODE_TYPE=:nodeType, NODE_ID=:nodeId WHERE ID=:id");
+            query.setParameter("id", objects[0]);
+            NodeType nodeType = nodeTypes.get(objects[1].toString());
+            if (nodeType == null) {
+                throw new InternalApplicationException("nodeType == null for " + objects[1]);
+            }
+            query.setParameter("nodeType", nodeType.name());
+            query.setParameter("nodeId", objects[2]);
+            query.executeUpdate();
+        }
+        // tasks
+        log.info("Deleted completed tasks: " + session.createSQLQuery("DELETE FROM BPM_TASK WHERE END_DATE IS NOT NULL").executeUpdate());
+        session.createSQLQuery("UPDATE BPM_TASK SET FIRST_OPEN=0").executeUpdate();
+        q = "SELECT t.ID, t.ACTORID_, mi.PROCESSINSTANCE_, d.NAME_ FROM BPM_TASK t, JBPM_MODULEINSTANCE mi, JBPM_TASK d WHERE t.TASKMGMTINSTANCE_= mi.ID_ and t.TASK_=d.ID_";
+        list = session.createSQLQuery(q).list();
+        for (Object[] objects : list) {
+            String executorIdentity = (String) objects[1];
+            Long executorId = null;
+            if (Strings.isNullOrEmpty(executorIdentity)) {
+            } else if (executorIdentity.startsWith("G")) {
+                executorId = Long.parseLong(executorIdentity.substring(1));
+            } else {
+                q = "SELECT ID FROM EXECUTOR WHERE CODE=" + executorIdentity;
+                try {
+                    Number id = (Number) session.createSQLQuery(q).uniqueResult();
+                    executorId = id != null ? id.longValue() : null;
+                } catch (Exception e) {
+                    log.info("Invalid query " + q);
+                    throw e;
+                }
+            }
+            if (executorId == null) {
+                log.warn("Null executorId for task " + objects[0] + " (ACTORID_='" + objects[1] + "')");
+            }
+            SQLQuery query = session
+                    .createSQLQuery("UPDATE BPM_TASK SET EXECUTOR_ID=:executorId, PROCESS_ID=:processId, NODE_ID=:nodeId WHERE ID=:id");
+            query.setParameter("id", objects[0]);
+            query.setParameter("executorId", executorId);
+            query.setParameter("processId", objects[2]);
+            query.setParameter("nodeId", objects[3]);
+            query.executeUpdate();
+        }
+        log.info("Deleted broken tasks [by PROCESS_ID]: " + session.createSQLQuery("DELETE FROM BPM_TASK WHERE PROCESS_ID IS NULL").executeUpdate());
+        log.info("Deleted broken tasks [by NODE_ID]: " + session.createSQLQuery("DELETE FROM BPM_TASK WHERE NODE_ID IS NULL").executeUpdate());
+        // swimlanes
+        q = "SELECT t.ID, t.ACTORID_, mi.PROCESSINSTANCE_ FROM BPM_SWIMLANE t, JBPM_MODULEINSTANCE mi WHERE t.TASKMGMTINSTANCE_= mi.ID_";
+        list = session.createSQLQuery(q).list();
+        for (Object[] objects : list) {
+            String executorIdentity = (String) objects[1];
+            Long executorId = null;
+            if (executorIdentity == null) {
+            } else if (executorIdentity.startsWith("G")) {
+                executorId = Long.parseLong(executorIdentity.substring(1));
+            } else {
+                Number id = (Number) session.createSQLQuery("SELECT ID FROM EXECUTOR WHERE CODE=" + executorIdentity).uniqueResult();
+                executorId = id != null ? id.longValue() : null;
+            }
+            if (executorId == null) {
+                log.warn("Null executorId for swimlane " + objects[0] + " (ACTORID_='" + objects[1] + "')");
+            }
+            SQLQuery query = session.createSQLQuery("UPDATE BPM_SWIMLANE SET EXECUTOR_ID=:executorId, PROCESS_ID=:processId WHERE ID=:id");
+            query.setParameter("id", objects[0]);
+            query.setParameter("executorId", executorId);
+            query.setParameter("processId", objects[2]);
+            query.executeUpdate();
+        }
+        log.info("Deleted broken swimlanes: " + session.createSQLQuery("DELETE FROM BPM_SWIMLANE WHERE PROCESS_ID IS NULL").executeUpdate());
+        // fill priveleged executors permissions
+        List<Long> privelegedExecutorIds = Lists.newArrayList(1L, 2L);
+        for (SecuredObjectType type : SecuredObjectType.values()) {
+            for (Long executorId : privelegedExecutorIds) {
+                SQLQuery query = session.createSQLQuery("INSERT INTO PRIVELEGED_MAPPING (TYPE, EXECUTOR_ID) VALUES (:type, :executorId)");
+                query.setParameter("type", type.name());
+                query.setParameter("executorId", executorId);
+                query.executeUpdate();
+            }
+        }
         // convert PermissionMapping
         //
         // TODO fill process history for diagram drawing ... (JBPM_TRANSITION +
         // JBPM_PASSTRANS)
 
-        // TODO почистить job c фиктивным LOCKOWNER_
-
         // TODO fill BPM_SUBPROCESS
     }
-
 }
