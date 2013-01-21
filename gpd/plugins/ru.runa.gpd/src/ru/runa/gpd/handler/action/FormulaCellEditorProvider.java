@@ -141,7 +141,7 @@ public class FormulaCellEditorProvider extends DelegableProvider {
     private static class ChooseFunctionDialog extends ChooseItemDialog {
         private final static List<String> functions = new ArrayList<String>();
         static {
-            functions.add("get_instance_id()");
+            functions.add("get_process_id()");
             functions.add("current_date()");
             functions.add("current_time()");
             functions.add("current_date_time()");
