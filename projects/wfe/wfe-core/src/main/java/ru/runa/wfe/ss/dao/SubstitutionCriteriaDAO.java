@@ -22,11 +22,6 @@ public class SubstitutionCriteriaDAO extends GenericDAO<SubstitutionCriteria> {
         getHibernateTemplate().saveOrUpdate(substitutionCriteria);
     }
 
-    public void delete(SubstitutionCriteria criteria) {
-        Preconditions.checkNotNull(criteria);
-        delete(criteria.getId());
-    }
-
     public List<Substitution> getSubstitutionsByCriteria(SubstitutionCriteria criteria) {
         return getHibernateTemplate().find("from Substitution where criteria=?", criteria);
     }

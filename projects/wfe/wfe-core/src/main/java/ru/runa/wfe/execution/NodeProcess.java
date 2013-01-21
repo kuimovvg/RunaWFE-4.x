@@ -12,8 +12,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
@@ -34,11 +32,11 @@ public class NodeProcess {
     protected NodeProcess() {
     }
 
-    public NodeProcess(Token parentToken, Process child, Node processStateNode) {
+    public NodeProcess(Token parentToken, Process subProcess, Node processStateNode) {
         process = parentToken.getProcess();
         this.parentToken = parentToken;
         nodeId = processStateNode.getNodeId();
-        subProcess = child;
+        this.subProcess = subProcess;
     }
 
     @Id
@@ -81,7 +79,7 @@ public class NodeProcess {
     @JoinColumn(name = "PROCESS_ID", nullable = false)
     @ForeignKey(name = "FK_SUBPROCESS_PROCESS")
     @Index(name = "IX_SUBPROCESS_PROCESS")
-    @Cascade({ CascadeType.ALL })
+    // @Cascade({ CascadeType.ALL })
     public Process getSubProcess() {
         return subProcess;
     }
