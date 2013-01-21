@@ -61,8 +61,8 @@ public class ExecutorGroupMembership {
 
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false, insertable = true, updatable = false)
-    @ForeignKey(name = "FK_EGM_EXECUTOR")
-    @Index(name = "EXEC_GROUP_REL_EXEC_ID_IDX")
+    @ForeignKey(name = "FK_MEMBER_EXECUTOR")
+    @Index(name = "IX_MEMBER_EXECUTOR")
     @Fetch(FetchMode.JOIN)
     public Executor getExecutor() {
         return executor;
@@ -74,8 +74,8 @@ public class ExecutorGroupMembership {
 
     @ManyToOne(targetEntity = Group.class)
     @JoinColumn(name = "GROUP_ID", nullable = false, insertable = true, updatable = false)
-    @ForeignKey(name = "FK_EGM_GROUP")
-    @Index(name = "EXEC_GROUP_REL_GROUP_ID_IDX")
+    @ForeignKey(name = "FK_MEMBER_GROUP")
+    @Index(name = "IX_MEMBER_GROUP")
     @Fetch(FetchMode.JOIN)
     public Group getGroup() {
         return group;

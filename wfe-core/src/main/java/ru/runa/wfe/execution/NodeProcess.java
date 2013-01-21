@@ -56,7 +56,7 @@ public class NodeProcess {
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PARENT_PROCESS_ID", nullable = false)
     @ForeignKey(name = "FK_SUBPROCESS_PARENT_PROCESS")
-    @Index(name = "IDX_PARENT_PROCESS")
+    @Index(name = "IX_SUBPROCESS_PARENT_PROCESS")
     public Process getProcess() {
         return process;
     }
@@ -80,7 +80,7 @@ public class NodeProcess {
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PROCESS_ID", nullable = false)
     @ForeignKey(name = "FK_SUBPROCESS_PROCESS")
-    @Index(name = "IDX_PROCESS")
+    @Index(name = "IX_SUBPROCESS_PROCESS")
     @Cascade({ CascadeType.ALL })
     public Process getSubProcess() {
         return subProcess;

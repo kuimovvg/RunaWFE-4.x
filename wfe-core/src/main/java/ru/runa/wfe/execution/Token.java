@@ -198,7 +198,7 @@ public class Token implements Serializable {
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PROCESS_ID")
     @ForeignKey(name = "FK_TOKEN_PROCESS")
-    @Index(name = "IDX_PROCESS")
+    @Index(name = "IX_TOKEN_PROCESS")
     @Fetch(FetchMode.JOIN)
     public Process getProcess() {
         return process;
@@ -211,7 +211,7 @@ public class Token implements Serializable {
     @ManyToOne(targetEntity = Token.class)
     @JoinColumn(name = "PARENT_ID")
     @ForeignKey(name = "FK_TOKEN_PARENT")
-    @Index(name = "IDX_TOKEN_PARENT")
+    @Index(name = "IX_TOKEN_PARENT")
     @Fetch(FetchMode.JOIN)
     public Token getParent() {
         return parent;
