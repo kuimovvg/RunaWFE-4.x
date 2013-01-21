@@ -125,7 +125,7 @@ public class MessageNodeDialog extends Dialog {
 
             @Override
             public void widgetSelected(SelectionEvent event) {
-                VariableMapping mapping = new VariableMapping("processInstanceId", "${currentInstanceId}", VariableMapping.USAGE_SELECTOR);
+                VariableMapping mapping = new VariableMapping("processId", "${currentProcessId}", VariableMapping.USAGE_SELECTOR);
                 if (sendMode) {
                     editVariableMapping(mapping, VariableMapping.USAGE_SELECTOR);
                 } else {
