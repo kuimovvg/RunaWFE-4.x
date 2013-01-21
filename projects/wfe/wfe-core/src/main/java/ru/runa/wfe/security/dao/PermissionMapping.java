@@ -98,7 +98,7 @@ public class PermissionMapping {
 
     @Column(name = "TYPE", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @Index(name = "IDX_TYPE")
+    @Index(name = "IX_PERMISSION_TYPE")
     public SecuredObjectType getType() {
         return type;
     }
@@ -110,7 +110,7 @@ public class PermissionMapping {
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false)
     @ForeignKey(name = "FK_PERMISSION_EXECUTOR")
-    @Index(name = "IDX_EXECUTOR")
+    @Index(name = "IX_PERMISSION_EXECUTOR")
     @Fetch(FetchMode.JOIN)
     public Executor getExecutor() {
         return executor;

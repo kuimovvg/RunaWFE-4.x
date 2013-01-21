@@ -136,7 +136,7 @@ public class Substitution implements Cloneable, Serializable {
     }
 
     @Column(name = "ACTOR_ID", nullable = false)
-    @Index(name = "ACTOR_ID_IDX")
+    @Index(name = "IX_SUBSTITUTION_ACTOR")
     public Long getActorId() {
         return actorId;
     }
@@ -148,7 +148,7 @@ public class Substitution implements Cloneable, Serializable {
     @ManyToOne(targetEntity = SubstitutionCriteria.class)
     @JoinColumn(name = "CRITERIA_ID")
     @ForeignKey(name = "FK_SUBSTITUTION_CRITERIA")
-    @Index(name = "CRITERIA_ID_IDX")
+    @Index(name = "IX_SUBSTITUTION_CRITERIA")
     @Fetch(FetchMode.JOIN)
     public SubstitutionCriteria getCriteria() {
         return criteria;

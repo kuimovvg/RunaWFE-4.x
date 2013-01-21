@@ -147,7 +147,7 @@ public class Process implements Identifiable {
     @ManyToOne(targetEntity = Deployment.class)
     @JoinColumn(name = "DEFINITION_ID", nullable = false)
     @ForeignKey(name = "FK_PROCESS_DEFINITION")
-    @Index(name = "IDX_PROCESS_DEFINITION")
+    @Index(name = "IX_PROCESS_DEFINITION")
     public Deployment getDefinition() {
         return definition;
     }
@@ -159,7 +159,7 @@ public class Process implements Identifiable {
     @ManyToOne(targetEntity = Token.class, cascade = { javax.persistence.CascadeType.ALL })
     @JoinColumn(name = "ROOT_TOKEN_ID", nullable = false)
     @ForeignKey(name = "FK_PROCESS_ROOT_TOKEN")
-    @Index(name = "IDX_PROCESS_ROOT_TOKEN")
+    @Index(name = "IX_PROCESS_ROOT_TOKEN")
     public Token getRootToken() {
         return rootToken;
     }

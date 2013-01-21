@@ -118,7 +118,7 @@ public class Swimlane implements Serializable, Assignable {
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PROCESS_ID")
     @ForeignKey(name = "FK_SWIMLANE_PROCESS")
-    @Index(name = "IDX_PROCESS")
+    @Index(name = "IX_SWIMLANE_PROCESS")
     public Process getProcess() {
         return process;
     }

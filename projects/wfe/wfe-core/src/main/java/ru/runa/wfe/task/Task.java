@@ -206,7 +206,7 @@ public class Task implements Assignable {
     @ManyToOne(targetEntity = Process.class)
     @JoinColumn(name = "PROCESS_ID")
     @ForeignKey(name = "FK_TASK_PROCESS")
-    @Index(name = "IDX_PROCESS")
+    @Index(name = "IX_TASK_PROCESS")
     public Process getProcess() {
         return process;
     }
@@ -218,7 +218,7 @@ public class Task implements Assignable {
     @ManyToOne(targetEntity = Executor.class)
     @JoinColumn(name = "EXECUTOR_ID")
     @ForeignKey(name = "FK_TASK_EXECUTOR")
-    @Index(name = "IDX_EXECUTOR")
+    @Index(name = "IX_TASK_EXECUTOR")
     public Executor getExecutor() {
         return executor;
     }

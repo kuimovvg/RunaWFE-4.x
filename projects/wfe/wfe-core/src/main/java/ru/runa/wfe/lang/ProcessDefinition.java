@@ -220,6 +220,7 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
     }
 
     public Node getNodeNotNull(String id) {
+        Preconditions.checkNotNull(id);
         for (Node node : nodes) {
             if (id.equals(node.getNodeId())) {
                 return node;

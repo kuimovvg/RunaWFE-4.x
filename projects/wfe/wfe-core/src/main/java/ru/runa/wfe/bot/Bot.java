@@ -75,7 +75,7 @@ public class Bot implements Serializable {
     @ManyToOne(targetEntity = BotStation.class)
     @JoinColumn(name = "BOT_STATION_ID", nullable = false, updatable = true, insertable = true)
     @ForeignKey(name = "FK_BOT_STATION")
-    @Index(name = "B_BS_IDX")
+    @Index(name = "IX_BOT_STATION")
     @Fetch(FetchMode.JOIN)
     public BotStation getBotStation() {
         return botStation;
