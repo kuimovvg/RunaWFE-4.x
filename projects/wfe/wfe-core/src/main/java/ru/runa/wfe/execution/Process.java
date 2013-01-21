@@ -144,7 +144,7 @@ public class Process implements Identifiable {
         endDate = end;
     }
 
-    @ManyToOne(targetEntity = Deployment.class)
+    @ManyToOne(targetEntity = Deployment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "DEFINITION_ID", nullable = false)
     @ForeignKey(name = "FK_PROCESS_DEFINITION")
     @Index(name = "IX_PROCESS_DEFINITION")
@@ -156,7 +156,7 @@ public class Process implements Identifiable {
         definition = processDeployment;
     }
 
-    @ManyToOne(targetEntity = Token.class, cascade = { javax.persistence.CascadeType.ALL })
+    @ManyToOne(targetEntity = Token.class, fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.ALL })
     @JoinColumn(name = "ROOT_TOKEN_ID", nullable = false)
     @ForeignKey(name = "FK_PROCESS_ROOT_TOKEN")
     @Index(name = "IX_PROCESS_ROOT_TOKEN")
@@ -168,7 +168,7 @@ public class Process implements Identifiable {
         this.rootToken = rootToken;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = Swimlane.class)
+    @OneToMany(targetEntity = Swimlane.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PROCESS_ID")
     @Cascade({ CascadeType.ALL, CascadeType.DELETE_ORPHAN })
     public Set<Swimlane> getSwimlanes() {
@@ -179,7 +179,7 @@ public class Process implements Identifiable {
         this.swimlanes = swimlanes;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = Task.class)
+    @OneToMany(targetEntity = Task.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PROCESS_ID")
     @Cascade({ CascadeType.ALL, CascadeType.DELETE_ORPHAN })
     public Set<Task> getTasks() {

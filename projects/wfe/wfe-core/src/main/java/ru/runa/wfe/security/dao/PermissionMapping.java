@@ -21,6 +21,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,11 +34,10 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
@@ -107,13 +107,12 @@ public class PermissionMapping {
         this.type = type;
     }
 
-    @ManyToOne(targetEntity = Executor.class)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false)
     @ForeignKey(name = "FK_PERMISSION_EXECUTOR")
     @Index(name = "IX_PERMISSION_EXECUTOR")
-    @Fetch(FetchMode.JOIN)
     public Executor getExecutor() {
-        return executor;
+        return Proxies.getImplementation(executor);
     }
 
     private void setExecutor(Executor executor) {

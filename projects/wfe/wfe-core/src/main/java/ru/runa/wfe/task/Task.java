@@ -25,6 +25,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,6 +45,7 @@ import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.TaskAssignLog;
 import ru.runa.wfe.audit.TaskEndLog;
+import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Swimlane;
@@ -181,7 +183,7 @@ public class Task implements Assignable {
         this.firstOpen = firstOpen;
     }
 
-    @ManyToOne(targetEntity = Token.class)
+    @ManyToOne(targetEntity = Token.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "TOKEN_ID")
     @ForeignKey(name = "FK_TASK_TOKEN")
     public Token getToken() {
@@ -192,7 +194,7 @@ public class Task implements Assignable {
         this.token = token;
     }
 
-    @ManyToOne(targetEntity = Swimlane.class)
+    @ManyToOne(targetEntity = Swimlane.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "SWIMLANE_ID")
     @ForeignKey(name = "FK_TASK_SWIMLANE")
     public Swimlane getSwimlane() {
@@ -203,7 +205,7 @@ public class Task implements Assignable {
         this.swimlane = swimlane;
     }
 
-    @ManyToOne(targetEntity = Process.class)
+    @ManyToOne(targetEntity = Process.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PROCESS_ID")
     @ForeignKey(name = "FK_TASK_PROCESS")
     @Index(name = "IX_TASK_PROCESS")
@@ -215,12 +217,12 @@ public class Task implements Assignable {
         this.process = process;
     }
 
-    @ManyToOne(targetEntity = Executor.class)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "EXECUTOR_ID")
     @ForeignKey(name = "FK_TASK_EXECUTOR")
     @Index(name = "IX_TASK_EXECUTOR")
     public Executor getExecutor() {
-        return executor;
+        return Proxies.getImplementation(executor);
     }
 
     public void setExecutor(Executor executor) {
@@ -229,7 +231,7 @@ public class Task implements Assignable {
 
     @Override
     public void assignExecutor(ExecutionContext executionContext, Executor executor, boolean cascadeUpdate) {
-        if (Objects.equal(this.executor, executor)) {
+        if (Objects.equal(getExecutor(), executor)) {
             return;
         }
         log.debug("assigning task '" + name + "' to '" + executor + "'");
