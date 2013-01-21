@@ -21,6 +21,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,8 +33,6 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -72,11 +71,10 @@ public class Bot implements Serializable {
         this.version = version;
     }
 
-    @ManyToOne(targetEntity = BotStation.class)
+    @ManyToOne(targetEntity = BotStation.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "BOT_STATION_ID", nullable = false, updatable = true, insertable = true)
     @ForeignKey(name = "FK_BOT_STATION")
     @Index(name = "IX_BOT_STATION")
-    @Fetch(FetchMode.JOIN)
     public BotStation getBotStation() {
         return botStation;
     }

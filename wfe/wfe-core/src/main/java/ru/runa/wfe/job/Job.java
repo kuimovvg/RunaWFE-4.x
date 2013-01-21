@@ -7,6 +7,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -91,7 +92,7 @@ public abstract class Job {
         this.dueDate = dueDate;
     }
 
-    @ManyToOne(targetEntity = Process.class)
+    @ManyToOne(targetEntity = Process.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PROCESS_ID", nullable = false)
     @ForeignKey(name = "FK_JOB_PROCESS")
     @Index(name = "IX_JOB_PROCESS")
@@ -103,7 +104,7 @@ public abstract class Job {
         this.process = process;
     }
 
-    @ManyToOne(targetEntity = Token.class)
+    @ManyToOne(targetEntity = Token.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "TOKEN_ID")
     @ForeignKey(name = "FK_JOB_TOKEN")
     public Token getToken() {

@@ -19,6 +19,7 @@ package ru.runa.wfe.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,10 +32,10 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+
+import ru.runa.wfe.commons.hibernate.Proxies;
 
 import com.google.common.base.Objects;
 
@@ -59,26 +60,24 @@ public class ExecutorGroupMembership {
         this.executor = executor;
     }
 
-    @ManyToOne(targetEntity = Executor.class)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_MEMBER_EXECUTOR")
     @Index(name = "IX_MEMBER_EXECUTOR")
-    @Fetch(FetchMode.JOIN)
     public Executor getExecutor() {
-        return executor;
+        return Proxies.getImplementation(executor);
     }
 
     public void setExecutor(Executor executor) {
         this.executor = executor;
     }
 
-    @ManyToOne(targetEntity = Group.class)
+    @ManyToOne(targetEntity = Group.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "GROUP_ID", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_MEMBER_GROUP")
     @Index(name = "IX_MEMBER_GROUP")
-    @Fetch(FetchMode.JOIN)
     public Group getGroup() {
-        return group;
+        return Proxies.getImplementation(group);
     }
 
     public void setGroup(Group group) {

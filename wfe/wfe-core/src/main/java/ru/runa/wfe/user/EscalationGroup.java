@@ -3,11 +3,13 @@ package ru.runa.wfe.user;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
 
+import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.task.Task;
 
@@ -24,11 +26,11 @@ public class EscalationGroup extends TemporaryGroup {
     private Executor originalExecutor;
     private int escalationLevel;
 
-    @ManyToOne(targetEntity = Executor.class)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "ESCALATION_EXECUTOR_ID")
     @ForeignKey(name = "FK_GROUP_ESCALATION_EXECUTOR")
     public Executor getOriginalExecutor() {
-        return originalExecutor;
+        return Proxies.getImplementation(originalExecutor);
     }
 
     public void setOriginalExecutor(Executor originalExecutor) {

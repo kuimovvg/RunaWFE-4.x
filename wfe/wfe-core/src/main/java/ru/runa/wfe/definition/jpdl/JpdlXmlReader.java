@@ -24,7 +24,6 @@ import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EndNode;
-import ru.runa.wfe.lang.EndTokenNode;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Fork;
 import ru.runa.wfe.lang.GraphElement;
@@ -44,6 +43,7 @@ import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.lang.VariableContainerNode;
 import ru.runa.wfe.lang.WaitState;
+import ru.runa.wfe.lang.jpdl.EndTokenNode;
 import ru.runa.wfe.lang.jpdl.Join;
 import ru.runa.wfe.var.VariableMapping;
 

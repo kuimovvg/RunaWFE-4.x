@@ -21,6 +21,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,6 +35,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
@@ -72,11 +74,11 @@ public class PrivelegedMapping {
         this.id = id;
     }
 
-    @ManyToOne(targetEntity = Executor.class)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false)
     @ForeignKey(name = "FK_PM_EXECUTOR")
     public Executor getExecutor() {
-        return executor;
+        return Proxies.getImplementation(executor);
     }
 
     public void setExecutor(Executor executor) {

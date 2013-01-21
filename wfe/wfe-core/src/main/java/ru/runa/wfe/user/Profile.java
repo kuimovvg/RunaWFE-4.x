@@ -40,8 +40,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Sort;
@@ -96,10 +94,9 @@ public final class Profile implements Serializable {
         this.version = version;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Actor.class)
+    @ManyToOne(targetEntity = Actor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "ACTOR_ID", nullable = false, updatable = false, unique = true)
     @ForeignKey(name = "FK_PROFILE_ACTOR")
-    @Fetch(FetchMode.JOIN)
     public Actor getActor() {
         return actor;
     }
@@ -108,7 +105,7 @@ public final class Profile implements Serializable {
         this.actor = actor;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, targetEntity = BatchPresentation.class)
+    @OneToMany(targetEntity = BatchPresentation.class, fetch = FetchType.EAGER)
     @Sort(type = SortType.UNSORTED)
     @JoinColumn(name = "PROFILE_ID")
     @ForeignKey(name = "FK_BATCH_PRESENTATION_PROFILE")
