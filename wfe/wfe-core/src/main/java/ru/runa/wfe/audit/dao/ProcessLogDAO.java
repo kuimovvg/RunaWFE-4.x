@@ -32,8 +32,7 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
      */
     public void deleteAll(Long processId) {
         log.debug("deleting logs for process " + processId);
-        List<ProcessLog> processLogs = getAll(processId);
-        getHibernateTemplate().deleteAll(processLogs);
+        getHibernateTemplate().bulkUpdate("delete from ProcessLog where processId=?", processId);
     }
 
     /**

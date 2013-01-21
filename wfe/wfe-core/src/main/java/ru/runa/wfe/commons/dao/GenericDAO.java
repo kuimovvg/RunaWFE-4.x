@@ -119,7 +119,7 @@ public abstract class GenericDAO<T extends Object> extends CommonDAO {
      */
     public void delete(Long id) {
         Preconditions.checkNotNull(id);
-        getHibernateTemplate().delete(getNotNull(id));
+        delete(getNotNull(id));
     }
 
     /**
@@ -130,6 +130,14 @@ public abstract class GenericDAO<T extends Object> extends CommonDAO {
         for (Long id : ids) {
             delete(id);
         }
+    }
+
+    /**
+     * Deletes entity from DB
+     */
+    public void delete(T entity) {
+        Preconditions.checkNotNull(entity);
+        getHibernateTemplate().delete(entity);
     }
 
 }

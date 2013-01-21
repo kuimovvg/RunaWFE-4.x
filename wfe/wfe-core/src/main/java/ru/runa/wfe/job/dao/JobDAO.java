@@ -29,10 +29,9 @@ public class JobDAO extends GenericDAO<Job> {
         log.debug(timers.size() + " timers by name '" + name + "' for " + token + " were deleted");
     }
 
-    public void deleteJobs(Process process) {
+    public void deleteAll(Process process) {
         log.debug("deleting jobs for process " + process.getId());
-        List<Job> jobs = getHibernateTemplate().find("from Job where process=?", process);
-        getHibernateTemplate().deleteAll(jobs);
+        getHibernateTemplate().bulkUpdate("delete from Job where process=?", process);
     }
 
 }
