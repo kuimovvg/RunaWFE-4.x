@@ -36,7 +36,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.commons.hibernate.Proxies;
-import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
 
@@ -47,17 +46,14 @@ import ru.runa.wfe.user.Executor;
 @Table(name = "PRIVELEGED_MAPPING")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class PrivelegedMapping {
-
     private Long id;
     private SecuredObjectType type;
     private Executor executor;
 
-    // TODO private long permission;
-
     protected PrivelegedMapping() {
     }
 
-    public PrivelegedMapping(SecuredObjectType type, Executor executor, Permission permission) {
+    public PrivelegedMapping(SecuredObjectType type, Executor executor) {
         setType(type);
         setExecutor(executor);
     }

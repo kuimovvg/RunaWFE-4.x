@@ -47,7 +47,8 @@ import com.google.common.base.Objects;
  * Created on 01.07.2004
  */
 /**
- * Represents an Executor. Executor is an abstract object of system that could perform different actions.
+ * Represents an Executor. Executor is an abstract object of system that could
+ * perform different actions.
  * 
  */
 @Entity
@@ -146,12 +147,12 @@ public abstract class Executor implements Identifiable {
             return false;
         }
         Executor executor = (Executor) obj;
-        return Objects.equal(name, executor.name) && Objects.equal(description, executor.description);
+        return Objects.equal(getName(), executor.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, description);
+        return Objects.hashCode(getName());
     }
 
     @Override

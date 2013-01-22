@@ -31,7 +31,6 @@ import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskFactory;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.base.Preconditions;
 
@@ -44,8 +43,6 @@ public class MultiTaskNode extends InteractionNode implements Synchronizable {
 
     @Autowired
     private TaskFactory taskFactory;
-    @Autowired
-    private ExecutorDAO executorDAO;
 
     private TaskExecutionMode mode;
     private boolean async;

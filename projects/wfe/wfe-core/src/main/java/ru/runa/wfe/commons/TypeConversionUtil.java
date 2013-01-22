@@ -103,7 +103,7 @@ public class TypeConversionUtil {
                 return (T) array;
             }
             if (List.class.isAssignableFrom(classConvertTo)) {
-                List result = new ArrayList();
+                List<Object> result = new ArrayList<Object>();
                 if (object.getClass().isArray()) {
                     int len = Array.getLength(object);
                     for (int i = 0; i < len; i++) {
@@ -162,7 +162,7 @@ public class TypeConversionUtil {
                         Long executorId = convertTo(s.substring(1), Long.class);
                         return (T) executorDAO.getExecutor(executorId);
                     } else {
-                        Long actorCode = convertTo(object, Long.class);
+                        Long actorCode = Long.parseLong(s);
                         return (T) executorDAO.getActorByCode(actorCode);
                     }
                 } catch (NumberFormatException nfe) {
