@@ -8,7 +8,6 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.orgfunction.OrgFunctionDefinition;
 import ru.runa.gpd.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
@@ -117,27 +116,6 @@ public class TaskState extends State implements Synchronizable {
         }
         this.useEscalation = useEscalation;
         firePropertyChange(PROPERTY_ESCALATION, !useEscalation, useEscalation);
-    }
-
-    /**
-     * @return true if there is more than one output transitions (timer
-     *         transition ignored)
-     */
-    public boolean hasMultipleOutputTransitions() {
-        int count = getLeavingTransitions().size();
-        if (hasTimeoutTransition()) {
-            count--;
-        }
-        return count > 1;
-    }
-
-    public boolean hasTimeoutTransition() {
-        for (Transition transition : getLeavingTransitions()) {
-            if (PluginConstants.TIMER_TRANSITION_NAME.equals(transition.getName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

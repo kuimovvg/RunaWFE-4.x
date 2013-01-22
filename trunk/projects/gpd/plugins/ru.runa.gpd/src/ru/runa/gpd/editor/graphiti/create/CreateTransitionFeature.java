@@ -80,13 +80,4 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
         addConnectionContext.setNewObject(transition);
         return (Connection) getFeatureProvider().addIfPossible(addConnectionContext);
     }
-    //    private Node getNode(Anchor anchor) {
-    //        if (anchor != null) {
-    //            Object object = getBusinessObjectForPictogramElement(anchor.getParent());
-    //            if (object instanceof Node) {
-    //                return (Node) object;
-    //            }
-    //        }
-    //        return null;
-    //    }
 }
