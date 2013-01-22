@@ -22,6 +22,7 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
 /**
@@ -37,7 +38,6 @@ public class WordReportSettingsXmlParser {
     private static final String BOOKMARK_ATTRIBUTE_NAME = "bookmark";
     private static final String VARIABLE_ATTRIBUTE_NAME = "variable";
     private static final String FORMAT_CLASS_ATTRIBUTE_NAME = "format-class";
-    private static final String FORMAT_ATTRIBUTE_NAME = "format";
 
     public static MSWordReportTaskSettings read(String configuration) {
         Document document = XmlUtils.parseWithoutValidation(configuration);
@@ -51,10 +51,8 @@ public class WordReportSettingsXmlParser {
             String bookmark = mappingElement.attributeValue(BOOKMARK_ATTRIBUTE_NAME);
             String variable = mappingElement.attributeValue(VARIABLE_ATTRIBUTE_NAME);
             String formatClassName = mappingElement.attributeValue(FORMAT_CLASS_ATTRIBUTE_NAME);
-            String format = mappingElement.attributeValue(FORMAT_ATTRIBUTE_NAME); // TODO
-                                                                                  // PEX
-                                                                                  // OPT
-            BookmarkVariableMapping bookmarkVariableMapping = new BookmarkVariableMapping(bookmark, variable, formatClassName, format);
+            formatClassName = BackCompatibilityClassNames.getClassName(formatClassName);
+            BookmarkVariableMapping bookmarkVariableMapping = new BookmarkVariableMapping(bookmark, variable, formatClassName);
             wordReportSettings.addBookmarkMapping(bookmarkVariableMapping);
         }
         return wordReportSettings;

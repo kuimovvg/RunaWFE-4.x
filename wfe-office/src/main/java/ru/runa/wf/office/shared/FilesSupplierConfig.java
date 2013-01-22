@@ -74,11 +74,7 @@ public abstract class FilesSupplierConfig {
                     throw new InternalApplicationException("Unable to read input file from location '" + inputFilePath + "'");
                 }
             }
-            InputStream inputStream = ClassLoaderUtil.getResourceAsStream(inputFilePath, getClass());
-            if (inputStream != null) {
-                return inputStream;
-            }
-            throw new InternalApplicationException("No input file found in location '" + inputFilePath + "'");
+            return ClassLoaderUtil.getAsStreamNotNull(inputFilePath, getClass());
         }
         if (required) {
             throw new InternalApplicationException("No input file defined in configuration");

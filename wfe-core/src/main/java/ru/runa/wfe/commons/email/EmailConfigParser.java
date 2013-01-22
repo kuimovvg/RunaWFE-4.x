@@ -10,7 +10,6 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 
 @SuppressWarnings("unchecked")
@@ -100,8 +99,7 @@ public class EmailConfigParser {
     }
 
     private static EmailConfig parseFromFile(String fileName) throws IOException {
-        InputStream is = ClassLoaderUtil.getResourceAsStream(fileName, EmailConfigParser.class);
-        Preconditions.checkNotNull(is, "Resource not found by name " + fileName);
+        InputStream is = ClassLoaderUtil.getAsStreamNotNull(fileName, EmailConfigParser.class);
         String c = new String(ByteStreams.toByteArray(is), Charsets.UTF_8);
         return parse(c);
     }

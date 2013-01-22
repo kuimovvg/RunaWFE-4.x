@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.handler.action.var;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,19 +24,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.var.FileVariable;
 
 public class FormulaActionHandlerOperations {
@@ -510,30 +508,23 @@ public class FormulaActionHandlerOperations {
     private static TreeMap<String, HashMap<Integer, String>> families = new TreeMap<String, HashMap<Integer, String>>();
     private static TreeMap<String, HashMap<Integer, String>> parents = new TreeMap<String, HashMap<Integer, String>>();
     static {
-        readNameCaseConfig("/ActionHandlers/nameCaseConf.xml");
+        readNameCaseConfig("nameCaseConf.xml");
     }
 
     private static void readNameCaseConfig(String path) {
         try {
-            InputStream is = ClassLoaderUtil.getResourceAsStream(path, FormulaActionHandlerOperations.class);
-            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
-            if (!doc.getDocumentElement().getTagName().equals("nameCaseConf")) {
-                throw new IOException();
-            }
-            NodeList childs = doc.getDocumentElement().getChildNodes();
-            for (int i = 0; i < childs.getLength(); ++i) {
-                if (!(childs.item(i) instanceof Element)) {
-                    continue;
+            InputStream is = ClassLoaderUtil.getAsStreamNotNull(path, FormulaActionHandlerOperations.class);
+            Document document = XmlUtils.parseWithoutValidation(is);
+            List<Element> childs = document.getRootElement().elements();
+            for (Element element : childs) {
+                if (element.getName().equals("name")) {
+                    names.put(element.attributeValue("value"), parseNameCaseRules(element));
                 }
-                Element el = (Element) childs.item(i);
-                if (el.getTagName().equals("name")) {
-                    names.put(el.getAttribute("value"), parseNameCaseRules(el));
+                if (element.getName().equals("family")) {
+                    families.put(element.attributeValue("value"), parseNameCaseRules(element));
                 }
-                if (el.getTagName().equals("family")) {
-                    families.put(el.getAttribute("value"), parseNameCaseRules(el));
-                }
-                if (el.getTagName().equals("parent")) {
-                    parents.put(el.getAttribute("value"), parseNameCaseRules(el));
+                if (element.getName().equals("parent")) {
+                    parents.put(element.attributeValue("value"), parseNameCaseRules(element));
                 }
             }
         } catch (Exception e) {
@@ -541,20 +532,15 @@ public class FormulaActionHandlerOperations {
         }
     }
 
-    private static HashMap<Integer, String> parseNameCaseRules(Element el) {
+    private static HashMap<Integer, String> parseNameCaseRules(Element element) {
         HashMap<Integer, String> result = new HashMap<Integer, String>();
-        NodeList childs = el.getChildNodes();
-        for (int i = 0; i < childs.getLength(); ++i) {
-            if (!(childs.item(i) instanceof Element)) {
-                continue;
-            }
-            Element r = (Element) childs.item(i);
-            if (r.getTagName().equals("name")) {
+        List<Element> childs = element.elements();
+        for (Element child : childs) {
+            if (child.getName().equals("name")) {
                 break;
             }
-            int c = Integer.parseInt(r.getAttribute("case"));
-            String v = r.getTextContent();
-            result.put(c, v);
+            int c = Integer.parseInt(child.attributeValue("case"));
+            result.put(c, child.getText());
         }
         return result;
     }

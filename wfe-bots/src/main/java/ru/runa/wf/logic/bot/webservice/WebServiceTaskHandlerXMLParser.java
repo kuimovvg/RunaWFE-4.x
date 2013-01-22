@@ -109,8 +109,7 @@ public class WebServiceTaskHandlerXMLParser {
         String requestMethod = root.elementText(REQUEST_METHOD);
         boolean isLoggingEnable = "true".equalsIgnoreCase(root.elementText(LOGGING));
         List<Interaction> interactions = readInteractions(root.elements(INTERACTION));
-        return new WebServiceTaskHandlerSettings(url, soapAction, interactions, document.getXMLEncoding(), authBase, requestMethod, isLoggingEnable,
-                errorAction);
+        return new WebServiceTaskHandlerSettings(url, soapAction, interactions, authBase, requestMethod, isLoggingEnable, errorAction);
     }
 
     /**

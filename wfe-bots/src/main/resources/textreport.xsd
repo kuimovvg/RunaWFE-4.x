@@ -43,7 +43,6 @@
 								<xs:complexType>
 									<xs:attribute name="variableName" type="xs:string" use="required" />
 									<xs:attribute name="formatClass" type="xs:string" use="required" />
-									<xs:attribute name="pattern" type="xs:string" use="optional" />
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>

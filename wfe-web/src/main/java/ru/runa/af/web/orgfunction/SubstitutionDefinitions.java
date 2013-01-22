@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.os.ParamRenderer;
@@ -40,10 +39,7 @@ public class SubstitutionDefinitions {
 
     static {
         try {
-            InputStream is = ClassLoaderUtil.getResourceAsStream(ORGFUNCTIONS_XML, SubstitutionDefinitions.class);
-            if (is == null) {
-                throw new InternalApplicationException("Config file not found: " + ORGFUNCTIONS_XML);
-            }
+            InputStream is = ClassLoaderUtil.getAsStreamNotNull(ORGFUNCTIONS_XML, SubstitutionDefinitions.class);
             Document document = XmlUtils.parseWithoutValidation(is);
             List<Element> oElements = document.getRootElement().elements("function");
             for (Element oElement : oElements) {

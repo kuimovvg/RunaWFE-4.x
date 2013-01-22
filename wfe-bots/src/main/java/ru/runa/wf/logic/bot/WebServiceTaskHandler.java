@@ -184,7 +184,7 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
     private byte[] prepareRequest(WfTask taskStub, Interaction interaction) throws Exception {
         ByteArrayOutputStream res2 = new ByteArrayOutputStream();
         Transformer transformer = TransformerFactory.newInstance().newTransformer(
-                new StreamSource(ClassLoaderUtil.getResourceAsStream("bot/webServiceTaskHandlerRequest.xslt", getClass())));
+                new StreamSource(ClassLoaderUtil.getAsStreamNotNull("webServiceTaskHandlerRequest.xslt", getClass())));
         transformer.transform(new StreamSource(new ByteArrayInputStream(interaction.requestXML.getBytes(settings.encoding))), new StreamResult(res2));
         byte[] soapData = res2.toByteArray();
         if (settings.isLoggingEnable && log.isDebugEnabled()) {

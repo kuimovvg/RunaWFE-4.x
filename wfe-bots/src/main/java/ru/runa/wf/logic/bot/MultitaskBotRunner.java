@@ -164,7 +164,8 @@ public class MultitaskBotRunner extends BotRunner {
         TaskHandler taskHandler = taskHandlerMap.get(task.getName());
         if (taskHandler != null) {
             IVariableProvider variableProvider = new DelegateProcessVariableProvider(getSubject(), task.getProcessId());
-            log.info("Starting bot task " + task.getName() + " in process " + task.getProcessId() + " with config " + taskHandler.getConfiguration());
+            log.info("Starting bot task " + task.getName() + " in process " + task.getProcessId() + " with config \n"
+                    + taskHandler.getConfiguration());
             Map<String, Object> variables = taskHandler.handle(getSubject(), variableProvider, task);
             if (variables == null) {
                 variables = Maps.newHashMap();

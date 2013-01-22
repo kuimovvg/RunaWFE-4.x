@@ -30,7 +30,7 @@ public class EmailTaskNotifier implements ITaskNotifier {
     @Required
     public void setConfigLocation(String path) {
         try {
-            InputStream in = ClassLoaderUtil.getResourceAsStream(path, getClass());
+            InputStream in = ClassLoaderUtil.getAsStreamNotNull(path, getClass());
             configBytes = ByteStreams.toByteArray(in);
         } catch (Exception e) {
             log.error("Configuration error", e);

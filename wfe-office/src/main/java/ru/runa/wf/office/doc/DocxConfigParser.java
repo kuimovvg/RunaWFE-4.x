@@ -6,6 +6,7 @@ import org.dom4j.Element;
 
 import ru.runa.wf.office.doc.DocxConfig.TableConfig;
 import ru.runa.wf.office.shared.FilesSupplierConfigParser;
+import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
 
@@ -19,7 +20,7 @@ public class DocxConfigParser extends FilesSupplierConfigParser<DocxConfig> {
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     protected void parseCustom(Element root, DocxConfig config) throws Exception {
         config.setStrictMode(Boolean.parseBoolean(root.attributeValue("strict", "true")));
         List<Element> tableElements = root.elements("table");
@@ -42,7 +43,8 @@ public class DocxConfigParser extends FilesSupplierConfigParser<DocxConfig> {
             String variableName = hintElement.attributeValue("name");
             Preconditions.checkNotNull(variableName, "Missed 'name' attribute in table element");
             String formatClassName = hintElement.attributeValue("type");
-            Preconditions.checkNotNull(variableName, "Missed 'type' attribute in table element");
+            Preconditions.checkNotNull(formatClassName, "Missed 'type' attribute in table element");
+            formatClassName = BackCompatibilityClassNames.getClassName(formatClassName);
             VariableFormat webFormat = FormatCommons.create(formatClassName);
             config.getTypeHints().put(variableName, webFormat);
         }

@@ -177,7 +177,7 @@ public class WorkflowBot implements Runnable {
             return;
         }
         IVariableProvider variableProvider = new DelegateProcessVariableProvider(subject, task.getProcessId());
-        log.info("Starting bot task " + task.getName() + " in process " + task.getProcessId() + " with config " + taskHandler.getConfiguration());
+        log.info("Starting bot task " + task.getName() + " in process " + task.getProcessId() + " with config \n" + taskHandler.getConfiguration());
         Map<String, Object> variables = taskHandler.handle(subject, variableProvider, task);
         if (variables == null) {
             variables = Maps.newHashMap();

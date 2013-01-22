@@ -36,7 +36,7 @@ public class PathEntityResolver implements EntityResolver {
 
     @Override
     public InputSource resolveEntity(String publicId, String systemId) {
-        return new InputSource(ClassLoaderUtil.getResourceAsStream(path, getClass()));
+        return new InputSource(ClassLoaderUtil.getAsStreamNotNull(path, getClass()));
 
     }
 }

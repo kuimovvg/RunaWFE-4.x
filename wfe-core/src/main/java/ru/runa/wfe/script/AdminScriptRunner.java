@@ -76,7 +76,6 @@ import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 import ru.runa.wfe.user.logic.ProfileLogic;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -1039,8 +1038,7 @@ public class AdminScriptRunner {
     protected byte[] getBotTaskConfiguration(String config) throws IOException {
         InputStream is = null;
         try {
-            is = ClassLoaderUtil.getResourceAsStream(config, getClass());
-            Preconditions.checkNotNull(is, "No resource available: " + config);
+            is = ClassLoaderUtil.getAsStreamNotNull(config, getClass());
             byte[] result = new byte[is.available()];
             is.read(result);
             return result;
