@@ -9,10 +9,10 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.PropertyUtil;
-import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Transition;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 
 public class UpdateTransitionFeature extends UpdateFeature {
     @Override
@@ -31,11 +31,11 @@ public class UpdateTransitionFeature extends UpdateFeature {
         }
         Text nameTextGa = (Text) PropertyUtil.findGaRecursiveByName(pe, GaProperty.NAME);
         if (nameTextGa != null) {
-            boolean nameLabelVisible = bo.getSource().getLeavingTransitions().size() > 1;
+            boolean nameLabelVisible = !Strings.isNullOrEmpty(bo.getLabel());
             if (nameTextGa.getPictogramElement().isVisible() != nameLabelVisible) {
                 return Reason.createTrueReason();
             }
-            if (!Objects.equal(nameTextGa.getValue(), bo.getName())) {
+            if (!Objects.equal(nameTextGa.getValue(), bo.getLabel())) {
                 return Reason.createTrueReason();
             }
         }
@@ -48,7 +48,7 @@ public class UpdateTransitionFeature extends UpdateFeature {
         PictogramElement pe = context.getPictogramElement();
         // retrieve name from business model
         Transition bo = (Transition) getBusinessObjectForPictogramElement(pe);
-        PropertyUtil.setProperty(pe, GaProperty.NAME, ((NamedGraphElement) bo).getName());
+        PropertyUtil.setProperty(pe, GaProperty.NAME, bo.getLabel());
         GraphicsAlgorithm defaultFlowGa = PropertyUtil.findGaRecursiveByName(pe, GaProperty.DEFAULT_FLOW);
         if (defaultFlowGa != null) {
             defaultFlowGa.getPictogramElement().setVisible(bo.isDefaultFlow());
@@ -59,7 +59,7 @@ public class UpdateTransitionFeature extends UpdateFeature {
         }
         GraphicsAlgorithm nameTextGa = PropertyUtil.findGaRecursiveByName(pe, GaProperty.NAME);
         if (nameTextGa != null) {
-            boolean nameLabelVisible = bo.getSource().getLeavingTransitions().size() > 1;
+            boolean nameLabelVisible = !Strings.isNullOrEmpty(bo.getLabel());
             nameTextGa.getPictogramElement().setVisible(nameLabelVisible);
         }
         return true;
