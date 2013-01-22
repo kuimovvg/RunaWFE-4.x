@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.security.auth.Subject;
 
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -34,12 +34,7 @@ import ru.runa.wfe.var.IVariableProvider;
  * @author Vitaliy S
  * @since 2.0
  */
-public class CancelCurrentProcessTaskHandler implements TaskHandler {
-
-    @Override
-    public void setConfiguration(byte[] configuration) {
-        // do nothing with configuration
-    }
+public class CancelCurrentProcessTaskHandler extends TaskHandlerBase {
 
     @Override
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {

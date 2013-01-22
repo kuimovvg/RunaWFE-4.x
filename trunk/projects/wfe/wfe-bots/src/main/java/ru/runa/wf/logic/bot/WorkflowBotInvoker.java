@@ -30,12 +30,11 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
-import ru.runa.wfe.bot.BotRunnerException;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.invoker.BotInvoker;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 
 import com.google.common.collect.Sets;
 
@@ -68,7 +67,7 @@ public class WorkflowBotInvoker implements BotInvoker {
             if (taskListSize > allowedTaskList) {
                 log.warn("max allowed task list size exeeded for bot:" + bot);
             }
-        } catch (BotRunnerException e) {
+        } catch (Exception e) {
             log.error("bots execution error", e);
         }
     }
@@ -97,7 +96,7 @@ public class WorkflowBotInvoker implements BotInvoker {
                     while (i.hasNext()) {
                         BotTask task = i.next();
                         try {
-                            TaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
+                            ITaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
                             handler.setConfiguration(task.getConfiguration());
                             wbot.addTask(task.getName(), handler, 0);
                             log.info("Configured task handler for " + task.getName());
