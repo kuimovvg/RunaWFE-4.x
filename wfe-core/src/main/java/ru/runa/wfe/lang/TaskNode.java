@@ -66,19 +66,20 @@ public class TaskNode extends InteractionNode implements Synchronizable {
             leave(executionContext);
         }
     }
-
-    @Override
-    public void leave(ExecutionContext executionContext, Transition transition) {
-        for (Task task : executionContext.getProcess().getTasks()) {
-            if (executionContext.getToken().equals(task.getToken())) {
-                // if this is a non-finished task and all those tasks should be
-                // finished
-                if (task.isActive()) {
-                    // end this task
-                    task.end(executionContext, transition, false);
-                }
-            }
-        }
-        super.leave(executionContext, transition);
-    }
+    // DO NOT END ASSYNC TASKS IN CASE OF UNCOMMENT
+    // @Override
+    // public void leave(ExecutionContext executionContext, Transition
+    // transition) {
+    // for (Task task : executionContext.getProcess().getTasks()) {
+    // if (executionContext.getToken().equals(task.getToken())) {
+    // // if this is a non-finished task and all those tasks should be
+    // // finished
+    // if (task.isActive()) {
+    // // end this task
+    // task.end(executionContext, transition, false);
+    // }
+    // }
+    // }
+    // super.leave(executionContext, transition);
+    // }
 }
