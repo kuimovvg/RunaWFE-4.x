@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.security.auth.Subject;
@@ -33,11 +32,12 @@ import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilder;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilderFactory;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportTaskSettings;
 import ru.runa.wf.logic.bot.mswordreport.WordReportSettingsXmlParser;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -48,8 +48,7 @@ import com.google.common.io.ByteStreams;
  * Created on 23.11.2006
  * 
  */
-
-public class MSWordReportTaskHandler implements TaskHandler {
+public class MSWordReportTaskHandler implements ITaskHandler {
     private static final Log log = LogFactory.getLog(MSWordReportTaskHandler.class);
     private static final String CONTENT_TYPE = "application/vnd.ms-word";
 
@@ -64,7 +63,6 @@ public class MSWordReportTaskHandler implements TaskHandler {
     public synchronized Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws IOException {
         File reportTemporaryFile = null;
         try {
-            log.info("Starting task " + wfTask.getName() + " in process " + wfTask.getProcessId());
             reportTemporaryFile = File.createTempFile("prefix", ".doc");
             MSWordReportBuilder wordReportBuilder = MSWordReportBuilderFactory.createMSWordReportBuilder();
             log.debug("Using template " + settings.getTemplateFileLocation());
@@ -72,10 +70,10 @@ public class MSWordReportTaskHandler implements TaskHandler {
             FileInputStream fis = new FileInputStream(reportTemporaryFile);
             byte[] fileContent = ByteStreams.toByteArray(fis);
             fis.close();
-            Map<String, Object> taskVariables = new HashMap<String, Object>();
             FileVariable fileVariable = new FileVariable(settings.getReportFileName(), fileContent, CONTENT_TYPE);
-            taskVariables.put(settings.getReportVariableName(), fileVariable);
-            return taskVariables;
+            Map<String, Object> result = Maps.newHashMapWithExpectedSize(1);
+            result.put(settings.getReportVariableName(), fileVariable);
+            return result;
         } finally {
             if (reportTemporaryFile != null) {
                 if (!reportTemporaryFile.delete()) {

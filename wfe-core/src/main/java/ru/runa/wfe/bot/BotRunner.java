@@ -30,7 +30,7 @@ public abstract class BotRunner {
         this.subject = subject;
     }
 
-    public abstract void execute() throws BotRunnerException;
+    public abstract void execute() throws Exception;
 
     public Subject getSubject() {
         return subject;

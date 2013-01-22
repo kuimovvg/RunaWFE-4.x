@@ -30,7 +30,6 @@ import ru.runa.wfe.commons.xml.XMLHelper;
 
 /**
  * Created on 01.04.2005
- * 
  */
 public class CancelProcessTaskXmlParser {
     private static final String PROCESS_TO_CANCEL = "processToCancel";

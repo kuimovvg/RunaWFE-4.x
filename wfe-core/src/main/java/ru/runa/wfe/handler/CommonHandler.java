@@ -8,23 +8,30 @@ import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 
-public abstract class CommonHandler implements ActionHandler, TaskHandler {
-
+public abstract class CommonHandler implements ActionHandler, ITaskHandler {
     protected abstract Map<String, Object> executeAction(IVariableProvider variableProvider) throws Exception;
+
+    private String configuration;
 
     @Override
     public abstract void setConfiguration(String configuration) throws ConfigurationException;
 
     @Override
     public final void setConfiguration(byte[] config) {
-        setConfiguration(new String(config, Charsets.UTF_8));
+        this.configuration = new String(config, Charsets.UTF_8);
+        setConfiguration(configuration);
+    }
+
+    @Override
+    public Object getConfiguration() {
+        return configuration;
     }
 
     @Override

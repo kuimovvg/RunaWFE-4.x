@@ -35,8 +35,7 @@ import ru.runa.service.client.DelegateProcessVariableProvider;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.bot.BotRunner;
-import ru.runa.wfe.bot.BotRunnerException;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -56,7 +55,7 @@ public class MultitaskBotRunner extends BotRunner {
 
     private final int maxTaskListLength;
 
-    private final Map<String, TaskHandler> taskHandlerMap = new HashMap<String, TaskHandler>();
+    private final Map<String, ITaskHandler> taskHandlerMap = new HashMap<String, ITaskHandler>();
 
     private static Set<WfTask> taskInProgressSet = new HashSet<WfTask>();
 
@@ -70,7 +69,7 @@ public class MultitaskBotRunner extends BotRunner {
         this.startTimeout = startTimeout;
     }
 
-    public void addTask(String taskName, TaskHandler taskHandler, int timeout) {
+    public void addTask(String taskName, ITaskHandler taskHandler, int timeout) {
         taskHandlerMap.put(taskName, taskHandler);
         timeoutMap.put(taskName, timeout);
     }
@@ -88,14 +87,8 @@ public class MultitaskBotRunner extends BotRunner {
         return maxTaskListLength;
     }
 
-    public int getTaskListSize() throws BotRunnerException {
-        try {
-            return getTasks().size();
-        } catch (AuthorizationException e) {
-            throw new BotRunnerException(e);
-        } catch (AuthenticationException e) {
-            throw new BotRunnerException(e);
-        }
+    public int getTaskListSize() {
+        return getTasks().size();
     }
 
     private static Timer taskTimeoutTimer = null;
@@ -131,35 +124,31 @@ public class MultitaskBotRunner extends BotRunner {
     }
 
     @Override
-    public void execute() throws BotRunnerException {
-        try {
-            if (startTimeout > 0) {
-                Thread.sleep(startTimeout);
+    public void execute() throws Exception {
+        if (startTimeout > 0) {
+            Thread.sleep(startTimeout);
+        }
+        Set<WfTask> tasksToDoSet = getTasks();
+        for (WfTask taskStub : tasksToDoSet) {
+            Integer timeout = timeoutMap.get(taskStub.getName());
+            if (timeout != null) {
+                getTaskTimeoutTimer().schedule(new TaskTimeoutTimerTask(taskStub, this), timeout.intValue());
             }
-            Set<WfTask> tasksToDoSet = getTasks();
-            for (WfTask taskStub : tasksToDoSet) {
-                Integer timeout = timeoutMap.get(taskStub.getName());
-                if (timeout != null) {
-                    getTaskTimeoutTimer().schedule(new TaskTimeoutTimerTask(taskStub, this), timeout.intValue());
-                }
-            }
+        }
 
-            for (Iterator<WfTask> iter = tasksToDoSet.iterator(); iter.hasNext();) {
-                WfTask currentTaskStub = iter.next();
-                if (!isTaskInProgress(currentTaskStub)) {
-                    try {
-                        addTaskInProgress(currentTaskStub);
-                        doTask(currentTaskStub);
-                        iter.remove();
-                    } catch (Throwable e) {
-                        log.error("Unable to handle task " + currentTaskStub + ", bot " + this + " because of " + e.getMessage(), e);
-                    } finally {
-                        removeTaskInProgress(currentTaskStub);
-                    }
+        for (Iterator<WfTask> iter = tasksToDoSet.iterator(); iter.hasNext();) {
+            WfTask currentTaskStub = iter.next();
+            if (!isTaskInProgress(currentTaskStub)) {
+                try {
+                    addTaskInProgress(currentTaskStub);
+                    doTask(currentTaskStub);
+                    iter.remove();
+                } catch (Throwable e) {
+                    log.error("Unable to handle task " + currentTaskStub + ", bot " + this + " because of " + e.getMessage(), e);
+                } finally {
+                    removeTaskInProgress(currentTaskStub);
                 }
             }
-        } catch (Exception e) {
-            throw new BotRunnerException(e);
         }
     }
 
@@ -172,22 +161,23 @@ public class MultitaskBotRunner extends BotRunner {
     }
 
     private void doTask(WfTask task) throws Exception {
-        TaskHandler taskHandler = taskHandlerMap.get(task.getName());
+        ITaskHandler taskHandler = taskHandlerMap.get(task.getName());
         if (taskHandler != null) {
             IVariableProvider variableProvider = new DelegateProcessVariableProvider(getSubject(), task.getProcessId());
+            log.info("Starting bot task " + task.getName() + " in process " + task.getProcessId() + " with config " + taskHandler.getConfiguration());
             Map<String, Object> variables = taskHandler.handle(getSubject(), variableProvider, task);
             if (variables == null) {
                 variables = Maps.newHashMap();
             }
-            Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
+            Object skipTaskCompletion = variables.remove(ITaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
             if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
-                log.info("Task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
+                log.info("Bot task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
             } else {
                 Delegates.getExecutionService().completeTask(getSubject(), task.getId(), variables);
-                log.info("Task '" + task + "' completed by task handler " + taskHandler.getClass() + ", bot = " + this);
+                log.info("Bot task '" + task + "' completed by task handler " + taskHandler.getClass() + ", bot = " + this);
             }
         } else {
-            log.warn("No handler for task " + task + ", bot " + this);
+            log.warn("No handler for bot task " + task + ", bot " + this);
         }
     }
 

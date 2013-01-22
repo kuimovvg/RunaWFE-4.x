@@ -27,7 +27,7 @@ import ru.runa.wfe.var.IVariableProvider;
 /**
  * Interface for bot task execution.
  */
-public interface TaskHandler {
+public interface ITaskHandler {
     /**
      * If this variable assigned to Boolean.TRUE then bot system will not
      * complete task.
@@ -41,6 +41,11 @@ public interface TaskHandler {
      *            Loaded from database configuration.
      */
     public void setConfiguration(byte[] configuration) throws Exception;
+
+    /**
+     * Get configuration for debug output.
+     */
+    public Object getConfiguration();
 
     /**
      * Handles task, assigned to bot.

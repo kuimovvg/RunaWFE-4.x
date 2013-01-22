@@ -21,7 +21,7 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -29,7 +29,7 @@ import ru.runa.wfe.var.IVariableProvider;
  * Created on 04.03.2005
  * 
  */
-public class DoNothingTaskHandler implements TaskHandler {
+public class DoNothingTaskHandler implements ITaskHandler {
 
     @Override
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
