@@ -148,8 +148,7 @@ public class ExecutorLogic extends CommonLogic {
     }
 
     public void remove(Executor executor) throws ExecutorDoesNotExistException, AuthorizationException {
-        List<Executor> privelegedExecutorsSet = permissionDAO.getPrivilegedExecutors();
-        if (privelegedExecutorsSet.contains(executor)) {
+        if (permissionDAO.isPrivilegedExecutor(executor)) {
             throw new AuthorizationException("Executor " + executor.getName() + " can not be removed");
         }
         if (executor instanceof Actor) {
