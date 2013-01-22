@@ -30,7 +30,7 @@ import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTaskXmlParser;
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wfe.handler.bot.ITaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -42,7 +42,7 @@ import com.google.common.io.ByteStreams;
  * @author dofs
  * @since 3.0
  */
-public class CancelProcessTaskHandler implements ITaskHandler {
+public class CancelProcessTaskHandler implements TaskHandler {
     private CancelProcessTask processToCancelTask;
 
     @Override

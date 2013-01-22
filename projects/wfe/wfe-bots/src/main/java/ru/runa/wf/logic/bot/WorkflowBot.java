@@ -35,7 +35,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.handler.bot.ITaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -69,7 +69,7 @@ public class WorkflowBot implements Runnable {
 
     private BotExecutionStatus botStatus = BotExecutionStatus.scheduled;
 
-    private final Map<String, ITaskHandler> taskHandlerMap;
+    private final Map<String, TaskHandler> taskHandlerMap;
     private final Subject subject;
     private final String botName;
     private final WfTask task;
@@ -87,10 +87,10 @@ public class WorkflowBot implements Runnable {
     // Creating WorkflowBot template object
     public WorkflowBot(Bot bot, List<BotTask> tasks) throws AuthenticationException {
         subject = Delegates.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
-        HashMap<String, ITaskHandler> handlers = new HashMap<String, ITaskHandler>();
+        HashMap<String, TaskHandler> handlers = new HashMap<String, TaskHandler>();
         for (BotTask task : tasks) {
             try {
-                ITaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
+                TaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
                 handler.setConfiguration(task.getConfiguration());
                 handlers.put(task.getName(), handler);
                 log.info("Configured taskHandler for " + task.getName());
@@ -171,7 +171,7 @@ public class WorkflowBot implements Runnable {
     }
 
     private void doHandle() throws Exception {
-        ITaskHandler taskHandler = taskHandlerMap.get(task.getName());
+        TaskHandler taskHandler = taskHandlerMap.get(task.getName());
         if (taskHandler == null) {
             log.warn("No handler for bot task " + task + ", bot " + botName);
             return;
@@ -182,7 +182,7 @@ public class WorkflowBot implements Runnable {
         if (variables == null) {
             variables = Maps.newHashMap();
         }
-        Object skipTaskCompletion = variables.remove(ITaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
+        Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
         if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
             log.info("Bot task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
         } else {
