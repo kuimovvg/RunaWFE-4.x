@@ -25,6 +25,8 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.graphiti.util.IColorConstant;
 
+import com.google.common.base.Strings;
+
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.StyleUtil;
@@ -86,8 +88,8 @@ public class AddTransitionFeature extends AbstractAddFeature {
         // create link and wire it
         link(connection, transition);
         // add dynamic text decorator for the reference name
-        boolean nameLabelVisible = transition.getSource().getLeavingTransitions().size() > 1;
-        createLabel(connection, transition.getName(), (Rectangle) addConnectionContext.getProperty(LABEL_LOCATION_PROPERTY), nameLabelVisible);
+        boolean nameLabelVisible = !Strings.isNullOrEmpty(transition.getLabel());
+        createLabel(connection, transition.getLabel(), (Rectangle) addConnectionContext.getProperty(LABEL_LOCATION_PROPERTY), nameLabelVisible);
         // add static graphical decorators (composition and navigable)
         createArrow(connection);
         boolean exclusive = transition.getSource().isExclusive() && transition.getSource().getLeavingTransitions().size() > 1;
@@ -99,7 +101,6 @@ public class AddTransitionFeature extends AbstractAddFeature {
     private void createLabel(Connection connection, String transitionName, Rectangle location, boolean visible) {
         ConnectionDecorator connectionDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, true, 0.5, true);
         Text text = Graphiti.getGaService().createDefaultText(getDiagram(), connectionDecorator);
-        // text.setStyle(StyleUtil.getStyleForTask((getDiagram())));
         text.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
         text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
         if (location != null) {
@@ -107,7 +108,6 @@ public class AddTransitionFeature extends AbstractAddFeature {
         } else {
             Graphiti.getGaService().setLocation(text, 10, 0);
         }
-        //TextUtil.setTextSize(transitionName, text);
         text.setValue(transitionName);
         IDimension textDimension = GraphitiUi.getUiLayoutService().calculateTextSize(transitionName, text.getFont());
         Graphiti.getGaService().setSize(text, textDimension.getWidth(), textDimension.getHeight());
