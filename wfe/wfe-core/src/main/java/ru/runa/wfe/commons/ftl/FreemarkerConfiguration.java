@@ -14,7 +14,6 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
@@ -36,8 +35,7 @@ public class FreemarkerConfiguration {
     }
 
     private FreemarkerConfiguration() {
-        InputStream is = ClassLoaderUtil.getResourceAsStream(CONFIG, getClass());
-        Preconditions.checkNotNull(is, "No configuration found: " + CONFIG);
+        InputStream is = ClassLoaderUtil.getAsStreamNotNull(CONFIG, getClass());
         Document document = XmlUtils.parseWithoutValidation(is);
         Element root = document.getRootElement();
         List<Element> tagElements = root.elements(TAG_ELEMENT);

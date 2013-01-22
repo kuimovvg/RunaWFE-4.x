@@ -89,7 +89,7 @@ public abstract class EJB3Delegate {
         if (initialContext == null) {
             try {
                 Properties env = new Properties();
-                InputStream is = ClassLoaderUtil.getResourceAsStream("jndi.properties", getClass());
+                InputStream is = ClassLoaderUtil.getAsStream("jndi.properties", getClass());
                 if (is != null) {
                     Preconditions.checkNotNull(is, "jndi.properties is not in classpath");
                     env.load(is);

@@ -33,7 +33,6 @@ import ru.runa.wfe.audit.ProcessDefinitionDeleteLog;
 import ru.runa.wfe.audit.dao.SystemLogDAO;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
-import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionNameMismatchException;
 import ru.runa.wfe.definition.DefinitionPermission;
@@ -75,8 +74,7 @@ public class DefinitionLogic extends WFCommonLogic {
     @Autowired
     private SystemLogDAO systemLogDAO;
 
-    public WfDefinition deployProcessDefinition(Subject subject, byte[] processArchiveBytes, List<String> processType)
-            throws DefinitionAlreadyExistException, DefinitionArchiveFormatException, DefinitionDoesNotExistException {
+    public WfDefinition deployProcessDefinition(Subject subject, byte[] processArchiveBytes, List<String> processType) {
         checkPermissionAllowed(subject, ASystem.INSTANCE, WorkflowSystemPermission.DEPLOY_DEFINITION);
         ProcessDefinition definition = parseProcessDefinition(processArchiveBytes);
         try {
@@ -93,8 +91,7 @@ public class DefinitionLogic extends WFCommonLogic {
         return new WfDefinition(definition);
     }
 
-    public WfDefinition redeployProcessDefinition(Subject subject, Long definitionId, byte[] processArchiveBytes, List<String> processType)
-            throws DefinitionDoesNotExistException, DefinitionArchiveFormatException, DefinitionNameMismatchException {
+    public WfDefinition redeployProcessDefinition(Subject subject, Long definitionId, byte[] processArchiveBytes, List<String> processType) {
         ProcessDefinition deployedDefinition = getDefinition(definitionId);
         checkPermissionAllowed(subject, deployedDefinition, DefinitionPermission.REDEPLOY_DEFINITION);
         if (processArchiveBytes == null) {

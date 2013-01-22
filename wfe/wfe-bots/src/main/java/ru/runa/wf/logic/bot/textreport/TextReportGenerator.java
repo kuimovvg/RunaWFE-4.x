@@ -43,7 +43,7 @@ public class TextReportGenerator {
         String templateEncoding = settings.getTemplateEncoding();
         String encoding = settings.getReportEncoding();
 
-        InputStream inputStream = ClassLoaderUtil.getResourceAsStream(templateFileName, TextReportGenerator.class);
+        InputStream inputStream = ClassLoaderUtil.getAsStreamNotNull(templateFileName, TextReportGenerator.class);
         String content = new String(ByteStreams.toByteArray(inputStream), templateEncoding);
         String[] symbols = settings.getContextSymbols();
         String[] replacements = settings.getContextReplacements();

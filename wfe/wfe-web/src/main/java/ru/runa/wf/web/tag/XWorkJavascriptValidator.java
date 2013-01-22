@@ -47,7 +47,7 @@ public class XWorkJavascriptValidator {
 
     public static String getJavascript(byte[] validationXmlBytes) {
         try {
-            InputStream is = ClassLoaderUtil.getResourceAsStream("wfform-validate.ftl", XWorkJavascriptValidator.class);
+            InputStream is = ClassLoaderUtil.getAsStreamNotNull("wfform-validate.ftl", XWorkJavascriptValidator.class);
             Configuration cfg = new Configuration();
             Template template = new Template("validate", new InputStreamReader(is), cfg);
             template.setEncoding(Charsets.UTF_8.name());

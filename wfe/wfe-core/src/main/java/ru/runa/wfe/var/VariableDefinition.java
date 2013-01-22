@@ -82,6 +82,6 @@ public class VariableDefinition implements Serializable {
     }
 
     public VariableFormat<Object> getFormat() {
-        return FormatCommons.create(formatClassName);
+        return FormatCommons.create(this);
     }
 }
