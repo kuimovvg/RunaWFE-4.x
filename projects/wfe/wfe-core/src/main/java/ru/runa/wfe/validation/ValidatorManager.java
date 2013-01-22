@@ -36,8 +36,7 @@ public class ValidatorManager {
 
     private static void registerValidatorDefinitions(String resourceName) {
         try {
-            InputStream is = ClassLoaderUtil.getResourceAsStream(resourceName, ValidatorManager.class);
-            Preconditions.checkNotNull(is, "Unable to load validators from " + resourceName);
+            InputStream is = ClassLoaderUtil.getAsStreamNotNull(resourceName, ValidatorManager.class);
             validators.putAll(ValidatorFileParser.parseValidatorDefinitions(is));
         } catch (Exception e) {
             LOG.error("check validator definition " + resourceName, e);

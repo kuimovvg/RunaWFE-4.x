@@ -47,10 +47,10 @@ public class JacobMSWordReportBuilder implements MSWordReportBuilder {
             String errorMessage = e.getMessage();
             if (wordApplication != null) {
                 if (wordDocument == null) {
-                    errorMessage = "Can not open template document " + settings.getTemplateFilePath();
+                    errorMessage = "Could not open template document " + settings.getTemplateFilePath();
                 }
             } else {
-                errorMessage = "Can not instanciated ms word application.";
+                errorMessage = "Could not instantiate MSWord application.";
             }
             throw new InternalApplicationException(errorMessage, e);
         } finally {

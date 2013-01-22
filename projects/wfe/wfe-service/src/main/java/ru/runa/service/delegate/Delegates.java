@@ -45,7 +45,7 @@ import com.google.common.collect.Maps;
  * @since 4.0
  */
 public class Delegates {
-    private static final Properties PROPERTIES = ClassLoaderUtil.getProperties("wfe.delegate.properties");
+    private static final Properties PROPERTIES = ClassLoaderUtil.getPropertiesNotNull("wfe.delegate.properties");
     private static Map<Class<?>, Object> delegates = Maps.newHashMap();
 
     @SuppressWarnings("unchecked")

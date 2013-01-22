@@ -88,10 +88,7 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
             if (uniqueScript && webHelper.getPageContext().getAttribute(path) != null) {
                 return "";
             }
-            InputStream is = ClassLoaderUtil.getResourceAsStream(path, getClass());
-            if (is == null) {
-                throw new NullPointerException("Script not found '" + path + "'");
-            }
+            InputStream is = ClassLoaderUtil.getAsStreamNotNull(path, getClass());
             byte[] data = ByteStreams.toByteArray(is);
             String jsCode = new String(data, Charsets.UTF_8);
 

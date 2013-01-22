@@ -26,7 +26,7 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
  * 
  */
 public class WebResources {
-    private static final Properties PROPERTIES = ClassLoaderUtil.getProperties("wfe.web.properties");
+    private static final Properties PROPERTIES = ClassLoaderUtil.getPropertiesNotNull("wfe.web.properties");
 
     public static final String ACTION_MAPPING_UPDATE_EXECUTOR = "/manage_executor";
     public static final String ACTION_MAPPING_MANAGE_EXECUTORS = "/manage_executors";

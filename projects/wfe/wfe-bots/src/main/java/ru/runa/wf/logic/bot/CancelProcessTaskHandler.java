@@ -61,10 +61,7 @@ public class CancelProcessTaskHandler extends TaskHandlerBase {
             if (configurationName == null) {
                 throw new ConfigurationException("Record for '" + processDefinitionName + " missed in task handler configuration");
             }
-            InputStream inputStream = ClassLoaderUtil.getResourceAsStream(configurationName, DatabaseTaskHandler.class);
-            if (inputStream == null) {
-                throw new ConfigurationException("Unable to find configuration " + configurationName);
-            }
+            InputStream inputStream = ClassLoaderUtil.getAsStreamNotNull(configurationName, DatabaseTaskHandler.class);
             byte[] configuration = ByteStreams.toByteArray(inputStream);
             DatabaseTaskHandler databaseTaskHandler = new DatabaseTaskHandler();
             databaseTaskHandler.setConfiguration(configuration);

@@ -54,7 +54,7 @@ public class EmailTaskNotifierActionHandler implements ActionHandler {
 
     @Override
     public void setConfiguration(String path) throws IOException {
-        InputStream in = ClassLoaderUtil.getResourceAsStream(path, getClass());
+        InputStream in = ClassLoaderUtil.getAsStreamNotNull(path, getClass());
         configBytes = ByteStreams.toByteArray(in);
     } // TODO check this
 

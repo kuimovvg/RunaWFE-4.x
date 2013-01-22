@@ -58,7 +58,6 @@ import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
-import com.google.common.base.Preconditions;
 import com.google.common.io.Closeables;
 
 @Stateless
@@ -262,8 +261,7 @@ public class BotBean {
     private byte[] getBotTaskConfiguration(String config) throws IOException {
         InputStream is = null;
         try {
-            is = ClassLoaderUtil.getResourceAsStream(config, getClass());
-            Preconditions.checkNotNull(is, config);
+            is = ClassLoaderUtil.getAsStreamNotNull(config, getClass());
             byte[] result = new byte[is.available()];
             is.read(result);
             return result;
