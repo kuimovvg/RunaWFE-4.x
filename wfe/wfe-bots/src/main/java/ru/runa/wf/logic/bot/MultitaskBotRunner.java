@@ -35,7 +35,7 @@ import ru.runa.service.client.DelegateProcessVariableProvider;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.bot.BotRunner;
-import ru.runa.wfe.handler.bot.ITaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -55,7 +55,7 @@ public class MultitaskBotRunner extends BotRunner {
 
     private final int maxTaskListLength;
 
-    private final Map<String, ITaskHandler> taskHandlerMap = new HashMap<String, ITaskHandler>();
+    private final Map<String, TaskHandler> taskHandlerMap = new HashMap<String, TaskHandler>();
 
     private static Set<WfTask> taskInProgressSet = new HashSet<WfTask>();
 
@@ -69,7 +69,7 @@ public class MultitaskBotRunner extends BotRunner {
         this.startTimeout = startTimeout;
     }
 
-    public void addTask(String taskName, ITaskHandler taskHandler, int timeout) {
+    public void addTask(String taskName, TaskHandler taskHandler, int timeout) {
         taskHandlerMap.put(taskName, taskHandler);
         timeoutMap.put(taskName, timeout);
     }
@@ -161,7 +161,7 @@ public class MultitaskBotRunner extends BotRunner {
     }
 
     private void doTask(WfTask task) throws Exception {
-        ITaskHandler taskHandler = taskHandlerMap.get(task.getName());
+        TaskHandler taskHandler = taskHandlerMap.get(task.getName());
         if (taskHandler != null) {
             IVariableProvider variableProvider = new DelegateProcessVariableProvider(getSubject(), task.getProcessId());
             log.info("Starting bot task " + task.getName() + " in process " + task.getProcessId() + " with config " + taskHandler.getConfiguration());
@@ -169,7 +169,7 @@ public class MultitaskBotRunner extends BotRunner {
             if (variables == null) {
                 variables = Maps.newHashMap();
             }
-            Object skipTaskCompletion = variables.remove(ITaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
+            Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
             if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
                 log.info("Bot task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
             } else {

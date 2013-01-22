@@ -30,7 +30,7 @@ import javax.security.auth.Subject;
 import ru.runa.wf.logic.bot.textreport.TextReportGenerator;
 import ru.runa.wf.logic.bot.textreport.TextReportSettings;
 import ru.runa.wf.logic.bot.textreport.TextReportSettingsXmlParser;
-import ru.runa.wfe.handler.bot.ITaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -41,7 +41,7 @@ import ru.runa.wfe.var.IVariableProvider;
  * @author dofs
  * @since 2.0
  */
-public class TextReportTaskHandler implements ITaskHandler {
+public class TextReportTaskHandler implements TaskHandler {
     private TextReportSettings settings;
 
     @Override

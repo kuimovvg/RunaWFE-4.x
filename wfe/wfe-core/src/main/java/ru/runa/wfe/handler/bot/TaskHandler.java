@@ -27,7 +27,7 @@ import ru.runa.wfe.var.IVariableProvider;
 /**
  * Interface for bot task execution.
  */
-public interface ITaskHandler {
+public interface TaskHandler {
     /**
      * If this variable assigned to Boolean.TRUE then bot system will not
      * complete task.

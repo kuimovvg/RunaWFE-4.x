@@ -31,7 +31,7 @@ import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.definition.par.FileDataProvider;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.handler.bot.ITaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -39,7 +39,7 @@ import ru.runa.wfe.var.IVariableProvider;
  * Created on 04.07.2005
  * 
  */
-public class EmailTaskHandler implements ITaskHandler {
+public class EmailTaskHandler implements TaskHandler {
     private static final Log log = LogFactory.getLog(EmailTaskHandler.class);
 
     private EmailConfig config;
