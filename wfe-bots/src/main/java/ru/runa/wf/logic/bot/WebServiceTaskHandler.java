@@ -52,7 +52,7 @@ import ru.runa.wf.logic.bot.webservice.WebServiceTaskHandlerXMLParser;
 import ru.runa.wf.logic.bot.webservice.WebServiceTaskHandlerXSLTHelper;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.handler.bot.ITaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
@@ -67,7 +67,7 @@ import com.google.common.io.NullOutputStream;
  * transformation and special XSLT tags. Responses can be processed with XSLT to
  * fill some variables, or can be stored completely in variables.
  */
-public class WebServiceTaskHandler implements ITaskHandler {
+public class WebServiceTaskHandler implements TaskHandler {
     /**
      * Logging support.
      */

@@ -26,7 +26,7 @@ import javax.security.auth.Subject;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.handler.bot.ITaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
@@ -37,7 +37,7 @@ import ru.runa.wfe.var.IVariableProvider;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
-public class CancelOldProcesses implements ITaskHandler {
+public class CancelOldProcesses implements TaskHandler {
 
     @Override
     public void setConfiguration(byte[] configuration) {
