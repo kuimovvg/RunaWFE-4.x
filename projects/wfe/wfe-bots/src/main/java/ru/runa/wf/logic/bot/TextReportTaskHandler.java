@@ -20,7 +20,6 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +29,7 @@ import javax.security.auth.Subject;
 import ru.runa.wf.logic.bot.textreport.TextReportGenerator;
 import ru.runa.wf.logic.bot.textreport.TextReportSettings;
 import ru.runa.wf.logic.bot.textreport.TextReportSettingsXmlParser;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -41,16 +40,16 @@ import ru.runa.wfe.var.IVariableProvider;
  * @author dofs
  * @since 2.0
  */
-public class TextReportTaskHandler implements TaskHandler {
+public class TextReportTaskHandler extends TaskHandlerBase {
     private TextReportSettings settings;
 
     @Override
-    public void setConfiguration(byte[] configuration) {
-        settings = TextReportSettingsXmlParser.read(new ByteArrayInputStream(configuration));
+    public void setConfiguration(String configuration) {
+        settings = TextReportSettingsXmlParser.read(configuration);
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws IOException {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws IOException {
         byte[] fileContent = TextReportGenerator.getReportContent(settings, variableProvider);
         Map<String, Object> vars = new HashMap<String, Object>();
         FileVariable fileVariable = new FileVariable(settings.getReportFileName(), fileContent, settings.getReportContentType());

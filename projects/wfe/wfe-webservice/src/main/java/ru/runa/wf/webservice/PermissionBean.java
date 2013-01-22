@@ -260,8 +260,8 @@ public class PermissionBean {
             AuthenticationException {
         Subject subject = getSubject(actorPrincipal);
         Executor executor = executorLogic.getExecutor(subject, executorStr);
-        List<WfProcess> wfProcess = executionLogic.getProcessesForDefinitionName(subject, processName);
-        for (WfProcess process : wfProcess) {
+        List<WfProcess> processes = executionLogic.getProcessesForDefinitionName(subject, processName);
+        for (WfProcess process : processes) {
             setPermissionOnIdentifiable(subject, executor, process, permissionList);
         }
     }
@@ -276,8 +276,8 @@ public class PermissionBean {
             AuthenticationException {
         Subject subject = getSubject(actorPrincipal);
         Executor executor = executorLogic.getExecutor(subject, executorStr);
-        List<WfProcess> wfProcess = executionLogic.getProcessesForDefinitionName(subject, processName);
-        for (WfProcess process : wfProcess) {
+        List<WfProcess> processes = executionLogic.getProcessesForDefinitionName(subject, processName);
+        for (WfProcess process : processes) {
             removePermissionOnIdentifiable(subject, executor, process, permissionList);
         }
     }

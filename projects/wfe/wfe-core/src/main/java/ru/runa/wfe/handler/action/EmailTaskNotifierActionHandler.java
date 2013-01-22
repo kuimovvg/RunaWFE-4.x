@@ -17,11 +17,10 @@
  */
 package ru.runa.wfe.handler.action;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
@@ -47,8 +46,6 @@ import com.google.common.io.ByteStreams;
  * @version 1.0 Initial version
  */
 public class EmailTaskNotifierActionHandler implements ActionHandler {
-    private static final Log log = LogFactory.getLog(EmailTaskNotifierActionHandler.class);
-
     @Autowired
     private ExecutorDAO executorDAO;
     @Autowired
@@ -56,13 +53,9 @@ public class EmailTaskNotifierActionHandler implements ActionHandler {
     private byte[] configBytes;
 
     @Override
-    public void setConfiguration(String path) {
-        try {
-            InputStream in = ClassLoaderUtil.getResourceAsStream(path, getClass());
-            configBytes = ByteStreams.toByteArray(in);
-        } catch (Exception e) {
-            log.error("Configuration error", e);
-        }
+    public void setConfiguration(String path) throws IOException {
+        InputStream in = ClassLoaderUtil.getResourceAsStream(path, getClass());
+        configBytes = ByteStreams.toByteArray(in);
     } // TODO check this
 
     @Override
@@ -81,7 +74,6 @@ public class EmailTaskNotifierActionHandler implements ActionHandler {
                                 executionContext.getProcessDefinition());
                     }
                 }
-
             }
         }
     }

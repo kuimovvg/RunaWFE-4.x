@@ -20,7 +20,7 @@ package ru.runa.wfe.handler.bot;
 import ru.runa.wfe.ApplicationException;
 
 /**
- * Created on 05.03.2005
+ * Created on 05.03.2005 TODO PEX
  */
 public class TaskHandlerException extends ApplicationException {
 

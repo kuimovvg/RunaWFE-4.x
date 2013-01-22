@@ -139,18 +139,18 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
 
         @Override
         public String getClassName(Object item, Subject subject) {
-            WfTask wfTask = (WfTask) item;
-            Date deadlineDate = wfTask.getDeadlineDate();
+            WfTask task = (WfTask) item;
+            Date deadlineDate = task.getDeadlineDate();
             if (deadlineDate == null) {
                 return null;
             }
-            if (wfTask.getDeadlineWarningDate() != null && wfTask.getDeadlineWarningDate().before(new Date())) {
+            if (task.getDeadlineWarningDate() != null && task.getDeadlineWarningDate().before(new Date())) {
                 return "deadlineAlmostExpired";
             }
             if (deadlineDate.before(new Date())) {
                 return "deadlineExpired";
             }
-            if (wfTask.isEscalated()) {
+            if (task.isEscalated()) {
                 return "escalatedTask";
             }
             return "deadlineExists";

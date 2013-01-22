@@ -17,21 +17,18 @@
  */
 package ru.runa.wf.logic.bot.webservice;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
 import ru.runa.wf.logic.bot.WebServiceTaskHandler;
-import ru.runa.wfe.commons.xml.PathEntityResolver;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 
 /**
- * Class for parsing {@link WebServiceTaskHandler} settings from XML file.
+ * Class for parsing {@link WebServiceTaskHandler} settings from XML file
+ * (semantic defined in webServiceTaskHandlerConfig.xsd).
  */
 public class WebServiceTaskHandlerXMLParser {
     /**
@@ -94,11 +91,6 @@ public class WebServiceTaskHandlerXMLParser {
     private static final String LOGGING = "log";
 
     /**
-     * Allows XML parser to resolve external entities (XSD).
-     */
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("webServiceTaskHandlerConfig.xsd");
-
-    /**
      * Read XML from specified stream and create
      * {@link WebServiceTaskHandlerSettings} instance according to XML.
      * 
@@ -107,17 +99,17 @@ public class WebServiceTaskHandlerXMLParser {
      * @return Instance of {@link WebServiceTaskHandlerSettings} created
      *         according to XML.
      */
-    public static WebServiceTaskHandlerSettings read(InputStream data) {
-        Document document = XMLHelper.getDocument(data, PATH_ENTITY_RESOLVER);
-        Element configuration = document.getDocumentElement();
-        String url = getElementText(configuration, URL);
-        String soapAction = getElementText(configuration, SOAP_ACTION);
-        ErrorResponseProcessingResult errorAction = readErrorAction(configuration);
-        String authBase = getElementText(configuration, AUTH_BASE);
-        String requestMethod = getElementText(configuration, REQUEST_METHOD);
-        boolean isLoggingEnable = "true".equalsIgnoreCase(getElementText(configuration, LOGGING));
-        List<Interaction> interactions = readInteractions(configuration.getElementsByTagName(INTERACTION));
-        return new WebServiceTaskHandlerSettings(url, soapAction, interactions, document.getXmlEncoding(), authBase, requestMethod, isLoggingEnable,
+    public static WebServiceTaskHandlerSettings read(String configuration) {
+        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Element root = document.getRootElement();
+        String url = root.elementText(URL);
+        String soapAction = root.elementText(SOAP_ACTION);
+        ErrorResponseProcessingResult errorAction = readErrorAction(root);
+        String authBase = root.elementText(AUTH_BASE);
+        String requestMethod = root.elementText(REQUEST_METHOD);
+        boolean isLoggingEnable = "true".equalsIgnoreCase(root.elementText(LOGGING));
+        List<Interaction> interactions = readInteractions(root.elements(INTERACTION));
+        return new WebServiceTaskHandlerSettings(url, soapAction, interactions, document.getXMLEncoding(), authBase, requestMethod, isLoggingEnable,
                 errorAction);
     }
 
@@ -128,12 +120,11 @@ public class WebServiceTaskHandlerXMLParser {
      *            List of XML elements, describing interactions.
      * @return List of readed interactions.
      */
-    private static List<Interaction> readInteractions(NodeList interactionsElements) {
+    private static List<Interaction> readInteractions(List<Element> interactionsElements) {
         List<Interaction> result = new ArrayList<Interaction>();
-        for (int i = 0; i < interactionsElements.getLength(); ++i) {
-            Element interaction = (Element) interactionsElements.item(i);
-            String requestXML = getElementText(interaction, INTERACTION_REQUEST);
-            String responseXSLT = getElementText(interaction, INTERACTION_RESPONSE);
+        for (Element interaction : interactionsElements) {
+            String requestXML = interaction.elementText(INTERACTION_REQUEST);
+            String responseXSLT = interaction.elementText(INTERACTION_RESPONSE);
             String variableName = getElementAttribute(interaction, INTERACTION_RESPONSE, INTERACTION_VARIABLE);
             String maxLength = getElementAttribute(interaction, INTERACTION_RESPONSE, INTERACTION_RESPONSE_LENGTH);
             int maxResponseLength = maxLength == null ? 128 * 1024 : Integer.parseInt(maxLength);
@@ -153,36 +144,17 @@ public class WebServiceTaskHandlerXMLParser {
      *            Parent element to read element with specified name.
      * @param elementName
      *            Element name to read.
-     * @return Text content of element with specified name or null, if no such
-     *         element found.
-     */
-    private static String getElementText(Element parentElement, String elementName) {
-        NodeList elements = parentElement.getElementsByTagName(elementName);
-        if (elements.getLength() == 0) {
-            return null;
-        }
-        return elements.item(0).getTextContent();
-    }
-
-    /**
-     * Read element with specified name and returns it text content.
-     * 
-     * @param parentElement
-     *            Parent element to read element with specified name.
-     * @param elementName
-     *            Element name to read.
      * @param attributeName
      *            Attribute name to read
      * @return Text content of element with specified name or null, if no such
      *         element found.
      */
     private static String getElementAttribute(Element parentElement, String elementName, String attributeName) {
-        NodeList elements = parentElement.getElementsByTagName(elementName);
-        if (elements.getLength() == 0) {
+        Element element = parentElement.element(elementName);
+        if (element == null) {
             return null;
         }
-        Node attribute = elements.item(0).getAttributes().getNamedItem(attributeName);
-        return attribute == null ? null : attribute.getNodeValue();
+        return element.attributeValue(attributeName);
     }
 
     /**
@@ -195,10 +167,10 @@ public class WebServiceTaskHandlerXMLParser {
      *         null, if errorAction is not set.
      */
     private static ErrorResponseProcessingResult readErrorAction(Element configuration) {
-        NodeList actionElement = configuration.getElementsByTagName(ERROR_ACTION);
-        if (actionElement.getLength() == 0) {
+        Element actionElement = configuration.element(ERROR_ACTION);
+        if (actionElement == null) {
             return null;
         }
-        return ErrorResponseProcessingResult.valueOf(actionElement.item(0).getTextContent());
+        return ErrorResponseProcessingResult.valueOf(actionElement.getText());
     }
 }

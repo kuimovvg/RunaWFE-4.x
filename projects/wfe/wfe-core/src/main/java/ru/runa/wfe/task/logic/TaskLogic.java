@@ -139,7 +139,7 @@ public class TaskLogic extends WFCommonLogic {
         checkPermissionAllowed(subject, process, ProcessPermission.READ);
         Actor performer = SubjectPrincipalsHelper.getActor(subject);
         Map<String, SwimlaneDefinition> swimlaneMap = processDefinition.getSwimlanes();
-        List<WfSwimlane> wfSwimlanes = Lists.newArrayListWithExpectedSize(swimlaneMap.size());
+        List<WfSwimlane> swimlanes = Lists.newArrayListWithExpectedSize(swimlaneMap.size());
         for (SwimlaneDefinition swimlaneDefinition : swimlaneMap.values()) {
             Swimlane swimlane = process.getSwimlane(swimlaneDefinition.getName());
             Executor assignedExecutor = null;
@@ -150,9 +150,9 @@ public class TaskLogic extends WFCommonLogic {
                     assignedExecutor = Actor.UNAUTHORIZED_ACTOR;
                 }
             }
-            wfSwimlanes.add(new WfSwimlane(swimlaneDefinition, assignedExecutor));
+            swimlanes.add(new WfSwimlane(swimlaneDefinition, assignedExecutor));
         }
-        return wfSwimlanes;
+        return swimlanes;
     }
 
     public void assignSwimlane(Subject subject, Long processId, String swimlaneName, Executor executor) {

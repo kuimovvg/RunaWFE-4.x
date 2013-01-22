@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +36,7 @@ import ru.runa.wf.logic.bot.startprocess.StartProcessVariableMapping;
 import ru.runa.wf.logic.bot.startprocess.StartProcessXmlParser;
 import ru.runa.wfe.commons.sqltask.DatabaseTask;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Permission;
@@ -53,26 +52,23 @@ import com.google.common.collect.Maps;
  * 
  *         added 9.06.2009 by gavrusev_sergei from version 2
  */
-public class StartProcessTaskHandler implements TaskHandler {
-
+public class StartProcessTaskHandler extends TaskHandlerBase {
     private static final Log log = LogFactory.getLog(StartProcessTaskHandler.class);
 
-    private StartProcessTask[] startProcessTasks;
+    private List<StartProcessTask> startProcessTasks;
 
     @Override
-    public void setConfiguration(byte[] configuration) {
-        startProcessTasks = StartProcessXmlParser.parse(new ByteArrayInputStream(configuration));
+    public void setConfiguration(String configuration) {
+        startProcessTasks = StartProcessXmlParser.parse(configuration);
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) {
         ExecutionService executionService = Delegates.getExecutionService();
         Map<String, Object> outputVariables = Maps.newHashMap();
 
         Map<String, Object> variablesMap = Maps.newHashMap();
-        for (int i = 0; i < startProcessTasks.length; i++) {
-            Long startedProcessId = null;
-            StartProcessTask startProcessTask = startProcessTasks[i];
+        for (StartProcessTask startProcessTask : startProcessTasks) {
             String processName = startProcessTask.getName();
             String startedProcessValueName = startProcessTask.getStartedProcessIdValueName();
             for (int j = 0; j < startProcessTask.getVariablesCount(); j++) {
@@ -81,7 +77,7 @@ public class StartProcessTaskHandler implements TaskHandler {
                 String to = startProcessVariableMapping.getToName();
                 Object value = variableProvider.getValue(from);
                 if (DatabaseTask.INSTANCE_ID_VARIABLE_NAME.equals(from)) {
-                    value = wfTask.getProcessId();
+                    value = task.getProcessId();
                 }
                 if (DatabaseTask.CURRENT_DATE_VARIABLE_NAME.equals(from)) {
                     value = new Date();
@@ -90,7 +86,7 @@ public class StartProcessTaskHandler implements TaskHandler {
             }
 
             // Start process
-            startedProcessId = executionService.startProcess(subject, processName, variablesMap);
+            Long startedProcessId = executionService.startProcess(subject, processName, variablesMap);
 
             // add startedProcessId to variables
             if (startedProcessValueName != null) {
@@ -99,8 +95,8 @@ public class StartProcessTaskHandler implements TaskHandler {
 
             try {
                 AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
-                WfProcess wfProcess = executionService.getProcess(subject, startedProcessId);
-                WfProcess superWfProcess = executionService.getProcess(subject, wfTask.getProcessId());
+                WfProcess process = executionService.getProcess(subject, startedProcessId);
+                WfProcess superWfProcess = executionService.getProcess(subject, task.getProcessId());
                 BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
                 List<Executor> executors = authorizationService.getExecutorsWithPermission(subject, superWfProcess, batchPresentation, true);
                 for (Executor executor : executors) {
@@ -108,13 +104,13 @@ public class StartProcessTaskHandler implements TaskHandler {
                     for (Permission perm : authorizationService.getOwnPermissions(subject, executor, superWfProcess)) {
                         permissions.add(perm);
                     }
-                    for (Permission perm : authorizationService.getOwnPermissions(subject, executor, wfProcess)) {
+                    for (Permission perm : authorizationService.getOwnPermissions(subject, executor, process)) {
                         permissions.add(perm);
                     }
-                    authorizationService.setPermissions(subject, executor, permissions, wfProcess);
+                    authorizationService.setPermissions(subject, executor, permissions, process);
                 }
             } catch (Throwable e) {
-                log.error("Error on permission copy to new subprocess (step is ignored).", e);
+                log.error("Error in permission copy to new subprocess (step is ignored).", e);
             }
         }
         return outputVariables;

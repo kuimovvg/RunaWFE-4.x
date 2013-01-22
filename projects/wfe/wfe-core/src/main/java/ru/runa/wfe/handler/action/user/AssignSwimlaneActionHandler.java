@@ -25,7 +25,6 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.ConfigurationException;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Swimlane;
@@ -57,19 +56,15 @@ public class AssignSwimlaneActionHandler implements ActionHandler {
     }
 
     @Override
-    public void execute(ExecutionContext executionContext) {
-        try {
-            List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(executionContext.getVariableProvider(), swimlaneInititalizer,
-                    null);
-            if (executors.size() == 0) {
-                log.warn("No assignment will be done (OrgFunction return empty array of executor ids)");
-                return;
-            }
-            SwimlaneDefinition swimlaneDefinition = executionContext.getProcessDefinition().getSwimlaneNotNull(swimlaneName);
-            Swimlane swimlane = executionContext.getProcess().getSwimlaneNotNull(swimlaneDefinition);
-            assignmentHelper.assignSwimlane(executionContext, swimlane, executors);
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
+    public void execute(ExecutionContext executionContext) throws Exception {
+        List<? extends Executor> executors = OrgFunctionHelper
+                .evaluateOrgFunction(executionContext.getVariableProvider(), swimlaneInititalizer, null);
+        if (executors.size() == 0) {
+            log.warn("No assignment will be done (OrgFunction return empty array of executor ids)");
+            return;
         }
+        SwimlaneDefinition swimlaneDefinition = executionContext.getProcessDefinition().getSwimlaneNotNull(swimlaneName);
+        Swimlane swimlane = executionContext.getProcess().getSwimlaneNotNull(swimlaneDefinition);
+        assignmentHelper.assignSwimlane(executionContext, swimlane, executors);
     }
 }

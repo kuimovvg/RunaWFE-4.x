@@ -41,7 +41,7 @@ import ru.runa.wfe.commons.sqltask.Result;
 import ru.runa.wfe.commons.sqltask.StoredProcedureQuery;
 import ru.runa.wfe.commons.sqltask.SwimlaneParameter;
 import ru.runa.wfe.commons.sqltask.SwimlaneResult;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
@@ -53,18 +53,18 @@ import com.google.common.collect.Maps;
  * @created on 01.04.2005
  * @modifier 22.03.2006 gaidomartin@gmail.com
  */
-public class DatabaseTaskHandler implements TaskHandler {
-    private byte[] configuration = null;
+public class DatabaseTaskHandler extends TaskHandlerBase {
+    private String configuration;
 
     @Override
-    public void setConfiguration(byte[] configuration) {
+    public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
         Map<String, Object> outputVariables = Maps.newHashMap();
-        outputVariables.put(DatabaseTask.INSTANCE_ID_VARIABLE_NAME, new Long(wfTask.getProcessId()));
+        outputVariables.put(DatabaseTask.INSTANCE_ID_VARIABLE_NAME, task.getProcessId());
         outputVariables.put(DatabaseTask.CURRENT_DATE_VARIABLE_NAME, new Date());
         DatabaseTask[] databaseTasks = DatabaseTaskXmlParser.parse(configuration, variableProvider);
         Context context = new InitialContext();
