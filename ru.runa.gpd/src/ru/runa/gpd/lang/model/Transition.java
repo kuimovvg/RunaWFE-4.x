@@ -7,6 +7,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginConstants;
 
 import com.google.common.base.Objects;
 
@@ -122,6 +123,28 @@ public class Transition extends NamedGraphElement implements Active {
         if (getParent() == null || target == null) {
             return "not_completed";
         }
-        return ((Node) getParent()).toString() + " -> (" + getName() + ") -> " + target.toString();
+        return getParent().toString() + " -> (" + getName() + ") -> " + target.toString();
+    }
+    
+    public String getLabel() {
+        if (getSource() instanceof Decision || getSource() instanceof ExclusiveGateway) {
+            return getName();
+        }
+        if (PluginConstants.TIMER_TRANSITION_NAME.equals(getName()) && getSource() instanceof ITimed) {
+            Timer timer = ((ITimed) getSource()).getTimer();
+            return timer != null ? timer.getDelay().toString() : "";
+        }
+        if (getSource() instanceof TaskState) {
+            int count = 0;
+            for (Transition transition : getSource().getLeavingTransitions()) {
+                if (!PluginConstants.TIMER_TRANSITION_NAME.equals(transition.getName())) {
+                    count++;
+                }
+            }
+            if (count > 1) {
+                return getName();
+            }
+        }
+        return "";
     }
 }
