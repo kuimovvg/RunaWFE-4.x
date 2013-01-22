@@ -37,7 +37,7 @@ import ru.runa.wf.logic.bot.startprocess.StartProcessVariableMapping;
 import ru.runa.wf.logic.bot.startprocess.StartProcessXmlParser;
 import ru.runa.wfe.commons.sqltask.DatabaseTask;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.handler.bot.ITaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Permission;
@@ -53,7 +53,7 @@ import com.google.common.collect.Maps;
  * 
  *         added 9.06.2009 by gavrusev_sergei from version 2
  */
-public class StartProcessTaskHandler implements ITaskHandler {
+public class StartProcessTaskHandler implements TaskHandler {
 
     private static final Log log = LogFactory.getLog(StartProcessTaskHandler.class);
 

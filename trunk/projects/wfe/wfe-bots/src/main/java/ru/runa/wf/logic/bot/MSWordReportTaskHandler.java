@@ -32,7 +32,7 @@ import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilder;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilderFactory;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportTaskSettings;
 import ru.runa.wf.logic.bot.mswordreport.WordReportSettingsXmlParser;
-import ru.runa.wfe.handler.bot.ITaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -48,7 +48,7 @@ import com.google.common.io.ByteStreams;
  * Created on 23.11.2006
  * 
  */
-public class MSWordReportTaskHandler implements ITaskHandler {
+public class MSWordReportTaskHandler implements TaskHandler {
     private static final Log log = LogFactory.getLog(MSWordReportTaskHandler.class);
     private static final String CONTENT_TYPE = "application/vnd.ms-word";
 

@@ -34,7 +34,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.security.auth.Subject;
 
-import ru.runa.wfe.handler.bot.ITaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
@@ -43,7 +43,7 @@ import ru.runa.wfe.var.IVariableProvider;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 
-public class JcrRepositoryTaskHandler implements ITaskHandler {
+public class JcrRepositoryTaskHandler implements TaskHandler {
     private static final String NT_FILE = "nt:file";
     private static final String NT_RESOURCE = "nt:resource";
     private static final String JCR_ENCODING = "jcr:encoding";
