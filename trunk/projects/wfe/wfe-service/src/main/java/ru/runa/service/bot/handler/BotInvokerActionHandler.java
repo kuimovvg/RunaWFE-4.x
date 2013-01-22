@@ -28,6 +28,8 @@ import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
 
+import com.google.common.base.Strings;
+
 /**
  * Starts bot invocation at specified server.
  * 
@@ -46,7 +48,7 @@ public class BotInvokerActionHandler implements ActionHandler {
     public void execute(ExecutionContext executionContext) {
         List<BotStation> botStations = Delegates.getBotService().getBotStations();
         BotStation botStation = null;
-        if (configuration != null) {
+        if (!Strings.isNullOrEmpty(configuration)) {
             // old way: search by address
             for (BotStation bs : botStations) {
                 if (configuration.equals(bs.getAddress())) {

@@ -39,15 +39,11 @@ public class BookmarkVariableMapping {
         return variableName;
     }
 
-    public BookmarkVariableMapping(String bookmarkName, String variableName, String formatClassName, String formatPattern) {
+    public BookmarkVariableMapping(String bookmarkName, String variableName, String formatClassName) {
         this.bookmarkName = bookmarkName;
         this.variableName = variableName;
         if (!Strings.isNullOrEmpty(formatClassName)) {
-            if (formatPattern != null && formatPattern.length() > 0) {
-                format = FormatCommons.create(formatClassName, formatPattern);
-            } else {
-                format = FormatCommons.create(formatClassName);
-            }
+            format = FormatCommons.create(formatClassName);
         }
     }
 }

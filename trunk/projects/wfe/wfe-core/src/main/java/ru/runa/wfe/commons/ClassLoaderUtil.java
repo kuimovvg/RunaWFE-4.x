@@ -78,11 +78,10 @@ public class ClassLoaderUtil {
         }
     }
 
-    public static Properties getProperties(String resource) {
+    public static Properties getPropertiesNotNull(String resource) {
         Properties properties = new Properties();
         try {
-            InputStream is = getResourceAsStream(resource, ClassLoaderUtil.class);
-            Preconditions.checkNotNull(is, "Unable to load properties " + resource);
+            InputStream is = getAsStreamNotNull(resource, ClassLoaderUtil.class);
             properties.load(is);
             is.close();
         } catch (IOException e) {
@@ -91,7 +90,8 @@ public class ClassLoaderUtil {
         return properties;
     }
 
-    public static URL getResource(String resourceName, Class<?> callingClass) {
+    private static URL getAsURL(String resourceName, Class<?> callingClass) {
+        Preconditions.checkNotNull(resourceName, "resourceName");
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = null;
         while ((loader != null) && (url == null)) {
@@ -112,18 +112,44 @@ public class ClassLoaderUtil {
             url = callingClass.getResource(resourceName);
         }
         if ((url == null) && (resourceName != null) && (resourceName.charAt(0) != '/')) {
-            return getResource('/' + resourceName, callingClass);
+            return getAsURL('/' + resourceName, callingClass);
         }
         return url;
     }
 
-    public static InputStream getResourceAsStream(String resourceName, Class<?> callingClass) {
-        URL url = getResource(resourceName, callingClass);
+    /**
+     * Get resource as stream.
+     * 
+     * @param resourceName
+     *            classpath resource name
+     * @param callingClass
+     *            package of this class will be inspected for resources
+     * @return resource stream or <code>null</code>
+     */
+    public static InputStream getAsStream(String resourceName, Class<?> callingClass) {
+        URL url = getAsURL(resourceName, callingClass);
         try {
-            return (url != null) ? url.openStream() : null;
+            return url != null ? url.openStream() : null;
         } catch (IOException e) {
             return null;
         }
+    }
+
+    /**
+     * Get resource as stream.
+     * 
+     * @param resourceName
+     *            classpath resource name
+     * @param callingClass
+     *            package of this class will be inspected for resources
+     * @return resource stream
+     */
+    public static InputStream getAsStreamNotNull(String resourceName, Class<?> callingClass) {
+        InputStream stream = getAsStream(resourceName, callingClass);
+        if (stream == null) {
+            throw new InternalApplicationException("No resource found by '" + resourceName + "'");
+        }
+        return stream;
     }
 
     public static Object instantiate(String className, Object[] params) {

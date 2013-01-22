@@ -25,6 +25,7 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
@@ -35,6 +36,7 @@ import com.google.common.base.Strings;
  * Semantic is defined in textreport.xsd.
  */
 public class TextReportSettingsXmlParser {
+    private static final String TEMPLATE_ELEMENT_NAME = "template";
     private static final String FILE_NAME_ATTRIBUTE_NAME = "fileName";
     private static final String FILE_ENCODING_ATTRIBUTE_NAME = "fileEncoding";
     private static final String VARIABLE_NAME_ATTRIBUTE_NAME = "variableName";
@@ -43,7 +45,6 @@ public class TextReportSettingsXmlParser {
     private static final String FORMATTERS_ELEMENT_NAME = "formatters";
     private static final String VARIABLE_ELEMENT_NAME = "variable";
     private static final String FORMAT_CLASS_ATTRIBUTE_NAME = "formatClass";
-    private static final String FORMAT_PATTERN_ATTRIBUTE_NAME = "pattern";
     private static final String REPLACEMENTS_ELEMENT_NAME = "replacements";
     private static final String REPLACEMENT_ELEMENT_NAME = "replacement";
     private static final String SOURCE_ATTRIBUTE_NAME = "source";
@@ -56,8 +57,9 @@ public class TextReportSettingsXmlParser {
         Document document = XmlUtils.parseWithoutValidation(configuration);
 
         Element root = document.getRootElement();
-        textReportSettings.setTemplateFileName(root.attributeValue(FILE_NAME_ATTRIBUTE_NAME));
-        textReportSettings.setTemplateEncoding(root.attributeValue(FILE_ENCODING_ATTRIBUTE_NAME));
+        Element templateElement = root.element(TEMPLATE_ELEMENT_NAME);
+        textReportSettings.setTemplateFileName(templateElement.attributeValue(FILE_NAME_ATTRIBUTE_NAME));
+        textReportSettings.setTemplateEncoding(templateElement.attributeValue(FILE_ENCODING_ATTRIBUTE_NAME));
 
         Element reportElement = root.element(REPORT_ELEMENT_NAME);
         textReportSettings.setReportFileName(reportElement.attributeValue(FILE_NAME_ATTRIBUTE_NAME));
@@ -87,14 +89,9 @@ public class TextReportSettingsXmlParser {
                 Element variableNode = nodeList.get(i);
                 String variableName = variableNode.attributeValue(VARIABLE_NAME_ATTRIBUTE_NAME);
                 String formatClassName = variableNode.attributeValue(FORMAT_CLASS_ATTRIBUTE_NAME);
-                String formatPattern = variableNode.attributeValue(FORMAT_PATTERN_ATTRIBUTE_NAME);
                 if (!Strings.isNullOrEmpty(formatClassName)) {
-                    VariableFormat<?> format;
-                    if (!Strings.isNullOrEmpty(formatPattern)) {
-                        format = FormatCommons.create(formatClassName, formatPattern);
-                    } else {
-                        format = FormatCommons.create(formatClassName);
-                    }
+                    formatClassName = BackCompatibilityClassNames.getClassName(formatClassName);
+                    VariableFormat<?> format = FormatCommons.create(formatClassName);
                     textReportSettings.addVariableFormat(variableName, format);
                 }
             }

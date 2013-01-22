@@ -65,9 +65,13 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
         for (SecuredObjectType type : SecuredObjectType.values()) {
             privelegedExecutors.put(type, new ArrayList<Executor>());
         }
-        List<PrivelegedMapping> list = getHibernateTemplate().find("from PrivelegedMapping m");
-        for (PrivelegedMapping mapping : list) {
-            privelegedExecutors.get(mapping.getType()).add(mapping.getExecutor());
+        try {
+            List<PrivelegedMapping> list = getHibernateTemplate().find("from PrivelegedMapping m");
+            for (PrivelegedMapping mapping : list) {
+                privelegedExecutors.get(mapping.getType()).add(mapping.getExecutor());
+            }
+        } catch (Exception e) {
+            log.error("priveleged executors was not loaded (if this exception occurs in empty DB just ignore it)", e);
         }
     }
 
@@ -133,8 +137,21 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
      *            Secured object to set permission on.
      */
     public void setPermissions(Executor executor, Collection<Permission> permissions, Identifiable identifiable) {
+        if (isPrivilegedExecutor(executor, identifiable)) {
+            log.debug("permissions not granted for priveleged executor");
+            return;
+        }
         checkArePermissionAllowed(identifiable, permissions);
-        setPermissionsInternal(executor, permissions, identifiable);
+        Set<PermissionMapping> permissionMappingToRemoveSet = getOwnPermissionMappings(executor, identifiable);
+        for (Permission permission : permissions) {
+            PermissionMapping pm = new PermissionMapping(executor, identifiable, permission.getMask());
+            if (permissionMappingToRemoveSet.contains(pm)) {
+                permissionMappingToRemoveSet.remove(pm);
+            } else {
+                getHibernateTemplate().save(pm);
+            }
+        }
+        getHibernateTemplate().deleteAll(permissionMappingToRemoveSet);
     }
 
     /**
@@ -249,29 +266,6 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
         if (notAllowedPermission.size() > 0) {
             throw new UnapplicablePermissionException(identifiable, permissions);
         }
-    }
-
-    /**
-     * Save permissions for executor on secured object.
-     * 
-     * @param executor
-     *            Executor, which got permissions.
-     * @param permissions
-     *            Permissions, set to executor.
-     * @param identifiable
-     *            Secured object to set permission on.
-     */
-    private void setPermissionsInternal(Executor executor, Collection<Permission> permissions, Identifiable identifiable) {
-        Set<PermissionMapping> permissionMappingToRemoveSet = getOwnPermissionMappings(executor, identifiable);
-        for (Permission permission : permissions) {
-            PermissionMapping pm = new PermissionMapping(executor, identifiable, permission.getMask());
-            if (permissionMappingToRemoveSet.contains(pm)) {
-                permissionMappingToRemoveSet.remove(pm);
-            } else {
-                getHibernateTemplate().save(pm);
-            }
-        }
-        getHibernateTemplate().deleteAll(permissionMappingToRemoveSet);
     }
 
     /**

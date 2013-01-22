@@ -32,25 +32,23 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.calendar.BusinessCalendar;
 
 /**
- * a calendar that knows about business hours. modified on 06.03.2009 by gavrusev_sergei
+ * a calendar that knows about business hours. modified on 06.03.2009 by
+ * gavrusev_sergei
  */
 public class BusinessCalendarImpl implements BusinessCalendar, Serializable {
     private static final long serialVersionUID = 1L;
-    private static Properties businessCalendarProperties = null;
+    private static Properties businessCalendarProperties = ClassLoaderUtil.getPropertiesNotNull("business.calendar.properties");
 
     private final Day[] weekDays;
     private final List<Holiday> holidays;
 
-    public static synchronized Properties getBusinessCalendarProperties() {
-        if (businessCalendarProperties == null) {
-            businessCalendarProperties = ClassLoaderUtil.getProperties("business.calendar.properties");
-        }
-        return businessCalendarProperties;
+    public BusinessCalendarImpl() {
+        weekDays = Day.parseWeekDays(businessCalendarProperties, this);
+        holidays = Holiday.parseHolidays(businessCalendarProperties);
     }
 
-    public BusinessCalendarImpl() {
-        weekDays = Day.parseWeekDays(getBusinessCalendarProperties(), this);
-        holidays = Holiday.parseHolidays(getBusinessCalendarProperties());
+    public static Properties getBusinessCalendarProperties() {
+        return businessCalendarProperties;
     }
 
     @Override
