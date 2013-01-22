@@ -356,7 +356,7 @@
          </param>
          <param
                name="%Param.RelationParameter"
-               type="varcombo"
+               type="richcombo"
                variableTypeFilter="ru.runa.wfe.user.Executor"
                variableAccess="READ">
          </param>
