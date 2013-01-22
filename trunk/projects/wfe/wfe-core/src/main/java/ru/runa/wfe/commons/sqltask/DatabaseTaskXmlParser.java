@@ -17,81 +17,52 @@
  */
 package ru.runa.wfe.commons.sqltask;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
-import ru.runa.wfe.commons.xml.PathEntityResolver;
-import ru.runa.wfe.commons.xml.SimpleErrorHandler;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.var.IVariableProvider;
 
 /**
- * Created on 01.04.2005
+ * Semantic is defined in database-tasks.xsd.
  * 
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
  */
 public class DatabaseTaskXmlParser {
     private static final String TASK_ELEMENT_NAME = "task";
-
     private static final String DATASOURCE_ATTRIBUTE_NAME = "datasource";
-
     private static final String SQL_ATTRIBUTE_NAME = "sql";
-
     private static final String VARIABLE_ATTRIBUTE_NAME = "var";
-
     private static final String QUERY_ELEMENT_NAME = "query";
-
     private static final String QUERIES_ELEMENT_NAME = "queries";
-
     private static final String PROCEDURE_ELEMENT_NAME = "procedure";
-
     private static final String PARAMETER_ELEMENT_NAME = "param";
-
     private static final String SWIMLANE_PARAMETER_ELEMENT_NAME = "swimlane-param";
-
     private static final String RESULT_ELEMENT_NAME = "result";
-
     private static final String SWIMLANE_RESULT_ELEMENT_NAME = "swimlane-result";
-
     private static final String FIELD_PARAMETER_ELEMENT_NAME = "field";
-
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("database-tasks.xsd");
 
     /**
      * Parses DatabaseTaskHandler configuration
      * 
-     * @param bytes
-     *            xml configuration bytes
+     * @param configuration
+     *            xml configuration
      * @param variableProvider
      *            process variables to substitute values in query string
      */
-    public static DatabaseTask[] parse(byte[] bytes, IVariableProvider variableProvider) throws DatabaseTaskXmlParserException {
-        try {
-            InputStream is = new ByteArrayInputStream(bytes);
-            Document document = XMLHelper.getDocument(is, PATH_ENTITY_RESOLVER, SimpleErrorHandler.getInstance());
-            DatabaseTask[] databaseTasks = parseDatabaseTasks(document, variableProvider);
-            return databaseTasks;
-        } catch (Exception e) {
-            throw new DatabaseTaskXmlParserException(e);
-        }
-    }
-
-    private static DatabaseTask[] parseDatabaseTasks(Document document, IVariableProvider variableProvider) {
-        NodeList taskElementList = document.getElementsByTagName(TASK_ELEMENT_NAME);
-        DatabaseTask[] databaseTasks = new DatabaseTask[taskElementList.getLength()];
+    public static DatabaseTask[] parse(String configuration, IVariableProvider variableProvider) throws DatabaseTaskXmlParserException {
+        Document document = XmlUtils.parseWithoutValidation(configuration);
+        List<Element> taskElementList = document.getRootElement().elements(TASK_ELEMENT_NAME);
+        DatabaseTask[] databaseTasks = new DatabaseTask[taskElementList.size()];
         for (int i = 0; i < databaseTasks.length; i++) {
-            Element taskElement = (Element) taskElementList.item(i);
-            String datasourceName = parseSQLQueryElement(taskElement.getAttribute(DATASOURCE_ATTRIBUTE_NAME), variableProvider);
+            Element taskElement = taskElementList.get(i);
+            String datasourceName = parseSQLQueryElement(taskElement.attributeValue(DATASOURCE_ATTRIBUTE_NAME), variableProvider);
             AbstractQuery[] abstractQueries = parseTaskQueries(taskElement, variableProvider);
             databaseTasks[i] = new DatabaseTask(datasourceName, abstractQueries);
         }
@@ -99,26 +70,25 @@ public class DatabaseTaskXmlParser {
     }
 
     private static AbstractQuery[] parseTaskQueries(Element taskElement, IVariableProvider variableProvider) {
-        Element queriesElement = (Element) taskElement.getElementsByTagName(QUERIES_ELEMENT_NAME).item(0);
+        Element queriesElement = taskElement.element(QUERIES_ELEMENT_NAME);
 
-        NodeList queryElementList = queriesElement.getChildNodes();
-        List<AbstractQuery> queryList = new ArrayList<AbstractQuery>(queryElementList.getLength());
-        for (int i = 0; i < queryElementList.getLength(); i++) {
-            Node node = queryElementList.item(i);
-            if (node.getNodeType() != Node.ELEMENT_NODE
-                    || !(QUERY_ELEMENT_NAME.equals(node.getNodeName()) || PROCEDURE_ELEMENT_NAME.equals(node.getNodeName()))) {
+        List<Element> queryElementList = queriesElement.elements();
+        List<AbstractQuery> queryList = new ArrayList<AbstractQuery>(queryElementList.size());
+        for (int i = 0; i < queryElementList.size(); i++) {
+            Element node = queryElementList.get(i);
+            if (!(QUERY_ELEMENT_NAME.equals(node.getName()) || PROCEDURE_ELEMENT_NAME.equals(node.getName()))) {
                 continue;
             }
-            Element queryElement = (Element) node;
-            String sql = parseSQLQueryElement(queryElement.getAttribute(SQL_ATTRIBUTE_NAME), variableProvider);
+            Element queryElement = node;
+            String sql = parseSQLQueryElement(queryElement.attributeValue(SQL_ATTRIBUTE_NAME), variableProvider);
             List<Parameter> parameterList = new ArrayList<Parameter>();
             List<Result> resultList = new ArrayList<Result>();
             parseQueryParameters(queryElement, parameterList, resultList);
             Parameter[] parameters = parameterList.toArray(new Parameter[parameterList.size()]);
             Result[] results = resultList.toArray(new Result[resultList.size()]);
-            if (QUERY_ELEMENT_NAME.equals(queryElement.getLocalName())) {
+            if (QUERY_ELEMENT_NAME.equals(queryElement.getName())) {
                 queryList.add(new Query(sql, parameters, results));
-            } else if (PROCEDURE_ELEMENT_NAME.equals(queryElement.getLocalName())) {
+            } else if (PROCEDURE_ELEMENT_NAME.equals(queryElement.getName())) {
                 queryList.add(new StoredProcedureQuery(sql, parameters, results));
             }
         }
@@ -126,23 +96,21 @@ public class DatabaseTaskXmlParser {
     }
 
     private static void parseQueryParameters(Element queryElement, List<Parameter> parameterList, List<Result> resultList) {
-        NodeList queryNodes = queryElement.getChildNodes();
-        for (int k = 0; k < queryNodes.getLength(); k++) {
-            Node queryNode = queryNodes.item(k);
-            if (queryNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element parameterElement = (Element) queryNode;
-                String elementName = parameterElement.getNodeName();
-                String variableName = parameterElement.getAttribute(VARIABLE_ATTRIBUTE_NAME);
-                String fieldName = parameterElement.getAttribute(FIELD_PARAMETER_ELEMENT_NAME);
-                if (PARAMETER_ELEMENT_NAME.equals(elementName)) {
-                    parameterList.add(new Parameter(variableName, fieldName));
-                } else if (SWIMLANE_PARAMETER_ELEMENT_NAME.equals(elementName)) {
-                    parameterList.add(new SwimlaneParameter(variableName, fieldName));
-                } else if (RESULT_ELEMENT_NAME.equals(elementName)) {
-                    resultList.add(new Result(variableName, fieldName));
-                } else if (SWIMLANE_RESULT_ELEMENT_NAME.equals(elementName)) {
-                    resultList.add(new SwimlaneResult(variableName, fieldName));
-                }
+        List<Element> queryNodes = queryElement.elements();
+        for (int k = 0; k < queryNodes.size(); k++) {
+            Element queryNode = queryNodes.get(k);
+            Element parameterElement = queryNode;
+            String elementName = parameterElement.getName();
+            String variableName = parameterElement.attributeValue(VARIABLE_ATTRIBUTE_NAME);
+            String fieldName = parameterElement.attributeValue(FIELD_PARAMETER_ELEMENT_NAME);
+            if (PARAMETER_ELEMENT_NAME.equals(elementName)) {
+                parameterList.add(new Parameter(variableName, fieldName));
+            } else if (SWIMLANE_PARAMETER_ELEMENT_NAME.equals(elementName)) {
+                parameterList.add(new SwimlaneParameter(variableName, fieldName));
+            } else if (RESULT_ELEMENT_NAME.equals(elementName)) {
+                resultList.add(new Result(variableName, fieldName));
+            } else if (SWIMLANE_RESULT_ELEMENT_NAME.equals(elementName)) {
+                resultList.add(new SwimlaneResult(variableName, fieldName));
             }
         }
     }

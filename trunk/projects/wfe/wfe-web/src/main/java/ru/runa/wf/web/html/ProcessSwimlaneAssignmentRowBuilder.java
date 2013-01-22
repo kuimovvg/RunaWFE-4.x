@@ -51,19 +51,19 @@ public class ProcessSwimlaneAssignmentRowBuilder implements RowBuilder {
     @Override
     public TR buildNext() {
         TR tr = new TR();
-        WfTask wfTask = iterator.next();
+        WfTask task = iterator.next();
 
-        TD stateTd = new TD(wfTask.getName());
+        TD stateTd = new TD(task.getName());
         tr.addElement(stateTd);
         stateTd.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
 
         TD executorsTd = new TD();
         tr.addElement(executorsTd);
         executorsTd.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
-        if (wfTask.getOwner() != null) {
-            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, wfTask.getOwner().getId(),
+        if (task.getOwner() != null) {
+            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, task.getOwner().getId(),
                     pageContext, PortletUrlType.Render);
-            executorsTd.addElement(new A(url, ExecutorNameConverter.getName(wfTask.getOwner(), pageContext)));
+            executorsTd.addElement(new A(url, ExecutorNameConverter.getName(task.getOwner(), pageContext)));
         }
         return tr;
     }

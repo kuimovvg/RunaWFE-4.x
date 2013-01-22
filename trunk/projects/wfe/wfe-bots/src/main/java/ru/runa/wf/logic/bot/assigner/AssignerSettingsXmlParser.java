@@ -17,57 +17,36 @@
  */
 package ru.runa.wf.logic.bot.assigner;
 
-import java.io.InputStream;
+import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
-import ru.runa.wfe.commons.xml.PathEntityResolver;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 
+/**
+ * Sematics defined in resources/assigner.xsd.
+ * 
+ * @author Dofs
+ * 
+ */
 public class AssignerSettingsXmlParser {
-
+    private static final String CONDITIONS_ELEMENT_NAME = "conditions";
     private static final String CONDITION_ELEMENT_NAME = "condition";
-
     private static final String SWIMLANE_ELEMENT_NAME = "swimlaneName";
     private static final String FUNCTION_ELEMENT_NAME = "function";
     private static final String VARIABLE_ELEMENT_NAME = "variableName";
 
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("assigner.xsd");
-
-    private AssignerSettingsXmlParser() {
-        // prevents direct object instantiation
-    }
-
-    public static AssignerSettings read(InputStream inputStream) throws Exception {
-        Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
-
+    public static AssignerSettings read(String configuration) throws Exception {
         AssignerSettings assignerSettings = new AssignerSettings();
-        NodeList nodeList = document.getElementsByTagName(CONDITION_ELEMENT_NAME);
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node conditionNode = nodeList.item(i);
-
-            String swimlaneName = null;
-            String functionClassName = null;
-            String variableName = null;
-
-            NodeList childNodeList = conditionNode.getChildNodes();
-            for (int j = 0; j < childNodeList.getLength(); j++) {
-                Node child = childNodeList.item(j);
-                if (child.getNodeType() != Node.ELEMENT_NODE) {
-                    continue;
-                }
-                if (SWIMLANE_ELEMENT_NAME.equals(child.getNodeName())) {
-                    swimlaneName = child.getFirstChild().getNodeValue();
-                } else if (FUNCTION_ELEMENT_NAME.equals(child.getNodeName())) {
-                    functionClassName = child.getFirstChild().getNodeValue();
-                } else if (VARIABLE_ELEMENT_NAME.equals(child.getNodeName())) {
-                    variableName = child.getFirstChild().getNodeValue();
-                } else {
-                    // ignore #text nodes
-                }
-            }
+        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Element conditionsElement = document.getRootElement().element(CONDITIONS_ELEMENT_NAME);
+        List<Element> elements = conditionsElement.elements(CONDITION_ELEMENT_NAME);
+        for (Element conditionElement : elements) {
+            // TODO PEX 3
+            String swimlaneName = conditionElement.elementTextTrim(SWIMLANE_ELEMENT_NAME);
+            String functionClassName = conditionElement.elementTextTrim(FUNCTION_ELEMENT_NAME);
+            String variableName = conditionElement.elementTextTrim(VARIABLE_ELEMENT_NAME);
             assignerSettings.addAssignerCondition(new AssignerSettings.Condition(swimlaneName, functionClassName, variableName));
         }
         return assignerSettings;

@@ -29,13 +29,13 @@ import ru.runa.wfe.var.IVariableProvider;
  */
 public interface TaskHandler {
     /**
-     * If this variable assigned to Boolean.TRUE then bot system will not
+     * If this variable assigned to Boolean.TRUE then bot subsystem will not
      * complete task.
      */
     public static final String SKIP_TASK_COMPLETION_VARIABLE_NAME = "skipTaskCompletion";
 
     /**
-     * Configuring bot from database.
+     * Configuring bot task.
      * 
      * @param configuration
      *            Loaded from database configuration.
@@ -43,20 +43,19 @@ public interface TaskHandler {
     public void setConfiguration(byte[] configuration) throws Exception;
 
     /**
-     * Get configuration for debug output.
+     * Get configuration for debug purpose.
      */
-    public Object getConfiguration();
+    public String getConfiguration();
 
     /**
-     * Handles task, assigned to bot.
+     * Handles task assigned to bot.
      * 
      * @param subject
-     *            Current bot subject.
+     *            bot subject.
      * @param variableProvider
      *            access process variables
      * @param task
-     *            Task to be processed.
-     * @return variables passed to process
+     *            task to be processed.
      */
     public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception;
 }

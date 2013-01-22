@@ -23,16 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.CharacterData;
-import org.w3c.dom.Comment;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.EntityReference;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.validation.ValidatorConfig;
 
 import com.google.common.collect.Maps;
@@ -43,12 +38,11 @@ public class ValidatorFileParser {
     public static Map<String, String> parseValidatorDefinitions(InputStream is) {
         Map<String, String> result = Maps.newHashMap();
         try {
-            Document doc = XMLHelper.getDocumentWithoutValidation(is);
-            NodeList nodes = doc.getElementsByTagName("validator");
-            for (int i = 0; i < nodes.getLength(); i++) {
-                Element validatorElement = (Element) nodes.item(i);
-                String name = validatorElement.getAttribute("name");
-                String className = validatorElement.getAttribute("class");
+            Document document = XmlUtils.parseWithoutValidation(is);
+            List<Element> nodes = document.getRootElement().elements("validator");
+            for (Element validatorElement : nodes) {
+                String name = validatorElement.attributeValue("name");
+                String className = validatorElement.attributeValue("class");
                 result.put(name, className);
             }
         } catch (Exception e) {
@@ -58,65 +52,33 @@ public class ValidatorFileParser {
     }
 
     public static List<ValidatorConfig> parseValidatorConfigs(InputStream is) {
-        try {
-            List<ValidatorConfig> validatorCfgs = new ArrayList<ValidatorConfig>();
-            Document doc = XMLHelper.getDocumentWithoutValidation(is);
-            NodeList fieldNodes = doc.getElementsByTagName("field");
-            {
-                NodeList validatorNodes = doc.getElementsByTagName("validator");
-                addValidatorConfigs(validatorNodes, new HashMap<String, String>(), validatorCfgs);
-            }
-
-            for (int i = 0; i < fieldNodes.getLength(); i++) {
-                Element fieldElement = (Element) fieldNodes.item(i);
-                String fieldName = fieldElement.getAttribute("name");
-                Map<String, String> extraParams = new HashMap<String, String>();
-                extraParams.put("fieldName", fieldName);
-
-                NodeList validatorNodes = fieldElement.getElementsByTagName("field-validator");
-                addValidatorConfigs(validatorNodes, extraParams, validatorCfgs);
-            }
-            return validatorCfgs;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        List<ValidatorConfig> configs = new ArrayList<ValidatorConfig>();
+        Document doc = XmlUtils.parseWithoutValidation(is);
+        List<Element> fieldElements = doc.getRootElement().elements("field");
+        List<Element> validatorElements = doc.getRootElement().elements("validator");
+        addValidatorConfigs(validatorElements, new HashMap<String, String>(), configs);
+        for (Element fieldElement : fieldElements) {
+            String fieldName = fieldElement.attributeValue("name");
+            Map<String, String> extraParams = new HashMap<String, String>();
+            extraParams.put("fieldName", fieldName);
+            validatorElements = fieldElement.elements("field-validator");
+            addValidatorConfigs(validatorElements, extraParams, configs);
         }
+        return configs;
     }
 
-    private static String getTextValue(Element valueEle) {
-        StringBuffer value = new StringBuffer();
-        NodeList nl = valueEle.getChildNodes();
-        boolean firstCDataFound = false;
-        for (int i = 0; i < nl.getLength(); i++) {
-            Node item = nl.item(i);
-            if ((item instanceof CharacterData && !(item instanceof Comment)) || item instanceof EntityReference) {
-                final String nodeValue = item.getNodeValue();
-                if (nodeValue != null) {
-                    if (firstCDataFound) {
-                        value.append(MULTI_TEXTVALUE_SEPARATOR);
-                    } else {
-                        firstCDataFound = true;
-                    }
-                    value.append(nodeValue.trim());
-                }
-            }
-        }
-        return value.toString().trim();
-    }
-
-    private static void addValidatorConfigs(NodeList validatorNodes, Map<String, String> extraParams, List<ValidatorConfig> configs) {
-        for (int j = 0; j < validatorNodes.getLength(); j++) {
-            Element validatorElement = (Element) validatorNodes.item(j);
-            String validatorType = validatorElement.getAttribute("type");
+    private static void addValidatorConfigs(List<Element> validatorElements, Map<String, String> extraParams, List<ValidatorConfig> configs) {
+        for (Element validatorElement : validatorElements) {
+            String validatorType = validatorElement.attributeValue("type");
             Map<String, String> params = new HashMap<String, String>(extraParams);
-            NodeList paramNodes = validatorElement.getElementsByTagName("param");
-            for (int k = 0; k < paramNodes.getLength(); k++) {
-                Element paramElement = (Element) paramNodes.item(k);
-                String paramName = paramElement.getAttribute("name");
-                params.put(paramName, getTextValue(paramElement));
+            List<Element> paramNodes = validatorElement.elements("param");
+            for (Element paramElement : paramNodes) {
+                String paramName = paramElement.attributeValue("name");
+                String text = paramElement.getTextTrim();
+                text = text.replaceAll("\n", MULTI_TEXTVALUE_SEPARATOR);
+                params.put(paramName, text);
             }
-            NodeList messageNodes = validatorElement.getElementsByTagName("message");
-            Node messageNode = messageNodes.item(0).getFirstChild();
-            String message = messageNode.getNodeValue();
+            String message = validatorElement.elementTextTrim("message");
             ValidatorConfig config = new ValidatorConfig(validatorType, params, message);
             configs.add(config);
         }

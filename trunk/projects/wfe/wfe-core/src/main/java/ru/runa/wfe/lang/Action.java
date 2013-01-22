@@ -21,6 +21,9 @@
  */
 package ru.runa.wfe.lang;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
 
@@ -28,6 +31,7 @@ import com.google.common.base.Preconditions;
 
 public class Action extends GraphElement {
     private static final long serialVersionUID = 1L;
+    private static final Log log = LogFactory.getLog(Action.class);
     private boolean propagationAllowed = true;
     private Delegation delegation;
     private Event event;
@@ -57,7 +61,14 @@ public class Action extends GraphElement {
 
     public void execute(ExecutionContext executionContext) throws Exception {
         ActionHandler actionHandler = delegation.getInstance();
-        actionHandler.execute(executionContext);
+        try {
+            log.info("ActionHandler started " + actionHandler);
+            actionHandler.execute(executionContext);
+            log.info("ActionHandler finished " + actionHandler);
+        } catch (Exception e) {
+            log.info("ActionHandler failed " + actionHandler);
+            throw e;
+        }
     }
 
     public boolean isPropagationAllowed() {

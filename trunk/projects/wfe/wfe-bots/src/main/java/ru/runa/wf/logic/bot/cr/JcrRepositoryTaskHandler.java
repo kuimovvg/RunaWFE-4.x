@@ -34,8 +34,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.security.auth.Subject;
 
-import ru.runa.wfe.handler.bot.TaskHandler;
-import ru.runa.wfe.handler.bot.TaskHandlerException;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -43,7 +42,7 @@ import ru.runa.wfe.var.IVariableProvider;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 
-public class JcrRepositoryTaskHandler implements TaskHandler {
+public class JcrRepositoryTaskHandler extends TaskHandlerBase {
     private static final String NT_FILE = "nt:file";
     private static final String NT_RESOURCE = "nt:resource";
     private static final String JCR_ENCODING = "jcr:encoding";
@@ -55,12 +54,12 @@ public class JcrRepositoryTaskHandler implements TaskHandler {
     private JcrTaskConfig config;
 
     @Override
-    public void setConfiguration(byte[] configuration) throws Exception {
-        config = ConfigXmlParser.parse(new ByteArrayInputStream(configuration));
+    public void setConfiguration(String configuration) throws Exception {
+        config = ConfigXmlParser.parse(configuration);
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
         Session session = null;
         try {
             Context context = new InitialContext();
@@ -86,11 +85,7 @@ public class JcrRepositoryTaskHandler implements TaskHandler {
             return outputVariables;
         } finally {
             if (session != null) {
-                try {
-                    session.save();
-                } catch (RepositoryException e) {
-                    throw new TaskHandlerException(e);
-                }
+                session.save();
                 session.logout();
             }
         }

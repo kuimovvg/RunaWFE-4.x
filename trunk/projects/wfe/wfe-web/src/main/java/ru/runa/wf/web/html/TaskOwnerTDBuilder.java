@@ -42,10 +42,10 @@ public class TaskOwnerTDBuilder implements TDBuilder {
 
     @Override
     public TD build(Object object, Env env) {
-        WfTask wfTask = (WfTask) object;
-        String actorName = ExecutorNameConverter.getName(wfTask.getOwner(), env.getPageContext());
+        WfTask task = (WfTask) object;
+        String actorName = ExecutorNameConverter.getName(task.getOwner(), env.getPageContext());
         ConcreteElement link = new StringElement(actorName);
-        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, wfTask.getOwner().getId(),
+        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, task.getOwner().getId(),
                 env.getPageContext(), PortletUrlType.Render);
         link = new A(url, link);
         TD td = new TD(link);
@@ -55,8 +55,8 @@ public class TaskOwnerTDBuilder implements TDBuilder {
 
     @Override
     public String getValue(Object object, Env env) {
-        WfTask wfTask = (WfTask) object;
-        String result = ExecutorNameConverter.getName(wfTask.getOwner(), env.getPageContext());
+        WfTask task = (WfTask) object;
+        String result = ExecutorNameConverter.getName(task.getOwner(), env.getPageContext());
         if (result == null) {
             result = "";
         }

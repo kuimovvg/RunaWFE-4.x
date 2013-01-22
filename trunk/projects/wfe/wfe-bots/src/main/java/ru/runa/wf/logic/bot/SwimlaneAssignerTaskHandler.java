@@ -17,14 +17,15 @@
  */
 package ru.runa.wf.logic.bot;
 
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.security.auth.Subject;
 
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wf.logic.bot.assigner.AssignerResources;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
@@ -38,23 +39,26 @@ import ru.runa.wfe.var.IVariableProvider;
  * @author dofs
  * @since 2.0
  */
-public class SwimlaneAssignerTaskHandler implements TaskHandler {
-    private AssignerResources resources;
+public class SwimlaneAssignerTaskHandler extends TaskHandlerBase {
+    private static final String SWIMLANE_NAME_PROPERTY = "swimlaneName";
+    private static final String ASSIGNER_FUNCTION_PROPERTY = "assignerFunction";
+    private Properties properties = new Properties();
 
     @Override
-    public void setConfiguration(byte[] configuration) {
-        resources = new AssignerResources(configuration);
+    public void setConfiguration(String configuration) throws Exception {
+        properties.load(new StringReader(configuration));
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
-        String swimlaneName = resources.getSwimlaneName();
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) {
+        String swimlaneName = properties.getProperty(SWIMLANE_NAME_PROPERTY);
+        String assignerFunction = properties.getProperty(ASSIGNER_FUNCTION_PROPERTY);
         Long actorCode = SubjectPrincipalsHelper.getActor(subject).getCode();
-        List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(variableProvider, resources.getAssignerFunction(), actorCode);
+        List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(variableProvider, assignerFunction, actorCode);
         if (executors.size() != 1) {
             throw new TaskHandlerException("assigner (organization) function return more than 1 actor to be assigned in swimlane");
         }
-        Delegates.getExecutionService().assignSwimlane(subject, wfTask.getProcessId(), swimlaneName, executors.get(0));
+        Delegates.getExecutionService().assignSwimlane(subject, task.getProcessId(), swimlaneName, executors.get(0));
         return null;
     }
 }

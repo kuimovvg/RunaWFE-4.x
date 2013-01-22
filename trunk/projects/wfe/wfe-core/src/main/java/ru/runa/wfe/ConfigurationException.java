@@ -21,6 +21,7 @@
  */
 package ru.runa.wfe;
 
+// TODO PEX
 public class ConfigurationException extends ApplicationException {
     private static final long serialVersionUID = 1L;
 

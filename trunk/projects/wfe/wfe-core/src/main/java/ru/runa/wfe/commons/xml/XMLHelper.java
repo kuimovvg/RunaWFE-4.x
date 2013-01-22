@@ -31,20 +31,9 @@ import ru.runa.wfe.InternalApplicationException;
 /**
  * Unifies XML operations.
  * 
+ * @deprecated use {@link XmlUtils}.
  */
 public class XMLHelper {
-
-    private XMLHelper() {
-    }
-
-    public static Document getDocument(String path, EntityResolver entityResolver) {
-        DocumentBuilder documentBuilder = getDocumentBuilder(entityResolver, SimpleErrorHandler.getInstance());
-        try {
-            return documentBuilder.parse(path);
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
-        }
-    }
 
     public static Document getDocument(InputStream inputStream, EntityResolver entityResolver, ErrorHandler errorHandler) {
         DocumentBuilder documentBuilder = getDocumentBuilder(entityResolver, errorHandler);
@@ -57,10 +46,6 @@ public class XMLHelper {
 
     public static Document getDocument(InputStream inputStream, EntityResolver entityResolver) {
         return getDocument(inputStream, entityResolver, SimpleErrorHandler.getInstance());
-    }
-
-    public static Document getDocumentWithoutValidation(InputStream inputStream) {
-        return getDocument(inputStream, null, SimpleErrorHandler.getInstance());
     }
 
     public static Document newDocument(EntityResolver entityResolver, ErrorHandler errorHandler) {

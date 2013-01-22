@@ -53,8 +53,8 @@ public class TaskProcessIdTDBuilder implements TDBuilder, Serializable {
 
     @Override
     public TD build(Object object, Env env) {
-        WfTask wfTask = (WfTask) object;
-        Long processId = wfTask.getProcessId();
+        WfTask task = (WfTask) object;
+        Long processId = task.getProcessId();
         ConcreteElement link = new StringElement(processId.toString());
         boolean isAllowed = false;
         try {
@@ -73,12 +73,12 @@ public class TaskProcessIdTDBuilder implements TDBuilder, Serializable {
         }
         if (isAllowed) {
             Map<String, Object> params = Maps.newHashMap();
-            if (wfTask.getProcessId() == null) {
+            if (task.getProcessId() == null) {
                 params.put(IdForm.ID_INPUT_NAME, processId);
-                params.put(TaskIdForm.TASK_ID_INPUT_NAME, wfTask.getId());
+                params.put(TaskIdForm.TASK_ID_INPUT_NAME, task.getId());
             } else {
-                params.put(IdForm.ID_INPUT_NAME, wfTask.getProcessId());
-                params.put(TaskIdForm.TASK_ID_INPUT_NAME, wfTask.getId());
+                params.put(IdForm.ID_INPUT_NAME, task.getProcessId());
+                params.put(TaskIdForm.TASK_ID_INPUT_NAME, task.getId());
             }
             String url = Commons.getActionUrl(ShowGraphModeHelper.getManageProcessAction(), params, env.getPageContext(), PortletUrlType.Render);
             link = new A(url, link);

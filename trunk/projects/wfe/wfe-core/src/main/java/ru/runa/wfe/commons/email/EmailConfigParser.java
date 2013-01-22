@@ -24,10 +24,6 @@ public class EmailConfigParser {
         return configuration.contains("<email-config>");
     }
 
-    public static boolean canParse(byte[] bs) {
-        return canParse(toString(bs));
-    }
-
     public static String toString(byte[] bs) {
         return new String(bs, Charsets.UTF_8);
     }

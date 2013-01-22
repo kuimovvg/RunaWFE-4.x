@@ -18,39 +18,23 @@
 package ru.runa.wf.logic.bot.updatepermission;
 
 import java.util.Collection;
+import java.util.List;
 
 import ru.runa.wfe.security.Permission;
 
+import com.google.common.base.Strings;
+
 public class UpdatePermissionsSettings {
-
     private final Collection<Permission> permissions;
-
-    private final String[] orgFunctions;
-
-    private String method;
-
+    private final List<String> orgFunctions;
+    private final Method method;
     private String conditionVarName;
-
     private String conditionVarValue;
 
-    public static final String METHOD_ADD_NAME = "add";
-
-    public static final String METHOD_SET_NAME = "set";
-
-    public static final String METHOD_DELETE_NAME = "delete";
-
-    public UpdatePermissionsSettings(String[] orgFunctions, String method, Collection<Permission> permissions) {
+    public UpdatePermissionsSettings(List<String> orgFunctions, Method method, Collection<Permission> permissions) {
         this.orgFunctions = orgFunctions;
-        setMethod(method);
+        this.method = method;
         this.permissions = permissions;
-    }
-
-    private void setMethod(String method) {
-        if (METHOD_ADD_NAME.equals(method) || METHOD_SET_NAME.equals(method) || METHOD_DELETE_NAME.equals(method)) {
-            this.method = method;
-        } else {
-            throw new IllegalArgumentException("Unknown method name " + method);
-        }
     }
 
     public void setCondition(String conditionVarName, String conditionVarValue) {
@@ -59,26 +43,18 @@ public class UpdatePermissionsSettings {
     }
 
     public boolean isConditionExists() {
-        return ((conditionVarName != null) && (conditionVarValue != null));
+        return !Strings.isNullOrEmpty(conditionVarName);
     }
 
     public String getConditionVarName() {
-        checkConditionExists();
         return conditionVarName;
     }
 
     public String getConditionVarValue() {
-        checkConditionExists();
         return conditionVarValue;
     }
 
-    private void checkConditionExists() {
-        if (!isConditionExists()) {
-            throw new IllegalStateException("Condition does not exist.");
-        }
-    }
-
-    public String[] getOrgFunctions() {
+    public List<String> getOrgFunctions() {
         return orgFunctions;
     }
 
@@ -86,7 +62,7 @@ public class UpdatePermissionsSettings {
         return permissions;
     }
 
-    public String getMethod() {
+    public Method getMethod() {
         return method;
     }
 }

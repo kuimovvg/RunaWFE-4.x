@@ -1,16 +1,12 @@
 package ru.runa.wfe.definition.par;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
-import ru.runa.wfe.commons.xml.ClasspathEntityResolver;
-import ru.runa.wfe.commons.xml.LoggingErrorHandler;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 
 public class ValidationXmlParser {
@@ -22,14 +18,11 @@ public class ValidationXmlParser {
 
     public static List<String> readVariableNames(String fileName, byte[] xmlFileBytes) {
         try {
-            Document document = XMLHelper.getDocumentWithoutValidation(new ByteArrayInputStream(xmlFileBytes));
-            NodeList fieldElementsList = document.getElementsByTagName(FIELD_ELEMENT_NAME);
-
-            List<String> varNames = new ArrayList<String>(fieldElementsList.getLength());
-            for (int i = 0; i < fieldElementsList.getLength(); i++) {
-                Element fieldElement = (Element) fieldElementsList.item(i);
-                String varName = fieldElement.getAttribute(NAME_ATTRIBUTE_NAME);
-                varNames.add(varName);
+            Document document = XmlUtils.parseWithoutValidation(xmlFileBytes);
+            List<Element> fieldElements = document.getRootElement().elements(FIELD_ELEMENT_NAME);
+            List<String> varNames = new ArrayList<String>(fieldElements.size());
+            for (Element fieldElement : fieldElements) {
+                varNames.add(fieldElement.attributeValue(NAME_ATTRIBUTE_NAME));
             }
             return varNames;
         } catch (Exception e) {
@@ -39,17 +32,14 @@ public class ValidationXmlParser {
 
     public static List<String> readRequiredVariableNames(byte[] xmlFileBytes) {
         try {
-            Document document = XMLHelper.getDocument(new ByteArrayInputStream(xmlFileBytes), ClasspathEntityResolver.getInstance(),
-                    new LoggingErrorHandler(ValidationXmlParser.class));
-            NodeList fieldElementsList = document.getElementsByTagName(FIELD_ELEMENT_NAME);
-            List<String> varNames = new ArrayList<String>(fieldElementsList.getLength());
-            for (int i = 0; i < fieldElementsList.getLength(); i++) {
-                Element fieldElement = (Element) fieldElementsList.item(i);
-                String varName = fieldElement.getAttribute(NAME_ATTRIBUTE_NAME);
-                NodeList validatorElementsList = fieldElement.getElementsByTagName(FIELD_VALIDATOR_ELEMENT_NAME);
-                for (int j = 0; j < validatorElementsList.getLength(); j++) {
-                    Element validatorElement = (Element) validatorElementsList.item(j);
-                    String typeName = validatorElement.getAttribute(TYPE_ATTRIBUTE_NAME);
+            Document document = XmlUtils.parseWithoutValidation(xmlFileBytes);
+            List<Element> fieldElements = document.getRootElement().elements(FIELD_ELEMENT_NAME);
+            List<String> varNames = new ArrayList<String>(fieldElements.size());
+            for (Element fieldElement : fieldElements) {
+                String varName = fieldElement.attributeValue(NAME_ATTRIBUTE_NAME);
+                List<Element> validatorElements = fieldElement.elements(FIELD_VALIDATOR_ELEMENT_NAME);
+                for (Element validatorElement : validatorElements) {
+                    String typeName = validatorElement.attributeValue(TYPE_ATTRIBUTE_NAME);
                     if (REQUIRED_VALIDATOR_NAME.equals(typeName)) {
                         varNames.add(varName);
                     }
