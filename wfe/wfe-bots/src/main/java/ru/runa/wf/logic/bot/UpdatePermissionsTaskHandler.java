@@ -29,7 +29,7 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsSettings;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsXmlParser;
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 import ru.runa.wfe.os.OrgFunctionException;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.security.Identifiable;
@@ -47,7 +47,7 @@ import com.google.common.collect.Lists;
  * @author dofs
  * @since 2.0
  */
-public class UpdatePermissionsTaskHandler implements TaskHandler {
+public class UpdatePermissionsTaskHandler implements ITaskHandler {
 
     private UpdatePermissionsSettings settings;
 

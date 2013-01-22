@@ -30,7 +30,7 @@ import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.var.IVariableProvider;
@@ -43,7 +43,7 @@ import ru.runa.wfe.var.IVariableProvider;
  * 
  * @since 3.0
  */
-public class SetActorStatusTaskHandler implements TaskHandler {
+public class SetActorStatusTaskHandler implements ITaskHandler {
     private static final Log log = LogFactory.getLog(SetActorStatusTaskHandler.class);
     private Config config;
 

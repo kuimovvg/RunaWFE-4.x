@@ -35,7 +35,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -69,7 +69,7 @@ public class WorkflowBot implements Runnable {
 
     private BotExecutionStatus botStatus = BotExecutionStatus.scheduled;
 
-    private final Map<String, TaskHandler> taskHandlerMap;
+    private final Map<String, ITaskHandler> taskHandlerMap;
     private final Subject subject;
     private final String botName;
     private final WfTask task;
@@ -87,10 +87,10 @@ public class WorkflowBot implements Runnable {
     // Creating WorkflowBot template object
     public WorkflowBot(Bot bot, List<BotTask> tasks) throws AuthenticationException {
         subject = Delegates.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
-        HashMap<String, TaskHandler> handlers = new HashMap<String, TaskHandler>();
+        HashMap<String, ITaskHandler> handlers = new HashMap<String, ITaskHandler>();
         for (BotTask task : tasks) {
             try {
-                TaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
+                ITaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
                 handler.setConfiguration(task.getConfiguration());
                 handlers.put(task.getName(), handler);
                 log.info("Configured taskHandler for " + task.getName());
@@ -171,22 +171,23 @@ public class WorkflowBot implements Runnable {
     }
 
     private void doHandle() throws Exception {
-        TaskHandler taskHandler = taskHandlerMap.get(task.getName());
+        ITaskHandler taskHandler = taskHandlerMap.get(task.getName());
         if (taskHandler == null) {
-            log.warn("No handler for task " + task + ", bot " + botName);
+            log.warn("No handler for bot task " + task + ", bot " + botName);
             return;
         }
         IVariableProvider variableProvider = new DelegateProcessVariableProvider(subject, task.getProcessId());
+        log.info("Starting bot task " + task.getName() + " in process " + task.getProcessId() + " with config " + taskHandler.getConfiguration());
         Map<String, Object> variables = taskHandler.handle(subject, variableProvider, task);
         if (variables == null) {
             variables = Maps.newHashMap();
         }
-        Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
+        Object skipTaskCompletion = variables.remove(ITaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
         if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
-            log.info("Task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
+            log.info("Bot task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
         } else {
             Delegates.getExecutionService().completeTask(subject, task.getId(), variables);
-            log.debug("Handled task " + task + ", bot " + botName + " by " + taskHandler.getClass());
+            log.debug("Handled bot task " + task + ", bot " + botName + " by " + taskHandler.getClass());
         }
     }
 

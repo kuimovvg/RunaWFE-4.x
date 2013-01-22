@@ -24,7 +24,7 @@ import javax.security.auth.Subject;
 
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.logic.bot.assigner.AssignerResources;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
@@ -38,7 +38,7 @@ import ru.runa.wfe.var.IVariableProvider;
  * @author dofs
  * @since 2.0
  */
-public class SwimlaneAssignerTaskHandler implements TaskHandler {
+public class SwimlaneAssignerTaskHandler implements ITaskHandler {
     private AssignerResources resources;
 
     @Override

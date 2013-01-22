@@ -28,19 +28,23 @@ import ru.runa.wf.logic.bot.assigner.AssignerSettings.Condition;
 import ru.runa.wf.logic.bot.assigner.AssignerSettingsXmlParser;
 import ru.runa.wf.logic.bot.assigner.IEvaluationFunction;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.collect.Maps;
 
-public class AdvancedSwimlaneAssignerTaskHandler implements TaskHandler {
-
+public class AdvancedSwimlaneAssignerTaskHandler implements ITaskHandler {
     private AssignerSettings settings;
 
     @Override
     public void setConfiguration(byte[] configuration) throws Exception {
         settings = AssignerSettingsXmlParser.read(new ByteArrayInputStream(configuration));
+    }
+
+    @Override
+    public Object getConfiguration() {
+        return settings;
     }
 
     @Override
