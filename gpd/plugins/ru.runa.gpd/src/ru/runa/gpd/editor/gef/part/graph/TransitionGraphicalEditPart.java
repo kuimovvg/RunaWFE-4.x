@@ -24,7 +24,6 @@ import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.PropertyNames;
-import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 
@@ -44,14 +43,7 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
         Transition transition = getModel();
         TransitionFigure figure = transition.getTypeDefinition().getGefEntry().createFigure(getModel().getProcessDefinition());
         figure.setRoutingConstraint(constructFigureBendpointList());
-        if (transition.getSource() instanceof Decision) {
-            figure.setLabelText(transition.getName());
-        }
-        if (transition.getSource() instanceof ITimed && transition.getName().equals(PluginConstants.TIMER_TRANSITION_NAME)) {
-            Timer timer = ((ITimed) transition.getSource()).getTimer();
-            String labelText = timer != null ? timer.getDelay().toString() : "";
-            figure.setLabelText(labelText);
-        }
+        figure.setLabelText(transition.getLabel());
         figure.addRoutingListener(new RoutingListener() {
             @Override
             public void invalidate(Connection connection) {
@@ -78,7 +70,7 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
             public void setConstraint(Connection connection, Object constraint) {
             }
         });
-        //decorateFigure(figure);
+        // decorateFigure(figure);
         return figure;
     }
 
@@ -93,17 +85,8 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
 
     @Override
     protected void refreshVisuals() {
-        Transition transition = getModel();
-        if (transition.getSource() instanceof TaskState && !PluginConstants.TIMER_TRANSITION_NAME.equals(transition.getName())) {
-            String label;
-            if (((TaskState) transition.getSource()).hasMultipleOutputTransitions()) {
-                label = transition.getName();
-            } else {
-                label = "";
-            }
-            getFigure().setLabelText(label);
-        }
         TransitionFigure f = getFigure();
+        f.setLabelText(getModel().getLabel());
         f.setRoutingConstraint(constructFigureBendpointList());
     }
 
@@ -158,17 +141,12 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
             refreshVisuals();
         } else if (PROPERTY_NAME.equals(messageId) && evt.getSource() instanceof Transition) {
             Transition transition = getModel();
+            getFigure().setLabelText(transition.getLabel());
             if (transition.getSource() instanceof Decision) {
-                getFigure().setLabelText(transition.getName());
                 // update decision configuration
                 Decision decision = (Decision) transition.getSource();
                 IDecisionProvider provider = HandlerRegistry.getProvider(decision);
                 provider.transitionRenamed(decision, (String) evt.getOldValue(), (String) evt.getNewValue());
-            }
-            if (transition.getSource() instanceof ITimed) {
-                Timer timer = ((ITimed) transition.getSource()).getTimer();
-                String labelText = timer != null ? timer.getDelay().toString() : "";
-                getFigure().setLabelText(labelText);
             }
             refreshVisuals();
         } else if (PROPERTY_TIMER_DELAY.equals(messageId)) {
