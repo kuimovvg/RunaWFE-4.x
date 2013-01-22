@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,7 +31,7 @@ import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilder;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilderFactory;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportTaskSettings;
 import ru.runa.wf.logic.bot.mswordreport.WordReportSettingsXmlParser;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -48,19 +47,19 @@ import com.google.common.io.ByteStreams;
  * Created on 23.11.2006
  * 
  */
-public class MSWordReportTaskHandler implements TaskHandler {
+public class MSWordReportTaskHandler extends TaskHandlerBase {
     private static final Log log = LogFactory.getLog(MSWordReportTaskHandler.class);
     private static final String CONTENT_TYPE = "application/vnd.ms-word";
 
     private MSWordReportTaskSettings settings;
 
     @Override
-    public void setConfiguration(byte[] configuration) {
-        settings = WordReportSettingsXmlParser.read(new ByteArrayInputStream(configuration));
+    public void setConfiguration(String configuration) {
+        settings = WordReportSettingsXmlParser.read(configuration);
     }
 
     @Override
-    public synchronized Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws IOException {
+    public synchronized Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws IOException {
         File reportTemporaryFile = null;
         try {
             reportTemporaryFile = File.createTempFile("prefix", ".doc");

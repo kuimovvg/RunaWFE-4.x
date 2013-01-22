@@ -60,7 +60,6 @@ import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 
 /**
@@ -81,77 +80,65 @@ public class SQLActionHandler implements ActionHandler {
     }
 
     @Override
-    public void execute(ExecutionContext executionContext) {
-        try {
-            log.info("SQLActionHandler started");
-            Map<String, Object> in = Maps.newHashMap();
-            in.put(DatabaseTask.INSTANCE_ID_VARIABLE_NAME, executionContext.getToken().getProcess().getId());
-            in.put(DatabaseTask.CURRENT_DATE_VARIABLE_NAME, new Date());
-            MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(in, executionContext.getVariableProvider());
-            DatabaseTask[] databaseTasks = DatabaseTaskXmlParser.parse(configuration.getBytes(Charsets.UTF_8), variableProvider);
-            log.debug("all variables: " + in);
-            Map<String, Object> out = new HashMap<String, Object>();
-            Context context = new InitialContext();
-            for (int i = 0; i < databaseTasks.length; i++) {
-                Connection conn = null;
-                try {
-                    DatabaseTask databaseTask = databaseTasks[i];
-                    PreparedStatement ps = null;
-                    DataSource ds = (DataSource) context.lookup(databaseTask.getDatasourceName());
-                    conn = ds.getConnection();
-                    for (int j = 0; j < databaseTask.getQueriesCount(); j++) {
-                        AbstractQuery query = databaseTask.getQuery(j);
-                        if (query instanceof Query) {
-                            log.debug("Preparing query " + query.getSql());
-                            ps = conn.prepareStatement(query.getSql());
-                        } else if (query instanceof StoredProcedureQuery) {
-                            log.debug("Preparing call " + query.getSql());
-                            ps = conn.prepareCall(query.getSql());
-                        } else {
-                            String unknownQueryClassName = (query == null ? "null" : query.getClass().getName());
-                            throw new Exception("Unknown query type:" + unknownQueryClassName);
-                        }
-                        fillQueryParameters(ps, variableProvider, query);
-                        if (ps.execute()) {
-                            ResultSet resultSet = ps.getResultSet();
-                            boolean first = true;
-                            while (resultSet.next()) {
-                                Map<String, Object> result = extractResults(variableProvider, resultSet, query);
-                                if (first) {
-                                    out.putAll(result);
-                                } else {
-                                    for (Map.Entry<String, Object> entry : result.entrySet()) {
-                                        Object object = out.get(entry.getKey());
-                                        if (!(object instanceof List)) {
-                                            ArrayList list = new ArrayList();
-                                            list.add(object);
-                                            out.put(entry.getKey(), list);
-                                            object = list;
-                                        }
-                                        ((List) object).add(entry.getValue());
-                                    }
-                                }
-                                first = false;
-                            }
-                            // if (!resultSet.next()) {
-                            // throw new
-                            // Exception("No results in rowset for query " +
-                            // query);
-                            // }
-                            out.putAll(extractResults(variableProvider, resultSet, query));
-                        }
+    public void execute(ExecutionContext executionContext) throws Exception {
+        Map<String, Object> in = Maps.newHashMap();
+        in.put(DatabaseTask.INSTANCE_ID_VARIABLE_NAME, executionContext.getToken().getProcess().getId());
+        in.put(DatabaseTask.CURRENT_DATE_VARIABLE_NAME, new Date());
+        MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(in, executionContext.getVariableProvider());
+        DatabaseTask[] databaseTasks = DatabaseTaskXmlParser.parse(configuration, variableProvider);
+        log.debug("all variables: " + in);
+        Map<String, Object> out = new HashMap<String, Object>();
+        Context context = new InitialContext();
+        for (int i = 0; i < databaseTasks.length; i++) {
+            Connection conn = null;
+            try {
+                DatabaseTask databaseTask = databaseTasks[i];
+                PreparedStatement ps = null;
+                DataSource ds = (DataSource) context.lookup(databaseTask.getDatasourceName());
+                conn = ds.getConnection();
+                for (int j = 0; j < databaseTask.getQueriesCount(); j++) {
+                    AbstractQuery query = databaseTask.getQuery(j);
+                    if (query instanceof Query) {
+                        log.debug("Preparing query " + query.getSql());
+                        ps = conn.prepareStatement(query.getSql());
+                    } else if (query instanceof StoredProcedureQuery) {
+                        log.debug("Preparing call " + query.getSql());
+                        ps = conn.prepareCall(query.getSql());
+                    } else {
+                        String unknownQueryClassName = (query == null ? "null" : query.getClass().getName());
+                        throw new Exception("Unknown query type:" + unknownQueryClassName);
                     }
-                } finally {
-                    SQLCommons.releaseResources(conn);
+                    fillQueryParameters(ps, variableProvider, query);
+                    if (ps.execute()) {
+                        ResultSet resultSet = ps.getResultSet();
+                        boolean first = true;
+                        while (resultSet.next()) {
+                            Map<String, Object> result = extractResults(variableProvider, resultSet, query);
+                            if (first) {
+                                out.putAll(result);
+                            } else {
+                                for (Map.Entry<String, Object> entry : result.entrySet()) {
+                                    Object object = out.get(entry.getKey());
+                                    if (!(object instanceof List)) {
+                                        ArrayList<Object> list = new ArrayList<Object>();
+                                        list.add(object);
+                                        out.put(entry.getKey(), list);
+                                        object = list;
+                                    }
+                                    ((List<Object>) object).add(entry.getValue());
+                                }
+                            }
+                            first = false;
+                        }
+                        out.putAll(extractResults(variableProvider, resultSet, query));
+                    }
                 }
+            } finally {
+                SQLCommons.releaseResources(conn);
             }
-            // write variables
-            executionContext.setVariables(out);
-            log.info("SQLActionHandler finished");
-        } catch (Exception e) {
-            log.error("SQLActionHandler failed", e);
-            throw new RuntimeException(e);
         }
+        // write variables
+        executionContext.setVariables(out);
     }
 
     private Map<String, Object> extractResults(MapDelegableVariableProvider in, ResultSet resultSet, AbstractQuery query) throws Exception {

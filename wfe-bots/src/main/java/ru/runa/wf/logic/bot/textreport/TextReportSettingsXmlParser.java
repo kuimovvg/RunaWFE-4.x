@@ -20,108 +20,77 @@
  */
 package ru.runa.wf.logic.bot.textreport;
 
-import java.io.InputStream;
+import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
-import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.xml.PathEntityResolver;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Strings;
 
 /**
- * Created on 2006
- * 
+ * Semantic is defined in textreport.xsd.
  */
 public class TextReportSettingsXmlParser {
-
     private static final String FILE_NAME_ATTRIBUTE_NAME = "fileName";
-
     private static final String FILE_ENCODING_ATTRIBUTE_NAME = "fileEncoding";
-
     private static final String VARIABLE_NAME_ATTRIBUTE_NAME = "variableName";
-
     private static final String CONTENT_TYPE_ATTRIBUTE_NAME = "contentType";
-
-    private static final String TEMPLATE_ELEMENT_NAME = "template";
-
     private static final String REPORT_ELEMENT_NAME = "report";
-
+    private static final String FORMATTERS_ELEMENT_NAME = "formatters";
     private static final String VARIABLE_ELEMENT_NAME = "variable";
-
     private static final String FORMAT_CLASS_ATTRIBUTE_NAME = "formatClass";
-
     private static final String FORMAT_PATTERN_ATTRIBUTE_NAME = "pattern";
-
     private static final String REPLACEMENTS_ELEMENT_NAME = "replacements";
-
     private static final String REPLACEMENT_ELEMENT_NAME = "replacement";
-
     private static final String SOURCE_ATTRIBUTE_NAME = "source";
-
     private static final String DESTINATION_ATTRIBUTE_NAME = "dest";
-
     private static final String XML_FORMAT_ATTRIBUTE_NAME = "xmlFormat";
-
     private static final String APPLY_TO_REGEXP_ATTRIBUTE_NAME = "applyToRegexp";
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("textreport.xsd");
 
-    private TextReportSettingsXmlParser() {
-        // prevents direct object instantiation
-    }
+    public static TextReportSettings read(String configuration) {
+        TextReportSettings textReportSettings = new TextReportSettings();
+        Document document = XmlUtils.parseWithoutValidation(configuration);
 
-    public static TextReportSettings read(InputStream inputStream) {
-        try {
-            TextReportSettings textReportSettings = new TextReportSettings();
+        Element root = document.getRootElement();
+        textReportSettings.setTemplateFileName(root.attributeValue(FILE_NAME_ATTRIBUTE_NAME));
+        textReportSettings.setTemplateEncoding(root.attributeValue(FILE_ENCODING_ATTRIBUTE_NAME));
 
-            Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
+        Element reportElement = root.element(REPORT_ELEMENT_NAME);
+        textReportSettings.setReportFileName(reportElement.attributeValue(FILE_NAME_ATTRIBUTE_NAME));
+        textReportSettings.setReportEncoding(reportElement.attributeValue(FILE_ENCODING_ATTRIBUTE_NAME));
+        textReportSettings.setReportContentType(reportElement.attributeValue(CONTENT_TYPE_ATTRIBUTE_NAME));
+        textReportSettings.setReportVariableName(reportElement.attributeValue(VARIABLE_NAME_ATTRIBUTE_NAME));
 
-            Node templateNode = document.getElementsByTagName(TEMPLATE_ELEMENT_NAME).item(0);
-            textReportSettings.setTemplateFileName(templateNode.getAttributes().getNamedItem(FILE_NAME_ATTRIBUTE_NAME).getNodeValue());
-            textReportSettings.setTemplateEncoding(templateNode.getAttributes().getNamedItem(FILE_ENCODING_ATTRIBUTE_NAME).getNodeValue());
-
-            Node reportNode = document.getElementsByTagName(REPORT_ELEMENT_NAME).item(0);
-            textReportSettings.setReportFileName(reportNode.getAttributes().getNamedItem(FILE_NAME_ATTRIBUTE_NAME).getNodeValue());
-            textReportSettings.setReportEncoding(reportNode.getAttributes().getNamedItem(FILE_ENCODING_ATTRIBUTE_NAME).getNodeValue());
-            textReportSettings.setReportContentType(reportNode.getAttributes().getNamedItem(CONTENT_TYPE_ATTRIBUTE_NAME).getNodeValue());
-            textReportSettings.setReportVariableName(reportNode.getAttributes().getNamedItem(VARIABLE_NAME_ATTRIBUTE_NAME).getNodeValue());
-
-            NodeList replacementsNodeList = document.getElementsByTagName(REPLACEMENTS_ELEMENT_NAME);
-            if (replacementsNodeList.getLength() > 0) {
-                Node replacementsNode = replacementsNodeList.item(0);
-                textReportSettings.setXmlFormatSupport("true".equals(replacementsNode.getAttributes().getNamedItem(XML_FORMAT_ATTRIBUTE_NAME)
-                        .getNodeValue()));
-                textReportSettings.setApplyToRegexp("true".equals(replacementsNode.getAttributes().getNamedItem(APPLY_TO_REGEXP_ATTRIBUTE_NAME)
-                        .getNodeValue()));
-            }
-
-            NodeList nodeList = document.getElementsByTagName(REPLACEMENT_ELEMENT_NAME);
-            String[] replacementSources = new String[nodeList.getLength()];
-            String[] replacementDestinations = new String[nodeList.getLength()];
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node replacementNode = nodeList.item(i);
-                replacementSources[i] = replacementNode.getAttributes().getNamedItem(SOURCE_ATTRIBUTE_NAME).getNodeValue();
-                replacementDestinations[i] = replacementNode.getAttributes().getNamedItem(DESTINATION_ATTRIBUTE_NAME).getNodeValue();
+        Element replacementElement = root.element(REPLACEMENTS_ELEMENT_NAME);
+        if (replacementElement != null) {
+            textReportSettings.setXmlFormatSupport("true".equals(replacementElement.attributeValue(XML_FORMAT_ATTRIBUTE_NAME)));
+            textReportSettings.setApplyToRegexp("true".equals(replacementElement.attributeValue(APPLY_TO_REGEXP_ATTRIBUTE_NAME)));
+            List<Element> nodeList = replacementElement.elements(REPLACEMENT_ELEMENT_NAME);
+            String[] replacementSources = new String[nodeList.size()];
+            String[] replacementDestinations = new String[nodeList.size()];
+            for (int i = 0; i < nodeList.size(); i++) {
+                Element replacementNode = nodeList.get(i);
+                replacementSources[i] = replacementNode.attributeValue(SOURCE_ATTRIBUTE_NAME);
+                replacementDestinations[i] = replacementNode.attributeValue(DESTINATION_ATTRIBUTE_NAME);
             }
             textReportSettings.setReplacements(replacementSources, replacementDestinations);
+        }
 
-            nodeList = document.getElementsByTagName(VARIABLE_ELEMENT_NAME);
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node variableNode = nodeList.item(i);
-                String variableName = variableNode.getAttributes().getNamedItem(VARIABLE_NAME_ATTRIBUTE_NAME).getNodeValue();
-                String formatClassName = variableNode.getAttributes().getNamedItem(FORMAT_CLASS_ATTRIBUTE_NAME).getNodeValue();
-                String formatPattern = null;
-                if (variableNode.getAttributes().getNamedItem(FORMAT_PATTERN_ATTRIBUTE_NAME) != null) {
-                    formatPattern = variableNode.getAttributes().getNamedItem(FORMAT_PATTERN_ATTRIBUTE_NAME).getNodeValue();
-                }
+        Element formattersElement = root.element(FORMATTERS_ELEMENT_NAME);
+        if (formattersElement != null) {
+            List<Element> nodeList = formattersElement.elements(VARIABLE_ELEMENT_NAME);
+            for (int i = 0; i < nodeList.size(); i++) {
+                Element variableNode = nodeList.get(i);
+                String variableName = variableNode.attributeValue(VARIABLE_NAME_ATTRIBUTE_NAME);
+                String formatClassName = variableNode.attributeValue(FORMAT_CLASS_ATTRIBUTE_NAME);
+                String formatPattern = variableNode.attributeValue(FORMAT_PATTERN_ATTRIBUTE_NAME);
                 if (!Strings.isNullOrEmpty(formatClassName)) {
                     VariableFormat<?> format;
-                    if ((formatPattern == null) || (formatPattern.length() == 0)) {
+                    if (!Strings.isNullOrEmpty(formatPattern)) {
                         format = FormatCommons.create(formatClassName, formatPattern);
                     } else {
                         format = FormatCommons.create(formatClassName);
@@ -129,11 +98,7 @@ public class TextReportSettingsXmlParser {
                     textReportSettings.addVariableFormat(variableName, format);
                 }
             }
-
-            return textReportSettings;
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
         }
-
+        return textReportSettings;
     }
 }

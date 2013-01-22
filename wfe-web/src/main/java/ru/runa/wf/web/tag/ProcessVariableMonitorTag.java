@@ -65,8 +65,8 @@ public class ProcessVariableMonitorTag extends ProcessBaseFormTag {
             headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_VALUE, pageContext));
             HeaderBuilder headerBuilder = new StringsHeaderBuilder(headerNames);
             ExecutionService executionService = Delegates.getExecutionService();
-            List<WfVariable> wfVariables = executionService.getVariables(getSubject(), getIdentifiableId());
-            RowBuilder rowBuilder = new ProcessVariablesRowBuilder(getIdentifiableId(), wfVariables, pageContext);
+            List<WfVariable> variables = executionService.getVariables(getSubject(), getIdentifiableId());
+            RowBuilder rowBuilder = new ProcessVariablesRowBuilder(getIdentifiableId(), variables, pageContext);
             tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
         } catch (Exception e) {
             handleException(e);

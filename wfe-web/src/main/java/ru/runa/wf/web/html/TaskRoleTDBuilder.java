@@ -37,8 +37,8 @@ public class TaskRoleTDBuilder implements TDBuilder {
 
     @Override
     public String getValue(Object object, Env env) {
-        WfTask wfTask = (WfTask) object;
-        return wfTask.getSwimlaneName();
+        WfTask task = (WfTask) object;
+        return task.getSwimlaneName();
     }
 
     @Override

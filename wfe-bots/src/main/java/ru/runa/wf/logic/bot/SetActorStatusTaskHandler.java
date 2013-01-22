@@ -21,8 +21,6 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
@@ -30,7 +28,7 @@ import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.var.IVariableProvider;
@@ -43,18 +41,16 @@ import ru.runa.wfe.var.IVariableProvider;
  * 
  * @since 3.0
  */
-public class SetActorStatusTaskHandler implements TaskHandler {
-    private static final Log log = LogFactory.getLog(SetActorStatusTaskHandler.class);
+public class SetActorStatusTaskHandler extends TaskHandlerBase {
     private Config config;
 
     @Override
-    public void setConfiguration(byte[] configuration) {
+    public void setConfiguration(String configuration) {
         config = XmlParser.parse(configuration);
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
-        log.info("Executing task in process " + wfTask.getProcessId() + " with " + config);
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) {
         ExecutorService executorDelegate = Delegates.getExecutorService();
         Long actorCode = variableProvider.getValueNotNull(Long.class, config.actorVariableName);
         Actor actor = executorDelegate.getActorByCode(subject, actorCode);
@@ -78,8 +74,8 @@ public class SetActorStatusTaskHandler implements TaskHandler {
         private static final String ACTOR_ARRT_NAME = "actorVariableName";
         private static final String STATUS_ATTR_NAME = "statusVariableName";
 
-        public static Config parse(byte[] bytes) {
-            Document document = XmlUtils.parseWithoutValidation(bytes);
+        public static Config parse(String configuration) {
+            Document document = XmlUtils.parseWithoutValidation(configuration);
             Element root = document.getRootElement();
             if (!CONFIG_ELEMENT_NAME.equals(root.getName())) {
                 throw new ConfigurationException("No <config> element found at root");

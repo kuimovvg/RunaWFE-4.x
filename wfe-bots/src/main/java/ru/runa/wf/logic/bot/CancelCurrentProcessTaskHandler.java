@@ -37,8 +37,13 @@ import ru.runa.wfe.var.IVariableProvider;
 public class CancelCurrentProcessTaskHandler extends TaskHandlerBase {
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) {
-        Delegates.getExecutionService().cancelProcess(subject, wfTask.getProcessId());
+    public void setConfiguration(String configuration) throws Exception {
+        // unused
+    }
+
+    @Override
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) {
+        Delegates.getExecutionService().cancelProcess(subject, task.getProcessId());
         return null;
     }
 }

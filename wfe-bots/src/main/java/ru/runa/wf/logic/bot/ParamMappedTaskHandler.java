@@ -15,7 +15,7 @@ import org.dom4j.Element;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -23,7 +23,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-public abstract class ParamMappedTaskHandler implements TaskHandler {
+public abstract class ParamMappedTaskHandler extends TaskHandlerBase {
     private static final Log log = LogFactory.getLog(ParamMappedTaskHandler.class);
     protected static final String BOTS_XML_FILE = "bots.xml";
     protected static final String INPUT_PARAM = "input";
@@ -129,7 +129,7 @@ public abstract class ParamMappedTaskHandler implements TaskHandler {
     }
 
     @Override
-    public void setConfiguration(byte[] configuration) throws Exception {
+    public void setConfiguration(String configuration) throws Exception {
         Document doc = XmlUtils.parseWithoutValidation(configuration);
         Element inputElement = doc.getRootElement().element(INPUT_PARAM);
         if (inputElement != null) {

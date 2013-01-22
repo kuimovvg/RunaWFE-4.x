@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.io.ByteArrayInputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +25,11 @@ import javax.security.auth.Subject;
 
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
+import ru.runa.wf.logic.bot.updatepermission.Method;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsSettings;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsXmlParser;
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.handler.bot.TaskHandler;
-import ru.runa.wfe.os.OrgFunctionException;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -47,17 +46,16 @@ import com.google.common.collect.Lists;
  * @author dofs
  * @since 2.0
  */
-public class UpdatePermissionsTaskHandler implements TaskHandler {
-
+public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
     private UpdatePermissionsSettings settings;
 
     @Override
-    public void setConfiguration(byte[] configuration) {
-        settings = UpdatePermissionsXmlParser.read(new ByteArrayInputStream(configuration));
+    public void setConfiguration(String configuration) {
+        settings = UpdatePermissionsXmlParser.read(configuration);
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
         boolean allowed = true;
         if (settings.isConditionExists()) {
             String conditionVar = variableProvider.getValue(String.class, settings.getConditionVarName());
@@ -70,12 +68,11 @@ public class UpdatePermissionsTaskHandler implements TaskHandler {
             List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions(), actorCode);
             AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
             List<Collection<Permission>> allPermissions = Lists.newArrayListWithExpectedSize(executors.size());
-            Identifiable identifiable = Delegates.getExecutionService().getProcess(subject, wfTask.getProcessId());
-            String method = settings.getMethod();
+            Identifiable identifiable = Delegates.getExecutionService().getProcess(subject, task.getProcessId());
             List<Long> executorIds = Lists.newArrayList();
             for (Executor executor : executors) {
                 Collection<Permission> oldPermissions = authorizationService.getPermissions(subject, executor, identifiable);
-                allPermissions.add(getNewPermissions(oldPermissions, settings.getPermissions(), method));
+                allPermissions.add(getNewPermissions(oldPermissions, settings.getPermissions(), settings.getMethod()));
                 executorIds.add(executor.getId());
             }
             authorizationService.setPermissions(subject, executorIds, allPermissions, identifiable);
@@ -83,21 +80,20 @@ public class UpdatePermissionsTaskHandler implements TaskHandler {
         return null;
     }
 
-    private List<? extends Executor> evaluateOrgFunctions(IVariableProvider variableProvider, String[] orgFunctions, Long actorToSubstituteCode)
-            throws OrgFunctionException {
+    private List<? extends Executor> evaluateOrgFunctions(IVariableProvider variableProvider, List<String> orgFunctions, Long actorToSubstituteCode) {
         List<Executor> executors = Lists.newArrayList();
-        for (int i = 0; i < orgFunctions.length; i++) {
-            executors.addAll(OrgFunctionHelper.evaluateOrgFunction(variableProvider, orgFunctions[i], actorToSubstituteCode));
+        for (String orgFunction : orgFunctions) {
+            executors.addAll(OrgFunctionHelper.evaluateOrgFunction(variableProvider, orgFunction, actorToSubstituteCode));
         }
         return executors;
     }
 
-    private Collection<Permission> getNewPermissions(Collection<Permission> oldPermissions, Collection<Permission> permissions, String method) {
-        if (UpdatePermissionsSettings.METHOD_ADD_NAME.equals(method)) {
+    private Collection<Permission> getNewPermissions(Collection<Permission> oldPermissions, Collection<Permission> permissions, Method method) {
+        if (Method.add == method) {
             return Permission.mergePermissions(oldPermissions, permissions);
-        } else if (UpdatePermissionsSettings.METHOD_SET_NAME.equals(method)) {
+        } else if (Method.set == method) {
             return permissions;
-        } else if (UpdatePermissionsSettings.METHOD_DELETE_NAME.equals(method)) {
+        } else if (Method.delete == method) {
             return Permission.subtractPermissions(oldPermissions, permissions);
         } else {
             // should never happend
