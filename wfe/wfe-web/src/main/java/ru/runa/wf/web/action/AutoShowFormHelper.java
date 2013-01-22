@@ -53,8 +53,7 @@ public class AutoShowFormHelper {
         }
         if (currentTasks.size() == 1) {
             Map<String, Object> params = new HashMap<String, Object>();
-            WfTask wfTask = currentTasks.get(0);
-            params.put(ProcessForm.ID_INPUT_NAME, wfTask.getId());
+            params.put(ProcessForm.ID_INPUT_NAME, currentTasks.get(0).getId());
             return Commons.forward(mapping.findForward(LOCAL_FORWARD_SUBMIT_TASK), params);
         } else if (currentTasks.size() > 1) {
             // list tasks

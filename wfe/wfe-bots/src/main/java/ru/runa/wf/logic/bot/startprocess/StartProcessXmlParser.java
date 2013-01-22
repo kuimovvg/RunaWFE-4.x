@@ -17,17 +17,21 @@
  */
 package ru.runa.wf.logic.bot.startprocess;
 
-import java.io.InputStream;
+import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
-import ru.runa.wfe.commons.xml.PathEntityResolver;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 
+import com.google.common.collect.Lists;
+
+/**
+ * Semantic is defined in process-start.xsd.
+ * 
+ * @author Dofs
+ * 
+ */
 public class StartProcessXmlParser {
     private static final String PROCESS_ELEMENT_NAME = "process";
     private static final String TITLE_ATTRIBUTE_NAME = "name";
@@ -36,59 +40,40 @@ public class StartProcessXmlParser {
     private static final String VARTO_ATTRIBUTE_NAME = "to";
     private static final String STARTED_PROCESS_ID = "started-process-id";
     private static final String VARIABLE_NAME = "variable-name";
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("process-start.xsd");
 
     /**
      * Parses StartProcessXmlHandler configuration
-     * 
-     * @param configurationPath
-     * @return
      */
-    public static StartProcessTask[] parse(String configurationPath) {
-        Document document = XMLHelper.getDocument(configurationPath, PATH_ENTITY_RESOLVER);
-        StartProcessTask[] startProcessTask = parseStartProcess(document);
-        return startProcessTask;
-    }
-
-    public static StartProcessTask[] parse(InputStream is) {
-        Document document = XMLHelper.getDocument(is, PATH_ENTITY_RESOLVER);
-        StartProcessTask[] startProcessTask = parseStartProcess(document);
-        return startProcessTask;
-    }
-
-    private static String getStartedProcessIdName(Element processElement) {
-        NodeList spIdNodes = processElement.getElementsByTagName(STARTED_PROCESS_ID);
-        String startedProcessId = null;
-        if (spIdNodes != null && spIdNodes.getLength() > 0) {
-            Node spIdNode = spIdNodes.item(0);
-            NamedNodeMap nnm = spIdNode.getAttributes();
-            startedProcessId = nnm.getNamedItem(VARIABLE_NAME).getNodeValue();
-        }
-        return startedProcessId;
-    }
-
-    private static StartProcessTask[] parseStartProcess(Document document) {
-        NodeList processElementList = document.getElementsByTagName(PROCESS_ELEMENT_NAME);
-        StartProcessTask[] startProcessTasks = new StartProcessTask[processElementList.getLength()];
-        for (int i = 0; i < startProcessTasks.length; i++) {
-            Element processElement = (Element) processElementList.item(i);
-            String title = processElement.getAttribute(TITLE_ATTRIBUTE_NAME);
+    public static List<StartProcessTask> parse(String configuration) {
+        List<StartProcessTask> startProcessTasks = Lists.newArrayList();
+        Document document = XmlUtils.parseWithoutValidation(configuration);
+        List<Element> processElements = document.getRootElement().elements(PROCESS_ELEMENT_NAME);
+        for (Element processElement : processElements) {
+            String title = processElement.attributeValue(TITLE_ATTRIBUTE_NAME);
             StartProcessVariableMapping[] variables = parseProcessStartProcessVariableMappings(processElement);
             String startedProcessId = getStartedProcessIdName(processElement);
-            startProcessTasks[i] = new StartProcessTask(title, variables, startedProcessId);
+            startProcessTasks.add(new StartProcessTask(title, variables, startedProcessId));
         }
         return startProcessTasks;
     }
 
-    private static StartProcessVariableMapping[] parseProcessStartProcessVariableMappings(Element processElement) {
-        NodeList variableElementList = processElement.getElementsByTagName(VARIABLE_ELEMENT_NAME);
-        StartProcessVariableMapping[] variables = new StartProcessVariableMapping[variableElementList.getLength()];
-        for (int j = 0; j < variables.length; j++) {
-            Element variableElement = (Element) variableElementList.item(j);
-            String varFrom = variableElement.getAttribute(VARFROM_ATTRIBUTE_NAME);
-            String varTo = variableElement.getAttribute(VARTO_ATTRIBUTE_NAME);
-            variables[j] = new StartProcessVariableMapping(varFrom, varTo);
+    private static String getStartedProcessIdName(Element processElement) {
+        Element spIdNode = processElement.element(STARTED_PROCESS_ID);
+        String startedProcessId = null;
+        if (spIdNode != null) {
+            startedProcessId = spIdNode.attributeValue(VARIABLE_NAME);
         }
-        return variables;
+        return startedProcessId;
+    }
+
+    private static StartProcessVariableMapping[] parseProcessStartProcessVariableMappings(Element processElement) {
+        List<StartProcessVariableMapping> variables = Lists.newArrayList();
+        List<Element> variableElements = processElement.elements(VARIABLE_ELEMENT_NAME);
+        for (Element variableElement : variableElements) {
+            String varFrom = variableElement.attributeValue(VARFROM_ATTRIBUTE_NAME);
+            String varTo = variableElement.attributeValue(VARTO_ATTRIBUTE_NAME);
+            variables.add(new StartProcessVariableMapping(varFrom, varTo));
+        }
+        return variables.toArray(new StartProcessVariableMapping[variables.size()]);
     }
 }

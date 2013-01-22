@@ -47,8 +47,6 @@ public class ValidatorManager {
     private static Validator createValidator(ValidatorConfig config) throws Exception {
         String className = validators.get(config.getType());
         Preconditions.checkNotNull(className, "There is no validator class mapped to the name '" + config.getType() + "'");
-        // Class<? extends Validator> clazz =
-        // ClassLoaderUtil.loadClass(className, ValidatorManagerImpl.class);
         Validator validator = ClassLoaderUtil.instantiate(className);
         validator.init(config.getParams());
         validator.setValidatorType(config.getType());

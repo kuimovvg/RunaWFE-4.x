@@ -17,53 +17,37 @@
  */
 package ru.runa.wf.logic.bot.cancelprocess;
 
-import java.io.InputStream;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
-import ru.runa.wfe.commons.xml.PathEntityResolver;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
+
+import com.google.common.collect.Maps;
 
 /**
- * Created on 01.04.2005
+ * Sematics defined in resources/cancel-process.xsd Created on 01.04.2005
  */
 public class CancelProcessTaskXmlParser {
     private static final String PROCESS_TO_CANCEL = "processToCancel";
     private static final String NAME_ATTRIBUTE_NAME = "name";
     private static final String TASK_HANDLER_CONFIGURATION_ATTRIBUT_NAME = "taskHandlerConfiguration";
     private static final String PROCESS_ID_VARIABLE_ATTRIBUTE_NAME = "processIdVariable";
-    private static final String PROCESSES_ELEMENT_NAME = "processes";
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("cancel-process.xsd");
 
     /**
-     * Parses DatabaseTaskHandler configuration
-     * 
-     * @param configurationPath
-     * @return
+     * Parses DatabaseTaskHandler configuration.
      */
-    public static CancelProcessTask parse(String configurationPath) throws Exception {
-        Document document = XMLHelper.getDocument(configurationPath, PATH_ENTITY_RESOLVER);
-        return parseDatabaseTasks(document);
-    }
-
-    public static CancelProcessTask parse(InputStream configurationInputStream) throws Exception {
-        Document document = XMLHelper.getDocument(configurationInputStream, PATH_ENTITY_RESOLVER);
-        return parseDatabaseTasks(document);
-    }
-
-    private static CancelProcessTask parseDatabaseTasks(Document document) {
-        NodeList processesElementList = document.getElementsByTagName(PROCESSES_ELEMENT_NAME);
-        String processIdVariable = ((Element) processesElementList.item(0)).getAttribute(PROCESS_ID_VARIABLE_ATTRIBUTE_NAME);
-        NodeList taskElementList = document.getElementsByTagName(PROCESS_TO_CANCEL);
-        Map<String, String> taskMap = new HashMap<String, String>(taskElementList.getLength());
-        for (int i = 0; i < taskElementList.getLength(); i++) {
-            Element processEllement = (Element) taskElementList.item(i);
-            String name = processEllement.getAttribute(NAME_ATTRIBUTE_NAME);
-            String handlerConfiguration = processEllement.getAttribute(TASK_HANDLER_CONFIGURATION_ATTRIBUT_NAME);
+    public static CancelProcessTask parse(String configuration) throws Exception {
+        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Element processesElement = document.getRootElement();
+        String processIdVariable = processesElement.attributeValue(PROCESS_ID_VARIABLE_ATTRIBUTE_NAME);
+        List<Element> processToCancelElements = processesElement.elements(PROCESS_TO_CANCEL);
+        Map<String, String> taskMap = Maps.newHashMap();
+        for (Element processEllement : processToCancelElements) {
+            String name = processEllement.attributeValue(NAME_ATTRIBUTE_NAME);
+            String handlerConfiguration = processEllement.attributeValue(TASK_HANDLER_CONFIGURATION_ATTRIBUT_NAME);
             taskMap.put(name, handlerConfiguration);
         }
         return new CancelProcessTask(processIdVariable, taskMap);

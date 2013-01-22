@@ -26,7 +26,7 @@ import javax.security.auth.Subject;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
@@ -37,19 +37,15 @@ import ru.runa.wfe.var.IVariableProvider;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
-public class CancelOldProcesses implements TaskHandler {
+public class CancelOldProcesses extends TaskHandlerBase {
 
     @Override
-    public void setConfiguration(byte[] configuration) {
+    public void setConfiguration(String configuration) throws Exception {
+        // not used
     }
 
     @Override
-    public Object getConfiguration() {
-        return null;
-    }
-
-    @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
         ExecutionService executionService = Delegates.getExecutionService();
         BatchPresentation batchPresentation = BatchPresentationFactory.PROCESSES.createNonPaged();
         FilterCriteria filter = FilterCriteriaFactory.getFilterCriteria(batchPresentation, 3);
@@ -62,7 +58,7 @@ public class CancelOldProcesses implements TaskHandler {
         batchPresentation.setFilteredFields(map);
         List<WfProcess> processes = executionService.getProcesses(subject, batchPresentation);
         for (WfProcess process : processes) {
-            if (process.getStartDate().before(lastDate) && !Objects.equal(process.getId(), wfTask.getProcessId())) {
+            if (process.getStartDate().before(lastDate) && !Objects.equal(process.getId(), task.getProcessId())) {
                 executionService.cancelProcess(subject, process.getId());
             }
         }

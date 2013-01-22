@@ -44,33 +44,29 @@ public class BotInvokerActionHandler implements ActionHandler {
 
     @Override
     public void execute(ExecutionContext executionContext) {
-        try {
-            List<BotStation> botStations = Delegates.getBotService().getBotStations();
-            BotStation botStation = null;
-            if (configuration != null) {
-                // old way: search by address
-                for (BotStation bs : botStations) {
-                    if (configuration.equals(bs.getAddress())) {
-                        botStation = bs;
-                        break;
-                    }
-                }
-                if (botStation == null) {
-                    botStation = Delegates.getBotService().getBotStation(configuration);
-                }
-            } else {
-                if (botStations.size() > 0) {
-                    botStation = botStations.get(0);
+        List<BotStation> botStations = Delegates.getBotService().getBotStations();
+        BotStation botStation = null;
+        if (configuration != null) {
+            // old way: search by address
+            for (BotStation bs : botStations) {
+                if (configuration.equals(bs.getAddress())) {
+                    botStation = bs;
+                    break;
                 }
             }
             if (botStation == null) {
-                log.warn("No botstation can be found for invocation " + configuration);
-                return;
+                botStation = Delegates.getBotService().getBotStation(configuration);
             }
-            Delegates.getBotInvokerService(botStation.getAddress()).invokeBots(botStation);
-        } catch (Throwable e) {
-            log.warn("BotRunner invoker can't invoke bots.", e);
+        } else {
+            if (botStations.size() > 0) {
+                botStation = botStations.get(0);
+            }
         }
+        if (botStation == null) {
+            log.warn("No botstation can be found for invocation " + configuration);
+            return;
+        }
+        Delegates.getBotInvokerService(botStation.getAddress()).invokeBots(botStation);
     }
 
 }

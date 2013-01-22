@@ -31,7 +31,7 @@ import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.definition.par.FileDataProvider;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -39,13 +39,13 @@ import ru.runa.wfe.var.IVariableProvider;
  * Created on 04.07.2005
  * 
  */
-public class EmailTaskHandler implements TaskHandler {
+public class EmailTaskHandler extends TaskHandlerBase {
     private static final Log log = LogFactory.getLog(EmailTaskHandler.class);
 
     private EmailConfig config;
 
     @Override
-    public void setConfiguration(byte[] configuration) {
+    public void setConfiguration(String configuration) {
         if (!EmailConfigParser.canParse(configuration)) {
             throw new IllegalArgumentException("invalid configuration");
         }
@@ -53,19 +53,19 @@ public class EmailTaskHandler implements TaskHandler {
     }
 
     @Override
-    public Map<String, Object> handle(final Subject subject, IVariableProvider variableProvider, final WfTask wfTask) throws Exception {
+    public Map<String, Object> handle(final Subject subject, IVariableProvider variableProvider, final WfTask task) throws Exception {
         final DefinitionService definitionService = Delegates.getDefinitionService();
         try {
             Interaction interaction = null;
             if (config.isUseMessageFromTaskForm()) {
-                interaction = definitionService.getTaskInteraction(subject, wfTask.getId());
+                interaction = definitionService.getTaskInteraction(subject, task.getId());
             }
             FileDataProvider fileDataProvider = new FileDataProvider() {
 
                 @Override
                 public byte[] getFileData(String fileName) {
                     try {
-                        return definitionService.getFile(subject, wfTask.getDefinitionId(), fileName);
+                        return definitionService.getFile(subject, task.getDefinitionId(), fileName);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTaskXmlParser;
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -42,21 +41,16 @@ import com.google.common.io.ByteStreams;
  * @author dofs
  * @since 3.0
  */
-public class CancelProcessTaskHandler implements TaskHandler {
+public class CancelProcessTaskHandler extends TaskHandlerBase {
     private CancelProcessTask processToCancelTask;
 
     @Override
-    public void setConfiguration(byte[] configuration) throws Exception {
-        processToCancelTask = CancelProcessTaskXmlParser.parse(new ByteArrayInputStream(configuration));
+    public void setConfiguration(String configuration) throws Exception {
+        processToCancelTask = CancelProcessTaskXmlParser.parse(configuration);
     }
 
     @Override
-    public Object getConfiguration() {
-        return processToCancelTask;
-    }
-
-    @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask wfTask) throws Exception {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
         Long processId = variableProvider.getValue(Long.class, processToCancelTask.getProcessIdVariableName());
         if (processId != null && processId != 0) {
             Delegates.getExecutionService().cancelProcess(subject, processId);
@@ -74,7 +68,7 @@ public class CancelProcessTaskHandler implements TaskHandler {
             byte[] configuration = ByteStreams.toByteArray(inputStream);
             DatabaseTaskHandler databaseTaskHandler = new DatabaseTaskHandler();
             databaseTaskHandler.setConfiguration(configuration);
-            databaseTaskHandler.handle(subject, variableProvider, wfTask);
+            databaseTaskHandler.handle(subject, variableProvider, task);
         }
         return null;
     }

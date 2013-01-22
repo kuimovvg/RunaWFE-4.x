@@ -17,19 +17,16 @@
  */
 package ru.runa.wf.logic.bot.mswordreport;
 
-import java.io.InputStream;
+import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
-import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.commons.xml.PathEntityResolver;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 
 /**
  * 
- * Created on 24.11.2006
+ * Semantic is defined in msword-report-task.xsd.
  * 
  */
 public class WordReportSettingsXmlParser {
@@ -41,36 +38,22 @@ public class WordReportSettingsXmlParser {
     private static final String VARIABLE_ATTRIBUTE_NAME = "variable";
     private static final String FORMAT_CLASS_ATTRIBUTE_NAME = "format-class";
     private static final String FORMAT_ATTRIBUTE_NAME = "format";
-    private static final String REPORT_TASK_ELEMENT_NAME = "report";
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("msword-report-task.xsd");
 
-    private WordReportSettingsXmlParser() {
-    }
-
-    public static MSWordReportTaskSettings read(String configurationPath) {
-        InputStream inputStream = ClassLoaderUtil.getResourceAsStream(configurationPath, WordReportSettingsXmlParser.class);
-        Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
-        return parse(document);
-    }
-
-    public static MSWordReportTaskSettings read(InputStream inputStream) {
-        Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
-        return parse(document);
-    }
-
-    private static MSWordReportTaskSettings parse(Document document) {
-        Element report = (Element) document.getElementsByTagName(REPORT_TASK_ELEMENT_NAME).item(0);
-        String templatePath = report.getAttribute(TEMPLATE_FILE_PATH_ELEMENT_NAME);
-        String fileName = report.getAttribute(OUTPUT_VARIABLE_FILE_ELEMENT_NAME);
-        String variableName = report.getAttribute(OUTPUT_VARIABLE_ELEMENT_NAME);
+    public static MSWordReportTaskSettings read(String configuration) {
+        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Element root = document.getRootElement();
+        String templatePath = root.attributeValue(TEMPLATE_FILE_PATH_ELEMENT_NAME);
+        String fileName = root.attributeValue(OUTPUT_VARIABLE_FILE_ELEMENT_NAME);
+        String variableName = root.attributeValue(OUTPUT_VARIABLE_ELEMENT_NAME);
         MSWordReportTaskSettings wordReportSettings = new MSWordReportTaskSettings(templatePath, fileName, variableName);
-        NodeList variablesNodeList = document.getElementsByTagName(MAPPING_ELEMENT_NAME);
-        for (int i = 0; i < variablesNodeList.getLength(); i++) {
-            Element variableElement = (Element) variablesNodeList.item(i);
-            String bookmark = variableElement.getAttribute(BOOKMARK_ATTRIBUTE_NAME);
-            String variable = variableElement.getAttribute(VARIABLE_ATTRIBUTE_NAME);
-            String formatClassName = variableElement.getAttribute(FORMAT_CLASS_ATTRIBUTE_NAME);
-            String format = variableElement.getAttribute(FORMAT_ATTRIBUTE_NAME);
+        List<Element> mappingElements = root.elements(MAPPING_ELEMENT_NAME);
+        for (Element mappingElement : mappingElements) {
+            String bookmark = mappingElement.attributeValue(BOOKMARK_ATTRIBUTE_NAME);
+            String variable = mappingElement.attributeValue(VARIABLE_ATTRIBUTE_NAME);
+            String formatClassName = mappingElement.attributeValue(FORMAT_CLASS_ATTRIBUTE_NAME);
+            String format = mappingElement.attributeValue(FORMAT_ATTRIBUTE_NAME); // TODO
+                                                                                  // PEX
+                                                                                  // OPT
             BookmarkVariableMapping bookmarkVariableMapping = new BookmarkVariableMapping(bookmark, variable, formatClassName, format);
             wordReportSettings.addBookmarkMapping(bookmarkVariableMapping);
         }

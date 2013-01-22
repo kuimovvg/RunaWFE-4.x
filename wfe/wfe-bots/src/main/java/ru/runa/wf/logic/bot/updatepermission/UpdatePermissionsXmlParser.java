@@ -17,75 +17,54 @@
  */
 package ru.runa.wf.logic.bot.updatepermission;
 
-import java.io.InputStream;
 import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
-import ru.runa.wfe.commons.xml.PathEntityResolver;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Semantic is defined in update-permissions.xsd.
+ * 
+ * @author Dofs
+ * 
+ */
 public class UpdatePermissionsXmlParser {
     private static final String CONDITION_ELEMENT_NAME = "condition";
-
     private static final String CONDITION_VAR_NAME_ATTRIBUTE_NAME = "varName";
-
     private static final String CONDITION_VAR_VALUE_ATTRIBUTE_NAME = "varValue";
-
+    private static final String ORGFUNCTIONS_ELEMENT_NAME = "orgFunctions";
     private static final String ORGFUNCTION_ELEMENT_NAME = "orgFunction";
-
     private static final String METHOD_ELEMENT_NAME = "method";
+    private static final String PERMISSIONS_ELEMENT_NAME = "permissions";
+    private static final String PERMISSION_ELEMENT_NAME = "permission";
 
-    public static final String PERMISSION_VARIABLE_ELEMENT_NAME = "permission";
-
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("update-permissions.xsd");
-
-    private UpdatePermissionsXmlParser() {
-        // prevents direct object instantiation
-    }
-
-    public static UpdatePermissionsSettings read(InputStream inputStream) {
-        Document document = XMLHelper.getDocument(inputStream, PATH_ENTITY_RESOLVER);
-
-        String[] orgFunctions = getElementValues(document, ORGFUNCTION_ELEMENT_NAME);
-        String method = getElementValue(document, METHOD_ELEMENT_NAME);
-        List<Permission> permissions = getPermissions(getElementValues(document, PERMISSION_VARIABLE_ELEMENT_NAME));
+    public static UpdatePermissionsSettings read(String configuration) {
+        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Element root = document.getRootElement();
+        List<String> orgFunctions = Lists.newArrayList();
+        List<Element> orgFunctionElements = root.element(ORGFUNCTIONS_ELEMENT_NAME).elements(ORGFUNCTION_ELEMENT_NAME);
+        for (Element element : orgFunctionElements) {
+            orgFunctions.add(element.getTextTrim());
+        }
+        Method method = Method.valueOf(root.elementTextTrim(METHOD_ELEMENT_NAME));
+        List<Permission> permissions = Lists.newArrayList();
+        List<Element> permissionElements = root.element(PERMISSIONS_ELEMENT_NAME).elements(PERMISSION_ELEMENT_NAME);
+        for (Element element : permissionElements) {
+            permissions.add(ProcessPermission.CANCEL_PROCESS.getPermission(element.getTextTrim()));
+        }
         UpdatePermissionsSettings settings = new UpdatePermissionsSettings(orgFunctions, method, permissions);
-
-        NodeList nodeList = document.getElementsByTagName(CONDITION_ELEMENT_NAME);
-        if (nodeList.getLength() > 0) {
-            Element conditionNode = (Element) nodeList.item(0);
-            settings.setCondition(conditionNode.getAttribute(CONDITION_VAR_NAME_ATTRIBUTE_NAME),
-                    conditionNode.getAttribute(CONDITION_VAR_VALUE_ATTRIBUTE_NAME));
+        Element conditionElement = root.element(CONDITION_ELEMENT_NAME);
+        if (conditionElement != null) {
+            settings.setCondition(conditionElement.attributeValue(CONDITION_VAR_NAME_ATTRIBUTE_NAME),
+                    conditionElement.attributeValue(CONDITION_VAR_VALUE_ATTRIBUTE_NAME));
         }
         return settings;
     }
 
-    private static List<Permission> getPermissions(String[] permissionNames) {
-        List<Permission> permissions = Lists.newArrayListWithExpectedSize(permissionNames.length);
-        for (int i = 0; i < permissionNames.length; i++) {
-            permissions.add(ProcessPermission.CANCEL_PROCESS.getPermission(permissionNames[i]));
-        }
-        return permissions;
-    }
-
-    private static String getElementValue(Document document, String elementName) {
-        NodeList nodeList = document.getElementsByTagName(elementName);
-        return nodeList.item(0).getChildNodes().item(0).getNodeValue();
-    }
-
-    private static String[] getElementValues(Document document, String elementName) {
-        NodeList nodeList = document.getElementsByTagName(elementName);
-        String[] values = new String[nodeList.getLength()];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = nodeList.item(i).getChildNodes().item(0).getNodeValue();
-        }
-        return values;
-    }
 }
