@@ -202,9 +202,9 @@ public class BpmnXmlReader {
                     String nodeId = element.attributeValue(ID);
                     int outgoingTransitionsCount = getOutgoingTransitionsCount(parentElement, nodeId);
                     if (outgoingTransitionsCount > 1) {
-                        node = ApplicationContextFactory.createAutowiredBean(Join.class);
-                    } else {
                         node = ApplicationContextFactory.createAutowiredBean(Fork.class);
+                    } else {
+                        node = ApplicationContextFactory.createAutowiredBean(Join.class);
                     }
                 } else if (EXCLUSIVE_GATEWAY.equals(nodeName)) {
                     String nodeId = element.attributeValue(ID);

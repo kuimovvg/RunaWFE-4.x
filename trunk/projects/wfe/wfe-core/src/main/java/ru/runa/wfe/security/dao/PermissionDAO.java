@@ -22,11 +22,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
@@ -43,6 +45,7 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -51,9 +54,22 @@ import com.google.common.collect.Sets;
  * @author Konstantinov Aleksey 19.02.2012
  */
 @SuppressWarnings("unchecked")
-public class PermissionDAO extends CommonDAO {
+public class PermissionDAO extends CommonDAO implements InitializingBean {
     @Autowired
     private ExecutorDAO executorDAO;
+
+    private Map<SecuredObjectType, List<Executor>> privelegedExecutors = Maps.newHashMap();
+
+    @Override
+    protected void initDao() throws Exception {
+        for (SecuredObjectType type : SecuredObjectType.values()) {
+            privelegedExecutors.put(type, new ArrayList<Executor>());
+        }
+        List<PrivelegedMapping> list = getHibernateTemplate().find("from PrivelegedMapping m");
+        for (PrivelegedMapping mapping : list) {
+            privelegedExecutors.get(mapping.getType()).add(mapping.getExecutor());
+        }
+    }
 
     /**
      * Returns an array of Permission that executor has on identifiable. Returns
@@ -341,19 +357,20 @@ public class PermissionDAO extends CommonDAO {
      *            executors.
      * @return Privileged {@linkplain Executor}'s array.
      */
-    public List<Executor> getPrivilegedExecutors(Identifiable identifiable) {
-        return getHibernateTemplate().find("select distinct m.executor from PrivelegedMapping m where m.type=?", identifiable.getSecuredObjectType());
+    private List<Executor> getPrivilegedExecutors(Identifiable identifiable) {
+        return privelegedExecutors.get(identifiable.getSecuredObjectType());
     }
 
     /**
-     * Return array of all privileged {@linkplain Executor}s for all (@linkplain
-     * SecuredObject) type (i.e. executors whose permissions on any
-     * SecuredObject type can not be changed).
-     * 
-     * @return Privileged {@linkplain Executor}'s array.
+     * Check if executor is privileged executor for any secured object type.
      */
-    public List<Executor> getPrivilegedExecutors() {
-        return getHibernateTemplate().find("select distinct m.executor from PrivelegedMapping m");
+    public boolean isPrivilegedExecutor(Executor executor) {
+        for (List<Executor> executors : privelegedExecutors.values()) {
+            if (executors.contains(executor)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -370,8 +387,7 @@ public class PermissionDAO extends CommonDAO {
      *         otherwise.
      */
     public boolean isPrivilegedExecutor(Executor executor, Identifiable identifiable) {
-        return getHibernateTemplate().find("from PrivelegedMapping where type=? and executor=?", identifiable.getSecuredObjectType(), executor)
-                .size() > 0;
+        return getPrivilegedExecutors(identifiable).contains(executor);
     }
 
     /**
@@ -388,7 +404,8 @@ public class PermissionDAO extends CommonDAO {
      */
     public void addType(SecuredObjectType type, List<? extends Executor> privelegedExecutors) {
         for (Executor executor : privelegedExecutors) {
-            getHibernateTemplate().save(new PrivelegedMapping(type, executor, Permission.READ));
+            getHibernateTemplate().save(new PrivelegedMapping(type, executor));
+            this.privelegedExecutors.get(type).add(executor);
         }
     }
 
