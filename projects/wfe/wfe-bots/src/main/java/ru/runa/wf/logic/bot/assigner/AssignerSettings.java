@@ -24,7 +24,6 @@ import ru.runa.wfe.ConfigurationException;
 import com.google.common.collect.Lists;
 
 public class AssignerSettings {
-
     private final List<Condition> conditions = Lists.newArrayList();
 
     public void addAssignerCondition(Condition condition) {
@@ -38,8 +37,12 @@ public class AssignerSettings {
         return conditions;
     }
 
-    public static class Condition {
+    @Override
+    public String toString() {
+        return conditions.toString();
+    }
 
+    public static class Condition {
         private final String swimlaneName;
         private final String functionClassName;
         private final String variableName;
@@ -64,6 +67,11 @@ public class AssignerSettings {
 
         public String getVariableName() {
             return variableName;
+        }
+
+        @Override
+        public String toString() {
+            return swimlaneName + " | " + functionClassName + " | " + variableName;
         }
     }
 }

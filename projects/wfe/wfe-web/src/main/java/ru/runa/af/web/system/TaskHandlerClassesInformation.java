@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 
 /**
  * User: stan79
@@ -74,7 +74,7 @@ public class TaskHandlerClassesInformation {
                     className = className.substring(0, lastIndexOfDotSymbol).replace('/', '.');
                     // If we can't load class - just move to next class.
                     Class<?> someClass = ClassLoaderUtil.loadClass(className);
-                    if (TaskHandler.class.isAssignableFrom(someClass) && !Modifier.isAbstract(someClass.getModifiers())) {
+                    if (ITaskHandler.class.isAssignableFrom(someClass) && !Modifier.isAbstract(someClass.getModifiers())) {
                         taskHandlerImplementationClasses.add(someClass.getCanonicalName());
                     }
                 } catch (Throwable e) {

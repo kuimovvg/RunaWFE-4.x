@@ -41,7 +41,7 @@ import ru.runa.wfe.commons.sqltask.Result;
 import ru.runa.wfe.commons.sqltask.StoredProcedureQuery;
 import ru.runa.wfe.commons.sqltask.SwimlaneParameter;
 import ru.runa.wfe.commons.sqltask.SwimlaneResult;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.ITaskHandler;
 import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
@@ -53,7 +53,7 @@ import com.google.common.collect.Maps;
  * @created on 01.04.2005
  * @modifier 22.03.2006 gaidomartin@gmail.com
  */
-public class DatabaseTaskHandler implements TaskHandler {
+public class DatabaseTaskHandler implements ITaskHandler {
     private byte[] configuration = null;
 
     @Override
