@@ -8,7 +8,6 @@
     			<xs:complexType>
     				<xs:attribute name="bookmark" type="xs:string" use="required"></xs:attribute>
     				<xs:attribute name="variable" type="xs:string" use="required"></xs:attribute>
-    				<xs:attribute name="format-class" type="xs:string" use="optional"></xs:attribute>
     			</xs:complexType>
     		</xs:element>
     	</xs:sequence>

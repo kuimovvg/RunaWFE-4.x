@@ -17,31 +17,26 @@
  */
 package ru.runa.wf.logic.bot.mswordreport;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ResourceCommons;
+import ru.runa.wfe.var.IVariableProvider;
 
 /**
  * 
  * Created on 23.11.2006
- *
+ * 
  */
 public class MSWordReportBuilderFactory extends ResourceCommons {
-
     private static final String BUNDLE = "msword-report";
-
     private static final String BUILDER_PROPERTY = "word.report.builder.class";
-
-    public static MSWordReportBuilder createMSWordReportBuilder() {
-        try {
-            String builderClassName = readProperty(BUILDER_PROPERTY, BUNDLE);
-            return (MSWordReportBuilder) ClassLoaderUtil.instantiate(builderClassName);
-        } catch (Throwable e) {
-            throw new InternalApplicationException(e);
-        }
-    }
 
     private MSWordReportBuilderFactory() {
         super(BUNDLE);
     }
+
+    public static MSWordReportBuilder createBuilder(MSWordReportTaskSettings settings, IVariableProvider variableProvider) {
+        String builderClassName = readProperty(BUILDER_PROPERTY, BUNDLE);
+        return (MSWordReportBuilder) ClassLoaderUtil.instantiate(builderClassName, settings, variableProvider);
+    }
+
 }

@@ -29,10 +29,14 @@ import com.jacob.com.Variant;
  * Created on 23.11.2006
  * 
  */
-public class JacobMSWordReportBuilder implements MSWordReportBuilder {
+public class JacobMSWordReportBuilder extends MSWordReportBuilder {
+
+    public JacobMSWordReportBuilder(MSWordReportTaskSettings settings, IVariableProvider variableProvider) {
+        super(settings, variableProvider);
+    }
 
     @Override
-    public void build(String reportTemporaryFileName, IVariableProvider variableProvider, MSWordReportTaskSettings settings) {
+    public void build(String reportTemporaryFileName) {
         ActiveXComponent wordApplication = null;
         Dispatch wordDocument = null;
         try {
@@ -69,6 +73,17 @@ public class JacobMSWordReportBuilder implements MSWordReportBuilder {
     }
 
     private void replaceBookmarksWithValues(Dispatch wordDocument, IVariableProvider variableProvider, MSWordReportTaskSettings settings) {
+        // Dispatch bookmarks = Dispatch.get(wordDocument,
+        // "Bookmarks").toDispatch();
+        // int bookmarksCount = Dispatch.get(bookmarks, "Count").toInt();
+        // for (int i = 1; i <= bookmarksCount; i++) {
+        // Dispatch bookmark = Dispatch.call(bookmarks, "Item", new
+        // Integer(1)).toDispatch();
+        // String bookmarkName = Dispatch.get(bookmark, "Name").getString();
+        // String value = settings.format(bookmarkName, variableProvider);
+        // Dispatch range = Dispatch.get(bookmark, "Range").toDispatch();
+        // Dispatch.put(range, "Text", value);
+        // }
         Dispatch bookmarks = Dispatch.get(wordDocument, "Bookmarks").toDispatch();
         int bookmarksCount = Dispatch.get(bookmarks, "Count").toInt();
         for (int i = 1; i <= bookmarksCount; i++) {

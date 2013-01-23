@@ -17,33 +17,22 @@
  */
 package ru.runa.wf.logic.bot.mswordreport;
 
-import ru.runa.wfe.var.format.FormatCommons;
-import ru.runa.wfe.var.format.VariableFormat;
-
-import com.google.common.base.Strings;
 
 public class BookmarkVariableMapping {
     private final String bookmarkName;
     private final String variableName;
-    private VariableFormat format;
+
+    public BookmarkVariableMapping(String bookmarkName, String variableName) {
+        this.bookmarkName = bookmarkName;
+        this.variableName = variableName;
+    }
 
     public String getBookmarkName() {
         return bookmarkName;
-    }
-
-    public VariableFormat getFormat() {
-        return format;
     }
 
     public String getVariableName() {
         return variableName;
     }
 
-    public BookmarkVariableMapping(String bookmarkName, String variableName, String formatClassName) {
-        this.bookmarkName = bookmarkName;
-        this.variableName = variableName;
-        if (!Strings.isNullOrEmpty(formatClassName)) {
-            format = FormatCommons.create(formatClassName);
-        }
-    }
 }
