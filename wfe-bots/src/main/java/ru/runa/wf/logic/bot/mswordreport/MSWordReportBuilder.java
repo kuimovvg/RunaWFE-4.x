@@ -18,12 +18,27 @@
 package ru.runa.wf.logic.bot.mswordreport;
 
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
 
 /**
  * 
  * Created on 23.11.2006
  * 
  */
-public interface MSWordReportBuilder {
-    public void build(String reportTemporaryFileName, IVariableProvider variableProvider, MSWordReportTaskSettings reportSettings);
+public abstract class MSWordReportBuilder {
+    protected final MSWordReportTaskSettings settings;
+    protected final IVariableProvider variableProvider;
+
+    public MSWordReportBuilder(MSWordReportTaskSettings settings, IVariableProvider variableProvider) {
+        this.settings = settings;
+        this.variableProvider = variableProvider;
+    }
+
+    public abstract void build(String reportTemporaryFileName);
+
+    protected String getVariableValue(BookmarkVariableMapping mapping) {
+        WfVariable variable = variableProvider.getVariableNotNull(mapping.getVariableName());
+        return variable.getDefinition().getFormat().format(variable.getValue());
+    }
+
 }

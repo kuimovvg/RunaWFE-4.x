@@ -152,7 +152,7 @@ public class ClassLoaderUtil {
         return stream;
     }
 
-    public static Object instantiate(String className, Object[] params) {
+    public static Object instantiate(String className, Object... params) {
         try {
             Class<?> clazz = loadClass(className);
             Class<?>[] paramType;

@@ -38,6 +38,7 @@ import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 
 /**
  * 
@@ -61,19 +62,20 @@ public class MSWordReportTaskHandler extends TaskHandlerBase {
     @Override
     public synchronized Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws IOException {
         File reportTemporaryFile = null;
+        FileInputStream reportFileInputStream = null;
         try {
             reportTemporaryFile = File.createTempFile("prefix", ".doc");
-            MSWordReportBuilder wordReportBuilder = MSWordReportBuilderFactory.createMSWordReportBuilder();
+            MSWordReportBuilder wordReportBuilder = MSWordReportBuilderFactory.createBuilder(settings, variableProvider);
             log.debug("Using template " + settings.getTemplateFileLocation());
-            wordReportBuilder.build(reportTemporaryFile.getAbsolutePath(), variableProvider, settings);
-            FileInputStream fis = new FileInputStream(reportTemporaryFile);
-            byte[] fileContent = ByteStreams.toByteArray(fis);
-            fis.close();
+            wordReportBuilder.build(reportTemporaryFile.getAbsolutePath());
+            reportFileInputStream = new FileInputStream(reportTemporaryFile);
+            byte[] fileContent = ByteStreams.toByteArray(reportFileInputStream);
             FileVariable fileVariable = new FileVariable(settings.getReportFileName(), fileContent, CONTENT_TYPE);
             Map<String, Object> result = Maps.newHashMapWithExpectedSize(1);
             result.put(settings.getReportVariableName(), fileVariable);
             return result;
         } finally {
+            Closeables.closeQuietly(reportFileInputStream);
             if (reportTemporaryFile != null) {
                 if (!reportTemporaryFile.delete()) {
                     log.warn("Unable to delete " + reportTemporaryFile.getAbsolutePath());

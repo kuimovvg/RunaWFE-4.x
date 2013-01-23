@@ -125,7 +125,7 @@ public final class WfTask implements Serializable {
 
     @Override
     public String toString() {
-        return definitionName + "(" + definitionId + ", " + processId + ", " + id + "): " + name;
+        return definitionName + " (" + definitionId + ", " + processId + ", " + id + "): '" + name + "'";
     }
 
 }

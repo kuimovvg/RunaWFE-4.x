@@ -5,10 +5,8 @@
 		Sample-templated will be saved as report.doc  and assigned to process variable resultWord.
 	-->
 	<report template-path="/bot/sample-template.doc" output-variable="resultWord" output-variable-file-name="report.doc">
-		<mapping bookmark="dateInDateFormat" variable="date" format-class="ru.runa.wfe.var.format.DateFormat" />
-		<mapping bookmark="dateInTimeFormat" variable="date" format-class="ru.runa.wfe.var.format.TimeFormat" />
+		<mapping bookmark="date" variable="date" />
 		<mapping bookmark="double" variable="double" />
-		<!-- If format-class is omitted toString method is called on variable value. -->
 		<mapping bookmark="string" variable="string" />
 	</report>
 </msword-report-task>

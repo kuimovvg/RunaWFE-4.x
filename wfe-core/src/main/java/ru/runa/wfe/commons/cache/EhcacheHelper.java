@@ -32,16 +32,7 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
  * @author Konstantinov Aleksey
  */
 public final class EhcacheHelper {
-
-    /**
-     * Logging support.
-     */
     private static final Log log = LogFactory.getLog(EhcacheHelper.class);
-
-    /**
-     * XML file name with caches settings.
-     */
-    public static final String settingsFile = "/ehcache_wfe_caching.xml";
 
     /**
      * {@linkplain CacheManager} to be used in WFE caches.
@@ -65,7 +56,7 @@ public final class EhcacheHelper {
      */
     private static CacheManager createManager() {
         try {
-            InputStream configuration = ClassLoaderUtil.getAsStreamNotNull(settingsFile, EhcacheHelper.class);
+            InputStream configuration = ClassLoaderUtil.getAsStreamNotNull("ehcache.xml", EhcacheHelper.class);
             if (configuration == null) {
                 log.error("EHCache manager settings for WFE caching not found. Local caching will be used.");
                 return null;

@@ -19,11 +19,13 @@ package ru.runa.wf.logic.bot.mswordreport;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Map;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
+
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -34,6 +36,7 @@ public class MSWordReportTaskSettings {
     private final String templateFileLocation;
     private final String reportFileName;
     private final String reportVariableName;
+    private final Map<String, BookmarkVariableMapping> bookmarkMapping = Maps.newHashMap();
 
     public MSWordReportTaskSettings(String templateFileLocation, String reportFileName, String reportVariableName) {
         this.templateFileLocation = templateFileLocation;
@@ -69,22 +72,21 @@ public class MSWordReportTaskSettings {
         }
     }
 
-    private final Map<String, BookmarkVariableMapping> bookmarkMapping = new HashMap<String, BookmarkVariableMapping>();
-
     public void addBookmarkMapping(BookmarkVariableMapping bookmarkVariableMapping) {
         bookmarkMapping.put(bookmarkVariableMapping.getBookmarkName(), bookmarkVariableMapping);
+    }
+
+    public Map<String, BookmarkVariableMapping> getBookmarkMapping() {
+        return bookmarkMapping;
     }
 
     public String format(String bookmark, IVariableProvider variableProvider) {
         BookmarkVariableMapping bookmarkVariableMapping = bookmarkMapping.get(bookmark);
         if (bookmarkVariableMapping == null) {
-            throw new IllegalArgumentException("bookmark " + bookmark + " is not defined in document " + templateFileLocation);
+            throw new IllegalArgumentException("In template found not mapped by bot task configuration bookmark '" + bookmark + "'");
         }
-        Object variableValue = variableProvider.getValueNotNull(bookmarkVariableMapping.getVariableName());
-        if (bookmarkVariableMapping.getFormat() != null) {
-            return bookmarkVariableMapping.getFormat().format(variableValue);
-        }
-        return String.valueOf(variableValue);
+        WfVariable variable = variableProvider.getVariableNotNull(bookmarkVariableMapping.getVariableName());
+        return variable.getDefinition().getFormat().format(variable.getValue());
     }
 
 }
