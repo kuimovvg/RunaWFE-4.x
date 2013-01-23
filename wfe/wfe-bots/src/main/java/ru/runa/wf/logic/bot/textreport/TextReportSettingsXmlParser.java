@@ -25,12 +25,7 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.xml.XmlUtils;
-import ru.runa.wfe.var.format.FormatCommons;
-import ru.runa.wfe.var.format.VariableFormat;
-
-import com.google.common.base.Strings;
 
 /**
  * Semantic is defined in textreport.xsd.
@@ -42,9 +37,6 @@ public class TextReportSettingsXmlParser {
     private static final String VARIABLE_NAME_ATTRIBUTE_NAME = "variableName";
     private static final String CONTENT_TYPE_ATTRIBUTE_NAME = "contentType";
     private static final String REPORT_ELEMENT_NAME = "report";
-    private static final String FORMATTERS_ELEMENT_NAME = "formatters";
-    private static final String VARIABLE_ELEMENT_NAME = "variable";
-    private static final String FORMAT_CLASS_ATTRIBUTE_NAME = "formatClass";
     private static final String REPLACEMENTS_ELEMENT_NAME = "replacements";
     private static final String REPLACEMENT_ELEMENT_NAME = "replacement";
     private static final String SOURCE_ATTRIBUTE_NAME = "source";
@@ -80,21 +72,6 @@ public class TextReportSettingsXmlParser {
                 replacementDestinations[i] = replacementNode.attributeValue(DESTINATION_ATTRIBUTE_NAME);
             }
             textReportSettings.setReplacements(replacementSources, replacementDestinations);
-        }
-
-        Element formattersElement = root.element(FORMATTERS_ELEMENT_NAME);
-        if (formattersElement != null) {
-            List<Element> nodeList = formattersElement.elements(VARIABLE_ELEMENT_NAME);
-            for (int i = 0; i < nodeList.size(); i++) {
-                Element variableNode = nodeList.get(i);
-                String variableName = variableNode.attributeValue(VARIABLE_NAME_ATTRIBUTE_NAME);
-                String formatClassName = variableNode.attributeValue(FORMAT_CLASS_ATTRIBUTE_NAME);
-                if (!Strings.isNullOrEmpty(formatClassName)) {
-                    formatClassName = BackCompatibilityClassNames.getClassName(formatClassName);
-                    VariableFormat<?> format = FormatCommons.create(formatClassName);
-                    textReportSettings.addVariableFormat(variableName, format);
-                }
-            }
         }
         return textReportSettings;
     }

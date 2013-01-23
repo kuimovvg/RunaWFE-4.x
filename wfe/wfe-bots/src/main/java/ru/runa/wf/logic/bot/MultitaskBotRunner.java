@@ -164,18 +164,17 @@ public class MultitaskBotRunner extends BotRunner {
         TaskHandler taskHandler = taskHandlerMap.get(task.getName());
         if (taskHandler != null) {
             IVariableProvider variableProvider = new DelegateProcessVariableProvider(getSubject(), task.getProcessId());
-            log.info("Starting bot task " + task.getName() + " in process " + task.getProcessId() + " with config \n"
-                    + taskHandler.getConfiguration());
+            log.info("Starting bot task " + task + " with config \n" + taskHandler.getConfiguration());
             Map<String, Object> variables = taskHandler.handle(getSubject(), variableProvider, task);
             if (variables == null) {
                 variables = Maps.newHashMap();
             }
             Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
             if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
-                log.info("Bot task '" + task + "' postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
+                log.info("Bot task " + task + " postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
             } else {
                 Delegates.getExecutionService().completeTask(getSubject(), task.getId(), variables);
-                log.info("Bot task '" + task + "' completed by task handler " + taskHandler.getClass() + ", bot = " + this);
+                log.info("Bot task " + task + " completed by task handler " + taskHandler.getClass() + ", bot = " + this);
             }
         } else {
             log.warn("No handler for bot task " + task + ", bot " + this);

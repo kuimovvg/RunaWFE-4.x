@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.var.IVariableProvider;
-import ru.runa.wfe.var.format.VariableFormat;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.io.ByteStreams;
 
@@ -62,9 +62,8 @@ public class TextReportGenerator {
         while (matcher.find()) {
             String originalVarName = matcher.group(1);
             String variableName = symbolsReplacer.replaceAllReverse(originalVarName);
-            Object variable = variableProvider.getValueNotNull(variableName);
-            VariableFormat format = settings.getFormat(variableName);
-            String formattedValue = format != null ? format.format(variable) : String.valueOf(variable);
+            WfVariable variable = variableProvider.getVariableNotNull(variableName);
+            String formattedValue = variable.getDefinition().getFormat().format(variable.getValue());
             String replacedFormattedValue = symbolsReplacer.replaceAll(formattedValue);
             matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacedFormattedValue));
         }
