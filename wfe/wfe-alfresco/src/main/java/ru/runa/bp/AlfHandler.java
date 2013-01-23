@@ -19,7 +19,7 @@ import ru.runa.wfe.commons.TimeMeasurer;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
@@ -29,13 +29,8 @@ import ru.runa.wfe.var.IVariableProvider;
  * 
  * @author dofs
  */
-public abstract class AlfHandler implements ActionHandler, TaskHandler {
+public abstract class AlfHandler extends TaskHandlerBase implements ActionHandler {
     protected Log log = LogFactory.getLog(getClass());
-
-    /**
-     * Cached configuration and extracted parameters from it.
-     */
-    protected String configuration;
     private final Map<String, ParamDef> inputParams = new HashMap<String, ParamDef>();
     private final Map<String, ParamDef> outputParams = new HashMap<String, ParamDef>();
 
@@ -96,14 +91,8 @@ public abstract class AlfHandler implements ActionHandler, TaskHandler {
     }
 
     @Override
-    public void setConfiguration(byte[] configuration) throws Exception {
-        setConfiguration(new String(configuration, Charsets.UTF_8));
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public void setConfiguration(String configuration) throws ConfigurationException {
-        this.configuration = configuration;
         if (configuration.trim().length() == 0) {
             return;
         }
