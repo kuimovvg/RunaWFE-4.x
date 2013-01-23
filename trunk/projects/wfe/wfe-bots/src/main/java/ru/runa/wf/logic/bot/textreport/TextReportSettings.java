@@ -20,25 +20,18 @@
  */
 package ru.runa.wf.logic.bot.textreport;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import ru.runa.wfe.var.format.VariableFormat;
 
 /**
  * Created on 2006
  * 
  */
 public class TextReportSettings {
-
     private String templateFileName;
     private String reportVariableName;
     private String reportFileName;
     private String reportContentType;
     private String[] contextSymbols;
     private String[] contextReplacements;
-
-    private final Map<String, VariableFormat> varFormats = new HashMap<String, VariableFormat>();
 
     /**
      * true for applying replacements to REGEXP
@@ -126,13 +119,5 @@ public class TextReportSettings {
 
     public void setXmlFormatSupport(boolean templateXmlFormatSupport) {
         xmlFormatSupport = templateXmlFormatSupport;
-    }
-
-    public void addVariableFormat(String var, VariableFormat format) {
-        varFormats.put(var, format);
-    }
-
-    public VariableFormat getFormat(String var) {
-        return varFormats.get(var);
     }
 }

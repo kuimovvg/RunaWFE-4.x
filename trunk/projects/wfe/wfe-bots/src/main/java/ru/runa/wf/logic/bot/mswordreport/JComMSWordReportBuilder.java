@@ -30,9 +30,14 @@ import ru.runa.wfe.var.IVariableProvider;
  * Created on 23.11.2006
  * 
  */
-public class JComMSWordReportBuilder implements MSWordReportBuilder {
+public class JComMSWordReportBuilder extends MSWordReportBuilder {
+
+    public JComMSWordReportBuilder(MSWordReportTaskSettings settings, IVariableProvider variableProvider) {
+        super(settings, variableProvider);
+    }
+
     @Override
-    public void build(String reportTemporaryFileName, IVariableProvider variableProvider, MSWordReportTaskSettings settings) {
+    public void build(String reportTemporaryFileName) {
         IDispatch wordApplication = null;
         IDispatch wordDocument = null;
         try {
@@ -40,7 +45,7 @@ public class JComMSWordReportBuilder implements MSWordReportBuilder {
             wordApplication.put("DisplayAlerts", Boolean.FALSE);
             wordApplication.put("Visible", Boolean.FALSE);
             wordDocument = (IDispatch) ((IDispatch) wordApplication.get("Documents")).method("Open", new String[] { settings.getTemplateFilePath() });
-            replaceBookmarksWithValues(wordDocument, variableProvider, settings);
+            replaceBookmarksWithValues(wordDocument);
             wordDocument.method("SaveAs", new Object[] { reportTemporaryFileName });
         } catch (JComException e) {
             String errorMessage = e.getMessage();
@@ -70,22 +75,37 @@ public class JComMSWordReportBuilder implements MSWordReportBuilder {
         }
     }
 
-    private void replaceBookmarksWithValues(IDispatch wordDocument, IVariableProvider variableProvider, MSWordReportTaskSettings settings)
-            throws JComException {
+    private void replaceBookmarksWithValues(IDispatch wordDocument) throws JComException {
+        // IDispatch bookmarks = (IDispatch) wordDocument.get("Bookmarks",
+        // null);
+        // int bookmarksCount = 1;
+        // int bookmarksIterations = 0;
+        // while (bookmarksCount > 0 && bookmarksIterations++ < 100) {
+        // IDispatch bookmark = (IDispatch) bookmarks.method("Item", new
+        // Integer[] { 1 });
+        // String bookmarkName = (String) bookmark.get("Name");
+        // String value = settings.format(bookmarkName, variableProvider);
+        // ((IDispatch) bookmark.get("Range")).put("Text", value);
+        // bookmarksCount = (Integer) bookmarks.get("Count", null);
+        // }
+        // for (int i = 0; i < bookmarksCount; i++) {
+        // IDispatch bookmark = (IDispatch) bookmarks.method("Item", new
+        // Integer[] { i + 1 });
+        // String bookmarkName = (String) bookmark.get("Name");
+        // LogFactory.getLog(getClass()).warn("Bookmark exists in result doc: "
+        // + bookmarkName);
+        // }
         IDispatch bookmarks = (IDispatch) wordDocument.get("Bookmarks", null);
-        int bookmarksCount = 1;
-        int bookmarksIterations = 0;
-        while (bookmarksCount > 0 && bookmarksIterations++ < 100) {
-            IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Integer[] { 1 });
-            String bookmarkName = (String) bookmark.get("Name");
-            String value = settings.format(bookmarkName, variableProvider);
+        for (BookmarkVariableMapping mapping : settings.getBookmarkMapping().values()) {
+            IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Object[] { mapping.getBookmarkName() });
+            String value = getVariableValue(mapping);
             ((IDispatch) bookmark.get("Range")).put("Text", value);
-            bookmarksCount = (Integer) bookmarks.get("Count", null);
         }
+        int bookmarksCount = (Integer) bookmarks.get("Count", null);
         for (int i = 0; i < bookmarksCount; i++) {
             IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Integer[] { i + 1 });
             String bookmarkName = (String) bookmark.get("Name");
-            LogFactory.getLog(getClass()).warn("Bookmark exists in result doc: " + bookmarkName);
+            LogFactory.getLog(getClass()).warn("Bookmark exists in result document: '" + bookmarkName + "'");
         }
     }
 }

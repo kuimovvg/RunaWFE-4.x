@@ -22,7 +22,6 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
 /**
@@ -31,28 +30,26 @@ import ru.runa.wfe.commons.xml.XmlUtils;
  * 
  */
 public class WordReportSettingsXmlParser {
-    private static final String TEMPLATE_FILE_PATH_ELEMENT_NAME = "template-path";
-    private static final String OUTPUT_VARIABLE_FILE_ELEMENT_NAME = "output-variable-file-name";
-    private static final String OUTPUT_VARIABLE_ELEMENT_NAME = "output-variable";
+    private static final String REPORT_ELEMENT_NAME = "report";
+    private static final String TEMPLATE_FILE_PATH_ATTRIBUTE_NAME = "template-path";
+    private static final String OUTPUT_VARIABLE_FILE_ATTRIBUTE_NAME = "output-variable-file-name";
+    private static final String OUTPUT_VARIABLE_ATTRIBUTE_NAME = "output-variable";
     private static final String MAPPING_ELEMENT_NAME = "mapping";
     private static final String BOOKMARK_ATTRIBUTE_NAME = "bookmark";
     private static final String VARIABLE_ATTRIBUTE_NAME = "variable";
-    private static final String FORMAT_CLASS_ATTRIBUTE_NAME = "format-class";
 
     public static MSWordReportTaskSettings read(String configuration) {
         Document document = XmlUtils.parseWithoutValidation(configuration);
-        Element root = document.getRootElement();
-        String templatePath = root.attributeValue(TEMPLATE_FILE_PATH_ELEMENT_NAME);
-        String fileName = root.attributeValue(OUTPUT_VARIABLE_FILE_ELEMENT_NAME);
-        String variableName = root.attributeValue(OUTPUT_VARIABLE_ELEMENT_NAME);
+        Element reportElement = document.getRootElement().element(REPORT_ELEMENT_NAME);
+        String templatePath = reportElement.attributeValue(TEMPLATE_FILE_PATH_ATTRIBUTE_NAME);
+        String fileName = reportElement.attributeValue(OUTPUT_VARIABLE_FILE_ATTRIBUTE_NAME);
+        String variableName = reportElement.attributeValue(OUTPUT_VARIABLE_ATTRIBUTE_NAME);
         MSWordReportTaskSettings wordReportSettings = new MSWordReportTaskSettings(templatePath, fileName, variableName);
-        List<Element> mappingElements = root.elements(MAPPING_ELEMENT_NAME);
+        List<Element> mappingElements = reportElement.elements(MAPPING_ELEMENT_NAME);
         for (Element mappingElement : mappingElements) {
             String bookmark = mappingElement.attributeValue(BOOKMARK_ATTRIBUTE_NAME);
             String variable = mappingElement.attributeValue(VARIABLE_ATTRIBUTE_NAME);
-            String formatClassName = mappingElement.attributeValue(FORMAT_CLASS_ATTRIBUTE_NAME);
-            formatClassName = BackCompatibilityClassNames.getClassName(formatClassName);
-            BookmarkVariableMapping bookmarkVariableMapping = new BookmarkVariableMapping(bookmark, variable, formatClassName);
+            BookmarkVariableMapping bookmarkVariableMapping = new BookmarkVariableMapping(bookmark, variable);
             wordReportSettings.addBookmarkMapping(bookmarkVariableMapping);
         }
         return wordReportSettings;
