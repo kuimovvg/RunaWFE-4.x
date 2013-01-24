@@ -3,10 +3,7 @@ package ru.runa.wf.office.shared;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.handler.CommonHandler;
-
-import com.google.common.base.Throwables;
 
 public abstract class OfficeFilesSupplierHandler<T extends FilesSupplierConfig> extends CommonHandler {
     protected static Log log = LogFactory.getLog(OfficeFilesSupplierHandler.class);
@@ -16,14 +13,9 @@ public abstract class OfficeFilesSupplierHandler<T extends FilesSupplierConfig> 
     protected abstract FilesSupplierConfigParser<T> createParser();
 
     @Override
-    public void setConfiguration(String configuration) throws ConfigurationException {
-        try {
-            FilesSupplierConfigParser<T> parser = createParser();
-            this.config = parser.parse(configuration);
-        } catch (Throwable th) {
-            Throwables.propagateIfInstanceOf(th, ConfigurationException.class);
-            Throwables.propagate(th);
-        }
+    public void setConfiguration(String configuration) throws Exception {
+        FilesSupplierConfigParser<T> parser = createParser();
+        this.config = parser.parse(configuration);
     }
 
 }

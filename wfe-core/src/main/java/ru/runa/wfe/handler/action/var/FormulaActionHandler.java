@@ -22,7 +22,6 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
@@ -764,7 +763,7 @@ public class FormulaActionHandler implements ActionHandler {
     }
 
     @Override
-    public void setConfiguration(String configurationName) throws ConfigurationException {
+    public void setConfiguration(String configurationName) {
         inputData = configurationName;
     }
 

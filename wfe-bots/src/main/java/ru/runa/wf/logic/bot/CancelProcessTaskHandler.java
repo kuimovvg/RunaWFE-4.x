@@ -26,7 +26,6 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTask;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTaskXmlParser;
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
@@ -59,7 +58,7 @@ public class CancelProcessTaskHandler extends TaskHandlerBase {
             String processDefinitionName = definitionStub.getName();
             String configurationName = processToCancelTask.getDatabaseTaskMap().get(processDefinitionName);
             if (configurationName == null) {
-                throw new ConfigurationException("Record for '" + processDefinitionName + " missed in task handler configuration");
+                throw new Exception("Record for '" + processDefinitionName + " missed in task handler configuration");
             }
             InputStream inputStream = ClassLoaderUtil.getAsStreamNotNull(configurationName, DatabaseTaskHandler.class);
             byte[] configuration = ByteStreams.toByteArray(inputStream);
