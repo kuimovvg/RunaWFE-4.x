@@ -8,6 +8,7 @@
     			<xs:complexType>
     				<xs:attribute name="bookmark" type="xs:string" use="required"></xs:attribute>
     				<xs:attribute name="variable" type="xs:string" use="required"></xs:attribute>
+    				<xs:attribute name="optional" type="xs:boolean" use="optional"></xs:attribute>
     			</xs:complexType>
     		</xs:element>
     	</xs:sequence>

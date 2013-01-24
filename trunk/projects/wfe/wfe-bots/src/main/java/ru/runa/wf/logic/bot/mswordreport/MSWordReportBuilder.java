@@ -17,6 +17,9 @@
  */
 package ru.runa.wf.logic.bot.mswordreport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
 
@@ -26,6 +29,7 @@ import ru.runa.wfe.var.dto.WfVariable;
  * 
  */
 public abstract class MSWordReportBuilder {
+    protected final Log log = LogFactory.getLog(getClass());
     protected final MSWordReportTaskSettings settings;
     protected final IVariableProvider variableProvider;
 

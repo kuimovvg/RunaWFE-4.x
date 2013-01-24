@@ -17,14 +17,15 @@
  */
 package ru.runa.wf.logic.bot.mswordreport;
 
-
 public class BookmarkVariableMapping {
     private final String bookmarkName;
     private final String variableName;
+    private final boolean optional;
 
-    public BookmarkVariableMapping(String bookmarkName, String variableName) {
+    public BookmarkVariableMapping(String bookmarkName, String variableName, boolean optional) {
         this.bookmarkName = bookmarkName;
         this.variableName = variableName;
+        this.optional = optional;
     }
 
     public String getBookmarkName() {
@@ -35,4 +36,7 @@ public class BookmarkVariableMapping {
         return variableName;
     }
 
+    public boolean isOptional() {
+        return optional;
+    }
 }
