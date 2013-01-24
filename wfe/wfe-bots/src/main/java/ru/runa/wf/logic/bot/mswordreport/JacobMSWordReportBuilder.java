@@ -73,25 +73,27 @@ public class JacobMSWordReportBuilder extends MSWordReportBuilder {
     }
 
     private void replaceBookmarksWithValues(Dispatch wordDocument, IVariableProvider variableProvider, MSWordReportTaskSettings settings) {
-        // Dispatch bookmarks = Dispatch.get(wordDocument,
-        // "Bookmarks").toDispatch();
-        // int bookmarksCount = Dispatch.get(bookmarks, "Count").toInt();
-        // for (int i = 1; i <= bookmarksCount; i++) {
-        // Dispatch bookmark = Dispatch.call(bookmarks, "Item", new
-        // Integer(1)).toDispatch();
-        // String bookmarkName = Dispatch.get(bookmark, "Name").getString();
-        // String value = settings.format(bookmarkName, variableProvider);
-        // Dispatch range = Dispatch.get(bookmark, "Range").toDispatch();
-        // Dispatch.put(range, "Text", value);
-        // }
         Dispatch bookmarks = Dispatch.get(wordDocument, "Bookmarks").toDispatch();
+        for (BookmarkVariableMapping mapping : settings.getMappings()) {
+            try {
+                Dispatch bookmark = Dispatch.call(bookmarks, "Item", mapping.getBookmarkName()).toDispatch();
+                String value = getVariableValue(mapping);
+                Dispatch range = Dispatch.get(bookmark, "Range").toDispatch();
+                Dispatch.put(range, "Text", value);
+            } catch (Exception e) {
+                String m = "No bookmark found in template document by name '" + mapping.getBookmarkName() + "'";
+                if (mapping.isOptional()) {
+                    log.warn(m);
+                } else {
+                    throw new InternalApplicationException(m, e);
+                }
+            }
+        }
         int bookmarksCount = Dispatch.get(bookmarks, "Count").toInt();
-        for (int i = 1; i <= bookmarksCount; i++) {
-            Dispatch bookmark = Dispatch.call(bookmarks, "Item", new Integer(1)).toDispatch();
+        for (int i = 0; i < bookmarksCount; i++) {
+            Dispatch bookmark = Dispatch.call(bookmarks, "Item", new Integer(i + 1)).toDispatch();
             String bookmarkName = Dispatch.get(bookmark, "Name").getString();
-            String value = settings.format(bookmarkName, variableProvider);
-            Dispatch range = Dispatch.get(bookmark, "Range").toDispatch();
-            Dispatch.put(range, "Text", value);
+            log.warn("Bookmark exists in result document: '" + bookmarkName + "'");
         }
     }
 }
