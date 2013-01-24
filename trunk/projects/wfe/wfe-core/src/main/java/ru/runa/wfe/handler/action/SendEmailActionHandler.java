@@ -20,7 +20,6 @@ package ru.runa.wfe.handler.action;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
@@ -39,14 +38,15 @@ public class SendEmailActionHandler implements ActionHandler {
     private String configuration;
 
     @Override
-    public void setConfiguration(String configuration) throws ConfigurationException {
+    public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }
 
     @Override
     public void execute(ExecutionContext executionContext) throws Exception {
+        // we parse config here because it changes its state during execution
         if (!EmailConfigParser.canParse(configuration)) {
-            throw new ConfigurationException("Invalid configuration " + configuration);
+            throw new Exception("Invalid configuration " + configuration);
         }
         EmailConfig config = EmailConfigParser.parse(configuration);
         try {
@@ -54,7 +54,7 @@ public class SendEmailActionHandler implements ActionHandler {
             if (config.isUseMessageFromTaskForm()) {
                 Task task = executionContext.getTask();
                 if (task == null) {
-                    throw new ConfigurationException("task is null");
+                    throw new Exception("task is null");
                 }
                 interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
             }

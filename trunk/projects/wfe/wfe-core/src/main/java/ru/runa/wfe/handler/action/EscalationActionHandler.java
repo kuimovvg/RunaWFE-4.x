@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.audit.TaskEscalationLog;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -56,7 +55,7 @@ public class EscalationActionHandler implements ActionHandler {
     private String orgFunctionClassName;
 
     @Override
-    public void setConfiguration(String configuration) throws ConfigurationException {
+    public void setConfiguration(String configuration) {
         orgFunctionClassName = configuration;
     }
 

@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Swimlane;
@@ -34,8 +33,12 @@ import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.user.Executor;
 
+import com.google.common.base.Preconditions;
+
 public class AssignSwimlaneActionHandler implements ActionHandler {
     private static final Log log = LogFactory.getLog(AssignSwimlaneActionHandler.class);
+    private static final String SWIMLANE_INITITALIZER = "swimlaneInititalizer";
+    private static final String SWIMLANE = "swimlaneName";
 
     private String swimlaneInititalizer;
     private String swimlaneName;
@@ -43,15 +46,17 @@ public class AssignSwimlaneActionHandler implements ActionHandler {
     protected AssignmentHelper assignmentHelper;
 
     @Override
-    public void setConfiguration(String configuration) throws ConfigurationException {
+    public void setConfiguration(String configuration) {
         Element root = XmlUtils.parseWithoutValidation(configuration).getRootElement();
-        swimlaneName = root.attributeValue("swimlaneName");
+        swimlaneName = root.attributeValue(SWIMLANE);
         if (swimlaneName == null) {
-            swimlaneName = root.elementTextTrim("swimlaneName");
+            swimlaneName = root.elementTextTrim(SWIMLANE);
+            Preconditions.checkNotNull(swimlaneName, SWIMLANE);
         }
-        swimlaneInititalizer = root.attributeValue("swimlaneInititalizer");
+        swimlaneInititalizer = root.attributeValue(SWIMLANE_INITITALIZER);
         if (swimlaneInititalizer == null) {
-            swimlaneInititalizer = root.elementTextTrim("swimlaneInititalizer");
+            swimlaneInititalizer = root.elementTextTrim(SWIMLANE_INITITALIZER);
+            Preconditions.checkNotNull(swimlaneInititalizer, SWIMLANE_INITITALIZER);
         }
     }
 

@@ -24,6 +24,8 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Sematics defined in resources/assigner.xsd.
  * 
@@ -43,10 +45,12 @@ public class AssignerSettingsXmlParser {
         Element conditionsElement = document.getRootElement().element(CONDITIONS_ELEMENT_NAME);
         List<Element> elements = conditionsElement.elements(CONDITION_ELEMENT_NAME);
         for (Element conditionElement : elements) {
-            // TODO PEX 3
             String swimlaneName = conditionElement.elementTextTrim(SWIMLANE_ELEMENT_NAME);
             String functionClassName = conditionElement.elementTextTrim(FUNCTION_ELEMENT_NAME);
             String variableName = conditionElement.elementTextTrim(VARIABLE_ELEMENT_NAME);
+            Preconditions.checkNotNull(swimlaneName, SWIMLANE_ELEMENT_NAME);
+            Preconditions.checkNotNull(functionClassName, FUNCTION_ELEMENT_NAME);
+            Preconditions.checkNotNull(variableName, VARIABLE_ELEMENT_NAME);
             assignerSettings.addAssignerCondition(new AssignerSettings.Condition(swimlaneName, functionClassName, variableName));
         }
         return assignerSettings;

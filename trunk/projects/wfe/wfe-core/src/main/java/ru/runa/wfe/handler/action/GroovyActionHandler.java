@@ -2,7 +2,6 @@ package ru.runa.wfe.handler.action;
 
 import java.util.Map;
 
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.GroovyScriptExecutor;
 import ru.runa.wfe.commons.IScriptExecutor;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -15,7 +14,7 @@ public class GroovyActionHandler implements ActionHandler {
     }
 
     @Override
-    public void setConfiguration(String configuration) throws ConfigurationException {
+    public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }
 

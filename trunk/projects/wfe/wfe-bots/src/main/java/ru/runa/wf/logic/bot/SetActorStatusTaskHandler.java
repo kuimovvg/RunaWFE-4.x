@@ -26,12 +26,13 @@ import org.dom4j.Element;
 
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.var.IVariableProvider;
+
+import com.google.common.base.Preconditions;
 
 /**
  * This task handler changes actor status. Configuration looks like <config
@@ -70,19 +71,17 @@ public class SetActorStatusTaskHandler extends TaskHandlerBase {
     }
 
     private static class XmlParser {
-        private static final String CONFIG_ELEMENT_NAME = "config";
-        private static final String ACTOR_ARRT_NAME = "actorVariableName";
+        private static final String ACTOR_ATTR_NAME = "actorVariableName";
         private static final String STATUS_ATTR_NAME = "statusVariableName";
 
         public static Config parse(String configuration) {
             Document document = XmlUtils.parseWithoutValidation(configuration);
             Element root = document.getRootElement();
-            if (!CONFIG_ELEMENT_NAME.equals(root.getName())) {
-                throw new ConfigurationException("No <config> element found at root");
-            }
             Config config = new Config();
-            config.actorVariableName = root.attributeValue(ACTOR_ARRT_NAME);
+            config.actorVariableName = root.attributeValue(ACTOR_ATTR_NAME);
             config.statusVariableName = root.attributeValue(STATUS_ATTR_NAME);
+            Preconditions.checkNotNull(config.actorVariableName, ACTOR_ATTR_NAME);
+            Preconditions.checkNotNull(config.statusVariableName, STATUS_ATTR_NAME);
             return config;
         }
     }

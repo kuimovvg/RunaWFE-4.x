@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.security.auth.Subject;
 
-import org.apache.commons.codec.Charsets;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -14,13 +13,11 @@ import org.dom4j.Element;
 
 import ru.runa.alfresco.AlfSession;
 import ru.runa.alfresco.AlfSessionWrapper;
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.TimeMeasurer;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
-import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -92,44 +89,27 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setConfiguration(String configuration) throws ConfigurationException {
+    public void setConfiguration(String configuration) throws Exception {
         if (configuration.trim().length() == 0) {
             return;
         }
-        try {
-            Document doc = XmlUtils.parseWithoutValidation(configuration);
-            Element inputElement = doc.getRootElement().element("input");
-            if (inputElement != null) {
-                List<Element> inputParamElements = inputElement.elements("param");
-                for (Element element : inputParamElements) {
-                    ParamDef paramDef = new ParamDef(element);
-                    inputParams.put(paramDef.name, paramDef);
-                }
+        Document doc = XmlUtils.parseWithoutValidation(configuration);
+        Element inputElement = doc.getRootElement().element("input");
+        if (inputElement != null) {
+            List<Element> inputParamElements = inputElement.elements("param");
+            for (Element element : inputParamElements) {
+                ParamDef paramDef = new ParamDef(element);
+                inputParams.put(paramDef.name, paramDef);
             }
-            Element outputElement = doc.getRootElement().element("output");
-            if (outputElement != null) {
-                List<Element> outputParamElements = outputElement.elements("param");
-                for (Element element : outputParamElements) {
-                    ParamDef paramDef = new ParamDef(element);
-                    outputParams.put(paramDef.name, paramDef);
-                }
+        }
+        Element outputElement = doc.getRootElement().element("output");
+        if (outputElement != null) {
+            List<Element> outputParamElements = outputElement.elements("param");
+            for (Element element : outputParamElements) {
+                ParamDef paramDef = new ParamDef(element);
+                outputParams.put(paramDef.name, paramDef);
             }
-        } catch (Throwable th) {
-            log.error("Alfresco handler configuration error.", th);
-            throw new ConfigurationException(th);
         }
-    }
-
-    public final void configure(byte[] config) throws TaskHandlerException {
-        try {
-            setConfiguration(new String(config, Charsets.UTF_8));
-        } catch (Exception e) {
-            throw new TaskHandlerException(e);
-        }
-    }
-
-    public void configure(String config) throws TaskHandlerException {
-        throw new UnsupportedOperationException();
     }
 
     /**

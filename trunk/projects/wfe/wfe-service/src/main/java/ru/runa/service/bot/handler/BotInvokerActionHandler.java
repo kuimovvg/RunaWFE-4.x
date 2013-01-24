@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
@@ -40,7 +39,7 @@ public class BotInvokerActionHandler implements ActionHandler {
     private String configuration;
 
     @Override
-    public void setConfiguration(String configuration) throws ConfigurationException {
+    public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }
 

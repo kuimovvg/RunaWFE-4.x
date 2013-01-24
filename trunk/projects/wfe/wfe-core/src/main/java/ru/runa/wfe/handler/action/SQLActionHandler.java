@@ -42,7 +42,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.SQLCommons;
 import ru.runa.wfe.commons.sqltask.AbstractQuery;
 import ru.runa.wfe.commons.sqltask.DatabaseTask;
@@ -75,7 +74,7 @@ public class SQLActionHandler implements ActionHandler {
     private ExecutorDAO executorDAO;
 
     @Override
-    public void setConfiguration(String configuration) throws ConfigurationException {
+    public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }
 

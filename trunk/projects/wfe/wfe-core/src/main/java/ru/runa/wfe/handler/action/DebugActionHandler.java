@@ -3,7 +3,6 @@ package ru.runa.wfe.handler.action;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 
@@ -18,7 +17,7 @@ public class DebugActionHandler implements ActionHandler {
     private String configuration;
 
     @Override
-    public void setConfiguration(String configuration) throws ConfigurationException {
+    public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }
 
