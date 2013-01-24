@@ -20,9 +20,6 @@ package ru.runa.wf.logic.bot.mswordreport;
 import jp.ne.so_net.ga2.no_ji.jcom.IDispatch;
 import jp.ne.so_net.ga2.no_ji.jcom.JComException;
 import jp.ne.so_net.ga2.no_ji.jcom.ReleaseManager;
-
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -76,36 +73,26 @@ public class JComMSWordReportBuilder extends MSWordReportBuilder {
     }
 
     private void replaceBookmarksWithValues(IDispatch wordDocument) throws JComException {
-        // IDispatch bookmarks = (IDispatch) wordDocument.get("Bookmarks",
-        // null);
-        // int bookmarksCount = 1;
-        // int bookmarksIterations = 0;
-        // while (bookmarksCount > 0 && bookmarksIterations++ < 100) {
-        // IDispatch bookmark = (IDispatch) bookmarks.method("Item", new
-        // Integer[] { 1 });
-        // String bookmarkName = (String) bookmark.get("Name");
-        // String value = settings.format(bookmarkName, variableProvider);
-        // ((IDispatch) bookmark.get("Range")).put("Text", value);
-        // bookmarksCount = (Integer) bookmarks.get("Count", null);
-        // }
-        // for (int i = 0; i < bookmarksCount; i++) {
-        // IDispatch bookmark = (IDispatch) bookmarks.method("Item", new
-        // Integer[] { i + 1 });
-        // String bookmarkName = (String) bookmark.get("Name");
-        // LogFactory.getLog(getClass()).warn("Bookmark exists in result doc: "
-        // + bookmarkName);
-        // }
         IDispatch bookmarks = (IDispatch) wordDocument.get("Bookmarks", null);
-        for (BookmarkVariableMapping mapping : settings.getBookmarkMapping().values()) {
-            IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Object[] { mapping.getBookmarkName() });
-            String value = getVariableValue(mapping);
-            ((IDispatch) bookmark.get("Range")).put("Text", value);
+        for (BookmarkVariableMapping mapping : settings.getMappings()) {
+            try {
+                IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Object[] { mapping.getBookmarkName() });
+                String value = getVariableValue(mapping);
+                ((IDispatch) bookmark.get("Range")).put("Text", value);
+            } catch (Exception e) {
+                String m = "No bookmark found in template document by name '" + mapping.getBookmarkName() + "'";
+                if (mapping.isOptional()) {
+                    log.warn(m);
+                } else {
+                    throw new InternalApplicationException(m, e);
+                }
+            }
         }
         int bookmarksCount = (Integer) bookmarks.get("Count", null);
         for (int i = 0; i < bookmarksCount; i++) {
             IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Integer[] { i + 1 });
             String bookmarkName = (String) bookmark.get("Name");
-            LogFactory.getLog(getClass()).warn("Bookmark exists in result document: '" + bookmarkName + "'");
+            log.warn("Bookmark exists in result document: '" + bookmarkName + "'");
         }
     }
 }
