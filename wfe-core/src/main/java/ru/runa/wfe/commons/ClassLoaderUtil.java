@@ -117,6 +117,14 @@ public class ClassLoaderUtil {
         return url;
     }
 
+    public static URL getAsURLNotNull(String resourceName, Class<?> callingClass) {
+        URL url = getAsURL(resourceName, callingClass);
+        if (url == null) {
+            throw new InternalApplicationException("No resource found by '" + resourceName + "'");
+        }
+        return url;
+    }
+
     /**
      * Get resource as stream.
      * 

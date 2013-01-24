@@ -111,4 +111,9 @@ public class BotTask implements Serializable {
     public void setConfiguration(byte[] configuration) {
         this.configuration = configuration;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
