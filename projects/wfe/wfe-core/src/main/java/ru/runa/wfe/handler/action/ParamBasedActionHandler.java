@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -137,32 +136,27 @@ public abstract class ParamBasedActionHandler implements ActionHandler {
     }
 
     @Override
-    public void setConfiguration(String configuration) throws ConfigurationException {
+    public void setConfiguration(String configuration) throws Exception {
         this.configuration = configuration;
         if (configuration.trim().length() == 0) {
             return;
         }
-        try {
-            Document doc = XmlUtils.parseWithoutValidation(configuration);
-            Element inputElement = doc.getRootElement().element("input");
-            if (inputElement != null) {
-                List<Element> inputParamElements = inputElement.elements("param");
-                for (Element element : inputParamElements) {
-                    ParamDef paramDef = new ParamDef(element);
-                    inputParams.put(paramDef.name, paramDef);
-                }
+        Document doc = XmlUtils.parseWithoutValidation(configuration);
+        Element inputElement = doc.getRootElement().element("input");
+        if (inputElement != null) {
+            List<Element> inputParamElements = inputElement.elements("param");
+            for (Element element : inputParamElements) {
+                ParamDef paramDef = new ParamDef(element);
+                inputParams.put(paramDef.name, paramDef);
             }
-            Element outputElement = doc.getRootElement().element("output");
-            if (outputElement != null) {
-                List<Element> outputParamElements = outputElement.elements("param");
-                for (Element element : outputParamElements) {
-                    ParamDef paramDef = new ParamDef(element);
-                    outputParams.put(paramDef.name, paramDef);
-                }
+        }
+        Element outputElement = doc.getRootElement().element("output");
+        if (outputElement != null) {
+            List<Element> outputParamElements = outputElement.elements("param");
+            for (Element element : outputParamElements) {
+                ParamDef paramDef = new ParamDef(element);
+                outputParams.put(paramDef.name, paramDef);
             }
-        } catch (Throwable th) {
-            log.error("Configuration error.", th);
-            throw new ConfigurationException(th);
         }
     }
 

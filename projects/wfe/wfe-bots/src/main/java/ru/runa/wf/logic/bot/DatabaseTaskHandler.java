@@ -42,7 +42,6 @@ import ru.runa.wfe.commons.sqltask.StoredProcedureQuery;
 import ru.runa.wfe.commons.sqltask.SwimlaneParameter;
 import ru.runa.wfe.commons.sqltask.SwimlaneResult;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
-import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.var.IVariableProvider;
@@ -84,13 +83,13 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
                             ps = conn.prepareCall(query.getSql());
                         } else {
                             String unknownQueryClassName = (query == null ? "null" : query.getClass().getName());
-                            throw new TaskHandlerException("Unknown query type:" + unknownQueryClassName);
+                            throw new Exception("Unknown query type:" + unknownQueryClassName);
                         }
                         fillQueryParameters(subject, ps, variableProvider, query);
                         if (ps.execute()) {
                             ResultSet resultSet = ps.getResultSet();
                             if (!resultSet.next()) {
-                                throw new TaskHandlerException("No results in rowset for query " + query);
+                                throw new Exception("No results in rowset for query " + query);
                             }
                             outputVariables.putAll(extractResultsToProcessVariables(subject, variableProvider, resultSet, query));
                         }
