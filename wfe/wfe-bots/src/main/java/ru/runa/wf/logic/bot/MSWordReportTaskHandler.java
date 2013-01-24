@@ -19,10 +19,7 @@ package ru.runa.wf.logic.bot;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Map;
-
-import javax.security.auth.Subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,8 +28,7 @@ import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilder;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilderFactory;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportTaskSettings;
 import ru.runa.wf.logic.bot.mswordreport.WordReportSettingsXmlParser;
-import ru.runa.wfe.handler.bot.TaskHandlerBase;
-import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.handler.CommonHandler;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -48,7 +44,7 @@ import com.google.common.io.Closeables;
  * Created on 23.11.2006
  * 
  */
-public class MSWordReportTaskHandler extends TaskHandlerBase {
+public class MSWordReportTaskHandler extends CommonHandler {
     private static final Log log = LogFactory.getLog(MSWordReportTaskHandler.class);
     private static final String CONTENT_TYPE = "application/vnd.ms-word";
 
@@ -60,7 +56,7 @@ public class MSWordReportTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public synchronized Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws IOException {
+    protected Map<String, Object> executeAction(IVariableProvider variableProvider) throws Exception {
         File reportTemporaryFile = null;
         FileInputStream reportFileInputStream = null;
         try {

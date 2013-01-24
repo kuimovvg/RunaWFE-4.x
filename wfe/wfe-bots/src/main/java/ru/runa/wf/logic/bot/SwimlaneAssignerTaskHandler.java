@@ -26,7 +26,6 @@ import javax.security.auth.Subject;
 
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
-import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.task.dto.WfTask;
@@ -50,13 +49,13 @@ public class SwimlaneAssignerTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) {
+    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
         String swimlaneName = properties.getProperty(SWIMLANE_NAME_PROPERTY);
         String assignerFunction = properties.getProperty(ASSIGNER_FUNCTION_PROPERTY);
         Long actorCode = SubjectPrincipalsHelper.getActor(subject).getCode();
         List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(variableProvider, assignerFunction, actorCode);
         if (executors.size() != 1) {
-            throw new TaskHandlerException("assigner (organization) function return more than 1 actor to be assigned in swimlane");
+            throw new Exception("assigner (organization) function return more than 1 actor to be assigned in swimlane");
         }
         Delegates.getExecutionService().assignSwimlane(subject, task.getProcessId(), swimlaneName, executors.get(0));
         return null;

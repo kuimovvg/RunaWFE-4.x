@@ -2,7 +2,6 @@ package ru.runa.wfe.handler.action.var;
 
 import java.util.List;
 
-import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.handler.action.ParamBasedActionHandler;
 
@@ -70,7 +69,7 @@ public class ListAggregateFunctionActionHandler extends ParamBasedActionHandler 
                 result = new Long((long) max);
             }
         } else {
-            throw new ConfigurationException("Unknown function '" + function + "'");
+            throw new Exception("Unknown function '" + function + "'");
         }
         setOutputVariable("object", result);
     }

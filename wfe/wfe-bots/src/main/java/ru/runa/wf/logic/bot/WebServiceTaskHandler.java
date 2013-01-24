@@ -53,7 +53,6 @@ import ru.runa.wf.logic.bot.webservice.WebServiceTaskHandlerXSLTHelper;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
-import ru.runa.wfe.handler.bot.TaskHandlerException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -245,7 +244,7 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
         }
         ErrorResponseProcessingResult errorAction = (interaction.errorAction == null ? settings.errorAction : interaction.errorAction);
         if (errorAction == ErrorResponseProcessingResult.BREAK || errorAction == null) {
-            throw new TaskHandlerException("Interaction with we service failed with behavior BREAK.");
+            throw new Exception("Interaction with we service failed with behavior BREAK.");
         }
         if (errorAction == ErrorResponseProcessingResult.IGNORE) {
             return true;
