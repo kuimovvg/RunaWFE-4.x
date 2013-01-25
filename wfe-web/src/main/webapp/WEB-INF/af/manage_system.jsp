@@ -8,6 +8,8 @@
 <tiles:put name="head" type="string">
 	<script>
 	var storageVisible = false;
+	var bottaskErrorsVisible = false;
+	var processErrorsVisible = false;
 	$(document).ready(function() {
 		$("#storageButton").click(function() {
 			if (storageVisible) {
@@ -18,6 +20,28 @@
 				$("#storageContentDiv").show();
 				$("#storageImg").attr("src", "/wfe/images/view_setup_visible.gif");
 				storageVisible = true;
+			}
+		});
+		$("#bottaskErrorsButton").click(function() {
+			if (bottaskErrorsVisible) {
+				$("#bottaskErrorsContentDiv").hide();
+				$("#bottaskErrorsImg").attr("src", "/wfe/images/view_setup_hidden.gif");
+				bottaskErrorsVisible = false;
+			} else {
+				$("#bottaskErrorsContentDiv").show();
+				$("#bottaskErrorsImg").attr("src", "/wfe/images/view_setup_visible.gif");
+				bottaskErrorsVisible = true;
+			}
+		});
+		$("#processErrorsButton").click(function() {
+			if (processErrorsVisible) {
+				$("#processErrorsContentDiv").hide();
+				$("#processErrorsImg").attr("src", "/wfe/images/view_setup_hidden.gif");
+				processErrorsVisible = false;
+			} else {
+				$("#processErrorsContentDiv").show();
+				$("#processErrorsImg").attr("src", "/wfe/images/view_setup_visible.gif");
+				processErrorsVisible = true;
 			}
 		});
 		$("a[fileName]").each(function() {
@@ -67,15 +91,6 @@
 
 <table class='box'><tr><th class='box'><bean:message key="adminkit.scripts" /></th></tr>
 <tr><td class='box'>
-	<div id="scriptResults" class="error" style="border-color: #ccc;">
-		<% 
-			if (request.getSession().getAttribute("results") != null) {
-				out.println((String) request.getSession().getAttribute("results"));
-			}
-		%>
-	</div>
-</td></tr>
-<tr><td class='box'>
 	<div style="position: relative;">
 		<div style="position: absolute; right: 5px; top: 5px;">
 			<table><tbody><tr>
@@ -106,7 +121,30 @@
 			<wf:viewAdminkitScripts />
 		</div>
 	</div>
-</td></tr></table
+</td></tr></table>
+
+<table class='box'><tr><th class='box'><bean:message key="title.errors" /></th></tr>
+<tr><td class='box'>
+	<div>
+		<a id="bottaskErrorsButton" href="#" class="link">
+			<img id="bottaskErrorsImg" class="hidableblock" src="/wfe/images/view_setup_hidden.gif">
+			&nbsp;<bean:message key="errors.bottask" />
+		</a>
+	</div>
+	<div id="bottaskErrorsContentDiv" style="display: none;">
+		<wf:viewBotTaskErrors />
+	</div>
+	<br />
+	<div>
+		<a id="processErrorsButton" href="#" class="link">
+			<img id="processErrorsImg" class="hidableblock" src="/wfe/images/view_setup_hidden.gif">
+			&nbsp;<bean:message key="errors.process" />
+		</a>
+	</div>
+	<div id="processErrorsContentDiv" style="display: none;">
+		<wf:viewProcessErrors />
+	</div>
+</td></tr></table>
 
 </tiles:put>
 <tiles:put name="messages" value="../common/messages.jsp" />

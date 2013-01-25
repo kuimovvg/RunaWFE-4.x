@@ -27,6 +27,7 @@ import org.apache.struts.action.ActionMessages;
 
 import ru.runa.wfe.ApplicationException;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.LocalizableException;
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
@@ -63,13 +64,8 @@ public class ActionExceptionHelper {
     private ActionExceptionHelper() {
     }
 
-    public static void addException(ActionMessages errors, Exception e) {
-        Throwable rootCause = Throwables.getRootCause(e);
-        if (rootCause instanceof Exception) {
-            e = (Exception) rootCause;
-        } else {
-            e = new Exception(rootCause);
-        }
+    public static void addException(ActionMessages errors, Throwable e) {
+        e = Throwables.getRootCause(e);
         errors.add(ActionMessages.GLOBAL_MESSAGE, getActionMessage(e));
         log.error("web exception", e);
     }
@@ -144,12 +140,14 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_DOESNOT_EXISTS);
         } else if (e instanceof RelationAlreadyExistException) {
             actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_EXISTS, e.getMessage());
+        } else if (e instanceof LocalizableException) {
+            actionMessage = new ActionMessage(e.getLocalizedMessage(), false);
         } else if (e instanceof ApplicationException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.getMessage());
         } else if (e instanceof InternalApplicationException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.getMessage());
         } else {
-            actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.toString());
+            actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.getMessage());
         }
         return actionMessage;
     }

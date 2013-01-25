@@ -72,7 +72,7 @@ public class BotTask implements Serializable {
         this.version = version;
     }
 
-    @ManyToOne(targetEntity = Bot.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Bot.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "BOT_ID", nullable = false, updatable = true, insertable = true)
     @ForeignKey(name = "FK_BOT_TASK_BOT")
     @Index(name = "IX_BOT_TASK_BOT")
