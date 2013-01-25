@@ -26,6 +26,10 @@ public class ProcessExecutionErrors { // TODO nodeID instead of taskName?
         botTaskConfigurationErrors.put(new BotTaskIdentifier(botName, botTaskName), throwable);
     }
 
+    public static synchronized void removeBotTaskConfigurationError(String botName, String botTaskName) {
+        botTaskConfigurationErrors.remove(new BotTaskIdentifier(botName, botTaskName));
+    }
+
     public static synchronized void addBotTaskNotFoundProcessError(WfTask task, String botName, String botTaskName) {
         Throwable ce = botTaskConfigurationErrors.get(new BotTaskIdentifier(botName, botTaskName));
         Exception throwable;
@@ -59,6 +63,10 @@ public class ProcessExecutionErrors { // TODO nodeID instead of taskName?
                 processErrors.remove(processId);
             }
         }
+    }
+
+    public static synchronized void removeProcessErrors(Long processId) {
+        processErrors.remove(processId);
     }
 
     public static synchronized List<Throwable> getProcessErrorsAsList(Long processId) {
