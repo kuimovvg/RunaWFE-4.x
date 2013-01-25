@@ -100,6 +100,7 @@ public class WorkflowBot implements Runnable {
                 handler.setConfiguration(botTask.getConfiguration());
                 handlers.put(botTask.getName(), handler);
                 log.info("Configured taskHandler for " + botTask.getName());
+                ProcessExecutionErrors.removeBotTaskConfigurationError(botName, botTask.getName());
             } catch (Throwable th) {
                 ProcessExecutionErrors.addBotTaskConfigurationError(botName, botTask.getName(), th);
                 log.error("Can't create handler for bot " + bot.getUsername() + " (task is " + botTask + ")", th);
