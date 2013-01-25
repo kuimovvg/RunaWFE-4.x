@@ -18,10 +18,10 @@
 package ru.runa.wf.logic.bot.mswordreport;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.List;
 
-import ru.runa.wfe.InternalApplicationException;
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.commons.ClassLoaderUtil;
 
 import com.google.common.collect.Lists;
@@ -65,9 +65,10 @@ public class MSWordReportTaskSettings {
             if (file.exists()) {
                 return file.getAbsolutePath();
             }
-            throw new InternalApplicationException("No template found at location '" + templateFileLocation + "'");
-        } catch (URISyntaxException e) {
-            throw new InternalApplicationException("No template found at location '" + templateFileLocation + "'", e);
+            throw new MSWordReportException(MSWordReportException.TEMPLATE_NOT_FOUND, templateFileLocation);
+        } catch (Exception e) {
+            LogFactory.getLog(getClass()).error("", e);
+            throw new MSWordReportException(MSWordReportException.TEMPLATE_NOT_FOUND, templateFileLocation);
         }
     }
 

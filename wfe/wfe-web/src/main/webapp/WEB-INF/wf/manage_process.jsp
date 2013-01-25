@@ -3,12 +3,13 @@
 <%@ page import="ru.runa.wf.web.form.TaskIdForm" %>
 <%@ page import="ru.runa.wf.web.action.ShowGraphModeHelper" %>
 <%@ page import="ru.runa.common.WebResources" %>
+<%@ page import="ru.runa.common.WebResources" %>
 
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles"%>
 <%@ taglib uri="/WEB-INF/wf.tld" prefix="wf" %>
 <tiles:insert page="/WEB-INF/af/main_layout.jsp" flush="true">
 
-<tiles:put name="body" type="string" >
+<tiles:put name="head" type="string">
 
 <% if (WebResources.getDiagramRefreshInterval() > 0) { %>
 <script type="text/javascript">
@@ -29,6 +30,11 @@ function Reload() {
 </script>
 
 <% } %>
+
+</tiles:put>
+
+<tiles:put name="body" type="string" >
+
 <%
 	String parameterName = IdForm.ID_INPUT_NAME;
 	Long id = Long.parseLong(request.getParameter(parameterName));
@@ -45,7 +51,7 @@ function Reload() {
 	
 	boolean graphMode = ShowGraphModeHelper.isShowGraphMode();
 %>
-<wf:processInfoForm  buttonAlignment="right" identifiableId='<%= id %>' taskId='<%= taskId %>'>
+<wf:processInfoForm buttonAlignment="right" identifiableId='<%= id %>' taskId='<%= taskId %>'>
 <table width="100%">
 	<tr>
 		<td align="right">

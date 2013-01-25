@@ -18,6 +18,8 @@ import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
+import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.handler.assign.AssignmentHandler;
 import ru.runa.wfe.handler.assign.AssignmentHelper;
 import ru.runa.wfe.lang.Delegation;
@@ -42,6 +44,7 @@ import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -66,25 +69,30 @@ public class TaskLogic extends WFCommonLogic {
         if (!task.isActive()) {
             throw new TaskAlreadyCompletedException(task.getName());
         }
-        ProcessDefinition processDefinition = getDefinition(task);
-        ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
-        if (variables == null) {
-            variables = Maps.newHashMap();
+        try {
+            ProcessDefinition processDefinition = getDefinition(task);
+            ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
+            if (variables == null) {
+                variables = Maps.newHashMap();
+            }
+            String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
+            checkCanParticipate(subject, task, actor);
+            actor = checkPermissionsOnExecutor(subject, actor, ActorPermission.READ);
+            assignmentHelper.reassignTask(executionContext, task, actor, true);
+            validateVariables(processDefinition, task.getNodeId(),
+                    new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
+            executionContext.setVariables(variables);
+            Transition transition = null;
+            if (transitionName != null) {
+                transition = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitionNotNull(transitionName);
+            }
+            task.end(executionContext, transition, true);
+            log.info("Task '" + task.getName() + "' was done by " + actor + " in process " + task.getProcess());
+            ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getName());
+        } catch (Throwable th) {
+            ProcessExecutionErrors.addProcessError(task.getProcess().getId(), task.getName(), th);
+            throw Throwables.propagate(th);
         }
-        String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
-        checkCanParticipate(subject, task, actor);
-        actor = checkPermissionsOnExecutor(subject, actor, ActorPermission.READ);
-
-        assignmentHelper.reassignTask(executionContext, task, actor, true);
-
-        validateVariables(processDefinition, task.getNodeId(), new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
-        executionContext.setVariables(variables);
-        Transition transition = null;
-        if (transitionName != null) {
-            transition = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitionNotNull(transitionName);
-        }
-        task.end(executionContext, transition, true);
-        log.info("Task '" + task.getName() + "' was done by " + actor + " in process " + task.getProcess());
     }
 
     public void markTaskOpened(Subject subject, Long taskId) {
@@ -111,8 +119,11 @@ public class TaskLogic extends WFCommonLogic {
                     AssignmentHandler handler = delegation.getInstance();
                     handler.assign(new ExecutionContext(processDefinition, task), task);
                 }
-            } catch (Exception e) {
-                log.warn(task.getSwimlane().getName(), e);
+                ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getName());
+            } catch (Throwable th) {
+                log.warn("Unable to assign task '" + task + "' with swimlane '" + task.getSwimlane() + "'", th);
+                ProcessExecutionException e = new ProcessExecutionException(ProcessExecutionException.TASK_ASSIGNMENT_FAILED, task.getName());
+                ProcessExecutionErrors.addProcessError(task.getProcess().getId(), task.getName(), e);
             }
         }
     }

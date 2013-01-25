@@ -13,10 +13,14 @@ import ru.runa.wfe.commons.calendar.impl.Duration;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
+import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.handler.assign.AssignmentHelper;
 import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.task.Task;
+
+import com.google.common.base.Throwables;
 
 @Entity
 @DiscriminatorValue(value = "T")
@@ -52,35 +56,43 @@ public class Timer extends Job {
 
     @Override
     public void execute(ExecutionContext executionContext) {
-        Event event = executionContext.getNode().getEvent(Event.EVENTTYPE_TIMER);
-        if (event != null) {
-            for (Action timerAction : event.getActions()) {
-                // in case of multiple timers on node we discriminate actions by
-                // name
-                if (getName().equals(timerAction.getName())) {
-                    executionContext.getNode().executeAction(timerAction, executionContext);
+        try {
+            Event event = executionContext.getNode().getEvent(Event.EVENTTYPE_TIMER);
+            if (event != null) {
+                for (Action timerAction : event.getActions()) {
+                    // in case of multiple timers on node we discriminate
+                    // actions by
+                    // name
+                    if (getName().equals(timerAction.getName())) {
+                        executionContext.getNode().executeAction(timerAction, executionContext);
+                    }
                 }
             }
-        }
-        if (outTransitionName != null) {
-            Task task = executionContext.getTask();
-            if (task != null) {
-                Swimlane swimlane = task.getSwimlane();
-                if (swimlane != null) {
-                    AssignmentHelper assignmentHelper = ApplicationContextFactory.getAssignmentHelper();
-                    assignmentHelper.reassignTask(executionContext, task, swimlane.getExecutor(), false);
+            if (outTransitionName != null) {
+                Task task = executionContext.getTask();
+                if (task != null) {
+                    Swimlane swimlane = task.getSwimlane();
+                    if (swimlane != null) {
+                        AssignmentHelper assignmentHelper = ApplicationContextFactory.getAssignmentHelper();
+                        assignmentHelper.reassignTask(executionContext, task, swimlane.getExecutor(), false);
+                    }
+                } else {
+                    log.warn("Task is null in timer node '" + getToken().getNodeId() + "' when leaving by transition: " + outTransitionName);
                 }
-            } else {
-                log.warn("Task is null in timer node '" + getToken().getNodeId() + "' when leaving by transition: " + outTransitionName);
+                getToken().signal(executionContext, executionContext.getNode().getLeavingTransitionNotNull(outTransitionName));
+            } else if (repeatDurationString != null) {
+                Duration repeatDuration = new Duration(repeatDurationString);
+                if (repeatDuration.getMilliseconds() > 0) {
+                    BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
+                    setDueDate(businessCalendar.add(getDueDate(), repeatDuration));
+                    log.debug("updated '" + this + "' for repetition on '" + getDueDate() + "'");
+                }
             }
-            getToken().signal(executionContext, executionContext.getNode().getLeavingTransitionNotNull(outTransitionName));
-        } else if (repeatDurationString != null) {
-            Duration repeatDuration = new Duration(repeatDurationString);
-            if (repeatDuration.getMilliseconds() > 0) {
-                BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
-                setDueDate(businessCalendar.add(getDueDate(), repeatDuration));
-                log.debug("updated '" + this + "' for repetition on '" + getDueDate() + "'");
-            }
+            ProcessExecutionErrors.removeProcessError(getProcess().getId(), getToken().getNodeId());
+        } catch (Throwable th) {
+            ProcessExecutionException pee = new ProcessExecutionException(ProcessExecutionException.TIMER_EXECUTION_FAILED, th.getMessage());
+            ProcessExecutionErrors.addProcessError(getProcess().getId(), getToken().getNodeId(), pee);
+            throw Throwables.propagate(th);
         }
     }
 
