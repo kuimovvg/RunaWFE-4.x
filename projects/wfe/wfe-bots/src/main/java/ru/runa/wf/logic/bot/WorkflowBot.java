@@ -35,6 +35,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
@@ -43,6 +44,7 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 public class WorkflowBot implements Runnable {
@@ -84,26 +86,26 @@ public class WorkflowBot implements Runnable {
     private Thread executionThread = null;
     private boolean isTaskInterrupting = false;
 
-    // Creating WorkflowBot template object
-    public WorkflowBot(Bot bot, List<BotTask> tasks) throws AuthenticationException {
-        subject = Delegates.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
-        HashMap<String, TaskHandler> handlers = new HashMap<String, TaskHandler>();
-        for (BotTask task : tasks) {
-            try {
-                TaskHandler handler = ClassLoaderUtil.instantiate(task.getTaskHandlerClassName());
-                handler.setConfiguration(task.getConfiguration());
-                handlers.put(task.getName(), handler);
-                log.info("Configured taskHandler for " + task.getName());
-            } catch (Throwable th) {
-                log.error("Can't create handler for bot " + bot.getUsername() + " (task is " + task + ")", th);
-            }
-        }
-        taskHandlerMap = handlers;
+    public WorkflowBot(Subject subject, Bot bot, List<BotTask> tasks) {
+        this.subject = subject;
         task = null;
         parent = null;
         botName = bot.getUsername();
         botDeplay = bot.getStartTimeout();
         existingBots = new HashSet<WorkflowBot>();
+        HashMap<String, TaskHandler> handlers = new HashMap<String, TaskHandler>();
+        for (BotTask botTask : tasks) {
+            try {
+                TaskHandler handler = ClassLoaderUtil.instantiate(botTask.getTaskHandlerClassName());
+                handler.setConfiguration(botTask.getConfiguration());
+                handlers.put(botTask.getName(), handler);
+                log.info("Configured taskHandler for " + botTask.getName());
+            } catch (Throwable th) {
+                ProcessExecutionErrors.addBotTaskConfigurationError(botName, botTask.getName(), th);
+                log.error("Can't create handler for bot " + bot.getUsername() + " (task is " + botTask + ")", th);
+            }
+        }
+        taskHandlerMap = handlers;
     }
 
     private WorkflowBot(WorkflowBot parent, WfTask task) {
@@ -145,8 +147,8 @@ public class WorkflowBot implements Runnable {
         for (Iterator<WorkflowBot> botIterator = existingBots.iterator(); botIterator.hasNext();) {
             WorkflowBot bot = botIterator.next();
             if (bot.botStatus == BotExecutionStatus.completted && bot.resetTime < System.currentTimeMillis()) {
-                botIterator.remove(); // Completted bot task hold time is
-                                      // elapsed
+                // Completed bot task hold time is elapsed
+                botIterator.remove();
             }
             if (bot.botStatus == BotExecutionStatus.failed && bot.resetTime < System.currentTimeMillis()) {
                 // Search in currentTasks
@@ -174,20 +176,28 @@ public class WorkflowBot implements Runnable {
         TaskHandler taskHandler = taskHandlerMap.get(task.getName());
         if (taskHandler == null) {
             log.warn("No handler for bot task " + task + ", bot " + botName);
+            ProcessExecutionErrors.addBotTaskNotFoundProcessError(task, botName, task.getName());
             return;
         }
-        IVariableProvider variableProvider = new DelegateProcessVariableProvider(subject, task.getProcessId());
-        log.info("Starting bot task " + task + " with config \n" + taskHandler.getConfiguration());
-        Map<String, Object> variables = taskHandler.handle(subject, variableProvider, task);
-        if (variables == null) {
-            variables = Maps.newHashMap();
-        }
-        Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
-        if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
-            log.info("Bot task " + task + " postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
-        } else {
-            Delegates.getExecutionService().completeTask(subject, task.getId(), variables);
-            log.debug("Handled bot task " + task + ", bot " + botName + " by " + taskHandler.getClass());
+        try {
+            IVariableProvider variableProvider = new DelegateProcessVariableProvider(subject, task.getProcessId());
+            log.info("Starting bot task " + task + " with config \n" + taskHandler.getConfiguration());
+            Map<String, Object> variables = taskHandler.handle(subject, variableProvider, task);
+            if (variables == null) {
+                variables = Maps.newHashMap();
+            }
+            Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
+            if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
+                log.info("Bot task " + task + " postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
+            } else {
+                Delegates.getExecutionService().completeTask(subject, task.getId(), variables);
+                log.debug("Handled bot task " + task + ", bot " + botName + " by " + taskHandler.getClass());
+            }
+            ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getName());
+        } catch (Throwable th) {
+            ProcessExecutionErrors.addProcessError(task.getProcessId(), task.getName(), th);
+            Throwables.propagateIfInstanceOf(th, Exception.class);
+            throw Throwables.propagate(th);
         }
     }
 
@@ -212,12 +222,10 @@ public class WorkflowBot implements Runnable {
             return;
         } catch (Throwable e) {
             log.error("Error execution bot " + botName + " for task " + task, e);
-            logBotsError(task, e);
+            logBotError(task, e);
             botStatus = BotExecutionStatus.failed;
-            long newDelay = resetTime == -1 ? failedTasksDelayPeriod : (resetTime - startTime) * 2; // Double
-                                                                                                    // delay
-                                                                                                    // if
-                                                                                                    // exists
+            // Double delay if exists
+            long newDelay = resetTime == -1 ? failedTasksDelayPeriod : (resetTime - startTime) * 2;
             if (newDelay > failedTasksMaxDelayPeriod) {
                 newDelay = failedTasksMaxDelayPeriod;
             }
@@ -251,31 +259,12 @@ public class WorkflowBot implements Runnable {
         if (parent == null) {
             builder.append("Template bot '").append(botName).append("'");
         } else {
-            builder.append("BotRunner '").append(botName).append("' with task [").append(task).append("]");
+            builder.append("Bot '").append(botName).append("' with task ").append(task);
         }
         return builder.toString();
     }
 
-    @Override
-    public int hashCode() {
-        if (task == null) {
-            return -1;
-        }
-        return task.getId().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof WorkflowBot)) {
-            return false;
-        }
-        WorkflowBot wfBot = (WorkflowBot) obj;
-        // Long currentId = taskStub == null ? -1 : taskStub.getId();
-        // Long otherId = wfBot.taskStub == null ? -1 : wfBot.taskStub.getId();
-        return Objects.equal(task, wfBot.task);
-    }
-
-    private void logBotsError(WfTask task, Throwable th) {
+    private void logBotError(WfTask task, Throwable th) {
         BotLogger botLogger = BotStationResources.createBotLogger();
         if (botLogger == null) {
             return;

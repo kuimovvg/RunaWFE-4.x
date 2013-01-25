@@ -35,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
@@ -130,22 +129,21 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
 
     private void configure() {
         try {
-            BotService botService = Delegates.getBotService();
             if (botStation.getVersion() != configurationVersion) {
                 botTemplates = Lists.newArrayList();
                 log.info("Will update bots configuration.");
                 String username = BotStationResources.getSystemUsername();
                 String password = BotStationResources.getSystemPassword();
                 Subject botStationSubject = Delegates.getAuthenticationService().authenticate(username, password);
-                List<Bot> bots = botService.getBots(botStationSubject, botStation.getId());
+                List<Bot> bots = Delegates.getBotService().getBots(botStationSubject, botStation.getId());
                 for (Bot bot : bots) {
                     log.info("Configuring " + bot.getUsername());
                     Subject subject = Delegates.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
-                    List<BotTask> tasks = botService.getBotTasks(subject, bot.getId());
+                    List<BotTask> tasks = Delegates.getBotService().getBotTasks(subject, bot.getId());
                     try {
-                        botTemplates.add(new WorkflowBot(bot, tasks));
+                        botTemplates.add(new WorkflowBot(subject, bot, tasks));
                     } catch (AuthenticationException e) {
-                        log.error("BotRunner " + bot.getUsername() + " has incorrect password.");
+                        log.error("Bot " + bot.getUsername() + " has incorrect password.");
                     }
                 }
                 configurationVersion = botStation.getVersion();

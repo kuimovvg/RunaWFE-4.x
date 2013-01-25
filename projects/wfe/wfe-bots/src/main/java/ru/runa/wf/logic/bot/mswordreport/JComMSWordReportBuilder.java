@@ -20,7 +20,6 @@ package ru.runa.wf.logic.bot.mswordreport;
 import jp.ne.so_net.ga2.no_ji.jcom.IDispatch;
 import jp.ne.so_net.ga2.no_ji.jcom.JComException;
 import jp.ne.so_net.ga2.no_ji.jcom.ReleaseManager;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.IVariableProvider;
 
 /**
@@ -45,15 +44,11 @@ public class JComMSWordReportBuilder extends MSWordReportBuilder {
             replaceBookmarksWithValues(wordDocument);
             wordDocument.method("SaveAs", new Object[] { reportTemporaryFileName });
         } catch (JComException e) {
-            String errorMessage = e.getMessage();
-            if (wordApplication != null) {
-                if (wordDocument == null) {
-                    errorMessage = "Could not open template document " + settings.getTemplateFilePath();
-                }
-            } else {
-                errorMessage = "Could not instantiate MSWord application.";
+            log.error("", e);
+            if (wordApplication != null && wordDocument == null) {
+                throw new MSWordReportException(MSWordReportException.OPEN_TEMPLATE_DOCUMENT_FAILED, settings.getTemplateFilePath());
             }
-            throw new InternalApplicationException(errorMessage, e);
+            throw new MSWordReportException(MSWordReportException.MSWORD_APP_COMM_ERROR);
         } finally {
             try {
                 if (wordDocument != null) {
@@ -67,7 +62,8 @@ public class JComMSWordReportBuilder extends MSWordReportBuilder {
                     }
                 }
             } catch (JComException e) {
-                throw new InternalApplicationException(e);
+                log.error("", e);
+                throw new MSWordReportException(MSWordReportException.MSWORD_APP_COMM_ERROR);
             }
         }
     }
@@ -80,11 +76,11 @@ public class JComMSWordReportBuilder extends MSWordReportBuilder {
                 String value = getVariableValue(mapping);
                 ((IDispatch) bookmark.get("Range")).put("Text", value);
             } catch (Exception e) {
-                String m = "No bookmark found in template document by name '" + mapping.getBookmarkName() + "'";
                 if (mapping.isOptional()) {
-                    log.warn(m);
+                    log.warn("No bookmark found in template document by name '" + mapping.getBookmarkName() + "'");
                 } else {
-                    throw new InternalApplicationException(m, e);
+                    log.error("", e);
+                    throw new MSWordReportException(MSWordReportException.BOOKMARK_NOT_FOUND_IN_TEMPLATE, mapping.getBookmarkName());
                 }
             }
         }

@@ -60,7 +60,7 @@ public class TaskFactory {
     public void assign(ExecutionContext executionContext, TaskDefinition taskDefinition, Task task) {
         Process process = executionContext.getProcess();
         SwimlaneDefinition swimlaneDefinition = taskDefinition.getSwimlane();
-        Swimlane swimlane;
+        Swimlane swimlane = null;
         // if this is a task assignment for a start-state
         if (taskDefinition.getNode() instanceof StartState) {
             swimlane = process.getSwimlane(swimlaneDefinition.getName());
@@ -70,7 +70,11 @@ public class TaskFactory {
                 throw new UnsupportedOperationException("use ru.runa.wfe.execution.TaskFactory.createStart(ExecutionContext, Actor)");
             }
         } else {
-            swimlane = process.getInitializedSwimlaneNotNull(executionContext, swimlaneDefinition, taskDefinition.isReassignSwimlane());
+            try {
+                swimlane = process.getInitializedSwimlaneNotNull(executionContext, swimlaneDefinition, taskDefinition.isReassignSwimlane());
+            } catch (Exception e) {
+                log.error("Unable to assign in process id = " + executionContext.getProcess().getId(), e);
+            }
         }
         // copy the swimlane assignment into the task
         task.setSwimlane(swimlane);
