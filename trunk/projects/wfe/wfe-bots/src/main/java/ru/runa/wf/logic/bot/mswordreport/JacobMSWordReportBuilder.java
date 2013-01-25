@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.logic.bot.mswordreport;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.jacob.activeX.ActiveXComponent;
@@ -47,16 +46,12 @@ public class JacobMSWordReportBuilder extends MSWordReportBuilder {
             wordDocument = Dispatch.call(wordDocuments, "Open", settings.getTemplateFilePath()).toDispatch();
             replaceBookmarksWithValues(wordDocument, variableProvider, settings);
             Dispatch.call(wordDocument, "SaveAs", reportTemporaryFileName);
-        } catch (RuntimeException e) {
-            String errorMessage = e.getMessage();
-            if (wordApplication != null) {
-                if (wordDocument == null) {
-                    errorMessage = "Could not open template document " + settings.getTemplateFilePath();
-                }
-            } else {
-                errorMessage = "Could not instantiate MSWord application.";
+        } catch (Exception e) {
+            log.error("", e);
+            if (wordApplication != null && wordDocument == null) {
+                throw new MSWordReportException(MSWordReportException.OPEN_TEMPLATE_DOCUMENT_FAILED, settings.getTemplateFilePath());
             }
-            throw new InternalApplicationException(errorMessage, e);
+            throw new MSWordReportException(MSWordReportException.MSWORD_APP_COMM_ERROR);
         } finally {
             if (wordDocument != null) {
                 try {
@@ -81,11 +76,11 @@ public class JacobMSWordReportBuilder extends MSWordReportBuilder {
                 Dispatch range = Dispatch.get(bookmark, "Range").toDispatch();
                 Dispatch.put(range, "Text", value);
             } catch (Exception e) {
-                String m = "No bookmark found in template document by name '" + mapping.getBookmarkName() + "'";
                 if (mapping.isOptional()) {
-                    log.warn(m);
+                    log.warn("No bookmark found in template document by name '" + mapping.getBookmarkName() + "'");
                 } else {
-                    throw new InternalApplicationException(m, e);
+                    log.error("", e);
+                    throw new MSWordReportException(MSWordReportException.BOOKMARK_NOT_FOUND_IN_TEMPLATE, mapping.getBookmarkName());
                 }
             }
         }

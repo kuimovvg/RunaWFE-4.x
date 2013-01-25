@@ -41,7 +41,10 @@ public abstract class MSWordReportBuilder {
     public abstract void build(String reportTemporaryFileName);
 
     protected String getVariableValue(BookmarkVariableMapping mapping) {
-        WfVariable variable = variableProvider.getVariableNotNull(mapping.getVariableName());
+        WfVariable variable = variableProvider.getVariable(mapping.getVariableName());
+        if (variable == null || variable.getValue() == null) {
+            throw new MSWordReportException(MSWordReportException.VARIABLE_NOT_FOUND_IN_PROCESS, mapping.getVariableName());
+        }
         return variable.getDefinition().getFormat().format(variable.getValue());
     }
 

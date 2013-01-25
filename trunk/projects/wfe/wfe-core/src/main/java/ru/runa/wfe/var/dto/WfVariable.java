@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import ru.runa.wfe.var.VariableDefinition;
 
+import com.google.common.base.Preconditions;
 
 public class WfVariable implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -14,6 +15,7 @@ public class WfVariable implements Serializable {
     }
 
     public WfVariable(VariableDefinition definition, Object value) {
+        Preconditions.checkNotNull(definition);
         this.definition = definition;
         this.value = value;
     }
