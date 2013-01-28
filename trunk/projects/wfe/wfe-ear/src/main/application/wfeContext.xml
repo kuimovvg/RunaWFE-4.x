@@ -35,12 +35,6 @@
 		<property name="entityInterceptor">
 			<bean class="ru.runa.wfe.commons.hibernate.WFRunaHibernateInterceptor" />
 		</property>
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JBossTransactionManagerLookup</prop>
-				<prop key="hibernate.connection.autocommit">false</prop>
-			</props>
-		</property>
 	</bean>
 
 	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
