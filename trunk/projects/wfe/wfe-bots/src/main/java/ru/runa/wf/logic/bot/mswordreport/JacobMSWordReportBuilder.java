@@ -75,6 +75,8 @@ public class JacobMSWordReportBuilder extends MSWordReportBuilder {
                 String value = getVariableValue(mapping);
                 Dispatch range = Dispatch.get(bookmark, "Range").toDispatch();
                 Dispatch.put(range, "Text", value);
+            } catch (MSWordReportException e) {
+                throw e;
             } catch (Exception e) {
                 if (mapping.isOptional()) {
                     log.warn("No bookmark found in template document by name '" + mapping.getBookmarkName() + "'");
