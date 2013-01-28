@@ -88,7 +88,7 @@ public class JComMSWordReportBuilder extends MSWordReportBuilder {
         }
         int bookmarksCount = (Integer) bookmarks.get("Count", null);
         for (int i = 0; i < bookmarksCount; i++) {
-            IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Integer[] { i + 1 });
+            IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Integer[] { new Integer(i + 1) });
             String bookmarkName = (String) bookmark.get("Name");
             log.warn("Bookmark exists in result document: '" + bookmarkName + "'");
         }
