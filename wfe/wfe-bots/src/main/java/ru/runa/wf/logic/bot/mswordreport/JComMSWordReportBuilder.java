@@ -75,6 +75,8 @@ public class JComMSWordReportBuilder extends MSWordReportBuilder {
                 IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Object[] { mapping.getBookmarkName() });
                 String value = getVariableValue(mapping);
                 ((IDispatch) bookmark.get("Range")).put("Text", value);
+            } catch (MSWordReportException e) {
+                throw e;
             } catch (Exception e) {
                 if (mapping.isOptional()) {
                     log.warn("No bookmark found in template document by name '" + mapping.getBookmarkName() + "'");
