@@ -19,55 +19,42 @@ package ru.runa.service.af;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.ss.SubstitutionDoesNotExistException;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 30.01.2006
  */
 public interface SubstitutionService {
 
-    public Substitution createSubstitution(Subject subject, Long actorId, Substitution substitution) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException;
+    public Substitution createSubstitution(User user, Long actorId, Substitution substitution) throws AuthorizationException;
 
-    public void store(Subject subject, Substitution substitution) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException;
+    public void store(User user, Substitution substitution) throws AuthorizationException;
 
-    public List<Substitution> get(Subject subject, Long actorId) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException;
+    public List<Substitution> get(User user, Long actorId) throws AuthorizationException;
 
-    public void delete(Subject subject, List<Long> substitutionIds) throws SubstitutionDoesNotExistException, AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException;
+    public void delete(User user, List<Long> substitutionIds) throws SubstitutionDoesNotExistException, AuthorizationException;
 
-    public void switchSubstitutionsPositions(Subject subject, Long substitutionId1, Long substitutionId2) throws SubstitutionDoesNotExistException,
-            AuthorizationException, AuthenticationException, ExecutorDoesNotExistException;
+    public void switchSubstitutionsPositions(User user, Long substitutionId1, Long substitutionId2) throws SubstitutionDoesNotExistException,
+            AuthorizationException;
 
-    public Substitution getSubstitution(Subject subject, Long substitutionId) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException;
+    public Substitution getSubstitution(User user, Long substitutionId) throws AuthorizationException;
 
-    public <T extends SubstitutionCriteria> void createSubstitutionCriteria(Subject subject, T substitutionCriteria) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException;
+    public <T extends SubstitutionCriteria> void createSubstitutionCriteria(User user, T substitutionCriteria) throws AuthorizationException;
 
-    public SubstitutionCriteria getSubstitutionCriteria(Subject subject, Long substitutionCriteriaId) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException;
+    public SubstitutionCriteria getSubstitutionCriteria(User user, Long substitutionCriteriaId) throws AuthorizationException;
 
-    public List<SubstitutionCriteria> getSubstitutionCriteriaAll(Subject subject) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException;
+    public List<SubstitutionCriteria> getSubstitutionCriteriaAll(User user) throws AuthorizationException;
 
-    public void store(Subject subject, SubstitutionCriteria substitutionCriteria) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException;
+    public void store(User user, SubstitutionCriteria substitutionCriteria) throws AuthorizationException;
 
-    public void deleteSubstitutionCriteria(Subject subject, Long substitutionCriteriaId) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException;
+    public void deleteSubstitutionCriteria(User user, Long substitutionCriteriaId) throws AuthorizationException;
 
-    public void deleteSubstitutionCriteria(Subject subject, SubstitutionCriteria substitutionCriteria) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException;
+    public void deleteSubstitutionCriteria(User user, SubstitutionCriteria substitutionCriteria) throws AuthorizationException;
 
-    public List<Substitution> getBySubstitutionCriteria(Subject subject, SubstitutionCriteria substitutionCriteria) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException;
+    public List<Substitution> getBySubstitutionCriteria(User user, SubstitutionCriteria substitutionCriteria) throws AuthorizationException;
 
 }

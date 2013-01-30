@@ -17,7 +17,6 @@
  */
 package ru.runa.af.web.orgfunction;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
@@ -27,6 +26,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.os.FunctionConfiguration;
 import ru.runa.wfe.os.OrgFunctionParser;
 import ru.runa.wfe.os.ParamRenderer;
+import ru.runa.wfe.user.User;
 
 public class SubstitutionHelper {
     private static final Log log = LogFactory.getLog(SubstitutionHelper.class);
@@ -49,7 +49,7 @@ public class SubstitutionHelper {
         }
     }
 
-    public static String getUserFriendlyOrgFunction(Subject subject, PageContext pageContext, String orgFunction) {
+    public static String getUserFriendlyOrgFunction(User user, PageContext pageContext, String orgFunction) {
         try {
             StringBuffer result = new StringBuffer();
             FunctionConfiguration configuration = OrgFunctionParser.parse(orgFunction);
@@ -62,7 +62,7 @@ public class SubstitutionHelper {
                     result.append(", ");
                 }
                 ParamRenderer renderer = functionDef.getParams().get(i).getRenderer();
-                result.append(renderer.getDisplayLabel(subject, parameters[i]));
+                result.append(renderer.getDisplayLabel(user, parameters[i]));
             }
             result.append(")");
             return result.toString();

@@ -28,7 +28,7 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.InvalidSessionException;
 import ru.runa.common.web.Messages;
 
@@ -45,7 +45,7 @@ public class HTTPSessionFilter extends HTTPFilterBase {
         String query = request.getRequestURI();
         if (query.endsWith("do") && !query.endsWith("/start.do") && !query.endsWith("login.do")) {
             try {
-                SubjectHttpSessionHelper.getActorSubject(request.getSession());
+                Commons.getUser(request.getSession());
             } catch (InvalidSessionException e) {
                 ActionMessages errors = new ActionMessages();
                 errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_SESSION_INVALID));

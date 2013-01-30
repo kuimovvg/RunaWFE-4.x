@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,6 +34,7 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
@@ -74,7 +74,7 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
             html.append("</select>");
             html.append("<select id=\"").append(userVarName).append("\" name=\"").append(userVarName).append("\">");
             if (defaultGroup != null) {
-                List<Actor> actors = getActors(subject, defaultGroup);
+                List<Actor> actors = getActors(user, defaultGroup);
                 Actor defaultActor = getSavedValue(Actor.class, userVarName);
                 if (defaultActor == null && actors.size() > 0) {
                     defaultActor = actors.get(0);
@@ -106,7 +106,7 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
     public void processAjaxRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         StringBuffer json = new StringBuffer("[");
         Group group = TypeConversionUtil.convertTo(request.getParameter("groupId"), Group.class);
-        List<Actor> actors = getActors(subject, group);
+        List<Actor> actors = getActors(user, group);
         if (actors.size() == 0) {
             json.append("{\"id\": \"\", \"name\": \"No users in this group\"}");
         } else {
@@ -122,15 +122,15 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
         response.getOutputStream().write(json.toString().getBytes(Charsets.UTF_8));
     }
 
-    private List<Actor> getActors(Subject subject, Group group) throws TemplateModelException {
-        return Delegates.getExecutorService().getGroupActors(subject, group);
+    private List<Actor> getActors(User user, Group group) throws TemplateModelException {
+        return Delegates.getExecutorService().getGroupActors(user, group);
     }
 
     private List<Group> getGroups() throws TemplateModelException {
         ExecutorService executorService = Delegates.getExecutorService();
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         // TODO add executorService.getAllGroups
-        List<Executor> executors = executorService.getAll(subject, batchPresentation);
+        List<Executor> executors = executorService.getAll(user, batchPresentation);
         List<Group> groupList = new ArrayList<Group>();
         for (Executor executor : executors) {
             if (executor instanceof Group) {

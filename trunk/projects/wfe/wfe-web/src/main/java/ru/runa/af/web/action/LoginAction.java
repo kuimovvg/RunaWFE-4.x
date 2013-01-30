@@ -17,7 +17,6 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,8 +26,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.LoginForm;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
@@ -37,12 +36,15 @@ import ru.runa.service.af.SystemService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 09.08.2004
  * 
- * @struts:action path="/login" name="loginForm" validate="true" input = "/start.do"
- * @struts.action-forward name="success" path="/manage_tasks.do" redirect = "true"
+ * @struts:action path="/login" name="loginForm" validate="true" input =
+ *                "/start.do"
+ * @struts.action-forward name="success" path="/manage_tasks.do" redirect =
+ *                        "true"
  * @struts.action-forward name="failure" path="/start.do" redirect = "true"
  */
 public class LoginAction extends Action {
@@ -58,15 +60,15 @@ public class LoginAction extends Action {
         String password = loginForm.getPassword();
 
         SystemService systemService = Delegates.getSystemService();
-        Subject subject = Delegates.getAuthenticationService().authenticate(login, password);
-        systemService.login(subject, ASystem.INSTANCE);
+        User user = Delegates.getAuthenticationService().authenticateByLoginPassword(login, password);
+        systemService.login(user, ASystem.INSTANCE);
 
         HttpSession session = request.getSession();
 
         ProfileService profileService = Delegates.getProfileService();
-        Profile profile = profileService.getProfile(subject);
+        Profile profile = profileService.getProfile(user);
         ProfileHttpSessionHelper.setProfile(profile, session);
-        SubjectHttpSessionHelper.addActorSubject(subject, session);
+        Commons.setUser(user, session);
         if (request.getParameter("forwardUrl") != null) {
             forward = new ActionForward(request.getParameter("forwardUrl"));
         }

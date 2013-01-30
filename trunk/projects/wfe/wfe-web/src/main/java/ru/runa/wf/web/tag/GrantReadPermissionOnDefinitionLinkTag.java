@@ -38,8 +38,8 @@ public class GrantReadPermissionOnDefinitionLinkTag extends IdLinkBaseTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getSubject(), Permission.UPDATE_PERMISSIONS, Delegates.getDefinitionService()
-                    .getProcessDefinition(getSubject(), getIdentifiableId()));
+            return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, Delegates.getDefinitionService()
+                    .getProcessDefinition(getUser(), getIdentifiableId()));
         } catch (Exception e) {
             return false;
         }

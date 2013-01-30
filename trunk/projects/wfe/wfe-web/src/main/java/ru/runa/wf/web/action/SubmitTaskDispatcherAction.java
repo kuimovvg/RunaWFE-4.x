@@ -21,23 +21,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
@@ -54,11 +52,14 @@ import com.google.common.base.Objects;
  * Created on 20.04.2008
  * 
  * @struts:action path="/submitTaskDispatcher" name="idForm" validate="false"
- * @struts.action-forward name="tasksList" path="/manage_tasks.do" redirect = "true"
- * @struts.action-forward name="submitTask" path="/submit_task.do" redirect = "false"
- * @struts.action-forward name="executeTask" path="/submitTaskForm.do" redirect = "false"
+ * @struts.action-forward name="tasksList" path="/manage_tasks.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="submitTask" path="/submit_task.do" redirect =
+ *                        "false"
+ * @struts.action-forward name="executeTask" path="/submitTaskForm.do" redirect
+ *                        = "false"
  */
-public class SubmitTaskDispatcherAction extends Action {
+public class SubmitTaskDispatcherAction extends ActionBase {
     private static final Log log = LogFactory.getLog(SubmitTaskDispatcherAction.class);
 
     private final String LOCAL_FORWARD_TASKS_LIST = "tasksList";
@@ -88,10 +89,9 @@ public class SubmitTaskDispatcherAction extends Action {
         IdForm idForm = (IdForm) form;
         try {
             ExecutionService executionService = Delegates.getExecutionService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
             BatchPresentation batchPresentation = profile.getActiveBatchPresentation("listTasksForm").clone();
-            List<WfTask> tasks = executionService.getTasks(subject, batchPresentation);
+            List<WfTask> tasks = executionService.getTasks(getLoggedUser(request), batchPresentation);
             WfTask currentTask = null;
             Long currentTaskId = idForm.getId();
             for (WfTask task : tasks) {
@@ -104,10 +104,11 @@ public class SubmitTaskDispatcherAction extends Action {
                 throw new TaskAlreadyAcceptedException(request.getParameter(ProcessForm.ID_INPUT_NAME));
             }
             if (currentTask.isFirstOpen()) {
-                executionService.markTaskOpened(subject, currentTask.getId());
+                executionService.markTaskOpened(getLoggedUser(request), currentTask.getId());
             }
         } catch (TaskAlreadyAcceptedException e) {
-            // forward user to the tasks list screen cause current task was already accepted by another user...
+            // forward user to the tasks list screen cause current task was
+            // already accepted by another user...
             forwardName = LOCAL_FORWARD_TASKS_LIST;
             ActionExceptionHelper.addException(errors, e);
         } catch (Exception e) {

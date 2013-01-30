@@ -40,9 +40,9 @@ public class AddGroupMembersLinkTag extends IdLinkBaseTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             ExecutorService executorService = Delegates.getExecutorService();
-            Executor executor = executorService.getExecutor(getSubject(), getIdentifiableId());
+            Executor executor = executorService.getExecutor(getUser(), getIdentifiableId());
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getSubject(), GroupPermission.ADD_TO_GROUP, executor);
+            return authorizationService.isAllowed(getUser(), GroupPermission.ADD_TO_GROUP, executor);
         } catch (Exception e) {
             return false;
         }

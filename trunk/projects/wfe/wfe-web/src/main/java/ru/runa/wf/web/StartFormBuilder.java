@@ -17,15 +17,15 @@
  */
 package ru.runa.wf.web;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 17.11.2004
  */
 public interface StartFormBuilder {
 
-    String build(Subject subject, Long definitionId, PageContext pageContext, Interaction interaction) throws Exception;
+    String build(User user, Long definitionId, PageContext pageContext, Interaction interaction) throws Exception;
 }

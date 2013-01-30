@@ -30,64 +30,65 @@ import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorNotInGroupException;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 
 /**
  * Responsible for managing {@link Executor}s Created on 07.07.2004
  */
 public interface ExecutorService {
 
-    public <T extends Executor> T create(Subject subject, T executor) throws ExecutorAlreadyExistsException;
+    public <T extends Executor> T create(User user, T executor) throws ExecutorAlreadyExistsException;
 
-    public List<Executor> getAll(Subject subject, BatchPresentation batchPresentation);
+    public List<Executor> getAll(User user, BatchPresentation batchPresentation);
 
-    public int getAllCount(Subject subject, BatchPresentation batchPresentation);
+    public int getAllCount(User user, BatchPresentation batchPresentation);
 
-    public List<Executor> getExecutors(Subject subject, List<Long> ids) throws ExecutorDoesNotExistException;
+    public List<Executor> getExecutors(User user, List<Long> ids) throws ExecutorDoesNotExistException;
 
-    public List<Actor> getActors(Subject subject, BatchPresentation batchPresentation);
+    public List<Actor> getActors(User user, BatchPresentation batchPresentation);
 
-    public <T extends Executor> T getExecutor(Subject subject, Long id) throws ExecutorDoesNotExistException;
+    public <T extends Executor> T getExecutor(User user, Long id) throws ExecutorDoesNotExistException;
 
-    public <T extends Executor> T getExecutor(Subject subject, String name) throws ExecutorDoesNotExistException;
+    public <T extends Executor> T getExecutor(User user, String name) throws ExecutorDoesNotExistException;
 
-    public void update(Subject subject, Executor executor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException;
+    public void update(User user, Executor executor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException;
 
-    public void remove(Subject subject, Executor executor) throws ExecutorDoesNotExistException;
+    public void remove(User user, Executor executor) throws ExecutorDoesNotExistException;
 
-    public void remove(Subject subject, List<Long> ids) throws ExecutorDoesNotExistException;
+    public void remove(User user, List<Long> ids) throws ExecutorDoesNotExistException;
 
     public Actor getActorCaseInsensitive(String login) throws ExecutorDoesNotExistException;
 
-    public List<Group> getGroups(Subject subject, List<Long> ids) throws ExecutorDoesNotExistException;
+    public List<Group> getGroups(User user, List<Long> ids) throws ExecutorDoesNotExistException;
 
-    public List<Actor> getActorsByCodes(Subject subject, List<Long> codes) throws ExecutorDoesNotExistException;
+    public List<Actor> getActorsByCodes(User user, List<Long> codes) throws ExecutorDoesNotExistException;
 
-    public List<Actor> getActors(Subject subject, List<Long> ids) throws ExecutorDoesNotExistException;
+    public List<Actor> getActors(User user, List<Long> ids) throws ExecutorDoesNotExistException;
 
-    public List<Actor> getAvailableActorsByCodes(Subject subject, List<Long> codes) throws ExecutorDoesNotExistException;
+    public List<Actor> getAvailableActorsByCodes(User user, List<Long> codes) throws ExecutorDoesNotExistException;
 
-    public void addExecutorsToGroup(Subject subject, List<? extends Executor> executors, Group group) throws ExecutorDoesNotExistException,
+    public void addExecutorsToGroup(User user, List<? extends Executor> executors, Group group) throws ExecutorDoesNotExistException,
             ExecutorAlreadyInGroupException;
 
-    public void addExecutorsToGroup(Subject subject, List<Long> executorIds, Long groupId) throws ExecutorDoesNotExistException,
+    public void addExecutorsToGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorDoesNotExistException,
             ExecutorAlreadyInGroupException;
 
-    public void addExecutorToGroups(Subject subject, Executor executor, List<Group> groups) throws ExecutorDoesNotExistException,
+    public void addExecutorToGroups(User user, Executor executor, List<Group> groups) throws ExecutorDoesNotExistException,
             ExecutorAlreadyInGroupException;
 
-    public void addExecutorToGroups(Subject subject, Long executorId, List<Long> groupIds) throws ExecutorDoesNotExistException,
+    public void addExecutorToGroups(User user, Long executorId, List<Long> groupIds) throws ExecutorDoesNotExistException,
             ExecutorAlreadyInGroupException;
 
-    public void removeExecutorsFromGroup(Subject subject, List<? extends Executor> executors, Group group) throws ExecutorDoesNotExistException,
+    public void removeExecutorsFromGroup(User user, List<? extends Executor> executors, Group group) throws ExecutorDoesNotExistException,
             ExecutorNotInGroupException;
 
-    public void removeExecutorsFromGroup(Subject subject, List<Long> executorIds, Long groupId) throws ExecutorDoesNotExistException,
+    public void removeExecutorsFromGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorDoesNotExistException,
             ExecutorNotInGroupException;
 
-    public void removeExecutorFromGroups(Subject subject, Executor executor, List<Group> groups) throws ExecutorDoesNotExistException,
+    public void removeExecutorFromGroups(User user, Executor executor, List<Group> groups) throws ExecutorDoesNotExistException,
             ExecutorNotInGroupException;
 
-    public void removeExecutorFromGroups(Subject subject, Long executorId, List<Long> groupIds) throws ExecutorDoesNotExistException,
+    public void removeExecutorFromGroups(User user, Long executorId, List<Long> groupIds) throws ExecutorDoesNotExistException,
             ExecutorNotInGroupException;
 
     /**
@@ -103,7 +104,7 @@ public interface ExecutorService {
      *            a group
      * @return an array of executors from group.
      */
-    public List<Executor> getAllExecutorsFromGroup(Subject subject, Group group) throws ExecutorDoesNotExistException;
+    public List<Executor> getAllExecutorsFromGroup(User user, Group group) throws ExecutorDoesNotExistException;
 
     /**
      * Loads first level group children's (not recursive). <b>Paging is enabled
@@ -120,7 +121,7 @@ public interface ExecutorService {
      *            group children's; false to load group children's.
      * @return Array of loaded executors.
      */
-    public List<Executor> getGroupChildren(Subject subject, Group group, BatchPresentation batchPresentation, boolean isExclude)
+    public List<Executor> getGroupChildren(User user, Group group, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException;
 
     /**
@@ -137,7 +138,7 @@ public interface ExecutorService {
      *            group children's; false to load group children's.
      * @return Executors count.
      */
-    public int getGroupChildrenCount(Subject subject, Group group, BatchPresentation batchPresentation, boolean isExclude)
+    public int getGroupChildrenCount(User user, Group group, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException;
 
     /**
@@ -154,7 +155,7 @@ public interface ExecutorService {
      *            Group, to load actors from.
      * @return All actors from group.
      */
-    public List<Actor> getGroupActors(Subject subject, Group group) throws ExecutorDoesNotExistException;
+    public List<Actor> getGroupActors(User user, Group group) throws ExecutorDoesNotExistException;
 
     /**
      * Load first level executor groups (not recursive). <b>Paging is enabled on
@@ -172,7 +173,7 @@ public interface ExecutorService {
      *            executor.
      * @return Array of loaded groups.
      */
-    public List<Group> getExecutorGroups(Subject subject, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
+    public List<Group> getExecutorGroups(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException;
 
     /**
@@ -190,18 +191,18 @@ public interface ExecutorService {
      *            executor.
      * @return Groups count.
      */
-    public int getExecutorGroupsCount(Subject subject, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
+    public int getExecutorGroupsCount(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException;
 
-    public boolean isExecutorInGroup(Subject subject, Executor executor, Group group) throws ExecutorDoesNotExistException;
+    public boolean isExecutorInGroup(User user, Executor executor, Group group) throws ExecutorDoesNotExistException;
 
-    public boolean isExecutorExist(Subject subject, String executorName) throws ExecutorDoesNotExistException;
+    public boolean isExecutorExist(User user, String executorName) throws ExecutorDoesNotExistException;
 
-    public void setPassword(Subject subject, Actor actor, String password) throws ExecutorDoesNotExistException, WeakPasswordException;
+    public void setPassword(User user, Actor actor, String password) throws ExecutorDoesNotExistException, WeakPasswordException;
 
-    public void setStatus(Subject subject, Long actorId, boolean isActive) throws ExecutorDoesNotExistException;
+    public void setStatus(User user, Long actorId, boolean isActive) throws ExecutorDoesNotExistException;
 
-    public Actor getActorByCode(Subject subject, Long code) throws ExecutorDoesNotExistException;
+    public Actor getActorByCode(User user, Long code) throws ExecutorDoesNotExistException;
 
-    public List<Actor> getActorsByExecutorIds(Subject subject, List<Long> executorIds) throws ExecutorDoesNotExistException;
+    public List<Actor> getActorsByExecutorIds(User user, List<Long> executorIds) throws ExecutorDoesNotExistException;
 }

@@ -17,20 +17,18 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
@@ -40,13 +38,15 @@ import ru.runa.wfe.user.ExecutorDoesNotExistException;
 /**
  * Created on 03.02.2006
  * 
- * @struts:action path="/switchSubstitutionsPositions" name="idsForm" validate="true" input = "/WEB-INF/af/manage_executor.jsp"
+ * @struts:action path="/switchSubstitutionsPositions" name="idsForm"
+ *                validate="true" input = "/WEB-INF/af/manage_executor.jsp"
  * @struts.action-forward name="success" path="/WEB-INF/af/manage_executor.jsp"
  * @struts.action-forward name="failure" path="/WEB-INF/af/manage_executor.jsp"
- * @struts.action-forward name="failure_executor_does_not_exist" path="/WEB-INF/af/manage_executors.jsp"
+ * @struts.action-forward name="failure_executor_does_not_exist"
+ *                        path="/WEB-INF/af/manage_executors.jsp"
  */
 
-public class SwitchSubstitutionsPositionsAction extends Action {
+public class SwitchSubstitutionsPositionsAction extends ActionBase {
 
     public static final String ACTION_PATH = "/switchSubstitutionsPositions";
 
@@ -58,8 +58,7 @@ public class SwitchSubstitutionsPositionsAction extends Action {
         String errorForwardName = Resources.FORWARD_FAILURE;
         try {
             SubstitutionService substitutionService = Delegates.getSubstitutionService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            substitutionService.switchSubstitutionsPositions(subject, form.getIds()[0], form.getIds()[1]);
+            substitutionService.switchSubstitutionsPositions(getLoggedUser(request), form.getIds()[0], form.getIds()[1]);
         } catch (ExecutorDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);
             errorForwardName = WebResources.FORWARD_FAILURE_EXECUTOR_DOES_NOT_EXIST;

@@ -19,7 +19,6 @@ package ru.runa.common.web.html;
 
 import java.io.Serializable;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.TD;
@@ -30,6 +29,7 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.User;
 
 /**
  * @author Gordienko_m
@@ -42,7 +42,7 @@ public interface TDBuilder {
             public Identifiable getIdentifiable(Object o, Env env);
         }
 
-        public Subject getSubject();
+        public User getUser();
 
         public PageContext getPageContext();
 

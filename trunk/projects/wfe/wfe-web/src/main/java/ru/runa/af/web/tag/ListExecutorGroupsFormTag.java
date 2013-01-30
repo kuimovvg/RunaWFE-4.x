@@ -50,13 +50,13 @@ public class ListExecutorGroupsFormTag extends ListExecutorsBaseFormTag {
     @Override
     protected List<? extends Executor> getExecutors() {
         ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getExecutorGroups(getSubject(), getExecutor(), getBatchPresentation(), false);
+        return executorService.getExecutorGroups(getUser(), getExecutor(), getBatchPresentation(), false);
     }
 
     @Override
     protected int getExecutorsCount() {
         ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getExecutorGroupsCount(getSubject(), getExecutor(), getBatchPresentation(), false);
+        return executorService.getExecutorGroupsCount(getUser(), getExecutor(), getBatchPresentation(), false);
     }
 
     @Override

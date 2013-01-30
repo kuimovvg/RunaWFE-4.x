@@ -23,7 +23,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.security.auth.Subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,9 +35,8 @@ import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.logic.AuthenticationLogic;
-import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
 
@@ -57,34 +55,28 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     private SessionContext context;
 
     @Override
-    public Subject authenticate() throws AuthenticationException {
+    public User authenticateByCallerPrincipal() throws AuthenticationException {
         log.debug("Authenticating (principal)");
-        Subject subject = authenticationLogic.authenticate(context.getCallerPrincipal());
-        log.debug("Authenticated (principal): " + SubjectPrincipalsHelper.getActor(subject));
-        return subject;
+        User user = authenticationLogic.authenticate(context.getCallerPrincipal());
+        log.debug("Authenticated (principal): " + user);
+        return user;
     }
 
     @Override
-    public Subject authenticate(byte[] token) throws AuthenticationException {
+    public User authenticateByKerberos(byte[] token) throws AuthenticationException {
         Preconditions.checkNotNull(token, "Kerberos authentication information");
         log.debug("Authenticating (kerberos)");
-        Subject subject = authenticationLogic.authenticate(token, KerberosLoginModuleResources.rtnKerberosResources);
-        log.debug("Authenticated (kerberos): " + SubjectPrincipalsHelper.getActor(subject));
-        return subject;
+        User user = authenticationLogic.authenticate(token, KerberosLoginModuleResources.rtnKerberosResources);
+        log.debug("Authenticated (kerberos): " + user);
+        return user;
     }
 
     @Override
-    public Subject authenticate(String name, String password) throws AuthenticationException {
+    public User authenticateByLoginPassword(String name, String password) throws AuthenticationException {
         log.debug("Authenticating (login) " + name);
-        Subject subject = authenticationLogic.authenticate(name, password);
-        log.debug("Authenticated (login): " + name);
-        return subject;
-    }
-
-    @Override
-    public Actor getActor(Subject subject) throws AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return SubjectPrincipalsHelper.getActor(subject);
+        User user = authenticationLogic.authenticate(name, password);
+        log.debug("Authenticated (login): " + user);
+        return user;
     }
 
 }

@@ -19,33 +19,16 @@ package ru.runa.common.web.action;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.User;
 
-/**
- */
-public abstract class IdentifiableAction extends Action {
+public abstract class IdentifiableAction extends ActionBase {
 
     protected abstract List<Permission> getIdentifiablePermissions();
 
-    /**
-     * ugly fuzzy method ;-P (today is friday)
-     * 
-     * @param subject
-     * @param identifiableName
-     * @param errors
-     * @param errorForwardName
-     * @return return specific identifiable (WARNING Might return null if errors occured)
-     * @throws AuthorizationFailedException
-     */
-    protected abstract Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) throws AuthorizationException,
-            AuthenticationException;
+    protected abstract Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors);
 
 }

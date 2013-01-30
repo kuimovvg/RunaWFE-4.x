@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ActorPrincipal;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 public abstract class LoginModuleBase implements LoginModule {
@@ -22,7 +22,7 @@ public abstract class LoginModuleBase implements LoginModule {
     private Subject subject;
     private CallbackHandler callbackHandler;
     private boolean commitSucceeded;
-    private ActorPrincipal actorPrincipal;
+    private User user;
     private Actor actor;
     @Autowired
     protected ExecutorDAO executorDAO;
@@ -79,9 +79,9 @@ public abstract class LoginModuleBase implements LoginModule {
         if (actor == null) {
             return false;
         }
-        actorPrincipal = new ActorPrincipal(actor, SubjectPrincipalsHelper.encodeActor(actor));
-        if (!subject.getPrincipals().contains(actorPrincipal)) {
-            subject.getPrincipals().add(actorPrincipal);
+        user = SubjectPrincipalsHelper.createUser(actor);
+        if (!subject.getPrincipals().contains(user)) {
+            subject.getPrincipals().add(user);
         }
         commitSucceeded = true;
         return true;
@@ -94,7 +94,7 @@ public abstract class LoginModuleBase implements LoginModule {
      */
     @Override
     public boolean logout() {
-        subject.getPrincipals().remove(actorPrincipal);
+        subject.getPrincipals().remove(user);
         actor = null;
         commitSucceeded = false;
         return true;

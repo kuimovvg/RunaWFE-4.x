@@ -17,16 +17,16 @@
  */
 package ru.runa.wf.web;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 17.11.2004
  */
 public interface TaskFormBuilder {
 
-    String build(Subject subject, PageContext pageContext, Interaction interaction, WfTask task) throws Exception;
+    String build(User user, PageContext pageContext, Interaction interaction, WfTask task) throws Exception;
 }

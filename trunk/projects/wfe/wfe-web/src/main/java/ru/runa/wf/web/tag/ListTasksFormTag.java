@@ -21,7 +21,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
@@ -48,6 +47,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 15.10.2004
@@ -68,12 +68,11 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
     protected void fillFormElement(TD tdFormElement) throws JspException {
         try {
             ExecutionService executionService = Delegates.getExecutionService();
-            Subject subject = getSubject();
             BatchPresentation batchPresentation = getBatchPresentation();
             boolean isTaskTableBuild = false;
             while (!isTaskTableBuild) {
                 try {
-                    List<WfTask> tasks = executionService.getTasks(subject, batchPresentation);
+                    List<WfTask> tasks = executionService.getTasks(getUser(), batchPresentation);
                     Table table = buildTasksTable(pageContext, batchPresentation, tasks, getReturnAction(), false);
 
                     PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, tasks.size());
@@ -138,7 +137,7 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
     public static class TasksCssClassStrategy implements CssClassStrategy {
 
         @Override
-        public String getClassName(Object item, Subject subject) {
+        public String getClassName(Object item, User user) {
             WfTask task = (WfTask) item;
             Date deadlineDate = task.getDeadlineDate();
             if (deadlineDate == null) {

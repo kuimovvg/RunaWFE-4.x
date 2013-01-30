@@ -19,7 +19,6 @@ package ru.runa.wf.web.html;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
@@ -27,12 +26,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.WebResources;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.common.web.html.RowBuilder;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableDisplaySupport;
@@ -75,8 +75,8 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
             try {
                 VariableFormat variableFormat = FormatCommons.create(variable);
                 if (variableFormat instanceof VariableDisplaySupport) {
-                    Subject subject = SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
-                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(subject, new StrutsWebHelper(pageContext), processId, variable
+                    User user = Commons.getUser(pageContext.getSession());
+                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(user, new StrutsWebHelper(pageContext), processId, variable
                             .getDefinition().getName(), value);
                 } else {
                     formattedValue = variableFormat.format(value);

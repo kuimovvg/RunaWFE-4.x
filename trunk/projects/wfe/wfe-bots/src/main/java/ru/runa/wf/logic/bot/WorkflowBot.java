@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,6 +39,7 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Objects;
@@ -72,7 +71,7 @@ public class WorkflowBot implements Runnable {
     private BotExecutionStatus botStatus = BotExecutionStatus.scheduled;
 
     private final Map<String, TaskHandler> taskHandlerMap;
-    private final Subject subject;
+    private final User user;
     private final String botName;
     private final WfTask task;
     private final WorkflowBot parent;
@@ -86,8 +85,8 @@ public class WorkflowBot implements Runnable {
     private Thread executionThread = null;
     private boolean isTaskInterrupting = false;
 
-    public WorkflowBot(Subject subject, Bot bot, List<BotTask> tasks) {
-        this.subject = subject;
+    public WorkflowBot(User user, Bot bot, List<BotTask> tasks) {
+        this.user = user;
         task = null;
         parent = null;
         botName = bot.getUsername();
@@ -110,7 +109,7 @@ public class WorkflowBot implements Runnable {
     }
 
     private WorkflowBot(WorkflowBot parent, WfTask task) {
-        subject = parent.subject;
+        user = parent.user;
         taskHandlerMap = parent.taskHandlerMap;
         botName = parent.botName;
         this.task = task;
@@ -142,7 +141,7 @@ public class WorkflowBot implements Runnable {
     }
 
     public Set<WfTask> getNewTasks() throws AuthenticationException, AuthorizationException {
-        List<WfTask> currentTasks = Delegates.getExecutionService().getTasks(subject, BatchPresentationFactory.TASKS.createNonPaged());
+        List<WfTask> currentTasks = Delegates.getExecutionService().getTasks(user, BatchPresentationFactory.TASKS.createNonPaged());
         Set<WfTask> result = new HashSet<WfTask>();
         Set<WorkflowBot> failedBotsToRestart = new HashSet<WorkflowBot>();
         for (Iterator<WorkflowBot> botIterator = existingBots.iterator(); botIterator.hasNext();) {
@@ -181,9 +180,9 @@ public class WorkflowBot implements Runnable {
             return;
         }
         try {
-            IVariableProvider variableProvider = new DelegateProcessVariableProvider(subject, task.getProcessId());
+            IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
             log.info("Starting bot task " + task + " with config \n" + taskHandler.getConfiguration());
-            Map<String, Object> variables = taskHandler.handle(subject, variableProvider, task);
+            Map<String, Object> variables = taskHandler.handle(user, variableProvider, task);
             if (variables == null) {
                 variables = Maps.newHashMap();
             }
@@ -191,7 +190,7 @@ public class WorkflowBot implements Runnable {
             if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
                 log.info("Bot task " + task + " postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
             } else {
-                Delegates.getExecutionService().completeTask(subject, task.getId(), variables);
+                Delegates.getExecutionService().completeTask(user, task.getId(), variables);
                 log.debug("Handled bot task " + task + ", bot " + botName + " by " + taskHandler.getClass());
             }
             ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getName());

@@ -20,7 +20,6 @@ package ru.runa.wf.logic.bot;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import ru.runa.wf.logic.bot.assigner.AssignerSettings;
 import ru.runa.wf.logic.bot.assigner.AssignerSettings.Condition;
@@ -29,6 +28,7 @@ import ru.runa.wf.logic.bot.assigner.IEvaluationFunction;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.collect.Maps;
@@ -42,7 +42,7 @@ public class AdvancedSwimlaneAssignerTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         Map<String, Object> outputVariables = Maps.newHashMap();
         List<Condition> conditions = settings.getAssignerConditions();
         for (Condition condition : conditions) {

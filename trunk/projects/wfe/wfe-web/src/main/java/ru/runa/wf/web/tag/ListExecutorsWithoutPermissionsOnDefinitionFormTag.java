@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.web.tag;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import ru.runa.af.web.tag.ListExecutorsWithoutPermissionsBase;
@@ -31,7 +30,8 @@ import ru.runa.wfe.security.Identifiable;
  * 
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
- * @jsp.tag name = "listExecutorsWithoutPermissionsOnDefinitionForm" body-content = "JSP"
+ * @jsp.tag name = "listExecutorsWithoutPermissionsOnDefinitionForm"
+ *          body-content = "JSP"
  */
 public class ListExecutorsWithoutPermissionsOnDefinitionFormTag extends ListExecutorsWithoutPermissionsBase {
 
@@ -46,8 +46,7 @@ public class ListExecutorsWithoutPermissionsOnDefinitionFormTag extends ListExec
     protected Identifiable getIdentifiable() throws JspException {
         try {
             DefinitionService definitionService = Delegates.getDefinitionService();
-            Subject subject = getSubject();
-            return definitionService.getProcessDefinition(subject, getIdentifiableId());
+            return definitionService.getProcessDefinition(getUser(), getIdentifiableId());
         } catch (Exception e) {
             throw new JspException(e);
         }

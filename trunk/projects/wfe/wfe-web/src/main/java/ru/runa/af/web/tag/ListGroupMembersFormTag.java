@@ -56,7 +56,7 @@ public class ListGroupMembersFormTag extends ListExecutorsBaseFormTag {
     protected boolean isVisible() throws JspException {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return getExecutor() instanceof Group && authorizationService.isAllowed(getSubject(), GroupPermission.LIST_GROUP, getExecutor());
+            return getExecutor() instanceof Group && authorizationService.isAllowed(getUser(), GroupPermission.LIST_GROUP, getExecutor());
         } catch (Exception e) {
             return false;
         }
@@ -65,13 +65,13 @@ public class ListGroupMembersFormTag extends ListExecutorsBaseFormTag {
     @Override
     protected List<? extends Executor> getExecutors() {
         ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getGroupChildren(getSubject(), (Group) getExecutor(), getBatchPresentation(), false);
+        return executorService.getGroupChildren(getUser(), (Group) getExecutor(), getBatchPresentation(), false);
     }
 
     @Override
     protected int getExecutorsCount() {
         ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getGroupChildrenCount(getSubject(), (Group) getExecutor(), getBatchPresentation(), false);
+        return executorService.getGroupChildrenCount(getUser(), (Group) getExecutor(), getBatchPresentation(), false);
     }
 
     @Override

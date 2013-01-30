@@ -79,7 +79,7 @@ public class BotTaskListTag extends TitledFormTag {
     @Override
     public boolean isFormButtonEnabled() throws JspException {
         AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        return authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
+        return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
     }
 
     @Override
@@ -88,8 +88,8 @@ public class BotTaskListTag extends TitledFormTag {
         BotService botService = Delegates.getBotService();
         getForm().setEncType(Form.ENC_UPLOAD);
         AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        boolean disabled = !authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-        List<BotTask> tasks = botService.getBotTasks(getSubject(), botID);
+        boolean disabled = !authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
+        List<BotTask> tasks = botService.getBotTasks(getUser(), botID);
         int nameSize = 1;
         for (BotTask botTask : tasks) {
             if (botTask.getName().length() > nameSize) {

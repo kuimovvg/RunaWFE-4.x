@@ -17,22 +17,21 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.af.SystemService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.InternalApplicationException;
@@ -44,7 +43,7 @@ import ru.runa.wfe.security.ASystem;
  * @struts:action path="/logout" validate="false"
  * @struts.action-forward name = "success" path = "/start.do" redirect = "true"
  */
-public class LogoutAction extends Action {
+public class LogoutAction extends ActionBase {
 
     public static final String ACTION_NAME = "/logout";
 
@@ -53,10 +52,9 @@ public class LogoutAction extends Action {
         ActionMessages errors = new ActionMessages();
         try {
             HttpSession session = request.getSession();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(session);
             SystemService systemService = Delegates.getSystemService();
-            systemService.logout(subject, ASystem.INSTANCE);
-            SubjectHttpSessionHelper.removeActorSubject(session);
+            systemService.logout(getLoggedUser(request), ASystem.INSTANCE);
+            Commons.removeUser(session);
             ProfileHttpSessionHelper.removeProfile(session);
             TabHttpSessionHelper.removeTabForwardName(session);
             session.invalidate();

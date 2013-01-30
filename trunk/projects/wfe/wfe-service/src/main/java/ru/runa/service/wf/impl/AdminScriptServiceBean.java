@@ -23,7 +23,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -33,6 +32,7 @@ import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.service.wf.AdminScriptService;
 import ru.runa.wfe.script.AdminScriptException;
 import ru.runa.wfe.script.AdminScriptRunner;
+import ru.runa.wfe.user.User;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -42,8 +42,8 @@ public class AdminScriptServiceBean implements AdminScriptService {
     private AdminScriptRunner runner;
 
     @Override
-    public void run(Subject subject, byte[] configData, byte[][] processDefinitionsBytes) throws AdminScriptException {
-        runner.setSubject(subject);
+    public void run(User user, byte[] configData, byte[][] processDefinitionsBytes) throws AdminScriptException {
+        runner.setUser(user);
         runner.setProcessDefinitionsBytes(processDefinitionsBytes);
         runner.runScript(new ByteArrayInputStream(configData));
     }

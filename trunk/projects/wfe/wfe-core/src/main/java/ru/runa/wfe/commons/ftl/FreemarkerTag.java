@@ -3,10 +3,9 @@ package ru.runa.wfe.commons.ftl;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.TemplateMethodModelEx;
@@ -16,13 +15,13 @@ import freemarker.template.TemplateModelException;
 @SuppressWarnings("unchecked")
 public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializable {
     private static final long serialVersionUID = 1L;
-    protected Subject subject;
+    protected User user;
     protected IVariableProvider variableProvider;
     protected WebHelper webHelper;
     private List<TemplateModel> arguments;
 
-    public void init(Subject subject, WebHelper webHelper, IVariableProvider variableProvider) {
-        this.subject = subject;
+    public void init(User user, WebHelper webHelper, IVariableProvider variableProvider) {
+        this.user = user;
         this.webHelper = webHelper;
         this.variableProvider = variableProvider;
     }

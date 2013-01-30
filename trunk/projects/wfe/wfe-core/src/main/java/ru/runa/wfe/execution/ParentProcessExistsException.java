@@ -25,13 +25,13 @@ import ru.runa.wfe.ApplicationException;
  * @author Dofs
  * @since 4.0
  */
-public class SuperProcessExistsException extends ApplicationException {
+public class ParentProcessExistsException extends ApplicationException {
     private static final long serialVersionUID = 1833565682886180147L;
 
     private final String definitionName;
     private final String parentDefinitionName;
 
-    public SuperProcessExistsException(String definitionName, String parentDefinitionName) {
+    public ParentProcessExistsException(String definitionName, String parentDefinitionName) {
         this.definitionName = definitionName;
         this.parentDefinitionName = parentDefinitionName;
     }

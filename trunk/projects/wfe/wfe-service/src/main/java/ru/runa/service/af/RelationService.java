@@ -19,8 +19,6 @@ package ru.runa.service.af;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationAlreadyExistException;
@@ -30,16 +28,18 @@ import ru.runa.wfe.relation.RelationPairDoesNotExistException;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
 /**
-  * Relations service interface.
-  *
-  * @author Konstantinov Aleksey 12.02.2012
-  */
+ * Relations service interface.
+ * 
+ * @author Konstantinov Aleksey 12.02.2012
+ */
 public interface RelationService {
     /**
-     * Create {@link Relation} with specified name and description or throws {@link RelationAlreadyExistException} if relation with such name is already
-     * exists.
+     * Create {@link Relation} with specified name and description or throws
+     * {@link RelationAlreadyExistException} if relation with such name is
+     * already exists.
      * 
      * @param subject
      *            Subject, which perform operation.
@@ -55,11 +55,12 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public Relation createRelation(Subject subject, String name, String description) throws RelationAlreadyExistException, AuthorizationException,
+    public Relation createRelation(User user, String name, String description) throws RelationAlreadyExistException, AuthorizationException,
             AuthenticationException;
 
     /**
-     * Return list of {@link Relation}, according to specified {@link BatchPresentation}.
+     * Return list of {@link Relation}, according to specified
+     * {@link BatchPresentation}.
      * 
      * @param subject
      *            Subject, which perform operation.
@@ -71,10 +72,12 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public List<Relation> getRelations(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException;
+    public List<Relation> getRelations(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException;
 
     /**
-     * Return {@link Relation} with specified name or throws {@link RelationDoesNotExistException} if relation with such name does not exists.
+     * Return {@link Relation} with specified name or throws
+     * {@link RelationDoesNotExistException} if relation with such name does not
+     * exists.
      * 
      * @param subject
      *            Subject, which perform operation.
@@ -88,11 +91,13 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public Relation getRelation(Subject subject, String relationsName) throws RelationDoesNotExistException, AuthorizationException,
+    public Relation getRelation(User user, String relationsName) throws RelationDoesNotExistException, AuthorizationException,
             AuthenticationException;
 
     /**
-     * Return {@link Relation} with specified identity or throws {@link RelationDoesNotExistException} if relation with such identity does not exists.
+     * Return {@link Relation} with specified identity or throws
+     * {@link RelationDoesNotExistException} if relation with such identity does
+     * not exists.
      * 
      * @param subject
      *            Subject, which perform operation.
@@ -106,8 +111,7 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public Relation getRelation(Subject subject, Long relationId) throws RelationDoesNotExistException, AuthorizationException,
-            AuthenticationException;
+    public Relation getRelation(User user, Long relationId) throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
 
     /**
      * Remove {@link Relation} with specified identity.
@@ -123,8 +127,7 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public void removeRelation(Subject subject, Long relationId) throws RelationDoesNotExistException, AuthorizationException,
-            AuthenticationException;
+    public void removeRelation(User user, Long relationId) throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
 
     /**
      * Add {@link RelationPair} to {@link Relation} with specified name.
@@ -145,7 +148,7 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public RelationPair addRelationPair(Subject subject, String relationName, Executor left, Executor right) throws RelationDoesNotExistException,
+    public RelationPair addRelationPair(User user, String relationName, Executor left, Executor right) throws RelationDoesNotExistException,
             AuthorizationException, AuthenticationException;
 
     /**
@@ -162,11 +165,12 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public void removeRelationPair(Subject subject, Long relationPairId) throws RelationPairDoesNotExistException, AuthorizationException,
+    public void removeRelationPair(User user, Long relationPairId) throws RelationPairDoesNotExistException, AuthorizationException,
             AuthenticationException;
 
     /**
-     * Return {@link RelationPair} for specified {@link Relation}, according to specified {@link BatchPresentation}.
+     * Return {@link RelationPair} for specified {@link Relation}, according to
+     * specified {@link BatchPresentation}.
      * 
      * @param subject
      *            Subject, which perform operation.
@@ -181,11 +185,12 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public List<RelationPair> getRelationPairs(Subject subject, String relationsName, BatchPresentation batchPresentation)
+    public List<RelationPair> getRelationPairs(User user, String relationsName, BatchPresentation batchPresentation)
             throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
 
     /**
-     * Return {@link RelationPair} for specified {@link Relation}, according to specified {@link BatchPresentation}.
+     * Return {@link RelationPair} for specified {@link Relation}, according to
+     * specified {@link BatchPresentation}.
      * 
      * @param subject
      *            Subject, which perform operation.
@@ -200,18 +205,20 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public List<RelationPair> getRelationPairs(Subject subject, Long relationId, BatchPresentation batchPresentation)
-            throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
+    public List<RelationPair> getRelationPairs(User user, Long relationId, BatchPresentation batchPresentation) throws RelationDoesNotExistException,
+            AuthorizationException, AuthenticationException;
 
     /**
-     * Return {@link RelationPair} for specified {@link Relation}, which right part contains executor from 'right' parameter.
+     * Return {@link RelationPair} for specified {@link Relation}, which right
+     * part contains executor from 'right' parameter.
      * 
      * @param subject
      *            Subject, which perform operation.
      * @param relationName
      *            {@link Relation} name.
      * @param right
-     *            Collection of {@link Executor}, which contains in right part of {@link RelationPair}.
+     *            Collection of {@link Executor}, which contains in right part
+     *            of {@link RelationPair}.
      * @return List of {@link RelationPair}.
      * @throws RelationDoesNotExistException
      *             {@link Relation} with specified name does not exists.
@@ -220,18 +227,20 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public List<RelationPair> getExecutorsRelationPairsRight(Subject subject, String relationName, List<Executor> right)
+    public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<Executor> right)
             throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
 
     /**
-     * Return {@link RelationPair} for specified {@link Relation}, which left part contains executor from 'left' parameter.
+     * Return {@link RelationPair} for specified {@link Relation}, which left
+     * part contains executor from 'left' parameter.
      * 
      * @param subject
      *            Subject, which perform operation.
      * @param relationName
      *            {@link Relation} name.
      * @param right
-     *            Collection of {@link Executor}, which contains in left part of {@link RelationPair}.
+     *            Collection of {@link Executor}, which contains in left part of
+     *            {@link RelationPair}.
      * @return List of {@link RelationPair}.
      * @throws RelationDoesNotExistException
      *             {@link Relation} with specified name does not exists.
@@ -240,6 +249,6 @@ public interface RelationService {
      * @throws AuthenticationException
      *             Subject is incorrect.
      */
-    public List<RelationPair> getExecutorsRelationPairsLeft(Subject subject, String relationName, List<Executor> left)
+    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<Executor> left)
             throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
 }

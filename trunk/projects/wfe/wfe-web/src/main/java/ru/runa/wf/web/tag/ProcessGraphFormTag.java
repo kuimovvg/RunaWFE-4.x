@@ -98,7 +98,7 @@ public class ProcessGraphFormTag extends ProcessBaseFormTag {
      */
     private void addImageActions(final TD formDataTD, IMG img) {
         ExecutionService executionService = Delegates.getExecutionService();
-        List<GraphElementPresentation> elements = executionService.getProcessGraphElements(getSubject(), getIdentifiableId());
+        List<GraphElementPresentation> elements = executionService.getProcessGraphElements(getUser(), getIdentifiableId());
         ProcessGraphElementPresentationVisitor operation = new ProcessGraphElementPresentationVisitor(taskId, pageContext, formDataTD);
         for (GraphElementPresentation graphElementPresentation : elements) {
             graphElementPresentation.visit(operation);

@@ -17,7 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import ru.runa.common.web.Commons;
@@ -30,7 +29,8 @@ import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 
 /**
- * @jsp.tag name = "grantPermissionOnGroupsOfRelationsLink" body-content = "empty"
+ * @jsp.tag name = "grantPermissionOnGroupsOfRelationsLink" body-content =
+ *          "empty"
  */
 public class GrantPermissionOnGroupsOfRelationsLinkTag extends LinkTag {
 
@@ -42,8 +42,7 @@ public class GrantPermissionOnGroupsOfRelationsLinkTag extends LinkTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Subject subject = getSubject();
-            return authorizationService.isAllowed(subject, RelationPermission.UPDATE_PERMISSIONS, RelationsGroupSecure.INSTANCE);
+            return authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_PERMISSIONS, RelationsGroupSecure.INSTANCE);
         } catch (Exception e) {
             return false;
         }

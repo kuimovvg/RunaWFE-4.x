@@ -20,7 +20,6 @@ package ru.runa.wf.web.customtag.impl;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -32,8 +31,8 @@ import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 /**
  * Created 08.07.2005
@@ -121,10 +120,10 @@ public abstract class AbstractAutoCompletionComboBoxVarTag extends AbstractActor
     }
 
     @Override
-    public String getHtml(Subject subject, String varName, Object varValue, PageContext pageContext) throws Exception {
+    public String getHtml(User user, String varName, Object varValue, PageContext pageContext) throws Exception {
         StringBuffer htmlContent = new StringBuffer();
-        List<Actor> actors = getActors(subject, varName, varValue);
-        Actor defaultActor = SubjectPrincipalsHelper.getActor(subject);
+        List<Actor> actors = getActors(user, varName, varValue);
+        Actor defaultActor = user;
         htmlContent.append(createAutoCompletionScript(varName, actors, pageContext));
         htmlContent.append(createInputAndSelectHtml(varName, actors, defaultActor));
         return htmlContent.toString();

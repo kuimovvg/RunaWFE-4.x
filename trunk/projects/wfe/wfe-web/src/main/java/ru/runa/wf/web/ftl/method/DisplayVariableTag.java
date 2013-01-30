@@ -21,7 +21,7 @@ public class DisplayVariableTag extends FreemarkerTag {
                 return "";
             }
             VariableDisplaySupport<Object> displaySupport = (VariableDisplaySupport<Object>) format;
-            html += displaySupport.getHtml(subject, webHelper, variableProvider.getProcessId(), variableName, variable.getValue());
+            html += displaySupport.getHtml(user, webHelper, variableProvider.getProcessId(), variableName, variable.getValue());
         } else {
             html += format.format(variable.getValue());
         }

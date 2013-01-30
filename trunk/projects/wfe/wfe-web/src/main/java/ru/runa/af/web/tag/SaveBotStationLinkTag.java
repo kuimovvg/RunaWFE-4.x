@@ -37,7 +37,7 @@ public class SaveBotStationLinkTag extends LinkTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getSubject(), BotStationPermission.READ, BotStation.INSTANCE);
+            return authorizationService.isAllowed(getUser(), BotStationPermission.READ, BotStation.INSTANCE);
         } catch (Exception e) {
             return false;
         }

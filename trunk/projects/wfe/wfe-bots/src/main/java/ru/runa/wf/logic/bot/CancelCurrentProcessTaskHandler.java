@@ -19,11 +19,11 @@ package ru.runa.wf.logic.bot;
 
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 /**
@@ -42,8 +42,8 @@ public class CancelCurrentProcessTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) {
-        Delegates.getExecutionService().cancelProcess(subject, task.getProcessId());
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) {
+        Delegates.getExecutionService().cancelProcess(user, task.getProcessId());
         return null;
     }
 }

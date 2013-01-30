@@ -20,7 +20,6 @@ package ru.runa.wf.logic.bot;
 import java.io.InputStream;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
@@ -30,6 +29,7 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.io.ByteStreams;
@@ -49,12 +49,12 @@ public class CancelProcessTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         Long processId = variableProvider.getValue(Long.class, processToCancelTask.getProcessIdVariableName());
         if (processId != null && processId != 0) {
-            Delegates.getExecutionService().cancelProcess(subject, processId);
+            Delegates.getExecutionService().cancelProcess(user, processId);
             DefinitionService definitionService = Delegates.getDefinitionService();
-            WfDefinition definitionStub = definitionService.getProcessDefinitionByProcessId(subject, processId);
+            WfDefinition definitionStub = definitionService.getProcessDefinitionByProcessId(user, processId);
             String processDefinitionName = definitionStub.getName();
             String configurationName = processToCancelTask.getDatabaseTaskMap().get(processDefinitionName);
             if (configurationName == null) {
@@ -64,7 +64,7 @@ public class CancelProcessTaskHandler extends TaskHandlerBase {
             byte[] configuration = ByteStreams.toByteArray(inputStream);
             DatabaseTaskHandler databaseTaskHandler = new DatabaseTaskHandler();
             databaseTaskHandler.setConfiguration(configuration);
-            databaseTaskHandler.handle(subject, variableProvider, task);
+            databaseTaskHandler.handle(user, variableProvider, task);
         }
         return null;
     }

@@ -1,18 +1,16 @@
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.ActionExceptionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
@@ -23,7 +21,7 @@ import ru.runa.wfe.bot.BotStation;
  * @struts:action path="/update_bot_station" name="botStationForm"
  *                validate="false" input = "/WEB-INF/wf/bot_station.jsp"
  */
-public class UpdateBotStationAction extends Action {
+public class UpdateBotStationAction extends ActionBase {
     public static final String UPDATE_BOT_STATION_ACTION_PATH = "/update_bot_station";
 
     @Override
@@ -31,12 +29,11 @@ public class UpdateBotStationAction extends Action {
         ActionMessages errors = new ActionMessages();
         BotStationForm botStationForm = (BotStationForm) form;
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             BotService botService = Delegates.getBotService();
             BotStation botStation = botService.getBotStation(botStationForm.getBotStationID());
             botStation.setName(botStationForm.getBotStationName());
             botStation.setAddress(botStationForm.getBotStationRMIAddress());
-            botService.updateBotStation(subject, botStation);
+            botService.updateBotStation(getLoggedUser(request), botStation);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }

@@ -20,20 +20,18 @@ package ru.runa.wf.web.action;
 import java.io.OutputStream;
 
 import javax.activation.MimetypesFileTypeMap;
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.web.form.DefinitionFileForm;
@@ -47,11 +45,9 @@ import ru.runa.wf.web.form.DefinitionFileForm;
  *                        path="/WEB-INF/wf/process_definition_description.jsp"
  * @struts.action-forward name="failure" path="/error.do" redirect = "true"
  */
-public class LoadProcessDefinitionHtmlFileAction extends Action {
+public class LoadProcessDefinitionHtmlFileAction extends ActionBase {
 
     public static final String ACTION_PATH = "/getHtmlFile";
-
-    // private static final String CONTENT_TYPE = "text/html";
     private static MimetypesFileTypeMap fileTypeMap = new MimetypesFileTypeMap();
 
     @Override
@@ -63,9 +59,8 @@ public class LoadProcessDefinitionHtmlFileAction extends Action {
         String fileName = form.getFileName();
         ActionForward successForward = null;
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             DefinitionService definitionService = Delegates.getDefinitionService();
-            byte[] bytes = definitionService.getFile(subject, id, fileName);
+            byte[] bytes = definitionService.getFile(getLoggedUser(request), id, fileName);
 
             if (fileName.endsWith(".html")) {
                 request.setAttribute("htmlBytes", bytes);

@@ -3,9 +3,8 @@ package ru.runa.wfe.var.format;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.user.User;
 
 public class ListFormat implements VariableFormat<List<?>>, VariableDisplaySupport<List<?>> {
 
@@ -24,12 +23,12 @@ public class ListFormat implements VariableFormat<List<?>>, VariableDisplaySuppo
     }
 
     @Override
-    public String getHtml(Subject subject, WebHelper webHelper, Long processId, String name, List<?> list) {
+    public String getHtml(User user, WebHelper webHelper, Long processId, String name, List<?> list) {
         StringBuffer html = new StringBuffer();
         html.append("<div class=\"listFormatItem\">");
         for (int i = 0; i < list.size(); i++) {
             Object object = list.get(i);
-            String value = FormatCommons.getVarOut(object, subject, webHelper, processId, name, i, null);
+            String value = FormatCommons.getVarOut(object, webHelper, processId, name, i, null);
             html.append(value);
         }
         html.append("</div>");

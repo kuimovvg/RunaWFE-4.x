@@ -17,16 +17,14 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
@@ -37,7 +35,7 @@ import ru.runa.service.wf.BotService;
  * @struts:action path="/delete_bot" name="idsForm" validate="true" input =
  *                "/WEB-INF/wf/bot_station.jsp"
  */
-public class DeleteBotAction extends Action {
+public class DeleteBotAction extends ActionBase {
     public static final String DELETE_BOT_ACTION_PATH = "/delete_bot";
 
     @Override
@@ -47,10 +45,9 @@ public class DeleteBotAction extends Action {
         if (botToDeleteIds.length == 0) {
             return new ActionForward("/bot_station.do?botStationID=" + idsForm.getId());
         }
-        Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
         BotService botService = Delegates.getBotService();
         for (Long botId : botToDeleteIds) {
-            botService.removeBot(subject, botId);
+            botService.removeBot(getLoggedUser(request), botId);
         }
         return new ActionForward("/bot_station.do?botStationID=" + idsForm.getId());
     }

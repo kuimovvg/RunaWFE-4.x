@@ -37,7 +37,7 @@ public class AddBotTaskLinkTag extends LinkTag {
         boolean result = false;
         try {
             AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
-            result = authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
+            result = authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         } catch (Exception e) {
         }
         return result;

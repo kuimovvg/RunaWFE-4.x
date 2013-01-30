@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
@@ -34,14 +32,20 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 25.08.2004
  * 
- * @struts:action path="/updatePermissionsOnExecutor" name="updatePermissionsOnIdentifiableForm" validate="true" input = "/WEB-INF/af/manage_executor.jsp"
- * @struts.action-forward name="success" path="/manage_executor_permissions.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_executor_permissions.do" redirect = "true"
- * @struts.action-forward name="failure_executor_does_not_exist" path="/manage_executors.do" redirect = "true"
+ * @struts:action path="/updatePermissionsOnExecutor"
+ *                name="updatePermissionsOnIdentifiableForm" validate="true"
+ *                input = "/WEB-INF/af/manage_executor.jsp"
+ * @struts.action-forward name="success" path="/manage_executor_permissions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/manage_executor_permissions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure_executor_does_not_exist"
+ *                        path="/manage_executors.do" redirect = "true"
  */
 public class UpdatePermissionsOnExecutorAction extends UpdatePermissionOnIdentifiableAction {
 
@@ -50,12 +54,12 @@ public class UpdatePermissionsOnExecutorAction extends UpdatePermissionOnIdentif
     private boolean executorExists;
 
     @Override
-    protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) throws AuthorizationException,
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) throws AuthorizationException,
             AuthenticationException {
         executorExists = false;
         Identifiable result = null;
         try {
-            result = Delegates.getExecutorService().getExecutor(subject, identifiableId);
+            result = Delegates.getExecutorService().getExecutor(user, identifiableId);
             executorExists = true;
         } catch (ExecutorDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);

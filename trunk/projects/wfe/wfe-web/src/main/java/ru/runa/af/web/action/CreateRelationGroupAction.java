@@ -17,29 +17,31 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.CreateRelationGroupForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.Delegates;
 
 /**
- * @struts:action path="/createRelationGroup" name="createRelationGroupForm" validate="true" input = "/WEB-INF/af/create_relation_group.jsp"
- * @struts.action-forward name="success" path="/manage_relations.do" redirect = "true"
- * @struts.action-forward name="failure" path="/create_relation_group.do" redirect = "true"
+ * @struts:action path="/createRelationGroup" name="createRelationGroupForm"
+ *                validate="true" input =
+ *                "/WEB-INF/af/create_relation_group.jsp"
+ * @struts.action-forward name="success" path="/manage_relations.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure" path="/create_relation_group.do"
+ *                        redirect = "true"
  */
-public class CreateRelationGroupAction extends Action {
+public class CreateRelationGroupAction extends ActionBase {
 
     public static final String ACTION_PATH = "/createRelationGroup";
 
@@ -48,9 +50,8 @@ public class CreateRelationGroupAction extends Action {
         ActionMessages errors = new ActionMessages();
         CreateRelationGroupForm relationForm = (CreateRelationGroupForm) form;
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             RelationService relationService = Delegates.getRelationService();
-            relationService.createRelation(subject, relationForm.getRelationName(), relationForm.getRelationDescription());
+            relationService.createRelation(getLoggedUser(request), relationForm.getRelationName(), relationForm.getRelationDescription());
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }

@@ -20,13 +20,11 @@ package ru.runa.common.web.action;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.GroupForm;
@@ -38,9 +36,10 @@ import ru.runa.wfe.user.Profile;
 /**
  * Created on 06.07.2005
  * 
- * @struts:action path="/changeGroupping" name="groupForm" validate="true" input = "/error.do"
+ * @struts:action path="/changeGroupping" name="groupForm" validate="true" input
+ *                = "/error.do"
  */
-public class ExpandCollapseGroupAction extends Action {
+public class ExpandCollapseGroupAction extends ActionBase {
 
     public static final String ACTION_PATH = "/changeGroupping";
 
@@ -53,7 +52,7 @@ public class ExpandCollapseGroupAction extends Action {
             BatchPresentation batchPresentation = profile.getActiveBatchPresentation(groupForm.getBatchPresentationId());
             String groupId = groupForm.getGroupId();
             batchPresentation.setGroupBlockStatus(groupId, !batchPresentation.isGroupBlockExpanded(groupId));
-            profileService.saveBatchPresentation(SubjectHttpSessionHelper.getActorSubject(request.getSession()), batchPresentation);
+            profileService.saveBatchPresentation(getLoggedUser(request), batchPresentation);
         } catch (Exception e) {
             ActionMessages actionMessages = new ActionMessages();
             ActionExceptionHelper.addException(actionMessages, e);

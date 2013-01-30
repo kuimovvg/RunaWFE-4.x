@@ -1,8 +1,7 @@
 package ru.runa.wfe.commons.ftl;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.SimpleHash;
@@ -13,13 +12,13 @@ public class FormHashModel extends SimpleHash {
 
     private static final long serialVersionUID = 1L;
 
-    private final Subject subject;
+    private final User user;
     private final IVariableProvider variableProvider;
     private final WebHelper webHelper;
 
-    public FormHashModel(Subject subject, IVariableProvider variableProvider, WebHelper webHelper) {
+    public FormHashModel(User user, IVariableProvider variableProvider, WebHelper webHelper) {
         super(ObjectWrapper.BEANS_WRAPPER);
-        this.subject = subject;
+        this.user = user;
         this.variableProvider = variableProvider;
         // TODO PATCHED VERSION SubjectHolder.setSubject(subject);
         this.webHelper = webHelper;
@@ -47,7 +46,7 @@ public class FormHashModel extends SimpleHash {
             FreemarkerConfiguration conf = FreemarkerConfiguration.getInstance();
             FreemarkerTag tag = conf.getTag(key);
             if (tag != null) {
-                tag.init(subject, webHelper, variableProvider);
+                tag.init(user, webHelper, variableProvider);
                 if (webHelper != null) {
                     webHelper.getSession().setAttribute(key, tag);
                 }

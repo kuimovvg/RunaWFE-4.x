@@ -19,7 +19,6 @@ package ru.runa.wf.logic.bot;
 
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +32,7 @@ import ru.runa.wfe.definition.par.FileDataProvider;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 /**
@@ -53,25 +53,25 @@ public class EmailTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(final Subject subject, IVariableProvider variableProvider, final WfTask task) throws Exception {
+    public Map<String, Object> handle(final User user, IVariableProvider variableProvider, final WfTask task) throws Exception {
         final DefinitionService definitionService = Delegates.getDefinitionService();
         try {
             Interaction interaction = null;
             if (config.isUseMessageFromTaskForm()) {
-                interaction = definitionService.getTaskInteraction(subject, task.getId());
+                interaction = definitionService.getTaskInteraction(user, task.getId());
             }
             FileDataProvider fileDataProvider = new FileDataProvider() {
 
                 @Override
                 public byte[] getFileData(String fileName) {
                     try {
-                        return definitionService.getFile(subject, task.getDefinitionId(), fileName);
+                        return definitionService.getFile(user, task.getDefinitionId(), fileName);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
             };
-            EmailUtils.sendTaskMessage(subject, config, interaction, variableProvider, fileDataProvider);
+            EmailUtils.sendTaskMessage(user, config, interaction, variableProvider, fileDataProvider);
         } catch (Exception e) {
             if (config.isThrowErrorOnFailure()) {
                 throw e;

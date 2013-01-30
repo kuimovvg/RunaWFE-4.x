@@ -19,7 +19,6 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import org.apache.ecs.html.TD;
@@ -62,11 +61,10 @@ public class ListAllExecutorsFormTag extends BatchReturningTitledFormTag {
     protected void fillFormElement(TD tdFormElement) throws JspException {
         try {
             ExecutorService executorService = Delegates.getExecutorService();
-            Subject subject = getSubject();
-            int executorsCount = executorService.getAllCount(subject, getBatchPresentation());
-            List<Executor> executors = executorService.getAll(subject, getBatchPresentation());
+            int executorsCount = executorService.getAllCount(getUser(), getBatchPresentation());
+            List<Executor> executors = executorService.getAll(getUser(), getBatchPresentation());
             BatchPresentation batchPresentation = getBatchPresentation();
-            setupFormButton(subject, executors);
+            setupFormButton(executors);
             PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, executorsCount, getReturnAction());
             navigation.addPagingNavigationTable(tdFormElement);
             TableBuilder tableBuilder = new TableBuilder();
@@ -90,9 +88,10 @@ public class ListAllExecutorsFormTag extends BatchReturningTitledFormTag {
      * @param executors
      *            Executors, shown on form.
      */
-    private void setupFormButton(Subject subject, List<Executor> executors) {
+    private void setupFormButton(List<Executor> executors) {
         BatchPresentation batchPresentation = getBatchPresentation();
-        for (boolean isEnable : BatchExecutorPermissionHelper.getEnabledCheckboxes(subject, executors, batchPresentation, ExecutorPermission.UPDATE)) {
+        for (boolean isEnable : BatchExecutorPermissionHelper
+                .getEnabledCheckboxes(getUser(), executors, batchPresentation, ExecutorPermission.UPDATE)) {
             if (isEnable) {
                 isButtonEnabled = true;
                 break;

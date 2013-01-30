@@ -20,20 +20,18 @@ package ru.runa.af.web.action;
 import java.util.List;
 import java.util.Set;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.BotTasksForm;
 import ru.runa.af.web.system.TaskHandlerClassesInformation;
 import ru.runa.common.web.ActionExceptionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotTask;
@@ -47,7 +45,7 @@ import com.google.common.collect.Sets;
  * @struts:action path="/update_bot_tasks" name="botTasksForm" validate="true"
  *                input = "/WEB-INF/wf/bot.jsp"
  */
-public class UpdateBotTasksAction extends Action {
+public class UpdateBotTasksAction extends ActionBase {
     public static final String UPDATE_BOT_TASKS_ACTION_PATH = "/update_bot_tasks";
 
     @Override
@@ -56,8 +54,7 @@ public class UpdateBotTasksAction extends Action {
         BotTasksForm form = (BotTasksForm) actionForm;
         try {
             BotService botService = Delegates.getBotService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            List<BotTask> tasks = botService.getBotTasks(subject, form.getId());
+            List<BotTask> tasks = botService.getBotTasks(getLoggedUser(request), form.getId());
 
             Set<Long> checkedIdSet = Sets.newHashSet(form.getIds());
             List<BotTask> tasksToDelete = Lists.newArrayList();
@@ -76,10 +73,10 @@ public class UpdateBotTasksAction extends Action {
                 }
             }
             for (BotTask task : tasksToDelete) {
-                botService.removeBotTask(subject, task.getId());
+                botService.removeBotTask(getLoggedUser(request), task.getId());
             }
             for (BotTask task : tasksToUpdate) {
-                botService.updateBotTask(subject, task);
+                botService.updateBotTask(getLoggedUser(request), task);
             }
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);

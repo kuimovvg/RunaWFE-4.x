@@ -81,7 +81,7 @@ public class ShowGraphHistoryFormTag extends ProcessBaseFormTag {
         String href = Commons.getActionUrl(HistoryGraphImageAction.ACTION_PATH, params, pageContext, PortletUrlType.Resource);
         try {
             ExecutionService executionService = Delegates.getExecutionService();
-            List<GraphElementPresentation> logElements = executionService.getProcessUIHistoryData(getSubject(), getIdentifiableId(), taskId);
+            List<GraphElementPresentation> logElements = executionService.getProcessUIHistoryData(getUser(), getIdentifiableId(), taskId);
 
             GraphHistoryElementPresentationVisitor operation = new GraphHistoryElementPresentationVisitor(taskId, pageContext, formDataTD);
             for (GraphElementPresentation element : logElements) {

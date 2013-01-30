@@ -2,12 +2,12 @@ package ru.runa.wfe.handler;
 
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 public abstract class CommonHandler extends TaskHandlerBase implements ActionHandler {
@@ -23,7 +23,7 @@ public abstract class CommonHandler extends TaskHandlerBase implements ActionHan
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         return executeAction(variableProvider);
     }
 

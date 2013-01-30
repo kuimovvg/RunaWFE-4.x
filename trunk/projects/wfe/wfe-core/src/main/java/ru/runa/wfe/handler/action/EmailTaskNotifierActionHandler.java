@@ -30,7 +30,7 @@ import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.security.auth.SubjectHolder;
+import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.dao.TaskDAO;
 import ru.runa.wfe.user.Actor;
@@ -70,7 +70,7 @@ public class EmailTaskNotifierActionHandler implements ActionHandler {
                         EmailConfig config = EmailConfigParser.parse(configBytes);
                         config.getHeaderProperties().put("To", email);
                         Interaction interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
-                        EmailUtils.sendTaskMessage(SubjectHolder.get(), config, interaction, executionContext.getVariableProvider(),
+                        EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, executionContext.getVariableProvider(),
                                 executionContext.getProcessDefinition());
                     }
                 }

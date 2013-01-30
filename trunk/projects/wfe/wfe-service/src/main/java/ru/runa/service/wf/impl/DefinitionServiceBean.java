@@ -23,7 +23,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -38,6 +37,7 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 
 import com.google.common.base.Preconditions;
@@ -50,102 +50,102 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     private DefinitionLogic definitionLogic;
 
     @Override
-    public WfDefinition deployProcessDefinition(Subject subject, byte[] processArchive, List<String> processType) {
-        Preconditions.checkNotNull(subject);
+    public WfDefinition deployProcessDefinition(User user, byte[] processArchive, List<String> processType) {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(processArchive);
         Preconditions.checkNotNull(processType);
-        return definitionLogic.deployProcessDefinition(subject, processArchive, processType);
+        return definitionLogic.deployProcessDefinition(user, processArchive, processType);
     }
 
     @Override
-    public WfDefinition redeployProcessDefinition(Subject subject, Long processId, byte[] processArchive, List<String> processType) {
-        Preconditions.checkNotNull(subject);
+    public WfDefinition redeployProcessDefinition(User user, Long processId, byte[] processArchive, List<String> processType) {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(processType);
-        return definitionLogic.redeployProcessDefinition(subject, processId, processArchive, processType);
+        return definitionLogic.redeployProcessDefinition(user, processId, processArchive, processType);
     }
 
     @Override
-    public WfDefinition getLatestProcessDefinition(Subject subject, String definitionName) {
-        Preconditions.checkNotNull(subject);
-        return definitionLogic.getLatestProcessDefinition(subject, definitionName);
+    public WfDefinition getLatestProcessDefinition(User user, String definitionName) {
+        Preconditions.checkNotNull(user);
+        return definitionLogic.getLatestProcessDefinition(user, definitionName);
     }
 
     @Override
-    public WfDefinition getProcessDefinition(Subject subject, Long definitionId) {
-        Preconditions.checkNotNull(subject);
-        return definitionLogic.getProcessDefinition(subject, definitionId);
+    public WfDefinition getProcessDefinition(User user, Long definitionId) {
+        Preconditions.checkNotNull(user);
+        return definitionLogic.getProcessDefinition(user, definitionId);
     }
 
     @Override
-    public WfDefinition getProcessDefinitionByProcessId(Subject subject, Long processId) {
-        Preconditions.checkNotNull(subject);
-        return definitionLogic.getProcessDefinitionByProcessId(subject, processId);
+    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) {
+        Preconditions.checkNotNull(user);
+        return definitionLogic.getProcessDefinitionByProcessId(user, processId);
     }
 
     @Override
-    public List<WfDefinition> getLatestProcessDefinitions(Subject subject, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(subject);
+    public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return definitionLogic.getLatestProcessDefinitions(subject, batchPresentation);
+        return definitionLogic.getLatestProcessDefinitions(user, batchPresentation);
     }
 
     @Override
-    public void undeployProcessDefinition(Subject subject, String processName) {
-        Preconditions.checkNotNull(subject);
-        definitionLogic.undeployProcessDefinition(subject, processName);
+    public void undeployProcessDefinition(User user, String processName) {
+        Preconditions.checkNotNull(user);
+        definitionLogic.undeployProcessDefinition(user, processName);
     }
 
     @Override
-    public void removeProcessDefinition(Subject subject, String definitionName, int version) {
-        Preconditions.checkNotNull(subject);
-        // archivingLogic.removeProcessDefinition(subject, definitionName,
+    public void removeProcessDefinition(User user, String definitionName, int version) {
+        Preconditions.checkNotNull(user);
+        // archivingLogic.removeProcessDefinition(user, definitionName,
         // version, 0);
     }
 
     @Override
-    public List<String> getOutputTransitionNames(Subject subject, Long definitionId, Long taskId) {
-        Preconditions.checkNotNull(subject);
-        return definitionLogic.getOutputTransitionNames(subject, definitionId, taskId);
+    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) {
+        Preconditions.checkNotNull(user);
+        return definitionLogic.getOutputTransitionNames(user, definitionId, taskId);
     }
 
     @Override
-    public Interaction getTaskInteraction(Subject subject, Long taskId) {
-        Preconditions.checkNotNull(subject);
-        return definitionLogic.getInteraction(subject, taskId);
+    public Interaction getTaskInteraction(User user, Long taskId) {
+        Preconditions.checkNotNull(user);
+        return definitionLogic.getInteraction(user, taskId);
     }
 
     @Override
-    public Interaction getStartInteraction(Subject subject, Long definitionId) {
-        Preconditions.checkNotNull(subject);
-        return definitionLogic.getStartInteraction(subject, definitionId);
+    public Interaction getStartInteraction(User user, Long definitionId) {
+        Preconditions.checkNotNull(user);
+        return definitionLogic.getStartInteraction(user, definitionId);
     }
 
     @Override
-    public byte[] getFile(Subject subject, Long definitionId, String fileName) {
-        Preconditions.checkNotNull(subject);
-        return definitionLogic.getFile(subject, definitionId, fileName);
+    public byte[] getFile(User user, Long definitionId, String fileName) {
+        Preconditions.checkNotNull(user);
+        return definitionLogic.getFile(user, definitionId, fileName);
     }
 
     @Override
-    public List<SwimlaneDefinition> getSwimlanes(Subject subject, Long definitionId) {
-        Preconditions.checkNotNull(subject);
-        return definitionLogic.getSwimlanes(subject, definitionId);
+    public List<SwimlaneDefinition> getSwimlanes(User user, Long definitionId) {
+        Preconditions.checkNotNull(user);
+        return definitionLogic.getSwimlanes(user, definitionId);
     }
 
     @Override
-    public List<VariableDefinition> getVariables(Subject subject, Long definitionId) {
-        return definitionLogic.getProcessDefinitionVariables(subject, definitionId);
+    public List<VariableDefinition> getVariables(User user, Long definitionId) {
+        return definitionLogic.getProcessDefinitionVariables(user, definitionId);
     }
 
     @Override
-    public List<GraphElementPresentation> getProcessDefinitionGraphElements(Subject subject, Long definitionId) {
-        Preconditions.checkNotNull(subject);
-        return definitionLogic.getProcessDefinitionGraphElements(subject, definitionId);
+    public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId) {
+        Preconditions.checkNotNull(user);
+        return definitionLogic.getProcessDefinitionGraphElements(user, definitionId);
     }
 
     @Override
-    public List<WfDefinition> getProcessDefinitionHistory(Subject subject, String name) {
-        Preconditions.checkNotNull(subject);
-        return definitionLogic.getProcessDefinitionHistory(subject, name);
+    public List<WfDefinition> getProcessDefinitionHistory(User user, String name) {
+        Preconditions.checkNotNull(user);
+        return definitionLogic.getProcessDefinitionHistory(user, name);
     }
 }

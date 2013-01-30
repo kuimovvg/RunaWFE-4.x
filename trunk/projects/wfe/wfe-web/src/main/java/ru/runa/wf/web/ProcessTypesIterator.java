@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.dto.WfDefinition;
@@ -33,16 +31,17 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.user.User;
 
 public class ProcessTypesIterator implements Iterator<String[]> {
 
     private final List<String[]> processTypes = new ArrayList<String[]>();
     private int curIdx = 0;
 
-    public ProcessTypesIterator(Subject subject) throws AuthenticationException, AuthorizationException {
+    public ProcessTypesIterator(User user) throws AuthenticationException, AuthorizationException {
         DefinitionService definitionService = Delegates.getDefinitionService();
         BatchPresentation batchPresentation = BatchPresentationFactory.DEFINITIONS.createNonPaged();
-        List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(subject, batchPresentation);
+        List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(user, batchPresentation);
         SortedSet<String[]> processTypesSet = new TreeSet<String[]>(new Comparator<String[]>() {
             @Override
             public int compare(String[] o1, String[] o2) {
