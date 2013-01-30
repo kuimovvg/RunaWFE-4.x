@@ -47,7 +47,7 @@ public class ShowTasksHistoryTag extends ProcessBaseFormTag {
             ExecutionService executionService = Delegates.getExecutionService();
             ProcessLogFilter filter = new ProcessLogFilter(getIdentifiableId());
             filter.setIncludeSubprocessLogs(true);
-            ProcessLogs logs = executionService.getProcessLogs(getSubject(), filter);
+            ProcessLogs logs = executionService.getProcessLogs(getUser(), filter);
             List<TR> rows = processLogs(logs);
             HeaderBuilder tasksHistoryHeaderBuilder = new TasksHistoryHeaderBuilder();
             RowBuilder rowBuilder = new TRRowBuilder(rows);

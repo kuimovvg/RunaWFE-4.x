@@ -20,7 +20,6 @@ package ru.runa.common.web.action;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,8 +29,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.LookupDispatchAction;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.TableViewSetupForm;
@@ -51,7 +50,8 @@ import ru.runa.wfe.user.Profile;
 /**
  * Created on 26.01.2005
  * 
- * @struts:action path="/tableViewSetup" name="tableViewSetupForm" validate="false" parameter = "dispatch"
+ * @struts:action path="/tableViewSetup" name="tableViewSetupForm"
+ *                validate="false" parameter = "dispatch"
  */
 public class TableViewSetupFormAction extends LookupDispatchAction {
     private static final String DEFAULT_VIEW_SETUP_NAME = " ";
@@ -170,8 +170,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             BatchPresentation batchPresentation = getActiveBatchPresentation(profile, tableViewSetupForm.getBatchPresentationId());
             applyBatchPresentation(batchPresentation, tableViewSetupForm);
             ProfileService profileService = Delegates.getProfileService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            profileService.saveBatchPresentation(subject, batchPresentation);
+            profileService.saveBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
@@ -196,8 +195,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             batchPresentationClone.setName(newName);
             applyBatchPresentation(batchPresentationClone, tableViewSetupForm);
             ProfileService profileService = Delegates.getProfileService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            profileService.createBatchPresentation(subject, batchPresentationClone);
+            profileService.createBatchPresentation(Commons.getUser(request.getSession()), batchPresentationClone);
             profile.addBatchPresentation(batchPresentationClone);
             profile.setActiveBatchPresentation(batchPresentationClone.getCategory(), batchPresentationClone.getName());
         } catch (Exception e) {
@@ -217,8 +215,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         try {
             BatchPresentation batchPresentation = getActiveBatchPresentation(profile, tableViewSetupForm.getBatchPresentationId());
             ProfileService profileService = Delegates.getProfileService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            profileService.deleteBatchPresentation(subject, batchPresentation);
+            profileService.deleteBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
             profile.deleteBatchPresentation(batchPresentation);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);

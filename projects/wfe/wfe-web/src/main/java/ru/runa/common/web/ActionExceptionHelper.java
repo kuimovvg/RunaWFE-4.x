@@ -35,7 +35,7 @@ import ru.runa.wfe.definition.DefinitionFileDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionNameMismatchException;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
-import ru.runa.wfe.execution.SuperProcessExistsException;
+import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.presentation.filter.FilterFormatException;
 import ru.runa.wfe.relation.RelationAlreadyExistException;
 import ru.runa.wfe.relation.RelationDoesNotExistException;
@@ -133,8 +133,8 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.EXCEPTION_DEFINITION_TYPE_NOT_PRESENT);
         } else if (e instanceof TaskAlreadyAcceptedException) {
             actionMessage = new ActionMessage(Messages.TASK_WAS_ALREADY_ACCEPTED, e.getMessage());
-        } else if (e instanceof SuperProcessExistsException) {
-            SuperProcessExistsException exc = (SuperProcessExistsException) e;
+        } else if (e instanceof ParentProcessExistsException) {
+            ParentProcessExistsException exc = (ParentProcessExistsException) e;
             actionMessage = new ActionMessage(Messages.PROCESS_HAS_SUPER_PROCESS, exc.getDefinitionName(), exc.getParentDefinitionName());
         } else if (e instanceof RelationDoesNotExistException) {
             actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_DOESNOT_EXISTS);

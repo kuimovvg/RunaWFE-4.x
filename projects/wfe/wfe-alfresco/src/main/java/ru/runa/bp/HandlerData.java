@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,6 +14,7 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.ProcessHierarchyUtils;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 /**
@@ -45,14 +44,14 @@ public class HandlerData {
         processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(context.getProcess().getHierarchySubProcess());
     }
 
-    public HandlerData(Map<String, ParamDef> inputParams, Map<String, ParamDef> outputParams, Subject subject, IVariableProvider variableProvider,
+    public HandlerData(Map<String, ParamDef> inputParams, Map<String, ParamDef> outputParams, User user, IVariableProvider variableProvider,
             WfTask task) {
         this.inputParams = inputParams;
         this.outputParams = outputParams;
         processId = task.getProcessId();
         taskName = task.getName();
         this.variableProvider = variableProvider;
-        WfProcess process = Delegates.getExecutionService().getProcess(subject, processId);
+        WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
         processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(process.getHierarchySubProcess());
     }
 

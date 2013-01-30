@@ -39,7 +39,7 @@ public class DeployDefinitionLinkTag extends LinkTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getSubject(), WorkflowSystemPermission.DEPLOY_DEFINITION, ASystem.INSTANCE);
+            return authorizationService.isAllowed(getUser(), WorkflowSystemPermission.DEPLOY_DEFINITION, ASystem.INSTANCE);
         } catch (Exception e) {
             return false;
         }

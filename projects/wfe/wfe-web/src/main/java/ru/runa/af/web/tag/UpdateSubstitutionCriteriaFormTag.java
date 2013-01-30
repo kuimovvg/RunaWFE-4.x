@@ -19,7 +19,6 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
@@ -75,8 +74,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
                 for (ParamDef paramDef : functionDef.getParams()) {
                     paramsDiv.append("<div>");
                     paramsDiv.append("<span>").append(paramDef.getMessage(pageContext)).append("</span>");
-                    paramsDiv.append("<span>").append(createEditElement(paramDef.getRenderer(), getSubject(), pageContext, "", i, false))
-                            .append("</span>");
+                    paramsDiv.append("<span>").append(createEditElement(paramDef.getRenderer(), pageContext, "", i, false)).append("</span>");
                     paramsDiv.append("</div>");
                 }
                 paramsDiv.append("</div>");
@@ -107,7 +105,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
     protected String getTitle() {
         SubstitutionService substitutionService = Delegates.getSubstitutionService();
         if (getIdentifiableId() != null) {
-            substitutionCriteria = substitutionService.getSubstitutionCriteria(getSubject(), getIdentifiableId());
+            substitutionCriteria = substitutionService.getSubstitutionCriteria(getUser(), getIdentifiableId());
         }
         return Messages.getMessage("substitutioncriteria.edit.title", pageContext);
     }
@@ -160,7 +158,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
                         }
                         ParamDef paramDef = functionDef.getParams().get(i);
                         table.addElement(createParameterTR(i, paramDef.getMessage(pageContext),
-                                createEditElement(paramDef.getRenderer(), getSubject(), pageContext, value, i, isEnabled)));
+                                createEditElement(paramDef.getRenderer(), pageContext, value, i, isEnabled)));
                     }
                 }
             }
@@ -193,7 +191,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
         return tr;
     }
 
-    private Element createEditElement(ParamRenderer renderer, Subject subject, PageContext pageContext, String value, int index, boolean enabled) {
+    private Element createEditElement(ParamRenderer renderer, PageContext pageContext, String value, int index, boolean enabled) {
         Span span = new Span();
         Input input = new Input(Input.TEXT, SubstitutionCriteriaForm.CONF_INPUT_NAME, value);
         input.setDisabled(!enabled);

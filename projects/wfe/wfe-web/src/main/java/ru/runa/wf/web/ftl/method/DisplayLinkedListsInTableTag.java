@@ -34,7 +34,7 @@ public class DisplayLinkedListsInTableTag extends FreemarkerTag {
             for (i = 0; i < lists.size(); i++) {
                 String headerVariableName = getParameterAs(String.class, i) + "_header";
                 Object o = variableProvider.getValue(headerVariableName);
-                String value = FormatCommons.getVarOut(o, subject, webHelper, variableProvider.getProcessId(), headerVariableName, 0, null);
+                String value = FormatCommons.getVarOut(o, webHelper, variableProvider.getProcessId(), headerVariableName, 0, null);
                 buffer.append("<td>").append(value).append("</td>");
             }
             buffer.append("</tr>");
@@ -43,7 +43,7 @@ public class DisplayLinkedListsInTableTag extends FreemarkerTag {
                 for (List<?> list : lists) {
                     Object o = (list.size() > i) ? list.get(i) : "";
                     String listVarName = getParameterAs(String.class, i);
-                    String value = FormatCommons.getVarOut(o, subject, webHelper, variableProvider.getProcessId(), listVarName, i, null);
+                    String value = FormatCommons.getVarOut(o, webHelper, variableProvider.getProcessId(), listVarName, i, null);
                     buffer.append("<td>").append(value).append("</td>");
                 }
                 buffer.append("</tr>");

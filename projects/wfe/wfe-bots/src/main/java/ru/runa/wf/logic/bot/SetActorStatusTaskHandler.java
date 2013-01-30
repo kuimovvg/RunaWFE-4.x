@@ -19,7 +19,6 @@ package ru.runa.wf.logic.bot;
 
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -30,6 +29,7 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Preconditions;
@@ -51,12 +51,12 @@ public class SetActorStatusTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) {
         ExecutorService executorDelegate = Delegates.getExecutorService();
         Long actorCode = variableProvider.getValueNotNull(Long.class, config.actorVariableName);
-        Actor actor = executorDelegate.getActorByCode(subject, actorCode);
+        Actor actor = executorDelegate.getActorByCode(user, actorCode);
         boolean isActive = variableProvider.getValueNotNull(Boolean.class, config.statusVariableName);
-        executorDelegate.setStatus(subject, actor.getId(), isActive);
+        executorDelegate.setStatus(user, actor.getId(), isActive);
         return null;
     }
 

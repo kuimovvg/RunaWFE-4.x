@@ -94,8 +94,8 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             try {
                 SubstitutionService substitutionService = Delegates.getSubstitutionService();
                 for (Long id : ids) {
-                    SubstitutionCriteria substitutionCriteria = substitutionService.getSubstitutionCriteria(getSubject(), id);
-                    substitutions.addAll(substitutionService.getBySubstitutionCriteria(getSubject(), substitutionCriteria));
+                    SubstitutionCriteria substitutionCriteria = substitutionService.getSubstitutionCriteria(getUser(), id);
+                    substitutions.addAll(substitutionService.getBySubstitutionCriteria(getUser(), substitutionCriteria));
                 }
             } catch (Exception e) {
                 handleException(e);
@@ -103,7 +103,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             for (Substitution substitution : substitutions) {
                 ExecutorService executorService = Delegates.getExecutorService();
                 try {
-                    Actor actor = executorService.getExecutor(getSubject(), substitution.getActorId());
+                    Actor actor = executorService.getExecutor(getUser(), substitution.getActorId());
                     message += "<li>" + actor.getFullName() + " (" + actor.getName() + ")</li>";
                 } catch (Exception e) {
                     handleException(e);
@@ -159,7 +159,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             List<SubstitutionCriteria> substitutionCriterias = null;
             try {
                 SubstitutionService substitutionService = Delegates.getSubstitutionService();
-                substitutionCriterias = substitutionService.getSubstitutionCriteriaAll(getSubject());
+                substitutionCriterias = substitutionService.getSubstitutionCriteriaAll(getUser());
             } catch (Exception e) {
                 return null;
             }

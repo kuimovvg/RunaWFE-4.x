@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.logic.bot.updatepermission.Method;
@@ -33,9 +31,9 @@ import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.collect.Lists;
@@ -55,7 +53,7 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         boolean allowed = true;
         if (settings.isConditionExists()) {
             String conditionVar = variableProvider.getValue(String.class, settings.getConditionVarName());
@@ -64,18 +62,18 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
             }
         }
         if (allowed) {
-            Long actorCode = SubjectPrincipalsHelper.getActor(subject).getCode();
+            Long actorCode = user.getCode();
             List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions(), actorCode);
             AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
             List<Collection<Permission>> allPermissions = Lists.newArrayListWithExpectedSize(executors.size());
-            Identifiable identifiable = Delegates.getExecutionService().getProcess(subject, task.getProcessId());
+            Identifiable identifiable = Delegates.getExecutionService().getProcess(user, task.getProcessId());
             List<Long> executorIds = Lists.newArrayList();
             for (Executor executor : executors) {
-                Collection<Permission> oldPermissions = authorizationService.getPermissions(subject, executor, identifiable);
+                Collection<Permission> oldPermissions = authorizationService.getPermissions(user, executor, identifiable);
                 allPermissions.add(getNewPermissions(oldPermissions, settings.getPermissions(), settings.getMethod()));
                 executorIds.add(executor.getId());
             }
-            authorizationService.setPermissions(subject, executorIds, allPermissions, identifiable);
+            authorizationService.setPermissions(user, executorIds, allPermissions, identifiable);
         }
         return null;
     }

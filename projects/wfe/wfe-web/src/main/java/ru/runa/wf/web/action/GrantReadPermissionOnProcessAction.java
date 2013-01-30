@@ -19,8 +19,6 @@ package ru.runa.wf.web.action;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
@@ -36,16 +34,21 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 
 /**
  * Created on 23.08.2004
  * 
- * @struts:action path="/grantReadPermissionOnProcess" name="idsForm" validate="true" input = "/WEB-INF/wf/manage_process.jsp"
- * @struts.action-forward name="success" path="/manage_process_permissions.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_process_permissions.do" redirect = "true"
- * @struts.action-forward name="failure_process_does_not_exist" path="/manage_processes.do" redirect = "true"
+ * @struts:action path="/grantReadPermissionOnProcess" name="idsForm"
+ *                validate="true" input = "/WEB-INF/wf/manage_process.jsp"
+ * @struts.action-forward name="success" path="/manage_process_permissions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/manage_process_permissions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure_process_does_not_exist"
+ *                        path="/manage_processes.do" redirect = "true"
  */
 public class GrantReadPermissionOnProcessAction extends GrantPermisionOnIdentifiableAction {
     public static final String ACTION_PATH = "/grantReadPermissionOnProcess";
@@ -60,12 +63,12 @@ public class GrantReadPermissionOnProcessAction extends GrantPermisionOnIdentifi
     }
 
     @Override
-    protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) throws AuthenticationException,
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) throws AuthenticationException,
             AuthorizationException {
         processExists = false;
         Identifiable result = null;
         try {
-            result = Delegates.getExecutionService().getProcess(subject, identifiableId);
+            result = Delegates.getExecutionService().getProcess(user, identifiableId);
             processExists = true;
         } catch (ProcessDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);

@@ -20,13 +20,11 @@ package ru.runa.wf.web.tag;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.TD;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.GroupState;
@@ -72,7 +70,7 @@ public class ListProcessesDefinitionsFormTag extends BatchReturningTitledFormTag
         try {
             DefinitionService definitionService = Delegates.getDefinitionService();
             BatchPresentation batchPresentation = getBatchPresentation();
-            List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(getSubject(), batchPresentation);
+            List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(getUser(), batchPresentation);
             PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, definitions.size());
             navigation.addPagingNavigationTable(tdFormElement);
             isButtonEnabled = isUndeployAllowed(definitions);
@@ -102,7 +100,7 @@ public class ListProcessesDefinitionsFormTag extends BatchReturningTitledFormTag
 
     private boolean isUndeployAllowed(List<WfDefinition> definitions) throws AuthenticationException {
         AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
-        for (boolean undeploy : authorizationService.isAllowed(getSubject(), DefinitionPermission.UNDEPLOY_DEFINITION, definitions)) {
+        for (boolean undeploy : authorizationService.isAllowed(getUser(), DefinitionPermission.UNDEPLOY_DEFINITION, definitions)) {
             if (undeploy) {
                 return true;
             }
@@ -114,14 +112,6 @@ public class ListProcessesDefinitionsFormTag extends BatchReturningTitledFormTag
 
         public EnvImpl(BatchPresentation batch) {
             batchPresentation = batch;
-        }
-
-        @Override
-        public Subject getSubject() {
-            if (subject == null) {
-                subject = SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
-            }
-            return subject;
         }
 
         @Override
@@ -154,7 +144,6 @@ public class ListProcessesDefinitionsFormTag extends BatchReturningTitledFormTag
             return null;
         }
 
-        Subject subject = null;
         BatchPresentation batchPresentation = null;
     }
 

@@ -111,11 +111,11 @@ public class CreateRelationLeftExecutorFormTag extends FormTag {
         Table table = new Table();
         TR tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_CREATE_RELATION_FROM, pageContext)));
-        tr.addElement(new ActorSelectTD(getSubject(), relationFromName, getExecutorName(), getExecutors()));
+        tr.addElement(new ActorSelectTD(relationFromName, getExecutorName(), getExecutors()));
         table.addElement(tr);
         tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_CREATE_RELATION_TO, pageContext)));
-        tr.addElement(new ActorSelectTD(getSubject(), relationToName, null, false));
+        tr.addElement(new ActorSelectTD(getUser(), relationToName, null, false));
         table.addElement(tr);
         tdFormElement.addElement(table);
         tdFormElement.addElement(new Input(Input.HIDDEN, "relationName", relationName));
@@ -128,10 +128,10 @@ public class CreateRelationLeftExecutorFormTag extends FormTag {
         Set<Executor> result = new HashSet<Executor>();
         try {
             ExecutorService executorService = Delegates.getExecutorService();
-            Executor ex = executorService.getExecutor(getSubject(), executorId);
+            Executor ex = executorService.getExecutor(getUser(), executorId);
             result.add(ex);
             BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-            for (Executor executor : executorService.getExecutorGroups(getSubject(), ex, batchPresentation, false)) {
+            for (Executor executor : executorService.getExecutorGroups(getUser(), ex, batchPresentation, false)) {
                 result.add(executor);
             }
         } catch (Exception e) {
@@ -143,7 +143,7 @@ public class CreateRelationLeftExecutorFormTag extends FormTag {
     private String getExecutorName() throws JspException {
         try {
             ExecutorService executorService = Delegates.getExecutorService();
-            return executorService.getExecutor(getSubject(), executorId).getName();
+            return executorService.getExecutor(getUser(), executorId).getName();
         } catch (Exception e) {
             return e.getMessage();
         }

@@ -1,11 +1,11 @@
 package ru.runa.wfe.script;
 
-import javax.security.auth.Subject;
-
 import org.w3c.dom.Element;
+
+import ru.runa.wfe.user.User;
 
 public interface CustomAdminScriptJob {
 
-	public void execute(Subject subject, Element element) throws Exception;
-	
+    public void execute(User user, Element element) throws Exception;
+
 }

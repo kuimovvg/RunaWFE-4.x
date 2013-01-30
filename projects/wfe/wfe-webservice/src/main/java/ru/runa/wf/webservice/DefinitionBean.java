@@ -12,7 +12,6 @@ import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.security.auth.Subject;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +25,13 @@ import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.logic.DefinitionLogic;
+import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
-import ru.runa.wfe.execution.SuperProcessExistsException;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.user.ActorPrincipal;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -47,28 +46,27 @@ public class DefinitionBean {
 
     @WebMethod
     public void deployProcessDefinitionLocal(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "file", targetNamespace = "http://runa.ru/workflow/webservices") String file,
             @WebParam(mode = Mode.IN, name = "type", targetNamespace = "http://runa.ru/workflow/webservices") String type)
             throws AuthenticationException, AuthorizationException, DefinitionAlreadyExistException, DefinitionArchiveFormatException,
             ParserConfigurationException {
         try {
             byte[] scriptBytes = Files.toByteArray(new File(file));
-            deployProcessDefinition(actor, scriptBytes, type);
+            deployProcessDefinition(user, scriptBytes, type);
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            throw new InternalApplicationException(e);
         }
     }
 
     @WebMethod
     public void deployProcessDefinition(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "parFiles", targetNamespace = "http://runa.ru/workflow/webservices") byte[] parBytes,
             @WebParam(mode = Mode.IN, name = "type", targetNamespace = "http://runa.ru/workflow/webservices") String type)
             throws AuthenticationException, AuthorizationException, DefinitionAlreadyExistException, DefinitionArchiveFormatException,
             ParserConfigurationException {
-        Subject subject = getSubject(actor);
-        definitionLogic.deployProcessDefinition(subject, parBytes, parseTypes(type));
+        definitionLogic.deployProcessDefinition(user, parBytes, parseTypes(type));
     }
 
     private List<String> parseTypes(String type) {
@@ -92,85 +90,67 @@ public class DefinitionBean {
 
     @WebMethod
     public void redeployProcessDefinitionLocal(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "definitionId", targetNamespace = "http://runa.ru/workflow/webservices") Long definitionId,
             @WebParam(mode = Mode.IN, name = "file", targetNamespace = "http://runa.ru/workflow/webservices") String file,
             @WebParam(mode = Mode.IN, name = "type", targetNamespace = "http://runa.ru/workflow/webservices") String type)
-            throws AuthenticationException, AuthorizationException, DefinitionAlreadyExistException, DefinitionArchiveFormatException,
-            ParserConfigurationException {
+            throws AuthenticationException, AuthorizationException, DefinitionAlreadyExistException, DefinitionArchiveFormatException {
         try {
             byte[] scriptBytes = Files.toByteArray(new File(file));
-            redeployProcessDefinition(actor, definitionId, scriptBytes, type);
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            redeployProcessDefinition(user, definitionId, scriptBytes, type);
+        } catch (IOException e) {
+            throw new ApplicationException(e);
         }
     }
 
     @WebMethod
     public void redeployProcessDefinition(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "definitionId", targetNamespace = "http://runa.ru/workflow/webservices") Long definitionId,
             @WebParam(mode = Mode.IN, name = "parBytes", targetNamespace = "http://runa.ru/workflow/webservices") byte[] parBytes,
             @WebParam(mode = Mode.IN, name = "type", targetNamespace = "http://runa.ru/workflow/webservices") String type)
-            throws AuthenticationException, AuthorizationException, DefinitionAlreadyExistException, DefinitionArchiveFormatException,
-            ParserConfigurationException {
-        try {
-            Subject subject = getSubject(actor);
-            definitionLogic.redeployProcessDefinition(subject, definitionId, parBytes, parseTypes(type));
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
-        }
+            throws AuthenticationException, AuthorizationException, DefinitionAlreadyExistException, DefinitionArchiveFormatException {
+        definitionLogic.redeployProcessDefinition(user, definitionId, parBytes, parseTypes(type));
     }
 
     @WebMethod
     public void undeployProcessDefinition(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name)
-            throws AuthenticationException, AuthorizationException, DefinitionDoesNotExistException, SuperProcessExistsException {
-        Subject subject = getSubject(actor);
-        definitionLogic.undeployProcessDefinition(subject, name);
+            throws AuthenticationException, AuthorizationException, DefinitionDoesNotExistException, ParentProcessExistsException {
+        definitionLogic.undeployProcessDefinition(user, name);
     }
 
     @WebMethod
     public WfDefinition getLatestProcessDefinition(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name)
             throws AuthenticationException, AuthorizationException, DefinitionDoesNotExistException {
-        Subject subject = getSubject(actor);
-        return definitionLogic.getLatestProcessDefinition(subject, name);
+        return definitionLogic.getLatestProcessDefinition(user, name);
     }
 
     @WebMethod
     public WfDefinition getProcessDefinition(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "definitionId", targetNamespace = "http://runa.ru/workflow/webservices") Long definitionId)
             throws AuthenticationException, AuthorizationException, DefinitionDoesNotExistException {
-        Subject subject = getSubject(actor);
-        return definitionLogic.getProcessDefinition(subject, definitionId);
+        return definitionLogic.getProcessDefinition(user, definitionId);
     }
 
     @WebMethod
     public WfDefinition getProcessDefinitionByProcessId(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "processId", targetNamespace = "http://runa.ru/workflow/webservices") Long processId)
             throws AuthenticationException, AuthorizationException, DefinitionDoesNotExistException, ProcessDoesNotExistException {
-        Subject subject = getSubject(actor);
-        return definitionLogic.getProcessDefinitionByProcessId(subject, processId);
-    }
-
-    private Subject getSubject(ActorPrincipal actor) {
-        Subject result = new Subject();
-        result.getPrincipals().add(actor);
-        return result;
+        return definitionLogic.getProcessDefinitionByProcessId(user, processId);
     }
 
     @WebMethod
     public List<WfDefinition> getLatestProcessDefinitions(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor)
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user)
             throws AuthenticationException, AuthorizationException, DefinitionDoesNotExistException {
-        Subject subject = getSubject(actor);
         BatchPresentation batchPresentation = BatchPresentationFactory.DEFINITIONS.createNonPaged();
-        return definitionLogic.getLatestProcessDefinitions(subject, batchPresentation);
+        return definitionLogic.getLatestProcessDefinitions(user, batchPresentation);
     }
 
 }

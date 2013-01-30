@@ -103,7 +103,7 @@ public class BotStationStatusTag extends TitledFormTag {
         boolean result = false;
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            result = authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
+            result = authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         } catch (Exception e) {
             throw new JspException(e);
         }

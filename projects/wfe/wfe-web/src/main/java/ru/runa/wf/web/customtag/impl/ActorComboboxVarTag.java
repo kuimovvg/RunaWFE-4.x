@@ -19,12 +19,12 @@ package ru.runa.wf.web.customtag.impl;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
 
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 10.11.2005
@@ -33,12 +33,12 @@ import ru.runa.wfe.user.Actor;
 public class ActorComboboxVarTag extends AbstractActorComboBoxVarTag {
 
     @Override
-    public List<Actor> getActors(Subject subject, String varName, Object varValue) {
+    public List<Actor> getActors(User user, String varName, Object varValue) {
         BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
-        return Delegates.getExecutorService().getActors(subject, batchPresentation);
+        return Delegates.getExecutorService().getActors(user, batchPresentation);
     }
 
     @Override

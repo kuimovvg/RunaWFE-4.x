@@ -17,8 +17,9 @@
  */
 package ru.runa.wf.web.customtag;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
+
+import ru.runa.wfe.user.User;
 
 /**
  * @since 1.0
@@ -26,5 +27,5 @@ import javax.servlet.jsp.PageContext;
  */
 @Deprecated
 public interface VarTag {
-    public String getHtml(Subject subject, String varName, Object varValue, PageContext pageContext) throws Exception;
+    public String getHtml(User user, String varName, Object varValue, PageContext pageContext) throws Exception;
 }

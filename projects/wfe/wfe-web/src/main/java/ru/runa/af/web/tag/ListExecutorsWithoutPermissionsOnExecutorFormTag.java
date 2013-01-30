@@ -42,6 +42,6 @@ public class ListExecutorsWithoutPermissionsOnExecutorFormTag extends ListExecut
     @Override
     protected Identifiable getIdentifiable() throws JspException {
         ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getExecutor(getSubject(), getIdentifiableId());
+        return executorService.getExecutor(getUser(), getIdentifiableId());
     }
 }

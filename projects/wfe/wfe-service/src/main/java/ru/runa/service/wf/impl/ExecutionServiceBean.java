@@ -25,7 +25,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -39,8 +38,8 @@ import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.audit.logic.AuditLogic;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
+import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
-import ru.runa.wfe.execution.SuperProcessExistsException;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
@@ -55,6 +54,7 @@ import ru.runa.wfe.task.logic.TaskLogic;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.logic.VariableLogic;
@@ -75,173 +75,173 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     private AuditLogic auditLogic;
 
     @Override
-    public Long startProcess(Subject subject, String definitionName, Map<String, Object> variablesMap) throws AuthorizationException,
+    public Long startProcess(User user, String definitionName, Map<String, Object> variablesMap) throws AuthorizationException,
             AuthenticationException, DefinitionDoesNotExistException, ValidationException {
-        Preconditions.checkNotNull(subject);
-        return executionLogic.startProcess(subject, definitionName, variablesMap);
+        Preconditions.checkNotNull(user);
+        return executionLogic.startProcess(user, definitionName, variablesMap);
     }
 
     @Override
-    public int getAllProcessesCount(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public int getAllProcessesCount(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return executionLogic.getAllProcessesCount(subject, batchPresentation);
+        return executionLogic.getAllProcessesCount(user, batchPresentation);
     }
 
     @Override
-    public List<WfProcess> getProcesses(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return executionLogic.getProcesses(subject, batchPresentation);
+        return executionLogic.getProcesses(user, batchPresentation);
     }
 
     @Override
-    public WfProcess getProcess(Subject subject, Long id) throws AuthorizationException, AuthenticationException, ProcessDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return executionLogic.getProcess(subject, id);
+    public WfProcess getProcess(User user, Long id) throws AuthorizationException, AuthenticationException, ProcessDoesNotExistException {
+        Preconditions.checkNotNull(user);
+        return executionLogic.getProcess(user, id);
     }
 
     @Override
-    public WfProcess getParentProcess(Subject subject, Long id) throws ProcessDoesNotExistException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return executionLogic.getParentProcess(subject, id);
+    public WfProcess getParentProcess(User user, Long id) throws ProcessDoesNotExistException, AuthenticationException {
+        Preconditions.checkNotNull(user);
+        return executionLogic.getParentProcess(user, id);
     }
 
     @Override
-    public List<WfTask> getTasks(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return taskLogic.getTasks(subject, batchPresentation);
+        return taskLogic.getTasks(user, batchPresentation);
     }
 
     @Override
-    public WfTask getTask(Subject subject, Long taskId) throws AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return taskLogic.getTask(subject, taskId);
+    public WfTask getTask(User user, Long taskId) throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
+        return taskLogic.getTask(user, taskId);
     }
 
     @Override
-    public List<WfVariable> getVariables(Subject subject, Long processId) throws AuthorizationException, ProcessDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return variableLogic.getVariables(subject, processId);
+    public List<WfVariable> getVariables(User user, Long processId) throws AuthorizationException, ProcessDoesNotExistException {
+        Preconditions.checkNotNull(user);
+        return variableLogic.getVariables(user, processId);
     }
 
     @Override
-    public Map<Long, Object> getVariableValuesFromProcesses(Subject subject, List<Long> processIds, String variableName) {
-        Preconditions.checkNotNull(subject);
-        return variableLogic.getVariableValueFromProcesses(subject, processIds, variableName);
+    public Map<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName) {
+        Preconditions.checkNotNull(user);
+        return variableLogic.getVariableValueFromProcesses(user, processIds, variableName);
     }
 
     @Override
-    public WfVariable getVariable(Subject subject, Long processId, String variableName) throws AuthorizationException {
-        Preconditions.checkNotNull(subject);
-        return variableLogic.getVariable(subject, processId, variableName);
+    public WfVariable getVariable(User user, Long processId, String variableName) throws AuthorizationException {
+        Preconditions.checkNotNull(user);
+        return variableLogic.getVariable(user, processId, variableName);
     }
 
     @Override
-    public void updateVariables(Subject subject, Long processId, Map<String, Object> variables) throws ProcessDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        variableLogic.updateVariables(subject, processId, variables);
+    public void updateVariables(User user, Long processId, Map<String, Object> variables) throws ProcessDoesNotExistException {
+        Preconditions.checkNotNull(user);
+        variableLogic.updateVariables(user, processId, variables);
     }
 
     @Override
-    public void completeTask(Subject subject, Long taskId, Map<String, Object> variables) throws AuthorizationException, AuthenticationException,
+    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws AuthorizationException, AuthenticationException,
             TaskDoesNotExistException, ExecutorDoesNotExistException, ValidationException {
-        Preconditions.checkNotNull(subject);
-        taskLogic.completeTask(subject, taskId, variables);
+        Preconditions.checkNotNull(user);
+        taskLogic.completeTask(user, taskId, variables);
     }
 
     @Override
-    public void cancelProcess(Subject subject, Long processId) throws AuthorizationException, AuthenticationException, ProcessDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        executionLogic.cancelProcess(subject, processId);
+    public void cancelProcess(User user, Long processId) throws AuthorizationException, AuthenticationException, ProcessDoesNotExistException {
+        Preconditions.checkNotNull(user);
+        executionLogic.cancelProcess(user, processId);
     }
 
     @Override
-    public List<WfSwimlane> getSwimlanes(Subject subject, Long processId) throws AuthorizationException, AuthenticationException,
+    public List<WfSwimlane> getSwimlanes(User user, Long processId) throws AuthorizationException, AuthenticationException,
             ProcessDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return taskLogic.getSwimlanes(subject, processId);
+        Preconditions.checkNotNull(user);
+        return taskLogic.getSwimlanes(user, processId);
     }
 
     @Override
-    public List<WfTask> getActiveTasks(Subject subject, Long processId) throws AuthorizationException, AuthenticationException,
+    public List<WfTask> getActiveTasks(User user, Long processId) throws AuthorizationException, AuthenticationException,
             ProcessDoesNotExistException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return taskLogic.getActiveTasks(subject, processId);
+        Preconditions.checkNotNull(user);
+        return taskLogic.getActiveTasks(user, processId);
     }
 
     @Override
-    public byte[] getProcessDiagram(Subject subject, Long processId, Long taskId, Long childProcessId) throws AuthorizationException,
+    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId) throws AuthorizationException,
             AuthenticationException, ProcessDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return executionLogic.getProcessDiagram(subject, processId, taskId, childProcessId);
+        Preconditions.checkNotNull(user);
+        return executionLogic.getProcessDiagram(user, processId, taskId, childProcessId);
     }
 
     @Override
-    public byte[] getProcessHistoryDiagram(Subject subject, Long processId, Long taskId) throws AuthorizationException, AuthenticationException,
+    public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId) throws AuthorizationException, AuthenticationException,
             ProcessDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return executionLogic.getProcessHistoryDiagram(subject, processId, taskId);
+        Preconditions.checkNotNull(user);
+        return executionLogic.getProcessHistoryDiagram(user, processId, taskId);
     }
 
     @Override
-    public List<GraphElementPresentation> getProcessUIHistoryData(Subject subject, Long processId, Long taskId) throws AuthorizationException,
+    public List<GraphElementPresentation> getProcessUIHistoryData(User user, Long processId, Long taskId) throws AuthorizationException,
             AuthenticationException, ProcessDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return executionLogic.getProcessUIHistoryData(subject, processId, taskId);
+        Preconditions.checkNotNull(user);
+        return executionLogic.getProcessUIHistoryData(user, processId, taskId);
     }
 
     @Override
-    public List<GraphElementPresentation> getProcessGraphElements(Subject subject, Long processId) throws AuthenticationException,
-            AuthorizationException {
-        Preconditions.checkNotNull(subject);
-        return executionLogic.getProcessGraphElements(subject, processId);
+    public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId) throws AuthenticationException, AuthorizationException {
+        Preconditions.checkNotNull(user);
+        return executionLogic.getProcessGraphElements(user, processId);
     }
 
     @Override
-    public void assignSwimlane(Subject subject, Long processId, String swimlaneName, Executor executor) throws AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        taskLogic.assignSwimlane(subject, processId, swimlaneName, executor);
+    public void assignSwimlane(User user, Long processId, String swimlaneName, Executor executor) throws AuthenticationException {
+        Preconditions.checkNotNull(user);
+        taskLogic.assignSwimlane(user, processId, swimlaneName, executor);
     }
 
     @Override
-    public void assignTask(Subject subject, Long taskId, Executor previousOwner, Actor actor) throws AuthenticationException,
-            TaskAlreadyAcceptedException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        taskLogic.assignTask(subject, taskId, previousOwner, actor);
+    public void assignTask(User user, Long taskId, Executor previousOwner, Actor actor) throws AuthenticationException, TaskAlreadyAcceptedException,
+            ExecutorDoesNotExistException {
+        Preconditions.checkNotNull(user);
+        taskLogic.assignTask(user, taskId, previousOwner, actor);
     }
 
     @Override
-    public ProcessLogs getProcessLogs(Subject subject, ProcessLogFilter filter) {
-        Preconditions.checkNotNull(subject);
-        return auditLogic.getProcessLogs(subject, filter);
+    public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter) {
+        Preconditions.checkNotNull(user);
+        return auditLogic.getProcessLogs(user, filter);
     }
 
     @Override
-    public void markTaskOpened(Subject subject, Long taskId) throws AuthenticationException, TaskDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        taskLogic.markTaskOpened(subject, taskId);
+    public void markTaskOpened(User user, Long taskId) throws AuthenticationException, TaskDoesNotExistException {
+        Preconditions.checkNotNull(user);
+        taskLogic.markTaskOpened(user, taskId);
     }
 
     @Override
-    public void removeProcesses(Subject subject, Date startDate, Date finishDate, String name, int version, Long id, Long idTill,
-            boolean onlyFinished, boolean dateInterval) throws AuthenticationException, ProcessDoesNotExistException, SuperProcessExistsException {
-        Preconditions.checkNotNull(subject);
-        // archivingLogic.removeProcesses(subject, startDate, finishDate, name, version, id, idTill, onlyFinished, dateInterval);
+    public void removeProcesses(User user, Date startDate, Date finishDate, String name, int version, Long id, Long idTill, boolean onlyFinished,
+            boolean dateInterval) throws AuthenticationException, ProcessDoesNotExistException, ParentProcessExistsException {
+        Preconditions.checkNotNull(user);
+        // archivingLogic.removeProcesses(user, startDate, finishDate, name,
+        // version, id, idTill, onlyFinished, dateInterval);
     }
 
     @Override
-    public List<SystemLog> getSystemLogs(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return auditLogic.getSystemLogs(subject, batchPresentation);
+        return auditLogic.getSystemLogs(user, batchPresentation);
     }
 
     @Override
-    public int getSystemLogsCount(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public int getSystemLogsCount(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return auditLogic.getSystemLogsCount(subject, batchPresentation);
+        return auditLogic.getSystemLogsCount(user, batchPresentation);
     }
 }

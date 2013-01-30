@@ -20,13 +20,11 @@ package ru.runa.wf.web.tag;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.TD;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.GroupState;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.PagingNavigationHelper;
@@ -64,10 +62,12 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
             BatchPresentation batchPresentation = getBatchPresentation();
             ExecutionService executionService = Delegates.getExecutionService();
 
-            int instanceCount = executionService.getAllProcessesCount(getSubject(), batchPresentation);
-            // we must call getProcesses before obtaining current page number since it can be changed after getProcesses call
-            List<WfProcess> processes = executionService.getProcesses(getSubject(), batchPresentation);
-            // batchPresentation must be recalculated since the current page number might changed
+            int instanceCount = executionService.getAllProcessesCount(getUser(), batchPresentation);
+            // we must call getProcesses before obtaining current page number
+            // since it can be changed after getProcesses call
+            List<WfProcess> processes = executionService.getProcesses(getUser(), batchPresentation);
+            // batchPresentation must be recalculated since the current page
+            // number might changed
             batchPresentation = getBatchPresentation();
             PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, instanceCount, getReturnAction());
             navigation.addPagingNavigationTable(tdFormElement);
@@ -102,14 +102,6 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
         }
 
         @Override
-        public Subject getSubject() {
-            if (subject == null) {
-                subject = SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
-            }
-            return subject;
-        }
-
-        @Override
         public PageContext getPageContext() {
             return pageContext;
         }
@@ -139,7 +131,6 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
             return null;
         }
 
-        Subject subject = null;
         BatchPresentation batchPresentation = null;
     }
 

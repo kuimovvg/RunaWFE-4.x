@@ -19,8 +19,6 @@ package ru.runa.service.delegate;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.af.ExecutorService;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthenticationException;
@@ -33,6 +31,7 @@ import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorNotInGroupException;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 
 /*
  * Created on 10.08.2004
@@ -48,40 +47,39 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public <T extends Executor> T create(Subject subject, T executor) throws ExecutorAlreadyExistsException, AuthorizationException,
+    public <T extends Executor> T create(User user, T executor) throws ExecutorAlreadyExistsException, AuthorizationException,
             AuthenticationException {
-        return getExecutorService().create(subject, executor);
+        return getExecutorService().create(user, executor);
     }
 
     @Override
-    public void remove(Subject subject, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getExecutorService().remove(subject, ids);
+    public void remove(User user, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+        getExecutorService().remove(user, ids);
     }
 
     @Override
-    public void remove(Subject subject, Executor executor) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getExecutorService().remove(subject, executor);
+    public void remove(User user, Executor executor) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+        getExecutorService().remove(user, executor);
     }
 
     @Override
-    public void update(Subject subject, Executor executor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException,
-            AuthorizationException {
-        getExecutorService().update(subject, executor);
+    public void update(User user, Executor executor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException, AuthorizationException {
+        getExecutorService().update(user, executor);
     }
 
     @Override
-    public List<Executor> getAll(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        return getExecutorService().getAll(subject, batchPresentation);
+    public List<Executor> getAll(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        return getExecutorService().getAll(user, batchPresentation);
     }
 
     @Override
-    public int getAllCount(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        return getExecutorService().getAllCount(subject, batchPresentation);
+    public int getAllCount(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        return getExecutorService().getAllCount(user, batchPresentation);
     }
 
     @Override
-    public List<Actor> getActors(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        return getExecutorService().getActors(subject, batchPresentation);
+    public List<Actor> getActors(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        return getExecutorService().getActors(user, batchPresentation);
     }
 
     @Override
@@ -90,164 +88,161 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public List<Group> getGroups(Subject subject, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException,
+    public List<Group> getGroups(User user, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+        return getExecutorService().getGroups(user, ids);
+    }
+
+    @Override
+    public <T extends Executor> T getExecutor(User user, String name) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        return getExecutorService().getGroups(subject, ids);
+        return (T) getExecutorService().getExecutor(user, name);
     }
 
     @Override
-    public <T extends Executor> T getExecutor(Subject subject, String name) throws ExecutorDoesNotExistException, AuthorizationException,
-            AuthenticationException {
-        return (T) getExecutorService().getExecutor(subject, name);
-    }
-
-    @Override
-    public void addExecutorsToGroup(Subject subject, List<? extends Executor> executors, Group group) throws ExecutorAlreadyInGroupException,
+    public void addExecutorsToGroup(User user, List<? extends Executor> executors, Group group) throws ExecutorAlreadyInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getExecutorService().addExecutorsToGroup(subject, executors, group);
+        getExecutorService().addExecutorsToGroup(user, executors, group);
     }
 
     @Override
-    public void addExecutorsToGroup(Subject subject, List<Long> executorIds, Long groupId) throws ExecutorAlreadyInGroupException,
+    public void addExecutorsToGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorAlreadyInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getExecutorService().addExecutorsToGroup(subject, executorIds, groupId);
+        getExecutorService().addExecutorsToGroup(user, executorIds, groupId);
     }
 
     @Override
-    public void addExecutorToGroups(Subject subject, Executor executor, List<Group> groups) throws ExecutorAlreadyInGroupException,
+    public void addExecutorToGroups(User user, Executor executor, List<Group> groups) throws ExecutorAlreadyInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getExecutorService().addExecutorToGroups(subject, executor, groups);
+        getExecutorService().addExecutorToGroups(user, executor, groups);
     }
 
     @Override
-    public void addExecutorToGroups(Subject subject, Long executorId, List<Long> groupIds) throws ExecutorAlreadyInGroupException,
+    public void addExecutorToGroups(User user, Long executorId, List<Long> groupIds) throws ExecutorAlreadyInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getExecutorService().addExecutorToGroups(subject, executorId, groupIds);
+        getExecutorService().addExecutorToGroups(user, executorId, groupIds);
     }
 
     @Override
-    public void removeExecutorsFromGroup(Subject subject, List<? extends Executor> executors, Group group) throws ExecutorNotInGroupException,
+    public void removeExecutorsFromGroup(User user, List<? extends Executor> executors, Group group) throws ExecutorNotInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getExecutorService().removeExecutorsFromGroup(subject, executors, group);
+        getExecutorService().removeExecutorsFromGroup(user, executors, group);
     }
 
     @Override
-    public void removeExecutorsFromGroup(Subject subject, List<Long> executorIds, Long groupId) throws ExecutorNotInGroupException,
+    public void removeExecutorsFromGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorNotInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getExecutorService().removeExecutorsFromGroup(subject, executorIds, groupId);
+        getExecutorService().removeExecutorsFromGroup(user, executorIds, groupId);
     }
 
     @Override
-    public void removeExecutorFromGroups(Subject subject, Executor executor, List<Group> groups) throws ExecutorNotInGroupException,
+    public void removeExecutorFromGroups(User user, Executor executor, List<Group> groups) throws ExecutorNotInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getExecutorService().removeExecutorFromGroups(subject, executor, groups);
+        getExecutorService().removeExecutorFromGroups(user, executor, groups);
     }
 
     @Override
-    public void removeExecutorFromGroups(Subject subject, Long executorId, List<Long> groupIds) throws ExecutorNotInGroupException,
+    public void removeExecutorFromGroups(User user, Long executorId, List<Long> groupIds) throws ExecutorNotInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getExecutorService().removeExecutorFromGroups(subject, executorId, groupIds);
+        getExecutorService().removeExecutorFromGroups(user, executorId, groupIds);
     }
 
     @Override
-    public List<Executor> getGroupChildren(Subject subject, Group group, BatchPresentation batchPresentation, boolean isExclude)
+    public List<Executor> getGroupChildren(User user, Group group, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        return getExecutorService().getGroupChildren(subject, group, batchPresentation, isExclude);
+        return getExecutorService().getGroupChildren(user, group, batchPresentation, isExclude);
     }
 
     @Override
-    public int getGroupChildrenCount(Subject subject, Group group, BatchPresentation batchPresentation, boolean isExclude)
+    public int getGroupChildrenCount(User user, Group group, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        return getExecutorService().getGroupChildrenCount(subject, group, batchPresentation, isExclude);
+        return getExecutorService().getGroupChildrenCount(user, group, batchPresentation, isExclude);
     }
 
     @Override
-    public List<Actor> getGroupActors(Subject subject, Group group) throws AuthenticationException, AuthorizationException,
-            ExecutorDoesNotExistException {
-        return getExecutorService().getGroupActors(subject, group);
+    public List<Actor> getGroupActors(User user, Group group) throws AuthenticationException, AuthorizationException, ExecutorDoesNotExistException {
+        return getExecutorService().getGroupActors(user, group);
     }
 
     @Override
-    public List<Group> getExecutorGroups(Subject subject, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
+    public List<Group> getExecutorGroups(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        return getExecutorService().getExecutorGroups(subject, executor, batchPresentation, isExclude);
+        return getExecutorService().getExecutorGroups(user, executor, batchPresentation, isExclude);
     }
 
     @Override
-    public int getExecutorGroupsCount(Subject subject, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
+    public int getExecutorGroupsCount(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        return getExecutorService().getExecutorGroupsCount(subject, executor, batchPresentation, isExclude);
+        return getExecutorService().getExecutorGroupsCount(user, executor, batchPresentation, isExclude);
     }
 
     @Override
-    public void setPassword(Subject subject, Actor actor, String password) throws ExecutorDoesNotExistException, AuthorizationException,
+    public void setPassword(User user, Actor actor, String password) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException, WeakPasswordException {
-        getExecutorService().setPassword(subject, actor, password);
+        getExecutorService().setPassword(user, actor, password);
     }
 
     @Override
-    public void setStatus(Subject subject, Long actorId, boolean isActive) throws AuthorizationException, AuthenticationException,
+    public void setStatus(User user, Long actorId, boolean isActive) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        getExecutorService().setStatus(subject, actorId, isActive);
+        getExecutorService().setStatus(user, actorId, isActive);
     }
 
     @Override
-    public <T extends Executor> T getExecutor(Subject subject, Long id) throws ExecutorDoesNotExistException, AuthorizationException,
+    public <T extends Executor> T getExecutor(User user, Long id) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        return (T) getExecutorService().getExecutor(subject, id);
+        return (T) getExecutorService().getExecutor(user, id);
     }
 
     @Override
-    public List<Executor> getExecutors(Subject subject, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException,
+    public List<Executor> getExecutors(User user, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        return getExecutorService().getExecutors(subject, ids);
+        return getExecutorService().getExecutors(user, ids);
     }
 
     @Override
-    public Actor getActorByCode(Subject subject, Long code) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
-        return getExecutorService().getActorByCode(subject, code);
+    public Actor getActorByCode(User user, Long code) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
+        return getExecutorService().getActorByCode(user, code);
     }
 
     @Override
-    public boolean isExecutorInGroup(Subject subject, Executor executor, Group group) throws AuthorizationException, AuthenticationException,
+    public boolean isExecutorInGroup(User user, Executor executor, Group group) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        return getExecutorService().isExecutorInGroup(subject, executor, group);
+        return getExecutorService().isExecutorInGroup(user, executor, group);
     }
 
     @Override
-    public boolean isExecutorExist(Subject subject, String executorName) throws AuthorizationException, AuthenticationException,
+    public boolean isExecutorExist(User user, String executorName) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        return getExecutorService().isExecutorExist(subject, executorName);
+        return getExecutorService().isExecutorExist(user, executorName);
     }
 
     @Override
-    public List<Actor> getActorsByCodes(Subject subject, List<Long> codes) throws AuthorizationException, AuthenticationException,
+    public List<Actor> getActorsByCodes(User user, List<Long> codes) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        return getExecutorService().getActorsByCodes(subject, codes);
+        return getExecutorService().getActorsByCodes(user, codes);
     }
 
     @Override
-    public List<Actor> getAvailableActorsByCodes(Subject subject, List<Long> codes) throws AuthorizationException, AuthenticationException,
+    public List<Actor> getAvailableActorsByCodes(User user, List<Long> codes) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        return getExecutorService().getAvailableActorsByCodes(subject, codes);
+        return getExecutorService().getAvailableActorsByCodes(user, codes);
     }
 
     @Override
-    public List<Actor> getActorsByExecutorIds(Subject subject, List<Long> executorIds) throws ExecutorDoesNotExistException, AuthorizationException,
+    public List<Actor> getActorsByExecutorIds(User user, List<Long> executorIds) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        return getExecutorService().getActorsByExecutorIds(subject, executorIds);
+        return getExecutorService().getActorsByExecutorIds(user, executorIds);
     }
 
     @Override
-    public List<Actor> getActors(Subject subject, List<Long> ids) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException {
-        return getExecutorService().getActors(subject, ids);
+    public List<Actor> getActors(User user, List<Long> ids) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
+        return getExecutorService().getActors(user, ids);
     }
 
     @Override
-    public List<Executor> getAllExecutorsFromGroup(Subject subject, Group group) throws ExecutorDoesNotExistException, AuthorizationException,
+    public List<Executor> getAllExecutorsFromGroup(User user, Group group) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        return getExecutorService().getAllExecutorsFromGroup(subject, group);
+        return getExecutorService().getAllExecutorsFromGroup(user, group);
     }
 
 }

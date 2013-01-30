@@ -19,7 +19,7 @@ public class DisplayListElementTag extends FreemarkerTag {
         if (index < list.size()) {
             object = list.get(index);
         }
-        return FormatCommons.getVarOut(object, subject, webHelper, variableProvider.getProcessId(), listVarName, index, null);
+        return FormatCommons.getVarOut(object, webHelper, variableProvider.getProcessId(), listVarName, index, null);
     }
 
 }

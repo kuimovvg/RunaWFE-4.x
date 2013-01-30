@@ -48,7 +48,7 @@ public class SystemLogActorExtractor implements IdentifiableExtractor {
             if (cache.containsKey(systemLog.getActorId())) {
                 return cache.get(systemLog.getActorId());
             }
-            Actor actor = Delegates.getExecutorService().getActorByCode(env.getSubject(), systemLog.getActorId());
+            Actor actor = Delegates.getExecutorService().getActorByCode(env.getUser(), systemLog.getActorId());
             // Actor may be null, but it is correct result (if deleted).
             cache.put(systemLog.getActorId(), actor);
             return actor;

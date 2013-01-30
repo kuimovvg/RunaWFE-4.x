@@ -27,7 +27,6 @@ import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.security.auth.Subject;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -53,9 +52,9 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.WeakPasswordException;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ActorPrincipal;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
 import com.google.common.io.Closeables;
@@ -72,23 +71,21 @@ public class BotBean {
 
     @WebMethod
     public void createBotStation(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name,
             @WebParam(mode = Mode.IN, name = "address", targetNamespace = "http://runa.ru/workflow/webservices") String address)
             throws BotStationAlreadyExistsException, AuthorizationException, AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
         BotStation botStation = new BotStation(name, address);
-        botLogic.createBotStation(subject, botStation);
+        botLogic.createBotStation(user, botStation);
     }
 
     @WebMethod
     public void updateBotStation(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name,
             @WebParam(mode = Mode.IN, name = "newName", targetNamespace = "http://runa.ru/workflow/webservices") String newName,
             @WebParam(mode = Mode.IN, name = "address", targetNamespace = "http://runa.ru/workflow/webservices") String address)
             throws BotStationAlreadyExistsException, AuthorizationException, AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
         BotStation botStation = botLogic.getBotStationNotNull(name);
         if (newName != null) {
             botStation.setName(newName);
@@ -96,47 +93,43 @@ public class BotBean {
         if (address != null) {
             botStation.setAddress(address);
         }
-        botLogic.updateBotStation(subject, botStation);
+        botLogic.updateBotStation(user, botStation);
     }
 
     @WebMethod
     public void removeBotStation(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name)
             throws BotStationDoesNotExistException, AuthorizationException, AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
         BotStation botStation = botLogic.getBotStationNotNull(name);
-        botLogic.removeBotStation(subject, botStation.getId());
+        botLogic.removeBotStation(user, botStation.getId());
     }
 
     @WebMethod
-    public void createBot(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+    public void createBot(@WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "botStationName", targetNamespace = "http://runa.ru/workflow/webservices") String botStationName,
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name,
             @WebParam(mode = Mode.IN, name = "password", targetNamespace = "http://runa.ru/workflow/webservices") String password,
             @WebParam(mode = Mode.IN, name = "startTimeout", targetNamespace = "http://runa.ru/workflow/webservices") Long startTimeout)
             throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException, WeakPasswordException, BotAlreadyExistsException,
             AuthorizationException, AuthenticationException, AttributeRequiredException {
-        Subject subject = getSubject(actorPrincipal);
         if (botStationName == null || botStationName.length() == 0) {
             throw new AttributeRequiredException("BotRunner", "botStationName");
         }
         Actor actor = new Actor(name, "bot");
-        executorLogic.create(subject, actor);
-        executorLogic.setPassword(subject, actor, password);
+        executorLogic.create(user, actor);
+        executorLogic.setPassword(user, actor, password);
 
         Bot bot = new Bot();
         bot.setBotStation(botLogic.getBotStationNotNull(botStationName));
         bot.setUsername(name);
         bot.setPassword(password);
         bot.setStartTimeout(startTimeout);
-        botLogic.createBot(subject, bot);
+        botLogic.createBot(user, bot);
     }
 
     @WebMethod
-    public void updateBot(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+    public void updateBot(@WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name,
             @WebParam(mode = Mode.IN, name = "newName", targetNamespace = "http://runa.ru/workflow/webservices") String newName,
             @WebParam(mode = Mode.IN, name = "botStationName", targetNamespace = "http://runa.ru/workflow/webservices") String botStationName,
@@ -144,8 +137,7 @@ public class BotBean {
             @WebParam(mode = Mode.IN, name = "password", targetNamespace = "http://runa.ru/workflow/webservices") String password,
             @WebParam(mode = Mode.IN, name = "startTimeout", targetNamespace = "http://runa.ru/workflow/webservices") Long startTimeout)
             throws BotAlreadyExistsException, AuthorizationException, BotDoesNotExistException {
-        Subject subject = getSubject(actorPrincipal);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), name);
+        Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), name);
         if (newName != null) {
             bot.setUsername(newName);
         }
@@ -156,29 +148,26 @@ public class BotBean {
         if (newBotStationName != null) {
             bot.setBotStation(botLogic.getBotStationNotNull(newBotStationName));
         }
-        botLogic.updateBot(subject, bot);
+        botLogic.updateBot(user, bot);
     }
 
     @WebMethod
-    public void removeBot(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+    public void removeBot(@WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "botStationName", targetNamespace = "http://runa.ru/workflow/webservices") String botStationName,
             @WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name)
             throws AuthorizationException, AuthenticationException, BotDoesNotExistException {
-        Subject subject = getSubject(actorPrincipal);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), name);
-        botLogic.removeBot(subject, bot.getId());
+        Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), name);
+        botLogic.removeBot(user, bot.getId());
     }
 
     @WebMethod
     public void addConfigurationsToBot(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "botStationName", targetNamespace = "http://runa.ru/workflow/webservices") String botStationName,
             @WebParam(mode = Mode.IN, name = "botName", targetNamespace = "http://runa.ru/workflow/webservices") String botName,
             @WebParam(mode = Mode.IN, name = "configurations", targetNamespace = "http://runa.ru/workflow/webservices") BotConfigurationDescr[] botConfigurations)
             throws IOException, AuthorizationException, AuthenticationException, BotTaskAlreadyExistsException {
-        Subject subject = getSubject(actorPrincipal);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), botName);
+        Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), botName);
         for (BotConfigurationDescr botConfigurationDescr : botConfigurations) {
             String name = botConfigurationDescr.getName();
             String handler = botConfigurationDescr.getHandler();
@@ -198,36 +187,34 @@ public class BotBean {
             }
             byte[] configuration = getBotTaskConfiguration(config);
             task.setConfiguration(configuration);
-            botLogic.createBotTask(subject, task);
+            botLogic.createBotTask(user, task);
         }
     }
 
     @WebMethod
     public void removeConfigurationsToBot(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "botStationName", targetNamespace = "http://runa.ru/workflow/webservices") String botStationName,
             @WebParam(mode = Mode.IN, name = "botName", targetNamespace = "http://runa.ru/workflow/webservices") String botName,
             @WebParam(mode = Mode.IN, name = "configurations", targetNamespace = "http://runa.ru/workflow/webservices") BotConfigurationDescr[] botConfigurations)
             throws AuthorizationException, AuthenticationException, BotTaskDoesNotExistException {
-        Subject subject = getSubject(actorPrincipal);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), botName);
+        Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), botName);
         for (BotConfigurationDescr botConfigurationDescr : botConfigurations) {
             String name = botConfigurationDescr.getName();
-            BotTask task = botLogic.getBotTaskNotNull(subject, bot.getId(), name);
-            botLogic.removeBotTask(subject, task.getId());
+            BotTask task = botLogic.getBotTaskNotNull(user, bot.getId(), name);
+            botLogic.removeBotTask(user, task.getId());
         }
     }
 
     @WebMethod
     public void removeAllConfigurationsFromBot(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "botStationName", targetNamespace = "http://runa.ru/workflow/webservices") String botStationName,
             @WebParam(mode = Mode.IN, name = "botName", targetNamespace = "http://runa.ru/workflow/webservices") String botName)
             throws AuthorizationException, AuthenticationException, BotTaskDoesNotExistException {
-        Subject subject = getSubject(actorPrincipal);
-        Bot bot = botLogic.getBotNotNull(subject, botLogic.getBotStationNotNull(botStationName).getId(), botName);
-        for (BotTask task : botLogic.getBotTasks(subject, bot.getId())) {
-            botLogic.removeBotTask(subject, task.getId());
+        Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), botName);
+        for (BotTask task : botLogic.getBotTasks(user, bot.getId())) {
+            botLogic.removeBotTask(user, task.getId());
         }
     }
 
@@ -268,11 +255,5 @@ public class BotBean {
         } finally {
             Closeables.closeQuietly(is);
         }
-    }
-
-    private Subject getSubject(ActorPrincipal actor) {
-        Subject result = new Subject();
-        result.getPrincipals().add(actor);
-        return result;
     }
 }

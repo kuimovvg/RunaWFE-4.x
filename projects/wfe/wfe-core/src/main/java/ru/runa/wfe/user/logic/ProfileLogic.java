@@ -19,8 +19,6 @@ package ru.runa.wfe.user.logic;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
@@ -29,11 +27,11 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ProfileDAO;
 
 import com.google.common.collect.Lists;
@@ -48,9 +46,9 @@ public class ProfileLogic extends CommonLogic {
     @Autowired
     private ProfileDAO profileDAO;
 
-    public void updateProfiles(Subject subject, List<Profile> profiles) throws AuthorizationException {
+    public void updateProfiles(User user, List<Profile> profiles) throws AuthorizationException {
         for (Profile profile : profiles) {
-            checkPermissionAllowed(subject, profile.getActor(), ExecutorPermission.UPDATE);
+            checkPermissionAllowed(user, profile.getActor(), ExecutorPermission.UPDATE);
             profileDAO.merge(profile);
         }
     }
@@ -65,45 +63,41 @@ public class ProfileLogic extends CommonLogic {
         return profile;
     }
 
-    public List<Profile> getProfiles(Subject subject, List<Long> actorIds) throws ExecutorDoesNotExistException {
+    public List<Profile> getProfiles(User user, List<Long> actorIds) throws ExecutorDoesNotExistException {
         List<Profile> result = Lists.newArrayListWithCapacity(actorIds.size());
         for (Long actorId : actorIds) {
             Actor actor = executorDAO.getActor(actorId);
-            checkPermissionAllowed(subject, actor, Permission.READ);
+            checkPermissionAllowed(user, actor, Permission.READ);
             result.add(getProfileNotNull(actor));
         }
         return result;
     }
 
-    public Profile getProfile(Subject subject, Long actorId) throws AuthorizationException, ExecutorDoesNotExistException {
+    public Profile getProfile(User user, Long actorId) throws AuthorizationException, ExecutorDoesNotExistException {
         Actor actor = executorDAO.getActor(actorId);
-        checkPermissionAllowed(subject, actor, Permission.READ);
+        checkPermissionAllowed(user, actor, Permission.READ);
         return getProfileNotNull(actor);
     }
 
-    public void changeActiveBatchPresentation(Subject subject, String batchPresentationId, String newActiveBatchName) {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        Profile profile = profileDAO.get(actor);
+    public void changeActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
+        Profile profile = profileDAO.get(user);
         profile.setActiveBatchPresentation(batchPresentationId, newActiveBatchName);
     }
 
-    public void deleteBatchPresentation(Subject subject, BatchPresentation batchPresentation) {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        Profile profile = profileDAO.get(actor);
+    public void deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
+        Profile profile = profileDAO.get(user);
         profile.deleteBatchPresentation(batchPresentation);
     }
 
-    public BatchPresentation createBatchPresentation(Subject subject, BatchPresentation batchPresentation) {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        Profile profile = profileDAO.get(actor);
+    public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) {
+        Profile profile = profileDAO.get(user);
         profile.addBatchPresentation(batchPresentation);
         profile.setActiveBatchPresentation(batchPresentation.getCategory(), batchPresentation.getName());
         return batchPresentation;
     }
 
-    public void saveBatchPresentation(Subject subject, BatchPresentation batchPresentation) {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        Profile profile = profileDAO.get(actor);
+    public void saveBatchPresentation(User user, BatchPresentation batchPresentation) {
+        Profile profile = profileDAO.get(user);
         if (BatchPresentationConsts.DEFAULT_NAME.equals(batchPresentation.getName())) {
             throw new InternalApplicationException("default batch presentation cannot be changed");
         }

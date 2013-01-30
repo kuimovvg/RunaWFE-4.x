@@ -21,16 +21,14 @@ package ru.runa.wf.web.customtag.impl;
 import java.util.Collections;
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.os.func.DemoSubordinateRecursive;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationComparator;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 /**
@@ -46,8 +44,8 @@ public class DemoSubordinateAutoCompletingComboboxVarTag extends AbstractAutoCom
     ExecutorDAO executorDAO;
 
     @Override
-    public List<Actor> getActors(Subject subject, String varName, Object varValue) {
-        List<Actor> subordinates = getSubordinates(subject);
+    public List<Actor> getActors(User user, String varName, Object varValue) {
+        List<Actor> subordinates = getSubordinates(user);
         BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };
@@ -56,12 +54,11 @@ public class DemoSubordinateAutoCompletingComboboxVarTag extends AbstractAutoCom
         return subordinates;
     }
 
-    private List<Actor> getSubordinates(Subject subject) {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
+    private List<Actor> getSubordinates(User user) {
         Object[] parameters = new Object[1];
-        parameters[0] = Long.toString(actor.getCode());
+        parameters[0] = Long.toString(user.getCode());
         List<Actor> actors = new DemoSubordinateRecursive().getSubordinateActors(executorDAO, parameters);
-        actors.add(0, actor);
+        actors.add(0, user);
         return actors;
     }
 

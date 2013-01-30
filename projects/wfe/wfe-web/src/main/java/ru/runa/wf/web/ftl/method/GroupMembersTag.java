@@ -24,7 +24,6 @@ import org.apache.ecs.html.Select;
 
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
 import freemarker.template.TemplateModelException;
@@ -38,7 +37,7 @@ public class GroupMembersTag extends FreemarkerTag {
         String actorVarName = getParameterAs(String.class, 0);
         Group group = getParameterAs(Group.class, 1);
         String view = getParameterAs(String.class, 2);
-        List<Actor> actors = Delegates.getExecutorService().getGroupActors(subject, group);
+        List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, group);
         if ("all".equals(view)) {
             return createSelect(actorVarName, actors).toString();
         } else if ("raw".equals(view)) {
@@ -49,7 +48,7 @@ public class GroupMembersTag extends FreemarkerTag {
     }
 
     protected Select createSelect(String selectName, List<Actor> actors) {
-        Actor defaultSelectedActor = SubjectPrincipalsHelper.getActor(subject);
+        Actor defaultSelectedActor = user;
         Select select = new Select();
         select.setName(selectName);
         for (Actor actor : actors) {

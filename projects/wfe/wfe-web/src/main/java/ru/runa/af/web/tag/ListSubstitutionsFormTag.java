@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import org.apache.ecs.Entities;
@@ -82,10 +81,9 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
         SubstitutionService substitutionService = Delegates.getSubstitutionService();
         try {
             Actor actor = (Actor) getExecutor();
-            Subject subject = getSubject();
-            List<Substitution> substitutions = substitutionService.get(subject, actor.getId());
+            List<Substitution> substitutions = substitutionService.get(getUser(), actor.getId());
             AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
-            boolean disabled = !authorizationService.isAllowed(subject, ExecutorPermission.UPDATE, actor);
+            boolean disabled = !authorizationService.isAllowed(getUser(), ExecutorPermission.UPDATE, actor);
             RowBuilder substitutionRowBuilder = new SubstitutionRowBuilder(substitutions, disabled);
             HeaderBuilder substitutionHeaderBuilder = new SubstitutionHeaderBuilder();
             TableBuilder tableBuilder = new TableBuilder();
@@ -195,7 +193,7 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
                 string = Messages.getMessage("terminator.edit.title", pageContext);
             } else {
                 try {
-                    string = SubstitutionHelper.getUserFriendlyOrgFunction(getSubject(), pageContext, substitution.getSubstitutionOrgFunction());
+                    string = SubstitutionHelper.getUserFriendlyOrgFunction(getUser(), pageContext, substitution.getSubstitutionOrgFunction());
                 } catch (Exception e) {
                     string = "<span class='error'>" + substitution.getSubstitutionOrgFunction() + "</span>";
                 }

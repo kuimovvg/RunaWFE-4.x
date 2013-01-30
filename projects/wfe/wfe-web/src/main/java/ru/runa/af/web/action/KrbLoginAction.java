@@ -18,10 +18,6 @@
 
 package ru.runa.af.web.action;
 
-import java.security.Principal;
-import java.util.HashSet;
-
-import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,9 +29,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
@@ -46,14 +42,15 @@ import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ActorPrincipal;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 
 /**
  * This class provides Kerberos auth for IE
  * 
  * @struts:action path="/krblogin"
- * @struts.action-forward name="success" path="/manage_tasks.do" redirect = "true"
+ * @struts.action-forward name="success" path="/manage_tasks.do" redirect =
+ *                        "true"
  * @struts.action-forward name="failure" path="/start.do" redirect = "true"
  */
 public class KrbLoginAction extends Action {
@@ -62,8 +59,7 @@ public class KrbLoginAction extends Action {
     private final static String DEFAULT_TAB_FORWARD_NAME = "manage_tasks";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         try {
             if (!WebResources.isKrbSupported()) {
@@ -79,19 +75,15 @@ public class KrbLoginAction extends Action {
             }
             String actorName = domainActorName.substring(0, atIndex);
             Actor actor = Delegates.getExecutorService().getActorCaseInsensitive(actorName);
-            ActorPrincipal ap = new ActorPrincipal(actor, SubjectPrincipalsHelper.encodeActor(actor));
-
-            HashSet<Principal> princ = new HashSet<Principal>();
-            princ.add(ap);
-            Subject subject = new Subject(false, princ, new HashSet<Object>(), new HashSet<Object>());
+            User user = SubjectPrincipalsHelper.createUser(actor);
 
             SystemService systemService = Delegates.getSystemService();
-            systemService.login(subject, ASystem.INSTANCE);
+            systemService.login(user, ASystem.INSTANCE);
             HttpSession session = request.getSession();
             ProfileService profileService = Delegates.getProfileService();
-            Profile profile = profileService.getProfile(subject);
+            Profile profile = profileService.getProfile(user);
             ProfileHttpSessionHelper.setProfile(profile, session);
-            SubjectHttpSessionHelper.addActorSubject(subject, session);
+            Commons.setUser(user, session);
             TabHttpSessionHelper.setTabForwardName(DEFAULT_TAB_FORWARD_NAME, session);
             saveToken(request);
         } catch (Exception e) {

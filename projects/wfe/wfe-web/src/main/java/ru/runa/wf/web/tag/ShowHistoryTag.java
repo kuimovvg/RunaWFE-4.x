@@ -72,7 +72,7 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
             ExecutionService executionService = Delegates.getExecutionService();
             ProcessLogFilter filter = new ProcessLogFilter(getIdentifiableId());
             filter.setIncludeSubprocessLogs(true);
-            ProcessLogs logs = executionService.getProcessLogs(getSubject(), filter);
+            ProcessLogs logs = executionService.getProcessLogs(getUser(), filter);
             int maxLevel = logs.getMaxSubprocessLevel();
             List<TR> rows = Lists.newArrayList();
             TD mergedEventDateTD = null;
@@ -133,7 +133,7 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                     continue;
                 }
                 try {
-                    Executor executor = Delegates.getExecutorService().getExecutor(getSubject(), name);
+                    Executor executor = Delegates.getExecutorService().getExecutor(getUser(), name);
                     result[i] = createExecutorLink(executor);
                 } catch (Exception e) {
                     log.warn("could not get executor '" + name + "': " + e.getMessage());
@@ -148,7 +148,7 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                 String executors = "{ ";
                 for (Long id : ids) {
                     try {
-                        Executor executor = Delegates.getExecutorService().getExecutor(getSubject(), id);
+                        Executor executor = Delegates.getExecutorService().getExecutor(getUser(), id);
                         executors += createExecutorLink(executor);
                         executors += "&nbsp;";
                     } catch (Exception e) {

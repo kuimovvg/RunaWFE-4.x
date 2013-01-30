@@ -22,7 +22,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
-import javax.security.auth.Subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +31,7 @@ import ru.runa.wfe.commons.ftl.FormHashModel;
 import ru.runa.wfe.commons.ftl.FreemarkerProcessor;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -127,7 +127,7 @@ public class EmailUtils {
         }
     }
 
-    public static void sendTaskMessage(Subject subject, EmailConfig config, Interaction interaction, IVariableProvider variableProvider,
+    public static void sendTaskMessage(User user, EmailConfig config, Interaction interaction, IVariableProvider variableProvider,
             IFileDataProvider fileDataProvider) throws Exception {
         config.applySubstitutions(variableProvider);
         byte[] formBytes;
@@ -139,7 +139,7 @@ public class EmailUtils {
         } else {
             formBytes = config.getMessage().getBytes(Charsets.UTF_8);
         }
-        FormHashModel model = new FormHashModel(subject, variableProvider, null);
+        FormHashModel model = new FormHashModel(user, variableProvider, null);
         String formMessage = FreemarkerProcessor.process(formBytes, model);
 
         Map<String, String> replacements = new HashMap<String, String>();

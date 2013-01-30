@@ -19,10 +19,7 @@ package ru.runa.af.web.action;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.security.Principal;
-import java.util.HashSet;
 
-import javax.security.auth.Subject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,9 +37,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
@@ -53,15 +50,19 @@ import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ActorPrincipal;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 
 /**
- * This class provides NTLM SSO for Firefox and probably for IE with fixed bag http://support.microsoft.com/default.aspx?scid=kb;en-us;902409&sd=rss&spid=2073. In order to enable
- * SSO support in IE enable options/advances/security/Enable Integrated Windows Authentication Created on 10.11.2005
+ * This class provides NTLM SSO for Firefox and probably for IE with fixed bag
+ * http ://support.microsoft.com/default.aspx?scid=kb;en-us;902409&sd=rss&spid=
+ * 2073. In order to enable SSO support in IE enable
+ * options/advances/security/Enable Integrated Windows Authentication Created on
+ * 10.11.2005
  * 
  * @struts:action path="/ntlmlogin"
- * @struts.action-forward name="success" path="/manage_tasks.do" redirect = "true"
+ * @struts.action-forward name="success" path="/manage_tasks.do" redirect =
+ *                        "true"
  * @struts.action-forward name="failure" path="/start.do" redirect = "true"
  */
 public class NTLMLoginAction extends Action {
@@ -70,8 +71,7 @@ public class NTLMLoginAction extends Action {
     private final static String DEFAULT_TAB_FORWARD_NAME = "manage_tasks";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         try {
             if (!WebResources.isNTLMSupported()) {
@@ -85,20 +85,16 @@ public class NTLMLoginAction extends Action {
             SmbSession.logon(dc, ntlmPasswordAuthentication);
             String actorName = ntlmPasswordAuthentication.getUsername();
             Actor actor = Delegates.getExecutorService().getActorCaseInsensitive(actorName);
-            ActorPrincipal ap = new ActorPrincipal(actor, SubjectPrincipalsHelper.encodeActor(actor));
-
-            HashSet<Principal> princ = new HashSet<Principal>();
-            princ.add(ap);
-            Subject subject = new Subject(false, princ, new HashSet<Object>(), new HashSet<Object>());
+            User user = SubjectPrincipalsHelper.createUser(actor);
 
             SystemService systemService = Delegates.getSystemService();
-            systemService.login(subject, ASystem.INSTANCE);
+            systemService.login(user, ASystem.INSTANCE);
 
             HttpSession session = request.getSession();
             ProfileService profileService = Delegates.getProfileService();
-            Profile profile = profileService.getProfile(subject);
+            Profile profile = profileService.getProfile(user);
             ProfileHttpSessionHelper.setProfile(profile, session);
-            SubjectHttpSessionHelper.addActorSubject(subject, session);
+            Commons.setUser(user, session);
             TabHttpSessionHelper.setTabForwardName(DEFAULT_TAB_FORWARD_NAME, session);
             saveToken(request);
         } catch (Exception e) {

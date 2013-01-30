@@ -1,6 +1,5 @@
 package ru.runa.wf.web.ftl;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.common.web.StrutsWebHelper;
@@ -9,13 +8,14 @@ import ru.runa.wf.web.TaskFormBuilder;
 import ru.runa.wfe.commons.ftl.FormHashModel;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 
 public class FreemarkerTaskFormBuilder extends BaseTaskFormBuilder implements TaskFormBuilder {
 
     @Override
-    public String build(Subject subject, PageContext pageContext, Interaction interaction, WfTask task) throws Exception {
-        FormHashModel model = new FormHashModel(subject, new DelegateProcessVariableProvider(subject, task.getProcessId()), new StrutsWebHelper(
-                pageContext));
+    public String build(User user, PageContext pageContext, Interaction interaction, WfTask task) throws Exception {
+        FormHashModel model = new FormHashModel(user, new DelegateProcessVariableProvider(user, task.getProcessId()),
+                new StrutsWebHelper(pageContext));
         return build(interaction, model, task.getDefinitionId());
     }
 

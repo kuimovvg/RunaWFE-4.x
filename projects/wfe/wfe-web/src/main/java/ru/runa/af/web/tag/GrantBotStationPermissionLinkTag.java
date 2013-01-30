@@ -36,7 +36,7 @@ public class GrantBotStationPermissionLinkTag extends LinkTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getSubject(), Permission.UPDATE_PERMISSIONS, BotStation.INSTANCE);
+            return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, BotStation.INSTANCE);
         } catch (Exception e) {
             return false;
         }

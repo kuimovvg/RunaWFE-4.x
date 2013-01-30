@@ -23,7 +23,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -43,6 +42,7 @@ import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorNotInGroupException;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
 import com.google.common.base.Preconditions;
@@ -58,31 +58,31 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     private ExecutorLogic executorLogic;
 
     @Override
-    public void update(Subject subject, Executor executor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+    public void update(User user, Executor executor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
-        executorLogic.update(subject, executor);
+        executorLogic.update(user, executor);
     }
 
     @Override
-    public List<Executor> getAll(Subject subject, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(subject);
+    public List<Executor> getAll(User user, BatchPresentation batchPresentation) {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return executorLogic.getAll(subject, batchPresentation);
+        return executorLogic.getAll(user, batchPresentation);
     }
 
     @Override
-    public int getAllCount(Subject subject, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(subject);
+    public int getAllCount(User user, BatchPresentation batchPresentation) {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return executorLogic.getAllCount(subject, batchPresentation);
+        return executorLogic.getAllCount(user, batchPresentation);
     }
 
     @Override
-    public List<Actor> getActors(Subject subject, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(subject);
+    public List<Actor> getActors(User user, BatchPresentation batchPresentation) {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return executorLogic.getActors(subject, batchPresentation);
+        return executorLogic.getActors(user, batchPresentation);
     }
 
     @Override
@@ -92,240 +92,237 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public Executor getExecutor(Subject subject, String name) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return executorLogic.getExecutor(subject, name);
+    public Executor getExecutor(User user, String name) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
+        return executorLogic.getExecutor(user, name);
     }
 
     @Override
-    public void remove(Subject subject, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public void remove(User user, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(ids);
-        executorLogic.remove(subject, ids);
+        executorLogic.remove(user, ids);
     }
 
     @Override
-    public void remove(Subject subject, Executor executor) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public void remove(User user, Executor executor) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
-        executorLogic.remove(subject, executor);
+        executorLogic.remove(user, executor);
     }
 
     @Override
-    public <T extends Executor> T create(Subject subject, T executor) throws ExecutorAlreadyExistsException, AuthorizationException {
-        Preconditions.checkNotNull(subject);
+    public <T extends Executor> T create(User user, T executor) throws ExecutorAlreadyExistsException, AuthorizationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
-        return executorLogic.create(subject, executor);
+        return executorLogic.create(user, executor);
     }
 
     @Override
-    public void addExecutorsToGroup(Subject subject, List<? extends Executor> executors, Group group) throws ExecutorAlreadyInGroupException,
+    public void addExecutorsToGroup(User user, List<? extends Executor> executors, Group group) throws ExecutorAlreadyInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executors);
         Preconditions.checkNotNull(group);
-        executorLogic.addExecutorsToGroup(subject, executors, group);
+        executorLogic.addExecutorsToGroup(user, executors, group);
     }
 
     @Override
-    public void addExecutorsToGroup(Subject subject, List<Long> executorIds, Long groupId) throws ExecutorAlreadyInGroupException,
+    public void addExecutorsToGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorAlreadyInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executorIds);
-        executorLogic.addExecutorsToGroup(subject, executorIds, groupId);
+        executorLogic.addExecutorsToGroup(user, executorIds, groupId);
     }
 
     @Override
-    public void addExecutorToGroups(Subject subject, Executor executor, List<Group> groups) throws ExecutorAlreadyInGroupException,
+    public void addExecutorToGroups(User user, Executor executor, List<Group> groups) throws ExecutorAlreadyInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
         Preconditions.checkNotNull(groups);
-        executorLogic.addExecutorToGroups(subject, executor, groups);
+        executorLogic.addExecutorToGroups(user, executor, groups);
     }
 
     @Override
-    public void addExecutorToGroups(Subject subject, Long executorId, List<Long> groupIds) throws ExecutorAlreadyInGroupException,
+    public void addExecutorToGroups(User user, Long executorId, List<Long> groupIds) throws ExecutorAlreadyInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(groupIds);
-        executorLogic.addExecutorToGroups(subject, executorId, groupIds);
+        executorLogic.addExecutorToGroups(user, executorId, groupIds);
     }
 
     @Override
-    public List<Executor> getGroupChildren(Subject subject, Group group, BatchPresentation batchPresentation, boolean isExclude)
+    public List<Executor> getGroupChildren(User user, Group group, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(group);
         Preconditions.checkNotNull(batchPresentation);
-        return executorLogic.getGroupChildren(subject, group, batchPresentation, isExclude);
+        return executorLogic.getGroupChildren(user, group, batchPresentation, isExclude);
     }
 
     @Override
-    public int getGroupChildrenCount(Subject subject, Group group, BatchPresentation batchPresentation, boolean isExclude)
+    public int getGroupChildrenCount(User user, Group group, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(group);
         Preconditions.checkNotNull(batchPresentation);
-        return executorLogic.getGroupChildrenCount(subject, group, batchPresentation, isExclude);
+        return executorLogic.getGroupChildrenCount(user, group, batchPresentation, isExclude);
     }
 
     @Override
-    public List<Actor> getGroupActors(Subject subject, Group group) throws AuthenticationException, AuthorizationException,
-            ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+    public List<Actor> getGroupActors(User user, Group group) throws AuthenticationException, AuthorizationException, ExecutorDoesNotExistException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(group);
-        return executorLogic.getGroupActors(subject, group);
+        return executorLogic.getGroupActors(user, group);
     }
 
     @Override
-    public void removeExecutorsFromGroup(Subject subject, List<? extends Executor> executors, Group group) throws ExecutorNotInGroupException,
+    public void removeExecutorsFromGroup(User user, List<? extends Executor> executors, Group group) throws ExecutorNotInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executors);
         Preconditions.checkNotNull(group);
-        executorLogic.removeExecutorsFromGroup(subject, executors, group);
+        executorLogic.removeExecutorsFromGroup(user, executors, group);
     }
 
     @Override
-    public void removeExecutorsFromGroup(Subject subject, List<Long> executorIds, Long groupId) throws ExecutorNotInGroupException,
+    public void removeExecutorsFromGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorNotInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executorIds);
-        executorLogic.removeExecutorsFromGroup(subject, executorIds, groupId);
+        executorLogic.removeExecutorsFromGroup(user, executorIds, groupId);
     }
 
     @Override
-    public void removeExecutorFromGroups(Subject subject, Executor executor, List<Group> groups) throws ExecutorNotInGroupException,
+    public void removeExecutorFromGroups(User user, Executor executor, List<Group> groups) throws ExecutorNotInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
         Preconditions.checkNotNull(groups);
-        executorLogic.removeExecutorFromGroups(subject, executor, groups);
+        executorLogic.removeExecutorFromGroups(user, executor, groups);
     }
 
     @Override
-    public void removeExecutorFromGroups(Subject subject, Long executorId, List<Long> groupIds) throws ExecutorNotInGroupException,
+    public void removeExecutorFromGroups(User user, Long executorId, List<Long> groupIds) throws ExecutorNotInGroupException,
             ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(groupIds);
-        executorLogic.removeExecutorFromGroups(subject, executorId, groupIds);
+        executorLogic.removeExecutorFromGroups(user, executorId, groupIds);
     }
 
     @Override
-    public void setPassword(Subject subject, Actor actor, String password) throws ExecutorDoesNotExistException, AuthorizationException,
+    public void setPassword(User user, Actor actor, String password) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException, WeakPasswordException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(actor);
-        executorLogic.setPassword(subject, actor, password);
+        executorLogic.setPassword(user, actor, password);
     }
 
     @Override
-    public void setStatus(Subject subject, Long actorId, boolean isActive) throws AuthorizationException, AuthenticationException,
+    public void setStatus(User user, Long actorId, boolean isActive) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        executorLogic.setStatus(subject, actorId, isActive);
+        Preconditions.checkNotNull(user);
+        executorLogic.setStatus(user, actorId, isActive);
     }
 
     @Override
-    public List<Group> getExecutorGroups(Subject subject, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
+    public List<Group> getExecutorGroups(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
         Preconditions.checkNotNull(batchPresentation);
-        return executorLogic.getExecutorGroups(subject, executor, batchPresentation, isExclude);
+        return executorLogic.getExecutorGroups(user, executor, batchPresentation, isExclude);
     }
 
     @Override
-    public int getExecutorGroupsCount(Subject subject, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
+    public int getExecutorGroupsCount(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
         Preconditions.checkNotNull(batchPresentation);
-        return executorLogic.getExecutorGroupsCount(subject, executor, batchPresentation, isExclude);
+        return executorLogic.getExecutorGroupsCount(user, executor, batchPresentation, isExclude);
     }
 
     @Override
-    public List<Executor> getAllExecutorsFromGroup(Subject subject, Group group) throws ExecutorDoesNotExistException, AuthorizationException,
+    public List<Executor> getAllExecutorsFromGroup(User user, Group group) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(group);
-        return executorLogic.getAllExecutorsFromGroup(subject, group);
+        return executorLogic.getAllExecutorsFromGroup(user, group);
     }
 
     @Override
-    public boolean isExecutorInGroup(Subject subject, Executor executor, Group group) throws ExecutorDoesNotExistException, AuthorizationException,
+    public boolean isExecutorInGroup(User user, Executor executor, Group group) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
         Preconditions.checkNotNull(group);
-        return executorLogic.isExecutorInGroup(subject, executor, group);
+        return executorLogic.isExecutorInGroup(user, executor, group);
     }
 
     @Override
-    public boolean isExecutorExist(Subject subject, String executorName) throws ExecutorDoesNotExistException, AuthorizationException,
+    public boolean isExecutorExist(User user, String executorName) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return executorLogic.isExecutorExist(subject, executorName);
+        Preconditions.checkNotNull(user);
+        return executorLogic.isExecutorExist(user, executorName);
     }
 
     @Override
-    public Executor getExecutor(Subject subject, Long id) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return executorLogic.getExecutor(subject, id);
+    public Executor getExecutor(User user, Long id) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
+        return executorLogic.getExecutor(user, id);
     }
 
     @Override
-    public List<Executor> getExecutors(Subject subject, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException,
+    public List<Executor> getExecutors(User user, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(ids);
-        return executorLogic.getExecutors(subject, ids);
+        return executorLogic.getExecutors(user, ids);
     }
 
     @Override
-    public List<Group> getGroups(Subject subject, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException,
-            AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public List<Group> getGroups(User user, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(ids);
-        return executorLogic.getGroups(subject, ids);
+        return executorLogic.getGroups(user, ids);
     }
 
     @Override
-    public Actor getActorByCode(Subject subject, Long code) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return executorLogic.getActorByCode(subject, code);
+    public Actor getActorByCode(User user, Long code) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
+        Preconditions.checkNotNull(user);
+        return executorLogic.getActorByCode(user, code);
     }
 
     @Override
-    public List<Actor> getActorsByCodes(Subject subject, List<Long> codes) throws AuthorizationException, AuthenticationException,
+    public List<Actor> getActorsByCodes(User user, List<Long> codes) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(codes);
-        return executorLogic.getActorsByCodes(subject, codes);
+        return executorLogic.getActorsByCodes(user, codes);
     }
 
     @Override
-    public List<Actor> getActorsByExecutorIds(Subject subject, List<Long> executorIds) throws ExecutorDoesNotExistException, AuthorizationException,
+    public List<Actor> getActorsByExecutorIds(User user, List<Long> executorIds) throws ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executorIds);
-        return executorLogic.getActorsByExecutorIds(subject, executorIds);
+        return executorLogic.getActorsByExecutorIds(user, executorIds);
     }
 
     @Override
-    public List<Actor> getAvailableActorsByCodes(Subject subject, List<Long> codes) throws AuthorizationException, AuthenticationException,
+    public List<Actor> getAvailableActorsByCodes(User user, List<Long> codes) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(codes);
-        return executorLogic.getAvailableActorsByCodes(subject, codes);
+        return executorLogic.getAvailableActorsByCodes(user, codes);
     }
 
     @Override
-    public List<Actor> getActors(Subject subject, List<Long> ids) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+    public List<Actor> getActors(User user, List<Long> ids) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(ids);
-        return executorLogic.getActors(subject, ids);
+        return executorLogic.getActors(user, ids);
     }
 }

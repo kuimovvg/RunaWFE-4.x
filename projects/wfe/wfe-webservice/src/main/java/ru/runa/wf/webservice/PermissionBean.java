@@ -28,7 +28,6 @@ import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -50,9 +49,9 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.PermissionNotFoundException;
 import ru.runa.wfe.security.UnapplicablePermissionException;
 import ru.runa.wfe.security.logic.AuthorizationLogic;
-import ru.runa.wfe.user.ActorPrincipal;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
 import com.google.common.collect.Sets;
@@ -73,339 +72,316 @@ public class PermissionBean {
 
     @WebMethod
     public void addPermissionsOnActor(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "actor", targetNamespace = "http://runa.ru/workflow/webservices") String actorStr,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        Identifiable actor = executorLogic.getActor(subject, actorStr);
-        addPermissionOnIdentifiable(subject, executor, actor, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        Identifiable actor = executorLogic.getActor(user, actorStr);
+        addPermissionOnIdentifiable(user, executor, actor, permissionList);
     }
 
     @WebMethod
     public void setPermissionsOnActor(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "actor", targetNamespace = "http://runa.ru/workflow/webservices") String actorStr,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        Identifiable actor = executorLogic.getActor(subject, actorStr);
-        setPermissionOnIdentifiable(subject, executor, actor, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        Identifiable actor = executorLogic.getActor(user, actorStr);
+        setPermissionOnIdentifiable(user, executor, actor, permissionList);
     }
 
     @WebMethod
     public void removePermissionsOnActor(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "actor", targetNamespace = "http://runa.ru/workflow/webservices") String actorStr,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        Identifiable actor = executorLogic.getActor(subject, actorStr);
-        removePermissionOnIdentifiable(subject, executor, actor, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        Identifiable actor = executorLogic.getActor(user, actorStr);
+        removePermissionOnIdentifiable(user, executor, actor, permissionList);
     }
 
     @WebMethod
     public void addPermissionsOnGroup(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "group", targetNamespace = "http://runa.ru/workflow/webservices") String groupStr,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        Identifiable group = executorLogic.getGroup(subject, groupStr);
-        addPermissionOnIdentifiable(subject, executor, group, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        Identifiable group = executorLogic.getGroup(user, groupStr);
+        addPermissionOnIdentifiable(user, executor, group, permissionList);
     }
 
     @WebMethod
     public void setPermissionsOnGroup(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "group", targetNamespace = "http://runa.ru/workflow/webservices") String groupStr,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        Identifiable group = executorLogic.getGroup(subject, groupStr);
-        setPermissionOnIdentifiable(subject, executor, group, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        Identifiable group = executorLogic.getGroup(user, groupStr);
+        setPermissionOnIdentifiable(user, executor, group, permissionList);
     }
 
     @WebMethod
     public void removePermissionsOnGroup(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "group", targetNamespace = "http://runa.ru/workflow/webservices") String groupStr,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        Identifiable group = executorLogic.getGroup(subject, groupStr);
-        removePermissionOnIdentifiable(subject, executor, group, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        Identifiable group = executorLogic.getGroup(user, groupStr);
+        removePermissionOnIdentifiable(user, executor, group, permissionList);
     }
 
     @WebMethod
     public void addPermissionsOnSystem(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        addPermissionOnIdentifiable(subject, executor, ASystem.INSTANCE, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        addPermissionOnIdentifiable(user, executor, ASystem.INSTANCE, permissionList);
     }
 
     @WebMethod
     public void setPermissionsOnSystem(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        setPermissionOnIdentifiable(subject, executor, ASystem.INSTANCE, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        setPermissionOnIdentifiable(user, executor, ASystem.INSTANCE, permissionList);
     }
 
     @WebMethod
     public void removePermissionsOnSystem(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        removePermissionOnIdentifiable(subject, executor, ASystem.INSTANCE, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        removePermissionOnIdentifiable(user, executor, ASystem.INSTANCE, permissionList);
     }
 
     @WebMethod
     public void addPermissionsOnDefinition(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "definition", targetNamespace = "http://runa.ru/workflow/webservices") String definitionStr,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException, DefinitionDoesNotExistException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        Identifiable definition = definitionLogic.getLatestProcessDefinition(subject, definitionStr);
-        addPermissionOnIdentifiable(subject, executor, definition, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        Identifiable definition = definitionLogic.getLatestProcessDefinition(user, definitionStr);
+        addPermissionOnIdentifiable(user, executor, definition, permissionList);
     }
 
     @WebMethod
     public void setPermissionsOnDefinition(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "definition", targetNamespace = "http://runa.ru/workflow/webservices") String definitionStr,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException, DefinitionDoesNotExistException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        Identifiable definition = definitionLogic.getLatestProcessDefinition(subject, definitionStr);
-        setPermissionOnIdentifiable(subject, executor, definition, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        Identifiable definition = definitionLogic.getLatestProcessDefinition(user, definitionStr);
+        setPermissionOnIdentifiable(user, executor, definition, permissionList);
     }
 
     @WebMethod
     public void removePermissionsOnDefinition(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "definition", targetNamespace = "http://runa.ru/workflow/webservices") String definitionStr,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException, DefinitionDoesNotExistException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        Identifiable definition = definitionLogic.getLatestProcessDefinition(subject, definitionStr);
-        removePermissionOnIdentifiable(subject, executor, definition, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        Identifiable definition = definitionLogic.getLatestProcessDefinition(user, definitionStr);
+        removePermissionOnIdentifiable(user, executor, definition, permissionList);
     }
 
     @WebMethod
     public void addPermissionsOnProcesses(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "processName", targetNamespace = "http://runa.ru/workflow/webservices") String processName,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        List<WfProcess> processes = executionLogic.getProcessesForDefinitionName(subject, processName);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        List<WfProcess> processes = executionLogic.getProcessesForDefinitionName(user, processName);
         for (WfProcess process : processes) {
-            addPermissionOnIdentifiable(subject, executor, process, permissionList);
+            addPermissionOnIdentifiable(user, executor, process, permissionList);
         }
 
     }
 
     @WebMethod
     public void setPermissionsOnProcesses(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "processName", targetNamespace = "http://runa.ru/workflow/webservices") String processName,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        List<WfProcess> processes = executionLogic.getProcessesForDefinitionName(subject, processName);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        List<WfProcess> processes = executionLogic.getProcessesForDefinitionName(user, processName);
         for (WfProcess process : processes) {
-            setPermissionOnIdentifiable(subject, executor, process, permissionList);
+            setPermissionOnIdentifiable(user, executor, process, permissionList);
         }
     }
 
     @WebMethod
     public void removePermissionsOnProcesses(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "processName", targetNamespace = "http://runa.ru/workflow/webservices") String processName,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        List<WfProcess> processes = executionLogic.getProcessesForDefinitionName(subject, processName);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        List<WfProcess> processes = executionLogic.getProcessesForDefinitionName(user, processName);
         for (WfProcess process : processes) {
-            removePermissionOnIdentifiable(subject, executor, process, permissionList);
+            removePermissionOnIdentifiable(user, executor, process, permissionList);
         }
     }
 
     @WebMethod
     public void removeAllPermissionsFromProcessDefinition(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "definitions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> definitionList)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException,
             DefinitionDoesNotExistException, AttributeRequiredException {
-        Subject subject = getSubject(actorPrincipal);
         if (definitionList.size() == 0) {
             throw new AttributeRequiredException("removeAllPermissionsFromProcessDefinition", "definitions");
         }
         for (String definitionName : definitionList) {
-            Identifiable definition = definitionLogic.getLatestProcessDefinition(subject, definitionName);
-            removeAllPermissionOnIdentifiable(subject, definition);
+            Identifiable definition = definitionLogic.getLatestProcessDefinition(user, definitionName);
+            removeAllPermissionOnIdentifiable(user, definition);
         }
     }
 
     @WebMethod
     public void removeAllPermissionsFromProcesses(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "processNames", targetNamespace = "http://runa.ru/workflow/webservices") List<String> processNames)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException,
             DefinitionDoesNotExistException, AttributeRequiredException {
-        Subject subject = getSubject(actorPrincipal);
-
         if (processNames.size() == 0) {
             throw new AttributeRequiredException("removeAllPermissionsFromProcesses", "processes");
         }
         for (String processName : processNames) {
-            List<WfProcess> processes = executionLogic.getProcessesForDefinitionName(subject, processName);
+            List<WfProcess> processes = executionLogic.getProcessesForDefinitionName(user, processName);
             if (processes.size() == 0) {
                 throw new DefinitionDoesNotExistException(processName);
             }
             for (WfProcess process : processes) {
-                removeAllPermissionOnIdentifiable(subject, process);
+                removeAllPermissionOnIdentifiable(user, process);
             }
         }
     }
 
     @WebMethod
     public void removeAllPermissionsFromExecutor(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String name)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, name);
-        removeAllPermissionOnIdentifiable(subject, executor);
+        Executor executor = executorLogic.getExecutor(user, name);
+        removeAllPermissionOnIdentifiable(user, executor);
     }
 
     @WebMethod
     public void removeAllPermissionsFromSystem(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal)
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        removeAllPermissionOnIdentifiable(subject, ASystem.INSTANCE);
+        removeAllPermissionOnIdentifiable(user, ASystem.INSTANCE);
     }
 
     @WebMethod
     public void addPermissionsOnBotStations(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        addPermissionOnIdentifiable(subject, executor, BotStation.INSTANCE, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        addPermissionOnIdentifiable(user, executor, BotStation.INSTANCE, permissionList);
     }
 
     @WebMethod
     public void setPermissionsOnBotStations(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        setPermissionOnIdentifiable(subject, executor, BotStation.INSTANCE, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        setPermissionOnIdentifiable(user, executor, BotStation.INSTANCE, permissionList);
     }
 
     @WebMethod
     public void removePermissionsOnBotStations(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actorPrincipal,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "executor", targetNamespace = "http://runa.ru/workflow/webservices") String executorStr,
             @WebParam(mode = Mode.IN, name = "permissions", targetNamespace = "http://runa.ru/workflow/webservices") List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Subject subject = getSubject(actorPrincipal);
-        Executor executor = executorLogic.getExecutor(subject, executorStr);
-        removePermissionOnIdentifiable(subject, executor, BotStation.INSTANCE, permissionList);
+        Executor executor = executorLogic.getExecutor(user, executorStr);
+        removePermissionOnIdentifiable(user, executor, BotStation.INSTANCE, permissionList);
     }
 
-    private void addPermissionOnIdentifiable(Subject subject, Executor executor, Identifiable identifiable, List<String> permissionList)
+    private void addPermissionOnIdentifiable(User user, Executor executor, Identifiable identifiable, List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
         Collection<Permission> permissions = getPermissions(permissionList, identifiable);
-        Collection<Permission> ownPermissions = authorizationLogic.getOwnPermissions(subject, executor, identifiable);
+        Collection<Permission> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
         permissions = Permission.mergePermissions(permissions, ownPermissions);
-        authorizationLogic.setPermissions(subject, executor, permissions, identifiable);
+        authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 
-    private void setPermissionOnIdentifiable(Subject subject, Executor executor, Identifiable identifiable, List<String> permissionList)
+    private void setPermissionOnIdentifiable(User user, Executor executor, Identifiable identifiable, List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
         Collection<Permission> permissions = getPermissions(permissionList, identifiable);
-        authorizationLogic.setPermissions(subject, executor, permissions, identifiable);
+        authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 
-    private void removePermissionOnIdentifiable(Subject subject, Executor executor, Identifiable identifiable, List<String> permissionList)
+    private void removePermissionOnIdentifiable(User user, Executor executor, Identifiable identifiable, List<String> permissionList)
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
         Collection<Permission> permissions = getPermissions(permissionList, identifiable);
-        Collection<Permission> ownPermissions = authorizationLogic.getOwnPermissions(subject, executor, identifiable);
+        Collection<Permission> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
         permissions = Permission.subtractPermissions(ownPermissions, permissions);
-        authorizationLogic.setPermissions(subject, executor, permissions, identifiable);
+        authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 
-    private void removeAllPermissionOnIdentifiable(Subject subject, Identifiable identifiable) throws ExecutorDoesNotExistException,
+    private void removeAllPermissionOnIdentifiable(User user, Identifiable identifiable) throws ExecutorDoesNotExistException,
             AuthorizationException, AuthenticationException {
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-        List<Executor> executors = authorizationLogic.getExecutorsWithPermission(subject, identifiable, batchPresentation, true);
+        List<Executor> executors = authorizationLogic.getExecutorsWithPermission(user, identifiable, batchPresentation, true);
         for (Executor executor : executors) {
-            if (!authorizationLogic.isPrivelegedExecutor(subject, executor, identifiable)) {
-                authorizationLogic.setPermissions(subject, executor, Permission.getNoPermissions(), identifiable);
+            if (!authorizationLogic.isPrivelegedExecutor(user, executor, identifiable)) {
+                authorizationLogic.setPermissions(user, executor, Permission.getNoPermissions(), identifiable);
             }
         }
     }
@@ -420,9 +396,4 @@ public class PermissionBean {
         return permissions;
     }
 
-    private Subject getSubject(ActorPrincipal actor) {
-        Subject result = new Subject();
-        result.getPrincipals().add(actor);
-        return result;
-    }
 }

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,6 +18,7 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 /**
@@ -116,11 +116,11 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
      * Task handler implementation
      */
     @Override
-    public Map<String, Object> handle(final Subject subject, final IVariableProvider variableProvider, final WfTask task) throws Exception {
+    public Map<String, Object> handle(final User user, final IVariableProvider variableProvider, final WfTask task) throws Exception {
         return new AlfSessionWrapper<Map<String, Object>>() {
             @Override
             protected Map<String, Object> code() throws Exception {
-                HandlerData handlerData = new HandlerData(inputParams, outputParams, subject, variableProvider, task);
+                HandlerData handlerData = new HandlerData(inputParams, outputParams, user, variableProvider, task);
                 handlerData.setFailOnError(true);
                 TimeMeasurer timeMeasurer = new TimeMeasurer(log);
                 try {

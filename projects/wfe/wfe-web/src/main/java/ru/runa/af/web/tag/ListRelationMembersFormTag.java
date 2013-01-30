@@ -62,10 +62,10 @@ public class ListRelationMembersFormTag extends BatchReturningTitledFormTag {
         try {
             RelationService relationService = Delegates.getRelationService();
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Relation currentRelation = relationService.getRelation(getSubject(), getRelationName());
-            isFormButtonVisible = authorizationService.isAllowed(getSubject(), RelationPermission.UPDATE_RELATION, currentRelation);
+            Relation currentRelation = relationService.getRelation(getUser(), getRelationName());
+            isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, currentRelation);
             BatchPresentation batchPresentation = getBatch();
-            List<RelationPair> relations = relationService.getRelationPairs(getSubject(), relationName, batchPresentation);
+            List<RelationPair> relations = relationService.getRelationPairs(getUser(), relationName, batchPresentation);
 
             TableBuilder tableBuilder = new TableBuilder();
 

@@ -28,7 +28,6 @@ import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ExecutorPermission;
 
@@ -41,19 +40,23 @@ public class UpdatePasswordFormTag extends UpdateExecutorBaseFormTag {
 
     private static final long serialVersionUID = -3273077346043267061L;
 
+    @Override
     public void fillFormData(TD tdFormElement) throws JspException {
         PasswordTableBuilder builder = new PasswordTableBuilder(!isFormButtonEnabled(), pageContext);
         tdFormElement.addElement(builder.build());
     }
 
+    @Override
     protected Permission getPermission() {
         return ExecutorPermission.UPDATE;
     }
 
+    @Override
     public String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_APPLY, pageContext);
     }
 
+    @Override
     protected boolean isVisible() throws JspException {
         boolean result = false;
         if ((getExecutor() instanceof Actor) && isFormButtonEnabled()) {
@@ -66,17 +69,18 @@ public class UpdatePasswordFormTag extends UpdateExecutorBaseFormTag {
     protected boolean isFormButtonEnabled() throws JspException {
         try {
             return super.isFormButtonEnabled()
-                    || (SubjectPrincipalsHelper.getActor(getSubject()).equals(getIdentifiable()) && super.isFormButtonEnabled(ASystem.INSTANCE,
-                            SystemPermission.CHANGE_SELF_PASSWORD));
+                    || (getUser().equals(getIdentifiable()) && super.isFormButtonEnabled(ASystem.INSTANCE, SystemPermission.CHANGE_SELF_PASSWORD));
         } catch (AuthenticationException e) {
             throw new JspException(e);
         }
     }
 
+    @Override
     protected String getTitle() {
         return Messages.getMessage(Messages.TITLE_ACTOR_PASSWORD, pageContext);
     }
 
+    @Override
     public String getAction() {
         return UpdatePasswordAction.ACTION_PATH;
     }

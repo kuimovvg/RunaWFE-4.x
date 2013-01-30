@@ -20,8 +20,6 @@ package ru.runa.wf.logic.bot.webservice;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import org.apache.commons.codec.binary.Base64;
 
 import ru.runa.service.delegate.Delegates;
@@ -33,6 +31,7 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
 
 /**
@@ -48,7 +47,7 @@ public class WebServiceTaskHandlerXSLTHelper {
     /**
      * Current {@link WebServiceTaskHandler} subject.
      */
-    final Subject subject;
+    final User user;
 
     /**
      * Variables, changed by result xslt transformation.
@@ -60,12 +59,12 @@ public class WebServiceTaskHandlerXSLTHelper {
      * 
      * @param task
      *            Current task, processed by {@link WebServiceTaskHandler}.
-     * @param subject
-     *            Current {@link WebServiceTaskHandler} subject.
+     * @param user
+     *            Current {@link WebServiceTaskHandler} user.
      */
-    public WebServiceTaskHandlerXSLTHelper(WfTask task, Subject subject) {
+    public WebServiceTaskHandlerXSLTHelper(WfTask task, User user) {
         this.task = task;
-        this.subject = subject;
+        this.user = user;
         variables = new HashMap<String, Object>();
     }
 
@@ -78,7 +77,7 @@ public class WebServiceTaskHandlerXSLTHelper {
      */
     public String getVariable(String name) throws TaskDoesNotExistException, AuthorizationException, AuthenticationException {
         ExecutionService executionService = Delegates.getExecutionService();
-        WfVariable var = executionService.getVariable(subject, task.getProcessId(), name);
+        WfVariable var = executionService.getVariable(user, task.getProcessId(), name);
         if (var.getValue() != null) {
             return var.getValue().toString();
         }
@@ -86,24 +85,27 @@ public class WebServiceTaskHandlerXSLTHelper {
     }
 
     /**
-     * Read process instance id from variable and returns process instance graph for this process instance encoded in {@link Base64}.
+     * Read process instance id from variable and returns process instance graph
+     * for this process instance encoded in {@link Base64}.
      * 
      * @param processIdVariable
      *            Variable name to read process instance id.
-     * @return Process instance graph for this process instance encoded in {@link Base64}.
+     * @return Process instance graph for this process instance encoded in
+     *         {@link Base64}.
      */
     public String getProcessGraph(String processIdVariable) throws TaskDoesNotExistException, AuthorizationException, AuthenticationException,
             ProcessDoesNotExistException {
         ExecutionService executionService = Delegates.getExecutionService();
-        WfVariable var = executionService.getVariable(subject, task.getProcessId(), processIdVariable);
+        WfVariable var = executionService.getVariable(user, task.getProcessId(), processIdVariable);
         if (var.getValue() != null) {
-            return Base64.encodeBase64String(executionService.getProcessDiagram(subject, (Long) var.getValue(), null, null));
+            return Base64.encodeBase64String(executionService.getProcessDiagram(user, (Long) var.getValue(), null, null));
         }
         throw new InternalApplicationException("Can't create SOAP request. WFE variable " + processIdVariable + " not found");
     }
 
     /**
-     * Add variable to internal storage. You can merge this variables into your storage using MergeVariablesIn call.
+     * Add variable to internal storage. You can merge this variables into your
+     * storage using MergeVariablesIn call.
      * 
      * @param name
      *            Variable name.

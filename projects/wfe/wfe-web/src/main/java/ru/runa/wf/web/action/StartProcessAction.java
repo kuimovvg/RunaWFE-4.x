@@ -17,42 +17,45 @@
  */
 package ru.runa.wf.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
-import ru.runa.service.wf.ExecutionService;
+import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Profile;
 
 /**
  * Created on 18.08.2004
  * 
- * @struts:action path="/startProcess" name="idForm" validate="true" input = "/WEB-INF/wf/manage_process_definitions.jsp"
- * @struts.action-forward name="success" path="/manage_process_definitions.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_process_definitions.do" redirect = "true"
- * @struts.action-forward name="success_display_start_form" path="/submit_start_process.do" redirect = "true"
- * @struts.action-forward name="submitTask" path="/submit_task.do" redirect = "false"
- * @struts.action-forward name="tasksList" path="/manage_tasks.do" redirect = "true"
+ * @struts:action path="/startProcess" name="idForm" validate="true" input =
+ *                "/WEB-INF/wf/manage_process_definitions.jsp"
+ * @struts.action-forward name="success" path="/manage_process_definitions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/manage_process_definitions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="success_display_start_form"
+ *                        path="/submit_start_process.do" redirect = "true"
+ * @struts.action-forward name="submitTask" path="/submit_task.do" redirect =
+ *                        "false"
+ * @struts.action-forward name="tasksList" path="/manage_tasks.do" redirect =
+ *                        "true"
  */
-public class StartProcessAction extends Action {
+public class StartProcessAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
@@ -64,22 +67,19 @@ public class StartProcessAction extends Action {
         ActionMessages messages = new ActionMessages();
         try {
             saveToken(request);
-            ExecutionService executionService = Delegates.getExecutionService();
-            DefinitionService definitionService = Delegates.getDefinitionService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            if (definitionService.getStartInteraction(subject, definitionId).hasForm()
-                    || definitionService.getOutputTransitionNames(subject, definitionId, null).size() > 1) {
+            if (Delegates.getDefinitionService().getStartInteraction(getLoggedUser(request), definitionId).hasForm()
+                    || Delegates.getDefinitionService().getOutputTransitionNames(getLoggedUser(request), definitionId, null).size() > 1) {
                 successForward = Commons.forward(mapping.findForward(ru.runa.common.WebResources.FORWARD_SUCCESS_DISPLAY_START_FORM),
                         IdForm.ID_INPUT_NAME, definitionId);
             } else {
-                Long processId = executionService
-                        .startProcess(subject, definitionService.getProcessDefinition(subject, definitionId).getName(), null);
+                WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(getLoggedUser(request), definitionId);
+                Long processId = Delegates.getExecutionService().startProcess(getLoggedUser(request), definition.getName(), null);
                 request.getSession().setAttribute(Resources.USER_MESSAGE_KEY, new ActionMessage(Messages.PROCESS_STARTED, processId.toString()));
                 successForward = mapping.findForward(Resources.FORWARD_SUCCESS);
 
                 if (WebResources.isAutoShowForm()) {
                     Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
-                    ActionForward forward = AutoShowFormHelper.getNextActionForward(subject, mapping, profile, processId);
+                    ActionForward forward = AutoShowFormHelper.getNextActionForward(getLoggedUser(request), mapping, profile, processId);
                     if (forward != null) {
                         return forward;
                     }

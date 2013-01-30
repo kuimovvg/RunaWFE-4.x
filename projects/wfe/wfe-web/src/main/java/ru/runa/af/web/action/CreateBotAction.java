@@ -1,18 +1,16 @@
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.BotForm;
 import ru.runa.common.web.ActionExceptionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
@@ -26,7 +24,7 @@ import ru.runa.wfe.bot.Bot;
  *                        "true"
  * @struts.action-forward name="failure" path="/create_bot.do" redirect = "true"
  */
-public class CreateBotAction extends Action {
+public class CreateBotAction extends ActionBase {
 
     public static final String CREATE_BOT_ACTION_PATH = "/create_bot";
 
@@ -35,13 +33,12 @@ public class CreateBotAction extends Action {
         ActionMessages errors = new ActionMessages();
         BotForm botForm = (BotForm) form;
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             BotService botService = Delegates.getBotService();
             Bot bot = new Bot();
             bot.setUsername(botForm.getWfeUser());
             bot.setPassword(botForm.getWfePassword());
             bot.setBotStation(botService.getBotStation(botForm.getBotStationID()));
-            botService.createBot(subject, bot);
+            botService.createBot(getLoggedUser(request), bot);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }

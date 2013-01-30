@@ -21,19 +21,17 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.HTMLUtils;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.form.VariableForm;
@@ -44,7 +42,7 @@ import ru.runa.wfe.var.FileVariable;
  * 
  * @struts:action path="/variableDownloader" name="variableForm" validate="true"
  */
-public class VariableDownloaderAction extends Action {
+public class VariableDownloaderAction extends ActionBase {
 
     private static final Log log = LogFactory.getLog(VariableDownloaderAction.class);
 
@@ -54,7 +52,6 @@ public class VariableDownloaderAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         try {
             FileVariable fileVariable = getVariable(actionForm, request);
-
             response.setContentType(fileVariable.getContentType());
             // http://forum.java.sun.com/thread.jspa?forumID=45&threadID=233446
             response.setHeader("Pragma", "public");
@@ -73,9 +70,8 @@ public class VariableDownloaderAction extends Action {
 
     private FileVariable getVariable(ActionForm actionForm, HttpServletRequest request) {
         VariableForm form = (VariableForm) actionForm;
-        Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
         ExecutionService executionService = Delegates.getExecutionService();
-        Object object = executionService.getVariable(subject, form.getId(), form.getVariableName()).getValue();
+        Object object = executionService.getVariable(getLoggedUser(request), form.getId(), form.getVariableName()).getValue();
         if (object == null) {
             return null;
         }

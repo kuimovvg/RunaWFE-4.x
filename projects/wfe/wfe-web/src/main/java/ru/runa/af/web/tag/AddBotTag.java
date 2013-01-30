@@ -51,7 +51,7 @@ public class AddBotTag extends TitledFormTag {
 
     protected void fillFormElement(TD tdFormElement) throws JspException {
         Table table = new Table();
-        ActorSelectTD actorSelect = new ActorSelectTD(getSubject(), BotForm.USER_NAME);
+        ActorSelectTD actorSelect = new ActorSelectTD(getUser(), BotForm.USER_NAME);
         Input botPasswordInput = new Input(Input.TEXT, BotForm.PASSWORD);
 
         Input hiddenBotStationID = new Input(Input.HIDDEN, BotForm.BOT_STATION_ID, String.valueOf(botStationID));

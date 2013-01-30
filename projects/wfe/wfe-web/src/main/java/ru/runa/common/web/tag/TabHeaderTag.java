@@ -20,7 +20,6 @@ package ru.runa.common.web.tag;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -30,7 +29,6 @@ import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
@@ -43,9 +41,11 @@ import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.User;
 
 /**
- * Represnts tabs for managing different secured objects types. Created on 04.10.2004
+ * Represnts tabs for managing different secured objects types. Created on
+ * 04.10.2004
  * 
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
@@ -130,15 +130,15 @@ public class TabHeaderTag extends TagSupport {
         return link;
     }
 
-    private Subject getSubject() {
-        return SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
+    private User getUser() {
+        return Commons.getUser(pageContext.getSession());
     }
 
     private boolean isMenuForwardVisible(Identifiable menuSecuredObject) {
         if (menuSecuredObject != null) {
             try {
                 AuthorizationService authorizationService = Delegates.getAuthorizationService();
-                return authorizationService.isAllowed(getSubject(), Permission.READ, menuSecuredObject);
+                return authorizationService.isAllowed(getUser(), Permission.READ, menuSecuredObject);
             } catch (Exception e) {
                 return false;
             }

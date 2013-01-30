@@ -17,20 +17,18 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.SubstitutionCriteriaForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ClassLoaderUtil;
@@ -38,11 +36,14 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 
 /**
- * @struts:action path="/updateSubstitutionCriteria" name="substitutionCriteriaForm" validate="true" input = "/WEB-INF/af/edit_substitution_criteria.jsp"
+ * @struts:action path="/updateSubstitutionCriteria"
+ *                name="substitutionCriteriaForm" validate="true" input =
+ *                "/WEB-INF/af/edit_substitution_criteria.jsp"
  * @struts.action-forward name="success" path="/WEB-INF/af/manage_system.jsp"
- * @struts.action-forward name="failure" path="/WEB-INF/af/edit_substitution_criteria.jsp"
+ * @struts.action-forward name="failure"
+ *                        path="/WEB-INF/af/edit_substitution_criteria.jsp"
  */
-public class UpdateSubstitutionCriteriaAction extends Action {
+public class UpdateSubstitutionCriteriaAction extends ActionBase {
     public static final String UPDATE_ACTION = "/updateSubstitutionCriteria";
     public static final String EDIT_ACTION = "/editSubstitutionCriteria";
     public static final String RETURN_ACTION = "/manage_system.do";
@@ -54,19 +55,18 @@ public class UpdateSubstitutionCriteriaAction extends Action {
         try {
             SubstitutionCriteriaForm form = (SubstitutionCriteriaForm) actionForm;
             SubstitutionService substitutionService = Delegates.getSubstitutionService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             SubstitutionCriteria substitutionCriteria;
             if (form.getId() == 0) {
                 substitutionCriteria = ClassLoaderUtil.instantiate(form.getType());
                 substitutionCriteria.setConf(form.getConf());
             } else {
-                substitutionCriteria = substitutionService.getSubstitutionCriteria(subject, form.getId());
+                substitutionCriteria = substitutionService.getSubstitutionCriteria(getLoggedUser(request), form.getId());
             }
             substitutionCriteria.setName(form.getName());
             if (form.getId() == 0) {
-                substitutionService.createSubstitutionCriteria(subject, substitutionCriteria);
+                substitutionService.createSubstitutionCriteria(getLoggedUser(request), substitutionCriteria);
             } else {
-                substitutionService.store(subject, substitutionCriteria);
+                substitutionService.store(getLoggedUser(request), substitutionCriteria);
             }
             return new ActionForward(RETURN_ACTION, true);
         } catch (Exception e) {

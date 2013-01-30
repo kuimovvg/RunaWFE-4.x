@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.portlet.PortletSession;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
@@ -38,6 +39,7 @@ import org.apache.struts.util.MessageResourcesFactory;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
@@ -47,8 +49,8 @@ import com.google.common.collect.Maps;
  * 
  */
 public class Commons {
-
     private static final TagUtils tagUtils = TagUtils.getInstance();
+    private static final String LOGGED_USER_ATTRIBUTE_NAME = User.class.getName();
 
     protected Commons() {
     }
@@ -116,13 +118,15 @@ public class Commons {
         return getForwardUrl(forward, null, pageContext, portletUrlType);
     }
 
-    public static String getForwardUrl(String forward, String parameterName, Object parameterValue, PageContext pageContext, PortletUrlType portletUrlType) {
+    public static String getForwardUrl(String forward, String parameterName, Object parameterValue, PageContext pageContext,
+            PortletUrlType portletUrlType) {
         Map<String, Object> parameters = new HashMap<String, Object>(1);
         parameters.put(parameterName, parameterValue);
         return getForwardUrl(forward, parameters, pageContext, portletUrlType);
     }
 
-    public static String getForwardUrl(String forward, Map<String, ? extends Object> parameters, PageContext pageContext, PortletUrlType portletUrlType) {
+    public static String getForwardUrl(String forward, Map<String, ? extends Object> parameters, PageContext pageContext,
+            PortletUrlType portletUrlType) {
         try {
             String url = tagUtils.computeURL(pageContext, forward, null, null, null, null, convertMap(parameters), null, false, false);
             url = applyPortlet(url, pageContext, portletUrlType);
@@ -248,4 +252,29 @@ public class Commons {
         }
         return retVal;
     }
+
+    public static void setUser(User user, HttpSession session) {
+        session.setAttribute(LOGGED_USER_ATTRIBUTE_NAME, user);
+    }
+
+    public static void setUser(User user, PortletSession session) {
+        session.setAttribute(LOGGED_USER_ATTRIBUTE_NAME, user);
+    }
+
+    public static void removeUser(HttpSession session) {
+        session.removeAttribute(LOGGED_USER_ATTRIBUTE_NAME);
+    }
+
+    public static User getUser(HttpSession session) {
+        try {
+            User user = (User) getSessionAttribute(session, LOGGED_USER_ATTRIBUTE_NAME);
+            if (user == null) {
+                throw new InvalidSessionException("Session does not contain subject.");
+            }
+            return user;
+        } catch (IllegalStateException e) {
+            throw new InvalidSessionException("Session does not contain subject.");
+        }
+    }
+
 }

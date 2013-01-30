@@ -19,36 +19,33 @@ package ru.runa.wf.web.action;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 06.10.2004
  * 
- * @struts:action path="/deployProcessDefinition" name="fileForm" validate="false"
- * @struts.action-forward name="success" path="/manage_process_definitions.do" redirect = "true"
- * @struts.action-forward name="failure" path="/deploy_process_definition.do" redirect = "false"
+ * @struts:action path="/deployProcessDefinition" name="fileForm"
+ *                validate="false"
+ * @struts.action-forward name="success" path="/manage_process_definitions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/deploy_process_definition.do"
+ *                        redirect = "false"
  */
 public class DeployProcessDefinitionAction extends BaseDeployProcessDefinitionAction {
     public static final String ACTION_PATH = "/deployProcessDefinition";
 
     @Override
-    protected void doAction(Subject subject, FileForm fileForm, List<String> processType, ActionMessages errors) {
+    protected void doAction(User user, FileForm fileForm, List<String> processType, ActionMessages errors) throws Exception {
         DefinitionService definitionService = Delegates.getDefinitionService();
-        try {
-            definitionService.deployProcessDefinition(subject, fileForm.getFile().getFileData(), processType);
-        } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
+        definitionService.deployProcessDefinition(user, fileForm.getFile().getFileData(), processType);
     }
 
     @Override

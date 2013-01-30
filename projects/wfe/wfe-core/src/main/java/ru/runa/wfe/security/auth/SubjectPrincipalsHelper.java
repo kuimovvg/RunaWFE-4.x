@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ActorPrincipal;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
 
@@ -55,26 +55,27 @@ public class SubjectPrincipalsHelper {
     }
 
     private static byte[] getActorKey(Actor actor) {
-        return (actor.getCode() + actor.getName()).getBytes();
+        return actor.getName().getBytes();
     }
 
-    public static byte[] encodeActor(Actor actor) {
+    public static User createUser(Actor actor) {
         try {
             Cipher cipher = Cipher.getInstance(encryptionType);
             cipher.init(Cipher.ENCRYPT_MODE, securedKey);
-            return cipher.doFinal(getActorKey(actor));
+            byte[] securedKey = cipher.doFinal(getActorKey(actor));
+            return new User(actor, securedKey);
         } catch (Exception e) {
             log.warn("Can't create subject cipher");
             return null;
         }
     }
 
-    private static void validateActorPrincipal(ActorPrincipal actorPrincipal) throws AuthenticationException {
+    private static void validateUser(User user) throws AuthenticationException {
         try {
             Cipher cipher = Cipher.getInstance(encryptionType);
             cipher.init(Cipher.DECRYPT_MODE, securedKey);
-            if (!Arrays.equals(getActorKey(actorPrincipal.getActor()), cipher.doFinal(actorPrincipal.getKey()))) {
-                throw new AuthenticationException("Incorrect actor principal at subject received");
+            if (!Arrays.equals(getActorKey(user), cipher.doFinal(user.getSecuredKey()))) {
+                throw new AuthenticationException("Incorrect user principal at subject received");
             }
         } catch (Exception e) {
             log.error("Error in subject decryption", e);
@@ -82,28 +83,16 @@ public class SubjectPrincipalsHelper {
         }
     }
 
-    public static Actor getActor(Subject subject) throws AuthenticationException {
+    public static User getUser(Subject subject) throws AuthenticationException {
         Preconditions.checkNotNull(subject);
-        Set<ActorPrincipal> principals = subject.getPrincipals(ActorPrincipal.class);
-        for (ActorPrincipal principal : principals) {
-            if (principal != null) {
-                validateActorPrincipal(principal);
-                return (principal).getActor();
+        Set<User> principals = subject.getPrincipals(User.class);
+        for (User user : principals) {
+            if (user != null) {
+                validateUser(user);
+                return user;
             }
         }
-        throw new AuthenticationException("Subject does not contain actor principal");
+        throw new AuthenticationException("Subject does not contain user principal");
     }
-
-    // private static Actor getActorById(long id) throws AuthenticationException
-    // {
-    // AFDaoHolder daoHolder = new AFDaoHolder();
-    // try {
-    // return daoHolder.getExecutorDAO().getActor(id);
-    // } catch (ExecutorOutOfDateException e) {
-    // throw new AuthenticationException(e);
-    // } finally {
-    // daoHolder.close();
-    // }
-    // }
 
 }

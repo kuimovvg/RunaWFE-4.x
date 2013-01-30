@@ -60,7 +60,7 @@ public class ChooseActorByRelationTag extends FreemarkerTag {
         List<Executor> result = new ArrayList<Executor>();
         result.add(param);
         BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-        result.addAll(Delegates.getExecutorService().getExecutorGroups(subject, param, batchPresentation, false));
+        result.addAll(Delegates.getExecutorService().getExecutorGroups(user, param, batchPresentation, false));
         return result;
     }
 
@@ -75,17 +75,17 @@ public class ChooseActorByRelationTag extends FreemarkerTag {
      */
     private List<Actor> getActors(String relationName, Executor relationParam) throws TemplateModelException {
         List<Executor> executorRightList = getExecutors(relationParam);
-        List<RelationPair> relationPairList = Delegates.getRelationService().getExecutorsRelationPairsRight(subject, relationName,
+        List<RelationPair> relationPairList = Delegates.getRelationService().getExecutorsRelationPairsRight(user, relationName,
                 executorRightList);
         HashSet<Actor> result = new HashSet<Actor>();
         for (RelationPair relationPair : relationPairList) {
             Executor executorLeft = relationPair.getLeft();
             try {
-                Delegates.getExecutorService().getExecutor(subject, executorLeft.getId());
+                Delegates.getExecutorService().getExecutor(user, executorLeft.getId());
                 if (executorLeft instanceof Actor) {
                     result.add((Actor) executorLeft);
                 } else if (executorLeft instanceof Group) {
-                    result.addAll(Delegates.getExecutorService().getGroupActors(subject, (Group) executorLeft));
+                    result.addAll(Delegates.getExecutorService().getGroupActors(user, (Group) executorLeft));
                 }
             } catch (AuthorizationException e) {
                 // TODO may be filter executors in logic?

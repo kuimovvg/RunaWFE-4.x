@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
@@ -34,6 +32,7 @@ import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Objects;
 
@@ -41,10 +40,10 @@ public class AutoShowFormHelper {
     private static final String LOCAL_FORWARD_TASKS_LIST = "tasksList";
     private static final String LOCAL_FORWARD_SUBMIT_TASK = "submitTask";
 
-    public static ActionForward getNextActionForward(Subject subject, ActionMapping mapping, Profile profile, Long processId) {
+    public static ActionForward getNextActionForward(User user, ActionMapping mapping, Profile profile, Long processId) {
         ExecutionService executionService = Delegates.getExecutionService();
         BatchPresentation batchPresentation = profile.getActiveBatchPresentation("listTasksForm").clone();
-        List<WfTask> tasks = executionService.getTasks(subject, batchPresentation);
+        List<WfTask> tasks = executionService.getTasks(user, batchPresentation);
         List<WfTask> currentTasks = new ArrayList<WfTask>();
         for (WfTask task : tasks) {
             if (Objects.equal(task.getProcessId(), processId)) {

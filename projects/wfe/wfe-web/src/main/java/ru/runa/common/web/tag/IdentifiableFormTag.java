@@ -69,7 +69,7 @@ public abstract class IdentifiableFormTag extends TitledFormTag {
     @Override
     protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) throws JspException {
         AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        return (permission == null || authorizationService.isAllowed(getSubject(), permission, identifiable));
+        return (permission == null || authorizationService.isAllowed(getUser(), permission, identifiable));
     }
 
     @Override

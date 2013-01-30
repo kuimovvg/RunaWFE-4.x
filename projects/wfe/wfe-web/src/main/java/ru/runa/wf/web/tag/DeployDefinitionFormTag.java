@@ -33,7 +33,7 @@ public class DeployDefinitionFormTag extends TitledFormTag {
     private static final long serialVersionUID = -3361459425268889410L;
 
     protected void fillFormElement(TD tdFormElement) {
-        RedeployDefinitionFormTag.fillTD(tdFormElement, getForm(), null, getSubject(), pageContext);
+        RedeployDefinitionFormTag.fillTD(tdFormElement, getForm(), null, getUser(), pageContext);
     }
 
     protected String getTitle() {

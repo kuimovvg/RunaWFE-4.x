@@ -19,8 +19,6 @@ package ru.runa.wfe.audit.logic;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.audit.ProcessLogFilter;
@@ -36,6 +34,7 @@ import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.SystemPermission;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
 
@@ -53,19 +52,19 @@ public class AuditLogic extends CommonLogic {
     @Autowired
     private NodeProcessDAO nodeProcessDAO;
 
-    public void login(Subject subject, ASystem system) throws AuthorizationException, AuthenticationException {
-        checkLoginAllowed(subject, system);
+    public void login(User user, ASystem system) throws AuthorizationException, AuthenticationException {
+        checkLoginAllowed(user, system);
     }
 
-    protected void checkLoginAllowed(Subject subject, ASystem system) throws AuthorizationException, AuthenticationException {
-        checkPermissionAllowed(subject, system, SystemPermission.LOGIN_TO_SYSTEM);
+    protected void checkLoginAllowed(User user, ASystem system) throws AuthorizationException, AuthenticationException {
+        checkPermissionAllowed(user, system, SystemPermission.LOGIN_TO_SYSTEM);
     }
 
-    public void logout(Subject subject, ASystem system) {
+    public void logout(User user, ASystem system) {
     }
 
-    public ProcessLogs getProcessLogs(Subject subject, ProcessLogFilter filter) {
-        // TODO checkPermissionAllowed(subject, identifiable, permission);
+    public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter) {
+        // TODO checkPermissionAllowed(user, identifiable, permission);
         Preconditions.checkNotNull(filter.getProcessId(), "filter.processId");
         ProcessLogs result = new ProcessLogs(filter.getProcessId());
         result.addLogs(processLogDAO.getAll(filter.getProcessId()));
@@ -81,28 +80,28 @@ public class AuditLogic extends CommonLogic {
     /**
      * Load system logs according to {@link BatchPresentation}.
      * 
-     * @param subject
-     *            Requester subject.
+     * @param user
+     *            Requester user.
      * @param batchPresentation
      *            {@link BatchPresentation} to load logs.
      * @return Loaded system logs.
      */
-    public List<SystemLog> getSystemLogs(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException {
-        checkPermissionAllowed(subject, ASystem.INSTANCE, SystemPermission.READ);
+    public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation) throws AuthorizationException {
+        checkPermissionAllowed(user, ASystem.INSTANCE, SystemPermission.READ);
         return new BatchPresentationHibernateCompiler(batchPresentation).getBatch(true);
     }
 
     /**
      * Load system logs count according to {@link BatchPresentation}.
      * 
-     * @param subject
-     *            Requester subject.
+     * @param user
+     *            Requester user.
      * @param batchPresentation
      *            {@link BatchPresentation} to load logs count.
      * @return System logs count.
      */
-    public int getSystemLogsCount(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException {
-        checkPermissionAllowed(subject, ASystem.INSTANCE, SystemPermission.READ);
+    public int getSystemLogsCount(User user, BatchPresentation batchPresentation) throws AuthorizationException {
+        checkPermissionAllowed(user, ASystem.INSTANCE, SystemPermission.READ);
         return new BatchPresentationHibernateCompiler(batchPresentation).getCount();
     }
 

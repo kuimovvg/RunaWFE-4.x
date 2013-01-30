@@ -6,21 +6,18 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.AdminScriptForm;
 import ru.runa.service.client.AdminScriptClient;
@@ -31,7 +28,7 @@ import ru.runa.wfe.commons.IOCommons;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 
-public class AdminkitScriptsAction extends Action {
+public class AdminkitScriptsAction extends ActionBase {
     private static final Log log = LogFactory.getLog(AdminkitScriptsAction.class);
     public static final String PATH = "/admin_scripts";
 
@@ -41,7 +38,6 @@ public class AdminkitScriptsAction extends Action {
         boolean ajaxRequest = form.isAjax();
         ActionMessages errors = new ActionMessages();
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             String action = form.getAction();
             String fileName = form.getFileName();
             if ("get".equals(action)) {
@@ -49,19 +45,12 @@ public class AdminkitScriptsAction extends Action {
                 if (!Strings.isNullOrEmpty(fileName)) {
                     File file = new File(IOCommons.getAdminkitScriptsDirPath() + fileName);
                     byte[] script = FileUtils.readFileToByteArray(file);
-                    // try {
-                    // XmlUtils.parseWithoutValidation(script);
                     writeResponse(response, script);
-                    // } catch (Exception e) {
-                    // log.debug("", e);
-                    // setErrors(ajaxRequest, errors, request, response,
-                    // "File '" + fileName + "' has invalid XML markup");
-                    // }
                 }
             } else if ("execute".equals(action)) {
                 log.info("Executing script");
                 final List<String> scriptErrors = new ArrayList<String>();
-                AdminScriptClient.run(subject, getScript(form), new Handler() {
+                AdminScriptClient.run(getLoggedUser(request), getScript(form), new Handler() {
 
                     @Override
                     public void onTransactionException(Exception e) {

@@ -20,14 +20,13 @@ package ru.runa.af.web.orgfunction;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.os.ParamRenderer;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.user.User;
 
 public class SwimlaneSubstitutionCriteriaRenderer implements ParamRenderer {
 
@@ -37,12 +36,12 @@ public class SwimlaneSubstitutionCriteriaRenderer implements ParamRenderer {
     }
 
     @Override
-    public List<String[]> loadJSEditorData(Subject subject) {
+    public List<String[]> loadJSEditorData(User user) {
         List<String[]> result = new ArrayList<String[]>();
         DefinitionService definitionService = Delegates.getDefinitionService();
-        List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(subject, BatchPresentationFactory.DEFINITIONS.createDefault());
+        List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(user, BatchPresentationFactory.DEFINITIONS.createDefault());
         for (WfDefinition definition : definitions) {
-            List<SwimlaneDefinition> swimlanes = definitionService.getSwimlanes(subject, definition.getId());
+            List<SwimlaneDefinition> swimlanes = definitionService.getSwimlanes(user, definition.getId());
             for (SwimlaneDefinition swimlaneDefinition : swimlanes) {
                 String swimlaneName = definition.getName() + "." + swimlaneDefinition.getName();
                 result.add(new String[] { swimlaneName, swimlaneName });
@@ -52,12 +51,12 @@ public class SwimlaneSubstitutionCriteriaRenderer implements ParamRenderer {
     }
 
     @Override
-    public String getDisplayLabel(Subject subject, String value) {
+    public String getDisplayLabel(User user, String value) {
         return value;
     }
 
     @Override
-    public boolean isValueValid(Subject subject, String value) {
+    public boolean isValueValid(User user, String value) {
         return value.trim().length() > 0;
     }
 

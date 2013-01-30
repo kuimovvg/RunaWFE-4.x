@@ -29,7 +29,6 @@ import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.security.auth.Subject;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -47,10 +46,10 @@ import ru.runa.wfe.ss.SubstitutionDoesNotExistException;
 import ru.runa.wfe.ss.TerminatorSubstitution;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ActorPrincipal;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
 import com.google.common.collect.Lists;
@@ -101,31 +100,29 @@ public class SubstitutionBean {
 
     @WebMethod
     public void changeSubstitutions(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "executors", targetNamespace = "http://runa.ru/workflow/webservices") List<String> executors,
             @WebParam(mode = Mode.IN, name = "addedSubstitutions", targetNamespace = "http://runa.ru/workflow/webservices") List<SubstitutionDescr> addedSubstitutionsDescr,
             @WebParam(mode = Mode.IN, name = "deletedSubstitutionsDescr", targetNamespace = "http://runa.ru/workflow/webservices") List<SubstitutionDescr> deletedSubstitutionsDescr)
             throws SubstitutionDoesNotExistException, AuthenticationException, AuthorizationException, ExecutorDoesNotExistException {
         Set<Actor> actors = new HashSet<Actor>();
-        Subject subject = getSubject(actor);
-
         for (int i = 0; i < executors.size(); ++i) {
-            actors.addAll(getActors(subject, executors.get(i)));
+            actors.addAll(getActors(user, executors.get(i)));
         }
 
-        List<Substitution> deleted = getDeletedSubstitution(subject, deletedSubstitutionsDescr, actors);
+        List<Substitution> deleted = getDeletedSubstitution(user, deletedSubstitutionsDescr, actors);
         if (deleted.size() > 0) {
             List<Long> deletedIds = Lists.newArrayListWithExpectedSize(deleted.size());
             for (int i = 0; i < deleted.size(); ++i) {
                 deletedIds.add(deleted.get(i).getId());
             }
-            substitutionLogic.delete(subject, deletedIds);
+            substitutionLogic.delete(user, deletedIds);
         }
 
-        addSubstitution(subject, addedSubstitutionsDescr, actors);
+        addSubstitution(user, addedSubstitutionsDescr, actors);
     }
 
-    private void addSubstitution(Subject subject, List<SubstitutionDescr> addedSubstitutionsDescr, Set<Actor> actors) throws AuthenticationException,
+    private void addSubstitution(User user, List<SubstitutionDescr> addedSubstitutionsDescr, Set<Actor> actors) throws AuthenticationException,
             AuthorizationException, ExecutorDoesNotExistException, SubstitutionDoesNotExistException {
         List<Substitution> firstSub = new ArrayList<Substitution>();
         List<Substitution> lastSub = new ArrayList<Substitution>();
@@ -145,7 +142,7 @@ public class SubstitutionBean {
                 orgFunc = orgFuncParam;
             }
             if (criteriaParam != null && criteriaParam.trim().length() > 0) {
-                criteria = substitutionLogic.getSubstitutionCriteria(subject, Long.parseLong(criteriaParam));
+                criteria = substitutionLogic.getSubstitutionCriteria(user, Long.parseLong(criteriaParam));
             }
             if (isEnabledParam != null && isEnabledParam.trim().length() > 0) {
                 isEnabled = Boolean.parseBoolean(isEnabledParam);
@@ -171,7 +168,7 @@ public class SubstitutionBean {
         List<Substitution> deletedSubstitutions = new ArrayList<Substitution>();
         List<Substitution> createdSubstitutions = new ArrayList<Substitution>();
         for (Actor actor : actors) {
-            List<Substitution> existing = substitutionLogic.getSubstitutions(subject, actor.getId());
+            List<Substitution> existing = substitutionLogic.getSubstitutions(user, actor.getId());
             if (!firstSub.isEmpty()) {
                 for (Substitution sub : existing) {
                     deletedSubstitutions.add(sub);
@@ -202,14 +199,14 @@ public class SubstitutionBean {
         }
 
         for (Substitution substitution : deletedSubstitutions) {
-            substitutionLogic.delete(subject, substitution);
+            substitutionLogic.delete(user, substitution);
         }
         for (Substitution substitution : createdSubstitutions) {
-            substitutionLogic.create(subject, substitution);
+            substitutionLogic.create(user, substitution);
         }
     }
 
-    private List<Substitution> getDeletedSubstitution(Subject subject, List<SubstitutionDescr> deletedSubstitutionsDescr, Set<Actor> actors)
+    private List<Substitution> getDeletedSubstitution(User user, List<SubstitutionDescr> deletedSubstitutionsDescr, Set<Actor> actors)
             throws AuthenticationException, AuthorizationException, ExecutorDoesNotExistException {
         if (deletedSubstitutionsDescr.size() == 0) {
             return new ArrayList<Substitution>();
@@ -226,12 +223,12 @@ public class SubstitutionBean {
                 orgFuncs[i] = orgFunc;
             }
             if (criteria != null && criteria.trim().length() > 0) {
-                criterias[i] = substitutionLogic.getSubstitutionCriteria(subject, Long.parseLong(criteria));
+                criterias[i] = substitutionLogic.getSubstitutionCriteria(user, Long.parseLong(criteria));
             }
         }
 
         for (Actor actor : actors) {
-            for (Substitution substitution : substitutionLogic.getSubstitutions(subject, actor.getId())) {
+            for (Substitution substitution : substitutionLogic.getSubstitutions(user, actor.getId())) {
                 for (int i = 0; i < deletedSubstitutionsDescr.size(); ++i) {
                     if (isCriteriaMatch(substitution.getCriteria(), criterias[i])
                             && isStringMatch(substitution.getSubstitutionOrgFunction(), tuneOrgFunc(orgFuncs[i], actor))) {
@@ -266,14 +263,14 @@ public class SubstitutionBean {
         }
     }
 
-    private Set<Actor> getActors(Subject subject, String executorName) throws AuthenticationException, AuthorizationException,
+    private Set<Actor> getActors(User user, String executorName) throws AuthenticationException, AuthorizationException,
             ExecutorDoesNotExistException {
         Set<Actor> result = new HashSet<Actor>();
-        Executor executor = executorLogic.getExecutor(subject, executorName);
+        Executor executor = executorLogic.getExecutor(user, executorName);
         if (executor instanceof Actor) {
             result.add((Actor) executor);
         } else {
-            result.addAll(executorLogic.getGroupActors(subject, (Group) executor));
+            result.addAll(executorLogic.getGroupActors(user, (Group) executor));
         }
         return result;
     }
@@ -289,9 +286,4 @@ public class SubstitutionBean {
         return retVal;
     }
 
-    private Subject getSubject(ActorPrincipal actor) {
-        Subject result = new Subject();
-        result.getPrincipals().add(actor);
-        return result;
-    }
 }
