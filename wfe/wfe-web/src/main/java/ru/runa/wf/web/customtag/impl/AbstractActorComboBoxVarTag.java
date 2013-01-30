@@ -19,7 +19,6 @@ package ru.runa.wf.web.customtag.impl;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -30,8 +29,8 @@ import org.apache.ecs.html.Select;
 
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.customtag.VarTag;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on Mar 24, 2006
@@ -56,20 +55,20 @@ public abstract class AbstractActorComboBoxVarTag implements VarTag {
     }
 
     @Override
-    public String getHtml(Subject subject, String varName, Object varValue, PageContext pageContext) throws Exception {
+    public String getHtml(User user, String varName, Object varValue, PageContext pageContext) throws Exception {
         StringBuilder htmlContent = new StringBuilder();
 
-        List<Actor> actors = getActors(subject, varName, varValue);
+        List<Actor> actors = getActors(user, varName, varValue);
         Actor defaultActor = null;
         if (varValue != null) {
             try {
-                defaultActor = Delegates.getExecutorService().getActorByCode(subject, Long.valueOf((String) varValue));
+                defaultActor = Delegates.getExecutorService().getActorByCode(user, Long.valueOf((String) varValue));
             } catch (Throwable e) {
                 log.warn("Unable to fetch actor value", e);
             }
         }
         if (defaultActor == null) {
-            defaultActor = SubjectPrincipalsHelper.getActor(subject);
+            defaultActor = user;
         }
 
         htmlContent.append(createSelect(varName, actors, defaultActor).toString());
@@ -77,7 +76,7 @@ public abstract class AbstractActorComboBoxVarTag implements VarTag {
         return htmlContent.toString();
     }
 
-    public abstract List<Actor> getActors(Subject subject, String varName, Object varValue);
+    public abstract List<Actor> getActors(User user, String varName, Object varValue);
 
     public String getActorPropertyToUse() {
         return "code";

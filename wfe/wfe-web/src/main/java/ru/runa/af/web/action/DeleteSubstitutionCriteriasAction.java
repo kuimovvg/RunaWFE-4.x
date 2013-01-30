@@ -4,20 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.SubstitutionCriteriasForm;
 import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
@@ -30,11 +28,12 @@ import com.google.common.collect.Lists;
 /**
  * Created on 14.08.2010
  * 
- * @struts:action path="/deleteSubstitutionCriterias" name="substitutionCriteriasForm" validate="false"
+ * @struts:action path="/deleteSubstitutionCriterias"
+ *                name="substitutionCriteriasForm" validate="false"
  * @struts.action-forward name="success" path="/manage_system.do"
  * @struts.action-forward name="failure" path="/manage_system.do"
  */
-public class DeleteSubstitutionCriteriasAction extends Action {
+public class DeleteSubstitutionCriteriasAction extends ActionBase {
 
     public static final String ACTION_PATH = "/deleteSubstitutionCriterias";
 
@@ -44,13 +43,12 @@ public class DeleteSubstitutionCriteriasAction extends Action {
         ActionMessages errors = new ActionMessages();
         try {
             SubstitutionService substitutionService = Delegates.getSubstitutionService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             ArrayList<Substitution> substitutions = new ArrayList<Substitution>();
             Long ids[] = ((SubstitutionCriteriasForm) form).getIds();
             String method = ((SubstitutionCriteriasForm) form).getRemoveMethod();
             for (Long id : ids) {
-                SubstitutionCriteria substitutionCriteria = substitutionService.getSubstitutionCriteria(subject, id);
-                substitutions.addAll(substitutionService.getBySubstitutionCriteria(subject, substitutionCriteria));
+                SubstitutionCriteria substitutionCriteria = substitutionService.getSubstitutionCriteria(getLoggedUser(request), id);
+                substitutions.addAll(substitutionService.getBySubstitutionCriteria(getLoggedUser(request), substitutionCriteria));
             }
 
             if (SubstitutionCriteriasForm.REMOVE_METHOD_CONFIRM.equals(method) && !substitutions.isEmpty()) {
@@ -62,16 +60,16 @@ public class DeleteSubstitutionCriteriasAction extends Action {
                 for (Substitution substitution : substitutions) {
                     substitutionIds.add(substitution.getId());
                 }
-                substitutionService.delete(subject, substitutionIds);
+                substitutionService.delete(getLoggedUser(request), substitutionIds);
             } else if (SubstitutionCriteriasForm.REMOVE_METHOD_ONLY.equals(method)) {
                 for (Substitution substitution : substitutions) {
                     substitution.setCriteria(null);
-                    substitutionService.store(subject, substitution);
+                    substitutionService.store(getLoggedUser(request), substitution);
                 }
             }
 
             for (long id : ids) {
-                substitutionService.deleteSubstitutionCriteria(subject, id);
+                substitutionService.deleteSubstitutionCriteria(getLoggedUser(request), id);
             }
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);

@@ -17,21 +17,18 @@
  */
 package ru.runa.service.af;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 20.07.2004
  */
 public interface AuthenticationService {
 
-    public Subject authenticate() throws AuthenticationException;
+    public User authenticateByCallerPrincipal() throws AuthenticationException;
 
-    public Subject authenticate(byte[] token) throws AuthenticationException;
+    public User authenticateByKerberos(byte[] token) throws AuthenticationException;
 
-    public Subject authenticate(String login, String password) throws AuthenticationException;
+    public User authenticateByLoginPassword(String login, String password) throws AuthenticationException;
 
-    public Actor getActor(Subject subject) throws AuthenticationException;
 }

@@ -39,7 +39,7 @@ public class ChooseGroupTag extends FreemarkerTag {
             return html.toString();
         } else if ("selectName".equals(view)) {
             WfVariable variable = variableProvider.getVariableNotNull(varName);
-            return ViewUtil.createExecutorSelect(subject, variable);
+            return ViewUtil.createExecutorSelect(user, variable);
         } else {
             throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
         }

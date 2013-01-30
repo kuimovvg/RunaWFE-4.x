@@ -60,7 +60,7 @@ public class TaskFormTag extends WFFormTag {
     }
 
     public List<String> getTransitionNames() throws AuthenticationException, TaskDoesNotExistException {
-        List<String> result = Delegates.getDefinitionService().getOutputTransitionNames(getSubject(), null, taskId);
+        List<String> result = Delegates.getDefinitionService().getOutputTransitionNames(getUser(), null, taskId);
         result.remove(Transition.TIMEOUT_TRANSITION_NAME);
         return result;
     }
@@ -77,19 +77,19 @@ public class TaskFormTag extends WFFormTag {
 
     @Override
     protected Long getDefinitionId() throws AuthorizationException, AuthenticationException {
-        return Delegates.getExecutionService().getTask(getSubject(), taskId).getDefinitionId();
+        return Delegates.getExecutionService().getTask(getUser(), taskId).getDefinitionId();
     }
 
     @Override
     protected Interaction getInteraction() throws AuthorizationException, AuthenticationException, TaskDoesNotExistException {
-        return Delegates.getDefinitionService().getTaskInteraction(getSubject(), taskId);
+        return Delegates.getDefinitionService().getTaskInteraction(getUser(), taskId);
     }
 
     @Override
     protected String buildForm(Interaction interaction) throws Exception {
         TaskFormBuilder taskFormBuilder = FormBuilderFactory.createTaskFormBuilder(interaction.getType());
-        WfTask task = Delegates.getExecutionService().getTask(getSubject(), taskId);
-        return taskFormBuilder.build(getSubject(), pageContext, interaction, task);
+        WfTask task = Delegates.getExecutionService().getTask(getUser(), taskId);
+        return taskFormBuilder.build(getUser(), pageContext, interaction, task);
     }
 
     @Override

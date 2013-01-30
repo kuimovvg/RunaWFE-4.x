@@ -24,13 +24,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import ru.runa.wf.logic.bot.textreport.TextReportGenerator;
 import ru.runa.wf.logic.bot.textreport.TextReportSettings;
 import ru.runa.wf.logic.bot.textreport.TextReportSettingsXmlParser;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -49,7 +49,7 @@ public class TextReportTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws IOException {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws IOException {
         byte[] fileContent = TextReportGenerator.getReportContent(settings, variableProvider);
         Map<String, Object> vars = new HashMap<String, Object>();
         FileVariable fileVariable = new FileVariable(settings.getReportFileName(), fileContent, settings.getReportContentType());

@@ -58,8 +58,8 @@ public abstract class ListExecutorsWithoutPermissionsBase extends IdentifiableFo
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
             BatchPresentation batchPresentation = getBatchPresentation();
-            List<Executor> executors = authorizationService.getExecutorsWithPermission(getSubject(), getIdentifiable(), batchPresentation, false);
-            int executorsCount = authorizationService.getExecutorsWithPermissionCount(getSubject(), getIdentifiable(), batchPresentation, false);
+            List<Executor> executors = authorizationService.getExecutorsWithPermission(getUser(), getIdentifiable(), batchPresentation, false);
+            int executorsCount = authorizationService.getExecutorsWithPermissionCount(getUser(), getIdentifiable(), batchPresentation, false);
             PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, executorsCount, getReturnAction());
             navigation.addPagingNavigationTable(tdFormElement);
             TableBuilder tableBuilder = new TableBuilder();

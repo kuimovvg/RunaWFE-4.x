@@ -19,18 +19,17 @@ package ru.runa.wfe.os;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
+import ru.runa.wfe.user.User;
 
 /**
- * Used in substitutions (web-interface).
- * Since 3.2.1
+ * Used in substitutions (web-interface). Since 3.2.1
  */
 public interface ParamRenderer {
 
     /**
      * Returns user-friendly display label for parameter value
      */
-    public String getDisplayLabel(Subject subject, String value);
+    public String getDisplayLabel(User user, String value);
 
     /**
      * Whether parameter has its own javascript editor
@@ -40,10 +39,10 @@ public interface ParamRenderer {
     /**
      * Called from ajax serlvlet during JS editor initialization
      */
-    public List<String[]> loadJSEditorData(Subject subject) throws Exception;
+    public List<String[]> loadJSEditorData(User user) throws Exception;
 
     /**
      * Validates parameter value
      */
-    public boolean isValueValid(Subject subject, String value);
+    public boolean isValueValid(User user, String value);
 }

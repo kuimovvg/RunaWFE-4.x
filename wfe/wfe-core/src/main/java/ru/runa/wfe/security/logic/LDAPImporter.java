@@ -37,7 +37,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
-import javax.security.auth.Subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,6 +57,7 @@ import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorNotInGroupException;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
@@ -102,7 +102,7 @@ public class LDAPImporter implements LoginHandler {
     private String password;
 
     private DirContext dirContext;
-    private Subject subject;
+    private User user;
 
     private String[] getOU() {
         return ou.split(";");
@@ -111,7 +111,7 @@ public class LDAPImporter implements LoginHandler {
     public void importExecutors(String username, String password) {
         authorizationLogic = new AuthorizationLogic();
         try {
-            subject = new AuthenticationLogic().authenticate(username, password);
+            user = new AuthenticationLogic().authenticate(username, password);
             dirContext = getContext();
             executorLogic = new ExecutorLogic();
             importExecutors(getActorList());
@@ -216,19 +216,19 @@ public class LDAPImporter implements LoginHandler {
         List<Executor> existExecutorList = new ArrayList<Executor>();
         List<Executor> executorToImportList = new ArrayList<Executor>();
         for (Executor executor : executorList) {
-            if (executorLogic.isExecutorExist(subject, executor.getName())) {
-                executor = executorLogic.getExecutor(subject, executor.getName());
+            if (executorLogic.isExecutorExist(user, executor.getName())) {
+                executor = executorLogic.getExecutor(user, executor.getName());
                 log.info(executor.getName() + " already exists. Skipping.");
                 existExecutorList.add(executor);
             } else {
                 log.info("Importing " + executor.getName());
                 executorToImportList.add(executor);
-                executorLogic.create(subject, executor);
+                executorLogic.create(user, executor);
             }
         }
         Group ldapUsersGroup = getLDAPUsersGroup();
-        executorLogic.addExecutorsToGroup(subject, executorToImportList, ldapUsersGroup);
-        authorizationLogic.setPermissions(subject, ldapUsersGroup, Lists.newArrayList(Permission.READ), executorToImportList);
+        executorLogic.addExecutorsToGroup(user, executorToImportList, ldapUsersGroup);
+        authorizationLogic.setPermissions(user, ldapUsersGroup, Lists.newArrayList(Permission.READ), executorToImportList);
     }
 
     private String getUserAttribute(String userId, String attributeName) throws NamingException {
@@ -299,7 +299,7 @@ public class LDAPImporter implements LoginHandler {
                     NameClassPair nc = (NameClassPair) list.next();
                     String groupName = dirContext.getAttributes(nc.getName() + "," + ou).get(SAM_ACCOUNT_NAME).get().toString();
                     try {
-                        Group group = executorLogic.getGroup(subject, groupName);
+                        Group group = executorLogic.getGroup(user, groupName);
                         List<Executor> executorsList = new ArrayList<Executor>();
                         Attribute groupAttr = dirContext.getAttributes(nc.getName() + "," + ou).get(MEMBER);
                         if (groupAttr == null) {
@@ -314,9 +314,9 @@ public class LDAPImporter implements LoginHandler {
                                 Attribute samAttr = dirContext.getAttributes(executorPath).get(SAM_ACCOUNT_NAME);
                                 if (samAttr != null) {
                                     String executorName = samAttr.get().toString();
-                                    if (executorLogic.isExecutorExist(subject, executorName)) {
-                                        Executor executorToAdd = executorLogic.getExecutor(subject, executorName);
-                                        if (!executorLogic.isExecutorInGroup(subject, executorToAdd, group)) {
+                                    if (executorLogic.isExecutorExist(user, executorName)) {
+                                        Executor executorToAdd = executorLogic.getExecutor(user, executorName);
+                                        if (!executorLogic.isExecutorInGroup(user, executorToAdd, group)) {
                                             executorsList.add(executorToAdd);
                                         }
                                     } else {
@@ -324,28 +324,15 @@ public class LDAPImporter implements LoginHandler {
                                                 + executorNC);
                                     }
                                 }
-                            } catch (AuthorizationException e) {
-                                log.warn("Failed to get executor", e);
-                            } catch (ExecutorDoesNotExistException e) {
-                                log.warn("Failed to get executor", e);
-                            } catch (AuthenticationException e) {
+                            } catch (Exception e) {
                                 log.warn("Failed to get executor", e);
                             }
                         }
-                        if (executorsList.size() > 0) {// small performance
-                                                       // optimization
-                            executorLogic.addExecutorsToGroup(subject, executorsList, group);
+                        if (executorsList.size() > 0) {
+                            executorLogic.addExecutorsToGroup(user, executorsList, group);
                         }
-                    } catch (AuthorizationException e) {
+                    } catch (Exception e) {
                         log.warn("Failed to perform operation " + e.getMessage(), e);
-                    } catch (ExecutorDoesNotExistException e) {
-                        log.warn("This is probably application error." + e.getMessage(), e);
-                    } catch (NamingException e) {
-                        log.warn(e.getMessage(), e);
-                    } catch (AuthenticationException e) {
-                        log.warn(e.getMessage(), e);
-                    } catch (ExecutorAlreadyInGroupException e) {
-                        log.warn("Failed to add executor=" + e.getMessage() + " to group" + e.getGroupName(), e);
                     }
                 }
             } catch (NamingException e) {
@@ -357,12 +344,12 @@ public class LDAPImporter implements LoginHandler {
     private Group getLDAPUsersGroup() throws ExecutorAlreadyExistsException, AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException, UnapplicablePermissionException {
         Group ldapUsersGroup = new Group(IMPORTED_FROM_LDAP_GROUP_NAME, IMPORTED_FROM_LDAP_GROUP_DESCRIPION);
-        if (!executorLogic.isExecutorExist(subject, ldapUsersGroup.getName())) {
-            ldapUsersGroup = executorLogic.create(subject, ldapUsersGroup);
-            authorizationLogic.setPermissions(subject, ldapUsersGroup, Lists.newArrayList(Permission.READ, SystemPermission.LOGIN_TO_SYSTEM),
+        if (!executorLogic.isExecutorExist(user, ldapUsersGroup.getName())) {
+            ldapUsersGroup = executorLogic.create(user, ldapUsersGroup);
+            authorizationLogic.setPermissions(user, ldapUsersGroup, Lists.newArrayList(Permission.READ, SystemPermission.LOGIN_TO_SYSTEM),
                     ASystem.INSTANCE);
         } else {
-            ldapUsersGroup = executorLogic.getGroup(subject, ldapUsersGroup.getName());
+            ldapUsersGroup = executorLogic.getGroup(user, ldapUsersGroup.getName());
         }
         return ldapUsersGroup;
     }

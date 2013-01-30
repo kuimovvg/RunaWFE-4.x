@@ -50,7 +50,7 @@ public class ListExecutorsWithoutPermissionsOnRelationFormTag extends ListExecut
     protected Identifiable getIdentifiable() throws JspException {
         try {
             RelationService relationService = Delegates.getRelationService();
-            return relationService.getRelation(getSubject(), getRelationName());
+            return relationService.getRelation(getUser(), getRelationName());
         } catch (Exception e) {
             throw new JspException(e);
         }

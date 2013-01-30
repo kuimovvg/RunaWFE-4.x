@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -33,6 +31,7 @@ import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.xml.SimpleErrorHandler;
 import ru.runa.wfe.commons.xml.XMLHelper;
 import ru.runa.wfe.script.AdminScriptRunner;
+import ru.runa.wfe.user.User;
 
 public class WfeScriptForBotStations extends AdminScriptRunner {
 
@@ -40,9 +39,9 @@ public class WfeScriptForBotStations extends AdminScriptRunner {
     private BotStation botStation = null;
     private Map<String, byte[]> configs;
 
-    public WfeScriptForBotStations(Subject subject, boolean replace) {
+    public WfeScriptForBotStations(User user, boolean replace) {
         this.replace = replace;
-        setSubject(subject);
+        setUser(user);
         setProcessDefinitionsBytes(new byte[0][0]);
     }
 

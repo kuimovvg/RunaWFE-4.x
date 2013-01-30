@@ -19,8 +19,6 @@ package ru.runa.af.web.action;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
@@ -38,16 +36,21 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 
 /**
  * Created on 23.08.2004
  * 
- * @struts:action path="/grantReadPermissionOnExecutor" name="idsForm" validate="true" input = "/WEB-INF/af/manage_executor.jsp"
- * @struts.action-forward name="success" path="/manage_executor_permissions.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_executor_permissions.do" redirect = "true"
- * @struts.action-forward name="failure_executor_does_not_exist" path="/manage_executors.do" redirect = "true"
+ * @struts:action path="/grantReadPermissionOnExecutor" name="idsForm"
+ *                validate="true" input = "/WEB-INF/af/manage_executor.jsp"
+ * @struts.action-forward name="success" path="/manage_executor_permissions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/manage_executor_permissions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure_executor_does_not_exist"
+ *                        path="/manage_executors.do" redirect = "true"
  */
 public class GrantReadPermissionOnExecutorAction extends GrantPermisionOnIdentifiableAction {
 
@@ -64,17 +67,18 @@ public class GrantReadPermissionOnExecutorAction extends GrantPermisionOnIdentif
      * @param identifiableName
      * @param errors
      * @param errorForwardName
-     * @return return specific identifiable (WARNING Might return null if errors occured)
+     * @return return specific identifiable (WARNING Might return null if errors
+     *         occured)
      * @throws AuthorizationFailedException
      */
     @Override
-    protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) throws AuthorizationException,
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) throws AuthorizationException,
             AuthenticationException {
         isExecutorExist = false;
         ExecutorService executorService = Delegates.getExecutorService();
         Identifiable result = null;
         try {
-            result = executorService.getExecutor(subject, identifiableId);
+            result = executorService.getExecutor(user, identifiableId);
             isExecutorExist = true;
         } catch (ExecutorDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);

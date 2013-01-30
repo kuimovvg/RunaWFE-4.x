@@ -20,17 +20,15 @@ package ru.runa.wf.web.action;
 
 import java.io.OutputStream;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.form.TaskIdForm;
@@ -39,7 +37,7 @@ import ru.runa.wf.web.form.TaskIdForm;
  * @struts:action path="/historyGraphImage" name="taskIdForm" validate="true"
  *                input = "/WEB-INF/wf/show_graph_history.jsp"
  */
-public class HistoryGraphImageAction extends Action {
+public class HistoryGraphImageAction extends ActionBase {
 
     public static final String ACTION_PATH = "/historyGraphImage";
 
@@ -47,9 +45,8 @@ public class HistoryGraphImageAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TaskIdForm idForm = (TaskIdForm) form;
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             ExecutionService executionService = Delegates.getExecutionService();
-            byte[] diagramBytes = executionService.getProcessHistoryDiagram(subject, idForm.getId(), idForm.getTaskId());
+            byte[] diagramBytes = executionService.getProcessHistoryDiagram(getLoggedUser(request), idForm.getId(), idForm.getTaskId());
             response.setContentType("image/png");
             OutputStream os = response.getOutputStream();
             os.write(diagramBytes);

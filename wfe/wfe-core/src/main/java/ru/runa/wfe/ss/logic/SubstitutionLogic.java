@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,6 +40,7 @@ import ru.runa.wfe.ss.dao.SubstitutionDAO;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorPermission;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -59,27 +58,26 @@ public class SubstitutionLogic extends CommonLogic {
     @Autowired
     private SubstitutionCriteriaDAO substitutionCriteriaDAO;
 
-    public void createSubstitution(Subject subject, Long actorId, Substitution substitution) throws AuthorizationException, AuthenticationException,
+    public void createSubstitution(User user, Long actorId, Substitution substitution) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        create(subject, actorId, substitution);
+        create(user, actorId, substitution);
     }
 
-    public void createSubstitution(Subject subject, Long actorId) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException {
-        create(subject, actorId, fillDefaultSubstitution(new Substitution()));
+    public void createSubstitution(User user, Long actorId) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
+        create(user, actorId, fillDefaultSubstitution(new Substitution()));
     }
 
-    public Substitution getSubstitution(Subject subject, Long id) {
+    public Substitution getSubstitution(User user, Long id) {
         return substitutionDAO.getNotNull(id);
     }
 
-    public void createTerminator(Subject subject, Long actorId, TerminatorSubstitution terminator) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException {
-        create(subject, actorId, terminator);
+    public void createTerminator(User user, Long actorId, TerminatorSubstitution terminator) throws AuthorizationException, AuthenticationException,
+            ExecutorDoesNotExistException {
+        create(user, actorId, terminator);
     }
 
-    public void createTerminator(Subject subject, Long actorId) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
-        create(subject, actorId, fillDefaultSubstitution(new TerminatorSubstitution()));
+    public void createTerminator(User user, Long actorId) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
+        create(user, actorId, fillDefaultSubstitution(new TerminatorSubstitution()));
     }
 
     private Substitution fillDefaultSubstitution(Substitution substitution) {
@@ -88,9 +86,9 @@ public class SubstitutionLogic extends CommonLogic {
         return substitution;
     }
 
-    private void create(Subject subject, Long actorId, Substitution substitution) throws AuthorizationException, ExecutorDoesNotExistException {
+    private void create(User user, Long actorId, Substitution substitution) throws AuthorizationException, ExecutorDoesNotExistException {
         Actor actor = executorDAO.getActor(actorId);
-        checkPermissionsOnExecutor(subject, actor, ExecutorPermission.UPDATE);
+        checkPermissionsOnExecutor(user, actor, ExecutorPermission.UPDATE);
         substitution.setActorId(actorId);
         List<Substitution> substitutions = substitutionDAO.getByActorId(actorId);
         int position = substitutions.size() == 0 ? 0 : substitutions.get(substitutions.size() - 1).getPosition() + 1;
@@ -98,10 +96,10 @@ public class SubstitutionLogic extends CommonLogic {
         substitutionDAO.create(substitution);
     }
 
-    public void insertSubstitution(Subject subject, Long actorId, Substitution substitution, int position) throws AuthorizationException,
+    public void insertSubstitution(User user, Long actorId, Substitution substitution, int position) throws AuthorizationException,
             ExecutorDoesNotExistException {
         Actor actor = executorDAO.getActor(actorId);
-        checkPermissionsOnExecutor(subject, actor, ExecutorPermission.UPDATE);
+        checkPermissionsOnExecutor(user, actor, ExecutorPermission.UPDATE);
         substitution.setActorId(actorId);
         substitution.setPosition(position);
         List<Substitution> substitutions = substitutionDAO.getByActorId(actorId);
@@ -114,17 +112,17 @@ public class SubstitutionLogic extends CommonLogic {
         substitutionDAO.create(substitution);
     }
 
-    public List<Substitution> getSubstitutions(Subject subject, Long actorId) {
+    public List<Substitution> getSubstitutions(User user, Long actorId) {
         Actor actor = executorDAO.getActor(actorId);
-        checkPermissionsOnExecutor(subject, actor, Permission.READ);
+        checkPermissionsOnExecutor(user, actor, Permission.READ);
         return substitutionDAO.getByActorId(actorId);
     }
 
-    public List<Substitution> getAllSubstitutions(Subject subject) {
+    public List<Substitution> getAllSubstitutions(User user) {
         List<Actor> actors = executorDAO.getAllActors(BatchPresentationFactory.ACTORS.createNonPaged());
         // this is workaround for n*1000 records
         try {
-            checkPermissionsOnExecutors(subject, actors, Permission.READ);
+            checkPermissionsOnExecutors(user, actors, Permission.READ);
         } catch (AuthorizationException e) {
             throw e;
         } catch (Exception e) {
@@ -133,13 +131,13 @@ public class SubstitutionLogic extends CommonLogic {
         return substitutionDAO.getAll();
     }
 
-    public void delete(Subject subject, List<Long> substitutionIds) throws SubstitutionDoesNotExistException {
+    public void delete(User user, List<Long> substitutionIds) throws SubstitutionDoesNotExistException {
         List<Substitution> substitutions = substitutionDAO.get(substitutionIds);
         if (substitutions.size() != substitutionIds.size()) {
             throw new SubstitutionDoesNotExistException();
         }
         List<Actor> actors = getSubstitutionActors(substitutions);
-        checkPermissionsOnExecutors(subject, actors, ExecutorPermission.UPDATE);
+        checkPermissionsOnExecutors(user, actors, ExecutorPermission.UPDATE);
         substitutionDAO.delete(substitutionIds);
         for (Actor actor : actors) {
             fixPositionsForDeletedSubstitution(actor.getId());
@@ -157,21 +155,21 @@ public class SubstitutionLogic extends CommonLogic {
         }
     }
 
-    public void delete(Subject subject, Substitution substitution) {
+    public void delete(User user, Substitution substitution) {
         Actor actor = executorDAO.getActor(substitution.getActorId());
-        checkPermissionsOnExecutors(subject, Lists.newArrayList(actor), ExecutorPermission.UPDATE);
+        checkPermissionsOnExecutors(user, Lists.newArrayList(actor), ExecutorPermission.UPDATE);
         substitutionDAO.delete(substitution);
         fixPositionsForDeletedSubstitution(substitution.getActorId());
     }
 
-    public void switchSubstitutionsPositions(Subject subject, Long substitutionId1, Long substitutionId2) throws SubstitutionDoesNotExistException {
+    public void switchSubstitutionsPositions(User user, Long substitutionId1, Long substitutionId2) throws SubstitutionDoesNotExistException {
         List<Long> ids = Lists.newArrayList(substitutionId1, substitutionId2);
         List<Substitution> substitutions = substitutionDAO.get(ids);
         if (substitutions.size() != 2) {
             throw new SubstitutionDoesNotExistException();
         }
         List<Actor> actors = getSubstitutionActors(substitutions);
-        checkPermissionsOnExecutors(subject, actors, ExecutorPermission.UPDATE);
+        checkPermissionsOnExecutors(user, actors, ExecutorPermission.UPDATE);
         substitutionDAO.delete(ids);
         int pos0 = substitutions.get(0).getPosition();
         substitutions.get(0).setId(null);
@@ -182,7 +180,7 @@ public class SubstitutionLogic extends CommonLogic {
         // TODO merge substitutionDAO.update(substitutions.get(1));
     }
 
-    public void create(Subject subject, Substitution substitution) {
+    public void create(User user, Substitution substitution) {
         substitutionDAO.create(substitution);
     }
 
@@ -202,31 +200,31 @@ public class SubstitutionLogic extends CommonLogic {
         return substitutionCache.getSubstituted(actor);
     }
 
-    public void createSubstitutionCriteria(Subject subject, SubstitutionCriteria substitutionCriteria) {
+    public void createSubstitutionCriteria(User user, SubstitutionCriteria substitutionCriteria) {
         substitutionCriteriaDAO.create(substitutionCriteria);
     }
 
-    public SubstitutionCriteria getSubstitutionCriteria(Subject subject, Long id) {
+    public SubstitutionCriteria getSubstitutionCriteria(User user, Long id) {
         return substitutionCriteriaDAO.getNotNull(id);
     }
 
-    public List<SubstitutionCriteria> getSubstitutionCriteriaAll(Subject subject) {
+    public List<SubstitutionCriteria> getSubstitutionCriteriaAll(User user) {
         return substitutionCriteriaDAO.getAll();
     }
 
-    public void store(Subject subject, SubstitutionCriteria substitutionsCriteria) {
+    public void store(User user, SubstitutionCriteria substitutionsCriteria) {
         substitutionCriteriaDAO.store(substitutionsCriteria);
     }
 
-    public void deleteSubstitutionCriteria(Subject subject, Long substitutionCriteriaId) {
+    public void deleteSubstitutionCriteria(User user, Long substitutionCriteriaId) {
         substitutionCriteriaDAO.delete(substitutionCriteriaId);
     }
 
-    public void deleteSubstitutionCriteria(Subject subject, SubstitutionCriteria substitutionCriteria) {
+    public void deleteSubstitutionCriteria(User user, SubstitutionCriteria substitutionCriteria) {
         substitutionCriteriaDAO.delete(substitutionCriteria);
     }
 
-    public List<Substitution> getBySubstitutionCriteria(Subject subject, SubstitutionCriteria substitutionCriteria) {
+    public List<Substitution> getBySubstitutionCriteria(User user, SubstitutionCriteria substitutionCriteria) {
         return substitutionCriteriaDAO.getSubstitutionsByCriteria(substitutionCriteria);
     }
 }

@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.action;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
@@ -33,14 +31,23 @@ import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 30.08.2004
  * 
- * @struts:action path="/updatePermissionOnProcessDefinition" name="updatePermissionsOnIdentifiableForm" validate="true" input = "/WEB-INF/wf/manage_process_definition.jsp"
- * @struts.action-forward name="success" path="/manage_process_definition_permissions.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_process_definition_permissions.do" redirect = "true"
- * @struts.action-forward name="failure_process_definition_does_not_exist" path="/manage_process_definitions.do" redirect = "true"
+ * @struts:action path="/updatePermissionOnProcessDefinition"
+ *                name="updatePermissionsOnIdentifiableForm" validate="true"
+ *                input = "/WEB-INF/wf/manage_process_definition.jsp"
+ * @struts.action-forward name="success"
+ *                        path="/manage_process_definition_permissions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure"
+ *                        path="/manage_process_definition_permissions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure_process_definition_does_not_exist"
+ *                        path="/manage_process_definitions.do" redirect =
+ *                        "true"
  */
 public class UpdatePermissionOnProcessDefinitionAction extends UpdatePermissionOnIdentifiableAction {
     public static final String ACTION_PATH = "/updatePermissionOnProcessDefinition";
@@ -48,12 +55,12 @@ public class UpdatePermissionOnProcessDefinitionAction extends UpdatePermissionO
     private boolean definitionExists;
 
     @Override
-    protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) throws AuthenticationException,
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) throws AuthenticationException,
             AuthorizationException {
         definitionExists = false;
         Identifiable result = null;
         try {
-            result = Delegates.getDefinitionService().getProcessDefinition(subject, identifiableId);
+            result = Delegates.getDefinitionService().getProcessDefinition(user, identifiableId);
             definitionExists = true;
         } catch (DefinitionDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);

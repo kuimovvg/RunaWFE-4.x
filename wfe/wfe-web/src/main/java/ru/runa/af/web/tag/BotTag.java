@@ -46,7 +46,7 @@ public class BotTag extends TitledFormTag {
             throw new JspException();
         }
         Table table = new Table();
-        ActorSelectTD actorSelect = new ActorSelectTD(getSubject(), BotForm.USER_NAME, bot.getUsername());
+        ActorSelectTD actorSelect = new ActorSelectTD(getUser(), BotForm.USER_NAME, bot.getUsername());
         Input botPasswordInput = new Input(Input.PASSWORD, BotForm.PASSWORD, bot.getPassword());
         Input botTimeoutInput = new Input(Input.TEXT, BotForm.BOT_TIMEOUT, String.valueOf(bot.getStartTimeout()));
 
@@ -72,7 +72,7 @@ public class BotTag extends TitledFormTag {
     }
 
     private Bot findBot() {
-        return Delegates.getBotService().getBot(getSubject(), botID);
+        return Delegates.getBotService().getBot(getUser(), botID);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class BotTag extends TitledFormTag {
         boolean result = false;
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            result = authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
+            result = authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         } catch (AuthorizationException e) {
             throw new JspException(e);
         } catch (AuthenticationException e) {

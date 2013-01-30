@@ -17,20 +17,20 @@
  */
 package ru.runa.wfe.security.auth;
 
-import javax.security.auth.Subject;
+import ru.runa.wfe.user.User;
 
-public class SubjectHolder {
-    private static ThreadLocal<Subject> subjects = new ThreadLocal<Subject>();
+public class UserHolder {
+    private static ThreadLocal<User> users = new ThreadLocal<User>();
 
-    public static void set(Subject subject) {
-        subjects.set(subject);
+    public static void set(User user) {
+        users.set(user);
     }
 
-    public static Subject get() {
-        return subjects.get();
+    public static User get() {
+        return users.get();
     }
 
     public static void reset() {
-        subjects.remove();
+        users.remove();
     }
 }

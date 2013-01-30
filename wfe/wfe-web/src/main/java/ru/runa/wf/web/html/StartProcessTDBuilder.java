@@ -79,8 +79,8 @@ public class StartProcessTDBuilder extends BaseTDBuilder {
                     || ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER)) {
                 DefinitionService definitionService = Delegates.getDefinitionService();
                 String actionParameter = null;
-                if (!(definitionService.getStartInteraction(env.getSubject(), definition.getId()).hasForm() || definitionService
-                        .getOutputTransitionNames(env.getSubject(), definition.getId(), null).size() > 1)) {
+                if (!(definitionService.getStartInteraction(env.getUser(), definition.getId()).hasForm() || definitionService
+                        .getOutputTransitionNames(env.getUser(), definition.getId(), null).size() > 1)) {
                     actionParameter = ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER;
                     startLink.addAttribute("onclick",
                             ConfirmationPopupHelper.getInstance().getConfirmationPopupCodeHTML(actionParameter, env.getPageContext()));

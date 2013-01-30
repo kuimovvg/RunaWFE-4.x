@@ -17,7 +17,6 @@
  */
 package ru.runa.common.web.tag;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
@@ -27,10 +26,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.ConcreteElement;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 02.09.2004
@@ -78,8 +78,8 @@ public abstract class VisibleTag extends TagSupport {
         }
     }
 
-    protected Subject getSubject() {
-        return SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
+    protected User getUser() {
+        return Commons.getUser(pageContext.getSession());
     }
 
     protected Profile getProfile() {

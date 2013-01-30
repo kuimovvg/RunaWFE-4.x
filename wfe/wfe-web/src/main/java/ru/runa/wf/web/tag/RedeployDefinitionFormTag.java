@@ -20,7 +20,6 @@ package ru.runa.wf.web.tag;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
@@ -41,6 +40,7 @@ import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 18.08.2004
@@ -51,9 +51,9 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
 
     private static final long serialVersionUID = 5106903896165128752L;
 
-    public static Select getTypeSelectElement(String[] definitionType, Subject subject, PageContext pageContext) throws AuthorizationException,
+    private static Select getTypeSelectElement(String[] definitionType, User user, PageContext pageContext) throws AuthorizationException,
             AuthenticationException {
-        ProcessTypesIterator iter = new ProcessTypesIterator(subject);
+        ProcessTypesIterator iter = new ProcessTypesIterator(user);
         String selectedIdx = definitionType == null ? "_default_type_" : null;
         Map<String, String> attr = (Map<String, String>) pageContext.getRequest().getAttribute("TypeAttributes");
         if (attr != null) {
@@ -91,14 +91,14 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
         return select;
     }
 
-    public static void fillTD(TD tdFormElement, Form form, String[] definitionType, Subject subject, PageContext pageContext) {
+    public static void fillTD(TD tdFormElement, Form form, String[] definitionType, User user, PageContext pageContext) {
         DefinitionFileOperationsFormBuilder.displayTable(form, tdFormElement);
 
         tdFormElement.addElement(new br());
         tdFormElement.addElement(Messages.getMessage("batch_presentation.process_definition.process_type", pageContext) + ": ");
 
         try {
-            Select select = getTypeSelectElement(definitionType, subject, pageContext);
+            Select select = getTypeSelectElement(definitionType, user, pageContext);
             tdFormElement.addElement(select);
         } catch (AuthenticationException e) {
         } catch (AuthorizationException e) {
@@ -116,7 +116,7 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) {
-        fillTD(tdFormElement, getForm(), getDefinition().getCategories(), getSubject(), pageContext);
+        fillTD(tdFormElement, getForm(), getDefinition().getCategories(), getUser(), pageContext);
     }
 
     @Override
@@ -148,7 +148,7 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
     protected boolean isVisible() throws JspException {
         AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
         try {
-            return authorizationService.isAllowed(getSubject(), DefinitionPermission.REDEPLOY_DEFINITION, getIdentifiable());
+            return authorizationService.isAllowed(getUser(), DefinitionPermission.REDEPLOY_DEFINITION, getIdentifiable());
         } catch (AuthorizationException e) {
             return false;
         } catch (AuthenticationException e) {

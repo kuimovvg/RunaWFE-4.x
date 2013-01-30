@@ -19,8 +19,6 @@ package ru.runa.af.web.action;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
@@ -31,15 +29,19 @@ import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 
 /**
  * Created on 23.08.2004
  * 
- * @struts:action path="/grantBotStationPermission" name="idsForm" validate="false"
- * @struts.action-forward name="success" path="/bot_station_permission.do" redirect = "true"
- * @struts.action-forward name="failure" path="/bot_station_permission.do" redirect = "true"
+ * @struts:action path="/grantBotStationPermission" name="idsForm"
+ *                validate="false"
+ * @struts.action-forward name="success" path="/bot_station_permission.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/bot_station_permission.do"
+ *                        redirect = "true"
  */
 public class GrantBotStationConfigurePermissionAction extends GrantPermisionOnIdentifiableAction {
 
@@ -53,7 +55,7 @@ public class GrantBotStationConfigurePermissionAction extends GrantPermisionOnId
     }
 
     @Override
-    protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
         return BotStation.INSTANCE;
     }
 

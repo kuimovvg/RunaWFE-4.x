@@ -21,21 +21,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.wf.web.ProcessTypesIterator;
-import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -44,13 +42,12 @@ import com.google.common.collect.Lists;
  * Created on 14.10.2004
  * 
  */
-abstract class BaseDeployProcessDefinitionAction extends Action {
+abstract class BaseDeployProcessDefinitionAction extends ActionBase {
 
-    protected abstract void doAction(Subject subject, FileForm fileForm, List<String> processType, ActionMessages errors);
+    protected abstract void doAction(User user, FileForm fileForm, List<String> processType, ActionMessages errors) throws Exception;
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, final HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = getErrors(request);
         String paramType = request.getParameter("type");
         String paramTypeSelected = request.getParameter("typeSel");
@@ -64,9 +61,8 @@ abstract class BaseDeployProcessDefinitionAction extends Action {
 
         FileForm fileForm = (FileForm) form;
         prepare(fileForm);
-        Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
         try {
-            ProcessTypesIterator iter = new ProcessTypesIterator(subject);
+            ProcessTypesIterator iter = new ProcessTypesIterator(getLoggedUser(request));
             if (paramTypeSelected == null || paramTypeSelected.equals("_default_type_")) {
                 if (paramType == null || paramType.length() == 0) {
                     throw new ProcessDefinitionTypeNotPresentException();
@@ -79,7 +75,7 @@ abstract class BaseDeployProcessDefinitionAction extends Action {
                     fullType.add(paramType);
                 }
             }
-            doAction(subject, fileForm, fullType, errors);
+            doAction(getLoggedUser(request), fileForm, fullType, errors);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }

@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -35,7 +34,6 @@ import org.apache.ecs.html.IMG;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.GroupState;
@@ -68,13 +66,6 @@ import com.google.common.collect.Lists;
 public class ReflectionRowBuilder implements RowBuilder {
 
     class EnvImpl extends EnvBaseImpl {
-        @Override
-        public Subject getSubject() {
-            if (subject == null) {
-                subject = SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
-            }
-            return subject;
-        }
 
         @Override
         public PageContext getPageContext() {
@@ -98,8 +89,8 @@ public class ReflectionRowBuilder implements RowBuilder {
                     || ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER)) {
                 DefinitionService definitionService = Delegates.getDefinitionService();
                 try {
-                    if (!(definitionService.getStartInteraction(getSubject(), pid).hasForm() || definitionService.getOutputTransitionNames(
-                            getSubject(), pid, null).size() > 1)) {
+                    if (!(definitionService.getStartInteraction(getUser(), pid).hasForm() || definitionService.getOutputTransitionNames(getUser(),
+                            pid, null).size() > 1)) {
                         String actionParameter = ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER;
                         return ConfirmationPopupHelper.getInstance().getConfirmationPopupCodeHTML(actionParameter, getPageContext());
                     }
@@ -117,13 +108,13 @@ public class ReflectionRowBuilder implements RowBuilder {
             if (retVal == null) {
                 AuthorizationService authorizationService = Delegates.getAuthorizationService();
                 if (extractor == null) {
-                    retVal = authorizationService.isAllowed(getSubject(), permission, (List<Identifiable>) items);
+                    retVal = authorizationService.isAllowed(getUser(), permission, (List<Identifiable>) items);
                 } else {
                     List<Identifiable> identifiables = Lists.newArrayListWithExpectedSize(items.size());
                     for (Object object : items) {
                         identifiables.add(extractor.getIdentifiable(object, this));
                     }
-                    retVal = authorizationService.isAllowed(getSubject(), permission, identifiables);
+                    retVal = authorizationService.isAllowed(getUser(), permission, identifiables);
                 }
                 isAllowedCache.put(new Pair(permission, extractor), retVal);
             }
@@ -141,7 +132,7 @@ public class ReflectionRowBuilder implements RowBuilder {
                     ids.add(processIdExtractor.getIdentifiable(items.get(i), this).getId());
                 }
                 ExecutionService executionService = Delegates.getExecutionService();
-                Map<Long, Object> variables = executionService.getVariableValuesFromProcesses(getSubject(), ids, variableName);
+                Map<Long, Object> variables = executionService.getVariableValuesFromProcesses(getUser(), ids, variableName);
                 cache.putAll(variables);
             }
             return cache.get(processIdExtractor.getIdentifiable(object, this).getId());
@@ -177,7 +168,6 @@ public class ReflectionRowBuilder implements RowBuilder {
         private final Map<Pair, boolean[]> isAllowedCache = new HashMap<Pair, boolean[]>();
         private final Map<String, Map<Long, Object>> taskVariableCache = new HashMap<String, Map<Long, Object>>();
 
-        private Subject subject = null;
     }
 
     private final List<? extends Object> items;
@@ -186,7 +176,7 @@ public class ReflectionRowBuilder implements RowBuilder {
 
     private final BatchPresentation batchPresentation;
 
-    private GroupState currentState = null;
+    private GroupState currentState;
 
     private final String returnAction;
 
@@ -285,7 +275,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         Object item = items.get(currentState.getItemIndex());
         TR tr = new TR();
         if (cssClassStrategy != null) {
-            String cssClassName = cssClassStrategy.getClassName(item, env.getSubject());
+            String cssClassName = cssClassStrategy.getClassName(item, env.getUser());
             if (cssClassName != null) {
                 tr.setClass(cssClassName);
             }

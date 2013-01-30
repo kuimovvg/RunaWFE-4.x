@@ -73,16 +73,16 @@ public class ListExecutorRightRelationMembersFormTag extends TitledFormTag {
             ExecutorService executorService = Delegates.getExecutorService();
             RelationService relationService = Delegates.getRelationService();
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Relation currentRelation = relationService.getRelation(getSubject(), getRelationName());
-            isFormButtonVisible = authorizationService.isAllowed(getSubject(), RelationPermission.UPDATE_RELATION, currentRelation);
+            Relation currentRelation = relationService.getRelation(getUser(), getRelationName());
+            isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, currentRelation);
             List<Executor> executors = new ArrayList<Executor>();
-            Executor executor = executorService.getExecutor(getSubject(), executorId);
+            Executor executor = executorService.getExecutor(getUser(), executorId);
             executors.add(executor);
             BatchPresentation executorBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-            for (Group group : executorService.getExecutorGroups(getSubject(), executor, executorBatchPresentation, false)) {
+            for (Group group : executorService.getExecutorGroups(getUser(), executor, executorBatchPresentation, false)) {
                 executors.add(group);
             }
-            List<RelationPair> relationPairs = relationService.getExecutorsRelationPairsRight(getSubject(), null, executors);
+            List<RelationPair> relationPairs = relationService.getExecutorsRelationPairsRight(getUser(), null, executors);
 
             TableBuilder tableBuilder = new TableBuilder();
 

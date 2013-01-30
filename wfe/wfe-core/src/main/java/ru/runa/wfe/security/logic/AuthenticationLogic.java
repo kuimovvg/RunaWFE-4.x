@@ -38,6 +38,7 @@ import ru.runa.wfe.security.auth.PasswordLoginModuleCallbackHandler;
 import ru.runa.wfe.security.auth.PrincipalCallbackHandler;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 14.03.2005
@@ -59,27 +60,27 @@ public class AuthenticationLogic extends CommonLogic {
         this.loginModuleConfiguration = loginModuleConfiguration;
     }
 
-    public Subject authenticate(Principal principal) throws AuthenticationException {
+    public User authenticate(Principal principal) throws AuthenticationException {
         return authenticate(new PrincipalCallbackHandler(principal), AuthType.OTHER);
     }
 
-    public Subject authenticate(byte[] kerberosToken, KerberosLoginModuleResources res) throws AuthenticationException {
+    public User authenticate(byte[] kerberosToken, KerberosLoginModuleResources res) throws AuthenticationException {
         return authenticate(new KerberosCallbackHandler(kerberosToken, res), AuthType.KERBEROS);
     }
 
-    public Subject authenticate(String name, String password) throws AuthenticationException {
+    public User authenticate(String name, String password) throws AuthenticationException {
         return authenticate(new PasswordLoginModuleCallbackHandler(name, password), AuthType.DB);
     }
 
-    private Subject authenticate(CallbackHandler callbackHandler, AuthType authType) throws AuthenticationException {
+    private User authenticate(CallbackHandler callbackHandler, AuthType authType) throws AuthenticationException {
         try {
             LoginContext loginContext = new LoginContext(LOGIN_MODULE_CONFIGURATION, null, callbackHandler, loginModuleConfiguration);
             loginContext.login();
             Subject subject = loginContext.getSubject();
-            callHandlers(SubjectPrincipalsHelper.getActor(subject), authType);
-            String actorName = SubjectPrincipalsHelper.getActor(subject).getName();
+            callHandlers(SubjectPrincipalsHelper.getUser(subject), authType);
+            String actorName = SubjectPrincipalsHelper.getUser(subject).getName();
             log.debug(actorName + " successfully authenticated");
-            return subject;
+            return SubjectPrincipalsHelper.getUser(subject);
         } catch (Exception e) {
             log.warn("Failed to authenticate because of: " + e.getMessage());
             throw new AuthenticationException(e);

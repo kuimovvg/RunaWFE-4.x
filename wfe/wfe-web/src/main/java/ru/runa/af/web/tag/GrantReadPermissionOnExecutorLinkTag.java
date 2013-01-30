@@ -40,9 +40,9 @@ public class GrantReadPermissionOnExecutorLinkTag extends IdLinkBaseTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             ExecutorService executorService = Delegates.getExecutorService();
-            Executor executor = executorService.getExecutor(getSubject(), getIdentifiableId());
+            Executor executor = executorService.getExecutor(getUser(), getIdentifiableId());
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getSubject(), Permission.UPDATE_PERMISSIONS, executor);
+            return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, executor);
         } catch (Exception e) {
             return false;
         }

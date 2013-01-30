@@ -23,7 +23,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -35,6 +34,7 @@ import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.audit.logic.AuditLogic;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
 
@@ -50,30 +50,30 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
     private AuditLogic auditLogic;
 
     @Override
-    public void login(Subject subject, ru.runa.wfe.security.ASystem system) throws AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public void login(User user, ru.runa.wfe.security.ASystem system) throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(system);
-        auditLogic.login(subject, system);
+        auditLogic.login(user, system);
     }
 
     @Override
-    public void logout(Subject subject, ru.runa.wfe.security.ASystem system) {
-        Preconditions.checkNotNull(subject);
+    public void logout(User user, ru.runa.wfe.security.ASystem system) {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(system);
-        auditLogic.logout(subject, system);
+        auditLogic.logout(user, system);
     }
 
     @Override
-    public Map<String, String> getLocalizations(Subject subject) {
-        Preconditions.checkNotNull(subject);
-        return auditLogic.getLocalizations(subject);
+    public Map<String, String> getLocalizations(User user) {
+        Preconditions.checkNotNull(user);
+        return auditLogic.getLocalizations(user);
     }
 
     @Override
-    public void saveLocalizations(Subject subject, Map<String, String> localizations) {
-        Preconditions.checkNotNull(subject);
+    public void saveLocalizations(User user, Map<String, String> localizations) {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(localizations);
-        auditLogic.saveLocalizations(subject, localizations);
+        auditLogic.saveLocalizations(user, localizations);
     }
 
 }

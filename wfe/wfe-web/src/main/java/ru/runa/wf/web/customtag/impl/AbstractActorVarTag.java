@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.web.customtag.impl;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
@@ -27,6 +26,7 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.customtag.VarTag;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 09.05.2005
@@ -36,20 +36,20 @@ public abstract class AbstractActorVarTag implements VarTag {
     private static final Log log = LogFactory.getLog(AbstractActorVarTag.class);
 
     @Override
-    final public String getHtml(Subject subject, String varName, Object var, PageContext pageContext) throws Exception {
+    final public String getHtml(User user, String varName, Object var, PageContext pageContext) throws Exception {
         if (var == null) {
             log.warn("Vartag variable is not set: " + varName);
             return "<p class='error'>null</p>";
         }
         Long code = TypeConversionUtil.convertTo(var, Long.class);
-        Actor actor = getActor(subject, code);
+        Actor actor = getActor(user, code);
         return actorToString(actor);
     }
 
     public abstract String actorToString(Actor actor);
 
-    private Actor getActor(Subject subject, long code) {
-        return Delegates.getExecutorService().getActorByCode(subject, code);
+    private Actor getActor(User user, long code) {
+        return Delegates.getExecutorService().getActorByCode(user, code);
     }
 
 }

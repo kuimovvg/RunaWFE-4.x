@@ -19,9 +19,9 @@ package ru.runa.wfe.handler.bot;
 
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 /**
@@ -50,12 +50,12 @@ public interface TaskHandler {
     /**
      * Handles task assigned to bot.
      * 
-     * @param subject
+     * @param user
      *            bot subject.
      * @param variableProvider
      *            access process variables
      * @param task
      *            task to be processed.
      */
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception;
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception;
 }

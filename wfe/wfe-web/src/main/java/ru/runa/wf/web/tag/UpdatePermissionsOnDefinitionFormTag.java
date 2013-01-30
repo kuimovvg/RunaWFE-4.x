@@ -47,9 +47,9 @@ public class UpdatePermissionsOnDefinitionFormTag extends ProcessDefinitionBaseF
     protected void fillFormData(TD tdFormElement) throws JspException {
         try {
             WfDefinition defintion = getDefinition();
-            PermissionTableBuilder tableBuilder = new PermissionTableBuilder(defintion, getSubject(), pageContext);
+            PermissionTableBuilder tableBuilder = new PermissionTableBuilder(defintion, getUser(), pageContext);
             Table table = tableBuilder.buildTable();
-            Actor starter = Delegates.getExecutorService().getExecutor(getSubject(), SystemExecutors.PROCESS_STARTER_NAME);
+            Actor starter = Delegates.getExecutorService().getExecutor(getUser(), SystemExecutors.PROCESS_STARTER_NAME);
             table.addElement(tableBuilder.createTR(starter, getUnmodifiablePermissions(), false));
             tdFormElement.addElement(table);
         } catch (Exception e) {

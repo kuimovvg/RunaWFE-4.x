@@ -17,20 +17,16 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import org.apache.ecs.html.A;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.tag.MessageTag;
-import ru.runa.service.af.AuthenticationService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
-import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 06.09.2004
@@ -43,16 +39,10 @@ public class LoginAsMessageTag extends MessageTag {
 
     @Override
     public String getMessage() throws JspException {
-        try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
-            AuthenticationService authenticationService = Delegates.getAuthenticationService();
-            Actor actor = authenticationService.getActor(subject);
-            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, actor.getId(), pageContext,
-                    PortletUrlType.Render);
-            A a = new A(url, "<I>" + actor.getName() + "</I>");
-            return super.getMessage() + " " + a.toString();
-        } catch (Exception e) {
-            return "";
-        }
+        User user = Commons.getUser(pageContext.getSession());
+        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, user.getId(), pageContext,
+                PortletUrlType.Render);
+        A a = new A(url, "<I>" + user.getName() + "</I>");
+        return super.getMessage() + " " + a.toString();
     }
 }

@@ -19,25 +19,28 @@ package ru.runa.af.web.orgfunction;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.os.ParamRenderer;
+import ru.runa.wfe.user.User;
 
 public class StringRenderer implements ParamRenderer {
 
+    @Override
     public boolean hasJSEditor() {
         return false;
     }
 
-    public List<String[]> loadJSEditorData(Subject subject) {
+    @Override
+    public List<String[]> loadJSEditorData(User user) {
         throw new UnsupportedOperationException();
     }
 
-    public String getDisplayLabel(Subject subject, String value) {
+    @Override
+    public String getDisplayLabel(User user, String value) {
         return value;
     }
 
-    public boolean isValueValid(Subject subject, String value) {
+    @Override
+    public boolean isValueValid(User user, String value) {
         return value.trim().length() > 0;
     }
 

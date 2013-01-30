@@ -57,7 +57,7 @@ public class ListNotGroupMembersFormTag extends ListExecutorsBaseFormTag {
             throw new InternalApplicationException("Executor type missmatch, Group expected but Actor found.");
         }
         Group group = (Group) executor;
-        return executorService.getGroupChildren(getSubject(), group, getBatchPresentation(), true);
+        return executorService.getGroupChildren(getUser(), group, getBatchPresentation(), true);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ListNotGroupMembersFormTag extends ListExecutorsBaseFormTag {
             throw new InternalApplicationException("Executor type missmatch, Group expected but Actor found.");
         }
         Group group = (Group) executor;
-        return executorService.getGroupChildrenCount(getSubject(), group, getBatchPresentation(), true);
+        return executorService.getGroupChildrenCount(getUser(), group, getBatchPresentation(), true);
     }
 
     @Override

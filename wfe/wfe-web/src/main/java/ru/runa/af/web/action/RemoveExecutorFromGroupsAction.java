@@ -17,21 +17,19 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.ExecutorService;
@@ -46,12 +44,16 @@ import com.google.common.collect.Lists;
  * 
  */
 /**
- * @struts:action path="/removeExecutorFromGroups" name="idsForm" validate="true" input = "/WEB-INF/af/manage_executor.jsp"
- * @struts.action-forward name="success" path="/manage_executor.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_executor.do" redirect = "true"
- * @struts.action-forward name="failure_executor_does_not_exist" path="/manage_executors.do" redirect = "true"
+ * @struts:action path="/removeExecutorFromGroups" name="idsForm"
+ *                validate="true" input = "/WEB-INF/af/manage_executor.jsp"
+ * @struts.action-forward name="success" path="/manage_executor.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure" path="/manage_executor.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure_executor_does_not_exist"
+ *                        path="/manage_executors.do" redirect = "true"
  */
-public class RemoveExecutorFromGroupsAction extends Action {
+public class RemoveExecutorFromGroupsAction extends ActionBase {
 
     public static final String ACTION_PATH = "/removeExecutorFromGroups";
 
@@ -63,8 +65,7 @@ public class RemoveExecutorFromGroupsAction extends Action {
         boolean executorExists = true;
         try {
             ExecutorService executorService = Delegates.getExecutorService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            executorService.removeExecutorFromGroups(subject, form.getId(), Lists.newArrayList(form.getIds()));
+            executorService.removeExecutorFromGroups(getLoggedUser(request), form.getId(), Lists.newArrayList(form.getIds()));
         } catch (ExecutorDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);
             executorExists = false;

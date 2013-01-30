@@ -35,7 +35,7 @@ abstract public class CreateExecutorLinkTag extends LinkTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getSubject(), SystemPermission.CREATE_EXECUTOR, ASystem.INSTANCE);
+            return authorizationService.isAllowed(getUser(), SystemPermission.CREATE_EXECUTOR, ASystem.INSTANCE);
         } catch (Exception e) {
             return false;
         }

@@ -19,23 +19,21 @@ package ru.runa.wf.web.action;
 
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.wf.web.VariablesFormatException;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.security.AuthenticationException;
@@ -47,7 +45,7 @@ import ru.runa.wfe.validation.impl.ValidationException;
  * Created on 15.12.2005
  * 
  */
-public abstract class BaseProcessFormAction extends Action {
+public abstract class BaseProcessFormAction extends ActionBase {
     public static final String USER_DEFINED_VARIABLES = "UserDefinedVariables";
     public static final String USER_ERRORS = "UserErrors";
 
@@ -58,11 +56,10 @@ public abstract class BaseProcessFormAction extends Action {
         Map<String, String> userInputErrors = null;
         ActionForward successForward = null;
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
             if (request.getSession().getAttribute(Globals.TRANSACTION_TOKEN_KEY) == null || isTokenValid(request, true)) {
                 saveToken(request);
-                successForward = executeProcessFromAction(request, form, mapping, subject, profile);
+                successForward = executeProcessFromAction(request, form, mapping, profile);
             } else {
                 return new ActionForward("/manage_tasks.do", true);
             }
@@ -113,8 +110,8 @@ public abstract class BaseProcessFormAction extends Action {
 
     protected abstract ActionMessage getMessage();
 
-    protected abstract ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm form, ActionMapping mapping, Subject subject,
-            Profile profile) throws Exception;
+    protected abstract ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm form, ActionMapping mapping, Profile profile)
+            throws Exception;
 
     protected abstract ActionForward getErrorForward(ActionMapping mapping, ActionForm actionForm);
 }

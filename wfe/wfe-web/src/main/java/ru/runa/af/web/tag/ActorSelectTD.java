@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import org.apache.ecs.html.Option;
@@ -35,19 +34,20 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
 public class ActorSelectTD extends TD {
     private static final long serialVersionUID = 1L;
 
-    public ActorSelectTD(Subject subject, String name) throws JspException {
-        this(subject, name, (String) null, true);
+    public ActorSelectTD(User user, String name) throws JspException {
+        this(user, name, (String) null, true);
     }
 
-    public ActorSelectTD(Subject subject, String name, String current) throws JspException {
-        this(subject, name, current, true);
+    public ActorSelectTD(User user, String name, String current) throws JspException {
+        this(user, name, current, true);
     }
 
-    public ActorSelectTD(Subject subject, String name, String current, Collection<Executor> executors) throws JspException {
+    public ActorSelectTD(String name, String current, Collection<Executor> executors) throws JspException {
         Select select = new Select();
         select.setName(name);
         ArrayList<Option> options = new ArrayList<Option>();
@@ -72,12 +72,12 @@ public class ActorSelectTD extends TD {
         super.addElement(select);
     }
 
-    public ActorSelectTD(Subject subject, String name, String current, boolean actorOnly) throws JspException {
+    public ActorSelectTD(User user, String name, String current, boolean actorOnly) throws JspException {
         Select select = new Select();
         select.setName(name);
         boolean exist = false;
         ExecutorService executorService = Delegates.getExecutorService();
-        List<Executor> executors = executorService.getAll(subject, BatchPresentationFactory.EXECUTORS.createNonPaged());
+        List<Executor> executors = executorService.getAll(user, BatchPresentationFactory.EXECUTORS.createNonPaged());
         ArrayList<Option> options = new ArrayList<Option>();
         for (Executor executor : executors) {
             if (!(executor instanceof Actor) && actorOnly) {

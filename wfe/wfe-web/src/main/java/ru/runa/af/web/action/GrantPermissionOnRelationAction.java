@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,7 +29,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.RelationIdsForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
@@ -44,15 +42,19 @@ import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 
 /**
  * Created on 23.08.2004
  * 
- * @struts:action path="/grantPermissionOnRelation" name="relationIdsForm" validate="false" input="/WEB-INF/af/relation_permission.jsp"
- * @struts.action-forward name="success" path="/relation_permission.do" redirect = "true"
- * @struts.action-forward name="failure" path="/relation_permission.do" redirect = "true"
+ * @struts:action path="/grantPermissionOnRelation" name="relationIdsForm"
+ *                validate="false" input="/WEB-INF/af/relation_permission.jsp"
+ * @struts.action-forward name="success" path="/relation_permission.do" redirect
+ *                        = "true"
+ * @struts.action-forward name="failure" path="/relation_permission.do" redirect
+ *                        = "true"
  */
 public class GrantPermissionOnRelationAction extends IdentifiableAction {
 
@@ -74,10 +76,9 @@ public class GrantPermissionOnRelationAction extends IdentifiableAction {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
             RelationService relationService = Delegates.getRelationService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            Identifiable identifiable = relationService.getRelation(subject, relationForm.getRelationName());
+            Identifiable identifiable = relationService.getRelation(getLoggedUser(request), relationForm.getRelationName());
             if (identifiable != null) {
-                authorizationService.setPermissions(subject, selectedIds, getIdentifiablePermissions(), identifiable);
+                authorizationService.setPermissions(getLoggedUser(request), selectedIds, getIdentifiablePermissions(), identifiable);
             }
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
@@ -94,7 +95,7 @@ public class GrantPermissionOnRelationAction extends IdentifiableAction {
     }
 
     @Override
-    protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
         return RelationsGroupSecure.INSTANCE;
     }
 }

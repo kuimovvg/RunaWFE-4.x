@@ -57,7 +57,7 @@ public class ProcessDefinitionDescriptionFormTag extends ProcessDefinitionBaseFo
         boolean result = false;
         try {
             DefinitionService definitionService = Delegates.getDefinitionService();
-            result = definitionService.getFile(getSubject(), getIdentifiableId(), ProcessDefinitionDescriptionAction.DESCRIPTION_FILE_NAME) != null;
+            result = definitionService.getFile(getUser(), getIdentifiableId(), ProcessDefinitionDescriptionAction.DESCRIPTION_FILE_NAME) != null;
         } catch (Exception e) {
             log.error(e.toString());
         }

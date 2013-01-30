@@ -2,8 +2,6 @@ package ru.runa.wfe.graph.image;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.execution.NodeProcess;
@@ -13,9 +11,8 @@ import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessesGraphElementAdapter;
 import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.dao.PermissionDAO;
-import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Objects;
 
@@ -27,7 +24,7 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
     /**
      * Current subject.
      */
-    private final Subject subject;
+    private final User user;
 
     /**
      * Instances of subprocesses, which must be added to graph elements.
@@ -43,8 +40,8 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
      * @param subject
      *            Current subject.
      */
-    public StartedSubprocessesVisitor(Subject subject, List<NodeProcess> nodeProcesses) {
-        this.subject = subject;
+    public StartedSubprocessesVisitor(User user, List<NodeProcess> nodeProcesses) {
+        this.user = user;
         this.nodeProcesses = nodeProcesses;
     }
 
@@ -81,9 +78,8 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
      *         otherwise.
      */
     private boolean checkPermission(Process process) throws DefinitionDoesNotExistException, AuthenticationException {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
         PermissionDAO permissionDAO = ApplicationContextFactory.getPermissionDAO();
-        return permissionDAO.isAllowed(actor, ProcessPermission.READ, process);
+        return permissionDAO.isAllowed(user, ProcessPermission.READ, process);
     }
 
 }

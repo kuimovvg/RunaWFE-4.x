@@ -32,10 +32,10 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.security.auth.Subject;
 
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -59,7 +59,7 @@ public class JcrRepositoryTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         Session session = null;
         try {
             Context context = new InitialContext();

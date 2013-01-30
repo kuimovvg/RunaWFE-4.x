@@ -17,12 +17,12 @@
  */
 package ru.runa.wf.web.customtag.impl;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
 import ru.runa.wf.web.customtag.VarTag;
+import ru.runa.wfe.user.User;
 
 /**
  * 
@@ -31,7 +31,7 @@ import ru.runa.wf.web.customtag.VarTag;
 public class VariableValueDisplayVarTag implements VarTag {
 
     @Override
-    public String getHtml(Subject subject, String varName, Object var, PageContext pageContext) {
+    public String getHtml(User user, String varName, Object var, PageContext pageContext) {
         if (var == null) {
             // this value causes problem with textarias. There text
             // "<p class='error'>null</p>" appears instead of empty value.

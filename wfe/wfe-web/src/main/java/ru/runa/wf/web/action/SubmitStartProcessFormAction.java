@@ -19,7 +19,6 @@ package ru.runa.wf.web.action;
 
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
@@ -33,39 +32,45 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.form.CommonProcessForm;
+import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 18.08.2004
  * 
- * @struts:action path="/submitStartProcessForm" name="commonProcessForm" validate="true" input = "/WEB-INF/wf/manage_process_definitions.jsp"
- * @struts.action-forward name="success" path="/manage_process_definitions.do" redirect = "true"
- * @struts.action-forward name="failure" path="/submit_start_process.do" redirect = "false"
- * @struts.action-forward name="submitTask" path="/submit_task.do" redirect = "false"
- * @struts.action-forward name="tasksList" path="/manage_tasks.do" redirect = "true"
+ * @struts:action path="/submitStartProcessForm" name="commonProcessForm"
+ *                validate="true" input =
+ *                "/WEB-INF/wf/manage_process_definitions.jsp"
+ * @struts.action-forward name="success" path="/manage_process_definitions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/submit_start_process.do"
+ *                        redirect = "false"
+ * @struts.action-forward name="submitTask" path="/submit_task.do" redirect =
+ *                        "false"
+ * @struts.action-forward name="tasksList" path="/manage_tasks.do" redirect =
+ *                        "true"
  */
 public class SubmitStartProcessFormAction extends BaseProcessFormAction {
-    protected Long processId = null;
+    protected Long processId;
 
     @Override
-    protected ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Subject subject,
-            Profile profile) throws Exception {
-        ExecutionService executionService = Delegates.getExecutionService();
-        DefinitionService definitionService = Delegates.getDefinitionService();
+    protected ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Profile profile)
+            throws Exception {
+        User user = getLoggedUser(request);
         Long definitionId = ((CommonProcessForm) actionForm).getId();
-        Interaction interaction = definitionService.getStartInteraction(subject, definitionId);
+        Interaction interaction = Delegates.getDefinitionService().getStartInteraction(user, definitionId);
         Map<String, Object> variables = getFormVariables(request, actionForm, interaction);
         String transitionName = ((CommonProcessForm) actionForm).getSubmitButton();
         variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
-        processId = executionService.startProcess(subject, definitionService.getProcessDefinition(subject, definitionId).getName(), variables);
+        WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(user, definitionId);
+        processId = Delegates.getExecutionService().startProcess(user, definition.getName(), variables);
 
         if (WebResources.isAutoShowForm()) {
-            ActionForward forward = AutoShowFormHelper.getNextActionForward(subject, mapping, profile, processId);
+            ActionForward forward = AutoShowFormHelper.getNextActionForward(user, mapping, profile, processId);
             if (forward != null) {
                 return forward;
             }

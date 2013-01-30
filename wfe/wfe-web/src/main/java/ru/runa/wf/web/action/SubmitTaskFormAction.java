@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
@@ -42,6 +41,7 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Objects;
 
@@ -62,17 +62,18 @@ import com.google.common.base.Objects;
 public class SubmitTaskFormAction extends BaseProcessFormAction {
 
     @Override
-    protected ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Subject subject,
-            Profile profile) throws Exception {
+    protected ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Profile profile)
+            throws Exception {
+        User user = getLoggedUser(request);
         ExecutionService executionService = Delegates.getExecutionService();
         DefinitionService definitionService = Delegates.getDefinitionService();
         ProcessForm form = (ProcessForm) actionForm;
         Long taskId = form.getId();
-        Interaction wfForm = definitionService.getTaskInteraction(subject, taskId);
+        Interaction wfForm = definitionService.getTaskInteraction(user, taskId);
         Map<String, Object> variables = getFormVariables(request, actionForm, wfForm);
 
         BatchPresentation batchPresentation = profile.getActiveBatchPresentation("listTasksForm").clone();
-        List<WfTask> tasks = executionService.getTasks(subject, batchPresentation);
+        List<WfTask> tasks = executionService.getTasks(user, batchPresentation);
         Long processId = null;
         for (WfTask task : tasks) {
             if (Objects.equal(task.getId(), taskId)) {
@@ -82,10 +83,10 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
 
         String transitionName = form.getSubmitButton();
         variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
-        executionService.completeTask(subject, taskId, variables);
+        executionService.completeTask(user, taskId, variables);
 
         if (WebResources.isAutoShowForm()) {
-            ActionForward forward = AutoShowFormHelper.getNextActionForward(subject, mapping, profile, processId);
+            ActionForward forward = AutoShowFormHelper.getNextActionForward(user, mapping, profile, processId);
             if (forward != null) {
                 return forward;
             }

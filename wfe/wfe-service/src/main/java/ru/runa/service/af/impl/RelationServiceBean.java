@@ -23,7 +23,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -42,6 +41,7 @@ import ru.runa.wfe.relation.logic.RelationLogic;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
 
@@ -58,86 +58,84 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     private RelationLogic relationLogic;
 
     @Override
-    public RelationPair addRelationPair(Subject subject, String relationGroupName, Executor from, Executor to) throws RelationDoesNotExistException,
+    public RelationPair addRelationPair(User user, String relationGroupName, Executor from, Executor to) throws RelationDoesNotExistException,
             AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(from);
         Preconditions.checkNotNull(to);
-        return relationLogic.addRelationPair(subject, relationGroupName, from, to);
+        return relationLogic.addRelationPair(user, relationGroupName, from, to);
     }
 
     @Override
-    public Relation createRelation(Subject subject, String name, String description) throws RelationAlreadyExistException, AuthorizationException,
+    public Relation createRelation(User user, String name, String description) throws RelationAlreadyExistException, AuthorizationException,
             AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return relationLogic.createRelation(subject, name, description);
+        Preconditions.checkNotNull(user);
+        return relationLogic.createRelation(user, name, description);
     }
 
     @Override
-    public List<Relation> getRelations(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public List<Relation> getRelations(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return relationLogic.getRelations(subject, batchPresentation);
+        return relationLogic.getRelations(user, batchPresentation);
     }
 
     @Override
-    public Relation getRelation(Subject subject, String relationsGroupName) throws RelationDoesNotExistException, AuthorizationException,
+    public Relation getRelation(User user, String relationsGroupName) throws RelationDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return relationLogic.getRelation(subject, relationsGroupName);
+        Preconditions.checkNotNull(user);
+        return relationLogic.getRelation(user, relationsGroupName);
     }
 
     @Override
-    public Relation getRelation(Subject subject, Long relationId) throws RelationDoesNotExistException, AuthorizationException,
-            AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        return relationLogic.getRelation(subject, relationId);
+    public Relation getRelation(User user, Long relationId) throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
+        return relationLogic.getRelation(user, relationId);
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsRight(Subject subject, String relationName, List<Executor> right)
+    public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<Executor> right)
             throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(right);
-        return relationLogic.getExecutorRelationPairsRight(subject, relationName, right);
+        return relationLogic.getExecutorRelationPairsRight(user, relationName, right);
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsLeft(Subject subject, String relationName, List<Executor> left)
+    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<Executor> left)
             throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(left);
-        return relationLogic.getExecutorRelationPairsLeft(subject, relationName, left);
+        return relationLogic.getExecutorRelationPairsLeft(user, relationName, left);
     }
 
     @Override
-    public List<RelationPair> getRelationPairs(Subject subject, String relationsGroupName, BatchPresentation batchPresentation)
+    public List<RelationPair> getRelationPairs(User user, String relationsGroupName, BatchPresentation batchPresentation)
             throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return relationLogic.getRelations(subject, relationsGroupName, batchPresentation);
+        return relationLogic.getRelations(user, relationsGroupName, batchPresentation);
     }
 
     @Override
-    public List<RelationPair> getRelationPairs(Subject subject, Long relationId, BatchPresentation batchPresentation)
-            throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public List<RelationPair> getRelationPairs(User user, Long relationId, BatchPresentation batchPresentation) throws RelationDoesNotExistException,
+            AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return relationLogic.getRelations(subject, relationId, batchPresentation);
+        return relationLogic.getRelations(user, relationId, batchPresentation);
     }
 
     @Override
-    public void removeRelationPair(Subject subject, Long relationId) throws RelationPairDoesNotExistException, AuthorizationException,
+    public void removeRelationPair(User user, Long relationId) throws RelationPairDoesNotExistException, AuthorizationException,
             AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        relationLogic.removeRelationPair(subject, relationId);
+        Preconditions.checkNotNull(user);
+        relationLogic.removeRelationPair(user, relationId);
     }
 
     @Override
-    public void removeRelation(Subject subject, Long relationGroupId) throws RelationDoesNotExistException, AuthorizationException,
-            AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        relationLogic.removeRelation(subject, relationGroupId);
+    public void removeRelation(User user, Long relationGroupId) throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
+        relationLogic.removeRelation(user, relationGroupId);
     }
 
 }

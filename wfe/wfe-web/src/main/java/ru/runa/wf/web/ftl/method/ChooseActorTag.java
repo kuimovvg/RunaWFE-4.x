@@ -42,14 +42,14 @@ public class ChooseActorTag extends FreemarkerTag {
         String view = getParameterAs(String.class, 1);
         if ("all".equals(view)) {
             WfVariable variable = variableProvider.getVariableNotNull(actorVarName);
-            return ViewUtil.createExecutorSelect(subject, variable);
+            return ViewUtil.createExecutorSelect(user, variable);
         } else if ("raw".equals(view)) {
             ExecutorService executorService = Delegates.getExecutorService();
             BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
             int[] sortIds = { 1 };
             boolean[] sortOrder = { true };
             batchPresentation.setFieldsToSort(sortIds, sortOrder);
-            return executorService.getActors(subject, batchPresentation);
+            return executorService.getActors(user, batchPresentation);
         } else {
             throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
         }

@@ -20,31 +20,32 @@ package ru.runa.af.web.action;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.RelationIdsForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
 
 /**
- * @struts:action path="/removeRelation" name="relationIdsForm" validate="false" input = "/WEB-INF/af/manage_relation_members.jsp"
- * @struts.action-forward name="success" path="/manage_relation.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_relation.do" redirect = "true"
+ * @struts:action path="/removeRelation" name="relationIdsForm" validate="false"
+ *                input = "/WEB-INF/af/manage_relation_members.jsp"
+ * @struts.action-forward name="success" path="/manage_relation.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure" path="/manage_relation.do" redirect =
+ *                        "true"
  */
-public class RemoveRelationAction extends Action {
+public class RemoveRelationAction extends ActionBase {
     public static final String ACTION_PATH = "/removeRelation";
 
     @Override
@@ -54,9 +55,8 @@ public class RemoveRelationAction extends Action {
         RelationIdsForm relationForm = (RelationIdsForm) form;
         try {
             RelationService relationService = Delegates.getRelationService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             for (Long relationId : relationForm.getIds()) {
-                relationService.removeRelationPair(subject, relationId);
+                relationService.removeRelationPair(getLoggedUser(request), relationId);
             }
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);

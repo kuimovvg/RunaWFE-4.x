@@ -38,7 +38,7 @@ public class UpdatePermissionsOnProcessFormTag extends ProcessBaseFormTag {
     @Override
     protected void fillFormData(TD tdFormElement) throws JspException {
         WfProcess instance = super.getProcess();
-        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(instance, getSubject(), pageContext);
+        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(instance, getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 

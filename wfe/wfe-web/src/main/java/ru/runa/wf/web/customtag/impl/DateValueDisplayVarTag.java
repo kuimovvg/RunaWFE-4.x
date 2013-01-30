@@ -19,17 +19,17 @@ package ru.runa.wf.web.customtag.impl;
 
 import java.util.Date;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.wf.web.customtag.VarTag;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.user.User;
 
 public class DateValueDisplayVarTag implements VarTag {
 
     @Override
-    public String getHtml(Subject subject, String varName, Object var, PageContext pageContext) {
+    public String getHtml(User user, String varName, Object var, PageContext pageContext) {
         if (var == null) {
             return "<p class='error'>null</p>";
         }

@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
@@ -27,17 +25,23 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.UpdatePermissionOnIdentifiableAction;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.user.User;
 
 /**
- * @struts:action path="/updatePermissionOnGroupsOfRelations" name="updatePermissionsOnIdentifiableForm" validate="false"
- * @struts.action-forward name="success" path="/group_of_relations_permission.do" redirect = "true"
- * @struts.action-forward name="failure" path="/group_of_relations_permission.do" redirect = "true"
+ * @struts:action path="/updatePermissionOnGroupsOfRelations"
+ *                name="updatePermissionsOnIdentifiableForm" validate="false"
+ * @struts.action-forward name="success"
+ *                        path="/group_of_relations_permission.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure"
+ *                        path="/group_of_relations_permission.do" redirect =
+ *                        "true"
  */
 public class UpdatePermissionOnGroupsOfRelations extends UpdatePermissionOnIdentifiableAction {
     public static final String ACTION_PATH_NAME = "/updatePermissionOnGroupsOfRelations";
 
     @Override
-    protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
         return RelationsGroupSecure.INSTANCE;
     }
 

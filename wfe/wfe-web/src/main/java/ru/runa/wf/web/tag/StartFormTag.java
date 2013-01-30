@@ -62,20 +62,20 @@ public class StartFormTag extends WFFormTag {
     @Override
     protected String buildForm(Interaction interaction) throws Exception {
         StartFormBuilder startFormBuilder = FormBuilderFactory.createStartFormBuilder(interaction.getType());
-        return startFormBuilder.build(getSubject(), getDefinitionId(), pageContext, interaction);
+        return startFormBuilder.build(getUser(), getDefinitionId(), pageContext, interaction);
     }
 
     @Override
     protected Interaction getInteraction() throws AuthorizationException, AuthenticationException {
         try {
-            return Delegates.getDefinitionService().getStartInteraction(getSubject(), definitionId);
+            return Delegates.getDefinitionService().getStartInteraction(getUser(), definitionId);
         } catch (DefinitionDoesNotExistException e) {
             throw new InternalApplicationException(e);
         }
     }
 
     public List<String> getTransitionNames() throws AuthenticationException, TaskDoesNotExistException {
-        return Delegates.getDefinitionService().getOutputTransitionNames(getSubject(), definitionId, null);
+        return Delegates.getDefinitionService().getOutputTransitionNames(getUser(), definitionId, null);
     }
 
     @Override

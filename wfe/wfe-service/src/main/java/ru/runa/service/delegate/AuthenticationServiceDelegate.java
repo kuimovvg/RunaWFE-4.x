@@ -17,11 +17,9 @@
  */
 package ru.runa.service.delegate;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.af.AuthenticationService;
 import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 public class AuthenticationServiceDelegate extends EJB3Delegate implements AuthenticationService {
 
@@ -34,22 +32,17 @@ public class AuthenticationServiceDelegate extends EJB3Delegate implements Authe
     }
 
     @Override
-    public Actor getActor(Subject subject) throws AuthenticationException {
-        return getAuthenticationService().getActor(subject);
+    public User authenticateByCallerPrincipal() throws AuthenticationException {
+        return getAuthenticationService().authenticateByCallerPrincipal();
     }
 
     @Override
-    public Subject authenticate() throws AuthenticationException {
-        return getAuthenticationService().authenticate();
+    public User authenticateByLoginPassword(String name, String password) throws AuthenticationException {
+        return getAuthenticationService().authenticateByLoginPassword(name, password);
     }
 
     @Override
-    public Subject authenticate(String name, String password) throws AuthenticationException {
-        return getAuthenticationService().authenticate(name, password);
-    }
-
-    @Override
-    public Subject authenticate(byte[] token) throws AuthenticationException {
-        return getAuthenticationService().authenticate(token);
+    public User authenticateByKerberos(byte[] token) throws AuthenticationException {
+        return getAuthenticationService().authenticateByKerberos(token);
     }
 }

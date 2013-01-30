@@ -18,11 +18,10 @@
 package ru.runa.common.web.portlet.impl;
 
 import javax.portlet.PortletSession;
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.portlet.PortletAuthenticator;
@@ -31,31 +30,32 @@ import ru.runa.service.af.SystemService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 
 public class AuthenticateMandatory implements PortletAuthenticator {
     protected boolean silent = false;
 
+    @Override
     public boolean authenticate(HttpServletRequest request, HttpServletResponse response, PortletSession session) {
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
+            User user = Commons.getUser(request.getSession());
             if (session.getAttribute(ProfileHttpSessionHelper.PROFILE_ATTRIBUTE_NAME) == null) {
                 ProfileService profileService = Delegates.getProfileService();
-                Profile profile = profileService.getProfile(subject);
+                Profile profile = profileService.getProfile(user);
                 ProfileHttpSessionHelper.setProfile(profile, session);
-                SubjectHttpSessionHelper.addActorSubject(subject, session);
                 TabHttpSessionHelper.setTabForwardName(request.getRequestURL().toString(), session);
             }
         } catch (Exception e) {
             try {
                 SystemService systemService = Delegates.getSystemService();
-                Subject subject = Delegates.getAuthenticationService().authenticate();
-                systemService.login(subject, ASystem.INSTANCE);
+                User user = Delegates.getAuthenticationService().authenticateByCallerPrincipal();
+                systemService.login(user, ASystem.INSTANCE);
                 ProfileService profileService = Delegates.getProfileService();
-                Profile profile = profileService.getProfile(subject);
+                Profile profile = profileService.getProfile(user);
                 ProfileHttpSessionHelper.setProfile(profile, session);
                 ProfileHttpSessionHelper.setProfile(profile, request.getSession());
-                SubjectHttpSessionHelper.addActorSubject(subject, session);
-                SubjectHttpSessionHelper.addActorSubject(subject, request.getSession());
+                Commons.setUser(user, session);
+                Commons.setUser(user, request.getSession());
                 TabHttpSessionHelper.setTabForwardName(request.getRequestURL().toString(), session);
                 TabHttpSessionHelper.setTabForwardName(request.getRequestURL().toString(), request.getSession());
             } catch (Exception e2) {

@@ -2,20 +2,18 @@ package ru.runa.af.web.action;
 
 import java.io.OutputStream;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.af.web.Native2AsciiHelper;
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.HTMLUtils;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
@@ -30,7 +28,7 @@ import com.google.common.base.Charsets;
  * @struts:action path="/download_bot_task_configuration" name="idForm" input =
  *                "/WEB-INF/wf/bot.jsp"
  */
-public class BotTaskConfigurationDownloadAction extends Action {
+public class BotTaskConfigurationDownloadAction extends ActionBase {
     public static final String DOWNLOAD_BOT_TASK_CONFIGURATION_ACTION_PATH = "/download_bot_task_configuration";
     private static final Log log = LogFactory.getLog(BotTaskConfigurationDownloadAction.class);
 
@@ -40,8 +38,7 @@ public class BotTaskConfigurationDownloadAction extends Action {
             IdForm form = (IdForm) actionForm;
             boolean editAction = request.getParameter("edit") != null;
             BotService botService = Delegates.getBotService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            BotTask botTask = botService.getBotTask(subject, form.getId());
+            BotTask botTask = botService.getBotTask(getLoggedUser(request), form.getId());
             String fileName = botTask.getName() + "_" + botTask.getId() + ".xml";
             byte[] configuration = botTask.getConfiguration();
             boolean configurationIsXml = true;

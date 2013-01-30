@@ -17,22 +17,21 @@
  */
 package ru.runa.service.af;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 
 public interface ProfileService {
 
-    public Profile getProfile(Subject subject) throws AuthenticationException;
+    public Profile getProfile(User user) throws AuthenticationException;
 
-    public void setActiveBatchPresentation(Subject subject, String batchPresentationId, String newName) throws AuthenticationException;
+    public void setActiveBatchPresentation(User user, String batchPresentationId, String newName);
 
-    public void deleteBatchPresentation(Subject subject, BatchPresentation batchPresentation) throws AuthenticationException;
+    public void deleteBatchPresentation(User user, BatchPresentation batchPresentation);
 
-    public BatchPresentation createBatchPresentation(Subject subject, BatchPresentation batchPresentation) throws AuthenticationException;
+    public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation);
 
-    public void saveBatchPresentation(Subject subject, BatchPresentation batchPresentation) throws AuthenticationException;
+    public void saveBatchPresentation(User user, BatchPresentation batchPresentation);
 
 }

@@ -19,8 +19,6 @@ package ru.runa.af.web.action;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
@@ -31,15 +29,21 @@ import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 
 /**
  * Created on 23.08.2004
  * 
- * @struts:action path="/grantPermissionOnRelations" name="idsForm" validate="false"
- * @struts.action-forward name="success" path="/group_of_relations_permission.do" redirect = "true"
- * @struts.action-forward name="failure" path="/group_of_relations_permission.do" redirect = "true"
+ * @struts:action path="/grantPermissionOnRelations" name="idsForm"
+ *                validate="false"
+ * @struts.action-forward name="success"
+ *                        path="/group_of_relations_permission.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure"
+ *                        path="/group_of_relations_permission.do" redirect =
+ *                        "true"
  */
 public class GrantPermissionOnRelationsAction extends GrantPermisionOnIdentifiableAction {
 
@@ -53,7 +57,7 @@ public class GrantPermissionOnRelationsAction extends GrantPermisionOnIdentifiab
     }
 
     @Override
-    protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
         return RelationsGroupSecure.INSTANCE;
     }
 

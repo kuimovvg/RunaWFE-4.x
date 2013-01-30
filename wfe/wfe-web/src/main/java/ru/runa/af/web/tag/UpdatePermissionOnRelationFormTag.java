@@ -41,7 +41,7 @@ public class UpdatePermissionOnRelationFormTag extends IdentifiableFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) throws JspException {
-        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getIdentifiable(), getSubject(), pageContext);
+        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getIdentifiable(), getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 
@@ -49,7 +49,7 @@ public class UpdatePermissionOnRelationFormTag extends IdentifiableFormTag {
     protected Identifiable getIdentifiable() throws JspException {
         try {
             RelationService relationService = Delegates.getRelationService();
-            return relationService.getRelation(getSubject(), getRelationName());
+            return relationService.getRelation(getUser(), getRelationName());
         } catch (Exception e) {
             return null;
         }

@@ -4,11 +4,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.action.ViewLogsAction;
 import ru.runa.service.af.AuthorizationService;
@@ -17,6 +15,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.SystemPermission;
+import ru.runa.wfe.user.User;
 
 /**
  * 
@@ -46,7 +45,7 @@ public class ViewLogsTag extends TagSupport {
             File dirFile = new File(logDirPath);
             if (dirFile.exists() && dirFile.isDirectory()) {
                 AuthorizationService authorizationService = Delegates.getAuthorizationService();
-                if (authorizationService.isAllowed(getSubject(), SystemPermission.VIEW_LOGS, ASystem.INSTANCE)) {
+                if (authorizationService.isAllowed(getUser(), SystemPermission.VIEW_LOGS, ASystem.INSTANCE)) {
                     for (File file : dirFile.listFiles()) {
                         if (file.isFile()) {
                             Map<String, String> params = new HashMap<String, String>();
@@ -72,8 +71,8 @@ public class ViewLogsTag extends TagSupport {
         }
     }
 
-    private Subject getSubject() {
-        return SubjectHttpSessionHelper.getActorSubject(pageContext.getSession());
+    private User getUser() {
+        return Commons.getUser(pageContext.getSession());
     }
 
 }

@@ -19,23 +19,22 @@ package ru.runa.af.web.orgfunction;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
 public class ActorCodeRenderer extends ExecutorRendererBase {
 
     @Override
-    protected List<? extends Executor> loadExecutors(Subject subject) throws Exception {
+    protected List<? extends Executor> loadExecutors(User user) throws Exception {
         ExecutorService executorService = Delegates.getExecutorService();
         BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
         batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
-        return executorService.getActors(subject, batchPresentation);
+        return executorService.getActors(user, batchPresentation);
     }
 
     @Override
@@ -44,8 +43,8 @@ public class ActorCodeRenderer extends ExecutorRendererBase {
     }
 
     @Override
-    protected Executor getExecutor(Subject subject, String code) throws Exception {
+    protected Executor getExecutor(User user, String code) throws Exception {
         ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getActorByCode(subject, Long.valueOf(code));
+        return executorService.getActorByCode(user, Long.valueOf(code));
     }
 }

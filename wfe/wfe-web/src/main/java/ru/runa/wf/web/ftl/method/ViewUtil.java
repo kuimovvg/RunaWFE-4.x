@@ -2,8 +2,6 @@ package ru.runa.wf.web.ftl.method;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.InternalApplicationException;
@@ -11,6 +9,7 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.ActorFormat;
 import ru.runa.wfe.var.format.ExecutorFormat;
@@ -20,7 +19,7 @@ import com.google.common.base.Objects;
 
 public class ViewUtil {
 
-    public static String createExecutorSelect(Subject subject, WfVariable variable) {
+    public static String createExecutorSelect(User user, WfVariable variable) {
         ExecutorService executorService = Delegates.getExecutorService();
         BatchPresentation batchPresentation;
         if (ActorFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
@@ -35,7 +34,7 @@ public class ViewUtil {
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
-        List<Executor> executors = executorService.getAll(subject, batchPresentation);
+        List<Executor> executors = executorService.getAll(user, batchPresentation);
 
         String html = "<select name=\"" + variable.getDefinition().getName() + "\">";
         for (Executor executor : executors) {

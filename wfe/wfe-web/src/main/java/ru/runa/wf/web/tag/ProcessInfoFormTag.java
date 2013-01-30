@@ -104,7 +104,7 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
         Element processDefinitionHref;
         try {
             DefinitionService definitionService = Delegates.getDefinitionService();
-            WfDefinition definitionStub = definitionService.getProcessDefinition(getSubject(), process.getProcessDefinitionId());
+            WfDefinition definitionStub = definitionService.getProcessDefinition(getUser(), process.getProcessDefinitionId());
             String url = Commons.getActionUrl(ru.runa.common.WebResources.ACTION_MAPPING_MANAGE_DEFINITION, IdForm.ID_INPUT_NAME,
                     definitionStub.getId(), pageContext, PortletUrlType.Render);
             processDefinitionHref = new A(url, process.getName());
@@ -144,7 +144,7 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
 
         ExecutionService executionService = Delegates.getExecutionService();
         try {
-            WfProcess parentProcess = executionService.getParentProcess(getSubject(), getIdentifiableId());
+            WfProcess parentProcess = executionService.getParentProcess(getUser(), getIdentifiableId());
             if (parentProcess != null) {
                 TR parentTR = new TR();
                 table.addElement(parentTR);
@@ -174,7 +174,7 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
 
     private boolean checkReadable(WfProcess parentProcess) throws AuthorizationException, AuthenticationException {
         AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
-        return authorizationService.isAllowed(getSubject(), ProcessPermission.READ, parentProcess);
+        return authorizationService.isAllowed(getUser(), ProcessPermission.READ, parentProcess);
     }
 
     @Override

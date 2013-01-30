@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.security.auth.Subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +41,7 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.collect.Maps;
@@ -63,7 +63,7 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) {
         ExecutionService executionService = Delegates.getExecutionService();
         Map<String, Object> outputVariables = Maps.newHashMap();
 
@@ -86,7 +86,7 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
             }
 
             // Start process
-            Long startedProcessId = executionService.startProcess(subject, processName, variablesMap);
+            Long startedProcessId = executionService.startProcess(user, processName, variablesMap);
 
             // add startedProcessId to variables
             if (startedProcessValueName != null) {
@@ -95,19 +95,19 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
 
             try {
                 AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
-                WfProcess process = executionService.getProcess(subject, startedProcessId);
-                WfProcess superWfProcess = executionService.getProcess(subject, task.getProcessId());
+                WfProcess process = executionService.getProcess(user, startedProcessId);
+                WfProcess superWfProcess = executionService.getProcess(user, task.getProcessId());
                 BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-                List<Executor> executors = authorizationService.getExecutorsWithPermission(subject, superWfProcess, batchPresentation, true);
+                List<Executor> executors = authorizationService.getExecutorsWithPermission(user, superWfProcess, batchPresentation, true);
                 for (Executor executor : executors) {
                     Set<Permission> permissions = new HashSet<Permission>();
-                    for (Permission perm : authorizationService.getOwnPermissions(subject, executor, superWfProcess)) {
+                    for (Permission perm : authorizationService.getOwnPermissions(user, executor, superWfProcess)) {
                         permissions.add(perm);
                     }
-                    for (Permission perm : authorizationService.getOwnPermissions(subject, executor, process)) {
+                    for (Permission perm : authorizationService.getOwnPermissions(user, executor, process)) {
                         permissions.add(perm);
                     }
-                    authorizationService.setPermissions(subject, executor, permissions, process);
+                    authorizationService.setPermissions(user, executor, permissions, process);
                 }
             } catch (Throwable e) {
                 log.error("Error in permission copy to new subprocess (step is ignored).", e);

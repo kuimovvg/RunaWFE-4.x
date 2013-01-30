@@ -17,7 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import ru.runa.common.web.Commons;
@@ -67,9 +66,8 @@ public class CreateRelationLinkTag extends LinkTag {
         try {
             RelationService relationService = Delegates.getRelationService();
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Subject subject = getSubject();
-            Relation relationGroup = relationService.getRelation(subject, getRelationName());
-            return authorizationService.isAllowed(subject, RelationPermission.UPDATE_PERMISSIONS, relationGroup);
+            Relation relationGroup = relationService.getRelation(getUser(), getRelationName());
+            return authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_PERMISSIONS, relationGroup);
         } catch (Exception e) {
             return false;
         }

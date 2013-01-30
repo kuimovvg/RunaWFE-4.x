@@ -17,21 +17,19 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.UpdateStatusForm;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.AuthenticationException;
@@ -40,12 +38,14 @@ import ru.runa.wfe.user.ExecutorDoesNotExistException;
 /**
  * Created on Mar 2, 2006
  * 
- * @struts:action path="/updateStatus" name="updateStatusForm" validate="true" input = "/WEB-INF/af/manage_executor.jsp"
+ * @struts:action path="/updateStatus" name="updateStatusForm" validate="true"
+ *                input = "/WEB-INF/af/manage_executor.jsp"
  * @struts.action-forward name="success" path="/WEB-INF/af/manage_executor.jsp"
  * @struts.action-forward name="failure" path="/WEB-INF/af/manage_executor.jsp"
- * @struts.action-forward name="failure_executor_does_not_exist" path="/WEB-INF/af/manage_executors.jsp"
+ * @struts.action-forward name="failure_executor_does_not_exist"
+ *                        path="/WEB-INF/af/manage_executors.jsp"
  */
-public class UpdateStatusAction extends Action {
+public class UpdateStatusAction extends ActionBase {
 
     public static final String ACTION_PATH = "/updateStatus";
 
@@ -56,9 +56,8 @@ public class UpdateStatusAction extends Action {
         UpdateStatusForm form = (UpdateStatusForm) actionForm;
         String errorForwardName = Resources.FORWARD_FAILURE;
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             ExecutorService executorService = Delegates.getExecutorService();
-            executorService.setStatus(subject, form.getId(), form.isActive());
+            executorService.setStatus(getLoggedUser(request), form.getId(), form.isActive());
         } catch (ExecutorDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);
             errorForwardName = WebResources.FORWARD_FAILURE_EXECUTOR_DOES_NOT_EXIST;

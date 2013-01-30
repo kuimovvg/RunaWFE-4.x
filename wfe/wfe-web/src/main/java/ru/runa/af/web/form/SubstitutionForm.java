@@ -17,7 +17,6 @@
  */
 package ru.runa.af.web.form;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionErrors;
@@ -25,11 +24,12 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.orgfunction.FunctionDef;
 import ru.runa.af.web.orgfunction.SubstitutionDefinitions;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wfe.os.ParamRenderer;
+import ru.runa.wfe.user.User;
 
 /**
  * @struts:form name = "substitutionForm"
@@ -65,10 +65,10 @@ public class SubstitutionForm extends IdForm {
                     if (fDef.getParams().size() != params.length) {
                         errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(ERROR_KEY));
                     } else {
-                        Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
+                        User user = Commons.getUser(request.getSession());
                         for (int i = 0; i < fDef.getParams().size(); i++) {
                             ParamRenderer renderer = fDef.getParams().get(i).getRenderer();
-                            if (!renderer.isValueValid(subject, params[i])) {
+                            if (!renderer.isValueValid(user, params[i])) {
                                 errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(ERROR_KEY));
                             }
                         }

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
@@ -17,6 +16,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
@@ -29,15 +29,15 @@ public class FormParser {
     private static final Pattern CUSTOM_TAG_PATTERN = Pattern.compile(
             "<customtag\\s+var\\s*=\\s*\"([^\"]+)\"\\s+delegation\\s*=\\s*\"([^\"]+)\"\\s*/>", Pattern.MULTILINE);
 
-    private final Subject subject;
+    private final User user;
     private final PageContext pageContext;
     private final IVariableProvider variableProvider;
     private final byte[] formBytes;
     private final Long definitionId;
     private final List<String> requiredVariableNames = Lists.newArrayList();
 
-    public FormParser(Subject subject, PageContext pageContext, Interaction interaction, Long definitionId, WfTask task) {
-        this.subject = subject;
+    public FormParser(User user, PageContext pageContext, Interaction interaction, Long definitionId, WfTask task) {
+        this.user = user;
         this.pageContext = pageContext;
         if (interaction.hasForm()) {
             formBytes = interaction.getFormData();
@@ -49,7 +49,7 @@ public class FormParser {
             variableProvider = new MapDelegableVariableProvider(interaction.getDefaultVariableValues(), null);
         } else {
             this.definitionId = task.getDefinitionId();
-            variableProvider = new DelegateProcessVariableProvider(subject, task.getProcessId());
+            variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
         }
         if (WebResources.isHighlightRequiredFields()) {
             requiredVariableNames.addAll(interaction.getRequiredVariableNames());
@@ -74,7 +74,7 @@ public class FormParser {
             try {
                 className = BackCompatibilityClassNames.getClassName(className);
                 VarTag customTag = (VarTag) ApplicationContextFactory.createAutowiredBean(className);
-                replacement = customTag.getHtml(subject, varName, variableProvider.getValue(varName), pageContext);
+                replacement = customTag.getHtml(user, varName, variableProvider.getValue(varName), pageContext);
             } catch (Exception e) {
                 log.warn("Exception processing vartags", e);
                 replacement = "<p class='error'>" + e.getMessage() + "</p>";

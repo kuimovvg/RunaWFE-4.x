@@ -29,8 +29,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,6 +39,7 @@ import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.invoker.BotInvoker;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 
@@ -134,14 +133,14 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                 log.info("Will update bots configuration.");
                 String username = BotStationResources.getSystemUsername();
                 String password = BotStationResources.getSystemPassword();
-                Subject botStationSubject = Delegates.getAuthenticationService().authenticate(username, password);
-                List<Bot> bots = Delegates.getBotService().getBots(botStationSubject, botStation.getId());
+                User botStationUser = Delegates.getAuthenticationService().authenticateByLoginPassword(username, password);
+                List<Bot> bots = Delegates.getBotService().getBots(botStationUser, botStation.getId());
                 for (Bot bot : bots) {
                     log.info("Configuring " + bot.getUsername());
-                    Subject subject = Delegates.getAuthenticationService().authenticate(bot.getUsername(), bot.getPassword());
-                    List<BotTask> tasks = Delegates.getBotService().getBotTasks(subject, bot.getId());
+                    User user = Delegates.getAuthenticationService().authenticateByLoginPassword(bot.getUsername(), bot.getPassword());
+                    List<BotTask> tasks = Delegates.getBotService().getBotTasks(user, bot.getId());
                     try {
-                        botTemplates.add(new WorkflowBot(subject, bot, tasks));
+                        botTemplates.add(new WorkflowBot(user, bot, tasks));
                     } catch (AuthenticationException e) {
                         log.error("Bot " + bot.getUsername() + " has incorrect password.");
                     }
