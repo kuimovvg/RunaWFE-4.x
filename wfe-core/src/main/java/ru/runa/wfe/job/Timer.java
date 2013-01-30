@@ -61,14 +61,14 @@ public class Timer extends Job {
             if (event != null) {
                 for (Action timerAction : event.getActions()) {
                     // in case of multiple timers on node we discriminate
-                    // actions by
-                    // name
+                    // actions by name
                     if (getName().equals(timerAction.getName())) {
                         executionContext.getNode().executeAction(timerAction, executionContext);
                     }
                 }
             }
             if (outTransitionName != null) {
+                // CancelTimerAction should cancel this timer
                 Task task = executionContext.getTask();
                 if (task != null) {
                     Swimlane swimlane = task.getSwimlane();
@@ -81,12 +81,16 @@ public class Timer extends Job {
                 }
                 getToken().signal(executionContext, executionContext.getNode().getLeavingTransitionNotNull(outTransitionName));
             } else if (repeatDurationString != null) {
+                // restart timer
                 Duration repeatDuration = new Duration(repeatDurationString);
                 if (repeatDuration.getMilliseconds() > 0) {
                     BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
                     setDueDate(businessCalendar.add(getDueDate(), repeatDuration));
                     log.debug("updated '" + this + "' for repetition on '" + getDueDate() + "'");
                 }
+            } else {
+                // end timer explicitly
+                ApplicationContextFactory.getJobDAO().deleteTimersByName(getName(), getToken());
             }
             ProcessExecutionErrors.removeProcessError(getProcess().getId(), getToken().getNodeId());
         } catch (Throwable th) {

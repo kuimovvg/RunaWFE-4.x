@@ -160,36 +160,9 @@ public abstract class GraphElement implements Serializable {
             log.debug("executing action '" + action + "'");
             action.execute(executionContext);
         } catch (Exception exception) {
-            // NOTE that Errors are not caught because that might halt the JVM
-            // and mask the original Error
-            log.error("action threw exception: " + exception.getMessage(), exception);
-            // if an exception handler is available
-            raiseException(exception);
+            Throwables.propagateIfInstanceOf(exception, RuntimeException.class);
+            throw new InternalApplicationException(exception);
         }
-    }
-
-    /**
-     * throws an ActionException if no applicable exception handler is found. An
-     * ExceptionHandler is searched for in this graph element and then
-     * recursively up the parent hierarchy. If an exception handler is found, it
-     * is applied. If the exception handler does not throw an exception, the
-     * exception is considered handled. Otherwise the search for an applicable
-     * exception handler continues where it left of with the newly thrown
-     * exception.
-     */
-    public void raiseException(Throwable exception) {
-        // there was exceptionHandlers
-        GraphElement parent = getParent();
-        // if this graph element has a parent
-        if (parent != null && !equals(parent)) {
-            // raise to the parent
-            parent.raiseException(exception);
-            return;
-        }
-        // if there is no parent we need to throw a delegation exception to the
-        // client
-        Throwables.propagateIfInstanceOf(exception, InternalApplicationException.class);
-        throw new InternalApplicationException(exception);
     }
 
     public GraphElement getParent() {
