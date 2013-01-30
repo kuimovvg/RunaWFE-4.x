@@ -307,9 +307,10 @@ public class JpdlXmlReader {
 
     private void readNodeTimers(ProcessDefinition processDefinition, Element parentElement, GraphElement node) throws Exception {
         List<Element> elements = parentElement.elements(TIMER_NODE);
-        int timerNumber = 1;
+        // int timerNumber = 1;
         for (Element element : elements) {
-            String name = node.getNodeId() + "/timer-" + (timerNumber++);
+            // TODO 1 timer for compatibility timer names with 3.x
+            String name = node.getNodeId();// + "/timer-" + (timerNumber++);
             CreateTimerAction createTimerAction = ApplicationContextFactory.createAutowiredBean(CreateTimerAction.class);
             createTimerAction.setName(name);
             createTimerAction.setTransitionName(element.attributeValue(TRANSITION_ATTR));

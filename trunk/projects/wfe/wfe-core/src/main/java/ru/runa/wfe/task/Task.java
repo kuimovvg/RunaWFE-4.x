@@ -238,7 +238,7 @@ public class Task implements Assignable {
         // log this assignment
         executionContext.addLog(new TaskAssignLog(this, executor));
         // do the actual assignment
-        this.executor = executor;
+        setExecutor(executor);
         if (cascadeUpdate) {
             swimlane.assignExecutor(executionContext, executor, false);
         }
@@ -288,7 +288,7 @@ public class Task implements Assignable {
 
     @Override
     public String toString() {
-        return getProcess().getId() + ": " + name;
+        return getProcess() + ": " + name;
     }
 
 }

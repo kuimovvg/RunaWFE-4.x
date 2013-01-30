@@ -33,9 +33,9 @@ public class ExpiredJobCheckerTask extends TransactionalTaskBase {
     protected void doExecute() {
         for (Job job : jobDAO.getExpiredJobs()) {
             try {
-                executor.executeJobs(job.getId());
+                executor.executeJob(job.getId());
             } catch (Exception e) {
-                log.error("Error execute job " + job, e);
+                // already logged
             }
         }
     }

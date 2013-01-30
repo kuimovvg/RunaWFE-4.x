@@ -1,5 +1,6 @@
 package ru.runa.wfe.task.logic;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -109,7 +110,8 @@ public class TaskLogic extends WFCommonLogic {
         List<Task> unassignedTasks = taskDAO.findUnassignedActiveTasks();
         for (Task task : unassignedTasks) {
             if (task.getProcess().hasEnded()) {
-                log.warn("Ended process for " + task);
+                log.warn("Ending task for finished process " + task);
+                task.setEndDate(new Date());
                 continue;
             }
             try {
