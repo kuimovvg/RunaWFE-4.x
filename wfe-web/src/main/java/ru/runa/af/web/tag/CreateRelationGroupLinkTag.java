@@ -51,7 +51,7 @@ public class CreateRelationGroupLinkTag extends LinkTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getSubject(), RelationPermission.UPDATE_RELATION, RelationsGroupSecure.INSTANCE);
+            return authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, RelationsGroupSecure.INSTANCE);
         } catch (Exception e) {
             return false;
         }

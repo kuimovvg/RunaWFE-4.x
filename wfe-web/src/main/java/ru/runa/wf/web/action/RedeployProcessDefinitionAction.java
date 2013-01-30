@@ -19,8 +19,6 @@ package ru.runa.wf.web.action;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
@@ -34,14 +32,22 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.user.User;
+
+import com.google.common.base.Strings;
 
 /**
  * Created on 06.10.2004
  * 
- * @struts:action path="/redeployProcessDefinition" name="fileForm" validate="false"
- * @struts.action-forward name="success" path="/manage_process_definition.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_process_definition.do" redirect = "false"
- * @struts.action-forward name="failure_process_definition_does_not_exist" path="/manage_process_definitions.do" redirect = "true"
+ * @struts:action path="/redeployProcessDefinition" name="fileForm"
+ *                validate="false"
+ * @struts.action-forward name="success" path="/manage_process_definition.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/manage_process_definition.do"
+ *                        redirect = "false"
+ * @struts.action-forward name="failure_process_definition_does_not_exist"
+ *                        path="/manage_process_definitions.do" redirect =
+ *                        "true"
  */
 public class RedeployProcessDefinitionAction extends BaseDeployProcessDefinitionAction {
     public static final String ACTION_PATH = "/redeployProcessDefinition";
@@ -51,13 +57,13 @@ public class RedeployProcessDefinitionAction extends BaseDeployProcessDefinition
     private Long definitionId;
 
     @Override
-    protected void doAction(Subject subject, FileForm fileForm, List<String> processType, ActionMessages errors) {
+    protected void doAction(User user, FileForm fileForm, List<String> processType, ActionMessages errors) {
         DefinitionService definitionService = Delegates.getDefinitionService();
         try {
-            WfDefinition processDefinitionDescriptor = definitionService.getProcessDefinition(subject, fileForm.getId());
-            definitionService.redeployProcessDefinition(subject, fileForm.getId(), "".equals(fileForm.getFile().getFileName()) ? null : fileForm
-                    .getFile().getFileData(), processType);
-            WfDefinition newProcessDefinitionStub = definitionService.getLatestProcessDefinition(subject, processDefinitionDescriptor.getName());
+            WfDefinition processDefinitionDescriptor = definitionService.getProcessDefinition(user, fileForm.getId());
+            definitionService.redeployProcessDefinition(user, fileForm.getId(), Strings.isNullOrEmpty(fileForm.getFile().getFileName()) ? null
+                    : fileForm.getFile().getFileData(), processType);
+            WfDefinition newProcessDefinitionStub = definitionService.getLatestProcessDefinition(user, processDefinitionDescriptor.getName());
             definitionId = newProcessDefinitionStub.getId();
         } catch (DefinitionDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);

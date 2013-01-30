@@ -82,11 +82,11 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
             List<Executor> executors = new ArrayList<Executor>();
             executors.add(getIdentifiable());
             BatchPresentation executorBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-            for (Group group : executorService.getExecutorGroups(getSubject(), getIdentifiable(), executorBatchPresentation, false)) {
+            for (Group group : executorService.getExecutorGroups(getUser(), getIdentifiable(), executorBatchPresentation, false)) {
                 executors.add(group);
             }
             Set<Relation> relations = new HashSet<Relation>();
-            for (RelationPair pair : relationService.getExecutorsRelationPairsRight(getSubject(), null, executors)) {
+            for (RelationPair pair : relationService.getExecutorsRelationPairsRight(getUser(), null, executors)) {
                 relations.add(pair.getRelation());
             }
             TableBuilder tableBuilder = new TableBuilder();
@@ -117,7 +117,7 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
     protected Executor getIdentifiable() throws JspException {
         ExecutorService executorService = Delegates.getExecutorService();
         try {
-            return executorService.getExecutor(getSubject(), getIdentifiableId());
+            return executorService.getExecutor(getUser(), getIdentifiableId());
         } catch (Exception e) {
             return null;
         }

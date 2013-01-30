@@ -17,22 +17,20 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.UpdateExecutorDetailsForm;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
@@ -53,7 +51,7 @@ import ru.runa.wfe.user.ExecutorDoesNotExistException;
  * @struts.action-forward name="failure_executor_does_not_exist"
  *                        path="/manage_executors.do" redirect = "true"
  */
-public class UpdateExecutorDetailsAction extends Action {
+public class UpdateExecutorDetailsAction extends ActionBase {
 
     public static final String ACTION_PATH = "/updateExecutorDetails";
 
@@ -65,8 +63,7 @@ public class UpdateExecutorDetailsAction extends Action {
         boolean executorExists = true;
         try {
             ExecutorService executorService = Delegates.getExecutorService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            Executor executor = executorService.getExecutor(subject, form.getId());
+            Executor executor = executorService.getExecutor(getLoggedUser(request), form.getId());
             executor.setDescription(form.getDescription());
             executor.setFullName(form.getFullName());
             executor.setName(form.getNewName());
@@ -76,7 +73,7 @@ public class UpdateExecutorDetailsAction extends Action {
                 actor.setEmail(form.getEmail());
                 actor.setPhone(form.getPhone());
             }
-            executorService.update(subject, executor);
+            executorService.update(getLoggedUser(request), executor);
         } catch (ExecutorDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);
             executorExists = false;

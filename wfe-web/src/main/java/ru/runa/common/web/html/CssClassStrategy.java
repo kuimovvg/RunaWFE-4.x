@@ -17,10 +17,10 @@
  */
 package ru.runa.common.web.html;
 
-import javax.security.auth.Subject;
+import ru.runa.wfe.user.User;
 
 public interface CssClassStrategy {
-    public String getClassName(Object item, Subject subject);
+    public String getClassName(Object item, User user);
 
     public String getCssStyle(Object item);
 }

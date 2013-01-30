@@ -37,7 +37,7 @@ public class UpdatePermissionsOnSystemFormTag extends UpdateSystemBaseFormTag {
 
     protected void fillFormData(TD tdFormElement) throws JspException {
         ASystem system = getSystem();
-        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(system, getSubject(), pageContext);
+        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(system, getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 

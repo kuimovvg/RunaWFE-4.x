@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,6 @@ import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.task.TaskAlreadyCompletedException;
@@ -41,6 +38,7 @@ import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ActorPermission;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorPermission;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
@@ -64,8 +62,7 @@ public class TaskLogic extends WFCommonLogic {
     @Autowired
     private AssignmentHelper assignmentHelper;
 
-    public void completeTask(Subject subject, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
+    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException {
         Task task = taskDAO.getNotNull(taskId);
         if (!task.isActive()) {
             throw new TaskAlreadyCompletedException(task.getName());
@@ -77,9 +74,9 @@ public class TaskLogic extends WFCommonLogic {
                 variables = Maps.newHashMap();
             }
             String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
-            checkCanParticipate(subject, task, actor);
-            actor = checkPermissionsOnExecutor(subject, actor, ActorPermission.READ);
-            assignmentHelper.reassignTask(executionContext, task, actor, true);
+            checkCanParticipate(user, task, user);
+            checkPermissionsOnExecutor(user, user, ActorPermission.READ);
+            assignmentHelper.reassignTask(executionContext, task, user, true);
             validateVariables(processDefinition, task.getNodeId(),
                     new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
             executionContext.setVariables(variables);
@@ -88,7 +85,7 @@ public class TaskLogic extends WFCommonLogic {
                 transition = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitionNotNull(transitionName);
             }
             task.end(executionContext, transition, true);
-            log.info("Task '" + task.getName() + "' was done by " + actor + " in process " + task.getProcess());
+            log.info("Task '" + task.getName() + "' was done by " + user + " in process " + task.getProcess());
             ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getName());
         } catch (Throwable th) {
             ProcessExecutionErrors.addProcessError(task.getProcess().getId(), task.getName(), th);
@@ -96,14 +93,14 @@ public class TaskLogic extends WFCommonLogic {
         }
     }
 
-    public void markTaskOpened(Subject subject, Long taskId) {
+    public void markTaskOpened(User user, Long taskId) {
         Task task = taskDAO.getNotNull(taskId);
         task.setFirstOpen(false);
     }
 
-    public WfTask getTask(Subject subject, Long taskId) throws AuthenticationException {
+    public WfTask getTask(User user, Long taskId) throws AuthenticationException {
         Task task = taskDAO.getNotNull(taskId);
-        return taskObjectFactory.create(task, SubjectPrincipalsHelper.getActor(subject), null);
+        return taskObjectFactory.create(task, user, null);
     }
 
     public void assignUnassignedTasks() {
@@ -130,34 +127,31 @@ public class TaskLogic extends WFCommonLogic {
         }
     }
 
-    public List<WfTask> getTasks(Subject subject, BatchPresentation batchPresentation) {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        return tasklistBuilder.getTasks(actor, batchPresentation);
+    public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) {
+        return tasklistBuilder.getTasks(user, batchPresentation);
     }
 
-    public List<WfTask> getActiveTasks(Subject subject, Long processId) throws ProcessDoesNotExistException {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
+    public List<WfTask> getActiveTasks(User user, Long processId) throws ProcessDoesNotExistException {
         List<WfTask> result = Lists.newArrayList();
         Process process = processDAO.getNotNull(processId);
-        checkPermissionAllowed(subject, process, ProcessPermission.READ);
+        checkPermissionAllowed(user, process, ProcessPermission.READ);
         for (Task task : process.getActiveTasks(null)) {
-            result.add(taskObjectFactory.create(task, actor, null));
+            result.add(taskObjectFactory.create(task, user, null));
         }
         return result;
     }
 
-    public List<WfSwimlane> getSwimlanes(Subject subject, Long processId) throws ProcessDoesNotExistException {
+    public List<WfSwimlane> getSwimlanes(User user, Long processId) throws ProcessDoesNotExistException {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
-        checkPermissionAllowed(subject, process, ProcessPermission.READ);
-        Actor performer = SubjectPrincipalsHelper.getActor(subject);
+        checkPermissionAllowed(user, process, ProcessPermission.READ);
         Map<String, SwimlaneDefinition> swimlaneMap = processDefinition.getSwimlanes();
         List<WfSwimlane> swimlanes = Lists.newArrayListWithExpectedSize(swimlaneMap.size());
         for (SwimlaneDefinition swimlaneDefinition : swimlaneMap.values()) {
             Swimlane swimlane = process.getSwimlane(swimlaneDefinition.getName());
             Executor assignedExecutor = null;
             if (swimlane != null && swimlane.getExecutor() != null) {
-                if (permissionDAO.isAllowed(performer, ExecutorPermission.READ, swimlane.getExecutor())) {
+                if (permissionDAO.isAllowed(user, ExecutorPermission.READ, swimlane.getExecutor())) {
                     assignedExecutor = swimlane.getExecutor();
                 } else {
                     assignedExecutor = Actor.UNAUTHORIZED_ACTOR;
@@ -168,7 +162,7 @@ public class TaskLogic extends WFCommonLogic {
         return swimlanes;
     }
 
-    public void assignSwimlane(Subject subject, Long processId, String swimlaneName, Executor executor) {
+    public void assignSwimlane(User user, Long processId, String swimlaneName, Executor executor) {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlaneNotNull(swimlaneName);
@@ -176,7 +170,7 @@ public class TaskLogic extends WFCommonLogic {
         assignmentHelper.assignSwimlane(new ExecutionContext(processDefinition, process), swimlane, Lists.newArrayList(executor));
     }
 
-    public void assignTask(Subject subject, Long taskId, Executor previousOwner, Actor actor) throws TaskAlreadyAcceptedException {
+    public void assignTask(User user, Long taskId, Executor previousOwner, Actor actor) throws TaskAlreadyAcceptedException {
         // check assigned executor for the task
         Task task = taskDAO.getNotNull(taskId);
         if (!task.isActive() || !Objects.equal(previousOwner, task.getExecutor())) {

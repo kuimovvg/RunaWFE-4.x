@@ -19,7 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import org.apache.ecs.html.Input;
@@ -66,10 +65,9 @@ public class TaskDetailsTag extends BatchReturningTitledFormTag {
     protected void fillFormElement(TD tdFormElement) throws JspException {
         try {
             ExecutionService executionService = Delegates.getExecutionService();
-            Subject subject = getSubject();
             BatchPresentation batchPresentation = getProfile().getActiveBatchPresentation("listTasksForm").clone();
             batchPresentation.setFieldsToGroup(new int[0]);
-            WfTask current = getTask(executionService, subject);
+            WfTask current = getTask(executionService);
             if (current == null) {
                 throw new TaskDoesNotExistException(getTaskId());
             }
@@ -91,8 +89,8 @@ public class TaskDetailsTag extends BatchReturningTitledFormTag {
         }
     }
 
-    private WfTask getTask(ExecutionService executionService, Subject subject) {
-        List<WfTask> tasks = executionService.getTasks(subject, getProfile().getActiveBatchPresentation("listTasksForm").clone());
+    private WfTask getTask(ExecutionService executionService) {
+        List<WfTask> tasks = executionService.getTasks(getUser(), getProfile().getActiveBatchPresentation("listTasksForm").clone());
         for (WfTask taskStub : tasks) {
             if (Objects.equal(taskStub.getId(), getTaskId())) {
                 return taskStub;

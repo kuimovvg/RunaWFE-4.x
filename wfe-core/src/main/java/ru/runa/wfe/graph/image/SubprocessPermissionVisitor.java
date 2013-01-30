@@ -1,7 +1,5 @@
 package ru.runa.wfe.graph.image;
 
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -14,9 +12,8 @@ import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessesGraphElementAdapter;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.dao.PermissionDAO;
-import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 
 /**
  * Operation to set starting process readable flag.
@@ -28,7 +25,7 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
     /**
      * Current subject.
      */
-    private final Subject subject;
+    private final User user;
 
     /**
      * Process definition cache.
@@ -45,8 +42,8 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
      * @param loader
      *            Process definition loader.
      */
-    public SubprocessPermissionVisitor(Subject subject, IProcessDefinitionLoader loader) {
-        this.subject = subject;
+    public SubprocessPermissionVisitor(User user, IProcessDefinitionLoader loader) {
+        this.user = user;
         this.loader = loader;
     }
 
@@ -85,8 +82,7 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
      *         otherwise.
      */
     private boolean checkPermission(ProcessDefinition processDefinition) throws DefinitionDoesNotExistException, AuthenticationException {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
         PermissionDAO permissionDAO = ApplicationContextFactory.getPermissionDAO();
-        return permissionDAO.isAllowed(actor, DefinitionPermission.READ, processDefinition);
+        return permissionDAO.isAllowed(user, DefinitionPermission.READ, processDefinition);
     }
 }

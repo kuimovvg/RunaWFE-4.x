@@ -21,14 +21,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
-import ru.runa.wfe.execution.SuperProcessExistsException;
+import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
@@ -38,6 +36,7 @@ import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.dto.WfVariable;
 
@@ -49,57 +48,57 @@ import ru.runa.wfe.var.dto.WfVariable;
  */
 public interface ExecutionService {
 
-    public Long startProcess(Subject subject, String definitionName, Map<String, Object> variables) throws DefinitionDoesNotExistException,
+    public Long startProcess(User user, String definitionName, Map<String, Object> variables) throws DefinitionDoesNotExistException,
             ValidationException;
 
-    public int getAllProcessesCount(Subject subject, BatchPresentation batchPresentation);
+    public int getAllProcessesCount(User user, BatchPresentation batchPresentation);
 
-    public List<WfProcess> getProcesses(Subject subject, BatchPresentation batchPresentation);
+    public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation);
 
-    public WfProcess getProcess(Subject subject, Long processId) throws ProcessDoesNotExistException;
+    public WfProcess getProcess(User user, Long processId) throws ProcessDoesNotExistException;
 
-    public WfProcess getParentProcess(Subject subject, Long processId) throws ProcessDoesNotExistException;
+    public WfProcess getParentProcess(User user, Long processId) throws ProcessDoesNotExistException;
 
-    public void cancelProcess(Subject subject, Long processId) throws ProcessDoesNotExistException;
+    public void cancelProcess(User user, Long processId) throws ProcessDoesNotExistException;
 
-    public List<WfTask> getTasks(Subject subject, BatchPresentation batchPresentation);
+    public List<WfTask> getTasks(User user, BatchPresentation batchPresentation);
 
-    public WfTask getTask(Subject subject, Long taskId) throws TaskDoesNotExistException;
+    public WfTask getTask(User user, Long taskId) throws TaskDoesNotExistException;
 
-    public List<WfTask> getActiveTasks(Subject subject, Long processId) throws ProcessDoesNotExistException;
+    public List<WfTask> getActiveTasks(User user, Long processId) throws ProcessDoesNotExistException;
 
-    public void assignTask(Subject subject, Long taskId, Executor previousOwner, Actor actor) throws TaskAlreadyAcceptedException;
+    public void assignTask(User user, Long taskId, Executor previousOwner, Actor actor) throws TaskAlreadyAcceptedException;
 
-    public void completeTask(Subject subject, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException;
+    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException;
 
-    public List<WfSwimlane> getSwimlanes(Subject subject, Long processId) throws ProcessDoesNotExistException;
+    public List<WfSwimlane> getSwimlanes(User user, Long processId) throws ProcessDoesNotExistException;
 
-    public void assignSwimlane(Subject subject, Long processId, String swimlaneName, Executor executor) throws ProcessDoesNotExistException;
+    public void assignSwimlane(User user, Long processId, String swimlaneName, Executor executor) throws ProcessDoesNotExistException;
 
-    public List<WfVariable> getVariables(Subject subject, Long processId) throws ProcessDoesNotExistException;
+    public List<WfVariable> getVariables(User user, Long processId) throws ProcessDoesNotExistException;
 
-    public WfVariable getVariable(Subject subject, Long processId, String variableName) throws ProcessDoesNotExistException;
+    public WfVariable getVariable(User user, Long processId, String variableName) throws ProcessDoesNotExistException;
 
-    public Map<Long, Object> getVariableValuesFromProcesses(Subject subject, List<Long> processIds, String variableName);
+    public Map<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName);
 
-    public void updateVariables(Subject subject, Long processId, Map<String, Object> variables) throws ProcessDoesNotExistException;
+    public void updateVariables(User user, Long processId, Map<String, Object> variables) throws ProcessDoesNotExistException;
 
-    public byte[] getProcessDiagram(Subject subject, Long processId, Long taskId, Long childProcessId) throws ProcessDoesNotExistException;
+    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId) throws ProcessDoesNotExistException;
 
-    public List<GraphElementPresentation> getProcessGraphElements(Subject subject, Long processId) throws ProcessDoesNotExistException;
+    public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId) throws ProcessDoesNotExistException;
 
-    public List<GraphElementPresentation> getProcessUIHistoryData(Subject subject, Long processId, Long taskId) throws ProcessDoesNotExistException;
+    public List<GraphElementPresentation> getProcessUIHistoryData(User user, Long processId, Long taskId) throws ProcessDoesNotExistException;
 
-    public byte[] getProcessHistoryDiagram(Subject subject, Long processId, Long taskId) throws ProcessDoesNotExistException;
+    public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId) throws ProcessDoesNotExistException;
 
-    public void markTaskOpened(Subject subject, Long taskId) throws TaskDoesNotExistException;
+    public void markTaskOpened(User user, Long taskId) throws TaskDoesNotExistException;
 
-    public ProcessLogs getProcessLogs(Subject subject, ProcessLogFilter filter);
+    public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter);
 
-    public void removeProcesses(Subject subject, Date startDate, Date finishDate, String name, int version, Long id, Long idTill,
-            boolean onlyFinished, boolean dateInterval) throws ProcessDoesNotExistException, SuperProcessExistsException;
+    public void removeProcesses(User user, Date startDate, Date finishDate, String name, int version, Long id, Long idTill, boolean onlyFinished,
+            boolean dateInterval) throws ProcessDoesNotExistException, ParentProcessExistsException;
 
-    public List<SystemLog> getSystemLogs(Subject subject, BatchPresentation batchPresentation);
+    public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation);
 
-    public int getSystemLogsCount(Subject subject, BatchPresentation batchPresentation);
+    public int getSystemLogsCount(User user, BatchPresentation batchPresentation);
 }

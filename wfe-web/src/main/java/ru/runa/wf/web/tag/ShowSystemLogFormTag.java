@@ -52,9 +52,9 @@ public class ShowSystemLogFormTag extends BatchReturningTitledFormTag {
             BatchPresentation batchPresentation = getBatchPresentation();
             ExecutionService executionService = Delegates.getExecutionService();
 
-            int instanceCount = (int) executionService.getSystemLogsCount(getSubject(), batchPresentation);
+            int instanceCount = (int) executionService.getSystemLogsCount(getUser(), batchPresentation);
             // we must call getSystemLogs before obtaining current page number since it can be changed after getSystemLogs call
-            List<SystemLog> instances = executionService.getSystemLogs(getSubject(), batchPresentation);
+            List<SystemLog> instances = executionService.getSystemLogs(getUser(), batchPresentation);
             // batchPresentation must be recalculated since the current page number might changed
             batchPresentation = getBatchPresentation();
             PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, instanceCount, getReturnAction());

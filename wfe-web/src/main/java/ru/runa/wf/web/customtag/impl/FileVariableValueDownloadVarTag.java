@@ -19,7 +19,6 @@ package ru.runa.wf.web.customtag.impl;
 
 import java.util.HashMap;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.StringElement;
@@ -30,6 +29,7 @@ import ru.runa.wf.web.customtag.VarTag;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
 
 /**
@@ -39,7 +39,7 @@ import ru.runa.wfe.var.FileVariable;
 public class FileVariableValueDownloadVarTag implements VarTag {
 
     @Override
-    public String getHtml(Subject subject, String varName, Object var, PageContext pageContext) {
+    public String getHtml(User user, String varName, Object var, PageContext pageContext) {
         if (pageContext == null || var == null) {
             return "";
         }

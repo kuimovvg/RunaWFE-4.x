@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.security.auth.Subject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,6 +43,7 @@ import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.commons.xml.PathEntityResolver;
 import ru.runa.wfe.commons.xml.SimpleErrorHandler;
 import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.user.User;
 
 import com.google.common.io.Files;
 
@@ -65,8 +65,8 @@ public class AdminScriptClient {
         }
         try {
             byte[] scriptBytes = Files.toByteArray(file);
-            Subject subject = Delegates.getAuthenticationService().authenticate(args[1], args[2]);
-            run(subject, scriptBytes, new Handler() {
+            User user = Delegates.getAuthenticationService().authenticateByLoginPassword(args[1], args[2]);
+            run(user, scriptBytes, new Handler() {
 
                 @Override
                 public void onTransactionException(Exception e) {
@@ -80,7 +80,7 @@ public class AdminScriptClient {
         }
     }
 
-    public static void run(Subject subject, byte[] scriptBytes, Handler handler) throws Exception {
+    public static void run(User user, byte[] scriptBytes, Handler handler) throws Exception {
         AdminScriptService delegate = Delegates.getAdminScriptService();
         InputStream scriptInputStream = new ByteArrayInputStream(scriptBytes);
         Document allDocument = XMLHelper.getDocument(scriptInputStream, PATH_ENTITY_RESOLVER);
@@ -89,7 +89,7 @@ public class AdminScriptClient {
         String defaultTransactionScope = allDocument.getDocumentElement().getAttribute("defaultTransactionScope");
         if (transactionScopeNodeList.getLength() == 0 && "all".equals(defaultTransactionScope)) {
             byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(allDocument);
-            delegate.run(subject, scriptBytes, processDefinitionsBytes);
+            delegate.run(user, scriptBytes, processDefinitionsBytes);
         } else {
             if (transactionScopeNodeList.getLength() > 0) {
                 System.out.println("multiple docs [by <transactionScope>]: " + transactionScopeNodeList.getLength());
@@ -107,7 +107,7 @@ public class AdminScriptClient {
                     byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document);
                     try {
                         handler.onStartTransaction(bs);
-                        delegate.run(subject, bs, processDefinitionsBytes);
+                        delegate.run(user, bs, processDefinitionsBytes);
                         handler.onEndTransaction();
                     } catch (Exception e) {
                         handler.onTransactionException(e);
@@ -125,7 +125,7 @@ public class AdminScriptClient {
                         byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document);
                         try {
                             handler.onStartTransaction(bs);
-                            delegate.run(subject, bs, processDefinitionsBytes);
+                            delegate.run(user, bs, processDefinitionsBytes);
                             handler.onEndTransaction();
                         } catch (Exception e) {
                             handler.onTransactionException(e);

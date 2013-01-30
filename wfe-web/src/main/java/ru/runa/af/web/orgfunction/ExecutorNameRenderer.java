@@ -19,22 +19,21 @@ package ru.runa.af.web.orgfunction;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
 public class ExecutorNameRenderer extends ExecutorRendererBase {
 
     @Override
-    protected List<? extends Executor> loadExecutors(Subject subject) throws Exception {
+    protected List<? extends Executor> loadExecutors(User user) throws Exception {
         ExecutorService executorService = Delegates.getExecutorService();
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
-        return executorService.getAll(subject, batchPresentation);
+        return executorService.getAll(user, batchPresentation);
     }
 
     @Override
@@ -43,8 +42,8 @@ public class ExecutorNameRenderer extends ExecutorRendererBase {
     }
 
     @Override
-    protected Executor getExecutor(Subject subject, String name) throws Exception {
+    protected Executor getExecutor(User user, String name) throws Exception {
         ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getExecutor(subject, name);
+        return executorService.getExecutor(user, name);
     }
 }

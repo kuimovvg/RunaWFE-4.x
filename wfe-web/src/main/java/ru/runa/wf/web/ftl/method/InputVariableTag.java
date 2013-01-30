@@ -98,11 +98,11 @@ public class InputVariableTag extends FreemarkerTag {
         // html = ViewUtil.createActorSelect(subject, variableName, value);
         // }
         if (ActorFormat.class.getName().equals(format) || ExecutorFormat.class.getName().equals(format) || GroupFormat.class.getName().equals(format)) {
-            html = ViewUtil.createExecutorSelect(subject, variable);
+            html = ViewUtil.createExecutorSelect(user, variable);
         }
         if (ListFormat.class.getName().equals(format)) {
             EditStringListTag tag = new EditStringListTag();
-            tag.init(subject, webHelper, variableProvider);
+            tag.init(user, webHelper, variableProvider);
             html = tag.renderRequest();
         }
         if (html.length() == 0) {

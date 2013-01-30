@@ -33,7 +33,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -54,6 +53,7 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
 
@@ -89,17 +89,17 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         Map<String, Object> variables = Maps.newHashMap();
-        xsltHelper.set(new WebServiceTaskHandlerXSLTHelper(task, subject));
-        URL url = getWebServiceUrl(subject, task);
-        for (int index = getStartInteraction(subject, task); index < settings.interactions.size(); ++index) {
+        xsltHelper.set(new WebServiceTaskHandlerXSLTHelper(task, user));
+        URL url = getWebServiceUrl(user, task);
+        for (int index = getStartInteraction(user, task); index < settings.interactions.size(); ++index) {
             Interaction interaction = settings.interactions.get(index);
             byte[] soapData = prepareRequest(task, interaction);
             HttpURLConnection connection = sendRequest(url, soapData);
             if (connection.getResponseCode() < 200 || connection.getResponseCode() >= 300) {
                 // Something goes wrong
-                if (!onErrorResponse(subject, task, connection, interaction)) {
+                if (!onErrorResponse(user, task, connection, interaction)) {
                     variables.put(SKIP_TASK_COMPLETION_VARIABLE_NAME, Boolean.TRUE);
                     return variables;
                 }
@@ -160,12 +160,12 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      * @return URL of web service to send requests.
      * @throws MalformedURLException
      */
-    private URL getWebServiceUrl(Subject subject, WfTask taskStub) throws MalformedURLException {
+    private URL getWebServiceUrl(User user, WfTask taskStub) throws MalformedURLException {
         try {
             return new URL(settings.url);
         } catch (MalformedURLException e) {
             ExecutionService executionService = Delegates.getExecutionService();
-            WfVariable var = executionService.getVariable(subject, taskStub.getProcessId(), settings.url);
+            WfVariable var = executionService.getVariable(user, taskStub.getProcessId(), settings.url);
             return new URL(var.getValue() != null ? var.getValue().toString() : "");
         }
     }
@@ -237,7 +237,7 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      * @return true, if next interaction must be processed and false if required
      *         to stop interaction processing.
      */
-    private boolean onErrorResponse(Subject subject, WfTask taskStub, HttpURLConnection connection, Interaction interaction) throws Exception {
+    private boolean onErrorResponse(User user, WfTask taskStub, HttpURLConnection connection, Interaction interaction) throws Exception {
         log.debug("Web service bot got error response with code " + connection.getResponseCode() + " for task " + taskStub.getId());
         if (interaction.responseVariable != null) {
             xsltHelper.get().setNewVariable(interaction.responseVariable, "Got error response: '" + connection.getResponseMessage() + "'");
@@ -249,19 +249,19 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
         if (errorAction == ErrorResponseProcessingResult.IGNORE) {
             return true;
         }
-        saveExecutionState(subject, taskStub, interaction);
+        saveExecutionState(user, taskStub, interaction);
         return false;
     }
 
     /**
      * Saves current bot execution state.
      */
-    private void saveExecutionState(Subject subject, WfTask task, Interaction interaction) {
+    private void saveExecutionState(User user, WfTask task, Interaction interaction) {
         ExecutionService executionService = Delegates.getExecutionService();
         Map<String, Object> variables = new HashMap<String, Object>();
         xsltHelper.get().MergeVariablesIn(variables);
         variables.put("WS_ITERATION_" + task.getId(), settings.interactions.indexOf(interaction));
-        executionService.updateVariables(subject, task.getProcessId(), variables);
+        executionService.updateVariables(user, task.getProcessId(), variables);
     }
 
     /**
@@ -359,9 +359,9 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      *            Current task instance to be processed.
      * @return index of interaction.
      */
-    private int getStartInteraction(Subject subject, WfTask taskStub) {
+    private int getStartInteraction(User user, WfTask taskStub) {
         ExecutionService executionService = Delegates.getExecutionService();
-        WfVariable variable = executionService.getVariable(subject, taskStub.getProcessId(), "WS_ITERATION_" + taskStub.getId());
+        WfVariable variable = executionService.getVariable(user, taskStub.getProcessId(), "WS_ITERATION_" + taskStub.getId());
         return TypeConversionUtil.convertTo(variable.getValue(), int.class);
     }
 }

@@ -81,7 +81,7 @@ abstract public class ListExecutorsBaseFormTag extends UpdateExecutorBaseFormTag
             int executorsCount = getExecutorsCount();
             List<? extends Executor> executors = getExecutors();
             if (super.isFormButtonEnabled()) {
-                for (boolean enable : BatchExecutorPermissionHelper.getEnabledCheckboxes(getSubject(), executors, getBatchPresentation(),
+                for (boolean enable : BatchExecutorPermissionHelper.getEnabledCheckboxes(getUser(), executors, getBatchPresentation(),
                         getExecutorsPermission())) {
                     if (enable) {
                         isButtonEnabled = true;

@@ -89,11 +89,11 @@ public class CreateRelationFormTag extends FormTag {
         Table table = new Table();
         TR tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_CREATE_RELATION_FROM, pageContext)));
-        tr.addElement(new ActorSelectTD(getSubject(), relationFromName, null, false));
+        tr.addElement(new ActorSelectTD(getUser(), relationFromName, null, false));
         table.addElement(tr);
         tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_CREATE_RELATION_TO, pageContext)));
-        tr.addElement(new ActorSelectTD(getSubject(), relationToName, null, false));
+        tr.addElement(new ActorSelectTD(getUser(), relationToName, null, false));
         table.addElement(tr);
         tdFormElement.addElement(table);
         tdFormElement.addElement(new Input(Input.HIDDEN, "relationName", relationName));

@@ -12,7 +12,7 @@ import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.security.auth.SubjectHolder;
+import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.task.logic.ITaskNotifier;
 
 import com.google.common.io.ByteStreams;
@@ -45,7 +45,7 @@ public class EmailTaskNotifier implements ITaskNotifier {
         EmailConfig config = EmailConfigParser.parse(configBytes);
         Task task = executionContext.getTask();
         Interaction interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
-        EmailUtils.sendTaskMessage(SubjectHolder.get(), config, interaction, executionContext.getVariableProvider(),
+        EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, executionContext.getVariableProvider(),
                 executionContext.getProcessDefinition());
     }
 

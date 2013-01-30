@@ -19,8 +19,6 @@ package ru.runa.wfe.commons.logic;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
@@ -28,12 +26,12 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.dao.PermissionMapping;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorGroupMembership;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 /**
@@ -59,17 +57,18 @@ public final class PresentationCompilerHelper {
      * Create {@linkplain BatchPresentationHibernateCompiler} for loading all
      * executors. <b>Paging is enabled on executors loading.</b>
      * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     * @param user
+     *            Current actor {@linkplain user}.
      * @param batchPresentation
      *            {@linkplain BatchPresentation} for loading all executors.
      * @return {@linkplain BatchPresentationHibernateCompiler} for loading all
      *         executors.
      */
-    public static BatchPresentationHibernateCompiler createAllExecutorsCompiler(Subject subject, BatchPresentation batchPresentation) {
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(SubjectPrincipalsHelper.getActor(subject));
+    public static BatchPresentationHibernateCompiler createAllExecutorsCompiler(User user, BatchPresentation batchPresentation) {
+        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user);
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        compiler.setParameters(batchPresentation.getClassPresentation().getPresentationClass(), null, null, true, executorIds, ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, null);
+        compiler.setParameters(batchPresentation.getClassPresentation().getPresentationClass(), null, null, true, executorIds,
+                ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, null);
         return compiler;
     }
 
@@ -79,8 +78,8 @@ public final class PresentationCompilerHelper {
      * children are loading, not recursive. <b>Paging is enabled on executors
      * loading.</b>
      * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     * @param user
+     *            Current actor {@linkplain user}.
      * @param group
      *            {@linkplain Group}, which children's must be loaded.
      * @param batchPresentation
@@ -93,9 +92,9 @@ public final class PresentationCompilerHelper {
      * @return {@linkplain BatchPresentationHibernateCompiler} for loading group
      *         children's.
      */
-    public static BatchPresentationHibernateCompiler createGroupChildrenCompiler(Subject subject, Group group, BatchPresentation batchPresentation,
+    public static BatchPresentationHibernateCompiler createGroupChildrenCompiler(User user, Group group, BatchPresentation batchPresentation,
             boolean hasExecutor) throws AuthenticationException {
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(SubjectPrincipalsHelper.getActor(subject));
+        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user);
         String inClause = hasExecutor ? "IN" : "NOT IN";
         String notInRestriction = inClause + " (SELECT relation.executor.id FROM " + ExecutorGroupMembership.class.getName()
                 + " as relation WHERE relation.group.id=" + group.getId() + ")";
@@ -110,8 +109,8 @@ public final class PresentationCompilerHelper {
      * executor groups. Loaded first level groups, not recursive. <b>Paging is
      * enabled on executors loading.</b>
      * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     * @param user
+     *            Current actor {@linkplain user}.
      * @param group
      *            {@linkplain Group} for loading executor groups.
      * @param batchPresentation
@@ -125,10 +124,10 @@ public final class PresentationCompilerHelper {
      * @return {@linkplain BatchPresentationHibernateCompiler} for loading
      *         executor groups.
      */
-    public static BatchPresentationHibernateCompiler createExecutorGroupsCompiler(Subject subject, Executor executor,
-            BatchPresentation batchPresentation, boolean hasGroup) {
+    public static BatchPresentationHibernateCompiler createExecutorGroupsCompiler(User user, Executor executor, BatchPresentation batchPresentation,
+            boolean hasGroup) {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(SubjectPrincipalsHelper.getActor(subject));
+        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user);
         String inClause = hasGroup ? "IN" : "NOT IN";
         String inRestriction = inClause + " (SELECT relation.group.id FROM " + ExecutorGroupMembership.class.getName()
                 + " as relation WHERE relation.executor.id=" + executor.getId() + ")";
@@ -143,8 +142,8 @@ public final class PresentationCompilerHelper {
      * executor's which already has (or not has) some permission on specified
      * identifiable.
      * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     * @param user
+     *            Current actor {@linkplain user}.
      * @param identifiable
      *            {@linkplain Identifiable} to load executors, which has (or
      *            not) permission on this identifiable.
@@ -159,10 +158,10 @@ public final class PresentationCompilerHelper {
      * @return {@linkplain BatchPresentationHibernateCompiler} for loading
      *         executors.
      */
-    public static BatchPresentationHibernateCompiler createExecutorWithPermissionCompiler(Subject subject, Identifiable identifiable,
+    public static BatchPresentationHibernateCompiler createExecutorWithPermissionCompiler(User user, Identifiable identifiable,
             BatchPresentation batchPresentation, boolean hasPermission) throws AuthenticationException {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(SubjectPrincipalsHelper.getActor(subject));
+        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user);
         String inClause = hasPermission ? "IN" : "NOT IN";
         String idRestriction = inClause + " (SELECT pm.executor.id from " + PermissionMapping.class.getName() + " as pm where pm.identifiableId="
                 + identifiable.getId() + ")";

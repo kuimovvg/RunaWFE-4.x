@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
@@ -27,20 +25,24 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.UpdatePermissionOnIdentifiableAction;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 30.08.2004
  * 
- * @struts:action path="/updatePermissionOnSystem" name="updatePermissionsOnIdentifiableForm" validate="false"
- * @struts.action-forward name="success" path="/manage_system.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_system.do" redirect = "true"
+ * @struts:action path="/updatePermissionOnSystem"
+ *                name="updatePermissionsOnIdentifiableForm" validate="false"
+ * @struts.action-forward name="success" path="/manage_system.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure" path="/manage_system.do" redirect =
+ *                        "true"
  */
 public class UpdatePermissionOnSystemAction extends UpdatePermissionOnIdentifiableAction {
 
     public static final String ACTION_PATH_NAME = "/updatePermissionOnSystem";
 
     @Override
-    protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
         return ASystem.INSTANCE;
     }
 

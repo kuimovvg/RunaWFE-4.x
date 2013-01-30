@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,6 +18,7 @@ import ru.runa.wfe.presentation.filter.StringFilterCriteria;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -49,7 +49,7 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
         boolean byLogin = "login".equals(displayFormat);
         StringBuffer json = new StringBuffer("[");
         String hint = request.getParameter("hint");
-        List<Actor> actors = getActors(subject, group, byLogin, hint);
+        List<Actor> actors = getActors(user, group, byLogin, hint);
         if (actors.size() == 0) {
             json.append("{\"id\": \"\", \"name\": \"\"}");
         }
@@ -69,12 +69,12 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
         response.getOutputStream().write(json.toString().getBytes(Charsets.UTF_8));
     }
 
-    private List<Actor> getActors(Subject subject, Group group, boolean byLogin, String hint) {
+    private List<Actor> getActors(User user, Group group, boolean byLogin, String hint) {
         int rangeSize = 50;
         List<Actor> actors = Lists.newArrayListWithExpectedSize(rangeSize);
         ExecutorService executorService = Delegates.getExecutorService();
         if (group != null) {
-            List<Actor> groupActors = executorService.getGroupActors(subject, group);
+            List<Actor> groupActors = executorService.getGroupActors(user, group);
             for (Actor actor : groupActors) {
                 if (byLogin) {
                     if (actor.getName().startsWith(hint)) {
@@ -101,7 +101,7 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
             // thid method used instead of getActors due to lack paging in
             // that
             // method
-            for (Executor executor : executorService.getAll(subject, batchPresentation)) {
+            for (Executor executor : executorService.getAll(user, batchPresentation)) {
                 if (executor instanceof Actor) {
                     actors.add((Actor) executor);
                 }

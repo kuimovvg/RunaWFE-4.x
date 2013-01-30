@@ -20,6 +20,7 @@ package ru.runa.common.web.html;
 import java.util.HashMap;
 import java.util.Map;
 
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.html.TDBuilder.Env;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
@@ -30,8 +31,18 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.User;
 
 public abstract class EnvBaseImpl implements Env {
+    private User user;
+
+    @Override
+    public User getUser() {
+        if (user == null) {
+            user = Commons.getUser(getPageContext().getSession());
+        }
+        return user;
+    }
 
     protected class DefaultIdentifiableExtractor implements Env.IdentifiableExtractor {
         private static final long serialVersionUID = 1L;
@@ -50,9 +61,9 @@ public abstract class EnvBaseImpl implements Env {
                 return result;
             }
             DefinitionService definitionService = Delegates.getDefinitionService();
-            WfDefinition processDef = definitionService.getProcessDefinition(getSubject(), processDefinitionId);
+            WfDefinition processDef = definitionService.getProcessDefinition(getUser(), processDefinitionId);
             AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
-            result = authorizationService.isAllowed(getSubject(), permission, processDef);
+            result = authorizationService.isAllowed(getUser(), permission, processDef);
             processDefPermissionCache.put(processDefinitionId, result);
             return result;
         } catch (AuthenticationException e) {

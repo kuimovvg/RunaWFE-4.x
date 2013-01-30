@@ -23,7 +23,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -39,6 +38,7 @@ import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.ss.SubstitutionDoesNotExistException;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
 
@@ -53,101 +53,99 @@ public class SubstitutionServiceBean implements SubstitutionServiceLocal, Substi
     private SubstitutionLogic substitutionLogic;
 
     @Override
-    public Substitution createSubstitution(Subject subject, Long actorId, Substitution substitution) throws AuthorizationException,
+    public Substitution createSubstitution(User user, Long actorId, Substitution substitution) throws AuthorizationException,
             AuthenticationException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitution);
-        substitutionLogic.createSubstitution(subject, actorId, substitution);
+        substitutionLogic.createSubstitution(user, actorId, substitution);
         return substitution;
     }
 
     @Override
-    public List<Substitution> get(Subject subject, Long actorId) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException {
-        return substitutionLogic.getSubstitutions(subject, actorId);
+    public List<Substitution> get(User user, Long actorId) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
+        return substitutionLogic.getSubstitutions(user, actorId);
     }
 
     @Override
-    public void delete(Subject subject, List<Long> substitutionIds) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException, SubstitutionDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+    public void delete(User user, List<Long> substitutionIds) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException,
+            SubstitutionDoesNotExistException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitutionIds);
-        substitutionLogic.delete(subject, substitutionIds);
+        substitutionLogic.delete(user, substitutionIds);
     }
 
     @Override
-    public void switchSubstitutionsPositions(Subject subject, Long substitutionId1, Long substitutionId2) throws SubstitutionDoesNotExistException,
+    public void switchSubstitutionsPositions(User user, Long substitutionId1, Long substitutionId2) throws SubstitutionDoesNotExistException,
             AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        substitutionLogic.switchSubstitutionsPositions(subject, substitutionId1, substitutionId2);
+        Preconditions.checkNotNull(user);
+        substitutionLogic.switchSubstitutionsPositions(user, substitutionId1, substitutionId2);
     }
 
     @Override
-    public Substitution getSubstitution(Subject subject, Long substitutionId) throws AuthorizationException, AuthenticationException,
+    public Substitution getSubstitution(User user, Long substitutionId) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return substitutionLogic.getSubstitution(subject, substitutionId);
+        Preconditions.checkNotNull(user);
+        return substitutionLogic.getSubstitution(user, substitutionId);
     }
 
     @Override
-    public void store(Subject subject, Substitution substitution) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+    public void store(User user, Substitution substitution) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitution);
-        substitutionLogic.create(subject, substitution);
+        substitutionLogic.create(user, substitution);
     }
 
     @Override
-    public void createSubstitutionCriteria(Subject subject, SubstitutionCriteria substitutionCriteria) throws AuthorizationException,
+    public void createSubstitutionCriteria(User user, SubstitutionCriteria substitutionCriteria) throws AuthorizationException,
             AuthenticationException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitutionCriteria);
-        substitutionLogic.createSubstitutionCriteria(subject, substitutionCriteria);
+        substitutionLogic.createSubstitutionCriteria(user, substitutionCriteria);
     }
 
     @Override
-    public SubstitutionCriteria getSubstitutionCriteria(Subject subject, Long substitutionCriteriaId) throws AuthorizationException,
+    public SubstitutionCriteria getSubstitutionCriteria(User user, Long substitutionCriteriaId) throws AuthorizationException,
             AuthenticationException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return substitutionLogic.getSubstitutionCriteria(subject, substitutionCriteriaId);
+        Preconditions.checkNotNull(user);
+        return substitutionLogic.getSubstitutionCriteria(user, substitutionCriteriaId);
     }
 
     @Override
-    public List<SubstitutionCriteria> getSubstitutionCriteriaAll(Subject subject) throws AuthorizationException, AuthenticationException,
+    public List<SubstitutionCriteria> getSubstitutionCriteriaAll(User user) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        return substitutionLogic.getSubstitutionCriteriaAll(subject);
+        Preconditions.checkNotNull(user);
+        return substitutionLogic.getSubstitutionCriteriaAll(user);
     }
 
     @Override
-    public void store(Subject subject, SubstitutionCriteria substitutionCriteria) throws AuthorizationException, AuthenticationException,
+    public void store(User user, SubstitutionCriteria substitutionCriteria) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitutionCriteria);
-        substitutionLogic.store(subject, substitutionCriteria);
+        substitutionLogic.store(user, substitutionCriteria);
     }
 
     @Override
-    public void deleteSubstitutionCriteria(Subject subject, Long substitutionCriteriaId) throws AuthorizationException, AuthenticationException,
+    public void deleteSubstitutionCriteria(User user, Long substitutionCriteriaId) throws AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
-        substitutionLogic.deleteSubstitutionCriteria(subject, substitutionCriteriaId);
+        Preconditions.checkNotNull(user);
+        substitutionLogic.deleteSubstitutionCriteria(user, substitutionCriteriaId);
     }
 
     @Override
-    public void deleteSubstitutionCriteria(Subject subject, SubstitutionCriteria substitutionCriteria) throws AuthorizationException,
+    public void deleteSubstitutionCriteria(User user, SubstitutionCriteria substitutionCriteria) throws AuthorizationException,
             AuthenticationException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitutionCriteria);
-        substitutionLogic.deleteSubstitutionCriteria(subject, substitutionCriteria);
+        substitutionLogic.deleteSubstitutionCriteria(user, substitutionCriteria);
     }
 
     @Override
-    public List<Substitution> getBySubstitutionCriteria(Subject subject, SubstitutionCriteria substitutionCriteria) throws AuthorizationException,
+    public List<Substitution> getBySubstitutionCriteria(User user, SubstitutionCriteria substitutionCriteria) throws AuthorizationException,
             AuthenticationException, ExecutorDoesNotExistException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitutionCriteria);
-        return substitutionLogic.getBySubstitutionCriteria(subject, substitutionCriteria);
+        return substitutionLogic.getBySubstitutionCriteria(user, substitutionCriteria);
     }
 
 }

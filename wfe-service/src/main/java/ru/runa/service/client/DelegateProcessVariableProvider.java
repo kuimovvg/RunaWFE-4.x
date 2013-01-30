@@ -1,8 +1,7 @@
 package ru.runa.service.client;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
 
@@ -14,11 +13,11 @@ import ru.runa.wfe.var.dto.WfVariable;
  * @since 4.0
  */
 public class DelegateProcessVariableProvider extends AbstractVariableProvider {
-    private final Subject subject;
+    private final User user;
     private final Long processId;
 
-    public DelegateProcessVariableProvider(Subject subject, Long processId) {
-        this.subject = subject;
+    public DelegateProcessVariableProvider(User user, Long processId) {
+        this.user = user;
         this.processId = processId;
     }
 
@@ -34,6 +33,6 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
 
     @Override
     public WfVariable getVariable(String variableName) {
-        return Delegates.getExecutionService().getVariable(subject, processId, variableName);
+        return Delegates.getExecutionService().getVariable(user, processId, variableName);
     }
 }

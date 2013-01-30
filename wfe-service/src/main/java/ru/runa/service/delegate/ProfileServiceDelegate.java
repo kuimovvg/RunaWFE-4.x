@@ -17,12 +17,11 @@
  */
 package ru.runa.service.delegate;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.af.ProfileService;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 
 public class ProfileServiceDelegate extends EJB3Delegate implements ProfileService {
 
@@ -35,28 +34,28 @@ public class ProfileServiceDelegate extends EJB3Delegate implements ProfileServi
     }
 
     @Override
-    public Profile getProfile(Subject subject) throws AuthenticationException {
-        return getProfileService().getProfile(subject);
+    public Profile getProfile(User user) throws AuthenticationException {
+        return getProfileService().getProfile(user);
     }
 
     @Override
-    public void setActiveBatchPresentation(Subject subject, String batchPresentationId, String newActiveBatchName) throws AuthenticationException {
-        getProfileService().setActiveBatchPresentation(subject, batchPresentationId, newActiveBatchName);
+    public void setActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) throws AuthenticationException {
+        getProfileService().setActiveBatchPresentation(user, batchPresentationId, newActiveBatchName);
     }
 
     @Override
-    public void deleteBatchPresentation(Subject subject, BatchPresentation batchPresentation) throws AuthenticationException {
-        getProfileService().deleteBatchPresentation(subject, batchPresentation);
+    public void deleteBatchPresentation(User user, BatchPresentation batchPresentation) throws AuthenticationException {
+        getProfileService().deleteBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public BatchPresentation createBatchPresentation(Subject subject, BatchPresentation batchPresentation) throws AuthenticationException {
-        return getProfileService().createBatchPresentation(subject, batchPresentation);
+    public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) throws AuthenticationException {
+        return getProfileService().createBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public void saveBatchPresentation(Subject subject, BatchPresentation batchPresentation) throws AuthenticationException {
-        getProfileService().saveBatchPresentation(subject, batchPresentation);
+    public void saveBatchPresentation(User user, BatchPresentation batchPresentation) throws AuthenticationException {
+        getProfileService().saveBatchPresentation(user, batchPresentation);
     }
 
 }

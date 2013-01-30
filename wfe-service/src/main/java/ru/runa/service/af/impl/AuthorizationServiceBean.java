@@ -24,7 +24,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -43,6 +42,7 @@ import ru.runa.wfe.security.UnapplicablePermissionException;
 import ru.runa.wfe.security.logic.AuthorizationLogic;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
 
@@ -57,98 +57,97 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     private AuthorizationLogic authorizationLogic;
 
     @Override
-    public boolean isAllowed(Subject subject, Permission permission, Identifiable identifiable) throws AuthorizationException,
-            AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public boolean isAllowed(User user, Permission permission, Identifiable identifiable) throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(permission);
         Preconditions.checkNotNull(identifiable);
-        return authorizationLogic.isAllowed(subject, permission, identifiable);
+        return authorizationLogic.isAllowed(user, permission, identifiable);
     }
 
     @Override
-    public boolean[] isAllowed(Subject subject, Permission permission, List<? extends Identifiable> identifiables) throws AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) throws AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(permission);
         Preconditions.checkNotNull(identifiables);
-        return authorizationLogic.isAllowed(subject, permission, identifiables);
+        return authorizationLogic.isAllowed(user, permission, identifiables);
     }
 
     @Override
-    public Collection<Permission> getPermissions(Subject subject, Executor performer, Identifiable identifiable)
-            throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public Collection<Permission> getPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
+            AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(performer);
         Preconditions.checkNotNull(identifiable);
-        return authorizationLogic.getPermissions(subject, performer, identifiable);
+        return authorizationLogic.getPermissions(user, performer, identifiable);
     }
 
     @Override
-    public Collection<Permission> getOwnPermissions(Subject subject, Executor performer, Identifiable identifiable)
-            throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
+            AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(performer);
         Preconditions.checkNotNull(identifiable);
-        return authorizationLogic.getOwnPermissions(subject, performer, identifiable);
+        return authorizationLogic.getOwnPermissions(user, performer, identifiable);
     }
 
     @Override
-    public void setPermissions(Subject subject, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable)
+    public void setPermissions(User user, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executorIds);
         Preconditions.checkNotNull(permissions);
         Preconditions.checkNotNull(identifiable);
-        authorizationLogic.setPermissions(subject, executorIds, permissions, identifiable);
+        authorizationLogic.setPermissions(user, executorIds, permissions, identifiable);
     }
 
     @Override
-    public void setPermissions(Subject subject, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
+    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
             throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException, UnapplicablePermissionException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(performer);
         Preconditions.checkNotNull(permissions);
         Preconditions.checkNotNull(identifiable);
-        authorizationLogic.setPermissions(subject, performer, permissions, identifiable);
+        authorizationLogic.setPermissions(user, performer, permissions, identifiable);
     }
 
     @Override
-    public void setPermissions(Subject subject, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable)
+    public void setPermissions(User user, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable)
             throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException, UnapplicablePermissionException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executorsId);
         Preconditions.checkNotNull(permissions);
         Preconditions.checkNotNull(identifiable);
-        authorizationLogic.setPermissions(subject, executorsId, permissions, identifiable);
+        authorizationLogic.setPermissions(user, executorsId, permissions, identifiable);
     }
 
     @Override
-    public List<Executor> getExecutorsWithPermission(Subject subject, Identifiable identifiable, BatchPresentation batchPresentation,
-            boolean withPermission) throws AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        Preconditions.checkNotNull(identifiable);
-        Preconditions.checkNotNull(batchPresentation);
-        return authorizationLogic.getExecutorsWithPermission(subject, identifiable, batchPresentation, withPermission);
-    }
-
-    @Override
-    public int getExecutorsWithPermissionCount(Subject subject, Identifiable identifiable, BatchPresentation batchPresentation, boolean withPermission)
+    public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean withPermission)
             throws AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(identifiable);
         Preconditions.checkNotNull(batchPresentation);
-        return authorizationLogic.getExecutorsWithPermissionCount(subject, identifiable, batchPresentation, withPermission);
+        return authorizationLogic.getExecutorsWithPermission(user, identifiable, batchPresentation, withPermission);
+    }
+
+    @Override
+    public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean withPermission)
+            throws AuthorizationException, AuthenticationException {
+        Preconditions.checkNotNull(user);
+        Preconditions.checkNotNull(identifiable);
+        Preconditions.checkNotNull(batchPresentation);
+        return authorizationLogic.getExecutorsWithPermissionCount(user, identifiable, batchPresentation, withPermission);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Object> List<T> getPersistentObjects(Subject subject, BatchPresentation batchPresentation, Class<T> persistentClass,
+    public <T extends Object> List<T> getPersistentObjects(User user, BatchPresentation batchPresentation, Class<T> persistentClass,
             Permission permission, SecuredObjectType[] securedObjectTypes, boolean enablePaging) throws AuthenticationException {
-        Preconditions.checkNotNull(subject);
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
         Preconditions.checkNotNull(persistentClass, "Persistence class");
         Preconditions.checkNotNull(permission);
         Preconditions.checkNotNull(securedObjectTypes, "Secured object class");
-        return (List<T>) authorizationLogic.getPersistentObjects(subject, batchPresentation, permission, securedObjectTypes, enablePaging);
+        return (List<T>) authorizationLogic.getPersistentObjects(user, batchPresentation, permission, securedObjectTypes, enablePaging);
     }
 
 }

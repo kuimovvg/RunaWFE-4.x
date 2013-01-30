@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
@@ -32,6 +31,7 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 import ru.runa.wfe.presentation.filter.FilterCriteriaFactory;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Objects;
@@ -45,7 +45,7 @@ public class CancelOldProcesses extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         ExecutionService executionService = Delegates.getExecutionService();
         BatchPresentation batchPresentation = BatchPresentationFactory.PROCESSES.createNonPaged();
         FilterCriteria filter = FilterCriteriaFactory.getFilterCriteria(batchPresentation, 3);
@@ -56,10 +56,10 @@ public class CancelOldProcesses extends TaskHandlerBase {
         Map<Integer, FilterCriteria> map = batchPresentation.getFilteredFields();
         map.put(new Integer(3), filter);
         batchPresentation.setFilteredFields(map);
-        List<WfProcess> processes = executionService.getProcesses(subject, batchPresentation);
+        List<WfProcess> processes = executionService.getProcesses(user, batchPresentation);
         for (WfProcess process : processes) {
             if (process.getStartDate().before(lastDate) && !Objects.equal(process.getId(), task.getProcessId())) {
-                executionService.cancelProcess(subject, process.getId());
+                executionService.cancelProcess(user, process.getId());
             }
         }
         Boolean periodic = variableProvider.getValueNotNull(Boolean.class, "isPeriodic");

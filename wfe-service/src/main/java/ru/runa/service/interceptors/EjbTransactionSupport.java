@@ -6,7 +6,6 @@ import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
-import javax.security.auth.Subject;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 
@@ -14,8 +13,8 @@ import org.hibernate.exception.LockAcquisitionException;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.CachingLogic;
-import ru.runa.wfe.security.auth.SubjectHolder;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
+import ru.runa.wfe.security.auth.UserHolder;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
@@ -32,12 +31,12 @@ public class EjbTransactionSupport {
             transaction.begin();
             System.out.println("=== " + ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName() + "("
                     + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")");
-            if (ic.getParameters() != null && ic.getParameters().length > 0 && ic.getParameters()[0] instanceof Subject) {
-                SubjectHolder.set((Subject) ic.getParameters()[0]);
+            if (ic.getParameters() != null && ic.getParameters().length > 0 && ic.getParameters()[0] instanceof User) {
+                UserHolder.set((User) ic.getParameters()[0]);
             }
             Object result = invokeWithRetry(ic);
             transaction.commit();
-            SubjectHolder.reset();
+            UserHolder.reset();
             return result;
         } catch (Throwable th) {
             rollbackTransaction(transaction);
@@ -67,12 +66,6 @@ public class EjbTransactionSupport {
                 String string;
                 if (object == null) {
                     string = "null";
-                } else if (object instanceof Subject) {
-                    try {
-                        string = SubjectPrincipalsHelper.getActor((Subject) object).getName();
-                    } catch (Exception e) {
-                        string = null;
-                    }
                 } else {
                     string = object.toString();
                 }

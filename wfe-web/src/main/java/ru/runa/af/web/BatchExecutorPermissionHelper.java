@@ -20,25 +20,25 @@ package ru.runa.af.web;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
 public class BatchExecutorPermissionHelper {
     private static final SecuredObjectType[] ACTOR_GROUP_CLASSESS = { SecuredObjectType.ACTOR, SecuredObjectType.GROUP };
 
-    public static boolean[] getEnabledCheckboxes(Subject subject, List<? extends Executor> executors, BatchPresentation batchPresentation,
-            Permission permission) throws AuthenticationException {
+    public static boolean[] getEnabledCheckboxes(User user, List<? extends Executor> executors, BatchPresentation batchPresentation,
+            Permission permission) {
         AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        // boolean[] enabledCheckboxed = authorizationServiceDelegate.isAllowed(subject, ExecutorPermission.UPDATE, executors);
-        HashSet<Executor> executorsWithUpdatePermissionSet = new HashSet<Executor>(authorizationService.getPersistentObjects(subject,
-                batchPresentation, Executor.class, permission, ACTOR_GROUP_CLASSESS, false));
+        // boolean[] enabledCheckboxed =
+        // authorizationServiceDelegate.isAllowed(subject,
+        // ExecutorPermission.UPDATE, executors);
+        HashSet<Executor> executorsWithUpdatePermissionSet = new HashSet<Executor>(authorizationService.getPersistentObjects(user, batchPresentation,
+                Executor.class, permission, ACTOR_GROUP_CLASSESS, false));
         boolean[] enabledCheckboxed = new boolean[executors.size()];
         for (int i = 0; i < executors.size(); i++) {
             if (executorsWithUpdatePermissionSet.contains(executors.get(i))) {

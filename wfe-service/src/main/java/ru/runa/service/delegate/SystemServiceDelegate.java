@@ -19,12 +19,11 @@ package ru.runa.service.delegate;
 
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.af.SystemService;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.user.User;
 
 /**
  * Base interface which implementaions provide operations on ASystem they are
@@ -44,23 +43,23 @@ public class SystemServiceDelegate extends EJB3Delegate implements SystemService
     }
 
     @Override
-    public void login(Subject subject, ASystem system) throws AuthorizationException, AuthenticationException {
-        getSystemService().login(subject, system);
+    public void login(User user, ASystem system) throws AuthorizationException, AuthenticationException {
+        getSystemService().login(user, system);
     }
 
     @Override
-    public void logout(Subject subject, ASystem system) {
-        getSystemService().logout(subject, system);
+    public void logout(User user, ASystem system) {
+        getSystemService().logout(user, system);
     }
 
     @Override
-    public Map<String, String> getLocalizations(Subject subject) {
-        return getSystemService().getLocalizations(subject);
+    public Map<String, String> getLocalizations(User user) {
+        return getSystemService().getLocalizations(user);
     }
 
     @Override
-    public void saveLocalizations(Subject subject, Map<String, String> localizations) {
-        getSystemService().saveLocalizations(subject, localizations);
+    public void saveLocalizations(User user, Map<String, String> localizations) {
+        getSystemService().saveLocalizations(user, localizations);
     }
 
 }

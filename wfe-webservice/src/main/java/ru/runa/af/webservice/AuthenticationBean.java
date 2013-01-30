@@ -17,8 +17,8 @@
  */
 package ru.runa.af.webservice;
 
-import java.util.Set;
-
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.jws.WebMethod;
@@ -26,39 +26,50 @@ import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.WSLoggerInterceptor;
+import ru.runa.service.af.AuthenticationService;
 import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
 import ru.runa.wfe.security.logic.AuthenticationLogic;
-import ru.runa.wfe.user.ActorPrincipal;
+import ru.runa.wfe.user.User;
 
 @Stateless
 @WebService(name = "Authentication", targetNamespace = "http://runa.ru/workflow/webservices", serviceName = "AuthenticationWebService")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
 @Interceptors({ SpringBeanAutowiringInterceptor.class, WSLoggerInterceptor.class })
-public class AuthenticationBean {
+public class AuthenticationBean implements AuthenticationService {
     @Autowired
     private AuthenticationLogic authenticationLogic;
+    @Resource
+    private SessionContext context;
 
-    @WebMethod(operationName = "authenticateDB")
-    public ActorPrincipal authenticate(@WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name,
+    @Override
+    @WebMethod
+    public User authenticateByCallerPrincipal() throws AuthenticationException {
+        return authenticationLogic.authenticate(context.getCallerPrincipal());
+    }
+
+    @Override
+    @WebMethod(operationName = "authenticateByKerberos")
+    public User authenticateByKerberos(@WebParam(name = "token") byte[] token) throws AuthenticationException {
+        return authenticationLogic.authenticate(token, KerberosLoginModuleResources.rtnKerberosResources);
+    }
+
+    @WebMethod(operationName = "authenticateByKerberos2")
+    public User authenticate2(@WebParam byte[] token) throws AuthenticationException {
+        return authenticationLogic.authenticate(token, KerberosLoginModuleResources.rtnKerberosResources);
+    }
+
+    @Override
+    @WebMethod(operationName = "authenticateByLoginPassword")
+    public User authenticateByLoginPassword(@WebParam(mode = Mode.IN, name = "name", targetNamespace = "http://runa.ru/workflow/webservices") String name,
             @WebParam(mode = Mode.IN, name = "password", targetNamespace = "http://runa.ru/workflow/webservices") String password)
             throws AuthenticationException {
-        return getActorPrincipal(authenticationLogic.authenticate(name, password));
+        return authenticationLogic.authenticate(name, password);
     }
 
-    private ActorPrincipal getActorPrincipal(Subject subject) {
-        if (subject == null) {
-            return null;
-        }
-        Set<ActorPrincipal> princs = subject.getPrincipals(ActorPrincipal.class);
-        if (princs == null || princs.isEmpty()) {
-            return null;
-        }
-        return princs.iterator().next();
-    }
 }

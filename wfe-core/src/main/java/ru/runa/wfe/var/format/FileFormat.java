@@ -19,9 +19,8 @@ package ru.runa.wfe.var.format;
 
 import java.util.HashMap;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
 
 import com.google.common.collect.Maps;
@@ -42,11 +41,11 @@ public class FileFormat implements VariableFormat<FileVariable>, VariableDisplay
     }
 
     @Override
-    public String getHtml(Subject subject, WebHelper webHelper, Long processId, String name, FileVariable value) {
-        return getHtml(value, subject, webHelper, processId, name, 0, null);
+    public String getHtml(User user, WebHelper webHelper, Long processId, String name, FileVariable value) {
+        return getHtml(value, webHelper, processId, name, 0, null);
     }
 
-    public static String getHtml(FileVariable value, Subject subject, WebHelper webHelper, Long processId, String name, int listIndex, Object mapKey) {
+    public static String getHtml(FileVariable value, WebHelper webHelper, Long processId, String name, int listIndex, Object mapKey) {
         HashMap<String, Object> params = Maps.newHashMap();
         params.put("id", processId);
         params.put("variableName", name);

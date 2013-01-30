@@ -2,8 +2,6 @@ package ru.runa.service.wf;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotAlreadyExistsException;
 import ru.runa.wfe.bot.BotDoesNotExistException;
@@ -13,6 +11,7 @@ import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.BotTaskAlreadyExistsException;
 import ru.runa.wfe.bot.BotTaskDoesNotExistException;
+import ru.runa.wfe.user.User;
 
 /**
  * Service for operations with {@link BotStation}, {@link Bot}, {@link BotTask}.
@@ -29,7 +28,7 @@ public interface BotService {
      * @throws BotStationAlreadyExistsException
      *             if name collision occurs
      */
-    public BotStation createBotStation(Subject subject, BotStation botStation) throws BotStationAlreadyExistsException;
+    public BotStation createBotStation(User user, BotStation botStation) throws BotStationAlreadyExistsException;
 
     /**
      * Get all bot stations.
@@ -59,14 +58,14 @@ public interface BotService {
      * @throws BotStationAlreadyExistsException
      *             if name collision occurs
      */
-    public void updateBotStation(Subject subject, BotStation bs) throws BotStationAlreadyExistsException;
+    public void updateBotStation(User user, BotStation bs) throws BotStationAlreadyExistsException;
 
     /**
      * Removes bot station with all bots and bot tasks by id.
      * 
      * @throws BotStationDoesNotExistException
      */
-    public void removeBotStation(Subject subject, Long id) throws BotStationDoesNotExistException;
+    public void removeBotStation(User user, Long id) throws BotStationDoesNotExistException;
 
     /**
      * Imports bot station with all bots and bot tasks from archive.
@@ -76,7 +75,7 @@ public interface BotService {
      * @param replace
      *            override existing entities
      */
-    public void importBotStation(Subject subject, byte[] archive, boolean replace);
+    public void importBotStation(User user, byte[] archive, boolean replace);
 
     /**
      * Exports bot station to archive
@@ -84,7 +83,7 @@ public interface BotService {
      * @return archive
      * @throws BotStationDoesNotExistException
      */
-    public byte[] exportBotStation(Subject subject, BotStation station) throws BotStationDoesNotExistException;
+    public byte[] exportBotStation(User user, BotStation station) throws BotStationDoesNotExistException;
 
     /**
      * Creates new bot.
@@ -93,14 +92,14 @@ public interface BotService {
      * @throws BotAlreadyExistsException
      *             if name collision occurs
      */
-    public Bot createBot(Subject subject, Bot bot) throws BotAlreadyExistsException;
+    public Bot createBot(User user, Bot bot) throws BotAlreadyExistsException;
 
     /**
      * Loads all bots for bot station
      * 
      * @return list, not <code>null</code>
      */
-    public List<Bot> getBots(Subject subject, Long botStationId);
+    public List<Bot> getBots(User user, Long botStationId);
 
     /**
      * Gets bot by id.
@@ -108,7 +107,7 @@ public interface BotService {
      * @return bot, not <code>null</code>
      * @throws BotDoesNotExistException
      */
-    public Bot getBot(Subject subject, Long id) throws BotDoesNotExistException;
+    public Bot getBot(User user, Long id) throws BotDoesNotExistException;
 
     /**
      * Updates bot data.
@@ -116,14 +115,14 @@ public interface BotService {
      * @throws BotAlreadyExistsException
      *             if name collision occurs
      */
-    public void updateBot(Subject subject, Bot bot) throws BotAlreadyExistsException;
+    public void updateBot(User user, Bot bot) throws BotAlreadyExistsException;
 
     /**
      * Removes bot with all bot tasks by id.
      * 
      * @throws BotDoesNotExistException
      */
-    public void removeBot(Subject subject, Long id) throws BotDoesNotExistException;
+    public void removeBot(User user, Long id) throws BotDoesNotExistException;
 
     /**
      * Exports bot to archive.
@@ -131,7 +130,7 @@ public interface BotService {
      * @return archive
      * @throws BotDoesNotExistException
      */
-    public byte[] exportBot(Subject subject, Bot bot) throws BotDoesNotExistException;
+    public byte[] exportBot(User user, Bot bot) throws BotDoesNotExistException;
 
     /**
      * Imports bot from archive.
@@ -140,7 +139,7 @@ public interface BotService {
      *            override existing entities
      * @throws BotStationDoesNotExistException
      */
-    public void importBot(Subject subject, BotStation station, byte[] archive, boolean replace) throws BotStationDoesNotExistException;
+    public void importBot(User user, BotStation station, byte[] archive, boolean replace) throws BotStationDoesNotExistException;
 
     /**
      * Creates bot task.
@@ -149,14 +148,14 @@ public interface BotService {
      * @throws BotTaskAlreadyExistsException
      *             if name collision occurs
      */
-    public BotTask createBotTask(Subject subject, BotTask task) throws BotTaskAlreadyExistsException;
+    public BotTask createBotTask(User user, BotTask task) throws BotTaskAlreadyExistsException;
 
     /**
      * Loads all bot tasks by bot id.
      * 
      * @return list, not <code>null</code>
      */
-    public List<BotTask> getBotTasks(Subject subject, Long id);
+    public List<BotTask> getBotTasks(User user, Long id);
 
     /**
      * Loads bot task by id.
@@ -164,7 +163,7 @@ public interface BotService {
      * @return task, not <code>null</code>
      * @throws BotTaskDoesNotExistException
      */
-    public BotTask getBotTask(Subject subject, Long id) throws BotTaskDoesNotExistException;
+    public BotTask getBotTask(User user, Long id) throws BotTaskDoesNotExistException;
 
     /**
      * Updates bot task.
@@ -172,14 +171,14 @@ public interface BotService {
      * @throws BotTaskAlreadyExistsException
      *             if name collision occurs
      */
-    public void updateBotTask(Subject subject, BotTask task) throws BotTaskAlreadyExistsException;
+    public void updateBotTask(User user, BotTask task) throws BotTaskAlreadyExistsException;
 
     /**
      * Removes bot task by id.
      * 
      * @throws BotTaskDoesNotExistException
      */
-    public void removeBotTask(Subject subject, Long id) throws BotTaskDoesNotExistException;
+    public void removeBotTask(User user, Long id) throws BotTaskDoesNotExistException;
 
     /**
      * Exports bot task to archive.
@@ -187,6 +186,6 @@ public interface BotService {
      * @return archive
      * @throws BotDoesNotExistException
      */
-    public byte[] exportBotTask(Subject subject, Bot bot, String botTaskName) throws BotDoesNotExistException;
+    public byte[] exportBotTask(User user, Bot bot, String botTaskName) throws BotDoesNotExistException;
 
 }

@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +16,7 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Objects;
@@ -150,8 +150,8 @@ public abstract class ParamMappedTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
-        byte[] botXmlFile = Delegates.getDefinitionService().getFile(subject, task.getDefinitionId(), BOTS_XML_FILE);
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
+        byte[] botXmlFile = Delegates.getDefinitionService().getFile(user, task.getDefinitionId(), BOTS_XML_FILE);
         Document doc = XmlUtils.parseWithoutValidation(botXmlFile);
         List<Element> taskElements = doc.getRootElement().elements(TASK_PARAM);
         for (Element taskElement : taskElements) {

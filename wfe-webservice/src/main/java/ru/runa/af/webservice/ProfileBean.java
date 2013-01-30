@@ -14,7 +14,6 @@ import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.security.auth.Subject;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,9 +29,9 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ActorPrincipal;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 import ru.runa.wfe.user.logic.ProfileLogic;
 
@@ -83,13 +82,12 @@ public class ProfileBean {
 
     @WebMethod
     public void replicateBatchPresentation(
-            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") ActorPrincipal actor,
+            @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "batchName", targetNamespace = "http://runa.ru/workflow/webservices") String batchPresentationNewName,
             @WebParam(mode = Mode.IN, name = "useTemplates", targetNamespace = "http://runa.ru/workflow/webservices") String useTemplatesParam,
             @WebParam(mode = Mode.IN, name = "activeMode", targetNamespace = "http://runa.ru/workflow/webservices") String activeModeParam,
             @WebParam(mode = Mode.IN, name = "batchPresentations", targetNamespace = "http://runa.ru/workflow/webservices") List<BatchPresentationTypeDescr> batchPresentations)
             throws ExecutorDoesNotExistException, AuthenticationException, AuthorizationException {
-        Subject subject = getSubject(actor);
         boolean useTemplates = isTemplatesActive(useTemplatesParam);
         setActiveMode activeMode = readSetActiveMode(activeModeParam);
 
@@ -101,11 +99,11 @@ public class ProfileBean {
                 if (srcBatch != null) {
                     throw new InternalApplicationException("Only one source batchPresentation is allowed inside replicateBatchPresentation.");
                 }
-                srcBatch = readBatchPresentation(subject, batchPresentation);
+                srcBatch = readBatchPresentation(user, batchPresentation);
                 continue;
             }
             if (name.equals("template")) {
-                replaceableBatchPresentations.add(readBatchPresentation(subject, batchPresentation));
+                replaceableBatchPresentations.add(readBatchPresentation(user, batchPresentation));
                 continue;
             }
             throw new InternalApplicationException("BatchPresentation with name '" + name + "' is not allowed inside replicateBatchPresentation.");
@@ -123,20 +121,20 @@ public class ProfileBean {
         srcBatch = srcBatch.clone();
         srcBatch.setName(batchPresentationNewName);
         replicationDescr.put(srcBatch, new ReplicationDescr(replaceableBatchPresentations, activeMode, useTemplates));
-        replicateBatchPresentation(subject, replicationDescr);
+        replicateBatchPresentation(user, replicationDescr);
     }
 
-    private void replicateBatchPresentation(Subject subject, Map<BatchPresentation, ReplicationDescr> replicationDescr)
-            throws AuthenticationException, AuthorizationException, ExecutorDoesNotExistException {
+    private void replicateBatchPresentation(User user, Map<BatchPresentation, ReplicationDescr> replicationDescr) throws AuthenticationException,
+            AuthorizationException, ExecutorDoesNotExistException {
         if (replicationDescr.isEmpty()) {
             return;
         }
-        List<Actor> allActors = executorLogic.getActors(subject, BatchPresentationFactory.ACTORS.createNonPaged());
+        List<Actor> allActors = executorLogic.getActors(user, BatchPresentationFactory.ACTORS.createNonPaged());
         List<Long> actorIds = Lists.newArrayListWithExpectedSize(allActors.size());
         for (Actor actor : allActors) {
             actorIds.add(actor.getId());
         }
-        List<Profile> profiles = profileLogic.getProfiles(subject, actorIds);
+        List<Profile> profiles = profileLogic.getProfiles(user, actorIds);
         // For all profiles
         for (Profile profile : profiles) {
             // Replicate all batches
@@ -160,7 +158,7 @@ public class ProfileBean {
                 }
             }
         }
-        profileLogic.updateProfiles(subject, profiles);
+        profileLogic.updateProfiles(user, profiles);
     }
 
     private enum setActiveMode {
@@ -209,7 +207,7 @@ public class ProfileBean {
         return setActiveMode.none;
     }
 
-    private BatchPresentation readBatchPresentation(Subject subject, BatchPresentationTypeDescr batchPresentationTypeDescr)
+    private BatchPresentation readBatchPresentation(User user, BatchPresentationTypeDescr batchPresentationTypeDescr)
             throws ExecutorDoesNotExistException, AuthenticationException, AuthorizationException {
         String actorName = batchPresentationTypeDescr.getActorName();
         String batchName = batchPresentationTypeDescr.getBatchName();
@@ -240,7 +238,7 @@ public class ProfileBean {
         // BatchPresentationConsts.DEFAULT_NAME, batchId);
         // }
         // }
-        return getBatchFromProfile(profileLogic.getProfile(subject, executorLogic.getExecutor(subject, actorName).getId()), batchId, batchName);
+        return getBatchFromProfile(profileLogic.getProfile(user, executorLogic.getExecutor(user, actorName).getId()), batchId, batchName);
     }
 
     private BatchPresentation getBatchFromProfile(Profile profile, String batchID, String batchName) {
@@ -252,9 +250,4 @@ public class ProfileBean {
         return null;
     }
 
-    private Subject getSubject(ActorPrincipal actor) {
-        Subject result = new Subject();
-        result.getPrincipals().add(actor);
-        return result;
-    }
 }

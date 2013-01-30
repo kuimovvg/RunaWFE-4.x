@@ -20,7 +20,6 @@ package ru.runa.wf.web.servlet;
 import java.io.IOException;
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,9 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
+import ru.runa.common.web.Commons;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.os.ParamRenderer;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Charsets;
 
@@ -44,14 +44,14 @@ public class AjaxCommandServlet extends HttpServlet {
         log.debug("Got ajax request: " + request.getQueryString());
         try {
             String command = request.getParameter("command");
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
+            User user = Commons.getUser(request.getSession());
             StringBuffer result = new StringBuffer();
             if ("getParamDialogData".equals(command)) {
                 result.append("[");
 
                 String rendererClassName = request.getParameter("renderer");
                 ParamRenderer renderer = ClassLoaderUtil.instantiate(rendererClassName);
-                List<String[]> data = renderer.loadJSEditorData(subject);
+                List<String[]> data = renderer.loadJSEditorData(user);
 
                 for (int i = 0; i < data.size(); i++) {
                     if (i != 0) {

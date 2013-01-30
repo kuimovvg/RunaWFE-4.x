@@ -15,7 +15,7 @@ public class DisplayMapElementTag extends FreemarkerTag {
         Map<?, ?> map = variableProvider.getValueNotNull(Map.class, mapVarName);
         Object key = getParameterAs(Object.class, 1);
         Object object = map.get(key);
-        return FormatCommons.getVarOut(object, subject, webHelper, variableProvider.getProcessId(), mapVarName, 0, key);
+        return FormatCommons.getVarOut(object, webHelper, variableProvider.getProcessId(), mapVarName, 0, key);
     }
 
 }

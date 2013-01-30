@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.commons.logic.PresentationCompilerHelper;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -32,10 +30,9 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.UnapplicablePermissionException;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
-import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -45,118 +42,126 @@ import com.google.common.collect.Sets;
  * 
  */
 public class AuthorizationLogic extends CommonLogic {
-    public boolean isAllowed(Subject subject, Permission permission, Identifiable identifiable) throws AuthenticationException {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        return permissionDAO.isAllowed(actor, permission, identifiable);
+    public boolean isAllowed(User user, Permission permission, Identifiable identifiable) throws AuthenticationException {
+        return permissionDAO.isAllowed(user, permission, identifiable);
     }
 
-    public boolean isPrivelegedExecutor(Subject subject, Executor executor, Identifiable identifiable) throws AuthorizationException,
+    public boolean isPrivelegedExecutor(User user, Executor executor, Identifiable identifiable) throws AuthorizationException,
             AuthenticationException {
-        checkPermissionAllowed(subject, executor, Permission.READ);
-        checkPermissionAllowed(subject, identifiable, Permission.READ);
+        checkPermissionAllowed(user, executor, Permission.READ);
+        checkPermissionAllowed(user, identifiable, Permission.READ);
         return permissionDAO.isPrivilegedExecutor(executor, identifiable);
     }
 
-    public boolean[] isAllowed(Subject subject, Permission permission, List<? extends Identifiable> identifiables) throws AuthenticationException {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        return permissionDAO.isAllowed(actor, permission, identifiables);
+    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) throws AuthenticationException {
+        return permissionDAO.isAllowed(user, permission, identifiables);
     }
 
-    public Collection<Permission> getPermissions(Subject subject, Executor performer, Identifiable identifiable)
-            throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        performer = checkPermissionsOnExecutor(subject, performer, Permission.READ);
-        checkPermissionAllowed(subject, identifiable, Permission.READ);
+    public Collection<Permission> getPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
+            AuthorizationException, AuthenticationException {
+        performer = checkPermissionsOnExecutor(user, performer, Permission.READ);
+        checkPermissionAllowed(user, identifiable, Permission.READ);
         return permissionDAO.getPermissions(performer, identifiable);
     }
 
-    public Collection<Permission> getOwnPermissions(Subject subject, Executor performer, Identifiable identifiable)
-            throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        performer = checkPermissionsOnExecutor(subject, performer, Permission.READ);
-        checkPermissionAllowed(subject, identifiable, Permission.READ);
+    public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
+            AuthorizationException, AuthenticationException {
+        performer = checkPermissionsOnExecutor(user, performer, Permission.READ);
+        checkPermissionAllowed(user, identifiable, Permission.READ);
         return permissionDAO.getOwnPermissions(performer, identifiable);
     }
 
-    public void setPermissions(Subject subject, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
+    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        setPermissionOnIdentifiable(subject, performer, permissions, identifiable);
+        setPermissionOnIdentifiable(user, performer, permissions, identifiable);
     }
 
-    public void setPermissions(Subject subject, List<Long> executorIds, Collection<Permission> permissions, Identifiable identifiable)
+    public void setPermissions(User user, List<Long> executorIds, Collection<Permission> permissions, Identifiable identifiable)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
         List<Executor> executors = executorDAO.getExecutors(executorIds);
         checkIsChangingPermissionForPrivilegedExecutors(executors, identifiable, permissions);
-        checkPermissionsOnExecutors(subject, executors, Permission.READ);
-        checkPermissionAllowed(subject, identifiable, Permission.UPDATE_PERMISSIONS);
+        checkPermissionsOnExecutors(user, executors, Permission.READ);
+        checkPermissionAllowed(user, identifiable, Permission.UPDATE_PERMISSIONS);
         for (Executor executor : executors) {
             permissionDAO.setPermissions(executor, permissions, identifiable);
         }
     }
 
-    public void setPermissions(Subject subject, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable)
+    public void setPermissions(User user, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
         List<Executor> executors = executorDAO.getExecutors(executorIds);
         checkIsChangingPermissionForPrivilegedExecutors(executors, identifiable, permissions);
-        checkPermissionAllowed(subject, identifiable, Permission.UPDATE_PERMISSIONS);
+        checkPermissionAllowed(user, identifiable, Permission.UPDATE_PERMISSIONS);
         Preconditions.checkArgument(executors.size() == permissions.size(), "arrays length differs");
         for (int i = 0; i < executors.size(); i++) {
             permissionDAO.setPermissions(executors.get(i), permissions.get(i), identifiable);
         }
     }
 
-    public void setPermissions(Subject subject, Executor performer, Collection<Permission> permissions, List<? extends Identifiable> identifiables)
+    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, List<? extends Identifiable> identifiables)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
         for (Identifiable identifiable : identifiables) {
-            performer = setPermissionOnIdentifiable(subject, performer, permissions, identifiable);
+            performer = setPermissionOnIdentifiable(user, performer, permissions, identifiable);
         }
     }
 
-    private Executor setPermissionOnIdentifiable(Subject subject, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
+    private Executor setPermissionOnIdentifiable(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
             throws AuthorizationException, ExecutorDoesNotExistException, AuthenticationException, UnapplicablePermissionException {
         checkIsChangingPermissionForPrivilegedExecutors(performer, identifiable, permissions);
-        performer = checkPermissionsOnExecutor(subject, performer, Permission.READ);
-        checkPermissionAllowed(subject, identifiable, Permission.UPDATE_PERMISSIONS);
+        performer = checkPermissionsOnExecutor(user, performer, Permission.READ);
+        checkPermissionAllowed(user, identifiable, Permission.UPDATE_PERMISSIONS);
         permissionDAO.setPermissions(performer, permissions, identifiable);
         return performer;
     }
 
     /**
-     * Load executor's which already has (or not has) some permission on specified identifiable. This query using paging.
+     * Load executor's which already has (or not has) some permission on
+     * specified identifiable. This query using paging.
      * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     * @param user
+     *            Current actor {@linkplain user}.
      * @param identifiable
-     *            {@linkplain Identifiable} to load executors, which has (or not) permission on this identifiable.
+     *            {@linkplain Identifiable} to load executors, which has (or
+     *            not) permission on this identifiable.
      * @param batchPresentation
      *            {@linkplain BatchPresentation} for loading executors.
      * @param hasPermission
-     *            Flag equals true to load executors with permissions on {@linkplain Identifiable}; false to load executors without permissions.
-     * @return Executors with or without permission on {@linkplain Identifiable}.
+     *            Flag equals true to load executors with permissions on
+     *            {@linkplain Identifiable}; false to load executors without
+     *            permissions.
+     * @return Executors with or without permission on {@linkplain Identifiable}
+     *         .
      */
-    public List<Executor> getExecutorsWithPermission(Subject subject, Identifiable identifiable, BatchPresentation batchPresentation,
-            boolean hasPermission) throws AuthorizationException, AuthenticationException {
-        checkPermissionAllowed(subject, identifiable, Permission.READ);
-        BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createExecutorWithPermissionCompiler(subject, identifiable,
+    public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission)
+            throws AuthorizationException, AuthenticationException {
+        checkPermissionAllowed(user, identifiable, Permission.READ);
+        BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createExecutorWithPermissionCompiler(user, identifiable,
                 batchPresentation, hasPermission);
         return compiler.getBatch();
     }
 
     /**
-     * Load executor's count which already has (or not has) some permission on specified identifiable.
+     * Load executor's count which already has (or not has) some permission on
+     * specified identifiable.
      * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     * @param user
+     *            Current actor {@linkplain user}.
      * @param identifiable
-     *            {@linkplain Identifiable} to load executors, which has (or not) permission on this identifiable.
+     *            {@linkplain Identifiable} to load executors, which has (or
+     *            not) permission on this identifiable.
      * @param batchPresentation
      *            {@linkplain BatchPresentation} for loading executors.
      * @param hasPermission
-     *            Flag equals true to load executors with permissions on {@linkplain Identifiable}; false to load executors without permissions.
-     * @return Count of executors with or without permission on {@linkplain Identifiable}.
+     *            Flag equals true to load executors with permissions on
+     *            {@linkplain Identifiable}; false to load executors without
+     *            permissions.
+     * @return Count of executors with or without permission on
+     *         {@linkplain Identifiable}.
      */
-    public int getExecutorsWithPermissionCount(Subject subject, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission)
+    public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission)
             throws AuthorizationException, AuthenticationException {
-        checkPermissionAllowed(subject, identifiable, Permission.READ);
-        BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createExecutorWithPermissionCompiler(subject, identifiable,
+        checkPermissionAllowed(user, identifiable, Permission.READ);
+        BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createExecutorWithPermissionCompiler(user, identifiable,
                 batchPresentation, hasPermission);
         return compiler.getCount();
     }

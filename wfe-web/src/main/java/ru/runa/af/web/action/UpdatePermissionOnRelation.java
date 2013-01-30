@@ -20,8 +20,6 @@ package ru.runa.af.web.action;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
@@ -33,19 +31,24 @@ import ru.runa.common.web.action.UpdatePermissionOnIdentifiableAction;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.user.User;
 
 /**
- * @struts:action path="/updatePermissionOnRelation" name="updatePermissionsOnIdentifiableForm" validate="true" input = "/WEB-INF/af/manage_relation_members.jsp"
- * @struts.action-forward name="success" path="/relation_permission.do" redirect = "true"
- * @struts.action-forward name="failure" path="/relation_permission.do" redirect = "true"
+ * @struts:action path="/updatePermissionOnRelation"
+ *                name="updatePermissionsOnIdentifiableForm" validate="true"
+ *                input = "/WEB-INF/af/manage_relation_members.jsp"
+ * @struts.action-forward name="success" path="/relation_permission.do" redirect
+ *                        = "true"
+ * @struts.action-forward name="failure" path="/relation_permission.do" redirect
+ *                        = "true"
  */
 public class UpdatePermissionOnRelation extends UpdatePermissionOnIdentifiableAction {
     public static final String ACTION_PATH_NAME = "/updatePermissionOnRelation";
 
     @Override
-    protected Identifiable getIdentifiable(Subject subject, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
         try {
-            return Delegates.getRelationService().getRelation(subject, identifiableId);
+            return Delegates.getRelationService().getRelation(user, identifiableId);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
             return null;
@@ -63,9 +66,9 @@ public class UpdatePermissionOnRelation extends UpdatePermissionOnIdentifiableAc
     }
 
     @Override
-    protected ActionForward getErrorForward(Subject subject, ActionMapping mapping, Long identifiableId) {
+    protected ActionForward getErrorForward(User user, ActionMapping mapping, Long identifiableId) {
         try {
-            Relation relation = Delegates.getRelationService().getRelation(subject, identifiableId);
+            Relation relation = Delegates.getRelationService().getRelation(user, identifiableId);
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("relationName", relation.getName());
             params.put("id", identifiableId);
@@ -76,9 +79,9 @@ public class UpdatePermissionOnRelation extends UpdatePermissionOnIdentifiableAc
     }
 
     @Override
-    protected ActionForward getSuccessForward(Subject subject, ActionMapping mapping, Long identifiableId) {
+    protected ActionForward getSuccessForward(User user, ActionMapping mapping, Long identifiableId) {
         try {
-            Relation relation = Delegates.getRelationService().getRelation(subject, identifiableId);
+            Relation relation = Delegates.getRelationService().getRelation(user, identifiableId);
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("relationName", relation.getName());
             params.put("id", identifiableId);

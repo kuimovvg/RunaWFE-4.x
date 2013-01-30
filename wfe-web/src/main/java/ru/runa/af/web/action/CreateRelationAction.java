@@ -20,21 +20,19 @@ package ru.runa.af.web.action;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.CreateRelationForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.Delegates;
@@ -42,11 +40,14 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Executor;
 
 /**
- * @struts:action path="/createRelation" name="createRelationForm" validate="true" input = "/WEB-INF/af/create_relation.jsp"
- * @struts.action-forward name="success" path="/manage_relation.do" redirect = "true"
- * @struts.action-forward name="failure" path="/create_relation.do" redirect = "true"
+ * @struts:action path="/createRelation" name="createRelationForm"
+ *                validate="true" input = "/WEB-INF/af/create_relation.jsp"
+ * @struts.action-forward name="success" path="/manage_relation.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure" path="/create_relation.do" redirect =
+ *                        "true"
  */
-public class CreateRelationAction extends Action {
+public class CreateRelationAction extends ActionBase {
 
     public static final String ACTION_PATH = "/createRelation";
 
@@ -56,24 +57,22 @@ public class CreateRelationAction extends Action {
         ActionMessages errors = new ActionMessages();
         CreateRelationForm relationForm = (CreateRelationForm) form;
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             ExecutorService executorService = Delegates.getExecutorService();
             RelationService relationService = Delegates.getRelationService();
-            Executor executorFrom = executorService.getExecutor(subject, relationForm.getRelationFrom());
-            Executor executorTo = executorService.getExecutor(subject, relationForm.getRelationTo());
-            relationService.addRelationPair(subject, relationForm.getRelationName(), executorFrom, executorTo);
+            Executor executorFrom = executorService.getExecutor(getLoggedUser(request), relationForm.getRelationFrom());
+            Executor executorTo = executorService.getExecutor(getLoggedUser(request), relationForm.getRelationTo());
+            relationService.addRelationPair(getLoggedUser(request), relationForm.getRelationName(), executorFrom, executorTo);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
-
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
             return getFailureForward(mapping, relationForm);
         }
-        return getSucessForward(mapping, relationForm);
+        return getSuccessForward(mapping, relationForm);
     }
 
-    private ActionForward getSucessForward(ActionMapping mapping, CreateRelationForm relationForm) {
+    private ActionForward getSuccessForward(ActionMapping mapping, CreateRelationForm relationForm) {
         if (relationForm.getSuccess() == null) {
             return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), "relationName", relationForm.getRelationName());
         }

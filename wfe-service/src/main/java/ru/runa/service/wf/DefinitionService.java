@@ -19,21 +19,20 @@ package ru.runa.service.wf;
 
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionNameMismatchException;
 import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
-import ru.runa.wfe.execution.SuperProcessExistsException;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 
 /**
@@ -41,35 +40,34 @@ import ru.runa.wfe.var.VariableDefinition;
  */
 public interface DefinitionService {
 
-    public WfDefinition deployProcessDefinition(Subject subject, byte[] process, List<String> processType) throws AuthorizationException,
+    public WfDefinition deployProcessDefinition(User user, byte[] process, List<String> processType) throws AuthorizationException,
             DefinitionAlreadyExistException, DefinitionArchiveFormatException;
 
-    public WfDefinition redeployProcessDefinition(Subject subject, Long definitionId, byte[] process, List<String> processType)
+    public WfDefinition redeployProcessDefinition(User user, Long definitionId, byte[] process, List<String> processType)
             throws DefinitionDoesNotExistException, AuthorizationException, DefinitionDoesNotExistException, DefinitionArchiveFormatException,
             DefinitionNameMismatchException;
 
-    public List<WfDefinition> getLatestProcessDefinitions(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException;
+    public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) throws AuthorizationException;
 
-    public WfDefinition getLatestProcessDefinition(Subject subject, String definitionName) throws DefinitionDoesNotExistException,
-            AuthorizationException, DefinitionDoesNotExistException;
-
-    public WfDefinition getProcessDefinition(Subject subject, Long definitionId) throws DefinitionDoesNotExistException, AuthorizationException,
+    public WfDefinition getLatestProcessDefinition(User user, String definitionName) throws DefinitionDoesNotExistException, AuthorizationException,
             DefinitionDoesNotExistException;
 
-    public WfDefinition getProcessDefinitionByProcessId(Subject subject, Long processId) throws AuthorizationException, ProcessDoesNotExistException;
-
-    public void undeployProcessDefinition(Subject subject, String definitionName) throws DefinitionDoesNotExistException, AuthorizationException,
-            SuperProcessExistsException;
-
-    public void removeProcessDefinition(Subject subject, String definitionName, int version) throws AuthorizationException,
+    public WfDefinition getProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException, AuthorizationException,
             DefinitionDoesNotExistException;
+
+    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) throws AuthorizationException, ProcessDoesNotExistException;
+
+    public void undeployProcessDefinition(User user, String definitionName) throws DefinitionDoesNotExistException, AuthorizationException,
+            ParentProcessExistsException;
+
+    public void removeProcessDefinition(User user, String definitionName, int version) throws AuthorizationException, DefinitionDoesNotExistException;
 
     /**
      * Retrieves file data from process definition archieve.
      * 
      * @return file data or <code>null</code> if file does not exist
      */
-    public byte[] getFile(Subject subject, Long definitionId, String fileName) throws AuthorizationException, DefinitionDoesNotExistException;
+    public byte[] getFile(User user, Long definitionId, String fileName) throws AuthorizationException, DefinitionDoesNotExistException;
 
     /**
      * Gets available output transition names. Process definition id or task id
@@ -83,17 +81,17 @@ public interface DefinitionService {
      *            task id, can be <code>null</code>
      * @return names
      */
-    public List<String> getOutputTransitionNames(Subject subject, Long definitionId, Long taskId) throws TaskDoesNotExistException;
+    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) throws TaskDoesNotExistException;
 
-    public Interaction getTaskInteraction(Subject subject, Long taskId) throws TaskDoesNotExistException, AuthorizationException;
+    public Interaction getTaskInteraction(User user, Long taskId) throws TaskDoesNotExistException, AuthorizationException;
 
-    public Interaction getStartInteraction(Subject subject, Long definitionId) throws DefinitionDoesNotExistException, AuthorizationException;
+    public Interaction getStartInteraction(User user, Long definitionId) throws DefinitionDoesNotExistException, AuthorizationException;
 
-    public List<SwimlaneDefinition> getSwimlanes(Subject subject, Long definitionId) throws AuthorizationException, DefinitionDoesNotExistException;
+    public List<SwimlaneDefinition> getSwimlanes(User user, Long definitionId) throws AuthorizationException, DefinitionDoesNotExistException;
 
-    public List<VariableDefinition> getVariables(Subject subject, Long definitionId) throws AuthorizationException, DefinitionDoesNotExistException;
+    public List<VariableDefinition> getVariables(User user, Long definitionId) throws AuthorizationException, DefinitionDoesNotExistException;
 
-    public List<GraphElementPresentation> getProcessDefinitionGraphElements(Subject subject, Long definitionId) throws AuthorizationException;
+    public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId) throws AuthorizationException;
 
-    public List<WfDefinition> getProcessDefinitionHistory(Subject subject, String name) throws AuthorizationException;
+    public List<WfDefinition> getProcessDefinitionHistory(User user, String name) throws AuthorizationException;
 }

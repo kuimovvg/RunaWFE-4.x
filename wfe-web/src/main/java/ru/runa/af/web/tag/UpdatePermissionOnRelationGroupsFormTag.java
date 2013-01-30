@@ -38,7 +38,7 @@ public class UpdatePermissionOnRelationGroupsFormTag extends IdentifiableFormTag
 
     @Override
     protected void fillFormData(TD tdFormElement) throws JspException {
-        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getIdentifiable(), getSubject(), pageContext);
+        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getIdentifiable(), getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 

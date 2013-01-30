@@ -35,7 +35,7 @@ public class UpdatePermissionsOnExecutorFormTag extends UpdateExecutorBaseFormTa
     private static final long serialVersionUID = 8288435097264802933L;
 
     protected void fillFormData(TD tdFormElement) throws JspException {
-        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getExecutor(), getSubject(), pageContext);
+        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getExecutor(), getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 

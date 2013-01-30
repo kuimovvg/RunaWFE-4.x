@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
@@ -33,6 +31,7 @@ import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.task.TaskDoesNotExistException;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
 
@@ -46,11 +45,11 @@ import com.google.common.collect.Lists;
  */
 public class VariableLogic extends WFCommonLogic {
 
-    public List<WfVariable> getVariables(Subject subject, Long processId) throws ProcessDoesNotExistException {
+    public List<WfVariable> getVariables(User user, Long processId) throws ProcessDoesNotExistException {
         List<WfVariable> result = Lists.newArrayList();
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
-        checkPermissionAllowed(subject, process, ProcessPermission.READ);
+        checkPermissionAllowed(user, process, ProcessPermission.READ);
         Map<String, Object> variables = variableDAO.getAll(process);
         for (VariableDefinition variableDefinition : processDefinition.getVariables()) {
             Object value = variables.get(variableDefinition.getName());
@@ -59,11 +58,11 @@ public class VariableLogic extends WFCommonLogic {
         return result;
     }
 
-    public WfVariable getVariable(Subject subject, Long processId, String variableName) throws ProcessDoesNotExistException {
+    public WfVariable getVariable(User user, Long processId, String variableName) throws ProcessDoesNotExistException {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         if (!processDefinition.isVariablePublic(variableName)) {
-            // TODO checkReadToVariablesAllowed(subject, task);
+            // TODO checkReadToVariablesAllowed(user, task);
         }
         VariableDefinition variableDefinition = processDefinition.getVariable(variableName);
         if (variableDefinition == null) {
@@ -80,14 +79,14 @@ public class VariableLogic extends WFCommonLogic {
         return new WfVariable(variableDefinition, variableValue);
     }
 
-    public Map<Long, Object> getVariableValueFromProcesses(Subject subject, List<Long> processIds, String variableName) {
+    public Map<Long, Object> getVariableValueFromProcesses(User user, List<Long> processIds, String variableName) {
         List<Identifiable> idents = Lists.newArrayListWithExpectedSize(processIds.size());
         for (Long processId : processIds) {
             Process stub = new Process();
             stub.setId(processId);
             idents.add(stub);
         }
-        idents = filterIdentifiable(subject, idents, ProcessPermission.READ);
+        idents = filterIdentifiable(user, idents, ProcessPermission.READ);
         List<Long> readableProcesses = new ArrayList<Long>();
         for (Identifiable identifiable : idents) {
             readableProcesses.add(identifiable.getId());
@@ -95,10 +94,9 @@ public class VariableLogic extends WFCommonLogic {
         return processDAO.getVariableValueFromProcesses(processIds, variableName);
     }
 
-    public void updateVariables(Subject subject, Long processId, Map<String, Object> variables) throws AuthorizationException,
-            TaskDoesNotExistException {
+    public void updateVariables(User user, Long processId, Map<String, Object> variables) throws AuthorizationException, TaskDoesNotExistException {
         Process process = processDAO.getNotNull(processId);
-        checkPermissionAllowed(subject, process, ProcessPermission.UPDATE_PERMISSIONS);
+        checkPermissionAllowed(user, process, ProcessPermission.UPDATE_PERMISSIONS);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         executionContext.setVariables(variables);

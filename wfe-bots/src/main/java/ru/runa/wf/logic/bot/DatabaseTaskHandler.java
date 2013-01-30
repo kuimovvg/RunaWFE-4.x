@@ -25,7 +25,6 @@ import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.security.auth.Subject;
 import javax.sql.DataSource;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -44,6 +43,7 @@ import ru.runa.wfe.commons.sqltask.SwimlaneResult;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.collect.Maps;
@@ -61,7 +61,7 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
     }
 
     @Override
-    public Map<String, Object> handle(Subject subject, IVariableProvider variableProvider, WfTask task) throws Exception {
+    public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         Map<String, Object> outputVariables = Maps.newHashMap();
         outputVariables.put(DatabaseTask.INSTANCE_ID_VARIABLE_NAME, task.getProcessId());
         outputVariables.put(DatabaseTask.CURRENT_DATE_VARIABLE_NAME, new Date());
@@ -85,13 +85,13 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
                             String unknownQueryClassName = (query == null ? "null" : query.getClass().getName());
                             throw new Exception("Unknown query type:" + unknownQueryClassName);
                         }
-                        fillQueryParameters(subject, ps, variableProvider, query);
+                        fillQueryParameters(user, ps, variableProvider, query);
                         if (ps.execute()) {
                             ResultSet resultSet = ps.getResultSet();
                             if (!resultSet.next()) {
                                 throw new Exception("No results in rowset for query " + query);
                             }
-                            outputVariables.putAll(extractResultsToProcessVariables(subject, variableProvider, resultSet, query));
+                            outputVariables.putAll(extractResultsToProcessVariables(user, variableProvider, resultSet, query));
                         }
                     } finally {
                         SQLCommons.releaseResources(ps);
@@ -104,7 +104,7 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
         return outputVariables;
     }
 
-    private Map<String, Object> extractResultsToProcessVariables(Subject subject, IVariableProvider variableProvider, ResultSet resultSet,
+    private Map<String, Object> extractResultsToProcessVariables(User user, IVariableProvider variableProvider, ResultSet resultSet,
             AbstractQuery query) throws Exception {
         Map<String, Object> outputVariables = Maps.newHashMap();
         for (int i = 0; i < query.getResultVariableCount(); i++) {
@@ -116,11 +116,11 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
                 String fieldName = result.getFieldName();
                 Actor actor = null;
                 if ("code".equals(fieldName)) {
-                    actor = Delegates.getExecutorService().getActorByCode(subject, ((Long) newValue).longValue());
+                    actor = Delegates.getExecutorService().getActorByCode(user, ((Long) newValue).longValue());
                 } else if ("id".equals(fieldName)) {
-                    actor = Delegates.getExecutorService().getExecutor(subject, ((Long) newValue).longValue());
+                    actor = Delegates.getExecutorService().getExecutor(user, ((Long) newValue).longValue());
                 } else {
-                    actor = Delegates.getExecutorService().getExecutor(subject, (String) newValue);
+                    actor = Delegates.getExecutorService().getExecutor(user, (String) newValue);
                 }
                 newValue = Long.toString(actor.getCode());
             } else if (result.isFieldSetup()) {
@@ -135,12 +135,12 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
         return outputVariables;
     }
 
-    private void fillQueryParameters(Subject subject, PreparedStatement ps, IVariableProvider variableProvider, AbstractQuery query) throws Exception {
+    private void fillQueryParameters(User user, PreparedStatement ps, IVariableProvider variableProvider, AbstractQuery query) throws Exception {
         for (int i = 0; i < query.getParameterCount(); i++) {
             Parameter parameter = query.getParameter(i);
             Object value = variableProvider.getValue(parameter.getVariableName());
             if (parameter instanceof SwimlaneParameter) {
-                Actor actor = Delegates.getExecutorService().getActorByCode(subject, Long.parseLong((String) value));
+                Actor actor = Delegates.getExecutorService().getActorByCode(user, Long.parseLong((String) value));
                 value = PropertyUtils.getProperty(actor, ((SwimlaneParameter) parameter).getFieldName());
             } else if (parameter.isFieldSetup()) {
                 value = PropertyUtils.getProperty(value, parameter.getFieldName());

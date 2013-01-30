@@ -57,7 +57,7 @@ public class DefinitionGraphFormTag extends ProcessDefinitionBaseFormTag {
 
         try {
             DefinitionService definitionService = Delegates.getDefinitionService();
-            List<GraphElementPresentation> elements = definitionService.getProcessDefinitionGraphElements(getSubject(), getIdentifiableId());
+            List<GraphElementPresentation> elements = definitionService.getProcessDefinitionGraphElements(getUser(), getIdentifiableId());
             DefinitionGraphElementPresentationVisitor operation = new DefinitionGraphElementPresentationVisitor(pageContext);
             for (GraphElementPresentation graphElementPresentation : elements) {
                 graphElementPresentation.visit(operation);

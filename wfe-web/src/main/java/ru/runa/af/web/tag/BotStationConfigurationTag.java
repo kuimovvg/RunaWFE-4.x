@@ -38,7 +38,7 @@ public class BotStationConfigurationTag extends IdentifiableFormTag {
     private static final long serialVersionUID = -1187003724875968614L;
 
     protected void fillFormData(TD tdFormElement) throws JspException {
-        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getIdentifiable(), getSubject(), pageContext);
+        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getIdentifiable(), getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 

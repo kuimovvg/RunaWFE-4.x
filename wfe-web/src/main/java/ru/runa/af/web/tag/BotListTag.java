@@ -42,7 +42,7 @@ public class BotListTag extends TitledFormTag {
     protected void fillFormElement(TD tdFormElement) throws JspException {
         tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botStationID)));
         try {
-            List<Bot> bots = Delegates.getBotService().getBots(getSubject(), botStationID);
+            List<Bot> bots = Delegates.getBotService().getBots(getUser(), botStationID);
             tdFormElement.addElement(new BotTableBuilder(pageContext).buildBotTable(bots));
         } catch (Exception e) {
             handleException(e);
@@ -68,7 +68,7 @@ public class BotListTag extends TitledFormTag {
     public boolean isFormButtonEnabled() throws JspException {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getSubject(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
+            return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         } catch (Exception e) {
             return false;
         }

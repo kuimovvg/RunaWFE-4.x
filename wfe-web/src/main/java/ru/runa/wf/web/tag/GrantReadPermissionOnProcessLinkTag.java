@@ -39,8 +39,8 @@ public class GrantReadPermissionOnProcessLinkTag extends IdLinkBaseTag {
         try {
             AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
             ExecutionService executionService = Delegates.getExecutionService();
-            WfProcess process = executionService.getProcess(getSubject(), getIdentifiableId());
-            return authorizationService.isAllowed(getSubject(), Permission.UPDATE_PERMISSIONS, process);
+            WfProcess process = executionService.getProcess(getUser(), getIdentifiableId());
+            return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, process);
         } catch (Exception e) {
             return false;
         }

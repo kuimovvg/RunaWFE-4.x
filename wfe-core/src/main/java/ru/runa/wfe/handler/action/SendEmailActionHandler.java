@@ -25,7 +25,7 @@ import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.security.auth.SubjectHolder;
+import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.task.Task;
 
 /**
@@ -58,7 +58,7 @@ public class SendEmailActionHandler implements ActionHandler {
                 }
                 interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
             }
-            EmailUtils.sendTaskMessage(SubjectHolder.get(), config, interaction, executionContext.getVariableProvider(),
+            EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, executionContext.getVariableProvider(),
                     executionContext.getProcessDefinition());
         } catch (Exception e) {
             if (config.isThrowErrorOnFailure()) {

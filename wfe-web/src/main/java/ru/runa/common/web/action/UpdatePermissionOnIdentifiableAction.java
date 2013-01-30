@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,7 +29,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.af.web.form.UpdatePermissionsOnIdentifiableForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.service.af.AuthorizationService;
@@ -41,6 +39,7 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 
@@ -53,8 +52,7 @@ abstract public class UpdatePermissionOnIdentifiableAction extends IdentifiableA
         UpdatePermissionsOnIdentifiableForm permissionsForm = (UpdatePermissionsOnIdentifiableForm) form;
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
-            Identifiable identifiable = getIdentifiable(subject, permissionsForm.getId(), errors);
+            Identifiable identifiable = getIdentifiable(getLoggedUser(request), permissionsForm.getId(), errors);
             if (identifiable != null) {
                 Long[] selectedIds = permissionsForm.getIds();
                 List<Long> executorsIdList = new ArrayList<Long>(selectedIds.length);
@@ -69,7 +67,8 @@ abstract public class UpdatePermissionOnIdentifiableAction extends IdentifiableA
                     permissionList.add(permissions);
                 }
                 BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-                List<Executor> executors = authorizationService.getExecutorsWithPermission(subject, identifiable, batchPresentation, true);
+                List<Executor> executors = authorizationService.getExecutorsWithPermission(getLoggedUser(request), identifiable, batchPresentation,
+                        true);
                 for (Executor executor : executors) {
                     if (!executorsIdList.contains(executor.getId())) {
                         executorsIdList.add(executor.getId());
@@ -77,7 +76,7 @@ abstract public class UpdatePermissionOnIdentifiableAction extends IdentifiableA
                     }
                 }
 
-                authorizationService.setPermissions(subject, executorsIdList, permissionList, identifiable);
+                authorizationService.setPermissions(getLoggedUser(request), executorsIdList, permissionList, identifiable);
             }
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
@@ -85,9 +84,9 @@ abstract public class UpdatePermissionOnIdentifiableAction extends IdentifiableA
 
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
-            return getErrorForward(SubjectHttpSessionHelper.getActorSubject(request.getSession()), mapping, permissionsForm.getId());
+            return getErrorForward(getLoggedUser(request), mapping, permissionsForm.getId());
         }
-        return getSuccessForward(SubjectHttpSessionHelper.getActorSubject(request.getSession()), mapping, permissionsForm.getId());
+        return getSuccessForward(getLoggedUser(request), mapping, permissionsForm.getId());
     }
 
     @Override
@@ -99,11 +98,11 @@ abstract public class UpdatePermissionOnIdentifiableAction extends IdentifiableA
 
     public abstract ActionForward getSuccessForward(ActionMapping mapping, Long identifiableId);
 
-    protected ActionForward getErrorForward(Subject subject, ActionMapping mapping, Long identifiableId) {
+    protected ActionForward getErrorForward(User user, ActionMapping mapping, Long identifiableId) {
         return getErrorForward(mapping, identifiableId);
     }
 
-    protected ActionForward getSuccessForward(Subject subject, ActionMapping mapping, Long identifiableId) {
+    protected ActionForward getSuccessForward(User user, ActionMapping mapping, Long identifiableId) {
         return getSuccessForward(mapping, identifiableId);
     }
 }

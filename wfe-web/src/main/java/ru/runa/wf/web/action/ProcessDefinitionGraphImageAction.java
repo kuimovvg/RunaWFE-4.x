@@ -19,17 +19,15 @@ package ru.runa.wf.web.action;
 
 import java.io.OutputStream;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
@@ -42,18 +40,17 @@ import ru.runa.wfe.definition.IFileDataProvider;
  *                validate="true" input =
  *                "/WEB-INF/wf/manage_process_definitions.jsp"
  */
-public class ProcessDefinitionGraphImageAction extends Action {
+public class ProcessDefinitionGraphImageAction extends ActionBase {
     public static final String ACTION_PATH = "/processDefinitionGraphImage";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         IdForm idForm = (IdForm) form;
         try {
-            Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
             DefinitionService definitionService = Delegates.getDefinitionService();
-            byte[] bytes = definitionService.getFile(subject, idForm.getId(), IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME);
+            byte[] bytes = definitionService.getFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME);
             if (bytes == null) {
-                bytes = definitionService.getFile(subject, idForm.getId(), IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME);
+                bytes = definitionService.getFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME);
             }
             if (bytes == null) {
                 throw new NullPointerException("No graph stream found.");

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
@@ -52,6 +51,7 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Sets;
 
@@ -62,7 +62,7 @@ import com.google.common.collect.Sets;
 public class PermissionTableBuilder {
     private final Identifiable identifiable;
 
-    private final Subject subject;
+    private final User user;
 
     private final PageContext pageContext;
 
@@ -76,14 +76,14 @@ public class PermissionTableBuilder {
      */
     private boolean isDisabled;
 
-    public PermissionTableBuilder(Identifiable identifiable, Subject subject, PageContext pageContext) throws JspException {
+    public PermissionTableBuilder(Identifiable identifiable, User user, PageContext pageContext) throws JspException {
         this.identifiable = identifiable;
-        this.subject = subject;
+        this.user = user;
         this.pageContext = pageContext;
         try {
             authorizationService = Delegates.getAuthorizationService();
             allowedPermission = identifiable.getSecuredObjectType().getAllPermissions();
-            isDisabled = !authorizationService.isAllowed(subject, Permission.UPDATE_PERMISSIONS, identifiable);
+            isDisabled = !authorizationService.isAllowed(user, Permission.UPDATE_PERMISSIONS, identifiable);
         } catch (AuthorizationException e) {
             throw new JspException(e);
         } catch (AuthenticationException e) {
@@ -96,7 +96,7 @@ public class PermissionTableBuilder {
         table.setClass(Resources.CLASS_PERMISSION_TABLE);
         table.addElement(createTableHeaderTR());
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-        List<Executor> executors = authorizationService.getExecutorsWithPermission(subject, identifiable, batchPresentation, true);
+        List<Executor> executors = authorizationService.getExecutorsWithPermission(user, identifiable, batchPresentation, true);
         for (Executor executor : executors) {
             table.addElement(createTR(executor, new ArrayList<Permission>(), true));
         }
@@ -141,7 +141,7 @@ public class PermissionTableBuilder {
     }
 
     private boolean[] getEnabledPermissions(Executor performer) throws JspException {
-        Set<Permission> executorPermissionsSet = Sets.newHashSet(authorizationService.getOwnPermissions(subject, performer, identifiable));
+        Set<Permission> executorPermissionsSet = Sets.newHashSet(authorizationService.getOwnPermissions(user, performer, identifiable));
         boolean[] enabled = new boolean[allowedPermission.size()];
         for (int i = 0; i < allowedPermission.size(); i++) {
             enabled[i] = executorPermissionsSet.contains(allowedPermission.get(i));

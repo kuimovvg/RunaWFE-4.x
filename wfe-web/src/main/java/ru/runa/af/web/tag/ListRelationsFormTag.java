@@ -60,8 +60,8 @@ public class ListRelationsFormTag extends BatchReturningTitledFormTag {
         try {
             RelationService relationService = Delegates.getRelationService();
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            isFormButtonVisible = authorizationService.isAllowed(getSubject(), RelationPermission.UPDATE_RELATION, RelationsGroupSecure.INSTANCE);
-            List<Relation> relationGroups = relationService.getRelations(getSubject(), getBatchPresentation());
+            isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, RelationsGroupSecure.INSTANCE);
+            List<Relation> relationGroups = relationService.getRelations(getUser(), getBatchPresentation());
 
             TableBuilder tableBuilder = new TableBuilder();
 

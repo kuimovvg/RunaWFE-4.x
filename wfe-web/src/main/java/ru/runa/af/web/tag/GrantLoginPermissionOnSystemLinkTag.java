@@ -17,7 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.security.auth.Subject;
 import javax.servlet.jsp.JspException;
 
 import ru.runa.common.web.Commons;
@@ -44,8 +43,7 @@ public class GrantLoginPermissionOnSystemLinkTag extends LinkTag {
     protected boolean isLinkEnabled() throws JspException {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Subject subject = getSubject();
-            return authorizationService.isAllowed(subject, Permission.UPDATE_PERMISSIONS, ASystem.INSTANCE);
+            return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, ASystem.INSTANCE);
         } catch (Exception e) {
             return false;
         }

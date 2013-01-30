@@ -21,7 +21,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.security.auth.Subject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -32,9 +31,8 @@ import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
-import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.logic.ProfileLogic;
 
 import com.google.common.base.Preconditions;
@@ -47,39 +45,38 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     private ProfileLogic profileLogic;
 
     @Override
-    public Profile getProfile(Subject subject) throws AuthenticationException {
-        Preconditions.checkNotNull(subject);
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
-        return profileLogic.getProfile(subject, actor.getId());
+    public Profile getProfile(User user) throws AuthenticationException {
+        Preconditions.checkNotNull(user);
+        return profileLogic.getProfile(user, user.getId());
     }
 
     @Override
-    public void setActiveBatchPresentation(Subject subject, String batchPresentationId, String newActiveBatchName) throws AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public void setActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) throws AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentationId);
         Preconditions.checkNotNull(newActiveBatchName);
-        profileLogic.changeActiveBatchPresentation(subject, batchPresentationId, newActiveBatchName);
+        profileLogic.changeActiveBatchPresentation(user, batchPresentationId, newActiveBatchName);
     }
 
     @Override
-    public void deleteBatchPresentation(Subject subject, BatchPresentation batchPresentation) throws AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public void deleteBatchPresentation(User user, BatchPresentation batchPresentation) throws AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        profileLogic.deleteBatchPresentation(subject, batchPresentation);
+        profileLogic.deleteBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public BatchPresentation createBatchPresentation(Subject subject, BatchPresentation batchPresentation) throws AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) throws AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return profileLogic.createBatchPresentation(subject, batchPresentation);
+        return profileLogic.createBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public void saveBatchPresentation(Subject subject, BatchPresentation batchPresentation) throws AuthenticationException {
-        Preconditions.checkNotNull(subject);
+    public void saveBatchPresentation(User user, BatchPresentation batchPresentation) throws AuthenticationException {
+        Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        profileLogic.saveBatchPresentation(subject, batchPresentation);
+        profileLogic.saveBatchPresentation(user, batchPresentation);
     }
 
 }

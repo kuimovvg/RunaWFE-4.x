@@ -17,17 +17,15 @@
  */
 package ru.runa.af.web.action;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.af.web.SubjectHttpSessionHelper;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
@@ -42,7 +40,7 @@ import ru.runa.service.wf.BotService;
  * @struts.action-forward name="failure" path="/delete_bot_station.do" redirect
  *                        = "true"
  */
-public class DeleteBotStationAction extends Action {
+public class DeleteBotStationAction extends ActionBase {
     public static final String DELETE_BOT_STATION_ACTION_PATH = "/delete_bot_station";
 
     @Override
@@ -52,10 +50,9 @@ public class DeleteBotStationAction extends Action {
         if (botStationToDeleteIds.length == 0) {
             return mapping.findForward(Resources.FORWARD_SUCCESS);
         }
-        Subject subject = SubjectHttpSessionHelper.getActorSubject(request.getSession());
         BotService botService = Delegates.getBotService();
         for (Long botStationId : botStationToDeleteIds) {
-            botService.removeBotStation(subject, botStationId);
+            botService.removeBotStation(getLoggedUser(request), botStationId);
         }
         return mapping.findForward(Resources.FORWARD_SUCCESS);
     }

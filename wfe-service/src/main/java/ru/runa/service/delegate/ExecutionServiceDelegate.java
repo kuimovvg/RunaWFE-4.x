@@ -21,15 +21,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
+import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
-import ru.runa.wfe.execution.SuperProcessExistsException;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
@@ -42,6 +40,7 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.dto.WfVariable;
 
@@ -59,144 +58,142 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public Long startProcess(Subject subject, String definitionName, Map<String, Object> variablesMap) throws AuthorizationException,
+    public Long startProcess(User user, String definitionName, Map<String, Object> variablesMap) throws AuthorizationException,
             AuthenticationException, DefinitionDoesNotExistException, ValidationException {
-        return getExecutionService().startProcess(subject, definitionName, variablesMap);
+        return getExecutionService().startProcess(user, definitionName, variablesMap);
     }
 
     @Override
-    public void cancelProcess(Subject subject, Long processId) throws AuthorizationException, AuthenticationException, ProcessDoesNotExistException {
-        getExecutionService().cancelProcess(subject, processId);
+    public void cancelProcess(User user, Long processId) throws AuthorizationException, AuthenticationException, ProcessDoesNotExistException {
+        getExecutionService().cancelProcess(user, processId);
     }
 
     @Override
-    public int getAllProcessesCount(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        return getExecutionService().getAllProcessesCount(subject, batchPresentation);
+    public int getAllProcessesCount(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        return getExecutionService().getAllProcessesCount(user, batchPresentation);
     }
 
     @Override
-    public List<WfProcess> getProcesses(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        return getExecutionService().getProcesses(subject, batchPresentation);
+    public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        return getExecutionService().getProcesses(user, batchPresentation);
     }
 
     @Override
-    public WfProcess getProcess(Subject subject, Long id) throws AuthorizationException, AuthenticationException, ProcessDoesNotExistException {
-        return getExecutionService().getProcess(subject, id);
+    public WfProcess getProcess(User user, Long id) throws AuthorizationException, AuthenticationException, ProcessDoesNotExistException {
+        return getExecutionService().getProcess(user, id);
     }
 
     @Override
-    public WfProcess getParentProcess(Subject subject, Long id) throws AuthenticationException, ProcessDoesNotExistException {
-        return getExecutionService().getParentProcess(subject, id);
+    public WfProcess getParentProcess(User user, Long id) throws AuthenticationException, ProcessDoesNotExistException {
+        return getExecutionService().getParentProcess(user, id);
     }
 
     @Override
-    public List<WfTask> getTasks(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        return getExecutionService().getTasks(subject, batchPresentation);
+    public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        return getExecutionService().getTasks(user, batchPresentation);
     }
 
     @Override
-    public WfTask getTask(Subject subject, Long taskId) throws AuthorizationException, AuthenticationException {
-        return getExecutionService().getTask(subject, taskId);
+    public WfTask getTask(User user, Long taskId) throws AuthorizationException, AuthenticationException {
+        return getExecutionService().getTask(user, taskId);
     }
 
     @Override
-    public List<WfVariable> getVariables(Subject subject, Long processId) throws AuthorizationException, AuthenticationException,
+    public List<WfVariable> getVariables(User user, Long processId) throws AuthorizationException, AuthenticationException,
             ProcessDoesNotExistException {
-        return getExecutionService().getVariables(subject, processId);
+        return getExecutionService().getVariables(user, processId);
     }
 
     @Override
-    public WfVariable getVariable(Subject subject, Long processId, String variableName) throws ProcessDoesNotExistException {
-        return getExecutionService().getVariable(subject, processId, variableName);
+    public WfVariable getVariable(User user, Long processId, String variableName) throws ProcessDoesNotExistException {
+        return getExecutionService().getVariable(user, processId, variableName);
     }
 
     @Override
-    public Map<Long, Object> getVariableValuesFromProcesses(Subject subject, List<Long> processIds, String variableName)
-            throws AuthenticationException {
-        return getExecutionService().getVariableValuesFromProcesses(subject, processIds, variableName);
+    public Map<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName) throws AuthenticationException {
+        return getExecutionService().getVariableValuesFromProcesses(user, processIds, variableName);
     }
 
     @Override
-    public void updateVariables(Subject subject, Long processId, Map<String, Object> variables) throws ProcessDoesNotExistException {
-        getExecutionService().updateVariables(subject, processId, variables);
+    public void updateVariables(User user, Long processId, Map<String, Object> variables) throws ProcessDoesNotExistException {
+        getExecutionService().updateVariables(user, processId, variables);
     }
 
     @Override
-    public void completeTask(Subject subject, Long taskId, Map<String, Object> variables) throws AuthorizationException, AuthenticationException,
+    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws AuthorizationException, AuthenticationException,
             TaskDoesNotExistException, ExecutorDoesNotExistException, ValidationException {
-        getExecutionService().completeTask(subject, taskId, variables);
+        getExecutionService().completeTask(user, taskId, variables);
     }
 
     @Override
-    public List<WfSwimlane> getSwimlanes(Subject subject, Long processId) throws AuthorizationException, AuthenticationException,
+    public List<WfSwimlane> getSwimlanes(User user, Long processId) throws AuthorizationException, AuthenticationException,
             ProcessDoesNotExistException {
-        return getExecutionService().getSwimlanes(subject, processId);
+        return getExecutionService().getSwimlanes(user, processId);
     }
 
     @Override
-    public List<WfTask> getActiveTasks(Subject subject, Long processId) throws AuthorizationException, AuthenticationException,
+    public List<WfTask> getActiveTasks(User user, Long processId) throws AuthorizationException, AuthenticationException,
             ProcessDoesNotExistException, ExecutorDoesNotExistException {
-        return getExecutionService().getActiveTasks(subject, processId);
+        return getExecutionService().getActiveTasks(user, processId);
     }
 
     @Override
-    public byte[] getProcessDiagram(Subject subject, Long processId, Long taskId, Long childProcessId) throws AuthorizationException,
+    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId) throws AuthorizationException,
             AuthenticationException, ProcessDoesNotExistException {
-        return getExecutionService().getProcessDiagram(subject, processId, taskId, childProcessId);
+        return getExecutionService().getProcessDiagram(user, processId, taskId, childProcessId);
     }
 
     @Override
-    public byte[] getProcessHistoryDiagram(Subject subject, Long processId, Long taskId) throws AuthorizationException, AuthenticationException,
+    public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId) throws AuthorizationException, AuthenticationException,
             ProcessDoesNotExistException {
-        return getExecutionService().getProcessHistoryDiagram(subject, processId, taskId);
+        return getExecutionService().getProcessHistoryDiagram(user, processId, taskId);
     }
 
     @Override
-    public List<GraphElementPresentation> getProcessUIHistoryData(Subject subject, Long processId, Long taskId) throws AuthorizationException,
+    public List<GraphElementPresentation> getProcessUIHistoryData(User user, Long processId, Long taskId) throws AuthorizationException,
             AuthenticationException, ProcessDoesNotExistException {
-        return getExecutionService().getProcessUIHistoryData(subject, processId, taskId);
+        return getExecutionService().getProcessUIHistoryData(user, processId, taskId);
     }
 
     @Override
-    public List<GraphElementPresentation> getProcessGraphElements(Subject subject, Long processId) throws AuthenticationException,
-            AuthorizationException {
-        return getExecutionService().getProcessGraphElements(subject, processId);
+    public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId) throws AuthenticationException, AuthorizationException {
+        return getExecutionService().getProcessGraphElements(user, processId);
     }
 
     @Override
-    public void assignSwimlane(Subject subject, Long processId, String swimlaneName, Executor executor) throws AuthenticationException {
-        getExecutionService().assignSwimlane(subject, processId, swimlaneName, executor);
+    public void assignSwimlane(User user, Long processId, String swimlaneName, Executor executor) throws AuthenticationException {
+        getExecutionService().assignSwimlane(user, processId, swimlaneName, executor);
     }
 
     @Override
-    public void assignTask(Subject subject, Long taskId, Executor previousOwner, Actor actor) throws AuthenticationException,
-            TaskAlreadyAcceptedException, ExecutorDoesNotExistException {
-        getExecutionService().assignTask(subject, taskId, previousOwner, actor);
+    public void assignTask(User user, Long taskId, Executor previousOwner, Actor actor) throws AuthenticationException, TaskAlreadyAcceptedException,
+            ExecutorDoesNotExistException {
+        getExecutionService().assignTask(user, taskId, previousOwner, actor);
     }
 
     @Override
-    public ProcessLogs getProcessLogs(Subject subject, ProcessLogFilter filter) {
-        return getExecutionService().getProcessLogs(subject, filter);
+    public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter) {
+        return getExecutionService().getProcessLogs(user, filter);
     }
 
     @Override
-    public void markTaskOpened(Subject subject, Long taskId) throws AuthenticationException, TaskDoesNotExistException {
-        getExecutionService().markTaskOpened(subject, taskId);
+    public void markTaskOpened(User user, Long taskId) throws AuthenticationException, TaskDoesNotExistException {
+        getExecutionService().markTaskOpened(user, taskId);
     }
 
     @Override
-    public void removeProcesses(Subject subject, Date startDate, Date finishDate, String name, int version, Long id, Long idTill,
-            boolean onlyFinished, boolean dateInterval) throws AuthenticationException, ProcessDoesNotExistException, SuperProcessExistsException {
-        getExecutionService().removeProcesses(subject, startDate, finishDate, name, version, id, idTill, onlyFinished, dateInterval);
+    public void removeProcesses(User user, Date startDate, Date finishDate, String name, int version, Long id, Long idTill, boolean onlyFinished,
+            boolean dateInterval) throws AuthenticationException, ProcessDoesNotExistException, ParentProcessExistsException {
+        getExecutionService().removeProcesses(user, startDate, finishDate, name, version, id, idTill, onlyFinished, dateInterval);
     }
 
     @Override
-    public List<SystemLog> getSystemLogs(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        return getExecutionService().getSystemLogs(subject, batchPresentation);
+    public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        return getExecutionService().getSystemLogs(user, batchPresentation);
     }
 
     @Override
-    public int getSystemLogsCount(Subject subject, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
-        return getExecutionService().getSystemLogsCount(subject, batchPresentation);
+    public int getSystemLogsCount(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+        return getExecutionService().getSystemLogsCount(user, batchPresentation);
     }
 }

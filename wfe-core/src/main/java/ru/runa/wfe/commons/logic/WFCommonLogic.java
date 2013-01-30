@@ -23,8 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +45,6 @@ import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskDoesNotExistException;
@@ -56,6 +53,7 @@ import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.ValidatorContext;
 import ru.runa.wfe.validation.ValidatorManager;
 import ru.runa.wfe.validation.impl.ValidationException;
@@ -119,10 +117,9 @@ public class WFCommonLogic extends CommonLogic {
         }
     }
 
-    protected boolean canParticipateAsSubstitutor(Subject subject, Task task) throws AuthenticationException {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
+    protected boolean canParticipateAsSubstitutor(User user, Task task) throws AuthenticationException {
         try {
-            Set<Long> canSubIds = substitutionLogic.getSubstituted(actor);
+            Set<Long> canSubIds = substitutionLogic.getSubstituted(user);
             Set<Actor> canSub = new HashSet<Actor>();
             for (Long id : canSubIds) {
                 canSub.add(executorDAO.getActor(id));
@@ -142,36 +139,35 @@ public class WFCommonLogic extends CommonLogic {
         return false;
     }
 
-    protected void checkCanParticipate(Subject subject, Task task, Actor targetActor) throws AuthorizationException, TaskDoesNotExistException {
-        Actor actor = SubjectPrincipalsHelper.getActor(subject);
+    protected void checkCanParticipate(User user, Task task, Actor targetActor) throws AuthorizationException, TaskDoesNotExistException {
         if (targetActor == null) {
-            targetActor = actor;
+            targetActor = user;
         }
         Executor taskExecutor = task.getExecutor();
         if (taskExecutor == null) {
             throw new AuthorizationException("Unable to participate in unassigned task");
         }
         if (taskExecutor instanceof Actor) {
-            if (Objects.equal(actor, taskExecutor)) {
+            if (Objects.equal(user, taskExecutor)) {
                 return;
             }
         } else {
             Set<Actor> groupActors = executorDAO.getGroupActors((Group) taskExecutor);
-            if (groupActors.contains(actor)) {
+            if (groupActors.contains(user)) {
                 return;
             }
         }
-        if (canParticipateAsSubstitutor(subject, task)) {
+        if (canParticipateAsSubstitutor(user, task)) {
             return;
         }
-        throw new AuthorizationException("Executor " + actor + " has no pemission to participate as " + targetActor + " in task " + task);
+        throw new AuthorizationException("Executor " + user + " has no pemission to participate as " + targetActor + " in task " + task);
     }
 
-    protected void checkReadToVariablesAllowed(Subject subject, Task task) throws AuthorizationException, TaskDoesNotExistException {
-        if (isPermissionAllowed(subject, task.getProcess(), ProcessPermission.READ)) {
+    protected void checkReadToVariablesAllowed(User user, Task task) throws AuthorizationException, TaskDoesNotExistException {
+        if (isPermissionAllowed(user, task.getProcess(), ProcessPermission.READ)) {
             return;
         }
-        checkCanParticipate(subject, task, null);
+        checkCanParticipate(user, task, null);
     }
 
     protected Set<Actor> getAssignedActors(Task task) throws ExecutorDoesNotExistException {
@@ -202,8 +198,8 @@ public class WFCommonLogic extends CommonLogic {
     /**
      * Loads graph presentation elements for process definition.
      * 
-     * @param subject
-     *            Current subject.
+     * @param user
+     *            Current user.
      * @param id
      *            Identity of process definition, which presentation elements
      *            must be loaded.
@@ -212,10 +208,10 @@ public class WFCommonLogic extends CommonLogic {
      *            null, if nothing to apply.
      * @return List of graph presentation elements.
      */
-    public List<GraphElementPresentation> getDefinitionGraphElements(Subject subject, Long id, GraphElementPresentationVisitor visitor) {
+    public List<GraphElementPresentation> getDefinitionGraphElements(User user, Long id, GraphElementPresentationVisitor visitor) {
         try {
             ProcessDefinition definition = getDefinition(id);
-            checkPermissionAllowed(subject, definition, DefinitionPermission.READ);
+            checkPermissionAllowed(user, definition, DefinitionPermission.READ);
             List<GraphElementPresentation> result = GraphElementPresentationBuilder.createElements(definition);
             if (visitor != null) {
                 for (GraphElementPresentation elementPresentation : result) {

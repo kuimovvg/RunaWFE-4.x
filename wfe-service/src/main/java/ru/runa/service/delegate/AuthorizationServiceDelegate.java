@@ -20,8 +20,6 @@ package ru.runa.service.delegate;
 import java.util.Collection;
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthenticationException;
@@ -32,6 +30,7 @@ import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.UnapplicablePermissionException;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.User;
 
 /**
  * 
@@ -48,62 +47,61 @@ public class AuthorizationServiceDelegate extends EJB3Delegate implements Author
     }
 
     @Override
-    public boolean isAllowed(Subject subject, Permission permission, Identifiable identifiable) throws AuthorizationException,
-            AuthenticationException {
-        return getAuthorizationService().isAllowed(subject, permission, identifiable);
+    public boolean isAllowed(User user, Permission permission, Identifiable identifiable) throws AuthorizationException, AuthenticationException {
+        return getAuthorizationService().isAllowed(user, permission, identifiable);
     }
 
     @Override
-    public boolean[] isAllowed(Subject subject, Permission permission, List<? extends Identifiable> identifiables) throws AuthenticationException {
-        return getAuthorizationService().isAllowed(subject, permission, identifiables);
+    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) throws AuthenticationException {
+        return getAuthorizationService().isAllowed(user, permission, identifiables);
     }
 
     @Override
-    public void setPermissions(Subject subject, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
+    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getAuthorizationService().setPermissions(subject, performer, permissions, identifiable);
+        getAuthorizationService().setPermissions(user, performer, permissions, identifiable);
     }
 
     @Override
-    public void setPermissions(Subject subject, List<Long> executorsId, List<Collection<Permission>> permissions, Identifiable identifiable)
+    public void setPermissions(User user, List<Long> executorsId, List<Collection<Permission>> permissions, Identifiable identifiable)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getAuthorizationService().setPermissions(subject, executorsId, permissions, identifiable);
+        getAuthorizationService().setPermissions(user, executorsId, permissions, identifiable);
     }
 
     @Override
-    public void setPermissions(Subject subject, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable)
+    public void setPermissions(User user, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable)
             throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        getAuthorizationService().setPermissions(subject, executorsId, permissions, identifiable);
+        getAuthorizationService().setPermissions(user, executorsId, permissions, identifiable);
     }
 
     @Override
-    public Collection<Permission> getPermissions(Subject subject, Executor performer, Identifiable identifiable)
-            throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        return getAuthorizationService().getPermissions(subject, performer, identifiable);
+    public Collection<Permission> getPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
+            AuthorizationException, AuthenticationException {
+        return getAuthorizationService().getPermissions(user, performer, identifiable);
     }
 
     @Override
-    public Collection<Permission> getOwnPermissions(Subject subject, Executor performer, Identifiable identifiable)
-            throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
-        return getAuthorizationService().getOwnPermissions(subject, performer, identifiable);
+    public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
+            AuthorizationException, AuthenticationException {
+        return getAuthorizationService().getOwnPermissions(user, performer, identifiable);
     }
 
     @Override
-    public List<Executor> getExecutorsWithPermission(Subject subject, Identifiable identifiable, BatchPresentation batchPresentation,
-            boolean hasPermission) throws AuthorizationException, AuthenticationException {
-        return getAuthorizationService().getExecutorsWithPermission(subject, identifiable, batchPresentation, hasPermission);
-    }
-
-    @Override
-    public int getExecutorsWithPermissionCount(Subject subject, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission)
+    public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission)
             throws AuthorizationException, AuthenticationException {
-        return getAuthorizationService().getExecutorsWithPermissionCount(subject, identifiable, batchPresentation, hasPermission);
+        return getAuthorizationService().getExecutorsWithPermission(user, identifiable, batchPresentation, hasPermission);
     }
 
     @Override
-    public <T extends Object> List<T> getPersistentObjects(Subject subject, BatchPresentation batchPresentation, Class<T> persistentClass,
+    public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission)
+            throws AuthorizationException, AuthenticationException {
+        return getAuthorizationService().getExecutorsWithPermissionCount(user, identifiable, batchPresentation, hasPermission);
+    }
+
+    @Override
+    public <T extends Object> List<T> getPersistentObjects(User user, BatchPresentation batchPresentation, Class<T> persistentClass,
             Permission permission, SecuredObjectType[] securedObjectClasses, boolean enablePaging) throws AuthenticationException {
-        return getAuthorizationService().getPersistentObjects(subject, batchPresentation, persistentClass, permission, securedObjectClasses,
+        return getAuthorizationService().getPersistentObjects(user, batchPresentation, persistentClass, permission, securedObjectClasses,
                 enablePaging);
     }
 

@@ -19,11 +19,10 @@ package ru.runa.service.af;
 
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.user.User;
 
 /**
  * Interface for common operations.
@@ -32,11 +31,11 @@ import ru.runa.wfe.security.AuthorizationException;
  */
 public interface SystemService {
 
-    public void login(Subject subject, ASystem system) throws AuthenticationException, AuthorizationException;
+    public void login(User user, ASystem system) throws AuthenticationException, AuthorizationException;
 
-    public void logout(Subject subject, ASystem system);
+    public void logout(User user, ASystem system);
 
-    public Map<String, String> getLocalizations(Subject subject);
+    public Map<String, String> getLocalizations(User user);
 
-    public void saveLocalizations(Subject subject, Map<String, String> localizations);
+    public void saveLocalizations(User user, Map<String, String> localizations);
 }
