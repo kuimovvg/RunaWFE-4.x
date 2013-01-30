@@ -17,7 +17,9 @@ public abstract class CommonHandler extends TaskHandlerBase implements ActionHan
     @Override
     public void execute(ExecutionContext context) throws Exception {
         Map<String, Object> result = executeAction(context.getVariableProvider());
-        context.setVariables(result);
+        if (result != null) {
+            context.setVariables(result);
+        }
     }
 
     @Override
