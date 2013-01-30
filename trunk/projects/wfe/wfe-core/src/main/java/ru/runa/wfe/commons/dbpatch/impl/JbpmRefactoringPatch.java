@@ -27,6 +27,8 @@ import com.google.common.io.ByteStreams;
  * Increase TransactionTimeout in jboss-service.xml in case of timed out
  * rollback.
  * 
+ * What is missed: process logs; batch presentations
+ * 
  * @author dofs
  * @since 4.0
  */
