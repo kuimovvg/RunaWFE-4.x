@@ -140,13 +140,13 @@ public class PermissionMapping {
             return false;
         }
         PermissionMapping pm = (PermissionMapping) obj;
-        return Objects.equal(mask, pm.mask) && Objects.equal(executor, pm.executor) && Objects.equal(identifiableId, pm.identifiableId)
+        return Objects.equal(mask, pm.mask) && Objects.equal(getExecutor(), pm.getExecutor()) && Objects.equal(identifiableId, pm.identifiableId)
                 && Objects.equal(type, pm.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(mask, executor, identifiableId, type);
+        return Objects.hashCode(mask, getExecutor(), identifiableId, type);
     }
 
 }

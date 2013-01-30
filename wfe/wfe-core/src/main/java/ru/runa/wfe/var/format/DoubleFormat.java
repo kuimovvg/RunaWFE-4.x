@@ -21,11 +21,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-public class DoubleFormat implements VariableFormat<Double> {
+public class DoubleFormat implements VariableFormat<Number> {
     private final NumberFormat decimalFormat = new DecimalFormat("0.####################################");
 
     @Override
-    public Double parse(String[] source) throws ParseException {
+    public Number parse(String[] source) throws ParseException {
         Double result = null;
         if (source != null) {
             result = new Double(decimalFormat.parse(source[0]).doubleValue());
@@ -34,7 +34,7 @@ public class DoubleFormat implements VariableFormat<Double> {
     }
 
     @Override
-    public String format(Double obj) {
+    public String format(Number obj) {
         return decimalFormat.format(obj);
     }
 }

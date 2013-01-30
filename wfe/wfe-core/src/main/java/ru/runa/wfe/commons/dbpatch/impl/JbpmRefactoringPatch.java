@@ -7,21 +7,37 @@ import java.util.Map;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.security.SecuredObjectType;
+import ru.runa.wfe.security.dao.PermissionDAO;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
+/**
+ * Increase TransactionTimeout in jboss-service.xml in case of timed out
+ * rollback.
+ * 
+ * @author dofs
+ * @since 4.0
+ */
 public class JbpmRefactoringPatch extends DBPatch {
     private boolean jbpmIdTablesExist;
     private boolean jbpmCommentTableExists;
+
+    @Autowired
+    private PermissionDAO permissionDAO;
+    @Autowired
+    private ExecutorDAO executorDAO;
 
     @Override
     protected List<String> getDDLQueriesBefore() {
@@ -79,6 +95,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveColumn("BOT_TASK", "CONFIG"));
         sql.add(getDDLRenameColumn("BOT_TASK", "CLAZZ", new ColumnDef("TASK_HANDLER", Types.VARCHAR)));
         sql.add(getDDLRenameIndex("BOT_TASK", "BT_B_IDX", "IX_BOT_TASK_BOT"));
+        sql.add(getDDLCreateColumn("BOT_TASK", new ColumnDef("VERSION", Types.BIGINT)));
         // ru.runa.wfe.user.Executor
         sql.add(getDDLRenameTable("EXECUTORS", "EXECUTOR"));
         sql.add(getDDLRenameColumn("EXECUTOR", "IS_GROUP", new ColumnDef("DISCRIMINATOR", Types.VARCHAR)));
@@ -116,10 +133,8 @@ public class JbpmRefactoringPatch extends DBPatch {
         privColumns.add(new ColumnDef("EXECUTOR_ID", Types.BIGINT, false));
         sql.add(getDDLCreateTable("PRIVELEGED_MAPPING", privColumns, null));
         sql.add(getDDLCreateForeignKey("PRIVELEGED_MAPPING", "FK_PM_EXECUTOR", "EXECUTOR_ID", "EXECUTOR", "ID"));
-        sql.add(getDDLCreateIndex("PRIVELEGED_MAPPING", "IX_PRIVELEGE_TYPE", "TYPE")); // TODO
-        // naming:
-        // privilege
-        // ru.runa.wfe.security.dao.PermissionMapping
+        sql.add(getDDLCreateIndex("PRIVELEGED_MAPPING", "IX_PRIVELEGE_TYPE", "TYPE"));
+        // TODO naming: privilege vs ru.runa.wfe.security.dao.PermissionMapping
         List<ColumnDef> permColumns = Lists.newArrayList();
         permColumns.add(new ColumnDef("ID", Types.BIGINT, false).setPrimaryKey());
         permColumns.add(new ColumnDef("TYPE", dialect.getTypeName(Types.VARCHAR, 255, 255, 255), false));
@@ -127,9 +142,8 @@ public class JbpmRefactoringPatch extends DBPatch {
         permColumns.add(new ColumnDef("MASK", Types.BIGINT, false));
         permColumns.add(new ColumnDef("IDENTIFIABLE_ID", Types.BIGINT, false));
         permColumns.add(new ColumnDef("EXECUTOR_ID", Types.BIGINT, false));
-        sql.add(getDDLCreateTable("PERMISSION_MAPPING", permColumns, null)); // TODO
-                                                                             // naming:
-                                                                             // PERMISSION
+        sql.add(getDDLCreateTable("PERMISSION_MAPPING", permColumns, null));
+        // TODO naming: PERMISSION
         sql.add(getDDLCreateForeignKey("PERMISSION_MAPPING", "FK_PERMISSION_EXECUTOR", "EXECUTOR_ID", "EXECUTOR", "ID"));
         sql.add(getDDLCreateIndex("PERMISSION_MAPPING", "IX_PERMISSION_EXECUTOR", "EXECUTOR_ID"));
         sql.add(getDDLCreateIndex("PERMISSION_MAPPING", "IX_PERMISSION_TYPE", "TYPE"));
@@ -181,7 +195,6 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameForeignKey("FK_PROCIN_ROOTTKN", "FK_PROCESS_ROOT_TOKEN"));
         sql.add(getDDLRemoveForeignKey("BPM_PROCESS", "FK_PROCIN_SPROCTKN"));
         sql.add(getDDLRemoveIndex("BPM_PROCESS", "IDX_PROCIN_SPROCTK"));
-        sql.add(getDDLRemoveColumn("BPM_PROCESS", "SUPERPROCESSTOKEN_"));
 
         // ru.runa.wfe.execution.Token
         sql.add(getDDLRenameTable("JBPM_TOKEN", "BPM_TOKEN"));
@@ -313,7 +326,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveForeignKey("BPM_LOG", "FK_LOG_SWIMINST"));
         sql.add(getDDLRemoveColumn("BPM_LOG", "SWIMLANEINSTANCE_"));
         sql.add(getDDLCreateColumn("BPM_LOG", new ColumnDef("BYTES", Types.VARBINARY)));
-        sql.add(getDDLCreateColumn("BPM_LOG", new ColumnDef("CONTENT", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
+        sql.add(getDDLCreateColumn("BPM_LOG", new ColumnDef("CONTENT", dialect.getTypeName(Types.VARCHAR, 4000, 255, 255))));
         sql.add(getDDLCreateColumn("BPM_LOG", new ColumnDef("PROCESS_ID", Types.BIGINT)));
         sql.add(getDDLCreateIndex("BPM_LOG", "IX_LOG_PROCESS", "PROCESS_ID"));
         sql.add(getDDLCreateColumn("BPM_LOG", new ColumnDef("SEVERITY", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
@@ -390,6 +403,13 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLCreateColumn("BPM_SUBPROCESS", new ColumnDef("PARENT_NODE_ID", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
 
         sql.add(getDDLRemoveTable("EXECUTOR_OPEN_TASKS"));
+        // for next patch
+        sql.add(getDDLCreateColumn("JBPM_PASSTRANS", new ColumnDef("NODE_ID", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
+        sql.add(getDDLCreateColumn("JBPM_PASSTRANS", new ColumnDef("TRANSITION_ID", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
+        sql.add(getDDLRenameColumn("JBPM_PASSTRANS", "ID_", new ColumnDef("ID", Types.BIGINT)));
+        sql.add(getDDLRenameColumn("JBPM_PASSTRANS", "PROCESSINSTANCE_", new ColumnDef("PROCESS_ID", Types.BIGINT)));
+        sql.add(getDDLRemoveForeignKey("JBPM_PASSTRANS", "FK_PASSTRANS_PROCINST"));
+        sql.add(getDDLRemoveForeignKey("JBPM_PASSTRANS", "FK_PASSTRANS_TRANS"));
         return sql;
     }
 
@@ -447,7 +467,7 @@ public class JbpmRefactoringPatch extends DBPatch {
 
         sql.add(getDDLRemoveTable("PROCESS_TYPES"));
         sql.add(getDDLRemoveTable("PROCESS_DEFINITION_INFO"));
-        sql.add(getDDLRemoveTable("JBPM_PASSTRANS"));
+        // sql.add(getDDLRemoveTable("JBPM_PASSTRANS"));
         sql.add(getDDLRemoveTable("JBPM_TRANSITION"));
 
         sql.add(getDDLRemoveTable("JBPM_MODULEINSTANCE"));
@@ -459,6 +479,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveColumn("BPM_TASK", "TASK_"));
         sql.add(getDDLRemoveColumn("BPM_JOB", "LOCKOWNER_"));
         sql.add(getDDLRemoveColumn("BPM_SUBPROCESS", "NODE_"));
+        sql.add(getDDLRemoveColumn("BPM_PROCESS", "SUPERPROCESSTOKEN_"));
         return sql;
     }
 
@@ -492,6 +513,13 @@ public class JbpmRefactoringPatch extends DBPatch {
         String q;
         List<Object[]> list;
 
+        Map<Integer, Long> actorIdByCode = Maps.newHashMap();
+        q = "SELECT ID, CODE FROM EXECUTOR WHERE CODE IS NOT NULL";
+        list = session.createSQLQuery(q).list();
+        for (Object[] objects : list) {
+            actorIdByCode.put(((Number) objects[1]).intValue(), ((Number) objects[0]).longValue());
+        }
+
         log.info("Cleaned keepAlive jobs: " + session.createSQLQuery("DELETE FROM BPM_JOB WHERE LOCKOWNER_ = 'keepAlive'").executeUpdate());
         // update process definition PAR file
         q = "SELECT md.PROCESSDEFINITION_, f.BYTES_ FROM JBPM_PROCESSFILES f, JBPM_MODULEDEFINITION md WHERE f.DEFINITION_ID_=md.ID_ AND f.NAME_='par'";
@@ -512,7 +540,8 @@ public class JbpmRefactoringPatch extends DBPatch {
             query.setParameter("category", objects[1]);
             query.executeUpdate();
         }
-        // tokens
+        // Token
+        log.info("Deleted broken tokens [by PROCESS_ID]: " + session.createSQLQuery("DELETE FROM BPM_TOKEN WHERE PROCESS_ID IS NULL").executeUpdate());
         q = "SELECT t.ID, n.CLASS_, n.NAME_ FROM BPM_TOKEN t, JBPM_NODE n WHERE t.NODE_= n.ID_";
         list = session.createSQLQuery(q).list();
         for (Object[] objects : list) {
@@ -526,6 +555,7 @@ public class JbpmRefactoringPatch extends DBPatch {
             query.setParameter("nodeId", objects[2]);
             query.executeUpdate();
         }
+        // TRANSITION_ID used only for bpmn2, leave it empty
         // tasks
         log.info("Deleted completed tasks: " + session.createSQLQuery("DELETE FROM BPM_TASK WHERE END_DATE IS NOT NULL").executeUpdate());
         session.createSQLQuery("UPDATE BPM_TASK SET FIRST_OPEN=0").executeUpdate();
@@ -538,14 +568,7 @@ public class JbpmRefactoringPatch extends DBPatch {
             } else if (executorIdentity.startsWith("G")) {
                 executorId = Long.parseLong(executorIdentity.substring(1));
             } else {
-                q = "SELECT ID FROM EXECUTOR WHERE CODE=" + executorIdentity;
-                try {
-                    Number id = (Number) session.createSQLQuery(q).uniqueResult();
-                    executorId = id != null ? id.longValue() : null;
-                } catch (Exception e) {
-                    log.info("Invalid query " + q);
-                    throw e;
-                }
+                executorId = actorIdByCode.get(Integer.parseInt(executorIdentity));
             }
             if (executorId == null) {
                 log.warn("Null executorId for task " + objects[0] + " (ACTORID_='" + objects[1] + "')");
@@ -558,20 +581,21 @@ public class JbpmRefactoringPatch extends DBPatch {
             query.setParameter("nodeId", objects[3]);
             query.executeUpdate();
         }
-        log.info("Deleted broken tasks [by PROCESS_ID]: " + session.createSQLQuery("DELETE FROM BPM_TASK WHERE PROCESS_ID IS NULL").executeUpdate());
         log.info("Deleted broken tasks [by NODE_ID]: " + session.createSQLQuery("DELETE FROM BPM_TASK WHERE NODE_ID IS NULL").executeUpdate());
+        log.info("Deleted broken tasks [by PROCESS_ID]: " + session.createSQLQuery("DELETE FROM BPM_TASK WHERE PROCESS_ID IS NULL").executeUpdate());
         // swimlanes
+        log.info("Deleted broken swimlanes [by ACTORID_]: "
+                + session.createSQLQuery("DELETE FROM BPM_SWIMLANE WHERE ACTORID_ IS NULL OR ACTORID_=''").executeUpdate());
         q = "SELECT t.ID, t.ACTORID_, mi.PROCESSINSTANCE_ FROM BPM_SWIMLANE t, JBPM_MODULEINSTANCE mi WHERE t.TASKMGMTINSTANCE_= mi.ID_";
         list = session.createSQLQuery(q).list();
         for (Object[] objects : list) {
             String executorIdentity = (String) objects[1];
             Long executorId = null;
-            if (executorIdentity == null) {
+            if (Strings.isNullOrEmpty(executorIdentity)) {
             } else if (executorIdentity.startsWith("G")) {
                 executorId = Long.parseLong(executorIdentity.substring(1));
             } else {
-                Number id = (Number) session.createSQLQuery("SELECT ID FROM EXECUTOR WHERE CODE=" + executorIdentity).uniqueResult();
-                executorId = id != null ? id.longValue() : null;
+                executorId = actorIdByCode.get(Integer.parseInt(executorIdentity));
             }
             if (executorId == null) {
                 log.warn("Null executorId for swimlane " + objects[0] + " (ACTORID_='" + objects[1] + "')");
@@ -584,20 +608,61 @@ public class JbpmRefactoringPatch extends DBPatch {
         }
         log.info("Deleted broken swimlanes: " + session.createSQLQuery("DELETE FROM BPM_SWIMLANE WHERE PROCESS_ID IS NULL").executeUpdate());
         // fill priveleged executors permissions
-        List<Long> privelegedExecutorIds = Lists.newArrayList(1L, 2L);
-        for (SecuredObjectType type : SecuredObjectType.values()) {
-            for (Long executorId : privelegedExecutorIds) {
-                SQLQuery query = session.createSQLQuery("INSERT INTO PRIVELEGED_MAPPING (TYPE, EXECUTOR_ID) VALUES (:type, :executorId)");
-                query.setParameter("type", type.name());
-                query.setParameter("executorId", executorId);
-                query.executeUpdate();
-            }
-        }
+        // List<Long> privelegedExecutorIds = Lists.newArrayList(1L, 2L);
+        // for (SecuredObjectType type : SecuredObjectType.values()) {
+        // for (Long executorId : privelegedExecutorIds) {
+        // SQLQuery query =
+        // session.createSQLQuery("INSERT INTO PRIVELEGED_MAPPING (TYPE, EXECUTOR_ID) VALUES (:type, :executorId)");
+        // query.setParameter("type", type.name());
+        // query.setParameter("executorId", executorId);
+        // query.executeUpdate();
+        // }
+        // }
+        List<Executor> adminWithGroupExecutors = executorDAO.getExecutors(Lists.newArrayList(1L, 2L));
+        // define executor permissions
+        permissionDAO.addType(SecuredObjectType.ACTOR, adminWithGroupExecutors);
+        permissionDAO.addType(SecuredObjectType.GROUP, adminWithGroupExecutors);
+        // define system permissions
+        permissionDAO.addType(SecuredObjectType.SYSTEM, adminWithGroupExecutors);
+        permissionDAO.addType(SecuredObjectType.RELATIONGROUP, adminWithGroupExecutors);
+        permissionDAO.addType(SecuredObjectType.RELATION, adminWithGroupExecutors);
+        permissionDAO.addType(SecuredObjectType.RELATIONPAIR, adminWithGroupExecutors);
+        permissionDAO.addType(SecuredObjectType.BOTSTATION, adminWithGroupExecutors);
+        permissionDAO.addType(SecuredObjectType.DEFINITION, adminWithGroupExecutors);
+        permissionDAO.addType(SecuredObjectType.PROCESS, adminWithGroupExecutors);
+        // Variable
+        q = "DELETE FROM BPM_VARIABLE WHERE PROCESS_ID IS NULL";
+        log.info("Deleted broken variables [by PROCESS_ID]: " + session.createSQLQuery(q).executeUpdate());
         // convert PermissionMapping
+        q = "DELETE FROM PERMISSION_MAPPINGS where EXECUTOR_ID in (1, 2, 3)";
+        log.info("Deleted admin permission mappings " + session.createSQLQuery(q).executeUpdate());
+        q = "WITH TMP (type, version, mask, identifiable_id, executor_id) AS (SELECT so.TYPE_CODE, 0, p.MASK, so.EXT_ID, p.EXECUTOR_ID FROM PERMISSION_MAPPINGS p left join SECURED_OBJECTS so ON p.SECURED_OBJECT_ID=so.ID) INSERT INTO PERMISSION_MAPPING SELECT type, version, mask, identifiable_id, executor_id FROM TMP";
+        log.info("Inserted permission mappings " + session.createSQLQuery(q).executeUpdate());
+        q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.ACTOR.name() + "' WHERE TYPE='-984354279'";
+        log.info("Updated permission mappings (SecuredObjectType.ACTOR): " + session.createSQLQuery(q).executeUpdate());
+        q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.GROUP.name() + "' WHERE TYPE='-978370909'";
+        log.info("Updated permission mappings (SecuredObjectType.GROUP): " + session.createSQLQuery(q).executeUpdate());
+        q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.SYSTEM.name() + "' WHERE TYPE='-1524981484'";
+        log.info("Updated permission mappings (SecuredObjectType.SYSTEM): " + session.createSQLQuery(q).executeUpdate());
+        q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.DEFINITION.name() + "' WHERE TYPE='344855614'";
+        log.info("Updated permission mappings (SecuredObjectType.DEFINITION): " + session.createSQLQuery(q).executeUpdate());
+        q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.PROCESS.name() + "' WHERE TYPE='-1929624128'";
+        log.info("Updated permission mappings (SecuredObjectType.PROCESS): " + session.createSQLQuery(q).executeUpdate());
+        q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.BOTSTATION.name() + "' WHERE TYPE='-582775863'";
+        log.info("Updated permission mappings (SecuredObjectType.BOTSTATION): " + session.createSQLQuery(q).executeUpdate());
+        // TODO check these 2 types in 3.x sources
+        q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.RELATIONGROUP.name() + "' WHERE TYPE='-222568517'";
+        log.info("Updated permission mappings (SecuredObjectType.RELATIONGROUP)" + session.createSQLQuery(q).executeUpdate());
+        q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.RELATION.name() + "' WHERE TYPE='-2060382376'";
+        log.info("Updated permission mappings (SecuredObjectType.RELATION)" + session.createSQLQuery(q).executeUpdate());
         //
-        // TODO fill process history for diagram drawing ... (JBPM_TRANSITION +
-        // JBPM_PASSTRANS)
-
-        // TODO fill BPM_SUBPROCESS
+        // fill process history for diagram drawing ... prerequisite for next
+        // patch
+        q = "UPDATE JBPM_PASSTRANS SET TRANSITION_ID = (SELECT t.NAME_ FROM JBPM_TRANSITION t WHERE t.ID_=TRANSITION_), NODE_ID = (SELECT n.NAME_ FROM JBPM_NODE n, JBPM_TRANSITION t WHERE n.ID_=t.FROM_ AND t.ID_=TRANSITION_)";
+        log.info("Updated JBPM_PASSTRANS " + session.createSQLQuery(q).executeUpdate());
+        // fill BPM_SUBPROCESS
+        q = "UPDATE BPM_SUBPROCESS SET PARENT_TOKEN_ID = (SELECT p.SUPERPROCESSTOKEN_ FROM BPM_PROCESS p WHERE p.ID=PROCESS_ID), PARENT_NODE_ID = (SELECT n.NAME_ FROM JBPM_NODE n WHERE n.ID_=NODE_)";
+        log.info("Updated subprocesses " + session.createSQLQuery(q).executeUpdate());
+        //
     }
 }
