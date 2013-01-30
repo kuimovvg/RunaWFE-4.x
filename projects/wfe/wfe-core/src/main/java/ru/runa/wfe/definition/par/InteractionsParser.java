@@ -57,9 +57,6 @@ public class InteractionsParser implements ProcessArchiveParser {
                 String stateId = formElement.attributeValue(STATE_ATTRIBUTE_NAME);
                 String fileName = formElement.attributeValue(FILE_ATTRIBUTE_NAME);
                 String typeName = formElement.attributeValue(TYPE_ATTRIBUTE_NAME);
-                if (Strings.isNullOrEmpty(typeName)) {
-                    throw new InvalidDefinitionException("Invalid form type = '" + typeName + "' for state " + stateId);
-                }
                 String validationFileName = formElement.attributeValue(VALIDATION_FILE_ATTRIBUTE_NAME);
                 boolean jsValidationEnabled = Boolean.parseBoolean(formElement.attributeValue(JS_VALIDATION_ATTRIBUTE_NAME));
                 String scriptFileName = formElement.attributeValue(SCRIPT_FILE_ATTRIBUTE_NAME);

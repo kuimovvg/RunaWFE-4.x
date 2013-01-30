@@ -24,11 +24,11 @@ import java.text.ParseException;
  * Created on 22.05.2006
  * 
  */
-public class LongFormat implements VariableFormat<Long> {
+public class LongFormat implements VariableFormat<Number> {
     private final DecimalFormat decimalFormat = new DecimalFormat("0");
 
     @Override
-    public Long parse(String[] source) throws ParseException {
+    public Number parse(String[] source) throws ParseException {
         Long result = null;
         if (source != null) {
             result = new Long(decimalFormat.parse(source[0]).longValue());
@@ -37,7 +37,7 @@ public class LongFormat implements VariableFormat<Long> {
     }
 
     @Override
-    public String format(Long obj) {
+    public String format(Number obj) {
         return decimalFormat.format(obj);
     }
 }

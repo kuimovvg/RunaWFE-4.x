@@ -56,6 +56,6 @@ public class EscalationGroup extends TemporaryGroup {
 
     @Override
     public String toString() {
-        return getName() + " (" + originalExecutor + "|" + escalationLevel + ")";
+        return getName() + " (" + getOriginalExecutor() + "|" + escalationLevel + ")";
     }
 }

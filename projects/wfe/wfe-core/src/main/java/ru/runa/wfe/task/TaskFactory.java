@@ -76,9 +76,11 @@ public class TaskFactory {
                 log.error("Unable to assign in process id = " + executionContext.getProcess().getId(), e);
             }
         }
-        // copy the swimlane assignment into the task
-        task.setSwimlane(swimlane);
-        task.assignExecutor(executionContext, swimlane.getExecutor(), false);
+        if (swimlane != null) {
+            // copy the swimlane assignment into the task
+            task.setSwimlane(swimlane);
+            task.assignExecutor(executionContext, swimlane.getExecutor(), false);
+        }
     }
 
     /**

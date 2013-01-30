@@ -118,11 +118,11 @@ public class ExecutorGroupMembership {
             return false;
         }
         ExecutorGroupMembership r = (ExecutorGroupMembership) obj;
-        return Objects.equal(executor, r.executor) && Objects.equal(group, r.group);
+        return Objects.equal(getExecutor(), r.getExecutor()) && Objects.equal(getGroup(), r.getGroup());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(executor, group);
+        return Objects.hashCode(getExecutor(), getGroup());
     }
 }

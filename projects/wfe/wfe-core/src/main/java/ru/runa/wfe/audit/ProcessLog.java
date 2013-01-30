@@ -127,7 +127,7 @@ public abstract class ProcessLog implements IAttributes, Serializable {
         this.severity = severity;
     }
 
-    @Column(name = "CONTENT")
+    @Column(name = "CONTENT", length = 4000)
     public String getContent() {
         return XmlUtils.serialize(attributes);
     }

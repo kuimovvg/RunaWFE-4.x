@@ -17,6 +17,8 @@ import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Actor;
 
+import com.google.common.base.Objects;
+
 /**
  * Operation to add identities of started subprocesses to graph elements.
  */
@@ -61,7 +63,7 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
     @Override
     public void onSubprocess(SubprocessGraphElementPresentation element) {
         for (NodeProcess subprocess : nodeProcesses) {
-            if (subprocess.getNodeId().equals(element.getNodeId())) {
+            if (Objects.equal(subprocess.getNodeId(), element.getNodeId())) {
                 element.setSubprocessId(subprocess.getSubProcess().getId());
                 if (checkPermission(subprocess.getSubProcess())) {
                     element.setReadPermission(true);

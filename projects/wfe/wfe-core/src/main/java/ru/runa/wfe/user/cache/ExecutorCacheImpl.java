@@ -256,14 +256,14 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
         }
 
         for (Executor executor : executors) {
-            fillAllParrentsCache(executorToAllParentGroupsCache, nameToExecutorCache.get(executor.getName()), executorToParentGroupsCache);
+            fillAllParentsCache(executorToAllParentGroupsCache, nameToExecutorCache.get(executor.getName()), executorToParentGroupsCache);
             if (executor instanceof Group) {
                 fillActorMembersCache(groupToAllActorMembersCache, (Group) (nameToExecutorCache.get(executor.getName())), groupToMembersCache);
             }
         }
     }
 
-    private Set<Group> fillAllParrentsCache(Cache<Long, HashSet<Group>> cache, Executor executor, Cache<Long, HashSet<Group>> mapExecutorToParents) {
+    private Set<Group> fillAllParentsCache(Cache<Long, HashSet<Group>> cache, Executor executor, Cache<Long, HashSet<Group>> mapExecutorToParents) {
         HashSet<Group> executorGroups = cache.get(executor.getId());
         if (executorGroups != null) {
             return executorGroups;
@@ -273,7 +273,7 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
         if (mapExecutorToParents.get(executor.getId()) != null) {
             for (Group group : mapExecutorToParents.get(executor.getId())) {
                 executorGroups.add(group);
-                executorGroups.addAll(fillAllParrentsCache(cache, group, mapExecutorToParents));
+                executorGroups.addAll(fillAllParentsCache(cache, group, mapExecutorToParents));
             }
         }
         return executorGroups;
