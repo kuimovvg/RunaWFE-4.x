@@ -41,6 +41,7 @@ import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
 import ru.runa.wfe.commons.dbpatch.impl.JbpmRefactoringPatch;
+import ru.runa.wfe.commons.dbpatch.impl.TransitionLogPatch;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Actor;
@@ -87,7 +88,8 @@ public class InitializerLogic {
         dbPatches.add(UnsupportedPatch.class); // 20
         // 4.x
         dbPatches.add(AddHierarchyProcess.class);
-        dbPatches.add(JbpmRefactoringPatch.class);
+        dbPatches.add(JbpmRefactoringPatch.class); // 22
+        dbPatches.add(TransitionLogPatch.class);
     };
 
     @Autowired
@@ -230,7 +232,7 @@ public class InitializerLogic {
             }
         }
         while (dbVersion < dbPatches.size()) {
-            DBPatch patch = ClassLoaderUtil.instantiate(dbPatches.get(dbVersion));
+            DBPatch patch = ApplicationContextFactory.createAutowiredBean(dbPatches.get(dbVersion));
             dbVersion++;
             try {
                 if (isDDLTransacted) {
@@ -264,7 +266,7 @@ public class InitializerLogic {
         int status = -1;
         try {
             status = transaction.getStatus();
-            if (status != Status.STATUS_NO_TRANSACTION) {
+            if (status != Status.STATUS_NO_TRANSACTION && status != Status.STATUS_ROLLEDBACK) {
                 transaction.rollback();
             } else {
                 log.warn("Unable to rollback, status: " + status);

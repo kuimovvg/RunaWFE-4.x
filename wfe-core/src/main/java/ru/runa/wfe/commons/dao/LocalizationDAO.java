@@ -2,6 +2,8 @@ package ru.runa.wfe.commons.dao;
 
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 /**
  * DAO for managing {@link Localization}.
  * 
@@ -10,8 +12,18 @@ import java.util.Map;
  */
 public class LocalizationDAO extends GenericDAO<Localization> {
 
-    private Localization get(String name) {
-        return findFirstOrNull("from Localization where name = ?", name);
+    private Map<String, String> localizations = Maps.newHashMap();
+
+    @Override
+    protected void initDao() throws Exception {
+        try {
+            for (Localization localization : getAll()) {
+                localizations.put(localization.getName(), localization.getValue());
+            }
+        } catch (Exception e) {
+            log.error("localization was not loaded (if this exception occurs in empty DB just ignore it)");
+            log.debug("", e);
+        }
     }
 
     /**
@@ -22,11 +34,11 @@ public class LocalizationDAO extends GenericDAO<Localization> {
      * @return localized value or key if no localization exists
      */
     public String getLocalized(String name) {
-        Localization localization = get(name);
-        if (localization == null) {
+        String value = localizations.get(name);
+        if (value == null) {
             return name;
         }
-        return localization.getValue();
+        return value;
     }
 
     /**
@@ -53,8 +65,11 @@ public class LocalizationDAO extends GenericDAO<Localization> {
      * @param rewrite
      *            rewrite existing localization
      */
-    public void saveLocalization(String name, String value, boolean rewrite) {
-        Localization localization = get(name);
+    private void saveLocalization(String name, String value, boolean rewrite) {
+        Localization localization = findFirstOrNull("from Localization where name=?", name);
+        if (localization == null || rewrite) {
+            localizations.put(name, value);
+        }
         if (localization == null) {
             create(new Localization(name, value));
         } else if (rewrite) {

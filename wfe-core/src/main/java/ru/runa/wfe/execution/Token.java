@@ -111,9 +111,9 @@ public class Token implements Serializable {
         setNodeType(parent.getNodeType());
         setTransitionId(parent.getTransitionId());
         setAbleToReactivateParent(true);
+        setChildren(new HashSet<Token>());
         setParent(parent);
         parent.addChild(this);
-        setChildren(new HashSet<Token>());
     }
 
     @Id
@@ -247,7 +247,7 @@ public class Token implements Serializable {
     }
 
     private void addChild(Token token) {
-        children.add(token);
+        getChildren().add(token);
     }
 
     public void signal(ExecutionContext executionContext) {
@@ -278,7 +278,7 @@ public class Token implements Serializable {
             // ended.
             endDate = new Date();
             // end all this token's children
-            for (Token child : children) {
+            for (Token child : getChildren()) {
                 if (!child.hasEnded()) {
                     child.end(executionContext);
                 }
@@ -296,7 +296,7 @@ public class Token implements Serializable {
     @Transient
     public List<Token> getActiveChildren() {
         List<Token> activeChildren = Lists.newArrayList();
-        for (Token child : children) {
+        for (Token child : getChildren()) {
             if (!child.hasEnded()) {
                 activeChildren.add(child);
             }

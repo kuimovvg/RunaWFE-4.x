@@ -71,7 +71,8 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
                 privelegedExecutors.get(mapping.getType()).add(mapping.getExecutor());
             }
         } catch (Exception e) {
-            log.error("priveleged executors was not loaded (if this exception occurs in empty DB just ignore it)", e);
+            log.error("priveleged executors was not loaded (if this exception occurs in empty DB just ignore it)");
+            log.debug("", e);
         }
     }
 

@@ -12,6 +12,8 @@ import ru.runa.wfe.job.Job;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.ProcessDefinition;
 
+import com.google.common.base.Throwables;
+
 public class JobExecutor {
     private static Log log = LogFactory.getLog(JobExecutor.class);
     @Autowired
@@ -20,12 +22,19 @@ public class JobExecutor {
     private IProcessDefinitionLoader processDefinitionLoader;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void executeJobs(Long id) {
-        Job job = jobDAO.getNotNull(id);
-        log.debug("executing " + job);
-        ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(job.getProcess().getDefinition().getId());
-        ExecutionContext executionContext = new ExecutionContext(processDefinition, job.getToken());
-        job.execute(executionContext);
+    public void executeJob(Long id) {
+        Job job = null;
+        try {
+            job = jobDAO.getNotNull(id);
+            log.debug("executing " + job);
+            ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(job.getProcess().getDefinition().getId());
+            ExecutionContext executionContext = new ExecutionContext(processDefinition, job.getToken());
+            job.execute(executionContext);
+        } catch (Exception e) {
+            log.error("Error execute job " + job, e);
+            // for rollback
+            throw Throwables.propagate(e);
+        }
     }
 
 }
