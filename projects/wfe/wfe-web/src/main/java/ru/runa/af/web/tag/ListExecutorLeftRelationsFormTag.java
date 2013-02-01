@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.WebResources;
@@ -40,7 +38,6 @@ import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.service.af.ExecutorService;
-import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -68,32 +65,26 @@ public class ListExecutorLeftRelationsFormTag extends IdentifiableFormTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
-        ExecutorService executorService = Delegates.getExecutorService();
-        RelationService relationService = Delegates.getRelationService();
-        try {
-            List<Executor> executors = new ArrayList<Executor>();
-            executors.add(getIdentifiable());
-            BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-            for (Group group : executorService.getExecutorGroups(getUser(), getIdentifiable(), batchPresentation, false)) {
-                executors.add(group);
-            }
-            Set<Relation> relations = new HashSet<Relation>();
-            for (RelationPair pair : relationService.getExecutorsRelationPairsLeft(getUser(), null, executors)) {
-                relations.add(pair.getRelation());
-            }
-            TableBuilder tableBuilder = new TableBuilder();
-
-            TDBuilder[] builders = getBuilders(new TDBuilder[] {}, BatchPresentationFactory.RELATION_GROUPS.createDefault(), new TDBuilder[] {});
-
-            RowBuilder rowBuilder = new ReflectionRowBuilder(Lists.newArrayList(relations), batchPresentation, pageContext,
-                    WebResources.ACTION_MAPPING_MANAGE_EXECUTOR_LEFT_RELATION, "", new RelationURLStrategy(), builders);
-            HeaderBuilder headerBuilder = new StringsHeaderBuilder(getNames());
-
-            tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
-        } catch (Exception e) {
-            handleException(e);
+    protected void fillFormData(TD tdFormElement) {
+        List<Executor> executors = new ArrayList<Executor>();
+        executors.add(getIdentifiable());
+        BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
+        for (Group group : Delegates.getExecutorService().getExecutorGroups(getUser(), getIdentifiable(), batchPresentation, false)) {
+            executors.add(group);
         }
+        Set<Relation> relations = new HashSet<Relation>();
+        for (RelationPair pair : Delegates.getRelationService().getExecutorsRelationPairsLeft(getUser(), null, executors)) {
+            relations.add(pair.getRelation());
+        }
+        TableBuilder tableBuilder = new TableBuilder();
+
+        TDBuilder[] builders = getBuilders(new TDBuilder[] {}, BatchPresentationFactory.RELATION_GROUPS.createDefault(), new TDBuilder[] {});
+
+        RowBuilder rowBuilder = new ReflectionRowBuilder(Lists.newArrayList(relations), batchPresentation, pageContext,
+                WebResources.ACTION_MAPPING_MANAGE_EXECUTOR_LEFT_RELATION, "", new RelationURLStrategy(), builders);
+        HeaderBuilder headerBuilder = new StringsHeaderBuilder(getNames());
+
+        tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
     }
 
     @Override
@@ -102,7 +93,7 @@ public class ListExecutorLeftRelationsFormTag extends IdentifiableFormTag {
     }
 
     @Override
-    protected boolean isFormButtonVisible() throws JspException {
+    protected boolean isFormButtonVisible() {
         return false;
     }
 
@@ -113,7 +104,7 @@ public class ListExecutorLeftRelationsFormTag extends IdentifiableFormTag {
     }
 
     @Override
-    protected Permission getPermission() throws JspException {
+    protected Permission getPermission() {
         return RelationPermission.READ;
     }
 

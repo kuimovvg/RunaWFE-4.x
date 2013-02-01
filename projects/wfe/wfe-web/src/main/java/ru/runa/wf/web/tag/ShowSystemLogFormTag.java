@@ -19,8 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.Messages;
@@ -47,29 +45,27 @@ public class ShowSystemLogFormTag extends BatchReturningTitledFormTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
-        try {
-            BatchPresentation batchPresentation = getBatchPresentation();
-            ExecutionService executionService = Delegates.getExecutionService();
+    protected void fillFormElement(TD tdFormElement) {
+        BatchPresentation batchPresentation = getBatchPresentation();
+        ExecutionService executionService = Delegates.getExecutionService();
 
-            int instanceCount = (int) executionService.getSystemLogsCount(getUser(), batchPresentation);
-            // we must call getSystemLogs before obtaining current page number since it can be changed after getSystemLogs call
-            List<SystemLog> instances = executionService.getSystemLogs(getUser(), batchPresentation);
-            // batchPresentation must be recalculated since the current page number might changed
-            batchPresentation = getBatchPresentation();
-            PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, instanceCount, getReturnAction());
-            navigation.addPagingNavigationTable(tdFormElement);
+        int instanceCount = executionService.getSystemLogsCount(getUser(), batchPresentation);
+        // we must call getSystemLogs before obtaining current page number since
+        // it can be changed after getSystemLogs call
+        List<SystemLog> instances = executionService.getSystemLogs(getUser(), batchPresentation);
+        // batchPresentation must be recalculated since the current page number
+        // might changed
+        batchPresentation = getBatchPresentation();
+        PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, instanceCount, getReturnAction());
+        navigation.addPagingNavigationTable(tdFormElement);
 
-            TDBuilder[] builders = getBuilders(new TDBuilder[] {}, batchPresentation, new TDBuilder[] {});
+        TDBuilder[] builders = getBuilders(new TDBuilder[] {}, batchPresentation, new TDBuilder[] {});
 
-            HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 0, 0, getReturnAction(), pageContext);
-            RowBuilder rowBuilder = new ReflectionRowBuilder(instances, batchPresentation, pageContext, null, getReturnAction(), "id", builders);
-            tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
+        HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 0, 0, getReturnAction(), pageContext);
+        RowBuilder rowBuilder = new ReflectionRowBuilder(instances, batchPresentation, pageContext, null, getReturnAction(), "id", builders);
+        tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
 
-            navigation.addPagingNavigationTable(tdFormElement);
-        } catch (Exception e) {
-            handleException(e);
-        }
+        navigation.addPagingNavigationTable(tdFormElement);
     }
 
     protected Permission getPermission() {

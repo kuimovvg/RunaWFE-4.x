@@ -80,24 +80,24 @@ public class ProfileLogic extends CommonLogic {
     }
 
     public void changeActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
-        Profile profile = profileDAO.get(user);
+        Profile profile = profileDAO.get(user.getActor());
         profile.setActiveBatchPresentation(batchPresentationId, newActiveBatchName);
     }
 
     public void deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
-        Profile profile = profileDAO.get(user);
+        Profile profile = profileDAO.get(user.getActor());
         profile.deleteBatchPresentation(batchPresentation);
     }
 
     public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) {
-        Profile profile = profileDAO.get(user);
+        Profile profile = profileDAO.get(user.getActor());
         profile.addBatchPresentation(batchPresentation);
         profile.setActiveBatchPresentation(batchPresentation.getCategory(), batchPresentation.getName());
         return batchPresentation;
     }
 
     public void saveBatchPresentation(User user, BatchPresentation batchPresentation) {
-        Profile profile = profileDAO.get(user);
+        Profile profile = profileDAO.get(user.getActor());
         if (BatchPresentationConsts.DEFAULT_NAME.equals(batchPresentation.getName())) {
             throw new InternalApplicationException("default batch presentation cannot be changed");
         }

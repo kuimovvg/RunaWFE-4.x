@@ -19,8 +19,6 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.BatchExecutorPermissionHelper;
@@ -58,26 +56,22 @@ public class ListAllExecutorsFormTag extends BatchReturningTitledFormTag {
     private boolean isButtonEnabled;
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
-        try {
-            ExecutorService executorService = Delegates.getExecutorService();
-            int executorsCount = executorService.getAllCount(getUser(), getBatchPresentation());
-            List<Executor> executors = executorService.getAll(getUser(), getBatchPresentation());
-            BatchPresentation batchPresentation = getBatchPresentation();
-            setupFormButton(executors);
-            PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, executorsCount, getReturnAction());
-            navigation.addPagingNavigationTable(tdFormElement);
-            TableBuilder tableBuilder = new TableBuilder();
-            TDBuilder[] prefixBuilders = new TDBuilder[] { new IdentifiableCheckboxTDBuilder(ExecutorPermission.UPDATE) };
-            TDBuilder[] builders = getBuilders(prefixBuilders, batchPresentation, new TDBuilder[] {});
-            RowBuilder rowBuilder = new ReflectionRowBuilder(executors, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
-                    getReturnAction(), IdForm.ID_INPUT_NAME, builders);
-            HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 1, 0, getReturnAction(), pageContext);
-            tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
-            navigation.addPagingNavigationTable(tdFormElement);
-        } catch (Exception e) {
-            handleException(e);
-        }
+    protected void fillFormElement(TD tdFormElement) {
+        ExecutorService executorService = Delegates.getExecutorService();
+        int executorsCount = executorService.getAllCount(getUser(), getBatchPresentation());
+        List<Executor> executors = executorService.getAll(getUser(), getBatchPresentation());
+        BatchPresentation batchPresentation = getBatchPresentation();
+        setupFormButton(executors);
+        PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, executorsCount, getReturnAction());
+        navigation.addPagingNavigationTable(tdFormElement);
+        TableBuilder tableBuilder = new TableBuilder();
+        TDBuilder[] prefixBuilders = new TDBuilder[] { new IdentifiableCheckboxTDBuilder(ExecutorPermission.UPDATE) };
+        TDBuilder[] builders = getBuilders(prefixBuilders, batchPresentation, new TDBuilder[] {});
+        RowBuilder rowBuilder = new ReflectionRowBuilder(executors, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
+                getReturnAction(), IdForm.ID_INPUT_NAME, builders);
+        HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 1, 0, getReturnAction(), pageContext);
+        tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
+        navigation.addPagingNavigationTable(tdFormElement);
     }
 
     /**

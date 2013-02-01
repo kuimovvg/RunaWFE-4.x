@@ -56,9 +56,9 @@ public class DemoSubordinateAutoCompletingComboboxVarTag extends AbstractAutoCom
 
     private List<Actor> getSubordinates(User user) {
         Object[] parameters = new Object[1];
-        parameters[0] = Long.toString(user.getCode());
+        parameters[0] = Long.toString(user.getActor().getCode());
         List<Actor> actors = new DemoSubordinateRecursive().getSubordinateActors(executorDAO, parameters);
-        actors.add(0, user);
+        actors.add(0, user.getActor());
         return actors;
     }
 

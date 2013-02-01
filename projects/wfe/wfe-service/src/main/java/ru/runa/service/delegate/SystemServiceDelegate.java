@@ -58,6 +58,11 @@ public class SystemServiceDelegate extends EJB3Delegate implements SystemService
     }
 
     @Override
+    public String getLocalized(User user, String name) {
+        return getSystemService().getLocalized(user, name);
+    }
+
+    @Override
     public void saveLocalizations(User user, Map<String, String> localizations) {
         getSystemService().saveLocalizations(user, localizations);
     }

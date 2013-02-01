@@ -20,7 +20,6 @@ package ru.runa.af.web.html;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.A;
@@ -47,7 +46,7 @@ public class BotStationTableBuilder {
         this.pageContext = pageContext;
     }
 
-    public Table buildBotStationTable(List<BotStation> botStations) throws JspException {
+    public Table buildBotStationTable(List<BotStation> botStations) {
         Table table = new Table();
         table.setClass(Resources.CLASS_LIST_TABLE);
         table.setWidth("100%");
@@ -59,7 +58,7 @@ public class BotStationTableBuilder {
         return table;
     }
 
-    private TR createTR(BotStation botStation) throws JspException {
+    private TR createTR(BotStation botStation) {
         TR tr = new TR();
         tr.setClass(Resources.CLASS_LIST_TABLE_TH);
         Input input = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, Long.toString(botStation.getId()));

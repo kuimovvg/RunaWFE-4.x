@@ -123,7 +123,7 @@ public class RelationLogic extends CommonLogic {
     @SuppressWarnings("unchecked")
     public List<Relation> getRelations(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
         checkPermissionAllowed(user, RelationsGroupSecure.INSTANCE, Permission.READ);
-        List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user);
+        List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user.getActor());
         return (List<Relation>) permissionDAO.getPersistentObjects(actorAndGroupsIds, batchPresentation, Permission.READ,
                 new SecuredObjectType[] { SecuredObjectType.RELATION }, false);
     }

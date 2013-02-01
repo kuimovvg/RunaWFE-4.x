@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.action.UpdatePermissionOnSystemAction;
@@ -35,24 +33,29 @@ import ru.runa.wfe.security.Permission;
 public class UpdatePermissionsOnSystemFormTag extends UpdateSystemBaseFormTag {
     private static final long serialVersionUID = 2102558048751151714L;
 
-    protected void fillFormData(TD tdFormElement) throws JspException {
+    @Override
+    protected void fillFormData(TD tdFormElement) {
         ASystem system = getSystem();
         PermissionTableBuilder tableBuilder = new PermissionTableBuilder(system, getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 
+    @Override
     protected Permission getPermission() {
         return Permission.UPDATE_PERMISSIONS;
     }
 
+    @Override
     public String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_APPLY, pageContext);
     }
 
+    @Override
     protected String getTitle() {
         return Messages.getMessage(Messages.TITLE_PERMISSION_OWNERS, pageContext);
     }
 
+    @Override
     public String getAction() {
         return UpdatePermissionOnSystemAction.ACTION_PATH_NAME;
     }

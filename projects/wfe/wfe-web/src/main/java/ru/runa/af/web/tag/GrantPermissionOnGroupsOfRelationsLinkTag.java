@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
@@ -39,7 +37,7 @@ public class GrantPermissionOnGroupsOfRelationsLinkTag extends LinkTag {
     private static final String HREF = "/grant_group_of_relations_permission.do";
 
     @Override
-    protected boolean isLinkEnabled() throws JspException {
+    protected boolean isLinkEnabled() {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_PERMISSIONS, RelationsGroupSecure.INSTANCE);

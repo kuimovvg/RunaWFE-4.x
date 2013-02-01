@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.ftl.method;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.common.web.Commons;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import freemarker.template.TemplateModelException;
@@ -29,12 +27,8 @@ public class MultiLanguageExampleTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        try {
-            String key = getParameterAs(String.class, 0);
-            return Commons.getMessage(key, webHelper.getPageContext());
-        } catch (JspException e) {
-            throw new TemplateModelException(e);
-        }
+        String key = getParameterAs(String.class, 0);
+        return Commons.getMessage(key, webHelper.getPageContext());
     }
 
 }

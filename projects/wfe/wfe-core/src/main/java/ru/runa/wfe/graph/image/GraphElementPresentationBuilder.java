@@ -38,7 +38,7 @@ public class GraphElementPresentationBuilder {
      *            Nodes to convert
      * @return List of graph elements for nodes.
      */
-    public static List<GraphElementPresentation> createElements(ProcessDefinition definition) throws Exception {
+    public static List<GraphElementPresentation> createElements(ProcessDefinition definition) {
         DiagramModel diagramModel = DiagramModel.load(definition);
         List<GraphElementPresentation> result = new ArrayList<GraphElementPresentation>();
         for (Node node : definition.getNodes()) {

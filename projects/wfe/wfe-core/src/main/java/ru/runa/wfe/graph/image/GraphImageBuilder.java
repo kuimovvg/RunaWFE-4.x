@@ -36,6 +36,7 @@ import ru.runa.wfe.graph.image.model.TransitionModel;
 import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
+import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.GraphElement;
@@ -236,7 +237,7 @@ public class GraphImageBuilder {
         // nodeModel contains only id
         nodeModel.setName(node.getName());
         CreateTimerAction createTimerAction = getTimerActionIfExists(node);
-        boolean hasTimer = (createTimerAction != null && !"__ESCALATION".equals(createTimerAction.getName()));
+        boolean hasTimer = (createTimerAction != null && !Timer.ESCALATION_NAME.equals(createTimerAction.getName()));
         nodeModel.setWithTimer(hasTimer);
         if (node instanceof Synchronizable) {
             nodeModel.setAsync(((Synchronizable) node).isAsync());

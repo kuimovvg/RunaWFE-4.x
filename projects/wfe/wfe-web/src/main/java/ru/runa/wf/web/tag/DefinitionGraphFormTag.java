@@ -19,8 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Center;
 import org.apache.ecs.html.IMG;
 import org.apache.ecs.html.TD;
@@ -46,7 +44,7 @@ public class DefinitionGraphFormTag extends ProcessDefinitionBaseFormTag {
     private static final long serialVersionUID = 880745425325952663L;
 
     @Override
-    protected void fillFormData(final TD tdFormElement) throws JspException {
+    protected void fillFormData(final TD tdFormElement) {
 
         String href = Commons.getActionUrl(ProcessDefinitionGraphImageAction.ACTION_PATH, IdForm.ID_INPUT_NAME, getIdentifiableId(), pageContext,
                 PortletUrlType.Resource);
@@ -55,21 +53,16 @@ public class DefinitionGraphFormTag extends ProcessDefinitionBaseFormTag {
         IMG processGraphImage = new IMG(href);
         processGraphImage.setBorder(0);
 
-        try {
-            DefinitionService definitionService = Delegates.getDefinitionService();
-            List<GraphElementPresentation> elements = definitionService.getProcessDefinitionGraphElements(getUser(), getIdentifiableId());
-            DefinitionGraphElementPresentationVisitor operation = new DefinitionGraphElementPresentationVisitor(pageContext);
-            for (GraphElementPresentation graphElementPresentation : elements) {
-                graphElementPresentation.visit(operation);
-            }
-            if (!operation.getResultMap().isEmpty()) {
-                tdFormElement.addElement(operation.getResultMap());
-                processGraphImage.setUseMap("#processMap");
-            }
-        } catch (Exception e) {
-            handleException(e);
+        DefinitionService definitionService = Delegates.getDefinitionService();
+        List<GraphElementPresentation> elements = definitionService.getProcessDefinitionGraphElements(getUser(), getIdentifiableId());
+        DefinitionGraphElementPresentationVisitor operation = new DefinitionGraphElementPresentationVisitor(pageContext);
+        for (GraphElementPresentation graphElementPresentation : elements) {
+            graphElementPresentation.visit(operation);
         }
-
+        if (!operation.getResultMap().isEmpty()) {
+            tdFormElement.addElement(operation.getResultMap());
+            processGraphImage.setUseMap("#processMap");
+        }
         center.addElement(processGraphImage);
         tdFormElement.addElement(center);
 

@@ -20,7 +20,6 @@ package ru.runa.wf.web.tag;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.Form;
@@ -145,14 +144,12 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
     }
 
     @Override
-    protected boolean isVisible() throws JspException {
+    protected boolean isVisible() {
         AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
         try {
             return authorizationService.isAllowed(getUser(), DefinitionPermission.REDEPLOY_DEFINITION, getIdentifiable());
         } catch (AuthorizationException e) {
             return false;
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
         }
     }
 }

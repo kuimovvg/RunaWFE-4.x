@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -65,17 +63,17 @@ public class CreateRelationLeftExecutorFormTag extends FormTag {
     }
 
     @Override
-    protected boolean isFormButtonEnabled() throws JspException {
+    protected boolean isFormButtonEnabled() {
         return true;
     }
 
     @Override
-    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) throws JspException {
+    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
         return true;
     }
 
     @Override
-    protected boolean isFormButtonVisible() throws JspException {
+    protected boolean isFormButtonVisible() {
         return true;
     }
 
@@ -107,7 +105,7 @@ public class CreateRelationLeftExecutorFormTag extends FormTag {
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         Table table = new Table();
         TR tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_CREATE_RELATION_FROM, pageContext)));
@@ -124,23 +122,19 @@ public class CreateRelationLeftExecutorFormTag extends FormTag {
         tdFormElement.addElement(new Input(Input.HIDDEN, "failure", "/create_relation_left_executor.do"));
     }
 
-    private Collection<Executor> getExecutors() throws JspException {
+    private Collection<Executor> getExecutors() {
         Set<Executor> result = new HashSet<Executor>();
-        try {
-            ExecutorService executorService = Delegates.getExecutorService();
-            Executor ex = executorService.getExecutor(getUser(), executorId);
-            result.add(ex);
-            BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-            for (Executor executor : executorService.getExecutorGroups(getUser(), ex, batchPresentation, false)) {
-                result.add(executor);
-            }
-        } catch (Exception e) {
-            handleException(e);
+        ExecutorService executorService = Delegates.getExecutorService();
+        Executor ex = executorService.getExecutor(getUser(), executorId);
+        result.add(ex);
+        BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
+        for (Executor executor : executorService.getExecutorGroups(getUser(), ex, batchPresentation, false)) {
+            result.add(executor);
         }
         return result;
     }
 
-    private String getExecutorName() throws JspException {
+    private String getExecutorName() {
         try {
             ExecutorService executorService = Delegates.getExecutorService();
             return executorService.getExecutor(getUser(), executorId).getName();

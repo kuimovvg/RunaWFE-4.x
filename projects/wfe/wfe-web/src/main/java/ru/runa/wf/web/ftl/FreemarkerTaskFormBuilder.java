@@ -13,7 +13,7 @@ import ru.runa.wfe.user.User;
 public class FreemarkerTaskFormBuilder extends BaseTaskFormBuilder implements TaskFormBuilder {
 
     @Override
-    public String build(User user, PageContext pageContext, Interaction interaction, WfTask task) throws Exception {
+    public String build(User user, PageContext pageContext, Interaction interaction, WfTask task) {
         FormHashModel model = new FormHashModel(user, new DelegateProcessVariableProvider(user, task.getProcessId()),
                 new StrutsWebHelper(pageContext));
         return build(interaction, model, task.getDefinitionId());

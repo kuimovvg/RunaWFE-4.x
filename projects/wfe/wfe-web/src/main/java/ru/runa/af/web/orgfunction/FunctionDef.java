@@ -20,31 +20,22 @@ package ru.runa.af.web.orgfunction;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.jsp.PageContext;
-
-import ru.runa.common.web.Messages;
-
 public class FunctionDef {
-    private final String messageKey;
-    private final String message;
     private final String className;
+    private final String label;
     private final List<ParamDef> params = new ArrayList<ParamDef>();
 
-    public FunctionDef(String messageKey, String message, String className) {
-        this.messageKey = messageKey;
-        this.message = message;
+    public FunctionDef(String className, String label) {
         this.className = className;
+        this.label = label;
     }
 
     public void addParam(ParamDef definition) {
         params.add(definition);
     }
 
-    public String getMessage(PageContext pageContext) {
-        if (message != null) {
-            return message;
-        }
-        return Messages.getMessage(messageKey, pageContext);
+    public String getLabel() {
+        return label;
     }
 
     public String getClassName() {

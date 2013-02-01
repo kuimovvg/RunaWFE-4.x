@@ -119,7 +119,7 @@ public class WFCommonLogic extends CommonLogic {
 
     protected boolean canParticipateAsSubstitutor(User user, Task task) throws AuthenticationException {
         try {
-            Set<Long> canSubIds = substitutionLogic.getSubstituted(user);
+            Set<Long> canSubIds = substitutionLogic.getSubstituted(user.getActor());
             Set<Actor> canSub = new HashSet<Actor>();
             for (Long id : canSubIds) {
                 canSub.add(executorDAO.getActor(id));
@@ -135,13 +135,14 @@ public class WFCommonLogic extends CommonLogic {
                 }
             }
         } catch (ExecutorDoesNotExistException e) {
+            log.warn("canParticipateAsSubstitutor: " + e);
         }
         return false;
     }
 
     protected void checkCanParticipate(User user, Task task, Actor targetActor) throws AuthorizationException, TaskDoesNotExistException {
         if (targetActor == null) {
-            targetActor = user;
+            targetActor = user.getActor();
         }
         Executor taskExecutor = task.getExecutor();
         if (taskExecutor == null) {
@@ -209,20 +210,15 @@ public class WFCommonLogic extends CommonLogic {
      * @return List of graph presentation elements.
      */
     public List<GraphElementPresentation> getDefinitionGraphElements(User user, Long id, GraphElementPresentationVisitor visitor) {
-        try {
-            ProcessDefinition definition = getDefinition(id);
-            checkPermissionAllowed(user, definition, DefinitionPermission.READ);
-            List<GraphElementPresentation> result = GraphElementPresentationBuilder.createElements(definition);
-            if (visitor != null) {
-                for (GraphElementPresentation elementPresentation : result) {
-                    elementPresentation.visit(visitor);
-                }
+        ProcessDefinition definition = getDefinition(id);
+        checkPermissionAllowed(user, definition, DefinitionPermission.READ);
+        List<GraphElementPresentation> result = GraphElementPresentationBuilder.createElements(definition);
+        if (visitor != null) {
+            for (GraphElementPresentation elementPresentation : result) {
+                elementPresentation.visit(visitor);
             }
-            return result;
-        } catch (Exception e) {
-            log.warn("Unable to draw diagram", e);
-            throw new InternalApplicationException(e);
         }
+        return result;
     }
 
 }

@@ -19,21 +19,12 @@ package ru.runa.wfe.os;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.dao.ExecutorDAO;
 
 /**
  * Created on 08.01.2007
  **/
-public abstract class OrgFunctionBase implements OrgFunction {
-    protected Log log = LogFactory.getLog(getClass());
-
-    @Autowired
-    protected ExecutorDAO executorDAO;
+public abstract class OrgFunctionBase extends OrgFunction {
 
     @Override
     public final List<? extends Executor> getExecutors(Object... parameters) throws OrgFunctionException {

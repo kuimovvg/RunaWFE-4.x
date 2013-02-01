@@ -28,5 +28,5 @@ import ru.runa.wfe.user.User;
  */
 public interface TaskFormBuilder {
 
-    String build(User user, PageContext pageContext, Interaction interaction, WfTask task) throws Exception;
+    String build(User user, PageContext pageContext, Interaction interaction, WfTask task);
 }

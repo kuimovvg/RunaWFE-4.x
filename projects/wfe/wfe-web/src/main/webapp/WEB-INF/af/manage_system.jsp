@@ -95,7 +95,7 @@
 		<div style="position: absolute; right: 5px; top: 5px;">
 			<table><tbody><tr>
 				<td class="hidableblock">
-					<a id="storageButton" href="#" class="link">
+					<a id="storageButton" href="javascript:void(0)" class="link">
 						<img id="storageImg" class="hidableblock" src="/wfe/images/view_setup_hidden.gif">
 						&nbsp;<bean:message key="adminkit.savedscripts" />
 					</a>
@@ -106,9 +106,9 @@
 			<table>
 				<tr>
 					<td class='hidableblock'>
-						<a href="#" class='link' onclick='javascript:uploadScript("<bean:message key="button.save" />", "<bean:message key="button.execute" />", "<bean:message key="button.cancel" />");'><bean:message key="button.upload" /></a>
+						<a href="javascript:void(0)" class='link' onclick='javascript:uploadScript("<bean:message key="button.save" />", "<bean:message key="button.execute" />", "<bean:message key="button.cancel" />");'><bean:message key="button.upload" /></a>
 						&nbsp;&nbsp;&nbsp;
-						<a href="#" class='link' onclick='javascript:editScript("", "<bean:message key="button.save" />", "<bean:message key="button.execute" />", "<bean:message key="button.cancel" />");'><bean:message key="button.create" /></a>
+						<a href="javascript:void(0)" class='link' onclick='javascript:editScript("", "<bean:message key="button.save" />", "<bean:message key="button.execute" />", "<bean:message key="button.cancel" />");'><bean:message key="button.create" /></a>
 					</td>
 				</tr>
 				<tr>
@@ -126,7 +126,7 @@
 <table class='box'><tr><th class='box'><bean:message key="title.errors" /></th></tr>
 <tr><td class='box'>
 	<div>
-		<a id="bottaskErrorsButton" href="#" class="link">
+		<a id="bottaskErrorsButton" href="javascript:void(0)" class="link">
 			<img id="bottaskErrorsImg" class="hidableblock" src="/wfe/images/view_setup_hidden.gif">
 			&nbsp;<bean:message key="errors.bottask" />
 		</a>
@@ -136,7 +136,7 @@
 	</div>
 	<br />
 	<div>
-		<a id="processErrorsButton" href="#" class="link">
+		<a id="processErrorsButton" href="javascript:void(0)" class="link">
 			<img id="processErrorsImg" class="hidableblock" src="/wfe/images/view_setup_hidden.gif">
 			&nbsp;<bean:message key="errors.process" />
 		</a>

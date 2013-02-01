@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.af.web.action.GrantPermissionOnRelationsAction;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.Identifiable;
@@ -28,7 +26,8 @@ import ru.runa.wfe.security.Identifiable;
  * 
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
- * @jsp.tag name = "listExecutorsWithoutPermissionsOnRelationsForm" body-content = "JSP"
+ * @jsp.tag name = "listExecutorsWithoutPermissionsOnRelationsForm" body-content
+ *          = "JSP"
  */
 public class ListExecutorsWithoutPermissionsOnRelationsFormTag extends ListExecutorsWithoutPermissionsBase {
 
@@ -40,7 +39,7 @@ public class ListExecutorsWithoutPermissionsOnRelationsFormTag extends ListExecu
     }
 
     @Override
-    protected Identifiable getIdentifiable() throws JspException {
+    protected Identifiable getIdentifiable() {
         return RelationsGroupSecure.INSTANCE;
     }
 }

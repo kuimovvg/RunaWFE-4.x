@@ -20,7 +20,6 @@ package ru.runa.af.web.tag;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
 
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
@@ -36,8 +35,6 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 
@@ -49,16 +46,16 @@ import ru.runa.wfe.security.Permission;
 public class BotStationListTag extends TitledFormTag {
     private static final long serialVersionUID = -4263750161023575386L;
 
-    protected Permission getPermission() throws JspException {
+    protected Permission getPermission() {
         return BotStationPermission.BOT_STATION_CONFIGURE;
     }
 
-    protected Identifiable getIdentifiable() throws JspException {
+    protected Identifiable getIdentifiable() {
         return BotStation.INSTANCE;
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         getForm().setName("botStationList");
         getForm().setID("botStationList");
         getForm().setAction(
@@ -86,17 +83,9 @@ public class BotStationListTag extends TitledFormTag {
     }
 
     @Override
-    public boolean isFormButtonEnabled() throws JspException {
-        boolean result = false;
-        try {
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            result = authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-        } catch (AuthorizationException e) {
-            throw new JspException(e);
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
-        }
-        return result;
+    public boolean isFormButtonEnabled() {
+        AuthorizationService authorizationService = Delegates.getAuthorizationService();
+        return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
     }
 
     @Override

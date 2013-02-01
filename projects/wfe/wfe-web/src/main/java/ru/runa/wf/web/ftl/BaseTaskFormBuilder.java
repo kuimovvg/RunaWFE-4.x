@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 
 public abstract class BaseTaskFormBuilder {
 
-    public String build(Interaction interaction, FormHashModel model, Long definitionId) throws Exception {
+    public String build(Interaction interaction, FormHashModel model, Long definitionId) {
         if (interaction.hasForm()) {
             String out = FreemarkerProcessor.process(interaction.getFormData(), model);
             List<String> requiredVariableNames = Lists.newArrayList();

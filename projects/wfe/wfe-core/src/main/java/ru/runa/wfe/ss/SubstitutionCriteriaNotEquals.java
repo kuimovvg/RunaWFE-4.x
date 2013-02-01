@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
@@ -42,12 +41,7 @@ import ru.runa.wfe.user.dao.ExecutorDAO;
 @DiscriminatorValue(value = "not_equals")
 public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
     private static final long serialVersionUID = 1L;
-
-    private String DISPLAY_TYPE = "substitutioncriteria.SubstitutionCriteriaNotEquals";
     private String SWIMLANE_PREFIX = "swimlane:";
-
-    public SubstitutionCriteriaNotEquals() {
-    }
 
     @Override
     public boolean isSatisfied(ExecutionContext executionContext, Task task, Actor asActor, Actor substitutorActor) {
@@ -82,9 +76,4 @@ public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
         return !(getConf() == null || getConf().isEmpty());
     }
 
-    @Override
-    @Transient
-    public String getLabelKey() {
-        return DISPLAY_TYPE;
-    }
 }

@@ -84,32 +84,30 @@ public class DefinitionLogic extends WFCommonLogic {
         definition.getDBImpl().setCategories(processType);
         deploymentDAO.deploy(definition.getDBImpl(), null);
         Collection<Permission> allPermissions = new DefinitionPermission().getAllPermissions();
-        permissionDAO.setPermissions(user, allPermissions, definition);
+        permissionDAO.setPermissions(user.getActor(), allPermissions, definition);
         log.debug("Deployed process definition " + definition);
         return new WfDefinition(definition);
     }
 
     public WfDefinition redeployProcessDefinition(User user, Long definitionId, byte[] processArchiveBytes, List<String> processType) {
-        ProcessDefinition deployedDefinition = getDefinition(definitionId);
-        checkPermissionAllowed(user, deployedDefinition, DefinitionPermission.REDEPLOY_DEFINITION);
+        Deployment deployment = deploymentDAO.getNotNull(definitionId);
+        checkPermissionAllowed(user, deployment, DefinitionPermission.REDEPLOY_DEFINITION);
         if (processArchiveBytes == null) {
             // update only categories
-            deployedDefinition.getDBImpl().setCategories(processType);
-            // TODO merge deploymentDAO.update(deployedDefinition.getDBImpl());
-            return new WfDefinition(deployedDefinition);
+            deployment.setCategories(processType);
+            return getProcessDefinition(user, definitionId);
         }
         ProcessDefinition definition = parseProcessDefinition(processArchiveBytes);
-        if (!deployedDefinition.getName().equals(definition.getName())) {
-            throw new DefinitionNameMismatchException("Process archive contains definition for process " + definition.getName()
-                    + " mismatch with deployed process name " + deployedDefinition.getName(), definition.getName(), deployedDefinition.getName());
+        if (!deployment.getName().equals(definition.getName())) {
+            throw new DefinitionNameMismatchException("Expected definition name " + deployment.getName(), definition.getName(), deployment.getName());
         }
         definition.getDBImpl().setCategories(processType);
-        deploymentDAO.deploy(definition.getDBImpl(), deployedDefinition.getDBImpl());
-        for (Executor executor : permissionDAO.getExecutorsWithPermission(deployedDefinition)) {
-            List<Permission> permissions = permissionDAO.getOwnPermissions(executor, deployedDefinition);
+        deploymentDAO.deploy(definition.getDBImpl(), deployment);
+        for (Executor executor : permissionDAO.getExecutorsWithPermission(deployment)) {
+            List<Permission> permissions = permissionDAO.getOwnPermissions(executor, deployment);
             permissionDAO.setPermissions(executor, permissions, definition);
         }
-        log.debug("Process definition " + deployedDefinition + " was successfully redeployed");
+        log.debug("Process definition " + deployment + " was successfully redeployed");
         return new WfDefinition(definition);
     }
 
@@ -120,15 +118,19 @@ public class DefinitionLogic extends WFCommonLogic {
         return new WfDefinition(definition);
     }
 
-    public WfDefinition getProcessDefinition(User user, Long definitionId) throws AuthenticationException, AuthorizationException,
-            DefinitionDoesNotExistException {
-        ProcessDefinition processDefinition = getDefinition(definitionId);
-        checkPermissionAllowed(user, processDefinition, Permission.READ);
-        return new WfDefinition(processDefinition);
+    public WfDefinition getProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException {
+        try {
+            ProcessDefinition processDefinition = getDefinition(definitionId);
+            checkPermissionAllowed(user, processDefinition, Permission.READ);
+            return new WfDefinition(processDefinition);
+        } catch (Exception e) {
+            Deployment deployment = deploymentDAO.getNotNull(definitionId);
+            checkPermissionAllowed(user, deployment, Permission.READ);
+            return new WfDefinition(deployment);
+        }
     }
 
-    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) throws AuthenticationException, AuthorizationException,
-            ProcessDoesNotExistException {
+    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) throws ProcessDoesNotExistException {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         checkPermissionAllowed(user, processDefinition, Permission.READ);
@@ -151,23 +153,23 @@ public class DefinitionLogic extends WFCommonLogic {
         return getDefinitionGraphElements(user, definitionId, operation);
     }
 
-    public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) throws AuthenticationException {
-        List<Number> latestDefinitions = new BatchPresentationHibernateCompiler(batchPresentation).getIdentities(null, null, false);
-        List<WfDefinition> result = Lists.newArrayListWithExpectedSize(latestDefinitions.size());
-        for (Number definitionId : latestDefinitions) {
-            try {
-                ProcessDefinition processDefinition = getDefinition(definitionId.longValue());
-                if (isPermissionAllowed(user, processDefinition, Permission.READ)) {
+    public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) {
+        List<Deployment> deployments = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(false);
+        List<WfDefinition> result = Lists.newArrayListWithExpectedSize(deployments.size());
+        for (Deployment deployment : deployments) {
+            if (isPermissionAllowed(user, deployment, Permission.READ)) {
+                try {
+                    ProcessDefinition processDefinition = getDefinition(deployment.getId());
                     result.add(new WfDefinition(processDefinition));
+                } catch (Exception e) {
+                    result.add(new WfDefinition(deployment));
                 }
-            } catch (Exception e) {
-                log.error("Unable to parse process definition by id " + definitionId, e);
             }
         }
         return result;
     }
 
-    public List<WfDefinition> getProcessDefinitionHistory(User user, String name) throws AuthenticationException {
+    public List<WfDefinition> getProcessDefinitionHistory(User user, String name) {
         List<Deployment> deploymentVersions = deploymentDAO.findAllDeploymentVersions(name);
         List<WfDefinition> result = Lists.newArrayListWithExpectedSize(deploymentVersions.size());
         for (Deployment deployment : deploymentVersions) {
@@ -178,11 +180,10 @@ public class DefinitionLogic extends WFCommonLogic {
         return result;
     }
 
-    public void undeployProcessDefinition(User user, String definitionName) throws AuthenticationException, AuthorizationException,
-            DefinitionDoesNotExistException, ParentProcessExistsException {
+    public void undeployProcessDefinition(User user, String definitionName) throws DefinitionDoesNotExistException, ParentProcessExistsException {
         Preconditions.checkNotNull(definitionName, "definitionName must be specified.");
-        ProcessDefinition processDefinition = getLatestDefinition(definitionName);
-        checkPermissionAllowed(user, processDefinition, DefinitionPermission.UNDEPLOY_DEFINITION);
+        Deployment deployment = deploymentDAO.findLatestDeployment(definitionName);
+        checkPermissionAllowed(user, deployment, DefinitionPermission.UNDEPLOY_DEFINITION);
         ProcessFilter filter = new ProcessFilter();
         filter.setDefinitionName(definitionName);
         List<Process> processes = processDAO.getProcesses(filter);
@@ -193,13 +194,13 @@ public class DefinitionLogic extends WFCommonLogic {
             }
         }
         deleteProcessDefinitionsByName(user, definitionName);
-        log.debug("Process definition " + processDefinition + " was undeployed");
+        log.debug("Process definition " + deployment + " was undeployed");
     }
 
     /**
      * Deletes all Process Definitions from the database
      */
-    private void deleteProcessDefinitionsByName(User user, String definitionName) throws AuthenticationException {
+    private void deleteProcessDefinitionsByName(User user, String definitionName) {
         List<Deployment> deployments = deploymentDAO.findAllDeploymentVersions(definitionName);
         for (Deployment deployment : deployments) {
             // delete all the processes of this definition
@@ -208,11 +209,11 @@ public class DefinitionLogic extends WFCommonLogic {
                 deleteProcess(process);
             }
             deploymentDAO.delete(deployment);
-            systemLogDAO.create(new ProcessDefinitionDeleteLog(user.getId(), definitionName, deployment.getVersion()));
+            systemLogDAO.create(new ProcessDefinitionDeleteLog(user.getActor().getId(), definitionName, deployment.getVersion()));
         }
     }
 
-    public Interaction getInteraction(User user, Long taskId) throws AuthorizationException, AuthenticationException, TaskDoesNotExistException {
+    public Interaction getInteraction(User user, Long taskId) throws TaskDoesNotExistException {
         try {
             Task task = taskDAO.getNotNull(taskId);
             ProcessDefinition definition = getDefinition(task);
@@ -225,7 +226,7 @@ public class DefinitionLogic extends WFCommonLogic {
         }
     }
 
-    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) throws AuthenticationException, TaskDoesNotExistException {
+    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) throws TaskDoesNotExistException {
         try {
             List<Transition> transitions;
             if (definitionId != null) {
@@ -246,8 +247,7 @@ public class DefinitionLogic extends WFCommonLogic {
         }
     }
 
-    public byte[] getFile(User user, Long definitionId, String fileName) throws AuthenticationException, DefinitionDoesNotExistException,
-            AuthorizationException {
+    public byte[] getFile(User user, Long definitionId, String fileName) throws DefinitionDoesNotExistException {
         ProcessDefinition definition = getDefinition(definitionId);
         if (!ProcessArchive.UNSECURED_FILE_NAMES.contains(fileName)) {
             checkPermissionAllowed(user, definition, DefinitionPermission.READ);
@@ -258,8 +258,7 @@ public class DefinitionLogic extends WFCommonLogic {
         return definition.getFileData(fileName);
     }
 
-    public Interaction getStartInteraction(User user, Long definitionId) throws AuthorizationException, AuthenticationException,
-            DefinitionDoesNotExistException {
+    public Interaction getStartInteraction(User user, Long definitionId) throws DefinitionDoesNotExistException {
         ProcessDefinition definition = getDefinition(definitionId);
         checkPermissionAllowed(user, definition, DefinitionPermission.READ);
         Interaction interaction = definition.getInteractionNotNull(definition.getStartStateNotNull().getNodeId());
@@ -270,14 +269,13 @@ public class DefinitionLogic extends WFCommonLogic {
         return interaction;
     }
 
-    public List<SwimlaneDefinition> getSwimlanes(User user, Long definitionId) throws AuthenticationException {
+    public List<SwimlaneDefinition> getSwimlanes(User user, Long definitionId) {
         ProcessDefinition definition = processDefinitionLoader.getDefinition(definitionId);
         checkPermissionAllowed(user, definition, DefinitionPermission.READ);
         return Lists.newArrayList(definition.getSwimlanes().values());
     }
 
-    public List<VariableDefinition> getProcessDefinitionVariables(User user, Long definitionId) throws DefinitionDoesNotExistException,
-            AuthenticationException, AuthorizationException {
+    public List<VariableDefinition> getProcessDefinitionVariables(User user, Long definitionId) throws DefinitionDoesNotExistException {
         ProcessDefinition definition = getDefinition(definitionId);
         checkPermissionAllowed(user, definition, DefinitionPermission.READ);
         return definition.getVariables();

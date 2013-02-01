@@ -63,11 +63,7 @@ public class ClassLoaderUtil {
 
     @SuppressWarnings("unchecked")
     public static <T extends Object> T instantiate(String className) {
-        try {
-            return (T) instantiate(loadClass(className));
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
-        }
+        return (T) instantiate(loadClass(className));
     }
 
     public static <T extends Object> T instantiate(Class<T> clazz) {

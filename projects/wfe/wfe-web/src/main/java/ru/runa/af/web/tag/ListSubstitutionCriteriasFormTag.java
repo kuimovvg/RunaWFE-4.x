@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.A;
@@ -82,7 +81,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
     }
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
+    protected void fillFormData(TD tdFormElement) {
         SubstitutionCriteriaTableBuilder tableBuilder = new SubstitutionCriteriaTableBuilder(pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
         tdFormElement.addElement(new Input(Input.HIDDEN, SubstitutionCriteriasForm.REMOVE_METHOD_INPUT_NAME,
@@ -91,23 +90,15 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             String message = Messages.getMessage(Messages.LABEL_SUBSTITUTION_CRITERIA_USED_BY, pageContext) + ":<ul>";
             ArrayList<Long> ids = arrayFromString(substitutionCriteriaIDs);
             ArrayList<Substitution> substitutions = new ArrayList<Substitution>();
-            try {
-                SubstitutionService substitutionService = Delegates.getSubstitutionService();
-                for (Long id : ids) {
-                    SubstitutionCriteria substitutionCriteria = substitutionService.getSubstitutionCriteria(getUser(), id);
-                    substitutions.addAll(substitutionService.getBySubstitutionCriteria(getUser(), substitutionCriteria));
-                }
-            } catch (Exception e) {
-                handleException(e);
+            SubstitutionService substitutionService = Delegates.getSubstitutionService();
+            for (Long id : ids) {
+                SubstitutionCriteria substitutionCriteria = substitutionService.getSubstitutionCriteria(getUser(), id);
+                substitutions.addAll(substitutionService.getBySubstitutionCriteria(getUser(), substitutionCriteria));
             }
             for (Substitution substitution : substitutions) {
                 ExecutorService executorService = Delegates.getExecutorService();
-                try {
-                    Actor actor = executorService.getExecutor(getUser(), substitution.getActorId());
-                    message += "<li>" + actor.getFullName() + " (" + actor.getName() + ")</li>";
-                } catch (Exception e) {
-                    handleException(e);
-                }
+                Actor actor = executorService.getExecutor(getUser(), substitution.getActorId());
+                message += "<li>" + actor.getFullName() + " (" + actor.getName() + ")</li>";
             }
             message += "</ul>" + Messages.getMessage(Messages.CONF_POPUP_REMOVE_SUBSTITUTION_CRITERIA, pageContext);
             getForm().addAttribute("id", "substitutionCriteriasForm");
@@ -148,11 +139,11 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
     private class SubstitutionCriteriaTableBuilder {
         private final PageContext pageContext;
 
-        public SubstitutionCriteriaTableBuilder(PageContext pageContext) throws JspException {
+        public SubstitutionCriteriaTableBuilder(PageContext pageContext) {
             this.pageContext = pageContext;
         }
 
-        public Table buildTable() throws JspException {
+        public Table buildTable() {
             Table table = new Table();
             table.setClass(Resources.CLASS_PERMISSION_TABLE);
             table.addElement(createTableHeaderTR());
@@ -180,7 +171,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             return tr;
         }
 
-        private TR createTR(SubstitutionCriteria substitutionCriteria, boolean enabled) throws JspException {
+        private TR createTR(SubstitutionCriteria substitutionCriteria, boolean enabled) {
             TR tr = new TR();
             Input input = new Input(Input.CHECKBOX, SubstitutionCriteriasForm.IDS_INPUT_NAME, String.valueOf(substitutionCriteria.getId()));
             input.setChecked(enabled);
@@ -192,7 +183,8 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
                 editHref.addElement(substitutionCriteria.getName());
                 tr.addElement(new TD(editHref).setClass(Resources.CLASS_LIST_TABLE_TD));
             }
-            tr.addElement(new TD(Messages.getMessage(substitutionCriteria.getLabelKey(), pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
+            String label = Delegates.getSystemService().getLocalized(getUser(), substitutionCriteria.getClass().getName());
+            tr.addElement(new TD(label).setClass(Resources.CLASS_LIST_TABLE_TD));
             tr.addElement(new TD(substitutionCriteria.getConf()).setClass(Resources.CLASS_LIST_TABLE_TD));
             return tr;
         }

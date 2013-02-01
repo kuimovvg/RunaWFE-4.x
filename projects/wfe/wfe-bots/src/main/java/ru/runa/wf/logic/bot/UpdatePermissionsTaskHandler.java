@@ -28,6 +28,7 @@ import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsSettings;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsXmlParser;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
+import ru.runa.wfe.os.OrgFunction;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -62,8 +63,7 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
             }
         }
         if (allowed) {
-            Long actorCode = user.getCode();
-            List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions(), actorCode);
+            List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions());
             AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
             List<Collection<Permission>> allPermissions = Lists.newArrayListWithExpectedSize(executors.size());
             Identifiable identifiable = Delegates.getExecutionService().getProcess(user, task.getProcessId());
@@ -78,10 +78,10 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
         return null;
     }
 
-    private List<? extends Executor> evaluateOrgFunctions(IVariableProvider variableProvider, List<String> orgFunctions, Long actorToSubstituteCode) {
+    private List<? extends Executor> evaluateOrgFunctions(IVariableProvider variableProvider, List<OrgFunction> orgFunctions) {
         List<Executor> executors = Lists.newArrayList();
-        for (String orgFunction : orgFunctions) {
-            executors.addAll(OrgFunctionHelper.evaluateOrgFunction(variableProvider, orgFunction, actorToSubstituteCode));
+        for (OrgFunction orgFunction : orgFunctions) {
+            executors.addAll(OrgFunctionHelper.evaluateOrgFunction(orgFunction, variableProvider));
         }
         return executors;
     }
@@ -94,7 +94,7 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
         } else if (Method.delete == method) {
             return Permission.subtractPermissions(oldPermissions, permissions);
         } else {
-            // should never happend
+            // should never happened
             throw new InternalApplicationException("Unknown method provided: " + method);
         }
     }

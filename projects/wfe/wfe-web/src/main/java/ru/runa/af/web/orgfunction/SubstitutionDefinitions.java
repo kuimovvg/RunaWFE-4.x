@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.os.ParamRenderer;
@@ -43,8 +44,9 @@ public class SubstitutionDefinitions {
             Document document = XmlUtils.parseWithoutValidation(is);
             List<Element> oElements = document.getRootElement().elements("function");
             for (Element oElement : oElements) {
-                FunctionDef fDef = new FunctionDef(oElement.attributeValue("messageKey"), oElement.attributeValue("message"),
-                        oElement.attributeValue("class"));
+                String className = oElement.attributeValue("class");
+                String label = Delegates.getSystemService().getLocalized(null, className);
+                FunctionDef fDef = new FunctionDef(className, label);
                 List<Element> pElements = oElement.elements("param");
                 for (Element pElement : pElements) {
                     String rendererClassName = pElement.attributeValue("renderer");

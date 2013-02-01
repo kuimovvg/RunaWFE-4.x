@@ -90,8 +90,8 @@ public class TaskProcessIdTDBuilder implements TDBuilder, Serializable {
 
     @Override
     public String getValue(Object object, Env env) {
-        WfTask taskStub = (WfTask) object;
-        return Long.toString(taskStub.getProcessId());
+        WfTask task = (WfTask) object;
+        return task.getProcessId().toString();
     }
 
     @Override

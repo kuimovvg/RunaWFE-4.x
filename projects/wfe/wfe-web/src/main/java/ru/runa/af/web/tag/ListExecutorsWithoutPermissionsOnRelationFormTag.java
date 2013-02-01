@@ -19,10 +19,7 @@ package ru.runa.af.web.tag;
 
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.af.web.action.GrantPermissionOnRelationAction;
-import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 
@@ -33,7 +30,8 @@ import com.google.common.collect.Maps;
  * 
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
- * @jsp.tag name = "listExecutorsWithoutPermissionsOnRelationForm" body-content = "JSP"
+ * @jsp.tag name = "listExecutorsWithoutPermissionsOnRelationForm" body-content
+ *          = "JSP"
  */
 public class ListExecutorsWithoutPermissionsOnRelationFormTag extends ListExecutorsWithoutPermissionsBase {
 
@@ -47,13 +45,8 @@ public class ListExecutorsWithoutPermissionsOnRelationFormTag extends ListExecut
     }
 
     @Override
-    protected Identifiable getIdentifiable() throws JspException {
-        try {
-            RelationService relationService = Delegates.getRelationService();
-            return relationService.getRelation(getUser(), getRelationName());
-        } catch (Exception e) {
-            throw new JspException(e);
-        }
+    protected Identifiable getIdentifiable() {
+        return Delegates.getRelationService().getRelation(getUser(), getRelationName());
     }
 
     @Override

@@ -4,8 +4,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TH;
 import org.apache.ecs.html.TR;
@@ -42,48 +40,40 @@ public class ShowTasksHistoryTag extends ProcessBaseFormTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
-        try {
-            ExecutionService executionService = Delegates.getExecutionService();
-            ProcessLogFilter filter = new ProcessLogFilter(getIdentifiableId());
-            filter.setIncludeSubprocessLogs(true);
-            ProcessLogs logs = executionService.getProcessLogs(getUser(), filter);
-            List<TR> rows = processLogs(logs);
-            HeaderBuilder tasksHistoryHeaderBuilder = new TasksHistoryHeaderBuilder();
-            RowBuilder rowBuilder = new TRRowBuilder(rows);
-            TableBuilder tableBuilder = new TableBuilder();
-            tdFormElement.addElement(tableBuilder.build(tasksHistoryHeaderBuilder, rowBuilder));
-        } catch (Exception e) {
-            handleException(e);
-        }
+    protected void fillFormData(TD tdFormElement) {
+        ExecutionService executionService = Delegates.getExecutionService();
+        ProcessLogFilter filter = new ProcessLogFilter(getIdentifiableId());
+        filter.setIncludeSubprocessLogs(true);
+        ProcessLogs logs = executionService.getProcessLogs(getUser(), filter);
+        List<TR> rows = processLogs(logs);
+        HeaderBuilder tasksHistoryHeaderBuilder = new TasksHistoryHeaderBuilder();
+        RowBuilder rowBuilder = new TRRowBuilder(rows);
+        TableBuilder tableBuilder = new TableBuilder();
+        tdFormElement.addElement(tableBuilder.build(tasksHistoryHeaderBuilder, rowBuilder));
     }
 
-    public List<TR> processLogs(ProcessLogs logs) throws Exception {
-        try {
-            List<TR> result = Lists.newArrayList();
-            Map<TaskCreateLog, TaskEndLog> taskLogs = logs.getTaskLogs();
-            for (ProcessLog log : logs.getLogs()) {
-                if (log instanceof ProcessStartLog) {
-                    TaskCreateLog createLog = null;
-                    for (TaskCreateLog key : taskLogs.keySet()) {
-                        if (Objects.equal(key.getId(), log.getId())) {
-                            createLog = key;
-                            break;
-                        }
+    public List<TR> processLogs(ProcessLogs logs) {
+        List<TR> result = Lists.newArrayList();
+        Map<TaskCreateLog, TaskEndLog> taskLogs = logs.getTaskLogs();
+        for (ProcessLog log : logs.getLogs()) {
+            if (log instanceof ProcessStartLog) {
+                TaskCreateLog createLog = null;
+                for (TaskCreateLog key : taskLogs.keySet()) {
+                    if (Objects.equal(key.getId(), log.getId())) {
+                        createLog = key;
+                        break;
                     }
-                    TaskEndLog endLog = taskLogs.get(createLog);
-                    result.add(populateTaskRow(createLog, endLog));
                 }
-                if (log instanceof TaskCreateLog) {
-                    TaskCreateLog createLog = (TaskCreateLog) log;
-                    TaskEndLog endLog = taskLogs.get(createLog);
-                    result.add(populateTaskRow(createLog, endLog));
-                }
+                TaskEndLog endLog = taskLogs.get(createLog);
+                result.add(populateTaskRow(createLog, endLog));
             }
-            return result;
-        } catch (Exception e) {
-            throw new JspException(e);
+            if (log instanceof TaskCreateLog) {
+                TaskCreateLog createLog = (TaskCreateLog) log;
+                TaskEndLog endLog = taskLogs.get(createLog);
+                result.add(populateTaskRow(createLog, endLog));
+            }
         }
+        return result;
     }
 
     private TR populateTaskRow(TaskCreateLog createLog, TaskEndLog endLog) {
@@ -136,7 +126,7 @@ public class ShowTasksHistoryTag extends ProcessBaseFormTag {
     }
 
     @Override
-    protected Permission getPermission() throws JspException {
+    protected Permission getPermission() {
         return ProcessPermission.READ;
     }
 

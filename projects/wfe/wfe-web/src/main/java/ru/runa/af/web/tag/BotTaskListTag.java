@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.A;
@@ -77,13 +76,13 @@ public class BotTaskListTag extends TitledFormTag {
     }
 
     @Override
-    public boolean isFormButtonEnabled() throws JspException {
+    public boolean isFormButtonEnabled() {
         AuthorizationService authorizationService = Delegates.getAuthorizationService();
         return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botID)));
         BotService botService = Delegates.getBotService();
         getForm().setEncType(Form.ENC_UPLOAD);

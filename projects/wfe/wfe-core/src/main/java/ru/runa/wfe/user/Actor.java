@@ -90,11 +90,6 @@ public class Actor extends Executor {
         this.phone = phone;
     }
 
-    public Actor(Actor actor) {
-        this(actor.getName(), actor.getDescription(), actor.getFullName(), actor.getCode(), actor.getEmail(), actor.getPhone());
-        setId(actor.getId());
-    }
-
     @Transient
     @Override
     public SecuredObjectType getSecuredObjectType() {

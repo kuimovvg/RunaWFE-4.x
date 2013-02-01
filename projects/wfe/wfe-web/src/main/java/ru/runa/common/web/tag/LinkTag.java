@@ -17,8 +17,6 @@
  */
 package ru.runa.common.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
@@ -37,22 +35,22 @@ public class LinkTag extends VisibleTag {
     private static final long serialVersionUID = -6333366313026520201L;
 
     /**
-     * @return true if link must be enabled
-     * @throws JspException
+     * @return true if link must be enabled @
      */
-    protected boolean isLinkEnabled() throws JspException {
+    protected boolean isLinkEnabled() {
         return true;
     }
 
     @Override
-    protected ConcreteElement getEndElement() throws JspException {
+    protected ConcreteElement getEndElement() {
         ConcreteElement concreteElement;
         if (isLinkEnabled()) {
             A link = new A(getHref(), getLinkText());
             link.setClass(Resources.CLASS_LINK);
             concreteElement = link;
         } else {
-            // TODO Mihail insists on hiding links instead disabling. Disabled links now will be hidden
+            // TODO Mihail insists on hiding links instead disabling. Disabled
+            // links now will be hidden
             // concreteElement = new Span(getLinkText());
             // concreteElement.setClass(Resources.CLASS_DISABLED_LINK);
             concreteElement = new StringElement();
@@ -69,21 +67,21 @@ public class LinkTag extends VisibleTag {
         return linkText;
     }
 
-    protected String getHref() throws JspException {
+    protected String getHref() {
         return href;
     }
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
      */
-    public void setForward(String forward) throws JspException {
+    public void setForward(String forward) {
         href = Commons.getForwardUrl(forward, pageContext, PortletUrlType.Action);
     }
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
      */
-    public void setHref(String href) throws JspException {
+    public void setHref(String href) {
         this.href = Commons.getActionUrl(href, pageContext, PortletUrlType.Render);
     }
 
@@ -95,7 +93,7 @@ public class LinkTag extends VisibleTag {
     }
 
     @Override
-    protected ConcreteElement getStartElement() throws JspException {
+    protected ConcreteElement getStartElement() {
         return new StringElement();
     }
 }

@@ -26,6 +26,8 @@ import com.google.common.base.Throwables;
 @DiscriminatorValue(value = "T")
 public class Timer extends Job {
     private static Log log = LogFactory.getLog(Timer.class);
+    public static final String ESCALATION_NAME = "__ESCALATION";
+
     private String repeatDurationString;
     private String outTransitionName;
 

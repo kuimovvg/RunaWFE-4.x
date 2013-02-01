@@ -95,7 +95,7 @@ public class ExecutorLogic extends CommonLogic {
     }
 
     public void update(User user, Executor executor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException {
-        executor = checkPermissionsOnExecutor(user, executor, ExecutorPermission.UPDATE);
+        checkPermissionsOnExecutor(user, executor, ExecutorPermission.UPDATE);
         executorDAO.update(executor);
     }
 
@@ -134,7 +134,7 @@ public class ExecutorLogic extends CommonLogic {
 
     public void remove(User user, List<Long> ids) throws ExecutorDoesNotExistException, AuthorizationException {
         List<Executor> executors = getExecutors(user, ids);
-        executors = checkPermissionsOnExecutors(user, executors, ExecutorPermission.UPDATE);
+        checkPermissionsOnExecutors(user, executors, ExecutorPermission.UPDATE);
         for (Executor executor : executors) {
             remove(executor);
         }
@@ -172,7 +172,7 @@ public class ExecutorLogic extends CommonLogic {
 
     private void postCreateExecutor(User user, Executor executor, Collection<Permission> selfPermissions) {
         Collection<Permission> p = executor.getSecuredObjectType().getNoPermission().getAllPermissions();
-        permissionDAO.setPermissions(user, p, executor);
+        permissionDAO.setPermissions(user.getActor(), p, executor);
         permissionDAO.setPermissions(executor, selfPermissions, executor);
     }
 
@@ -190,8 +190,8 @@ public class ExecutorLogic extends CommonLogic {
 
     private void addExecutorsToGroupInternal(User user, List<? extends Executor> executors, Group group) throws AuthorizationException,
             ExecutorDoesNotExistException, ExecutorAlreadyInGroupException {
-        executors = checkPermissionsOnExecutors(user, executors, Permission.READ);
-        group = checkPermissionsOnExecutor(user, group, GroupPermission.ADD_TO_GROUP);
+        checkPermissionsOnExecutors(user, executors, Permission.READ);
+        checkPermissionsOnExecutor(user, group, GroupPermission.ADD_TO_GROUP);
         executorDAO.addExecutorsToGroup(executors, group);
     }
 
@@ -209,14 +209,14 @@ public class ExecutorLogic extends CommonLogic {
 
     private void addExecutorToGroupsInternal(User user, Executor executor, List<Group> groups) throws AuthorizationException,
             ExecutorDoesNotExistException, ExecutorAlreadyInGroupException {
-        executor = checkPermissionsOnExecutor(user, executor, Permission.READ);
-        groups = checkPermissionsOnExecutors(user, groups, GroupPermission.ADD_TO_GROUP);
+        checkPermissionsOnExecutor(user, executor, Permission.READ);
+        checkPermissionsOnExecutors(user, groups, GroupPermission.ADD_TO_GROUP);
         executorDAO.addExecutorToGroups(executor, groups);
     }
 
     public List<Executor> getGroupChildren(User user, Group group, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException {
-        group = checkPermissionsOnExecutor(user, group, isExclude ? GroupPermission.ADD_TO_GROUP : GroupPermission.LIST_GROUP);
+        checkPermissionsOnExecutor(user, group, isExclude ? GroupPermission.ADD_TO_GROUP : GroupPermission.LIST_GROUP);
         BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createGroupChildrenCompiler(user, group, batchPresentation,
                 !isExclude);
         List<Executor> executorList = compiler.getBatch();
@@ -225,20 +225,20 @@ public class ExecutorLogic extends CommonLogic {
 
     public int getGroupChildrenCount(User user, Group group, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException {
-        group = checkPermissionsOnExecutor(user, group, isExclude ? GroupPermission.ADD_TO_GROUP : GroupPermission.LIST_GROUP);
+        checkPermissionsOnExecutor(user, group, isExclude ? GroupPermission.ADD_TO_GROUP : GroupPermission.LIST_GROUP);
         BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createGroupChildrenCompiler(user, group, batchPresentation,
                 !isExclude);
         return compiler.getCount();
     }
 
     public List<Actor> getGroupActors(User user, Group group) throws AuthorizationException, ExecutorDoesNotExistException {
-        group = checkPermissionsOnExecutor(user, group, GroupPermission.LIST_GROUP);
+        checkPermissionsOnExecutor(user, group, GroupPermission.LIST_GROUP);
         Set<Actor> groupActors = executorDAO.getGroupActors(group);
         return filterIdentifiable(user, Lists.newArrayList(groupActors), Permission.READ);
     }
 
     public List<Executor> getAllExecutorsFromGroup(User user, Group group) throws ExecutorDoesNotExistException, AuthorizationException {
-        group = checkPermissionsOnExecutor(user, group, GroupPermission.LIST_GROUP);
+        checkPermissionsOnExecutor(user, group, GroupPermission.LIST_GROUP);
         return filterIdentifiable(user, executorDAO.getAllNonGroupExecutorsFromGroup(group), Permission.READ);
     }
 
@@ -266,15 +266,15 @@ public class ExecutorLogic extends CommonLogic {
         // throw new AuthorizationException("Executor " + executor.getName()
         // + " can not be removed from group " + group.getName());
         // }
-        group = checkPermissionsOnExecutor(user, group, GroupPermission.REMOVE_FROM_GROUP);
-        executors = checkPermissionsOnExecutors(user, executors, Permission.READ);
+        checkPermissionsOnExecutor(user, group, GroupPermission.REMOVE_FROM_GROUP);
+        checkPermissionsOnExecutors(user, executors, Permission.READ);
         executorDAO.removeExecutorsFromGroup(executors, group);
     }
 
     public void removeExecutorFromGroups(User user, Executor executor, List<Group> groups) throws ExecutorNotInGroupException,
             ExecutorDoesNotExistException, AuthorizationException {
-        executor = checkPermissionsOnExecutor(user, executor, Permission.READ);
-        groups = checkPermissionsOnExecutors(user, groups, GroupPermission.REMOVE_FROM_GROUP);
+        checkPermissionsOnExecutor(user, executor, Permission.READ);
+        checkPermissionsOnExecutors(user, groups, GroupPermission.REMOVE_FROM_GROUP);
         executorDAO.removeExecutorFromGroups(executor, groups);
     }
 
@@ -282,8 +282,8 @@ public class ExecutorLogic extends CommonLogic {
             ExecutorDoesNotExistException, AuthorizationException {
         Executor executor = executorDAO.getExecutor(executorId);
         List<Group> groups = executorDAO.getGroups(groupIds);
-        executor = checkPermissionsOnExecutor(user, executor, Permission.READ);
-        groups = checkPermissionsOnExecutors(user, groups, GroupPermission.REMOVE_FROM_GROUP);
+        checkPermissionsOnExecutor(user, executor, Permission.READ);
+        checkPermissionsOnExecutors(user, groups, GroupPermission.REMOVE_FROM_GROUP);
         executorDAO.removeExecutorFromGroups(executor, groups);
     }
 
@@ -304,14 +304,14 @@ public class ExecutorLogic extends CommonLogic {
 
     public void setStatus(User user, Long actorId, boolean isActive) throws AuthorizationException, ExecutorDoesNotExistException {
         Actor actor = executorDAO.getActor(actorId);
-        actor = checkPermissionsOnExecutor(user, actor, ActorPermission.UPDATE_STATUS);
+        checkPermissionsOnExecutor(user, actor, ActorPermission.UPDATE_STATUS);
         executorDAO.setStatus(actor, isActive);
         callSetStatusHandlers(actor, isActive);
     }
 
     public List<Group> getExecutorGroups(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException {
-        executor = checkPermissionsOnExecutor(user, executor, Permission.READ);
+        checkPermissionsOnExecutor(user, executor, Permission.READ);
         BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createExecutorGroupsCompiler(user, executor, batchPresentation,
                 !isExclude);
         List<Group> executorList = compiler.getBatch();
@@ -320,15 +320,15 @@ public class ExecutorLogic extends CommonLogic {
 
     public int getExecutorGroupsCount(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude)
             throws ExecutorDoesNotExistException, AuthorizationException {
-        executor = checkPermissionsOnExecutor(user, executor, Permission.READ);
+        checkPermissionsOnExecutor(user, executor, Permission.READ);
         BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createExecutorGroupsCompiler(user, executor, batchPresentation,
                 !isExclude);
         return compiler.getCount();
     }
 
     public boolean isExecutorInGroup(User user, Executor executor, Group group) throws ExecutorDoesNotExistException, AuthorizationException {
-        executor = checkPermissionsOnExecutor(user, executor, Permission.READ);
-        group = checkPermissionsOnExecutor(user, group, Permission.READ);
+        checkPermissionsOnExecutor(user, executor, Permission.READ);
+        checkPermissionsOnExecutor(user, group, Permission.READ);
         return executorDAO.isExecutorInGroup(executor, group);
     }
 

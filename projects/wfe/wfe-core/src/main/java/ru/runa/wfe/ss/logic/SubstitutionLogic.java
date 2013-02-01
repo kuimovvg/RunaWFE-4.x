@@ -82,7 +82,7 @@ public class SubstitutionLogic extends CommonLogic {
 
     private Substitution fillDefaultSubstitution(Substitution substitution) {
         substitution.setEnabled(false);
-        substitution.setSubstitutionOrgFunction("");
+        substitution.setOrgFunction("");
         return substitution;
     }
 

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
 
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Permission;
@@ -61,9 +60,6 @@ public class BatchPresentationHibernateCompiler {
     /**
      * Creates query to load data according to {@link BatchPresentation}.
      * 
-     * @param enablePaging
-     *            Flag, equals true, if paging must be used in query; false
-     *            otherwise.
      * @return {@link Query} to load data.
      */
     public <T extends Object> List<T> getBatch() {
@@ -83,8 +79,6 @@ public class BatchPresentationHibernateCompiler {
     /**
      * Creates query to load data according to {@link BatchPresentation}.
      * 
-     * @param session
-     *            {@link Session} for query creation.
      * @param enablePaging
      *            Flag, equals true, if paging must be used in query; false
      *            otherwise.
@@ -126,7 +120,7 @@ public class BatchPresentationHibernateCompiler {
      * @param enablePaging
      *            Flag, equals true, if paging must be used in query; false
      *            otherwise.
-     * @return {@link Query} to load data.
+     * @return {@link Query} to load data. TODO unused
      */
     public List<Number> getIdentities(Collection<?> owners, String ownersDBPath, boolean enablePaging) {
         parameters = new HibernateCompilerParameters(owners, ownersDBPath, enablePaging, false, null, true);

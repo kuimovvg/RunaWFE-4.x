@@ -17,7 +17,6 @@
  */
 package ru.runa.common.web.tag;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 
 import org.apache.ecs.ConcreteElement;
@@ -53,7 +52,7 @@ public abstract class TitledFormTag extends FormTag {
     private String valign;
 
     @Override
-    protected ConcreteElement getStartElement() throws JspException {
+    protected ConcreteElement getStartElement() {
         StringBuilder sb = new StringBuilder();
         sb.append(new Div().createStartTag());
         Table table = new Table();
@@ -85,7 +84,7 @@ public abstract class TitledFormTag extends FormTag {
     }
 
     @Override
-    protected ConcreteElement getEndElement() throws JspException {
+    protected ConcreteElement getEndElement() {
         StringBuilder sb = new StringBuilder(super.getEndElement().toString());
         sb.append(new TD().createEndTag());
         sb.append(new TR().createEndTag());
@@ -95,12 +94,12 @@ public abstract class TitledFormTag extends FormTag {
     }
 
     @Override
-    protected int doEndTagReturnedValue() throws JspException {
+    protected int doEndTagReturnedValue() {
         return Tag.EVAL_PAGE;
     }
 
     @Override
-    protected int doStartTagReturnedValue() throws JspException {
+    protected int doStartTagReturnedValue() {
         int result;
         if (isVisible()) {
             result = Tag.EVAL_BODY_INCLUDE;

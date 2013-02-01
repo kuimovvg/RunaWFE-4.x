@@ -17,7 +17,6 @@
  */
 package ru.runa.common.web;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 /**
@@ -333,14 +332,10 @@ public class Messages {
     }
 
     public static String getMessage(String key, PageContext pageContext) {
-        try {
-            String value = Commons.getMessage(key, pageContext);
-            if (value == null) {
-                value = '!' + key + '!';
-            }
-            return value;
-        } catch (JspException e) {
-            return '!' + key + '!';
+        String value = Commons.getMessage(key, pageContext);
+        if (value == null) {
+            value = '!' + key + '!';
         }
+        return value;
     }
 }

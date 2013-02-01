@@ -38,9 +38,9 @@ public class TaskUrlStrategy implements ItemUrlStrategy {
 
     @Override
     public String getUrl(String baseUrl, Object item) {
-        WfTask taskStub = (WfTask) item;
+        WfTask task = (WfTask) item;
         Map<String, Object> map = Maps.newHashMap();
-        map.put(IdForm.ID_INPUT_NAME, taskStub.getId());
+        map.put(IdForm.ID_INPUT_NAME, task.getId());
         return Commons.getActionUrl(baseUrl, map, pageContext, PortletUrlType.Action);
     }
 }

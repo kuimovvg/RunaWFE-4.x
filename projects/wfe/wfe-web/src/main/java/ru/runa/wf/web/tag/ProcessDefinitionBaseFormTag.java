@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
@@ -34,16 +32,12 @@ public abstract class ProcessDefinitionBaseFormTag extends IdentifiableFormTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Identifiable getIdentifiable() throws JspException {
+    protected Identifiable getIdentifiable() {
         return getDefinition();
     }
 
     protected WfDefinition getDefinition() {
-        try {
-            DefinitionService definitionService = Delegates.getDefinitionService();
-            return definitionService.getProcessDefinition(getUser(), getIdentifiableId());
-        } catch (Exception e) {
-            return null;
-        }
+        DefinitionService definitionService = Delegates.getDefinitionService();
+        return definitionService.getProcessDefinition(getUser(), getIdentifiableId());
     }
 }
