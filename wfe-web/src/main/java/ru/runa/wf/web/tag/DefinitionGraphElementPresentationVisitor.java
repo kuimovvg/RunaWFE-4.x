@@ -89,7 +89,7 @@ public class DefinitionGraphElementPresentationVisitor extends SubprocessesGraph
             return;
         }
         Map<String, Object> params = Maps.newHashMap();
-        params.put(IdForm.ID_INPUT_NAME, element.getIds().get(0));
+        params.put(IdForm.ID_INPUT_NAME, element.getSubprocessIds().get(0));
         String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, params, pageContext, PortletUrlType.Render);
         Area area = new Area("RECT", element.getGraphConstraints());
         area.setHref(url);

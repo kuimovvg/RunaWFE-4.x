@@ -17,13 +17,94 @@
  */
 package ru.runa.wfe.graph.view;
 
+import java.io.Serializable;
+
+import ru.runa.wfe.graph.image.model.NodeModel;
+import ru.runa.wfe.lang.Node;
+import ru.runa.wfe.lang.NodeType;
+
 /**
  * Interface for process definition graph elements presentation components.
  */
-public interface GraphElementPresentation {
+public class GraphElementPresentation implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String nodeId;
+    private NodeType nodeType;
+    private String name;
+    private int[] graphConstraints;
+
+    /**
+     * Some additional data, assigned to graph element. This data is differs in
+     * graph elements, returned by different kinds of requests. May be null if
+     * not set.
+     */
+    private Object data;
+
+    /**
+     * Initializes data.
+     */
+    public void initialize(Node node, NodeModel model) {
+        this.nodeId = node.getNodeId();
+        this.nodeType = node.getNodeType();
+        this.name = node.getName();
+    }
+
     /**
      * Applies operation to element presentation component.
-     * @param visitor Operation, applied to component.
+     * 
+     * @param visitor
+     *            Operation, applied to component.
      */
-    public void visit(GraphElementPresentationVisitor visitor);
+    public void visit(GraphElementPresentationVisitor visitor) {
+        visitor.onGraphElement(this);
+    }
+
+    /**
+     * Graph element ID.
+     */
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    /**
+     * Graph element name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    public NodeType getNodeType() {
+        return nodeType;
+    }
+
+    /**
+     * Graph element position constraints. For rectangles represents upper-left
+     * and bottom-right corners.
+     */
+    public int[] getGraphConstraints() {
+        return graphConstraints;
+    }
+
+    /**
+     * Graph element position constraints. For rectangles represents upper-left
+     * and bottom-right corners.
+     */
+    public void setGraphConstraints(int[] graphConstraints) {
+        this.graphConstraints = graphConstraints;
+    }
+
+    /**
+     * Some additional data, assigned to graph element.
+     */
+    public Object getData() {
+        return data;
+    }
+
+    /**
+     * Some additional data, assigned to graph element.
+     */
+    public void setData(Object data) {
+        this.data = data;
+    }
+
 }
