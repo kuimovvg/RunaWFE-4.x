@@ -54,7 +54,6 @@ public class CommonLogic {
     @Autowired
     protected LocalizationDAO localizationDAO;
 
-    // FIXME return void
     protected <T extends Executor> T checkPermissionsOnExecutor(User user, T executor, Permission permission) throws AuthorizationException,
             ExecutorDoesNotExistException {
         if (executor.getName().equals(SystemExecutors.PROCESS_STARTER_NAME) && permission.equals(Permission.READ)) {
@@ -122,7 +121,7 @@ public class CommonLogic {
     @SuppressWarnings("unchecked")
     public <T extends Object> List<T> getPersistentObjects(User user, BatchPresentation batchPresentation, Permission permission,
             SecuredObjectType[] securedObjectTypes, boolean enablePaging) throws AuthenticationException {
-        List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user);
+        List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user.getActor());
         return (List<T>) permissionDAO.getPersistentObjects(actorAndGroupsIds, batchPresentation, permission, securedObjectTypes, enablePaging);
     }
 
@@ -147,7 +146,7 @@ public class CommonLogic {
      */
     public int getPersistentObjectCount(User user, BatchPresentation batchPresentation, Permission permission, SecuredObjectType[] securedObjectTypes)
             throws AuthenticationException {
-        List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user);
+        List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user.getActor());
         return permissionDAO.getPersistentObjectCount(actorAndGroupsIds, batchPresentation, permission, securedObjectTypes);
     }
 
@@ -159,6 +158,11 @@ public class CommonLogic {
             result.put(localization.getName(), localization.getValue());
         }
         return result;
+    }
+
+    public String getLocalized(User user, String name) {
+        // TODO permissions
+        return localizationDAO.getLocalized(name);
     }
 
     public void saveLocalizations(User user, Map<String, String> localizations) {

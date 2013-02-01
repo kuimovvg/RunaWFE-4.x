@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -46,17 +44,17 @@ public class CreateRelationFormTag extends FormTag {
     }
 
     @Override
-    protected boolean isFormButtonEnabled() throws JspException {
+    protected boolean isFormButtonEnabled() {
         return true;
     }
 
     @Override
-    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) throws JspException {
+    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
         return true;
     }
 
     @Override
-    protected boolean isFormButtonVisible() throws JspException {
+    protected boolean isFormButtonVisible() {
         return true;
     }
 
@@ -85,7 +83,7 @@ public class CreateRelationFormTag extends FormTag {
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         Table table = new Table();
         TR tr = new TR();
         tr.addElement(new TD(Messages.getMessage(Messages.LABEL_CREATE_RELATION_FROM, pageContext)));

@@ -424,24 +424,24 @@ public class AdminScriptRunner {
     }
 
     public void addPermissionsOnDefinition(Element element) throws Exception {
-        for (WfDefinition definition : getProcessDefinitionStubs(element)) {
+        for (WfDefinition definition : getProcessDefinitions(element)) {
             addPermissionOnIdentifiable(element, definition);
         }
     }
 
     public void setPermissionsOnDefinition(Element element) throws Exception {
-        for (WfDefinition definition : getProcessDefinitionStubs(element)) {
+        for (WfDefinition definition : getProcessDefinitions(element)) {
             setPermissionOnIdentifiable(element, definition);
         }
     }
 
     public void removePermissionsOnDefinition(Element element) throws Exception {
-        for (WfDefinition definition : getProcessDefinitionStubs(element)) {
+        for (WfDefinition definition : getProcessDefinitions(element)) {
             removePermissionOnIdentifiable(element, definition);
         }
     }
 
-    private Set<WfDefinition> getProcessDefinitionStubs(Element element) throws Exception {
+    private Set<WfDefinition> getProcessDefinitions(Element element) throws Exception {
         Set<WfDefinition> result = new HashSet<WfDefinition>();
         for (String name : getNestedNamedIdentityNames(element, "ProcessDefinition", namedProcessDefinitionIdentities)) {
             result.add(definitionLogic.getLatestProcessDefinition(user, name));
@@ -506,7 +506,7 @@ public class AdminScriptRunner {
     }
 
     public void removeAllPermissionsFromProcessDefinition(Element element) throws Exception {
-        for (WfDefinition definition : getProcessDefinitionStubs(element)) {
+        for (WfDefinition definition : getProcessDefinitions(element)) {
             removeAllPermissionOnIdentifiable(definition);
         }
     }
@@ -795,7 +795,7 @@ public class AdminScriptRunner {
             for (Substitution substitution : substitutionLogic.getSubstitutions(user, actor.getId())) {
                 for (int i = 0; i < elements.getLength(); ++i) {
                     if (isCriteriaMatch(substitution.getCriteria(), criterias[i])
-                            && isStringMatch(substitution.getSubstitutionOrgFunction(), tuneOrgFunc(orgFuncs[i], actor))) {
+                            && isStringMatch(substitution.getOrgFunction(), tuneOrgFunc(orgFuncs[i], actor))) {
                         retVal.add(substitution);
                         break;
                     }
@@ -812,12 +812,12 @@ public class AdminScriptRunner {
             return;
         }
         for (int i = 0; i < elements.getLength(); ++i) {
-            String orgFunc = null;
+            String orgFunction = null;
             SubstitutionCriteria criteria = null;
             boolean isEnabled = true;
             boolean isFirst = true;
             if (((Element) elements.item(i)).hasAttribute(ORGFUNC_ATTRIBUTE_NAME)) {
-                orgFunc = ((Element) elements.item(i)).getAttribute(ORGFUNC_ATTRIBUTE_NAME);
+                orgFunction = ((Element) elements.item(i)).getAttribute(ORGFUNC_ATTRIBUTE_NAME);
             }
             if (((Element) elements.item(i)).hasAttribute(CRITERIA_ATTRIBUTE_NAME)) {
                 criteria = substitutionLogic.getSubstitutionCriteria(user,
@@ -830,11 +830,11 @@ public class AdminScriptRunner {
                 isFirst = Boolean.parseBoolean(((Element) elements.item(i)).getAttribute(ISFIRST_ATTRIBUTE_NAME));
             }
             Substitution sub = null;
-            if (orgFunc == null) {
+            if (orgFunction == null) {
                 sub = new TerminatorSubstitution();
             } else {
                 sub = new Substitution();
-                sub.setSubstitutionOrgFunction(orgFunc);
+                sub.setOrgFunction(orgFunction);
             }
             sub.setCriteria(criteria);
             sub.setEnabled(isEnabled);
@@ -856,21 +856,21 @@ public class AdminScriptRunner {
             int subIdx = 0;
             for (Substitution sub : firstSub) {
                 Substitution clone = (Substitution) sub.clone();
-                clone.setSubstitutionOrgFunction(tuneOrgFunc(clone.getSubstitutionOrgFunction(), actor));
+                clone.setOrgFunction(tuneOrgFunc(clone.getOrgFunction(), actor));
                 clone.setPosition(subIdx++);
                 clone.setActorId(actor.getId());
                 createdSubstitutions.add(clone);
             }
             for (Substitution sub : existing) {
                 Substitution clone = (Substitution) sub.clone();
-                clone.setSubstitutionOrgFunction(tuneOrgFunc(clone.getSubstitutionOrgFunction(), actor));
+                clone.setOrgFunction(tuneOrgFunc(clone.getOrgFunction(), actor));
                 clone.setPosition(subIdx++);
                 clone.setActorId(actor.getId());
                 createdSubstitutions.add(clone);
             }
             for (Substitution sub : lastSub) {
                 Substitution clone = (Substitution) sub.clone();
-                clone.setSubstitutionOrgFunction(tuneOrgFunc(clone.getSubstitutionOrgFunction(), actor));
+                clone.setOrgFunction(tuneOrgFunc(clone.getOrgFunction(), actor));
                 clone.setPosition(subIdx++);
                 clone.setActorId(actor.getId());
                 createdSubstitutions.add(clone);

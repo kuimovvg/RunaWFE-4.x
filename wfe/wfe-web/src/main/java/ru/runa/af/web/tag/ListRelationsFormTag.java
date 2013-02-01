@@ -19,8 +19,6 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.action.RemoveRelationGroupAction;
@@ -56,33 +54,29 @@ public class ListRelationsFormTag extends BatchReturningTitledFormTag {
     boolean isFormButtonVisible;
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
-        try {
-            RelationService relationService = Delegates.getRelationService();
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, RelationsGroupSecure.INSTANCE);
-            List<Relation> relationGroups = relationService.getRelations(getUser(), getBatchPresentation());
+    protected void fillFormElement(TD tdFormElement) {
+        RelationService relationService = Delegates.getRelationService();
+        AuthorizationService authorizationService = Delegates.getAuthorizationService();
+        isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, RelationsGroupSecure.INSTANCE);
+        List<Relation> relationGroups = relationService.getRelations(getUser(), getBatchPresentation());
 
-            TableBuilder tableBuilder = new TableBuilder();
+        TableBuilder tableBuilder = new TableBuilder();
 
-            TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
+        TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
 
-                @Override
-                protected boolean isEnabled(Object object, Env env) {
-                    return isFormButtonVisible;
-                }
-            };
+            @Override
+            protected boolean isEnabled(Object object, Env env) {
+                return isFormButtonVisible;
+            }
+        };
 
-            TDBuilder[] builders = getBuilders(new TDBuilder[] { checkboxBuilder }, getBatchPresentation(), new TDBuilder[] {});
+        TDBuilder[] builders = getBuilders(new TDBuilder[] { checkboxBuilder }, getBatchPresentation(), new TDBuilder[] {});
 
-            RowBuilder rowBuilder = new ReflectionRowBuilder(relationGroups, getBatchPresentation(), pageContext,
-                    WebResources.ACTION_MAPPING_MANAGE_RELATION, getReturnAction(), new RelationURLStrategy(), builders);
-            HeaderBuilder headerBuilder = new SortingHeaderBuilder(getBatchPresentation(), 1, 0, getReturnAction(), pageContext);
+        RowBuilder rowBuilder = new ReflectionRowBuilder(relationGroups, getBatchPresentation(), pageContext,
+                WebResources.ACTION_MAPPING_MANAGE_RELATION, getReturnAction(), new RelationURLStrategy(), builders);
+        HeaderBuilder headerBuilder = new SortingHeaderBuilder(getBatchPresentation(), 1, 0, getReturnAction(), pageContext);
 
-            tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
-        } catch (Exception e) {
-            handleException(e);
-        }
+        tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
     }
 
     @Override
@@ -91,17 +85,17 @@ public class ListRelationsFormTag extends BatchReturningTitledFormTag {
     }
 
     @Override
-    protected boolean isFormButtonEnabled() throws JspException {
+    protected boolean isFormButtonEnabled() {
         return isFormButtonVisible;
     }
 
     @Override
-    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) throws JspException {
+    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
         return isFormButtonVisible;
     }
 
     @Override
-    protected boolean isFormButtonVisible() throws JspException {
+    protected boolean isFormButtonVisible() {
         return isFormButtonVisible;
     }
 

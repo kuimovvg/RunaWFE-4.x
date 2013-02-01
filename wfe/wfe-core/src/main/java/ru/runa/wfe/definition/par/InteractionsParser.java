@@ -76,8 +76,8 @@ public class InteractionsParser implements ProcessArchiveParser {
                 byte[] css = archive.getFileData(IFileDataProvider.FORM_CSS_FILE_NAME);
                 Interaction interaction = new Interaction(typeName, formCode, validationXml, jsValidationEnabled, scriptJs, css);
                 if (validationXml != null) {
-                    List<String> variableNames = ValidationXmlParser.readVariableNames(validationFileName, validationXml);
-                    List<String> requiredVarNames = ValidationXmlParser.readRequiredVariableNames(validationXml);
+                    List<String> variableNames = ValidationXmlParser.readVariableNames(processDefinition, validationFileName, validationXml);
+                    List<String> requiredVarNames = ValidationXmlParser.readRequiredVariableNames(processDefinition, validationXml);
                     for (String varName : requiredVarNames) {
                         interaction.getRequiredVariableNames().add(varName);
                     }
@@ -86,8 +86,8 @@ public class InteractionsParser implements ProcessArchiveParser {
                         if (variableDefinition == null) {
                             SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlane(name);
                             if (swimlaneDefinition == null) {
-                                throw new InvalidDefinitionException("Variable '" + name + "' is defined in '" + validationFileName
-                                        + "' but not defined in " + processDefinition);
+                                throw new InvalidDefinitionException(processDefinition.getName(), "Variable '" + name + "' is defined in '"
+                                        + validationFileName + "' but not defined in " + processDefinition);
                             }
                             variableDefinition = new VariableDefinition();
                             variableDefinition.setName(name);
@@ -100,7 +100,7 @@ public class InteractionsParser implements ProcessArchiveParser {
                 processDefinition.addInteraction(stateId, interaction);
             }
         } catch (Exception e) {
-            throw new InvalidDefinitionException(IFileDataProvider.FORMS_XML_FILE_NAME, e);
+            throw new InvalidDefinitionException(processDefinition.getName(), IFileDataProvider.FORMS_XML_FILE_NAME, e);
         }
     }
 

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.ConcreteElement;
@@ -41,13 +40,10 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
@@ -61,13 +57,8 @@ import com.google.common.collect.Sets;
  */
 public class PermissionTableBuilder {
     private final Identifiable identifiable;
-
     private final User user;
-
     private final PageContext pageContext;
-
-    private AuthorizationService authorizationService;
-
     private List<Permission> allowedPermission;
 
     /**
@@ -76,27 +67,20 @@ public class PermissionTableBuilder {
      */
     private boolean isDisabled;
 
-    public PermissionTableBuilder(Identifiable identifiable, User user, PageContext pageContext) throws JspException {
+    public PermissionTableBuilder(Identifiable identifiable, User user, PageContext pageContext) {
         this.identifiable = identifiable;
         this.user = user;
         this.pageContext = pageContext;
-        try {
-            authorizationService = Delegates.getAuthorizationService();
-            allowedPermission = identifiable.getSecuredObjectType().getAllPermissions();
-            isDisabled = !authorizationService.isAllowed(user, Permission.UPDATE_PERMISSIONS, identifiable);
-        } catch (AuthorizationException e) {
-            throw new JspException(e);
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
-        }
+        allowedPermission = identifiable.getSecuredObjectType().getAllPermissions();
+        isDisabled = !Delegates.getAuthorizationService().isAllowed(user, Permission.UPDATE_PERMISSIONS, identifiable);
     }
 
-    public Table buildTable() throws JspException {
+    public Table buildTable() {
         Table table = new Table();
         table.setClass(Resources.CLASS_PERMISSION_TABLE);
         table.addElement(createTableHeaderTR());
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-        List<Executor> executors = authorizationService.getExecutorsWithPermission(user, identifiable, batchPresentation, true);
+        List<Executor> executors = Delegates.getAuthorizationService().getExecutorsWithPermission(user, identifiable, batchPresentation, true);
         for (Executor executor : executors) {
             table.addElement(createTR(executor, new ArrayList<Permission>(), true));
         }
@@ -114,7 +98,7 @@ public class PermissionTableBuilder {
         return tr;
     }
 
-    public TR createTR(Executor executor, List<Permission> unmodifiablePermission, boolean isLink) throws JspException {
+    public TR createTR(Executor executor, List<Permission> unmodifiablePermission, boolean isLink) {
         TR tr = new TR();
         Input input = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, String.valueOf(executor.getId()));
         input.setChecked(true);
@@ -140,8 +124,9 @@ public class PermissionTableBuilder {
         return tr;
     }
 
-    private boolean[] getEnabledPermissions(Executor performer) throws JspException {
-        Set<Permission> executorPermissionsSet = Sets.newHashSet(authorizationService.getOwnPermissions(user, performer, identifiable));
+    private boolean[] getEnabledPermissions(Executor performer) {
+        Set<Permission> executorPermissionsSet = Sets
+                .newHashSet(Delegates.getAuthorizationService().getOwnPermissions(user, performer, identifiable));
         boolean[] enabled = new boolean[allowedPermission.size()];
         for (int i = 0; i < allowedPermission.size(); i++) {
             enabled[i] = executorPermissionsSet.contains(allowedPermission.get(i));

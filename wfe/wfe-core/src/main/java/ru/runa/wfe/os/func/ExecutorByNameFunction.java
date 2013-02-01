@@ -19,13 +19,10 @@ package ru.runa.wfe.os.func;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.os.OrgFunction;
 import ru.runa.wfe.os.OrgFunctionException;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.collect.Lists;
 
@@ -35,10 +32,7 @@ import com.google.common.collect.Lists;
  * 
  * Created on Jul 12, 2006
  */
-public class ExecutorByNameFunction implements OrgFunction {
-
-    @Autowired
-    protected ExecutorDAO executorDAO;
+public class ExecutorByNameFunction extends OrgFunction {
 
     @Override
     public List<? extends Executor> getExecutors(Object... parameters) throws OrgFunctionException {

@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.Messages;
@@ -36,7 +34,7 @@ public class UpdatePermissionsOnProcessFormTag extends ProcessBaseFormTag {
     private static final long serialVersionUID = 8819829254395916036L;
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
+    protected void fillFormData(TD tdFormElement) {
         WfProcess instance = super.getProcess();
         PermissionTableBuilder tableBuilder = new PermissionTableBuilder(instance, getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());

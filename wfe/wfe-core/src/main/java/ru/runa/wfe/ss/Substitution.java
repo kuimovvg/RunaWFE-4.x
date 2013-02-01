@@ -65,7 +65,7 @@ public class Substitution implements Cloneable, Serializable {
 
     private Long actorId;
 
-    private String substitutionOrgFunction;
+    private String orgFunction;
 
     private boolean enabled;
 
@@ -115,13 +115,13 @@ public class Substitution implements Cloneable, Serializable {
         this.position = position;
     }
 
-    @Column(name = "SUBSITUTION_ORG_FUNCTION", nullable = false)
-    public String getSubstitutionOrgFunction() {
-        return substitutionOrgFunction;
+    @Column(name = "ORG_FUNCTION", nullable = false)
+    public String getOrgFunction() {
+        return orgFunction;
     }
 
-    public void setSubstitutionOrgFunction(String substitutionOrgFunction) {
-        this.substitutionOrgFunction = OracleCommons.fixNullString(substitutionOrgFunction);
+    public void setOrgFunction(String orgFunction) {
+        this.orgFunction = OracleCommons.fixNullString(orgFunction);
     }
 
     @Version
@@ -171,6 +171,6 @@ public class Substitution implements Cloneable, Serializable {
 
     @Override
     public String toString() {
-        return substitutionOrgFunction;
+        return orgFunction;
     }
 }

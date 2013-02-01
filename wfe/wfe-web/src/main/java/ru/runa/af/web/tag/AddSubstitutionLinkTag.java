@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
 import ru.runa.service.af.AuthorizationService;
@@ -48,7 +46,7 @@ public class AddSubstitutionLinkTag extends IdLinkBaseTag {
     }
 
     @Override
-    protected boolean isLinkEnabled() throws JspException {
+    protected boolean isLinkEnabled() {
         ExecutorService executorService = Delegates.getExecutorService();
         Actor actor = executorService.getExecutor(getUser(), getIdentifiableId());
         AuthorizationService authorizationService = Delegates.getAuthorizationService();

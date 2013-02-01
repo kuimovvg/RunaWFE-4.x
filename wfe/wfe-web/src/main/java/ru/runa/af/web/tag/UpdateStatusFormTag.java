@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.action.UpdateStatusAction;
@@ -37,20 +35,24 @@ public class UpdateStatusFormTag extends UpdateExecutorBaseFormTag {
 
     private static final long serialVersionUID = 1L;
 
-    public void fillFormData(TD formTd) throws JspException {
+    @Override
+    public void fillFormData(TD formTd) {
         StatusTableBuilder builder = new StatusTableBuilder((Actor) getExecutor(), !isFormButtonEnabled(), pageContext);
         formTd.addElement(builder.build());
     }
 
+    @Override
     protected Permission getPermission() {
         return ActorPermission.UPDATE_STATUS;
     }
 
+    @Override
     public String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_APPLY, pageContext);
     }
 
-    protected boolean isVisible() throws JspException {
+    @Override
+    protected boolean isVisible() {
         boolean result = false;
         if (super.isFormButtonEnabled() && (getExecutor() instanceof Actor)) {
             result = true;
@@ -58,10 +60,12 @@ public class UpdateStatusFormTag extends UpdateExecutorBaseFormTag {
         return result;
     }
 
+    @Override
     protected String getTitle() {
         return Messages.getMessage(Messages.TITLE_ACTOR_STATUS, pageContext);
     }
 
+    @Override
     public String getAction() {
         return UpdateStatusAction.ACTION_PATH;
     }

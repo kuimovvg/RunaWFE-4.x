@@ -20,8 +20,6 @@ package ru.runa.common.web.tag;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.Entities;
 import org.apache.ecs.StringElement;
@@ -81,29 +79,28 @@ abstract public class FormTag extends VisibleTag {
      * In this method descendants fill the form.
      * 
      * @param tdFormElement
-     * @throws JspException
-     *             if any exception occured
+     *            @ if any exception occured
      */
-    abstract protected void fillFormElement(final TD tdFormElement) throws JspException;
+    abstract protected void fillFormElement(final TD tdFormElement);
 
     /**
      * @return returns true if form button must be displayed
      */
-    protected boolean isFormButtonVisible() throws JspException {
+    protected boolean isFormButtonVisible() {
         return true;
     }
 
     /**
      * @return returns true if form button must be displayed
      */
-    protected boolean isFormButtonEnabled() throws JspException {
+    protected boolean isFormButtonEnabled() {
         return true;
     }
 
     /**
      * @return returns true if form button must be displayed
      */
-    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) throws JspException {
+    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
         return true;
     }
 
@@ -138,7 +135,7 @@ abstract public class FormTag extends VisibleTag {
     }
 
     @Override
-    protected ConcreteElement getEndElement() throws JspException {
+    protected ConcreteElement getEndElement() {
         form = new Form();
         Table table = new Table();
         table.setClass(Resources.CLASS_BOX);
@@ -190,7 +187,7 @@ abstract public class FormTag extends VisibleTag {
     }
 
     @Override
-    protected ConcreteElement getStartElement() throws JspException {
+    protected ConcreteElement getStartElement() {
         return new StringElement();
     }
 }

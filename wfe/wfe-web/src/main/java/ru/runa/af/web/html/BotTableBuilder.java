@@ -20,7 +20,6 @@ package ru.runa.af.web.html;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.A;
@@ -47,7 +46,7 @@ public class BotTableBuilder {
         this.pageContext = pageContext;
     }
 
-    public Table buildBotTable(List<Bot> bots) throws JspException {
+    public Table buildBotTable(List<Bot> bots) {
         Table table = new Table();
         table.setClass(Resources.CLASS_LIST_TABLE);
         table.setWidth("100%");
@@ -58,14 +57,15 @@ public class BotTableBuilder {
         return table;
     }
 
-    private TR createTR(Bot bot) throws JspException {
+    private TR createTR(Bot bot) {
         TR tr = new TR();
         tr.setClass(Resources.CLASS_LIST_TABLE_TH);
         Input input = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, Long.toString(bot.getId()));
         input.setChecked(false);
         String path = Commons.getActionUrl("bot.do", "botID", new Long(bot.getId()), pageContext, PortletUrlType.Render);
         tr.addElement(new TD(input).setClass(Resources.CLASS_LIST_TABLE_TD));
-        // tr.addElement(new TD(new A(path, new Long(bot.getId()).toString()).toString()).setWidth("10%").setClass(Resources.CLASS_LIST_TABLE_TD));
+        // tr.addElement(new TD(new A(path, new
+        // Long(bot.getId()).toString()).toString()).setWidth("10%").setClass(Resources.CLASS_LIST_TABLE_TD));
         tr.addElement(new TD(new A(path, bot.getUsername())).setWidth("90%").setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }

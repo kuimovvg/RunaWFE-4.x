@@ -212,7 +212,7 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
         node.processDefinition = this;
         if (node instanceof StartState) {
             if (startState != null) {
-                throw new InvalidDefinitionException("only one start-state allowed in a process");
+                throw new InvalidDefinitionException(getName(), "only one start-state allowed in a process");
             }
             startState = (StartState) node;
         }

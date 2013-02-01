@@ -35,7 +35,6 @@ import org.apache.portals.bridges.struts.StrutsPortletURL;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.taglib.TagUtils;
-import org.apache.struts.util.MessageResourcesFactory;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.PortletUrlType;
@@ -150,29 +149,16 @@ public class Commons {
         }
     }
 
-    public static String getMessage(String key, PageContext pageContext, Object arg) throws JspException {
-        String result = tagUtils.message(pageContext, Globals.MESSAGES_KEY, Globals.LOCALE_KEY, key, new Object[] { arg });
-        if (result == null) {
-            result = MessageResourcesFactory.createFactory().createResources("struts_msgs")
-                    .getMessage(getLocale(pageContext), key, new Object[] { arg });
-        }
-        return result;
+    public static String getMessage(String key, PageContext pageContext) {
+        return getMessage(key, pageContext, null);
     }
 
-    public static String getMessage(String key, PageContext pageContext, Object[] args) throws JspException {
-        String result = tagUtils.message(pageContext, Globals.MESSAGES_KEY, Globals.LOCALE_KEY, key, args);
-        if (result == null) {
-            result = MessageResourcesFactory.createFactory().createResources("struts_msgs").getMessage(getLocale(pageContext), key, args);
+    public static String getMessage(String key, PageContext pageContext, Object[] args) {
+        try {
+            return tagUtils.message(pageContext, Globals.MESSAGES_KEY, Globals.LOCALE_KEY, key, args);
+        } catch (JspException e) {
+            return "!" + key + "!";
         }
-        return result;
-    }
-
-    public static String getMessage(String key, PageContext pageContext) throws JspException {
-        String result = tagUtils.message(pageContext, Globals.MESSAGES_KEY, Globals.LOCALE_KEY, key);
-        if (result == null) {
-            result = MessageResourcesFactory.createFactory().createResources("struts_msgs").getMessage(getLocale(pageContext), key);
-        }
-        return result;
     }
 
     public static Locale getLocale(PageContext pageContext) {

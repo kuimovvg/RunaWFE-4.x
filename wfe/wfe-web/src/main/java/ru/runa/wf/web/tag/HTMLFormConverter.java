@@ -18,13 +18,11 @@
 
 package ru.runa.wf.web.tag;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
@@ -35,7 +33,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.w3c.dom.html.HTMLOptionElement;
-import org.xml.sax.SAXException;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.HTMLUtils;
@@ -82,7 +79,7 @@ public class HTMLFormConverter {
 
     private static final String[] STD_INPUT_NAMES = { "", "text", "hidden", "password" };
 
-    public static byte[] changeUrls(PageContext pageContext, Long id, String htmlHref, byte[] originalBytes) throws SAXException, IOException {
+    public static byte[] changeUrls(PageContext pageContext, Long id, String htmlHref, byte[] originalBytes) {
         Document document = HTMLUtils.readHtml(originalBytes);
         if (pageContext != null) {
             for (Map.Entry<String, String> tagNameTagAttributeEntry : TAG_NAME_ATTRIBUTE_MAP.entrySet()) {
@@ -423,11 +420,7 @@ public class HTMLFormConverter {
     private static String getErrorText(PageContext pageContext, Map<String, String> errors, String inputName) {
         String errorText = errors.get(inputName);
         if (errorText == null) {
-            try {
-                errorText = Commons.getMessage(Messages.MESSAGE_WEB_CLIENT_VARIABLE_FORMAT_ERROR, pageContext, inputName);
-            } catch (JspException e) {
-                errorText = "MESSAGE NOT FOUND FOR KEY: " + Messages.MESSAGE_WEB_CLIENT_VARIABLE_FORMAT_ERROR;
-            }
+            errorText = Commons.getMessage(Messages.MESSAGE_WEB_CLIENT_VARIABLE_FORMAT_ERROR, pageContext, new Object[] { inputName });
         }
         return errorText;
     }

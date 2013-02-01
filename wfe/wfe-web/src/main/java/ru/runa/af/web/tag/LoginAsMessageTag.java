@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.A;
 
 import ru.runa.common.WebResources;
@@ -38,9 +36,9 @@ public class LoginAsMessageTag extends MessageTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public String getMessage() throws JspException {
+    public String getMessage() {
         User user = Commons.getUser(pageContext.getSession());
-        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, user.getId(), pageContext,
+        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, user.getActor().getId(), pageContext,
                 PortletUrlType.Render);
         A a = new A(url, "<I>" + user.getName() + "</I>");
         return super.getMessage() + " " + a.toString();

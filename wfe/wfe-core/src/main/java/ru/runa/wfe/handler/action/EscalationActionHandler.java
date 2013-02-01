@@ -40,6 +40,8 @@ import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
+import com.google.common.base.Strings;
+
 public class EscalationActionHandler implements ActionHandler {
     private static final Log log = LogFactory.getLog(EscalationActionHandler.class);
     @Autowired
@@ -56,23 +58,14 @@ public class EscalationActionHandler implements ActionHandler {
 
     @Override
     public void setConfiguration(String configuration) {
-        orgFunctionClassName = configuration;
+        orgFunctionClassName = Strings.isNullOrEmpty(configuration) ? defaultOrgFunctionClassName : configuration;
+        ClassLoaderUtil.instantiate(orgFunctionClassName);
     }
 
     @Override
     public void execute(ExecutionContext executionContext) throws Exception {
         if (!escalationEnabled) {
             log.info("Escalation disabled");
-            return;
-        }
-        if (orgFunctionClassName == null || orgFunctionClassName.length() == 0) {
-            orgFunctionClassName = defaultOrgFunctionClassName;
-        }
-        orgFunctionClassName = orgFunctionClassName.trim();
-        try {
-            ClassLoaderUtil.instantiate(orgFunctionClassName);
-        } catch (Throwable e) {
-            log.error("Unknown orgFunction: " + orgFunctionClassName);
             return;
         }
         if (executionContext.getNode() instanceof TaskNode) {
@@ -113,7 +106,7 @@ public class EscalationActionHandler implements ActionHandler {
             assignedExecutors.addAll(previousSwimlaneActors);
             for (Actor previousActor : previousSwimlaneActors) {
                 String swimlaneInitializer = orgFunctionClassName + "(" + previousActor.getCode() + ")";
-                List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(swimlaneInitializer, null);
+                List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(swimlaneInitializer);
                 if (executors.size() == 0) {
                     log.debug("No escalation will be done for member: " + swimlaneInitializer);
                 } else {

@@ -20,7 +20,6 @@ package ru.runa.wf.logic.bot;
 import java.io.InputStream;
 import java.util.Map;
 
-
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTask;
@@ -54,8 +53,8 @@ public class CancelProcessTaskHandler extends TaskHandlerBase {
         if (processId != null && processId != 0) {
             Delegates.getExecutionService().cancelProcess(user, processId);
             DefinitionService definitionService = Delegates.getDefinitionService();
-            WfDefinition definitionStub = definitionService.getProcessDefinitionByProcessId(user, processId);
-            String processDefinitionName = definitionStub.getName();
+            WfDefinition definition = definitionService.getProcessDefinitionByProcessId(user, processId);
+            String processDefinitionName = definition.getName();
             String configurationName = processToCancelTask.getDatabaseTaskMap().get(processDefinitionName);
             if (configurationName == null) {
                 throw new Exception("Record for '" + processDefinitionName + " missed in task handler configuration");

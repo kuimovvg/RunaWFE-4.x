@@ -20,22 +20,18 @@ package ru.runa.wf.logic.bot.updatepermission;
 import java.util.Collection;
 import java.util.List;
 
+import ru.runa.wfe.os.OrgFunction;
 import ru.runa.wfe.security.Permission;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public class UpdatePermissionsSettings {
-    private final Collection<Permission> permissions;
-    private final List<String> orgFunctions;
-    private final Method method;
+    private final Collection<Permission> permissions = Lists.newArrayList();
+    private final List<OrgFunction> orgFunctions = Lists.newArrayList();
+    private Method method;
     private String conditionVarName;
     private String conditionVarValue;
-
-    public UpdatePermissionsSettings(List<String> orgFunctions, Method method, Collection<Permission> permissions) {
-        this.orgFunctions = orgFunctions;
-        this.method = method;
-        this.permissions = permissions;
-    }
 
     public void setCondition(String conditionVarName, String conditionVarValue) {
         this.conditionVarName = conditionVarName;
@@ -54,7 +50,7 @@ public class UpdatePermissionsSettings {
         return conditionVarValue;
     }
 
-    public List<String> getOrgFunctions() {
+    public List<OrgFunction> getOrgFunctions() {
         return orgFunctions;
     }
 
@@ -64,5 +60,9 @@ public class UpdatePermissionsSettings {
 
     public Method getMethod() {
         return method;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
     }
 }

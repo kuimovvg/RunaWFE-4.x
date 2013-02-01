@@ -155,17 +155,17 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      * 
      * @param subject
      *            Current bot subject.
-     * @param taskStub
+     * @param task
      *            Current task instance to be processed.
      * @return URL of web service to send requests.
      * @throws MalformedURLException
      */
-    private URL getWebServiceUrl(User user, WfTask taskStub) throws MalformedURLException {
+    private URL getWebServiceUrl(User user, WfTask task) throws MalformedURLException {
         try {
             return new URL(settings.url);
         } catch (MalformedURLException e) {
             ExecutionService executionService = Delegates.getExecutionService();
-            WfVariable var = executionService.getVariable(user, taskStub.getProcessId(), settings.url);
+            WfVariable var = executionService.getVariable(user, task.getProcessId(), settings.url);
             return new URL(var.getValue() != null ? var.getValue().toString() : "");
         }
     }
@@ -174,20 +174,20 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      * Prepare web request to send. Applies XSLT to replace WFE tags with actual
      * values.
      * 
-     * @param taskStub
+     * @param task
      *            Current task instance to be processed.
      * @param interaction
      *            Current interaction with web service.
      * @return Prepared web service request.
      */
-    private byte[] prepareRequest(WfTask taskStub, Interaction interaction) throws Exception {
+    private byte[] prepareRequest(WfTask task, Interaction interaction) throws Exception {
         ByteArrayOutputStream res2 = new ByteArrayOutputStream();
         Transformer transformer = TransformerFactory.newInstance().newTransformer(
                 new StreamSource(ClassLoaderUtil.getAsStreamNotNull("webServiceTaskHandlerRequest.xslt", getClass())));
         transformer.transform(new StreamSource(new ByteArrayInputStream(interaction.requestXML.getBytes(settings.encoding))), new StreamResult(res2));
         byte[] soapData = res2.toByteArray();
         if (settings.isLoggingEnable && log.isDebugEnabled()) {
-            log.debug("Web service bot request for task " + taskStub.getId() + " is:\n" + new String(soapData, settings.encoding));
+            log.debug("Web service bot request for task " + task.getId() + " is:\n" + new String(soapData, settings.encoding));
         }
         return soapData;
     }
@@ -228,7 +228,7 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      * 
      * @param subject
      *            Current bot subject.
-     * @param taskStub
+     * @param task
      *            Current task instance to be processed.
      * @param connection
      *            HTTP connection to communicate with web service.
@@ -237,8 +237,8 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      * @return true, if next interaction must be processed and false if required
      *         to stop interaction processing.
      */
-    private boolean onErrorResponse(User user, WfTask taskStub, HttpURLConnection connection, Interaction interaction) throws Exception {
-        log.debug("Web service bot got error response with code " + connection.getResponseCode() + " for task " + taskStub.getId());
+    private boolean onErrorResponse(User user, WfTask task, HttpURLConnection connection, Interaction interaction) throws Exception {
+        log.debug("Web service bot got error response with code " + connection.getResponseCode() + " for task " + task.getId());
         if (interaction.responseVariable != null) {
             xsltHelper.get().setNewVariable(interaction.responseVariable, "Got error response: '" + connection.getResponseMessage() + "'");
         }
@@ -249,7 +249,7 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
         if (errorAction == ErrorResponseProcessingResult.IGNORE) {
             return true;
         }
-        saveExecutionState(user, taskStub, interaction);
+        saveExecutionState(user, task, interaction);
         return false;
     }
 
@@ -268,18 +268,18 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      * Called to process response from web service with code from [200; 299]
      * (This codes indicates successful request processing).
      * 
-     * @param taskStub
+     * @param task
      *            Current task instance to be processed.
      * @param connection
      *            HTTP connection to communicate with web service.
      * @param interaction
      *            Current processing interaction.
      */
-    private void onResponse(WfTask taskStub, HttpURLConnection connection, Interaction interaction) throws Exception {
+    private void onResponse(WfTask task, HttpURLConnection connection, Interaction interaction) throws Exception {
         if (interaction.responseXSLT == null && interaction.responseVariable == null) {
             return;
         }
-        String response = logResponseAndSetVariable(taskStub, connection, interaction);
+        String response = logResponseAndSetVariable(task, connection, interaction);
         InputStream inputStream = response == null ? connection.getInputStream() : new ByteArrayInputStream(response.getBytes(settings.encoding));
         if (interaction.responseXSLT != null) {
             Transformer transformer = TransformerFactory.newInstance().newTransformer(
@@ -291,7 +291,7 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
     /**
      * Reads response from connection, log it and set it into response variable.
      * 
-     * @param taskStub
+     * @param task
      *            Current task instance to be processed.
      * @param connection
      *            HTTP connection to communicate with web service.
@@ -299,13 +299,13 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      *            Current processing interaction.
      * @return Response as string or null, if response wasn't read from stream.
      */
-    private String logResponseAndSetVariable(WfTask taskStub, HttpURLConnection connection, Interaction interaction) throws IOException {
+    private String logResponseAndSetVariable(WfTask task, HttpURLConnection connection, Interaction interaction) throws IOException {
         if (interaction.responseVariable == null && (!settings.isLoggingEnable || !log.isDebugEnabled())) {
             return null;
         }
         String response = readStringFromStream(connection.getInputStream(), settings.encoding, interaction.maxResponseLength);
         if (settings.isLoggingEnable) {
-            log.debug("Web service bot got response for task " + taskStub.getId() + ":\n" + response);
+            log.debug("Web service bot got response for task " + task.getId() + ":\n" + response);
         }
         if (interaction.responseVariable != null) {
             xsltHelper.get().setNewVariable(interaction.responseVariable, response);
@@ -355,13 +355,13 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      * 
      * @param subject
      *            Current bot subject.
-     * @param taskStub
+     * @param task
      *            Current task instance to be processed.
      * @return index of interaction.
      */
-    private int getStartInteraction(User user, WfTask taskStub) {
+    private int getStartInteraction(User user, WfTask task) {
         ExecutionService executionService = Delegates.getExecutionService();
-        WfVariable variable = executionService.getVariable(user, taskStub.getProcessId(), "WS_ITERATION_" + taskStub.getId());
+        WfVariable variable = executionService.getVariable(user, task.getProcessId(), "WS_ITERATION_" + task.getId());
         return TypeConversionUtil.convertTo(variable.getValue(), int.class);
     }
 }

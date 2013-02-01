@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Form;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
@@ -53,7 +51,7 @@ public class DeployBotTag extends TitledFormTag {
     }
 
     @Override
-    protected boolean isFormButtonEnabled() throws JspException {
+    protected boolean isFormButtonEnabled() {
         try {
             AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
@@ -78,7 +76,7 @@ public class DeployBotTag extends TitledFormTag {
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         getForm().setEncType(Form.ENC_UPLOAD);
         tdFormElement.addElement(new Input(Input.hidden, FileForm.ID_INPUT_NAME, Long.toString(ID)));
         Input boolInput = new Input(Input.CHECKBOX, DeployBotForm.REPLACE_OPTION_NAME);

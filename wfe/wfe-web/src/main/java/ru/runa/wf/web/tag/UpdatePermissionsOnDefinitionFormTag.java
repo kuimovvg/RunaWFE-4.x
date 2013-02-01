@@ -19,8 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.Table;
 
@@ -44,17 +42,13 @@ public class UpdatePermissionsOnDefinitionFormTag extends ProcessDefinitionBaseF
     private static final long serialVersionUID = -3924515617058954059L;
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
-        try {
-            WfDefinition defintion = getDefinition();
-            PermissionTableBuilder tableBuilder = new PermissionTableBuilder(defintion, getUser(), pageContext);
-            Table table = tableBuilder.buildTable();
-            Actor starter = Delegates.getExecutorService().getExecutor(getUser(), SystemExecutors.PROCESS_STARTER_NAME);
-            table.addElement(tableBuilder.createTR(starter, getUnmodifiablePermissions(), false));
-            tdFormElement.addElement(table);
-        } catch (Exception e) {
-            handleException(e);
-        }
+    protected void fillFormData(TD tdFormElement) {
+        WfDefinition defintion = getDefinition();
+        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(defintion, getUser(), pageContext);
+        Table table = tableBuilder.buildTable();
+        Actor starter = Delegates.getExecutorService().getExecutor(getUser(), SystemExecutors.PROCESS_STARTER_NAME);
+        table.addElement(tableBuilder.createTR(starter, getUnmodifiablePermissions(), false));
+        tdFormElement.addElement(table);
     }
 
     private List<Permission> getUnmodifiablePermissions() {

@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
@@ -38,7 +36,7 @@ public class CreateRelationGroupLinkTag extends LinkTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected String getHref() throws JspException {
+    protected String getHref() {
         return Commons.getActionUrl("create_relation_group.do", pageContext, PortletUrlType.Action);
     }
 
@@ -48,7 +46,7 @@ public class CreateRelationGroupLinkTag extends LinkTag {
     }
 
     @Override
-    protected boolean isLinkEnabled() throws JspException {
+    protected boolean isLinkEnabled() {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, RelationsGroupSecure.INSTANCE);

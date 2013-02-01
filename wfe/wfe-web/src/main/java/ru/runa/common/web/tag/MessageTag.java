@@ -17,8 +17,6 @@
  */
 package ru.runa.common.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
 
@@ -32,12 +30,13 @@ public class MessageTag extends VisibleTag {
     private static final long serialVersionUID = -1765787772164997739L;
     String message = "";
 
-    protected ConcreteElement getEndElement() throws JspException {
+    @Override
+    protected ConcreteElement getEndElement() {
         StringElement stringElement = new StringElement(getMessage());
         return stringElement;
     }
 
-    public String getMessage() throws JspException {
+    public String getMessage() {
         return message;
     }
 
@@ -52,7 +51,8 @@ public class MessageTag extends VisibleTag {
 
     }
 
-    protected ConcreteElement getStartElement() throws JspException {
+    @Override
+    protected ConcreteElement getStartElement() {
         return new StringElement();
     }
 }

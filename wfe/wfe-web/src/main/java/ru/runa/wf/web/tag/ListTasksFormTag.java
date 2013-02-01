@@ -21,7 +21,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.TD;
@@ -65,35 +64,31 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
     private static final String[] NO_PREFIX_HEADER_NAMES = new String[0];
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
-        try {
-            ExecutionService executionService = Delegates.getExecutionService();
-            BatchPresentation batchPresentation = getBatchPresentation();
-            boolean isTaskTableBuild = false;
-            while (!isTaskTableBuild) {
-                try {
-                    List<WfTask> tasks = executionService.getTasks(getUser(), batchPresentation);
-                    Table table = buildTasksTable(pageContext, batchPresentation, tasks, getReturnAction(), false);
+    protected void fillFormElement(TD tdFormElement) {
+        ExecutionService executionService = Delegates.getExecutionService();
+        BatchPresentation batchPresentation = getBatchPresentation();
+        boolean isTaskTableBuild = false;
+        while (!isTaskTableBuild) {
+            try {
+                List<WfTask> tasks = executionService.getTasks(getUser(), batchPresentation);
+                Table table = buildTasksTable(pageContext, batchPresentation, tasks, getReturnAction(), false);
 
-                    PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, tasks.size());
-                    navigation.addPagingNavigationTable(tdFormElement);
-                    tdFormElement.addElement(table);
-                    navigation.addPagingNavigationTable(tdFormElement);
+                PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, tasks.size());
+                navigation.addPagingNavigationTable(tdFormElement);
+                tdFormElement.addElement(table);
+                navigation.addPagingNavigationTable(tdFormElement);
 
-                    isTaskTableBuild = true;
-                } catch (InternalApplicationException e) {
-                    if (e.getCause() == null || !(e.getCause() instanceof TaskDoesNotExistException || e.getCause() instanceof SQLException)) {
-                        throw e;
-                    }
+                isTaskTableBuild = true;
+            } catch (InternalApplicationException e) {
+                if (e.getCause() == null || !(e.getCause() instanceof TaskDoesNotExistException || e.getCause() instanceof SQLException)) {
+                    throw e;
                 }
             }
-        } catch (Exception e) {
-            handleException(e);
         }
     }
 
     public static Table buildTasksTable(PageContext pageContext, BatchPresentation batchPresentation, List<WfTask> tasks, String returnAction,
-            boolean disableCheckbox) throws JspException {
+            boolean disableCheckbox) {
         isButtonEnabled = false;
         for (int i = 0; i < tasks.size(); i++) {
             if (tasks.get(i).isGroupAssigned()) {

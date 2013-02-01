@@ -17,7 +17,8 @@
  */
 package ru.runa.common.web.tag;
 
-import javax.servlet.jsp.JspException;
+import java.io.IOException;
+
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -26,9 +27,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.ConcreteElement;
 
+import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 
@@ -39,19 +40,19 @@ public abstract class VisibleTag extends TagSupport {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Log log = LogFactory.getLog(VisibleTag.class);
+    protected static final Log log = LogFactory.getLog(VisibleTag.class);
 
     private boolean isVisible = false;
 
-    abstract protected ConcreteElement getEndElement() throws JspException;
+    protected abstract ConcreteElement getEndElement();
 
-    abstract protected ConcreteElement getStartElement() throws JspException;
+    protected abstract ConcreteElement getStartElement();
 
-    protected int doStartTagReturnedValue() throws JspException {
+    protected int doStartTagReturnedValue() {
         return Tag.SKIP_BODY;
     }
 
-    protected int doEndTagReturnedValue() throws JspException {
+    protected int doEndTagReturnedValue() {
         return Tag.EVAL_PAGE;
     }
 
@@ -59,23 +60,29 @@ public abstract class VisibleTag extends TagSupport {
      * Returns <code>true</code>(dafault) if tag content should be displayed, or
      * <code>false</code> otherwise.
      */
-    protected boolean isVisible() throws JspException {
+    protected boolean isVisible() {
         return true;
     }
 
     @Override
     public int doStartTag() {
-        try {
-            isVisible = isVisible();
-            if (isVisible) {
-                JspWriter writer = pageContext.getOut();
+        isVisible = isVisible();
+        if (isVisible) {
+            JspWriter writer = pageContext.getOut();
+            try {
                 ConcreteElement element = getStartElement();
                 element.output(writer);
+            } catch (Throwable th) {
+                // DEBUG category set due to logging in EJB layer; stack trace
+                // is logged only for Web layer errors.
+                log.debug("", th);
+                try {
+                    writer.write("<span class=\"error\">" + ActionExceptionHelper.getErrorMessage(th.getCause(), pageContext) + "</span>");
+                } catch (IOException e1) {
+                }
             }
-            return doStartTagReturnedValue();
-        } catch (JspException e) {
-            throw new InternalApplicationException(e.getCause());
         }
+        return doStartTagReturnedValue();
     }
 
     protected User getUser() {
@@ -88,20 +95,20 @@ public abstract class VisibleTag extends TagSupport {
 
     @Override
     public int doEndTag() {
-        try {
-            if (isVisible) {
-                JspWriter writer = pageContext.getOut();
+        if (isVisible) {
+            JspWriter writer = pageContext.getOut();
+            try {
                 ConcreteElement element = getEndElement();
                 element.output(writer);
+            } catch (Throwable th) {
+                log.error("", th);
+                try {
+                    writer.write("<span class=\"error\">" + ActionExceptionHelper.getErrorMessage(th.getCause(), pageContext) + "</span>");
+                } catch (IOException e) {
+                }
             }
-            return doEndTagReturnedValue();
-        } catch (JspException e) {
-            throw new InternalApplicationException(e.getCause());
         }
+        return doEndTagReturnedValue();
     }
 
-    protected void handleException(Exception e) throws JspException {
-        log.warn("visibleTag", e);
-        throw new JspException(e);
-    }
 }

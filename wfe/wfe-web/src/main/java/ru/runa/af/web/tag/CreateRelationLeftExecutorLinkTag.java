@@ -20,8 +20,6 @@ package ru.runa.af.web.tag;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
@@ -66,7 +64,7 @@ public class CreateRelationLeftExecutorLinkTag extends LinkTag {
     }
 
     @Override
-    protected String getHref() throws JspException {
+    protected String getHref() {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("relationName", relationName);
         params.put("executorId", executorId);
@@ -79,7 +77,7 @@ public class CreateRelationLeftExecutorLinkTag extends LinkTag {
     }
 
     @Override
-    protected boolean isLinkEnabled() throws JspException {
+    protected boolean isLinkEnabled() {
         try {
             RelationService relationService = Delegates.getRelationService();
             AuthorizationService authorizationService = Delegates.getAuthorizationService();

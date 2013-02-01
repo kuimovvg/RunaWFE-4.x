@@ -39,13 +39,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ActorPrincipal", namespace = "http://runa.ru/workflow/webservices")
-public class User extends Actor implements Principal, Serializable {
+public class User implements Principal, Serializable {
     private static final long serialVersionUID = 43549879345L;
-    /**
-     * Actor name
-     */
     @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private byte[] securedKey;
+    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    private Actor actor;
 
     // This is need for web services
     protected User() {
@@ -58,8 +57,17 @@ public class User extends Actor implements Principal, Serializable {
      *            secured key
      */
     public User(Actor actor, byte[] securedKey) {
-        super(actor);
+        this.actor = actor;
         this.securedKey = securedKey;
+    }
+
+    @Override
+    public String getName() {
+        return actor.getName();
+    }
+
+    public Actor getActor() {
+        return actor;
     }
 
     public byte[] getSecuredKey() {

@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.action.UpdatePermissionOnGroupsOfRelations;
@@ -37,29 +35,32 @@ public class UpdatePermissionOnRelationGroupsFormTag extends IdentifiableFormTag
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
+    protected void fillFormData(TD tdFormElement) {
         PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getIdentifiable(), getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 
     @Override
-    protected Identifiable getIdentifiable() throws JspException {
+    protected Identifiable getIdentifiable() {
         return RelationsGroupSecure.INSTANCE;
     }
 
     @Override
-    protected Permission getPermission() throws JspException {
+    protected Permission getPermission() {
         return RelationPermission.READ;
     }
 
+    @Override
     public String getAction() {
         return UpdatePermissionOnGroupsOfRelations.ACTION_PATH_NAME;
     }
 
+    @Override
     protected String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_APPLY, pageContext);
     }
 
+    @Override
     protected String getTitle() {
         return Messages.getMessage(Messages.TITLE_PERMISSION_OWNERS, pageContext);
     }
