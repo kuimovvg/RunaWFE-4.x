@@ -47,7 +47,7 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     @Override
     public Profile getProfile(User user) throws AuthenticationException {
         Preconditions.checkNotNull(user);
-        return profileLogic.getProfile(user, user.getId());
+        return profileLogic.getProfile(user, user.getActor().getId());
     }
 
     @Override

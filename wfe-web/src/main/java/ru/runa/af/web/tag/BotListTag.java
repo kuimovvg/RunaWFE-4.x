@@ -2,8 +2,6 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
@@ -39,14 +37,10 @@ public class BotListTag extends TitledFormTag {
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botStationID)));
-        try {
-            List<Bot> bots = Delegates.getBotService().getBots(getUser(), botStationID);
-            tdFormElement.addElement(new BotTableBuilder(pageContext).buildBotTable(bots));
-        } catch (Exception e) {
-            handleException(e);
-        }
+        List<Bot> bots = Delegates.getBotService().getBots(getUser(), botStationID);
+        tdFormElement.addElement(new BotTableBuilder(pageContext).buildBotTable(bots));
     }
 
     @Override
@@ -65,7 +59,7 @@ public class BotListTag extends TitledFormTag {
     }
 
     @Override
-    public boolean isFormButtonEnabled() throws JspException {
+    public boolean isFormButtonEnabled() {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);

@@ -9,13 +9,16 @@ import org.dom4j.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.definition.logic.SwimlaneUtils;
 import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
+import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
@@ -101,7 +104,6 @@ public class BpmnXmlReader {
     private static final String SEND_MESSAGE = "sendTask";
     private static final String RECEIVE_MESSAGE = "receiveTask";
     private static final String TIMER_GLOBAL = "__GLOBAL";//
-    private static final String TIMER_ESCALATION = "__ESCALATION";//
     private static final String BOUNDARY_EVENT = "boundaryEvent";
     private static final String INTERMEDIATE_EVENT = "intermediateCatchEvent";
     private static final String CANCEL_ACTIVITY = "cancelActivity";
@@ -148,7 +150,7 @@ public class BpmnXmlReader {
                 // definition.setSwimlaneDisplayMode(SwimlaneDisplayMode.valueOf(swimlaneDisplayModeName));
             }
             if ("false".equals(process.attributeValue(EXECUTABLE))) {
-                throw new InvalidDefinitionException("invalid process definition " + processDefinition.getName());
+                throw new InvalidDefinitionException(processDefinition.getName(), "process is not executable");
             }
 
             // 1: read most content
@@ -161,7 +163,7 @@ public class BpmnXmlReader {
             // 3: verify
             verifyElements(processDefinition);
         } catch (Exception e) {
-            throw new InvalidDefinitionException(IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME, e);
+            throw new InvalidDefinitionException(processDefinition.getName(), IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME, e);
         }
         return processDefinition;
     }
@@ -173,7 +175,7 @@ public class BpmnXmlReader {
             for (Element swimlaneElement : swimlanes) {
                 String swimlaneName = swimlaneElement.attributeValue(NAME);
                 if (swimlaneName == null) {
-                    throw new InvalidDefinitionException("there's a swimlane without a name");
+                    throw new InternalApplicationException("there's a swimlane without a name");
                 }
                 SwimlaneDefinition swimlaneDefinition = new SwimlaneDefinition();
                 swimlaneDefinition.setName(swimlaneName);
@@ -194,38 +196,34 @@ public class BpmnXmlReader {
         List<Element> elements = parentElement.elements();
         for (Element element : elements) {
             String nodeName = element.getName();
-            try {
-                Node node = null;
-                if (nodeTypes.containsKey(nodeName)) {
-                    node = ApplicationContextFactory.createAutowiredBean(nodeTypes.get(nodeName));
-                } else if (PARALLEL_GATEWAY.equals(nodeName)) {
-                    String nodeId = element.attributeValue(ID);
-                    int outgoingTransitionsCount = getOutgoingTransitionsCount(parentElement, nodeId);
-                    if (outgoingTransitionsCount > 1) {
-                        node = ApplicationContextFactory.createAutowiredBean(Fork.class);
-                    } else {
-                        node = ApplicationContextFactory.createAutowiredBean(Join.class);
-                    }
-                } else if (EXCLUSIVE_GATEWAY.equals(nodeName)) {
-                    String nodeId = element.attributeValue(ID);
-                    int outgoingTransitionsCount = getOutgoingTransitionsCount(parentElement, nodeId);
-                    if (outgoingTransitionsCount > 1) {
-                        node = ApplicationContextFactory.createAutowiredBean(ExclusiveDecision.class);
-                    } else {
-                        node = ApplicationContextFactory.createAutowiredBean(ExclusiveMerge.class);
-                    }
+            Node node = null;
+            if (nodeTypes.containsKey(nodeName)) {
+                node = ApplicationContextFactory.createAutowiredBean(nodeTypes.get(nodeName));
+            } else if (PARALLEL_GATEWAY.equals(nodeName)) {
+                String nodeId = element.attributeValue(ID);
+                int outgoingTransitionsCount = getOutgoingTransitionsCount(parentElement, nodeId);
+                if (outgoingTransitionsCount > 1) {
+                    node = ApplicationContextFactory.createAutowiredBean(Fork.class);
+                } else {
+                    node = ApplicationContextFactory.createAutowiredBean(Join.class);
                 }
-                if (node != null) {
-                    node.setProcessDefinition(processDefinition);
-                    readNode(processDefinition, element, node);
+            } else if (EXCLUSIVE_GATEWAY.equals(nodeName)) {
+                String nodeId = element.attributeValue(ID);
+                int outgoingTransitionsCount = getOutgoingTransitionsCount(parentElement, nodeId);
+                if (outgoingTransitionsCount > 1) {
+                    node = ApplicationContextFactory.createAutowiredBean(ExclusiveDecision.class);
+                } else {
+                    node = ApplicationContextFactory.createAutowiredBean(ExclusiveMerge.class);
                 }
-            } catch (Exception e) {
-                throw new InvalidDefinitionException("couldn't instantiate node '" + nodeName + "'", e);
+            }
+            if (node != null) {
+                node.setProcessDefinition(processDefinition);
+                readNode(processDefinition, element, node);
             }
         }
     }
 
-    private void readNode(ProcessDefinition processDefinition, Element element, Node node) throws Exception {
+    private void readNode(ProcessDefinition processDefinition, Element element, Node node) {
         node.setNodeId(element.attributeValue(ID));
         node.setName(element.attributeValue(NAME));
         node.setDescription(element.elementTextTrim(DOCUMENTATION));
@@ -264,17 +262,21 @@ public class BpmnXmlReader {
         }
     }
 
-    private void readTimer(ProcessDefinition processDefinition, Element eventElement, GraphElement node) throws Exception {
+    private void readTimer(ProcessDefinition processDefinition, Element eventElement, GraphElement node) {
         Element timerElement = eventElement.element(TIMER_EVENT);
         CreateTimerAction createTimerAction = ApplicationContextFactory.createAutowiredBean(CreateTimerAction.class);
         createTimerAction.setNodeId(eventElement.attributeValue(ID));
-        createTimerAction.setName(eventElement.attributeValue(NAME));
-        // if (TIMER_DURATION.equals(childNode.getName())) {
-        // ((Timer) element).setDelay(new Delay(childNode.getTextTrim()));
-        // }
-        String duration = timerElement.elementTextTrim(TIMER_DURATION);
+        String name = eventElement.attributeValue(NAME, node.getNodeId());
+        createTimerAction.setName(name);
+        String durationString = timerElement.elementTextTrim(TIMER_DURATION);
+        if (Strings.isNullOrEmpty(durationString) && node instanceof TaskNode && Timer.ESCALATION_NAME.equals(name)) {
+            durationString = ((TaskNode) node).getFirstTaskNotNull().getDeadlineDuration();
+            if (Strings.isNullOrEmpty(durationString)) {
+                throw new InternalApplicationException("No '" + TIMER_DURATION + "' specified for timer in " + node);
+            }
+        }
+        createTimerAction.setDueDate(durationString);
         createTimerAction.setTransitionName(Transition.TIMEOUT_TRANSITION_NAME); // TODO
-        createTimerAction.setDueDate(duration);
         // createTimerAction.setRepeatDurationString(element.attributeValue(REPEAT_ATTR));
         String createEventType = node instanceof TaskNode ? Event.EVENTTYPE_TASK_CREATE : Event.EVENTTYPE_NODE_ENTER;
         addAction(node, createEventType, createTimerAction);
@@ -339,16 +341,16 @@ public class BpmnXmlReader {
         for (Element element : elements) {
             String id = element.attributeValue(ID);
             if (id == null) {
-                throw new InvalidDefinitionException("transition without an '" + ID + "'-attribute");
+                throw new InternalApplicationException("transition without an '" + ID + "'-attribute");
             }
             String name = element.attributeValue(NAME);
             String from = element.attributeValue(SOURCE_REF);
             if (from == null) {
-                throw new InvalidDefinitionException("transition '" + id + "' without a '" + SOURCE_REF + "'-attribute");
+                throw new InternalApplicationException("transition '" + id + "' without a '" + SOURCE_REF + "'-attribute");
             }
             String to = element.attributeValue(TARGET_REF);
             if (to == null) {
-                throw new InvalidDefinitionException("transition '" + id + "' without a '" + TARGET_REF + "'-attribute");
+                throw new InternalApplicationException("transition '" + id + "' without a '" + TARGET_REF + "'-attribute");
             }
             Transition transition = new Transition();
             transition.setNodeId(id);
@@ -389,7 +391,7 @@ public class BpmnXmlReader {
         return count;
     }
 
-    private void readTask(ProcessDefinition processDefinition, Element element, InteractionNode node) throws Exception {
+    private void readTask(ProcessDefinition processDefinition, Element element, InteractionNode node) {
         TaskDefinition taskDefinition = new TaskDefinition();
         taskDefinition.setNodeId(node.getNodeId());
         taskDefinition.setProcessDefinition(processDefinition);
@@ -412,25 +414,16 @@ public class BpmnXmlReader {
         Map<String, String> swimlaneProperties = parseExtensionProperties(element);
         String className = swimlaneProperties.get(CLASS);
         if (className == null) {
-            throw new InvalidDefinitionException("no className specified in " + element.asXML());
+            throw new InternalApplicationException("no className specified in " + element.asXML());
         }
+        ClassLoaderUtil.instantiate(className);
         String configuration = swimlaneProperties.get(CONFIG);
         return new Delegation(className, configuration);
     }
 
     private void verifyElements(ProcessDefinition processDefinition) {
-        for (SwimlaneDefinition swimlaneDefinition : processDefinition.getSwimlanes().values()) {
-            SwimlaneDefinition startTaskSwimlane = processDefinition.getStartStateNotNull().getFirstTaskNotNull().getSwimlane();
-            if (swimlaneDefinition.getDelegation() == null && swimlaneDefinition != startTaskSwimlane) {
-                throw new InvalidDefinitionException("swimlane '" + swimlaneDefinition + "' does not have an assignment");
-            }
-        }
         for (Node node : processDefinition.getNodes()) {
-            try {
-                node.validate();
-            } catch (Exception e) {
-                throw new InvalidDefinitionException("validation fails", e);
-            }
+            node.validate();
         }
     }
 }

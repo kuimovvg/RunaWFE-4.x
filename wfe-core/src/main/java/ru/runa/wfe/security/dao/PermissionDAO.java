@@ -42,6 +42,7 @@ import ru.runa.wfe.security.PermissionNotFoundException;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.UnapplicablePermissionException;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.collect.Lists;
@@ -167,8 +168,8 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
      * @return true if executor has requested permission on secuedObject; false
      *         otherwise.
      */
-    public boolean isAllowed(final Executor executor, final Permission permission, final Identifiable identifiable) {
-        final Set<Executor> executorWithGroups = getExecutorWithAllHisGroups(executor);
+    public boolean isAllowed(final User user, final Permission permission, final Identifiable identifiable) {
+        final Set<Executor> executorWithGroups = getExecutorWithAllHisGroups(user.getActor());
         for (Executor executor2 : executorWithGroups) {
             if (getPrivilegedExecutors(identifiable).contains(executor2)) {
                 return true;
@@ -201,11 +202,11 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
      * @return Array of: true if executor has requested permission on
      *         secuedObject; false otherwise.
      */
-    public boolean[] isAllowed(final Executor executor, final Permission permission, final List<? extends Identifiable> identifiables) {
+    public boolean[] isAllowed(final User user, final Permission permission, final List<? extends Identifiable> identifiables) {
         if (identifiables.size() == 0) {
             return new boolean[0];
         }
-        final Set<Executor> executorWithGroups = getExecutorWithAllHisGroups(executor);
+        final Set<Executor> executorWithGroups = getExecutorWithAllHisGroups(user.getActor());
         for (Executor potentialPrivilegedExecutor : executorWithGroups) {
             if (getPrivilegedExecutors(identifiables.get(0)).contains(potentialPrivilegedExecutor)) {
                 boolean[] result = new boolean[identifiables.size()];

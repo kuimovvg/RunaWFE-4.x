@@ -19,8 +19,6 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.BatchExecutorPermissionHelper;
@@ -51,7 +49,7 @@ abstract public class ListExecutorsBaseFormTag extends UpdateExecutorBaseFormTag
     protected boolean isButtonEnabled;
 
     @Override
-    protected boolean isFormButtonEnabled() throws JspException {
+    protected boolean isFormButtonEnabled() {
         return isButtonEnabled && (super.isFormButtonEnabled());
     }
 
@@ -76,33 +74,29 @@ abstract public class ListExecutorsBaseFormTag extends UpdateExecutorBaseFormTag
     }
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
-        try {
-            int executorsCount = getExecutorsCount();
-            List<? extends Executor> executors = getExecutors();
-            if (super.isFormButtonEnabled()) {
-                for (boolean enable : BatchExecutorPermissionHelper.getEnabledCheckboxes(getUser(), executors, getBatchPresentation(),
-                        getExecutorsPermission())) {
-                    if (enable) {
-                        isButtonEnabled = true;
-                        break;
-                    }
+    protected void fillFormData(TD tdFormElement) {
+        int executorsCount = getExecutorsCount();
+        List<? extends Executor> executors = getExecutors();
+        if (super.isFormButtonEnabled()) {
+            for (boolean enable : BatchExecutorPermissionHelper.getEnabledCheckboxes(getUser(), executors, getBatchPresentation(),
+                    getExecutorsPermission())) {
+                if (enable) {
+                    isButtonEnabled = true;
+                    break;
                 }
             }
-            BatchPresentation batchPresentation = getBatchPresentation();
-            PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, executorsCount, getReturnAction());
-            navigation.addPagingNavigationTable(tdFormElement);
-            TableBuilder tableBuilder = new TableBuilder();
-            TDBuilder[] builders = getBuilders(new TDBuilder[] { new IdentifiableCheckboxTDBuilder(getExecutorsPermission()) }, batchPresentation,
-                    new TDBuilder[] {});
-            RowBuilder rowBuilder = new ReflectionRowBuilder(executors, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
-                    getReturnAction(), IdForm.ID_INPUT_NAME, builders);
-            HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 1, 0, returnAction, pageContext);
-            tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
-            navigation.addPagingNavigationTable(tdFormElement);
-        } catch (Exception e) {
-            handleException(e);
         }
+        BatchPresentation batchPresentation = getBatchPresentation();
+        PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, executorsCount, getReturnAction());
+        navigation.addPagingNavigationTable(tdFormElement);
+        TableBuilder tableBuilder = new TableBuilder();
+        TDBuilder[] builders = getBuilders(new TDBuilder[] { new IdentifiableCheckboxTDBuilder(getExecutorsPermission()) }, batchPresentation,
+                new TDBuilder[] {});
+        RowBuilder rowBuilder = new ReflectionRowBuilder(executors, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
+                getReturnAction(), IdForm.ID_INPUT_NAME, builders);
+        HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 1, 0, returnAction, pageContext);
+        tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
+        navigation.addPagingNavigationTable(tdFormElement);
     }
 
     /**
@@ -113,7 +107,8 @@ abstract public class ListExecutorsBaseFormTag extends UpdateExecutorBaseFormTag
     protected abstract List<? extends Executor> getExecutors();
 
     /**
-     * Load count of all executors may be shown in tag. Used to setup pages before and after executor list.
+     * Load count of all executors may be shown in tag. Used to setup pages
+     * before and after executor list.
      * 
      * @return Executors count.
      */

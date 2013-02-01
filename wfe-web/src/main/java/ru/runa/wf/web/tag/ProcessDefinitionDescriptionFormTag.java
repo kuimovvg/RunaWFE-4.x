@@ -17,10 +17,6 @@
  */
 package ru.runa.wf.web.tag;
 
-import javax.servlet.jsp.JspException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.IFrame;
 import org.apache.ecs.html.TD;
 
@@ -43,26 +39,19 @@ import ru.runa.wfe.security.Permission;
  */
 public class ProcessDefinitionDescriptionFormTag extends ProcessDefinitionBaseFormTag {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(ProcessDefinitionDescriptionFormTag.class);
 
     @Override
-    protected void fillFormData(final TD tdFormElement) throws JspException {
+    protected void fillFormData(final TD tdFormElement) {
         Long id = ((WfDefinition) getIdentifiable()).getId();
-        String url = Commons.getActionUrl(ProcessDefinitionDescriptionAction.ACTION_PATH, IdForm.ID_INPUT_NAME, id, pageContext, PortletUrlType.Action);
+        String url = Commons.getActionUrl(ProcessDefinitionDescriptionAction.ACTION_PATH, IdForm.ID_INPUT_NAME, id, pageContext,
+                PortletUrlType.Action);
         tdFormElement.addElement(new IFrame().setSrc(url).setWidth("100%"));
     }
 
     @Override
-    protected boolean isVisible() throws JspException {
-        boolean result = false;
-        try {
-            DefinitionService definitionService = Delegates.getDefinitionService();
-            result = definitionService.getFile(getUser(), getIdentifiableId(), ProcessDefinitionDescriptionAction.DESCRIPTION_FILE_NAME) != null;
-        } catch (Exception e) {
-            log.error(e.toString());
-        }
-        return result;
-        // return super.isVisible();
+    protected boolean isVisible() {
+        DefinitionService definitionService = Delegates.getDefinitionService();
+        return definitionService.getFile(getUser(), getIdentifiableId(), ProcessDefinitionDescriptionAction.DESCRIPTION_FILE_NAME) != null;
     }
 
     @Override

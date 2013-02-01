@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -55,8 +53,8 @@ public class ProcessDefinitionInfoFormTag extends ProcessDefinitionBaseFormTag {
     }
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
-        WfDefinition processDefinitonStub = getDefinition();
+    protected void fillFormData(TD tdFormElement) {
+        WfDefinition definition = getDefinition();
         Table table = new Table();
         tdFormElement.addElement(table);
         table.setClass(Resources.CLASS_LIST_TABLE);
@@ -65,15 +63,15 @@ public class ProcessDefinitionInfoFormTag extends ProcessDefinitionBaseFormTag {
         table.addElement(nameTR);
         String definitionName = Messages.getMessage(TaskClassPresentation.TASK_BATCH_PRESENTATION_DEFINITION_NAME, pageContext);
         nameTR.addElement(new TD(definitionName).setClass(Resources.CLASS_LIST_TABLE_TD));
-        nameTR.addElement(new TD(processDefinitonStub.getName()).setClass(Resources.CLASS_LIST_TABLE_TD));
+        nameTR.addElement(new TD(definition.getName()).setClass(Resources.CLASS_LIST_TABLE_TD));
 
         TR versionTR = new TR();
         table.addElement(versionTR);
         String versionName = Messages.getMessage(DefinitionClassPresentation.PROCESS_DEFINITION_BATCH_PRESENTATION_VERSION, pageContext);
         versionTR.addElement(new TD(versionName).setClass(Resources.CLASS_LIST_TABLE_TD));
         TD versionTD = new TD();
-        versionTD.addElement(processDefinitonStub.getVersion() + " (");
-        String downloadUrl = Commons.getActionUrl(LoadProcessDefinitionArchiveAction.ACTION_PATH, IdForm.ID_INPUT_NAME, processDefinitonStub.getId(),
+        versionTD.addElement(definition.getVersion() + " (");
+        String downloadUrl = Commons.getActionUrl(LoadProcessDefinitionArchiveAction.ACTION_PATH, IdForm.ID_INPUT_NAME, definition.getId(),
                 pageContext, PortletUrlType.Render);
         versionTD.addElement(new A(downloadUrl, Messages.getMessage("label.export", pageContext)));
         versionTD.addElement(")");
@@ -83,7 +81,7 @@ public class ProcessDefinitionInfoFormTag extends ProcessDefinitionBaseFormTag {
         table.addElement(descriptionTR);
         String descruption = Messages.getMessage(DefinitionClassPresentation.PROCESS_DEFINITION_BATCH_PRESENTATION_DESCRIPTION, pageContext);
         descriptionTR.addElement(new TD(descruption).setClass(Resources.CLASS_LIST_TABLE_TD));
-        descriptionTR.addElement(new TD(processDefinitonStub.getDescription()).setClass(Resources.CLASS_LIST_TABLE_TD));
+        descriptionTR.addElement(new TD(definition.getDescription()).setClass(Resources.CLASS_LIST_TABLE_TD));
     }
 
     @Override

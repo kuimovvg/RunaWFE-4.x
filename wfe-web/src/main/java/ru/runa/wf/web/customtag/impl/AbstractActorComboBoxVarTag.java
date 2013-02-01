@@ -68,7 +68,7 @@ public abstract class AbstractActorComboBoxVarTag implements VarTag {
             }
         }
         if (defaultActor == null) {
-            defaultActor = user;
+            defaultActor = user.getActor();
         }
 
         htmlContent.append(createSelect(varName, actors, defaultActor).toString());

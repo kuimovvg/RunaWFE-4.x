@@ -19,8 +19,6 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
@@ -58,36 +56,32 @@ public class ListRelationMembersFormTag extends BatchReturningTitledFormTag {
     boolean isFormButtonVisible;
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
-        try {
-            RelationService relationService = Delegates.getRelationService();
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Relation currentRelation = relationService.getRelation(getUser(), getRelationName());
-            isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, currentRelation);
-            BatchPresentation batchPresentation = getBatch();
-            List<RelationPair> relations = relationService.getRelationPairs(getUser(), relationName, batchPresentation);
+    protected void fillFormElement(TD tdFormElement) {
+        RelationService relationService = Delegates.getRelationService();
+        AuthorizationService authorizationService = Delegates.getAuthorizationService();
+        Relation currentRelation = relationService.getRelation(getUser(), getRelationName());
+        isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, currentRelation);
+        BatchPresentation batchPresentation = getBatch();
+        List<RelationPair> relations = relationService.getRelationPairs(getUser(), relationName, batchPresentation);
 
-            TableBuilder tableBuilder = new TableBuilder();
+        TableBuilder tableBuilder = new TableBuilder();
 
-            TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
+        TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
 
-                @Override
-                protected boolean isEnabled(Object object, Env env) {
-                    return isFormButtonVisible;
-                }
-            };
+            @Override
+            protected boolean isEnabled(Object object, Env env) {
+                return isFormButtonVisible;
+            }
+        };
 
-            TDBuilder[] builders = getBuilders(new TDBuilder[] { checkboxBuilder }, batchPresentation, new TDBuilder[] {});
+        TDBuilder[] builders = getBuilders(new TDBuilder[] { checkboxBuilder }, batchPresentation, new TDBuilder[] {});
 
-            RowBuilder rowBuilder = new ReflectionRowBuilder(relations, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
-                    getReturnAction(), IdForm.ID_INPUT_NAME, builders);
-            HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 1, 0, getReturnAction(), pageContext);
+        RowBuilder rowBuilder = new ReflectionRowBuilder(relations, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
+                getReturnAction(), IdForm.ID_INPUT_NAME, builders);
+        HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 1, 0, getReturnAction(), pageContext);
 
-            tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
-            tdFormElement.addElement(new Input(Input.HIDDEN, "relationName", getRelationName()));
-        } catch (Exception e) {
-            handleException(e);
-        }
+        tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
+        tdFormElement.addElement(new Input(Input.HIDDEN, "relationName", getRelationName()));
     }
 
     public void setRelationName(String relationName) {
@@ -107,17 +101,17 @@ public class ListRelationMembersFormTag extends BatchReturningTitledFormTag {
     }
 
     @Override
-    protected boolean isFormButtonEnabled() throws JspException {
+    protected boolean isFormButtonEnabled() {
         return isFormButtonVisible;
     }
 
     @Override
-    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) throws JspException {
+    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
         return isFormButtonVisible;
     }
 
     @Override
-    protected boolean isFormButtonVisible() throws JspException {
+    protected boolean isFormButtonVisible() {
         return isFormButtonVisible;
     }
 

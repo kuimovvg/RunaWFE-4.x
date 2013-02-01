@@ -155,7 +155,7 @@ public class SubstitutionBean {
                 sub = new TerminatorSubstitution();
             } else {
                 sub = new Substitution();
-                sub.setSubstitutionOrgFunction(orgFunc);
+                sub.setOrgFunction(orgFunc);
             }
             sub.setCriteria(criteria);
             sub.setEnabled(isEnabled);
@@ -177,21 +177,21 @@ public class SubstitutionBean {
             int subIdx = 0;
             for (Substitution sub : firstSub) {
                 Substitution clone = (Substitution) sub.clone();
-                clone.setSubstitutionOrgFunction(tuneOrgFunc(clone.getSubstitutionOrgFunction(), actor));
+                clone.setOrgFunction(tuneOrgFunc(clone.getOrgFunction(), actor));
                 clone.setPosition(subIdx++);
                 clone.setActorId(actor.getId());
                 createdSubstitutions.add(clone);
             }
             for (Substitution sub : existing) {
                 Substitution clone = (Substitution) sub.clone();
-                clone.setSubstitutionOrgFunction(tuneOrgFunc(clone.getSubstitutionOrgFunction(), actor));
+                clone.setOrgFunction(tuneOrgFunc(clone.getOrgFunction(), actor));
                 clone.setPosition(subIdx++);
                 clone.setActorId(actor.getId());
                 createdSubstitutions.add(clone);
             }
             for (Substitution sub : lastSub) {
                 Substitution clone = (Substitution) sub.clone();
-                clone.setSubstitutionOrgFunction(tuneOrgFunc(clone.getSubstitutionOrgFunction(), actor));
+                clone.setOrgFunction(tuneOrgFunc(clone.getOrgFunction(), actor));
                 clone.setPosition(subIdx++);
                 clone.setActorId(actor.getId());
                 createdSubstitutions.add(clone);
@@ -231,7 +231,7 @@ public class SubstitutionBean {
             for (Substitution substitution : substitutionLogic.getSubstitutions(user, actor.getId())) {
                 for (int i = 0; i < deletedSubstitutionsDescr.size(); ++i) {
                     if (isCriteriaMatch(substitution.getCriteria(), criterias[i])
-                            && isStringMatch(substitution.getSubstitutionOrgFunction(), tuneOrgFunc(orgFuncs[i], actor))) {
+                            && isStringMatch(substitution.getOrgFunction(), tuneOrgFunc(orgFuncs[i], actor))) {
                         retVal.add(substitution);
                         break;
                     }

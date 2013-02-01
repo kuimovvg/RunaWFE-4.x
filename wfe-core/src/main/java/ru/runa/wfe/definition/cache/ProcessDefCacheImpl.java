@@ -64,8 +64,8 @@ class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCach
                 return processDefinition;
             }
         }
-        Deployment processDeploymentDbImpl = deploymentDAO.getNotNull(definitionId);
-        ProcessArchive archive = new ProcessArchive(processDeploymentDbImpl);
+        Deployment deployment = deploymentDAO.getNotNull(definitionId);
+        ProcessArchive archive = new ProcessArchive(deployment);
         processDefinition = archive.parseProcessDefinition();
         synchronized (this) {
             definitionIdToDefinition.put(definitionId, processDefinition);

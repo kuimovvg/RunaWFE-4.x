@@ -19,8 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
@@ -86,14 +84,14 @@ public class TaskFormTag extends WFFormTag {
     }
 
     @Override
-    protected String buildForm(Interaction interaction) throws Exception {
+    protected String buildForm(Interaction interaction) {
         TaskFormBuilder taskFormBuilder = FormBuilderFactory.createTaskFormBuilder(interaction.getType());
         WfTask task = Delegates.getExecutionService().getTask(getUser(), taskId);
         return taskFormBuilder.build(getUser(), pageContext, interaction, task);
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         super.fillFormElement(tdFormElement);
         tdFormElement.addElement(new Input(Input.HIDDEN, IdForm.ID_INPUT_NAME, String.valueOf(taskId)));
         tdFormElement.addElement(new Input(Input.HIDDEN, WebResources.ACTION_MAPPING_SUBMIT_TASK_DISPATCHER, "redirectEnabled"));

@@ -28,7 +28,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
@@ -99,8 +98,4 @@ public class SubstitutionCriteria implements Serializable {
         return false;
     }
 
-    @Transient
-    public String getLabelKey() {
-        return "";
-    }
 }

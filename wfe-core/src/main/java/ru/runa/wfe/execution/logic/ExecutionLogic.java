@@ -73,7 +73,7 @@ public class ExecutionLogic extends WFCommonLogic {
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         checkPermissionAllowed(user, process, ProcessPermission.CANCEL_PROCESS);
-        process.cancel(executionContext, user);
+        process.cancel(executionContext, user.getActor());
         ProcessExecutionErrors.removeProcessErrors(processId);
         log.info("Process " + process + " was cancelled by " + user);
     }
@@ -147,7 +147,7 @@ public class ExecutionLogic extends WFCommonLogic {
             validateVariables(processDefinition, processDefinition.getStartStateNotNull().getNodeId(), new MapDelegableVariableProvider(variables,
                     null));
             String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
-            Process process = processFactory.startProcess(processDefinition, variables, user, transitionName);
+            Process process = processFactory.startProcess(processDefinition, variables, user.getActor(), transitionName);
             log.info("Process " + process + " was successfully started");
             return process.getId();
         } catch (Exception e) {

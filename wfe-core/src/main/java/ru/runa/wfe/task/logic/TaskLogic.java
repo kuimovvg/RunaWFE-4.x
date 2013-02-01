@@ -74,9 +74,9 @@ public class TaskLogic extends WFCommonLogic {
                 variables = Maps.newHashMap();
             }
             String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
-            checkCanParticipate(user, task, user);
-            checkPermissionsOnExecutor(user, user, ActorPermission.READ);
-            assignmentHelper.reassignTask(executionContext, task, user, true);
+            checkCanParticipate(user, task, user.getActor());
+            checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
+            assignmentHelper.reassignTask(executionContext, task, user.getActor(), true);
             validateVariables(processDefinition, task.getNodeId(),
                     new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
             executionContext.setVariables(variables);
@@ -100,7 +100,7 @@ public class TaskLogic extends WFCommonLogic {
 
     public WfTask getTask(User user, Long taskId) throws AuthenticationException {
         Task task = taskDAO.getNotNull(taskId);
-        return taskObjectFactory.create(task, user, null);
+        return taskObjectFactory.create(task, user.getActor(), null);
     }
 
     public void assignUnassignedTasks() {
@@ -128,7 +128,7 @@ public class TaskLogic extends WFCommonLogic {
     }
 
     public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) {
-        return tasklistBuilder.getTasks(user, batchPresentation);
+        return tasklistBuilder.getTasks(user.getActor(), batchPresentation);
     }
 
     public List<WfTask> getActiveTasks(User user, Long processId) throws ProcessDoesNotExistException {
@@ -136,7 +136,7 @@ public class TaskLogic extends WFCommonLogic {
         Process process = processDAO.getNotNull(processId);
         checkPermissionAllowed(user, process, ProcessPermission.READ);
         for (Task task : process.getActiveTasks(null)) {
-            result.add(taskObjectFactory.create(task, user, null));
+            result.add(taskObjectFactory.create(task, user.getActor(), null));
         }
         return result;
     }

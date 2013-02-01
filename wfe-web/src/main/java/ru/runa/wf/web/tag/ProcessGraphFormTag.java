@@ -20,8 +20,6 @@ package ru.runa.wf.web.tag;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.IMG;
 import org.apache.ecs.html.TD;
 
@@ -73,7 +71,7 @@ public class ProcessGraphFormTag extends ProcessBaseFormTag {
     }
 
     @Override
-    protected void fillFormData(final TD formDataTD) throws JspException {
+    protected void fillFormData(final TD formDataTD) {
         Map<String, Object> params = Maps.newHashMap();
         params.put(IdForm.ID_INPUT_NAME, getProcess().getId());
         params.put("childProcessId", childProcessId);
@@ -120,7 +118,7 @@ public class ProcessGraphFormTag extends ProcessBaseFormTag {
     }
 
     @Override
-    protected boolean isVisible() throws JspException {
+    protected boolean isVisible() {
         return true;
     }
 

@@ -19,8 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.Element;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
@@ -85,12 +83,12 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
     }
 
     @Override
-    protected boolean isFormButtonVisible() throws JspException {
+    protected boolean isFormButtonVisible() {
         return !getProcess().isEnded();
     }
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
+    protected void fillFormData(TD tdFormElement) {
         WfProcess process = getProcess();
         Table table = new Table();
         tdFormElement.addElement(table);
@@ -104,14 +102,12 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
         Element processDefinitionHref;
         try {
             DefinitionService definitionService = Delegates.getDefinitionService();
-            WfDefinition definitionStub = definitionService.getProcessDefinition(getUser(), process.getProcessDefinitionId());
-            String url = Commons.getActionUrl(ru.runa.common.WebResources.ACTION_MAPPING_MANAGE_DEFINITION, IdForm.ID_INPUT_NAME,
-                    definitionStub.getId(), pageContext, PortletUrlType.Render);
+            WfDefinition definition = definitionService.getProcessDefinition(getUser(), process.getProcessDefinitionId());
+            String url = Commons.getActionUrl(ru.runa.common.WebResources.ACTION_MAPPING_MANAGE_DEFINITION, IdForm.ID_INPUT_NAME, definition.getId(),
+                    pageContext, PortletUrlType.Render);
             processDefinitionHref = new A(url, process.getName());
         } catch (AuthorizationException e1) {
             processDefinitionHref = new StringElement(process.getName());
-        } catch (Exception e) {
-            throw new JspException(e);
         }
         nameTR.addElement(new TD(processDefinitionHref).setClass(Resources.CLASS_LIST_TABLE_TD));
 
@@ -143,32 +139,28 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
         }
 
         ExecutionService executionService = Delegates.getExecutionService();
-        try {
-            WfProcess parentProcess = executionService.getParentProcess(getUser(), getIdentifiableId());
-            if (parentProcess != null) {
-                TR parentTR = new TR();
-                table.addElement(parentTR);
-                String parentNameString = Messages.getMessage(Messages.LABEL_PARENT_PROCESS, pageContext);
-                parentTR.addElement(new TD(parentNameString).setClass(Resources.CLASS_LIST_TABLE_TD));
-                TD td = new TD();
-                td.setClass(Resources.CLASS_LIST_TABLE_TD);
-                Element inner;
-                String parentProcessDefinitionName = parentProcess.getName();
-                if (checkReadable(parentProcess)) {
-                    Map<String, Object> params = Maps.newHashMap();
-                    params.put(IdForm.ID_INPUT_NAME, parentProcess.getId());
-                    params.put(TaskIdForm.TASK_ID_INPUT_NAME, taskId);
-                    params.put("childProcessId", process.getId());
-                    inner = new A(Commons.getActionUrl(ShowGraphModeHelper.getManageProcessAction(), params, pageContext, PortletUrlType.Render),
-                            parentProcessDefinitionName);
-                } else {
-                    inner = new StringElement(parentProcessDefinitionName);
-                }
-                td.addElement(inner);
-                parentTR.addElement(td);
+        WfProcess parentProcess = executionService.getParentProcess(getUser(), getIdentifiableId());
+        if (parentProcess != null) {
+            TR parentTR = new TR();
+            table.addElement(parentTR);
+            String parentNameString = Messages.getMessage(Messages.LABEL_PARENT_PROCESS, pageContext);
+            parentTR.addElement(new TD(parentNameString).setClass(Resources.CLASS_LIST_TABLE_TD));
+            TD td = new TD();
+            td.setClass(Resources.CLASS_LIST_TABLE_TD);
+            Element inner;
+            String parentProcessDefinitionName = parentProcess.getName();
+            if (checkReadable(parentProcess)) {
+                Map<String, Object> params = Maps.newHashMap();
+                params.put(IdForm.ID_INPUT_NAME, parentProcess.getId());
+                params.put(TaskIdForm.TASK_ID_INPUT_NAME, taskId);
+                params.put("childProcessId", process.getId());
+                inner = new A(Commons.getActionUrl(ShowGraphModeHelper.getManageProcessAction(), params, pageContext, PortletUrlType.Render),
+                        parentProcessDefinitionName);
+            } else {
+                inner = new StringElement(parentProcessDefinitionName);
             }
-        } catch (Exception e) {
-            throw new JspException(e);
+            td.addElement(inner);
+            parentTR.addElement(td);
         }
     }
 

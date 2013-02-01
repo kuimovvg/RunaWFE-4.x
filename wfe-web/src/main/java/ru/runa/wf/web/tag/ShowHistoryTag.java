@@ -20,10 +20,6 @@ package ru.runa.wf.web.tag;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TH;
@@ -64,63 +60,58 @@ import com.google.common.collect.Maps;
  */
 public class ShowHistoryTag extends ProcessBaseFormTag {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(ShowHistoryTag.class);
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
-        try {
-            ExecutionService executionService = Delegates.getExecutionService();
-            ProcessLogFilter filter = new ProcessLogFilter(getIdentifiableId());
-            filter.setIncludeSubprocessLogs(true);
-            ProcessLogs logs = executionService.getProcessLogs(getUser(), filter);
-            int maxLevel = logs.getMaxSubprocessLevel();
-            List<TR> rows = Lists.newArrayList();
-            TD mergedEventDateTD = null;
-            String mergedEventDateString = null;
-            int mergedRowsCount = 0;
-            for (ProcessLog log : logs.getLogs()) {
-                String description;
-                try {
-                    String format = Messages.getMessage("history.log." + log.getClass().getSimpleName(), pageContext);
-                    Object[] arguments = log.getPatternArguments();
-                    Object[] substitutedArguments = substituteArguments(arguments);
-                    description = log.toString(format, substitutedArguments);
-                } catch (Exception e) {
-                    description = log.toString();
-                }
-                TR tr = new TR();
-                int currentLevel = logs.getLevel(log);
-                for (int i = 0; i < currentLevel; i++) {
-                    tr.addElement(new TD().addElement("x").setClass(Resources.CLASS_EMPTY20_TABLE_TD));
-                }
-                for (int i = currentLevel; i < maxLevel; i++) {
-                    tr.addElement(new TD().addElement("").setClass(Resources.CLASS_EMPTY20_TABLE_TD));
-                }
-                String eventDateString = CalendarUtil.formatDateTime(log.getDate());
-                if (!Objects.equal(mergedEventDateString, eventDateString)) {
-                    if (mergedEventDateTD != null) {
-                        mergedEventDateTD.setRowSpan(mergedRowsCount + 1);
-                    }
-                    mergedRowsCount = 0;
-                    mergedEventDateTD = (TD) new TD().addElement(eventDateString).setClass(Resources.CLASS_LIST_TABLE_TD);
-                    mergedEventDateString = eventDateString;
-                    tr.addElement(mergedEventDateTD);
-                } else {
-                    mergedRowsCount++;
-                }
-                tr.addElement(new TD().addElement(description).setClass(Resources.CLASS_LIST_TABLE_TD));
-                rows.add(tr);
+    protected void fillFormData(TD tdFormElement) {
+        ExecutionService executionService = Delegates.getExecutionService();
+        ProcessLogFilter filter = new ProcessLogFilter(getIdentifiableId());
+        filter.setIncludeSubprocessLogs(true);
+        ProcessLogs logs = executionService.getProcessLogs(getUser(), filter);
+        int maxLevel = logs.getMaxSubprocessLevel();
+        List<TR> rows = Lists.newArrayList();
+        TD mergedEventDateTD = null;
+        String mergedEventDateString = null;
+        int mergedRowsCount = 0;
+        for (ProcessLog log : logs.getLogs()) {
+            String description;
+            try {
+                String format = Messages.getMessage("history.log." + log.getClass().getSimpleName(), pageContext);
+                Object[] arguments = log.getPatternArguments();
+                Object[] substitutedArguments = substituteArguments(arguments);
+                description = log.toString(format, substitutedArguments);
+            } catch (Exception e) {
+                description = log.toString();
             }
-            if (mergedEventDateTD != null) {
-                mergedEventDateTD.setRowSpan(mergedRowsCount + 1);
+            TR tr = new TR();
+            int currentLevel = logs.getLevel(log);
+            for (int i = 0; i < currentLevel; i++) {
+                tr.addElement(new TD().addElement("x").setClass(Resources.CLASS_EMPTY20_TABLE_TD));
             }
-            HeaderBuilder tasksHistoryHeaderBuilder = new HistoryHeaderBuilder(maxLevel);
-            RowBuilder rowBuilder = new TRRowBuilder(rows);
-            TableBuilder tableBuilder = new TableBuilder();
-            tdFormElement.addElement(tableBuilder.build(tasksHistoryHeaderBuilder, rowBuilder));
-        } catch (Exception e) {
-            handleException(e);
+            for (int i = currentLevel; i < maxLevel; i++) {
+                tr.addElement(new TD().addElement("").setClass(Resources.CLASS_EMPTY20_TABLE_TD));
+            }
+            String eventDateString = CalendarUtil.formatDateTime(log.getDate());
+            if (!Objects.equal(mergedEventDateString, eventDateString)) {
+                if (mergedEventDateTD != null) {
+                    mergedEventDateTD.setRowSpan(mergedRowsCount + 1);
+                }
+                mergedRowsCount = 0;
+                mergedEventDateTD = (TD) new TD().addElement(eventDateString).setClass(Resources.CLASS_LIST_TABLE_TD);
+                mergedEventDateString = eventDateString;
+                tr.addElement(mergedEventDateTD);
+            } else {
+                mergedRowsCount++;
+            }
+            tr.addElement(new TD().addElement(description).setClass(Resources.CLASS_LIST_TABLE_TD));
+            rows.add(tr);
         }
+        if (mergedEventDateTD != null) {
+            mergedEventDateTD.setRowSpan(mergedRowsCount + 1);
+        }
+        HeaderBuilder tasksHistoryHeaderBuilder = new HistoryHeaderBuilder(maxLevel);
+        RowBuilder rowBuilder = new TRRowBuilder(rows);
+        TableBuilder tableBuilder = new TableBuilder();
+        tdFormElement.addElement(tableBuilder.build(tasksHistoryHeaderBuilder, rowBuilder));
     }
 
     private Object[] substituteArguments(Object[] arguments) {
@@ -136,7 +127,7 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                     Executor executor = Delegates.getExecutorService().getExecutor(getUser(), name);
                     result[i] = createExecutorLink(executor);
                 } catch (Exception e) {
-                    log.warn("could not get executor '" + name + "': " + e.getMessage());
+                    log.error("could not get executor '" + name + "': " + e.getMessage());
                     result[i] = name;
                 }
             } else if (arguments[i] instanceof ExecutorIdsValue) {
@@ -152,7 +143,7 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                         executors += createExecutorLink(executor);
                         executors += "&nbsp;";
                     } catch (Exception e) {
-                        log.warn("could not get executor by " + id + ": " + e.getMessage());
+                        log.error("could not get executor by " + id + ": " + e.getMessage());
                         executors += id + "&nbsp;";
                     }
                 }
@@ -217,15 +208,25 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
             }
             tr.addElement(new TH("Date").setClass(Resources.CLASS_LIST_TABLE_TH));
             tr.addElement(new TH("Event").setClass(Resources.CLASS_LIST_TABLE_TH));
-            // tr.addElement(new TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_TASK_NAME, pageContext))
+            // tr.addElement(new
+            // TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_TASK_NAME,
+            // pageContext))
             // .setClass(Resources.CLASS_LIST_TABLE_TH));
-            // tr.addElement(new TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_EXECUTOR, pageContext))
+            // tr.addElement(new
+            // TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_EXECUTOR,
+            // pageContext))
             // .setClass(Resources.CLASS_LIST_TABLE_TH));
-            // tr.addElement(new TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_START_DATE, pageContext))
+            // tr.addElement(new
+            // TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_START_DATE,
+            // pageContext))
             // .setClass(Resources.CLASS_LIST_TABLE_TH));
-            // tr.addElement(new TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_END_DATE, pageContext))
+            // tr.addElement(new
+            // TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_END_DATE,
+            // pageContext))
             // .setClass(Resources.CLASS_LIST_TABLE_TH));
-            // tr.addElement(new TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_DURATION, pageContext))
+            // tr.addElement(new
+            // TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_DURATION,
+            // pageContext))
             // .setClass(Resources.CLASS_LIST_TABLE_TH));
             return tr;
         }

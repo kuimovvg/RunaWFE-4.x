@@ -3,8 +3,6 @@ package ru.runa.wf.web.tag;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.TD;
@@ -26,12 +24,12 @@ public class ShowProcessErrorsTag extends VisibleTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected ConcreteElement getStartElement() throws JspException {
+    protected ConcreteElement getStartElement() {
         return new StringElement();
     }
 
     @Override
-    protected ConcreteElement getEndElement() throws JspException {
+    protected ConcreteElement getEndElement() {
         List<TR> rows = Lists.newArrayList();
         for (Map.Entry<Long, Map<String, Throwable>> processEntry : ProcessExecutionErrors.getProcessErrors().entrySet()) {
             for (Map.Entry<String, Throwable> taskEntry : processEntry.getValue().entrySet()) {

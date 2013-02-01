@@ -24,9 +24,7 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ProcessPermission;
-import ru.runa.wfe.security.Permission;
-
-import com.google.common.collect.Lists;
+import ru.runa.wfe.os.OrgFunctionHelper;
 
 /**
  * Semantic is defined in update-permissions.xsd.
@@ -45,20 +43,18 @@ public class UpdatePermissionsXmlParser {
     private static final String PERMISSION_ELEMENT_NAME = "permission";
 
     public static UpdatePermissionsSettings read(String configuration) {
+        UpdatePermissionsSettings settings = new UpdatePermissionsSettings();
         Document document = XmlUtils.parseWithoutValidation(configuration);
         Element root = document.getRootElement();
-        List<String> orgFunctions = Lists.newArrayList();
         List<Element> orgFunctionElements = root.element(ORGFUNCTIONS_ELEMENT_NAME).elements(ORGFUNCTION_ELEMENT_NAME);
         for (Element element : orgFunctionElements) {
-            orgFunctions.add(element.getTextTrim());
+            settings.getOrgFunctions().add(OrgFunctionHelper.parseOrgFunction(element.getTextTrim()));
         }
-        Method method = Method.valueOf(root.elementTextTrim(METHOD_ELEMENT_NAME));
-        List<Permission> permissions = Lists.newArrayList();
+        settings.setMethod(Method.valueOf(root.elementTextTrim(METHOD_ELEMENT_NAME)));
         List<Element> permissionElements = root.element(PERMISSIONS_ELEMENT_NAME).elements(PERMISSION_ELEMENT_NAME);
         for (Element element : permissionElements) {
-            permissions.add(ProcessPermission.CANCEL_PROCESS.getPermission(element.getTextTrim()));
+            settings.getPermissions().add(ProcessPermission.CANCEL_PROCESS.getPermission(element.getTextTrim()));
         }
-        UpdatePermissionsSettings settings = new UpdatePermissionsSettings(orgFunctions, method, permissions);
         Element conditionElement = root.element(CONDITION_ELEMENT_NAME);
         if (conditionElement != null) {
             settings.setCondition(conditionElement.attributeValue(CONDITION_VAR_NAME_ATTRIBUTE_NAME),

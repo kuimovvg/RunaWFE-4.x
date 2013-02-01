@@ -17,7 +17,6 @@
  */
 package ru.runa.common.web;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
@@ -34,8 +33,8 @@ import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionFileDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionNameMismatchException;
 import ru.runa.wfe.definition.InvalidDefinitionException;
-import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ParentProcessExistsException;
+import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.presentation.filter.FilterFormatException;
 import ru.runa.wfe.relation.RelationAlreadyExistException;
 import ru.runa.wfe.relation.RelationDoesNotExistException;
@@ -70,7 +69,7 @@ public class ActionExceptionHelper {
         log.error("web exception", e);
     }
 
-    public static String getErrorMessage(Throwable e, PageContext pageContext) throws JspException {
+    public static String getErrorMessage(Throwable e, PageContext pageContext) {
         ActionMessage actionMessage = getActionMessage(e);
         return Commons.getMessage(actionMessage.getKey(), pageContext, actionMessage.getValues());
     }
@@ -116,7 +115,7 @@ public class ActionExceptionHelper {
         } else if (e instanceof DefinitionArchiveFormatException) {
             actionMessage = new ActionMessage(Messages.DEFINITION_ARCHIVE_FORMAT_ERROR);
         } else if (e instanceof InvalidDefinitionException) {
-            actionMessage = new ActionMessage(Messages.DEFINITION_FILE_FORMAT_ERROR, e.getMessage());
+            actionMessage = new ActionMessage(Messages.DEFINITION_FILE_FORMAT_ERROR, ((InvalidDefinitionException) e).getDefinitionName());
         } else if (e instanceof DefinitionNameMismatchException) {
             DefinitionNameMismatchException exception = (DefinitionNameMismatchException) e;
             actionMessage = new ActionMessage(Messages.ERROR_WEB_CLIENT_DEFINITION_NAME_MISMATCH, exception.getDeployedProcessDefinitionName(),

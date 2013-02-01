@@ -70,6 +70,11 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
     }
 
     @Override
+    public String getLocalized(User user, String name) {
+        return auditLogic.getLocalized(user, name);
+    }
+
+    @Override
     public void saveLocalizations(User user, Map<String, String> localizations) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(localizations);

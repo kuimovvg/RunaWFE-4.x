@@ -17,57 +17,49 @@
  */
 package ru.runa.af.web.orgfunction;
 
-import javax.servlet.jsp.PageContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.os.FunctionConfiguration;
-import ru.runa.wfe.os.OrgFunctionParser;
+import ru.runa.wfe.os.OrgFunction;
+import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.os.ParamRenderer;
 import ru.runa.wfe.user.User;
 
 public class SubstitutionHelper {
     private static final Log log = LogFactory.getLog(SubstitutionHelper.class);
 
-    public static String injectFunction(String orgFunction) {
+    public static String injectFunction(String swimlaneInitializer) {
         try {
-            return OrgFunctionParser.parse(orgFunction).getFunctionName();
+            return OrgFunctionHelper.parseOrgFunction(swimlaneInitializer).getClass().getName();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return "";
         }
     }
 
-    public static String injectParameter(String orgFunction, int index) {
+    public static String injectParameter(String swimlaneInitializer, int index) {
         try {
-            return OrgFunctionParser.parse(orgFunction).getParameters()[index];
+            return OrgFunctionHelper.parseOrgFunction(swimlaneInitializer).getParameterNames()[index];
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return "";
         }
     }
 
-    public static String getUserFriendlyOrgFunction(User user, PageContext pageContext, String orgFunction) {
-        try {
-            StringBuffer result = new StringBuffer();
-            FunctionConfiguration configuration = OrgFunctionParser.parse(orgFunction);
-            String[] parameters = configuration.getParameters();
-            FunctionDef functionDef = SubstitutionDefinitions.getByClassName(configuration.getFunctionName());
-            result.append(functionDef.getMessage(pageContext));
-            result.append("(");
-            for (int i = 0; i < functionDef.getParams().size(); i++) {
-                if (i != 0) {
-                    result.append(", ");
-                }
-                ParamRenderer renderer = functionDef.getParams().get(i).getRenderer();
-                result.append(renderer.getDisplayLabel(user, parameters[i]));
+    public static String getUserFriendlyOrgFunction(User user, String swimlaneInitializer) {
+        StringBuffer result = new StringBuffer();
+        OrgFunction function = OrgFunctionHelper.parseOrgFunction(swimlaneInitializer);
+        FunctionDef functionDef = SubstitutionDefinitions.getByClassName(function.getClass().getName());
+        result.append(functionDef.getLabel());
+        result.append("(");
+        for (int i = 0; i < functionDef.getParams().size(); i++) {
+            if (i != 0) {
+                result.append(", ");
             }
-            result.append(")");
-            return result.toString();
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            ParamRenderer renderer = functionDef.getParams().get(i).getRenderer();
+            result.append(renderer.getDisplayLabel(user, function.getParameterNames()[i]));
         }
+        result.append(")");
+        return result.toString();
     }
 }

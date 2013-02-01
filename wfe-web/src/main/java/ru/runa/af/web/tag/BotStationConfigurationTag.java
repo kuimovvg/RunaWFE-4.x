@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.action.UpdateBotStationPermissionAction;
@@ -37,27 +35,33 @@ import ru.runa.wfe.security.Permission;
 public class BotStationConfigurationTag extends IdentifiableFormTag {
     private static final long serialVersionUID = -1187003724875968614L;
 
-    protected void fillFormData(TD tdFormElement) throws JspException {
+    @Override
+    protected void fillFormData(TD tdFormElement) {
         PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getIdentifiable(), getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 
-    protected Permission getPermission() throws JspException {
+    @Override
+    protected Permission getPermission() {
         return BotStationPermission.READ;
     }
 
-    protected Identifiable getIdentifiable() throws JspException {
+    @Override
+    protected Identifiable getIdentifiable() {
         return BotStation.INSTANCE;
     }
 
+    @Override
     public String getAction() {
         return UpdateBotStationPermissionAction.ACTION_PATH_NAME;
     }
 
+    @Override
     protected String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_APPLY, pageContext);
     }
 
+    @Override
     protected String getTitle() {
         return Messages.getMessage(Messages.TITLE_PERMISSION_OWNERS, pageContext);
     }

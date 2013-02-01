@@ -56,7 +56,7 @@ public class FormParser {
         }
     }
 
-    public byte[] getParsedFormBytes() throws Exception {
+    public byte[] getParsedFormBytes() {
         StringBuilder sb = new StringBuilder(new String(formBytes, Charsets.UTF_8));
         applyTags(sb);
         byte[] formBytes = HTMLFormConverter.changeUrls(pageContext, definitionId, "form.html", sb.toString().getBytes(Charsets.UTF_8));

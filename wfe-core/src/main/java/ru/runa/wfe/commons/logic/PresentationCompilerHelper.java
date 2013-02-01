@@ -65,7 +65,7 @@ public final class PresentationCompilerHelper {
      *         executors.
      */
     public static BatchPresentationHibernateCompiler createAllExecutorsCompiler(User user, BatchPresentation batchPresentation) {
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user);
+        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
         compiler.setParameters(batchPresentation.getClassPresentation().getPresentationClass(), null, null, true, executorIds,
                 ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, null);
@@ -94,7 +94,7 @@ public final class PresentationCompilerHelper {
      */
     public static BatchPresentationHibernateCompiler createGroupChildrenCompiler(User user, Group group, BatchPresentation batchPresentation,
             boolean hasExecutor) throws AuthenticationException {
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user);
+        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         String inClause = hasExecutor ? "IN" : "NOT IN";
         String notInRestriction = inClause + " (SELECT relation.executor.id FROM " + ExecutorGroupMembership.class.getName()
                 + " as relation WHERE relation.group.id=" + group.getId() + ")";
@@ -127,7 +127,7 @@ public final class PresentationCompilerHelper {
     public static BatchPresentationHibernateCompiler createExecutorGroupsCompiler(User user, Executor executor, BatchPresentation batchPresentation,
             boolean hasGroup) {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user);
+        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         String inClause = hasGroup ? "IN" : "NOT IN";
         String inRestriction = inClause + " (SELECT relation.group.id FROM " + ExecutorGroupMembership.class.getName()
                 + " as relation WHERE relation.executor.id=" + executor.getId() + ")";
@@ -161,7 +161,7 @@ public final class PresentationCompilerHelper {
     public static BatchPresentationHibernateCompiler createExecutorWithPermissionCompiler(User user, Identifiable identifiable,
             BatchPresentation batchPresentation, boolean hasPermission) throws AuthenticationException {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user);
+        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         String inClause = hasPermission ? "IN" : "NOT IN";
         String idRestriction = inClause + " (SELECT pm.executor.id from " + PermissionMapping.class.getName() + " as pm where pm.identifiableId="
                 + identifiable.getId() + ")";

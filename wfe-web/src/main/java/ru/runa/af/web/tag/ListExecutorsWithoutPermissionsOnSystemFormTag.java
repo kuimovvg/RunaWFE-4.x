@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.af.web.action.GrantLoginPermissionOnSystemAction;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Identifiable;
@@ -28,7 +26,8 @@ import ru.runa.wfe.security.Identifiable;
  * 
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
- * @jsp.tag name = "listExecutorsWithoutPermissionsOnSystemForm" body-content = "JSP"
+ * @jsp.tag name = "listExecutorsWithoutPermissionsOnSystemForm" body-content =
+ *          "JSP"
  */
 public class ListExecutorsWithoutPermissionsOnSystemFormTag extends ListExecutorsWithoutPermissionsBase {
 
@@ -40,7 +39,7 @@ public class ListExecutorsWithoutPermissionsOnSystemFormTag extends ListExecutor
     }
 
     @Override
-    protected Identifiable getIdentifiable() throws JspException {
+    protected Identifiable getIdentifiable() {
         return ASystem.INSTANCE;
     }
 }

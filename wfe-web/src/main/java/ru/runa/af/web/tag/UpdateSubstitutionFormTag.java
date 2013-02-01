@@ -19,11 +19,8 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.Element;
 import org.apache.ecs.Entities;
 import org.apache.ecs.html.A;
@@ -59,8 +56,6 @@ import ru.runa.wfe.ss.TerminatorSubstitution;
  * @jsp.tag name = "updateSubstitutionForm" body-content = "JSP"
  */
 public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
-
-    private static final Log log = LogFactory.getLog(UpdateSubstitutionFormTag.class);
     private static final long serialVersionUID = 9096797376521541558L;
     private Substitution substitution;
     private boolean terminator;
@@ -89,12 +84,12 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
     }
 
     @Override
-    protected Identifiable getIdentifiable() throws JspException {
+    protected Identifiable getIdentifiable() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void fillFormData(TD tdFormElement) throws JspException {
+    public void fillFormData(TD tdFormElement) {
         try {
             StringBuffer paramsDiv = new StringBuffer("<div id='rh' style='display: none;'>");
             List<FunctionDef> functions = SubstitutionDefinitions.getAll();
@@ -170,7 +165,7 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
             if (!terminator) {
                 String function = "";
                 if (substitution != null) {
-                    function = SubstitutionHelper.injectFunction(substitution.getSubstitutionOrgFunction());
+                    function = SubstitutionHelper.injectFunction(substitution.getOrgFunction());
                 }
                 SubstitutionForm form = (SubstitutionForm) pageContext.getRequest().getAttribute(SubstitutionForm.NAME);
                 if (form != null) {
@@ -188,7 +183,7 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
                         for (int i = 0; i < functionDef.getParams().size(); i++) {
                             String value = "";
                             if (substitution != null) {
-                                value = SubstitutionHelper.injectParameter(substitution.getSubstitutionOrgFunction(), i);
+                                value = SubstitutionHelper.injectParameter(substitution.getOrgFunction(), i);
                             }
                             ParamDef paramDef = functionDef.getParams().get(i);
                             table.addElement(createParameterTR(i, paramDef.getMessage(pageContext),
@@ -235,7 +230,7 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
             Option[] options = new Option[definitions.size()];
             for (int i = 0; i < options.length; i++) {
                 options[i] = new Option(definitions.get(i).getClassName());
-                options[i].addElement(definitions.get(i).getMessage(pageContext));
+                options[i].addElement(definitions.get(i).getLabel());
             }
             for (Option option : options) {
                 if (selectedValue.equals(option.getValue())) {

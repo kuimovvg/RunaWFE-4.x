@@ -156,6 +156,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         // ru.runa.wfe.ss.Substitution
         sql.add(getDDLRenameTable("SUBSTITUTIONS", "SUBSTITUTION"));
         sql.add(getDDLRenameColumn("SUBSTITUTION", "IS_TERMINATOR", new ColumnDef("DISCRIMINATOR", Types.VARCHAR)));
+        sql.add(getDDLRenameColumn("SUBSTITUTION", "SUBSTITUTION_ORG_FUNCTION", new ColumnDef("ORG_FUNCTION", Types.VARCHAR)));
         sql.add(getDDLCreateIndex("SUBSTITUTION", "IX_SUBSTITUTION_CRITERIA", "CRITERIA_ID"));
         sql.add(getDDLCreateIndex("SUBSTITUTION", "IX_SUBSTITUTION_ACTOR", "ACTOR_ID"));
         sql.add(getDDLCreateForeignKey("SUBSTITUTION", "FK_SUBSTITUTION_CRITERIA", "CRITERIA_ID", "SUBSTITUTION_CRITERIA", "ID"));

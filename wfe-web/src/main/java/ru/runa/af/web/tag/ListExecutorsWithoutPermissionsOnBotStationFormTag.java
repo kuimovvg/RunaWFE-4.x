@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.af.web.action.GrantBotStationConfigurePermissionAction;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.security.Identifiable;
@@ -27,7 +25,8 @@ import ru.runa.wfe.security.Identifiable;
  * Created on 31.08.2004
  * 
  * @author stan79
- * @jsp.tag name = "ListExecutorsWithoutPermissionsOnBotStationFormTag" body-content = "JSP"
+ * @jsp.tag name = "ListExecutorsWithoutPermissionsOnBotStationFormTag"
+ *          body-content = "JSP"
  */
 public class ListExecutorsWithoutPermissionsOnBotStationFormTag extends ListExecutorsWithoutPermissionsBase {
 
@@ -39,7 +38,7 @@ public class ListExecutorsWithoutPermissionsOnBotStationFormTag extends ListExec
     }
 
     @Override
-    protected Identifiable getIdentifiable() throws JspException {
+    protected Identifiable getIdentifiable() {
         return BotStation.INSTANCE;
     }
 }

@@ -48,7 +48,7 @@ public class GroupMembersTag extends FreemarkerTag {
     }
 
     protected Select createSelect(String selectName, List<Actor> actors) {
-        Actor defaultSelectedActor = user;
+        Actor defaultSelectedActor = user.getActor();
         Select select = new Select();
         select.setName(selectName);
         for (Actor actor : actors) {

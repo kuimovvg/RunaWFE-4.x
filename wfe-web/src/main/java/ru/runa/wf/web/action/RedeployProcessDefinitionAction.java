@@ -29,7 +29,6 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.user.User;
@@ -58,13 +57,11 @@ public class RedeployProcessDefinitionAction extends BaseDeployProcessDefinition
 
     @Override
     protected void doAction(User user, FileForm fileForm, List<String> processType, ActionMessages errors) {
-        DefinitionService definitionService = Delegates.getDefinitionService();
         try {
-            WfDefinition processDefinitionDescriptor = definitionService.getProcessDefinition(user, fileForm.getId());
-            definitionService.redeployProcessDefinition(user, fileForm.getId(), Strings.isNullOrEmpty(fileForm.getFile().getFileName()) ? null
-                    : fileForm.getFile().getFileData(), processType);
-            WfDefinition newProcessDefinitionStub = definitionService.getLatestProcessDefinition(user, processDefinitionDescriptor.getName());
-            definitionId = newProcessDefinitionStub.getId();
+            WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(user, fileForm.getId());
+            byte[] data = Strings.isNullOrEmpty(fileForm.getFile().getFileName()) ? null : fileForm.getFile().getFileData();
+            definition = Delegates.getDefinitionService().redeployProcessDefinition(user, fileForm.getId(), data, processType);
+            definitionId = definition.getId();
         } catch (DefinitionDoesNotExistException e) {
             ActionExceptionHelper.addException(errors, e);
             definitionExists = false;

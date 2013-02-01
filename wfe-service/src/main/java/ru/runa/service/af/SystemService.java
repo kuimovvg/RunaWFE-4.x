@@ -37,5 +37,7 @@ public interface SystemService {
 
     public Map<String, String> getLocalizations(User user);
 
+    public String getLocalized(User user, String name);
+
     public void saveLocalizations(User user, Map<String, String> localizations);
 }
