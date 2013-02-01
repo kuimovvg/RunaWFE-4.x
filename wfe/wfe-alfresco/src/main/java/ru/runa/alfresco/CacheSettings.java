@@ -33,7 +33,7 @@ public class CacheSettings extends Settings {
                 log.info("Cache is disabled (Resource not found in " + configuration + ").");
             }
         } catch (Throwable e) {
-            log.fatal("Cache is disabled (error)", e);
+            log.error("Cache is disabled (error)", e);
         }
     }
 

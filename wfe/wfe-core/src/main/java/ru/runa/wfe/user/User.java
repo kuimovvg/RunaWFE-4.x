@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import ru.runa.wfe.commons.SystemUtils;
+
 /**
  * <p>
  * This class implements the <code>Principal</code> interface and represents a
@@ -38,15 +40,14 @@ import javax.xml.bind.annotation.XmlType;
  * Principals associated with a <code>Subject</code>. Created on 16.07.2004
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ActorPrincipal", namespace = "http://runa.ru/workflow/webservices")
+@XmlType(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
 public class User implements Principal, Serializable {
     private static final long serialVersionUID = 43549879345L;
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private byte[] securedKey;
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Actor actor;
 
-    // This is need for web services
     protected User() {
     }
 
