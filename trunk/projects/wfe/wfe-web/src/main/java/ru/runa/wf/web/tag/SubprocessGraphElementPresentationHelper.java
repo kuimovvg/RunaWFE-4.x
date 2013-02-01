@@ -101,7 +101,7 @@ public class SubprocessGraphElementPresentationHelper {
         int mlSize = 17;
         int maxItemsPerLine = 10;
         int additionalHeight = 0;
-        int mainDivSize = mlSize * element.getIds().size();
+        int mainDivSize = mlSize * element.getSubprocessIds().size();
         if (mainDivSize > maxItemsPerLine * mlSize) {
             additionalHeight = (int) Math.ceil(((double) mainDivSize / (maxItemsPerLine * mlSize))) * mlSize;
             mainDivSize = maxItemsPerLine * mlSize;
@@ -113,8 +113,8 @@ public class SubprocessGraphElementPresentationHelper {
         buf.append("width: ").append(mainDivSize).append("px;");
         buf.append("left: ").append(ltCoords[0]).append("px;");
         buf.append("top: ").append(ltCoords[1]).append("px;\">");
-        for (int i = 0; i < element.getIds().size(); i++) {
-            Long subprocessId = element.getIds().get(i);
+        for (int i = 0; i < element.getSubprocessIds().size(); i++) {
+            Long subprocessId = element.getSubprocessIds().get(i);
             buf.append("<div class=\"multiInstanceBox\" style=\"width: ");
             buf.append(mlSize).append("px; height: ").append(mlSize).append("px;\" ");
             buf.append("onmouseover=\"this.style.backgroundColor='gray';\" onmouseout=\"this.style.backgroundColor='white';\">");
