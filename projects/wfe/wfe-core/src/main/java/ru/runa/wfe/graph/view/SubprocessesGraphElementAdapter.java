@@ -17,11 +17,26 @@
  */
 package ru.runa.wfe.graph.view;
 
+import ru.runa.wfe.lang.NodeType;
+
 /**
  * Adopts simple interface for subprocess elements visiting to
  * {@link GraphElementPresentationVisitor}.
  */
 public abstract class SubprocessesGraphElementAdapter implements GraphElementPresentationVisitor {
+
+    @Override
+    public void onGraphElement(GraphElementPresentation element) {
+        if (element.getNodeType() == NodeType.Subprocess) {
+            onSubprocess((SubprocessGraphElementPresentation) element);
+        }
+        if (element.getNodeType() == NodeType.MultiSubprocess) {
+            onMultiSubprocess((MultiinstanceGraphElementPresentation) element);
+        }
+        if (element.getNodeType() == NodeType.TaskNode) {
+            onTaskState((TaskGraphElementPresentation) element);
+        }
+    }
 
     @Override
     public abstract void onMultiSubprocess(MultiinstanceGraphElementPresentation element);
@@ -31,50 +46,6 @@ public abstract class SubprocessesGraphElementAdapter implements GraphElementPre
 
     @Override
     public void onTaskState(TaskGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onMultiTaskState(MultiTaskGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onDecision(DecisionGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onEndTokenState(EndTokenStateGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onEndState(EndStateGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onFork(ForkGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onJoin(JoinGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onNode(NodeGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onStartState(StartStateGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onState(WaitStateGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onReceiveMessage(ReceiveMessageGraphElementPresentation element) {
-    }
-
-    @Override
-    public void onSendMessage(SendMessageGraphElementPresentation element) {
     }
 
 }

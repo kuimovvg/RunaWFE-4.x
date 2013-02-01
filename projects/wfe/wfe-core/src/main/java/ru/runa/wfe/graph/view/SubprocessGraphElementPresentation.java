@@ -17,10 +17,14 @@
  */
 package ru.runa.wfe.graph.view;
 
+import ru.runa.wfe.graph.image.model.NodeModel;
+import ru.runa.wfe.lang.Node;
+import ru.runa.wfe.lang.SubProcessState;
+
 /**
  * Represents Subprocess element on process graph.
  */
-public class SubprocessGraphElementPresentation extends BaseGraphElementPresentation {
+public class SubprocessGraphElementPresentation extends GraphElementPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,14 +42,12 @@ public class SubprocessGraphElementPresentation extends BaseGraphElementPresenta
     /**
      * Name of subprocess.
      */
-    private final String subprocessName;
+    private String subprocessName;
 
-    /**
-     * @param subprocessName
-     *            Name of subprocess.
-     */
-    public SubprocessGraphElementPresentation(String subprocessName) {
-        this.subprocessName = subprocessName;
+    @Override
+    public void initialize(Node node, NodeModel model) {
+        super.initialize(node, model);
+        this.subprocessName = ((SubProcessState) node).getSubProcessName();
     }
 
     @Override

@@ -17,44 +17,21 @@
  */
 package ru.runa.wfe.graph.view;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 /**
  * Represents multiple instance graph element.
  */
-public class MultiinstanceGraphElementPresentation extends BaseGraphElementPresentation {
-
+public class MultiinstanceGraphElementPresentation extends SubprocessGraphElementPresentation {
     private static final long serialVersionUID = 1L;
 
     /**
      * Identities of subprocesses, forked by this graph element. Contains
      * subprocess definition id if used in definition page.
      */
-    private final List<Long> ids = new ArrayList<Long>();
-
-    /**
-     * Flag, equals true, if subprocess is readable by current user; false
-     * otherwise.
-     */
-    private boolean readPermission;
-
-    /**
-     * Name of subprocess.
-     */
-    private final String subprocessName;
-
-    /**
-     * Creates multiple instance graph element.
-     * 
-     * @param subprocessName
-     *            Name of subprocess.
-     * @param data
-     *            Some additional data, assigned to graph element.
-     */
-    public MultiinstanceGraphElementPresentation(String subprocessName) {
-        this.subprocessName = subprocessName;
-    }
+    private final List<Long> subprocessIds = Lists.newArrayList();
 
     @Override
     public void visit(GraphElementPresentationVisitor visitor) {
@@ -68,36 +45,14 @@ public class MultiinstanceGraphElementPresentation extends BaseGraphElementPrese
      *            Process identity.
      */
     public void addSubprocessId(Long id) {
-        ids.add(id);
+        subprocessIds.add(id);
     }
 
     /**
      * Identities of subprocesses, forked by this graph element.
      */
-    public List<Long> getIds() {
-        return ids;
+    public List<Long> getSubprocessIds() {
+        return subprocessIds;
     }
 
-    /**
-     * Flag, equals true, if subprocess is readable by current user; false
-     * otherwise.
-     */
-    public boolean isReadPermission() {
-        return readPermission;
-    }
-
-    /**
-     * Flag, equals true, if subprocess is readable by current user; false
-     * otherwise.
-     */
-    public void setReadPermission(boolean readPermission) {
-        this.readPermission = readPermission;
-    }
-
-    /**
-     * Name of subprocess.
-     */
-    public String getSubprocessName() {
-        return subprocessName;
-    }
 }
