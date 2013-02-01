@@ -149,7 +149,7 @@ public class WFCommonLogic extends CommonLogic {
             throw new AuthorizationException("Unable to participate in unassigned task");
         }
         if (taskExecutor instanceof Actor) {
-            if (Objects.equal(user, taskExecutor)) {
+            if (Objects.equal(user.getActor(), taskExecutor)) {
                 return;
             }
         } else {

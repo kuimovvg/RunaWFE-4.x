@@ -17,32 +17,34 @@
  */
 package ru.runa.wfe.graph.view;
 
+import ru.runa.wfe.graph.image.model.NodeModel;
+import ru.runa.wfe.lang.InteractionNode;
+import ru.runa.wfe.lang.Node;
+import ru.runa.wfe.lang.TaskDefinition;
+
 /**
  * Represents an task state graph element.
  */
-public class TaskGraphElementPresentation extends BaseGraphElementPresentation {
+public class TaskGraphElementPresentation extends GraphElementPresentation {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * Flag, equals true, if task state is minimized; false otherwise.
      */
-    private final boolean isMinimized;
+    private boolean minimized;
 
     /**
      * Swimlane name of this task element.
      */
-    private final String swimlaneName;
+    private String swimlaneName;
 
-    /**
-     * @param swimlaneName
-     *            Swimlane name of this task element.
-     * @param isMinimized
-     *            Flag, equals true, if state is minimized; false otherwise.
-     */
-    public TaskGraphElementPresentation(String swimlaneName, boolean isMinimized) {
-        this.swimlaneName = swimlaneName;
-        this.isMinimized = isMinimized;
+    @Override
+    public void initialize(Node node, NodeModel model) {
+        super.initialize(node, model);
+        TaskDefinition taskDefinition = ((InteractionNode) node).getFirstTaskNotNull();
+        swimlaneName = taskDefinition.getSwimlane().getName();
+        minimized = model.isMinimizedView();
     }
 
     @Override
@@ -54,7 +56,7 @@ public class TaskGraphElementPresentation extends BaseGraphElementPresentation {
      * Flag, equals true, if state is collapsed; false otherwise.
      */
     public boolean isMinimized() {
-        return isMinimized;
+        return minimized;
     }
 
     /**

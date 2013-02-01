@@ -24,7 +24,7 @@ import org.apache.ecs.html.Map;
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.WebResources;
-import ru.runa.wfe.graph.view.BaseGraphElementPresentation;
+import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessesGraphElementAdapter;
@@ -39,11 +39,6 @@ public class GraphHistoryElementPresentationVisitor extends SubprocessesGraphEle
      * Created map of elements, represents links and tool tips areas.
      */
     private final Map map = new Map();
-
-    /**
-     * Root form element.
-     */
-    private final TD formDataTD;
 
     /**
      * Helper to create links to subprocesses.
@@ -66,7 +61,6 @@ public class GraphHistoryElementPresentationVisitor extends SubprocessesGraphEle
      *            Main TD element of form, containing graph history.
      */
     public GraphHistoryElementPresentationVisitor(Long taskId, PageContext pageContext, TD formDataTD) {
-        this.formDataTD = formDataTD;
         map.setName("processMap");
         helperSubprocess = new SubprocessGraphElementPresentationHelper(taskId, pageContext, formDataTD, map, WebResources.ACTION_SHOW_GRAPH_HISTORY);
         helperTasks = new TaskGraphElementHelper(map);
@@ -108,7 +102,7 @@ public class GraphHistoryElementPresentationVisitor extends SubprocessesGraphEle
      *            {@link Area} element, to add tool tips, or null, if
      *            {@link Area} element must be created.
      */
-    private Area addTooltip(BaseGraphElementPresentation element, Area area) {
+    private Area addTooltip(GraphElementPresentation element, Area area) {
         if (area == null) {
             area = new Area("RECT", element.getGraphConstraints());
             map.addElement(area);

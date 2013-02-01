@@ -23,6 +23,14 @@ package ru.runa.wfe.graph.view;
 public interface GraphElementPresentationVisitor {
 
     /**
+     * Calling to handle graph element.
+     * 
+     * @param element
+     *            Element to handle.
+     */
+    void onGraphElement(GraphElementPresentation element);
+
+    /**
      * Calling to handle subprocesses graph element.
      * 
      * @param element
@@ -45,92 +53,4 @@ public interface GraphElementPresentationVisitor {
      *            Element to handle.
      */
     void onTaskState(TaskGraphElementPresentation element);
-
-    /**
-     * Calling to handle multi task state graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onMultiTaskState(MultiTaskGraphElementPresentation element);
-
-    /**
-     * Calling to handle state graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onState(WaitStateGraphElementPresentation element);
-
-    /**
-     * Calling to handle start state graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onStartState(StartStateGraphElementPresentation element);
-
-    /**
-     * Calling to handle end state graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onEndTokenState(EndTokenStateGraphElementPresentation element);
-
-    /**
-     * Calling to handle end state graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onEndState(EndStateGraphElementPresentation element);
-
-    /**
-     * Calling to handle decision graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onDecision(DecisionGraphElementPresentation element);
-
-    /**
-     * Calling to handle fork graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onFork(ForkGraphElementPresentation element);
-
-    /**
-     * Calling to handle join graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onJoin(JoinGraphElementPresentation element);
-
-    /**
-     * Calling to handle node graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onNode(NodeGraphElementPresentation element);
-
-    /**
-     * Calling to handle send message graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onSendMessage(SendMessageGraphElementPresentation element);
-
-    /**
-     * Calling to handle receive message graph element.
-     * 
-     * @param element
-     *            Element to handle.
-     */
-    void onReceiveMessage(ReceiveMessageGraphElementPresentation element);
 }
