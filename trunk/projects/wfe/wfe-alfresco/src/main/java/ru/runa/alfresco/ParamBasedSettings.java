@@ -25,7 +25,7 @@ public class ParamBasedSettings extends Settings {
             }
             log.info(mainElement.getName() + " settings: " + properties);
         } catch (Throwable e) {
-            log.fatal("Unable to load production info", e);
+            log.error("Unable to load production info", e);
         }
     }
 

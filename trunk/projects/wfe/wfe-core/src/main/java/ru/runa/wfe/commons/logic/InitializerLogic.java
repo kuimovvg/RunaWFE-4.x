@@ -59,7 +59,7 @@ import com.google.common.collect.Lists;
  * @author Dofs
  */
 public class InitializerLogic {
-    private static final Log log = LogFactory.getLog(InitializerLogic.class);
+    protected static final Log log = LogFactory.getLog(InitializerLogic.class);
     private static final String IS_DATABASE_INITIALIZED_VARIABLE_NAME = "ru.runa.database_initialized";
     private static final String DATABASE_VERSION_VARIABLE_NAME = "ru.runa.database_version";
 
@@ -159,7 +159,7 @@ public class InitializerLogic {
             Map<String, String> localizations = LocalizationParser.parseLocalizations(stream);
             localizationDAO.saveLocalizations(localizations, false);
         } catch (Exception e) {
-            log.fatal("initialization failed", e);
+            log.error("initialization failed", e);
         }
     }
 
