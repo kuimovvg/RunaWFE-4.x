@@ -52,7 +52,7 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
     private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(ProcessDefinition.class);
 
-    private final Deployment dBImpl;
+    private Deployment dBImpl;
     private Map<String, byte[]> processFiles = Maps.newHashMap();
     private StartState startState;
     private final List<Node> nodes = Lists.newArrayList();
@@ -67,6 +67,9 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
             Event.EVENTTYPE_TASK_START, Event.EVENTTYPE_TASK_END, Event.EVENTTYPE_TRANSITION, Event.EVENTTYPE_BEFORE_SIGNAL,
             Event.EVENTTYPE_AFTER_SIGNAL, Event.EVENTTYPE_SUPERSTATE_ENTER, Event.EVENTTYPE_SUPERSTATE_LEAVE, Event.EVENTTYPE_SUBPROCESS_CREATED,
             Event.EVENTTYPE_SUBPROCESS_END, Event.EVENTTYPE_TIMER };
+
+    protected ProcessDefinition() {
+    }
 
     public ProcessDefinition(Deployment processDeploymentDBImpl) {
         dBImpl = processDeploymentDBImpl;

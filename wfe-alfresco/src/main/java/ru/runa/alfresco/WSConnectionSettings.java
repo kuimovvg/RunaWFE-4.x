@@ -5,6 +5,7 @@ import org.dom4j.Element;
 
 /**
  * Web services connection settings.
+ * 
  * @author dofs
  */
 public class WSConnectionSettings extends Settings {
@@ -26,7 +27,7 @@ public class WSConnectionSettings extends Settings {
             systemPassword = connectionElement.attributeValue("password");
             endpointAddress = connectionElement.attributeValue("endpoint");
         } catch (Throwable e) {
-            log.fatal("Unable to load ws connection info", e);
+            log.error("Unable to load ws connection info", e);
         }
     }
 
@@ -41,9 +42,12 @@ public class WSConnectionSettings extends Settings {
     public static String getSystemPassword() {
         return systemPassword;
     }
-    
+
     public static String getAlfBaseUrl() {
-        return endpointAddress.substring(0, endpointAddress.length()-3); // remove 'api' at end
+        return endpointAddress.substring(0, endpointAddress.length() - 3); // remove
+                                                                           // 'api'
+                                                                           // at
+                                                                           // end
     }
 
 }

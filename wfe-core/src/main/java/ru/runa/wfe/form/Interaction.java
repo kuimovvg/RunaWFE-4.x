@@ -32,15 +32,18 @@ import com.google.common.collect.Maps;
 public class Interaction implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final String type;
-    private final byte[] formData;
-    private final byte[] validationData;
-    private final boolean useJSValidation;
-    private final byte[] scriptData;
-    private final byte[] cssData;
+    private String type;
+    private byte[] formData;
+    private byte[] validationData;
+    private boolean useJSValidation;
+    private byte[] scriptData;
+    private byte[] cssData;
     private final List<String> requiredVariableNames = Lists.newArrayList();
     private final Map<String, VariableDefinition> variableDefinitions = Maps.newHashMap();
     private final Map<String, Object> defaultVariableValues = Maps.newHashMap();
+
+    protected Interaction() {
+    }
 
     public Interaction(String type, byte[] formData, byte[] validationData, boolean useJSValidation, byte[] scriptData, byte[] cssData) {
         this.type = type;

@@ -14,6 +14,7 @@ import ru.runa.alfresco.anno.Type;
 
 /**
  * Registered mappings between Java and Alfresco types and namespace prefixes.
+ * 
  * @author dofs
  */
 public class Mappings extends Settings {
@@ -71,7 +72,7 @@ public class Mappings extends Settings {
                 NAMESPACES.put(prefix, namespace);
             }
         } catch (Throwable e) {
-            log.fatal("Unable to load namespaces", e);
+            log.error("Unable to load namespaces", e);
         }
         namespacesLoaded = true;
     }
@@ -105,7 +106,7 @@ public class Mappings extends Settings {
                 }
             }
         } catch (Throwable e) {
-            log.fatal("Unable to load mappings", e);
+            log.error("Unable to load mappings", e);
         }
         mappingsLoaded = true;
     }
@@ -160,7 +161,7 @@ public class Mappings extends Settings {
             clazz = clazz.getSuperclass();
         } while (clazz != null);
     }
-    
+
     public static AlfTypeDesc getMapping(Class<?> clazz) {
         loadMappings();
         if (!MAPPINGS_BY_CLASS.containsKey(clazz)) {
