@@ -19,14 +19,42 @@ package ru.runa.wfe.os;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.dao.ExecutorDAO;
 
 /**
  * General abstraction for organization function
  * 
  * @since 2.1
  */
-public interface OrgFunction {
+public abstract class OrgFunction {
+    protected Log log = LogFactory.getLog(getClass());
+
+    @Autowired
+    protected ExecutorDAO executorDAO;
+
+    protected String relationName;
+    protected String[] parameterNames;
+
+    public String getRelationName() {
+        return relationName;
+    }
+
+    public void setRelationName(String relationName) {
+        this.relationName = relationName;
+    }
+
+    public String[] getParameterNames() {
+        return parameterNames;
+    }
+
+    public void setParameterNames(String[] parameterNames) {
+        this.parameterNames = parameterNames;
+    }
 
     /**
      * @param parameters
@@ -34,5 +62,5 @@ public interface OrgFunction {
      * @return id's of executors
      * @throws OrgFunctionException
      */
-    public List<? extends Executor> getExecutors(Object... parameters) throws OrgFunctionException;
+    public abstract List<? extends Executor> getExecutors(Object... parameters) throws OrgFunctionException;
 }

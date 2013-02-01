@@ -8,6 +8,7 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.InvalidDefinitionException;
+import ru.runa.wfe.lang.ProcessDefinition;
 
 public class ValidationXmlParser {
     private final static String FIELD_ELEMENT_NAME = "field";
@@ -16,7 +17,7 @@ public class ValidationXmlParser {
     private final static String TYPE_ATTRIBUTE_NAME = "type";
     private final static String REQUIRED_VALIDATOR_NAME = "required";
 
-    public static List<String> readVariableNames(String fileName, byte[] xmlFileBytes) {
+    public static List<String> readVariableNames(ProcessDefinition processDefinition, String fileName, byte[] xmlFileBytes) {
         try {
             Document document = XmlUtils.parseWithoutValidation(xmlFileBytes);
             List<Element> fieldElements = document.getRootElement().elements(FIELD_ELEMENT_NAME);
@@ -26,11 +27,11 @@ public class ValidationXmlParser {
             }
             return varNames;
         } catch (Exception e) {
-            throw new InvalidDefinitionException("Error in " + fileName, e);
+            throw new InvalidDefinitionException(processDefinition.getName(), "Error in " + fileName, e);
         }
     }
 
-    public static List<String> readRequiredVariableNames(byte[] xmlFileBytes) {
+    public static List<String> readRequiredVariableNames(ProcessDefinition processDefinition, byte[] xmlFileBytes) {
         try {
             Document document = XmlUtils.parseWithoutValidation(xmlFileBytes);
             List<Element> fieldElements = document.getRootElement().elements(FIELD_ELEMENT_NAME);
@@ -47,7 +48,7 @@ public class ValidationXmlParser {
             }
             return varNames;
         } catch (Exception e) {
-            throw new InvalidDefinitionException("${form}.validation.xml", e);
+            throw new InvalidDefinitionException(processDefinition.getName(), "${form}.validation.xml", e);
         }
     }
 }

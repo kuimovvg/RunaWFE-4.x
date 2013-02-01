@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.service.af.AuthorizationService;
@@ -33,7 +31,7 @@ public class GrantBotStationPermissionLinkTag extends LinkTag {
     private static final long serialVersionUID = -8445857392805848169L;
 
     @Override
-    protected boolean isLinkEnabled() throws JspException {
+    protected boolean isLinkEnabled() {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, BotStation.INSTANCE);

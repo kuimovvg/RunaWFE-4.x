@@ -30,6 +30,7 @@ import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.handler.action.ActionHandler;
 import ru.runa.wfe.handler.assign.AssignmentHelper;
 import ru.runa.wfe.lang.SwimlaneDefinition;
+import ru.runa.wfe.os.OrgFunction;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.user.Executor;
 
@@ -40,10 +41,10 @@ public class AssignSwimlaneActionHandler implements ActionHandler {
     private static final String SWIMLANE_INITITALIZER = "swimlaneInititalizer";
     private static final String SWIMLANE = "swimlaneName";
 
-    private String swimlaneInititalizer;
-    private String swimlaneName;
     @Autowired
     protected AssignmentHelper assignmentHelper;
+    private String swimlaneName;
+    private OrgFunction orgFunction;
 
     @Override
     public void setConfiguration(String configuration) {
@@ -53,17 +54,17 @@ public class AssignSwimlaneActionHandler implements ActionHandler {
             swimlaneName = root.elementTextTrim(SWIMLANE);
             Preconditions.checkNotNull(swimlaneName, SWIMLANE);
         }
-        swimlaneInititalizer = root.attributeValue(SWIMLANE_INITITALIZER);
-        if (swimlaneInititalizer == null) {
-            swimlaneInititalizer = root.elementTextTrim(SWIMLANE_INITITALIZER);
-            Preconditions.checkNotNull(swimlaneInititalizer, SWIMLANE_INITITALIZER);
+        String swimlaneInitializer = root.attributeValue(SWIMLANE_INITITALIZER);
+        if (swimlaneInitializer == null) {
+            swimlaneInitializer = root.elementTextTrim(SWIMLANE_INITITALIZER);
+            Preconditions.checkNotNull(swimlaneInitializer, SWIMLANE_INITITALIZER);
         }
+        orgFunction = OrgFunctionHelper.parseOrgFunction(swimlaneInitializer);
     }
 
     @Override
     public void execute(ExecutionContext executionContext) throws Exception {
-        List<? extends Executor> executors = OrgFunctionHelper
-                .evaluateOrgFunction(executionContext.getVariableProvider(), swimlaneInititalizer, null);
+        List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(orgFunction, executionContext.getVariableProvider());
         if (executors.size() == 0) {
             log.warn("No assignment will be done (OrgFunction return empty array of executor ids)");
             return;

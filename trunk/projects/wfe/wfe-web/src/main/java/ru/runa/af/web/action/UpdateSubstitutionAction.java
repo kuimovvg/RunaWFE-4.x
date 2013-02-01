@@ -59,7 +59,7 @@ public class UpdateSubstitutionAction extends ActionBase {
             if (form.getId() == 0) {
                 if (form.isTerminator()) {
                     substitution = new TerminatorSubstitution();
-                    substitution.setSubstitutionOrgFunction("");
+                    substitution.setOrgFunction("");
                 } else {
                     substitution = new Substitution();
                 }
@@ -73,7 +73,7 @@ public class UpdateSubstitutionAction extends ActionBase {
             substitution.setCriteria(criteria);
             substitution.setEnabled(form.isEnabled());
             if (!(substitution instanceof TerminatorSubstitution)) {
-                substitution.setSubstitutionOrgFunction(form.buildOrgFunction());
+                substitution.setOrgFunction(form.buildOrgFunction());
             }
             if (form.getId() == 0) {
                 substitutionService.createSubstitution(getLoggedUser(request), form.getActorId(), substitution);

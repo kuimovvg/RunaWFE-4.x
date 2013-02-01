@@ -76,7 +76,7 @@ public class DiagramModel {
     }
 
     @SuppressWarnings("unchecked")
-    public static DiagramModel load(ProcessDefinition definition) throws Exception {
+    public static DiagramModel load(ProcessDefinition definition) {
         byte[] gpdBytes = definition.getFileDataNotNull(IFileDataProvider.GPD_XML_FILE_NAME);
         DiagramModel diagramModel = new DiagramModel();
         Document document = XmlUtils.parseWithoutValidation(gpdBytes);

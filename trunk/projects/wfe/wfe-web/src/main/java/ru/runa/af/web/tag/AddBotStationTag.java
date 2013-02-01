@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -38,7 +36,7 @@ public class AddBotStationTag extends TitledFormTag {
     private static final long serialVersionUID = 1920713038009470026L;
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         Table table = new Table();
         Input nameInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_NAME, "");
         Input botStationRMIAddress = new Input(Input.TEXT, BotStationForm.BOT_STATION_RMI_ADDRESS);

@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
@@ -36,7 +34,7 @@ public class AddSubstitutionCriteriaLinkTag extends IdLinkBaseTag {
     private static final String HREF = "/createSubstitutionCriteria.do";
 
     @Override
-    protected boolean isLinkEnabled() throws JspException {
+    protected boolean isLinkEnabled() {
         return true;
     }
 

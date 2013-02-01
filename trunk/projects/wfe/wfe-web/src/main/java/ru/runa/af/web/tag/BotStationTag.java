@@ -1,7 +1,5 @@
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -11,12 +9,9 @@ import ru.runa.af.web.action.UpdateBotStationAction;
 import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 
 /**
  * @author petrmikheev
@@ -39,7 +34,7 @@ public class BotStationTag extends TitledFormTag {
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         BotStation botStation = Delegates.getBotService().getBotStation(botStationID);
         Table table = new Table();
         Input nameInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_NAME, botStation.getName());
@@ -81,16 +76,7 @@ public class BotStationTag extends TitledFormTag {
     }
 
     @Override
-    public boolean isFormButtonEnabled() throws JspException {
-        boolean result = false;
-        try {
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            result = authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-        } catch (AuthorizationException e) {
-            throw new JspException(e);
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
-        }
-        return result;
+    public boolean isFormButtonEnabled() {
+        return Delegates.getAuthorizationService().isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
     }
 }

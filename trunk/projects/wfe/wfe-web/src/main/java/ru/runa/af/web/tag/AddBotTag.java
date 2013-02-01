@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -49,7 +47,8 @@ public class AddBotTag extends TitledFormTag {
         return botStationID;
     }
 
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    @Override
+    protected void fillFormElement(TD tdFormElement) {
         Table table = new Table();
         ActorSelectTD actorSelect = new ActorSelectTD(getUser(), BotForm.USER_NAME);
         Input botPasswordInput = new Input(Input.TEXT, BotForm.PASSWORD);
@@ -68,18 +67,22 @@ public class AddBotTag extends TitledFormTag {
         tdFormElement.addElement(table);
     }
 
+    @Override
     protected String getTitle() {
         return Messages.getMessage(Messages.TITLE_ADD_BOT, pageContext);
     }
 
+    @Override
     public String getButtonAlignment() {
         return "right";
     }
 
+    @Override
     protected String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_ADD_BOT, pageContext);
     }
 
+    @Override
     public String getAction() {
         return CreateBotAction.CREATE_BOT_ACTION_PATH;
     }

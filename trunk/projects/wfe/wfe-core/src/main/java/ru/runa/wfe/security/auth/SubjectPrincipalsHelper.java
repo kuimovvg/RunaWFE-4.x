@@ -74,7 +74,7 @@ public class SubjectPrincipalsHelper {
         try {
             Cipher cipher = Cipher.getInstance(encryptionType);
             cipher.init(Cipher.DECRYPT_MODE, securedKey);
-            if (!Arrays.equals(getActorKey(user), cipher.doFinal(user.getSecuredKey()))) {
+            if (!Arrays.equals(getActorKey(user.getActor()), cipher.doFinal(user.getSecuredKey()))) {
                 throw new AuthenticationException("Incorrect user principal at subject received");
             }
         } catch (Exception e) {

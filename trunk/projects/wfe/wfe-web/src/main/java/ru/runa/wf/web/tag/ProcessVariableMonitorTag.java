@@ -19,8 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.WebResources;
@@ -54,23 +52,19 @@ public class ProcessVariableMonitorTag extends ProcessBaseFormTag {
     }
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
-        try {
-            List<String> headerNames = Lists.newArrayList();
-            headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_NAME, pageContext));
-            headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_TYPE, pageContext));
-            if (WebResources.isDisplayVariablesJavaType()) {
-                headerNames.add("Java " + Messages.getMessage(Messages.LABEL_VARIABLE_TYPE, pageContext));
-            }
-            headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_VALUE, pageContext));
-            HeaderBuilder headerBuilder = new StringsHeaderBuilder(headerNames);
-            ExecutionService executionService = Delegates.getExecutionService();
-            List<WfVariable> variables = executionService.getVariables(getUser(), getIdentifiableId());
-            RowBuilder rowBuilder = new ProcessVariablesRowBuilder(getIdentifiableId(), variables, pageContext);
-            tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
-        } catch (Exception e) {
-            handleException(e);
+    protected void fillFormData(TD tdFormElement) {
+        List<String> headerNames = Lists.newArrayList();
+        headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_NAME, pageContext));
+        headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_TYPE, pageContext));
+        if (WebResources.isDisplayVariablesJavaType()) {
+            headerNames.add("Java " + Messages.getMessage(Messages.LABEL_VARIABLE_TYPE, pageContext));
         }
+        headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_VALUE, pageContext));
+        HeaderBuilder headerBuilder = new StringsHeaderBuilder(headerNames);
+        ExecutionService executionService = Delegates.getExecutionService();
+        List<WfVariable> variables = executionService.getVariables(getUser(), getIdentifiableId());
+        RowBuilder rowBuilder = new ProcessVariablesRowBuilder(getIdentifiableId(), variables, pageContext);
+        tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
     }
 
     @Override

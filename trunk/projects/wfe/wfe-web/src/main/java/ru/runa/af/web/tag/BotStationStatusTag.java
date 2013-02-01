@@ -1,7 +1,5 @@
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -40,7 +38,7 @@ public class BotStationStatusTag extends TitledFormTag {
     private boolean stationOn = false;
     private boolean periodicInvocationOn = false;
 
-    private void renewValues() throws JspException {
+    private void renewValues() {
         try {
             BotStation botStation = Delegates.getBotService().getBotStation(botStationID);
             periodicInvocationOn = Delegates.getBotInvokerService(botStation.getAddress()).isRunning();
@@ -52,7 +50,7 @@ public class BotStationStatusTag extends TitledFormTag {
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         renewValues();
         Input hiddenBotStationID = new Input(Input.HIDDEN, BotStationForm.BOT_STATION_ID, String.valueOf(botStationID));
         tdFormElement.addElement(hiddenBotStationID);
@@ -99,14 +97,9 @@ public class BotStationStatusTag extends TitledFormTag {
     }
 
     @Override
-    public boolean isFormButtonEnabled() throws JspException {
-        boolean result = false;
-        try {
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            result = authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-        } catch (Exception e) {
-            throw new JspException(e);
-        }
+    public boolean isFormButtonEnabled() {
+        AuthorizationService authorizationService = Delegates.getAuthorizationService();
+        boolean result = authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         if (!result) {
             return false;
         }

@@ -19,13 +19,16 @@
 package ru.runa.wfe.os;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.os.func.NullOrgFunction;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.relation.dao.RelationDAO;
 import ru.runa.wfe.user.Executor;
@@ -37,81 +40,130 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Created on 03.01.2006.
+ * Parses and evaluates {@link OrgFunction}'s. Swimlane initializer can be given
+ * in 2 forms: 1) FQDN class name(param1, param2, ...) for example
+ * 'ru.runa.af.organizationfunction.ExecutorByNameFunction(userName)' 2)
+ * 
+ * @relationName(FQDN class name(param1, param2, ...)) for example
+ *                    '@boss(ru.runa.af.organizationfunction.ExecutorByNameFunction(${processVariableName
+ *                    } ) ) ' Each param can be given as string or as
+ *                    substituted variable name in form of ${userVarName}.
+ * 
+ * @author Dofs
+ * @since 2.0
  */
 public class OrgFunctionHelper {
+    private static final Pattern VARIABLE_PATTERN = Pattern.compile("^\\$\\{(.*)\\}$");
+    private static final String ORG_FUNCTION_PATTERN = "^(\\w+[\\w\\.]*)\\(([^\\)]*)\\)$";
+    private static final Map<String, OrgFunction> CACHE = new HashMap<String, OrgFunction>();
 
-    private OrgFunctionHelper() {
+    /**
+     * @param swimlaneInitializer
+     * @see OrgFunctionHelper
+     * @return not <code>null</code>
+     * @throws OrgFunctionException
+     */
+    public static List<? extends Executor> evaluateOrgFunction(String swimlaneInitializer) throws OrgFunctionException {
+        OrgFunction function = parseOrgFunction(swimlaneInitializer);
+        return evaluateOrgFunction(function, null);
     }
 
-    public static List<? extends Executor> evaluateOrgFunction(String swimlaneInitializer, Long actorToSubstituteCode) throws OrgFunctionException {
-        swimlaneInitializer = swimlaneInitializer.trim();
-        List<? extends Executor> result = evaluateOrgFunctionInternal(null, getOrgFunction(swimlaneInitializer), actorToSubstituteCode);
-        return applyRelation(swimlaneInitializer, result);
+    /**
+     * 
+     * @param function
+     * @param variableProvider
+     *            for substituting organization function parameters
+     * @return not <code>null</code>
+     * @throws OrgFunctionException
+     */
+    public static List<? extends Executor> evaluateOrgFunction(OrgFunction function, IVariableProvider variableProvider) throws OrgFunctionException {
+        Object[] parameters = getOrgFunctionParameters(function, variableProvider);
+        List<? extends Executor> result = function.getExecutors(parameters);
+        if (result == null) {
+            result = new ArrayList<Executor>();
+        }
+        return applyRelation(function, result);
     }
 
-    public static List<? extends Executor> evaluateOrgFunction(IVariableProvider variableProvider, String swimlaneInitializer,
-            Long actorToSubstituteCode) throws OrgFunctionException {
-        swimlaneInitializer = swimlaneInitializer.trim();
-        List<? extends Executor> result = evaluateOrgFunctionInternal(variableProvider, getOrgFunction(swimlaneInitializer), actorToSubstituteCode);
-        return applyRelation(swimlaneInitializer, result);
-    }
-
-    private static List<? extends Executor> applyRelation(String swimlaneInitializer, List<? extends Executor> executors) {
-        if (!swimlaneInitializer.startsWith("@")) {
+    private static List<? extends Executor> applyRelation(OrgFunction function, List<? extends Executor> executors) {
+        if (function.getRelationName() == null) {
             return executors;
         }
         ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
         RelationDAO relationDAO = ApplicationContextFactory.getRelationDAO();
-        String relationGroup = swimlaneInitializer.substring(1, swimlaneInitializer.indexOf('('));
         Set<Executor> relationExecutors = new HashSet<Executor>();
         for (Executor executor : executors) {
             relationExecutors.add(executor);
             relationExecutors.addAll(executorDAO.getExecutorParentsAll(executor));
         }
         Set<Executor> resultSet = Sets.newHashSet();
-        for (RelationPair relation : relationDAO.getExecutorsRelationPairsRight(relationGroup, new ArrayList<Executor>(relationExecutors))) {
+        List<RelationPair> pairs = relationDAO.getExecutorsRelationPairsRight(function.getRelationName(), Lists.newArrayList(relationExecutors));
+        for (RelationPair relation : pairs) {
             resultSet.add(relation.getLeft());
         }
         return Lists.newArrayList(resultSet);
     }
 
-    private static String getOrgFunction(String swimlaneInitializer) {
-        if (swimlaneInitializer.startsWith("@")) {
-            return swimlaneInitializer.substring(swimlaneInitializer.indexOf('(') + 1, swimlaneInitializer.length() - 1);
-        }
-        return swimlaneInitializer;
-    }
-
-    private static List<? extends Executor> evaluateOrgFunctionInternal(IVariableProvider variableProvider, String swimlaneInititalizer,
-            Long actorToSubstituteCode) throws OrgFunctionException {
-        FunctionConfiguration functionConfiguration = OrgFunctionParser.parse(swimlaneInititalizer);
-        OrgFunction function = ApplicationContextFactory.createAutowiredBean(functionConfiguration.getFunctionName());
-        Object[] parameters = fillProcessVariableArray(variableProvider, functionConfiguration, actorToSubstituteCode);
-        return function.getExecutors(parameters);
-    }
-
-    private static final String ORG_FUNCTION_RESULT_SYMBOL = "?";
-
-    private static final Pattern pattern = Pattern.compile("^\\$\\{(.*)\\}$");// ^\$\{(.*)\}$
-
-    private static Object[] fillProcessVariableArray(IVariableProvider variableProvider, FunctionConfiguration functionConfiguration,
-            Long actorToSubstituteCode) {
-        String[] variableNames = functionConfiguration.getParameters();
-        Object[] parameters = new Object[variableNames.length];
-        for (int i = 0; i < variableNames.length; i++) {
-            Matcher matcher = pattern.matcher(variableNames[i]);
-            if (ORG_FUNCTION_RESULT_SYMBOL.equals(variableNames[i]) && actorToSubstituteCode != null) {
-                parameters[i] = String.valueOf(actorToSubstituteCode.longValue());
-            } else if (matcher.matches()) {
+    private static Object[] getOrgFunctionParameters(OrgFunction orgFunction, IVariableProvider variableProvider) {
+        String[] parameterNames = orgFunction.getParameterNames();
+        Object[] parameters = new Object[parameterNames.length];
+        for (int i = 0; i < parameterNames.length; i++) {
+            Matcher matcher = VARIABLE_PATTERN.matcher(parameterNames[i]);
+            if (matcher.matches()) {
                 String processVariableName = matcher.group(1);
                 Preconditions.checkNotNull(variableProvider, "variableProvider required for this orgfunction");
                 parameters[i] = variableProvider.getValue(processVariableName);
             } else {
-                parameters[i] = variableNames[i];
+                parameters[i] = parameterNames[i];
             }
         }
         return parameters;
+    }
+
+    /**
+     * 
+     * @param swimlaneInitializer
+     * @return
+     * @throws OrgFunctionException
+     */
+    public static OrgFunction parseOrgFunction(String swimlaneInitializer) throws OrgFunctionException {
+        Preconditions.checkNotNull(swimlaneInitializer);
+        OrgFunction orgFunction = CACHE.get(swimlaneInitializer);
+        if (orgFunction == null) {
+            if (swimlaneInitializer.length() == 0) {
+                return new NullOrgFunction();
+            }
+            String relationName = null;
+            if (swimlaneInitializer.startsWith("@")) {
+                int bIndex = swimlaneInitializer.indexOf('(');
+                relationName = swimlaneInitializer.substring(1, bIndex);
+                swimlaneInitializer = swimlaneInitializer.substring(bIndex + 1, swimlaneInitializer.length() - 1);
+            }
+            Pattern functionNamePattern = Pattern.compile(ORG_FUNCTION_PATTERN);
+            Matcher functionNameMatcher = functionNamePattern.matcher(swimlaneInitializer);
+            if (!functionNameMatcher.matches()) {
+                throw new OrgFunctionException("Illegal configuration: '" + swimlaneInitializer + "'");
+            }
+            String functionName = functionNameMatcher.group(1);
+            if (functionName == null) {
+                throw new OrgFunctionException("Illegal or missing function name in " + swimlaneInitializer);
+            }
+            String parameterString = functionNameMatcher.group(2);
+            if (parameterString == null) {
+                throw new OrgFunctionException("Illegal parameter names in " + swimlaneInitializer);
+            }
+            String[] parameterNames = parameterString.length() == 0 ? new String[0] : parameterString.split(",", -1);
+            for (int i = 0; i < parameterNames.length; i++) {
+                if (parameterNames[i].length() == 0) {
+                    throw new OrgFunctionException("Illegal parameter name in " + swimlaneInitializer);
+                }
+            }
+            orgFunction = ApplicationContextFactory.createAutowiredBean(functionName);
+            orgFunction.setRelationName(relationName);
+            orgFunction.setParameterNames(parameterNames);
+            CACHE.put(swimlaneInitializer, orgFunction);
+        }
+        return orgFunction;
     }
 
 }

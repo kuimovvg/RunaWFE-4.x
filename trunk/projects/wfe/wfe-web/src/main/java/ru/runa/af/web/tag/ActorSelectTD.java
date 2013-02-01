@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 import org.apache.ecs.html.TD;
@@ -39,15 +37,15 @@ import ru.runa.wfe.user.User;
 public class ActorSelectTD extends TD {
     private static final long serialVersionUID = 1L;
 
-    public ActorSelectTD(User user, String name) throws JspException {
+    public ActorSelectTD(User user, String name) {
         this(user, name, (String) null, true);
     }
 
-    public ActorSelectTD(User user, String name, String current) throws JspException {
+    public ActorSelectTD(User user, String name, String current) {
         this(user, name, current, true);
     }
 
-    public ActorSelectTD(String name, String current, Collection<Executor> executors) throws JspException {
+    public ActorSelectTD(String name, String current, Collection<Executor> executors) {
         Select select = new Select();
         select.setName(name);
         ArrayList<Option> options = new ArrayList<Option>();
@@ -72,7 +70,7 @@ public class ActorSelectTD extends TD {
         super.addElement(select);
     }
 
-    public ActorSelectTD(User user, String name, String current, boolean actorOnly) throws JspException {
+    public ActorSelectTD(User user, String name, String current, boolean actorOnly) {
         Select select = new Select();
         select.setName(name);
         boolean exist = false;

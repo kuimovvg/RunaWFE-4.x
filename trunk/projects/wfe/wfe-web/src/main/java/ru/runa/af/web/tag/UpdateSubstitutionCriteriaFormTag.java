@@ -19,7 +19,6 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.Element;
@@ -59,12 +58,12 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
     private SubstitutionCriteria substitutionCriteria;
 
     @Override
-    protected Identifiable getIdentifiable() throws JspException {
+    protected Identifiable getIdentifiable() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void fillFormData(TD tdFormElement) throws JspException {
+    public void fillFormData(TD tdFormElement) {
         try {
             StringBuffer paramsDiv = new StringBuffer("<div id='rh' style='display: none;'>");
             List<FunctionDef> functions = SubstitutionCriteriaDefinitions.getAll();
@@ -170,7 +169,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
             Option[] options = new Option[definitions.size()];
             for (int i = 0; i < options.length; i++) {
                 options[i] = new Option(definitions.get(i).getClassName());
-                options[i].addElement(definitions.get(i).getMessage(pageContext));
+                options[i].addElement(definitions.get(i).getLabel());
             }
             for (Option option : options) {
                 if (selectedValue.equals(option.getValue())) {

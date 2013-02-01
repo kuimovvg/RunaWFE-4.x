@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.action.UpdateExecutorDetailsAction;
@@ -35,24 +33,29 @@ import ru.runa.wfe.user.ExecutorPermission;
 public class UpdateExecutorDetailsFormTag extends UpdateExecutorBaseFormTag {
     private static final long serialVersionUID = 9096797376521541558L;
 
-    public void fillFormData(TD tdFormElement) throws JspException {
+    @Override
+    public void fillFormData(TD tdFormElement) {
         boolean isCheckboxInputDisaabled = !isFormButtonEnabled();
         ExecutorTableBuilder extb = new ExecutorTableBuilder(getExecutor(), isCheckboxInputDisaabled, pageContext);
         tdFormElement.addElement(extb.buildTable());
     }
 
+    @Override
     protected Permission getPermission() {
         return ExecutorPermission.UPDATE;
     }
 
+    @Override
     public String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_APPLY, pageContext);
     }
 
+    @Override
     protected String getTitle() {
         return Messages.getMessage(Messages.TITLE_EXECUTOR_DETAILS, pageContext);
     }
 
+    @Override
     public String getAction() {
         return UpdateExecutorDetailsAction.ACTION_PATH;
     }

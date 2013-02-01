@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
@@ -52,7 +50,7 @@ public class CreateRelationLinkTag extends LinkTag {
     }
 
     @Override
-    protected String getHref() throws JspException {
+    protected String getHref() {
         return Commons.getActionUrl("create_relation.do", "relationName", relationName, pageContext, PortletUrlType.Action);
     }
 
@@ -62,7 +60,7 @@ public class CreateRelationLinkTag extends LinkTag {
     }
 
     @Override
-    protected boolean isLinkEnabled() throws JspException {
+    protected boolean isLinkEnabled() {
         try {
             RelationService relationService = Delegates.getRelationService();
             AuthorizationService authorizationService = Delegates.getAuthorizationService();

@@ -20,7 +20,6 @@ package ru.runa.wf.web.tag;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.TD;
@@ -57,33 +56,28 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
     private static final long serialVersionUID = 585180395259884607L;
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
-        try {
-            BatchPresentation batchPresentation = getBatchPresentation();
-            ExecutionService executionService = Delegates.getExecutionService();
+    protected void fillFormElement(TD tdFormElement) {
+        BatchPresentation batchPresentation = getBatchPresentation();
+        ExecutionService executionService = Delegates.getExecutionService();
 
-            int instanceCount = executionService.getAllProcessesCount(getUser(), batchPresentation);
-            // we must call getProcesses before obtaining current page number
-            // since it can be changed after getProcesses call
-            List<WfProcess> processes = executionService.getProcesses(getUser(), batchPresentation);
-            // batchPresentation must be recalculated since the current page
-            // number might changed
-            batchPresentation = getBatchPresentation();
-            PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, instanceCount, getReturnAction());
-            navigation.addPagingNavigationTable(tdFormElement);
+        int instanceCount = executionService.getAllProcessesCount(getUser(), batchPresentation);
+        // we must call getProcesses before obtaining current page number
+        // since it can be changed after getProcesses call
+        List<WfProcess> processes = executionService.getProcesses(getUser(), batchPresentation);
+        // batchPresentation must be recalculated since the current page
+        // number might changed
+        batchPresentation = getBatchPresentation();
+        PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, instanceCount, getReturnAction());
+        navigation.addPagingNavigationTable(tdFormElement);
 
-            TDBuilder[] builders = getBuilders(new TDBuilder[] {}, batchPresentation, new TDBuilder[] {});
-            String[] prefixCellsHeaders = getGrouppingCells(batchPresentation, processes);
-            HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, prefixCellsHeaders, new String[0], getReturnAction(),
-                    pageContext);
-            RowBuilder rowBuilder = new ReflectionRowBuilder(processes, batchPresentation, pageContext, ShowGraphModeHelper.getManageProcessAction(),
-                    getReturnAction(), "id", builders);
-            tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
+        TDBuilder[] builders = getBuilders(new TDBuilder[] {}, batchPresentation, new TDBuilder[] {});
+        String[] prefixCellsHeaders = getGrouppingCells(batchPresentation, processes);
+        HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, prefixCellsHeaders, new String[0], getReturnAction(), pageContext);
+        RowBuilder rowBuilder = new ReflectionRowBuilder(processes, batchPresentation, pageContext, ShowGraphModeHelper.getManageProcessAction(),
+                getReturnAction(), "id", builders);
+        tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
 
-            navigation.addPagingNavigationTable(tdFormElement);
-        } catch (Exception e) {
-            handleException(e);
-        }
+        navigation.addPagingNavigationTable(tdFormElement);
     }
 
     private String[] getGrouppingCells(BatchPresentation batchPresentation, List<WfProcess> list) {

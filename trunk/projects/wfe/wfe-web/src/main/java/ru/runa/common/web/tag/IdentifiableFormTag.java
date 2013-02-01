@@ -17,8 +17,6 @@
  */
 package ru.runa.common.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
@@ -48,18 +46,17 @@ public abstract class IdentifiableFormTag extends TitledFormTag {
         return identifiableId;
     }
 
-    protected abstract void fillFormData(final TD tdFormElement) throws JspException;
+    protected abstract void fillFormData(final TD tdFormElement);
 
     /**
-     * @return {@link Permission}that executor must have to update.
-     * @throws JspException
+     * @return {@link Permission}that executor must have to update. @
      */
-    protected abstract Permission getPermission() throws JspException;
+    protected abstract Permission getPermission();
 
-    protected abstract Identifiable getIdentifiable() throws JspException;
+    protected abstract Identifiable getIdentifiable();
 
     @Override
-    protected boolean isFormButtonEnabled() throws JspException {
+    protected boolean isFormButtonEnabled() {
         if (getPermission() == null) {
             return true;
         }
@@ -67,13 +64,13 @@ public abstract class IdentifiableFormTag extends TitledFormTag {
     }
 
     @Override
-    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) throws JspException {
+    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
         AuthorizationService authorizationService = Delegates.getAuthorizationService();
         return (permission == null || authorizationService.isAllowed(getUser(), permission, identifiable));
     }
 
     @Override
-    public final void fillFormElement(TD tdFormElement) throws JspException {
+    public final void fillFormElement(TD tdFormElement) {
         fillFormData(tdFormElement);
         Input hiddenName = new Input(Input.HIDDEN, IdForm.ID_INPUT_NAME, String.valueOf(getIdentifiableId()));
         tdFormElement.addElement(hiddenName);

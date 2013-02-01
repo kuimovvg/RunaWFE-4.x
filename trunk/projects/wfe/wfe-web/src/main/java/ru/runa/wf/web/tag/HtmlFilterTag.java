@@ -18,8 +18,6 @@
 
 package ru.runa.wf.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.Messages;
@@ -36,18 +34,15 @@ public class HtmlFilterTag extends TitledFormTag {
     private static final long serialVersionUID = 3401243801430914L;
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
-        try {
-            byte[] htmlBytes = (byte[]) pageContext.getRequest().getAttribute("htmlBytes");
-            Long processDefinitionId = (Long) pageContext.getRequest().getAttribute("processDefinitionId");
-            String pageHref = (String) pageContext.getRequest().getAttribute("pageHref");
+    protected void fillFormElement(TD tdFormElement) {
+        byte[] htmlBytes = (byte[]) pageContext.getRequest().getAttribute("htmlBytes");
+        Long processDefinitionId = (Long) pageContext.getRequest().getAttribute("processDefinitionId");
+        String pageHref = (String) pageContext.getRequest().getAttribute("pageHref");
 
-            // we do not move HTMLPageFilter to action since we need pageContext for processing
-            byte[] filteredBytes = HTMLFormConverter.changeUrls(pageContext, processDefinitionId, pageHref, htmlBytes);
-            tdFormElement.addElement(new String(filteredBytes, Charsets.UTF_8));
-        } catch (Exception e) {
-            handleException(e);
-        }
+        // we do not move HTMLPageFilter to action since we need pageContext for
+        // processing
+        byte[] filteredBytes = HTMLFormConverter.changeUrls(pageContext, processDefinitionId, pageHref, htmlBytes);
+        tdFormElement.addElement(new String(filteredBytes, Charsets.UTF_8));
     }
 
     @Override

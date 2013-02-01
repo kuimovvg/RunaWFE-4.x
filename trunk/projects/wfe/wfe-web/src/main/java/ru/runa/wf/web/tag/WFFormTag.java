@@ -19,18 +19,12 @@ package ru.runa.wf.web.tag;
 
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.Form;
 import org.apache.ecs.html.Input;
-import org.apache.ecs.html.LI;
 import org.apache.ecs.html.P;
 import org.apache.ecs.html.Script;
 import org.apache.ecs.html.TD;
-import org.apache.ecs.html.UL;
 import org.apache.struts.Globals;
 import org.apache.struts.taglib.html.Constants;
 
@@ -51,18 +45,14 @@ import com.google.common.base.Charsets;
  * 
  */
 public abstract class WFFormTag extends TitledFormTag {
-
     private static final long serialVersionUID = 1L;
-
-    private static final Log log = LogFactory.getLog(WFFormTag.class);
-
     public static final String FORM_NAME = "processForm";
 
     private boolean isButtonVisible = false;
 
     @Override
     @SuppressWarnings("unchecked")
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         isButtonVisible = false;
         try {
             Interaction interaction = getInteraction();
@@ -96,19 +86,12 @@ public abstract class WFFormTag extends TitledFormTag {
             tdFormElement.addElement(new StringElement(wfFormContent));
             isButtonVisible = true;
         } catch (TaskDoesNotExistException e) {
-            log.error(e.getMessage());
+            log.warn(e.getMessage());
             P p = new P();
             tdFormElement.addElement(p);
             p.setClass(Resources.CLASS_ERROR);
             String message = ActionExceptionHelper.getErrorMessage(e, pageContext);
             p.addElement(message);
-        } catch (Exception e) {
-            log.error("task form error", e.getCause());
-            UL ul = new UL();
-            tdFormElement.addElement(ul);
-            ul.setClass(Resources.CLASS_ERROR);
-            ul.addElement(new LI(Messages.getMessage(Messages.TASK_FORM_ERROR, pageContext) + " "
-                    + ActionExceptionHelper.getErrorMessage(e.getCause(), pageContext)));
         }
         getForm().setEncType(Form.ENC_UPLOAD);
         getForm().setAcceptCharset(Charsets.UTF_8.name());
@@ -135,5 +118,5 @@ public abstract class WFFormTag extends TitledFormTag {
 
     abstract protected Interaction getInteraction() throws AuthorizationException, AuthenticationException, TaskDoesNotExistException;
 
-    abstract protected String buildForm(Interaction interaction) throws Exception;
+    abstract protected String buildForm(Interaction interaction);
 }

@@ -27,5 +27,5 @@ import ru.runa.wfe.user.User;
  */
 public interface StartFormBuilder {
 
-    String build(User user, Long definitionId, PageContext pageContext, Interaction interaction) throws Exception;
+    String build(User user, Long definitionId, PageContext pageContext, Interaction interaction);
 }

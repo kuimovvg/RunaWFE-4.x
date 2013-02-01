@@ -19,8 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.Messages;
@@ -45,17 +43,13 @@ public class ProcessActiveTaskMonitorTag extends ProcessBaseFormTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
-        try {
-            ExecutionService executionService = Delegates.getExecutionService();
-            List<WfTask> activeTasks = executionService.getActiveTasks(getUser(), getIdentifiableId());
-            HeaderBuilder headerBuilder = new StringsHeaderBuilder(new String[] { Messages.getMessage(Messages.LABEL_STATE_NAME, pageContext),
-                    Messages.getMessage(Messages.LABEL_SWIMLANE_ASSIGNMENT, pageContext) });
-            RowBuilder rowBuilder = new ProcessSwimlaneAssignmentRowBuilder(activeTasks, pageContext);
-            tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
-        } catch (Exception e) {
-            handleException(e);
-        }
+    protected void fillFormData(TD tdFormElement) {
+        ExecutionService executionService = Delegates.getExecutionService();
+        List<WfTask> activeTasks = executionService.getActiveTasks(getUser(), getIdentifiableId());
+        HeaderBuilder headerBuilder = new StringsHeaderBuilder(new String[] { Messages.getMessage(Messages.LABEL_STATE_NAME, pageContext),
+                Messages.getMessage(Messages.LABEL_SWIMLANE_ASSIGNMENT, pageContext) });
+        RowBuilder rowBuilder = new ProcessSwimlaneAssignmentRowBuilder(activeTasks, pageContext);
+        tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
     }
 
     @Override
@@ -64,7 +58,7 @@ public class ProcessActiveTaskMonitorTag extends ProcessBaseFormTag {
     }
 
     @Override
-    protected Permission getPermission() throws JspException {
+    protected Permission getPermission() {
         return ProcessPermission.READ;
     }
 

@@ -91,7 +91,7 @@ public class ProcessTaskAssignmentAction extends ActionBase {
                 try {
                     Long taskId = taskIds.get(i);
                     Executor previousExecutor = taskPreviousOwners.get(i);
-                    executionService.assignTask(getLoggedUser(request), taskId, previousExecutor, getLoggedUser(request));
+                    executionService.assignTask(getLoggedUser(request), taskId, previousExecutor, getLoggedUser(request).getActor());
                 } catch (TaskAlreadyAcceptedException e) {
                     // forward user to the tasks list screen cause current task
                     // was already accepted by another user...

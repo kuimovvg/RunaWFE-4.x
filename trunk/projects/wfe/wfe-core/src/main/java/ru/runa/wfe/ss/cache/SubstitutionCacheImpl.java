@@ -123,10 +123,9 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
     private void logError(Substitution substitution) {
         try {
             log.error("Error in substitution for actor with name " + executorDAO.getActor(substitution.getActorId()).getName() + " and function "
-                    + substitution.getSubstitutionOrgFunction());
+                    + substitution.getOrgFunction());
         } catch (ExecutorDoesNotExistException e) {
-            log.error("Error in substitution for actor with id " + substitution.getActorId() + " and function "
-                    + substitution.getSubstitutionOrgFunction());
+            log.error("Error in substitution for actor with id " + substitution.getActorId() + " and function " + substitution.getOrgFunction());
         }
     }
 
@@ -162,8 +161,7 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                     subDescr.put(substitution, null);
                     continue;
                 }
-                List<? extends Executor> substitutors = OrgFunctionHelper.evaluateOrgFunction(substitution.getSubstitutionOrgFunction(),
-                        actor.getCode());
+                List<? extends Executor> substitutors = OrgFunctionHelper.evaluateOrgFunction(substitution.getOrgFunction());
                 HashSet<Long> substitutorIds = new HashSet<Long>();
                 for (Executor sub : substitutors) {
                     if (sub instanceof Actor) {

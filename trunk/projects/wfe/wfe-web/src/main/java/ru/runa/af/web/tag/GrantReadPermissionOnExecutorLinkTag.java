@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
 import ru.runa.service.af.AuthorizationService;
@@ -37,7 +35,7 @@ public class GrantReadPermissionOnExecutorLinkTag extends IdLinkBaseTag {
     private static final long serialVersionUID = -6511718027087691517L;
 
     @Override
-    protected boolean isLinkEnabled() throws JspException {
+    protected boolean isLinkEnabled() {
         try {
             ExecutorService executorService = Delegates.getExecutorService();
             Executor executor = executorService.getExecutor(getUser(), getIdentifiableId());

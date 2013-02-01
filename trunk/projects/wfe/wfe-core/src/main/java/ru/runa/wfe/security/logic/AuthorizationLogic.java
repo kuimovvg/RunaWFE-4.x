@@ -59,14 +59,14 @@ public class AuthorizationLogic extends CommonLogic {
 
     public Collection<Permission> getPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
             AuthorizationException, AuthenticationException {
-        performer = checkPermissionsOnExecutor(user, performer, Permission.READ);
+        checkPermissionsOnExecutor(user, performer, Permission.READ);
         checkPermissionAllowed(user, identifiable, Permission.READ);
         return permissionDAO.getPermissions(performer, identifiable);
     }
 
     public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
             AuthorizationException, AuthenticationException {
-        performer = checkPermissionsOnExecutor(user, performer, Permission.READ);
+        checkPermissionsOnExecutor(user, performer, Permission.READ);
         checkPermissionAllowed(user, identifiable, Permission.READ);
         return permissionDAO.getOwnPermissions(performer, identifiable);
     }
@@ -108,7 +108,7 @@ public class AuthorizationLogic extends CommonLogic {
     private Executor setPermissionOnIdentifiable(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
             throws AuthorizationException, ExecutorDoesNotExistException, AuthenticationException, UnapplicablePermissionException {
         checkIsChangingPermissionForPrivilegedExecutors(performer, identifiable, permissions);
-        performer = checkPermissionsOnExecutor(user, performer, Permission.READ);
+        checkPermissionsOnExecutor(user, performer, Permission.READ);
         checkPermissionAllowed(user, identifiable, Permission.UPDATE_PERMISSIONS);
         permissionDAO.setPermissions(performer, permissions, identifiable);
         return performer;

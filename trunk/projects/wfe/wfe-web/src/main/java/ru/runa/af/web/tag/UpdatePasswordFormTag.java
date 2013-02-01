@@ -17,15 +17,12 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.action.UpdatePasswordAction;
 import ru.runa.af.web.html.PasswordTableBuilder;
 import ru.runa.common.web.Messages;
 import ru.runa.wfe.security.ASystem;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.user.Actor;
@@ -41,7 +38,7 @@ public class UpdatePasswordFormTag extends UpdateExecutorBaseFormTag {
     private static final long serialVersionUID = -3273077346043267061L;
 
     @Override
-    public void fillFormData(TD tdFormElement) throws JspException {
+    public void fillFormData(TD tdFormElement) {
         PasswordTableBuilder builder = new PasswordTableBuilder(!isFormButtonEnabled(), pageContext);
         tdFormElement.addElement(builder.build());
     }
@@ -57,7 +54,7 @@ public class UpdatePasswordFormTag extends UpdateExecutorBaseFormTag {
     }
 
     @Override
-    protected boolean isVisible() throws JspException {
+    protected boolean isVisible() {
         boolean result = false;
         if ((getExecutor() instanceof Actor) && isFormButtonEnabled()) {
             result = true;
@@ -66,13 +63,9 @@ public class UpdatePasswordFormTag extends UpdateExecutorBaseFormTag {
     }
 
     @Override
-    protected boolean isFormButtonEnabled() throws JspException {
-        try {
-            return super.isFormButtonEnabled()
-                    || (getUser().equals(getIdentifiable()) && super.isFormButtonEnabled(ASystem.INSTANCE, SystemPermission.CHANGE_SELF_PASSWORD));
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
-        }
+    protected boolean isFormButtonEnabled() {
+        return super.isFormButtonEnabled()
+                || (getUser().equals(getIdentifiable()) && super.isFormButtonEnabled(ASystem.INSTANCE, SystemPermission.CHANGE_SELF_PASSWORD));
     }
 
     @Override

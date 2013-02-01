@@ -20,8 +20,6 @@ package ru.runa.af.web.tag;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
@@ -68,47 +66,43 @@ public class ListExecutorLeftRelationMembersFormTag extends TitledFormTag {
     private String returnAction;
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
-        try {
-            ExecutorService executorService = Delegates.getExecutorService();
-            RelationService relationService = Delegates.getRelationService();
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Relation currentRelation = relationService.getRelation(getUser(), getRelationName());
-            isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, currentRelation);
-            List<Executor> executors = new ArrayList<Executor>();
-            Executor executor = executorService.getExecutor(getUser(), executorId);
-            executors.add(executor);
-            BatchPresentation executorBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-            for (Group group : executorService.getExecutorGroups(getUser(), executor, executorBatchPresentation, false)) {
-                executors.add(group);
-            }
-            List<RelationPair> relationPairs = relationService.getExecutorsRelationPairsLeft(getUser(), null, executors);
-
-            TableBuilder tableBuilder = new TableBuilder();
-
-            TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
-
-                @Override
-                protected boolean isEnabled(Object object, Env env) {
-                    return isFormButtonVisible;
-                }
-            };
-
-            BatchPresentation batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
-            TDBuilder[] builders = getBuilders(new TDBuilder[] { checkboxBuilder }, batchPresentation, new TDBuilder[] {});
-
-            RowBuilder rowBuilder = new ReflectionRowBuilder(relationPairs, batchPresentation, pageContext,
-                    WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, getReturnAction(), IdForm.ID_INPUT_NAME, builders);
-            HeaderBuilder headerBuilder = new StringsHeaderBuilder(getNames(batchPresentation));
-
-            tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
-            tdFormElement.addElement(new Input(Input.HIDDEN, "relationName", getRelationName()));
-            tdFormElement.addElement(new Input(Input.HIDDEN, "executorId", Long.toString(executorId)));
-            tdFormElement.addElement(new Input(Input.HIDDEN, "success", "/manage_executor_relation_left.do"));
-            tdFormElement.addElement(new Input(Input.HIDDEN, "failure", "/manage_executor_relation_left.do"));
-        } catch (Exception e) {
-            handleException(e);
+    protected void fillFormElement(TD tdFormElement) {
+        ExecutorService executorService = Delegates.getExecutorService();
+        RelationService relationService = Delegates.getRelationService();
+        AuthorizationService authorizationService = Delegates.getAuthorizationService();
+        Relation currentRelation = relationService.getRelation(getUser(), getRelationName());
+        isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, currentRelation);
+        List<Executor> executors = new ArrayList<Executor>();
+        Executor executor = executorService.getExecutor(getUser(), executorId);
+        executors.add(executor);
+        BatchPresentation executorBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
+        for (Group group : executorService.getExecutorGroups(getUser(), executor, executorBatchPresentation, false)) {
+            executors.add(group);
         }
+        List<RelationPair> relationPairs = relationService.getExecutorsRelationPairsLeft(getUser(), null, executors);
+
+        TableBuilder tableBuilder = new TableBuilder();
+
+        TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
+
+            @Override
+            protected boolean isEnabled(Object object, Env env) {
+                return isFormButtonVisible;
+            }
+        };
+
+        BatchPresentation batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
+        TDBuilder[] builders = getBuilders(new TDBuilder[] { checkboxBuilder }, batchPresentation, new TDBuilder[] {});
+
+        RowBuilder rowBuilder = new ReflectionRowBuilder(relationPairs, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
+                getReturnAction(), IdForm.ID_INPUT_NAME, builders);
+        HeaderBuilder headerBuilder = new StringsHeaderBuilder(getNames(batchPresentation));
+
+        tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
+        tdFormElement.addElement(new Input(Input.HIDDEN, "relationName", getRelationName()));
+        tdFormElement.addElement(new Input(Input.HIDDEN, "executorId", Long.toString(executorId)));
+        tdFormElement.addElement(new Input(Input.HIDDEN, "success", "/manage_executor_relation_left.do"));
+        tdFormElement.addElement(new Input(Input.HIDDEN, "failure", "/manage_executor_relation_left.do"));
     }
 
     public void setRelationName(String relationName) {
@@ -150,17 +144,17 @@ public class ListExecutorLeftRelationMembersFormTag extends TitledFormTag {
     }
 
     @Override
-    protected boolean isFormButtonEnabled() throws JspException {
+    protected boolean isFormButtonEnabled() {
         return isFormButtonVisible;
     }
 
     @Override
-    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) throws JspException {
+    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
         return isFormButtonVisible;
     }
 
     @Override
-    protected boolean isFormButtonVisible() throws JspException {
+    protected boolean isFormButtonVisible() {
         return isFormButtonVisible;
     }
 

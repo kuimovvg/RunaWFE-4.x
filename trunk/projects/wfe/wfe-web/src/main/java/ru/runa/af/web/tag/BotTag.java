@@ -1,7 +1,5 @@
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
@@ -16,8 +14,8 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
+
+import com.google.common.base.Preconditions;
 
 /**
  * @author petrmikheev
@@ -40,11 +38,9 @@ public class BotTag extends TitledFormTag {
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         Bot bot = findBot();
-        if (bot == null) {
-            throw new JspException();
-        }
+        Preconditions.checkNotNull(bot);
         Table table = new Table();
         ActorSelectTD actorSelect = new ActorSelectTD(getUser(), BotForm.USER_NAME, bot.getUsername());
         Input botPasswordInput = new Input(Input.PASSWORD, BotForm.PASSWORD, bot.getPassword());
@@ -96,16 +92,8 @@ public class BotTag extends TitledFormTag {
     }
 
     @Override
-    public boolean isFormButtonEnabled() throws JspException {
-        boolean result = false;
-        try {
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            result = authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-        } catch (AuthorizationException e) {
-            throw new JspException(e);
-        } catch (AuthenticationException e) {
-            throw new JspException(e);
-        }
-        return result;
+    public boolean isFormButtonEnabled() {
+        AuthorizationService authorizationService = Delegates.getAuthorizationService();
+        return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
     }
 }

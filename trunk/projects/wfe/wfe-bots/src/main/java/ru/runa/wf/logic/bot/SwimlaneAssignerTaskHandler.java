@@ -24,11 +24,14 @@ import java.util.Properties;
 
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
+import ru.runa.wfe.os.OrgFunction;
 import ru.runa.wfe.os.OrgFunctionHelper;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
+
+import com.google.common.base.Preconditions;
 
 /**
  * (Re)Assigns swimlane.
@@ -39,19 +42,22 @@ import ru.runa.wfe.var.IVariableProvider;
 public class SwimlaneAssignerTaskHandler extends TaskHandlerBase {
     private static final String SWIMLANE_NAME_PROPERTY = "swimlaneName";
     private static final String ASSIGNER_FUNCTION_PROPERTY = "assignerFunction";
-    private Properties properties = new Properties();
+    private String swimlaneName;
+    private OrgFunction function;
 
     @Override
     public void setConfiguration(String configuration) throws Exception {
+        Properties properties = new Properties();
         properties.load(new StringReader(configuration));
+        String swimlaneName = properties.getProperty(SWIMLANE_NAME_PROPERTY);
+        Preconditions.checkNotNull(swimlaneName, SWIMLANE_NAME_PROPERTY);
+        String swimlaneInitializer = properties.getProperty(ASSIGNER_FUNCTION_PROPERTY);
+        function = OrgFunctionHelper.parseOrgFunction(swimlaneInitializer);
     }
 
     @Override
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
-        String swimlaneName = properties.getProperty(SWIMLANE_NAME_PROPERTY);
-        String assignerFunction = properties.getProperty(ASSIGNER_FUNCTION_PROPERTY);
-        Long actorCode = user.getCode();
-        List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(variableProvider, assignerFunction, actorCode);
+        List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(function, variableProvider);
         if (executors.size() != 1) {
             throw new Exception("assigner (organization) function return more than 1 actor to be assigned in swimlane");
         }

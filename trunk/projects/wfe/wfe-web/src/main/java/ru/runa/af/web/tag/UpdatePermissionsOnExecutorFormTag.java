@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.action.UpdatePermissionsOnExecutorAction;
@@ -34,23 +32,28 @@ import ru.runa.wfe.security.Permission;
 public class UpdatePermissionsOnExecutorFormTag extends UpdateExecutorBaseFormTag {
     private static final long serialVersionUID = 8288435097264802933L;
 
-    protected void fillFormData(TD tdFormElement) throws JspException {
+    @Override
+    protected void fillFormData(TD tdFormElement) {
         PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getExecutor(), getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 
+    @Override
     protected Permission getPermission() {
         return Permission.UPDATE_PERMISSIONS;
     }
 
+    @Override
     public String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_APPLY, pageContext);
     }
 
+    @Override
     protected String getTitle() {
         return Messages.getMessage(Messages.TITLE_PERMISSION_OWNERS, pageContext);
     }
 
+    @Override
     public String getAction() {
         return UpdatePermissionsOnExecutorAction.ACTION_PATH;
     }

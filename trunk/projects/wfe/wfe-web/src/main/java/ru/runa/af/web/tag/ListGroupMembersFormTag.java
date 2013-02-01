@@ -19,8 +19,6 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import ru.runa.af.web.action.RemoveExecutorsFromGroupAction;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
@@ -53,7 +51,7 @@ public class ListGroupMembersFormTag extends ListExecutorsBaseFormTag {
     }
 
     @Override
-    protected boolean isVisible() throws JspException {
+    protected boolean isVisible() {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
             return getExecutor() instanceof Group && authorizationService.isAllowed(getUser(), GroupPermission.LIST_GROUP, getExecutor());

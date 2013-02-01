@@ -19,8 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
@@ -60,7 +58,7 @@ public class StartFormTag extends WFFormTag {
     }
 
     @Override
-    protected String buildForm(Interaction interaction) throws Exception {
+    protected String buildForm(Interaction interaction) {
         StartFormBuilder startFormBuilder = FormBuilderFactory.createStartFormBuilder(interaction.getType());
         return startFormBuilder.build(getUser(), getDefinitionId(), pageContext, interaction);
     }
@@ -101,7 +99,7 @@ public class StartFormTag extends WFFormTag {
     }
 
     @Override
-    protected void fillFormElement(TD tdFormElement) throws JspException {
+    protected void fillFormElement(TD tdFormElement) {
         super.fillFormElement(tdFormElement);
         tdFormElement.addElement(new Input(Input.HIDDEN, IdForm.ID_INPUT_NAME, String.valueOf(definitionId)));
     }

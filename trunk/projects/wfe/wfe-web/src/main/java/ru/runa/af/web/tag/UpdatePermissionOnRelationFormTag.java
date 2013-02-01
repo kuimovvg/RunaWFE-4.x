@@ -17,8 +17,6 @@
  */
 package ru.runa.af.web.tag;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.action.UpdatePermissionOnRelation;
@@ -40,13 +38,13 @@ public class UpdatePermissionOnRelationFormTag extends IdentifiableFormTag {
     private String relationName;
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
+    protected void fillFormData(TD tdFormElement) {
         PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getIdentifiable(), getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 
     @Override
-    protected Identifiable getIdentifiable() throws JspException {
+    protected Identifiable getIdentifiable() {
         try {
             RelationService relationService = Delegates.getRelationService();
             return relationService.getRelation(getUser(), getRelationName());
@@ -56,7 +54,7 @@ public class UpdatePermissionOnRelationFormTag extends IdentifiableFormTag {
     }
 
     @Override
-    protected Permission getPermission() throws JspException {
+    protected Permission getPermission() {
         return RelationPermission.READ;
     }
 

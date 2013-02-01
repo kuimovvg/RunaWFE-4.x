@@ -19,7 +19,6 @@ package ru.runa.wfe.ss;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
@@ -33,11 +32,6 @@ import ru.runa.wfe.user.Actor;
 @DiscriminatorValue(value = "swimlane")
 public class SubstitutionCriteriaSwimlane extends SubstitutionCriteria {
     private static final long serialVersionUID = 812323181231L;
-
-    private String DISPLAY_TYPE = "substitutioncriteria.SubstitutionCriteriaSwimlane";
-
-    public SubstitutionCriteriaSwimlane() {
-    }
 
     @Override
     public boolean isSatisfied(ExecutionContext executionContext, Task task, Actor asActor, Actor substitutorActor) {
@@ -55,9 +49,4 @@ public class SubstitutionCriteriaSwimlane extends SubstitutionCriteria {
         return !(getConf() == null || getConf().isEmpty());
     }
 
-    @Override
-    @Transient
-    public String getLabelKey() {
-        return DISPLAY_TYPE;
-    }
 }

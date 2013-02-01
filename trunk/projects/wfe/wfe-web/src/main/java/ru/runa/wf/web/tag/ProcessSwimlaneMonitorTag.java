@@ -19,8 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.Messages;
@@ -53,20 +51,16 @@ public class ProcessSwimlaneMonitorTag extends ProcessBaseFormTag {
     }
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
-        try {
-            ExecutionService executionService = Delegates.getExecutionService();
-            List<WfSwimlane> swimlanes = executionService.getSwimlanes(getUser(), getIdentifiableId());
-            List<String> headerNames = Lists.newArrayList();
-            headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_NAME, pageContext));
-            headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_ASSIGNMENT, pageContext));
-            headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_ORGFUNCTION, pageContext));
-            HeaderBuilder headerBuilder = new StringsHeaderBuilder(headerNames);
-            RowBuilder rowBuilder = new ProcessSwimlaneRowBuilder(getIdentifiableId(), swimlanes, pageContext);
-            tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
-        } catch (Exception e) {
-            handleException(e);
-        }
+    protected void fillFormData(TD tdFormElement) {
+        ExecutionService executionService = Delegates.getExecutionService();
+        List<WfSwimlane> swimlanes = executionService.getSwimlanes(getUser(), getIdentifiableId());
+        List<String> headerNames = Lists.newArrayList();
+        headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_NAME, pageContext));
+        headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_ASSIGNMENT, pageContext));
+        headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_ORGFUNCTION, pageContext));
+        HeaderBuilder headerBuilder = new StringsHeaderBuilder(headerNames);
+        RowBuilder rowBuilder = new ProcessSwimlaneRowBuilder(getIdentifiableId(), swimlanes, pageContext);
+        tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
     }
 
     @Override

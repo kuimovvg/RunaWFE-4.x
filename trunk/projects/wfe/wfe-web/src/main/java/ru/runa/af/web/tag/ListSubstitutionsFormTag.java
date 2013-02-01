@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.Entities;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.IMG;
@@ -62,7 +60,7 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected boolean isVisible() throws JspException {
+    protected boolean isVisible() {
         return getExecutor() instanceof Actor;
     }
 
@@ -77,7 +75,7 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
     }
 
     @Override
-    protected void fillFormData(TD formTd) throws JspException {
+    protected void fillFormData(TD formTd) {
         SubstitutionService substitutionService = Delegates.getSubstitutionService();
         try {
             Actor actor = (Actor) getExecutor();
@@ -193,9 +191,9 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
                 string = Messages.getMessage("terminator.edit.title", pageContext);
             } else {
                 try {
-                    string = SubstitutionHelper.getUserFriendlyOrgFunction(getUser(), pageContext, substitution.getSubstitutionOrgFunction());
+                    string = SubstitutionHelper.getUserFriendlyOrgFunction(getUser(), substitution.getOrgFunction());
                 } catch (Exception e) {
-                    string = "<span class='error'>" + substitution.getSubstitutionOrgFunction() + "</span>";
+                    string = "<span class='error'>" + substitution.getOrgFunction() + "</span>";
                 }
             }
             if (disabled) {

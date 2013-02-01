@@ -19,8 +19,6 @@ package ru.runa.af.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.WebResources;
@@ -47,32 +45,29 @@ import ru.runa.wfe.user.Executor;
  * Created on 31.08.2004
  * 
  * @author stan79
- * @jsp.tag name = "ListExecutorsWithoutPermissionsOnBotStationFormTag" body-content = "JSP"
+ * @jsp.tag name = "ListExecutorsWithoutPermissionsOnBotStationFormTag"
+ *          body-content = "JSP"
  */
 public abstract class ListExecutorsWithoutPermissionsBase extends IdentifiableFormTag implements BatchedTag, ReturningTag {
 
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
-        try {
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            BatchPresentation batchPresentation = getBatchPresentation();
-            List<Executor> executors = authorizationService.getExecutorsWithPermission(getUser(), getIdentifiable(), batchPresentation, false);
-            int executorsCount = authorizationService.getExecutorsWithPermissionCount(getUser(), getIdentifiable(), batchPresentation, false);
-            PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, executorsCount, getReturnAction());
-            navigation.addPagingNavigationTable(tdFormElement);
-            TableBuilder tableBuilder = new TableBuilder();
-            TDBuilder[] prefixBuilders = new TDBuilder[] { new AllEnabledIdentifiableCheckboxTDBuilder() };
-            TDBuilder[] builders = getBuilders(prefixBuilders, batchPresentation, new TDBuilder[] {});
-            RowBuilder rowBuilder = new ReflectionRowBuilder(executors, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
-                    getReturnAction(), IdForm.ID_INPUT_NAME, builders);
-            HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 1, 0, getReturnAction(), pageContext);
-            tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
-            navigation.addPagingNavigationTable(tdFormElement);
-        } catch (Exception e) {
-            handleException(e);
-        }
+    protected void fillFormData(TD tdFormElement) {
+        AuthorizationService authorizationService = Delegates.getAuthorizationService();
+        BatchPresentation batchPresentation = getBatchPresentation();
+        List<Executor> executors = authorizationService.getExecutorsWithPermission(getUser(), getIdentifiable(), batchPresentation, false);
+        int executorsCount = authorizationService.getExecutorsWithPermissionCount(getUser(), getIdentifiable(), batchPresentation, false);
+        PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, executorsCount, getReturnAction());
+        navigation.addPagingNavigationTable(tdFormElement);
+        TableBuilder tableBuilder = new TableBuilder();
+        TDBuilder[] prefixBuilders = new TDBuilder[] { new AllEnabledIdentifiableCheckboxTDBuilder() };
+        TDBuilder[] builders = getBuilders(prefixBuilders, batchPresentation, new TDBuilder[] {});
+        RowBuilder rowBuilder = new ReflectionRowBuilder(executors, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
+                getReturnAction(), IdForm.ID_INPUT_NAME, builders);
+        HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 1, 0, getReturnAction(), pageContext);
+        tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
+        navigation.addPagingNavigationTable(tdFormElement);
     }
 
     @Override

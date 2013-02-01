@@ -19,8 +19,6 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import javax.servlet.jsp.JspException;
-
 import org.apache.ecs.html.Span;
 import org.apache.ecs.html.TD;
 
@@ -73,7 +71,7 @@ public class ProcessSwimlaneAssignmentMonitorTag extends ProcessBaseFormTag {
     }
 
     @Override
-    protected void fillFormData(TD tdFormElement) throws JspException {
+    protected void fillFormData(TD tdFormElement) {
         try {
             ExecutionService executionService = Delegates.getExecutionService();
             List<WfTask> activeTasks = executionService.getActiveTasks(getUser(), getIdentifiableId());
@@ -91,10 +89,9 @@ public class ProcessSwimlaneAssignmentMonitorTag extends ProcessBaseFormTag {
             // i was against this crap, but was urged to
             Span span = new Span();
             span.setClass(ru.runa.common.web.Resources.CLASS_ERROR);
-            span.addElement(Commons.getMessage(Messages.EXCEPTION_WEB_CLIENT_EXECUTOR_DOES_NOT_EXISTS, pageContext, e.getExecutorName()));
+            span.addElement(Commons.getMessage(Messages.EXCEPTION_WEB_CLIENT_EXECUTOR_DOES_NOT_EXISTS, pageContext,
+                    new Object[] { e.getExecutorName() }));
             tdFormElement.addElement(span);
-        } catch (Exception e) {
-            handleException(e);
         }
     }
 
