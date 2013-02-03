@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -190,10 +191,11 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
 
         private void addParamSection(Composite parent, final SQLQueryParameterModel parameterModel, final int queryIndex, final int paramIndex, boolean input) {
             final Combo combo = new Combo(parent, SWT.READ_ONLY);
+            Set<String> variableNames = variables.keySet();
             for (String variableName : variableNames) {
                 combo.add(variableName);
             }
-            if (input && formalVariable) {
+            if (input && !formalVariable) {
                 for (String variableName : PREDEFINED_VARIABLES) {
                     combo.add(variableName);
                 }
@@ -204,7 +206,7 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     parameterModel.varName = combo.getText();
-                    parameterModel.swimlaneVar = definition.getSwimlaneByName(parameterModel.varName) != null;
+                    parameterModel.swimlaneVar = swimlaneNames.contains(parameterModel.varName);
                 }
             });
             if (paramIndex != 0) {

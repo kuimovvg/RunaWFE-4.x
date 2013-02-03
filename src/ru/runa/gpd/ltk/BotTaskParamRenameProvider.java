@@ -1,6 +1,5 @@
 package ru.runa.gpd.ltk;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.NullChange;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -20,6 +18,7 @@ import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 
 @SuppressWarnings("unchecked")
 public class BotTaskParamRenameProvider implements VariableRenameProvider {
@@ -37,11 +36,11 @@ public class BotTaskParamRenameProvider implements VariableRenameProvider {
         BotTask botTask = taskState.getBotTask();
         if (botTask != null) {
             String conf = botTask.getDelegationConfiguration();
-            if (conf != null && conf.length() > 0) {
-                ByteArrayInputStream is = new ByteArrayInputStream(conf.getBytes(PluginConstants.UTF_ENCODING));
-                Document document = XmlUtil.parseWithoutValidation(is);
-                List<Element> elementsList = document.getRootElement().elements(PARAM);
-                for (Element element : elementsList) {
+            if (!Strings.isNullOrEmpty(conf)) {
+                Document document = XmlUtil.parseWithoutValidation(conf);
+                // FIXME recursive
+                List<Element> elements = document.getRootElement().elements(PARAM);
+                for (Element element : elements) {
                     if (Objects.equal(variableName, element.attributeValue(VARIABLE))) {
                         changes.add(new ParamChange(taskState, variableName, replacement));
                     }
@@ -71,18 +70,18 @@ public class BotTaskParamRenameProvider implements VariableRenameProvider {
             BotTask botTask = taskState.getBotTask();
             if (botTask != null) {
                 String conf = botTask.getDelegationConfiguration();
-                if (conf != null && conf.length() > 0) {
-                    ByteArrayInputStream is = new ByteArrayInputStream(conf.getBytes());
+                if (!Strings.isNullOrEmpty(conf)) {
                     try {
-                        Document document = XmlUtil.parseWithoutValidation(is);
-                        List<Element> elementsList = document.getRootElement().elements(PARAM);
-                        for (Element element : elementsList) {
+                        Document document = XmlUtil.parseWithoutValidation(conf);
+                        // FIXME recursive
+                        List<Element> elements = document.getRootElement().elements(PARAM);
+                        for (Element element : elements) {
                             if (Objects.equal(currentVariableName, element.attributeValue(VARIABLE))) {
                                 element.addAttribute(VARIABLE, replacementVariableName);
                             }
                         }
-                        byte[] bytes = XmlUtil.writeXml(document);
-                        taskState.getBotTask().setDelegationConfiguration(new String(bytes));
+                        String newConf = XmlUtil.toString(document);
+                        taskState.getBotTask().setDelegationConfiguration(newConf);
                     } catch (Exception e) {
                         PluginLogger.logError(e);
                     }

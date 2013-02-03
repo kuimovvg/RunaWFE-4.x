@@ -58,7 +58,7 @@ public class BotsXmlContentProvider extends AuxContentProvider {
                     botTask.setName(botTaskName);
                     botTask.setClazz(className);
                     if (confDocument != null) {
-                        String conf = new String(XmlUtil.writeXml(confDocument));
+                        String conf = XmlUtil.toString(confDocument);
                         botTask.setDelegationConfiguration(conf);
                     }
                     botTask.setDelegationClassName(className);
