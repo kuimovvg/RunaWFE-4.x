@@ -3,19 +3,20 @@ package ru.runa.wfe.handler.action.var;
 import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.handler.action.ParamBasedActionHandler;
+import ru.runa.wfe.handler.CommonParamBasedHandler;
+import ru.runa.wfe.handler.HandlerData;
 
 import com.google.common.collect.Lists;
 
-public class ListAggregateFunctionActionHandler extends ParamBasedActionHandler {
+public class ListAggregateFunctionActionHandler extends CommonParamBasedHandler {
 
     @Override
-    protected void executeAction() throws Exception {
-        List<?> list = getInputParam(List.class, "list", null);
+    protected void executeAction(HandlerData handlerData) throws Exception {
+        List<?> list = handlerData.getInputParam(List.class, "list", null);
         if (list == null) {
             list = Lists.newArrayList();
         }
-        String function = getInputParam(String.class, "function");
+        String function = handlerData.getInputParam(String.class, "function");
         Object result;
         if ("SUM".equals(function)) {
             result = getSum(list);
@@ -71,7 +72,7 @@ public class ListAggregateFunctionActionHandler extends ParamBasedActionHandler 
         } else {
             throw new Exception("Unknown function '" + function + "'");
         }
-        setOutputVariable("object", result);
+        handlerData.setOutputVariable("object", result);
     }
 
     private Number getSum(List<?> list) {

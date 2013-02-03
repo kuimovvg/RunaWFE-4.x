@@ -75,12 +75,6 @@ public class AuthorizationServiceDelegate extends EJB3Delegate implements Author
     }
 
     @Override
-    public Collection<Permission> getPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
-            AuthorizationException, AuthenticationException {
-        return getAuthorizationService().getPermissions(user, performer, identifiable);
-    }
-
-    @Override
     public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
             AuthorizationException, AuthenticationException {
         return getAuthorizationService().getOwnPermissions(user, performer, identifiable);

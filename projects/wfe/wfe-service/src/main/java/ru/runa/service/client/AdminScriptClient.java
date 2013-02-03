@@ -18,33 +18,22 @@
 package ru.runa.service.client;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
+import ru.runa.service.AdminScriptUtils;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.AdminScriptService;
 import ru.runa.wfe.commons.IOCommons;
-import ru.runa.wfe.commons.xml.PathEntityResolver;
-import ru.runa.wfe.commons.xml.SimpleErrorHandler;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.user.User;
 
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 /**
@@ -52,6 +41,9 @@ import com.google.common.io.Files;
  * 
  */
 public class AdminScriptClient {
+    private static final String DEPLOY_PROCESS_DEFINITION_TAG_NAME = "deployProcessDefinition";
+    private static final String FILE_ATTRIBUTE_NAME = "file";
+
     public static void main(String[] args) {
         if (args.length != 3) {
             System.out.println("Usage: AdminScriptRunner <scriptpath> <username> <password>");
@@ -80,31 +72,27 @@ public class AdminScriptClient {
         }
     }
 
-    public static void run(User user, byte[] scriptBytes, Handler handler) throws Exception {
+    public static void run(User user, byte[] scriptBytes, Handler handler) throws IOException {
         AdminScriptService delegate = Delegates.getAdminScriptService();
         InputStream scriptInputStream = new ByteArrayInputStream(scriptBytes);
-        Document allDocument = XMLHelper.getDocument(scriptInputStream, PATH_ENTITY_RESOLVER);
-
-        NodeList transactionScopeNodeList = allDocument.getElementsByTagName("transactionScope");
-        String defaultTransactionScope = allDocument.getDocumentElement().getAttribute("defaultTransactionScope");
-        if (transactionScopeNodeList.getLength() == 0 && "all".equals(defaultTransactionScope)) {
-            byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(allDocument);
+        Document allDocument = XmlUtils.parseWithXSDValidation(scriptInputStream, "workflowScript.xsd");
+        Element root = allDocument.getRootElement();
+        List<Element> transactionScopeElements = root.elements("transactionScope");
+        String defaultTransactionScope = root.attributeValue("defaultTransactionScope");
+        if (transactionScopeElements.size() == 0 && "all".equals(defaultTransactionScope)) {
+            byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(root);
             delegate.run(user, scriptBytes, processDefinitionsBytes);
         } else {
-            if (transactionScopeNodeList.getLength() > 0) {
-                System.out.println("multiple docs [by <transactionScope>]: " + transactionScopeNodeList.getLength());
-                for (int i = 0; i < transactionScopeNodeList.getLength(); i++) {
-                    Node transactionScopeElement = transactionScopeNodeList.item(i);
-                    Document document = createScriptDocument();
-                    NodeList chidren = transactionScopeElement.getChildNodes();
-                    for (int j = 0; j < chidren.getLength(); j++) {
-                        Node child = chidren.item(j);
-                        if (child.getNodeType() == Node.ELEMENT_NODE) {
-                            document.getDocumentElement().appendChild(document.importNode(child, true));
-                        }
+            if (transactionScopeElements.size() > 0) {
+                System.out.println("multiple docs [by <transactionScope>]: " + transactionScopeElements.size());
+                for (Element transactionScopeElement : transactionScopeElements) {
+                    Document document = AdminScriptUtils.createScriptDocument();
+                    List<Element> chidren = transactionScopeElement.elements();
+                    for (Element element : chidren) {
+                        document.getRootElement().add(element.createCopy());
                     }
-                    byte[] bs = writeDocument(document);
-                    byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document);
+                    byte[] bs = XmlUtils.save(document);
+                    byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document.getRootElement());
                     try {
                         handler.onStartTransaction(bs);
                         delegate.run(user, bs, processDefinitionsBytes);
@@ -114,58 +102,27 @@ public class AdminScriptClient {
                     }
                 }
             } else {
-                NodeList allChildrenNodeList = allDocument.getDocumentElement().getChildNodes();
-                System.out.println("multiple docs [by defaultTransactionScope]: " + allChildrenNodeList.getLength());
-                for (int i = 0; i < allChildrenNodeList.getLength(); i++) {
-                    Node child = allChildrenNodeList.item(i);
-                    if (child.getNodeType() == Node.ELEMENT_NODE) {
-                        Document document = createScriptDocument();
-                        document.getDocumentElement().appendChild(document.importNode(child, true));
-                        byte[] bs = writeDocument(document);
-                        byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document);
-                        try {
-                            handler.onStartTransaction(bs);
-                            delegate.run(user, bs, processDefinitionsBytes);
-                            handler.onEndTransaction();
-                        } catch (Exception e) {
-                            handler.onTransactionException(e);
-                        }
+                List<Element> allChildrenElements = allDocument.getRootElement().elements();
+                System.out.println("multiple docs [by defaultTransactionScope]: " + allChildrenElements.size());
+                for (Element child : allChildrenElements) {
+                    Document document = AdminScriptUtils.createScriptDocument();
+                    document.getRootElement().add(child.createCopy());
+                    byte[] bs = XmlUtils.save(document);
+                    byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document.getRootElement());
+                    try {
+                        handler.onStartTransaction(bs);
+                        delegate.run(user, bs, processDefinitionsBytes);
+                        handler.onEndTransaction();
+                    } catch (Exception e) {
+                        handler.onTransactionException(e);
                     }
                 }
             }
         }
     }
 
-    private static Document createScriptDocument() throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
-        factory.setValidating(true);
-        factory.setNamespaceAware(true);
-        DocumentBuilder documentBuilder = factory.newDocumentBuilder();
-        documentBuilder.setEntityResolver(PATH_ENTITY_RESOLVER);
-        documentBuilder.setErrorHandler(SimpleErrorHandler.getInstance());
-
-        Document document = documentBuilder.newDocument();
-        Element root = document.createElement("workflowScript");
-        root.setAttribute("xmlns", "http://runa.ru/xml");
-        root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        root.setAttribute("xsi:schemaLocation", "http://runa.ru/xml workflowScript.xsd");
-        document.appendChild(root);
-        return document;
-    }
-
-    private static byte[] writeDocument(Document document) throws Exception {
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        DOMSource source = new DOMSource(document);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        StreamResult result = new StreamResult(baos);
-        transformer.transform(source, result);
-        System.out.println(new String(baos.toByteArray()));
-        return baos.toByteArray();
-    }
-
-    private static byte[][] readProcessDefinitionsToByteArrays(Document document) throws ParserConfigurationException, SAXException, IOException {
-        String[] fileNames = readProcessDefinitionFileNames(document);
+    private static byte[][] readProcessDefinitionsToByteArrays(Element element) throws IOException {
+        String[] fileNames = readProcessDefinitionFileNames(element);
         byte[][] processDefinitionsBytes = new byte[fileNames.length][];
         for (int i = 0; i < fileNames.length; i++) {
             File processFile = new File(fileNames[i]);
@@ -178,17 +135,13 @@ public class AdminScriptClient {
         return processDefinitionsBytes;
     }
 
-    private static final String DEPLOY_PROCESS_DEFINITION_TAG_NAME = "deployProcessDefinition";
-    private static final String FILE_ATTRIBUTE_NAME = "file";
-    private static final PathEntityResolver PATH_ENTITY_RESOLVER = new PathEntityResolver("workflowScript.xsd");
-
-    private static String[] readProcessDefinitionFileNames(Document document) throws ParserConfigurationException, SAXException, IOException {
-        NodeList deployProcessDefinitionNodeList = document.getElementsByTagName(DEPLOY_PROCESS_DEFINITION_TAG_NAME);
-        String[] fileNames = new String[deployProcessDefinitionNodeList.getLength()];
-        for (int i = 0; i < fileNames.length; i++) {
-            fileNames[i] = ((Element) deployProcessDefinitionNodeList.item(i)).getAttribute(FILE_ATTRIBUTE_NAME);
+    private static String[] readProcessDefinitionFileNames(Element element) {
+        List<Element> elements = element.elements(DEPLOY_PROCESS_DEFINITION_TAG_NAME);
+        List<String> fileNames = Lists.newArrayList();
+        for (Element e : elements) {
+            fileNames.add(e.attributeValue(FILE_ATTRIBUTE_NAME));
         }
-        return fileNames;
+        return fileNames.toArray(new String[fileNames.size()]);
     }
 
     public static class Handler {

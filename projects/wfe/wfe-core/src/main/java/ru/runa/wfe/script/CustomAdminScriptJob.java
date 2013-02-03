@@ -1,6 +1,6 @@
 package ru.runa.wfe.script;
 
-import org.w3c.dom.Element;
+import org.dom4j.Element;
 
 import ru.runa.wfe.user.User;
 

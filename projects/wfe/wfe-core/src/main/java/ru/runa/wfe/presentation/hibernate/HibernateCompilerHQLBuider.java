@@ -318,7 +318,7 @@ public class HibernateCompilerHQLBuider {
      */
     private List<String> addSecureCheck() {
         List<String> result = new LinkedList<String>();
-        if (!parameters.isSequresQuery()) {
+        if (!parameters.isSequredQuery()) {
             return result;
         }
         result.add("(exists (from PrivelegedMapping pv where pv.executor.id in (:securedOwnersIds) and pv.type in (:securedTypes)) or instance.id in (select pm.identifiableId from PermissionMapping pm where pm.executor.id in (:securedOwnersIds) and pm.type in (:securedTypes) and pm.mask=:securedPermission))");

@@ -75,4 +75,8 @@ public class User implements Principal, Serializable {
         return securedKey;
     }
 
+    @Override
+    public String toString() {
+        return actor.toString();
+    }
 }

@@ -27,7 +27,9 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 
 /**
- * Class represents permissions on any {@link SecuredObject}. Every type of {@link SecuredObject} can own subclass of this class which represent set of allowed permissions.
+ * Class represents permissions on any {@link SecuredObject}. Every type of
+ * {@link SecuredObject} can own subclass of this class which represent set of
+ * allowed permissions.
  */
 public class Permission implements Serializable {
     private static final long serialVersionUID = -3672653529467591904L;
@@ -37,7 +39,8 @@ public class Permission implements Serializable {
      */
     public static final String READ_PERMISSION_NAME = "permission.read";
     /**
-     * Name of update permission. Update permission usually allows change object state.
+     * Name of update permission. Update permission usually allows change object
+     * state.
      */
     public static final String UPDATE_PERMISSIONS_PERMISSOIN_NAME = "permission.update_permissions";
 
@@ -61,8 +64,9 @@ public class Permission implements Serializable {
     private final String name;
 
     /**
-     * Permission mask. Every specific permission (Read, Update) has it's own bit position in this mask. If permission is granted, then permission bit is set to 1; otherwise
-     * permission bit is set to 0.
+     * Permission mask. Every specific permission (Read, Update) has it's own
+     * bit position in this mask. If permission is granted, then permission bit
+     * is set to 1; otherwise permission bit is set to 0.
      */
     private final long mask;
 
@@ -80,7 +84,7 @@ public class Permission implements Serializable {
      *            Permission name.
      */
     protected Permission(byte maskPower, String name) {
-        this.mask = getMask(maskPower);
+        mask = getMask(maskPower);
         this.name = name;
     }
 
@@ -93,8 +97,9 @@ public class Permission implements Serializable {
     }
 
     /**
-     * Return permission mask. Every specific permission (Read, Update) has it's own bit position in this mask. If permission is granted, then permission bit is set to 1; otherwise
-     * permission bit is set to 0.
+     * Return permission mask. Every specific permission (Read, Update) has it's
+     * own bit position in this mask. If permission is granted, then permission
+     * bit is set to 1; otherwise permission bit is set to 0.
      * 
      * @return Permission mask.
      */
@@ -112,7 +117,8 @@ public class Permission implements Serializable {
     }
 
     /**
-     * Return permission with specified mask if found, throws {@link PermissionNotFoundException} otherwise.
+     * Return permission with specified mask if found, throws
+     * {@link PermissionNotFoundException} otherwise.
      * 
      * @param mask
      *            Permission bit mask.
@@ -131,14 +137,17 @@ public class Permission implements Serializable {
     }
 
     /**
-     * Returns an array of all permissions that executor may have on type of secured object this class represents. This method must be overridden in subclass.
+     * Returns an array of all permissions that executor may have on type of
+     * secured object this class represents. This method must be overridden in
+     * subclass.
      */
     public List<Permission> getAllPermissions() {
         return Lists.newArrayList(ALL_PERMISSIONS);
     }
 
     /**
-     * Returns permission array, which represents no permission on secured object.
+     * Returns permission array, which represents no permission on secured
+     * object.
      * 
      * @return Permission array.
      */
@@ -147,7 +156,8 @@ public class Permission implements Serializable {
     }
 
     /**
-     * Return permission with specified name or throws {@link PermissionNotFoundException} otherwise.
+     * Return permission with specified name or throws
+     * {@link PermissionNotFoundException} otherwise.
      * 
      * @param name
      *            Permission name
@@ -199,7 +209,7 @@ public class Permission implements Serializable {
 
     @Override
     public String toString() {
-        return name + ": " + mask;
+        return getClass().getSimpleName() + ": " + name;
     }
 
     /**
@@ -251,7 +261,8 @@ public class Permission implements Serializable {
      * 
      * @param maskPower
      *            Bit position.
-     * @return Bit-mask, contains 1 in bit position maskPower and 0 in other bits.
+     * @return Bit-mask, contains 1 in bit position maskPower and 0 in other
+     *         bits.
      */
     private static final long getMask(long maskPower) {
         return (long) Math.pow(2, maskPower);

@@ -22,7 +22,6 @@ import org.apache.ecs.html.TD;
 import ru.runa.af.web.action.UpdatePermissionOnSystemAction;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.PermissionTableBuilder;
-import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Permission;
 
 /**
@@ -35,8 +34,7 @@ public class UpdatePermissionsOnSystemFormTag extends UpdateSystemBaseFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) {
-        ASystem system = getSystem();
-        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(system, getUser(), pageContext);
+        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(getSystem(), getUser(), pageContext);
         tdFormElement.addElement(tableBuilder.buildTable());
     }
 

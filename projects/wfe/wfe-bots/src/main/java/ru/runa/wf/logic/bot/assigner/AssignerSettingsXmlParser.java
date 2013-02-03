@@ -26,12 +26,6 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.base.Preconditions;
 
-/**
- * Sematics defined in resources/assigner.xsd.
- * 
- * @author Dofs
- * 
- */
 public class AssignerSettingsXmlParser {
     private static final String CONDITIONS_ELEMENT_NAME = "conditions";
     private static final String CONDITION_ELEMENT_NAME = "condition";
@@ -41,7 +35,7 @@ public class AssignerSettingsXmlParser {
 
     public static AssignerSettings read(String configuration) throws Exception {
         AssignerSettings assignerSettings = new AssignerSettings();
-        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Document document = XmlUtils.parseWithXSDValidation(configuration, "assigner.xsd");
         Element conditionsElement = document.getRootElement().element(CONDITIONS_ELEMENT_NAME);
         List<Element> elements = conditionsElement.elements(CONDITION_ELEMENT_NAME);
         for (Element conditionElement : elements) {

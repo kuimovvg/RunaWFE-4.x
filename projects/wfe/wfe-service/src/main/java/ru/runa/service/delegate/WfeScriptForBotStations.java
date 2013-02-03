@@ -21,15 +21,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
+import ru.runa.service.AdminScriptUtils;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
-import ru.runa.wfe.commons.xml.SimpleErrorHandler;
-import ru.runa.wfe.commons.xml.XMLHelper;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.script.AdminScriptRunner;
 import ru.runa.wfe.user.User;
 
@@ -53,42 +52,33 @@ public class WfeScriptForBotStations extends AdminScriptRunner {
         this.configs = configs;
     }
 
-    public static Document createScriptForBotLoading(Bot bot, List<BotTask> tasks) throws SAXException, IOException {
-        Document script = XMLHelper.newDocument(PATH_ENTITY_RESOLVER, SimpleErrorHandler.getInstance());
-        Element rootElement = script.createElement("workflowScript");
-        rootElement.setAttribute("xmlns", "http://runa.ru/xml");
-        rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        rootElement.setAttribute("xsi:schemaLocation", "http://runa.ru/xml workflowScript.xsd");
-        script.appendChild(rootElement);
-        Element createBotElement = script.createElement("createBot");
-        createBotElement.setAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
-        createBotElement.setAttribute(PASSWORD_ATTRIBUTE_NAME, "");
-        createBotElement.setAttribute(STARTTIMEOUT_ATTRIBUTE_NAME, "" + bot.getStartTimeout());
-        rootElement.appendChild(createBotElement);
+    public static byte[] createScriptForBotLoading(Bot bot, List<BotTask> tasks) {
+        Document script = AdminScriptUtils.createScriptDocument();
+        Element root = script.getRootElement();
+        Element createBotElement = root.addElement("createBot");
+        createBotElement.addAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
+        createBotElement.addAttribute(PASSWORD_ATTRIBUTE_NAME, "");
+        createBotElement.addAttribute(STARTTIMEOUT_ATTRIBUTE_NAME, "" + bot.getStartTimeout());
 
         if (tasks.size() > 0) {
-            Element removeTasks = script.createElement("removeConfigurationsFromBot");
-            removeTasks.setAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
+            Element removeTasks = root.addElement("removeConfigurationsFromBot");
+            removeTasks.addAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
             for (BotTask task : tasks) {
-                Element taskElement = script.createElement("botConfiguration");
-                taskElement.setAttribute(NAME_ATTRIBUTE_NAME, task.getName());
-                removeTasks.appendChild(taskElement);
+                Element taskElement = removeTasks.addElement("botConfiguration");
+                taskElement.addAttribute(NAME_ATTRIBUTE_NAME, task.getName());
             }
-            rootElement.appendChild(removeTasks);
-            Element addTasks = script.createElement("addConfigurationsToBot");
-            addTasks.setAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
+            Element addTasks = root.addElement("addConfigurationsToBot");
+            addTasks.addAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
             for (BotTask task : tasks) {
-                Element taskElement = script.createElement("botConfiguration");
-                taskElement.setAttribute(NAME_ATTRIBUTE_NAME, task.getName());
-                taskElement.setAttribute(HANDLER_ATTRIBUTE_NAME, task.getTaskHandlerClassName());
+                Element taskElement = addTasks.addElement("botConfiguration");
+                taskElement.addAttribute(NAME_ATTRIBUTE_NAME, task.getName());
+                taskElement.addAttribute(HANDLER_ATTRIBUTE_NAME, task.getTaskHandlerClassName());
                 if (task.getConfiguration() != null) {
-                    taskElement.setAttribute(CONFIGURATION_STRING_ATTRIBUTE_NAME, task.getName() + ".conf");
+                    taskElement.addAttribute(CONFIGURATION_STRING_ATTRIBUTE_NAME, task.getName() + ".conf");
                 }
-                addTasks.appendChild(taskElement);
             }
-            rootElement.appendChild(addTasks);
         }
-        return script;
+        return XmlUtils.save(script);
     }
 
     @Override

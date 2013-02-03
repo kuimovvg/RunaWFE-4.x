@@ -24,11 +24,6 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 
-/**
- * 
- * Semantic is defined in msword-report-task.xsd.
- * 
- */
 public class WordReportSettingsXmlParser {
     private static final String REPORT_ELEMENT_NAME = "report";
     private static final String TEMPLATE_FILE_PATH_ATTRIBUTE_NAME = "template-path";
@@ -40,7 +35,7 @@ public class WordReportSettingsXmlParser {
     private static final String OPTIONAL_ATTRIBUTE_NAME = "optional";
 
     public static MSWordReportTaskSettings read(String configuration) {
-        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Document document = XmlUtils.parseWithXSDValidation(configuration, "msword-report-task.xsd");
         Element reportElement = document.getRootElement().element(REPORT_ELEMENT_NAME);
         String templatePath = reportElement.attributeValue(TEMPLATE_FILE_PATH_ATTRIBUTE_NAME);
         String fileName = reportElement.attributeValue(OUTPUT_VARIABLE_FILE_ATTRIBUTE_NAME);

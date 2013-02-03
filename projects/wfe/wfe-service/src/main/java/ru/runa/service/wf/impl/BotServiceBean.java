@@ -17,13 +17,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-import org.w3c.dom.Document;
 
 import ru.runa.service.delegate.WfeScriptForBotStations;
 import ru.runa.service.interceptors.EjbExceptionSupport;
@@ -176,8 +172,8 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ZipOutputStream zipStream = new ZipOutputStream(baos);
             zipStream.putNextEntry(new ZipEntry("script.xml"));
-            Document script = WfeScriptForBotStations.createScriptForBotLoading(bot, tasks);
-            TransformerFactory.newInstance().newTransformer().transform(new DOMSource(script), new StreamResult(zipStream));
+            byte[] script = WfeScriptForBotStations.createScriptForBotLoading(bot, tasks);
+            zipStream.write(script);
             for (BotTask task : tasks) {
                 byte[] conf = task.getConfiguration();
                 if (conf == null || conf.length == 0) {

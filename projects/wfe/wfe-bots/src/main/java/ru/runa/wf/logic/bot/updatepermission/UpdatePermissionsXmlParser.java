@@ -26,12 +26,6 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.os.OrgFunctionHelper;
 
-/**
- * Semantic is defined in update-permissions.xsd.
- * 
- * @author Dofs
- * 
- */
 public class UpdatePermissionsXmlParser {
     private static final String CONDITION_ELEMENT_NAME = "condition";
     private static final String CONDITION_VAR_NAME_ATTRIBUTE_NAME = "varName";
@@ -44,7 +38,7 @@ public class UpdatePermissionsXmlParser {
 
     public static UpdatePermissionsSettings read(String configuration) {
         UpdatePermissionsSettings settings = new UpdatePermissionsSettings();
-        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Document document = XmlUtils.parseWithXSDValidation(configuration, "update-permissions.xsd");
         Element root = document.getRootElement();
         List<Element> orgFunctionElements = root.element(ORGFUNCTIONS_ELEMENT_NAME).elements(ORGFUNCTION_ELEMENT_NAME);
         for (Element element : orgFunctionElements) {

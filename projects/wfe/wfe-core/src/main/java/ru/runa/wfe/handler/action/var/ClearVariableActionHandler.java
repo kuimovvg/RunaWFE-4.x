@@ -1,13 +1,22 @@
 package ru.runa.wfe.handler.action.var;
 
-import ru.runa.wfe.handler.action.ParamBasedActionHandler;
+import ru.runa.wfe.handler.CommonParamBasedHandler;
+import ru.runa.wfe.handler.HandlerData;
+import ru.runa.wfe.handler.ParamDef;
 
-public class ClearVariableActionHandler extends ParamBasedActionHandler {
+// TODO test this
+/**
+ * Set process variable to 'null' value.
+ * 
+ * @author dofs
+ * @since 3.4
+ */
+public class ClearVariableActionHandler extends CommonParamBasedHandler {
 
     @Override
-    protected void executeAction() throws Exception {
-        ParamDef paramDef = outputParams.get("object");
-        outputVariables.put(paramDef.getVariableName(), null);
+    protected void executeAction(HandlerData handlerData) throws Exception {
+        ParamDef paramDef = handlerData.getOutputParamNotNull("object");
+        handlerData.setOutputVariable(paramDef.getVariableName(), null);
     }
 
 }

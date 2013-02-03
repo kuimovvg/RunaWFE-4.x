@@ -14,8 +14,8 @@ import com.google.common.base.Charsets;
 public class AlfSetContent extends AlfHandler {
 
     @Override
-    protected void executeAction(AlfSession session, HandlerData handlerData) throws Exception {
-        Object data = handlerData.getInputParam("data", null);
+    protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
+        Object data = alfHandlerData.getInputParam("data", null);
         if (data == null) {
             log.warn("No data found in process, returning...");
             return;
@@ -26,10 +26,10 @@ public class AlfSetContent extends AlfHandler {
             mimetype = ((FileVariable) data).getContentType();
             content = ((FileVariable) data).getData();
         } else {
-            mimetype = handlerData.getInputParam("mimetype");
+            mimetype = alfHandlerData.getInputParam("mimetype");
             content = data.toString().getBytes(Charsets.UTF_8);
         }
-        AlfObject object = session.loadObject(handlerData.getInputParam("uuid"));
+        AlfObject object = session.loadObject(alfHandlerData.getInputParam("uuid"));
         session.setContent(object, content, mimetype);
     }
 
