@@ -1,11 +1,13 @@
 package ru.runa.gpd.handler;
 
+import java.util.Map;
+
 import org.eclipse.jface.window.Window;
 import org.osgi.framework.Bundle;
 
 import ru.runa.gpd.lang.model.Delegable;
 
-public class DelegableProvider {
+public class DelegableProvider implements IBotTaskHandlerProvider {
     protected Bundle bundle;
 
     public Bundle getBundle() {
@@ -22,6 +24,15 @@ public class DelegableProvider {
 
     public String showConfigurationDialog(Delegable delegable) {
         DelegableConfigurationDialog dialog = createConfigurationDialog(delegable);
+        if (dialog.open() == Window.OK) {
+            return dialog.getResult();
+        }
+        return null;
+    }
+
+    @Override
+    public String showConfigurationDialog(String delegationConfiguration, Map<String, String> variables) {
+        DelegableConfigurationDialog dialog = new DelegableConfigurationDialog(delegationConfiguration);
         if (dialog.open() == Window.OK) {
             return dialog.getResult();
         }
