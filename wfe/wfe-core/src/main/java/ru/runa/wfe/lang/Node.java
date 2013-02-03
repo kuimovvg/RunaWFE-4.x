@@ -186,9 +186,4 @@ public abstract class Node extends GraphElement {
         transition.take(executionContext);
     }
 
-    @Override
-    public String toString() {
-        return String.format("[%s] [%s]", getNodeId(), getName());
-    }
-
 }

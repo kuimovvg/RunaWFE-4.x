@@ -26,7 +26,8 @@ public class URLValidator extends FieldValidatorSupport {
     public void validate() {
         Object value = getFieldValue();
         // if there is no value - don't do comparison
-        // if a value is required, a required validator should be added to the field
+        // if a value is required, a required validator should be added to the
+        // field
         if (value == null || value.toString().length() == 0) {
             return;
         }

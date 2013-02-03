@@ -89,7 +89,7 @@ public class VariableLogic extends WFCommonLogic {
         idents = filterIdentifiable(user, idents, ProcessPermission.READ);
         List<Long> readableProcesses = new ArrayList<Long>();
         for (Identifiable identifiable : idents) {
-            readableProcesses.add(identifiable.getId());
+            readableProcesses.add(identifiable.getIdentifiableId());
         }
         return processDAO.getVariableValueFromProcesses(processIds, variableName);
     }

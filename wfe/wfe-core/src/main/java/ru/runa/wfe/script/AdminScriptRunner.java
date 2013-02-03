@@ -511,8 +511,8 @@ public class AdminScriptRunner {
     private void addPermissionOnIdentifiable(Element element, Identifiable identifiable) throws Exception {
         Executor executor = executorLogic.getExecutor(user, element.attributeValue(EXECUTOR_ATTRIBUTE_NAME));
         Collection<Permission> permissions = getPermissions(element, identifiable);
-        Collection<Permission> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
-        permissions = Permission.mergePermissions(permissions, ownPermissions);
+        Map<Permission, Boolean> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
+        permissions = Permission.mergePermissions(permissions, ownPermissions.keySet());
         authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 
@@ -525,8 +525,8 @@ public class AdminScriptRunner {
     private void removePermissionOnIdentifiable(Element element, Identifiable identifiable) throws Exception {
         Executor executor = executorLogic.getExecutor(user, element.attributeValue(EXECUTOR_ATTRIBUTE_NAME));
         Collection<Permission> permissions = getPermissions(element, identifiable);
-        Collection<Permission> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
-        permissions = Permission.subtractPermissions(ownPermissions, permissions);
+        Map<Permission, Boolean> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
+        permissions = Permission.subtractPermissions(ownPermissions.keySet(), permissions);
         authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 
@@ -542,9 +542,9 @@ public class AdminScriptRunner {
 
     private Collection<Permission> getPermissions(Element element, Identifiable identifiable) throws AdminScriptException {
         Permission noPermission = identifiable.getSecuredObjectType().getNoPermission();
-        List<Element> permissionNodeList = element.elements(PERMISSION_ELEMENT_NAME);
+        List<Element> permissionElements = element.elements(PERMISSION_ELEMENT_NAME);
         Set<Permission> permissions = Sets.newHashSet();
-        for (Element permissionElement : permissionNodeList) {
+        for (Element permissionElement : permissionElements) {
             String permissionName = permissionElement.attributeValue(NAME_ATTRIBUTE_NAME);
             Permission permission = noPermission.getPermission(permissionName);
             permissions.add(permission);
@@ -732,8 +732,8 @@ public class AdminScriptRunner {
         } else if (substitutionCriteria == null || matcher == null) {
             return false;
         } else {
-            return (isStringMatch(substitutionCriteria.getName(), matcher.getName()) && isStringMatch(substitutionCriteria.getConf(),
-                    matcher.getConf()));
+            return (isStringMatch(substitutionCriteria.getName(), matcher.getName()) && isStringMatch(substitutionCriteria.getConfiguration(),
+                    matcher.getConfiguration()));
         }
     }
 

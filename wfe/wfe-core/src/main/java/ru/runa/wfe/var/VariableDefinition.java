@@ -22,6 +22,8 @@ import java.io.Serializable;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
 
+import com.google.common.base.Objects;
+
 /**
  * Created on 17.11.2004
  */
@@ -78,7 +80,7 @@ public class VariableDefinition implements Serializable {
 
     @Override
     public String toString() {
-        return name + " (" + formatClassName + ")";
+        return Objects.toStringHelper(this).add("format", formatClassName).add("name", getName()).toString();
     }
 
     public VariableFormat<Object> getFormat() {

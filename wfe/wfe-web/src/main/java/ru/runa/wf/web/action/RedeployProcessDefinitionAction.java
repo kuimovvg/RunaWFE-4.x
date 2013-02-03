@@ -29,7 +29,6 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.user.User;
 
@@ -51,8 +50,6 @@ import com.google.common.base.Strings;
 public class RedeployProcessDefinitionAction extends BaseDeployProcessDefinitionAction {
     public static final String ACTION_PATH = "/redeployProcessDefinition";
 
-    private boolean definitionExists = false;
-
     private Long definitionId;
 
     @Override
@@ -62,9 +59,6 @@ public class RedeployProcessDefinitionAction extends BaseDeployProcessDefinition
             byte[] data = Strings.isNullOrEmpty(fileForm.getFile().getFileName()) ? null : fileForm.getFile().getFileData();
             definition = Delegates.getDefinitionService().redeployProcessDefinition(user, fileForm.getId(), data, processType);
             definitionId = definition.getId();
-        } catch (DefinitionDoesNotExistException e) {
-            ActionExceptionHelper.addException(errors, e);
-            definitionExists = false;
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
@@ -77,15 +71,11 @@ public class RedeployProcessDefinitionAction extends BaseDeployProcessDefinition
 
     @Override
     protected ActionForward getErrorForward(ActionMapping mapping) {
-        if (definitionExists) {
-            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, definitionId);
-        }
-        return mapping.findForward(ru.runa.common.WebResources.FORWARD_FAILURE_PROCESS_DEFINITION_DOES_NOT_EXIST);
+        return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, definitionId);
     }
 
     @Override
     protected void prepare(FileForm fileForm) {
-        definitionExists = true;
         definitionId = fileForm.getId();
     }
 }

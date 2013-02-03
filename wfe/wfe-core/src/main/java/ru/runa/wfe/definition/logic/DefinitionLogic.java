@@ -57,7 +57,6 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskDoesNotExistException;
-import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 
@@ -103,10 +102,13 @@ public class DefinitionLogic extends WFCommonLogic {
         }
         definition.getDeployment().setCategories(processType);
         deploymentDAO.deploy(definition.getDeployment(), deployment);
-        for (Executor executor : permissionDAO.getExecutorsWithPermission(deployment)) {
-            List<Permission> permissions = permissionDAO.getOwnPermissions(executor, deployment);
-            permissionDAO.setPermissions(executor, permissions, definition);
-        }
+        // for (Executor executor :
+        // permissionDAO.getExecutorsWithPermission(deployment)) {
+        // Map<Permission, Boolean> permissions =
+        // permissionDAO.getOwnPermissions(executor, deployment);
+        // permissionDAO.setPermissions(executor, permissions.keySet(),
+        // definition);
+        // }
         log.debug("Process definition " + deployment + " was successfully redeployed");
         return new WfDefinition(definition);
     }

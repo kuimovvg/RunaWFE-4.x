@@ -164,7 +164,7 @@ public final class PresentationCompilerHelper {
         List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         String inClause = hasPermission ? "IN" : "NOT IN";
         String idRestriction = inClause + " (SELECT pm.executor.id from " + PermissionMapping.class.getName() + " as pm where pm.identifiableId="
-                + identifiable.getId() + ")";
+                + identifiable.getIdentifiableId() + " and pm.type='" + identifiable.getSecuredObjectType() + "')";
         compiler.setParameters(Executor.class, null, null, true, executorIds, Permission.READ, ALL_EXECUTORS_CLASSES, new String[] { idRestriction });
         return compiler;
     }

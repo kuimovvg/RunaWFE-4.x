@@ -13,6 +13,8 @@ import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.task.Task;
 
+import com.google.common.base.Objects;
+
 /**
  * Used for assigning escalated tasks.
  * 
@@ -24,7 +26,7 @@ public class EscalationGroup extends TemporaryGroup {
     private static final long serialVersionUID = 1L;
 
     private Executor originalExecutor;
-    private int escalationLevel;
+    private int level;
 
     @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "ESCALATION_EXECUTOR_ID")
@@ -38,24 +40,25 @@ public class EscalationGroup extends TemporaryGroup {
     }
 
     @Column(name = "ESCALATION_LEVEL")
-    public int getEscalationLevel() {
-        return escalationLevel;
+    public int getLevel() {
+        return level;
     }
 
-    public void setEscalationLevel(int escalationLevel) {
-        this.escalationLevel = escalationLevel;
+    public void setLevel(int escalationLevel) {
+        level = escalationLevel;
     }
 
     public static EscalationGroup create(Process process, Task task, Executor originalExecutor, int escalationLevel) {
         EscalationGroup escalationGroup = new EscalationGroup();
         escalationGroup.setName(GROUP_PREFIX + "_" + process.getId() + "_" + task.getId());
         escalationGroup.setOriginalExecutor(originalExecutor);
-        escalationGroup.setEscalationLevel(escalationLevel);
+        escalationGroup.setLevel(escalationLevel);
         return escalationGroup;
     }
 
     @Override
     public String toString() {
-        return getName() + " (" + getOriginalExecutor() + "|" + escalationLevel + ")";
+        return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).add("original", getOriginalExecutor()).add("level", level)
+                .toString();
     }
 }

@@ -35,7 +35,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.commons.hibernate.Proxies;
-import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
 
@@ -46,7 +46,7 @@ import ru.runa.wfe.user.Executor;
 @Entity
 @Table(name = "EXECUTOR_RELATION_PAIR")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class RelationPair implements Identifiable {
+public class RelationPair extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 
     /**

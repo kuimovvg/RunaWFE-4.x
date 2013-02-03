@@ -26,7 +26,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.UpdatePasswordForm;
-import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
@@ -34,9 +33,7 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
 /**
  * Created on 24.08.2004
@@ -55,28 +52,20 @@ public class UpdatePasswordAction extends ActionBase {
     public static final String ACTION_PATH = "/updatePassword";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         UpdatePasswordForm form = (UpdatePasswordForm) actionForm;
-        boolean executorExists = true;
         try {
             ExecutorService executorService = Delegates.getExecutorService();
             Actor actor = executorService.getExecutor(getLoggedUser(request), form.getId());
             executorService.setPassword(getLoggedUser(request), actor, form.getPassword());
-        } catch (ExecutorDoesNotExistException e) {
-            ActionExceptionHelper.addException(errors, e);
-            executorExists = false;
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
 
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
-            if (executorExists) {
-                return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, form.getId());
-            }
-            return mapping.findForward(WebResources.FORWARD_FAILURE_EXECUTOR_DOES_NOT_EXIST);
+            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, form.getId());
         }
         return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), IdForm.ID_INPUT_NAME, form.getId());
     }

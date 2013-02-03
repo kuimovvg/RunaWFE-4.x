@@ -36,6 +36,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import com.google.common.base.Objects;
+
 @Entity
 @Table(name = "BOT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -115,5 +117,10 @@ public class Bot implements Serializable {
 
     public void setStartTimeout(long lastInvoked) {
         startTimeout = lastInvoked;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("id", id).add("name", username).toString();
     }
 }

@@ -258,8 +258,8 @@ public class SubstitutionBean {
         } else if (substitutionCriteria == null || matcher == null) {
             return false;
         } else {
-            return (isStringMatch(substitutionCriteria.getName(), matcher.getName()) && isStringMatch(substitutionCriteria.getConf(),
-                    matcher.getConf()));
+            return (isStringMatch(substitutionCriteria.getName(), matcher.getName()) && isStringMatch(substitutionCriteria.getConfiguration(),
+                    matcher.getConfiguration()));
         }
     }
 

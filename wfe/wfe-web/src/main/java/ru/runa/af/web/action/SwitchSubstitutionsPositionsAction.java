@@ -25,15 +25,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
 /**
  * Created on 03.02.2006
@@ -51,23 +48,18 @@ public class SwitchSubstitutionsPositionsAction extends ActionBase {
     public static final String ACTION_PATH = "/switchSubstitutionsPositions";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         IdsForm form = (IdsForm) actionForm;
-        String errorForwardName = Resources.FORWARD_FAILURE;
         try {
             SubstitutionService substitutionService = Delegates.getSubstitutionService();
             substitutionService.switchSubstitutionsPositions(getLoggedUser(request), form.getIds()[0], form.getIds()[1]);
-        } catch (ExecutorDoesNotExistException e) {
-            ActionExceptionHelper.addException(errors, e);
-            errorForwardName = WebResources.FORWARD_FAILURE_EXECUTOR_DOES_NOT_EXIST;
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
         if (!errors.isEmpty()) {
             saveErrors(request, errors);
-            return mapping.findForward(errorForwardName);
+            return mapping.findForward(Resources.FORWARD_FAILURE);
         }
         return mapping.findForward(Resources.FORWARD_SUCCESS);
     }

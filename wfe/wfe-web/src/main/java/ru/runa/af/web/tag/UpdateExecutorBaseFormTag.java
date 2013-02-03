@@ -37,11 +37,7 @@ public abstract class UpdateExecutorBaseFormTag extends IdentifiableFormTag {
     }
 
     protected Executor getExecutor() {
-        try {
-            ExecutorService executorService = Delegates.getExecutorService();
-            return executorService.getExecutor(getUser(), getIdentifiableId());
-        } catch (Exception e) {
-            return null;
-        }
+        ExecutorService executorService = Delegates.getExecutorService();
+        return executorService.getExecutor(getUser(), getIdentifiableId());
     }
 }

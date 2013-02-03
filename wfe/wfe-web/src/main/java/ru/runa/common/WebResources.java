@@ -38,8 +38,6 @@ public class WebResources {
 
     public static final String ACTION_MAPPING_DISPLAY_SWIMLANE = "/display_swimlane";
 
-    /* default local action forwards */
-    public static final String FORWARD_FAILURE_EXECUTOR_DOES_NOT_EXIST = "failure_executor_does_not_exist";
     /* Validation rules */
     public static final int VALIDATOR_STRING_255 = 255;
 
@@ -53,8 +51,6 @@ public class WebResources {
     public static final String UNAUTHORIZED_EXECUTOR_NAME = "label.executor.unauthorized";
     public static final String NON_EXISTING_EXECUTOR_NAME = "label.executor.non_existing";
     public static final String FORWARD_SUCCESS_DISPLAY_START_FORM = "success_display_start_form";
-    public static final String FORWARD_FAILURE_PROCESS_DEFINITION_DOES_NOT_EXIST = "failure_process_definition_does_not_exist";
-    public static final String FORWARD_FAILURE_PROCESS_DOES_NOT_EXIST = "failure_process_does_not_exist";
 
     public static final String START_PROCESS_IMAGE = "/images/start.gif";
     public static final String START_PROCESS_DISABLED_IMAGE = "/images/start-disabled.gif";

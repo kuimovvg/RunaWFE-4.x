@@ -60,7 +60,7 @@ public class PermissionMapping {
 
     public PermissionMapping(Executor executor, Identifiable identifiable, Long mask) {
         setExecutor(executor);
-        setIdentifiableId(identifiable.getId());
+        setIdentifiableId(identifiable.getIdentifiableId());
         setType(identifiable.getSecuredObjectType());
         setMask(mask);
     }

@@ -39,7 +39,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.PolymorphismType;
 
 import ru.runa.wfe.commons.OracleCommons;
-import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.security.IdentifiableBase;
 
 import com.google.common.base.Objects;
 
@@ -59,7 +59,7 @@ import com.google.common.base.Objects;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @XmlType(name = "Executor", namespace = "http://runa.ru/workflow/webservices")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class Executor implements Identifiable {
+public abstract class Executor extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 
     @XmlElement(namespace = "http://runa.ru/workflow/webservices")
@@ -157,7 +157,7 @@ public abstract class Executor implements Identifiable {
 
     @Override
     public String toString() {
-        return name;
+        return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).toString();
     }
 
 }

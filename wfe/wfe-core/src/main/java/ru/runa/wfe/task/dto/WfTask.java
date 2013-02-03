@@ -25,6 +25,8 @@ import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
 
+import com.google.common.base.Objects;
+
 /**
  * Process task.
  * 
@@ -125,7 +127,7 @@ public final class WfTask implements Serializable {
 
     @Override
     public String toString() {
-        return definitionName + " (" + definitionId + ", " + processId + ", " + id + "): '" + name + "'";
+        return Objects.toStringHelper(this).add("definitionId", definitionId).add("processId", processId).add("id", id).add("name", name).toString();
     }
 
 }
