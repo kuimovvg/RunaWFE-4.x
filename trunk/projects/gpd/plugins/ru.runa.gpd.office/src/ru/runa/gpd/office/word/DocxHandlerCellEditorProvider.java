@@ -1,6 +1,5 @@
 package ru.runa.gpd.office.word;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,7 +28,6 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.handler.action.XmlBasedConstructorProvider;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.resource.Messages;
@@ -94,7 +92,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                     }
                 });
                 hyperlinkGroup.add(addTableLink);
-                new InputOutputComposite(this, model.getInOutModel(), definition, FilesSupplierMode.BOTH);
+                new InputOutputComposite(this, model.getInOutModel(), variables, FilesSupplierMode.BOTH);
                 int i = 0;
                 for (DocxTableModel table : model.tables) {
                     addTableSection(table, i++);
@@ -203,10 +201,9 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
 
         private void addColumnSection(Composite parent, final DocxColumnModel columnModel, final int tableIndex, final int columnIndex) {
             final Combo combo = new Combo(parent, SWT.READ_ONLY);
-            List<Variable> vars = definition.getVariables();
-            for (Variable variable : vars) {
-                if (variable.getFormat().equals("ru.runa.wfe.var.format.ListFormat")) {
-                    combo.add(variable.getName());
+            for (String varName : variables.keySet()) { // FIXME
+                if (variables.get(varName).equals("ru.runa.wf.web.forms.format.ArrayListFormat") || variables.get(varName).equals("list")) {
+                    combo.add(varName);
                 }
             }
             try {

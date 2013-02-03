@@ -1,6 +1,6 @@
 package ru.runa.gpd.office;
 
-import java.util.List;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -19,18 +19,16 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.office.resource.Messages;
 
 public class InputOutputComposite extends Composite {
     public final InputOutputModel model;
-    private final ProcessDefinition definition;
+    private final Map<String, String> variables; // FIXME
 
-    public InputOutputComposite(Composite parent, InputOutputModel m, ProcessDefinition definition, FilesSupplierMode mode) {
+    public InputOutputComposite(Composite parent, final InputOutputModel model, Map<String, String> variables, FilesSupplierMode mode) {
         super(parent, SWT.NONE);
-        this.model = m;
-        this.definition = definition;
+        this.model = model;
+        this.variables = variables;
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 3;
         setLayoutData(data);
@@ -61,8 +59,8 @@ public class InputOutputComposite extends Composite {
             fileNameLabel.setText(Messages.getString("label.fileName"));
             final Text fileNameText = new Text(outputGroup, SWT.BORDER);
             fileNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            if (m.outputFilename != null) {
-                fileNameText.setText(m.outputFilename);
+            if (model.outputFilename != null) {
+                fileNameText.setText(model.outputFilename);
             }
             fileNameText.addModifyListener(new ModifyListener() {
                 @Override
@@ -128,10 +126,9 @@ public class InputOutputComposite extends Composite {
             }
             final Combo combo = new Combo(composite, SWT.READ_ONLY);
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            List<Variable> vars = definition.getVariables();
-            for (Variable var : vars) {
-                if ("ru.runa.wfe.var.format.FileFormat".equals(var.getFormat())) {
-                    combo.add(var.getName());
+            for (String varName : variables.keySet()) { // FIXME
+                if ("ru.runa.wf.web.forms.format.FileFormat".equals(variables.get(varName)) || "file".equals(variables.get(varName))) {
+                    combo.add(varName);
                 }
             }
             if (variable != null) {
@@ -185,7 +182,7 @@ public class InputOutputComposite extends Composite {
         public String outputVariable;
         public String outputFilename;
 
-        public void serialize(Document document, Element parent, FilesSupplierMode mode) throws Exception {
+        public void serialize(Document document, Element parent, FilesSupplierMode mode) {
             if (mode.isInSupported()) {
                 Element input = parent.addElement("input");
                 if (inputPath != null && inputPath.length() > 0) {
@@ -209,7 +206,7 @@ public class InputOutputComposite extends Composite {
             }
         }
 
-        public static InputOutputModel deserialize(Element input, Element output) throws Exception {
+        public static InputOutputModel deserialize(Element input, Element output) {
             InputOutputModel model = new InputOutputModel();
             if (input != null) {
                 model.inputPath = input.attributeValue("path");

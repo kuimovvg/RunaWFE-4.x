@@ -12,7 +12,7 @@ public class DeleteAction extends BaseActionDelegate {
     @SuppressWarnings("unchecked")
     public void run(IAction action) {
         IStructuredSelection selection = getStructuredSelection();
-        if (isBotStructuredSelection(selection)) {
+        if (isBotStructuredSelection()) {
             WorkspaceOperations.deleteBotResources(selection.toList());
         } else {
             WorkspaceOperations.deleteResources(selection.toList());

@@ -14,6 +14,6 @@ public class NewProcessAction extends BaseActionDelegate {
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
-        action.setEnabled(ProjectFinder.getAllProjects().length > 0 && !isBotStructuredSelection(selection));
+        action.setEnabled(ProjectFinder.getAllProjects().length > 0 && !isBotStructuredSelection());
     }
 }
