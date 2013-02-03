@@ -14,6 +14,6 @@ public class ExportAction extends BaseActionDelegate {
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
-        action.setEnabled(ProcessCache.getAllProcessDefinitions().size() > 0 && !isBotStructuredSelection(selection));
+        action.setEnabled(ProcessCache.getAllProcessDefinitions().size() > 0 && !isBotStructuredSelection());
     }
 }

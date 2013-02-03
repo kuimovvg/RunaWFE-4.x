@@ -46,7 +46,7 @@ public class DocxTableModel extends Observable {
     protected boolean addBreak = true;
     public List<DocxColumnModel> columns = new ArrayList<DocxColumnModel>();
 
-    public void serialize(Document document, Element parent) throws Exception {
+    public void serialize(Document document, Element parent) {
         Element el = parent.addElement("table");
         el.addAttribute("name", name);
         if (styleName.length() > 0) {
@@ -58,7 +58,7 @@ public class DocxTableModel extends Observable {
         }
     }
 
-    public static DocxTableModel deserialize(Element element) throws Exception {
+    public static DocxTableModel deserialize(Element element) {
         DocxTableModel model = new DocxTableModel();
         model.name = element.attributeValue("name");
         model.styleName = element.attributeValue("styleName");

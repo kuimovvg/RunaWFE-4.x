@@ -111,8 +111,20 @@ public abstract class BaseHtmlFormType extends FormType {
         NodeList selectElements = document.getElementsByTagName("select");
         addHtmlFields(selectElements, variableNames);
         Map<String, Integer> typeSpecificVariableNames = getTypeSpecificVariableNames(formNode, formBytes);
-        if (typeSpecificVariableNames != null) {
-            variableNames.putAll(typeSpecificVariableNames);
+        for (Map.Entry<String, Integer> entry : typeSpecificVariableNames.entrySet()) {
+            Integer access = entry.getValue();
+            if (variableNames.containsKey(entry.getKey())) {
+                Integer oldAccess = variableNames.remove(entry.getKey());
+                if (oldAccess == FormType.WRITE_ACCESS || access == FormType.WRITE_ACCESS) {
+                    access = FormType.WRITE_ACCESS;
+                } else if (access == FormType.DOUBTFUL) {
+                    access = FormType.DOUBTFUL;
+                } else {
+                    access = oldAccess;
+                }
+                variableNames.put(entry.getKey(), entry.getValue());
+            }
+            variableNames.put(entry.getKey(), access);
         }
         return variableNames;
     }
