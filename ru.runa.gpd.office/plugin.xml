@@ -25,6 +25,30 @@
             enabled="true"
             type="actionHandler">
       </handler>
+      <handler
+            cellEditorProvider="ru.runa.gpd.office.excel.ReadExcelHandlerCellEditorProvider"
+            className="ru.runa.wf.office.excel.handlers.ReadHandler"
+            label="%ActionHandler.ReadHandler"
+            type="botHandler">
+      </handler>
+      <handler
+           cellEditorProvider="ru.runa.gpd.office.excel.SaveExcelHandlerCellEditorProvider"
+            className="ru.runa.wf.office.excel.handlers.SaveHandler"
+            label="%ActionHandler.SaveHandler"
+            type="botHandler">
+      </handler>
+      <handler
+            cellEditorProvider="ru.runa.gpd.office.word.DocxHandlerCellEditorProvider"
+           className="ru.runa.wf.office.doc.DocxHandler"
+            label="%ActionHandler.DocxHandler"
+            type="botHandler">
+      </handler>
+      <handler
+            cellEditorProvider="ru.runa.gpd.office.word.MSWordTaskHandlerConfigurator"
+            className="ru.runa.wf.logic.bot.MSWordReportTaskHandler"
+            label="%ActionHandler.MSWordHandler"
+            type="botHandler">
+      </handler>
    </extension>
 
 </plugin>

@@ -14,12 +14,12 @@ public class DocxColumnModel {
         this.variable = variable;
     }
 
-    public void serialize(Document document, Element parent) throws Exception {
+    public void serialize(Document document, Element parent) {
         Element el = parent.addElement("column");
         el.addAttribute("variable", variable);
     }
 
-    public static DocxColumnModel deserialize(Element element) throws Exception {
+    public static DocxColumnModel deserialize(Element element) {
         DocxColumnModel model = new DocxColumnModel();
         model.variable = element.attributeValue("variable");
         return model;

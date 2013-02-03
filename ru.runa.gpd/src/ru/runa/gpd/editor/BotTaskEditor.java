@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -66,6 +67,8 @@ import ru.runa.gpd.util.BotTaskContentUtil;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
+
+import com.google.common.collect.Maps;
 
 public class BotTaskEditor extends EditorPart implements ISelectionListener, IResourceChangeListener, PropertyChangeListener {
     public static final String ID = "ru.runa.gpd.editor.BotTaskEditor";
@@ -271,7 +274,14 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                 if (task.getDelegationClassName() != null) {
                     DelegableProvider provider = HandlerRegistry.getProvider(task.getDelegationClassName());
                     if (provider.getBundle() != null && !BotTaskConfigHelper.isTaskConfigurationInPlugin(task.getDelegationClassName())) {
-                        String newConfig = provider.showConfigurationDialog(task);
+                        Map<String, String> variables = Maps.newHashMap();
+                        ParamDefConfig paramDefConfig = task.getParamDefConfig();
+                        for (ParamDefGroup paramDefGroup : paramDefConfig.getGroups()) {
+                            for (ParamDef paramDef : paramDefGroup.getParameters()) {
+                                variables.put(paramDef.getName(), paramDef.getFormatFilters().iterator().next());
+                            }
+                        }
+                        String newConfig = provider.showConfigurationDialog(task.getDelegationConfiguration(), variables);
                         if (newConfig != null) {
                             configurationText.setText(newConfig);
                             task.setConfig(configurationText.getText());

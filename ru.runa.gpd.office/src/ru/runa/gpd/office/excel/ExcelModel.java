@@ -7,7 +7,6 @@ import java.util.Observable;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite.InputOutputModel;
@@ -27,7 +26,7 @@ public class ExcelModel extends Observable {
         this.inOutModel = inOutModel;
     }
 
-    public static ExcelModel fromXml(String xml, FilesSupplierMode mode) throws Exception {
+    public static ExcelModel fromXml(String xml, FilesSupplierMode mode) {
         Document document = XmlUtil.parseWithoutValidation(xml);
         InputOutputModel inOutModel;
         try {
@@ -54,17 +53,13 @@ public class ExcelModel extends Observable {
 
     @Override
     public String toString() {
-        try {
-            Document document = XmlUtil.createDocument("config");
-            Element root = document.getRootElement();
-            inOutModel.serialize(document, root, mode);
-            for (ConstraintsModel model : constraintses) {
-                model.serialize(document, root);
-            }
-            return new String(XmlUtil.writeXml(document), PluginConstants.UTF_ENCODING);
-        } catch (Exception e) {
-            throw new RuntimeException("Unable serialize model to XML", e);
+        Document document = XmlUtil.createDocument("config");
+        Element root = document.getRootElement();
+        inOutModel.serialize(document, root, mode);
+        for (ConstraintsModel model : constraintses) {
+            model.serialize(document, root);
         }
+        return XmlUtil.toString(document);
     }
 
     public InputOutputModel getInOutModel() {

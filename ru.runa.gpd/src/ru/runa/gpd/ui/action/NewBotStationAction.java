@@ -13,6 +13,6 @@ public class NewBotStationAction extends BaseActionDelegate {
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
-        action.setEnabled(isBotStructuredSelection(selection));
+        action.setEnabled(isBotStructuredSelection());
     }
 }

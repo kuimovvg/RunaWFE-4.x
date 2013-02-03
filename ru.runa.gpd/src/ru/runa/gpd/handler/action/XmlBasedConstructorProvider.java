@@ -3,6 +3,7 @@ package ru.runa.gpd.handler.action;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -28,39 +29,48 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.handler.DelegableProvider;
-import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Swimlane;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public abstract class XmlBasedConstructorProvider<T extends Observable> extends DelegableProvider {
-    protected ProcessDefinition definition;
     protected T model;
-    protected final List<String> variableNames = Lists.newArrayList();
     protected boolean formalVariable = false;
+    protected Map<String, String> variables = Maps.newHashMap();
+    protected List<String> swimlaneNames = Lists.newArrayList();
 
     @Override
     public String showConfigurationDialog(Delegable delegable) {
-        variableNames.clear();
-        if (delegable instanceof GraphElement) {
-            this.definition = ((GraphElement) delegable).getProcessDefinition();
-            formalVariable = true;
-            variableNames.addAll(definition.getVariableNames(true));
-        } else {
-            BotTask botTask = ((BotTask) delegable);
-            this.definition = botTask.getProcessDefinition();
-            ParamDefConfig paramDefConfig = botTask.getParamDefConfig();
-            for (ParamDefGroup paramDefGroup : paramDefConfig.getGroups()) {
-                for (ParamDef paramDef : paramDefGroup.getParameters()) {
-                    variableNames.add(paramDef.getName());
-                }
-            }
+        this.variables.clear();
+        this.swimlaneNames.clear();
+        ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
+        for (Variable variable : definition.getVariables()) {
+            variables.put(variable.getName(), variable.getFormat());
+        }
+        for (Swimlane swimlane : definition.getSwimlanes()) {
+            swimlaneNames.add(swimlane.getName());
         }
         XmlBasedConstructorDialog dialog = new XmlBasedConstructorDialog(delegable.getDelegationConfiguration());
+        if (dialog.open() == Window.OK) {
+            return dialog.getResult();
+        }
+        return null;
+    }
+
+    @Override
+    public String showConfigurationDialog(String delegationConfiguration, Map<String, String> variables) {
+        XmlBasedConstructorDialog dialog = new XmlBasedConstructorDialog(delegationConfiguration);
+        formalVariable = true;
+        this.variables.clear();
+        this.swimlaneNames.clear();
+        this.variables.putAll(variables);
         if (dialog.open() == Window.OK) {
             return dialog.getResult();
         }

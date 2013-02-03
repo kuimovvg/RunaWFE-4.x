@@ -1,6 +1,5 @@
 package ru.runa.gpd.office.excel;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -28,7 +27,6 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.handler.action.XmlBasedConstructorProvider;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.resource.Messages;
@@ -75,12 +73,6 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 for (Control control : getChildren()) {
                     control.dispose();
                 }
-                /*
-                 * final Button strict = new Button(this, SWT.CHECK); strict.setText(Messages.getString("label.strict"));
-                 * strict.setSelection(model.isStrict()); strict.addSelectionListener(new SelectionListener() { public void
-                 * widgetDefaultSelected(SelectionEvent arg0) { model.setStrict(strict.getSelection()); } public void widgetSelected(SelectionEvent
-                 * arg0) { model.setStrict(strict.getSelection()); } });
-                 */
                 Hyperlink addCellLink = new Hyperlink(this, SWT.NONE);
                 addCellLink.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
                 addCellLink.setText(Messages.getString("label.AddCell"));
@@ -114,7 +106,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     }
                 });
                 hyperlinkGroup.add(addColumnLink);
-                new InputOutputComposite(this, model.getInOutModel(), definition, getMode());
+                new InputOutputComposite(this, model.getInOutModel(), variables, getMode());
                 for (ConstraintsModel c : model.constraintses) {
                     switch (c.type) {
                     case ConstraintsModel.CELL:
@@ -153,10 +145,9 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 Label l = new Label(group, SWT.NONE);
                 l.setText(Messages.getString("label.variable"));
                 final Combo combo = new Combo(group, SWT.READ_ONLY);
-                List<Variable> vars = definition.getVariables();
-                for (Variable variable : vars) {
-                    if (isImportant(variable)) {
-                        combo.add(variable.getName());
+                for (String varName : variables.keySet()) {
+                    if (isImportant(variables.get(varName))) {
+                        combo.add(varName);
                     }
                 }
                 try {
@@ -265,8 +256,8 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 }
             }
 
-            public boolean isImportant(Variable v) {
-                return v.getFormat().equals("ru.runa.wfe.var.format.ListFormat");
+            public boolean isImportant(String vFormat) { // FIXME
+                return vFormat.equals("ru.runa.wf.web.forms.format.ArrayListFormat") || vFormat.equals("list");
             }
 
             public abstract String getTitle();
@@ -286,8 +277,8 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
             }
 
             @Override
-            public boolean isImportant(Variable v) {
-                return !v.getFormat().equals("ru.runa.wfe.var.format.ListFormat");
+            public boolean isImportant(String vFormat) {
+                return !(vFormat.equals("ru.runa.wf.web.forms.format.ArrayListFormat") || vFormat.equals("list")); // FIXME
             }
 
             @Override
