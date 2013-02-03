@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -70,7 +69,8 @@ public class WorkflowBot implements Runnable {
 
     private BotExecutionStatus botStatus = BotExecutionStatus.scheduled;
 
-    private final Map<String, TaskHandler> taskHandlerMap;
+    private final Map<String, TaskHandler> taskHandlers = Maps.newHashMap();
+    private final Map<String, byte[]> extendedConfigurations = Maps.newHashMap();
     private final User user;
     private final String botName;
     private final WfTask task;
@@ -83,7 +83,7 @@ public class WorkflowBot implements Runnable {
     private long startTime = -1;
     private long resetTime = -1;
     private Thread executionThread = null;
-    private boolean isTaskInterrupting = false;
+    private boolean taskInterrupting = false;
 
     public WorkflowBot(User user, Bot bot, List<BotTask> tasks) {
         this.user = user;
@@ -92,12 +92,15 @@ public class WorkflowBot implements Runnable {
         botName = bot.getUsername();
         botDeplay = bot.getStartTimeout();
         existingBots = new HashSet<WorkflowBot>();
-        HashMap<String, TaskHandler> handlers = new HashMap<String, TaskHandler>();
         for (BotTask botTask : tasks) {
             try {
                 TaskHandler handler = ClassLoaderUtil.instantiate(botTask.getTaskHandlerClassName());
-                handler.setConfiguration(botTask.getConfiguration());
-                handlers.put(botTask.getName(), handler);
+                if (BotTaskConfigurationUtils.isExtendedBotTaskConfiguration(botTask.getConfiguration())) {
+                    extendedConfigurations.put(botTask.getName(), botTask.getConfiguration());
+                } else {
+                    handler.setConfiguration(botTask.getConfiguration());
+                }
+                taskHandlers.put(botTask.getName(), handler);
                 log.info("Configured taskHandler for " + botTask.getName());
                 ProcessExecutionErrors.removeBotTaskConfigurationError(botName, botTask.getName());
             } catch (Throwable th) {
@@ -105,12 +108,12 @@ public class WorkflowBot implements Runnable {
                 log.error("Can't create handler for bot " + bot.getUsername() + " (task is " + botTask + ")", th);
             }
         }
-        taskHandlerMap = handlers;
     }
 
     private WorkflowBot(WorkflowBot parent, WfTask task) {
         user = parent.user;
-        taskHandlerMap = parent.taskHandlerMap;
+        taskHandlers.putAll(parent.taskHandlers);
+        extendedConfigurations.putAll(parent.extendedConfigurations);
         botName = parent.botName;
         this.task = task;
         this.parent = parent;
@@ -173,14 +176,22 @@ public class WorkflowBot implements Runnable {
     }
 
     private void doHandle() throws Exception {
-        TaskHandler taskHandler = taskHandlerMap.get(task.getName());
+        String botTaskName = BotTaskConfigurationUtils.getBotTaskName(user, task);
+        TaskHandler taskHandler = taskHandlers.get(botTaskName);
         if (taskHandler == null) {
-            log.warn("No handler for bot task " + task + ", bot " + botName);
-            ProcessExecutionErrors.addBotTaskNotFoundProcessError(task, botName, task.getName());
+            log.warn("No handler for bot task " + botTaskName + ", bot " + botName);
+            ProcessExecutionErrors.addBotTaskNotFoundProcessError(task, botName, botTaskName);
             return;
         }
         try {
             IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
+
+            byte[] extendedConfiguration = extendedConfigurations.get(botTaskName);
+            if (extendedConfiguration != null) {
+                byte[] configuration = BotTaskConfigurationUtils.substituteConfiguration(user, task, extendedConfiguration, variableProvider);
+                taskHandler.setConfiguration(configuration);
+            }
+
             log.info("Starting bot task " + task + " with config \n" + taskHandler.getConfiguration());
             Map<String, Object> variables = taskHandler.handle(user, variableProvider, task);
             if (variables == null) {
@@ -245,8 +256,8 @@ public class WorkflowBot implements Runnable {
     }
 
     public boolean setTaskInerruptStatus(boolean status) {
-        boolean tmp = isTaskInterrupting;
-        isTaskInterrupting = status;
+        boolean tmp = taskInterrupting;
+        taskInterrupting = status;
         if (status) {
             botStatus = BotExecutionStatus.failed;
         }

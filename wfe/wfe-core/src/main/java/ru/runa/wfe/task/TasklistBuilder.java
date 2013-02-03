@@ -6,16 +6,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.dao.ProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.ss.TerminatorSubstitution;
@@ -31,7 +31,6 @@ import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 /**
@@ -41,6 +40,7 @@ import com.google.common.collect.Lists;
  * @since 4.0
  */
 public class TasklistBuilder {
+    private static final Log log = LogFactory.getLog(TasklistBuilder.class);
     private TaskCache taskCache = TaskCacheCtrl.getInstance();
     @Autowired
     private WfTaskFactory taskObjectFactory;
@@ -51,18 +51,18 @@ public class TasklistBuilder {
     @Autowired
     private ProcessDefinitionLoader processDefinitionLoader;
 
-    public List<WfTask> getTasks(Actor actor, BatchPresentation batchPresentation) throws AuthenticationException {
-        try {
-            List<WfTask> result = taskCache.getTasks(actor.getId(), batchPresentation);
-            if (result != null) {
-                return result;
-            }
-            int cacheVersion = taskCache.getCacheVersion();
-            result = Lists.newArrayList();
-            Set<Executor> executorsToGetTasks = getActorsToGetTasks(actor, false);
-            Set<Executor> executorsToGetTasksSub = getSubstitutableExecutors(actor);
-            List<Task> tasks = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(executorsToGetTasksSub, "executor", false);
-            for (Task task : tasks) {
+    public List<WfTask> getTasks(Actor actor, BatchPresentation batchPresentation) {
+        List<WfTask> result = taskCache.getTasks(actor.getId(), batchPresentation);
+        if (result != null) {
+            return result;
+        }
+        int cacheVersion = taskCache.getCacheVersion();
+        result = Lists.newArrayList();
+        Set<Executor> executorsToGetTasks = getActorsToGetTasks(actor, false);
+        Set<Executor> executorsToGetTasksSub = getSubstitutableExecutors(actor);
+        List<Task> tasks = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(executorsToGetTasksSub, "executor", false);
+        for (Task task : tasks) {
+            try {
                 Executor taskExecutor = task.getExecutor();
                 ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task);
                 Interaction interaction = processDefinition.getInteractionNotNull(task.getNodeId());
@@ -89,14 +89,12 @@ public class TasklistBuilder {
                         }
                     }
                 }
+            } catch (Exception e) {
+                log.error("Unable build task " + task, e);
             }
-            taskCache.setTasks(cacheVersion, actor.getId(), batchPresentation, result);
-            return result;
-        } catch (Exception e) {
-            Throwables.propagateIfInstanceOf(e, InternalApplicationException.class);
-            Throwables.propagateIfInstanceOf(e, AuthenticationException.class);
-            throw Throwables.propagate(e);
         }
+        taskCache.setTasks(cacheVersion, actor.getId(), batchPresentation, result);
+        return result;
     }
 
     private Set<Executor> getActorsToGetTasks(Actor actor, boolean inactiveGroup) {

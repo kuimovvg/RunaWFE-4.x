@@ -69,7 +69,7 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
             Identifiable identifiable = Delegates.getExecutionService().getProcess(user, task.getProcessId());
             List<Long> executorIds = Lists.newArrayList();
             for (Executor executor : executors) {
-                Collection<Permission> oldPermissions = authorizationService.getPermissions(user, executor, identifiable);
+                Collection<Permission> oldPermissions = authorizationService.getOwnPermissions(user, executor, identifiable);
                 allPermissions.add(getNewPermissions(oldPermissions, settings.getPermissions(), settings.getMethod()));
                 executorIds.add(executor.getId());
             }

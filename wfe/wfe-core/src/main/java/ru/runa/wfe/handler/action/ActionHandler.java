@@ -22,9 +22,9 @@
 package ru.runa.wfe.handler.action;
 
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.handler.IConfigurable;
+import ru.runa.wfe.handler.Configurable;
 
-public interface ActionHandler extends IConfigurable {
+public interface ActionHandler extends Configurable {
 
     public void execute(ExecutionContext executionContext) throws Exception;
 }

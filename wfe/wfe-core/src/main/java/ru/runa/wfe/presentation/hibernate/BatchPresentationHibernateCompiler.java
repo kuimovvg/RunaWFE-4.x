@@ -228,7 +228,7 @@ public class BatchPresentationHibernateCompiler {
         HibernateCompilerQueryBuilder builder = new HibernateCompilerQueryBuilder(batchPresentation, compilerParams);
         Query query = builder.build();
         Map<String, QueryParameter> placeholders = builder.getPlaceholders();
-        if (compilerParams.isSequresQuery()) {
+        if (compilerParams.isSequredQuery()) {
             query.setParameterList("securedOwnersIds", compilerParams.getExecutorIds());
             query.setParameter("securedPermission", compilerParams.getPermission().getMask());
             List<String> typeNames = Lists.newArrayList();

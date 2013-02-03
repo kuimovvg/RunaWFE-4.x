@@ -27,9 +27,6 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.collect.Maps;
 
-/**
- * Sematics defined in resources/cancel-process.xsd Created on 01.04.2005
- */
 public class CancelProcessTaskXmlParser {
     private static final String PROCESS_TO_CANCEL = "processToCancel";
     private static final String NAME_ATTRIBUTE_NAME = "name";
@@ -40,7 +37,7 @@ public class CancelProcessTaskXmlParser {
      * Parses DatabaseTaskHandler configuration.
      */
     public static CancelProcessTask parse(String configuration) throws Exception {
-        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Document document = XmlUtils.parseWithXSDValidation(configuration, "cancel-process.xsd");
         Element processesElement = document.getRootElement();
         String processIdVariable = processesElement.attributeValue(PROCESS_ID_VARIABLE_ATTRIBUTE_NAME);
         List<Element> processToCancelElements = processesElement.elements(PROCESS_TO_CANCEL);

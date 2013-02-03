@@ -38,7 +38,6 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.security.PermissionNotFoundException;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.UnapplicablePermissionException;
 import ru.runa.wfe.user.Executor;
@@ -75,39 +74,6 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
             log.error("priveleged executors was not loaded (if this exception occurs in empty DB just ignore it)");
             log.debug("", e);
         }
-    }
-
-    /**
-     * Returns an array of Permission that executor has on identifiable. Returns
-     * as own permissions on identifiable as inherited group(s) permissions on
-     * identifiable.
-     * 
-     * @param executor
-     *            Executor for loading permissions.
-     * @param identifiable
-     *            Identifiable for loading permissions.
-     * @return Array of {@linkplain Permission} on secured object for Executor.
-     */
-    public List<Permission> getPermissions(final Executor executor, final Identifiable identifiable) {
-        final Set<Executor> executorWithGroups = getExecutorWithAllHisGroups(executor);
-        for (Executor executor2 : executorWithGroups) {
-            if (getPrivilegedExecutors(identifiable).contains(executor2)) {
-                return identifiable.getSecuredObjectType().getAllPermissions();
-            }
-        }
-        List<PermissionMapping> list = getHibernateTemplate().executeFind(new HibernateCallback<List<PermissionMapping>>() {
-
-            @Override
-            public List<PermissionMapping> doInHibernate(Session session) throws HibernateException, SQLException {
-                Query query = session
-                        .createQuery("from PermissionMapping where identifiableId=:identifiableId and type=:type and executor in (:executors)");
-                query.setParameter("identifiableId", identifiable.getId());
-                query.setParameter("type", identifiable.getSecuredObjectType());
-                query.setParameterList("executors", executorWithGroups);
-                return query.list();
-            }
-        });
-        return getPermissions(list, identifiable.getSecuredObjectType().getNoPermission());
     }
 
     /**
@@ -299,8 +265,7 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
      *            {@linkplain PermissionMapping} into {@linkplain Permission}.
      * @return {@linkplain Permission} array.
      */
-    private List<Permission> getPermissions(Collection<PermissionMapping> permissionMappings, Permission permission)
-            throws PermissionNotFoundException {
+    private List<Permission> getPermissions(Collection<PermissionMapping> permissionMappings, Permission permission) {
         List<Permission> permissions = Lists.newArrayList();
         for (PermissionMapping pm : permissionMappings) {
             permissions.add(permission.getPermission(pm.getMask()));
@@ -353,7 +318,7 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
      *            executors.
      * @return Privileged {@linkplain Executor}'s array.
      */
-    private List<Executor> getPrivilegedExecutors(Identifiable identifiable) {
+    public List<Executor> getPrivilegedExecutors(Identifiable identifiable) {
         return privelegedExecutors.get(identifiable.getSecuredObjectType());
     }
 

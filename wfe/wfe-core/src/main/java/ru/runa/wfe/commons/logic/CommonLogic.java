@@ -67,9 +67,9 @@ public class CommonLogic {
             throws AuthorizationException, ExecutorDoesNotExistException {
         boolean[] allowed = permissionDAO.isAllowed(user, permission, executors);
         for (int i = 0; i < allowed.length; i++) {
-            if (!allowed[i] && !executors.get(i).getName().equals(SystemExecutors.PROCESS_STARTER_NAME)) {
-                throw new AuthorizationException(user + " does not have permission " + permission + " to perform operation with object of class "
-                        + executors.get(i).getClass() + " and id " + executors.get(i).getId());
+            Executor executor = executors.get(i);
+            if (!allowed[i] && !SystemExecutors.PROCESS_STARTER_NAME.equals(executor.getName())) {
+                throw new AuthorizationException(user + " does not have " + permission + " to " + executor);
             }
         }
         return executors;
@@ -77,8 +77,7 @@ public class CommonLogic {
 
     protected void checkPermissionAllowed(User user, Identifiable identifiable, Permission permission) throws AuthorizationException {
         if (!isPermissionAllowed(user, identifiable, permission)) {
-            throw new AuthorizationException(user + " does not have permission " + permission + " to perform operation with object of class "
-                    + identifiable.getClass() + " and id " + identifiable.getId());
+            throw new AuthorizationException(user + " does not have " + permission + " to " + identifiable);
         }
     }
 

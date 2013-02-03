@@ -73,15 +73,6 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public Collection<Permission> getPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
-            AuthorizationException, AuthenticationException {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(performer);
-        Preconditions.checkNotNull(identifiable);
-        return authorizationLogic.getPermissions(user, performer, identifiable);
-    }
-
-    @Override
     public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
             AuthorizationException, AuthenticationException {
         Preconditions.checkNotNull(user);

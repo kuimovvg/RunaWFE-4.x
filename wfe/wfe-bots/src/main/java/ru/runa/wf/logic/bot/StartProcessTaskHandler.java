@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -96,16 +95,16 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
             try {
                 AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
                 WfProcess process = executionService.getProcess(user, startedProcessId);
-                WfProcess superWfProcess = executionService.getProcess(user, task.getProcessId());
+                WfProcess parentProcess = executionService.getProcess(user, task.getProcessId());
                 BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-                List<Executor> executors = authorizationService.getExecutorsWithPermission(user, superWfProcess, batchPresentation, true);
+                List<Executor> executors = authorizationService.getExecutorsWithPermission(user, parentProcess, batchPresentation, true);
                 for (Executor executor : executors) {
                     Set<Permission> permissions = new HashSet<Permission>();
-                    for (Permission perm : authorizationService.getOwnPermissions(user, executor, superWfProcess)) {
-                        permissions.add(perm);
+                    for (Permission permission : authorizationService.getOwnPermissions(user, executor, parentProcess)) {
+                        permissions.add(permission);
                     }
-                    for (Permission perm : authorizationService.getOwnPermissions(user, executor, process)) {
-                        permissions.add(perm);
+                    for (Permission permission : authorizationService.getOwnPermissions(user, executor, process)) {
+                        permissions.add(permission);
                     }
                     authorizationService.setPermissions(user, executor, permissions, process);
                 }

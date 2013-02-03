@@ -32,23 +32,23 @@ import com.google.common.io.ByteStreams;
 public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
 
     @Override
-    protected void executeAction(AlfSession session, HandlerData handlerData) throws Exception {
-        ByteArrayOutputStream baos = getResponse(session, handlerData);
+    protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
+        ByteArrayOutputStream baos = getResponse(session, alfHandlerData);
         byte[] response = baos.toByteArray();
         log.debug(new String(response, "UTF-8"));
-        handleResponse(handlerData, response);
+        handleResponse(alfHandlerData, response);
     }
 
-    protected ByteArrayOutputStream getResponse(AlfSession session, HandlerData handlerData) throws Exception {
+    protected ByteArrayOutputStream getResponse(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         httpClient.getCredentialsProvider().setCredentials(new AuthScope(null, -1, null),
                 new UsernamePasswordCredentials(WSConnectionSettings.getSystemLogin(), WSConnectionSettings.getSystemPassword()));
         String alfBaseUrl = WSConnectionSettings.getAlfBaseUrl();
         HttpUriRequest request = null;
         if (useHttpPost()) {
-            request = formHttpPostRequest(alfBaseUrl, handlerData);
+            request = formHttpPostRequest(alfBaseUrl, alfHandlerData);
         } else {
-            request = formHttpGetRequest(alfBaseUrl, handlerData);
+            request = formHttpGetRequest(alfBaseUrl, alfHandlerData);
         }
         HttpResponse response = httpClient.execute(request);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -61,10 +61,10 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
         return baos;
     }
 
-    protected HttpGet formHttpGetRequest(String alfBaseUrl, HandlerData handlerData) throws Exception {
+    protected HttpGet formHttpGetRequest(String alfBaseUrl, AlfHandlerData alfHandlerData) throws Exception {
         StringBuffer url = new StringBuffer();
-        url.append(alfBaseUrl).append("service/").append(getWebScriptUri(handlerData));
-        Map<String, String> params = getWebScriptParameters(handlerData);
+        url.append(alfBaseUrl).append("service/").append(getWebScriptUri(alfHandlerData));
+        Map<String, String> params = getWebScriptParameters(alfHandlerData);
         boolean first = true;
         for (String paramName : params.keySet()) {
             String paramValue = params.get(paramName);
@@ -82,11 +82,11 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
         return request;
     }
 
-    protected HttpPost formHttpPostRequest(String alfBaseUrl, HandlerData handlerData) throws Exception {
+    protected HttpPost formHttpPostRequest(String alfBaseUrl, AlfHandlerData alfHandlerData) throws Exception {
         StringBuffer url = new StringBuffer();
-        url.append(alfBaseUrl).append("service/").append(getWebScriptUri(handlerData));
-        Map<String, String> params = getWebScriptParameters(handlerData);
-        Map<String, FileVariable> fileParams = getWebScriptFileVariableParameters(handlerData);
+        url.append(alfBaseUrl).append("service/").append(getWebScriptUri(alfHandlerData));
+        Map<String, String> params = getWebScriptParameters(alfHandlerData);
+        Map<String, FileVariable> fileParams = getWebScriptFileVariableParameters(alfHandlerData);
         HttpPost request = new HttpPost(url.toString());
         MultipartEntity entity = new MultipartEntity();
 
@@ -108,8 +108,8 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
         return request;
     }
 
-    protected String getWebScriptUri(HandlerData handlerData) {
-        return handlerData.getInputParam(String.class, "webScriptUri");
+    protected String getWebScriptUri(AlfHandlerData alfHandlerData) {
+        return alfHandlerData.getInputParam(String.class, "webScriptUri");
     }
 
     protected boolean throwExceptionOnErrorState() {
@@ -120,13 +120,13 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
         return false;
     }
 
-    protected void handleResponse(HandlerData handlerData, byte[] response) {
+    protected void handleResponse(AlfHandlerData alfHandlerData, byte[] response) {
 
     }
 
-    protected abstract Map<String, String> getWebScriptParameters(HandlerData handlerData);
+    protected abstract Map<String, String> getWebScriptParameters(AlfHandlerData alfHandlerData);
 
-    protected Map<String, FileVariable> getWebScriptFileVariableParameters(HandlerData handlerData) {
+    protected Map<String, FileVariable> getWebScriptFileVariableParameters(AlfHandlerData alfHandlerData) {
         Map<String, FileVariable> map = new HashMap<String, FileVariable>();
         return map;
     }

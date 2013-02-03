@@ -1,7 +1,12 @@
 package ru.runa.wfe.handler;
 
-
-public interface IConfigurable {
+/**
+ * Provides common interface for configurable artifacts.
+ * 
+ * @author dofs
+ * @since 4.0
+ */
+public interface Configurable {
 
     /**
      * Configures bean.

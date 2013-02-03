@@ -5,15 +5,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.wfe.handler.action.ParamBasedActionHandler;
+import ru.runa.wfe.handler.CommonParamBasedHandler;
+import ru.runa.wfe.handler.HandlerData;
 
 import com.google.common.collect.Maps;
 
-public class ConvertMapValuesToListActionHandler extends ParamBasedActionHandler {
+public class ConvertMapValuesToListActionHandler extends CommonParamBasedHandler {
 
     @Override
-    protected void executeAction() throws Exception {
-        Map<?, ?> map = getInputParam(Map.class, "map", null);
+    protected void executeAction(HandlerData handlerData) throws Exception {
+        Map<?, ?> map = handlerData.getInputParam(Map.class, "map", null);
         if (map == null) {
             map = Maps.newHashMap();
         }
@@ -21,6 +22,6 @@ public class ConvertMapValuesToListActionHandler extends ParamBasedActionHandler
         if (list.size() > 0 && list.get(0) instanceof Comparable) {
             Collections.sort(list);
         }
-        setOutputVariable("list", list);
+        handlerData.setOutputVariable("list", list);
     }
 }

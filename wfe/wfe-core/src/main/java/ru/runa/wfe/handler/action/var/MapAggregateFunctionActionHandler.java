@@ -4,19 +4,20 @@ import java.util.Collection;
 import java.util.Map;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.handler.action.ParamBasedActionHandler;
+import ru.runa.wfe.handler.CommonParamBasedHandler;
+import ru.runa.wfe.handler.HandlerData;
 
 import com.google.common.collect.Maps;
 
-public class MapAggregateFunctionActionHandler extends ParamBasedActionHandler {
+public class MapAggregateFunctionActionHandler extends CommonParamBasedHandler {
     @Override
-    protected void executeAction() throws Exception {
-        Map<?, ?> map = getInputParam(Map.class, "map", null);
+    protected void executeAction(HandlerData handlerData) throws Exception {
+        Map<?, ?> map = handlerData.getInputParam(Map.class, "map", null);
         if (map == null) {
             map = Maps.newHashMap();
         }
-        String function = getInputParam(String.class, "function");
-        String functionOn = getInputParam(String.class, "on");
+        String function = handlerData.getInputParam(String.class, "function");
+        String functionOn = handlerData.getInputParam(String.class, "on");
         Collection<?> collection;
         if ("KEYS".equals(functionOn)) {
             collection = map.keySet();
@@ -78,7 +79,7 @@ public class MapAggregateFunctionActionHandler extends ParamBasedActionHandler {
         } else {
             throw new Exception("Unknown function '" + function + "'");
         }
-        setOutputVariable("object", result);
+        handlerData.setOutputVariable("object", result);
     }
 
     private Number getSum(Collection<?> collection) {
