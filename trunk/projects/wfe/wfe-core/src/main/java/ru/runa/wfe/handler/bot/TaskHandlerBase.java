@@ -1,10 +1,10 @@
 package ru.runa.wfe.handler.bot;
 
-import ru.runa.wfe.handler.IConfigurable;
+import ru.runa.wfe.handler.Configurable;
 
 import com.google.common.base.Charsets;
 
-public abstract class TaskHandlerBase implements TaskHandler, IConfigurable {
+public abstract class TaskHandlerBase implements TaskHandler, Configurable {
     private String configuration;
 
     @Override

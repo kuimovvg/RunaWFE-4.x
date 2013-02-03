@@ -25,13 +25,10 @@ import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.commons.logic.PresentationCompilerHelper;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.security.UnapplicablePermissionException;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
@@ -42,42 +39,31 @@ import com.google.common.collect.Sets;
  * 
  */
 public class AuthorizationLogic extends CommonLogic {
-    public boolean isAllowed(User user, Permission permission, Identifiable identifiable) throws AuthenticationException {
+    public boolean isAllowed(User user, Permission permission, Identifiable identifiable) {
         return permissionDAO.isAllowed(user, permission, identifiable);
     }
 
-    public boolean isPrivelegedExecutor(User user, Executor executor, Identifiable identifiable) throws AuthorizationException,
-            AuthenticationException {
+    public boolean isPrivelegedExecutor(User user, Executor executor, Identifiable identifiable) {
         checkPermissionAllowed(user, executor, Permission.READ);
         checkPermissionAllowed(user, identifiable, Permission.READ);
         return permissionDAO.isPrivilegedExecutor(executor, identifiable);
     }
 
-    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) throws AuthenticationException {
+    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) {
         return permissionDAO.isAllowed(user, permission, identifiables);
     }
 
-    public Collection<Permission> getPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
-            AuthorizationException, AuthenticationException {
-        checkPermissionsOnExecutor(user, performer, Permission.READ);
-        checkPermissionAllowed(user, identifiable, Permission.READ);
-        return permissionDAO.getPermissions(performer, identifiable);
-    }
-
-    public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
-            AuthorizationException, AuthenticationException {
+    public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
         checkPermissionsOnExecutor(user, performer, Permission.READ);
         checkPermissionAllowed(user, identifiable, Permission.READ);
         return permissionDAO.getOwnPermissions(performer, identifiable);
     }
 
-    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
-            throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable) {
         setPermissionOnIdentifiable(user, performer, permissions, identifiable);
     }
 
-    public void setPermissions(User user, List<Long> executorIds, Collection<Permission> permissions, Identifiable identifiable)
-            throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+    public void setPermissions(User user, List<Long> executorIds, Collection<Permission> permissions, Identifiable identifiable) {
         List<Executor> executors = executorDAO.getExecutors(executorIds);
         checkIsChangingPermissionForPrivilegedExecutors(executors, identifiable, permissions);
         checkPermissionsOnExecutors(user, executors, Permission.READ);
@@ -87,8 +73,7 @@ public class AuthorizationLogic extends CommonLogic {
         }
     }
 
-    public void setPermissions(User user, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable)
-            throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+    public void setPermissions(User user, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable) {
         List<Executor> executors = executorDAO.getExecutors(executorIds);
         checkIsChangingPermissionForPrivilegedExecutors(executors, identifiable, permissions);
         checkPermissionAllowed(user, identifiable, Permission.UPDATE_PERMISSIONS);
@@ -98,15 +83,13 @@ public class AuthorizationLogic extends CommonLogic {
         }
     }
 
-    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, List<? extends Identifiable> identifiables)
-            throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, List<? extends Identifiable> identifiables) {
         for (Identifiable identifiable : identifiables) {
             performer = setPermissionOnIdentifiable(user, performer, permissions, identifiable);
         }
     }
 
-    private Executor setPermissionOnIdentifiable(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
-            throws AuthorizationException, ExecutorDoesNotExistException, AuthenticationException, UnapplicablePermissionException {
+    private Executor setPermissionOnIdentifiable(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable) {
         checkIsChangingPermissionForPrivilegedExecutors(performer, identifiable, permissions);
         checkPermissionsOnExecutor(user, performer, Permission.READ);
         checkPermissionAllowed(user, identifiable, Permission.UPDATE_PERMISSIONS);
@@ -132,12 +115,17 @@ public class AuthorizationLogic extends CommonLogic {
      * @return Executors with or without permission on {@linkplain Identifiable}
      *         .
      */
-    public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission)
-            throws AuthorizationException, AuthenticationException {
+    public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission) {
         checkPermissionAllowed(user, identifiable, Permission.READ);
         BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createExecutorWithPermissionCompiler(user, identifiable,
                 batchPresentation, hasPermission);
-        return compiler.getBatch();
+        if (hasPermission) {
+            List<Executor> executors = compiler.getBatch();
+            executors.addAll(0, permissionDAO.getPrivilegedExecutors(identifiable));
+            return executors;
+        } else {
+            return compiler.getBatch();
+        }
     }
 
     /**
@@ -158,8 +146,7 @@ public class AuthorizationLogic extends CommonLogic {
      * @return Count of executors with or without permission on
      *         {@linkplain Identifiable}.
      */
-    public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission)
-            throws AuthorizationException, AuthenticationException {
+    public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission) {
         checkPermissionAllowed(user, identifiable, Permission.READ);
         BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createExecutorWithPermissionCompiler(user, identifiable,
                 batchPresentation, hasPermission);
@@ -167,32 +154,30 @@ public class AuthorizationLogic extends CommonLogic {
     }
 
     private void checkIsChangingPermissionForPrivilegedExecutors(List<Executor> executors, Identifiable identifiable,
-            List<Collection<Permission>> permissions) throws AuthorizationException, ExecutorDoesNotExistException {
+            List<Collection<Permission>> permissions) {
         for (int i = 0; i < executors.size(); i++) {
             checkIsChangingPermissionForPrivilegedExecutors(executors.get(i), identifiable, permissions.get(i));
         }
     }
 
     private void checkIsChangingPermissionForPrivilegedExecutors(List<Executor> executors, Identifiable identifiable,
-            Collection<Permission> permissions) throws AuthorizationException, ExecutorDoesNotExistException {
+            Collection<Permission> permissions) {
         for (Executor executor : executors) {
             checkIsChangingPermissionForPrivilegedExecutors(executor, identifiable, permissions);
         }
     }
 
-    private void checkIsChangingPermissionForPrivilegedExecutors(Executor executor, Identifiable identifiable, Collection<Permission> permissions)
-            throws AuthorizationException, ExecutorDoesNotExistException {
+    private void checkIsChangingPermissionForPrivilegedExecutors(Executor executor, Identifiable identifiable, Collection<Permission> permissions) {
         if (permissionDAO.isPrivilegedExecutor(executor, identifiable)) {
             checkIsPermissionChanged(executor, identifiable, permissions);
         }
     }
 
-    private void checkIsPermissionChanged(Executor executor, Identifiable identifiable, Collection<Permission> permissions)
-            throws AuthorizationException, ExecutorDoesNotExistException {
+    private void checkIsPermissionChanged(Executor executor, Identifiable identifiable, Collection<Permission> permissions) {
         Set<Permission> currentPermissions = Sets.newHashSet(permissionDAO.getOwnPermissions(executor, identifiable));
         Set<Permission> newPermissions = Sets.newHashSet(permissions);
         if (!currentPermissions.equals(newPermissions)) {
-            throw new AuthorizationException("Can not change permissions on priveleged executor " + executor.getName());
+            throw new AuthorizationException("Can not change permissions on priveleged executor " + executor);
         }
     }
 }

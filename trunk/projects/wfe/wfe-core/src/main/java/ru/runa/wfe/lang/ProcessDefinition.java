@@ -52,7 +52,7 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
     private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(ProcessDefinition.class);
 
-    private Deployment dBImpl;
+    private Deployment deployment;
     private Map<String, byte[]> processFiles = Maps.newHashMap();
     private StartState startState;
     private final List<Node> nodes = Lists.newArrayList();
@@ -71,14 +71,14 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
     protected ProcessDefinition() {
     }
 
-    public ProcessDefinition(Deployment processDeploymentDBImpl) {
-        dBImpl = processDeploymentDBImpl;
+    public ProcessDefinition(Deployment deployment) {
+        this.deployment = deployment;
         processDefinition = this;
     }
 
     @Override
     public Long getId() {
-        return dBImpl.getId();
+        return deployment.getId();
     }
 
     @Override
@@ -88,22 +88,22 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
 
     @Override
     public String getName() {
-        return dBImpl.getName();
+        return deployment.getName();
     }
 
     @Override
     public void setName(String name) {
-        dBImpl.setName(name);
+        deployment.setName(name);
     }
 
     @Override
     public String getDescription() {
-        return dBImpl.getDescription();
+        return deployment.getDescription();
     }
 
     @Override
     public void setDescription(String description) {
-        dBImpl.setDescription(description);
+        deployment.setDescription(description);
     }
 
     @Override
@@ -111,8 +111,8 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
         return supportedEventTypes;
     }
 
-    public Deployment getDBImpl() {
-        return dBImpl;
+    public Deployment getDeployment() {
+        return deployment;
     }
 
     /**
@@ -306,7 +306,10 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
 
     @Override
     public String toString() {
-        return getName();
+        if (deployment != null) {
+            return deployment.toString();
+        }
+        return name;
     }
 
 }

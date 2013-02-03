@@ -27,9 +27,6 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 
-/**
- * Semantic is defined in textreport.xsd.
- */
 public class TextReportSettingsXmlParser {
     private static final String TEMPLATE_ELEMENT_NAME = "template";
     private static final String FILE_NAME_ATTRIBUTE_NAME = "fileName";
@@ -46,7 +43,7 @@ public class TextReportSettingsXmlParser {
 
     public static TextReportSettings read(String configuration) {
         TextReportSettings textReportSettings = new TextReportSettings();
-        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Document document = XmlUtils.parseWithXSDValidation(configuration, "textreport.xsd");
 
         Element root = document.getRootElement();
         Element templateElement = root.element(TEMPLATE_ELEMENT_NAME);

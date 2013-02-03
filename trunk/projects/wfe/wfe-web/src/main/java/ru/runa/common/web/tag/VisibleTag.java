@@ -101,7 +101,9 @@ public abstract class VisibleTag extends TagSupport {
                 ConcreteElement element = getEndElement();
                 element.output(writer);
             } catch (Throwable th) {
-                log.error("", th);
+                // DEBUG category set due to logging in EJB layer; stack trace
+                // is logged only for Web layer errors.
+                log.debug("", th);
                 try {
                     writer.write("<span class=\"error\">" + ActionExceptionHelper.getErrorMessage(th.getCause(), pageContext) + "</span>");
                 } catch (IOException e) {

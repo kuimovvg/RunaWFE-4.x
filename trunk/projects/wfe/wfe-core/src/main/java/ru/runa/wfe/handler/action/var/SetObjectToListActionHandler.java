@@ -2,16 +2,17 @@ package ru.runa.wfe.handler.action.var;
 
 import java.util.ArrayList;
 
-import ru.runa.wfe.handler.action.ParamBasedActionHandler;
+import ru.runa.wfe.handler.CommonParamBasedHandler;
+import ru.runa.wfe.handler.HandlerData;
 
-public class SetObjectToListActionHandler extends ParamBasedActionHandler {
+public class SetObjectToListActionHandler extends CommonParamBasedHandler {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void executeAction() throws Exception {
-        ArrayList list = getInputParam(ArrayList.class, "list", null);
-        Object object = getInputParam(Object.class, "object");
-        int index = getInputParam(int.class, "index");
+    protected void executeAction(HandlerData handlerData) throws Exception {
+        ArrayList list = handlerData.getInputParam(ArrayList.class, "list", null);
+        Object object = handlerData.getInputParam(Object.class, "object");
+        int index = handlerData.getInputParam(int.class, "index");
         if (list == null) {
             list = new ArrayList();
         }
@@ -19,7 +20,7 @@ public class SetObjectToListActionHandler extends ParamBasedActionHandler {
             list.add(null);
         }
         list.set(index, object);
-        setOutputVariable("list", list);
+        handlerData.setOutputVariable("list", list);
         log.debug("Object " + object + " set to the list " + list + " at index " + index);
     }
 

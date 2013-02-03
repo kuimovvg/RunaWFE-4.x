@@ -17,35 +17,20 @@
  */
 package ru.runa.wfe.script;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+import org.dom4j.Element;
 
 import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.commons.xml.XmlUtils;
 
-/**
- * Created on 30.09.2005
- */
 public class AdminScriptException extends ApplicationException {
     private static final long serialVersionUID = 1L;
-    private static final String FAILED_TO_HANDLE_ELEMENT = "Failed to handle element ";
-    private static final String BECAUSE_OF_ERROR_MESSAGE = "Because of error: ";
 
     public AdminScriptException(String msg) {
         super(msg);
     }
 
     public AdminScriptException(Element element, Throwable cause) {
-        super(FAILED_TO_HANDLE_ELEMENT + getTextForElement(element) + " " + BECAUSE_OF_ERROR_MESSAGE + cause.getMessage(), cause);
+        super("Failed to handle element " + XmlUtils.toString(element), cause);
     }
 
-    private static String getTextForElement(Element element) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<" + element.getNodeName() + " ");
-        NamedNodeMap attributes = element.getAttributes();
-        for (int i = 0; i < attributes.getLength(); i++) {
-            sb.append(attributes.item(i).getNodeName() + "=\"" + attributes.item(i).getNodeValue() + "\" ");
-        }
-        sb.append(" >");
-        return sb.toString();
-    }
 }

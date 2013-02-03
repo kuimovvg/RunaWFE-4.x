@@ -22,12 +22,12 @@
 package ru.runa.wfe.handler.decision;
 
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.handler.IConfigurable;
+import ru.runa.wfe.handler.Configurable;
 
 /**
  * decision handler interface for IF elements.
  */
-public interface DecisionHandler extends IConfigurable {
+public interface DecisionHandler extends Configurable {
 
     public String decide(ExecutionContext executionContext) throws Exception;
 

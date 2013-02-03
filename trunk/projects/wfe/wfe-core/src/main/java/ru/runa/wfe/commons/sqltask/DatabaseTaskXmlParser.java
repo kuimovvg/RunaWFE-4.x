@@ -28,12 +28,6 @@ import org.dom4j.Element;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.var.IVariableProvider;
 
-/**
- * Semantic is defined in database-tasks.xsd.
- * 
- * @author Vitaliy S aka Yilativs
- * @author Gordienko_m
- */
 public class DatabaseTaskXmlParser {
     private static final String TASK_ELEMENT_NAME = "task";
     private static final String DATASOURCE_ATTRIBUTE_NAME = "datasource";
@@ -57,7 +51,7 @@ public class DatabaseTaskXmlParser {
      *            process variables to substitute values in query string
      */
     public static DatabaseTask[] parse(String configuration, IVariableProvider variableProvider) throws DatabaseTaskXmlParserException {
-        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Document document = XmlUtils.parseWithXSDValidation(configuration, "database-tasks.xsd");
         List<Element> taskElementList = document.getRootElement().elements(TASK_ELEMENT_NAME);
         DatabaseTask[] databaseTasks = new DatabaseTask[taskElementList.size()];
         for (int i = 0; i < databaseTasks.length; i++) {

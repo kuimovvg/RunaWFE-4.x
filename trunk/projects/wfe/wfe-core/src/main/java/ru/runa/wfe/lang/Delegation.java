@@ -24,7 +24,7 @@ package ru.runa.wfe.lang;
 import java.io.Serializable;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
-import ru.runa.wfe.handler.IConfigurable;
+import ru.runa.wfe.handler.Configurable;
 
 public class Delegation implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -41,9 +41,9 @@ public class Delegation implements Serializable {
         this.configuration = configuration;
     }
 
-    public <T extends IConfigurable> T getInstance() throws Exception {
+    public <T extends Configurable> T getInstance() throws Exception {
         if (instance == null) {
-            IConfigurable configurable = ApplicationContextFactory.createAutowiredBean(className);
+            Configurable configurable = ApplicationContextFactory.createAutowiredBean(className);
             configurable.setConfiguration(configuration);
             instance = configurable;
         }

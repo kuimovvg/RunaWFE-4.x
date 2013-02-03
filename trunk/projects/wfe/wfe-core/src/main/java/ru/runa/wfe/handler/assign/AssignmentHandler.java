@@ -22,12 +22,12 @@
 package ru.runa.wfe.handler.assign;
 
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.handler.IConfigurable;
+import ru.runa.wfe.handler.Configurable;
 
 /**
  * assigns {@link ru.runa.wfe.task.Task}s or {@link ru.runa.wfe.execution.Swimlane}s to actors.
  */
-public interface AssignmentHandler extends IConfigurable {
+public interface AssignmentHandler extends Configurable {
 
     /**
      * assigns the assignable (={@link ru.runa.wfe.task.Task} or a {@link ru.runa.wfe.execution.Swimlane} to an swimlaneActorId.

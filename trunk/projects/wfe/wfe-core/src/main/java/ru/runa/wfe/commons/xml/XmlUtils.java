@@ -18,11 +18,13 @@ import javax.xml.validation.SchemaFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
@@ -46,30 +48,39 @@ public class XmlUtils {
         return parse(in, false, false, null);
     }
 
-    public static Document parseWithXSDValidation(byte[] data, InputStream xsdInputStream) {
-        return parse(new ByteArrayInputStream(data), false, true, xsdInputStream);
+    public static Document parseWithXSDValidation(InputStream in, String xsdResourceName) {
+        return parse(in, false, true, xsdResourceName);
     }
 
-    private static Document parse(InputStream in, boolean dtdValidation, boolean xsdValidation, InputStream xsdInputStream) {
+    public static Document parseWithXSDValidation(byte[] data, String xsdResourceName) {
+        return parseWithXSDValidation(new ByteArrayInputStream(data), xsdResourceName);
+    }
+
+    public static Document parseWithXSDValidation(String data, String xsdResourceName) {
+        return parseWithXSDValidation(data.getBytes(Charsets.UTF_8), xsdResourceName);
+    }
+
+    private static Document parse(InputStream in, boolean dtdValidation, boolean xsdValidation, String xsdResourceName) {
         try {
             SAXReader reader;
             if (xsdValidation) {
                 SAXParserFactory factory = SAXParserFactory.newInstance();
-                if (xsdInputStream != null) {
+                if (xsdResourceName != null) {
+                    InputStream xsdInputStream = ClassLoaderUtil.getAsStreamNotNull(xsdResourceName, XmlUtils.class);
                     SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
                     factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(xsdInputStream) }));
                 } else {
                     factory.setValidating(true);
                 }
                 SAXParser parser = factory.newSAXParser();
-                if (xsdInputStream == null) {
+                if (xsdResourceName == null) {
                     parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
                 }
                 reader = new SAXReader(parser.getXMLReader());
             } else {
                 reader = new SAXReader();
             }
-            reader.setValidation(dtdValidation || (xsdValidation && xsdInputStream == null));
+            reader.setValidation(dtdValidation || (xsdValidation && xsdResourceName == null));
             reader.setErrorHandler(SimpleErrorHandler.getInstance());
             return reader.read(new BOMSkippingReader(new InputStreamReader(in, Charsets.UTF_8)));
         } catch (Exception e) {
@@ -77,19 +88,19 @@ public class XmlUtils {
         }
     }
 
-    public static byte[] save(Document document) {
+    public static byte[] save(Node node) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             XMLWriter writer = new XMLWriter(baos, OutputFormat.createPrettyPrint());
-            writer.write(document);
+            writer.write(node);
             return baos.toByteArray();
         } catch (IOException e) {
             throw new InternalApplicationException(e);
         }
     }
 
-    public static String toString(Document document) {
-        return new String(save(document), Charsets.UTF_8);
+    public static String toString(Node node) {
+        return new String(save(node), Charsets.UTF_8);
     }
 
     public static String serialize(Map<String, String> map) {

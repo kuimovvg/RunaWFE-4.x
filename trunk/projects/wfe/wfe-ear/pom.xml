@@ -22,6 +22,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>wfe-office</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>wfe-web</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
@@ -70,6 +76,10 @@
 						<jarModule>
 							<groupId>${project.groupId}</groupId>
 							<artifactId>wfe-bots</artifactId>
+						</jarModule>
+						<jarModule>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>wfe-office</artifactId>
 						</jarModule>
 						<webModule>
 							<groupId>${project.groupId}</groupId>

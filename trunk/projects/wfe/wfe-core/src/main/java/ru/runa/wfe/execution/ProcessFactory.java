@@ -128,7 +128,7 @@ public class ProcessFactory {
         Preconditions.checkNotNull(processDefinition, "can't create a process when processDefinition is null");
         Process process = new Process();
         process.setStartDate(new Date());
-        process.setDefinition(processDefinition.getDBImpl());
+        process.setDefinition(processDefinition.getDeployment());
         process.setSwimlanes(new HashSet<Swimlane>());
         process.setTasks(new HashSet<Task>());
         Token rootToken = new Token(processDefinition, process);
