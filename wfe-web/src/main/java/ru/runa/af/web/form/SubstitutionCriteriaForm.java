@@ -52,7 +52,7 @@ public class SubstitutionCriteriaForm extends IdForm {
                 errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(ERROR_KEY));
             } else {
                 SubstitutionCriteria substitutionCriteria = ClassLoaderUtil.instantiate(type);
-                substitutionCriteria.setConf(conf);
+                substitutionCriteria.setConfiguration(conf);
                 substitutionCriteria.setName(name);
                 if (!substitutionCriteria.validate()) {
                     errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(ERROR_KEY));

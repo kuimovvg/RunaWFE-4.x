@@ -19,6 +19,8 @@ package ru.runa.wfe.validation;
 
 import java.util.Map;
 
+import com.google.common.base.Objects;
+
 public class ValidatorConfig {
 
     private final String type;
@@ -28,7 +30,7 @@ public class ValidatorConfig {
     private final String message;
 
     public ValidatorConfig(String validatorType, Map<String, String> params, String message) {
-        this.type = validatorType;
+        type = validatorType;
         this.params = params;
         this.message = message;
     }
@@ -47,6 +49,6 @@ public class ValidatorConfig {
 
     @Override
     public String toString() {
-        return type + ": " + params;
+        return Objects.toStringHelper(this).add("type", type).add("params", params).toString();
     }
 }

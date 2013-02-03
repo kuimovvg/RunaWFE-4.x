@@ -29,13 +29,15 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.security.SecuredObjectType;
+
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "BOT_STATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class BotStation implements Identifiable {
+public class BotStation extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
     public static final BotStation INSTANCE = new BotStation(0L);
 
@@ -105,6 +107,11 @@ public class BotStation implements Identifiable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
     }
 
 }

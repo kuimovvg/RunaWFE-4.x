@@ -38,9 +38,4 @@ public class CancelTimerAction extends Action {
         jobDAO.deleteTimersByName(getName(), executionContext.getToken());
     }
 
-    @Override
-    public String toString() {
-        return getEvent() + ": " + getClass().getName();
-    }
-
 }

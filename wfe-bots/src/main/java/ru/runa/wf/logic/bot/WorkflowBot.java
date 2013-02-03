@@ -176,14 +176,14 @@ public class WorkflowBot implements Runnable {
     }
 
     private void doHandle() throws Exception {
-        String botTaskName = BotTaskConfigurationUtils.getBotTaskName(user, task);
-        TaskHandler taskHandler = taskHandlers.get(botTaskName);
-        if (taskHandler == null) {
-            log.warn("No handler for bot task " + botTaskName + ", bot " + botName);
-            ProcessExecutionErrors.addBotTaskNotFoundProcessError(task, botName, botTaskName);
-            return;
-        }
         try {
+            String botTaskName = BotTaskConfigurationUtils.getBotTaskName(user, task);
+            TaskHandler taskHandler = taskHandlers.get(botTaskName);
+            if (taskHandler == null) {
+                log.warn("No handler for bot task " + botTaskName + ", bot " + botName);
+                ProcessExecutionErrors.addBotTaskNotFoundProcessError(task, botName, botTaskName);
+                return;
+            }
             IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
 
             byte[] extendedConfiguration = extendedConfigurations.get(botTaskName);
@@ -266,13 +266,11 @@ public class WorkflowBot implements Runnable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
         if (parent == null) {
-            builder.append("Template bot '").append(botName).append("'");
+            return "Template bot '" + botName + "'";
         } else {
-            builder.append("Bot '").append(botName).append("' with task ").append(task);
+            return "Bot '" + botName + "' with task " + task;
         }
-        return builder.toString();
     }
 
     private void logBotError(WfTask task, Throwable th) {

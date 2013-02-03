@@ -19,6 +19,7 @@ package ru.runa.service.af.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -73,7 +74,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
+    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
             AuthorizationException, AuthenticationException {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(performer);

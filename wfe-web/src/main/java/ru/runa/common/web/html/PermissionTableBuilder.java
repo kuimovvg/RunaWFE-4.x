@@ -17,14 +17,12 @@
  */
 package ru.runa.common.web.html;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.ConcreteElement;
-import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
@@ -49,6 +47,9 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 /**
  * Builds HTML Table of executors with their own permissions on given
  * identifiable.
@@ -58,29 +59,34 @@ public class PermissionTableBuilder {
     private final User user;
     private final PageContext pageContext;
     private List<Permission> permissions;
-
-    /**
-     * this flag will be set to true if subject does not have permission to
-     * update permissions on identifiable .
-     */
-    private boolean disabled;
+    private boolean allowedUpdatePermissions;
+    private Map<Executor, List<Permission>> additionalExecutors = Maps.newHashMap();
 
     public PermissionTableBuilder(Identifiable identifiable, User user, PageContext pageContext) {
         this.identifiable = identifiable;
         this.user = user;
         this.pageContext = pageContext;
         permissions = identifiable.getSecuredObjectType().getAllPermissions();
-        disabled = !Delegates.getAuthorizationService().isAllowed(user, Permission.UPDATE_PERMISSIONS, identifiable);
+        allowedUpdatePermissions = Delegates.getAuthorizationService().isAllowed(user, Permission.UPDATE_PERMISSIONS, identifiable);
+    }
+
+    public void addAdditionalExecutor(Executor executor, List<Permission> unmodifiablePermissions) {
+        additionalExecutors.put(executor, unmodifiablePermissions);
     }
 
     public Table buildTable() {
+        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
+        List<Executor> executors = Delegates.getAuthorizationService().getExecutorsWithPermission(user, identifiable, batchPresentation, true);
+        executors.removeAll(additionalExecutors.keySet());
         Table table = new Table();
         table.setClass(Resources.CLASS_PERMISSION_TABLE);
         table.addElement(createTableHeaderTR());
-        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-        List<Executor> executors = Delegates.getAuthorizationService().getExecutorsWithPermission(user, identifiable, batchPresentation, true);
+        List<Permission> noPermissions = Lists.newArrayList();
         for (Executor executor : executors) {
-            table.addElement(createTR(executor, new ArrayList<Permission>(), true));
+            table.addElement(createTR(executor, noPermissions));
+        }
+        for (Map.Entry<Executor, List<Permission>> entry : additionalExecutors.entrySet()) {
+            table.addElement(createTR(entry.getKey(), entry.getValue()));
         }
         return table;
     }
@@ -96,29 +102,32 @@ public class PermissionTableBuilder {
         return tr;
     }
 
-    public TR createTR(Executor executor, List<Permission> unmodifiablePermissions, boolean isLink) {
+    private TR createTR(Executor executor, List<Permission> unmodifiablePermissions) {
         TR tr = new TR();
         Input input = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, String.valueOf(executor.getId()));
         input.setChecked(true);
-        input.setDisabled(disabled);
+        boolean executorCheckboxDisabled = true;
         tr.addElement(new TD(input).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
-        if (isLink) {
-            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, executor.getId(), pageContext,
-                    PortletUrlType.Render);
-            ConcreteElement tdElement = new A(url, ExecutorNameConverter.getName(executor, pageContext));
-            tr.addElement(new TD(tdElement).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
-        } else {
-            ConcreteElement tdElement = new StringElement(ExecutorNameConverter.getName(executor, pageContext));
-            tr.addElement(new TD(tdElement).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
-        }
-        Collection<Permission> ownPermissions = Delegates.getAuthorizationService().getOwnPermissions(user, executor, identifiable);
+        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, executor.getId(), pageContext,
+                PortletUrlType.Render);
+        ConcreteElement tdElement = new A(url, ExecutorNameConverter.getName(executor, pageContext));
+        tr.addElement(new TD(tdElement).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
+        Map<Permission, Boolean> ownPermissions = Delegates.getAuthorizationService().getOwnPermissions(user, executor, identifiable);
         for (Permission permission : permissions) {
-            Input checkbox = new Input(Input.CHECKBOX, UpdatePermissionsOnIdentifiableForm.EXECUTOR_INPUT_NAME_PREFIX + "(" + executor.getId() + ")."
-                    + UpdatePermissionsOnIdentifiableForm.PERMISSION_INPUT_NAME_PREFIX + "(" + permission.getMask() + ")");
-            checkbox.setChecked(ownPermissions.contains(permission));
-            checkbox.setDisabled(disabled || unmodifiablePermissions.contains(permission));
+            String name = UpdatePermissionsOnIdentifiableForm.EXECUTOR_INPUT_NAME_PREFIX + "(" + executor.getId() + ")."
+                    + UpdatePermissionsOnIdentifiableForm.PERMISSION_INPUT_NAME_PREFIX + "(" + permission.getMask() + ")";
+            boolean checked = ownPermissions.containsKey(permission);
+            boolean enabled = allowedUpdatePermissions && !unmodifiablePermissions.contains(permission);
+            if (checked) {
+                enabled &= ownPermissions.get(permission);
+            }
+            executorCheckboxDisabled &= !enabled;
+            Input checkbox = new Input(Input.CHECKBOX, name);
+            checkbox.setChecked(checked);
+            checkbox.setDisabled(!enabled);
             tr.addElement(new TD(checkbox).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
         }
+        input.setDisabled(executorCheckboxDisabled);
         return tr;
     }
 }

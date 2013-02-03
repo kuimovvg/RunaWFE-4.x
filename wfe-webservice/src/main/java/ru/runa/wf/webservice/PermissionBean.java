@@ -354,9 +354,12 @@ public class PermissionBean {
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
         Collection<Permission> permissions = getPermissions(permissionList, identifiable);
-        Collection<Permission> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
-        permissions = Permission.mergePermissions(permissions, ownPermissions);
-        authorizationLogic.setPermissions(user, executor, permissions, identifiable);
+        // Collection<Permission> ownPermissions =
+        // authorizationLogic.getOwnPermissions(user, executor, identifiable);
+        // permissions = Permission.mergePermissions(permissions,
+        // ownPermissions);
+        // authorizationLogic.setPermissions(user, executor, permissions,
+        // identifiable);
     }
 
     private void setPermissionOnIdentifiable(User user, Executor executor, Identifiable identifiable, List<String> permissionList)
@@ -370,9 +373,12 @@ public class PermissionBean {
             throws PermissionNotFoundException, UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException,
             AuthenticationException {
         Collection<Permission> permissions = getPermissions(permissionList, identifiable);
-        Collection<Permission> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
-        permissions = Permission.subtractPermissions(ownPermissions, permissions);
-        authorizationLogic.setPermissions(user, executor, permissions, identifiable);
+        // Collection<Permission> ownPermissions =
+        // authorizationLogic.getOwnPermissions(user, executor, identifiable);
+        // permissions = Permission.subtractPermissions(ownPermissions,
+        // permissions);
+        // authorizationLogic.setPermissions(user, executor, permissions,
+        // identifiable);
     }
 
     private void removeAllPermissionOnIdentifiable(User user, Identifiable identifiable) throws ExecutorDoesNotExistException,

@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.UpdatePermissionOnIdentifiableAction;
@@ -47,12 +46,7 @@ public class UpdatePermissionOnRelation extends UpdatePermissionOnIdentifiableAc
 
     @Override
     protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
-        try {
-            return Delegates.getRelationService().getRelation(user, identifiableId);
-        } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-            return null;
-        }
+        return Delegates.getRelationService().getRelation(user, identifiableId);
     }
 
     @Override
@@ -67,27 +61,19 @@ public class UpdatePermissionOnRelation extends UpdatePermissionOnIdentifiableAc
 
     @Override
     protected ActionForward getErrorForward(User user, ActionMapping mapping, Long identifiableId) {
-        try {
-            Relation relation = Delegates.getRelationService().getRelation(user, identifiableId);
-            Map<String, Object> params = new HashMap<String, Object>();
-            params.put("relationName", relation.getName());
-            params.put("id", identifiableId);
-            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), params);
-        } catch (Exception e) {
-            return null;
-        }
+        Relation relation = Delegates.getRelationService().getRelation(user, identifiableId);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("relationName", relation.getName());
+        params.put("id", identifiableId);
+        return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), params);
     }
 
     @Override
     protected ActionForward getSuccessForward(User user, ActionMapping mapping, Long identifiableId) {
-        try {
-            Relation relation = Delegates.getRelationService().getRelation(user, identifiableId);
-            Map<String, Object> params = new HashMap<String, Object>();
-            params.put("relationName", relation.getName());
-            params.put("id", identifiableId);
-            return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), params);
-        } catch (Exception e) {
-            return null;
-        }
+        Relation relation = Delegates.getRelationService().getRelation(user, identifiableId);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("relationName", relation.getName());
+        params.put("id", identifiableId);
+        return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), params);
     }
 }

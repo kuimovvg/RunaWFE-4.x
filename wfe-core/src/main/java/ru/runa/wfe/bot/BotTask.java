@@ -37,6 +37,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import com.google.common.base.Objects;
+
 @Entity
 @Table(name = "BOT_TASK")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -114,6 +116,6 @@ public class BotTask implements Serializable {
 
     @Override
     public String toString() {
-        return name;
+        return Objects.toStringHelper(this).add("taskHandler", taskHandlerClassName).add("name", name).toString();
     }
 }

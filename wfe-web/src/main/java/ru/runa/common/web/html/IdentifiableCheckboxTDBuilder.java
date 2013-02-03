@@ -32,6 +32,6 @@ public class IdentifiableCheckboxTDBuilder extends CheckboxTDBuilder {
     @Override
     protected String getIdValue(Object object) {
         Identifiable identifiable = (Identifiable) object;
-        return String.valueOf(identifiable.getId());
+        return String.valueOf(identifiable.getIdentifiableId());
     }
 }

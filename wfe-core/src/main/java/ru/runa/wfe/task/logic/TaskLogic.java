@@ -65,7 +65,7 @@ public class TaskLogic extends WFCommonLogic {
     public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException {
         Task task = taskDAO.getNotNull(taskId);
         if (!task.isActive()) {
-            throw new TaskAlreadyCompletedException(task.getName());
+            throw new TaskAlreadyCompletedException(task.toString());
         }
         try {
             ProcessDefinition processDefinition = getDefinition(task);

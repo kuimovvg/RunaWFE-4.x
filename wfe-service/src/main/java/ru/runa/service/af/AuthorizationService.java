@@ -19,6 +19,7 @@ package ru.runa.service.af;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
@@ -90,10 +91,12 @@ public interface AuthorizationService {
             throws AuthorizationException, UnapplicablePermissionException;
 
     /**
-     * Returns an array of Permission that executor himself has on
-     * {@link Identifiable}.
+     * Returns permissions that executor himself has on {@link Identifiable}.
+     * 
+     * @return Map of {Permission, Is permission can be modifiable}, not
+     *         <code>null</code>
      */
-    public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws AuthorizationException;
+    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws AuthorizationException;
 
     /**
      * Load executor's which already has (or not has) some permission on

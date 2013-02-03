@@ -56,7 +56,7 @@ public class BotLogic extends CommonLogic {
     }
 
     public BotStation createBotStation(User user, BotStation botStation) throws AuthorizationException, BotStationAlreadyExistsException {
-        checkPermissionsOnBotStations(user, BotStationPermission.BOT_STATION_CONFIGURE);
+        checkPermissionOnBotStation(user, BotStationPermission.BOT_STATION_CONFIGURE);
         if (botStationDAO.get(botStation.getName()) != null) {
             throw new BotStationAlreadyExistsException(botStation.getName());
         }
@@ -64,7 +64,7 @@ public class BotLogic extends CommonLogic {
     }
 
     public void updateBotStation(User user, BotStation botStation) throws AuthorizationException, BotStationAlreadyExistsException {
-        checkPermissionsOnBotStations(user, BotStationPermission.BOT_STATION_CONFIGURE);
+        checkPermissionOnBotStation(user, BotStationPermission.BOT_STATION_CONFIGURE);
         BotStation botStationToCheck = getBotStation(botStation.getName());
         if (botStationToCheck != null && !Objects.equal(botStationToCheck.getId(), botStation.getId())) {
             throw new BotStationAlreadyExistsException(botStation.getName());
@@ -85,7 +85,7 @@ public class BotLogic extends CommonLogic {
     }
 
     public void removeBotStation(User user, Long id) throws AuthorizationException, BotStationDoesNotExistException {
-        checkPermissionsOnBotStations(user, BotStationPermission.BOT_STATION_CONFIGURE);
+        checkPermissionOnBotStation(user, BotStationPermission.BOT_STATION_CONFIGURE);
         List<Bot> bots = getBots(user, id);
         for (Bot bot : bots) {
             removeBot(user, bot.getId());
@@ -94,7 +94,7 @@ public class BotLogic extends CommonLogic {
     }
 
     public Bot createBot(User user, Bot bot) throws AuthorizationException, BotAlreadyExistsException {
-        checkPermissionsOnBotStations(user, BotStationPermission.BOT_STATION_CONFIGURE);
+        checkPermissionOnBotStation(user, BotStationPermission.BOT_STATION_CONFIGURE);
         Preconditions.checkNotNull(bot.getBotStation());
         if (getBot(user, bot.getBotStation().getId(), bot.getUsername()) != null) {
             throw new BotAlreadyExistsException(bot.getUsername());
@@ -105,30 +105,30 @@ public class BotLogic extends CommonLogic {
     }
 
     public List<Bot> getBots(User user, Long botStationId) throws AuthorizationException {
-        checkPermissionsOnBotStations(user, Permission.READ);
+        checkReadPermissionOnBotStations(user);
         BotStation botStation = getBotStationNotNull(botStationId);
         return botDAO.getAll(botStation);
     }
 
     public Bot getBotNotNull(User user, Long id) throws AuthorizationException {
-        checkPermissionsOnBotStations(user, Permission.READ);
+        checkReadPermissionOnBotStations(user);
         return botDAO.getNotNull(id);
     }
 
     private Bot getBot(User user, Long botStationId, String name) throws AuthorizationException {
-        checkPermissionsOnBotStations(user, Permission.READ);
+        checkReadPermissionOnBotStations(user);
         BotStation botStation = getBotStationNotNull(botStationId);
         return botDAO.get(botStation, name);
     }
 
     public Bot getBotNotNull(User user, Long botStationId, String name) throws AuthorizationException {
-        checkPermissionsOnBotStations(user, Permission.READ);
+        checkReadPermissionOnBotStations(user);
         BotStation botStation = getBotStationNotNull(botStationId);
         return botDAO.getNotNull(botStation, name);
     }
 
     public void updateBot(User user, Bot bot) throws AuthorizationException, BotAlreadyExistsException {
-        checkPermissionsOnBotStations(user, BotStationPermission.BOT_STATION_CONFIGURE);
+        checkPermissionOnBotStation(user, BotStationPermission.BOT_STATION_CONFIGURE);
         Preconditions.checkNotNull(bot.getBotStation());
         Bot botToCheck = getBot(user, bot.getBotStation().getId(), bot.getUsername());
         if (botToCheck != null && !Objects.equal(botToCheck.getId(), bot.getId())) {
@@ -139,7 +139,7 @@ public class BotLogic extends CommonLogic {
     }
 
     public void removeBot(User user, Long id) throws AuthorizationException, BotDoesNotExistException {
-        checkPermissionsOnBotStations(user, BotStationPermission.BOT_STATION_CONFIGURE);
+        checkPermissionOnBotStation(user, BotStationPermission.BOT_STATION_CONFIGURE);
         List<BotTask> tasks = getBotTasks(user, id);
         for (BotTask botTask : tasks) {
             removeBotTask(user, botTask.getId());
@@ -148,7 +148,7 @@ public class BotLogic extends CommonLogic {
     }
 
     public BotTask createBotTask(User user, BotTask botTask) throws AuthorizationException, BotTaskAlreadyExistsException {
-        checkPermissionsOnBotStations(user, BotStationPermission.BOT_STATION_CONFIGURE);
+        checkPermissionOnBotStation(user, BotStationPermission.BOT_STATION_CONFIGURE);
         Preconditions.checkNotNull(botTask.getBot());
         if (getBotTask(user, botTask.getBot().getId(), botTask.getName()) != null) {
             throw new BotTaskAlreadyExistsException(botTask.getName());
@@ -159,30 +159,30 @@ public class BotLogic extends CommonLogic {
     }
 
     public List<BotTask> getBotTasks(User user, Long id) throws AuthorizationException {
-        checkPermissionsOnBotStations(user, Permission.READ);
+        checkReadPermissionOnBotStations(user);
         Bot bot = getBotNotNull(user, id);
         return botTaskDAO.getAll(bot);
     }
 
     public BotTask getBotTaskNotNull(User user, Long id) throws AuthorizationException {
-        checkPermissionsOnBotStations(user, Permission.READ);
+        checkReadPermissionOnBotStations(user);
         return botTaskDAO.getNotNull(id);
     }
 
     private BotTask getBotTask(User user, Long botId, String name) throws AuthorizationException {
-        checkPermissionsOnBotStations(user, Permission.READ);
+        checkReadPermissionOnBotStations(user);
         Bot bot = getBotNotNull(user, botId);
         return botTaskDAO.get(bot, name);
     }
 
     public BotTask getBotTaskNotNull(User user, Long botId, String name) throws AuthorizationException {
-        checkPermissionsOnBotStations(user, Permission.READ);
+        checkReadPermissionOnBotStations(user);
         Bot bot = getBotNotNull(user, botId);
         return botTaskDAO.getNotNull(bot, name);
     }
 
     public void updateBotTask(User user, BotTask botTask) throws AuthorizationException, BotTaskAlreadyExistsException {
-        checkPermissionsOnBotStations(user, BotStationPermission.BOT_STATION_CONFIGURE);
+        checkPermissionOnBotStation(user, BotStationPermission.BOT_STATION_CONFIGURE);
         Preconditions.checkNotNull(botTask.getBot());
         BotTask botTaskToCheck = getBotTask(user, botTask.getBot().getId(), botTask.getName());
         if (botTaskToCheck != null && !Objects.equal(botTaskToCheck.getId(), botTask.getId())) {
@@ -197,14 +197,21 @@ public class BotLogic extends CommonLogic {
     }
 
     public void removeBotTask(User user, Long id) throws AuthorizationException, BotTaskDoesNotExistException {
-        checkPermissionsOnBotStations(user, BotStationPermission.BOT_STATION_CONFIGURE);
+        checkPermissionOnBotStation(user, BotStationPermission.BOT_STATION_CONFIGURE);
         BotTask botTask = getBotTaskNotNull(user, id);
         botTaskDAO.delete(id);
         incrementBotStationVersion(botTask);
     }
 
-    private void checkPermissionsOnBotStations(User user, Permission permission) throws AuthorizationException {
+    private void checkPermissionOnBotStation(User user, Permission permission) throws AuthorizationException {
         checkPermissionAllowed(user, BotStation.INSTANCE, permission);
+    }
+
+    private void checkReadPermissionOnBotStations(User user) throws AuthorizationException {
+        // bot can read botstation
+        if (botDAO.get(user.getName()) == null) {
+            checkPermissionOnBotStation(user, Permission.READ);
+        }
     }
 
     private void incrementBotStationVersion(Object entity) {

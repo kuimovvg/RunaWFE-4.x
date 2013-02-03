@@ -153,7 +153,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
                     for (int i = 0; i < functionDef.getParams().size(); i++) {
                         String value = "";
                         if (substitutionCriteria != null) {
-                            value = SubstitutionHelper.injectParameter(substitutionCriteria.getConf(), i);
+                            value = SubstitutionHelper.injectParameter(substitutionCriteria.getConfiguration(), i);
                         }
                         ParamDef paramDef = functionDef.getParams().get(i);
                         table.addElement(createParameterTR(i, paramDef.getMessage(pageContext),

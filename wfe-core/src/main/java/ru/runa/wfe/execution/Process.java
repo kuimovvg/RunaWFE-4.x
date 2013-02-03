@@ -56,7 +56,7 @@ import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
-import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
@@ -71,7 +71,7 @@ import com.google.common.collect.Lists;
 @Entity
 @Table(name = "BPM_PROCESS")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Process implements Identifiable {
+public class Process extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 
     private Long id;
@@ -316,7 +316,7 @@ public class Process implements Identifiable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", id).add("definition", definition).toString();
+        return Objects.toStringHelper(this).add("definition", definition).add("id", id).toString();
     }
 
 }

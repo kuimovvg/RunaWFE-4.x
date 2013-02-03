@@ -58,6 +58,7 @@ import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.task.Task;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -338,7 +339,7 @@ public class Token implements Serializable {
 
     @Override
     public String toString() {
-        return "Token(" + name + ")";
+        return Objects.toStringHelper(this).add("process", getProcess()).add("name", name).toString();
     }
 
 }

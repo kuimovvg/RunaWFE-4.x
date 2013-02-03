@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public class Action extends GraphElement {
@@ -97,7 +98,7 @@ public class Action extends GraphElement {
 
     @Override
     public String toString() {
-        return event + ": " + delegation;
+        return Objects.toStringHelper(this).add("event", event).add("delegation", delegation).toString();
     }
 
 }

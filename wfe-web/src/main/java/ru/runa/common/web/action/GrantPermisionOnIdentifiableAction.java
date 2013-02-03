@@ -31,7 +31,6 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
 
 import com.google.common.collect.Lists;
@@ -42,21 +41,17 @@ import com.google.common.collect.Lists;
 abstract public class GrantPermisionOnIdentifiableAction extends IdentifiableAction {
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         IdsForm listExecutorsForm = (IdsForm) form;
         List<Long> selectedIds = Lists.newArrayList(listExecutorsForm.getIds());
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
             Identifiable identifiable = getIdentifiable(getLoggedUser(request), listExecutorsForm.getId(), errors);
-            if (identifiable != null) {
-                authorizationService.setPermissions(getLoggedUser(request), selectedIds, getIdentifiablePermissions(), identifiable);
-            }
+            authorizationService.setPermissions(getLoggedUser(request), selectedIds, getIdentifiablePermissions(), identifiable);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
-
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
             return getErrorForward(mapping, listExecutorsForm.getId());

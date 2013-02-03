@@ -288,7 +288,7 @@ public class Task implements Assignable {
 
     @Override
     public String toString() {
-        return getProcess() + ": " + name;
+        return Objects.toStringHelper(this).add("process", getProcess()).add("id", id).add("name", name).toString();
     }
 
 }
