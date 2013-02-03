@@ -213,7 +213,7 @@ public class HibernateCompilerParameters {
      * 
      * @return true, is query must check executors permission.
      */
-    public boolean isSequresQuery() {
+    public boolean isSequredQuery() {
         return executorIds != null;
     }
 

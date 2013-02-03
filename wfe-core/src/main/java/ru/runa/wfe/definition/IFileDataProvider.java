@@ -13,6 +13,7 @@ public interface IFileDataProvider {
     public static final String START_IMAGE_FILE_NAME = "start.png";
     public static final String FORM_CSS_FILE_NAME = "form.css";
     public static final String SUBSTITUTION_EXCEPTIONS_FILE_NAME = "substitutionExceptions.xml";
+    public static final String BOTS_XML_FILE = "bots.xml";
 
     byte[] getFileData(String fileName);
 

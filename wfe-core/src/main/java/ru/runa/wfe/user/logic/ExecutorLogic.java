@@ -147,7 +147,7 @@ public class ExecutorLogic extends CommonLogic {
 
     public void remove(Executor executor) throws ExecutorDoesNotExistException, AuthorizationException {
         if (permissionDAO.isPrivilegedExecutor(executor)) {
-            throw new AuthorizationException("Executor " + executor.getName() + " can not be removed");
+            throw new AuthorizationException(executor.getName() + " can not be removed");
         }
         if (executor instanceof Actor) {
             profileDAO.delete((Actor) executor);
@@ -296,7 +296,7 @@ public class ExecutorLogic extends CommonLogic {
             if (user.equals(actor)) {
                 checkPermissionAllowed(user, ASystem.INSTANCE, SystemPermission.CHANGE_SELF_PASSWORD);
             } else {
-                throw new AuthorizationException("Executor " + user + " hasn't permission to change password for actor " + actor.getFullName());
+                throw new AuthorizationException(user + " hasn't permission to change password for actor " + actor);
             }
         }
         executorDAO.setPassword(actor, password);

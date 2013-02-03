@@ -58,7 +58,7 @@ public class WfDefinition implements Identifiable {
     }
 
     public WfDefinition(ProcessDefinition definition) {
-        this(definition.getDBImpl());
+        this(definition.getDeployment());
         this.hasHtmlDescription = definition.getFileData(IFileDataProvider.INDEX_FILE_NAME) != null;
         this.hasStartImage = definition.getFileData(IFileDataProvider.START_IMAGE_FILE_NAME) != null;
         this.hasDisabledImage = definition.getFileData(IFileDataProvider.START_DISABLED_IMAGE_FILE_NAME) != null;

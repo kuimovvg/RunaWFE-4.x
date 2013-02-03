@@ -62,11 +62,11 @@ public class Action extends GraphElement {
     public void execute(ExecutionContext executionContext) throws Exception {
         ActionHandler actionHandler = delegation.getInstance();
         try {
-            log.info("ActionHandler started " + actionHandler);
+            log.info("Executing ActionHandler " + this); // TODO debug
             actionHandler.execute(executionContext);
-            log.info("ActionHandler finished " + actionHandler);
+            log.info("ActionHandler finished");
         } catch (Exception e) {
-            log.info("ActionHandler failed " + actionHandler);
+            log.error("ActionHandler failed " + this);
             throw e;
         }
     }
@@ -92,7 +92,7 @@ public class Action extends GraphElement {
     }
 
     public void setDelegation(Delegation instantiatableDelegate) {
-        this.delegation = instantiatableDelegate;
+        delegation = instantiatableDelegate;
     }
 
     @Override

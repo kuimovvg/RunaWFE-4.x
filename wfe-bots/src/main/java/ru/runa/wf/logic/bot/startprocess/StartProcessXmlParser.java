@@ -26,12 +26,6 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.collect.Lists;
 
-/**
- * Semantic is defined in process-start.xsd.
- * 
- * @author Dofs
- * 
- */
 public class StartProcessXmlParser {
     private static final String PROCESS_ELEMENT_NAME = "process";
     private static final String TITLE_ATTRIBUTE_NAME = "name";
@@ -46,7 +40,7 @@ public class StartProcessXmlParser {
      */
     public static List<StartProcessTask> parse(String configuration) {
         List<StartProcessTask> startProcessTasks = Lists.newArrayList();
-        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Document document = XmlUtils.parseWithXSDValidation(configuration, "process-start.xsd");
         List<Element> processElements = document.getRootElement().elements(PROCESS_ELEMENT_NAME);
         for (Element processElement : processElements) {
             String title = processElement.attributeValue(TITLE_ATTRIBUTE_NAME);

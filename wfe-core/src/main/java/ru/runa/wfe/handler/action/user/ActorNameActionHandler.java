@@ -20,19 +20,20 @@ package ru.runa.wfe.handler.action.user;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.handler.action.ParamBasedActionHandler;
+import ru.runa.wfe.handler.CommonParamBasedHandler;
+import ru.runa.wfe.handler.HandlerData;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
-public class ActorNameActionHandler extends ParamBasedActionHandler {
+public class ActorNameActionHandler extends CommonParamBasedHandler {
     @Autowired
     private ExecutorDAO executorDAO;
 
     @Override
-    protected void executeAction() throws Exception {
-        Long actorCode = getInputParam(Long.class, "actorCode", null);
-        String actorLogin = getInputParam(String.class, "actorLogin", null);
-        String format = getInputParam("format");
+    protected void executeAction(HandlerData handlerData) throws Exception {
+        Long actorCode = handlerData.getInputParam(Long.class, "actorCode", null);
+        String actorLogin = handlerData.getInputParam(String.class, "actorLogin", null);
+        String format = handlerData.getInputParam("format");
         Actor actor;
         if (actorCode != null) {
             actor = executorDAO.getActorByCode(actorCode);
@@ -53,6 +54,7 @@ public class ActorNameActionHandler extends ParamBasedActionHandler {
         } else {
             result = actor.getFullName();
         }
-        setOutputVariable("result", result);
+        handlerData.setOutputVariable("result", result);
     }
+
 }

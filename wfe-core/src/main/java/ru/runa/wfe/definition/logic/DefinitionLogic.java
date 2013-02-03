@@ -81,8 +81,8 @@ public class DefinitionLogic extends WFCommonLogic {
         } catch (DefinitionDoesNotExistException e) {
             // expected
         }
-        definition.getDBImpl().setCategories(processType);
-        deploymentDAO.deploy(definition.getDBImpl(), null);
+        definition.getDeployment().setCategories(processType);
+        deploymentDAO.deploy(definition.getDeployment(), null);
         Collection<Permission> allPermissions = new DefinitionPermission().getAllPermissions();
         permissionDAO.setPermissions(user.getActor(), allPermissions, definition);
         log.debug("Deployed process definition " + definition);
@@ -101,8 +101,8 @@ public class DefinitionLogic extends WFCommonLogic {
         if (!deployment.getName().equals(definition.getName())) {
             throw new DefinitionNameMismatchException("Expected definition name " + deployment.getName(), definition.getName(), deployment.getName());
         }
-        definition.getDBImpl().setCategories(processType);
-        deploymentDAO.deploy(definition.getDBImpl(), deployment);
+        definition.getDeployment().setCategories(processType);
+        deploymentDAO.deploy(definition.getDeployment(), deployment);
         for (Executor executor : permissionDAO.getExecutorsWithPermission(deployment)) {
             List<Permission> permissions = permissionDAO.getOwnPermissions(executor, deployment);
             permissionDAO.setPermissions(executor, permissions, definition);
@@ -253,7 +253,7 @@ public class DefinitionLogic extends WFCommonLogic {
             checkPermissionAllowed(user, definition, DefinitionPermission.READ);
         }
         if (ProcessArchive.PAR_FILE.equals(fileName)) {
-            return definition.getDBImpl().getContent();
+            return definition.getDeployment().getContent();
         }
         return definition.getFileData(fileName);
     }
