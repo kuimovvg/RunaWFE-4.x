@@ -119,7 +119,7 @@ public abstract class Job {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", id).add("name", name).add("dueDate", dueDate).add("process", process).toString();
+        return Objects.toStringHelper(this).add("id", id).add("name", name).add("dueDate", dueDate).add("process", getProcess()).toString();
     }
 
 }

@@ -23,6 +23,8 @@ package ru.runa.wfe.var;
 
 import java.io.Serializable;
 
+import com.google.common.base.Objects;
+
 public class VariableMapping implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -83,7 +85,7 @@ public class VariableMapping implements Serializable {
 
     @Override
     public String toString() {
-        return name + ":" + mappedName + ":" + usage;
+        return Objects.toStringHelper(this).add("usage", usage).add("name", getName()).add("mappedName", mappedName).toString();
     }
 
 }

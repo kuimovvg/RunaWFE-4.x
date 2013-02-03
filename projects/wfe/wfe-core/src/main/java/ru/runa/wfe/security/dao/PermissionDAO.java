@@ -44,7 +44,6 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -84,14 +83,23 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
      *            Executor for loading permissions.
      * @param identifiable
      *            Identifiable for loading permissions.
-     * @return Array of {@linkplain Permission} on secured object for Executor.
+     * @return Map of {Permission, Is permission can be modifiable}, not
+     *         <code>null</code>
      */
-    public List<Permission> getOwnPermissions(Executor executor, Identifiable identifiable) {
+    public Map<Permission, Boolean> getOwnPermissions(Executor executor, Identifiable identifiable) {
+        Map<Permission, Boolean> permissions = Maps.newHashMap();
         if (getPrivilegedExecutors(identifiable).contains(executor)) {
-            return identifiable.getSecuredObjectType().getAllPermissions();
+            for (Permission permission : identifiable.getSecuredObjectType().getAllPermissions()) {
+                permissions.put(permission, Boolean.FALSE);
+            }
+        } else {
+            List<PermissionMapping> permissionMappings = getOwnPermissionMappings(executor, identifiable);
+            Permission noPermission = identifiable.getSecuredObjectType().getNoPermission();
+            for (PermissionMapping pm : permissionMappings) {
+                permissions.put(noPermission.getPermission(pm.getMask()), Boolean.TRUE);
+            }
         }
-        Set<PermissionMapping> permissionMappingList = getOwnPermissionMappings(executor, identifiable);
-        return getPermissions(permissionMappingList, identifiable.getSecuredObjectType().getNoPermission());
+        return permissions;
     }
 
     /**
@@ -110,16 +118,16 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
             return;
         }
         checkArePermissionAllowed(identifiable, permissions);
-        Set<PermissionMapping> permissionMappingToRemoveSet = getOwnPermissionMappings(executor, identifiable);
+        List<PermissionMapping> permissionMappingToRemove = getOwnPermissionMappings(executor, identifiable);
         for (Permission permission : permissions) {
             PermissionMapping pm = new PermissionMapping(executor, identifiable, permission.getMask());
-            if (permissionMappingToRemoveSet.contains(pm)) {
-                permissionMappingToRemoveSet.remove(pm);
+            if (permissionMappingToRemove.contains(pm)) {
+                permissionMappingToRemove.remove(pm);
             } else {
                 getHibernateTemplate().save(pm);
             }
         }
-        getHibernateTemplate().deleteAll(permissionMappingToRemoveSet);
+        getHibernateTemplate().deleteAll(permissionMappingToRemove);
     }
 
     /**
@@ -146,7 +154,7 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
             @Override
             public List<PermissionMapping> doInHibernate(Session session) throws HibernateException, SQLException {
                 Query query = session.createQuery("from PermissionMapping where identifiableId=? and type=? and mask=? and executor in (:executors)");
-                query.setParameter(0, identifiable.getId());
+                query.setParameter(0, identifiable.getIdentifiableId());
                 query.setParameter(1, identifiable.getSecuredObjectType());
                 query.setParameter(2, permission.getMask());
                 query.setParameterList("executors", executorWithGroups);
@@ -188,7 +196,7 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
             int end = (i + 1) * 1000 > identifiables.size() ? identifiables.size() : (i + 1) * 1000;
             final List<Long> identifiableIds = new ArrayList<Long>(end - start);
             for (int j = start; j < end; j++) {
-                identifiableIds.add(identifiables.get(j).getId());
+                identifiableIds.add(identifiables.get(j).getIdentifiableId());
             }
             if (identifiableIds.isEmpty()) {
                 break;
@@ -214,7 +222,7 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
         }
         boolean[] result = new boolean[identifiables.size()];
         for (int i = 0; i < identifiables.size(); i++) {
-            result[i] = allowedIdentifiableIdsSet.contains(identifiables.get(i).getId());
+            result[i] = allowedIdentifiableIdsSet.contains(identifiables.get(i).getIdentifiableId());
         }
         return result;
     }
@@ -248,29 +256,9 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
      *            Secured object, which permissions is loading.
      * @return Loaded permissions.
      */
-    private Set<PermissionMapping> getOwnPermissionMappings(Executor executor, Identifiable identifiable) {
-        List<PermissionMapping> list = getHibernateTemplate().find("from PermissionMapping where identifiableId=? and type=? and executor=?",
-                identifiable.getId(), identifiable.getSecuredObjectType(), executor);
-        return Sets.newHashSet(list);
-    }
-
-    /**
-     * Converts collection of {@linkplain PermissionMapping} into
-     * {@linkplain Permission} array.
-     * 
-     * @param permissionMappings
-     *            Converted collection of {@linkplain PermissionMapping}.
-     * @param permission
-     *            Template permission to transform
-     *            {@linkplain PermissionMapping} into {@linkplain Permission}.
-     * @return {@linkplain Permission} array.
-     */
-    private List<Permission> getPermissions(Collection<PermissionMapping> permissionMappings, Permission permission) {
-        List<Permission> permissions = Lists.newArrayList();
-        for (PermissionMapping pm : permissionMappings) {
-            permissions.add(permission.getPermission(pm.getMask()));
-        }
-        return permissions;
+    private List<PermissionMapping> getOwnPermissionMappings(Executor executor, Identifiable identifiable) {
+        return getHibernateTemplate().find("from PermissionMapping where identifiableId=? and type=? and executor=?",
+                identifiable.getIdentifiableId(), identifiable.getSecuredObjectType(), executor);
     }
 
     private Set<Executor> getExecutorWithAllHisGroups(Executor executor) {
@@ -301,7 +289,7 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
      */
     public Set<Executor> getExecutorsWithPermission(Identifiable identifiable) {
         List<Executor> list = getHibernateTemplate().find(
-                "select distinct(pm.executor) from PermissionMapping pm where pm.identifiableId=? and pm.type=?", identifiable.getId(),
+                "select distinct(pm.executor) from PermissionMapping pm where pm.identifiableId=? and pm.type=?", identifiable.getIdentifiableId(),
                 identifiable.getSecuredObjectType());
         Set<Executor> result = Sets.newHashSet(list);
         result.addAll(getPrivilegedExecutors(identifiable));

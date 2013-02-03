@@ -76,9 +76,13 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
         processDefinition = this;
     }
 
-    @Override
     public Long getId() {
         return deployment.getId();
+    }
+
+    @Override
+    public Long getIdentifiableId() {
+        return new Long(getName().hashCode());
     }
 
     @Override

@@ -26,6 +26,8 @@ import java.io.Serializable;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.handler.Configurable;
 
+import com.google.common.base.Objects;
+
 public class Delegation implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -56,7 +58,7 @@ public class Delegation implements Serializable {
 
     @Override
     public String toString() {
-        return className + "(" + configuration + ")";
+        return Objects.toStringHelper(this).add("class", className).add("configuration", configuration).toString();
     }
 
 }

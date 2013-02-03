@@ -19,6 +19,7 @@ package ru.runa.service.delegate;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -75,7 +76,7 @@ public class AuthorizationServiceDelegate extends EJB3Delegate implements Author
     }
 
     @Override
-    public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
+    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
             AuthorizationException, AuthenticationException {
         return getAuthorizationService().getOwnPermissions(user, performer, identifiable);
     }

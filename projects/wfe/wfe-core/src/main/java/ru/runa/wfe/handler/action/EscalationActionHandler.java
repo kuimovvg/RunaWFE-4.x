@@ -85,7 +85,7 @@ public class EscalationActionHandler implements ActionHandler {
                 if (swimlaneGroup instanceof EscalationGroup) {
                     EscalationGroup escalationGroup = (EscalationGroup) swimlaneGroup;
                     originalExecutor = escalationGroup.getOriginalExecutor();
-                    previousEscalationLevel = escalationGroup.getEscalationLevel();
+                    previousEscalationLevel = escalationGroup.getLevel();
                 } else {
                     originalExecutor = swimlaneGroup;
                 }

@@ -45,14 +45,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.security.ASystem;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
-import ru.runa.wfe.security.UnapplicablePermissionException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorNotInGroupException;
@@ -214,7 +210,7 @@ public class LDAPImporter implements LoginHandler {
 
     private void importExecutors(List<? extends Executor> executorList) {
         List<Executor> existExecutorList = new ArrayList<Executor>();
-        List<Executor> executorToImportList = new ArrayList<Executor>();
+        Group ldapUsersGroup = getLDAPUsersGroup();
         for (Executor executor : executorList) {
             if (executorLogic.isExecutorExist(user, executor.getName())) {
                 executor = executorLogic.getExecutor(user, executor.getName());
@@ -222,13 +218,11 @@ public class LDAPImporter implements LoginHandler {
                 existExecutorList.add(executor);
             } else {
                 log.info("Importing " + executor.getName());
-                executorToImportList.add(executor);
                 executorLogic.create(user, executor);
+                executorLogic.addExecutorsToGroup(user, Lists.newArrayList(executor), ldapUsersGroup);
+                authorizationLogic.setPermissions(user, ldapUsersGroup, Lists.newArrayList(Permission.READ), executor);
             }
         }
-        Group ldapUsersGroup = getLDAPUsersGroup();
-        executorLogic.addExecutorsToGroup(user, executorToImportList, ldapUsersGroup);
-        authorizationLogic.setPermissions(user, ldapUsersGroup, Lists.newArrayList(Permission.READ), executorToImportList);
     }
 
     private String getUserAttribute(String userId, String attributeName) throws NamingException {
@@ -341,8 +335,7 @@ public class LDAPImporter implements LoginHandler {
         }
     }
 
-    private Group getLDAPUsersGroup() throws ExecutorAlreadyExistsException, AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException, UnapplicablePermissionException {
+    private Group getLDAPUsersGroup() {
         Group ldapUsersGroup = new Group(IMPORTED_FROM_LDAP_GROUP_NAME, IMPORTED_FROM_LDAP_GROUP_DESCRIPION);
         if (!executorLogic.isExecutorExist(user, ldapUsersGroup.getName())) {
             ldapUsersGroup = executorLogic.create(user, ldapUsersGroup);

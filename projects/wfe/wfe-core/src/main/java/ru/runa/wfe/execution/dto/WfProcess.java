@@ -24,8 +24,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 import ru.runa.wfe.execution.Process;
-import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.security.SecuredObjectType;
+
+import com.google.common.base.Objects;
 
 /**
  * Created on 02.11.2004
@@ -33,7 +35,7 @@ import ru.runa.wfe.security.SecuredObjectType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WfProcess", namespace = "http://runa.ru/workflow/webservices")
-public class WfProcess implements Identifiable {
+public class WfProcess extends IdentifiableBase {
     private static final long serialVersionUID = 4862220986262286596L;
     public static final String SELECTED_TRANSITION_KEY = "_SELECTED_TRANSITION_";
 
@@ -49,13 +51,13 @@ public class WfProcess implements Identifiable {
     }
 
     public WfProcess(Process process) {
-        this.id = process.getId();
-        this.name = process.getDefinition().getName();
-        this.processDefinitionId = process.getDefinition().getId();
-        this.version = process.getDefinition().getVersion().intValue();
-        this.startDate = process.getStartDate();
-        this.endDate = process.getEndDate();
-        this.hierarchySubProcess = process.getHierarchySubProcess();
+        id = process.getId();
+        name = process.getDefinition().getName();
+        processDefinitionId = process.getDefinition().getId();
+        version = process.getDefinition().getVersion().intValue();
+        startDate = process.getStartDate();
+        endDate = process.getEndDate();
+        hierarchySubProcess = process.getHierarchySubProcess();
     }
 
     @Override
@@ -93,7 +95,7 @@ public class WfProcess implements Identifiable {
 
     @Override
     public String toString() {
-        return name + ": " + id;
+        return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
     }
 
     public Long getProcessDefinitionId() {

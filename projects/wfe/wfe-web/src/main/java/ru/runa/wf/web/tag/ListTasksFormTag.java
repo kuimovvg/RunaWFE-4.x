@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.web.tag;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -38,13 +37,10 @@ import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.action.ProcessTaskAssignmentAction;
 import ru.runa.wf.web.html.AssignTaskCheckboxTDBuilder;
 import ru.runa.wf.web.html.TaskUrlStrategy;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 
@@ -65,26 +61,14 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        ExecutionService executionService = Delegates.getExecutionService();
         BatchPresentation batchPresentation = getBatchPresentation();
-        boolean isTaskTableBuild = false;
-        while (!isTaskTableBuild) {
-            try {
-                List<WfTask> tasks = executionService.getTasks(getUser(), batchPresentation);
-                Table table = buildTasksTable(pageContext, batchPresentation, tasks, getReturnAction(), false);
+        List<WfTask> tasks = Delegates.getExecutionService().getTasks(getUser(), batchPresentation);
+        Table table = buildTasksTable(pageContext, batchPresentation, tasks, getReturnAction(), false);
 
-                PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, tasks.size());
-                navigation.addPagingNavigationTable(tdFormElement);
-                tdFormElement.addElement(table);
-                navigation.addPagingNavigationTable(tdFormElement);
-
-                isTaskTableBuild = true;
-            } catch (InternalApplicationException e) {
-                if (e.getCause() == null || !(e.getCause() instanceof TaskDoesNotExistException || e.getCause() instanceof SQLException)) {
-                    throw e;
-                }
-            }
-        }
+        PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, tasks.size());
+        navigation.addPagingNavigationTable(tdFormElement);
+        tdFormElement.addElement(table);
+        navigation.addPagingNavigationTable(tdFormElement);
     }
 
     public static Table buildTasksTable(PageContext pageContext, BatchPresentation batchPresentation, List<WfTask> tasks, String returnAction,

@@ -21,17 +21,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.WebResources;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.UpdatePermissionOnIdentifiableAction;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.User;
 
 /**
@@ -44,35 +39,18 @@ import ru.runa.wfe.user.User;
  *                        redirect = "true"
  * @struts.action-forward name="failure" path="/manage_executor_permissions.do"
  *                        redirect = "true"
- * @struts.action-forward name="failure_executor_does_not_exist"
- *                        path="/manage_executors.do" redirect = "true"
  */
 public class UpdatePermissionsOnExecutorAction extends UpdatePermissionOnIdentifiableAction {
-
     public static final String ACTION_PATH = "/updatePermissionsOnExecutor";
 
-    private boolean executorExists;
-
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) throws AuthorizationException,
-            AuthenticationException {
-        executorExists = false;
-        Identifiable result = null;
-        try {
-            result = Delegates.getExecutorService().getExecutor(user, identifiableId);
-            executorExists = true;
-        } catch (ExecutorDoesNotExistException e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        return result;
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+        return Delegates.getExecutorService().getExecutor(user, identifiableId);
     }
 
     @Override
     public ActionForward getErrorForward(ActionMapping mapping, Long identifiableId) {
-        if (executorExists) {
-            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, identifiableId);
-        }
-        return mapping.findForward(WebResources.FORWARD_FAILURE_EXECUTOR_DOES_NOT_EXIST);
+        return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, identifiableId);
     }
 
     @Override

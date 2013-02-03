@@ -82,13 +82,17 @@ public class BotTaskConfigurationUtils {
         if (configElement == null) {
             return extendedConfiguration;
         }
-        Element paramConfigElement = document.getRootElement().element(PARAMETERS_PARAM);
-        ParamsDef botTaskParamsDef = ParamsDef.parse(paramConfigElement);
+        Element parametersElement = document.getRootElement().element(PARAMETERS_PARAM);
+        ParamsDef botTaskParamsDef = ParamsDef.parse(parametersElement.element("config"));
         ParamsDef taskParamsDef = ParamsDef.parse(configElement);
-        Element configurationElement = document.getRootElement().element(BOTCONFIG_PARAM);
-        String substituted = XmlUtils.toString(configurationElement);
+        String substituted = document.getRootElement().element(BOTCONFIG_PARAM).getTextTrim();
         for (ParamDef botTaskParamDef : botTaskParamsDef.getInputParams().values()) {
             ParamDef taskParamDef = taskParamsDef.getInputParamNotNull(botTaskParamDef.getName());
+            String replacement = getReplacement(taskParamDef);
+            substituted = substituted.replaceAll("\"" + taskParamDef.getName() + "\"", "\"" + replacement + "\"");
+        }
+        for (ParamDef botTaskParamDef : botTaskParamsDef.getOutputParams().values()) {
+            ParamDef taskParamDef = taskParamsDef.getOutputParamNotNull(botTaskParamDef.getName());
             String replacement = getReplacement(taskParamDef);
             substituted = substituted.replaceAll("\"" + taskParamDef.getName() + "\"", "\"" + replacement + "\"");
         }

@@ -34,7 +34,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
-import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.security.AuthenticationException;
 
 /**
@@ -58,23 +57,16 @@ public class CancelProcessAction extends ActionBase {
             throws AuthenticationException {
         ActionMessages errors = new ActionMessages();
         IdForm form = (IdForm) actionForm;
-        boolean processExists = true;
         try {
             ExecutionService executionService = Delegates.getExecutionService();
             executionService.cancelProcess(getLoggedUser(request), form.getId());
-        } catch (ProcessDoesNotExistException e) {
-            ActionExceptionHelper.addException(errors, e);
-            processExists = false;
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
 
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
-            if (processExists) {
-                return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, form.getId());
-            }
-            return mapping.findForward(ru.runa.common.WebResources.FORWARD_FAILURE_PROCESS_DOES_NOT_EXIST);
+            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, form.getId());
         } else {
             ActionMessages messages = new ActionMessages();
             messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.PROCESS_CANCELED));

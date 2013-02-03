@@ -77,7 +77,7 @@ public abstract class VisibleTag extends TagSupport {
                 // is logged only for Web layer errors.
                 log.debug("", th);
                 try {
-                    writer.write("<span class=\"error\">" + ActionExceptionHelper.getErrorMessage(th.getCause(), pageContext) + "</span>");
+                    writer.write("<span class=\"error\">" + ActionExceptionHelper.getErrorMessage(th, pageContext) + "</span>");
                 } catch (IOException e1) {
                 }
             }
@@ -105,7 +105,7 @@ public abstract class VisibleTag extends TagSupport {
                 // is logged only for Web layer errors.
                 log.debug("", th);
                 try {
-                    writer.write("<span class=\"error\">" + ActionExceptionHelper.getErrorMessage(th.getCause(), pageContext) + "</span>");
+                    writer.write("<span class=\"error\">" + ActionExceptionHelper.getErrorMessage(th, pageContext) + "</span>");
                 } catch (IOException e) {
                 }
             }

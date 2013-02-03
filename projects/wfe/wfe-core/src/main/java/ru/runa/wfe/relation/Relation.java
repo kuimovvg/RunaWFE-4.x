@@ -29,7 +29,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.security.SecuredObjectType;
 
 import com.google.common.base.Objects;
@@ -41,7 +41,7 @@ import com.google.common.base.Objects;
 @Entity
 @Table(name = "EXECUTOR_RELATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Relation implements Identifiable {
+public class Relation extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 
     /**

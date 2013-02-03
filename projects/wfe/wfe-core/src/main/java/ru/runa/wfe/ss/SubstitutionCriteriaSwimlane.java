@@ -41,12 +41,12 @@ public class SubstitutionCriteriaSwimlane extends SubstitutionCriteria {
         }
         String taskSwimlaneName = task.getSwimlane().getName();
         String expectedSwimlaneName = processDefinitionName + "." + taskSwimlaneName;
-        return expectedSwimlaneName.equals(getConf());
+        return expectedSwimlaneName.equals(getConfiguration());
     }
 
     @Override
     public boolean validate() {
-        return !(getConf() == null || getConf().isEmpty());
+        return !(getConfiguration() == null || getConfiguration().isEmpty());
     }
 
 }

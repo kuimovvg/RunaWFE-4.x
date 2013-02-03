@@ -44,6 +44,8 @@ import org.hibernate.annotations.PolymorphismType;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.OracleCommons;
 
+import com.google.common.base.Objects;
+
 /**
  * Created on 27.01.2006
  * 
@@ -171,6 +173,6 @@ public class Substitution implements Cloneable, Serializable {
 
     @Override
     public String toString() {
-        return orgFunction;
+        return Objects.toStringHelper(this).add("id", id).add("orgFunction", orgFunction).add("criteria", getCriteria()).toString();
     }
 }

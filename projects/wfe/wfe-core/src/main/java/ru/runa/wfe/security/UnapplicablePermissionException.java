@@ -24,7 +24,8 @@ import ru.runa.wfe.InternalApplicationException;
 import com.google.common.collect.Lists;
 
 /**
- * Signals that {@link java.security.Permission}s are not applicable on selected type of {@link SecuredObject}. Created on 10.08.2004
+ * Signals that {@link java.security.Permission}s are not applicable on selected
+ * type of {@link SecuredObject}. Created on 10.08.2004
  * 
  */
 public class UnapplicablePermissionException extends InternalApplicationException {
@@ -32,8 +33,7 @@ public class UnapplicablePermissionException extends InternalApplicationExceptio
     private final Collection<Permission> permissions;
 
     public UnapplicablePermissionException(Identifiable identifiable, Collection<Permission> permissions) {
-        super("Permissions " + permissions + " are not applicable for object type " + identifiable.getSecuredObjectType() + " with id "
-                + identifiable.getId());
+        super(permissions + " are not applicable for " + identifiable);
         this.permissions = Lists.newArrayList(permissions);
     }
 

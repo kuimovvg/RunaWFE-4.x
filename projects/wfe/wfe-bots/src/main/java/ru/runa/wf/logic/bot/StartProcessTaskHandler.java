@@ -100,16 +100,16 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
                 List<Executor> executors = authorizationService.getExecutorsWithPermission(user, parentProcess, batchPresentation, true);
                 for (Executor executor : executors) {
                     Set<Permission> permissions = new HashSet<Permission>();
-                    for (Permission permission : authorizationService.getOwnPermissions(user, executor, parentProcess)) {
+                    for (Permission permission : authorizationService.getOwnPermissions(user, executor, parentProcess).keySet()) {
                         permissions.add(permission);
                     }
-                    for (Permission permission : authorizationService.getOwnPermissions(user, executor, process)) {
+                    for (Permission permission : authorizationService.getOwnPermissions(user, executor, process).keySet()) {
                         permissions.add(permission);
                     }
                     authorizationService.setPermissions(user, executor, permissions, process);
                 }
-            } catch (Throwable e) {
-                log.error("Error in permission copy to new subprocess (step is ignored).", e);
+            } catch (Throwable th) {
+                log.error("Error in permission copy to new subprocess (step is ignored).", th);
             }
         }
         return outputVariables;

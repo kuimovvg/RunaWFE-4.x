@@ -20,20 +20,23 @@ package ru.runa.wfe.security;
 import java.io.Serializable;
 
 /**
- * Interface for all identifiable components, which can be secured using permission.
+ * Interface for all identifiable components, which can be secured using
+ * permission.
  */
 public interface Identifiable extends Serializable {
     /**
-     * Return identity for current object. Object with same id and type has same permissions, even if object is not equals. Object with same type but different id has different
-     * permissions.
+     * Return identity for current object. Object with same id and type has same
+     * permissions, even if object is not equals. Object with same type but
+     * different id has different permissions.
      * 
      * @return Object identity
      */
-    public Long getId();
+    public Long getIdentifiableId();
 
     /**
-     * Returns object type identity. Object with same id and type has same permissions, even if object is not equals. Object with same id but different type has different
-     * permissions.
+     * Returns object type identity. Object with same id and type has same
+     * permissions, even if object is not equals. Object with same id but
+     * different type has different permissions.
      * 
      * @return Object type identity.
      */

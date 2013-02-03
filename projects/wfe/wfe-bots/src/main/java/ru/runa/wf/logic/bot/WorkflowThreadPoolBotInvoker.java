@@ -37,6 +37,7 @@ import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.invoker.BotInvoker;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
@@ -136,21 +137,23 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                 User botStationUser = Delegates.getAuthenticationService().authenticateByLoginPassword(username, password);
                 List<Bot> bots = Delegates.getBotService().getBots(botStationUser, botStation.getId());
                 for (Bot bot : bots) {
-                    log.info("Configuring " + bot.getUsername());
-                    User user = Delegates.getAuthenticationService().authenticateByLoginPassword(bot.getUsername(), bot.getPassword());
-                    List<BotTask> tasks = Delegates.getBotService().getBotTasks(user, bot.getId());
                     try {
+                        log.info("Configuring " + bot.getUsername());
+                        User user = Delegates.getAuthenticationService().authenticateByLoginPassword(bot.getUsername(), bot.getPassword());
+                        List<BotTask> tasks = Delegates.getBotService().getBotTasks(user, bot.getId());
                         botTemplates.add(new WorkflowBot(user, bot, tasks));
-                    } catch (AuthenticationException e) {
-                        log.error("Bot " + bot.getUsername() + " has incorrect password.");
+                        ProcessExecutionErrors.removeBotTaskConfigurationError(bot.getUsername(), "*");
+                    } catch (Exception e) {
+                        log.error("Unable to configure bot " + bot);
+                        ProcessExecutionErrors.addBotTaskConfigurationError(bot.getUsername(), "*", e);
                     }
                 }
                 configurationVersion = botStation.getVersion();
             } else {
                 log.debug("bots configuration is up to date, version = " + botStation.getVersion());
             }
-        } catch (Throwable e) {
-            log.error("Botstation configuration error. ", e);
+        } catch (Throwable th) {
+            log.error("Botstation configuration error. ", th);
         }
     }
 

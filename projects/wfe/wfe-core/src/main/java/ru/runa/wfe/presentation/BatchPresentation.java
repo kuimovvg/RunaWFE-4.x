@@ -418,6 +418,11 @@ public final class BatchPresentation implements Cloneable, Serializable {
         return Objects.equal(getName(), presentation.getName()) && Objects.equal(getCategory(), presentation.getCategory());
     }
 
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("category", category).add("name", name).toString();
+    }
+
     public boolean strongEquals(Object obj) {
         if (obj == null) {
             return false;

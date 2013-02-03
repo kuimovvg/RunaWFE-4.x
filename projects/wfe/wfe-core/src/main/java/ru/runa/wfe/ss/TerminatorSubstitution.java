@@ -29,8 +29,4 @@ import javax.persistence.Entity;
 public class TerminatorSubstitution extends Substitution {
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + ": " + (getCriteria() != null ? getCriteria().getName() : "always");
-    }
 }
