@@ -38,6 +38,8 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
 
+import com.google.common.base.Objects;
+
 /**
  * Criterion for applying substitution rule.
  */
@@ -50,7 +52,7 @@ public class SubstitutionCriteria implements Serializable {
 
     private Long id;
     private String name;
-    private String conf;
+    private String configuration;
 
     public SubstitutionCriteria() {
     }
@@ -77,17 +79,17 @@ public class SubstitutionCriteria implements Serializable {
     }
 
     @Column(name = "CONF")
-    public String getConf() {
-        return conf;
+    public String getConfiguration() {
+        return configuration;
     }
 
-    public void setConf(String conf) {
-        this.conf = OracleCommons.fixNullString(conf);
+    public void setConfiguration(String conf) {
+        configuration = OracleCommons.fixNullString(conf);
     }
 
     @Override
     public String toString() {
-        return name + ", " + (conf != null ? conf : "");
+        return Objects.toStringHelper(this).add("id", id).add("name", name).add("configuration", configuration).toString();
     }
 
     public boolean isSatisfied(ExecutionContext executionContext, Task task, Actor asActor, Actor substitutorActor) {

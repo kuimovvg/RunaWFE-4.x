@@ -58,7 +58,7 @@ public class UpdateSubstitutionCriteriaAction extends ActionBase {
             SubstitutionCriteria substitutionCriteria;
             if (form.getId() == 0) {
                 substitutionCriteria = ClassLoaderUtil.instantiate(form.getType());
-                substitutionCriteria.setConf(form.getConf());
+                substitutionCriteria.setConfiguration(form.getConf());
             } else {
                 substitutionCriteria = substitutionService.getSubstitutionCriteria(getLoggedUser(request), form.getId());
             }

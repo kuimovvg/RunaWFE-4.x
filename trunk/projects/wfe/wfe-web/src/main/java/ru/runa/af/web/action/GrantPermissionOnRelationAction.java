@@ -39,7 +39,6 @@ import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.User;
@@ -68,8 +67,7 @@ public class GrantPermissionOnRelationAction extends IdentifiableAction {
     }
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         RelationIdsForm relationForm = (RelationIdsForm) form;
         List<Long> selectedIds = Lists.newArrayList(relationForm.getIds());

@@ -25,7 +25,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.WebResources;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
@@ -34,7 +33,6 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
 import com.google.common.collect.Lists;
 
@@ -58,23 +56,15 @@ public class AddExecutorToGroupsAction extends ActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = new ActionMessages();
         IdsForm groupsForm = (IdsForm) form;
-        boolean executorExists = true;
         try {
             ExecutorService executorService = Delegates.getExecutorService();
             executorService.addExecutorToGroups(getLoggedUser(request), groupsForm.getId(), Lists.newArrayList(groupsForm.getIds()));
-        } catch (ExecutorDoesNotExistException e) {
-            ActionExceptionHelper.addException(errors, e);
-            executorExists = false;
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
-
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
-            if (executorExists) {
-                return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, groupsForm.getId());
-            }
-            return mapping.findForward(WebResources.FORWARD_FAILURE_EXECUTOR_DOES_NOT_EXIST);
+            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, groupsForm.getId());
         }
         return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), IdForm.ID_INPUT_NAME, groupsForm.getId());
     }

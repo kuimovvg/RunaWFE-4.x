@@ -52,6 +52,8 @@ import ru.runa.wfe.audit.VariableUpdateLog;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 
+import com.google.common.base.Objects;
+
 /**
  * Base class for classes that store variable values in the database.
  */
@@ -190,15 +192,12 @@ public abstract class Variable<T extends Object> {
     }
 
     public String toString(Object value) {
-        if (value == null) {
-            return null;
-        }
-        return value.toString();
+        return String.valueOf(value);
     }
 
     @Override
     public String toString() {
-        return toString(getValue());
+        return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).add("value", toString(getValue())).toString();
     }
 
 }

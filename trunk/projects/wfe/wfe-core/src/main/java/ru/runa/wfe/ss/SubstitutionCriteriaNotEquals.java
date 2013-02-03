@@ -45,7 +45,7 @@ public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
 
     @Override
     public boolean isSatisfied(ExecutionContext executionContext, Task task, Actor asActor, Actor substitutorActor) {
-        String variableName = getConf();
+        String variableName = getConfiguration();
         Executor executor;
         ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
         if (variableName.startsWith(SWIMLANE_PREFIX)) {
@@ -73,7 +73,7 @@ public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
 
     @Override
     public boolean validate() {
-        return !(getConf() == null || getConf().isEmpty());
+        return !(getConfiguration() == null || getConfiguration().isEmpty());
     }
 
 }

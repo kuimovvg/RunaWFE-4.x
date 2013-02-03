@@ -33,6 +33,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ActionLog;
 import ru.runa.wfe.execution.ExecutionContext;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
@@ -171,7 +172,7 @@ public abstract class GraphElement implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("[%s] [%s] [%s]", getClass().getSimpleName(), getNodeId(), getName());
+        return Objects.toStringHelper(this).add("id", getNodeId()).add("name", getName()).toString();
     }
 
 }

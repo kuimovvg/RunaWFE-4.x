@@ -50,6 +50,16 @@ public class BotDAO extends GenericDAO<Bot> {
     }
 
     /**
+     * Load {@linkplain Bot} from database by userName (botstation is not
+     * specified so there can be more that 1 bot).
+     * 
+     * @return loaded {@linkplain Bot} or <code>null</code> if no bot found
+     */
+    public Bot get(String username) {
+        return findFirstOrNull("from Bot where username=?", username);
+    }
+
+    /**
      * Load {@linkplain Bot} from database by bot station and userName.
      * 
      * @return loaded {@linkplain Bot}

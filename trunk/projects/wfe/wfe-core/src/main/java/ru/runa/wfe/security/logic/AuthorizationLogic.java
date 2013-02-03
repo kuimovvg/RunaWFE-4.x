@@ -19,20 +19,18 @@ package ru.runa.wfe.security.logic;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.commons.logic.PresentationCompilerHelper;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 
 /**
  * Created on 14.03.2005
@@ -53,48 +51,37 @@ public class AuthorizationLogic extends CommonLogic {
         return permissionDAO.isAllowed(user, permission, identifiables);
     }
 
-    public Collection<Permission> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
+    /**
+     * @return Map of {Permission, Is permission can be modifiable}, not
+     *         <code>null</code>
+     */
+    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
         checkPermissionsOnExecutor(user, performer, Permission.READ);
         checkPermissionAllowed(user, identifiable, Permission.READ);
         return permissionDAO.getOwnPermissions(performer, identifiable);
     }
 
-    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable) {
-        setPermissionOnIdentifiable(user, performer, permissions, identifiable);
-    }
-
     public void setPermissions(User user, List<Long> executorIds, Collection<Permission> permissions, Identifiable identifiable) {
         List<Executor> executors = executorDAO.getExecutors(executorIds);
-        checkIsChangingPermissionForPrivilegedExecutors(executors, identifiable, permissions);
         checkPermissionsOnExecutors(user, executors, Permission.READ);
-        checkPermissionAllowed(user, identifiable, Permission.UPDATE_PERMISSIONS);
         for (Executor executor : executors) {
-            permissionDAO.setPermissions(executor, permissions, identifiable);
+            setPermissions(user, executor, permissions, identifiable);
         }
     }
 
     public void setPermissions(User user, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable) {
         List<Executor> executors = executorDAO.getExecutors(executorIds);
-        checkIsChangingPermissionForPrivilegedExecutors(executors, identifiable, permissions);
-        checkPermissionAllowed(user, identifiable, Permission.UPDATE_PERMISSIONS);
         Preconditions.checkArgument(executors.size() == permissions.size(), "arrays length differs");
+        checkPermissionsOnExecutors(user, executors, Permission.READ);
         for (int i = 0; i < executors.size(); i++) {
-            permissionDAO.setPermissions(executors.get(i), permissions.get(i), identifiable);
+            setPermissions(user, executors.get(i), permissions.get(i), identifiable);
         }
     }
 
-    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, List<? extends Identifiable> identifiables) {
-        for (Identifiable identifiable : identifiables) {
-            performer = setPermissionOnIdentifiable(user, performer, permissions, identifiable);
-        }
-    }
-
-    private Executor setPermissionOnIdentifiable(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable) {
-        checkIsChangingPermissionForPrivilegedExecutors(performer, identifiable, permissions);
-        checkPermissionsOnExecutor(user, performer, Permission.READ);
+    public void setPermissions(User user, Executor executor, Collection<Permission> permissions, Identifiable identifiable) {
+        checkPermissionsOnExecutor(user, executor, Permission.READ);
         checkPermissionAllowed(user, identifiable, Permission.UPDATE_PERMISSIONS);
-        permissionDAO.setPermissions(performer, permissions, identifiable);
-        return performer;
+        permissionDAO.setPermissions(executor, permissions, identifiable);
     }
 
     /**
@@ -121,7 +108,7 @@ public class AuthorizationLogic extends CommonLogic {
                 batchPresentation, hasPermission);
         if (hasPermission) {
             List<Executor> executors = compiler.getBatch();
-            executors.addAll(0, permissionDAO.getPrivilegedExecutors(identifiable));
+            executors.addAll(0, filterIdentifiable(user, permissionDAO.getPrivilegedExecutors(identifiable), Permission.READ));
             return executors;
         } else {
             return compiler.getBatch();
@@ -153,31 +140,4 @@ public class AuthorizationLogic extends CommonLogic {
         return compiler.getCount();
     }
 
-    private void checkIsChangingPermissionForPrivilegedExecutors(List<Executor> executors, Identifiable identifiable,
-            List<Collection<Permission>> permissions) {
-        for (int i = 0; i < executors.size(); i++) {
-            checkIsChangingPermissionForPrivilegedExecutors(executors.get(i), identifiable, permissions.get(i));
-        }
-    }
-
-    private void checkIsChangingPermissionForPrivilegedExecutors(List<Executor> executors, Identifiable identifiable,
-            Collection<Permission> permissions) {
-        for (Executor executor : executors) {
-            checkIsChangingPermissionForPrivilegedExecutors(executor, identifiable, permissions);
-        }
-    }
-
-    private void checkIsChangingPermissionForPrivilegedExecutors(Executor executor, Identifiable identifiable, Collection<Permission> permissions) {
-        if (permissionDAO.isPrivilegedExecutor(executor, identifiable)) {
-            checkIsPermissionChanged(executor, identifiable, permissions);
-        }
-    }
-
-    private void checkIsPermissionChanged(Executor executor, Identifiable identifiable, Collection<Permission> permissions) {
-        Set<Permission> currentPermissions = Sets.newHashSet(permissionDAO.getOwnPermissions(executor, identifiable));
-        Set<Permission> newPermissions = Sets.newHashSet(permissions);
-        if (!currentPermissions.equals(newPermissions)) {
-            throw new AuthorizationException("Can not change permissions on priveleged executor " + executor);
-        }
-    }
 }

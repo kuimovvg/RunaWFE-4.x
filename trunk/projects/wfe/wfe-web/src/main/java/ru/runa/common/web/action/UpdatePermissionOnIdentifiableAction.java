@@ -17,7 +17,6 @@
  */
 package ru.runa.common.web.action;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,11 +30,9 @@ import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.UpdatePermissionsOnIdentifiableForm;
 import ru.runa.common.web.ActionExceptionHelper;
-import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
@@ -46,47 +43,41 @@ import com.google.common.collect.Lists;
 abstract public class UpdatePermissionOnIdentifiableAction extends IdentifiableAction {
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
-        UpdatePermissionsOnIdentifiableForm permissionsForm = (UpdatePermissionsOnIdentifiableForm) form;
+        UpdatePermissionsOnIdentifiableForm form = (UpdatePermissionsOnIdentifiableForm) actionForm;
         try {
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Identifiable identifiable = getIdentifiable(getLoggedUser(request), permissionsForm.getId(), errors);
-            if (identifiable != null) {
-                Long[] selectedIds = permissionsForm.getIds();
-                List<Long> executorsIdList = new ArrayList<Long>(selectedIds.length);
-                List<Collection<Permission>> permissionList = Lists.newArrayList();
-                Permission noPermission = identifiable.getSecuredObjectType().getNoPermission();
-                for (int i = 0; i < selectedIds.length; i++) {
-                    executorsIdList.add(selectedIds[i]);
-                    List<Permission> permissions = Lists.newArrayList();
-                    for (Long mask : permissionsForm.getPermissionMasks(selectedIds[i])) {
-                        permissions.add(noPermission.getPermission(mask));
-                    }
-                    permissionList.add(permissions);
+            Identifiable identifiable = getIdentifiable(getLoggedUser(request), form.getId(), errors);
+            List<Long> executorIds = Lists.newArrayList();
+            List<Collection<Permission>> executorPermissions = Lists.newArrayList();
+            Permission noPermission = identifiable.getSecuredObjectType().getNoPermission();
+            for (Long executorId : form.getIds()) {
+                executorIds.add(executorId);
+                List<Permission> permissions = Lists.newArrayList();
+                for (Long mask : form.getPermissions(executorId).getPermissionMasks()) {
+                    permissions.add(noPermission.getPermission(mask));
                 }
-                BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-                List<Executor> executors = authorizationService.getExecutorsWithPermission(getLoggedUser(request), identifiable, batchPresentation,
-                        true);
-                for (Executor executor : executors) {
-                    if (!executorsIdList.contains(executor.getId())) {
-                        executorsIdList.add(executor.getId());
-                        permissionList.add(Permission.getNoPermissions());
-                    }
-                }
-
-                authorizationService.setPermissions(getLoggedUser(request), executorsIdList, permissionList, identifiable);
+                executorPermissions.add(permissions);
             }
+            // unset permissions
+            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
+            List<Executor> executors = Delegates.getAuthorizationService().getExecutorsWithPermission(getLoggedUser(request), identifiable,
+                    batchPresentation, true);
+            for (Executor executor : executors) {
+                if (!executorIds.contains(executor.getId())) {
+                    executorIds.add(executor.getId());
+                    executorPermissions.add(Permission.getNoPermissions());
+                }
+            }
+            Delegates.getAuthorizationService().setPermissions(getLoggedUser(request), executorIds, executorPermissions, identifiable);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
-
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
-            return getErrorForward(getLoggedUser(request), mapping, permissionsForm.getId());
+            return getErrorForward(getLoggedUser(request), mapping, form.getId());
         }
-        return getSuccessForward(getLoggedUser(request), mapping, permissionsForm.getId());
+        return getSuccessForward(getLoggedUser(request), mapping, form.getId());
     }
 
     @Override

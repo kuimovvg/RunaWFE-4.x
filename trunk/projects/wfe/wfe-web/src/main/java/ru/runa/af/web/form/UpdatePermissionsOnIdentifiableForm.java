@@ -17,21 +17,16 @@
  */
 package ru.runa.af.web.form;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdsForm;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -41,42 +36,23 @@ import com.google.common.collect.Sets;
  */
 public class UpdatePermissionsOnIdentifiableForm extends IdsForm {
     private static final long serialVersionUID = -8537078929694016589L;
-
-    public static final String ON_VALUE = "on";
-
+    private static final String ON_VALUE = "on";
     public static final String EXECUTOR_INPUT_NAME_PREFIX = "executor";
-
     public static final String PERMISSION_INPUT_NAME_PREFIX = "permission";
 
-    private Map<Long, Object> executorsMap;
+    private final Map<Long, Permissions> executorPermissions = Maps.newHashMap();
 
-    public Map<Long, Object> getExecutorsMap() {
-        return executorsMap;
+    public Permissions getPermissions(Long executorId) {
+        if (!executorPermissions.containsKey(executorId)) {
+            return new Permissions();
+        }
+        return executorPermissions.get(executorId);
     }
 
     @Override
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
-        executorsMap = new HashMap<Long, Object>();
-    }
-
-    @Override
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
-        ActionErrors errors = super.validate(mapping, request);
-        if (getExecutorsMap() == null) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_NULL_VALUE));
-        }
-        return errors;
-    }
-
-    /**
-     * this method is used by Struts map backed forms
-     * 
-     * @param executorId
-     * @param permissionObject
-     */
-    public void setExecutor(String executorId, Object permissionObject) {
-        executorsMap.put(Long.valueOf(executorId), permissionObject);
+        executorPermissions.clear();
     }
 
     /**
@@ -85,37 +61,21 @@ public class UpdatePermissionsOnIdentifiableForm extends IdsForm {
      * @param executorId
      * @return
      */
-    public Object getExecutor(String executorId) {
-        Object o = executorsMap.get(new Long(executorId));
-        if (o == null) {
-            o = new Permissions();
-            setExecutor(executorId, o);
+    public Permissions getExecutor(String executorId) {
+        Long id = new Long(executorId);
+        Permissions permissions = executorPermissions.get(id);
+        if (permissions == null) {
+            permissions = new Permissions();
+            executorPermissions.put(id, permissions);
         }
-        return o;
+        return permissions;
     }
 
-    public Set<Long> getPermissionMasks(Long executorId) {
-        Object o = executorsMap.get(executorId);
-        if (o == null) {
-            return Sets.newHashSet();
-        }
-        return ((Permissions) o).permissionsSet;
-    }
+    public static class Permissions {
+        private final Set<Long> permissionMasks = Sets.newHashSet();
 
-    static public class Permissions {
-        private final Set<Long> permissionsSet;
-
-        public Permissions() {
-            permissionsSet = new HashSet<Long>();
-        }
-
-        public Long[] getMasksOld() {
-            Long[] masks = new Long[permissionsSet.size()];
-            int i = 0;
-            for (Long element : permissionsSet) {
-                masks[i] = element;
-            }
-            return masks;
+        public Set<Long> getPermissionMasks() {
+            return permissionMasks;
         }
 
         /**
@@ -126,18 +86,9 @@ public class UpdatePermissionsOnIdentifiableForm extends IdsForm {
          */
         public void setPermission(String permissionMask, Object value) {
             if (ON_VALUE.equals(value)) {
-                permissionsSet.add(new Long(permissionMask));
+                permissionMasks.add(new Long(permissionMask));
             }
         }
 
-        /**
-         * this method is used by Struts map backed forms
-         * 
-         * @param permissionMask
-         * @return
-         */
-        public Object getPermission(String permissionMask) {
-            return permissionMask;
-        }
     }
 }

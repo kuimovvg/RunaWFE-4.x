@@ -653,7 +653,6 @@ public class JbpmRefactoringPatch extends DBPatch {
         log.info("Updated permission mappings (SecuredObjectType.PROCESS): " + session.createSQLQuery(q).executeUpdate());
         q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.BOTSTATION.name() + "' WHERE TYPE='-582775863'";
         log.info("Updated permission mappings (SecuredObjectType.BOTSTATION): " + session.createSQLQuery(q).executeUpdate());
-        // TODO check these 2 types in 3.x sources
         q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.RELATIONGROUP.name() + "' WHERE TYPE='-222568517'";
         log.info("Updated permission mappings (SecuredObjectType.RELATIONGROUP)" + session.createSQLQuery(q).executeUpdate());
         q = "UPDATE PERMISSION_MAPPING SET TYPE='" + SecuredObjectType.RELATION.name() + "' WHERE TYPE='-2060382376'";

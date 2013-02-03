@@ -23,15 +23,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.GrantPermisionOnIdentifiableAction;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.execution.ProcessDoesNotExistException;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.User;
@@ -55,33 +51,19 @@ public class GrantReadPermissionOnProcessAction extends GrantPermisionOnIdentifi
 
     private static List<Permission> READ_PERMISSONS = Lists.newArrayList(Permission.READ);
 
-    private boolean processExists;
-
     @Override
     protected List<Permission> getIdentifiablePermissions() {
         return READ_PERMISSONS;
     }
 
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) throws AuthenticationException,
-            AuthorizationException {
-        processExists = false;
-        Identifiable result = null;
-        try {
-            result = Delegates.getExecutionService().getProcess(user, identifiableId);
-            processExists = true;
-        } catch (ProcessDoesNotExistException e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        return result;
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+        return Delegates.getExecutionService().getProcess(user, identifiableId);
     }
 
     @Override
     public ActionForward getErrorForward(ActionMapping mapping, Long identifiableId) {
-        if (processExists) {
-            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, identifiableId);
-        }
-        return mapping.findForward(ru.runa.common.WebResources.FORWARD_FAILURE_PROCESS_DOES_NOT_EXIST);
+        return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, identifiableId);
     }
 
     @Override

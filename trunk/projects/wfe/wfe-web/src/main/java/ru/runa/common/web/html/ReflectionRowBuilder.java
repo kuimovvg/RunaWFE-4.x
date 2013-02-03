@@ -129,13 +129,13 @@ public class ReflectionRowBuilder implements RowBuilder {
                 taskVariableCache.put(variableName, cache);
                 List<Long> ids = Lists.newArrayListWithExpectedSize(items.size());
                 for (int i = 0; i < items.size(); ++i) {
-                    ids.add(processIdExtractor.getIdentifiable(items.get(i), this).getId());
+                    ids.add(processIdExtractor.getIdentifiable(items.get(i), this).getIdentifiableId());
                 }
                 ExecutionService executionService = Delegates.getExecutionService();
                 Map<Long, Object> variables = executionService.getVariableValuesFromProcesses(getUser(), ids, variableName);
                 cache.putAll(variables);
             }
-            return cache.get(processIdExtractor.getIdentifiable(object, this).getId());
+            return cache.get(processIdExtractor.getIdentifiable(object, this).getIdentifiableId());
         }
 
         private class Pair {

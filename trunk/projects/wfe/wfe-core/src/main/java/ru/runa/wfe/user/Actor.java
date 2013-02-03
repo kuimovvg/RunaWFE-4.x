@@ -163,7 +163,7 @@ public class Actor extends Executor {
 
     @Override
     public String toString() {
-        return getName() + " (" + code + ")";
+        return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).add("code", getCode()).toString();
     }
 
 }

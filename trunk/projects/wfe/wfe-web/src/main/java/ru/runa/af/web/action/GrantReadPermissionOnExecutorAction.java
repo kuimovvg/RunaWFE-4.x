@@ -23,19 +23,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.WebResources;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.GrantPermisionOnIdentifiableAction;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
@@ -58,32 +52,9 @@ public class GrantReadPermissionOnExecutorAction extends GrantPermisionOnIdentif
 
     private static List<Permission> READ_PERMISSONS = Lists.newArrayList(Permission.READ);
 
-    private boolean isExecutorExist;
-
-    /**
-     * ugly fuzzy method
-     * 
-     * @param subject
-     * @param identifiableName
-     * @param errors
-     * @param errorForwardName
-     * @return return specific identifiable (WARNING Might return null if errors
-     *         occured)
-     * @throws AuthorizationFailedException
-     */
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) throws AuthorizationException,
-            AuthenticationException {
-        isExecutorExist = false;
-        ExecutorService executorService = Delegates.getExecutorService();
-        Identifiable result = null;
-        try {
-            result = executorService.getExecutor(user, identifiableId);
-            isExecutorExist = true;
-        } catch (ExecutorDoesNotExistException e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        return result;
+    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+        return Delegates.getExecutorService().getExecutor(user, identifiableId);
     }
 
     @Override
@@ -93,10 +64,7 @@ public class GrantReadPermissionOnExecutorAction extends GrantPermisionOnIdentif
 
     @Override
     public ActionForward getErrorForward(ActionMapping mapping, Long identifiableId) {
-        if (isExecutorExist) {
-            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, identifiableId);
-        }
-        return mapping.findForward(WebResources.FORWARD_FAILURE_EXECUTOR_DOES_NOT_EXIST);
+        return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, identifiableId);
     }
 
     @Override

@@ -43,11 +43,11 @@ public class UpdatePermissionsOnDefinitionFormTag extends ProcessDefinitionBaseF
 
     @Override
     protected void fillFormData(TD tdFormElement) {
-        WfDefinition defintion = getDefinition();
-        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(defintion, getUser(), pageContext);
-        Table table = tableBuilder.buildTable();
+        WfDefinition definition = getDefinition();
+        PermissionTableBuilder tableBuilder = new PermissionTableBuilder(definition, getUser(), pageContext);
         Actor starter = Delegates.getExecutorService().getExecutor(getUser(), SystemExecutors.PROCESS_STARTER_NAME);
-        table.addElement(tableBuilder.createTR(starter, getUnmodifiablePermissions(), false));
+        tableBuilder.addAdditionalExecutor(starter, getUnmodifiablePermissions());
+        Table table = tableBuilder.buildTable();
         tdFormElement.addElement(table);
     }
 

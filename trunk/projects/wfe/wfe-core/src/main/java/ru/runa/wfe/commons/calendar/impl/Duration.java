@@ -42,11 +42,11 @@ import com.google.common.collect.Maps;
  * Where
  * <ul>
  * <li>&lt;quantity&gt; is a piece of text that is parsable with
- * <code>NumberFormat.getNumberInstance().parse(quantity)</code>. </li>
- * <li>&lt;unit&gt; is one of {second, seconds, minute, minutes, hour, hours, day, days, week,
- * weeks, month, months, year, years}. </li>
- * <li>And adding the optional indication <code>business</code> means that only business hours
- * should be taken into account for this duration. </li>
+ * <code>NumberFormat.getNumberInstance().parse(quantity)</code>.</li>
+ * <li>&lt;unit&gt; is one of {second, seconds, minute, minutes, hour, hours,
+ * day, days, week, weeks, month, months, year, years}.</li>
+ * <li>And adding the optional indication <code>business</code> means that only
+ * business hours should be taken into account for this duration.</li>
  * </ul>
  * </p>
  */
@@ -175,8 +175,8 @@ public class Duration implements Serializable {
     }
 
     /**
-     * creates a duration from a textual description. syntax: {number} space {unit} where number is
-     * parsable to a java.lang.Number and unit is one of
+     * creates a duration from a textual description. syntax: {number} space
+     * {unit} where number is parsable to a java.lang.Number and unit is one of
      * <ul>
      * <li>second</li>
      * <li>seconds</li>
@@ -215,18 +215,20 @@ public class Duration implements Serializable {
         String unitText = duration.substring(position.getIndex()).trim();
         if (unitText.startsWith("business")) {
             // parse unit
-            Long unit = (Long) businessAmounts.get(unitText);
-            if (unit == null)
+            Long unit = businessAmounts.get(unitText);
+            if (unit == null) {
                 throw new IllegalArgumentException("improper format of duration '" + duration + "'");
+            }
 
             field = Calendar.MILLISECOND;
             amount = multiply(quantity, unit.longValue());
             isBusinessTime = true;
         } else {
             // parse unit
-            Integer unit = (Integer) calendarFields.get(unitText);
-            if (unit == null)
+            Integer unit = calendarFields.get(unitText);
+            if (unit == null) {
                 throw new IllegalArgumentException("improper format of duration '" + duration + "'");
+            }
 
             // is quantity exactly representable as int?
             if (quantity instanceof Long && isInteger(quantity.longValue())) {
@@ -263,15 +265,17 @@ public class Duration implements Serializable {
             }
         }
 
-        if (lead == '-')
+        if (lead == '-') {
             amount = -amount;
+        }
     }
 
     private static int indexOfNonWhite(String str, int fromIndex) {
         int off = fromIndex;
         int len = str.length();
-        while (off < len && str.charAt(off) <= ' ')
+        while (off < len && str.charAt(off) <= ' ') {
             off++;
+        }
         return off;
     }
 
@@ -280,8 +284,9 @@ public class Duration implements Serializable {
     }
 
     public Date addTo(Date date) {
-        if (field == Calendar.MILLISECOND)
+        if (field == Calendar.MILLISECOND) {
             return new Date(date.getTime() + amount);
+        }
 
         Calendar calendar = BusinessCalendarImpl.getCalendar();
         calendar.setTime(date);
@@ -315,9 +320,5 @@ public class Duration implements Serializable {
     public boolean isBusinessTime() {
         return isBusinessTime;
     }
-    
-    public static void main(String[] args) {
-        Duration duration = new Duration("60 minutes");
-        System.out.println(duration.toString());
-    }
+
 }

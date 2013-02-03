@@ -214,7 +214,7 @@ public class ExecutionContext {
 
     @Override
     public String toString() {
-        return processDefinition + "|" + getProcess().getId();
+        return Objects.toStringHelper(this).add("token", getToken()).toString();
     }
 
 }

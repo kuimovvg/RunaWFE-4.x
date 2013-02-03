@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -209,7 +210,7 @@ public class Permission implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ": " + name;
+        return Objects.toStringHelper(this).add("name", name).toString();
     }
 
     /**

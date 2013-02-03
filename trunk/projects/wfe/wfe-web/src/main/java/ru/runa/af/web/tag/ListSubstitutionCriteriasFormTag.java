@@ -185,7 +185,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             }
             String label = Delegates.getSystemService().getLocalized(getUser(), substitutionCriteria.getClass().getName());
             tr.addElement(new TD(label).setClass(Resources.CLASS_LIST_TABLE_TD));
-            tr.addElement(new TD(substitutionCriteria.getConf()).setClass(Resources.CLASS_LIST_TABLE_TD));
+            tr.addElement(new TD(substitutionCriteria.getConfiguration()).setClass(Resources.CLASS_LIST_TABLE_TD));
             return tr;
         }
     }

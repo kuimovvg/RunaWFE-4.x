@@ -3,7 +3,6 @@ package ru.runa.wfe.execution;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,9 +49,9 @@ public class ProcessFactory {
     }
 
     private Set<Permission> getProcessPermissions(Executor executor, ProcessDefinition processDefinition) {
-        List<Permission> definitionPermissions = permissionDAO.getOwnPermissions(executor, processDefinition);
+        Map<Permission, Boolean> definitionPermissions = permissionDAO.getOwnPermissions(executor, processDefinition);
         Set<Permission> result = new HashSet<Permission>();
-        for (Permission permission : definitionPermissions) {
+        for (Permission permission : definitionPermissions.keySet()) {
             if (DEFINITION_TO_PROCESS_PERMISSION_MAP.containsKey(permission)) {
                 result.add(DEFINITION_TO_PROCESS_PERMISSION_MAP.get(permission));
             }
@@ -117,9 +116,9 @@ public class ProcessFactory {
         executors.addAll(permissionDAO.getExecutorsWithPermission(processDefinition));
         executors.addAll(permissionDAO.getExecutorsWithPermission(parentProcess));
         for (Executor executor : executors) {
-            List<Permission> permissionsByParentProcess = permissionDAO.getOwnPermissions(executor, parentProcess);
+            Map<Permission, Boolean> permissionsByParentProcess = permissionDAO.getOwnPermissions(executor, parentProcess);
             Set<Permission> permissionsByDefinition = getProcessPermissions(executor, processDefinition);
-            Set<Permission> permissions = Permission.mergePermissions(permissionsByParentProcess, permissionsByDefinition);
+            Set<Permission> permissions = Permission.mergePermissions(permissionsByParentProcess.keySet(), permissionsByDefinition);
             permissionDAO.setPermissions(executor, permissions, subProcess);
         }
     }

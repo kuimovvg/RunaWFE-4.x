@@ -28,6 +28,8 @@ import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.SecuredObjectType;
 
+import com.google.common.base.Objects;
+
 /**
  * Created on 29.09.2004
  * 
@@ -59,17 +61,22 @@ public class WfDefinition implements Identifiable {
 
     public WfDefinition(ProcessDefinition definition) {
         this(definition.getDeployment());
-        this.hasHtmlDescription = definition.getFileData(IFileDataProvider.INDEX_FILE_NAME) != null;
-        this.hasStartImage = definition.getFileData(IFileDataProvider.START_IMAGE_FILE_NAME) != null;
-        this.hasDisabledImage = definition.getFileData(IFileDataProvider.START_DISABLED_IMAGE_FILE_NAME) != null;
+        hasHtmlDescription = definition.getFileData(IFileDataProvider.INDEX_FILE_NAME) != null;
+        hasStartImage = definition.getFileData(IFileDataProvider.START_IMAGE_FILE_NAME) != null;
+        hasDisabledImage = definition.getFileData(IFileDataProvider.START_DISABLED_IMAGE_FILE_NAME) != null;
     }
 
     public WfDefinition(Deployment deployment) {
-        this.id = deployment.getId();
-        this.version = deployment.getVersion();
-        this.name = deployment.getName();
-        this.description = deployment.getDescription();
-        this.categories = deployment.getCategories();
+        id = deployment.getId();
+        version = deployment.getVersion();
+        name = deployment.getName();
+        description = deployment.getDescription();
+        categories = deployment.getCategories();
+    }
+
+    @Override
+    public Long getIdentifiableId() {
+        return new Long(getName().hashCode());
     }
 
     @Override
@@ -77,7 +84,6 @@ public class WfDefinition implements Identifiable {
         return SecuredObjectType.DEFINITION;
     }
 
-    @Override
     public Long getId() {
         return id;
     }
@@ -112,6 +118,6 @@ public class WfDefinition implements Identifiable {
 
     @Override
     public String toString() {
-        return "Name: " + name + ", version: " + version;
+        return Objects.toStringHelper(this).add("id", id).add("name", name).add("version", version).toString();
     }
 }

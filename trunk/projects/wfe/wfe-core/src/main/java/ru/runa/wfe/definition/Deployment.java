@@ -36,7 +36,6 @@ public class Deployment implements Identifiable {
     private String category;
     private byte[] content;
 
-    @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
     @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_PROCESS_DEFINITION")
@@ -107,6 +106,12 @@ public class Deployment implements Identifiable {
 
     @Transient
     @Override
+    public Long getIdentifiableId() {
+        return new Long(getName().hashCode());
+    }
+
+    @Transient
+    @Override
     public SecuredObjectType getSecuredObjectType() {
         return SecuredObjectType.DEFINITION;
     }
@@ -122,6 +127,6 @@ public class Deployment implements Identifiable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
+        return Objects.toStringHelper(this).add("id", id).add("name", name).add("version", version).toString();
     }
 }
