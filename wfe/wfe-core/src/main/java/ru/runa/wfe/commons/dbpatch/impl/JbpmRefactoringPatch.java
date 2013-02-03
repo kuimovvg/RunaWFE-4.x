@@ -156,7 +156,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         // ru.runa.wfe.ss.Substitution
         sql.add(getDDLRenameTable("SUBSTITUTIONS", "SUBSTITUTION"));
         sql.add(getDDLRenameColumn("SUBSTITUTION", "IS_TERMINATOR", new ColumnDef("DISCRIMINATOR", Types.VARCHAR)));
-        sql.add(getDDLRenameColumn("SUBSTITUTION", "SUBSTITUTION_ORG_FUNCTION", new ColumnDef("ORG_FUNCTION", Types.VARCHAR)));
+        sql.add(getDDLRenameColumn("SUBSTITUTION", "SUBSITUTION_ORG_FUNCTION", new ColumnDef("ORG_FUNCTION", Types.VARCHAR)));
         sql.add(getDDLCreateIndex("SUBSTITUTION", "IX_SUBSTITUTION_CRITERIA", "CRITERIA_ID"));
         sql.add(getDDLCreateIndex("SUBSTITUTION", "IX_SUBSTITUTION_ACTOR", "ACTOR_ID"));
         sql.add(getDDLCreateForeignKey("SUBSTITUTION", "FK_SUBSTITUTION_CRITERIA", "CRITERIA_ID", "SUBSTITUTION_CRITERIA", "ID"));
@@ -281,6 +281,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameTable("JBPM_LOG", "BPM_LOG"));
         sql.add(getDDLRenameColumn("BPM_LOG", "ID_", new ColumnDef("ID", Types.BIGINT)));
         sql.add(getDDLRenameColumn("BPM_LOG", "CLASS_", new ColumnDef("DISCRIMINATOR", Types.CHAR)));
+        sql.add(getDDLRemoveIndex("BPM_LOG", "LOG_TOKEN_IDX"));// 3.5 index
         sql.add(getDDLRemoveColumn("BPM_LOG", "INDEX_"));
         sql.add(getDDLRenameColumn("BPM_LOG", "DATE_", new ColumnDef("DATE", Types.DATE)));
         sql.add(getDDLRemoveForeignKey("BPM_LOG", "FK_LOG_TOKEN"));
@@ -373,6 +374,8 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveForeignKey("BPM_VARIABLE", "FK_VARINST_TK"));
         sql.add(getDDLRemoveColumn("BPM_VARIABLE", "TOKEN_"));
         sql.add(getDDLRemoveForeignKey("BPM_VARIABLE", "FK_VAR_TSKINST"));
+        sql.add(getDDLRemoveIndex("BPM_VARIABLE", "IDX_VARINST_TASKINST"));// 3.5
+                                                                           // index
         sql.add(getDDLRemoveColumn("BPM_VARIABLE", "TASKINSTANCE_"));
         sql.add(getDDLRemoveColumn("BPM_VARIABLE", "STRINGIDCLASS_"));
         sql.add(getDDLRemoveColumn("BPM_VARIABLE", "LONGIDCLASS_"));
@@ -428,9 +431,13 @@ public class JbpmRefactoringPatch extends DBPatch {
         if (jbpmCommentTableExists) {
             sql.add(getDDLRemoveTable("JBPM_COMMENT"));
         }
+        sql.add(getDDLRemoveIndex("BPM_SWIMLANE", "IDX_SWIMLINST_TASKMGMTINST"));// 3.5
+                                                                                 // index
         sql.add(getDDLRemoveColumn("BPM_SWIMLANE", "TASKMGMTINSTANCE_"));
         sql.add(getDDLRemoveColumn("BPM_SWIMLANE", "ACTORID_"));
         sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TASK_ACTORID"));
+        sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TASKINST_ACTOREND")); // 3.5
+                                                                         // index
         sql.add(getDDLRemoveColumn("BPM_TASK", "ACTORID_"));
         sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TSKINST_TMINST"));
         sql.add(getDDLRemoveColumn("BPM_TASK", "TASKMGMTINSTANCE_"));
@@ -522,6 +529,11 @@ public class JbpmRefactoringPatch extends DBPatch {
         for (Object[] objects : list) {
             actorIdByCode.put(((Number) objects[1]).intValue(), ((Number) objects[0]).longValue());
         }
+        List<Number> executorIds = Lists.newArrayList();
+        List<Number> numbers = session.createSQLQuery("SELECT ID FROM EXECUTOR").list();
+        for (Number number : numbers) {
+            executorIds.add(number.longValue());
+        }
 
         log.info("Cleaned keepAlive jobs: " + session.createSQLQuery("DELETE FROM BPM_JOB WHERE LOCKOWNER_ = 'keepAlive'").executeUpdate());
         // update process definition PAR file
@@ -544,6 +556,15 @@ public class JbpmRefactoringPatch extends DBPatch {
             query.executeUpdate();
         }
         // Token
+        q = "SELECT t.ID, p.ID FROM BPM_TOKEN t, BPM_PROCESS p WHERE p.ROOT_TOKEN_ID=t.ID AND PROCESS_ID IS NULL";
+        list = session.createSQLQuery(q).list();
+        // Update BPM_TOKEN.PROCESS_ID FROM BPM_PROCESS.ROOT_TOKEN_ID
+        for (Object[] objects : list) {
+            SQLQuery query = session.createSQLQuery("UPDATE BPM_TOKEN SET PROCESS_ID=:processId WHERE ID=:tokenId");
+            query.setParameter("tokenId", objects[0]);
+            query.setParameter("processId", objects[1]);
+            query.executeUpdate();
+        }
         log.info("Deleted broken tokens [by PROCESS_ID]: " + session.createSQLQuery("DELETE FROM BPM_TOKEN WHERE PROCESS_ID IS NULL").executeUpdate());
         q = "SELECT t.ID, n.CLASS_, n.NAME_ FROM BPM_TOKEN t, JBPM_NODE n WHERE t.NODE_= n.ID_";
         list = session.createSQLQuery(q).list();
@@ -570,6 +591,10 @@ public class JbpmRefactoringPatch extends DBPatch {
             if (Strings.isNullOrEmpty(executorIdentity)) {
             } else if (executorIdentity.startsWith("G")) {
                 executorId = Long.parseLong(executorIdentity.substring(1));
+                if (!executorIds.contains(executorId)) {
+                    log.warn("No executor found by ID=" + executorId + ", set it to null");
+                    executorId = null;
+                }
             } else {
                 executorId = actorIdByCode.get(Integer.parseInt(executorIdentity));
             }
@@ -597,6 +622,10 @@ public class JbpmRefactoringPatch extends DBPatch {
             if (Strings.isNullOrEmpty(executorIdentity)) {
             } else if (executorIdentity.startsWith("G")) {
                 executorId = Long.parseLong(executorIdentity.substring(1));
+                if (!executorIds.contains(executorId)) {
+                    log.warn("No executor found by ID=" + executorId + ", set it to null");
+                    executorId = null;
+                }
             } else {
                 executorId = actorIdByCode.get(Integer.parseInt(executorIdentity));
             }
@@ -667,4 +696,17 @@ public class JbpmRefactoringPatch extends DBPatch {
         log.info("Updated subprocesses " + session.createSQLQuery(q).executeUpdate());
         //
     }
+
+    /*
+     * [sys].[indexes] 3.5 indexes CREATE INDEX [LOG_TOKEN_IDX] ON
+     * [dbo].[JBPM_LOG] ( [INDEX_] ASC ) CREATE INDEX [IDX_VARINST_TASKINST] ON
+     * [dbo].[JBPM_VARIABLEINSTANCE] ( [TASKINSTANCE_] ASC ) CREATE INDEX
+     * [IDX_SWIMLINST_TASKMGMTINST] ON [dbo].[JBPM_SWIMLANEINSTANCE] (
+     * [TASKMGMTINSTANCE_] ASC ) CREATE INDEX [IDX_TASKINST_ACTOREND] ON
+     * [dbo].[JBPM_TASKINSTANCE] ( [ACTORID_] ASC, END_ ASC ) CREATE UNIQUE
+     * INDEX [UQ_SECURED_TE] ON [dbo].[SECURED_OBJECTS] ( [TYPE_CODE] ASC,
+     * [EXT_ID] ASC, [VERSION] ASC ) CREATE UNIQUE INDEX [UQ_PERMISSI_MES] ON
+     * [dbo].[PERMISSION_MAPPINGS] ( [MASK] ASC, [EXECUTOR_ID] ASC,
+     * [SECURED_OBJECT_ID] ASC, [VERSION] ASC )
+     */
 }

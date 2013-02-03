@@ -64,7 +64,7 @@ public class WorkflowBot implements Runnable {
     private final long failedTasksMaxDelayPeriod = 4 * 1920000;
 
     private enum BotExecutionStatus {
-        scheduled, completted, failed
+        scheduled, completed, failed
     };
 
     private BotExecutionStatus botStatus = BotExecutionStatus.scheduled;
@@ -149,7 +149,7 @@ public class WorkflowBot implements Runnable {
         Set<WorkflowBot> failedBotsToRestart = new HashSet<WorkflowBot>();
         for (Iterator<WorkflowBot> botIterator = existingBots.iterator(); botIterator.hasNext();) {
             WorkflowBot bot = botIterator.next();
-            if (bot.botStatus == BotExecutionStatus.completted && bot.resetTime < System.currentTimeMillis()) {
+            if (bot.botStatus == BotExecutionStatus.completed && bot.resetTime < System.currentTimeMillis()) {
                 // Completed bot task hold time is elapsed
                 botIterator.remove();
             }
@@ -228,7 +228,7 @@ public class WorkflowBot implements Runnable {
             }
             executionThread = Thread.currentThread();
             doHandle();
-            botStatus = BotExecutionStatus.completted;
+            botStatus = BotExecutionStatus.completed;
             resetTime = System.currentTimeMillis() + complettedTasksHoldPeriod;
             return;
         } catch (Throwable e) {
