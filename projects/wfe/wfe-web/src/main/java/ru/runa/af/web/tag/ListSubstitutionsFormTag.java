@@ -79,7 +79,7 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
         SubstitutionService substitutionService = Delegates.getSubstitutionService();
         try {
             Actor actor = (Actor) getExecutor();
-            List<Substitution> substitutions = substitutionService.get(getUser(), actor.getId());
+            List<Substitution> substitutions = substitutionService.getSubstitutions(getUser(), actor.getId());
             AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
             boolean disabled = !authorizationService.isAllowed(getUser(), ExecutorPermission.UPDATE, actor);
             RowBuilder substitutionRowBuilder = new SubstitutionRowBuilder(substitutions, disabled);

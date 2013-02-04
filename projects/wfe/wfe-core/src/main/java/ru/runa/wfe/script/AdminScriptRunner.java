@@ -758,7 +758,7 @@ public class AdminScriptRunner {
             orgFunctions.add(e.attributeValue(ORGFUNC_ATTRIBUTE_NAME));
             String criteria = e.attributeValue(CRITERIA_ATTRIBUTE_NAME);
             if (!Strings.isNullOrEmpty(criteria)) {
-                criterias.add(substitutionLogic.getSubstitutionCriteria(user, Long.parseLong(criteria)));
+                criterias.add(substitutionLogic.getCriteria(user, Long.parseLong(criteria)));
             } else {
                 criterias.add(null);
             }
@@ -786,24 +786,24 @@ public class AdminScriptRunner {
         for (Element e : elements) {
             String orgFunction = e.attributeValue(ORGFUNC_ATTRIBUTE_NAME);
             SubstitutionCriteria criteria = null;
-            boolean isEnabled = Boolean.parseBoolean(e.attributeValue(ISENABLED_ATTRIBUTE_NAME, "true"));
-            boolean isFirst = Boolean.parseBoolean(e.attributeValue(ISFIRST_ATTRIBUTE_NAME, "true"));
+            boolean enabled = Boolean.parseBoolean(e.attributeValue(ISENABLED_ATTRIBUTE_NAME, "true"));
+            boolean first = Boolean.parseBoolean(e.attributeValue(ISFIRST_ATTRIBUTE_NAME, "true"));
             if (e.attribute(CRITERIA_ATTRIBUTE_NAME) != null) {
-                criteria = substitutionLogic.getSubstitutionCriteria(user, Long.parseLong(e.attributeValue(CRITERIA_ATTRIBUTE_NAME)));
+                criteria = substitutionLogic.getCriteria(user, Long.parseLong(e.attributeValue(CRITERIA_ATTRIBUTE_NAME)));
             }
-            Substitution sub = null;
+            Substitution substitution;
             if (orgFunction == null) {
-                sub = new TerminatorSubstitution();
+                substitution = new TerminatorSubstitution();
             } else {
-                sub = new Substitution();
-                sub.setOrgFunction(orgFunction);
+                substitution = new Substitution();
+                substitution.setOrgFunction(orgFunction);
             }
-            sub.setCriteria(criteria);
-            sub.setEnabled(isEnabled);
-            if (isFirst) {
-                firstSub.add(sub);
+            substitution.setCriteria(criteria);
+            substitution.setEnabled(enabled);
+            if (first) {
+                firstSub.add(substitution);
             } else {
-                lastSub.add(sub);
+                lastSub.add(substitution);
             }
         }
         List<Substitution> deletedSubstitutions = new ArrayList<Substitution>();

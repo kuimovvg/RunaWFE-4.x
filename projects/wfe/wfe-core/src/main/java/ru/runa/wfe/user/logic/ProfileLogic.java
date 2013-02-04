@@ -28,6 +28,7 @@ import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.ActorPermission;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.Profile;
@@ -73,10 +74,16 @@ public class ProfileLogic extends CommonLogic {
         return result;
     }
 
-    public Profile getProfile(User user, Long actorId) throws AuthorizationException, ExecutorDoesNotExistException {
+    public Profile getProfile(User user, Long actorId) {
         Actor actor = executorDAO.getActor(actorId);
         checkPermissionAllowed(user, actor, Permission.READ);
         return getProfileNotNull(actor);
+    }
+
+    public void deleteActorProfile(User user, Long actorId) {
+        Actor actor = executorDAO.getActor(actorId);
+        checkPermissionAllowed(user, actor, ActorPermission.UPDATE);
+        profileDAO.delete(actor);
     }
 
     public void changeActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {

@@ -200,7 +200,7 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
         private Option[] getCriteriaOptions(String selectedValue) throws AuthenticationException {
             SubstitutionService substitutionService = Delegates.getSubstitutionService();
             try {
-                List<SubstitutionCriteria> criterias = substitutionService.getSubstitutionCriteriaAll(getUser());
+                List<SubstitutionCriteria> criterias = substitutionService.getAllCriterias(getUser());
                 Option[] options = new Option[criterias.size() + 1];
                 options[0] = new Option("0");
                 options[0].addElement(Messages.getMessage(Messages.SUBSTITUTION_ALWAYS, pageContext));

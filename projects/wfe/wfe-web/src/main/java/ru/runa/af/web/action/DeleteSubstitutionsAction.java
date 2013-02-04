@@ -34,7 +34,7 @@ public class DeleteSubstitutionsAction extends ActionBase {
         ActionMessages errors = new ActionMessages();
         try {
             SubstitutionService substitutionService = Delegates.getSubstitutionService();
-            substitutionService.delete(getLoggedUser(request), Lists.newArrayList(((IdsForm) form).getIds()));
+            substitutionService.deleteSubstitutions(getLoggedUser(request), Lists.newArrayList(((IdsForm) form).getIds()));
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }

@@ -73,8 +73,9 @@ public class SubstitutionDAO extends GenericDAO<Substitution> {
      *            's.
      * @return {@linkplain Substitution}'s for {@linkplain Actor}.
      */
-    public List<Substitution> getByActorId(Long actorId) {
-        return getHibernateTemplate().find("from Substitution where actorId=? order by position", actorId);
+    public List<Substitution> getByActorId(Long actorId, boolean orderByPositionAscending) {
+        String order = orderByPositionAscending ? "asc" : "desc";
+        return getHibernateTemplate().find("from Substitution where actorId=? order by position " + order, actorId);
     }
 
 }

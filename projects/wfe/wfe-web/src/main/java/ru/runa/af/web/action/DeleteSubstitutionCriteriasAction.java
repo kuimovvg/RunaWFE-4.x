@@ -46,9 +46,11 @@ public class DeleteSubstitutionCriteriasAction extends ActionBase {
             ArrayList<Substitution> substitutions = new ArrayList<Substitution>();
             Long ids[] = ((SubstitutionCriteriasForm) form).getIds();
             String method = ((SubstitutionCriteriasForm) form).getRemoveMethod();
+            List<SubstitutionCriteria> criterias = Lists.newArrayList();
             for (Long id : ids) {
-                SubstitutionCriteria substitutionCriteria = substitutionService.getSubstitutionCriteria(getLoggedUser(request), id);
-                substitutions.addAll(substitutionService.getBySubstitutionCriteria(getLoggedUser(request), substitutionCriteria));
+                SubstitutionCriteria criteria = substitutionService.getCriteria(getLoggedUser(request), id);
+                substitutions.addAll(substitutionService.getSubstitutionsByCriteria(getLoggedUser(request), criteria));
+                criterias.add(criteria);
             }
 
             if (SubstitutionCriteriasForm.REMOVE_METHOD_CONFIRM.equals(method) && !substitutions.isEmpty()) {
@@ -60,17 +62,14 @@ public class DeleteSubstitutionCriteriasAction extends ActionBase {
                 for (Substitution substitution : substitutions) {
                     substitutionIds.add(substitution.getId());
                 }
-                substitutionService.delete(getLoggedUser(request), substitutionIds);
+                substitutionService.deleteSubstitutions(getLoggedUser(request), substitutionIds);
             } else if (SubstitutionCriteriasForm.REMOVE_METHOD_ONLY.equals(method)) {
                 for (Substitution substitution : substitutions) {
                     substitution.setCriteria(null);
-                    substitutionService.store(getLoggedUser(request), substitution);
+                    substitutionService.updateSubstitution(getLoggedUser(request), substitution);
                 }
             }
-
-            for (long id : ids) {
-                substitutionService.deleteSubstitutionCriteria(getLoggedUser(request), id);
-            }
+            substitutionService.deleteCriterias(getLoggedUser(request), criterias);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }

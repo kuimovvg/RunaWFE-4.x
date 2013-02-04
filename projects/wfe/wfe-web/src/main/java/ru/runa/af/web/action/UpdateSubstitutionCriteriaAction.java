@@ -60,13 +60,13 @@ public class UpdateSubstitutionCriteriaAction extends ActionBase {
                 substitutionCriteria = ClassLoaderUtil.instantiate(form.getType());
                 substitutionCriteria.setConfiguration(form.getConf());
             } else {
-                substitutionCriteria = substitutionService.getSubstitutionCriteria(getLoggedUser(request), form.getId());
+                substitutionCriteria = substitutionService.getCriteria(getLoggedUser(request), form.getId());
             }
             substitutionCriteria.setName(form.getName());
             if (form.getId() == 0) {
-                substitutionService.createSubstitutionCriteria(getLoggedUser(request), substitutionCriteria);
+                substitutionService.createCriteria(getLoggedUser(request), substitutionCriteria);
             } else {
-                substitutionService.store(getLoggedUser(request), substitutionCriteria);
+                substitutionService.updateCriteria(getLoggedUser(request), substitutionCriteria);
             }
             return new ActionForward(RETURN_ACTION, true);
         } catch (Exception e) {
