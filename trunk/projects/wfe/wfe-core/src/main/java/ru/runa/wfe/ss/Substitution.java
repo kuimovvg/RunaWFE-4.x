@@ -57,23 +57,16 @@ import com.google.common.base.Objects;
 @DiscriminatorValue(value = "N")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Substitution implements Cloneable, Serializable {
-    static final long serialVersionUID = -9048255704644364624L;
+    private final static long serialVersionUID = -9048255704644364624L;
 
     private Long id;
-
-    private SubstitutionCriteria criteria;
-
-    private int position;
-
-    private Long actorId;
-
-    private String orgFunction;
-
-    private boolean enabled;
-
-    private boolean external;
-
     private Long version;
+    private Long actorId;
+    private Integer position;
+    private boolean enabled = true;
+    private String orgFunction;
+    private SubstitutionCriteria criteria;
+    private boolean external;
 
     public Substitution() {
     }
@@ -109,11 +102,11 @@ public class Substitution implements Cloneable, Serializable {
     }
 
     @Column(name = "POSITION_INDEX", nullable = false)
-    public int getPosition() {
+    public Integer getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(Integer position) {
         this.position = position;
     }
 
@@ -173,6 +166,7 @@ public class Substitution implements Cloneable, Serializable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", id).add("orgFunction", orgFunction).add("criteria", getCriteria()).toString();
+        return Objects.toStringHelper(this).add("id", id).add("actorId", actorId).add("enabled", enabled).add("position", position)
+                .add("orgFunction", orgFunction).add("criteria", getCriteria()).toString();
     }
 }

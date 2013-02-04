@@ -116,7 +116,7 @@ public class SubstitutionBean {
             for (int i = 0; i < deleted.size(); ++i) {
                 deletedIds.add(deleted.get(i).getId());
             }
-            substitutionLogic.delete(user, deletedIds);
+            // substitutionLogic.delete(user, deletedIds);
         }
 
         addSubstitution(user, addedSubstitutionsDescr, actors);
@@ -142,7 +142,7 @@ public class SubstitutionBean {
                 orgFunc = orgFuncParam;
             }
             if (criteriaParam != null && criteriaParam.trim().length() > 0) {
-                criteria = substitutionLogic.getSubstitutionCriteria(user, Long.parseLong(criteriaParam));
+                criteria = substitutionLogic.getCriteria(user, Long.parseLong(criteriaParam));
             }
             if (isEnabledParam != null && isEnabledParam.trim().length() > 0) {
                 isEnabled = Boolean.parseBoolean(isEnabledParam);
@@ -223,7 +223,7 @@ public class SubstitutionBean {
                 orgFuncs[i] = orgFunc;
             }
             if (criteria != null && criteria.trim().length() > 0) {
-                criterias[i] = substitutionLogic.getSubstitutionCriteria(user, Long.parseLong(criteria));
+                criterias[i] = substitutionLogic.getCriteria(user, Long.parseLong(criteria));
             }
         }
 

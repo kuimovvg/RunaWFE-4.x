@@ -20,12 +20,8 @@ package ru.runa.service.delegate;
 import java.util.List;
 
 import ru.runa.service.af.SubstitutionService;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
-import ru.runa.wfe.ss.SubstitutionDoesNotExistException;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.User;
 
 /**
@@ -43,78 +39,62 @@ public class SubstitutionServiceDelegate extends EJB3Delegate implements Substit
     }
 
     @Override
-    public Substitution createSubstitution(User user, Long actorId, Substitution substitution) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException {
-        return getSubstitutionService().createSubstitution(user, actorId, substitution);
+    public Substitution createSubstitution(User user, Substitution substitution) {
+        return getSubstitutionService().createSubstitution(user, substitution);
     }
 
     @Override
-    public List<Substitution> get(User user, Long actorId) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
-        return getSubstitutionService().get(user, actorId);
+    public List<Substitution> getSubstitutions(User user, Long actorId) {
+        return getSubstitutionService().getSubstitutions(user, actorId);
     }
 
     @Override
-    public void delete(User user, List<Long> substitutionIds) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException,
-            SubstitutionDoesNotExistException {
-        getSubstitutionService().delete(user, substitutionIds);
+    public void deleteSubstitutions(User user, List<Long> substitutionIds) {
+        getSubstitutionService().deleteSubstitutions(user, substitutionIds);
     }
 
     @Override
-    public void switchSubstitutionsPositions(User user, Long substitutionId1, Long substitutionId2) throws SubstitutionDoesNotExistException,
-            AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
-        getSubstitutionService().switchSubstitutionsPositions(user, substitutionId1, substitutionId2);
-    }
-
-    @Override
-    public Substitution getSubstitution(User user, Long substitutionId) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException {
+    public Substitution getSubstitution(User user, Long substitutionId) {
         return getSubstitutionService().getSubstitution(user, substitutionId);
     }
 
     @Override
-    public void store(User user, Substitution substitution) throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
-        getSubstitutionService().store(user, substitution);
+    public void updateSubstitution(User user, Substitution substitution) {
+        getSubstitutionService().updateSubstitution(user, substitution);
     }
 
     @Override
-    public <T extends SubstitutionCriteria> void createSubstitutionCriteria(User user, T substitutionCriteria) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException {
-        getSubstitutionService().createSubstitutionCriteria(user, substitutionCriteria);
+    public <T extends SubstitutionCriteria> void createCriteria(User user, T substitutionCriteria) {
+        getSubstitutionService().createCriteria(user, substitutionCriteria);
     }
 
     @Override
-    public SubstitutionCriteria getSubstitutionCriteria(User user, Long substitutionCriteriaId) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException {
-        return getSubstitutionService().getSubstitutionCriteria(user, substitutionCriteriaId);
+    public SubstitutionCriteria getCriteria(User user, Long substitutionCriteriaId) {
+        return getSubstitutionService().getCriteria(user, substitutionCriteriaId);
     }
 
     @Override
-    public List<SubstitutionCriteria> getSubstitutionCriteriaAll(User user) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException {
-        return getSubstitutionService().getSubstitutionCriteriaAll(user);
+    public List<SubstitutionCriteria> getAllCriterias(User user) {
+        return getSubstitutionService().getAllCriterias(user);
     }
 
     @Override
-    public void store(User user, SubstitutionCriteria substitutionCriteria) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException {
-        getSubstitutionService().store(user, substitutionCriteria);
+    public void updateCriteria(User user, SubstitutionCriteria substitutionCriteria) {
+        getSubstitutionService().updateCriteria(user, substitutionCriteria);
     }
 
     @Override
-    public void deleteSubstitutionCriteria(User user, Long substitutionCriteriaId) throws AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException {
-        getSubstitutionService().deleteSubstitutionCriteria(user, substitutionCriteriaId);
+    public void deleteCriterias(User user, List<SubstitutionCriteria> criterias) {
+        getSubstitutionService().deleteCriterias(user, criterias);
     }
 
     @Override
-    public void deleteSubstitutionCriteria(User user, SubstitutionCriteria substitutionCriteria) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException {
-        getSubstitutionService().deleteSubstitutionCriteria(user, substitutionCriteria);
+    public void deleteCriteria(User user, SubstitutionCriteria substitutionCriteria) {
+        getSubstitutionService().deleteCriteria(user, substitutionCriteria);
     }
 
     @Override
-    public List<Substitution> getBySubstitutionCriteria(User user, SubstitutionCriteria substitutionCriteria) throws AuthorizationException,
-            AuthenticationException, ExecutorDoesNotExistException {
-        return getSubstitutionService().getBySubstitutionCriteria(user, substitutionCriteria);
+    public List<Substitution> getSubstitutionsByCriteria(User user, SubstitutionCriteria substitutionCriteria) {
+        return getSubstitutionService().getSubstitutionsByCriteria(user, substitutionCriteria);
     }
 }

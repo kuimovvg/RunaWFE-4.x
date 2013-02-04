@@ -104,7 +104,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
     protected String getTitle() {
         SubstitutionService substitutionService = Delegates.getSubstitutionService();
         if (getIdentifiableId() != null) {
-            substitutionCriteria = substitutionService.getSubstitutionCriteria(getUser(), getIdentifiableId());
+            substitutionCriteria = substitutionService.getCriteria(getUser(), getIdentifiableId());
         }
         return Messages.getMessage("substitutioncriteria.edit.title", pageContext);
     }
