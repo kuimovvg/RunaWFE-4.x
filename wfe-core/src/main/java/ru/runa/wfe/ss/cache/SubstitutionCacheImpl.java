@@ -42,6 +42,8 @@ import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
+import com.google.common.base.Objects;
+
 class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
     private static final Log log = LogFactory.getLog(SubstitutionCacheImpl.class);
     public static final String substitutorsName = "ru.runa.wfe.wfe.af.caches.substitutors";
@@ -152,7 +154,7 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                     subDescr = new TreeMap<Substitution, HashSet<Long>>(new Comparator<Substitution>() {
                         @Override
                         public int compare(Substitution obj1, Substitution obj2) {
-                            return obj1.getPosition() < obj2.getPosition() ? -1 : obj1.getPosition() == obj2.getPosition() ? 0 : 1;
+                            return obj1.getPosition() < obj2.getPosition() ? -1 : Objects.equal(obj1.getPosition(), obj2.getPosition()) ? 0 : 1;
                         }
                     });
                     result.put(actor.getId(), subDescr);

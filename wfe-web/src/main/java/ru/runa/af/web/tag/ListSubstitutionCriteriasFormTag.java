@@ -92,8 +92,8 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             ArrayList<Substitution> substitutions = new ArrayList<Substitution>();
             SubstitutionService substitutionService = Delegates.getSubstitutionService();
             for (Long id : ids) {
-                SubstitutionCriteria substitutionCriteria = substitutionService.getSubstitutionCriteria(getUser(), id);
-                substitutions.addAll(substitutionService.getBySubstitutionCriteria(getUser(), substitutionCriteria));
+                SubstitutionCriteria substitutionCriteria = substitutionService.getCriteria(getUser(), id);
+                substitutions.addAll(substitutionService.getSubstitutionsByCriteria(getUser(), substitutionCriteria));
             }
             for (Substitution substitution : substitutions) {
                 ExecutorService executorService = Delegates.getExecutorService();
@@ -150,7 +150,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             List<SubstitutionCriteria> substitutionCriterias = null;
             try {
                 SubstitutionService substitutionService = Delegates.getSubstitutionService();
-                substitutionCriterias = substitutionService.getSubstitutionCriteriaAll(getUser());
+                substitutionCriterias = substitutionService.getAllCriterias(getUser());
             } catch (Exception e) {
                 return null;
             }

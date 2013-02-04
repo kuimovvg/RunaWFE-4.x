@@ -31,7 +31,6 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.ss.TerminatorSubstitution;
@@ -49,8 +48,7 @@ public class UpdateSubstitutionAction extends ActionBase {
     public static final String RETURN_ACTION = "/manage_executor.do?id=";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         try {
             SubstitutionForm form = (SubstitutionForm) actionForm;
@@ -63,12 +61,13 @@ public class UpdateSubstitutionAction extends ActionBase {
                 } else {
                     substitution = new Substitution();
                 }
+                substitution.setActorId(form.getActorId());
             } else {
                 substitution = substitutionService.getSubstitution(getLoggedUser(request), form.getId());
             }
             SubstitutionCriteria criteria = null;
             if (form.getCriteriaId() != 0) {
-                criteria = substitutionService.getSubstitutionCriteria(getLoggedUser(request), form.getCriteriaId());
+                criteria = substitutionService.getCriteria(getLoggedUser(request), form.getCriteriaId());
             }
             substitution.setCriteria(criteria);
             substitution.setEnabled(form.isEnabled());
@@ -76,9 +75,9 @@ public class UpdateSubstitutionAction extends ActionBase {
                 substitution.setOrgFunction(form.buildOrgFunction());
             }
             if (form.getId() == 0) {
-                substitutionService.createSubstitution(getLoggedUser(request), form.getActorId(), substitution);
+                substitutionService.createSubstitution(getLoggedUser(request), substitution);
             } else {
-                substitutionService.store(getLoggedUser(request), substitution);
+                substitutionService.updateSubstitution(getLoggedUser(request), substitution);
             }
             return new ActionForward(RETURN_ACTION + substitution.getActorId(), true);
         } catch (Exception e) {

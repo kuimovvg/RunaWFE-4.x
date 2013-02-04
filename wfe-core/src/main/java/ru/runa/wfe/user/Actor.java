@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.commons.OracleCommons;
+import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.security.SecuredObjectType;
 
 import com.google.common.base.Objects;
@@ -38,22 +39,19 @@ import com.google.common.base.Objects;
  */
 @Entity
 @DiscriminatorValue(value = "N")
-@XmlType(name = "Actor", namespace = "http://runa.ru/workflow/webservices")
+@XmlType(name = "Actor", namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Actor extends Executor {
     private static final long serialVersionUID = -582492651083909598L;
     public static final Actor UNAUTHORIZED_ACTOR = new Actor("__unauthorized__", null);
 
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long code;
-
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private boolean active = true;
-
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String email;
-
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String phone;
 
     protected Actor() {
