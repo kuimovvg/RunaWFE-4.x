@@ -35,6 +35,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -45,6 +49,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
+import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentations;
 
@@ -60,11 +65,17 @@ import com.google.common.collect.Sets;
 @Entity
 @Table(name = "PROFILE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@XmlType(name = "Profile", namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public final class Profile implements Serializable {
     private static final long serialVersionUID = 1L;
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long id;
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long version;
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Actor actor;
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Set<BatchPresentation> batchPresentations = Sets.newHashSet();
     private Map<String, BatchPresentation> defaultBatchPresentations = Maps.newHashMap();
     private final Set<String> visibleBlocks = Sets.newHashSet();

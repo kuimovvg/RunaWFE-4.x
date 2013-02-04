@@ -40,7 +40,7 @@ import ru.runa.wfe.commons.SystemUtils;
  * Principals associated with a <code>Subject</code>. Created on 16.07.2004
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
+@XmlType(name = "User", namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
 public class User implements Principal, Serializable {
     private static final long serialVersionUID = 43549879345L;
     @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)

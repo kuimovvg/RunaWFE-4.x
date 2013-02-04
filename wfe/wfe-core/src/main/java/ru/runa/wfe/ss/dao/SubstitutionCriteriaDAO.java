@@ -6,8 +6,6 @@ import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 
-import com.google.common.base.Preconditions;
-
 /**
  * DAO for {@link SubstitutionCriteria}.
  * 
@@ -16,11 +14,6 @@ import com.google.common.base.Preconditions;
  */
 @SuppressWarnings("unchecked")
 public class SubstitutionCriteriaDAO extends GenericDAO<SubstitutionCriteria> {
-
-    public void store(SubstitutionCriteria substitutionCriteria) {
-        Preconditions.checkNotNull(substitutionCriteria);
-        getHibernateTemplate().saveOrUpdate(substitutionCriteria);
-    }
 
     public List<Substitution> getSubstitutionsByCriteria(SubstitutionCriteria criteria) {
         return getHibernateTemplate().find("from Substitution where criteria=?", criteria);

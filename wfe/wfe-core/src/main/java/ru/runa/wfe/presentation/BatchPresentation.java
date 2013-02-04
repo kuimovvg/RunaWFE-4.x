@@ -35,6 +35,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,6 +47,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import ru.runa.wfe.commons.ArraysCommons;
 import ru.runa.wfe.commons.OracleCommons;
+import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 import ru.runa.wfe.presentation.filter.FilterCriteriaFactory;
 
@@ -57,95 +62,56 @@ import com.google.common.collect.Maps;
 @Entity
 @Table(name = "BATCH_PRESENTATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@XmlType(name = "BatchPresentation", namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public final class BatchPresentation implements Cloneable, Serializable {
     private static final long serialVersionUID = 6631653373163613071L;
     private static final Log log = LogFactory.getLog(BatchPresentation.class);
 
-    /**
-     * Identity of {@link BatchPresentation}.
-     */
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long id;
-
-    /**
-     * Object version (need by hibernate for correct updating).
-     */
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long version;
-
-    /**
-     * {@link ClassPresentation}, refers by this {@link BatchPresentation}.
-     */
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Integer classPresentationId;
-
-    /**
-     * Presentation group identity. Such as tasksList, processLists and so on.
-     * Each group refers to some page in web interface.
-     */
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String category;
-
-    /**
-     * Presentation name. Displays in web interface.
-     */
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String name;
-
-    /**
-     * Is this batchPresentation active inside category.
-     */
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private boolean active;
-
-    /**
-     * Page size for paged {@link BatchPresentation}.
-     */
-    int rangeSize = 10;
-
-    /**
-     * Page number for paged {@link BatchPresentation}.
-     */
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
+    private int rangeSize = 10;
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private int pageNumber = 1;
-
-    private transient byte[] fieldsData;
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Fields fields;
-
-    /**
-     * Holds identifiers for expanded groups.
-     */
-    final List<String> expandedBlockList = Lists.newArrayList();
-
+    private final List<String> expandedBlockList = Lists.newArrayList();
     /**
      * Helper to hold fields set (such us fields to display, sort and so on).
      */
     private transient Store storage;
+    private transient byte[] fieldsData;
 
-    /**
-     * For hibernate
-     */
     protected BatchPresentation() {
     }
 
-    /**
-     * @param name
-     *            of presentation
-     * @param classPresentation
-     *            tag that supports such presentation
-     * @param fieldsToSort
-     *            fields to sort (allowed multi field sorting)
-     * @param fieldsToDisplayIds
-     *            fields to display
-     * @param isGroupingEnabled
-     *            enables grouping
-     */
-    public BatchPresentation(String batchPresentationName, String batchPresentationId, ClassPresentation classPresentation, int[] fieldsToSortIds,
-            boolean[] fieldsToSortModes, int[] fieldsToDisplayIds, Map<Integer, FilterCriteria> fieldsToFilterMap, int[] fieldsToGroupIds) {
-        setName(batchPresentationName);
-        setCategory(batchPresentationId);
+    public BatchPresentation(String name, String category, ClassPresentation classPresentation, int[] fieldSortIds, boolean[] fieldSortModes,
+            int[] fieldDisplayIds, Map<Integer, FilterCriteria> fieldFilters, int[] fieldGroupIds) {
+        setName(name);
+        setCategory(category);
         classPresentationId = ClassPresentations.getClassPresentationId(classPresentation);
         fields = new Fields();
-        fields.sortIds = fieldsToSortIds;
-        fields.sortModes = fieldsToSortModes;
-        fields.displayIds = fieldsToDisplayIds;
-        fields.filters.putAll(fieldsToFilterMap);
-        fields.groupIds = fieldsToGroupIds;
+        fields.sortIds = fieldSortIds;
+        fields.sortModes = fieldSortModes;
+        fields.displayIds = fieldDisplayIds;
+        fields.filters.putAll(fieldFilters);
+        fields.groupIds = fieldGroupIds;
     }
 
+    /**
+     * Identity of {@link BatchPresentation}.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
     @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BATCH_PRESENTATION")
@@ -154,52 +120,87 @@ public final class BatchPresentation implements Cloneable, Serializable {
         return id;
     }
 
+    /**
+     * Identity of {@link BatchPresentation}.
+     */
     protected void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Object version (need by hibernate for correct updating).
+     */
     @Version
     @Column(name = "VERSION", nullable = false)
     protected Long getVersion() {
         return version;
     }
 
+    /**
+     * Object version (need by hibernate for correct updating).
+     */
     protected void setVersion(Long version) {
         this.version = version;
     }
 
+    /**
+     * {@link ClassPresentation}, refers by this {@link BatchPresentation}.
+     */
     @Column(name = "CLASS_PRESENTATION_ID")
     protected Integer getClassPresentationId() {
         return classPresentationId;
     }
 
+    /**
+     * {@link ClassPresentation}, refers by this {@link BatchPresentation}.
+     */
     protected void setClassPresentationId(Integer classPresentationId) {
         this.classPresentationId = classPresentationId;
     }
 
+    /**
+     * Presentation group identity. Such as tasksList, processLists and so on.
+     * Each group refers to some page in web interface.
+     */
     @Column(name = "CATEGORY", nullable = false)
     public String getCategory() {
         return category;
     }
 
+    /**
+     * Presentation group identity. Such as tasksList, processLists and so on.
+     * Each group refers to some page in web interface.
+     */
     protected void setCategory(String tagName) {
         category = tagName;
     }
 
+    /**
+     * Presentation name. Displays in web interface.
+     */
     @Column(name = "NAME", nullable = false)
     public String getName() {
         return name;
     }
 
+    /**
+     * Presentation name. Displays in web interface.
+     */
     public void setName(String name) {
         this.name = OracleCommons.fixNullString(name);
     }
 
+    /**
+     * Is this batchPresentation active inside category.
+     */
     @Column(name = "IS_ACTIVE")
     public boolean isActive() {
         return active;
     }
 
+    /**
+     * Is this batchPresentation active inside category.
+     */
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -223,11 +224,17 @@ public final class BatchPresentation implements Cloneable, Serializable {
         }
     }
 
+    /**
+     * Page size for paged {@link BatchPresentation}.
+     */
     @Column(name = "RANGE_SIZE")
     public int getRangeSize() {
         return rangeSize;
     }
 
+    /**
+     * Page size for paged {@link BatchPresentation}.
+     */
     public void setRangeSize(int rangeSize) {
         if (this.rangeSize != rangeSize) {
             this.rangeSize = rangeSize;
@@ -235,11 +242,17 @@ public final class BatchPresentation implements Cloneable, Serializable {
         }
     }
 
+    /**
+     * Page number for paged {@link BatchPresentation}.
+     */
     @Transient
     public int getPageNumber() {
         return pageNumber;
     }
 
+    /**
+     * Page number for paged {@link BatchPresentation}.
+     */
     public void setPageNumber(int pageNumber) {
         this.pageNumber = pageNumber;
     }
@@ -281,6 +294,9 @@ public final class BatchPresentation implements Cloneable, Serializable {
         storage = null;
     }
 
+    /**
+     * Holds identifiers for expanded groups.
+     */
     public void setGroupBlockStatus(String key, boolean isExpanded) {
         if (isExpanded) {
             expandedBlockList.add(key);
@@ -289,6 +305,9 @@ public final class BatchPresentation implements Cloneable, Serializable {
         }
     }
 
+    /**
+     * Holds identifiers for expanded groups.
+     */
     public boolean isGroupBlockExpanded(String key) {
         return expandedBlockList.contains(key);
     }
@@ -393,6 +412,9 @@ public final class BatchPresentation implements Cloneable, Serializable {
         storage = null;
     }
 
+    /**
+     * {@link ClassPresentation}, refers by this {@link BatchPresentation}.
+     */
     @Transient
     public ClassPresentation getClassPresentation() {
         return ClassPresentations.getClassPresentation(classPresentationId);

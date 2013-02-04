@@ -39,6 +39,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.PolymorphismType;
 
 import ru.runa.wfe.commons.OracleCommons;
+import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.security.IdentifiableBase;
 
 import com.google.common.base.Objects;
@@ -57,24 +58,20 @@ import com.google.common.base.Objects;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING, length = 1)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@XmlType(name = "Executor", namespace = "http://runa.ru/workflow/webservices")
+@XmlType(name = "Executor", namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Executor extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long id;
-
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long version;
-
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String name;
-
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String description;
-
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     protected String fullName;
 
     protected Executor() {
