@@ -34,15 +34,11 @@ import ru.runa.service.af.AuthorizationServiceRemote;
 import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
-import ru.runa.wfe.security.UnapplicablePermissionException;
 import ru.runa.wfe.security.logic.AuthorizationLogic;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
@@ -58,7 +54,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     private AuthorizationLogic authorizationLogic;
 
     @Override
-    public boolean isAllowed(User user, Permission permission, Identifiable identifiable) throws AuthorizationException, AuthenticationException {
+    public boolean isAllowed(User user, Permission permission, Identifiable identifiable) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(permission);
         Preconditions.checkNotNull(identifiable);
@@ -66,7 +62,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) throws AuthenticationException {
+    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(permission);
         Preconditions.checkNotNull(identifiables);
@@ -74,8 +70,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws ExecutorDoesNotExistException,
-            AuthorizationException, AuthenticationException {
+    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(performer);
         Preconditions.checkNotNull(identifiable);
@@ -83,8 +78,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public void setPermissions(User user, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable)
-            throws UnapplicablePermissionException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+    public void setPermissions(User user, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executorIds);
         Preconditions.checkNotNull(permissions);
@@ -93,8 +87,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
-            throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException, UnapplicablePermissionException {
+    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(performer);
         Preconditions.checkNotNull(permissions);
@@ -103,8 +96,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public void setPermissions(User user, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable)
-            throws AuthorizationException, AuthenticationException, ExecutorDoesNotExistException, UnapplicablePermissionException {
+    public void setPermissions(User user, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executorsId);
         Preconditions.checkNotNull(permissions);
@@ -113,8 +105,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean withPermission)
-            throws AuthorizationException, AuthenticationException {
+    public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean withPermission) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(identifiable);
         Preconditions.checkNotNull(batchPresentation);
@@ -122,8 +113,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean withPermission)
-            throws AuthorizationException, AuthenticationException {
+    public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean withPermission) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(identifiable);
         Preconditions.checkNotNull(batchPresentation);
@@ -133,7 +123,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Object> List<T> getPersistentObjects(User user, BatchPresentation batchPresentation, Class<T> persistentClass,
-            Permission permission, SecuredObjectType[] securedObjectTypes, boolean enablePaging) throws AuthenticationException {
+            Permission permission, SecuredObjectType[] securedObjectTypes, boolean enablePaging) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
         Preconditions.checkNotNull(persistentClass, "Persistence class");

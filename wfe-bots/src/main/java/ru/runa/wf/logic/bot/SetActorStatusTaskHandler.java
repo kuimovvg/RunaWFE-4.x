@@ -19,7 +19,6 @@ package ru.runa.wf.logic.bot;
 
 import java.util.Map;
 
-
 import org.dom4j.Document;
 import org.dom4j.Element;
 
@@ -56,7 +55,7 @@ public class SetActorStatusTaskHandler extends TaskHandlerBase {
         Long actorCode = variableProvider.getValueNotNull(Long.class, config.actorVariableName);
         Actor actor = executorDelegate.getActorByCode(user, actorCode);
         boolean isActive = variableProvider.getValueNotNull(Boolean.class, config.statusVariableName);
-        executorDelegate.setStatus(user, actor.getId(), isActive);
+        executorDelegate.setStatus(user, actor, isActive);
         return null;
     }
 

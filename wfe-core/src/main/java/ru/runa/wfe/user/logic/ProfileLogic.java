@@ -50,7 +50,7 @@ public class ProfileLogic extends CommonLogic {
     public void updateProfiles(User user, List<Profile> profiles) throws AuthorizationException {
         for (Profile profile : profiles) {
             checkPermissionAllowed(user, profile.getActor(), ExecutorPermission.UPDATE);
-            profileDAO.merge(profile);
+            profileDAO.update(profile);
         }
     }
 

@@ -76,9 +76,10 @@ public class SubstitutionLogic extends CommonLogic {
             if (alreadyExistsInSamePosition) {
                 for (Substitution existing : substitutions) {
                     if (existing.getPosition() >= substitution.getPosition()) {
+                        log.info("Incrementing position in " + existing);
                         existing.setPosition(existing.getPosition() + 1);
-                        log.info("Incremented position in " + existing);
-                        substitutionDAO.merge(existing);
+                        substitutionDAO.update(existing);
+                        substitutionDAO.flushPendingChanges();
                     }
                 }
             }
@@ -133,11 +134,12 @@ public class SubstitutionLogic extends CommonLogic {
         }
         if (Objects.equal(oldPosition, substitution.getPosition()) || substitutionWithNewPosition == null) {
             log.info("Saving " + substitution);
-            substitutionDAO.merge(substitution);
+            substitutionDAO.update(substitution);
         } else {
             log.info("Switching substitutions " + substitution + " <-> " + substitutionWithNewPosition);
             substitutionDAO.delete(substitution.getId());
             substitutionDAO.delete(substitutionWithNewPosition.getId());
+            substitutionDAO.flushPendingChanges();
             int pos0 = substitutionWithNewPosition.getPosition();
             substitutionWithNewPosition.setId(null);
             substitutionWithNewPosition.setPosition(substitution.getPosition());
@@ -175,7 +177,7 @@ public class SubstitutionLogic extends CommonLogic {
             Substitution substitution = actorSubstitutions.get(i);
             if (!Objects.equal(substitution.getPosition(), i)) {
                 substitution.setPosition(i);
-                substitutionDAO.merge(substitution);
+                substitutionDAO.update(substitution);
             }
         }
     }
@@ -209,7 +211,7 @@ public class SubstitutionLogic extends CommonLogic {
     }
 
     public void update(User user, SubstitutionCriteria substitutionsCriteria) {
-        substitutionCriteriaDAO.merge(substitutionsCriteria);
+        substitutionCriteriaDAO.update(substitutionsCriteria);
     }
 
     public void deleteCriterias(User user, List<SubstitutionCriteria> criterias) {

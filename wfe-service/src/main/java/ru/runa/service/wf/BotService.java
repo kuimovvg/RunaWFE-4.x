@@ -50,7 +50,7 @@ public interface BotService {
      * 
      * @return bot station or <code>null</code>
      */
-    public BotStation getBotStation(String name);
+    public BotStation getBotStationByName(String name);
 
     /**
      * Updates bot station data.

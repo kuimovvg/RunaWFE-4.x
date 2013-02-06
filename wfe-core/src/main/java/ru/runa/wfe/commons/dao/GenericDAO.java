@@ -110,8 +110,15 @@ public abstract class GenericDAO<T extends Object> extends CommonDAO {
      * @param entity
      *            detached entity
      */
-    public T merge(T entity) {
+    public T update(T entity) {
         return getHibernateTemplate().merge(entity);
+    }
+
+    /**
+     * Flush all pending saves, updates and deletes to the database.
+     */
+    public void flushPendingChanges() {
+        getHibernateTemplate().flush();
     }
 
     /**

@@ -17,7 +17,9 @@
  */
 package ru.runa.wfe.security;
 
-public class WeakPasswordException extends Exception {
+import ru.runa.wfe.ApplicationException;
+
+public class WeakPasswordException extends ApplicationException {
 
     private static final long serialVersionUID = 1L;
 }
