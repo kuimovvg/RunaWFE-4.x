@@ -57,7 +57,9 @@ public class AjaxCommandServlet extends HttpServlet {
                     if (i != 0) {
                         result.append(", ");
                     }
-                    result.append("{value:'").append(data.get(i)[0]).append("', text: '").append(data.get(i)[1]).append("'}");
+                    String[] strings = data.get(i);
+                    result.append("{\"value\":\"").append(normalize(strings[0])).append("\", \"text\": \"").append(normalize(strings[1]))
+                            .append("\"}");
                 }
                 result.append("]");
             } else {
@@ -68,5 +70,12 @@ public class AjaxCommandServlet extends HttpServlet {
             log.error("command", e);
             throw new ServletException(e);
         }
+    }
+
+    private String normalize(String data) {
+        if (data.contains("\"")) {
+            return data.replaceAll("\"", "'");
+        }
+        return data;
     }
 }

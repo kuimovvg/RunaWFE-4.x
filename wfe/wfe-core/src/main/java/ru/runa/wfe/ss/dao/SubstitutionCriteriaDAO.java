@@ -15,6 +15,10 @@ import ru.runa.wfe.ss.SubstitutionCriteria;
 @SuppressWarnings("unchecked")
 public class SubstitutionCriteriaDAO extends GenericDAO<SubstitutionCriteria> {
 
+    public SubstitutionCriteria getByName(String name) {
+        return findFirstOrNull("from SubstitutionCriteria where name=?", name);
+    }
+
     public List<Substitution> getSubstitutionsByCriteria(SubstitutionCriteria criteria) {
         return getHibernateTemplate().find("from Substitution where criteria=?", criteria);
     }

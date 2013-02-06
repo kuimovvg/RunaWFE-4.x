@@ -341,7 +341,7 @@ public class ExecutorDAO extends CommonDAO {
      */
     public void setPassword(Actor actor, String password) throws ExecutorDoesNotExistException {
         Preconditions.checkNotNull(password, "Password must be specified.");
-        ActorPassword actorPassword = getActorPassword(actor.getId());
+        ActorPassword actorPassword = getActorPassword(actor);
         if (actorPassword == null) {
             actorPassword = new ActorPassword(actor, password);
             getHibernateTemplate().save(actorPassword);
@@ -364,7 +364,7 @@ public class ExecutorDAO extends CommonDAO {
     public boolean isPasswordValid(Actor actor, String password) throws ExecutorDoesNotExistException {
         Preconditions.checkNotNull(password, "Password must be specified.");
         ActorPassword actorPassword = new ActorPassword(actor, password);
-        ActorPassword result = getActorPassword(actor.getId());
+        ActorPassword result = getActorPassword(actor);
         return actorPassword.equals(result);
     }
 
@@ -635,7 +635,7 @@ public class ExecutorDAO extends CommonDAO {
         if (executor instanceof Group) {
             getHibernateTemplate().deleteAll(getRelationGroupWithExecutors((Group) executor));
         } else {
-            ActorPassword actorPassword = getActorPassword(executor.getId());
+            ActorPassword actorPassword = getActorPassword((Actor) executor);
             if (actorPassword != null) {
                 getHibernateTemplate().delete(actorPassword);
             }
@@ -853,12 +853,8 @@ public class ExecutorDAO extends CommonDAO {
         return checkExecutorNotNull(getExecutorByName(clazz, name), name, clazz);
     }
 
-    private ActorPassword getActorPassword(Long id) throws HibernateException {
-        List<ActorPassword> list = getHibernateTemplate().find("from ActorPassword where actorId=?", id);
-        if (list.size() > 0) {
-            return list.get(0);
-        }
-        return null;
+    private ActorPassword getActorPassword(Actor actor) throws HibernateException {
+        return findFirstOrNull("from ActorPassword where actorId=?", actor.getId());
     }
 
     private Actor getActorByCodeInternal(Long code) {

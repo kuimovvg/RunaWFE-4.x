@@ -20,14 +20,15 @@ package ru.runa.common.web.tag;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.ActionExceptionHelper;
 
 /**
  * Created on 07.09.2004
  * 
- * @jsp.tag name = "globalExceptions" body-content = "empty" description = "Tag translate global JSP exceptions declared in web.xml into Struts ActionErrors and save them"
+ * @jsp.tag name = "globalExceptions" body-content = "empty" description =
+ *          "Tag translate global JSP exceptions declared in web.xml into Struts ActionErrors and save them"
  */
 public class GlobalExceptions extends TagSupport {
     private static final long serialVersionUID = 1L;
@@ -43,10 +44,10 @@ public class GlobalExceptions extends TagSupport {
         return SKIP_BODY;
     }
 
-    private ActionErrors getActionErrors() {
-        ActionErrors messages = (ActionErrors) pageContext.getRequest().getAttribute(Globals.ERROR_KEY);
+    private ActionMessages getActionErrors() {
+        ActionMessages messages = (ActionMessages) pageContext.getRequest().getAttribute(Globals.ERROR_KEY);
         if (messages == null) {
-            messages = new ActionErrors();
+            messages = new ActionMessages();
             pageContext.getRequest().setAttribute(Globals.ERROR_KEY, messages);
         }
         return messages;

@@ -22,7 +22,6 @@ import java.util.List;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
@@ -93,7 +92,7 @@ public final class PresentationCompilerHelper {
      *         children's.
      */
     public static BatchPresentationHibernateCompiler createGroupChildrenCompiler(User user, Group group, BatchPresentation batchPresentation,
-            boolean hasExecutor) throws AuthenticationException {
+            boolean hasExecutor) {
         List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         String inClause = hasExecutor ? "IN" : "NOT IN";
         String notInRestriction = inClause + " (SELECT relation.executor.id FROM " + ExecutorGroupMembership.class.getName()
@@ -159,13 +158,14 @@ public final class PresentationCompilerHelper {
      *         executors.
      */
     public static BatchPresentationHibernateCompiler createExecutorWithPermissionCompiler(User user, Identifiable identifiable,
-            BatchPresentation batchPresentation, boolean hasPermission) throws AuthenticationException {
+            BatchPresentation batchPresentation, boolean hasPermission) {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
         List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         String inClause = hasPermission ? "IN" : "NOT IN";
         String idRestriction = inClause + " (SELECT pm.executor.id from " + PermissionMapping.class.getName() + " as pm where pm.identifiableId="
                 + identifiable.getIdentifiableId() + " and pm.type='" + identifiable.getSecuredObjectType() + "')";
-        compiler.setParameters(Executor.class, null, null, true, executorIds, Permission.READ, ALL_EXECUTORS_CLASSES, new String[] { idRestriction });
+        compiler.setParameters(batchPresentation.getClassPresentation().getPresentationClass(), null, null, true, executorIds, Permission.READ,
+                ALL_EXECUTORS_CLASSES, new String[] { idRestriction });
         return compiler;
     }
 }

@@ -384,7 +384,7 @@ public class PermissionBean {
     private void removeAllPermissionOnIdentifiable(User user, Identifiable identifiable) throws ExecutorDoesNotExistException,
             AuthorizationException, AuthenticationException {
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-        List<Executor> executors = authorizationLogic.getExecutorsWithPermission(user, identifiable, batchPresentation, true);
+        List<? extends Executor> executors = authorizationLogic.getExecutorsWithPermission(user, identifiable, batchPresentation, true);
         for (Executor executor : executors) {
             if (!authorizationLogic.isPrivelegedExecutor(user, executor, identifiable)) {
                 authorizationLogic.setPermissions(user, executor, Permission.getNoPermissions(), identifiable);

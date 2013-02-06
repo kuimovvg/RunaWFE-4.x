@@ -154,9 +154,9 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
             Table table = new Table();
             table.setID("paramsTable");
             table.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE);
-            String criteriaId = "0";
+            String criteriaId = SubstitutionForm.NO_CRITERIA_ID.toString();
             if (substitution != null && substitution.getCriteria() != null) {
-                criteriaId = String.valueOf(substitution.getCriteria().getId());
+                criteriaId = substitution.getCriteria().getId().toString();
             }
             table.addElement(createTRWithLabelAndSelect(Messages.getMessage(Messages.LABEL_SUBSTITUTORS_CRITERIA, pageContext),
                     SubstitutionForm.CRITERIA_ID_INPUT_NAME, getCriteriaOptions(criteriaId), false));

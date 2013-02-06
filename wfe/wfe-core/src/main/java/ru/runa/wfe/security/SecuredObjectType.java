@@ -2,8 +2,8 @@ package ru.runa.wfe.security;
 
 import java.util.List;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.BotStationPermission;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.WorkflowSystemPermission;
 import ru.runa.wfe.execution.ProcessPermission;
@@ -23,11 +23,7 @@ public enum SecuredObjectType {
     }
 
     public Permission getNoPermission() {
-        try {
-            return permissionClass.newInstance();
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
-        }
+        return ClassLoaderUtil.instantiate(permissionClass);
     }
 
     public List<Permission> getAllPermissions() {

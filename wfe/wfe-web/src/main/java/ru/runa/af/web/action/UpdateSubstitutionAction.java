@@ -29,11 +29,12 @@ import ru.runa.af.web.form.SubstitutionForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.ss.TerminatorSubstitution;
+
+import com.google.common.base.Objects;
 
 /**
  * @struts:action path="/updateSubstitution" name="substitutionForm"
@@ -52,9 +53,8 @@ public class UpdateSubstitutionAction extends ActionBase {
         ActionMessages errors = new ActionMessages();
         try {
             SubstitutionForm form = (SubstitutionForm) actionForm;
-            SubstitutionService substitutionService = Delegates.getSubstitutionService();
             Substitution substitution;
-            if (form.getId() == 0) {
+            if (form.getId() == null) {
                 if (form.isTerminator()) {
                     substitution = new TerminatorSubstitution();
                     substitution.setOrgFunction("");
@@ -63,21 +63,21 @@ public class UpdateSubstitutionAction extends ActionBase {
                 }
                 substitution.setActorId(form.getActorId());
             } else {
-                substitution = substitutionService.getSubstitution(getLoggedUser(request), form.getId());
+                substitution = Delegates.getSubstitutionService().getSubstitution(getLoggedUser(request), form.getId());
             }
             SubstitutionCriteria criteria = null;
-            if (form.getCriteriaId() != 0) {
-                criteria = substitutionService.getCriteria(getLoggedUser(request), form.getCriteriaId());
+            if (!Objects.equal(SubstitutionForm.NO_CRITERIA_ID, form.getCriteriaId())) {
+                criteria = Delegates.getSubstitutionService().getCriteria(getLoggedUser(request), form.getCriteriaId());
             }
             substitution.setCriteria(criteria);
             substitution.setEnabled(form.isEnabled());
             if (!(substitution instanceof TerminatorSubstitution)) {
                 substitution.setOrgFunction(form.buildOrgFunction());
             }
-            if (form.getId() == 0) {
-                substitutionService.createSubstitution(getLoggedUser(request), substitution);
+            if (form.getId() == null) {
+                Delegates.getSubstitutionService().createSubstitution(getLoggedUser(request), substitution);
             } else {
-                substitutionService.updateSubstitution(getLoggedUser(request), substitution);
+                Delegates.getSubstitutionService().updateSubstitution(getLoggedUser(request), substitution);
             }
             return new ActionForward(RETURN_ACTION + substitution.getActorId(), true);
         } catch (Exception e) {
