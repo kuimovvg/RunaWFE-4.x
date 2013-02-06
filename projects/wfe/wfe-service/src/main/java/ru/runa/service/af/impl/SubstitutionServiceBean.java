@@ -78,7 +78,7 @@ public class SubstitutionServiceBean implements SubstitutionServiceLocal, Substi
     public void updateSubstitution(User user, Substitution substitution) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitution);
-        substitutionLogic.create(user, substitution);
+        substitutionLogic.update(user, substitution);
     }
 
     @Override
