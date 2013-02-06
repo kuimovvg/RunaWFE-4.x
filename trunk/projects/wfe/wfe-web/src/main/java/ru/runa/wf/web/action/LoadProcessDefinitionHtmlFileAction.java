@@ -64,7 +64,7 @@ public class LoadProcessDefinitionHtmlFileAction extends ActionBase {
 
             if (fileName.endsWith(".html")) {
                 request.setAttribute("htmlBytes", bytes);
-                request.setAttribute("processDefinitionId", new Long(id));
+                request.setAttribute("processDefinitionId", id);
                 request.setAttribute("pageHref", fileName);
                 successForward = mapping.findForward(Resources.FORWARD_SUCCESS);
             } else {

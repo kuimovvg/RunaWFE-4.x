@@ -25,13 +25,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.portlet.PortletExceptionHandler;
 
 public class ReturnHomeExceptionHandler implements PortletExceptionHandler {
 
+    @Override
     public boolean processError(Exception exception, ServletContext servletContext, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         ActionExceptionHelper.addException(getActionErrors(request), exception);
@@ -43,10 +44,10 @@ public class ReturnHomeExceptionHandler implements PortletExceptionHandler {
         return true;
     }
 
-    private static ActionErrors getActionErrors(HttpServletRequest request) {
-        ActionErrors messages = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
+    private static ActionMessages getActionErrors(HttpServletRequest request) {
+        ActionMessages messages = (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
         if (messages == null) {
-            messages = new ActionErrors();
+            messages = new ActionMessages();
             request.setAttribute(Globals.ERROR_KEY, messages);
         }
         return messages;

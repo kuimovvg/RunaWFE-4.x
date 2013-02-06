@@ -42,7 +42,12 @@ public interface SubstitutionService {
 
     public <T extends SubstitutionCriteria> void createCriteria(User user, T substitutionCriteria) throws AuthorizationException;
 
-    public SubstitutionCriteria getCriteria(User user, Long substitutionCriteriaId) throws AuthorizationException;
+    public SubstitutionCriteria getCriteria(User user, Long criteriaId) throws AuthorizationException;
+
+    /**
+     * @return {@link SubstitutionCriteria} or <code>null</code>
+     */
+    public SubstitutionCriteria getCriteriaByName(User user, String name) throws AuthorizationException;
 
     public List<SubstitutionCriteria> getAllCriterias(User user) throws AuthorizationException;
 

@@ -206,6 +206,10 @@ public class SubstitutionLogic extends CommonLogic {
         return substitutionCriteriaDAO.getNotNull(id);
     }
 
+    public SubstitutionCriteria getCriteria(User user, String name) {
+        return substitutionCriteriaDAO.getByName(name);
+    }
+
     public List<SubstitutionCriteria> getAllCriterias(User user) {
         return substitutionCriteriaDAO.getAll();
     }

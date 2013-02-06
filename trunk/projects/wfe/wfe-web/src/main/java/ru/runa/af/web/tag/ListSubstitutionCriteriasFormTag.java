@@ -147,14 +147,8 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             Table table = new Table();
             table.setClass(Resources.CLASS_PERMISSION_TABLE);
             table.addElement(createTableHeaderTR());
-            List<SubstitutionCriteria> substitutionCriterias = null;
-            try {
-                SubstitutionService substitutionService = Delegates.getSubstitutionService();
-                substitutionCriterias = substitutionService.getAllCriterias(getUser());
-            } catch (Exception e) {
-                return null;
-            }
-
+            SubstitutionService substitutionService = Delegates.getSubstitutionService();
+            List<SubstitutionCriteria> substitutionCriterias = substitutionService.getAllCriterias(getUser());
             ArrayList<Long> ids = arrayFromString(substitutionCriteriaIDs);
             for (SubstitutionCriteria substitutionCriteria : substitutionCriterias) {
                 table.addElement(createTR(substitutionCriteria, ids.contains(substitutionCriteria.getId())));
