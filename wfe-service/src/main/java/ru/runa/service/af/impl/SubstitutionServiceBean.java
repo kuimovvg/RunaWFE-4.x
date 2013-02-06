@@ -95,6 +95,12 @@ public class SubstitutionServiceBean implements SubstitutionServiceLocal, Substi
     }
 
     @Override
+    public SubstitutionCriteria getCriteriaByName(User user, String name) {
+        Preconditions.checkNotNull(user);
+        return substitutionLogic.getCriteria(user, name);
+    }
+
+    @Override
     public List<SubstitutionCriteria> getAllCriterias(User user) {
         Preconditions.checkNotNull(user);
         return substitutionLogic.getAllCriterias(user);

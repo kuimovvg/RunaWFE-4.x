@@ -29,10 +29,8 @@ import ru.runa.af.web.form.SubstitutionCriteriaForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 
 /**
@@ -49,30 +47,24 @@ public class UpdateSubstitutionCriteriaAction extends ActionBase {
     public static final String RETURN_ACTION = "/manage_system.do";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         try {
             SubstitutionCriteriaForm form = (SubstitutionCriteriaForm) actionForm;
-            SubstitutionService substitutionService = Delegates.getSubstitutionService();
-            SubstitutionCriteria substitutionCriteria;
-            if (form.getId() == 0) {
-                substitutionCriteria = ClassLoaderUtil.instantiate(form.getType());
+            if (form.getId() == null) {
+                SubstitutionCriteria substitutionCriteria = ClassLoaderUtil.instantiate(form.getType());
+                substitutionCriteria.setName(form.getName());
                 substitutionCriteria.setConfiguration(form.getConf());
+                Delegates.getSubstitutionService().createCriteria(getLoggedUser(request), substitutionCriteria);
             } else {
-                substitutionCriteria = substitutionService.getCriteria(getLoggedUser(request), form.getId());
-            }
-            substitutionCriteria.setName(form.getName());
-            if (form.getId() == 0) {
-                substitutionService.createCriteria(getLoggedUser(request), substitutionCriteria);
-            } else {
-                substitutionService.updateCriteria(getLoggedUser(request), substitutionCriteria);
+                SubstitutionCriteria substitutionCriteria = Delegates.getSubstitutionService().getCriteria(getLoggedUser(request), form.getId());
+                substitutionCriteria.setName(form.getName());
+                Delegates.getSubstitutionService().updateCriteria(getLoggedUser(request), substitutionCriteria);
             }
             return new ActionForward(RETURN_ACTION, true);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
-
         saveErrors(request, errors);
         return mapping.findForward(Resources.FORWARD_FAILURE);
     }

@@ -69,8 +69,13 @@ public class SubstitutionServiceDelegate extends EJB3Delegate implements Substit
     }
 
     @Override
-    public SubstitutionCriteria getCriteria(User user, Long substitutionCriteriaId) {
-        return getSubstitutionService().getCriteria(user, substitutionCriteriaId);
+    public SubstitutionCriteria getCriteria(User user, Long criteriaId) {
+        return getSubstitutionService().getCriteria(user, criteriaId);
+    }
+
+    @Override
+    public SubstitutionCriteria getCriteriaByName(User user, String name) {
+        return getSubstitutionService().getCriteriaByName(user, name);
     }
 
     @Override
