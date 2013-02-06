@@ -122,25 +122,17 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
         actorToSubstituted.putAll(getMapActorToSubstituted(actorToSubstitutors));
     }
 
-    private void logError(Substitution substitution) {
-        try {
-            log.error("Error in substitution for actor with name " + executorDAO.getActor(substitution.getActorId()).getName() + " and function "
-                    + substitution.getOrgFunction());
-        } catch (ExecutorDoesNotExistException e) {
-            log.error("Error in substitution for actor with id " + substitution.getActorId() + " and function " + substitution.getOrgFunction());
-        }
-    }
-
     private Map<Long, TreeMap<Substitution, HashSet<Long>>> getMapActorToSubstitutors() {
         Map<Long, TreeMap<Substitution, HashSet<Long>>> result = new HashMap<Long, TreeMap<Substitution, HashSet<Long>>>();
-        for (Substitution substitution : substitutionDAO.getAll()) {
-            try {
+        Substitution currentSubstitution = null;
+        try {
+            for (Substitution substitution : substitutionDAO.getAll()) {
+                currentSubstitution = substitution;
                 Actor actor = null;
                 try {
                     actor = executorDAO.getActor(substitution.getActorId());
                 } catch (ExecutorDoesNotExistException e) {
-                    // TODO auto-deletion?
-                    substitutionDAO.delete(substitution);
+                    log.warn("ERROR in " + substitution);
                     continue;
                 }
                 if (!substitution.isEnabled()) {
@@ -175,9 +167,9 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                     }
                 }
                 subDescr.put(substitution, substitutorIds);
-            } catch (Exception e) {
-                logError(substitution);
             }
+        } catch (Exception e) {
+            log.error("Error in " + currentSubstitution, e);
         }
         return result;
     }
