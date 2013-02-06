@@ -32,8 +32,7 @@ import ru.runa.service.af.SystemServiceRemote;
 import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.audit.logic.AuditLogic;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
@@ -50,14 +49,14 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
     private AuditLogic auditLogic;
 
     @Override
-    public void login(User user, ru.runa.wfe.security.ASystem system) throws AuthorizationException, AuthenticationException {
+    public void login(User user, ASystem system) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(system);
         auditLogic.login(user, system);
     }
 
     @Override
-    public void logout(User user, ru.runa.wfe.security.ASystem system) {
+    public void logout(User user, ASystem system) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(system);
         auditLogic.logout(user, system);

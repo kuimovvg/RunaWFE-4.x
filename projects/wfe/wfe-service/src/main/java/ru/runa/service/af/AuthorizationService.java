@@ -42,35 +42,6 @@ import ru.runa.wfe.user.User;
 public interface AuthorizationService {
 
     /**
-     * That means when you are using JBossWS with Document Wrapped you can't
-     * have two methods with same name inside the package without specifying
-     * customizations. Thus to solve your problem you have to specify at least:
-     * 
-     * @javax.xml.ws.RequestWrapper(className="package.UniqueClassName")
-     * @javax.xml.ws.ResponseWrapper(className="package.UniqueClassNameResponse") 
-     *                                                                            method
-     *                                                                            annotations
-     *                                                                            on
-     *                                                                            all
-     *                                                                            overloaded
-     *                                                                            methods
-     *                                                                            (
-     *                                                                            overloaded
-     *                                                                            here
-     *                                                                            means
-     *                                                                            not
-     *                                                                            overloaded
-     *                                                                            in
-     *                                                                            class
-     *                                                                            but
-     *                                                                            overloaded
-     *                                                                            in
-     *                                                                            package
-     *                                                                            )
-     *                                                                            .
-     */
-
-    /**
      * Checks whether {@link Actor}from subject has permission on
      * {@link Identifiable}.
      */

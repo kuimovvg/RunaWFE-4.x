@@ -37,12 +37,12 @@ public class AuthenticationServiceDelegate extends EJB3Delegate implements Authe
     }
 
     @Override
-    public User authenticateByLoginPassword(String name, String password) throws AuthenticationException {
+    public User authenticateByLoginPassword(String name, String password) {
         return getAuthenticationService().authenticateByLoginPassword(name, password);
     }
 
     @Override
-    public User authenticateByKerberos(byte[] token) throws AuthenticationException {
+    public User authenticateByKerberos(byte[] token) {
         return getAuthenticationService().authenticateByKerberos(token);
     }
 }

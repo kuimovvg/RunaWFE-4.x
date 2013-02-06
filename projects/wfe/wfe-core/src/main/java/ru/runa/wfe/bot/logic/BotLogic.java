@@ -69,7 +69,7 @@ public class BotLogic extends CommonLogic {
         if (botStationToCheck != null && !Objects.equal(botStationToCheck.getId(), botStation.getId())) {
             throw new BotStationAlreadyExistsException(botStation.getName());
         }
-        botStationDAO.merge(botStation);
+        botStationDAO.update(botStation);
     }
 
     public BotStation getBotStationNotNull(Long id) throws AuthorizationException, BotStationDoesNotExistException {
@@ -134,7 +134,7 @@ public class BotLogic extends CommonLogic {
         if (botToCheck != null && !Objects.equal(botToCheck.getId(), bot.getId())) {
             throw new BotAlreadyExistsException(bot.getUsername());
         }
-        bot = botDAO.merge(bot);
+        bot = botDAO.update(bot);
         incrementBotStationVersion(bot);
     }
 
@@ -192,7 +192,7 @@ public class BotLogic extends CommonLogic {
             BotTask botTaskFromDB = getBotTaskNotNull(user, botTask.getId());
             botTask.setConfiguration(botTaskFromDB.getConfiguration());
         }
-        botTask = botTaskDAO.merge(botTask);
+        botTask = botTaskDAO.update(botTask);
         incrementBotStationVersion(botTask);
     }
 
@@ -226,7 +226,7 @@ public class BotLogic extends CommonLogic {
             throw new InternalApplicationException("Unexpected entity class " + entity);
         }
         botStation.setVersion(botStation.getVersion() + 1);
-        botStationDAO.merge(botStation);
+        botStationDAO.update(botStation);
     }
 
 }

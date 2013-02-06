@@ -52,11 +52,8 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.logic.RelationLogic;
 import ru.runa.wfe.security.ASystem;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.security.WeakPasswordException;
 import ru.runa.wfe.security.logic.AuthorizationLogic;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
@@ -65,19 +62,19 @@ import ru.runa.wfe.ss.TerminatorSubstitution;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 import ru.runa.wfe.user.logic.ProfileLogic;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.io.Closeables;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 /**
@@ -215,13 +212,13 @@ public class AdminScriptRunner {
         return result;
     }
 
-    public void setActorInactive(Element element) throws Exception {
+    public void setActorInactive(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         Actor actor = executorLogic.getActor(user, name);
-        executorLogic.setStatus(user, actor.getId(), false);
+        executorLogic.setStatus(user, actor, false);
     }
 
-    public void createActor(Element element) throws Exception, AuthenticationException, WeakPasswordException {
+    public void createActor(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String fullName = element.attributeValue(FULL_NAME_ATTRIBUTE_NAME);
         String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
@@ -231,14 +228,14 @@ public class AdminScriptRunner {
         executorLogic.setPassword(user, actor, passwd);
     }
 
-    public void createGroup(Element element) throws Exception {
+    public void createGroup(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
         Group newGroup = new Group(name, description);
         executorLogic.create(user, newGroup);
     }
 
-    public void deleteExecutors(Element element) throws Exception {
+    public void deleteExecutors(Element element) {
         List<Element> children = element.elements();
         ArrayList<Long> idsList = new ArrayList<Long>();
         for (Element e : children) {
@@ -251,12 +248,12 @@ public class AdminScriptRunner {
         executorLogic.remove(user, idsList);
     }
 
-    public void deleteExecutor(Element element) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+    public void deleteExecutor(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         executorLogic.remove(user, Lists.newArrayList(executorLogic.getExecutor(user, name).getId()));
     }
 
-    private List<Executor> getExecutors(Element element) throws Exception {
+    private List<Executor> getExecutors(Element element) {
         List<Executor> result = Lists.newArrayList();
         List<Element> processDefSet = element.elements(NAMED_IDENTITY_ELEMENT_NAME);
         for (Element setElement : processDefSet) {
@@ -281,37 +278,37 @@ public class AdminScriptRunner {
         return result;
     }
 
-    public void addExecutorsToGroup(Element element) throws Exception {
+    public void addExecutorsToGroup(Element element) {
         String groupName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         List<Executor> executors = getExecutors(element);
         executorLogic.addExecutorsToGroup(user, executors, executorLogic.getGroup(user, groupName));
     }
 
-    public void removeExecutorsFromGroup(Element element) throws Exception {
+    public void removeExecutorsFromGroup(Element element) {
         String groupName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         List<Executor> executors = getExecutors(element);
         executorLogic.removeExecutorsFromGroup(user, executors, executorLogic.getGroup(user, groupName));
     }
 
-    public void addPermissionsOnActor(Element element) throws Exception {
+    public void addPermissionsOnActor(Element element) {
         for (Actor actor : getActor(element)) {
             addPermissionOnIdentifiable(element, actor);
         }
     }
 
-    public void setPermissionsOnActor(Element element) throws Exception {
+    public void setPermissionsOnActor(Element element) {
         for (Actor actor : getActor(element)) {
             setPermissionOnIdentifiable(element, actor);
         }
     }
 
-    public void removePermissionsOnActor(Element element) throws Exception {
+    public void removePermissionsOnActor(Element element) {
         for (Actor actor : getActor(element)) {
             removePermissionOnIdentifiable(element, actor);
         }
     }
 
-    private Set<String> getNestedNamedIdentityNames(Element element, String identityType, Map<String, Set<String>> storage) throws Exception {
+    private Set<String> getNestedNamedIdentityNames(Element element, String identityType, Map<String, Set<String>> storage) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         Set<String> result = new HashSet<String>();
         if (name != null && !name.equals("")) {
@@ -331,7 +328,7 @@ public class AdminScriptRunner {
         return result;
     }
 
-    private Set<Actor> getActor(Element element) throws Exception {
+    private Set<Actor> getActor(Element element) {
         Set<Actor> result = new HashSet<Actor>();
         for (String executorName : getNestedNamedIdentityNames(element, "Executor", namedExecutorIdentities)) {
             result.add(executorLogic.getActor(user, executorName));
@@ -339,25 +336,25 @@ public class AdminScriptRunner {
         return result;
     }
 
-    public void addPermissionsOnGroup(Element element) throws Exception {
+    public void addPermissionsOnGroup(Element element) {
         for (Group group : getGroup(element)) {
             addPermissionOnIdentifiable(element, group);
         }
     }
 
-    public void setPermissionsOnGroup(Element element) throws Exception {
+    public void setPermissionsOnGroup(Element element) {
         for (Group group : getGroup(element)) {
             setPermissionOnIdentifiable(element, group);
         }
     }
 
-    public void removePermissionsOnGroup(Element element) throws Exception {
+    public void removePermissionsOnGroup(Element element) {
         for (Group group : getGroup(element)) {
             removePermissionOnIdentifiable(element, group);
         }
     }
 
-    private Set<Group> getGroup(Element element) throws Exception {
+    private Set<Group> getGroup(Element element) {
         Set<Group> result = new HashSet<Group>();
         for (String executorName : getNestedNamedIdentityNames(element, "Executor", namedExecutorIdentities)) {
             result.add(executorLogic.getGroup(user, executorName));
@@ -365,7 +362,7 @@ public class AdminScriptRunner {
         return result;
     }
 
-    public void addPermissionsOnProcesses(Element element) throws Exception {
+    public void addPermissionsOnProcesses(Element element) {
         List<WfProcess> list = getProcesses(element);
         if (list.size() == 0) {
             log.warn("Process " + element.attributeValue(NAME_ATTRIBUTE_NAME) + "doesn't exist");
@@ -375,7 +372,7 @@ public class AdminScriptRunner {
         }
     }
 
-    public void setPermissionsOnProcesses(Element element) throws Exception {
+    public void setPermissionsOnProcesses(Element element) {
         List<WfProcess> list = getProcesses(element);
         if (list.size() == 0) {
             log.warn("Process " + element.attributeValue(NAME_ATTRIBUTE_NAME) + "doesn't exist");
@@ -385,7 +382,7 @@ public class AdminScriptRunner {
         }
     }
 
-    public void removePermissionsOnProcesses(Element element) throws Exception {
+    public void removePermissionsOnProcesses(Element element) {
         List<WfProcess> list = getProcesses(element);
         if (list.size() == 0) {
             log.warn("Process " + element.attributeValue(NAME_ATTRIBUTE_NAME) + "doesn't exist");
@@ -395,30 +392,30 @@ public class AdminScriptRunner {
         }
     }
 
-    private List<WfProcess> getProcesses(Element element) throws AuthenticationException {
+    private List<WfProcess> getProcesses(Element element) {
         String processName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         return executionLogic.getProcessesForDefinitionName(user, processName);
     }
 
-    public void addPermissionsOnDefinition(Element element) throws Exception {
+    public void addPermissionsOnDefinition(Element element) {
         for (WfDefinition definition : getProcessDefinitions(element)) {
             addPermissionOnIdentifiable(element, definition);
         }
     }
 
-    public void setPermissionsOnDefinition(Element element) throws Exception {
+    public void setPermissionsOnDefinition(Element element) {
         for (WfDefinition definition : getProcessDefinitions(element)) {
             setPermissionOnIdentifiable(element, definition);
         }
     }
 
-    public void removePermissionsOnDefinition(Element element) throws Exception {
+    public void removePermissionsOnDefinition(Element element) {
         for (WfDefinition definition : getProcessDefinitions(element)) {
             removePermissionOnIdentifiable(element, definition);
         }
     }
 
-    private Set<WfDefinition> getProcessDefinitions(Element element) throws Exception {
+    private Set<WfDefinition> getProcessDefinitions(Element element) {
         Set<WfDefinition> result = new HashSet<WfDefinition>();
         for (String name : getNestedNamedIdentityNames(element, "ProcessDefinition", namedProcessDefinitionIdentities)) {
             result.add(definitionLogic.getLatestProcessDefinition(user, name));
@@ -426,7 +423,7 @@ public class AdminScriptRunner {
         return result;
     }
 
-    public void deployProcessDefinition(Element element) throws Exception {
+    public void deployProcessDefinition(Element element) {
         String type = element.attributeValue(TYPE_ATTRIBUTE_NAME);
         List<String> parsedType = Lists.newArrayList();
         if (type == null || type.equals("")) {
@@ -446,7 +443,7 @@ public class AdminScriptRunner {
         definitionLogic.deployProcessDefinition(user, processDefinitionsBytes[processDeployed++], parsedType);
     }
 
-    public void redeployProcessDefinition(Element element) throws Exception {
+    public void redeployProcessDefinition(Element element) {
         String file = element.attributeValue(FILE_ATTRIBUTE_NAME);
         String type = element.attributeValue(TYPE_ATTRIBUTE_NAME);
         String id = element.attributeValue(DEFINITION_ID_ATTRIBUTE_NAME);
@@ -466,29 +463,33 @@ public class AdminScriptRunner {
                 }
             }
         }
-        byte[] scriptBytes = Files.toByteArray(new File(file));
-        definitionLogic.redeployProcessDefinition(user, definitionId, scriptBytes, parsedType);
+        try {
+            byte[] scriptBytes = Files.toByteArray(new File(file));
+            definitionLogic.redeployProcessDefinition(user, definitionId, scriptBytes, parsedType);
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        }
     }
 
-    public void addPermissionsOnSystem(Element element) throws Exception {
+    public void addPermissionsOnSystem(Element element) {
         addPermissionOnIdentifiable(element, ASystem.INSTANCE);
     }
 
-    public void setPermissionsOnSystem(Element element) throws Exception {
+    public void setPermissionsOnSystem(Element element) {
         setPermissionOnIdentifiable(element, ASystem.INSTANCE);
     }
 
-    public void removePermissionsOnSystem(Element element) throws Exception {
+    public void removePermissionsOnSystem(Element element) {
         removePermissionOnIdentifiable(element, ASystem.INSTANCE);
     }
 
-    public void removeAllPermissionsFromProcessDefinition(Element element) throws Exception {
+    public void removeAllPermissionsFromProcessDefinition(Element element) {
         for (WfDefinition definition : getProcessDefinitions(element)) {
             removeAllPermissionOnIdentifiable(definition);
         }
     }
 
-    public void removeAllPermissionsFromProcesses(Element element) throws Exception {
+    public void removeAllPermissionsFromProcesses(Element element) {
         List<WfProcess> list = getProcesses(element);
         if (list.size() == 0) {
             log.warn("Process " + element.attributeValue(NAME_ATTRIBUTE_NAME) + "doesn't exist");
@@ -498,17 +499,17 @@ public class AdminScriptRunner {
         }
     }
 
-    public void removeAllPermissionsFromExecutor(Element element) throws Exception {
+    public void removeAllPermissionsFromExecutor(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         Executor executor = executorLogic.getExecutor(user, name);
         removeAllPermissionOnIdentifiable(executor);
     }
 
-    public void removeAllPermissionsFromSystem(Element element) throws Exception {
+    public void removeAllPermissionsFromSystem(Element element) {
         removeAllPermissionOnIdentifiable(ASystem.INSTANCE);
     }
 
-    private void addPermissionOnIdentifiable(Element element, Identifiable identifiable) throws Exception {
+    private void addPermissionOnIdentifiable(Element element, Identifiable identifiable) {
         Executor executor = executorLogic.getExecutor(user, element.attributeValue(EXECUTOR_ATTRIBUTE_NAME));
         Collection<Permission> permissions = getPermissions(element, identifiable);
         Map<Permission, Boolean> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
@@ -516,13 +517,13 @@ public class AdminScriptRunner {
         authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 
-    private void setPermissionOnIdentifiable(Element element, Identifiable identifiable) throws Exception {
+    private void setPermissionOnIdentifiable(Element element, Identifiable identifiable) {
         Executor executor = executorLogic.getExecutor(user, element.attributeValue(EXECUTOR_ATTRIBUTE_NAME));
         Collection<Permission> permissions = getPermissions(element, identifiable);
         authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 
-    private void removePermissionOnIdentifiable(Element element, Identifiable identifiable) throws Exception {
+    private void removePermissionOnIdentifiable(Element element, Identifiable identifiable) {
         Executor executor = executorLogic.getExecutor(user, element.attributeValue(EXECUTOR_ATTRIBUTE_NAME));
         Collection<Permission> permissions = getPermissions(element, identifiable);
         Map<Permission, Boolean> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
@@ -530,7 +531,7 @@ public class AdminScriptRunner {
         authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 
-    private void removeAllPermissionOnIdentifiable(Identifiable identifiable) throws Exception {
+    private void removeAllPermissionOnIdentifiable(Identifiable identifiable) {
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         List<Executor> executors = authorizationLogic.getExecutorsWithPermission(user, identifiable, batchPresentation, true);
         for (Executor executor : executors) {
@@ -540,7 +541,7 @@ public class AdminScriptRunner {
         }
     }
 
-    private Collection<Permission> getPermissions(Element element, Identifiable identifiable) throws AdminScriptException {
+    private Collection<Permission> getPermissions(Element element, Identifiable identifiable) {
         Permission noPermission = identifiable.getSecuredObjectType().getNoPermission();
         List<Element> permissionElements = element.elements(PERMISSION_ELEMENT_NAME);
         Set<Permission> permissions = Sets.newHashSet();
@@ -561,7 +562,7 @@ public class AdminScriptRunner {
         return null;
     }
 
-    private BatchPresentation readBatchPresentation(Element element) throws Exception {
+    private BatchPresentation readBatchPresentation(Element element) {
         String actorName = element.attributeValue("actorName");
         String batchName = element.attributeValue("batchName");
         String batchId = element.attributeValue("batchId");
@@ -626,7 +627,7 @@ public class AdminScriptRunner {
         }
     }
 
-    public void replicateBatchPresentation(Map<BatchPresentation, ReplicationDescr> replicationDescr) throws Exception {
+    public void replicateBatchPresentation(Map<BatchPresentation, ReplicationDescr> replicationDescr) {
         if (replicationDescr.isEmpty()) {
             return;
         }
@@ -661,7 +662,7 @@ public class AdminScriptRunner {
         profileLogic.updateProfiles(user, profiles);
     }
 
-    public void replicateBatchPresentation(Element element) throws Exception {
+    public void replicateBatchPresentation(Element element) {
         String batchPresentationNewName = element.attributeValue("batchName");
         boolean useTemplates = isTemplatesActive(element);
         List<Element> batchPresentations = element.elements("batchPresentation");
@@ -696,7 +697,7 @@ public class AdminScriptRunner {
         replicateBatchPresentation(replicationDescr);
     }
 
-    private Set<Actor> getActors(Element element) throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+    private Set<Actor> getActors(Element element) {
         Set<Actor> retVal = new HashSet<Actor>();
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         Executor executor = executorLogic.getExecutor(user, name);
@@ -747,7 +748,7 @@ public class AdminScriptRunner {
         return result;
     }
 
-    private List<Substitution> getDeletedSubstitution(List<Element> elements, Set<Actor> actors) throws Exception {
+    private List<Substitution> getDeletedSubstitution(List<Element> elements, Set<Actor> actors) {
         if (elements.size() == 0) {
             return new ArrayList<Substitution>();
         }
@@ -777,7 +778,7 @@ public class AdminScriptRunner {
         return result;
     }
 
-    private void addSubstitution(List<Element> elements, Set<Actor> actors) throws Exception {
+    private void addSubstitution(List<Element> elements, Set<Actor> actors) {
         List<Substitution> firstSub = new ArrayList<Substitution>();
         List<Substitution> lastSub = new ArrayList<Substitution>();
         if (elements.size() == 0) {
@@ -846,7 +847,7 @@ public class AdminScriptRunner {
         }
     }
 
-    public void changeSubstitutions(Element element) throws Exception {
+    public void changeSubstitutions(Element element) {
         Set<Actor> actors = new HashSet<Actor>();
         List<Element> executorsElements = element.elements(EXECUTOR_ELEMENT_NAME);
         for (Element e : executorsElements) {
@@ -863,7 +864,7 @@ public class AdminScriptRunner {
         }
     }
 
-    public void createBotStation(Element element) throws Exception {
+    public void createBotStation(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String addr = element.attributeValue(ADDRESS_ATTRIBUTE_NAME);
         botLogic.createBotStation(user, new BotStation(name, addr));
@@ -879,7 +880,7 @@ public class AdminScriptRunner {
         createBotCommon(element, station);
     }
 
-    protected void createBotCommon(Element element, BotStation station) throws Exception {
+    protected void createBotCommon(Element element, BotStation station) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String pass = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
         String timeout = element.attributeValue(STARTTIMEOUT_ATTRIBUTE_NAME);
@@ -898,7 +899,7 @@ public class AdminScriptRunner {
         botLogic.createBot(user, bot);
     }
 
-    public void updateBot(Element element) throws Exception {
+    public void updateBot(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String newName = element.attributeValue(NEW_NAME_ATTRIBUTE_NAME);
         String pass = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
@@ -921,7 +922,7 @@ public class AdminScriptRunner {
         botLogic.updateBot(user, bot);
     }
 
-    public void updateBotStation(Element element) throws Exception {
+    public void updateBotStation(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String newName = element.attributeValue(NEW_NAME_ATTRIBUTE_NAME);
         String address = element.attributeValue(ADDRESS_ATTRIBUTE_NAME);
@@ -935,32 +936,32 @@ public class AdminScriptRunner {
         botLogic.updateBotStation(user, station);
     }
 
-    public void deleteBotStation(Element element) throws Exception {
+    public void deleteBotStation(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         BotStation botStation = botLogic.getBotStationNotNull(name);
         botLogic.removeBotStation(user, botStation.getId());
     }
 
-    public void deleteBot(Element element) throws Exception {
+    public void deleteBot(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), name);
         botLogic.removeBot(user, bot.getId());
     }
 
-    public void addPermissionsOnBotStations(Element element) throws Exception {
+    public void addPermissionsOnBotStations(Element element) {
         addPermissionOnIdentifiable(element, BotStation.INSTANCE);
     }
 
-    public void setPermissionsOnBotStations(Element element) throws Exception {
+    public void setPermissionsOnBotStations(Element element) {
         setPermissionOnIdentifiable(element, BotStation.INSTANCE);
     }
 
-    public void removePermissionsOnBotStations(Element element) throws Exception {
+    public void removePermissionsOnBotStations(Element element) {
         removePermissionOnIdentifiable(element, BotStation.INSTANCE);
     }
 
-    protected void addConfigurationsToBotCommon(Element element, BotStation botStation) throws Exception {
+    protected void addConfigurationsToBotCommon(Element element, BotStation botStation) {
         String botName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(user, botStation.getId(), botName);
         List<Element> taskNodeList = element.elements(BOT_CONFIGURATION_ELEMENT_NAME);
@@ -982,7 +983,7 @@ public class AdminScriptRunner {
                     configContent = taskElement.getTextTrim();
                 }
                 if (configContent != null) {
-                    configuration = configContent.trim().getBytes("UTF-8");
+                    configuration = configContent.trim().getBytes(Charsets.UTF_8);
                 } else {
                     configuration = new byte[0];
                 }
@@ -995,19 +996,15 @@ public class AdminScriptRunner {
         }
     }
 
-    protected byte[] getBotTaskConfiguration(String config) throws IOException {
-        InputStream is = null;
+    protected byte[] getBotTaskConfiguration(String config) {
         try {
-            is = ClassLoaderUtil.getAsStreamNotNull(config, getClass());
-            byte[] result = new byte[is.available()];
-            is.read(result);
-            return result;
-        } finally {
-            Closeables.closeQuietly(is);
+            return ByteStreams.toByteArray(ClassLoaderUtil.getAsStreamNotNull(config, getClass()));
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
         }
     }
 
-    public void addConfigurationsToBot(Element element) throws Exception {
+    public void addConfigurationsToBot(Element element) {
         String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
         BotStation bs = null;
         if (!Strings.isNullOrEmpty(botStationName)) {
@@ -1016,7 +1013,7 @@ public class AdminScriptRunner {
         addConfigurationsToBotCommon(element, bs);
     }
 
-    public void removeConfigurationsFromBot(Element element) throws Exception {
+    public void removeConfigurationsFromBot(Element element) {
         String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
         BotStation bs = null;
         if (botStationName != null) {
@@ -1025,7 +1022,7 @@ public class AdminScriptRunner {
         removeConfigurationsFromBotCommon(element, bs);
     }
 
-    public void removeConfigurationsFromBotCommon(Element element, BotStation botStation) throws Exception {
+    public void removeConfigurationsFromBotCommon(Element element, BotStation botStation) {
         String botName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(user, botStation.getId(), botName);
         List<Element> taskNodeList = element.elements(BOT_CONFIGURATION_ELEMENT_NAME);
@@ -1036,7 +1033,7 @@ public class AdminScriptRunner {
         }
     }
 
-    public void removeAllConfigurationsFromBot(Element element) throws Exception {
+    public void removeAllConfigurationsFromBot(Element element) {
         String botName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), botName);
@@ -1045,32 +1042,32 @@ public class AdminScriptRunner {
         }
     }
 
-    public void removeOldProcesses(Element element) throws Exception {
+    public void removeOldProcesses(Element element) {
         operationWithOldProcesses(element, 1);
     }
 
-    public void removeOldProcessDefinitionVersion(Element element) throws Exception {
+    public void removeOldProcessDefinitionVersion(Element element) {
         operationWithOldProcessDefinitionVersion(element, 1);
     }
 
-    public void archiveOldProcesses(Element element) throws Exception {
+    public void archiveOldProcesses(Element element) {
         operationWithOldProcesses(element, 2);
     }
 
-    public void archiveOldProcessDefinitionVersion(Element element) throws Exception {
+    public void archiveOldProcessDefinitionVersion(Element element) {
         operationWithOldProcessDefinitionVersion(element, 2);
     }
 
-    public void retrieveOldProcesses(Element element) throws Exception {
+    public void retrieveOldProcesses(Element element) {
         operationWithOldProcesses(element, 3);
     }
 
-    public void retrieveOldProcessDefinitionVersion(Element element) throws Exception {
+    public void retrieveOldProcessDefinitionVersion(Element element) {
         operationWithOldProcessDefinitionVersion(element, 3);
     }
 
     /* @param operation: remove - 1; archiving - 2; retrieve from archive - 3 */
-    private void operationWithOldProcesses(Element element, int operation) throws Exception {
+    private void operationWithOldProcesses(Element element, int operation) {
         // String prInstName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         // String prInstVersion =
         // element.attributeValue(VERSION_ATTRIBUTE_NAME);
@@ -1128,7 +1125,7 @@ public class AdminScriptRunner {
     }
 
     /* @param number: remove - 1; archiving - 2; retrieve from archive - 3 */
-    private void operationWithOldProcessDefinitionVersion(Element element, int operation) throws Exception {
+    private void operationWithOldProcessDefinitionVersion(Element element, int operation) {
         // String defName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         // String version = element.attributeValue(VERSION_ATTRIBUTE_NAME);
         // String versionTo = element.attributeValue("versionTo");
@@ -1151,7 +1148,7 @@ public class AdminScriptRunner {
         // }
     }
 
-    public void relation(Element element) throws Exception {
+    public void relation(Element element) {
         String relationName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String relationDescription = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
         boolean isExists = false;
@@ -1173,7 +1170,7 @@ public class AdminScriptRunner {
         }
     }
 
-    public void stopProcess(Element element) throws Exception {
+    public void stopProcess(Element element) {
         String id = element.attributeValue(ID_ATTRIBUTE_NAME);
         Long processId = Strings.isNullOrEmpty(id) ? null : Long.parseLong(id);
         executionLogic.cancelProcess(user, processId);

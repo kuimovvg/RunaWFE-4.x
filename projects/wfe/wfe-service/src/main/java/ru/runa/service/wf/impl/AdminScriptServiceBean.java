@@ -30,7 +30,6 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.service.wf.AdminScriptService;
-import ru.runa.wfe.script.AdminScriptException;
 import ru.runa.wfe.script.AdminScriptRunner;
 import ru.runa.wfe.user.User;
 
@@ -42,7 +41,7 @@ public class AdminScriptServiceBean implements AdminScriptService {
     private AdminScriptRunner runner;
 
     @Override
-    public void run(User user, byte[] configData, byte[][] processDefinitionsBytes) throws AdminScriptException {
+    public void run(User user, byte[] configData, byte[][] processDefinitionsBytes) {
         runner.setUser(user);
         runner.setProcessDefinitionsBytes(processDefinitionsBytes);
         runner.runScript(new ByteArrayInputStream(configData));

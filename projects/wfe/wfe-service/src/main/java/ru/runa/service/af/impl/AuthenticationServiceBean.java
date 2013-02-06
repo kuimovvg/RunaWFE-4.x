@@ -23,6 +23,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +35,6 @@ import ru.runa.service.af.AuthenticationServiceLocal;
 import ru.runa.service.af.AuthenticationServiceRemote;
 import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
 import ru.runa.wfe.security.logic.AuthenticationLogic;
 import ru.runa.wfe.user.User;
@@ -46,6 +47,8 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@WebService(name = "Authentication", serviceName = "AuthenticationWebService")
+@SOAPBinding
 public class AuthenticationServiceBean implements AuthenticationServiceLocal, AuthenticationServiceRemote {
     private static final Log log = LogFactory.getLog(AuthenticationServiceBean.class);
     @Autowired
@@ -55,7 +58,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     private SessionContext context;
 
     @Override
-    public User authenticateByCallerPrincipal() throws AuthenticationException {
+    public User authenticateByCallerPrincipal() {
         log.debug("Authenticating (principal)");
         User user = authenticationLogic.authenticate(context.getCallerPrincipal());
         log.debug("Authenticated (principal): " + user);
@@ -63,7 +66,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     }
 
     @Override
-    public User authenticateByKerberos(byte[] token) throws AuthenticationException {
+    public User authenticateByKerberos(byte[] token) {
         Preconditions.checkNotNull(token, "Kerberos authentication information");
         log.debug("Authenticating (kerberos)");
         User user = authenticationLogic.authenticate(token, KerberosLoginModuleResources.rtnKerberosResources);
@@ -72,7 +75,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     }
 
     @Override
-    public User authenticateByLoginPassword(String name, String password) throws AuthenticationException {
+    public User authenticateByLoginPassword(String name, String password) {
         log.debug("Authenticating (login) " + name);
         User user = authenticationLogic.authenticate(name, password);
         log.debug("Authenticated (login): " + user);
