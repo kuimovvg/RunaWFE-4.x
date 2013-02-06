@@ -200,7 +200,7 @@ public interface ExecutorService {
 
     public void setPassword(User user, Actor actor, String password) throws ExecutorDoesNotExistException, WeakPasswordException;
 
-    public void setStatus(User user, Long actorId, boolean isActive) throws ExecutorDoesNotExistException;
+    public void setStatus(User user, Actor actor, boolean isActive) throws ExecutorDoesNotExistException;
 
     public Actor getActorByCode(User user, Long code) throws ExecutorDoesNotExistException;
 

@@ -20,7 +20,7 @@ public class BotInvokerClient {
             if (args.length == 1) {
                 if (START_ARGUMENT.equals(args[0])) {
                     String botStationName = args[1];
-                    BotStation botStation = Delegates.getBotService().getBotStation(botStationName);
+                    BotStation botStation = Delegates.getBotService().getBotStationByName(botStationName);
                     if (botStation == null) {
                         System.err.println("No botstation could not be found '" + botStationName + "'");
                     }
