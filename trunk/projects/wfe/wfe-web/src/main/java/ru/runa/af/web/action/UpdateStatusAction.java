@@ -29,8 +29,8 @@ import ru.runa.af.web.form.UpdateStatusForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.user.Actor;
 
 /**
  * Created on Mar 2, 2006
@@ -48,8 +48,8 @@ public class UpdateStatusAction extends ActionBase {
         ActionMessages errors = new ActionMessages();
         UpdateStatusForm form = (UpdateStatusForm) actionForm;
         try {
-            ExecutorService executorService = Delegates.getExecutorService();
-            executorService.setStatus(getLoggedUser(request), form.getId(), form.isActive());
+            Actor actor = Delegates.getExecutorService().getExecutor(getLoggedUser(request), form.getId());
+            Delegates.getExecutorService().setStatus(getLoggedUser(request), actor, form.isActive());
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }

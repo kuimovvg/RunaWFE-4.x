@@ -347,7 +347,7 @@ public class ExecutorDAO extends CommonDAO {
             getHibernateTemplate().save(actorPassword);
         } else {
             actorPassword.setPassword(password);
-            getHibernateTemplate().update(actorPassword);
+            getHibernateTemplate().merge(actorPassword);
         }
     }
 
@@ -379,7 +379,7 @@ public class ExecutorDAO extends CommonDAO {
      */
     public void setStatus(Actor actor, boolean isActive) throws ExecutorDoesNotExistException {
         actor.setActive(isActive);
-        getHibernateTemplate().update(actor);
+        getHibernateTemplate().merge(actor);
     }
 
     /**
@@ -567,7 +567,8 @@ public class ExecutorDAO extends CommonDAO {
     }
 
     private ExecutorGroupMembership getRelationExecutorWithGroup(Group group, Executor executor) {
-        List<ExecutorGroupMembership> list = getHibernateTemplate().find("from ExecutorGroupMembership where group=? and executor=?", group, executor);
+        List<ExecutorGroupMembership> list = getHibernateTemplate()
+                .find("from ExecutorGroupMembership where group=? and executor=?", group, executor);
         if (list.size() > 0) {
             return list.get(0);
         }

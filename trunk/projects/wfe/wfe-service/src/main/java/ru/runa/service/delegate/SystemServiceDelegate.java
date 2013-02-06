@@ -21,8 +21,6 @@ import java.util.Map;
 
 import ru.runa.service.af.SystemService;
 import ru.runa.wfe.security.ASystem;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.user.User;
 
 /**
@@ -43,7 +41,7 @@ public class SystemServiceDelegate extends EJB3Delegate implements SystemService
     }
 
     @Override
-    public void login(User user, ASystem system) throws AuthorizationException, AuthenticationException {
+    public void login(User user, ASystem system) {
         getSystemService().login(user, system);
     }
 

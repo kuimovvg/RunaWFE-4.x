@@ -56,7 +56,7 @@ public class BotInvokerActionHandler implements ActionHandler {
                 }
             }
             if (botStation == null) {
-                botStation = Delegates.getBotService().getBotStation(configuration);
+                botStation = Delegates.getBotService().getBotStationByName(configuration);
             }
         } else {
             if (botStations.size() > 0) {

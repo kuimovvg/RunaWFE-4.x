@@ -20,17 +20,11 @@ package ru.runa.service.delegate;
 import java.util.List;
 
 import ru.runa.service.wf.DefinitionService;
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wfe.execution.ParentProcessExistsException;
-import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 
@@ -58,82 +52,72 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
-    public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) throws AuthenticationException,
-            AuthorizationException {
+    public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) {
         return getDefinitionService().getLatestProcessDefinitions(user, batchPresentation);
     }
 
     @Override
-    public WfDefinition getLatestProcessDefinition(User user, String definitionName) throws AuthenticationException, AuthorizationException,
-            DefinitionDoesNotExistException {
+    public WfDefinition getLatestProcessDefinition(User user, String definitionName) {
         return getDefinitionService().getLatestProcessDefinition(user, definitionName);
     }
 
     @Override
-    public WfDefinition getProcessDefinition(User user, Long definitionId) throws AuthenticationException, AuthorizationException,
-            DefinitionDoesNotExistException {
+    public WfDefinition getProcessDefinition(User user, Long definitionId) {
         return getDefinitionService().getProcessDefinition(user, definitionId);
     }
 
     @Override
-    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) throws AuthenticationException, AuthorizationException,
-            ProcessDoesNotExistException {
+    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) {
         return getDefinitionService().getProcessDefinitionByProcessId(user, processId);
     }
 
     @Override
-    public void undeployProcessDefinition(User user, String processName) throws AuthenticationException, AuthorizationException,
-            DefinitionDoesNotExistException, ParentProcessExistsException {
+    public void undeployProcessDefinition(User user, String processName) {
         getDefinitionService().undeployProcessDefinition(user, processName);
     }
 
     @Override
-    public void removeProcessDefinition(User user, String definitionName, int version) throws AuthenticationException, AuthorizationException,
-            DefinitionDoesNotExistException {
+    public void removeProcessDefinition(User user, String definitionName, int version) {
         getDefinitionService().removeProcessDefinition(user, definitionName, version);
     }
 
     @Override
-    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) throws AuthenticationException, TaskDoesNotExistException {
+    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) {
         return getDefinitionService().getOutputTransitionNames(user, definitionId, taskId);
     }
 
     @Override
-    public Interaction getTaskInteraction(User user, Long taskId) throws AuthorizationException, AuthenticationException, TaskDoesNotExistException {
+    public Interaction getTaskInteraction(User user, Long taskId) {
         return getDefinitionService().getTaskInteraction(user, taskId);
     }
 
     @Override
-    public Interaction getStartInteraction(User user, Long definitionId) throws AuthorizationException, AuthenticationException,
-            DefinitionDoesNotExistException {
+    public Interaction getStartInteraction(User user, Long definitionId) {
         return getDefinitionService().getStartInteraction(user, definitionId);
     }
 
     @Override
-    public byte[] getFile(User user, Long definitionId, String fileName) throws AuthorizationException, AuthenticationException,
-            DefinitionDoesNotExistException {
+    public byte[] getFile(User user, Long definitionId, String fileName) {
         return getDefinitionService().getFile(user, definitionId, fileName);
     }
 
     @Override
-    public List<SwimlaneDefinition> getSwimlanes(User user, Long definitionId) throws AuthorizationException, DefinitionDoesNotExistException {
+    public List<SwimlaneDefinition> getSwimlanes(User user, Long definitionId) {
         return getDefinitionService().getSwimlanes(user, definitionId);
     }
 
     @Override
-    public List<VariableDefinition> getVariables(User user, Long definitionId) throws AuthorizationException, AuthenticationException,
-            DefinitionDoesNotExistException {
+    public List<VariableDefinition> getVariables(User user, Long definitionId) {
         return getDefinitionService().getVariables(user, definitionId);
     }
 
     @Override
-    public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId) throws AuthorizationException,
-            AuthenticationException {
+    public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId) {
         return getDefinitionService().getProcessDefinitionGraphElements(user, definitionId);
     }
 
     @Override
-    public List<WfDefinition> getProcessDefinitionHistory(User user, String name) throws AuthenticationException {
+    public List<WfDefinition> getProcessDefinitionHistory(User user, String name) {
         return getDefinitionService().getProcessDefinitionHistory(user, name);
     }
 }

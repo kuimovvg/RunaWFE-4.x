@@ -17,6 +17,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -28,13 +31,10 @@ import ru.runa.service.wf.BotServiceLocal;
 import ru.runa.service.wf.BotServiceRemote;
 import ru.runa.wfe.ApplicationException;
 import ru.runa.wfe.bot.Bot;
-import ru.runa.wfe.bot.BotAlreadyExistsException;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.logic.BotLogic;
 import ru.runa.wfe.commons.ApplicationContextFactory;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
@@ -47,6 +47,8 @@ import com.google.common.io.ByteStreams;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@WebService(name = "BotWebService", serviceName = "BotWebServiceImpl")
+@SOAPBinding
 public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     @Autowired
     private BotLogic botLogic;
@@ -59,13 +61,15 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
-    public BotStation getBotStation(Long id) {
+    public BotStation getBotStation(@WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(id);
         return botLogic.getBotStationNotNull(id);
     }
 
+    // @javax.xml.ws.RequestWrapper(className="ru.runa.service.wf.impl.UniqueClassName")
+    // @javax.xml.ws.ResponseWrapper(className="ru.runa.service.wf.impl.UniqueClassNameResponse")
     @Override
-    public BotStation getBotStation(String name) {
+    public BotStation getBotStationByName(@WebParam(name = "name") String name) {
         Preconditions.checkNotNull(name);
         return botLogic.getBotStation(name);
     }
@@ -118,7 +122,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
-    public void updateBot(User user, Bot bot) throws AuthorizationException, AuthenticationException, BotAlreadyExistsException {
+    public void updateBot(User user, Bot bot) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(bot);
         botLogic.updateBot(user, bot);
@@ -254,7 +258,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
                     BufferedReader r = new BufferedReader(new InputStreamReader(zin));
                     String name = r.readLine();
                     String addr = r.readLine();
-                    station = getBotStation(name);
+                    station = getBotStationByName(name);
                     if (station == null) {
                         station = createBotStation(user, new BotStation(name, addr));
                     }

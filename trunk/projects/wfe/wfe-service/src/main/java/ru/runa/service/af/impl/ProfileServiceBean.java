@@ -30,7 +30,6 @@ import ru.runa.service.af.ProfileServiceRemote;
 import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.logic.ProfileLogic;
@@ -45,13 +44,13 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     private ProfileLogic profileLogic;
 
     @Override
-    public Profile getProfile(User user) throws AuthenticationException {
+    public Profile getProfile(User user) {
         Preconditions.checkNotNull(user);
         return profileLogic.getProfile(user, user.getActor().getId());
     }
 
     @Override
-    public void setActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) throws AuthenticationException {
+    public void setActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentationId);
         Preconditions.checkNotNull(newActiveBatchName);
@@ -59,21 +58,21 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     }
 
     @Override
-    public void deleteBatchPresentation(User user, BatchPresentation batchPresentation) throws AuthenticationException {
+    public void deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
         profileLogic.deleteBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) throws AuthenticationException {
+    public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
         return profileLogic.createBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public void saveBatchPresentation(User user, BatchPresentation batchPresentation) throws AuthenticationException {
+    public void saveBatchPresentation(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
         profileLogic.saveBatchPresentation(user, batchPresentation);

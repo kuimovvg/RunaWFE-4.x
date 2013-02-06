@@ -17,7 +17,6 @@
  */
 package ru.runa.service.delegate;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -82,24 +81,24 @@ public class WfeScriptForBotStations extends AdminScriptRunner {
     }
 
     @Override
-    public void removeConfigurationsFromBot(Element element) throws Exception {
+    public void removeConfigurationsFromBot(Element element) {
         if (replace) {
             super.removeConfigurationsFromBotCommon(element, botStation);
         }
     }
 
     @Override
-    public void addConfigurationsToBot(Element element) throws Exception {
+    public void addConfigurationsToBot(Element element) {
         addConfigurationsToBotCommon(element, botStation);
     }
 
     @Override
-    public void createBot(Element element) throws Exception {
+    public void createBot(Element element) {
         createBotCommon(element, botStation);
     }
 
     @Override
-    protected byte[] getBotTaskConfiguration(String config) throws IOException {
+    protected byte[] getBotTaskConfiguration(String config) {
         return configs.get(config);
     }
 }

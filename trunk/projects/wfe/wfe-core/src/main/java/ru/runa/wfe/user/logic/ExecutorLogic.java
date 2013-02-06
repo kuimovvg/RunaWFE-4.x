@@ -302,8 +302,7 @@ public class ExecutorLogic extends CommonLogic {
         executorDAO.setPassword(actor, password);
     }
 
-    public void setStatus(User user, Long actorId, boolean isActive) throws AuthorizationException, ExecutorDoesNotExistException {
-        Actor actor = executorDAO.getActor(actorId);
+    public void setStatus(User user, Actor actor, boolean isActive) throws AuthorizationException, ExecutorDoesNotExistException {
         checkPermissionsOnExecutor(user, actor, ActorPermission.UPDATE_STATUS);
         executorDAO.setStatus(actor, isActive);
         callSetStatusHandlers(actor, isActive);
