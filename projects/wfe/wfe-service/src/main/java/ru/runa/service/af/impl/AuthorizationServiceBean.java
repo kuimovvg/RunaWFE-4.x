@@ -109,7 +109,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(identifiable);
         Preconditions.checkNotNull(batchPresentation);
-        return authorizationLogic.getExecutorsWithPermission(user, identifiable, batchPresentation, withPermission);
+        return (List<Executor>) authorizationLogic.getExecutorsWithPermission(user, identifiable, batchPresentation, withPermission);
     }
 
     @Override

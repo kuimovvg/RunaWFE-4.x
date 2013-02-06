@@ -1,5 +1,7 @@
 package ru.runa.wfe.security;
 
+import com.google.common.base.Objects;
+
 public abstract class IdentifiableBase implements Identifiable {
     private static final long serialVersionUID = 1L;
 
@@ -10,4 +12,8 @@ public abstract class IdentifiableBase implements Identifiable {
         return getId();
     }
 
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("id", getIdentifiableId()).add("type", getSecuredObjectType()).toString();
+    }
 }

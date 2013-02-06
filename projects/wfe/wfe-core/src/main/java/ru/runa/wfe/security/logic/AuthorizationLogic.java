@@ -102,13 +102,19 @@ public class AuthorizationLogic extends CommonLogic {
      * @return Executors with or without permission on {@linkplain Identifiable}
      *         .
      */
-    public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission) {
+    public List<? extends Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation,
+            boolean hasPermission) {
         checkPermissionAllowed(user, identifiable, Permission.READ);
         BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createExecutorWithPermissionCompiler(user, identifiable,
                 batchPresentation, hasPermission);
         if (hasPermission) {
             List<Executor> executors = compiler.getBatch();
-            executors.addAll(0, filterIdentifiable(user, permissionDAO.getPrivilegedExecutors(identifiable), Permission.READ));
+            for (Executor privelegedExecutor : permissionDAO.getPrivilegedExecutors(identifiable)) {
+                if (batchPresentation.getClassPresentation().getPresentationClass().isAssignableFrom(privelegedExecutor.getClass())
+                        && isAllowed(user, Permission.READ, privelegedExecutor)) {
+                    executors.add(0, privelegedExecutor);
+                }
+            }
             return executors;
         } else {
             return compiler.getBatch();

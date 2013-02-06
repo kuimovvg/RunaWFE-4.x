@@ -38,6 +38,7 @@ public class SubstitutionForm extends IdForm {
     private static final long serialVersionUID = 1L;
     public static final String NAME = "substitutionForm";
     private static final String ERROR_KEY = "substitution.params.invalid";
+    public static final Long NO_CRITERIA_ID = 0L;
 
     public static final String CRITERIA_ID_INPUT_NAME = "criteriaId";
     public static final String ENABLED_INPUT_NAME = "enabled";

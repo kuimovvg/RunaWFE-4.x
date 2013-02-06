@@ -48,10 +48,10 @@ public class IdForm extends ActionForm {
         this.id = id;
     }
 
+    @Override
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
-
-        if (getId() == 0) {
+        if (getId() == null) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_NULL_VALUE));
         }
         return errors;

@@ -139,7 +139,7 @@ public class Substitution implements Cloneable, Serializable {
         this.actorId = actorId;
     }
 
-    @ManyToOne(targetEntity = SubstitutionCriteria.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = SubstitutionCriteria.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "CRITERIA_ID")
     @ForeignKey(name = "FK_SUBSTITUTION_CRITERIA")
     @Index(name = "IX_SUBSTITUTION_CRITERIA")
