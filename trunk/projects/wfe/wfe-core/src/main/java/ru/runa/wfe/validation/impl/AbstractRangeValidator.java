@@ -22,9 +22,13 @@ package ru.runa.wfe.validation.impl;
  */
 public abstract class AbstractRangeValidator<T extends Object> extends FieldValidatorSupport {
 
+    protected Comparable getComparableValue() {
+        return (Comparable<T>) getFieldValue();
+    }
+
     @Override
     public void validate() {
-        Comparable<T> value = (Comparable<T>) getFieldValue();
+        Comparable<T> value = getComparableValue();
         // if there is no value - don't do comparison
         // if a value is required, a required validator should be added to the
         // field
