@@ -15,28 +15,22 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wfe.os;
+package ru.runa.wfe.os.func;
 
 import java.util.List;
 
-import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.os.dao.OrganizationHierarchyDAO;
+import ru.runa.wfe.os.dao.Resources;
 
 /**
- * Created on 08.01.2007
- **/
-public abstract class OrgFunctionBase extends OrgFunction {
+ * 
+ * Created on Jul 13, 2006
+ * 
+ */
+public class SQLSubordinateFunction extends ActorOrgFunctionBase {
 
     @Override
-    public final List<? extends Executor> getExecutors(Object... parameters) throws OrgFunctionException {
-        try {
-            List<Long> codes = getExecutorCodes(parameters);
-            log.debug("Codes result: " + codes);
-            return executorDAO.getActorsByCodes(codes);
-        } catch (Exception e) {
-            throw new OrgFunctionException(e);
-        }
+    protected List<Long> getActorCodes(Long code) {
+        return OrganizationHierarchyDAO.getActorCodes(Resources.getSubordinateCodesByChiefCodeSQL(), new Long[] { code });
     }
-
-    protected abstract List<Long> getExecutorCodes(Object... parameters);
-
 }

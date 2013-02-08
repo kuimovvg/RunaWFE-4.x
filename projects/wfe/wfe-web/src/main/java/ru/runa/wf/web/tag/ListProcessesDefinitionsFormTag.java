@@ -47,8 +47,6 @@ import ru.runa.wf.web.html.StartProcessTDBuilder;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 
 /**
@@ -93,7 +91,7 @@ public class ListProcessesDefinitionsFormTag extends BatchReturningTitledFormTag
         return prefixCellsHeaders.toArray(new String[prefixCellsHeaders.size()]);
     }
 
-    private boolean isUndeployAllowed(List<WfDefinition> definitions) throws AuthenticationException {
+    private boolean isUndeployAllowed(List<WfDefinition> definitions) {
         AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
         for (boolean undeploy : authorizationService.isAllowed(getUser(), DefinitionPermission.UNDEPLOY_DEFINITION, definitions)) {
             if (undeploy) {
@@ -130,7 +128,7 @@ public class ListProcessesDefinitionsFormTag extends BatchReturningTitledFormTag
         }
 
         @Override
-        public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) throws AuthorizationException, AuthenticationException {
+        public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) {
             return false;
         }
 

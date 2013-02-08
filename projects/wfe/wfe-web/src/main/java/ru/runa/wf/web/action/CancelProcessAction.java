@@ -34,7 +34,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
-import ru.runa.wfe.security.AuthenticationException;
 
 /**
  * Created on 18.08.2004
@@ -53,8 +52,7 @@ public class CancelProcessAction extends ActionBase {
     public static final String ACTION_PATH = "/cancelProcess";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = new ActionMessages();
         IdForm form = (IdForm) actionForm;
         try {

@@ -19,7 +19,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.SubstitutionCriteriasForm;
 import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 
@@ -38,8 +37,7 @@ public class DeleteSubstitutionCriteriasAction extends ActionBase {
     public static final String ACTION_PATH = "/deleteSubstitutionCriterias";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = new ActionMessages();
         try {
             SubstitutionService substitutionService = Delegates.getSubstitutionService();

@@ -40,8 +40,6 @@ import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 
 /**
@@ -116,7 +114,7 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
         }
 
         @Override
-        public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) throws AuthorizationException, AuthenticationException {
+        public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) {
             return false;
         }
 

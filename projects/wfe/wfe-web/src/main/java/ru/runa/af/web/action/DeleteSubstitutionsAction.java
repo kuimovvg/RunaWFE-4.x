@@ -13,7 +13,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
 
 import com.google.common.collect.Lists;
 
@@ -29,8 +28,7 @@ public class DeleteSubstitutionsAction extends ActionBase {
     public static final String ACTION_PATH = "/deleteSubstitutions";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = new ActionMessages();
         try {
             SubstitutionService substitutionService = Delegates.getSubstitutionService();

@@ -36,7 +36,6 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.wf.web.VariablesFormatException;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.validation.impl.ValidationException;
@@ -50,8 +49,7 @@ public abstract class BaseProcessFormAction extends ActionBase {
     public static final String USER_ERRORS = "UserErrors";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         Map<String, String> userInputErrors = null;
         ActionForward successForward = null;

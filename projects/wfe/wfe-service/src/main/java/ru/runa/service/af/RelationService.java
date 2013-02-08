@@ -25,8 +25,6 @@ import ru.runa.wfe.relation.RelationAlreadyExistException;
 import ru.runa.wfe.relation.RelationDoesNotExistException;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.relation.RelationPairDoesNotExistException;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 
@@ -50,13 +48,8 @@ public interface RelationService {
      * @return Created relation.
      * @throws RelationAlreadyExistException
      *             Relation already exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
-    public Relation createRelation(User user, String name, String description) throws RelationAlreadyExistException, AuthorizationException,
-            AuthenticationException;
+    public Relation createRelation(User user, String name, String description) throws RelationAlreadyExistException;
 
     /**
      * Return list of {@link Relation}, according to specified
@@ -67,12 +60,8 @@ public interface RelationService {
      * @param batchPresentation
      *            Restrictions to get relations.
      * @return List of {@link Relation}.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
-    public List<Relation> getRelations(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException;
+    public List<Relation> getRelations(User user, BatchPresentation batchPresentation);
 
     /**
      * Return {@link Relation} with specified name or throws
@@ -86,13 +75,8 @@ public interface RelationService {
      * @return Relation with specified name.
      * @throws RelationDoesNotExistException
      *             Relation with specified name is not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
-    public Relation getRelation(User user, String relationsName) throws RelationDoesNotExistException, AuthorizationException,
-            AuthenticationException;
+    public Relation getRelation(User user, String relationsName) throws RelationDoesNotExistException;
 
     /**
      * Return {@link Relation} with specified identity or throws
@@ -106,12 +90,8 @@ public interface RelationService {
      * @return Relation with specified name.
      * @throws RelationDoesNotExistException
      *             Relation with specified name is not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
-    public Relation getRelation(User user, Long relationId) throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
+    public Relation getRelation(User user, Long relationId) throws RelationDoesNotExistException;
 
     /**
      * Remove {@link Relation} with specified identity.
@@ -122,12 +102,8 @@ public interface RelationService {
      *            Relation identity.
      * @throws RelationDoesNotExistException
      *             Relation with specified identity does not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
-    public void removeRelation(User user, Long relationId) throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
+    public void removeRelation(User user, Long relationId) throws RelationDoesNotExistException;
 
     /**
      * Add {@link RelationPair} to {@link Relation} with specified name.
@@ -143,13 +119,8 @@ public interface RelationService {
      * @return Created relation pair.
      * @throws RelationDoesNotExistException
      *             Relation with specified name does not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
-    public RelationPair addRelationPair(User user, String relationName, Executor left, Executor right) throws RelationDoesNotExistException,
-            AuthorizationException, AuthenticationException;
+    public RelationPair addRelationPair(User user, String relationName, Executor left, Executor right) throws RelationDoesNotExistException;
 
     /**
      * Removes {@link RelationPair} with specified identity.
@@ -160,13 +131,8 @@ public interface RelationService {
      *            {@link RelationPair} identity.
      * @throws RelationPairDoesnotExistException
      *             {@link RelationPair} does not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
-    public void removeRelationPair(User user, Long relationPairId) throws RelationPairDoesNotExistException, AuthorizationException,
-            AuthenticationException;
+    public void removeRelationPair(User user, Long relationPairId) throws RelationPairDoesNotExistException;
 
     /**
      * Return {@link RelationPair} for specified {@link Relation}, according to
@@ -180,13 +146,9 @@ public interface RelationService {
      *            Restrictions to get {@link RelationPair}.
      * @return
      * @throws RelationDoesNotExistException
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
     public List<RelationPair> getRelationPairs(User user, String relationsName, BatchPresentation batchPresentation)
-            throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
+            throws RelationDoesNotExistException;
 
     /**
      * Return {@link RelationPair} for specified {@link Relation}, according to
@@ -200,13 +162,8 @@ public interface RelationService {
      *            Restrictions to get {@link RelationPair}.
      * @return
      * @throws RelationDoesNotExistException
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
-    public List<RelationPair> getRelationPairs(User user, Long relationId, BatchPresentation batchPresentation) throws RelationDoesNotExistException,
-            AuthorizationException, AuthenticationException;
+    public List<RelationPair> getRelationPairs(User user, Long relationId, BatchPresentation batchPresentation) throws RelationDoesNotExistException;
 
     /**
      * Return {@link RelationPair} for specified {@link Relation}, which right
@@ -222,13 +179,9 @@ public interface RelationService {
      * @return List of {@link RelationPair}.
      * @throws RelationDoesNotExistException
      *             {@link Relation} with specified name does not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
     public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<Executor> right)
-            throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
+            throws RelationDoesNotExistException;
 
     /**
      * Return {@link RelationPair} for specified {@link Relation}, which left
@@ -244,11 +197,6 @@ public interface RelationService {
      * @return List of {@link RelationPair}.
      * @throws RelationDoesNotExistException
      *             {@link Relation} with specified name does not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             Subject is incorrect.
      */
-    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<Executor> left)
-            throws RelationDoesNotExistException, AuthorizationException, AuthenticationException;
+    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<Executor> left) throws RelationDoesNotExistException;
 }

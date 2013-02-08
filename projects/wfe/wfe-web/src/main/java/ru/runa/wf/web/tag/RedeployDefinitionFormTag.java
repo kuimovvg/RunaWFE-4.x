@@ -31,12 +31,11 @@ import org.apache.ecs.xhtml.br;
 
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
-import ru.runa.service.af.AuthorizationService;
+import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.ProcessTypesIterator;
 import ru.runa.wf.web.action.RedeployProcessDefinitionAction;
 import ru.runa.wf.web.html.DefinitionFileOperationsFormBuilder;
 import ru.runa.wfe.definition.DefinitionPermission;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.User;
@@ -50,15 +49,13 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
 
     private static final long serialVersionUID = 5106903896165128752L;
 
-    private static Select getTypeSelectElement(String[] definitionType, User user, PageContext pageContext) throws AuthorizationException,
-            AuthenticationException {
+    private static Select getTypeSelectElement(String[] definitionType, User user, PageContext pageContext) {
         ProcessTypesIterator iter = new ProcessTypesIterator(user);
         String selectedIdx = definitionType == null ? "_default_type_" : null;
         Map<String, String> attr = (Map<String, String>) pageContext.getRequest().getAttribute("TypeAttributes");
         if (attr != null) {
             selectedIdx = attr.get("typeSel");
         }
-
         Select select = new Select("typeSel");
         {
             Option option = new Option();
@@ -96,12 +93,8 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
         tdFormElement.addElement(new br());
         tdFormElement.addElement(Messages.getMessage("batch_presentation.process_definition.process_type", pageContext) + ": ");
 
-        try {
-            Select select = getTypeSelectElement(definitionType, user, pageContext);
-            tdFormElement.addElement(select);
-        } catch (AuthenticationException e) {
-        } catch (AuthorizationException e) {
-        }
+        Select select = getTypeSelectElement(definitionType, user, pageContext);
+        tdFormElement.addElement(select);
 
         Map<String, String> attr = (Map<String, String>) pageContext.getRequest().getAttribute("TypeAttributes");
         String newType = "";
@@ -145,9 +138,8 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
 
     @Override
     protected boolean isVisible() {
-        AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
         try {
-            return authorizationService.isAllowed(getUser(), DefinitionPermission.REDEPLOY_DEFINITION, getIdentifiable());
+            return Delegates.getAuthorizationService().isAllowed(getUser(), DefinitionPermission.REDEPLOY_DEFINITION, getIdentifiable());
         } catch (AuthorizationException e) {
             return false;
         }

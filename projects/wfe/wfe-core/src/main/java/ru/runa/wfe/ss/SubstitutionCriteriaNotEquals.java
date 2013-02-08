@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import ru.runa.wfe.ApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -32,6 +33,8 @@ import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
+
+import com.google.common.base.Strings;
 
 /**
  * Substitution with this criteria applies when substitutor not in actor list.
@@ -72,8 +75,10 @@ public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
     }
 
     @Override
-    public boolean validate() {
-        return !(getConfiguration() == null || getConfiguration().isEmpty());
+    public void validate() {
+        if (Strings.isNullOrEmpty(getConfiguration())) {
+            throw new ApplicationException(getClass().getName() + ": invalid configuration");
+        }
     }
 
 }

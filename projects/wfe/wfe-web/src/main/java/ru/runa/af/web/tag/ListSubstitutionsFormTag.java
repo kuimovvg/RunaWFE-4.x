@@ -193,6 +193,7 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
                 try {
                     string = SubstitutionHelper.getUserFriendlyOrgFunction(getUser(), substitution.getOrgFunction());
                 } catch (Exception e) {
+                    log.warn("", e);
                     string = "<span class='error'>" + substitution.getOrgFunction() + "</span>";
                 }
             }

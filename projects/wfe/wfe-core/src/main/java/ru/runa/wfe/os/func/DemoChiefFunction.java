@@ -31,10 +31,10 @@ import com.google.common.collect.Lists;
  * 
  * Created on 19.05.2005
  */
-public class DemoChiefFunction extends ActorOrganizationFunctionBase {
+public class DemoChiefFunction extends ActorOrgFunctionBase {
 
     @Override
-    protected List<Long> getExecutorCodes(Long actorCode) {
+    protected List<Long> getActorCodes(Long actorCode) {
         Actor actor = executorDAO.getActorByCode(actorCode);
         Enumeration<String> patternsEnumeration = DemoChiefResources.getPatterns();
         String chiefName = null;

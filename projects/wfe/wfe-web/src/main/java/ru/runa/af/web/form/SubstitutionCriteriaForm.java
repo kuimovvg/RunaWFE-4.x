@@ -25,41 +25,29 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.form.IdForm;
-import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.ss.SubstitutionCriteria;
+
+import com.google.common.base.Strings;
 
 /**
  * @struts:form name = "substitutionCriteriaForm"
  */
 public class SubstitutionCriteriaForm extends IdForm {
     private static final long serialVersionUID = 1L;
-    public static final String NAME = "substitutionCriteriaForm";
     private static final String ERROR_KEY = "substitutionCriteria.params.invalid";
 
     public static final String NAME_INPUT_NAME = "name";
     public static final String TYPE_INPUT_NAME = "type";
     public static final String CONF_INPUT_NAME = "conf";
 
-    private String name = "";
-    private String type = "";
-    private String conf = "";
+    private String name;
+    private String type;
+    private String conf;
 
     @Override
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
-        try {
-            if (name.isEmpty()) {
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(ERROR_KEY));
-            } else {
-                SubstitutionCriteria substitutionCriteria = ClassLoaderUtil.instantiate(type);
-                substitutionCriteria.setConfiguration(conf);
-                substitutionCriteria.setName(name);
-                if (!substitutionCriteria.validate()) {
-                    errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(ERROR_KEY));
-                }
-            }
-        } catch (Exception e) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(e.getClass().getName()));
+        if (Strings.isNullOrEmpty(name)) {
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(ERROR_KEY));
         }
         return errors;
     }

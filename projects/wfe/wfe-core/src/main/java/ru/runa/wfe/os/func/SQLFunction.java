@@ -21,7 +21,6 @@ import java.util.List;
 
 import ru.runa.wfe.commons.ArraysCommons;
 import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.os.OrgFunctionBase;
 import ru.runa.wfe.os.dao.OrganizationHierarchyDAO;
 
 /**
@@ -30,10 +29,10 @@ import ru.runa.wfe.os.dao.OrganizationHierarchyDAO;
  * Created on Jul 12, 2006
  * 
  */
-public class SQLFunction extends OrgFunctionBase {
+public class SQLFunction extends GetActorsOrgFunctionBase {
 
     @Override
-    protected List<Long> getExecutorCodes(Object... parameters) {
+    protected List<Long> getActorCodes(Object... parameters) {
         String sql = TypeConversionUtil.convertTo(parameters[0], String.class);
         return OrganizationHierarchyDAO.getActorCodes(sql, ArraysCommons.remove(parameters, 0));
     }

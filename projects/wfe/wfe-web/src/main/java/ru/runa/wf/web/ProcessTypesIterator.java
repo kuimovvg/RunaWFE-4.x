@@ -29,8 +29,6 @@ import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.user.User;
 
 public class ProcessTypesIterator implements Iterator<String[]> {
@@ -38,7 +36,7 @@ public class ProcessTypesIterator implements Iterator<String[]> {
     private final List<String[]> processTypes = new ArrayList<String[]>();
     private int curIdx = 0;
 
-    public ProcessTypesIterator(User user) throws AuthenticationException, AuthorizationException {
+    public ProcessTypesIterator(User user) {
         DefinitionService definitionService = Delegates.getDefinitionService();
         BatchPresentation batchPresentation = BatchPresentationFactory.DEFINITIONS.createNonPaged();
         List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(user, batchPresentation);
