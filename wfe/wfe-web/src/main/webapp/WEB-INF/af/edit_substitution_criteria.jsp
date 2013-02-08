@@ -8,7 +8,7 @@
 <%
 	String idParameter = request.getParameter("id");
 	Long id = null;
-	if (idParameter != null) {
+	if (idParameter != null && !"null".equals(idParameter)) {
 		id = Long.parseLong(idParameter);
 	}
 %>

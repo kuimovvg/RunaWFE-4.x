@@ -33,7 +33,6 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
 
 import com.google.common.collect.Lists;
 
@@ -54,8 +53,7 @@ public class RemoveExecutorsFromGroupAction extends ActionBase {
     public static final String ACTION_PATH = "/removeExecutorsFromGroup";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = new ActionMessages();
         IdsForm form = (IdsForm) actionForm;
         try {

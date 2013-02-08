@@ -22,12 +22,9 @@ import java.util.Map;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.html.TDBuilder.Env;
-import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -60,16 +57,13 @@ public abstract class EnvBaseImpl implements Env {
             if (result != null) {
                 return result;
             }
-            DefinitionService definitionService = Delegates.getDefinitionService();
-            WfDefinition processDef = definitionService.getProcessDefinition(getUser(), processDefinitionId);
-            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
-            result = authorizationService.isAllowed(getUser(), permission, processDef);
+            WfDefinition processDef = Delegates.getDefinitionService().getProcessDefinition(getUser(), processDefinitionId);
+            result = Delegates.getAuthorizationService().isAllowed(getUser(), permission, processDef);
             processDefPermissionCache.put(processDefinitionId, result);
             return result;
-        } catch (AuthenticationException e) {
         } catch (AuthorizationException e) {
+            return false;
         }
-        return false;
     }
 
     private final Map<Long, Boolean> processDefPermissionCache = new HashMap<Long, Boolean>();

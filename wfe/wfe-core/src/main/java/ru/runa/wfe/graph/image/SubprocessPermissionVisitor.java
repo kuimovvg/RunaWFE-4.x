@@ -11,7 +11,6 @@ import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessesGraphElementAdapter;
 import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.User;
 
@@ -81,7 +80,7 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
      * @return true, if current actor can read process definition and false
      *         otherwise.
      */
-    private boolean checkPermission(ProcessDefinition processDefinition) throws DefinitionDoesNotExistException, AuthenticationException {
+    private boolean checkPermission(ProcessDefinition processDefinition) {
         PermissionDAO permissionDAO = ApplicationContextFactory.getPermissionDAO();
         return permissionDAO.isAllowed(user, DefinitionPermission.READ, processDefinition);
     }

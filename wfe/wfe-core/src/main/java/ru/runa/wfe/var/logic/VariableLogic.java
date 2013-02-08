@@ -28,9 +28,7 @@ import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
-import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -94,7 +92,7 @@ public class VariableLogic extends WFCommonLogic {
         return processDAO.getVariableValueFromProcesses(processIds, variableName);
     }
 
-    public void updateVariables(User user, Long processId, Map<String, Object> variables) throws AuthorizationException, TaskDoesNotExistException {
+    public void updateVariables(User user, Long processId, Map<String, Object> variables) {
         Process process = processDAO.getNotNull(processId);
         checkPermissionAllowed(user, process, ProcessPermission.UPDATE_PERMISSIONS);
         ProcessDefinition processDefinition = getDefinition(process);

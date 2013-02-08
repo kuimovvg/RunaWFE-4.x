@@ -4,18 +4,18 @@ import java.util.List;
 
 import ru.runa.alfresco.AlfSession;
 import ru.runa.alfresco.AlfSessionWrapper;
-import ru.runa.wfe.os.OrgFunctionBase;
 import ru.runa.wfe.os.OrgFunctionException;
+import ru.runa.wfe.os.func.GetActorsOrgFunctionBase;
 
 /**
  * Base class for RunaWFE organization function.
  * 
  * @author dofs
  */
-public abstract class AlfOrgFunction extends OrgFunctionBase {
+public abstract class AlfOrgFunction extends GetActorsOrgFunctionBase {
 
     @Override
-    protected List<Long> getExecutorCodes(final Object... parameters) {
+    protected List<Long> getActorCodes(final Object... parameters) {
         try {
             return new AlfSessionWrapper<List<Long>>() {
                 @Override

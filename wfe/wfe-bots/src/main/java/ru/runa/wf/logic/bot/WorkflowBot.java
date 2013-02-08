@@ -35,8 +35,6 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.handler.bot.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
@@ -143,7 +141,7 @@ public class WorkflowBot implements Runnable {
         return result;
     }
 
-    public Set<WfTask> getNewTasks() throws AuthenticationException, AuthorizationException {
+    public Set<WfTask> getNewTasks() {
         List<WfTask> currentTasks = Delegates.getExecutionService().getTasks(user, BatchPresentationFactory.TASKS.createNonPaged());
         Set<WfTask> result = new HashSet<WfTask>();
         Set<WorkflowBot> failedBotsToRestart = new HashSet<WorkflowBot>();

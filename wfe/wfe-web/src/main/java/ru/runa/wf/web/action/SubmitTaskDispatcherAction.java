@@ -41,7 +41,6 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Profile;
@@ -69,8 +68,7 @@ public class SubmitTaskDispatcherAction extends ActionBase {
     private final String LOCAL_FORWARD_EXECUTE_TASK = "executeTask";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         String forwardName = LOCAL_FORWARD_SUBMIT_TASK;
         Map<String, Object> params = new HashMap<String, Object>();
 

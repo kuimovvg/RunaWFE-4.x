@@ -19,7 +19,6 @@ package ru.runa.service.af;
 
 import java.util.List;
 
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.ss.SubstitutionDoesNotExistException;
@@ -30,33 +29,33 @@ import ru.runa.wfe.user.User;
  */
 public interface SubstitutionService {
 
-    public Substitution createSubstitution(User user, Substitution substitution) throws AuthorizationException;
+    public Substitution createSubstitution(User user, Substitution substitution);
 
-    public List<Substitution> getSubstitutions(User user, Long actorId) throws AuthorizationException;
+    public List<Substitution> getSubstitutions(User user, Long actorId);
 
-    public Substitution getSubstitution(User user, Long substitutionId) throws AuthorizationException;
+    public Substitution getSubstitution(User user, Long substitutionId);
 
-    public void updateSubstitution(User user, Substitution substitution) throws AuthorizationException;
+    public void updateSubstitution(User user, Substitution substitution);
 
-    public void deleteSubstitutions(User user, List<Long> substitutionIds) throws SubstitutionDoesNotExistException, AuthorizationException;
+    public void deleteSubstitutions(User user, List<Long> substitutionIds) throws SubstitutionDoesNotExistException;
 
-    public <T extends SubstitutionCriteria> void createCriteria(User user, T substitutionCriteria) throws AuthorizationException;
+    public <T extends SubstitutionCriteria> void createCriteria(User user, T substitutionCriteria);
 
-    public SubstitutionCriteria getCriteria(User user, Long criteriaId) throws AuthorizationException;
+    public SubstitutionCriteria getCriteria(User user, Long criteriaId);
 
     /**
      * @return {@link SubstitutionCriteria} or <code>null</code>
      */
-    public SubstitutionCriteria getCriteriaByName(User user, String name) throws AuthorizationException;
+    public SubstitutionCriteria getCriteriaByName(User user, String name);
 
-    public List<SubstitutionCriteria> getAllCriterias(User user) throws AuthorizationException;
+    public List<SubstitutionCriteria> getAllCriterias(User user);
 
-    public void updateCriteria(User user, SubstitutionCriteria criteria) throws AuthorizationException;
+    public void updateCriteria(User user, SubstitutionCriteria criteria);
 
-    public void deleteCriterias(User user, List<SubstitutionCriteria> criterias) throws AuthorizationException;
+    public void deleteCriterias(User user, List<SubstitutionCriteria> criterias);
 
-    public void deleteCriteria(User user, SubstitutionCriteria criteria) throws AuthorizationException;
+    public void deleteCriteria(User user, SubstitutionCriteria criteria);
 
-    public List<Substitution> getSubstitutionsByCriteria(User user, SubstitutionCriteria criteria) throws AuthorizationException;
+    public List<Substitution> getSubstitutionsByCriteria(User user, SubstitutionCriteria criteria);
 
 }

@@ -30,9 +30,6 @@ import ru.runa.wf.web.TaskFormBuilder;
 import ru.runa.wf.web.html.FormBuilderFactory;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.lang.Transition;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 
 /**
@@ -57,7 +54,7 @@ public class TaskFormTag extends WFFormTag {
         this.taskId = taskId;
     }
 
-    public List<String> getTransitionNames() throws AuthenticationException, TaskDoesNotExistException {
+    public List<String> getTransitionNames() {
         List<String> result = Delegates.getDefinitionService().getOutputTransitionNames(getUser(), null, taskId);
         result.remove(Transition.TIMEOUT_TRANSITION_NAME);
         return result;
@@ -74,12 +71,12 @@ public class TaskFormTag extends WFFormTag {
     }
 
     @Override
-    protected Long getDefinitionId() throws AuthorizationException, AuthenticationException {
+    protected Long getDefinitionId() {
         return Delegates.getExecutionService().getTask(getUser(), taskId).getDefinitionId();
     }
 
     @Override
-    protected Interaction getInteraction() throws AuthorizationException, AuthenticationException, TaskDoesNotExistException {
+    protected Interaction getInteraction() {
         return Delegates.getDefinitionService().getTaskInteraction(getUser(), taskId);
     }
 

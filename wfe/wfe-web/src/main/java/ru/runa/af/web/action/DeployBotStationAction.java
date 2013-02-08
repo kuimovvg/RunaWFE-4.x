@@ -13,7 +13,6 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.BotService;
-import ru.runa.wfe.security.AuthenticationException;
 
 /**
  * @struts:action path="/deploy_bot_station" name="deployBotForm"
@@ -23,8 +22,7 @@ public class DeployBotStationAction extends ActionBase {
     public static final String ACTION_PATH = "/deploy_bot_station";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, final HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, final HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = getErrors(request);
         DeployBotForm fileForm = (DeployBotForm) form;
         try {

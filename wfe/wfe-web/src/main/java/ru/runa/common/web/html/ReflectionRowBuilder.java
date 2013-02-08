@@ -53,8 +53,6 @@ import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.FieldDescriptor;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 
@@ -103,7 +101,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         }
 
         @Override
-        public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) throws AuthorizationException, AuthenticationException {
+        public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) {
             boolean[] retVal = isAllowedCache.get(new Pair(permission, extractor));
             if (retVal == null) {
                 AuthorizationService authorizationService = Delegates.getAuthorizationService();
@@ -122,7 +120,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         }
 
         @Override
-        public Object getTaskVariable(Object object, IdentifiableExtractor processIdExtractor, String variableName) throws AuthenticationException {
+        public Object getTaskVariable(Object object, IdentifiableExtractor processIdExtractor, String variableName) {
             Map<Long, Object> cache = taskVariableCache.get(variableName);
             if (cache == null) {
                 cache = new HashMap<Long, Object>();

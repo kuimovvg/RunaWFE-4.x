@@ -34,8 +34,6 @@ import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.ss.TerminatorSubstitution;
 
-import com.google.common.base.Objects;
-
 /**
  * @struts:action path="/updateSubstitution" name="substitutionForm"
  *                validate="true" input = "/WEB-INF/af/edit_substitution.jsp"
@@ -50,11 +48,10 @@ public class UpdateSubstitutionAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         try {
             SubstitutionForm form = (SubstitutionForm) actionForm;
             Substitution substitution;
-            if (form.getId() == null) {
+            if (form.getId() == null || form.getId() == 0) {
                 if (form.isTerminator()) {
                     substitution = new TerminatorSubstitution();
                     substitution.setOrgFunction("");
@@ -66,7 +63,7 @@ public class UpdateSubstitutionAction extends ActionBase {
                 substitution = Delegates.getSubstitutionService().getSubstitution(getLoggedUser(request), form.getId());
             }
             SubstitutionCriteria criteria = null;
-            if (!Objects.equal(SubstitutionForm.NO_CRITERIA_ID, form.getCriteriaId())) {
+            if (form.getCriteriaId() != null && form.getCriteriaId() != 0) {
                 criteria = Delegates.getSubstitutionService().getCriteria(getLoggedUser(request), form.getCriteriaId());
             }
             substitution.setCriteria(criteria);
@@ -74,17 +71,17 @@ public class UpdateSubstitutionAction extends ActionBase {
             if (!(substitution instanceof TerminatorSubstitution)) {
                 substitution.setOrgFunction(form.buildOrgFunction());
             }
-            if (form.getId() == null) {
+            if (form.getId() == null || form.getId() == 0) {
                 Delegates.getSubstitutionService().createSubstitution(getLoggedUser(request), substitution);
             } else {
                 Delegates.getSubstitutionService().updateSubstitution(getLoggedUser(request), substitution);
             }
             return new ActionForward(RETURN_ACTION + substitution.getActorId(), true);
         } catch (Exception e) {
+            ActionMessages errors = new ActionMessages();
             ActionExceptionHelper.addException(errors, e);
+            saveErrors(request, errors);
+            return mapping.findForward(Resources.FORWARD_FAILURE);
         }
-
-        saveErrors(request, errors);
-        return mapping.findForward(Resources.FORWARD_FAILURE);
     }
 }

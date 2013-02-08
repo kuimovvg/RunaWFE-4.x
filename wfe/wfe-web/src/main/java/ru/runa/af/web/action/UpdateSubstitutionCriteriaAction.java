@@ -51,14 +51,17 @@ public class UpdateSubstitutionCriteriaAction extends ActionBase {
         ActionMessages errors = new ActionMessages();
         try {
             SubstitutionCriteriaForm form = (SubstitutionCriteriaForm) actionForm;
-            if (form.getId() == null) {
+            if (form.getId() == null || form.getId() == 0) {
                 SubstitutionCriteria substitutionCriteria = ClassLoaderUtil.instantiate(form.getType());
                 substitutionCriteria.setName(form.getName());
                 substitutionCriteria.setConfiguration(form.getConf());
+                substitutionCriteria.validate();
                 Delegates.getSubstitutionService().createCriteria(getLoggedUser(request), substitutionCriteria);
             } else {
                 SubstitutionCriteria substitutionCriteria = Delegates.getSubstitutionService().getCriteria(getLoggedUser(request), form.getId());
                 substitutionCriteria.setName(form.getName());
+                substitutionCriteria.setConfiguration(form.getConf());
+                substitutionCriteria.validate();
                 Delegates.getSubstitutionService().updateCriteria(getLoggedUser(request), substitutionCriteria);
             }
             return new ActionForward(RETURN_ACTION, true);

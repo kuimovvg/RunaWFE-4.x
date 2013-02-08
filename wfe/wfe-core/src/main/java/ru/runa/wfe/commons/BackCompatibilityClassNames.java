@@ -29,15 +29,15 @@ import ru.runa.wfe.handler.action.var.SetObjectToListActionHandler;
 import ru.runa.wfe.handler.action.var.SortListActionHandler;
 import ru.runa.wfe.handler.assign.DefaultAssignmentHandler;
 import ru.runa.wfe.handler.decision.BSFDecisionHandler;
-import ru.runa.wfe.os.func.ChiefFunction;
-import ru.runa.wfe.os.func.ChiefRecursiveFunction;
 import ru.runa.wfe.os.func.DemoChiefFunction;
-import ru.runa.wfe.os.func.DirectorFunction;
-import ru.runa.wfe.os.func.ExecutorByCodeFunction;
 import ru.runa.wfe.os.func.ExecutorByNameFunction;
+import ru.runa.wfe.os.func.GetActorsByCodesFunction;
+import ru.runa.wfe.os.func.SQLChiefFunction;
+import ru.runa.wfe.os.func.SQLChiefRecursiveFunction;
+import ru.runa.wfe.os.func.SQLDirectorFunction;
 import ru.runa.wfe.os.func.SQLFunction;
-import ru.runa.wfe.os.func.SubordinateFunction;
-import ru.runa.wfe.os.func.SubordinateRecursiveFunction;
+import ru.runa.wfe.os.func.SQLSubordinateFunction;
+import ru.runa.wfe.os.func.SQLSubordinateRecursiveFunction;
 
 import com.google.common.collect.Maps;
 
@@ -97,15 +97,15 @@ public class BackCompatibilityClassNames {
         bcc.put("ru.runa.wf.SendEmailActionHandler", SendEmailActionHandler.class.getName());
         bcc.put("ru.runa.wf.SQLActionHandler", SQLActionHandler.class.getName());
         // org functions renamed
-        bcc.put("ru.runa.af.organizationfunction.ChiefFunction", ChiefFunction.class.getName());
-        bcc.put("ru.runa.af.organizationfunction.ChiefRecursiveFunction", ChiefRecursiveFunction.class.getName());
         bcc.put("ru.runa.af.organizationfunction.DemoChiefFunction", DemoChiefFunction.class.getName());
-        bcc.put("ru.runa.af.organizationfunction.DirectorFunction", DirectorFunction.class.getName());
-        bcc.put("ru.runa.af.organizationfunction.ExecutorByCodeFunction", ExecutorByCodeFunction.class.getName());
+        bcc.put("ru.runa.af.organizationfunction.ExecutorByCodeFunction", GetActorsByCodesFunction.class.getName());
         bcc.put("ru.runa.af.organizationfunction.ExecutorByNameFunction", ExecutorByNameFunction.class.getName());
         bcc.put("ru.runa.af.organizationfunction.SQLFunction", SQLFunction.class.getName());
-        bcc.put("ru.runa.af.organizationfunction.SubordinateFunction", SubordinateFunction.class.getName());
-        bcc.put("ru.runa.af.organizationfunction.SubordinateRecursiveFunction", SubordinateRecursiveFunction.class.getName());
+        bcc.put("ru.runa.af.organizationfunction.ChiefFunction", SQLChiefFunction.class.getName());
+        bcc.put("ru.runa.af.organizationfunction.ChiefRecursiveFunction", SQLChiefRecursiveFunction.class.getName());
+        bcc.put("ru.runa.af.organizationfunction.DirectorFunction", SQLDirectorFunction.class.getName());
+        bcc.put("ru.runa.af.organizationfunction.SubordinateFunction", SQLSubordinateFunction.class.getName());
+        bcc.put("ru.runa.af.organizationfunction.SubordinateRecursiveFunction", SQLSubordinateRecursiveFunction.class.getName());
         // custom html tags
         bcc.put("ru.runa.wf.web.html.vartag.GroupMembersAutoCompletionVarTag", "ru.runa.wf.web.customtag.impl.GroupMembersAutoCompletionVarTag");
         bcc.put("ru.runa.wf.web.html.vartag.DemoSubordinateAutoCompletingComboboxVarTag",
