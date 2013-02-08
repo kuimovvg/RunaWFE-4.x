@@ -35,8 +35,6 @@ import ru.runa.wfe.relation.RelationPairDoesNotExistException;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.relation.dao.RelationDAO;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
@@ -66,13 +64,8 @@ public class RelationLogic extends CommonLogic {
      * @return Created relation pair.
      * @throws RelationDoesNotExistException
      *             Relation with specified name does not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
-    public RelationPair addRelationPair(User user, String relationName, Executor left, Executor right) throws RelationDoesNotExistException,
-            AuthorizationException, AuthenticationException {
+    public RelationPair addRelationPair(User user, String relationName, Executor left, Executor right) throws RelationDoesNotExistException {
         checkPermissionAllowed(user, relationDAO.getRelationNotNull(relationName), RelationPermission.UPDATE_RELATION);
         return relationDAO.addRelationPair(relationName, left, right);
     }
@@ -91,13 +84,8 @@ public class RelationLogic extends CommonLogic {
      * @return Created relation.
      * @throws RelationAlreadyExistException
      *             Relation already exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
-    public Relation createRelation(User user, String name, String description) throws AuthorizationException, AuthenticationException,
-            RelationAlreadyExistException {
+    public Relation createRelation(User user, String name, String description) throws RelationAlreadyExistException {
         try {
             checkPermissionAllowed(user, RelationsGroupSecure.INSTANCE, RelationPermission.UPDATE_RELATION);
             return relationDAO.createRelation(name, description);
@@ -115,13 +103,9 @@ public class RelationLogic extends CommonLogic {
      * @param batchPresentation
      *            Restrictions to get relations.
      * @return List of {@link Relation}.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
     @SuppressWarnings("unchecked")
-    public List<Relation> getRelations(User user, BatchPresentation batchPresentation) throws AuthorizationException, AuthenticationException {
+    public List<Relation> getRelations(User user, BatchPresentation batchPresentation) {
         checkPermissionAllowed(user, RelationsGroupSecure.INSTANCE, Permission.READ);
         List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user.getActor());
         return (List<Relation>) permissionDAO.getPersistentObjects(actorAndGroupsIds, batchPresentation, Permission.READ,
@@ -143,13 +127,9 @@ public class RelationLogic extends CommonLogic {
      * @return List of {@link RelationPair}.
      * @throws RelationDoesNotExistException
      *             {@link Relation} with specified name does not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
     public List<RelationPair> getExecutorRelationPairsRight(User user, String relationName, List<Executor> right)
-            throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {
+            throws RelationDoesNotExistException {
         List<RelationPair> result = new ArrayList<RelationPair>();
         List<RelationPair> loadedPairs = relationDAO.getExecutorsRelationPairsRight(relationName, right);
         Set<Relation> allowedRelations = getRelationsWithReadPermission(user, loadedPairs);
@@ -176,13 +156,8 @@ public class RelationLogic extends CommonLogic {
      * @return List of {@link RelationPair}.
      * @throws RelationDoesNotExistException
      *             {@link Relation} with specified name does not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
-    public List<RelationPair> getExecutorRelationPairsLeft(User user, String relationName, List<Executor> left) throws RelationDoesNotExistException,
-            AuthorizationException, AuthenticationException {
+    public List<RelationPair> getExecutorRelationPairsLeft(User user, String relationName, List<Executor> left) throws RelationDoesNotExistException {
         List<RelationPair> result = new ArrayList<RelationPair>();
         List<RelationPair> loadedPairs = relationDAO.getExecutorsRelationPairsLeft(relationName, left);
         Set<Relation> allowedRelations = getRelationsWithReadPermission(user, loadedPairs);
@@ -206,12 +181,8 @@ public class RelationLogic extends CommonLogic {
      * @return Relation with specified name.
      * @throws RelationDoesNotExistException
      *             Relation with specified name is not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
-    public Relation getRelation(User user, String relationName) throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {
+    public Relation getRelation(User user, String relationName) throws RelationDoesNotExistException {
         checkPermissionAllowed(user, relationDAO.getRelationNotNull(relationName), Permission.READ);
         return relationDAO.getRelationNotNull(relationName);
     }
@@ -228,12 +199,8 @@ public class RelationLogic extends CommonLogic {
      * @return Relation with specified name.
      * @throws RelationDoesNotExistException
      *             Relation with specified name is not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
-    public Relation getRelation(User user, Long relationId) throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {
+    public Relation getRelation(User user, Long relationId) throws RelationDoesNotExistException {
         checkPermissionAllowed(user, relationDAO.getRelationNotNull(relationId), Permission.READ);
         return relationDAO.getRelationNotNull(relationId);
     }
@@ -250,13 +217,8 @@ public class RelationLogic extends CommonLogic {
      *            Restrictions to get {@link RelationPair}.
      * @return
      * @throws RelationDoesNotExistException
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
-    public List<RelationPair> getRelations(User user, String relationName, BatchPresentation batchPresentation) throws RelationDoesNotExistException,
-            AuthorizationException, AuthenticationException {
+    public List<RelationPair> getRelations(User user, String relationName, BatchPresentation batchPresentation) throws RelationDoesNotExistException {
         checkPermissionAllowed(user, relationDAO.getRelationNotNull(relationName), Permission.READ);
         return relationDAO.getRelationPairs(relationName, batchPresentation);
     }
@@ -273,13 +235,8 @@ public class RelationLogic extends CommonLogic {
      *            Restrictions to get {@link RelationPair}.
      * @return
      * @throws RelationDoesNotExistException
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
-    public List<RelationPair> getRelations(User user, Long relationId, BatchPresentation batchPresentation) throws RelationDoesNotExistException,
-            AuthorizationException, AuthenticationException {
+    public List<RelationPair> getRelations(User user, Long relationId, BatchPresentation batchPresentation) throws RelationDoesNotExistException {
         checkPermissionAllowed(user, relationDAO.getRelationNotNull(relationId), Permission.READ);
         return relationDAO.getRelationPairs(relationId, batchPresentation);
     }
@@ -293,13 +250,8 @@ public class RelationLogic extends CommonLogic {
      *            {@link RelationPair} identity.
      * @throws RelationPairDoesnotExistException
      *             {@link RelationPair} does not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
-    public void removeRelationPair(User user, Long relationPairId) throws RelationPairDoesNotExistException, AuthorizationException,
-            AuthenticationException {
+    public void removeRelationPair(User user, Long relationPairId) throws RelationPairDoesNotExistException {
         RelationPair relationPair = relationDAO.getRelationPairNotNull(relationPairId);
         checkPermissionAllowed(user, relationPair.getRelation(), RelationPermission.UPDATE_RELATION);
         relationDAO.removeRelationPair(relationPairId);
@@ -314,12 +266,8 @@ public class RelationLogic extends CommonLogic {
      *            Relation identity.
      * @throws RelationDoesNotExistException
      *             Relation with specified identity does not exists.
-     * @throws AuthorizationException
-     *             Insufficient permission to perform operation.
-     * @throws AuthenticationException
-     *             user is incorrect.
      */
-    public void removeRelation(User user, Long relationId) throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {
+    public void removeRelation(User user, Long relationId) throws RelationDoesNotExistException {
         checkPermissionAllowed(user, RelationsGroupSecure.INSTANCE, RelationPermission.UPDATE_RELATION);
         relationDAO.removeRelation(relationId);
     }
@@ -336,7 +284,7 @@ public class RelationLogic extends CommonLogic {
      *            Relation pairs, from which {@link Relation} extracted.
      * @return {@link Relation}'s with READ permission.
      */
-    private Set<Relation> getRelationsWithReadPermission(User user, List<RelationPair> relationPairs) throws AuthenticationException {
+    private Set<Relation> getRelationsWithReadPermission(User user, List<RelationPair> relationPairs) {
         Set<Relation> result = new HashSet<Relation>();
         for (RelationPair relationPair : relationPairs) {
             Relation relation = relationPair.getRelation();

@@ -23,7 +23,6 @@ import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TDBuilder.Env.IdentifiableExtractor;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
 
 /**
@@ -59,15 +58,11 @@ public class ProcessVariableTDBuilder implements TDBuilder {
 
     @Override
     public String getValue(Object object, Env env) {
-        String value = "";
-        try {
-            Object val = env.getTaskVariable(object, new ProcessIdExtractor(), varName);
-            if (val != null) {
-                value = val.toString();
-            }
-        } catch (AuthenticationException e) {
+        Object val = env.getTaskVariable(object, new ProcessIdExtractor(), varName);
+        if (val != null) {
+            return val.toString();
         }
-        return value;
+        return "";
     }
 
     @Override

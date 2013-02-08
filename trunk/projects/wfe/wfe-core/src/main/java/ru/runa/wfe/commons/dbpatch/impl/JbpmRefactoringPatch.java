@@ -582,6 +582,8 @@ public class JbpmRefactoringPatch extends DBPatch {
         // TRANSITION_ID used only for bpmn2, leave it empty
         // tasks
         log.info("Deleted completed tasks: " + session.createSQLQuery("DELETE FROM BPM_TASK WHERE END_DATE IS NOT NULL").executeUpdate());
+        q = "DELETE FROM BPM_TASK WHERE PROCESS_ID IN (SELECT ID FROM BPM_PROCESS WHERE END_DATE IS NOT NULL)";
+        log.info("Deleted tasks for completed processes: " + session.createSQLQuery(q).executeUpdate());
         session.createSQLQuery("UPDATE BPM_TASK SET FIRST_OPEN=0").executeUpdate();
         q = "SELECT t.ID, t.ACTORID_, mi.PROCESSINSTANCE_, d.NAME_ FROM BPM_TASK t, JBPM_MODULEINSTANCE mi, JBPM_TASK d WHERE t.TASKMGMTINSTANCE_= mi.ID_ and t.TASK_=d.ID_";
         list = session.createSQLQuery(q).list();

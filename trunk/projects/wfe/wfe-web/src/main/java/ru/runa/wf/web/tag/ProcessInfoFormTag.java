@@ -31,7 +31,6 @@ import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.service.wf.ExecutionService;
@@ -44,7 +43,6 @@ import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.execution.ProcessClassPresentation;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.var.format.DateTimeFormat;
@@ -164,9 +162,8 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
         }
     }
 
-    private boolean checkReadable(WfProcess parentProcess) throws AuthorizationException, AuthenticationException {
-        AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
-        return authorizationService.isAllowed(getUser(), ProcessPermission.READ, parentProcess);
+    private boolean checkReadable(WfProcess parentProcess) {
+        return Delegates.getAuthorizationService().isAllowed(getUser(), ProcessPermission.READ, parentProcess);
     }
 
     @Override

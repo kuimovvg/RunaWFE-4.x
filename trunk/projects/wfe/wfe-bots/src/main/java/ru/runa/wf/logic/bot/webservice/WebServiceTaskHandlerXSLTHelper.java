@@ -26,10 +26,6 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.WebServiceTaskHandler;
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.execution.ProcessDoesNotExistException;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -75,7 +71,7 @@ public class WebServiceTaskHandlerXSLTHelper {
      *            Variable name.
      * @return Variable value converted to string.
      */
-    public String getVariable(String name) throws TaskDoesNotExistException, AuthorizationException, AuthenticationException {
+    public String getVariable(String name) {
         ExecutionService executionService = Delegates.getExecutionService();
         WfVariable var = executionService.getVariable(user, task.getProcessId(), name);
         if (var.getValue() != null) {
@@ -93,8 +89,7 @@ public class WebServiceTaskHandlerXSLTHelper {
      * @return Process instance graph for this process instance encoded in
      *         {@link Base64}.
      */
-    public String getProcessGraph(String processIdVariable) throws TaskDoesNotExistException, AuthorizationException, AuthenticationException,
-            ProcessDoesNotExistException {
+    public String getProcessGraph(String processIdVariable) {
         ExecutionService executionService = Delegates.getExecutionService();
         WfVariable var = executionService.getVariable(user, task.getProcessId(), processIdVariable);
         if (var.getValue() != null) {

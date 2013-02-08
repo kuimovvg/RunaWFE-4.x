@@ -13,7 +13,6 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.handler.ParamDef;
 import ru.runa.wfe.handler.ParamsDef;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
@@ -48,7 +47,7 @@ public class BotTaskConfigurationUtils {
         return false;
     }
 
-    public static String getBotTaskName(User user, WfTask task) throws AuthorizationException {
+    public static String getBotTaskName(User user, WfTask task) {
         Element taskElement = getBotTaskElement(user, task);
         if (taskElement != null) {
             return taskElement.attributeValue("botTaskName");
@@ -56,7 +55,7 @@ public class BotTaskConfigurationUtils {
         return task.getName();
     }
 
-    private static Element getBotTaskElement(User user, WfTask task) throws AuthorizationException {
+    private static Element getBotTaskElement(User user, WfTask task) {
         byte[] xml = Delegates.getDefinitionService().getFile(user, task.getDefinitionId(), IFileDataProvider.BOTS_XML_FILE);
         if (xml == null) {
             // this is the case of simple bot task

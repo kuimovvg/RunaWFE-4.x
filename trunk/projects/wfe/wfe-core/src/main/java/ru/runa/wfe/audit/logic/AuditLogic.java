@@ -31,8 +31,6 @@ import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
 import ru.runa.wfe.security.ASystem;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.user.User;
 
@@ -52,11 +50,11 @@ public class AuditLogic extends CommonLogic {
     @Autowired
     private NodeProcessDAO nodeProcessDAO;
 
-    public void login(User user, ASystem system) throws AuthorizationException, AuthenticationException {
+    public void login(User user, ASystem system) {
         checkLoginAllowed(user, system);
     }
 
-    protected void checkLoginAllowed(User user, ASystem system) throws AuthorizationException, AuthenticationException {
+    protected void checkLoginAllowed(User user, ASystem system) {
         checkPermissionAllowed(user, system, SystemPermission.LOGIN_TO_SYSTEM);
     }
 
@@ -86,7 +84,7 @@ public class AuditLogic extends CommonLogic {
      *            {@link BatchPresentation} to load logs.
      * @return Loaded system logs.
      */
-    public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation) throws AuthorizationException {
+    public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation) {
         checkPermissionAllowed(user, ASystem.INSTANCE, SystemPermission.READ);
         return new BatchPresentationHibernateCompiler(batchPresentation).getBatch(true);
     }
@@ -100,7 +98,7 @@ public class AuditLogic extends CommonLogic {
      *            {@link BatchPresentation} to load logs count.
      * @return System logs count.
      */
-    public int getSystemLogsCount(User user, BatchPresentation batchPresentation) throws AuthorizationException {
+    public int getSystemLogsCount(User user, BatchPresentation batchPresentation) {
         checkPermissionAllowed(user, ASystem.INSTANCE, SystemPermission.READ);
         return new BatchPresentationHibernateCompiler(batchPresentation).getCount();
     }

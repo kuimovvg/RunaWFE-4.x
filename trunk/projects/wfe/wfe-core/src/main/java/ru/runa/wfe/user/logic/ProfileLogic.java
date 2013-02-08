@@ -25,7 +25,6 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ActorPermission;
@@ -47,7 +46,7 @@ public class ProfileLogic extends CommonLogic {
     @Autowired
     private ProfileDAO profileDAO;
 
-    public void updateProfiles(User user, List<Profile> profiles) throws AuthorizationException {
+    public void updateProfiles(User user, List<Profile> profiles) {
         for (Profile profile : profiles) {
             checkPermissionAllowed(user, profile.getActor(), ExecutorPermission.UPDATE);
             profileDAO.update(profile);

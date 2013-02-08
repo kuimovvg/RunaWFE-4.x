@@ -23,13 +23,15 @@ import ru.runa.wfe.os.dao.OrganizationHierarchyDAO;
 import ru.runa.wfe.os.dao.Resources;
 
 /**
- * Created on 19.05.2006 10:35:40
+ * 
+ * Created on Jul 13, 2006
+ * 
  */
-public class DirectorFunction extends ActorOrganizationFunctionBase {
+public class SQLSubordinateRecursiveFunction extends ActorOrgFunctionBase {
 
     @Override
-    protected List<Long> getExecutorCodes(Long actorCode) {
-        return OrganizationHierarchyDAO.getDirectorCode(Resources.getAllDirectorsCodes(), Resources.getChiefCodeBySubordinateCodeSQL(), actorCode);
+    protected List<Long> getActorCodes(Long code) {
+        return OrganizationHierarchyDAO.getActorCodesRecurisve(Resources.getSubordinateCodesByChiefCodeSQL(), new Long[] { code });
     }
 
 }

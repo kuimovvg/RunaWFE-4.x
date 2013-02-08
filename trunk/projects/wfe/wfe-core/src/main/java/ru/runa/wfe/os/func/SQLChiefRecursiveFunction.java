@@ -22,22 +22,15 @@ import java.util.List;
 import ru.runa.wfe.os.dao.OrganizationHierarchyDAO;
 import ru.runa.wfe.os.dao.Resources;
 
-import com.google.common.collect.Lists;
-
 /**
  * 
  * Created on Jul 12, 2006
  * 
  */
-public class ChiefFunction extends ActorOrganizationFunctionBase {
+public class SQLChiefRecursiveFunction extends ActorOrgFunctionBase {
 
     @Override
-    protected List<Long> getExecutorCodes(Long code) {
-        List<Long> allChiefsCodes = OrganizationHierarchyDAO.getActorCodes(Resources.getChiefCodeBySubordinateCodeSQL(), new Long[] { code });
-        if (allChiefsCodes != null && allChiefsCodes.size() > 1) {
-            return Lists.newArrayList(allChiefsCodes.get(0));
-        } else {
-            return allChiefsCodes;
-        }
+    protected List<Long> getActorCodes(Long code) {
+        return OrganizationHierarchyDAO.getActorCodesRecurisve(Resources.getChiefCodeBySubordinateCodeSQL(), new Long[] { code });
     }
 }

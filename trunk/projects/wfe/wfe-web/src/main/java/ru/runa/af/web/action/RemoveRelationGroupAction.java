@@ -30,7 +30,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
 
 /**
  * @struts:action path="/removeRelationGroup" name="idsForm" validate="false"
@@ -43,8 +42,7 @@ public class RemoveRelationGroupAction extends ActionBase {
     public static final String ACTION_PATH = "/removeRelationGroup";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = new ActionMessages();
         try {
             RelationService relationService = Delegates.getRelationService();

@@ -52,8 +52,6 @@ import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
 import ru.runa.wfe.security.ASystem;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskDoesNotExistException;
@@ -113,8 +111,7 @@ public class DefinitionLogic extends WFCommonLogic {
         return new WfDefinition(definition);
     }
 
-    public WfDefinition getLatestProcessDefinition(User user, String definitionName) throws AuthenticationException, AuthorizationException,
-            DefinitionDoesNotExistException {
+    public WfDefinition getLatestProcessDefinition(User user, String definitionName) throws DefinitionDoesNotExistException {
         ProcessDefinition definition = getLatestDefinition(definitionName);
         checkPermissionAllowed(user, definition, Permission.READ);
         return new WfDefinition(definition);

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <orgfunctions>
-    <function class="ru.runa.af.organizationfunction.ExecutorByCodeFunction">
+    <function class="ru.runa.wfe.os.func.GetActorsByCodesFunction">
     	<param messageKey="orgfunction.param.employeeCode" renderer="ru.runa.af.web.orgfunction.ActorCodeRenderer" />
     </function>
-    <function class="ru.runa.af.organizationfunction.ExecutorByNameFunction">
+    <function class="ru.runa.wfe.os.func.ExecutorByNameFunction">
     	<param messageKey="orgfunction.param.executorName" renderer="ru.runa.af.web.orgfunction.ExecutorNameRenderer" />
     </function>
-    <function class="ru.runa.af.organizationfunction.ChiefFunction">
+    <function class="ru.runa.wfe.os.func.DemoChiefFunction">
     	<param messageKey="orgfunction.param.employeeCode" renderer="ru.runa.af.web.orgfunction.ActorCodeRenderer" />
     </function>
-    <function class="ru.runa.af.organizationfunction.DemoChiefFunction">
+    <function class="ru.runa.wfe.os.func.SQLChiefFunction">
     	<param messageKey="orgfunction.param.employeeCode" renderer="ru.runa.af.web.orgfunction.ActorCodeRenderer" />
     </function>
-    <function class="ru.runa.af.organizationfunction.DirectorFunction">
+    <function class="ru.runa.wfe.os.func.SQLDirectorFunction">
     	<param messageKey="orgfunction.param.employeeCode" renderer="ru.runa.af.web.orgfunction.ActorCodeRenderer" />
     </function>
 </orgfunctions>

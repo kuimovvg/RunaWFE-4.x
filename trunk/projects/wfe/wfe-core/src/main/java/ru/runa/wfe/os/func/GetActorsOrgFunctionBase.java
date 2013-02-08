@@ -19,18 +19,29 @@ package ru.runa.wfe.os.func;
 
 import java.util.List;
 
-import ru.runa.wfe.os.dao.OrganizationHierarchyDAO;
-import ru.runa.wfe.os.dao.Resources;
+import ru.runa.wfe.os.OrgFunction;
+import ru.runa.wfe.os.OrgFunctionException;
+import ru.runa.wfe.user.Executor;
+
+import com.google.common.base.Throwables;
 
 /**
- * 
- * Created on Jul 12, 2006
- * 
- */
-public class ChiefRecursiveFunction extends ActorOrganizationFunctionBase {
+ * Created on 08.01.2007
+ **/
+public abstract class GetActorsOrgFunctionBase extends OrgFunction {
 
     @Override
-    protected List<Long> getExecutorCodes(Long code) {
-        return OrganizationHierarchyDAO.getActorCodesRecurisve(Resources.getChiefCodeBySubordinateCodeSQL(), new Long[] { code });
+    public final List<? extends Executor> getExecutors(Object... parameters) throws OrgFunctionException {
+        try {
+            List<Long> codes = getActorCodes(parameters);
+            log.debug("Actor codes result: " + codes);
+            return executorDAO.getActorsByCodes(codes);
+        } catch (Exception e) {
+            Throwables.propagateIfPossible(e, OrgFunctionException.class);
+            throw new OrgFunctionException(e);
+        }
     }
+
+    protected abstract List<Long> getActorCodes(Object... parameters);
+
 }

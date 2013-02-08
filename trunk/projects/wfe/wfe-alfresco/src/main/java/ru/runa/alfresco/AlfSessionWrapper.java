@@ -11,6 +11,8 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.ApplicationException;
 
+import com.google.common.base.Throwables;
+
 /**
  * Authenticated wrapper for {@link AlfSession}.
  * 
@@ -66,7 +68,7 @@ public abstract class AlfSessionWrapper<T> {
             if (ConnectionException.MESSAGE.equals(e.getMessage())) {
                 throw new ConnectionException();
             }
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         } finally {
             sessionEnd();
         }

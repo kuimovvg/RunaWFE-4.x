@@ -20,9 +20,12 @@ package ru.runa.wfe.ss;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import ru.runa.wfe.ApplicationException;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
+
+import com.google.common.base.Strings;
 
 /**
  * Substitution with this criteria applies when task process swimlane equals
@@ -45,8 +48,10 @@ public class SubstitutionCriteriaSwimlane extends SubstitutionCriteria {
     }
 
     @Override
-    public boolean validate() {
-        return !(getConfiguration() == null || getConfiguration().isEmpty());
+    public void validate() {
+        if (Strings.isNullOrEmpty(getConfiguration())) {
+            throw new ApplicationException(getClass().getName() + ": invalid configuration");
+        }
     }
 
 }

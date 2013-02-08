@@ -23,10 +23,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.TD;
 
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.User;
@@ -52,12 +49,11 @@ public interface TDBuilder {
 
         public String getConfirmationMessage(Long pid);
 
-        public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) throws AuthorizationException, AuthenticationException;
+        public boolean isAllowed(Permission permission, IdentifiableExtractor extractor);
 
-        public boolean hasProcessDefinitionPermission(Permission permission, Long processDefinitionId) throws AuthorizationException,
-                AuthenticationException, DefinitionDoesNotExistException;
+        public boolean hasProcessDefinitionPermission(Permission permission, Long processDefinitionId);
 
-        public Object getTaskVariable(Object object, IdentifiableExtractor processIdExtractor, String variableName) throws AuthenticationException;
+        public Object getTaskVariable(Object object, IdentifiableExtractor processIdExtractor, String variableName);
     }
 
     public TD build(Object object, Env env);

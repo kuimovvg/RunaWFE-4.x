@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -119,7 +118,7 @@ public class CommonLogic {
      */
     @SuppressWarnings("unchecked")
     public <T extends Object> List<T> getPersistentObjects(User user, BatchPresentation batchPresentation, Permission permission,
-            SecuredObjectType[] securedObjectTypes, boolean enablePaging) throws AuthenticationException {
+            SecuredObjectType[] securedObjectTypes, boolean enablePaging) {
         List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user.getActor());
         return (List<T>) permissionDAO.getPersistentObjects(actorAndGroupsIds, batchPresentation, permission, securedObjectTypes, enablePaging);
     }
@@ -143,8 +142,7 @@ public class CommonLogic {
      * @return Objects count, which will be loaded according to
      *         {@linkplain BatchPresentation}.
      */
-    public int getPersistentObjectCount(User user, BatchPresentation batchPresentation, Permission permission, SecuredObjectType[] securedObjectTypes)
-            throws AuthenticationException {
+    public int getPersistentObjectCount(User user, BatchPresentation batchPresentation, Permission permission, SecuredObjectType[] securedObjectTypes) {
         List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user.getActor());
         return permissionDAO.getPersistentObjectCount(actorAndGroupsIds, batchPresentation, permission, securedObjectTypes);
     }

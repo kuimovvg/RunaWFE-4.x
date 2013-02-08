@@ -24,11 +24,9 @@ import java.util.Map;
 import javax.security.auth.Subject;
 
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
-import ru.runa.wfe.security.UnapplicablePermissionException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
@@ -45,21 +43,18 @@ public interface AuthorizationService {
      * Checks whether {@link Actor}from subject has permission on
      * {@link Identifiable}.
      */
-    public boolean isAllowed(User user, Permission permission, Identifiable identifiable) throws AuthorizationException;
+    public boolean isAllowed(User user, Permission permission, Identifiable identifiable);
 
     public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables);
 
     /**
      * Sets permissions for performer on {@link Identifiable}.
      */
-    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable)
-            throws AuthorizationException, UnapplicablePermissionException;
+    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable);
 
-    public void setPermissions(User user, List<Long> executorsId, List<Collection<Permission>> permissions, Identifiable identifiable)
-            throws AuthorizationException, UnapplicablePermissionException;
+    public void setPermissions(User user, List<Long> executorsId, List<Collection<Permission>> permissions, Identifiable identifiable);
 
-    public void setPermissions(User user, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable)
-            throws AuthorizationException, UnapplicablePermissionException;
+    public void setPermissions(User user, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable);
 
     /**
      * Returns permissions that executor himself has on {@link Identifiable}.
@@ -67,7 +62,7 @@ public interface AuthorizationService {
      * @return Map of {Permission, Is permission can be modifiable}, not
      *         <code>null</code>
      */
-    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) throws AuthorizationException;
+    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable);
 
     /**
      * Load executor's which already has (or not has) some permission on
@@ -86,8 +81,7 @@ public interface AuthorizationService {
      *            permissions.
      * @return Executors with or without permission on {@linkplain Identifiable}
      */
-    public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission)
-            throws AuthorizationException;
+    public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission);
 
     /**
      * Load executor's count which already has (or not has) some permission on
@@ -107,8 +101,7 @@ public interface AuthorizationService {
      * @return Count of executors with or without permission on
      *         {@linkplain Identifiable}.
      */
-    public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission)
-            throws AuthorizationException;
+    public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission);
 
     public <T extends Object> List<T> getPersistentObjects(User user, BatchPresentation batchPresentation, Class<T> persistentClass,
             Permission permission, SecuredObjectType[] securedObjectTypes, boolean enablePaging);

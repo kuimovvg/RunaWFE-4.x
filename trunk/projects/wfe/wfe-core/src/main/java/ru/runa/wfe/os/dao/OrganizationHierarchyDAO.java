@@ -42,12 +42,10 @@ import com.google.common.collect.Lists;
 public class OrganizationHierarchyDAO {
     private static List<Long> directorsCodesList;
 
-    private OrganizationHierarchyDAO() {
-    }
-
     /**
-     * Returns codes of actors selected by sql query. e.g. chief query - select BOSS_ID from EMPLOYEES where ID = ? e.g. direct subordinate query - select ID from EMPLOYEES where
-     * "BOSS_ID" = ?
+     * Returns codes of actors selected by sql query. e.g. chief query - select
+     * BOSS_ID from EMPLOYEES where ID = ? e.g. direct subordinate query -
+     * select ID from EMPLOYEES where "BOSS_ID" = ?
      * 
      * @param sql
      *            sql query
@@ -73,8 +71,10 @@ public class OrganizationHierarchyDAO {
     }
 
     /**
-     * Returns codes of actors selected by sql query recursevly. e.g. indirect subordinate org function query - select ID from EMPLOYEES where "BOSS_ID" = ? will return all
-     * subordinates of employee with given ID and subordinates on those subordinates and so on.
+     * Returns codes of actors selected by sql query recursevly. e.g. indirect
+     * subordinate org function query - select ID from EMPLOYEES where "BOSS_ID"
+     * = ? will return all subordinates of employee with given ID and
+     * subordinates on those subordinates and so on.
      * 
      * @param sql
      *            sql query

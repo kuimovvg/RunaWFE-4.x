@@ -36,7 +36,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.af.RelationService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Executor;
 
 /**
@@ -52,8 +51,7 @@ public class CreateRelationAction extends ActionBase {
     public static final String ACTION_PATH = "/createRelation";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         CreateRelationForm relationForm = (CreateRelationForm) form;
         try {

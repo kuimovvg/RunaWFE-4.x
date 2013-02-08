@@ -18,13 +18,12 @@
 package ru.runa.service.af;
 
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 
 public interface ProfileService {
 
-    public Profile getProfile(User user) throws AuthenticationException;
+    public Profile getProfile(User user);
 
     public void setActiveBatchPresentation(User user, String batchPresentationId, String newName);
 

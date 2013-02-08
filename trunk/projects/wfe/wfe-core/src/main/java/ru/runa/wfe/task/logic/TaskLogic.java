@@ -26,7 +26,6 @@ import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.task.TaskAlreadyCompletedException;
@@ -98,7 +97,7 @@ public class TaskLogic extends WFCommonLogic {
         task.setFirstOpen(false);
     }
 
-    public WfTask getTask(User user, Long taskId) throws AuthenticationException {
+    public WfTask getTask(User user, Long taskId) {
         Task task = taskDAO.getNotNull(taskId);
         return taskObjectFactory.create(task, user.getActor(), null);
     }
