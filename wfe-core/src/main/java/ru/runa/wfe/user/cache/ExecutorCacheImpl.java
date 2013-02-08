@@ -73,12 +73,12 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
         groupToAllActorMembersCache = createCache(allGroupActorsName);
         executorToAllParentGroupsCache = createCache(allExecutorGroupsName);
         batchAllExecutors = createCache(allExecutorsListsName);
-        List<Executor> executorsList = getAllExecutors();
+        List<Executor> allExecutors = getAllExecutors();
         List<ExecutorGroupMembership> relationsList = getAllRelations();
-        for (Executor executor : executorsList) {
+        for (Executor executor : allExecutors) {
             addExecutorToCaches(executor);
         }
-        fillRelationsCaches(relationsList, executorsList);
+        fillRelationsCaches(relationsList, allExecutors);
         return;
     }
 

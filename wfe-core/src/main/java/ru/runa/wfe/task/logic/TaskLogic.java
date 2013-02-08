@@ -73,7 +73,7 @@ public class TaskLogic extends WFCommonLogic {
                 variables = Maps.newHashMap();
             }
             String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
-            checkCanParticipate(user, task, user.getActor());
+            checkCanParticipate(user, task);
             checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
             assignmentHelper.reassignTask(executionContext, task, user.getActor(), true);
             validateVariables(processDefinition, task.getNodeId(),

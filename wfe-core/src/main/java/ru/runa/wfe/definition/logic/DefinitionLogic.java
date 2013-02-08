@@ -217,7 +217,7 @@ public class DefinitionLogic extends WFCommonLogic {
             Task task = taskDAO.getNotNull(taskId);
             ProcessDefinition definition = getDefinition(task);
             if (!isPermissionAllowed(user, definition, DefinitionPermission.READ)) {
-                checkCanParticipate(user, task, null);
+                checkCanParticipate(user, task);
             }
             return definition.getInteractionNotNull(task.getNodeId());
         } catch (DefinitionDoesNotExistException e) {
