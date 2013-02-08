@@ -36,7 +36,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Profile;
 
 /**
@@ -58,8 +57,7 @@ import ru.runa.wfe.user.Profile;
 public class StartProcessAction extends ActionBase {
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         IdForm idForm = (IdForm) form;
         Long definitionId = idForm.getId();

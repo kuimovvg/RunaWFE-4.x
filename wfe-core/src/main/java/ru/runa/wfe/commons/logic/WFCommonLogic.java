@@ -43,11 +43,9 @@ import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.graph.view.GraphElementPresentationVisitor;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dao.TaskDAO;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -117,7 +115,7 @@ public class WFCommonLogic extends CommonLogic {
         }
     }
 
-    protected boolean canParticipateAsSubstitutor(User user, Task task) throws AuthenticationException {
+    protected boolean canParticipateAsSubstitutor(User user, Task task) {
         try {
             Set<Long> canSubIds = substitutionLogic.getSubstituted(user.getActor());
             Set<Actor> canSub = new HashSet<Actor>();
@@ -135,12 +133,12 @@ public class WFCommonLogic extends CommonLogic {
                 }
             }
         } catch (ExecutorDoesNotExistException e) {
-            log.warn("canParticipateAsSubstitutor: " + e);
+            log.error("canParticipateAsSubstitutor: " + e);
         }
         return false;
     }
 
-    protected void checkCanParticipate(User user, Task task, Actor targetActor) throws AuthorizationException, TaskDoesNotExistException {
+    protected void checkCanParticipate(User user, Task task, Actor targetActor) throws AuthorizationException {
         if (targetActor == null) {
             targetActor = user.getActor();
         }
@@ -164,7 +162,7 @@ public class WFCommonLogic extends CommonLogic {
         throw new AuthorizationException("Executor " + user + " has no pemission to participate as " + targetActor + " in task " + task);
     }
 
-    protected void checkReadToVariablesAllowed(User user, Task task) throws AuthorizationException, TaskDoesNotExistException {
+    protected void checkReadToVariablesAllowed(User user, Task task) throws AuthorizationException {
         if (isPermissionAllowed(user, task.getProcess(), ProcessPermission.READ)) {
             return;
         }

@@ -106,6 +106,9 @@ public class InitializerLogic {
     private String administratorGroupName;
     private String administratorGroupDescription;
 
+    // TODO botsGroupName
+    // TODO localize predefined groups
+
     @Required
     public void setAdministratorName(String administratorName) {
         this.administratorName = administratorName;

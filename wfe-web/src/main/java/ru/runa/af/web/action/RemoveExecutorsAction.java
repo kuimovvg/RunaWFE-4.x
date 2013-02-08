@@ -32,7 +32,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
 
 import com.google.common.collect.Lists;
 
@@ -50,8 +49,7 @@ public class RemoveExecutorsAction extends ActionBase {
     public static final String ACTION_PATH = "/removeExecutors";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = new ActionMessages();
         try {
             ExecutorService executorService = Delegates.getExecutorService();

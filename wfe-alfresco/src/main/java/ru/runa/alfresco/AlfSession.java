@@ -51,6 +51,7 @@ import ru.runa.alfresco.search.Search;
 import ru.runa.wfe.ApplicationException;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 
 /**
  * Connector implementation using Alfresco web services.
@@ -91,7 +92,7 @@ public class AlfSession implements AlfConn {
             cml.setAddAspect(new CMLAddAspect[] { addAspect });
             WebServiceFactory.getRepositoryService().update(cml);
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -105,7 +106,7 @@ public class AlfSession implements AlfConn {
             cml.setRemoveAspect(new CMLRemoveAspect[] { removeAspect });
             WebServiceFactory.getRepositoryService().update(cml);
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -125,7 +126,7 @@ public class AlfSession implements AlfConn {
             log.info("Created folder '" + folderName + "' with " + docRef.getUuid());
             return docRef.getUuid();
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -159,7 +160,7 @@ public class AlfSession implements AlfConn {
                 cache.put(new Element(object.getUuidRef(), object));
             }
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -176,7 +177,7 @@ public class AlfSession implements AlfConn {
             log.info("Version of " + object + " updated to " + result.getVersions()[0].getLabel());
             object.markInitialState(typeDesc);
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -192,7 +193,7 @@ public class AlfSession implements AlfConn {
             WebServiceFactory.getRepositoryService().update(cml);
             log.info("Created association " + associationName);
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -214,7 +215,7 @@ public class AlfSession implements AlfConn {
             WebServiceFactory.getRepositoryService().update(cml);
             log.info("Created child association " + associationName);
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -269,7 +270,7 @@ public class AlfSession implements AlfConn {
                 }
             }
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -343,7 +344,7 @@ public class AlfSession implements AlfConn {
             object.clearCollections();
             return updated;
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -481,7 +482,7 @@ public class AlfSession implements AlfConn {
             return object;
         } catch (Exception e) {
             Thread.dumpStack();
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -491,7 +492,7 @@ public class AlfSession implements AlfConn {
             VersionHistory history = WebServiceFactory.getAuthoringService().getVersionHistory(where.getNodes()[0]);
             return history.getVersions();
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -525,7 +526,7 @@ public class AlfSession implements AlfConn {
             return true;
         } catch (Exception e) {
             Thread.dumpStack();
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -548,7 +549,7 @@ public class AlfSession implements AlfConn {
             WebServiceFactory.getContentService().write(object.getReference(), Constants.PROP_CONTENT, content,
                     new ContentFormat(mimetype, Charsets.UTF_8.name()));
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -582,7 +583,7 @@ public class AlfSession implements AlfConn {
                 cml.setDelete(new CMLDelete[] { delete });
                 WebServiceFactory.getRepositoryService().update(cml);
             } catch (Exception e) {
-                throw new ApplicationException(e);
+                throw Throwables.propagate(e);
             } finally {
                 AlfSessionWrapper.sessionEnd();
             }
@@ -614,7 +615,7 @@ public class AlfSession implements AlfConn {
             log.debug("Search " + query.getStatement() + " returns " + rows.length);
             return rows;
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -632,7 +633,7 @@ public class AlfSession implements AlfConn {
             }
             return result;
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }
@@ -669,7 +670,7 @@ public class AlfSession implements AlfConn {
             }
             typeDesc.setClassDefinitionLoaded(true);
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             AlfSessionWrapper.sessionEnd();
         }

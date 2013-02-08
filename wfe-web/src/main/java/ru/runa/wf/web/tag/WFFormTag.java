@@ -34,8 +34,6 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wf.web.action.BaseProcessFormAction;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 
 import com.google.common.base.Charsets;
@@ -114,9 +112,9 @@ public abstract class WFFormTag extends TitledFormTag {
         return Messages.getMessage(Messages.BUTTON_COMPLETE, pageContext);
     }
 
-    abstract protected Long getDefinitionId() throws AuthorizationException, AuthenticationException;
+    abstract protected Long getDefinitionId();
 
-    abstract protected Interaction getInteraction() throws AuthorizationException, AuthenticationException, TaskDoesNotExistException;
+    abstract protected Interaction getInteraction();
 
     abstract protected String buildForm(Interaction interaction);
 }

@@ -33,7 +33,6 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.AuthenticationException;
 
 import com.google.common.collect.Lists;
 
@@ -54,8 +53,7 @@ public class AddMembersToGroupAction extends ActionBase {
     public static final String ACTION_PATH = "/addMembersToGroup";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = new ActionMessages();
         IdsForm groupsForm = (IdsForm) form;
         try {

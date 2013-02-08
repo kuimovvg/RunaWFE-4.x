@@ -8,12 +8,12 @@
 <%
 	String idParameter = request.getParameter("id");
 	Long id = null;
-	if (idParameter != null) {
+	if (idParameter != null && !"null".equals(idParameter)) {
 		id = Long.parseLong(idParameter);
 	}
 	String actorIdParameter = request.getParameter("actorId");
 	Long actorId = null;
-	if (actorIdParameter != null) {
+	if (actorIdParameter != null && !"null".equals(actorIdParameter)) {
 		actorId = Long.parseLong(actorIdParameter);
 	}
 	boolean terminator = "true".equals(request.getParameter("terminator"));

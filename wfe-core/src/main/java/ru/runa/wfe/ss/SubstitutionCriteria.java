@@ -96,8 +96,10 @@ public class SubstitutionCriteria implements Serializable {
         return false;
     }
 
-    public boolean validate() {
-        return false;
+    /**
+     * throws Exception in case of invalid configuration.
+     */
+    public void validate() {
     }
 
 }

@@ -37,16 +37,15 @@ import ru.runa.af.web.html.BaseDetailTableBuilder;
 import ru.runa.af.web.orgfunction.FunctionDef;
 import ru.runa.af.web.orgfunction.ParamDef;
 import ru.runa.af.web.orgfunction.SubstitutionCriteriaDefinitions;
-import ru.runa.af.web.orgfunction.SubstitutionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdentifiableFormTag;
-import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.os.ParamRenderer;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.ss.SubstitutionCriteria;
+
+import com.google.common.base.Strings;
 
 /**
  * Created on 14.08.2010
@@ -55,7 +54,6 @@ import ru.runa.wfe.ss.SubstitutionCriteria;
  */
 public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
     private static final long serialVersionUID = 1L;
-    private SubstitutionCriteria substitutionCriteria;
 
     @Override
     protected Identifiable getIdentifiable() {
@@ -64,29 +62,25 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
 
     @Override
     public void fillFormData(TD tdFormElement) {
-        try {
-            StringBuffer paramsDiv = new StringBuffer("<div id='rh' style='display: none;'>");
-            List<FunctionDef> functions = SubstitutionCriteriaDefinitions.getAll();
-            int i = 0;
-            for (FunctionDef functionDef : functions) {
-                paramsDiv.append("<div id='").append(functionDef.getClassName()).append("'>");
-                for (ParamDef paramDef : functionDef.getParams()) {
-                    paramsDiv.append("<div>");
-                    paramsDiv.append("<span>").append(paramDef.getMessage(pageContext)).append("</span>");
-                    paramsDiv.append("<span>").append(createEditElement(paramDef.getRenderer(), pageContext, "", i, false)).append("</span>");
-                    paramsDiv.append("</div>");
-                }
+        StringBuffer paramsDiv = new StringBuffer("<div id='rh' style='display: none;'>");
+        List<FunctionDef> functions = SubstitutionCriteriaDefinitions.getAll();
+        int i = 0;
+        for (FunctionDef functionDef : functions) {
+            paramsDiv.append("<div id='").append(functionDef.getClassName()).append("'>");
+            for (ParamDef paramDef : functionDef.getParams()) {
+                paramsDiv.append("<div>");
+                paramsDiv.append("<span>").append(paramDef.getMessage(pageContext)).append("</span>");
+                paramsDiv.append("<span>").append(createEditElement(paramDef.getRenderer(), pageContext, "", i, false)).append("</span>");
                 paramsDiv.append("</div>");
-                i++;
             }
             paramsDiv.append("</div>");
-            tdFormElement.addElement(paramsDiv.toString());
-
-            SubstitutionTableBuilder builder = new SubstitutionTableBuilder(pageContext);
-            tdFormElement.addElement(builder.buildTable());
-        } catch (Exception e) {
-            tdFormElement.addElement(e.getMessage());
+            i++;
         }
+        paramsDiv.append("</div>");
+        tdFormElement.addElement(paramsDiv.toString());
+
+        SubstitutionTableBuilder builder = new SubstitutionTableBuilder(pageContext);
+        tdFormElement.addElement(builder.buildTable());
     }
 
     @Override
@@ -96,16 +90,11 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
 
     @Override
     public String getFormButtonName() {
-        String message = (substitutionCriteria != null) ? Messages.BUTTON_SAVE : Messages.BUTTON_ADD;
-        return Messages.getMessage(message, pageContext);
+        return Messages.getMessage(Messages.BUTTON_SAVE, pageContext);
     }
 
     @Override
     protected String getTitle() {
-        SubstitutionService substitutionService = Delegates.getSubstitutionService();
-        if (getIdentifiableId() != null) {
-            substitutionCriteria = substitutionService.getCriteria(getUser(), getIdentifiableId());
-        }
         return Messages.getMessage("substitutioncriteria.edit.title", pageContext);
     }
 
@@ -122,49 +111,47 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
             this.pageContext = pageContext;
         }
 
-        public Table buildTable() throws AuthenticationException {
+        public Table buildTable() {
+            SubstitutionCriteria substitutionCriteria = (getIdentifiableId() != null) ? Delegates.getSubstitutionService().getCriteria(getUser(),
+                    getIdentifiableId()) : null;
             Table table = new Table();
             table.setID("paramsTable");
             table.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE);
-            boolean isEnabled = true;
+            boolean enabled = substitutionCriteria == null;
             String criteriaName = "";
             if (substitutionCriteria != null) {
                 criteriaName = substitutionCriteria.getName();
             }
             table.addElement(createTRWith2TD(Messages.getMessage(Messages.LABEL_SUBSTITUTION_CRITERIA_NAME, pageContext),
                     SubstitutionCriteriaForm.NAME_INPUT_NAME, criteriaName, false));
-            String criteriaType = "";
+            String criteriaType = null;
             if (substitutionCriteria != null) {
-                criteriaType = SubstitutionHelper.injectFunction(substitutionCriteria.getClass().getName());
-            }
-            SubstitutionCriteriaForm form = (SubstitutionCriteriaForm) pageContext.getRequest().getAttribute(SubstitutionCriteriaForm.NAME);
-            if (form != null) {
-                criteriaType = form.getType();
+                criteriaType = substitutionCriteria.getClass().getName();
             }
             Option[] typeOptions = getTypeOptions(criteriaType);
-            if (criteriaType.length() == 0 && typeOptions.length > 0) {
+            if (Strings.isNullOrEmpty(criteriaType) && typeOptions.length > 0) {
                 criteriaType = typeOptions[0].getValue();
             }
             table.addElement(createTRWithLabelAndSelect(Messages.getMessage(Messages.LABEL_SUBSTITUTION_CRITERIA_TYPE, pageContext),
-                    SubstitutionCriteriaForm.TYPE_INPUT_NAME, typeOptions, !isEnabled));
-            if (criteriaType.length() > 0) {
+                    SubstitutionCriteriaForm.TYPE_INPUT_NAME, typeOptions, !enabled));
+            if (!Strings.isNullOrEmpty(criteriaType)) {
                 FunctionDef functionDef = SubstitutionCriteriaDefinitions.getByClassName(criteriaType);
                 if (functionDef != null) {
                     for (int i = 0; i < functionDef.getParams().size(); i++) {
+                        ParamDef paramDef = functionDef.getParams().get(i);
                         String value = "";
                         if (substitutionCriteria != null) {
-                            value = SubstitutionHelper.injectParameter(substitutionCriteria.getConfiguration(), i);
+                            value = substitutionCriteria.getConfiguration();
                         }
-                        ParamDef paramDef = functionDef.getParams().get(i);
                         table.addElement(createParameterTR(i, paramDef.getMessage(pageContext),
-                                createEditElement(paramDef.getRenderer(), pageContext, value, i, isEnabled)));
+                                createEditElement(paramDef.getRenderer(), pageContext, value, i, true)));
                     }
                 }
             }
             return table;
         }
 
-        private Option[] getTypeOptions(String selectedValue) throws AuthenticationException {
+        private Option[] getTypeOptions(String selectedValue) {
             List<FunctionDef> definitions = SubstitutionCriteriaDefinitions.getAll();
             Option[] options = new Option[definitions.size()];
             for (int i = 0; i < options.length; i++) {
@@ -172,7 +159,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
                 options[i].addElement(definitions.get(i).getLabel());
             }
             for (Option option : options) {
-                if (selectedValue.equals(option.getValue())) {
+                if (option.getValue().equals(selectedValue)) {
                     option.setSelected(true);
                     break;
                 }

@@ -28,12 +28,7 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.StartFormBuilder;
 import ru.runa.wf.web.html.FormBuilderFactory;
-import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.task.TaskDoesNotExistException;
 
 /**
  * Created on 17.11.2004
@@ -64,38 +59,22 @@ public class StartFormTag extends WFFormTag {
     }
 
     @Override
-    protected Interaction getInteraction() throws AuthorizationException, AuthenticationException {
-        try {
-            return Delegates.getDefinitionService().getStartInteraction(getUser(), definitionId);
-        } catch (DefinitionDoesNotExistException e) {
-            throw new InternalApplicationException(e);
-        }
+    protected Interaction getInteraction() {
+        return Delegates.getDefinitionService().getStartInteraction(getUser(), definitionId);
     }
 
-    public List<String> getTransitionNames() throws AuthenticationException, TaskDoesNotExistException {
+    public List<String> getTransitionNames() {
         return Delegates.getDefinitionService().getOutputTransitionNames(getUser(), definitionId, null);
     }
 
     @Override
     protected List<String> getFormButtonNames() {
-        try {
-            return getTransitionNames();
-        } catch (AuthenticationException e) {
-            throw new InternalApplicationException(e);
-        } catch (TaskDoesNotExistException e) {
-            throw new InternalApplicationException(e);
-        }
+        return getTransitionNames();
     }
 
     @Override
     protected boolean isMultipleSubmit() {
-        try {
-            return getTransitionNames().size() > 1;
-        } catch (AuthenticationException e) {
-            throw new InternalApplicationException(e);
-        } catch (TaskDoesNotExistException e) {
-            throw new InternalApplicationException(e);
-        }
+        return getTransitionNames().size() > 1;
     }
 
     @Override

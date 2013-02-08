@@ -18,7 +18,6 @@
 package ru.runa.service.delegate;
 
 import ru.runa.service.af.AuthenticationService;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.User;
 
 public class AuthenticationServiceDelegate extends EJB3Delegate implements AuthenticationService {
@@ -32,7 +31,7 @@ public class AuthenticationServiceDelegate extends EJB3Delegate implements Authe
     }
 
     @Override
-    public User authenticateByCallerPrincipal() throws AuthenticationException {
+    public User authenticateByCallerPrincipal() {
         return getAuthenticationService().authenticateByCallerPrincipal();
     }
 

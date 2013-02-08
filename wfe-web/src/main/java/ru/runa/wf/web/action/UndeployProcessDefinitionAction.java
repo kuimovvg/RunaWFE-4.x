@@ -31,7 +31,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wfe.security.AuthenticationException;
 
 /**
  * Created on 06.10.2004
@@ -48,8 +47,7 @@ public class UndeployProcessDefinitionAction extends ActionBase {
     public static final String ACTION_PATH = "/undeployProcessDefinition";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce)
-            throws AuthenticationException {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
         ActionMessages errors = getErrors(request);
         IdsForm idsForm = (IdsForm) form;
         try {

@@ -19,19 +19,25 @@ package ru.runa.wfe.os.func;
 
 import java.util.List;
 
-import ru.runa.wfe.os.dao.OrganizationHierarchyDAO;
-import ru.runa.wfe.os.dao.Resources;
+import ru.runa.wfe.commons.TypeConversionUtil;
+
+import com.google.common.collect.Lists;
 
 /**
  * 
- * Created on Jul 13, 2006
+ * Returns actors by code, can accept multiple codes at once
+ * 
+ * Created on Jul 12, 2006
  * 
  */
-public class SubordinateRecursiveFunction extends ActorOrganizationFunctionBase {
+public class GetActorsByCodesFunction extends GetActorsOrgFunctionBase {
 
     @Override
-    protected List<Long> getExecutorCodes(Long code) {
-        return OrganizationHierarchyDAO.getActorCodesRecurisve(Resources.getSubordinateCodesByChiefCodeSQL(), new Long[] { code });
+    protected List<Long> getActorCodes(Object... parameters) {
+        List<Long> codes = Lists.newArrayListWithExpectedSize(parameters.length);
+        for (int i = 0; i < parameters.length; i++) {
+            codes.add(TypeConversionUtil.convertTo(parameters[i], Long.class));
+        }
+        return codes;
     }
-
 }

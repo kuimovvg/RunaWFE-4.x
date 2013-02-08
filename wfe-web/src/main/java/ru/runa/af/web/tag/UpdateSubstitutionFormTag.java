@@ -43,7 +43,6 @@ import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.service.af.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.os.ParamRenderer;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.ss.Substitution;
@@ -90,30 +89,25 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
 
     @Override
     public void fillFormData(TD tdFormElement) {
-        try {
-            StringBuffer paramsDiv = new StringBuffer("<div id='rh' style='display: none;'>");
-            List<FunctionDef> functions = SubstitutionDefinitions.getAll();
-            int i = 0;
-            for (FunctionDef functionDef : functions) {
-                paramsDiv.append("<div id='").append(functionDef.getClassName()).append("'>");
-                for (ParamDef paramDef : functionDef.getParams()) {
-                    paramsDiv.append("<div>");
-                    paramsDiv.append("<span>").append(paramDef.getMessage(pageContext)).append("</span>");
-                    paramsDiv.append("<span>").append(createEditElement(paramDef.getRenderer(), pageContext, "", i, false)).append("</span>");
-                    paramsDiv.append("</div>");
-                }
+        StringBuffer paramsDiv = new StringBuffer("<div id='rh' style='display: none;'>");
+        List<FunctionDef> functions = SubstitutionDefinitions.getAll();
+        int i = 0;
+        for (FunctionDef functionDef : functions) {
+            paramsDiv.append("<div id='").append(functionDef.getClassName()).append("'>");
+            for (ParamDef paramDef : functionDef.getParams()) {
+                paramsDiv.append("<div>");
+                paramsDiv.append("<span>").append(paramDef.getMessage(pageContext)).append("</span>");
+                paramsDiv.append("<span>").append(createEditElement(paramDef.getRenderer(), pageContext, "", i, false)).append("</span>");
                 paramsDiv.append("</div>");
-                i++;
             }
             paramsDiv.append("</div>");
-            tdFormElement.addElement(paramsDiv.toString());
-
-            SubstitutionTableBuilder builder = new SubstitutionTableBuilder(pageContext);
-            tdFormElement.addElement(builder.buildTable());
-        } catch (Exception e) {
-            log.error("", e);
-            tdFormElement.addElement(e.getMessage());
+            i++;
         }
+        paramsDiv.append("</div>");
+        tdFormElement.addElement(paramsDiv.toString());
+
+        SubstitutionTableBuilder builder = new SubstitutionTableBuilder(pageContext);
+        tdFormElement.addElement(builder.buildTable());
     }
 
     @Override
@@ -150,11 +144,11 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
             this.pageContext = pageContext;
         }
 
-        public Table buildTable() throws AuthenticationException {
+        public Table buildTable() {
             Table table = new Table();
             table.setID("paramsTable");
             table.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE);
-            String criteriaId = SubstitutionForm.NO_CRITERIA_ID.toString();
+            String criteriaId = null;
             if (substitution != null && substitution.getCriteria() != null) {
                 criteriaId = substitution.getCriteria().getId().toString();
             }
@@ -166,10 +160,6 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
                 String function = "";
                 if (substitution != null) {
                     function = SubstitutionHelper.injectFunction(substitution.getOrgFunction());
-                }
-                SubstitutionForm form = (SubstitutionForm) pageContext.getRequest().getAttribute(SubstitutionForm.NAME);
-                if (form != null) {
-                    function = form.getFunction();
                 }
                 Option[] functionOptions = getFunctionOptions(function);
                 if (function.length() == 0 && functionOptions.length > 0) {
@@ -197,35 +187,25 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
             return table;
         }
 
-        private Option[] getCriteriaOptions(String selectedValue) throws AuthenticationException {
-            SubstitutionService substitutionService = Delegates.getSubstitutionService();
-            try {
-                List<SubstitutionCriteria> criterias = substitutionService.getAllCriterias(getUser());
-                Option[] options = new Option[criterias.size() + 1];
-                options[0] = new Option("0");
-                options[0].addElement(Messages.getMessage(Messages.SUBSTITUTION_ALWAYS, pageContext));
-                for (int i = 1; i < options.length; i++) {
-                    options[i] = new Option(String.valueOf(criterias.get(i - 1).getId()));
-                    options[i].addElement(criterias.get(i - 1).getName());
-                }
-                for (Option option : options) {
-                    if (option.getValue().equals(selectedValue)) {
-                        option.setSelected(true);
-                        break;
-                    }
-                }
-                return options;
-            } catch (Exception e) {
-                log.error("", e);
-                Option[] options = new Option[1];
-                options[0] = new Option("0");
-                options[0].addElement(Messages.getMessage(Messages.SUBSTITUTION_ALWAYS, pageContext));
-                options[0].setSelected(true);
-                return options;
+        private Option[] getCriteriaOptions(String selectedValue) {
+            List<SubstitutionCriteria> criterias = Delegates.getSubstitutionService().getAllCriterias(getUser());
+            Option[] options = new Option[criterias.size() + 1];
+            options[0] = new Option("");
+            options[0].addElement(Messages.getMessage(Messages.SUBSTITUTION_ALWAYS, pageContext));
+            for (int i = 1; i < options.length; i++) {
+                options[i] = new Option(String.valueOf(criterias.get(i - 1).getId()));
+                options[i].addElement(criterias.get(i - 1).getName());
             }
+            for (Option option : options) {
+                if (option.getValue().equals(selectedValue)) {
+                    option.setSelected(true);
+                    break;
+                }
+            }
+            return options;
         }
 
-        private Option[] getFunctionOptions(String selectedValue) throws AuthenticationException {
+        private Option[] getFunctionOptions(String selectedValue) {
             List<FunctionDef> definitions = SubstitutionDefinitions.getAll();
             Option[] options = new Option[definitions.size()];
             for (int i = 0; i < options.length; i++) {

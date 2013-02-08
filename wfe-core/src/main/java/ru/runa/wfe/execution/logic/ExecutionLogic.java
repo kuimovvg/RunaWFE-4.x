@@ -24,9 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.NodeProcess;
@@ -42,13 +40,10 @@ import ru.runa.wfe.graph.image.StartedSubprocessesVisitor;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
 import com.google.common.base.Throwables;
@@ -151,11 +146,6 @@ public class ExecutionLogic extends WFCommonLogic {
             log.info("Process " + process + " was successfully started");
             return process.getId();
         } catch (Exception e) {
-            Throwables.propagateIfInstanceOf(e, InternalApplicationException.class);
-            Throwables.propagateIfInstanceOf(e, AuthorizationException.class);
-            Throwables.propagateIfInstanceOf(e, AuthenticationException.class);
-            Throwables.propagateIfInstanceOf(e, DefinitionDoesNotExistException.class);
-            Throwables.propagateIfInstanceOf(e, ValidationException.class);
             throw Throwables.propagate(e);
         }
     }

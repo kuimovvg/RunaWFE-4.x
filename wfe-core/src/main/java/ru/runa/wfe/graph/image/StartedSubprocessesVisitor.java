@@ -3,14 +3,12 @@ package ru.runa.wfe.graph.image;
 import java.util.List;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.execution.NodeProcess;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessesGraphElementAdapter;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.User;
 
@@ -77,7 +75,7 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
      * @return true, if current actor can read process definition and false
      *         otherwise.
      */
-    private boolean checkPermission(Process process) throws DefinitionDoesNotExistException, AuthenticationException {
+    private boolean checkPermission(Process process) {
         PermissionDAO permissionDAO = ApplicationContextFactory.getPermissionDAO();
         return permissionDAO.isAllowed(user, ProcessPermission.READ, process);
     }

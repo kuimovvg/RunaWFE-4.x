@@ -44,7 +44,6 @@ import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.presentation.FieldState;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 import ru.runa.wfe.presentation.filter.FilterFormatException;
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.Profile;
 
 /**
@@ -159,8 +158,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         }
     }
 
-    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         try {
@@ -180,8 +178,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         return new ActionForward(tableViewSetupForm.getReturnAction(), true);
     }
 
-    public ActionForward saveAs(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward saveAs(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
@@ -207,8 +204,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         return new ActionForward(tableViewSetupForm.getReturnAction(), true);
     }
 
-    public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
