@@ -138,10 +138,7 @@ public class WFCommonLogic extends CommonLogic {
         return false;
     }
 
-    protected void checkCanParticipate(User user, Task task, Actor targetActor) throws AuthorizationException {
-        if (targetActor == null) {
-            targetActor = user.getActor();
-        }
+    protected void checkCanParticipate(User user, Task task) throws AuthorizationException {
         Executor taskExecutor = task.getExecutor();
         if (taskExecutor == null) {
             throw new AuthorizationException("Unable to participate in unassigned task");
@@ -159,14 +156,14 @@ public class WFCommonLogic extends CommonLogic {
         if (canParticipateAsSubstitutor(user, task)) {
             return;
         }
-        throw new AuthorizationException("Executor " + user + " has no pemission to participate as " + targetActor + " in task " + task);
+        throw new AuthorizationException("Executor " + user + " has no pemission to participate as " + taskExecutor + " in task " + task);
     }
 
     protected void checkReadToVariablesAllowed(User user, Task task) throws AuthorizationException {
         if (isPermissionAllowed(user, task.getProcess(), ProcessPermission.READ)) {
             return;
         }
-        checkCanParticipate(user, task, null);
+        checkCanParticipate(user, task);
     }
 
     protected Set<Actor> getAssignedActors(Task task) throws ExecutorDoesNotExistException {
