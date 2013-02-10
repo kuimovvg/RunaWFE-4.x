@@ -161,7 +161,7 @@ public class SubstitutionLogic extends CommonLogic {
     public void delete(User user, List<Long> substitutionIds) {
         List<Substitution> substitutions = substitutionDAO.get(substitutionIds);
         if (substitutions.size() != substitutionIds.size()) {
-            throw new SubstitutionDoesNotExistException();
+            throw new SubstitutionDoesNotExistException(substitutionIds.toString());
         }
         List<Actor> actors = getSubstitutionActors(substitutions);
         checkPermissionsOnExecutors(user, actors, ExecutorPermission.UPDATE);

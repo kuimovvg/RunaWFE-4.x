@@ -25,6 +25,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 
 import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.ss.Substitution;
+import ru.runa.wfe.ss.SubstitutionDoesNotExistException;
 import ru.runa.wfe.user.Actor;
 
 import com.google.common.collect.Lists;
@@ -36,6 +37,13 @@ import com.google.common.collect.Lists;
  */
 @SuppressWarnings("unchecked")
 public class SubstitutionDAO extends GenericDAO<Substitution> {
+
+    @Override
+    protected void checkNotNull(Substitution entity, Object identity) {
+        if (entity == null) {
+            throw new SubstitutionDoesNotExistException(String.valueOf(identity));
+        }
+    }
 
     /**
      * Load {@linkplain Substitution}'s by identity. Result

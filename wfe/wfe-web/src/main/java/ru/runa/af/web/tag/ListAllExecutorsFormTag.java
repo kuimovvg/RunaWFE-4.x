@@ -36,7 +36,7 @@ import ru.runa.common.web.html.SortingHeaderBuilder;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
-import ru.runa.service.af.ExecutorService;
+import ru.runa.service.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.user.Executor;
@@ -58,7 +58,7 @@ public class ListAllExecutorsFormTag extends BatchReturningTitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) {
         ExecutorService executorService = Delegates.getExecutorService();
-        int executorsCount = executorService.getAllCount(getUser(), getBatchPresentation());
+        int executorsCount = executorService.getExecutorsCount(getUser(), getBatchPresentation());
         List<Executor> executors = executorService.getAll(getUser(), getBatchPresentation());
         BatchPresentation batchPresentation = getBatchPresentation();
         setupFormButton(executors);

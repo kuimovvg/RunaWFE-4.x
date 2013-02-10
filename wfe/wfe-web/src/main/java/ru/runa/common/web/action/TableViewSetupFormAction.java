@@ -35,7 +35,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.TableViewSetupForm;
 import ru.runa.common.web.html.format.FilterFormatsFactory;
-import ru.runa.service.af.ProfileService;
+import ru.runa.service.ProfileService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ArraysCommons;
 import ru.runa.wfe.presentation.BatchPresentation;

@@ -17,6 +17,8 @@
  */
 package ru.runa.af.web.action;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,6 +33,9 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.ss.Substitution;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 /**
  * Created on 03.02.2006
@@ -52,8 +57,16 @@ public class SwitchSubstitutionsPositionsAction extends ActionBase {
         ActionMessages errors = new ActionMessages();
         IdsForm form = (IdsForm) actionForm;
         try {
-            Substitution substitution1 = Delegates.getSubstitutionService().getSubstitution(getLoggedUser(request), form.getIds()[0]);
-            Substitution substitution2 = Delegates.getSubstitutionService().getSubstitution(getLoggedUser(request), form.getIds()[1]);
+            List<Substitution> substitutions = Delegates.getSubstitutionService().getSubstitutions(getLoggedUser(request), form.getId());
+            Substitution substitution1 = null;
+            for (Substitution substitution : substitutions) {
+                if (Objects.equal(form.getIds()[0], substitution.getId())) {
+                    substitution1 = substitution;
+                    break;
+                }
+            }
+            Preconditions.checkNotNull(substitution1, "No substitution found");
+            Substitution substitution2 = substitutions.get(substitutions.indexOf(substitution1) + 1);
             substitution1.setPosition(substitution2.getPosition());
             Delegates.getSubstitutionService().updateSubstitution(getLoggedUser(request), substitution1);
         } catch (Exception e) {

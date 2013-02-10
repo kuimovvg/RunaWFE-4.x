@@ -26,7 +26,7 @@ import ru.runa.af.web.form.DeployBotForm;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.service.af.AuthorizationService;
+import ru.runa.service.AuthorizationService;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 

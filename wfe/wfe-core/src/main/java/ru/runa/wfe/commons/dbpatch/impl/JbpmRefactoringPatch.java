@@ -9,7 +9,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.definition.Language;
@@ -46,7 +46,7 @@ public class JbpmRefactoringPatch extends DBPatch {
     @Override
     protected List<String> getDDLQueriesBefore() {
         if (dbType != DBType.MSSQL) {
-            throw new WfException("Database migration patch from RunaWFE 3.x to 4.x is currently supported only for MS SQL Server");
+            throw new InternalApplicationException("Database migration patch from RunaWFE 3.x to 4.x is currently supported only for MS SQL Server");
         }
         // "MySQL DB update to version RunaWFE4.x is not supported because of mass column (which are foreign keys) renames [Error on rename of (errno: 150)]"
         List<String> sql = super.getDDLQueriesBefore();
@@ -582,7 +582,7 @@ public class JbpmRefactoringPatch extends DBPatch {
             query.setParameter("id", objects[0]);
             NodeType nodeType = nodeTypes.get(objects[1].toString());
             if (nodeType == null) {
-                throw new WfException("nodeType == null for " + objects[1]);
+                throw new InternalApplicationException("nodeType == null for " + objects[1]);
             }
             query.setParameter("nodeType", nodeType.name());
             query.setParameter("nodeId", objects[2]);

@@ -11,7 +11,7 @@ import org.apache.struts.action.ActionMessages;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.af.SubstitutionService;
+import ru.runa.service.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;

@@ -26,9 +26,9 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.af.AuthorizationService;
+import ru.runa.service.AuthorizationService;
+import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.startprocess.StartProcessTask;
 import ru.runa.wf.logic.bot.startprocess.StartProcessVariableMapping;
 import ru.runa.wf.logic.bot.startprocess.StartProcessXmlParser;

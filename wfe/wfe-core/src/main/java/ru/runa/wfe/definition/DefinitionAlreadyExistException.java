@@ -17,13 +17,13 @@
  */
 package ru.runa.wfe.definition;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Signals that deployed definition already exists
  * 
  */
-public class DefinitionAlreadyExistException extends WfException {
+public class DefinitionAlreadyExistException extends InternalApplicationException {
 
     private static final long serialVersionUID = 6474246489536171787L;
     private final String name;

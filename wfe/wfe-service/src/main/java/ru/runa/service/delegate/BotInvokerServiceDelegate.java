@@ -17,7 +17,7 @@
  */
 package ru.runa.service.delegate;
 
-import ru.runa.service.bot.BotInvokerService;
+import ru.runa.service.BotInvokerService;
 import ru.runa.wfe.bot.BotStation;
 
 /**

@@ -10,7 +10,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.action.ViewLogsAction;
-import ru.runa.service.af.AuthorizationService;
+import ru.runa.service.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.ASystem;

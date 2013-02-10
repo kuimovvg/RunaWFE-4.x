@@ -29,7 +29,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.SQLCommons;
 
 import com.google.common.base.Preconditions;
@@ -110,7 +110,7 @@ public class OrganizationHierarchyDAO {
             if (!codeSet.contains(code)) {
                 if (!codeSet.add(code)) {
                     // i.e. we have circle in hierarchy
-                    throw new WfException("Code hierarchy contains cycle");
+                    throw new InternalApplicationException("Code hierarchy contains cycle");
                 }
                 parameters[0] = code;
                 getCodesRecursive(ps, codeSet, parameters);
@@ -160,7 +160,7 @@ public class OrganizationHierarchyDAO {
             }
             codes.remove(0);
         }
-        throw new WfException("Code hierarchy contains no director for actor with code = " + code);
+        throw new InternalApplicationException("Code hierarchy contains no director for actor with code = " + code);
     }
 
     private static List<Long> getCodesFromResultSet(ResultSet rs) throws SQLException {
@@ -194,7 +194,7 @@ public class OrganizationHierarchyDAO {
         try {
             DataSource ds = (DataSource) getInitialContext().lookup(Resources.getDataSourceName());
             if (ds == null) {
-                throw new WfException("No DataSource found for " + Resources.getDataSourceName());
+                throw new InternalApplicationException("No DataSource found for " + Resources.getDataSourceName());
             }
             return ds.getConnection();
         } catch (Exception e) {

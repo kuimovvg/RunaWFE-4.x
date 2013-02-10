@@ -2,7 +2,7 @@ package ru.runa.wfe.handler.action.var;
 
 import java.util.List;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.handler.CommonParamBasedHandler;
 import ru.runa.wfe.handler.HandlerData;
 
@@ -39,7 +39,7 @@ public class ListAggregateFunctionActionHandler extends CommonParamBasedHandler 
                         doubleValue = true;
                     }
                 } else {
-                    throw new WfException("Function is applicable to list with numbers only, found " + object.getClass());
+                    throw new InternalApplicationException("Function is applicable to list with numbers only, found " + object.getClass());
                 }
             }
             if (doubleValue) {
@@ -61,7 +61,7 @@ public class ListAggregateFunctionActionHandler extends CommonParamBasedHandler 
                         doubleValue = true;
                     }
                 } else {
-                    throw new WfException("Function is applicable to list with numbers only, found " + object.getClass());
+                    throw new InternalApplicationException("Function is applicable to list with numbers only, found " + object.getClass());
                 }
             }
             if (doubleValue) {
@@ -87,7 +87,7 @@ public class ListAggregateFunctionActionHandler extends CommonParamBasedHandler 
                     doubleValue = true;
                 }
             } else {
-                throw new WfException("Function is applicable to list with numbers only, found " + object.getClass());
+                throw new InternalApplicationException("Function is applicable to list with numbers only, found " + object.getClass());
             }
         }
         if (doubleValue) {

@@ -29,7 +29,7 @@ import ru.runa.af.web.form.CreateRelationGroupForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.af.RelationService;
+import ru.runa.service.RelationService;
 import ru.runa.service.delegate.Delegates;
 
 /**

@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.alfresco.search.Search;
 import ru.runa.alfresco.search.Search.Sorting;
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
@@ -53,7 +53,7 @@ public class AlfHelper implements AlfConn {
         return registry;
     }
 
-    public void addAspect(AlfObject object, QName aspectTypeName) throws WfException {
+    public void addAspect(AlfObject object, QName aspectTypeName) throws InternalApplicationException {
         AlfTypeDesc desc = Mappings.getMapping(aspectTypeName.toString());
         loadClassDefinitionIfNeeded(desc);
         Map<QName, Serializable> props = new JavaObjectAccessor(object).getAlfrescoProperties(desc, true, false);
@@ -64,7 +64,7 @@ public class AlfHelper implements AlfConn {
         return registry.getNodeService().getAspects(object.getNodeRef()).contains(aspectTypeName);
     }
 
-    public ResultSet find(Search search) throws WfException {
+    public ResultSet find(Search search) throws InternalApplicationException {
         try {
             SearchParameters sp = new SearchParameters();
             sp.setLanguage(SearchService.LANGUAGE_LUCENE);
@@ -86,7 +86,7 @@ public class AlfHelper implements AlfConn {
         }
     }
 
-    public List<NodeRef> findObjectRefs(Search search) throws WfException {
+    public List<NodeRef> findObjectRefs(Search search) throws InternalApplicationException {
         ResultSet resultSet = null;
         try {
             resultSet = find(search);
@@ -101,12 +101,12 @@ public class AlfHelper implements AlfConn {
     }
 
     @Override
-    public <T extends AlfObject> List<T> findObjects(Search search) throws WfException {
+    public <T extends AlfObject> List<T> findObjects(Search search) throws InternalApplicationException {
         List<NodeRef> refs = findObjectRefs(search);
         return (List<T>) loadObjects(refs);
     }
 
-    public <T extends AlfObject> T findUniqueObject(Search search) throws WfException {
+    public <T extends AlfObject> T findUniqueObject(Search search) throws InternalApplicationException {
         List<T> objects = findObjects(search);
         search.setLimit(1);
         if (objects.size() > 1) {
@@ -114,7 +114,7 @@ public class AlfHelper implements AlfConn {
             for (T t : objects) {
                 noderefs.add(t.getNodeRef());
             }
-            throw new WfException("Search " + search + " returns not unique result: " + noderefs);
+            throw new InternalApplicationException("Search " + search + " returns not unique result: " + noderefs);
         }
         if (objects.size() == 1) {
             return objects.get(0);
@@ -123,7 +123,7 @@ public class AlfHelper implements AlfConn {
     }
 
     @Override
-    public <T extends AlfObject> T findObject(Search search) throws WfException {
+    public <T extends AlfObject> T findObject(Search search) throws InternalApplicationException {
         ResultSet resultSet = null;
         try {
             resultSet = find(search);
@@ -141,7 +141,7 @@ public class AlfHelper implements AlfConn {
         }
     }
 
-    public List<AlfObject> loadObjects(List<NodeRef> refs) throws WfException {
+    public List<AlfObject> loadObjects(List<NodeRef> refs) throws InternalApplicationException {
         List<AlfObject> result = new ArrayList<AlfObject>(refs.size());
         for (NodeRef nodeRef : refs) {
             AlfObject object = loadObject(nodeRef);
@@ -163,7 +163,7 @@ public class AlfHelper implements AlfConn {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void loadAssociation(Object ref, Collection collection, AlfSerializerDesc desc) throws WfException {
+    public void loadAssociation(Object ref, Collection collection, AlfSerializerDesc desc) throws InternalApplicationException {
         NodeRef nodeRef = (NodeRef) ref;
         QName assocName = desc.getPropertyQName();
         if (desc.getAssoc().child()) {
@@ -194,7 +194,7 @@ public class AlfHelper implements AlfConn {
     }
 
     @Override
-    public boolean updateObjectAssociations(AlfObject object) throws WfException {
+    public boolean updateObjectAssociations(AlfObject object) throws InternalApplicationException {
         boolean updated = false;
         Map<AlfSerializerDesc, List<Object>> assocToDelete = object.getAssocToDelete();
         for (AlfSerializerDesc desc : assocToDelete.keySet()) {
@@ -227,7 +227,7 @@ public class AlfHelper implements AlfConn {
         return updated;
     }
 
-    public <T extends AlfObject> T loadObject(NodeRef nodeRef) throws WfException {
+    public <T extends AlfObject> T loadObject(NodeRef nodeRef) throws InternalApplicationException {
         try {
             if (!registry.getNodeService().exists(nodeRef)) {
                 log.warn("Node does not exists: " + nodeRef);
@@ -242,7 +242,7 @@ public class AlfHelper implements AlfConn {
         }
     }
 
-    public AlfObject buildObject(NodeRef nodeRef, QName type, Map<QName, Serializable> properties) throws WfException {
+    public AlfObject buildObject(NodeRef nodeRef, QName type, Map<QName, Serializable> properties) throws InternalApplicationException {
         try {
             AlfTypeDesc typeDesc = Mappings.getMapping(type.toString());
             loadClassDefinitionIfNeeded(typeDesc);
@@ -264,13 +264,13 @@ public class AlfHelper implements AlfConn {
         }
     }
 
-    public void createObject(AlfObject object) throws WfException {
+    public void createObject(AlfObject object) throws InternalApplicationException {
         String folderUUID = Mappings.getFolderUUID(object.getClass());
         NodeRef dirRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, folderUUID);
         createObject(object, dirRef);
     }
 
-    public void createObject(AlfObject object, NodeRef folderRef) throws WfException {
+    public void createObject(AlfObject object, NodeRef folderRef) throws InternalApplicationException {
         AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass());
         loadClassDefinitionIfNeeded(typeDesc);
         log.debug("Creating new object of type " + object.getClass().getName() + " in " + folderRef);
@@ -287,7 +287,7 @@ public class AlfHelper implements AlfConn {
     }
 
     @Override
-    public boolean updateObject(AlfObject object, boolean forceAllProps) throws WfException {
+    public boolean updateObject(AlfObject object, boolean forceAllProps) throws InternalApplicationException {
         AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass());
         loadClassDefinitionIfNeeded(typeDesc);
         JavaObjectAccessor accessor = new JavaObjectAccessor(object);
@@ -305,7 +305,7 @@ public class AlfHelper implements AlfConn {
     }
 
     @Override
-    public boolean updateObject(AlfObject object, boolean forceAllProps, String comment) throws WfException {
+    public boolean updateObject(AlfObject object, boolean forceAllProps, String comment) throws InternalApplicationException {
         boolean updated = updateObject(object, forceAllProps);
         if (updated) {
             Map<String, Serializable> versionDetails = new HashMap<String, Serializable>(1);
@@ -316,11 +316,11 @@ public class AlfHelper implements AlfConn {
     }
 
     @Override
-    public void deleteObject(AlfObject object) throws WfException {
+    public void deleteObject(AlfObject object) throws InternalApplicationException {
         deleteObject(object.getNodeRef());
     }
 
-    private void deleteObject(NodeRef nodeRef) throws WfException {
+    private void deleteObject(NodeRef nodeRef) throws InternalApplicationException {
         if (!registry.getNodeService().exists(nodeRef)) {
             log.warn("No object exists: " + nodeRef);
             return;
@@ -328,7 +328,7 @@ public class AlfHelper implements AlfConn {
         registry.getNodeService().deleteNode(nodeRef);
     }
 
-    public void setContent(AlfObject object, String content, String mimetype) throws WfException {
+    public void setContent(AlfObject object, String content, String mimetype) throws InternalApplicationException {
         log.info("Setting content to " + object);
         ContentWriter writer = registry.getContentService().getWriter(object.getNodeRef(), ContentModel.PROP_CONTENT, true);
         writer.setEncoding(Charsets.UTF_8.name());
@@ -336,7 +336,7 @@ public class AlfHelper implements AlfConn {
         writer.putContent(content);
     }
 
-    private void loadClassDefinitionIfNeeded(AlfTypeDesc typeDesc) throws WfException {
+    private void loadClassDefinitionIfNeeded(AlfTypeDesc typeDesc) throws InternalApplicationException {
         if (typeDesc.isClassDefinitionLoaded()) {
             return;
         }

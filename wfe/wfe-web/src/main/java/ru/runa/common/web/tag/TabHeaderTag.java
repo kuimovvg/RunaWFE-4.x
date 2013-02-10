@@ -33,7 +33,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
-import ru.runa.service.af.AuthorizationService;
+import ru.runa.service.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.commons.web.PortletUrlType;

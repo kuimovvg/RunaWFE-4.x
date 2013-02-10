@@ -33,9 +33,9 @@ import org.apache.struts.action.ActionMessage;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
+import ru.runa.service.DefinitionService;
+import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.form.Interaction;
 
 /**

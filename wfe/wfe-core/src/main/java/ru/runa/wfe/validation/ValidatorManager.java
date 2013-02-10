@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.validation.impl.ValidatorFileParser;
@@ -60,7 +60,7 @@ public class ValidatorManager {
             try {
                 validators.add(createValidator(cfg));
             } catch (Exception e) {
-                throw new WfException("Unable to load validator class " + cfg, e);
+                throw new InternalApplicationException("Unable to load validator class " + cfg, e);
             }
         }
         return validators;

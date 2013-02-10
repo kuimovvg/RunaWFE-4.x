@@ -17,7 +17,7 @@
  */
 package ru.runa.wfe.graph.image.figure.bpmn;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.figure.AbstractFigureFactory;
 import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
@@ -76,7 +76,7 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
             figure = new Circle("receivemessage.png");
             break;
         default:
-            throw new WfException("Unexpected figure type found: " + nodeModel.getType());
+            throw new InternalApplicationException("Unexpected figure type found: " + nodeModel.getType());
         }
         figure.initFigure(nodeModel);
         return figure;

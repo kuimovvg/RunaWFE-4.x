@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
@@ -144,7 +144,7 @@ public class LDAPImporter implements LoginHandler {
         try {
             Group group = executorDAO.getGroup(groupName);
             if (!executorDAO.isExecutorInGroup(actor, group)) {
-                executorDAO.addExecutorsToGroup(Lists.newArrayList((Executor) actor), group);
+                executorDAO.addExecutorToGroup(actor, group);
             }
         } catch (ExecutorDoesNotExistException e) {
         }
@@ -154,7 +154,7 @@ public class LDAPImporter implements LoginHandler {
         try {
             Group group = executorDAO.getGroup(groupName);
             if (executorDAO.isExecutorInGroup(actor, group)) {
-                executorDAO.removeExecutorsFromGroup(Lists.newArrayList((Executor) actor), group);
+                executorDAO.removeExecutorFromGroup(actor, group);
             }
         } catch (ExecutorDoesNotExistException e) {
         }
@@ -326,7 +326,7 @@ public class LDAPImporter implements LoginHandler {
                     }
                 }
             } catch (NamingException e) {
-                throw new WfException(e.getMessage());
+                throw new InternalApplicationException(e.getMessage());
             }
         }
     }

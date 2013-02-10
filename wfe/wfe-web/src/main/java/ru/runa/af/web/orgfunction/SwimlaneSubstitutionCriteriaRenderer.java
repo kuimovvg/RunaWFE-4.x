@@ -20,8 +20,8 @@ package ru.runa.af.web.orgfunction;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.runa.service.DefinitionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.os.ParamRenderer;

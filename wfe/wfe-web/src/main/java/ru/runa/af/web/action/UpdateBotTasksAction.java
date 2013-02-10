@@ -32,8 +32,8 @@ import ru.runa.af.web.form.BotTasksForm;
 import ru.runa.af.web.system.TaskHandlerClassesInformation;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.action.ActionBase;
+import ru.runa.service.BotService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotTask;
 
 import com.google.common.collect.Lists;
