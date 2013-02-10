@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
@@ -139,7 +139,7 @@ public class TypeConversionUtil {
                                 try {
                                     date = CalendarUtil.convertToDate(formattedDate, CalendarUtil.HOURS_MINUTES_FORMAT);
                                 } catch (Exception e5) {
-                                    throw new WfException("Unable to find datetime format for '" + formattedDate + "'");
+                                    throw new InternalApplicationException("Unable to find datetime format for '" + formattedDate + "'");
                                 }
                             }
                         }
@@ -187,7 +187,7 @@ public class TypeConversionUtil {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
-        throw new WfException("No conversion found between '" + object.getClass() + "' and '" + classConvertTo
+        throw new InternalApplicationException("No conversion found between '" + object.getClass() + "' and '" + classConvertTo
                 + "'. Add yours or don't use this method.");
     }
 

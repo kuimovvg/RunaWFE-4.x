@@ -8,7 +8,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.handler.ParamDef;
@@ -104,7 +104,7 @@ public class BotTaskConfigurationUtils {
         } else if (!Strings.isNullOrEmpty(paramDef.getVariableName())) {
             return paramDef.getVariableName();
         } else {
-            throw new WfException("no replacement found for param " + paramDef);
+            throw new InternalApplicationException("no replacement found for param " + paramDef);
         }
     }
 

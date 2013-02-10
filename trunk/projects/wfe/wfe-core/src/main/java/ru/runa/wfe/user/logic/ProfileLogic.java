@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
@@ -105,7 +105,7 @@ public class ProfileLogic extends CommonLogic {
     public void saveBatchPresentation(User user, BatchPresentation batchPresentation) {
         Profile profile = profileDAO.get(user.getActor());
         if (BatchPresentationConsts.DEFAULT_NAME.equals(batchPresentation.getName())) {
-            throw new WfException("default batch presentation cannot be changed");
+            throw new InternalApplicationException("default batch presentation cannot be changed");
         }
         profile.addBatchPresentation(batchPresentation);
     }

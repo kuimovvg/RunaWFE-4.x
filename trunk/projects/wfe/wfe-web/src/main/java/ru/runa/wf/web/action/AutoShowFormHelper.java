@@ -26,8 +26,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.Commons;
+import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.dto.WfTask;

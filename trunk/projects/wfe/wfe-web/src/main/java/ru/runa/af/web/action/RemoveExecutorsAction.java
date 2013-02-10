@@ -30,7 +30,7 @@ import org.apache.struts.action.ActionMessages;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.af.ExecutorService;
+import ru.runa.service.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;

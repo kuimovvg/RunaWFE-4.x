@@ -26,9 +26,9 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.service.AdminScriptService;
 import ru.runa.service.AdminScriptUtils;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.AdminScriptService;
 import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.user.User;

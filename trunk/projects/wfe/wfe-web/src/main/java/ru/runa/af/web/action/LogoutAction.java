@@ -32,7 +32,7 @@ import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.af.SystemService;
+import ru.runa.service.SystemService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.ASystem;
 

@@ -42,8 +42,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.webservice.ErrorResponseProcessingResult;
 import ru.runa.wf.logic.bot.webservice.Interaction;
 import ru.runa.wf.logic.bot.webservice.WebServiceTaskHandlerSettings;

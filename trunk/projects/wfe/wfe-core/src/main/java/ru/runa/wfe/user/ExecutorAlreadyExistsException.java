@@ -17,13 +17,13 @@
  */
 package ru.runa.wfe.user;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Signals that {@link Executor}already exists. Created on 10.08.2004
  * 
  */
-public class ExecutorAlreadyExistsException extends WfException {
+public class ExecutorAlreadyExistsException extends InternalApplicationException {
     private static final long serialVersionUID = -1082771372061746496L;
     private final String executorName;
 

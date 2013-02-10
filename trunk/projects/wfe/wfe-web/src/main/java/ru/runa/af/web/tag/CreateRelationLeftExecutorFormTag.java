@@ -29,7 +29,7 @@ import org.apache.ecs.html.Table;
 import ru.runa.af.web.action.CreateRelationAction;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.FormTag;
-import ru.runa.service.af.ExecutorService;
+import ru.runa.service.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;

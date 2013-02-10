@@ -8,8 +8,8 @@ import org.apache.ecs.html.Script;
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.Messages;
+import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.action.CancelProcessAction;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogFilter;

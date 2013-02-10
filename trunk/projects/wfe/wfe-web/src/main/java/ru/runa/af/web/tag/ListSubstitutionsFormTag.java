@@ -42,8 +42,8 @@ import ru.runa.common.web.form.IdsForm;
 import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.TableBuilder;
-import ru.runa.service.af.AuthorizationService;
-import ru.runa.service.af.SubstitutionService;
+import ru.runa.service.AuthorizationService;
+import ru.runa.service.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.Permission;
@@ -150,23 +150,15 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
             enabledTD.addElement(enabledInput);
 
             enabledTD.addElement(Entities.NBSP);
-            int position;
-            if (index == substitutions.size()) {
-                position = 0;
-            } else {
-                position = index;
-
+            if (index != substitutions.size()) {
                 Map<String, Object> downParams = new HashMap<String, Object>();
-                downParams.put(IdsForm.IDS_INPUT_NAME,
-                        new String[] { String.valueOf(substitution.getId()), String.valueOf(substitutions.get(position).getId()) });
+                downParams.put(IdsForm.IDS_INPUT_NAME, substitution.getId());
                 downParams.put(IdsForm.ID_INPUT_NAME, substitution.getActorId());
-
                 A moveDownHref = new A(Commons.getActionUrl(SwitchSubstitutionsPositionsAction.ACTION_PATH, downParams, pageContext,
                         PortletUrlType.Action));
                 IMG moveDownIMG = new IMG(Commons.getUrl(Resources.SORT_DESC_IMAGE, pageContext, PortletUrlType.Resource), 0);
                 moveDownIMG.setAlt(Resources.SORT_DESC_ALT);
                 moveDownHref.addElement(moveDownIMG);
-
                 enabledTD.addElement(moveDownHref);
             }
             return enabledTD;

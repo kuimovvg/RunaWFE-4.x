@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wf.office.shared.FilesSupplierConfig;
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -36,7 +36,7 @@ public class ExcelBindings extends FilesSupplierConfig {
                 FileVariable fileVariable = (FileVariable) value;
                 return isFileNameBelongsToXLSX(fileVariable.getName(), defaultValue);
             }
-            throw new WfException("Variable '" + inputFileVariableName + "' should contains a file");
+            throw new InternalApplicationException("Variable '" + inputFileVariableName + "' should contains a file");
         }
         if (inputFilePath != null) {
             return isFileNameBelongsToXLSX(inputFilePath, defaultValue);

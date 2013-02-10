@@ -29,7 +29,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.DefinitionFileDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.IFileDataProvider;
@@ -180,7 +180,7 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
             graphBytes = processDefinition.getFileData(IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME);
         }
         if (graphBytes == null) {
-            throw new WfException("Neither " + IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME + " and "
+            throw new InternalApplicationException("Neither " + IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME + " and "
                     + IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME + " not found in process");
         }
         return graphBytes;
@@ -233,7 +233,7 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
                 return node;
             }
         }
-        throw new WfException("node '" + id + "' not found");
+        throw new InternalApplicationException("node '" + id + "' not found");
     }
 
     public GraphElement getGraphElement(String id) {
@@ -252,7 +252,7 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
     public GraphElement getGraphElementNotNull(String id) {
         GraphElement graphElement = getGraphElement(id);
         if (graphElement == null) {
-            throw new WfException("element '" + id + "' not found");
+            throw new InternalApplicationException("element '" + id + "' not found");
         }
         return graphElement;
     }
@@ -277,7 +277,7 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
     public SwimlaneDefinition getSwimlaneNotNull(String swimlaneName) {
         SwimlaneDefinition swimlaneDefinition = getSwimlane(swimlaneName);
         if (swimlaneDefinition == null) {
-            throw new WfException("swimlane '" + swimlaneName + "' not found in " + this);
+            throw new InternalApplicationException("swimlane '" + swimlaneName + "' not found in " + this);
         }
         return swimlaneDefinition;
     }
@@ -292,7 +292,7 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
                 }
             }
         }
-        throw new WfException("task '" + nodeId + "' not found in " + this);
+        throw new InternalApplicationException("task '" + nodeId + "' not found in " + this);
     }
 
     public Transition getTransitionNotNull(String fromNodeId, String transitionName) {

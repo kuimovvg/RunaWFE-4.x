@@ -31,7 +31,7 @@ import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.DBType;
@@ -107,7 +107,8 @@ public class InitializerLogic {
     private String administratorGroupName;
     private String administratorGroupDescription;
 
-    // TODO botsGroupName
+    private String botsGroupName = "Bots";
+
     // TODO localize predefined groups
 
     @Required
@@ -201,10 +202,10 @@ public class InitializerLogic {
         Actor admin = new Actor(administratorName, administratorDescription, administratorDescription);
         admin = executorDAO.create(admin);
         executorDAO.setPassword(admin, administratorPassword);
-        Group adminGroup = new Group(administratorGroupName, administratorGroupDescription);
-        adminGroup = executorDAO.create(adminGroup);
+        Group adminGroup = executorDAO.create(new Group(administratorGroupName, administratorGroupDescription));
+        executorDAO.create(new Group(botsGroupName, botsGroupName));
         List<? extends Executor> adminWithGroupExecutors = Lists.newArrayList(adminGroup, admin);
-        executorDAO.addExecutorsToGroup(Lists.newArrayList(admin), adminGroup);
+        executorDAO.addExecutorToGroup(admin, adminGroup);
         executorDAO.create(new Actor(SystemExecutors.PROCESS_STARTER_NAME, SystemExecutors.PROCESS_STARTER_DESCRIPTION));
         // define executor permissions
         permissionDAO.addType(SecuredObjectType.ACTOR, adminWithGroupExecutors);
@@ -276,7 +277,7 @@ public class InitializerLogic {
                 log.warn("Unable to rollback, status: " + status);
             }
         } catch (Exception e) {
-            throw new WfException("Unable to rollback, status: " + status, e);
+            throw new InternalApplicationException("Unable to rollback, status: " + status, e);
         }
     }
 

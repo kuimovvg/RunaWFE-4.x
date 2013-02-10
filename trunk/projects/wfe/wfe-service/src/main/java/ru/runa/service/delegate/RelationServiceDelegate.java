@@ -19,7 +19,7 @@ package ru.runa.service.delegate;
 
 import java.util.List;
 
-import ru.runa.service.af.RelationService;
+import ru.runa.service.RelationService;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPair;

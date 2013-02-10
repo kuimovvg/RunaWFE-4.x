@@ -40,7 +40,7 @@ import ru.runa.af.web.orgfunction.SubstitutionDefinitions;
 import ru.runa.af.web.orgfunction.SubstitutionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdentifiableFormTag;
-import ru.runa.service.af.SubstitutionService;
+import ru.runa.service.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.os.ParamRenderer;
 import ru.runa.wfe.security.Identifiable;

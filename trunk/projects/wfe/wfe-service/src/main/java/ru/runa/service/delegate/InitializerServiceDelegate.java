@@ -17,7 +17,7 @@
  */
 package ru.runa.service.delegate;
 
-import ru.runa.service.wf.InitializerService;
+import ru.runa.service.InitializerService;
 
 /**
  * Created on 24.06.2005
