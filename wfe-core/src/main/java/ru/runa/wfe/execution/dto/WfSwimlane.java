@@ -22,23 +22,40 @@ import java.io.Serializable;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.user.Executor;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
+
 public class WfSwimlane implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final SwimlaneDefinition swimlaneDefinition;
+    private final SwimlaneDefinition definition;
     private final Executor executor;
 
-    public WfSwimlane(SwimlaneDefinition swimlaneDefinition, Executor assignedExecutor) {
-        this.swimlaneDefinition = swimlaneDefinition;
-        this.executor = assignedExecutor;
+    public WfSwimlane(SwimlaneDefinition definition, Executor assignedExecutor) {
+        Preconditions.checkNotNull(definition);
+        this.definition = definition;
+        executor = assignedExecutor;
     }
 
     public SwimlaneDefinition getDefinition() {
-        return swimlaneDefinition;
+        return definition;
     }
 
     public Executor getExecutor() {
         return executor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(definition.getName());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof WfSwimlane) {
+            return Objects.equal(definition.getName(), ((WfSwimlane) obj).definition.getName());
+        }
+        return super.equals(obj);
     }
 
 }

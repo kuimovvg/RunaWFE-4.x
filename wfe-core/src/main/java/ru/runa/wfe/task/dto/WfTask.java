@@ -126,6 +126,19 @@ public final class WfTask implements Serializable {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof WfTask) {
+            return Objects.equal(id, ((WfTask) obj).id);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("definitionId", definitionId).add("processId", processId).add("id", id).add("name", name).toString();
     }

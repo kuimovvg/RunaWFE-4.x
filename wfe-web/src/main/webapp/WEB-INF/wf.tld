@@ -5808,7 +5808,7 @@
       <body-content>empty</body-content>
 
       <attribute>
-         <name>ID</name>
+         <name>botStationId</name>
          <required>false</required>
 
            <rtexprvalue>true</rtexprvalue>

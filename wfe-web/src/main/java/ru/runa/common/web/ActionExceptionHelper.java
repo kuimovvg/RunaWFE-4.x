@@ -57,9 +57,17 @@ import com.google.common.base.Throwables;
 public class ActionExceptionHelper {
     private static final Log log = LogFactory.getLog(ActionExceptionHelper.class);
 
+    public static void addProcessError(ActionMessages errors, Throwable e) {
+        addException(errors, "processErrors", e);
+    }
+
     public static void addException(ActionMessages errors, Throwable e) {
+        addException(errors, ActionMessages.GLOBAL_MESSAGE, e);
+    }
+
+    private static void addException(ActionMessages errors, String key, Throwable e) {
         e = Throwables.getRootCause(e);
-        errors.add(ActionMessages.GLOBAL_MESSAGE, getActionMessage(e));
+        errors.add(key, getActionMessage(e));
         // category set to DEBUG due to logging in EJB layer
         // it's logged anyway due to cause in web layer
         log.debug("action exception", e);

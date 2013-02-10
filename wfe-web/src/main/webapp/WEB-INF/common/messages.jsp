@@ -15,16 +15,6 @@
 <div id="ajaxErrorsDiv" class="error" style="font-weight: bold;">
 </div>
 
-<%--Not used at present --%>
-<logic:messagesPresent message="true" >
-	<FONT COLOR="#666666">
-		<html:messages id="message" message="true" >
-			<BR><BR>
-			<bean:write name="message"/>
-		</html:messages>
-	</FONT>
-</logic:messagesPresent>
-
 <%
 	ActionMessage m = (ActionMessage) Commons.getSessionAttribute(request.getSession(), Resources.USER_MESSAGE_KEY);
 	if (m != null) {
@@ -38,10 +28,13 @@
 <%--Used for error message displaying --%>
 <logic:messagesPresent>
 	<font class="error">
-		<BR>
-		<html:messages id="error">
+		<html:messages id="commonError" property="org.apache.struts.action.GLOBAL_MESSAGE">
 			<BR>
-			<B><bean:write name="error"/></B>
+			<B><bean:write name="commonError" /></B>
+		</html:messages>
+		<html:messages id="processError" property="processErrors">
+			<BR>
+			<B style="border: 1px solid gray;"><bean:write name="processError" /></B>
 		</html:messages>
 	</font>
 </logic:messagesPresent>

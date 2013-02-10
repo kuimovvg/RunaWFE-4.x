@@ -49,10 +49,10 @@ public class ShowBotTaskErrorsTag extends VisibleTag {
             } else {
                 botNameElement = new StringElement(bot.getUsername());
             }
-
             tr.addElement(new TD(botNameElement).setClass(Resources.CLASS_LIST_TABLE_TD));
             tr.addElement(new TD(entry.getKey().getBotTaskName()).setClass(Resources.CLASS_LIST_TABLE_TD));
-            tr.addElement(new TD(entry.getValue().getLocalizedMessage()).setClass(Resources.CLASS_LIST_TABLE_TD));
+            String url = "javascript:showBotTaskConfigurationError(" + bot.getId() + ", '" + entry.getKey().getBotTaskName() + "')";
+            tr.addElement(new TD(new A(url, entry.getValue().getLocalizedMessage())).setClass(Resources.CLASS_LIST_TABLE_TD));
             rows.add(tr);
         }
         ErrorsHeaderBuilder tasksHistoryHeaderBuilder = new ErrorsHeaderBuilder();
