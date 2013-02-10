@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.calendar.BusinessCalendar;
@@ -30,7 +30,7 @@ public class ExpressionEvaluator {
             if (endOfELIndex < (expression.length() - 1)) {
                 String durationSeparator = expression.substring(endOfELIndex + 1).trim().substring(0, 1);
                 if (!(durationSeparator.equals("+") || durationSeparator.equals("-"))) {
-                    throw new InternalApplicationException("Invalid duedate, + or - missing after EL");
+                    throw new WfException("Invalid duedate, + or - missing after EL");
                 }
                 durationString = expression.substring(endOfELIndex + 1).trim();
             }

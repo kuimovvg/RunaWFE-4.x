@@ -9,9 +9,10 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
+import ru.runa.wfe.definition.Language;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.dao.PermissionDAO;
@@ -35,6 +36,7 @@ import com.google.common.io.ByteStreams;
 public class JbpmRefactoringPatch extends DBPatch {
     private boolean jbpmIdTablesExist;
     private boolean jbpmCommentTableExists;
+    private static final boolean handleManualIndexes = !"true".equals(System.getProperty("skipPatchV21Indexes"));
 
     @Autowired
     private PermissionDAO permissionDAO;
@@ -44,7 +46,7 @@ public class JbpmRefactoringPatch extends DBPatch {
     @Override
     protected List<String> getDDLQueriesBefore() {
         if (dbType != DBType.MSSQL) {
-            throw new InternalApplicationException("Database migration patch from RunaWFE 3.x to 4.x is currently supported only for MS SQL Server");
+            throw new WfException("Database migration patch from RunaWFE 3.x to 4.x is currently supported only for MS SQL Server");
         }
         // "MySQL DB update to version RunaWFE4.x is not supported because of mass column (which are foreign keys) renames [Error on rename of (errno: 150)]"
         List<String> sql = super.getDDLQueriesBefore();
@@ -180,6 +182,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLCreateColumn("BPM_PROCESS_DEFINITION", new ColumnDef("LANGUAGE", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
         sql.add(getDDLCreateColumn("BPM_PROCESS_DEFINITION", new ColumnDef("CATEGORY", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
         sql.add(getDDLCreateColumn("BPM_PROCESS_DEFINITION", new ColumnDef("BYTES", Types.VARBINARY)));
+        sql.add(getDDLCreateColumn("BPM_PROCESS_DEFINITION", new ColumnDef("DEPLOYED", Types.TIMESTAMP)));
 
         // ru.runa.wfe.execution.Process
         sql.add(getDDLRenameTable("JBPM_PROCESSINSTANCE", "BPM_PROCESS"));
@@ -281,7 +284,9 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameTable("JBPM_LOG", "BPM_LOG"));
         sql.add(getDDLRenameColumn("BPM_LOG", "ID_", new ColumnDef("ID", Types.BIGINT)));
         sql.add(getDDLRenameColumn("BPM_LOG", "CLASS_", new ColumnDef("DISCRIMINATOR", Types.CHAR)));
-        sql.add(getDDLRemoveIndex("BPM_LOG", "LOG_TOKEN_IDX"));// 3.5 index
+        if (handleManualIndexes) {
+            sql.add(getDDLRemoveIndex("BPM_LOG", "LOG_TOKEN_IDX"));
+        }
         sql.add(getDDLRemoveColumn("BPM_LOG", "INDEX_"));
         sql.add(getDDLRenameColumn("BPM_LOG", "DATE_", new ColumnDef("DATE", Types.DATE)));
         sql.add(getDDLRemoveForeignKey("BPM_LOG", "FK_LOG_TOKEN"));
@@ -374,8 +379,9 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveForeignKey("BPM_VARIABLE", "FK_VARINST_TK"));
         sql.add(getDDLRemoveColumn("BPM_VARIABLE", "TOKEN_"));
         sql.add(getDDLRemoveForeignKey("BPM_VARIABLE", "FK_VAR_TSKINST"));
-        sql.add(getDDLRemoveIndex("BPM_VARIABLE", "IDX_VARINST_TASKINST"));// 3.5
-                                                                           // index
+        if (handleManualIndexes) {
+            sql.add(getDDLRemoveIndex("BPM_VARIABLE", "IDX_VARINST_TASKINST"));
+        }
         sql.add(getDDLRemoveColumn("BPM_VARIABLE", "TASKINSTANCE_"));
         sql.add(getDDLRemoveColumn("BPM_VARIABLE", "STRINGIDCLASS_"));
         sql.add(getDDLRemoveColumn("BPM_VARIABLE", "LONGIDCLASS_"));
@@ -431,13 +437,15 @@ public class JbpmRefactoringPatch extends DBPatch {
         if (jbpmCommentTableExists) {
             sql.add(getDDLRemoveTable("JBPM_COMMENT"));
         }
-        sql.add(getDDLRemoveIndex("BPM_SWIMLANE", "IDX_SWIMLINST_TASKMGMTINST"));// 3.5
-                                                                                 // index
+        if (handleManualIndexes) {
+            sql.add(getDDLRemoveIndex("BPM_SWIMLANE", "IDX_SWIMLINST_TASKMGMTINST"));
+        }
         sql.add(getDDLRemoveColumn("BPM_SWIMLANE", "TASKMGMTINSTANCE_"));
         sql.add(getDDLRemoveColumn("BPM_SWIMLANE", "ACTORID_"));
         sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TASK_ACTORID"));
-        sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TASKINST_ACTOREND")); // 3.5
-                                                                         // index
+        if (handleManualIndexes) {
+            sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TASKINST_ACTOREND"));
+        }
         sql.add(getDDLRemoveColumn("BPM_TASK", "ACTORID_"));
         sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TSKINST_TMINST"));
         sql.add(getDDLRemoveColumn("BPM_TASK", "TASKMGMTINSTANCE_"));
@@ -555,6 +563,7 @@ public class JbpmRefactoringPatch extends DBPatch {
             query.setParameter("category", objects[1]);
             query.executeUpdate();
         }
+        session.createSQLQuery("UPDATE BPM_PROCESS_DEFINITION SET LANGUAGE='" + Language.JPDL + "'").executeUpdate();
         // Token
         q = "SELECT t.ID, p.ID FROM BPM_TOKEN t, BPM_PROCESS p WHERE p.ROOT_TOKEN_ID=t.ID AND PROCESS_ID IS NULL";
         list = session.createSQLQuery(q).list();
@@ -573,7 +582,7 @@ public class JbpmRefactoringPatch extends DBPatch {
             query.setParameter("id", objects[0]);
             NodeType nodeType = nodeTypes.get(objects[1].toString());
             if (nodeType == null) {
-                throw new InternalApplicationException("nodeType == null for " + objects[1]);
+                throw new WfException("nodeType == null for " + objects[1]);
             }
             query.setParameter("nodeType", nodeType.name());
             query.setParameter("nodeId", objects[2]);

@@ -20,28 +20,28 @@ import ru.runa.wfe.bot.BotStationPermission;
 public class BotStationTag extends TitledFormTag {
     private static final long serialVersionUID = 1L;
 
-    private Long botStationID;
+    private Long botStationId;
 
-    public void setBotStationID(Long botStationID) {
-        this.botStationID = botStationID;
+    public void setBotStationId(Long botStationId) {
+        this.botStationId = botStationId;
     }
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
      */
-    public Long getBotStationID() {
-        return botStationID;
+    public Long getBotStationId() {
+        return botStationId;
     }
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        BotStation botStation = Delegates.getBotService().getBotStation(botStationID);
+        BotStation botStation = Delegates.getBotService().getBotStation(botStationId);
         Table table = new Table();
         Input nameInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_NAME, botStation.getName());
         String address = botStation.getAddress() != null ? botStation.getAddress() : "";
         Input botStationAddressInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_RMI_ADDRESS, address);
 
-        Input hiddenBotStationID = new Input(Input.HIDDEN, BotStationForm.BOT_STATION_ID, String.valueOf(botStationID));
+        Input hiddenBotStationID = new Input(Input.HIDDEN, BotStationForm.BOT_STATION_ID, String.valueOf(botStationId));
         tdFormElement.addElement(hiddenBotStationID);
 
         TR tr = new TR();

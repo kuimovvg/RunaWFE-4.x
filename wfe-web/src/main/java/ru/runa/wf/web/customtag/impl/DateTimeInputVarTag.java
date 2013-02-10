@@ -35,7 +35,7 @@ public class DateTimeInputVarTag implements VarTag {
     public String getHtml(User user, String varName, Object var, PageContext pageContext) throws Exception {
         String html = "<input type=\"text\" class=\"inputDateTime\" name=\"" + varName + "\" style=\"width: 150px;\" ";
         if (var instanceof Date) {
-            html += "value=\"" + CalendarUtil.formatTime((Date) var) + "\" ";
+            html += "value=\"" + CalendarUtil.formatDateTime((Date) var) + "\" ";
         }
         html += "/>";
         return html;

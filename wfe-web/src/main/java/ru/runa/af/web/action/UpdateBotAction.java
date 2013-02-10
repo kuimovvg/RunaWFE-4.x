@@ -30,11 +30,11 @@ public class UpdateBotAction extends ActionBase {
         BotForm botForm = (BotForm) form;
         try {
             BotService botService = Delegates.getBotService();
-            Bot bot = botService.getBot(getLoggedUser(request), botForm.getBotID());
+            Bot bot = botService.getBot(getLoggedUser(request), botForm.getBotId());
             bot.setUsername(botForm.getWfeUser());
             bot.setPassword(botForm.getWfePassword());
             bot.setStartTimeout(botForm.getBotTimeout());
-            bot.setBotStation(botService.getBotStation(botForm.getBotStationID()));
+            bot.setBotStation(botService.getBotStation(botForm.getBotStationId()));
             botService.updateBot(getLoggedUser(request), bot);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
@@ -44,6 +44,6 @@ public class UpdateBotAction extends ActionBase {
             saveErrors(request.getSession(), errors);
         }
 
-        return new ActionForward("/bot.do?botID=" + botForm.getBotID());
+        return new ActionForward("/bot.do?botId=" + botForm.getBotId());
     }
 }

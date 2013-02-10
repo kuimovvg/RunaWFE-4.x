@@ -19,7 +19,6 @@ package ru.runa.wf.logic.bot;
 
 import java.util.Map;
 
-
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;

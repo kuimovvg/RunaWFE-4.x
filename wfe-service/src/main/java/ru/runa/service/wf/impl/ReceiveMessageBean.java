@@ -74,7 +74,7 @@ public class ReceiveMessageBean implements MessageListener {
             boolean handled = false;
             List<Token> tokens = tokenDAO.findActiveTokens(NodeType.ReceiveMessage);
             for (Token token : tokens) {
-                ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(token.getProcess().getDefinition().getId());
+                ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(token.getProcess().getDeployment().getId());
                 ReceiveMessage receiveMessage = (ReceiveMessage) token.getNode(processDefinition);
                 ExecutionContext executionContext = new ExecutionContext(processDefinition, token);
                 boolean suitable = true;
@@ -86,7 +86,7 @@ public class ReceiveMessageBean implements MessageListener {
                             expectedValue = String.valueOf(token.getProcess().getId());
                         }
                         if ("${currentDefinitionName}".equals(expectedValue)) {
-                            expectedValue = token.getProcess().getDefinition().getName();
+                            expectedValue = token.getProcess().getDeployment().getName();
                         }
                         if ("${currentNodeName}".equals(expectedValue)) {
                             expectedValue = receiveMessage.getName();

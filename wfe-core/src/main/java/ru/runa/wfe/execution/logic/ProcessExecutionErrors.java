@@ -3,6 +3,7 @@ package ru.runa.wfe.execution.logic;
 import java.util.List;
 import java.util.Map;
 
+import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.task.dto.WfTask;
 
 import com.google.common.base.Objects;
@@ -22,21 +23,21 @@ public class ProcessExecutionErrors { // TODO nodeID instead of taskName?
         return Maps.newHashMap(processErrors);
     }
 
-    public static synchronized void addBotTaskConfigurationError(String botName, String botTaskName, Throwable throwable) {
-        botTaskConfigurationErrors.put(new BotTaskIdentifier(botName, botTaskName), throwable);
+    public static synchronized void addBotTaskConfigurationError(Bot bot, String botTaskName, Throwable throwable) {
+        botTaskConfigurationErrors.put(new BotTaskIdentifier(bot, botTaskName), throwable);
     }
 
-    public static synchronized void removeBotTaskConfigurationError(String botName, String botTaskName) {
-        botTaskConfigurationErrors.remove(new BotTaskIdentifier(botName, botTaskName));
+    public static synchronized void removeBotTaskConfigurationError(Bot bot, String botTaskName) {
+        botTaskConfigurationErrors.remove(new BotTaskIdentifier(bot, botTaskName));
     }
 
-    public static synchronized void addBotTaskNotFoundProcessError(WfTask task, String botName, String botTaskName) {
-        Throwable ce = botTaskConfigurationErrors.get(new BotTaskIdentifier(botName, botTaskName));
+    public static synchronized void addBotTaskNotFoundProcessError(WfTask task, Bot bot, String botTaskName) {
+        Throwable ce = botTaskConfigurationErrors.get(new BotTaskIdentifier(bot, botTaskName));
         Exception throwable;
         if (ce != null) {
             throwable = new ProcessExecutionException(ProcessExecutionException.BOT_TASK_CONFIGURATION_ERROR, botTaskName, ce.getMessage());
         } else {
-            throwable = new ProcessExecutionException(ProcessExecutionException.BOT_TASK_MISSED, botTaskName, botName);
+            throwable = new ProcessExecutionException(ProcessExecutionException.BOT_TASK_MISSED, botTaskName, bot.getUsername());
         }
         Map<String, Throwable> map = processErrors.get(task.getProcessId());
         if (map == null) {
@@ -78,16 +79,16 @@ public class ProcessExecutionErrors { // TODO nodeID instead of taskName?
     }
 
     public static class BotTaskIdentifier {
-        private final String botName;
+        private final Bot bot;
         private final String botTaskName;
 
-        public BotTaskIdentifier(String botName, String botTaskName) {
-            this.botName = botName;
+        public BotTaskIdentifier(Bot bot, String botTaskName) {
+            this.bot = bot;
             this.botTaskName = botTaskName;
         }
 
-        public String getBotName() {
-            return botName;
+        public Bot getBot() {
+            return bot;
         }
 
         public String getBotTaskName() {
@@ -96,13 +97,13 @@ public class ProcessExecutionErrors { // TODO nodeID instead of taskName?
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(botName, botTaskName);
+            return Objects.hashCode(bot, botTaskName);
         }
 
         @Override
         public boolean equals(Object obj) {
             BotTaskIdentifier bti = (BotTaskIdentifier) obj;
-            return Objects.equal(botName, bti.botName) && Objects.equal(botTaskName, bti.botTaskName);
+            return Objects.equal(bot.getUsername(), bti.bot.getUsername()) && Objects.equal(botTaskName, bti.botTaskName);
         }
     }
 }

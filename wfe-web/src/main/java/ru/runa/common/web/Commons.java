@@ -36,11 +36,11 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.taglib.TagUtils;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 /**
@@ -109,7 +109,7 @@ public class Commons {
             url = applyPortlet(url, pageContext, portletUrlType);
             return url;
         } catch (MalformedURLException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -131,7 +131,7 @@ public class Commons {
             url = applyPortlet(url, pageContext, portletUrlType);
             return url;
         } catch (MalformedURLException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -145,7 +145,7 @@ public class Commons {
             url = applyPortlet(url, pageContext, portletUrlType);
             return url;
         } catch (MalformedURLException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -208,7 +208,7 @@ public class Commons {
         try {
             return URLEncoder.encode(string, Charsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

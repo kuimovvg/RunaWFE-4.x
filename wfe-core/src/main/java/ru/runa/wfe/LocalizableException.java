@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
 
-public abstract class LocalizableException extends ApplicationException {
+public abstract class LocalizableException extends WfException {
     private static final long serialVersionUID = 1L;
 
     private final Object[] details;

@@ -62,17 +62,17 @@ import ru.runa.wfe.commons.xml.XmlUtils;
  */
 public class BotTaskListTag extends TitledFormTag {
     private static final long serialVersionUID = 1L;
-    private Long botID;
+    private Long botId;
 
-    public void setBotID(Long botID) {
-        this.botID = botID;
+    public void setBotId(Long botId) {
+        this.botId = botId;
     }
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
      */
-    public Long getBotID() {
-        return botID;
+    public Long getBotId() {
+        return botId;
     }
 
     @Override
@@ -83,12 +83,12 @@ public class BotTaskListTag extends TitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botID)));
+        tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botId)));
         BotService botService = Delegates.getBotService();
         getForm().setEncType(Form.ENC_UPLOAD);
         AuthorizationService authorizationService = Delegates.getAuthorizationService();
         boolean disabled = !authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-        List<BotTask> tasks = botService.getBotTasks(getUser(), botID);
+        List<BotTask> tasks = botService.getBotTasks(getUser(), botId);
         int nameSize = 1;
         for (BotTask botTask : tasks) {
             if (botTask.getName().length() > nameSize) {

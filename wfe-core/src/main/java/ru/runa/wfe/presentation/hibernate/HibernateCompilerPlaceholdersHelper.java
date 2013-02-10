@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Helper class to parse place holders positions from HQL and replace
@@ -59,7 +59,7 @@ public final class HibernateCompilerPlaceholdersHelper {
             if (placeholders.hasNext()) {
                 sqlQuery.replace(idx, idx + 1, ":" + placeholders.next());
             } else {
-                throw new InternalApplicationException("Can't compile batchPresentation. SQL has more named parameter when HQL.");
+                throw new WfException("Can't compile batchPresentation. SQL has more named parameter when HQL.");
             }
         }
     }

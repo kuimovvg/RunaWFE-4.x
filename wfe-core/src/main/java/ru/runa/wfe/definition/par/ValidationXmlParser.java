@@ -10,6 +10,8 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.lang.ProcessDefinition;
 
+import com.google.common.base.Throwables;
+
 public class ValidationXmlParser {
     private final static String FIELD_ELEMENT_NAME = "field";
     private final static String FIELD_VALIDATOR_ELEMENT_NAME = "field-validator";
@@ -27,6 +29,7 @@ public class ValidationXmlParser {
             }
             return varNames;
         } catch (Exception e) {
+            Throwables.propagateIfInstanceOf(e, InvalidDefinitionException.class);
             throw new InvalidDefinitionException(processDefinition.getName(), "Error in " + fileName, e);
         }
     }
@@ -48,7 +51,8 @@ public class ValidationXmlParser {
             }
             return varNames;
         } catch (Exception e) {
-            throw new InvalidDefinitionException(processDefinition.getName(), "${form}.validation.xml", e);
+            Throwables.propagateIfInstanceOf(e, InvalidDefinitionException.class);
+            throw new InvalidDefinitionException(processDefinition.getName(), e);
         }
     }
 }

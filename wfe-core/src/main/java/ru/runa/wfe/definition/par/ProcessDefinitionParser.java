@@ -3,7 +3,7 @@ package ru.runa.wfe.definition.par;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
@@ -25,7 +25,7 @@ public class ProcessDefinitionParser implements ProcessArchiveParser {
             BpmnXmlReader reader = ApplicationContextFactory.autowireBean(new BpmnXmlReader(document));
             reader.readProcessDefinition(processDefinition);
         } else {
-            throw new ApplicationException("Couldn't determine language from content");
+            throw new WfException("Couldn't determine language from content");
         }
     }
 }

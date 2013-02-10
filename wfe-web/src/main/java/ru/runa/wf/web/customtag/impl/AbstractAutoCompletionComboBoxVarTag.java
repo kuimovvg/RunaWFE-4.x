@@ -30,9 +30,10 @@ import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.User;
+
+import com.google.common.base.Throwables;
 
 /**
  * Created 08.07.2005
@@ -90,7 +91,7 @@ public abstract class AbstractAutoCompletionComboBoxVarTag extends AbstractActor
                 displayNames.append("'").append(displayName).append("'");
             }
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
         script.addElement("var " + selectName + displayNameListName + " = Array(" + displayNames.toString() + ");\n");
         script.addElement("var " + selectName + valueListName + " = Array(" + values.toString() + ");\n");

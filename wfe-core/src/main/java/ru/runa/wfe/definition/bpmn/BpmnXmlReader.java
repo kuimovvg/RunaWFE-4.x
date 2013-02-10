@@ -8,12 +8,10 @@ import org.dom4j.Element;
 import org.dom4j.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.ApplicationException;
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
-import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.definition.logic.SwimlaneUtils;
 import ru.runa.wfe.job.CancelTimerAction;
@@ -163,7 +161,7 @@ public class BpmnXmlReader {
             // 3: verify
             verifyElements(processDefinition);
         } catch (Exception e) {
-            throw new InvalidDefinitionException(processDefinition.getName(), IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME, e);
+            throw new InvalidDefinitionException(processDefinition.getName(), e);
         }
         return processDefinition;
     }
@@ -175,7 +173,7 @@ public class BpmnXmlReader {
             for (Element swimlaneElement : swimlanes) {
                 String swimlaneName = swimlaneElement.attributeValue(NAME);
                 if (swimlaneName == null) {
-                    throw new InternalApplicationException("there's a swimlane without a name");
+                    throw new WfException("there's a swimlane without a name");
                 }
                 SwimlaneDefinition swimlaneDefinition = new SwimlaneDefinition();
                 swimlaneDefinition.setName(swimlaneName);
@@ -272,7 +270,7 @@ public class BpmnXmlReader {
         if (Strings.isNullOrEmpty(durationString) && node instanceof TaskNode && Timer.ESCALATION_NAME.equals(name)) {
             durationString = ((TaskNode) node).getFirstTaskNotNull().getDeadlineDuration();
             if (Strings.isNullOrEmpty(durationString)) {
-                throw new InternalApplicationException("No '" + TIMER_DURATION + "' specified for timer in " + node);
+                throw new WfException("No '" + TIMER_DURATION + "' specified for timer in " + node);
             }
         }
         createTimerAction.setDueDate(durationString);
@@ -341,16 +339,16 @@ public class BpmnXmlReader {
         for (Element element : elements) {
             String id = element.attributeValue(ID);
             if (id == null) {
-                throw new InternalApplicationException("transition without an '" + ID + "'-attribute");
+                throw new WfException("transition without an '" + ID + "'-attribute");
             }
             String name = element.attributeValue(NAME);
             String from = element.attributeValue(SOURCE_REF);
             if (from == null) {
-                throw new InternalApplicationException("transition '" + id + "' without a '" + SOURCE_REF + "'-attribute");
+                throw new WfException("transition '" + id + "' without a '" + SOURCE_REF + "'-attribute");
             }
             String to = element.attributeValue(TARGET_REF);
             if (to == null) {
-                throw new InternalApplicationException("transition '" + id + "' without a '" + TARGET_REF + "'-attribute");
+                throw new WfException("transition '" + id + "' without a '" + TARGET_REF + "'-attribute");
             }
             Transition transition = new Transition();
             transition.setNodeId(id);
@@ -361,7 +359,7 @@ public class BpmnXmlReader {
             } else if (sourceElement instanceof Action) {
                 source = (Node) ((Action) sourceElement).getParent();
             } else {
-                throw new ApplicationException("Unexpected source element " + sourceElement);
+                throw new WfException("Unexpected source element " + sourceElement);
             }
             transition.setFrom(source);
             Node target = processDefinition.getNodeNotNull(to);
@@ -414,7 +412,7 @@ public class BpmnXmlReader {
         Map<String, String> swimlaneProperties = parseExtensionProperties(element);
         String className = swimlaneProperties.get(CLASS);
         if (className == null) {
-            throw new InternalApplicationException("no className specified in " + element.asXML());
+            throw new WfException("no className specified in " + element.asXML());
         }
         ClassLoaderUtil.instantiate(className);
         String configuration = swimlaneProperties.get(CONFIG);

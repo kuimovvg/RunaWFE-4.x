@@ -32,6 +32,7 @@ import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.ExecutorFormat;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 
 /**
  * Created on 17.11.2004
@@ -100,7 +101,8 @@ public class InteractionsParser implements ProcessArchiveParser {
                 processDefinition.addInteraction(stateId, interaction);
             }
         } catch (Exception e) {
-            throw new InvalidDefinitionException(processDefinition.getName(), IFileDataProvider.FORMS_XML_FILE_NAME, e);
+            Throwables.propagateIfInstanceOf(e, InvalidDefinitionException.class);
+            throw new InvalidDefinitionException(processDefinition.getName(), e);
         }
     }
 

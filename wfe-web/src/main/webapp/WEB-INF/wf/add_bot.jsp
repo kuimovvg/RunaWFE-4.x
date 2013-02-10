@@ -7,9 +7,9 @@
 <tiles:insert page="/WEB-INF/af/main_layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
 <%
-	long id = Long.parseLong(request.getParameter("botStationID"));
+	long id = Long.parseLong(request.getParameter("botStationId"));
 %>
-        <wf:addBotTag botStationID="<%= id %>"/>
+        <wf:addBotTag botStationId="<%= id %>"/>
     </tiles:put>
     <tiles:put name="messages" value="../common/messages.jsp"/>
 </tiles:insert>

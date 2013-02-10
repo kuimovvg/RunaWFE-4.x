@@ -26,7 +26,7 @@ public class ProcessDefinitionLoader implements IProcessDefinitionLoader {
 
     @Override
     public ProcessDefinition getDefinition(Process process) {
-        return getDefinition(process.getDefinition().getId());
+        return getDefinition(process.getDeployment().getId());
     }
 
     @Override

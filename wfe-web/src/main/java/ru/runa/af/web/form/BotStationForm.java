@@ -31,9 +31,9 @@ public class BotStationForm extends ActionForm {
 
     public static final String BOT_STATION_RMI_ADDRESS = "botStationRMIAddress";
 
-    public static final String BOT_STATION_ID = "botStationID";
+    public static final String BOT_STATION_ID = "botStationId";
 
-    private Long botStationID;
+    private Long botStationId;
 
     private String botStationName;
 
@@ -55,11 +55,11 @@ public class BotStationForm extends ActionForm {
         this.botStationRMIAddress = botStationRMIAddress;
     }
 
-    public Long getBotStationID() {
-        return botStationID;
+    public Long getBotStationId() {
+        return botStationId;
     }
 
-    public void setBotStationID(Long botStationID) {
-        this.botStationID = botStationID;
+    public void setBotStationId(Long botStationId) {
+        botStationId = botStationId;
     }
 }

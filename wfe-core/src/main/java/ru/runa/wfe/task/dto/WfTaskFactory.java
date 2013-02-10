@@ -55,7 +55,7 @@ public class WfTaskFactory {
 
     public WfTask create(Task task, Actor targetActor, String formType) {
         Process process = task.getProcess();
-        Deployment deployment = process.getDefinition();
+        Deployment deployment = process.getDeployment();
         boolean groupAssigned = task.getExecutor() instanceof Group;
         boolean escalated = false;
         try {

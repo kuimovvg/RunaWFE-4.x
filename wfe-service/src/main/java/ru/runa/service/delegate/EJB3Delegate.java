@@ -9,12 +9,13 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 public abstract class EJB3Delegate {
@@ -79,7 +80,7 @@ public abstract class EJB3Delegate {
                 Object service = getInitialContext().lookup(jndiName);
                 services.put(beanName, service);
             } catch (NamingException e) {
-                throw new InternalApplicationException("Unable to locate bean by jndi name '" + jndiName + "'", e);
+                throw new WfException("Unable to locate bean by jndi name '" + jndiName + "'", e);
             }
         }
         return (T) services.get(beanName);
@@ -101,7 +102,7 @@ public abstract class EJB3Delegate {
                 }
                 initialContext = new InitialContext(env);
             } catch (Exception e) {
-                throw new InternalApplicationException(e);
+                throw Throwables.propagate(e);
             }
         }
         return initialContext;

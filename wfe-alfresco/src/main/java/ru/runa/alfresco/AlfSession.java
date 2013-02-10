@@ -48,7 +48,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.alfresco.search.Search;
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
@@ -81,7 +81,7 @@ public class AlfSession implements AlfConn {
         return new Store(storeRef.getProtocol(), storeRef.getIdentifier());
     }
 
-    public void addAspect(AlfObject object, String aspectTypeName) throws ApplicationException {
+    public void addAspect(AlfObject object, String aspectTypeName) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             AlfTypeDesc desc = Mappings.getMapping(aspectTypeName);
@@ -98,7 +98,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public void removeAspect(AlfObject object, String aspectTypeName) throws ApplicationException {
+    public void removeAspect(AlfObject object, String aspectTypeName) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             CMLRemoveAspect removeAspect = new CMLRemoveAspect(aspectTypeName, object.getPredicate(), null);
@@ -112,7 +112,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public String createFolder(String rootFolderUUID, String folderName) throws ApplicationException {
+    public String createFolder(String rootFolderUUID, String folderName) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             ParentReference docParent = new ParentReference(getSpacesStore(), rootFolderUUID, null, Constants.ASSOC_CONTAINS, folderName);
@@ -132,12 +132,12 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public void createObject(AlfObject object) throws ApplicationException {
+    public void createObject(AlfObject object) throws WfException {
         String folderUUID = Mappings.getFolderUUID(object.getClass());
         createObject(folderUUID, object);
     }
 
-    public void createObject(String folderUUID, AlfObject object) throws ApplicationException {
+    public void createObject(String folderUUID, AlfObject object) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass());
@@ -166,7 +166,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public void updateVersion(AlfObject object, String comment) throws ApplicationException {
+    public void updateVersion(AlfObject object, String comment) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass());
@@ -183,7 +183,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public void addAssociation(AlfObject source, AlfObject target, String associationName) throws ApplicationException {
+    public void addAssociation(AlfObject source, AlfObject target, String associationName) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             CMLCreateAssociation createAssociation = new CMLCreateAssociation(source.getPredicate(), null, target.getPredicate(), null,
@@ -199,7 +199,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public void addChildAssociation(AlfObject source, AlfObject target, String associationName) throws ApplicationException {
+    public void addChildAssociation(AlfObject source, AlfObject target, String associationName) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             ParentReference parentReference = new ParentReference(source.getReference().getStore(), source.getReference().getUuid(), null,
@@ -222,7 +222,7 @@ public class AlfSession implements AlfConn {
     }
 
     @Override
-    public <T extends AlfObject> T loadObject(Object objectId) throws ApplicationException {
+    public <T extends AlfObject> T loadObject(Object objectId) throws WfException {
         if (objectId instanceof Version) {
             Reference ref = ((Version) objectId).getId();
             Predicate predicate = new Predicate(new Reference[] { ref }, ref.getStore(), null);
@@ -235,7 +235,7 @@ public class AlfSession implements AlfConn {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void loadAssociation(Object ref, Collection collection, AlfSerializerDesc desc) throws ApplicationException {
+    public void loadAssociation(Object ref, Collection collection, AlfSerializerDesc desc) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             Reference reference = (Reference) ref;
@@ -277,7 +277,7 @@ public class AlfSession implements AlfConn {
     }
 
     @Override
-    public boolean updateObjectAssociations(AlfObject object) throws ApplicationException {
+    public boolean updateObjectAssociations(AlfObject object) throws WfException {
         try {
             boolean updated = false;
             AlfSessionWrapper.sessionStart();
@@ -350,7 +350,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    private <T extends AlfObject> T loadObject(String uuid, Store store) throws ApplicationException {
+    private <T extends AlfObject> T loadObject(String uuid, Store store) throws WfException {
         Reference ref = getReference(uuid, store);
         T result = (T) findInCache(ref.getUuid());
         if (result != null) {
@@ -359,7 +359,7 @@ public class AlfSession implements AlfConn {
         return (T) loadObject(ref);
     }
 
-    public Reference getReference(String uuid, Store store) throws ApplicationException {
+    public Reference getReference(String uuid, Store store) throws WfException {
         String id;
         int li = uuid.lastIndexOf("/");
         if (li != -1) {
@@ -377,12 +377,12 @@ public class AlfSession implements AlfConn {
         return new Reference(store, id, null);
     }
 
-    private <T extends AlfObject> T loadObject(Reference reference) throws ApplicationException {
+    private <T extends AlfObject> T loadObject(Reference reference) throws WfException {
         Predicate predicate = new Predicate(new Reference[] { reference }, reference.getStore(), null);
         return (T) loadObject(predicate);
     }
 
-    private <T extends AlfObject> T loadObject(Predicate where) throws ApplicationException {
+    private <T extends AlfObject> T loadObject(Predicate where) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             Node node = WebServiceFactory.getRepositoryService().get(where)[0];
@@ -396,7 +396,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public NamedValue[] loadObjectProperties(Predicate where) throws ApplicationException {
+    public NamedValue[] loadObjectProperties(Predicate where) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             Node node = WebServiceFactory.getRepositoryService().get(where)[0];
@@ -410,7 +410,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    private <T extends AlfObject> T loadObject(Store store, ResultSetRow row) throws ApplicationException {
+    private <T extends AlfObject> T loadObject(Store store, ResultSetRow row) throws WfException {
         if (row.getColumns() != null) {
             Reference reference = new Reference(store, row.getNode().getId(), null);
             return (T) buildObject(row.getNode().getType(), reference, row.getColumns(), row.getNode().getAspects());
@@ -453,7 +453,7 @@ public class AlfSession implements AlfConn {
     }
 
     public <T extends AlfObject> T buildObject(String typeName, Reference reference, NamedValue[] props, String[] aspects)
-            throws ApplicationException {
+            throws WfException {
         try {
             AlfTypeDesc typeDesc = Mappings.getMapping(typeName);
             loadClassDefinitionIfNeeded(typeDesc);
@@ -486,7 +486,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public Version[] getAllVersions(Predicate where) throws ApplicationException {
+    public Version[] getAllVersions(Predicate where) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             VersionHistory history = WebServiceFactory.getAuthoringService().getVersionHistory(where.getNodes()[0]);
@@ -499,7 +499,7 @@ public class AlfSession implements AlfConn {
     }
 
     @Override
-    public boolean updateObject(AlfObject object, boolean force) throws ApplicationException {
+    public boolean updateObject(AlfObject object, boolean force) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass());
@@ -533,7 +533,7 @@ public class AlfSession implements AlfConn {
     }
 
     @Override
-    public boolean updateObject(AlfObject object, boolean force, String comment) throws ApplicationException {
+    public boolean updateObject(AlfObject object, boolean force, String comment) throws WfException {
         boolean updated = updateObject(object, force);
         if (updated) {
             // comment in 3.2
@@ -542,7 +542,7 @@ public class AlfSession implements AlfConn {
         return updated;
     }
 
-    public void setContent(AlfObject object, byte[] content, String mimetype) throws ApplicationException {
+    public void setContent(AlfObject object, byte[] content, String mimetype) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             log.info("Setting content to " + object);
@@ -556,7 +556,7 @@ public class AlfSession implements AlfConn {
     }
 
     @Override
-    public void deleteObject(AlfObject object) throws ApplicationException {
+    public void deleteObject(AlfObject object) throws WfException {
         if (object != null) {
             deleteObject(object.getReference());
             Cache cache = getCache(object.getClass().getName());
@@ -572,7 +572,7 @@ public class AlfSession implements AlfConn {
      * @throws Exception
      */
     @Deprecated
-    public void deleteObject(Reference reference) throws ApplicationException {
+    public void deleteObject(Reference reference) throws WfException {
         if (reference != null) {
             try {
                 AlfSessionWrapper.sessionStart();
@@ -591,7 +591,7 @@ public class AlfSession implements AlfConn {
     }
 
     @Override
-    public <T extends AlfObject> T findObject(Search search) throws ApplicationException {
+    public <T extends AlfObject> T findObject(Search search) throws WfException {
         List<T> objects = findObjects(search);
         if (objects.size() > 0) {
             return objects.get(0);
@@ -599,7 +599,7 @@ public class AlfSession implements AlfConn {
         return null;
     }
 
-    private ResultSetRow[] findObjectRows(Store store, Search search) throws ApplicationException {
+    private ResultSetRow[] findObjectRows(Store store, Search search) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             String luceneQuery = search.toString();
@@ -622,7 +622,7 @@ public class AlfSession implements AlfConn {
     }
 
     @Override
-    public <T extends AlfObject> List<T> findObjects(Search search) throws ApplicationException {
+    public <T extends AlfObject> List<T> findObjects(Search search) throws WfException {
         try {
             AlfSessionWrapper.sessionStart();
             Store store = new Store(search.getStore().getProtocol(), search.getStore().getIdentifier());
@@ -639,7 +639,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    private void loadClassDefinitionIfNeeded(AlfTypeDesc typeDesc) throws ApplicationException {
+    private void loadClassDefinitionIfNeeded(AlfTypeDesc typeDesc) throws WfException {
         if (typeDesc.isClassDefinitionLoaded()) {
             return;
         }

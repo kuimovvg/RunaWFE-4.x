@@ -19,12 +19,12 @@ package ru.runa.wf.logic.bot;
 
 import java.util.Map;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.DefinitionService;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
@@ -47,7 +47,7 @@ public class EmailTaskHandler extends TaskHandlerBase {
     @Override
     public void setConfiguration(String configuration) {
         if (!EmailConfigParser.canParse(configuration)) {
-            throw new IllegalArgumentException("invalid configuration");
+            throw new WfException("Format of email configuration has been changed in 4.x");
         }
         config = EmailConfigParser.parse(configuration);
     }

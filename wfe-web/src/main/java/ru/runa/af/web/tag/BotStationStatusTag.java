@@ -22,17 +22,17 @@ import ru.runa.wfe.bot.BotStationPermission;
 public class BotStationStatusTag extends TitledFormTag {
     private static final long serialVersionUID = 1920713038009470026L;
 
-    private Long botStationID;
+    private Long botStationId;
 
-    public void setBotStationID(Long botStationID) {
-        this.botStationID = botStationID;
+    public void setBotStationId(Long botStationId) {
+        this.botStationId = botStationId;
     }
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
      */
-    public Long getBotStationID() {
-        return botStationID;
+    public Long getBotStationId() {
+        return botStationId;
     }
 
     private boolean stationOn = false;
@@ -40,7 +40,7 @@ public class BotStationStatusTag extends TitledFormTag {
 
     private void renewValues() {
         try {
-            BotStation botStation = Delegates.getBotService().getBotStation(botStationID);
+            BotStation botStation = Delegates.getBotService().getBotStation(botStationId);
             periodicInvocationOn = Delegates.getBotInvokerService(botStation.getAddress()).isRunning();
             stationOn = true;
         } catch (Exception e) {
@@ -52,7 +52,7 @@ public class BotStationStatusTag extends TitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) {
         renewValues();
-        Input hiddenBotStationID = new Input(Input.HIDDEN, BotStationForm.BOT_STATION_ID, String.valueOf(botStationID));
+        Input hiddenBotStationID = new Input(Input.HIDDEN, BotStationForm.BOT_STATION_ID, String.valueOf(botStationId));
         tdFormElement.addElement(hiddenBotStationID);
         Table table = new Table();
         TR tr = new TR();

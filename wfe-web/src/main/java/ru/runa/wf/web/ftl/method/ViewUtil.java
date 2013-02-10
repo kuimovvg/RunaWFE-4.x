@@ -4,7 +4,7 @@ import java.util.List;
 
 import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
@@ -29,7 +29,7 @@ public class ViewUtil {
         } else if (GroupFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
             batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
         } else {
-            throw new InternalApplicationException("Unexpected format " + variable.getDefinition().getFormatClassName());
+            throw new WfException("Unexpected format " + variable.getDefinition().getFormatClassName());
         }
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };

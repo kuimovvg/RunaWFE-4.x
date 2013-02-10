@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.security.dao;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.InitializingBean;
@@ -152,7 +150,7 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
         return !getHibernateTemplate().executeFind(new HibernateCallback<List<PermissionMapping>>() {
 
             @Override
-            public List<PermissionMapping> doInHibernate(Session session) throws HibernateException, SQLException {
+            public List<PermissionMapping> doInHibernate(Session session) {
                 Query query = session.createQuery("from PermissionMapping where identifiableId=? and type=? and mask=? and executor in (:executors)");
                 query.setParameter(0, identifiable.getIdentifiableId());
                 query.setParameter(1, identifiable.getSecuredObjectType());
@@ -204,7 +202,7 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
             List<PermissionMapping> mappings = getHibernateTemplate().executeFind(new HibernateCallback<List<PermissionMapping>>() {
 
                 @Override
-                public List<PermissionMapping> doInHibernate(Session session) throws HibernateException, SQLException {
+                public List<PermissionMapping> doInHibernate(Session session) {
                     Query query = session
                             .createQuery("from PermissionMapping where identifiableId in (:identifiableIds) and type=:type and mask=:mask and executor in (:executors)");
                     query.setParameterList("identifiableIds", identifiableIds);

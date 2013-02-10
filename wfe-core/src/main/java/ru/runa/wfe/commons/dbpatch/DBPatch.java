@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.DBType;
 
@@ -151,7 +151,7 @@ public abstract class DBPatch {
             query = "sp_rename '" + tableName + "." + indexName + "', '" + newIndexName + "'";
             break;
         default:
-            throw new InternalApplicationException("TODO");
+            throw new WfException("TODO");
         }
         return query;
     }
@@ -178,7 +178,7 @@ public abstract class DBPatch {
             query = "sp_rename '" + keyName + "', '" + newKeyName + "'";
             break;
         default:
-            throw new InternalApplicationException("TODO");
+            throw new WfException("TODO");
         }
         return query;
     }

@@ -19,7 +19,7 @@ package ru.runa.wfe.security;
 
 import java.util.Collection;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 
 import com.google.common.collect.Lists;
 
@@ -28,7 +28,7 @@ import com.google.common.collect.Lists;
  * type of {@link SecuredObject}. Created on 10.08.2004
  * 
  */
-public class UnapplicablePermissionException extends InternalApplicationException {
+public class UnapplicablePermissionException extends WfException {
     private static final long serialVersionUID = 8758756795316935351L;
     private final Collection<Permission> permissions;
 

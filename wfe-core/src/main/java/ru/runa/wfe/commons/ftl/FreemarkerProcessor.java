@@ -6,9 +6,8 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import ru.runa.wfe.InternalApplicationException;
-
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 
 import freemarker.core.Environment;
 import freemarker.template.Configuration;
@@ -35,12 +34,13 @@ public class FreemarkerProcessor {
             out.flush();
             return out.toString();
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
     private static class CustomExceptionHandler implements TemplateExceptionHandler {
 
+        @Override
         public void handleTemplateException(TemplateException te, Environment env, Writer out) throws TemplateException {
             try {
                 out.write("<b>" + te.getMessage() + "</b>" + te.getFTLInstructionStack());

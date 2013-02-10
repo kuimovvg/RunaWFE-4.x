@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -63,7 +63,7 @@ public abstract class FilesSupplierConfig {
             if (value instanceof byte[]) {
                 return new ByteArrayInputStream((byte[]) value);
             }
-            throw new InternalApplicationException("Variable '" + inputFileVariableName + "' should contains a file");
+            throw new WfException("Variable '" + inputFileVariableName + "' should contains a file");
         }
         if (inputFilePath != null) {
             File file = new File(inputFilePath);
@@ -71,13 +71,13 @@ public abstract class FilesSupplierConfig {
                 try {
                     return Files.newInputStreamSupplier(file).getInput();
                 } catch (IOException e) {
-                    throw new InternalApplicationException("Unable to read input file from location '" + inputFilePath + "'");
+                    throw new WfException("Unable to read input file from location '" + inputFilePath + "'");
                 }
             }
             return ClassLoaderUtil.getAsStreamNotNull(inputFilePath, getClass());
         }
         if (required) {
-            throw new InternalApplicationException("No input file defined in configuration");
+            throw new WfException("No input file defined in configuration");
         }
         return null;
     }
@@ -94,24 +94,24 @@ public abstract class FilesSupplierConfig {
                 dir.mkdirs();
             }
             if (!dir.exists() || !dir.isDirectory()) {
-                throw new InternalApplicationException("Unable to locate output directory '" + outputDirPath + "'");
+                throw new WfException("Unable to locate output directory '" + outputDirPath + "'");
             }
             File file = new File(dir, getOutputFileName());
             if (!file.exists()) {
                 try {
                     file.createNewFile();
                 } catch (IOException e) {
-                    throw new InternalApplicationException("Unable to create new output file in location '" + file.getAbsolutePath() + "'", e);
+                    throw new WfException("Unable to create new output file in location '" + file.getAbsolutePath() + "'", e);
                 }
             }
             try {
                 return Files.newOutputStreamSupplier(file).getOutput();
             } catch (IOException e) {
-                throw new InternalApplicationException("Unable to write output file to location '" + file.getAbsolutePath() + "'", e);
+                throw new WfException("Unable to write output file to location '" + file.getAbsolutePath() + "'", e);
             }
         }
         if (required) {
-            throw new InternalApplicationException("No output file defined in configuration");
+            throw new WfException("No output file defined in configuration");
         }
         return null;
     }

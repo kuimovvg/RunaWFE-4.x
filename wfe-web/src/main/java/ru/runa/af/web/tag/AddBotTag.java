@@ -34,17 +34,17 @@ import ru.runa.common.web.tag.TitledFormTag;
 public class AddBotTag extends TitledFormTag {
     private static final long serialVersionUID = 1920713038009470026L;
 
-    private Long botStationID;
+    private Long botStationId;
 
-    public void setBotStationID(Long botStationID) {
-        this.botStationID = botStationID;
+    public void setBotStationId(Long botStationId) {
+        this.botStationId = botStationId;
     }
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
      */
-    public Long getBotStationID() {
-        return botStationID;
+    public Long getBotStationId() {
+        return botStationId;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class AddBotTag extends TitledFormTag {
         ActorSelectTD actorSelect = new ActorSelectTD(getUser(), BotForm.USER_NAME);
         Input botPasswordInput = new Input(Input.TEXT, BotForm.PASSWORD);
 
-        Input hiddenBotStationID = new Input(Input.HIDDEN, BotForm.BOT_STATION_ID, String.valueOf(botStationID));
+        Input hiddenBotStationID = new Input(Input.HIDDEN, BotForm.BOT_STATION_ID, String.valueOf(botStationId));
         tdFormElement.addElement(hiddenBotStationID);
 
         TR tr = new TR();

@@ -15,32 +15,29 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wfe.user;
-
-import ru.runa.wfe.ApplicationException;
+package ru.runa.wfe;
 
 /**
- * Created on 10.08.2004
+ * Signals about inappropriate application usage.
  * 
+ * @author Dofs
  */
-public class ExecutorAlreadyInGroupException extends ApplicationException {
-    private static final long serialVersionUID = 4591345908128542827L;
+public class WfException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-    private final String executorName;
-
-    private final String groupName;
-
-    public ExecutorAlreadyInGroupException(String executorName, String groupName) {
-        super("Executor " + executorName + " already in group " + groupName);
-        this.executorName = executorName;
-        this.groupName = groupName;
+    public WfException() {
+        super();
     }
 
-    public String getExecutorName() {
-        return executorName;
+    public WfException(String message) {
+        super(message);
     }
 
-    public String getGroupName() {
-        return groupName;
+    public WfException(Throwable cause) {
+        super(cause);
+    }
+
+    public WfException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

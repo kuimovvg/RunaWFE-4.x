@@ -227,7 +227,7 @@ public class ExecutionLogic extends WFCommonLogic {
         Process process = processDAO.getNotNull(processId);
         List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(processId);
         StartedSubprocessesVisitor operation = new StartedSubprocessesVisitor(user, nodeProcesses);
-        return getDefinitionGraphElements(user, process.getDefinition().getId(), operation);
+        return getDefinitionGraphElements(user, process.getDeployment().getId(), operation);
     }
 
 }

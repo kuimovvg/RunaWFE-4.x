@@ -1,6 +1,7 @@
 package ru.runa.common.web.tag;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,11 +12,12 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.action.ViewLogsAction;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.user.User;
+
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -66,8 +68,8 @@ public class ViewLogsTag extends TagSupport {
             }
             pageContext.getOut().write(html);
             return Tag.SKIP_BODY;
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
         }
     }
 

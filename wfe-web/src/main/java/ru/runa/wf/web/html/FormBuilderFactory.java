@@ -17,11 +17,10 @@
  */
 package ru.runa.wf.web.html;
 
-import net.sf.ehcache.util.ClassLoaderUtil;
 import ru.runa.common.WebResources;
 import ru.runa.wf.web.StartFormBuilder;
 import ru.runa.wf.web.TaskFormBuilder;
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Created on 17.11.2004
@@ -38,9 +37,9 @@ public class FormBuilderFactory {
     public static TaskFormBuilder createTaskFormBuilder(String formFileType) {
         String taskFormBuilderClassName = WebResources.getTaskFormBuilderClassName(formFileType);
         if (taskFormBuilderClassName == null) {
-            throw new InternalApplicationException("No task form builder registered for form type '" + formFileType + "'");
+            throw new WfException("No task form builder registered for form type '" + formFileType + "'");
         }
-        return getBuilder(taskFormBuilderClassName);
+        return ru.runa.wfe.commons.ClassLoaderUtil.instantiate(taskFormBuilderClassName);
     }
 
     /**
@@ -54,18 +53,9 @@ public class FormBuilderFactory {
     public static StartFormBuilder createStartFormBuilder(String formFileType) {
         String taskFormBuilderClassName = WebResources.getStartFormBuilderClassName(formFileType);
         if (taskFormBuilderClassName == null) {
-            throw new InternalApplicationException("No start task form builder registered for form type '" + formFileType + "'");
+            throw new WfException("No start task form builder registered for form type '" + formFileType + "'");
         }
-        return getBuilder(taskFormBuilderClassName);
-    }
-
-    private static <T extends Object> T getBuilder(String className) {
-        try {
-            Class<T> taskFormBuilderClass = ClassLoaderUtil.loadClass(className);
-            return taskFormBuilderClass.newInstance();
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
-        }
+        return ru.runa.wfe.commons.ClassLoaderUtil.instantiate(taskFormBuilderClassName);
     }
 
 }

@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
@@ -70,10 +69,6 @@ public class FreemarkerConfiguration {
             }
         }
         Class<? extends FreemarkerTag> tagClass = tags.get(name);
-        try {
-            return ApplicationContextFactory.createAutowiredBean(tagClass);
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
-        }
+        return ApplicationContextFactory.createAutowiredBean(tagClass);
     }
 }

@@ -20,8 +20,9 @@ package ru.runa.common.web.html;
 import org.apache.commons.beanutils.BeanUtils;
 
 import ru.runa.common.web.html.TDBuilder.Env.IdentifiableExtractor;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.security.Permission;
+
+import com.google.common.base.Throwables;
 
 /**
  * Created 07.07.2005
@@ -55,10 +56,10 @@ public abstract class BaseTDBuilder implements TDBuilder {
             return BeanUtils.getProperty(object, propertyName);
         } catch (NoSuchMethodException e) {
             if (isExceptionOnAbsent) {
-                throw new InternalApplicationException(e);
+                throw Throwables.propagate(e);
             }
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
         return "";
     }
