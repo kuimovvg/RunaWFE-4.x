@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import ru.runa.wfe.var.VariableDefinition;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public class WfVariable implements Serializable {
@@ -27,4 +28,18 @@ public class WfVariable implements Serializable {
     public Object getValue() {
         return value;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(definition.getName());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof WfVariable) {
+            return Objects.equal(definition.getName(), ((WfVariable) obj).definition.getName());
+        }
+        return super.equals(obj);
+    }
+
 }

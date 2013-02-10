@@ -5,20 +5,26 @@ import java.util.Map;
 
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
+import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TH;
 import org.apache.ecs.html.TR;
 
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.TRRowBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.VisibleTag;
+import ru.runa.wf.web.action.ShowGraphModeHelper;
+import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class ShowProcessErrorsTag extends VisibleTag {
     private static final long serialVersionUID = 1L;
@@ -32,11 +38,17 @@ public class ShowProcessErrorsTag extends VisibleTag {
     protected ConcreteElement getEndElement() {
         List<TR> rows = Lists.newArrayList();
         for (Map.Entry<Long, Map<String, Throwable>> processEntry : ProcessExecutionErrors.getProcessErrors().entrySet()) {
+            Map<String, Object> params = Maps.newHashMap();
+            params.put(IdForm.ID_INPUT_NAME, processEntry.getKey());
+            A processIdElement = new A(
+                    Commons.getActionUrl(ShowGraphModeHelper.getManageProcessAction(), params, pageContext, PortletUrlType.Render), processEntry
+                            .getKey().toString());
             for (Map.Entry<String, Throwable> taskEntry : processEntry.getValue().entrySet()) {
                 TR tr = new TR();
-                tr.addElement(new TD().addElement(processEntry.getKey().toString()).setClass(Resources.CLASS_LIST_TABLE_TD));
-                tr.addElement(new TD().addElement(taskEntry.getKey()).setClass(Resources.CLASS_LIST_TABLE_TD));
-                tr.addElement(new TD().addElement(taskEntry.getValue().getLocalizedMessage()).setClass(Resources.CLASS_LIST_TABLE_TD));
+                tr.addElement(new TD(processIdElement).setClass(Resources.CLASS_LIST_TABLE_TD));
+                tr.addElement(new TD(taskEntry.getKey()).setClass(Resources.CLASS_LIST_TABLE_TD));
+                String url = "javascript:showProcessError(" + processEntry.getKey() + ", '" + taskEntry.getKey() + "')";
+                tr.addElement(new TD(new A(url, taskEntry.getValue().getLocalizedMessage())).setClass(Resources.CLASS_LIST_TABLE_TD));
                 rows.add(tr);
             }
         }

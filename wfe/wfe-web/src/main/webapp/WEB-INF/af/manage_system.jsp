@@ -56,6 +56,7 @@
 	</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/xmleditor/codemirror.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/scripteditor.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/errorviewer.js" />">c=0;</script>
 </tiles:put>
 
 <tiles:put name="body" type="string" >
