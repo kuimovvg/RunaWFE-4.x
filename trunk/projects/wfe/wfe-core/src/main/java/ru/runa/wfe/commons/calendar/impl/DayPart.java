@@ -21,22 +21,17 @@
  */
 package ru.runa.wfe.commons.calendar.impl;
 
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
+import ru.runa.wfe.commons.CalendarUtil;
+
 /**
- * is part of a day that can for example be used to represent business hours. 
- *
- *	modified on 06.03.2009
- *  by  gavrusev_sergei
+ * is part of a day that can for example be used to represent business hours.
+ * 
+ * modified on 06.03.2009 by gavrusev_sergei
  */
-public class DayPart implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class DayPart {
     int fromHour = -1;
     int fromMinute = -1;
     int toHour = -1;
@@ -44,39 +39,38 @@ public class DayPart implements Serializable {
     Day day = null;
     int index = -1;
 
-    public DayPart(String dayPartText, DateFormat dateFormat, Day day, int index) {
+    public DayPart(String dayPartText, Day day, int index) {
         this.day = day;
         this.index = index;
 
         int separatorIndex = dayPartText.indexOf('-');
-        if (separatorIndex == -1)
+        if (separatorIndex == -1) {
             throw new IllegalArgumentException("improper format of daypart '" + dayPartText + "'");
+        }
         String fromText = dayPartText.substring(0, separatorIndex).trim().toLowerCase();
         String toText = dayPartText.substring(separatorIndex + 1).trim().toLowerCase();
 
-        try {
-            Date from = dateFormat.parse(fromText);
-            Date to = dateFormat.parse(toText);
+        Date from = CalendarUtil.convertToDate(fromText, CalendarUtil.HOURS_MINUTES_FORMAT);
+        Date to = CalendarUtil.convertToDate(toText, CalendarUtil.HOURS_MINUTES_FORMAT);
 
-            Calendar calendar = getCalendarWithDate(from);
-            fromHour = calendar.get(Calendar.HOUR_OF_DAY);
-            fromMinute = calendar.get(Calendar.MINUTE);
+        Calendar calendar = getCalendarWithDate(from);
+        fromHour = calendar.get(Calendar.HOUR_OF_DAY);
+        fromMinute = calendar.get(Calendar.MINUTE);
 
-            calendar.setTime(to);
-            toHour = calendar.get(Calendar.HOUR_OF_DAY);
-            if (toHour == 0)
-                toHour = 24;
-            toMinute = calendar.get(Calendar.MINUTE);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("improper format of daypart '" + dayPartText + "'");
+        calendar.setTime(to);
+        toHour = calendar.get(Calendar.HOUR_OF_DAY);
+        if (toHour == 0) {
+            toHour = 24;
         }
+        toMinute = calendar.get(Calendar.MINUTE);
     }
 
     public Date add(Date date, Duration duration) {
-        if (duration.getMilliseconds() >= 0)
+        if (duration.getMilliseconds() >= 0) {
             return moveForvard(date, duration);
-        else
+        } else {
             return moveBack(date, duration);
+        }
     }
 
     public boolean isStartAfter(Date date) {
@@ -113,9 +107,9 @@ public class DayPart implements Serializable {
         long millisInThisDayPart = (toHour - hour) * Duration.HOUR + (toMinute - minute) * Duration.MINUTE;
         long durationMillis = duration.getMilliseconds();
 
-        if (durationMillis <= millisInThisDayPart)
+        if (durationMillis <= millisInThisDayPart) {
             return duration.addTo(date);
-        else {
+        } else {
             Duration remainder = new Duration(durationMillis - millisInThisDayPart);
             Date dayPartEndDate = new Date(date.getTime() + millisInThisDayPart);
             DayPart nextDayPart = day.findNextDayPartStart(index + 1, dayPartEndDate);
@@ -131,9 +125,9 @@ public class DayPart implements Serializable {
         long millisInThisDayPart = (fromHour - hour) * Duration.HOUR + (fromMinute - minute) * Duration.MINUTE;
         long durationMillis = duration.getMilliseconds();
 
-        if (durationMillis >= millisInThisDayPart)
+        if (durationMillis >= millisInThisDayPart) {
             return duration.addTo(date);
-        else {
+        } else {
             Duration remainder = new Duration(durationMillis - millisInThisDayPart);
             Date dayPartStartDate = new Date(date.getTime() + millisInThisDayPart);
             DayPart nextDayPart = day.findPrevDayPartEnd(index - 1, dayPartStartDate);

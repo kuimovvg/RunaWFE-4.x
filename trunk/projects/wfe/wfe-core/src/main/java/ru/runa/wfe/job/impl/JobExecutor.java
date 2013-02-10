@@ -27,7 +27,7 @@ public class JobExecutor {
         try {
             job = jobDAO.getNotNull(id);
             log.debug("executing " + job);
-            ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(job.getProcess().getDefinition().getId());
+            ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(job.getProcess().getDeployment().getId());
             ExecutionContext executionContext = new ExecutionContext(processDefinition, job.getToken());
             job.execute(executionContext);
         } catch (Exception e) {

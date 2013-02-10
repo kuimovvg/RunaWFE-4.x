@@ -1,6 +1,5 @@
 package ru.runa.wfe.execution.dao;
 
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
@@ -47,7 +45,7 @@ public class ProcessDAO extends GenericDAO<Process> {
         return getHibernateTemplate().execute(new HibernateCallback<Map<Long, Object>>() {
 
             @Override
-            public Map<Long, Object> doInHibernate(Session session) throws HibernateException, SQLException {
+            public Map<Long, Object> doInHibernate(Session session) {
                 Map<Long, Object> result = Maps.newHashMap();
                 if (!processIds.isEmpty()) {
                     for (int i = 0; i <= processIds.size() / 1000; ++i) {
@@ -79,7 +77,7 @@ public class ProcessDAO extends GenericDAO<Process> {
         return getHibernateTemplate().executeFind(new HibernateCallback<List<Process>>() {
 
             @Override
-            public List<Process> doInHibernate(Session session) throws HibernateException, SQLException {
+            public List<Process> doInHibernate(Session session) {
                 List<String> conditions = Lists.newArrayList();
                 Map<String, Object> parameters = Maps.newHashMap();
                 if (filter.getDefinitionName() != null) {

@@ -34,7 +34,6 @@ import ru.runa.service.wf.BotService;
 import ru.runa.service.wf.DefinitionService;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.service.wf.InitializerService;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 
 import com.google.common.collect.Maps;
@@ -58,14 +57,10 @@ public class Delegates {
     }
 
     private static EJB3Delegate createDelegate(Class<? extends EJB3Delegate> delegateClass) {
-        try {
-            EJB3Delegate delegate = delegateClass.newInstance();
-            delegate.setEjbType(PROPERTIES.getProperty("ejb.type"));
-            delegate.setEjbJndiNameFormat(PROPERTIES.getProperty("ejb.jndiName.format"));
-            return delegate;
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
-        }
+        EJB3Delegate delegate = ClassLoaderUtil.instantiate(delegateClass);
+        delegate.setEjbType(PROPERTIES.getProperty("ejb.type"));
+        delegate.setEjbJndiNameFormat(PROPERTIES.getProperty("ejb.jndiName.format"));
+        return delegate;
     }
 
     public static AuthenticationService getAuthenticationService() {

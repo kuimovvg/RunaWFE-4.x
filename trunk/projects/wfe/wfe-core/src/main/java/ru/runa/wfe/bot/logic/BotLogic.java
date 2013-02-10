@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotAlreadyExistsException;
 import ru.runa.wfe.bot.BotDoesNotExistException;
@@ -222,7 +222,7 @@ public class BotLogic extends CommonLogic {
         } else if (entity instanceof BotTask) {
             botStation = ((BotTask) entity).getBot().getBotStation();
         } else {
-            throw new InternalApplicationException("Unexpected entity class " + entity);
+            throw new WfException("Unexpected entity class " + entity);
         }
         botStation.setVersion(botStation.getVersion() + 1);
         botStationDAO.update(botStation);

@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
 /**
@@ -22,7 +22,7 @@ public class Settings {
     protected static Document getConfigDocument() throws Exception {
         InputStream is = Settings.class.getResourceAsStream(CONFIG_RESOURCE);
         if (is == null) {
-            throw new ApplicationException("No resource found in " + CONFIG_RESOURCE);
+            throw new WfException("No resource found in " + CONFIG_RESOURCE);
         }
         return XmlUtils.parseWithoutValidation(is);
     }

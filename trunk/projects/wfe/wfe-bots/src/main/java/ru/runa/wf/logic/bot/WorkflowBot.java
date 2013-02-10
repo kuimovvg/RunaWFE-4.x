@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.client.DelegateProcessVariableProvider;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.ClassLoaderUtil;
@@ -70,10 +70,9 @@ public class WorkflowBot implements Runnable {
     private final Map<String, TaskHandler> taskHandlers = Maps.newHashMap();
     private final Map<String, byte[]> extendedConfigurations = Maps.newHashMap();
     private final User user;
-    private final String botName;
+    private final Bot bot;
     private final WfTask task;
     private final WorkflowBot parent;
-    private final long botDeplay;
 
     private final Set<WorkflowBot> existingBots;
     // This need for thread execution stuck detection and stuck thread
@@ -87,8 +86,7 @@ public class WorkflowBot implements Runnable {
         this.user = user;
         task = null;
         parent = null;
-        botName = bot.getUsername();
-        botDeplay = bot.getStartTimeout();
+        this.bot = bot;
         existingBots = new HashSet<WorkflowBot>();
         for (BotTask botTask : tasks) {
             try {
@@ -100,10 +98,10 @@ public class WorkflowBot implements Runnable {
                 }
                 taskHandlers.put(botTask.getName(), handler);
                 log.info("Configured taskHandler for " + botTask.getName());
-                ProcessExecutionErrors.removeBotTaskConfigurationError(botName, botTask.getName());
+                ProcessExecutionErrors.removeBotTaskConfigurationError(bot, botTask.getName());
             } catch (Throwable th) {
-                ProcessExecutionErrors.addBotTaskConfigurationError(botName, botTask.getName(), th);
-                log.error("Can't create handler for bot " + bot.getUsername() + " (task is " + botTask + ")", th);
+                ProcessExecutionErrors.addBotTaskConfigurationError(bot, botTask.getName(), th);
+                log.error("Can't create handler for bot " + bot + " (task is " + botTask + ")", th);
             }
         }
     }
@@ -112,23 +110,22 @@ public class WorkflowBot implements Runnable {
         user = parent.user;
         taskHandlers.putAll(parent.taskHandlers);
         extendedConfigurations.putAll(parent.extendedConfigurations);
-        botName = parent.botName;
+        bot = parent.bot;
         this.task = task;
         this.parent = parent;
-        botDeplay = parent.botDeplay;
         existingBots = null;
     }
 
     public WorkflowBot createTask(WfTask task) {
         if (parent != null || this.task != null) {
-            throw new InternalApplicationException("WorkflowBot task can be created only by template");
+            throw new WfException("WorkflowBot task can be created only by template");
         }
         WorkflowBot result = new WorkflowBot(this, task);
         if (existingBots.contains(result)) {
             for (WorkflowBot bot : existingBots) {
                 if (bot.equals(result)) {
                     if (bot.botStatus != BotExecutionStatus.failed) {
-                        throw new InternalApplicationException("Incorrect WorkflowBot usage - only failed tasks may be recreated.");
+                        throw new WfException("Incorrect WorkflowBot usage - only failed tasks may be recreated.");
                     }
                     result = bot;
                     break;
@@ -169,8 +166,8 @@ public class WorkflowBot implements Runnable {
         return result;
     }
 
-    public long getBotDelay() {
-        return botDeplay;
+    public Bot getBot() {
+        return bot;
     }
 
     private void doHandle() throws Exception {
@@ -178,8 +175,8 @@ public class WorkflowBot implements Runnable {
             String botTaskName = BotTaskConfigurationUtils.getBotTaskName(user, task);
             TaskHandler taskHandler = taskHandlers.get(botTaskName);
             if (taskHandler == null) {
-                log.warn("No handler for bot task " + botTaskName + ", bot " + botName);
-                ProcessExecutionErrors.addBotTaskNotFoundProcessError(task, botName, botTaskName);
+                log.warn("No handler for bot task " + botTaskName + ", " + bot);
+                ProcessExecutionErrors.addBotTaskNotFoundProcessError(task, bot, botTaskName);
                 return;
             }
             IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
@@ -200,7 +197,7 @@ public class WorkflowBot implements Runnable {
                 log.info("Bot task " + task + " postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
             } else {
                 Delegates.getExecutionService().completeTask(user, task.getId(), variables);
-                log.debug("Handled bot task " + task + ", bot " + botName + " by " + taskHandler.getClass());
+                log.debug("Handled bot task " + task + ", " + bot + " by " + taskHandler.getClass());
             }
             ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getName());
         } catch (Throwable th) {
@@ -230,7 +227,7 @@ public class WorkflowBot implements Runnable {
             resetTime = System.currentTimeMillis() + complettedTasksHoldPeriod;
             return;
         } catch (Throwable e) {
-            log.error("Error execution bot " + botName + " for task " + task, e);
+            log.error("Error execution " + bot + " for task " + task, e);
             logBotError(task, e);
             botStatus = BotExecutionStatus.failed;
             // Double delay if exists
@@ -265,9 +262,9 @@ public class WorkflowBot implements Runnable {
     @Override
     public String toString() {
         if (parent == null) {
-            return "Template bot '" + botName + "'";
+            return "Template " + bot;
         } else {
-            return "Bot '" + botName + "' with task " + task;
+            return bot + " with task " + task;
         }
     }
 

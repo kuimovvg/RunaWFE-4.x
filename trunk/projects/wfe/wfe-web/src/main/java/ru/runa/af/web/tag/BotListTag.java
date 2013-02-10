@@ -23,23 +23,23 @@ import ru.runa.wfe.bot.BotStationPermission;
  */
 public class BotListTag extends TitledFormTag {
     private static final long serialVersionUID = 1L;
-    private Long botStationID;
+    private Long botStationId;
 
-    public void setBotStationID(Long botStationID) {
-        this.botStationID = botStationID;
+    public void setBotStationId(Long botStationId) {
+        this.botStationId = botStationId;
     }
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
      */
-    public Long getBotStationID() {
-        return botStationID;
+    public Long getBotStationId() {
+        return botStationId;
     }
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botStationID)));
-        List<Bot> bots = Delegates.getBotService().getBots(getUser(), botStationID);
+        tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botStationId)));
+        List<Bot> bots = Delegates.getBotService().getBots(getUser(), botStationId);
         tdFormElement.addElement(new BotTableBuilder(pageContext).buildBotTable(bots));
     }
 

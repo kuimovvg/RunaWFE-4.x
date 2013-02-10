@@ -23,7 +23,7 @@ import java.util.Set;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -77,7 +77,7 @@ public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
     @Override
     public void validate() {
         if (Strings.isNullOrEmpty(getConfiguration())) {
-            throw new ApplicationException(getClass().getName() + ": invalid configuration");
+            throw new WfException(getClass().getName() + ": invalid configuration");
         }
     }
 

@@ -11,7 +11,7 @@ import javax.transaction.UserTransaction;
 
 import org.hibernate.exception.LockAcquisitionException;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.user.User;
@@ -41,7 +41,7 @@ public class EjbTransactionSupport {
         } catch (Throwable th) {
             rollbackTransaction(transaction);
             Throwables.propagateIfInstanceOf(th, Exception.class);
-            throw new InternalApplicationException(th);
+            throw Throwables.propagate(th);
         } finally {
             CachingLogic.onTransactionComplete();
         }
@@ -55,7 +55,7 @@ public class EjbTransactionSupport {
                 transaction.rollback();
             }
         } catch (Exception e) {
-            throw new InternalApplicationException("Unable to rollback, status: " + status, e);
+            throw new WfException("Unable to rollback, status: " + status, e);
         }
     }
 

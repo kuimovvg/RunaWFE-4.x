@@ -7,22 +7,21 @@
 <tiles:insert page="/WEB-INF/af/main_layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
 <%
-	String parameterName = "botStationID";
-	long id = Long.parseLong(request.getParameter(parameterName));
-	String returnAction="/bot_station.do?" + parameterName+ "=" +id;
+	long botStationId = Long.parseLong(request.getParameter("botStationId"));
+	String returnAction="/bot_station.do?botStationId=" + botStationId;
 %>
-        <wf:botStationTag botStationID="<%= id %>"/>
+        <wf:botStationTag botStationId="<%= botStationId %>"/>
         <table width="100%">
             <tr>
-                <td align="left"><wf:saveBotStationLink href="<%="save_bot_station.do?id=" + id %>"/></td>
+                <td align="left"><wf:saveBotStationLink href="<%="save_bot_station.do?id=" + botStationId %>"/></td>
             </tr>
         </table>
-        <wf:botStationStatusTag botStationID="<%= id %>"/>
-        <wf:deployBot ID="<%= id %>"/>
-        <wf:botListTag botStationID="<%= id %>">
+        <wf:botStationStatusTag botStationId="<%= botStationId %>"/>
+        <wf:deployBot botStationId="<%= botStationId %>"/>
+        <wf:botListTag botStationId="<%= botStationId %>">
 			<table width="100%">
                 <tr>
-                    <td align="left"><wf:createBotLink href="<%="add_bot.do?botStationID=" + id %>"/></td>
+                    <td align="left"><wf:createBotLink href="<%="add_bot.do?botStationId=" + botStationId %>"/></td>
                 </tr>
             </table>
         </wf:botListTag>

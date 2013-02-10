@@ -17,7 +17,7 @@
  */
 package ru.runa.wfe.execution;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Unexpected existance of parent process.
@@ -25,7 +25,7 @@ import ru.runa.wfe.ApplicationException;
  * @author Dofs
  * @since 4.0
  */
-public class ParentProcessExistsException extends ApplicationException {
+public class ParentProcessExistsException extends WfException {
     private static final long serialVersionUID = 1833565682886180147L;
 
     private final String definitionName;

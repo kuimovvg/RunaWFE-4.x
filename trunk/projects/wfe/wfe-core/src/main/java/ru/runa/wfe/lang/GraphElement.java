@@ -29,7 +29,6 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ActionLog;
 import ru.runa.wfe.execution.ExecutionContext;
 
@@ -161,8 +160,7 @@ public abstract class GraphElement implements Serializable {
             log.debug("executing action '" + action + "'");
             action.execute(executionContext);
         } catch (Exception exception) {
-            Throwables.propagateIfInstanceOf(exception, RuntimeException.class);
-            throw new InternalApplicationException(exception);
+            throw Throwables.propagate(exception);
         }
     }
 

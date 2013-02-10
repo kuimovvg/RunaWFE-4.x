@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.definition;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Signals that process definition archive doesn't contain file.
  */
-public class DefinitionFileDoesNotExistException extends ApplicationException {
+public class DefinitionFileDoesNotExistException extends WfException {
     private static final long serialVersionUID = 1L;
 
     public DefinitionFileDoesNotExistException(String fileName) {

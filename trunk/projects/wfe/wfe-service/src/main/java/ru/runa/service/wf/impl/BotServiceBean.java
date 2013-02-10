@@ -29,7 +29,6 @@ import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.service.wf.BotServiceLocal;
 import ru.runa.service.wf.BotServiceRemote;
-import ru.runa.wfe.ApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
@@ -38,6 +37,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 
@@ -190,7 +190,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
             baos.flush();
             return baos.toByteArray();
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -214,7 +214,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
             baos.flush();
             return baos.toByteArray();
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -241,7 +241,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
             wfeScriptForBotStations.setConfigs(files);
             wfeScriptForBotStations.runScript(script);
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -270,7 +270,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
                 importBot(user, station, ByteStreams.toByteArray(zin), replace);
             }
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

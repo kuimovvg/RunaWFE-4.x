@@ -5,7 +5,7 @@
 
 <tiles:insert page="/WEB-INF/af/main_layout.jsp" flush="true">
     <tiles:put name="body" type="string">
-	    <wf:deployBotStation/>
+	    <wf:deployBotStation />
         <wf:botStationList buttonAlignment="right">
             <table width="100%">
                 <tr>

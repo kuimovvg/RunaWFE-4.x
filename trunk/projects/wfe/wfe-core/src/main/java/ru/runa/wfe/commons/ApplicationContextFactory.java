@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.access.ContextSingletonBeanFactoryLocator;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.calendar.BusinessCalendar;
 import ru.runa.wfe.commons.hibernate.Converters;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
@@ -23,6 +22,8 @@ import ru.runa.wfe.relation.dao.RelationDAO;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.ss.dao.SubstitutionDAO;
 import ru.runa.wfe.user.dao.ExecutorDAO;
+
+import com.google.common.base.Throwables;
 
 public class ApplicationContextFactory {
     private static ApplicationContext applicationContext = null;
@@ -137,7 +138,7 @@ public class ApplicationContextFactory {
             autowireBean(object);
             return object;
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

@@ -34,7 +34,6 @@ import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.af.SystemService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.security.ASystem;
 
 /**
@@ -58,7 +57,7 @@ public class LogoutAction extends ActionBase {
             ProfileHttpSessionHelper.removeProfile(session);
             TabHttpSessionHelper.removeTabForwardName(session);
             session.invalidate();
-        } catch (InternalApplicationException e) {
+        } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
         if (!errors.isEmpty()) {

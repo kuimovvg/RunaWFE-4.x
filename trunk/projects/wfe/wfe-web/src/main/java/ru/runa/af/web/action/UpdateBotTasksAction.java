@@ -84,6 +84,6 @@ public class UpdateBotTasksAction extends ActionBase {
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
-        return new ActionForward("/bot.do?botID=" + form.getId());
+        return new ActionForward("/bot.do?botId=" + form.getId());
     }
 }

@@ -2,7 +2,6 @@ package ru.runa.wfe.handler;
 
 import java.util.Map;
 
-
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.action.ActionHandler;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;

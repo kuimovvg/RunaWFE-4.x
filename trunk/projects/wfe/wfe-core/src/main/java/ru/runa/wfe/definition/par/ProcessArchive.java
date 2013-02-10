@@ -39,7 +39,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
 public class ProcessArchive extends FileDataProvider {
-    private final Deployment parDeployment;
+    private final Deployment deployment;
     public static List<String> UNSECURED_FILE_NAMES = Lists.newArrayList();
     static {
         UNSECURED_FILE_NAMES.add(FORM_CSS_FILE_NAME);
@@ -58,10 +58,10 @@ public class ProcessArchive extends FileDataProvider {
 
     private Map<String, byte[]> fileData = Maps.newHashMap();
 
-    public ProcessArchive(Deployment parDeployment) {
+    public ProcessArchive(Deployment deployment) {
         try {
-            this.parDeployment = parDeployment;
-            ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(parDeployment.getContent()));
+            this.deployment = deployment;
+            ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(deployment.getContent()));
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
                 String entryName = zipEntry.getName();
@@ -78,7 +78,7 @@ public class ProcessArchive extends FileDataProvider {
     }
 
     public ProcessDefinition parseProcessDefinition() {
-        ProcessDefinition processDefinition = new ProcessDefinition(parDeployment);
+        ProcessDefinition processDefinition = new ProcessDefinition(deployment);
         for (ProcessArchiveParser processArchiveParser : processArchiveParsers) {
             processArchiveParser.readFromArchive(this, processDefinition);
         }

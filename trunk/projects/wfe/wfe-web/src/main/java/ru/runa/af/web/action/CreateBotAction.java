@@ -37,7 +37,7 @@ public class CreateBotAction extends ActionBase {
             Bot bot = new Bot();
             bot.setUsername(botForm.getWfeUser());
             bot.setPassword(botForm.getWfePassword());
-            bot.setBotStation(botService.getBotStation(botForm.getBotStationID()));
+            bot.setBotStation(botService.getBotStation(botForm.getBotStationId()));
             botService.createBot(getLoggedUser(request), bot);
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
@@ -45,6 +45,6 @@ public class CreateBotAction extends ActionBase {
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
-        return new ActionForward("/bot_station.do?botStationID=" + botForm.getBotStationID());
+        return new ActionForward("/bot_station.do?botStationId=" + botForm.getBotStationId());
     }
 }

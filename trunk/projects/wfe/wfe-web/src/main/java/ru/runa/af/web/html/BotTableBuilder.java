@@ -62,7 +62,7 @@ public class BotTableBuilder {
         tr.setClass(Resources.CLASS_LIST_TABLE_TH);
         Input input = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, Long.toString(bot.getId()));
         input.setChecked(false);
-        String path = Commons.getActionUrl("bot.do", "botID", new Long(bot.getId()), pageContext, PortletUrlType.Render);
+        String path = Commons.getActionUrl("bot.do", "botId", new Long(bot.getId()), pageContext, PortletUrlType.Render);
         tr.addElement(new TD(input).setClass(Resources.CLASS_LIST_TABLE_TD));
         // tr.addElement(new TD(new A(path, new
         // Long(bot.getId()).toString()).toString()).setWidth("10%").setClass(Resources.CLASS_LIST_TABLE_TD));

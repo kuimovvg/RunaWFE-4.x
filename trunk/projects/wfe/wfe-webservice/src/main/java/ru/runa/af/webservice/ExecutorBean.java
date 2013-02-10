@@ -21,9 +21,7 @@ import ru.runa.wfe.security.WeakPasswordException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
-import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
-import ru.runa.wfe.user.ExecutorNotInGroupException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.logic.ExecutorLogic;
@@ -85,7 +83,7 @@ public class ExecutorBean {
             @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "executors", targetNamespace = "http://runa.ru/workflow/webservices") List<String> executors,
             @WebParam(mode = Mode.IN, name = "groupName", targetNamespace = "http://runa.ru/workflow/webservices") String groupName)
-            throws ExecutorAlreadyInGroupException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+            throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
         List<Executor> result = Lists.newArrayList();
         for (String executorName : executors) {
             Executor executor = executorLogic.getExecutor(user, executorName);
@@ -100,7 +98,7 @@ public class ExecutorBean {
             @WebParam(mode = Mode.IN, name = "actorPrincipal", targetNamespace = "http://runa.ru/workflow/webservices") User user,
             @WebParam(mode = Mode.IN, name = "executors", targetNamespace = "http://runa.ru/workflow/webservices") List<String> executors,
             @WebParam(mode = Mode.IN, name = "groupName", targetNamespace = "http://runa.ru/workflow/webservices") String groupName)
-            throws ExecutorNotInGroupException, ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
+            throws ExecutorDoesNotExistException, AuthorizationException, AuthenticationException {
         List<Executor> result = Lists.newArrayList();
         for (String executorName : executors) {
             Executor executor = executorLogic.getExecutor(user, executorName);

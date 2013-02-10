@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
-import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.definition.logic.SwimlaneUtils;
 import ru.runa.wfe.job.CancelTimerAction;
@@ -135,7 +134,7 @@ public class JpdlXmlReader {
             verifyElements(processDefinition);
         } catch (Throwable th) {
             Throwables.propagateIfInstanceOf(th, InvalidDefinitionException.class);
-            throw new InvalidDefinitionException(processDefinition.getName(), IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME, th);
+            throw new InvalidDefinitionException(processDefinition.getName(), th);
         }
         return processDefinition;
     }

@@ -19,7 +19,6 @@ package ru.runa.wf.web.customtag.impl;
 
 import java.util.List;
 
-
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
