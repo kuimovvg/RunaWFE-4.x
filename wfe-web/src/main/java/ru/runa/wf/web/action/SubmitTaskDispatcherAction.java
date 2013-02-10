@@ -24,15 +24,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.WebResources;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
@@ -41,6 +37,7 @@ import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Profile;
@@ -59,12 +56,8 @@ import com.google.common.base.Objects;
  *                        = "false"
  */
 public class SubmitTaskDispatcherAction extends ActionBase {
-    private static final Log log = LogFactory.getLog(SubmitTaskDispatcherAction.class);
-
     private final String LOCAL_FORWARD_TASKS_LIST = "tasksList";
-
     private final String LOCAL_FORWARD_SUBMIT_TASK = "submitTask";
-
     private final String LOCAL_FORWARD_EXECUTE_TASK = "executeTask";
 
     @Override
@@ -83,12 +76,11 @@ public class SubmitTaskDispatcherAction extends ActionBase {
             log.debug("User should be redirected to /submit_task.do action.");
         }
 
-        ActionMessages errors = getErrors(request);
         IdForm idForm = (IdForm) form;
         try {
             ExecutionService executionService = Delegates.getExecutionService();
             Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
-            BatchPresentation batchPresentation = profile.getActiveBatchPresentation("listTasksForm").clone();
+            BatchPresentation batchPresentation = profile.getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS);
             List<WfTask> tasks = executionService.getTasks(getLoggedUser(request), batchPresentation);
             WfTask currentTask = null;
             Long currentTaskId = idForm.getId();
@@ -108,13 +100,9 @@ public class SubmitTaskDispatcherAction extends ActionBase {
             // forward user to the tasks list screen cause current task was
             // already accepted by another user...
             forwardName = LOCAL_FORWARD_TASKS_LIST;
-            ActionExceptionHelper.addException(errors, e);
+            addError(request, e);
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
         }
         return Commons.forward(mapping.findForward(forwardName), params);
     }

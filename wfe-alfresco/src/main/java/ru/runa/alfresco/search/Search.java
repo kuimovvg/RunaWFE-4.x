@@ -6,8 +6,11 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.QName;
 
+import com.google.common.base.Objects;
+
 /**
  * Represents query object.
+ * 
  * @author dofs
  */
 public class Search extends Group {
@@ -16,7 +19,7 @@ public class Search extends Group {
      * results limit.
      */
     private int limit;
-    
+
     private StoreRef store = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
 
     public Search(N operand, Op operator, Object... params) {
@@ -30,13 +33,13 @@ public class Search extends Group {
     public Search(String groupOperator, N operand, Op operator, Object... params) {
         super(groupOperator, operand, operator, params);
     }
-    
+
     public boolean hasSorting() {
         return !sortings.isEmpty();
     }
 
     public void addSort(QName sortColumnName, boolean sortAscending) {
-        this.sortings.add(new Sorting(sortColumnName, sortAscending));
+        sortings.add(new Sorting(sortColumnName, sortAscending));
     }
 
     public List<Sorting> getSortings() {
@@ -50,35 +53,43 @@ public class Search extends Group {
     public void setLimit(int limit) {
         this.limit = limit;
     }
-    
+
     public StoreRef getStore() {
         return store;
     }
-    
+
     public void setStore(StoreRef store) {
         this.store = store;
     }
-    
+
     public class Sorting {
         private final QName name;
         private final boolean ascending;
-        
+
         public Sorting(QName name, boolean ascending) {
             this.name = name;
             this.ascending = ascending;
         }
-        
+
         public QName getName() {
             return name;
         }
-        
+
         public boolean isAscending() {
             return ascending;
         }
-        
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(name);
+        }
+
         @Override
         public boolean equals(Object obj) {
-            return name.equals(((Sorting) obj).name);
+            if (obj instanceof Sorting) {
+                return Objects.equal(name, ((Sorting) obj).name);
+            }
+            return super.equals(obj);
         }
     }
 }

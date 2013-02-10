@@ -23,15 +23,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
 import ru.runa.common.web.Messages;
-import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.DefinitionService;
 import ru.runa.service.ExecutionService;
@@ -42,7 +39,6 @@ import ru.runa.wfe.form.Interaction;
  * @struts:action path="/submitInfoPathForm" name="processForm" validate="false"
  */
 public class SubmitInfoPathFormAction extends ActionBase {
-    private static final Log log = LogFactory.getLog(SubmitInfoPathFormAction.class);
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response)
@@ -70,7 +66,7 @@ public class SubmitInfoPathFormAction extends ActionBase {
                 Long processId = executionService.startProcess(getLoggedUser(request), definitionName, variables);
                 userMessage = new ActionMessage(Messages.PROCESS_STARTED, processId.toString());
             }
-            request.getSession().setAttribute(Resources.USER_MESSAGE_KEY, userMessage);
+            addMessage(request, userMessage);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             hasErrors = true;

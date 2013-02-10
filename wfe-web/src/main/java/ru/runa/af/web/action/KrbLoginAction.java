@@ -23,18 +23,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.WebResources;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.ProfileService;
 import ru.runa.service.SystemService;
 import ru.runa.service.delegate.Delegates;
@@ -53,14 +51,13 @@ import ru.runa.wfe.user.User;
  *                        "true"
  * @struts.action-forward name="failure" path="/start.do" redirect = "true"
  */
-public class KrbLoginAction extends Action {
+public class KrbLoginAction extends ActionBase {
 
     /* this must be changed if "success" forward changed! */
     private final static String DEFAULT_TAB_FORWARD_NAME = "manage_tasks";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         try {
             if (!WebResources.isKrbSupported()) {
                 throw new AuthenticationException("Kerberos support disabled");
@@ -87,10 +84,7 @@ public class KrbLoginAction extends Action {
             TabHttpSessionHelper.setTabForwardName(DEFAULT_TAB_FORWARD_NAME, session);
             saveToken(request);
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return mapping.findForward(Resources.FORWARD_FAILURE);
         }
         return mapping.findForward(Resources.FORWARD_SUCCESS);

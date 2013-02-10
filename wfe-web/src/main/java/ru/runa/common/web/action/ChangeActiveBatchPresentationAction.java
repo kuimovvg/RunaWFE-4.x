@@ -23,9 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.BatchPresentationForm;
 import ru.runa.service.ProfileService;
@@ -43,7 +41,6 @@ public class ChangeActiveBatchPresentationAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         BatchPresentationForm batchPresentationForm = (BatchPresentationForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
@@ -52,13 +49,8 @@ public class ChangeActiveBatchPresentationAction extends ActionBase {
                     batchPresentationForm.getBatchPresentationName());
             profile.setActiveBatchPresentation(batchPresentationForm.getBatchPresentationId(), batchPresentationForm.getBatchPresentationName());
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
+            addError(request, e);
         }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
-        }
-
         return new ActionForward(batchPresentationForm.getReturnAction(), true);
     }
 }

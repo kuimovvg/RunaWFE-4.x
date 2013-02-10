@@ -23,10 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.UpdateStatusForm;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
@@ -45,16 +43,12 @@ public class UpdateStatusAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         UpdateStatusForm form = (UpdateStatusForm) actionForm;
         try {
             Actor actor = Delegates.getExecutorService().getExecutor(getLoggedUser(request), form.getId());
             Delegates.getExecutorService().setStatus(getLoggedUser(request), actor, form.isActive());
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
-            saveErrors(request, errors);
+            addError(request, e);
             return mapping.findForward(Resources.FORWARD_FAILURE);
         }
         return mapping.findForward(Resources.FORWARD_SUCCESS);

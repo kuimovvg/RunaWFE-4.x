@@ -21,7 +21,6 @@
  */
 package ru.runa.wfe.commons.calendar.impl;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -35,10 +34,8 @@ import ru.runa.wfe.commons.calendar.BusinessCalendar;
  * a calendar that knows about business hours. modified on 06.03.2009 by
  * gavrusev_sergei
  */
-public class BusinessCalendarImpl implements BusinessCalendar, Serializable {
-    private static final long serialVersionUID = 1L;
+public class BusinessCalendarImpl implements BusinessCalendar {
     private static Properties businessCalendarProperties = ClassLoaderUtil.getPropertiesNotNull("business.calendar.properties");
-
     private final Day[] weekDays;
     private final List<Holiday> holidays;
 
@@ -118,7 +115,7 @@ public class BusinessCalendarImpl implements BusinessCalendar, Serializable {
             return null;
         }
         Day day = findDay(date);
-        for (DayPart dayPart : day.dayParts) {
+        for (DayPart dayPart : day.getDayParts()) {
             if (dayPart.includes(date)) {
                 return dayPart;
             }
@@ -172,7 +169,7 @@ public class BusinessCalendarImpl implements BusinessCalendar, Serializable {
             DayPart dayPart = findDayPart(date);
             if (dayPart == null) {
                 Day day = findDay(date);
-                dayPart = day.findPrevDayPartEnd(day.dayParts.length - 1, date);
+                dayPart = day.findPrevDayPartEnd(day.getDayParts().length - 1, date);
                 date = dayPart.getEndTime(date);
             }
             end = dayPart.add(date, duration);

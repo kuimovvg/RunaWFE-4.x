@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -52,7 +51,7 @@ public class HistoryGraphImageAction extends ActionBase {
             os.write(diagramBytes);
             os.flush();
         } catch (Exception e) {
-            LogFactory.getLog(getClass()).warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
         return null;
     }

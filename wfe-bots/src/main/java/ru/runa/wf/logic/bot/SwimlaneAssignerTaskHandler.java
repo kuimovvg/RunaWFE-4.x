@@ -49,7 +49,7 @@ public class SwimlaneAssignerTaskHandler extends TaskHandlerBase {
     public void setConfiguration(String configuration) throws Exception {
         Properties properties = new Properties();
         properties.load(new StringReader(configuration));
-        String swimlaneName = properties.getProperty(SWIMLANE_NAME_PROPERTY);
+        swimlaneName = properties.getProperty(SWIMLANE_NAME_PROPERTY);
         Preconditions.checkNotNull(swimlaneName, SWIMLANE_NAME_PROPERTY);
         String swimlaneInitializer = properties.getProperty(ASSIGNER_FUNCTION_PROPERTY);
         function = OrgFunctionHelper.parseOrgFunction(swimlaneInitializer);

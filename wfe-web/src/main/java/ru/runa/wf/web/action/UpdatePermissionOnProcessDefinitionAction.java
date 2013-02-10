@@ -19,7 +19,6 @@ package ru.runa.wf.web.action;
 
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
@@ -49,7 +48,7 @@ public class UpdatePermissionOnProcessDefinitionAction extends UpdatePermissionO
     public static final String ACTION_PATH = "/updatePermissionOnProcessDefinition";
 
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId) {
         return Delegates.getDefinitionService().getProcessDefinition(user, identifiableId);
     }
 

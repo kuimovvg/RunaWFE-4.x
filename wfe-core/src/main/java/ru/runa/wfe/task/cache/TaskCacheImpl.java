@@ -29,7 +29,7 @@ import ru.runa.wfe.task.dto.WfTask;
 
 class TaskCacheImpl extends BaseCacheImpl implements TaskCache {
     public static final String taskCacheName = "ru.runa.wfe.wfe.wf.caches.taskLists";
-    private final Cache<Long, ConcurrentHashMap<TaskCacheImpl.BatchPresentationStrongComparison, List<WfTask>>> actorToTasksCache;
+    private final Cache<Long, ConcurrentHashMap<TaskCacheImpl.BatchPresentationFieldEquals, List<WfTask>>> actorToTasksCache;
 
     public TaskCacheImpl() {
         actorToTasksCache = createCache(taskCacheName);
@@ -37,11 +37,11 @@ class TaskCacheImpl extends BaseCacheImpl implements TaskCache {
 
     @Override
     public List<WfTask> getTasks(Long actorId, BatchPresentation batchPresentation) {
-        Map<TaskCacheImpl.BatchPresentationStrongComparison, List<WfTask>> lists = actorToTasksCache.get(actorId);
+        Map<TaskCacheImpl.BatchPresentationFieldEquals, List<WfTask>> lists = actorToTasksCache.get(actorId);
         if (lists == null) {
             return null;
         }
-        return lists.get(new BatchPresentationStrongComparison(batchPresentation));
+        return lists.get(new BatchPresentationFieldEquals(batchPresentation));
     }
 
     @Override
@@ -49,12 +49,12 @@ class TaskCacheImpl extends BaseCacheImpl implements TaskCache {
         if (cacheVersion != currentCacheVersion) {
             return;
         }
-        ConcurrentHashMap<TaskCacheImpl.BatchPresentationStrongComparison, List<WfTask>> lists = actorToTasksCache.get(actorId);
+        ConcurrentHashMap<TaskCacheImpl.BatchPresentationFieldEquals, List<WfTask>> lists = actorToTasksCache.get(actorId);
         if (lists == null) {
-            lists = new ConcurrentHashMap<TaskCacheImpl.BatchPresentationStrongComparison, List<WfTask>>();
+            lists = new ConcurrentHashMap<TaskCacheImpl.BatchPresentationFieldEquals, List<WfTask>>();
             actorToTasksCache.put(actorId, lists);
         }
-        lists.put(new BatchPresentationStrongComparison(batchPresentation), tasks);
+        lists.put(new BatchPresentationFieldEquals(batchPresentation), tasks);
     }
 
     public void clearActorTasks(Long actorId) {
@@ -62,22 +62,24 @@ class TaskCacheImpl extends BaseCacheImpl implements TaskCache {
     }
 
     /**
-     * Class need to compare BatchPresentation with strongEquals, instead of equals criteria. It necessary in task list cache which using BatchPresentation as key.
+     * Class need to compare BatchPresentation with strongEquals, instead of
+     * equals criteria. It necessary in task list cache which using
+     * BatchPresentation as key.
      */
-    private static class BatchPresentationStrongComparison implements Serializable {
+    private static class BatchPresentationFieldEquals implements Serializable {
         private static final long serialVersionUID = 1L;
         BatchPresentation batchPresentation;
 
-        BatchPresentationStrongComparison(BatchPresentation batchPresentation) {
+        BatchPresentationFieldEquals(BatchPresentation batchPresentation) {
             this.batchPresentation = batchPresentation.clone();
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof TaskCacheImpl.BatchPresentationStrongComparison) {
-                return batchPresentation.strongEquals(((TaskCacheImpl.BatchPresentationStrongComparison) obj).batchPresentation);
+            if (obj instanceof TaskCacheImpl.BatchPresentationFieldEquals) {
+                return batchPresentation.fieldEquals(((TaskCacheImpl.BatchPresentationFieldEquals) obj).batchPresentation);
             } else if (obj instanceof BatchPresentation) {
-                return batchPresentation.strongEquals(obj);
+                return batchPresentation.fieldEquals((BatchPresentation) obj);
             }
             return false;
         }

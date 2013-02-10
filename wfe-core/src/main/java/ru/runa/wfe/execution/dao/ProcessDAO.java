@@ -38,7 +38,7 @@ public class ProcessDAO extends GenericDAO<Process> {
      */
 
     public List<Process> findAllProcesses(Long definitionId) {
-        return getHibernateTemplate().find("from Process where definition.id=? order by startDate desc", definitionId);
+        return getHibernateTemplate().find("from Process where deployment.id=? order by startDate desc", definitionId);
     }
 
     public Map<Long, Object> getVariableValueFromProcesses(final List<Long> processIds, final String variableName) {
@@ -81,7 +81,7 @@ public class ProcessDAO extends GenericDAO<Process> {
                 List<String> conditions = Lists.newArrayList();
                 Map<String, Object> parameters = Maps.newHashMap();
                 if (filter.getDefinitionName() != null) {
-                    conditions.add("definition.name=:definitionName");
+                    conditions.add("deployment.name=:definitionName");
                     parameters.put("definitionName", filter.getDefinitionName());
                 }
                 if (filter.getDefinitionVersion() != null) {

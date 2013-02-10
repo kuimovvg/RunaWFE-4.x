@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
@@ -45,7 +44,7 @@ public class UpdatePermissionOnRelation extends UpdatePermissionOnIdentifiableAc
     public static final String ACTION_PATH_NAME = "/updatePermissionOnRelation";
 
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId) {
         return Delegates.getRelationService().getRelation(user, identifiableId);
     }
 

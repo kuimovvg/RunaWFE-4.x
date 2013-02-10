@@ -27,6 +27,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.os.ParamRenderer;
@@ -68,12 +69,12 @@ public class SubstitutionDefinitions {
         return definitions;
     }
 
-    public static FunctionDef getByClassName(String className) {
+    public static FunctionDef getByClassNameNotNull(String className) {
         for (FunctionDef definition : definitions) {
             if (definition.getClassName().equals(className)) {
                 return definition;
             }
         }
-        return null;
+        throw new InternalApplicationException("No substitution definition found by name '" + className + "'");
     }
 }

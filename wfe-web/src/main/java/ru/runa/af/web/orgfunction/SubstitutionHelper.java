@@ -49,7 +49,7 @@ public class SubstitutionHelper {
     public static String getUserFriendlyOrgFunction(User user, String swimlaneInitializer) {
         StringBuffer result = new StringBuffer();
         OrgFunction function = OrgFunctionHelper.parseOrgFunction(swimlaneInitializer);
-        FunctionDef functionDef = SubstitutionDefinitions.getByClassName(function.getClass().getName());
+        FunctionDef functionDef = SubstitutionDefinitions.getByClassNameNotNull(function.getClass().getName());
         result.append(functionDef.getLabel());
         result.append("(");
         for (int i = 0; i < functionDef.getParams().size(); i++) {

@@ -4,11 +4,12 @@ import java.util.Set;
 
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
+import ru.runa.wfe.lang.EndTokenNode;
 import ru.runa.wfe.lang.NodeType;
 
 import com.google.common.collect.Sets;
 
-public class EndTokenNode extends ru.runa.wfe.lang.EndTokenNode {
+public class JpdlEndTokenNode extends EndTokenNode {
     private static final long serialVersionUID = 1L;
 
     @Override

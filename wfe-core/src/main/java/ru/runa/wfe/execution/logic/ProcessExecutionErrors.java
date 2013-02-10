@@ -102,8 +102,11 @@ public class ProcessExecutionErrors {
 
         @Override
         public boolean equals(Object obj) {
-            BotTaskIdentifier bti = (BotTaskIdentifier) obj;
-            return Objects.equal(bot.getUsername(), bti.bot.getUsername()) && Objects.equal(botTaskName, bti.botTaskName);
+            if (obj instanceof BotTaskIdentifier) {
+                BotTaskIdentifier bti = (BotTaskIdentifier) obj;
+                return Objects.equal(bot.getUsername(), bti.bot.getUsername()) && Objects.equal(botTaskName, bti.botTaskName);
+            }
+            return super.equals(obj);
         }
     }
 }

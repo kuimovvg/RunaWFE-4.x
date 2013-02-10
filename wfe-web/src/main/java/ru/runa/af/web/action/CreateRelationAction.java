@@ -26,10 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.CreateRelationForm;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
@@ -52,7 +50,6 @@ public class CreateRelationAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         CreateRelationForm relationForm = (CreateRelationForm) form;
         try {
             ExecutorService executorService = Delegates.getExecutorService();
@@ -61,10 +58,7 @@ public class CreateRelationAction extends ActionBase {
             Executor executorTo = executorService.getExecutor(getLoggedUser(request), relationForm.getRelationTo());
             relationService.addRelationPair(getLoggedUser(request), relationForm.getRelationName(), executorFrom, executorTo);
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return getFailureForward(mapping, relationForm);
         }
         return getSuccessForward(mapping, relationForm);

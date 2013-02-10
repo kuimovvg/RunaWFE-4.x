@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -31,8 +30,8 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.ProfileService;
-import ru.runa.service.SystemService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.user.Profile;
@@ -47,34 +46,33 @@ import ru.runa.wfe.user.User;
  *                        "true"
  * @struts.action-forward name="failure" path="/start.do" redirect = "true"
  */
-public class LoginAction extends Action {
+public class LoginAction extends ActionBase {
 
     /* this must be changed if "success" forward changed! */
     private final static String DEFAULT_TAB_FORWARD_NAME = "manage_tasks";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionForward forward = mapping.findForward(Resources.FORWARD_SUCCESS);
-        LoginForm loginForm = (LoginForm) form;
-        String login = loginForm.getLogin();
-        String password = loginForm.getPassword();
-
-        SystemService systemService = Delegates.getSystemService();
-        User user = Delegates.getAuthenticationService().authenticateByLoginPassword(login, password);
-        systemService.login(user, ASystem.INSTANCE);
-
-        HttpSession session = request.getSession();
-
-        ProfileService profileService = Delegates.getProfileService();
-        Profile profile = profileService.getProfile(user);
-        ProfileHttpSessionHelper.setProfile(profile, session);
-        Commons.setUser(user, session);
-        if (request.getParameter("forwardUrl") != null) {
-            forward = new ActionForward(request.getParameter("forwardUrl"));
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            LoginForm form = (LoginForm) actionForm;
+            User user = Delegates.getAuthenticationService().authenticateByLoginPassword(form.getLogin(), form.getPassword());
+            Delegates.getSystemService().login(user, ASystem.INSTANCE);
+            HttpSession session = request.getSession();
+            ProfileService profileService = Delegates.getProfileService();
+            Profile profile = profileService.getProfile(user);
+            ProfileHttpSessionHelper.setProfile(profile, session);
+            Commons.setUser(user, session);
+            TabHttpSessionHelper.setTabForwardName(DEFAULT_TAB_FORWARD_NAME, session);
+            saveToken(request);
+            if (request.getParameter("forwardUrl") != null) {
+                return new ActionForward(request.getParameter("forwardUrl"));
+            } else {
+                return mapping.findForward(Resources.FORWARD_SUCCESS);
+            }
+        } catch (Exception e) {
+            addError(request, e);
+            return mapping.findForward(Resources.FORWARD_FAILURE);
         }
-        TabHttpSessionHelper.setTabForwardName(DEFAULT_TAB_FORWARD_NAME, session);
-        saveToken(request);
-        return forward;
     }
 
 }
