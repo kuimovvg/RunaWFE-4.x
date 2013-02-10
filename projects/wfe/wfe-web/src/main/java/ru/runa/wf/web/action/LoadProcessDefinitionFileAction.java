@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -60,7 +59,7 @@ abstract class LoadProcessDefinitionFileAction extends ActionBase {
             os.write(bytes);
             os.flush();
         } catch (Exception e) {
-            LogFactory.getLog(getClass()).error("No file found: " + fileName, e);
+            log.error("No file found: " + fileName, e);
         }
         return null;
     }

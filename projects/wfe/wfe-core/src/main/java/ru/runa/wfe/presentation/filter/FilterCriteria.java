@@ -27,7 +27,7 @@ import ru.runa.wfe.presentation.hibernate.QueryParameter;
 
 import com.google.common.base.Objects;
 
-public abstract class FilterCriteria implements Cloneable, Serializable {
+public abstract class FilterCriteria implements Serializable {
     private static final long serialVersionUID = 1L;
     protected String[] filterTemplates;
     protected int templatesCount;
@@ -57,17 +57,6 @@ public abstract class FilterCriteria implements Cloneable, Serializable {
             Map<String, Object> queryNamedParameterNameValueMap);
 
     public abstract Criterion buildCriterion(String fieldName);
-
-    @Override
-    public FilterCriteria clone() {
-        try {
-            FilterCriteria clone = (FilterCriteria) super.clone();
-            clone.filterTemplates = filterTemplates.clone();
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError("Clone error");
-        }
-    }
 
     @Override
     public boolean equals(Object obj) {

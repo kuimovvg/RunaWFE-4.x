@@ -23,10 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.UpdatePasswordForm;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
@@ -53,18 +51,13 @@ public class UpdatePasswordAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         UpdatePasswordForm form = (UpdatePasswordForm) actionForm;
         try {
             ExecutorService executorService = Delegates.getExecutorService();
             Actor actor = executorService.getExecutor(getLoggedUser(request), form.getId());
             executorService.setPassword(getLoggedUser(request), actor, form.getPassword());
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, form.getId());
         }
         return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), IdForm.ID_INPUT_NAME, form.getId());

@@ -21,11 +21,9 @@ import java.util.List;
 
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
-import ru.runa.service.DefinitionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
@@ -43,9 +41,8 @@ public class DeployProcessDefinitionAction extends BaseDeployProcessDefinitionAc
     public static final String ACTION_PATH = "/deployProcessDefinition";
 
     @Override
-    protected void doAction(User user, FileForm fileForm, List<String> processType, ActionMessages errors) throws Exception {
-        DefinitionService definitionService = Delegates.getDefinitionService();
-        definitionService.deployProcessDefinition(user, fileForm.getFile().getFileData(), processType);
+    protected void doAction(User user, FileForm fileForm, List<String> processType) throws Exception {
+        Delegates.getDefinitionService().deployProcessDefinition(user, fileForm.getFile().getFileData(), processType);
     }
 
     @Override

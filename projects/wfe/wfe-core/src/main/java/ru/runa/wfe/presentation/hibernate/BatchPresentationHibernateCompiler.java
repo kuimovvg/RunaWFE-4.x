@@ -217,6 +217,11 @@ public class BatchPresentationHibernateCompiler {
                 concretteClass, idRestrictions);
     }
 
+    public void setParameters(Class<?> concretteClass, boolean enablePaging) {
+        // TODO get concretteClass from batchPresentation, check usage
+        parameters = new HibernateCompilerParameters(null, null, enablePaging, false, concretteClass);
+    }
+
     /**
      * Creates query to load data from database.
      * 

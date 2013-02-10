@@ -8,6 +8,8 @@ import java.util.List;
 import ru.runa.alfresco.ISynchronizable;
 import ru.runa.wfe.commons.CalendarUtil;
 
+import com.google.common.base.Objects;
+
 /**
  * Helper for comparison.
  * 
@@ -16,16 +18,10 @@ import ru.runa.wfe.commons.CalendarUtil;
 public class EqualsUtil {
 
     public static boolean equals(Object o1, Object o2) {
-        if (o1 == null && o2 == null) {
-            return true;
-        }
-        if ((o1 == null && o2 != null) || (o1 != null && o2 == null)) {
-            return false;
-        }
-        if (o1.getClass().isArray() && o2.getClass().isArray()) {
+        if (o1 != null && o2 != null && o1.getClass().isArray() && o2.getClass().isArray()) {
             return Arrays.equals((Object[]) o1, (Object[]) o2);
         }
-        return o1.equals(o2);
+        return Objects.equal(o1, o2);
     }
 
     public static boolean equals(Calendar c1, Calendar c2, boolean compareWithTime) {

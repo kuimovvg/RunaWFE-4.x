@@ -17,6 +17,7 @@
  */
 package ru.runa.common.web;
 
+import javax.security.auth.login.LoginException;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
@@ -24,8 +25,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.wfe.LocalizableException;
+import ru.runa.wf.web.VariablesFormatException;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.LocalizableException;
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
@@ -78,9 +80,9 @@ public class ActionExceptionHelper {
         return Commons.getMessage(actionMessage.getKey(), pageContext, actionMessage.getValues());
     }
 
-    private static ActionMessage getActionMessage(Throwable e) {
+    public static ActionMessage getActionMessage(Throwable e) {
         ActionMessage actionMessage;
-        if (e instanceof AuthenticationException) {
+        if (e instanceof AuthenticationException || e instanceof LoginException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_AUTHENTICATION);
         } else if (e instanceof AuthorizationException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_AUTHORIZATION);
@@ -136,10 +138,10 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_DOESNOT_EXISTS);
         } else if (e instanceof RelationAlreadyExistException) {
             actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_EXISTS, e.getMessage());
+        } else if (e instanceof VariablesFormatException) {
+            actionMessage = new ActionMessage(Messages.MESSAGE_WEB_CLIENT_VARIABLE_FORMAT_ERROR, ((VariablesFormatException) e).getErrorFields());
         } else if (e instanceof LocalizableException) {
             actionMessage = new ActionMessage(e.getLocalizedMessage(), false);
-        } else if (e instanceof InternalApplicationException) {
-            actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.getMessage());
         } else if (e instanceof InternalApplicationException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.getMessage());
         } else {

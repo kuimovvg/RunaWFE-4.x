@@ -19,7 +19,6 @@ package ru.runa.af.web.action;
 
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.UpdatePermissionOnIdentifiableAction;
@@ -42,7 +41,7 @@ public class UpdateBotStationPermissionAction extends UpdatePermissionOnIdentifi
     public static final String ACTION_PATH_NAME = "/updateBotStationPermission";
 
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId) {
         return BotStation.INSTANCE;
     }
 

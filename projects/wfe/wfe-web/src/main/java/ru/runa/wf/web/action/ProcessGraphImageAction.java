@@ -23,13 +23,11 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.form.TaskIdForm;
 
@@ -45,15 +43,14 @@ public class ProcessGraphImageAction extends ActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TaskIdForm idForm = (TaskIdForm) form;
         try {
-            ExecutionService executionService = Delegates.getExecutionService();
-            byte[] diagramBytes = executionService.getProcessDiagram(getLoggedUser(request), idForm.getId(), idForm.getTaskId(),
+            byte[] diagramBytes = Delegates.getExecutionService().getProcessDiagram(getLoggedUser(request), idForm.getId(), idForm.getTaskId(),
                     idForm.getChildProcessId());
             response.setContentType("image/png");
             OutputStream os = response.getOutputStream();
             os.write(diagramBytes);
             os.flush();
         } catch (Exception e) {
-            LogFactory.getLog(getClass()).warn(e.getMessage(), e);
+            log.warn("", e);
         }
         return null;
     }

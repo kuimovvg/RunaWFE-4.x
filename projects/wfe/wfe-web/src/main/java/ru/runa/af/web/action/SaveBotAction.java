@@ -8,9 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
@@ -30,9 +28,8 @@ public class SaveBotAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
-        IdForm idForm = (IdForm) form;
         try {
+            IdForm idForm = (IdForm) form;
             BotService botService = Delegates.getBotService();
             Bot bot = botService.getBot(getLoggedUser(request), idForm.getId());
             String fileName = bot.getUsername() + ".bot";
@@ -44,13 +41,8 @@ public class SaveBotAction extends ActionBase {
             out.write(archive);
             out.flush();
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
+            log.error("", e);
         }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
-        }
-
         return null;
     }
 }

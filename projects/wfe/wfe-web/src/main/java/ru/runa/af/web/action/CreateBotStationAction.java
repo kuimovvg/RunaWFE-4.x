@@ -6,10 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.BotStationForm;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.BotService;
@@ -32,17 +30,13 @@ public class CreateBotStationAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         BotStationForm form = (BotStationForm) actionForm;
         try {
             BotService botService = Delegates.getBotService();
             BotStation botStation = new BotStation(form.getBotStationName(), form.getBotStationRMIAddress());
             botService.createBotStation(getLoggedUser(request), botStation);
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
         }
         return mapping.findForward(Resources.FORWARD_SUCCESS);
     }

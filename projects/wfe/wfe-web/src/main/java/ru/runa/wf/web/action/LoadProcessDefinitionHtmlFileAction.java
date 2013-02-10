@@ -26,9 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
@@ -51,9 +49,7 @@ public class LoadProcessDefinitionHtmlFileAction extends ActionBase {
     private static MimetypesFileTypeMap fileTypeMap = new MimetypesFileTypeMap();
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        ActionMessages errors = new ActionMessages();
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         DefinitionFileForm form = (DefinitionFileForm) actionForm;
         Long id = form.getId();
         String fileName = form.getFileName();
@@ -76,11 +72,7 @@ public class LoadProcessDefinitionHtmlFileAction extends ActionBase {
                 os.flush();
             }
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return mapping.findForward(Resources.FORWARD_FAILURE);
         }
         return successForward;

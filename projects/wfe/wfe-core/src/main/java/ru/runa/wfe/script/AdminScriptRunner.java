@@ -70,6 +70,7 @@ import ru.runa.wfe.user.logic.ProfileLogic;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -1006,19 +1007,15 @@ public class AdminScriptRunner {
 
     public void addConfigurationsToBot(Element element) {
         String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
-        BotStation bs = null;
-        if (!Strings.isNullOrEmpty(botStationName)) {
-            bs = botLogic.getBotStationNotNull(botStationName);
-        }
+        Preconditions.checkNotNull(botStationName, BOTSTATION_ATTRIBUTE_NAME);
+        BotStation bs = botLogic.getBotStationNotNull(botStationName);
         addConfigurationsToBotCommon(element, bs);
     }
 
     public void removeConfigurationsFromBot(Element element) {
         String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
-        BotStation bs = null;
-        if (botStationName != null) {
-            bs = botLogic.getBotStationNotNull(botStationName);
-        }
+        Preconditions.checkNotNull(botStationName, BOTSTATION_ATTRIBUTE_NAME);
+        BotStation bs = botLogic.getBotStationNotNull(botStationName);
         removeConfigurationsFromBotCommon(element, bs);
     }
 

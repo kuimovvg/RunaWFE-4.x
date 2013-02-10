@@ -33,6 +33,7 @@ public class KrbLoginConfiguration extends Configuration {
     public KrbLoginConfiguration() {
     }
 
+    @Override
     public void refresh() {
     }
 
@@ -41,7 +42,6 @@ public class KrbLoginConfiguration extends Configuration {
         if (appName.equals(KrbSupportResources.getAppName())) {
             AppConfigurationEntry appConfigurationEntry = new AppConfigurationEntry(KrbSupportResources.getModuleClassName(),
                     AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, KrbSupportResources.getInitParameters());
-
             return new AppConfigurationEntry[] { appConfigurationEntry };
         }
         return null;

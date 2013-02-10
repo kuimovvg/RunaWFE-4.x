@@ -39,6 +39,7 @@ import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
@@ -72,7 +73,7 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
         Interaction wfForm = definitionService.getTaskInteraction(user, taskId);
         Map<String, Object> variables = getFormVariables(request, actionForm, wfForm);
 
-        BatchPresentation batchPresentation = profile.getActiveBatchPresentation("listTasksForm").clone();
+        BatchPresentation batchPresentation = profile.getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS);
         List<WfTask> tasks = executionService.getTasks(user, batchPresentation);
         Long processId = null;
         for (WfTask task : tasks) {

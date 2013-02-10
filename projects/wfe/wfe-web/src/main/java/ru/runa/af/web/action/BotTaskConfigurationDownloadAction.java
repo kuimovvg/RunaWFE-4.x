@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -30,7 +28,6 @@ import com.google.common.base.Charsets;
  */
 public class BotTaskConfigurationDownloadAction extends ActionBase {
     public static final String DOWNLOAD_BOT_TASK_CONFIGURATION_ACTION_PATH = "/download_bot_task_configuration";
-    private static final Log log = LogFactory.getLog(BotTaskConfigurationDownloadAction.class);
 
     @Override
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {

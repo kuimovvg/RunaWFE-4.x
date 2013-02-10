@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
@@ -53,7 +52,7 @@ public class GrantReadPermissionOnExecutorAction extends GrantPermisionOnIdentif
     private static List<Permission> READ_PERMISSONS = Lists.newArrayList(Permission.READ);
 
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId) {
         return Delegates.getExecutorService().getExecutor(user, identifiableId);
     }
 

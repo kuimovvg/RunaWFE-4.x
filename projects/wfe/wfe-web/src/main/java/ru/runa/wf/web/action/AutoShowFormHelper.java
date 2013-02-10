@@ -30,6 +30,7 @@ import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
@@ -42,7 +43,7 @@ public class AutoShowFormHelper {
 
     public static ActionForward getNextActionForward(User user, ActionMapping mapping, Profile profile, Long processId) {
         ExecutionService executionService = Delegates.getExecutionService();
-        BatchPresentation batchPresentation = profile.getActiveBatchPresentation("listTasksForm").clone();
+        BatchPresentation batchPresentation = profile.getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS);
         List<WfTask> tasks = executionService.getTasks(user, batchPresentation);
         List<WfTask> currentTasks = new ArrayList<WfTask>();
         for (WfTask task : tasks) {
@@ -58,7 +59,6 @@ public class AutoShowFormHelper {
             // list tasks
             return mapping.findForward(LOCAL_FORWARD_TASKS_LIST);
         }
-
         return null;
     }
 }

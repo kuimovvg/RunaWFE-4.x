@@ -20,13 +20,12 @@ package ru.runa.af.web.action;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.af.web.form.BotStationForm;
-import ru.runa.service.BotService;
+import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 
@@ -36,15 +35,18 @@ import ru.runa.wfe.bot.BotStation;
  * @struts:action path="/stop_periodic_bots_invocation" name="botStationForm"
  *                validate="false" input = "/WEB-INF/wf/bot_station.jsp"
  */
-public class StopPeriodicBotsInvocationAction extends Action {
+public class StopPeriodicBotsInvocationAction extends ActionBase {
     public static final String STOP_PERIODIC_BOTS_INVOCATION = "/stop_periodic_bots_invocation";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Long id = ((BotStationForm) form).getBotStationId();
-        BotService botService = Delegates.getBotService();
-        BotStation botStation = botService.getBotStation(id);
-        Delegates.getBotInvokerService(botStation.getAddress()).cancelPeriodicBotsInvocation();
+        try {
+            BotStation botStation = Delegates.getBotService().getBotStation(id);
+            Delegates.getBotInvokerService(botStation.getAddress()).cancelPeriodicBotsInvocation();
+        } catch (Exception e) {
+            addError(request, e);
+        }
         return new ActionForward("/bot_station.do?botStationId=" + id);
     }
 }

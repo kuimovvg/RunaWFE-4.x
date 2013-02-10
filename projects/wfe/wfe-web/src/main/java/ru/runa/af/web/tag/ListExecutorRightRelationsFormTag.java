@@ -109,12 +109,7 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
 
     @Override
     protected Executor getIdentifiable() {
-        ExecutorService executorService = Delegates.getExecutorService();
-        try {
-            return executorService.getExecutor(getUser(), getIdentifiableId());
-        } catch (Exception e) {
-            return null;
-        }
+        return Delegates.getExecutorService().getExecutor(getUser(), getIdentifiableId());
     }
 
     @Override

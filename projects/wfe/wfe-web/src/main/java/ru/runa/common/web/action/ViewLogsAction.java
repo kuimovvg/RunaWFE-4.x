@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -32,57 +31,61 @@ import com.google.common.io.Closeables;
  * @author dofs
  * 
  * @struts:action path="/viewLogs" name="viewLogForm" validate="false"
- * @struts.action-forward name="success" path="/displayLogs.do" redirect = "false"
+ * @struts.action-forward name="success" path="/displayLogs.do" redirect =
+ *                        "false"
  */
-public class ViewLogsAction extends Action {
+public class ViewLogsAction extends ActionBase {
     public static final String ACTION_PATH = "/viewLogs";
     private static int limitLinesCount = WebResources.getViewLogsLimitLinesCount();
     private static int autoReloadTimeoutSec = WebResources.getViewLogsAutoReloadTimeout();
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        String logDirPath = IOCommons.getLogDirPath();
-        request.setAttribute("logDirPath", logDirPath);
-        ViewLogForm form = (ViewLogForm) actionForm;
-        if (form.getFileName() != null) {
-            File file = new File(logDirPath, form.getFileName());
-            int allLinesCount = countLines(file);
-            form.setAllLinesCount(allLinesCount);
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            String logDirPath = IOCommons.getLogDirPath();
+            request.setAttribute("logDirPath", logDirPath);
+            ViewLogForm form = (ViewLogForm) actionForm;
+            if (form.getFileName() != null) {
+                File file = new File(logDirPath, form.getFileName());
+                int allLinesCount = countLines(file);
+                form.setAllLinesCount(allLinesCount);
 
-            if (form.getMode() == ViewLogForm.MODE_PAGING) {
-                request.setAttribute("pagingToolbar", createPagingToolbar(form));
-            }
+                if (form.getMode() == ViewLogForm.MODE_PAGING) {
+                    request.setAttribute("pagingToolbar", createPagingToolbar(form));
+                }
 
-            String logFileContent;
-            if (form.getMode() == ViewLogForm.MODE_SEARCH) {
-                List<Integer> lineNumbers = new ArrayList<Integer>();
-                String lines = searchLines(file, form, lineNumbers);
-                StringBuffer b = new StringBuffer(lines.length() + 200);
-                b.append("<table class=\"log\"><tr><td class=\"lineNumbers\">");
-                for (Integer num : lineNumbers) {
-                    b.append(num).append("<br>");
+                String logFileContent;
+                if (form.getMode() == ViewLogForm.MODE_SEARCH) {
+                    List<Integer> lineNumbers = new ArrayList<Integer>();
+                    String lines = searchLines(file, form, lineNumbers);
+                    StringBuffer b = new StringBuffer(lines.length() + 200);
+                    b.append("<table class=\"log\"><tr><td class=\"lineNumbers\">");
+                    for (Integer num : lineNumbers) {
+                        b.append(num).append("<br>");
+                    }
+                    b.append("</td><td class=\"content\">");
+                    b.append(lines);
+                    b.append("</td></tr></table>");
+                    logFileContent = b.toString();
+                } else {
+                    String lines = readLines(file, form);
+                    StringBuffer b = new StringBuffer(lines.length() + 200);
+                    b.append("<table class=\"log\"><tr><td class=\"lineNumbers\">");
+                    for (int i = form.getStartLine(); i <= form.getEndLine(); i++) {
+                        b.append(i).append("<br>");
+                    }
+                    b.append("</td><td class=\"content\">");
+                    b.append(lines);
+                    b.append("</td></tr></table>");
+                    logFileContent = b.toString();
                 }
-                b.append("</td><td class=\"content\">");
-                b.append(lines);
-                b.append("</td></tr></table>");
-                logFileContent = b.toString();
-            } else {
-                String lines = readLines(file, form);
-                StringBuffer b = new StringBuffer(lines.length() + 200);
-                b.append("<table class=\"log\"><tr><td class=\"lineNumbers\">");
-                for (int i = form.getStartLine(); i <= form.getEndLine(); i++) {
-                    b.append(i).append("<br>");
-                }
-                b.append("</td><td class=\"content\">");
-                b.append(lines);
-                b.append("</td></tr></table>");
-                logFileContent = b.toString();
+                request.setAttribute("logFileContent", logFileContent);
             }
-            request.setAttribute("logFileContent", logFileContent);
+            form.setLimitLinesCount(limitLinesCount);
+            request.setAttribute("autoReloadTimeoutSec", autoReloadTimeoutSec);
+        } catch (Exception e) {
+            addError(request, e);
         }
-        form.setLimitLinesCount(limitLinesCount);
-        request.setAttribute("autoReloadTimeoutSec", autoReloadTimeoutSec);
         return mapping.findForward(Resources.FORWARD_SUCCESS);
     }
 

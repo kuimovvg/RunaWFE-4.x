@@ -38,7 +38,7 @@ import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.lang.VariableContainerNode;
 import ru.runa.wfe.lang.WaitState;
-import ru.runa.wfe.lang.jpdl.EndTokenNode;
+import ru.runa.wfe.lang.jpdl.JpdlEndTokenNode;
 import ru.runa.wfe.lang.jpdl.Join;
 import ru.runa.wfe.var.VariableMapping;
 
@@ -90,7 +90,7 @@ public class JpdlXmlReader {
     private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
     static {
         nodeTypes.put("start-state", StartState.class);
-        nodeTypes.put("end-token-state", EndTokenNode.class);
+        nodeTypes.put("end-token-state", JpdlEndTokenNode.class);
         nodeTypes.put("end-state", EndNode.class);
         nodeTypes.put("wait-state", WaitState.class);
         nodeTypes.put("task-node", TaskNode.class);

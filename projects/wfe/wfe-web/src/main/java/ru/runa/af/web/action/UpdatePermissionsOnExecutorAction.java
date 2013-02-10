@@ -19,7 +19,6 @@ package ru.runa.af.web.action;
 
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
@@ -44,7 +43,7 @@ public class UpdatePermissionsOnExecutorAction extends UpdatePermissionOnIdentif
     public static final String ACTION_PATH = "/updatePermissionsOnExecutor";
 
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId) {
         return Delegates.getExecutorService().getExecutor(user, identifiableId);
     }
 

@@ -8,10 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.Native2AsciiHelper;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.service.BotService;
@@ -35,7 +33,6 @@ public class UpdateBotTaskConfigurationAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         IdForm idForm = (IdForm) form;
         BotService botService = Delegates.getBotService();
         try {
@@ -61,7 +58,7 @@ public class UpdateBotTaskConfigurationAction extends ActionBase {
             out.println("</response>");
             out.close();
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
+            log.error("", e);
         }
         return null;
     }
