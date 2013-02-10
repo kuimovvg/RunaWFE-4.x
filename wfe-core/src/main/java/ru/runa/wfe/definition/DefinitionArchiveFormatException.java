@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.definition;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Signals that process definition file is not archive or archive has unsupported format.
  */
-public class DefinitionArchiveFormatException extends WfException {
+public class DefinitionArchiveFormatException extends InternalApplicationException {
 
     private static final long serialVersionUID = 691334070620809955L;
 

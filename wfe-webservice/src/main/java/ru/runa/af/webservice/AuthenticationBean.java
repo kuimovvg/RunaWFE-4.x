@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.WSLoggerInterceptor;
-import ru.runa.service.af.AuthenticationService;
+import ru.runa.service.AuthenticationService;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
 import ru.runa.wfe.security.logic.AuthenticationLogic;

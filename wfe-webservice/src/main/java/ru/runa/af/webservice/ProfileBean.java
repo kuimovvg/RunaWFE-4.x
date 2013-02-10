@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.WSLoggerInterceptor;
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
@@ -97,7 +97,7 @@ public class ProfileBean {
             String name = batchPresentation.getName();
             if (name.equals("source")) {
                 if (srcBatch != null) {
-                    throw new WfException("Only one source batchPresentation is allowed inside replicateBatchPresentation.");
+                    throw new InternalApplicationException("Only one source batchPresentation is allowed inside replicateBatchPresentation.");
                 }
                 srcBatch = readBatchPresentation(user, batchPresentation);
                 continue;
@@ -106,11 +106,11 @@ public class ProfileBean {
                 replaceableBatchPresentations.add(readBatchPresentation(user, batchPresentation));
                 continue;
             }
-            throw new WfException("BatchPresentation with name '" + name + "' is not allowed inside replicateBatchPresentation.");
+            throw new InternalApplicationException("BatchPresentation with name '" + name + "' is not allowed inside replicateBatchPresentation.");
         }
 
         if (srcBatch == null) {
-            throw new WfException("No source BatchPresentation in replicateBatchPresentation found.");
+            throw new InternalApplicationException("No source BatchPresentation in replicateBatchPresentation found.");
         }
 
         if (batchPresentationNewName == null || batchPresentationNewName.equals("")) {

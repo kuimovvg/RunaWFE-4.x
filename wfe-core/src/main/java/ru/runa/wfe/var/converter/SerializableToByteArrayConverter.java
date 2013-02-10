@@ -29,7 +29,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.Converter;
 
 public class SerializableToByteArrayConverter implements Converter {
@@ -52,7 +52,7 @@ public class SerializableToByteArrayConverter implements Converter {
             objectStream.flush();
             return memoryStream.toByteArray();
         } catch (IOException e) {
-            throw new WfException("couldn't serialize '" + o + "'", e);
+            throw new InternalApplicationException("couldn't serialize '" + o + "'", e);
         }
     }
 
@@ -64,9 +64,9 @@ public class SerializableToByteArrayConverter implements Converter {
             ObjectInputStream objectStream = new ObjectInputStream(memoryStream);
             return objectStream.readObject();
         } catch (IOException ex) {
-            throw new WfException("failed to read object", ex);
+            throw new InternalApplicationException("failed to read object", ex);
         } catch (ClassNotFoundException ex) {
-            throw new WfException("serialized object class not found", ex);
+            throw new InternalApplicationException("serialized object class not found", ex);
         }
     }
 

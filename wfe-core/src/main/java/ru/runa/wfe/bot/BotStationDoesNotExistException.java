@@ -17,13 +17,13 @@
  */
 package ru.runa.wfe.bot;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * 
  * @author petr_mikheev
  */
-public class BotStationDoesNotExistException extends WfException {
+public class BotStationDoesNotExistException extends InternalApplicationException {
     private static final long serialVersionUID = 1L;
     private final String botstationName;
 

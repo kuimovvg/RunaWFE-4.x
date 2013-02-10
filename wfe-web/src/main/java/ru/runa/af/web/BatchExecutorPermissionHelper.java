@@ -20,7 +20,7 @@ package ru.runa.af.web;
 import java.util.HashSet;
 import java.util.List;
 
-import ru.runa.service.af.AuthorizationService;
+import ru.runa.service.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Permission;

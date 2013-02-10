@@ -2,7 +2,7 @@ package ru.runa.service.delegate;
 
 import java.util.List;
 
-import ru.runa.service.wf.BotService;
+import ru.runa.service.BotService;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;

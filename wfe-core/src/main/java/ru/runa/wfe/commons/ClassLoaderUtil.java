@@ -27,7 +27,7 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Properties;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -58,7 +58,7 @@ public class ClassLoaderUtil {
         try {
             return loadClass(className, ClassLoaderUtil.class);
         } catch (ClassNotFoundException e) {
-            throw new WfException("class not found '" + className + "'", e);
+            throw new InternalApplicationException("class not found '" + className + "'", e);
         }
     }
 
@@ -82,7 +82,7 @@ public class ClassLoaderUtil {
             properties.load(is);
             is.close();
         } catch (IOException e) {
-            throw new WfException("couldn't load properties file '" + resource + "'", e);
+            throw new InternalApplicationException("couldn't load properties file '" + resource + "'", e);
         }
         return properties;
     }
@@ -117,7 +117,7 @@ public class ClassLoaderUtil {
     public static URL getAsURLNotNull(String resourceName, Class<?> callingClass) {
         URL url = getAsURL(resourceName, callingClass);
         if (url == null) {
-            throw new WfException("No resource found by '" + resourceName + "'");
+            throw new InternalApplicationException("No resource found by '" + resourceName + "'");
         }
         return url;
     }
@@ -152,7 +152,7 @@ public class ClassLoaderUtil {
     public static InputStream getAsStreamNotNull(String resourceName, Class<?> callingClass) {
         InputStream stream = getAsStream(resourceName, callingClass);
         if (stream == null) {
-            throw new WfException("No resource found by '" + resourceName + "'");
+            throw new InternalApplicationException("No resource found by '" + resourceName + "'");
         }
         return stream;
     }

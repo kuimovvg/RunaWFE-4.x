@@ -19,7 +19,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import ru.runa.alfresco.AlfSession;
 import ru.runa.alfresco.WSConnectionSettings;
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.FileVariable;
 
 import com.google.common.io.ByteStreams;
@@ -54,7 +54,7 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
         int statusCode = response.getStatusLine().getStatusCode();
         log.debug("WebScript status code = " + statusCode);
         if (statusCode != 200 && throwExceptionOnErrorState()) {
-            throw new WfException("WebScript " + request.getRequestLine() + " status code is " + statusCode);
+            throw new InternalApplicationException("WebScript " + request.getRequestLine() + " status code is " + statusCode);
         }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         response.getEntity().writeTo(baos);

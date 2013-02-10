@@ -20,7 +20,7 @@ package ru.runa.wfe.ss;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
@@ -50,7 +50,7 @@ public class SubstitutionCriteriaSwimlane extends SubstitutionCriteria {
     @Override
     public void validate() {
         if (Strings.isNullOrEmpty(getConfiguration())) {
-            throw new WfException(getClass().getName() + ": invalid configuration");
+            throw new InternalApplicationException(getClass().getName() + ": invalid configuration");
         }
     }
 

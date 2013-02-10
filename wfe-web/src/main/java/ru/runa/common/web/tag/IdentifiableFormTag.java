@@ -21,7 +21,7 @@ import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.af.AuthorizationService;
+import ru.runa.service.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;

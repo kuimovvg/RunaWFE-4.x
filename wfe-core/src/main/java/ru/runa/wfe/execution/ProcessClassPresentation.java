@@ -100,15 +100,15 @@ public class ProcessClassPresentation extends ClassPresentation {
                 // value/show in web getter param
                 new FieldDescriptor(BATCH_PRESENTATION_ID, Integer.class.getName(), new DefaultDBSource(Process.class, "id"), true,
                         FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "id" }),
-                new FieldDescriptor(BATCH_PRESENTATION_DEFINITION_NAME, String.class.getName(), new DefaultDBSource(Process.class,
-                        "definition.name"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
-                        new Permission(), "name" }),
+                new FieldDescriptor(BATCH_PRESENTATION_DEFINITION_NAME, String.class.getName(),
+                        new DefaultDBSource(Process.class, "deployment.name"), true, FieldFilterMode.DATABASE,
+                        "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "name" }),
                 new FieldDescriptor(BATCH_PRESENTATION_STARTED, Date.class.getName(), new DefaultDBSource(Process.class, "startDate"), true,
                         FieldFilterMode.DATABASE, "ru.runa.wf.web.html.ProcessStartDateTDBuilder", new Object[] {}),
                 new FieldDescriptor(BATCH_PRESENTATION_ENDED, Date.class.getName(), new DefaultDBSource(Process.class, "endDate"), true,
                         FieldFilterMode.DATABASE, "ru.runa.wf.web.html.ProcessEndDateTDBuilder", new Object[] {}),
                 new FieldDescriptor(BATCH_PRESENTATION_DEFINITION_VERSION, Integer.class.getName(), new DefaultDBSource(Process.class,
-                        "processDefinition.version"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
+                        "deployment.version"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
                         new Permission(), "version" }),
                 new FieldDescriptor(filterable_prefix + "batch_presentation.process.id", AnywhereStringFilterCriteria.class.getName(),
                         new DefaultDBSource(Process.class, "hierarchySubProcess"), true, FieldFilterMode.DATABASE,

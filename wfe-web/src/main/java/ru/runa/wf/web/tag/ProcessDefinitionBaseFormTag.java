@@ -18,8 +18,8 @@
 package ru.runa.wf.web.tag;
 
 import ru.runa.common.web.tag.IdentifiableFormTag;
+import ru.runa.service.DefinitionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.security.Identifiable;
 

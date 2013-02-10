@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.os;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Indicates any generic error during organization function invocation
  */
-public class OrgFunctionException extends WfException {
+public class OrgFunctionException extends InternalApplicationException {
     private static final long serialVersionUID = 1L;
 
     public OrgFunctionException(String message) {

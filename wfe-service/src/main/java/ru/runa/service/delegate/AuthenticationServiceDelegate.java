@@ -17,7 +17,7 @@
  */
 package ru.runa.service.delegate;
 
-import ru.runa.service.af.AuthenticationService;
+import ru.runa.service.AuthenticationService;
 import ru.runa.wfe.user.User;
 
 public class AuthenticationServiceDelegate extends EJB3Delegate implements AuthenticationService {

@@ -19,7 +19,7 @@ package ru.runa.service.delegate;
 
 import java.util.List;
 
-import ru.runa.service.af.ExecutorService;
+import ru.runa.service.ExecutorService;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -50,11 +50,6 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public void remove(User user, Executor executor) {
-        getExecutorService().remove(user, executor);
-    }
-
-    @Override
     public void update(User user, Executor executor) {
         getExecutorService().update(user, executor);
     }
@@ -65,8 +60,8 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public int getAllCount(User user, BatchPresentation batchPresentation) {
-        return getExecutorService().getAllCount(user, batchPresentation);
+    public int getExecutorsCount(User user, BatchPresentation batchPresentation) {
+        return getExecutorService().getExecutorsCount(user, batchPresentation);
     }
 
     @Override
@@ -77,11 +72,6 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     @Override
     public Actor getActorCaseInsensitive(String login) {
         return getExecutorService().getActorCaseInsensitive(login);
-    }
-
-    @Override
-    public List<Group> getGroups(User user, List<Long> ids) {
-        return getExecutorService().getGroups(user, ids);
     }
 
     @Override
@@ -100,28 +90,13 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public void addExecutorToGroups(User user, Executor executor, List<Group> groups) {
-        getExecutorService().addExecutorToGroups(user, executor, groups);
-    }
-
-    @Override
     public void addExecutorToGroups(User user, Long executorId, List<Long> groupIds) {
         getExecutorService().addExecutorToGroups(user, executorId, groupIds);
     }
 
     @Override
-    public void removeExecutorsFromGroup(User user, List<? extends Executor> executors, Group group) {
-        getExecutorService().removeExecutorsFromGroup(user, executors, group);
-    }
-
-    @Override
     public void removeExecutorsFromGroup(User user, List<Long> executorIds, Long groupId) {
         getExecutorService().removeExecutorsFromGroup(user, executorIds, groupId);
-    }
-
-    @Override
-    public void removeExecutorFromGroups(User user, Executor executor, List<Group> groups) {
-        getExecutorService().removeExecutorFromGroups(user, executor, groups);
     }
 
     @Override
@@ -187,26 +162,6 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     @Override
     public boolean isExecutorExist(User user, String executorName) {
         return getExecutorService().isExecutorExist(user, executorName);
-    }
-
-    @Override
-    public List<Actor> getActorsByCodes(User user, List<Long> codes) {
-        return getExecutorService().getActorsByCodes(user, codes);
-    }
-
-    @Override
-    public List<Actor> getAvailableActorsByCodes(User user, List<Long> codes) {
-        return getExecutorService().getAvailableActorsByCodes(user, codes);
-    }
-
-    @Override
-    public List<Actor> getActorsByExecutorIds(User user, List<Long> executorIds) {
-        return getExecutorService().getActorsByExecutorIds(user, executorIds);
-    }
-
-    @Override
-    public List<Actor> getActors(User user, List<Long> ids) {
-        return getExecutorService().getActors(user, ids);
     }
 
     @Override

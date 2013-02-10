@@ -31,7 +31,6 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.af.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
@@ -53,12 +52,11 @@ public class AddMembersToGroupAction extends ActionBase {
     public static final String ACTION_PATH = "/addMembersToGroup";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         ActionMessages errors = new ActionMessages();
         IdsForm groupsForm = (IdsForm) form;
         try {
-            ExecutorService executorService = Delegates.getExecutorService();
-            executorService.addExecutorsToGroup(getLoggedUser(request), Lists.newArrayList(groupsForm.getIds()), groupsForm.getId());
+            Delegates.getExecutorService().addExecutorsToGroup(getLoggedUser(request), Lists.newArrayList(groupsForm.getIds()), groupsForm.getId());
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }

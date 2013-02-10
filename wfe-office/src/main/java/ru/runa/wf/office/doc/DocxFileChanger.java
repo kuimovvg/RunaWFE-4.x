@@ -16,7 +16,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 
 import ru.runa.wf.office.doc.DocxConfig.TableConfig;
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.format.VariableFormat;
 
@@ -67,7 +67,7 @@ public class DocxFileChanger {
             }
             styleNames.add(name);
         }
-        throw new WfException("Style '" + styleName + "' not found in template, all style names: " + styleNames);
+        throw new InternalApplicationException("Style '" + styleName + "' not found in template, all style names: " + styleNames);
     }
 
     private void handleParagraph(XWPFParagraph paragraph) throws Exception {
@@ -76,7 +76,7 @@ public class DocxFileChanger {
             return;
         }
         if (!pText.contains(PLACEHOLDER_END)) {
-            throw new WfException("No placeholder end found in " + pText);
+            throw new InternalApplicationException("No placeholder end found in " + pText);
         }
         List<XWPFRun> runs = paragraph.getRuns();
         for (int i = 0; i < runs.size(); i++) {
@@ -91,7 +91,7 @@ public class DocxFileChanger {
                 // search end in next run
                 int nextIndex = i + 1;
                 if (runs.size() <= nextIndex) {
-                    throw new WfException("No placeholder end can be found in " + pText);
+                    throw new InternalApplicationException("No placeholder end can be found in " + pText);
                 }
                 run = runs.get(nextIndex);
                 text = run.getText(0);
@@ -144,7 +144,7 @@ public class DocxFileChanger {
                 Object value = variableProvider.getValue(placeholder);
                 if (value == null) {
                     if (config.isStrictMode()) {
-                        throw new WfException("No template variable defined in process: '" + placeholder + "'");
+                        throw new InternalApplicationException("No template variable defined in process: '" + placeholder + "'");
                     }
                     continue;
                 }

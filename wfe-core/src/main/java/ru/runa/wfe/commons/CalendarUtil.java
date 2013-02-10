@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Helper for {@link Calendar} and {@link CalendarInterval}.
@@ -19,6 +19,7 @@ import ru.runa.wfe.WfException;
  * @since 4.0
  */
 public class CalendarUtil {
+    // TODO define in settings default formats
     public static final DateFormat DATE_WITHOUT_TIME_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
     public static final DateFormat DATE_WITH_HOUR_MINUTES_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     public static final DateFormat DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
@@ -223,7 +224,7 @@ public class CalendarUtil {
         List<CalendarInterval> source = Arrays.asList(interval1, interval2);
         List<CalendarInterval> merged = mergeIntersectingIntervalsNotOrdered(source);
         if (merged.size() != 1) {
-            throw new WfException("Seems like intervals not intersecting " + source);
+            throw new InternalApplicationException("Seems like intervals not intersecting " + source);
         }
         return merged.get(0);
     }
@@ -393,13 +394,14 @@ public class CalendarUtil {
         return result;
     }
 
-    public static synchronized Date convertToDate(String dateAsString, DateFormat dateFormat) {
+    public static synchronized Date convertToDate(String dateAsString, DateFormat format) {
         try {
-            synchronized (dateFormat) {
-                return dateFormat.parse(dateAsString);
+            synchronized (format) {
+                return format.parse(dateAsString);
             }
         } catch (ParseException e) {
-            throw new WfException("Unable parse " + dateAsString + " with format " + dateFormat, e);
+            String pattern = format instanceof SimpleDateFormat ? ((SimpleDateFormat) format).toPattern() : format.toString();
+            throw new InternalApplicationException("Unable parse " + dateAsString + " with " + pattern, e);
         }
     }
 

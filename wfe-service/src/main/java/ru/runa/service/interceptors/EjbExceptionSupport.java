@@ -7,7 +7,7 @@ import javax.interceptor.InvocationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.wf.impl.MessagePostponedException;
+import ru.runa.service.impl.MessagePostponedException;
 
 import com.google.common.base.Throwables;
 

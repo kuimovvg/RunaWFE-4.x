@@ -20,8 +20,8 @@ package ru.runa.wf.logic.bot;
 import java.io.InputStream;
 import java.util.Map;
 
+import ru.runa.service.DefinitionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTask;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTaskXmlParser;
 import ru.runa.wfe.commons.ClassLoaderUtil;

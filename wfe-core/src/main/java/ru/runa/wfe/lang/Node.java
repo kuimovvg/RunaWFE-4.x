@@ -24,7 +24,7 @@ package ru.runa.wfe.lang;
 import java.util.List;
 import java.util.Set;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.NodeEnterLog;
 import ru.runa.wfe.audit.NodeLeaveLog;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -106,7 +106,7 @@ public abstract class Node extends GraphElement {
     public Transition getLeavingTransitionNotNull(String transitionName) {
         Transition transition = getLeavingTransition(transitionName);
         if (transition == null) {
-            throw new WfException("leaving transition '" + transitionName + "' does not exist in " + this);
+            throw new InternalApplicationException("leaving transition '" + transitionName + "' does not exist in " + this);
         }
         return transition;
     }
@@ -123,7 +123,7 @@ public abstract class Node extends GraphElement {
         if (leavingTransitions.size() > 0) {
             return leavingTransitions.get(0);
         }
-        throw new WfException("No leaving transitions in " + this);
+        throw new InternalApplicationException("No leaving transitions in " + this);
     }
 
     /**

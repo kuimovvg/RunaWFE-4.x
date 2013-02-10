@@ -17,7 +17,7 @@
  */
 package ru.runa.service.delegate;
 
-import ru.runa.service.af.ProfileService;
+import ru.runa.service.ProfileService;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;

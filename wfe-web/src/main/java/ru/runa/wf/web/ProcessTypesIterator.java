@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import ru.runa.service.DefinitionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;

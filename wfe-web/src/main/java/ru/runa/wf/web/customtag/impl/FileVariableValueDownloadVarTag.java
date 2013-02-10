@@ -26,7 +26,7 @@ import org.apache.ecs.html.A;
 
 import ru.runa.common.web.Commons;
 import ru.runa.wf.web.customtag.VarTag;
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.user.User;
@@ -45,7 +45,7 @@ public class FileVariableValueDownloadVarTag implements VarTag {
         }
         String processIdParam = pageContext.getRequest().getParameter("id");
         if (processIdParam == null) {
-            throw new WfException("id param was not passed correctly to FileVariableValueDownloadVarTag");
+            throw new InternalApplicationException("id param was not passed correctly to FileVariableValueDownloadVarTag");
         }
         FileVariable fileVariable = TypeConversionUtil.convertTo(var, FileVariable.class);
         A ahref = new A();

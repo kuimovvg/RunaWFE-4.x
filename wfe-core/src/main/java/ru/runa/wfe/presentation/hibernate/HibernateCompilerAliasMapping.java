@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.FieldDescriptor;
@@ -52,7 +52,7 @@ public class HibernateCompilerAliasMapping {
         for (int idx = 0; idx < fields.length; ++idx) {
             FieldDescriptor field = fields[idx];
             if (field.dbSources == null) {
-                throw new WfException("Field dbSource is null. Something wrong with batchPresentation '"
+                throw new InternalApplicationException("Field dbSource is null. Something wrong with batchPresentation '"
                         + batchPresentation.getCategory() + "'");
             }
             if (field.dbSources[0].getSourceObject().equals(batchPresentation.getClassPresentation().getPresentationClass())) {

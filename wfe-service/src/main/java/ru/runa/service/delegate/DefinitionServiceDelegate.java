@@ -19,7 +19,7 @@ package ru.runa.service.delegate;
 
 import java.util.List;
 
-import ru.runa.service.wf.DefinitionService;
+import ru.runa.service.DefinitionService;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;

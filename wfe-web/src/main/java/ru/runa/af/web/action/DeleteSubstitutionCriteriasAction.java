@@ -17,7 +17,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.SubstitutionCriteriasForm;
-import ru.runa.service.af.SubstitutionService;
+import ru.runa.service.SubstitutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;

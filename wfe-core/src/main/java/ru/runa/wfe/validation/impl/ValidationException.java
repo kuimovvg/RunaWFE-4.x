@@ -24,7 +24,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -35,7 +35,7 @@ import com.google.common.collect.Maps;
  * @author Dofs
  * @since 3.0
  */
-public class ValidationException extends WfException {
+public class ValidationException extends InternalApplicationException {
     private static final long serialVersionUID = 5L;
 
     @XmlTransient

@@ -18,7 +18,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.CalendarUtil;
 
 import com.google.common.base.Throwables;
@@ -37,7 +37,7 @@ public class JavaObjectAccessor {
         this.alfObject = alfObject;
     }
 
-    public void setProperty(AlfSerializerDesc desc, Serializable value) throws WfException {
+    public void setProperty(AlfSerializerDesc desc, Serializable value) throws InternalApplicationException {
         try {
             String fieldName = desc.getFieldName();
             if (desc.isNodeReference()) {
@@ -77,7 +77,7 @@ public class JavaObjectAccessor {
         PropertyUtils.setProperty(alfObject, propertyName, value);
     }
 
-    public Map<QName, Serializable> getAlfrescoProperties(AlfTypeDesc typeDesc, boolean all, boolean includeName) throws WfException {
+    public Map<QName, Serializable> getAlfrescoProperties(AlfTypeDesc typeDesc, boolean all, boolean includeName) throws InternalApplicationException {
         Map<QName, Serializable> props = new HashMap<QName, Serializable>();
         Collection<AlfSerializerDesc> propDescs;
         if (all) {
@@ -99,7 +99,7 @@ public class JavaObjectAccessor {
         return props;
     }
 
-    public Serializable getProperty(AlfSerializerDesc desc) throws WfException {
+    public Serializable getProperty(AlfSerializerDesc desc) throws InternalApplicationException {
         try {
             String fieldName = desc.getFieldName();
             if (desc.isNodeReference()) {

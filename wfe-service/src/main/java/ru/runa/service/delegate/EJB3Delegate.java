@@ -9,7 +9,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 
@@ -80,7 +80,7 @@ public abstract class EJB3Delegate {
                 Object service = getInitialContext().lookup(jndiName);
                 services.put(beanName, service);
             } catch (NamingException e) {
-                throw new WfException("Unable to locate bean by jndi name '" + jndiName + "'", e);
+                throw new InternalApplicationException("Unable to locate bean by jndi name '" + jndiName + "'", e);
             }
         }
         return (T) services.get(beanName);

@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.var.impl.NullVariable;
 
@@ -35,11 +35,11 @@ public class VariableCreator {
                     variable.setConverter(type.getConverter());
                     return variable;
                 } catch (Exception e) {
-                    throw new WfException("Unable to create variable " + type.getVariableClass(), e);
+                    throw new InternalApplicationException("Unable to create variable " + type.getVariableClass(), e);
                 }
             }
         }
-        throw new WfException("No variable found for value " + value);
+        throw new InternalApplicationException("No variable found for value " + value);
     }
 
     /**
