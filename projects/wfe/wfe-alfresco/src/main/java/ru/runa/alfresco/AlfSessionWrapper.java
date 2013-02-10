@@ -9,7 +9,7 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Throwables;
 
@@ -59,7 +59,7 @@ public abstract class AlfSessionWrapper<T> {
             return code();
         } catch (RepositoryFault e) {
             log.error(e.getMessage1());
-            throw new WfException(e.getMessage1());
+            throw new InternalApplicationException(e.getMessage1());
         } catch (AxisFault e) {
             String s = getDetail(e);
             log.error(e.dumpToString());

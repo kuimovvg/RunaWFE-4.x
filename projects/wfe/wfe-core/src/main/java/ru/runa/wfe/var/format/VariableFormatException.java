@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.var.format;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Signals error in variable parsing
  */
-public class VariableFormatException extends WfException {
+public class VariableFormatException extends InternalApplicationException {
 
     private static final long serialVersionUID = 1547445813333713575L;
     private final String variableName;

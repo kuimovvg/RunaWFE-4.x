@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Signals that authorization failed during any {@link javax.security.auth.Subject}involved operation.
@@ -32,7 +32,7 @@ import ru.runa.wfe.WfException;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AuthorizationException", namespace = "http://runa.ru/workflow/webservices")
-public class AuthorizationException extends WfException {
+public class AuthorizationException extends InternalApplicationException {
 
     private static final long serialVersionUID = 939145271255203099L;
 

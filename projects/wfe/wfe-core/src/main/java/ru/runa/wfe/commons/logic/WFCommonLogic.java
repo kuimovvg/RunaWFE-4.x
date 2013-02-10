@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.dao.ProcessLogDAO;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
@@ -168,7 +168,7 @@ public class WFCommonLogic extends CommonLogic {
 
     protected Set<Actor> getAssignedActors(Task task) throws ExecutorDoesNotExistException {
         if (task.getExecutor() == null) {
-            throw new WfException("Unassigned tasks can't be in processing");
+            throw new InternalApplicationException("Unassigned tasks can't be in processing");
         }
         if (task.getExecutor() instanceof Actor) {
             return Sets.newHashSet((Actor) task.getExecutor());

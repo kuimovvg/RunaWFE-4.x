@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.user;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Signals that {@link Executor} does not exist in DB.
  */
-public class ExecutorDoesNotExistException extends WfException {
+public class ExecutorDoesNotExistException extends InternalApplicationException {
     private static final long serialVersionUID = -9096157439932169776L;
 
     private final String executorName;

@@ -18,7 +18,7 @@
 package ru.runa.af.web.tag;
 
 import ru.runa.common.web.tag.IdentifiableFormTag;
-import ru.runa.service.af.ExecutorService;
+import ru.runa.service.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.user.Executor;

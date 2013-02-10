@@ -26,8 +26,8 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
+import ru.runa.service.BotService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.BotService;
 
 /**
  * @author petrmikheev

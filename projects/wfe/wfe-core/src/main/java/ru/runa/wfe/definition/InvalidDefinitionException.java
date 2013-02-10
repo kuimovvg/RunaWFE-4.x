@@ -1,13 +1,13 @@
 package ru.runa.wfe.definition;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Thrown when trying to parse invalid process definition.
  * 
  * @author Dofs
  */
-public class InvalidDefinitionException extends WfException {
+public class InvalidDefinitionException extends InternalApplicationException {
     private static final long serialVersionUID = 1L;
     private final String definitionName;
 

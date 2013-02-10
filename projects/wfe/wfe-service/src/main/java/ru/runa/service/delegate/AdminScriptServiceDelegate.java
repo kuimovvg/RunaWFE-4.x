@@ -17,7 +17,7 @@
  */
 package ru.runa.service.delegate;
 
-import ru.runa.service.wf.AdminScriptService;
+import ru.runa.service.AdminScriptService;
 import ru.runa.wfe.user.User;
 
 /**

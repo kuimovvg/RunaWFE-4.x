@@ -1,6 +1,6 @@
 package ru.runa.service.client;
 
-import ru.runa.service.bot.BotInvokerService;
+import ru.runa.service.BotInvokerService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 

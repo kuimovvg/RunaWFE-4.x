@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotAlreadyExistsException;
 import ru.runa.wfe.bot.BotDoesNotExistException;
@@ -98,6 +98,8 @@ public class BotLogic extends CommonLogic {
         if (getBot(user, bot.getBotStation().getId(), bot.getUsername()) != null) {
             throw new BotAlreadyExistsException(bot.getUsername());
         }
+        // TODO names to settings
+        executorDAO.addExecutorToGroup(executorDAO.getExecutor(bot.getUsername()), executorDAO.getGroup("Bots"));
         bot = botDAO.create(bot);
         incrementBotStationVersion(bot);
         return bot;
@@ -143,6 +145,9 @@ public class BotLogic extends CommonLogic {
         for (BotTask botTask : tasks) {
             removeBotTask(user, botTask.getId());
         }
+        Bot bot = getBotNotNull(user, id);
+        // TODO names to settings
+        executorDAO.removeExecutorFromGroup(executorDAO.getExecutor(bot.getUsername()), executorDAO.getGroup("Bots"));
         botDAO.delete(id);
     }
 
@@ -222,7 +227,7 @@ public class BotLogic extends CommonLogic {
         } else if (entity instanceof BotTask) {
             botStation = ((BotTask) entity).getBot().getBotStation();
         } else {
-            throw new WfException("Unexpected entity class " + entity);
+            throw new InternalApplicationException("Unexpected entity class " + entity);
         }
         botStation.setVersion(botStation.getVersion() + 1);
         botStationDAO.update(botStation);

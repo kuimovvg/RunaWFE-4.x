@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.security;
 
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Signals that permission was not found by its name. Created on 29.09.2005
  */
-public class PermissionNotFoundException extends WfException {
+public class PermissionNotFoundException extends InternalApplicationException {
 
     private static final long serialVersionUID = -2793634917387492819L;
 

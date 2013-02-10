@@ -17,7 +17,7 @@
  */
 package ru.runa.wf.web.ftl.method;
 
-import ru.runa.service.af.ExecutorService;
+import ru.runa.service.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;

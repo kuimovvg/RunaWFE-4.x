@@ -29,7 +29,7 @@ import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.af.AuthorizationService;
+import ru.runa.service.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 

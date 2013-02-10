@@ -19,7 +19,7 @@ package ru.runa.service.delegate;
 
 import java.util.Map;
 
-import ru.runa.service.af.SystemService;
+import ru.runa.service.SystemService;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.user.User;
 

@@ -18,7 +18,7 @@
 package ru.runa.af.web.tag;
 
 import ru.runa.af.web.action.GrantReadPermissionOnExecutorAction;
-import ru.runa.service.af.ExecutorService;
+import ru.runa.service.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 

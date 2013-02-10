@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.service.client.DelegateProcessVariableProvider;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.WfException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.ClassLoaderUtil;
@@ -118,14 +118,14 @@ public class WorkflowBot implements Runnable {
 
     public WorkflowBot createTask(WfTask task) {
         if (parent != null || this.task != null) {
-            throw new WfException("WorkflowBot task can be created only by template");
+            throw new InternalApplicationException("WorkflowBot task can be created only by template");
         }
         WorkflowBot result = new WorkflowBot(this, task);
         if (existingBots.contains(result)) {
             for (WorkflowBot bot : existingBots) {
                 if (bot.equals(result)) {
                     if (bot.botStatus != BotExecutionStatus.failed) {
-                        throw new WfException("Incorrect WorkflowBot usage - only failed tasks may be recreated.");
+                        throw new InternalApplicationException("Incorrect WorkflowBot usage - only failed tasks may be recreated.");
                     }
                     result = bot;
                     break;

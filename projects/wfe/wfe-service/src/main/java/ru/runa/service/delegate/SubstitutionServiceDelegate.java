@@ -19,7 +19,7 @@ package ru.runa.service.delegate;
 
 import java.util.List;
 
-import ru.runa.service.af.SubstitutionService;
+import ru.runa.service.SubstitutionService;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.user.User;

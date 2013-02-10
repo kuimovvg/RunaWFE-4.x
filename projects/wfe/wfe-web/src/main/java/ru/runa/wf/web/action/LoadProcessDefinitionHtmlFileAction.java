@@ -32,8 +32,8 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
+import ru.runa.service.DefinitionService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
 import ru.runa.wf.web.form.DefinitionFileForm;
 
 /**

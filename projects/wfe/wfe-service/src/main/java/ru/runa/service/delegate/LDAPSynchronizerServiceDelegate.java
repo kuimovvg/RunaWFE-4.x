@@ -17,7 +17,7 @@
  */
 package ru.runa.service.delegate;
 
-import ru.runa.service.af.LDAPSynchronizerService;
+import ru.runa.service.LDAPSynchronizerService;
 
 /**
  * Created on 19.04.2006

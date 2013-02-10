@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.service.af.AuthorizationService;
+import ru.runa.service.AuthorizationService;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;

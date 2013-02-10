@@ -465,7 +465,7 @@ public class ExecutorDAO extends CommonDAO {
      */
     public void addExecutorsToGroup(Collection<? extends Executor> executors, Group group) {
         for (Executor executor : executors) {
-            createMembership(executor, group);
+            addExecutorToGroup(executor, group);
         }
     }
 
@@ -479,7 +479,16 @@ public class ExecutorDAO extends CommonDAO {
      */
     public void addExecutorToGroups(Executor executor, List<Group> groups) {
         for (Group group : groups) {
-            createMembership(executor, group);
+            addExecutorToGroup(executor, group);
+        }
+    }
+
+    /**
+     * Add {@linkplain Executor} to {@linkplain Group}
+     */
+    public void addExecutorToGroup(Executor executor, Group group) {
+        if (getMembership(group, executor) == null) {
+            getHibernateTemplate().save(new ExecutorGroupMembership(group, executor));
         }
     }
 
@@ -493,7 +502,7 @@ public class ExecutorDAO extends CommonDAO {
      */
     public void removeExecutorsFromGroup(List<? extends Executor> executors, Group group) {
         for (Executor executor : executors) {
-            removeMembership(executor, group);
+            removeExecutorFromGroup(executor, group);
         }
     }
 
@@ -507,7 +516,17 @@ public class ExecutorDAO extends CommonDAO {
      */
     public void removeExecutorFromGroups(Executor executor, List<Group> groups) {
         for (Group group : groups) {
-            removeMembership(executor, group);
+            removeExecutorFromGroup(executor, group);
+        }
+    }
+
+    /**
+     * Remove {@linkplain Executor} from {@linkplain Group}.
+     */
+    public void removeExecutorFromGroup(Executor executor, Group group) {
+        ExecutorGroupMembership membership = getMembership(group, executor);
+        if (membership != null) {
+            getHibernateTemplate().delete(membership);
         }
     }
 
@@ -672,19 +691,6 @@ public class ExecutorDAO extends CommonDAO {
         retVal = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(clazz, false);
         executorCache.addAllExecutor(cacheVersion, clazz, batchPresentation, retVal);
         return retVal;
-    }
-
-    private void createMembership(Executor executor, Group group) {
-        if (getMembership(group, executor) == null) {
-            getHibernateTemplate().save(new ExecutorGroupMembership(group, executor));
-        }
-    }
-
-    private void removeMembership(Executor executor, Group group) {
-        ExecutorGroupMembership membership = getMembership(group, executor);
-        if (membership != null) {
-            getHibernateTemplate().delete(membership);
-        }
     }
 
     private Set<Actor> getGroupActors(Group group, Set<Group> visited) {
