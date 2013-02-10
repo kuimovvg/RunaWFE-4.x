@@ -76,17 +76,17 @@ public class DeploymentDAO extends GenericDAO<Deployment> {
      * Process definitions are distinct by name.
      */
     public List<Deployment> findLatestDeployments() {
-        Map<String, Deployment> processDeploymentsByName = new HashMap<String, Deployment>();
+        Map<String, Deployment> deploymentsByName = new HashMap<String, Deployment>();
         List<Deployment> allProcessDeployments = getHibernateTemplate().find("from Deployment order by name, version desc");
         // TODO performance?
-        for (Deployment processDeployment : allProcessDeployments) {
-            String processDefinitionName = processDeployment.getName();
-            Deployment previous = processDeploymentsByName.get(processDefinitionName);
-            if ((previous == null) || (previous.getVersion() < processDeployment.getVersion())) {
-                processDeploymentsByName.put(processDefinitionName, processDeployment);
+        for (Deployment deployment : allProcessDeployments) {
+            String processDefinitionName = deployment.getName();
+            Deployment previous = deploymentsByName.get(processDefinitionName);
+            if ((previous == null) || (previous.getVersion() < deployment.getVersion())) {
+                deploymentsByName.put(processDefinitionName, deployment);
             }
         }
-        return Lists.newArrayList(processDeploymentsByName.values());
+        return Lists.newArrayList(deploymentsByName.values());
     }
 
     /**

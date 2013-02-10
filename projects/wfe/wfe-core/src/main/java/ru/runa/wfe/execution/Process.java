@@ -46,7 +46,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.audit.ProcessCancelLog;
 import ru.runa.wfe.audit.ProcessEndLog;
 import ru.runa.wfe.commons.ApplicationContextFactory;
@@ -80,7 +80,7 @@ public class Process extends IdentifiableBase {
     private Date endDate;
     private Token rootToken;
     private String hierarchySubProcess;
-    private Deployment definition;
+    private Deployment deployment;
 
     private Set<Swimlane> swimlanes;
     private Set<Task> tasks;
@@ -148,12 +148,12 @@ public class Process extends IdentifiableBase {
     @JoinColumn(name = "DEFINITION_ID", nullable = false)
     @ForeignKey(name = "FK_PROCESS_DEFINITION")
     @Index(name = "IX_PROCESS_DEFINITION")
-    public Deployment getDefinition() {
-        return definition;
+    public Deployment getDeployment() {
+        return deployment;
     }
 
-    public void setDefinition(Deployment processDeployment) {
-        definition = processDeployment;
+    public void setDeployment(Deployment deployment) {
+        this.deployment = deployment;
     }
 
     @ManyToOne(targetEntity = Token.class, fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.ALL })
@@ -217,7 +217,7 @@ public class Process extends IdentifiableBase {
                 AssignmentHandler assignmentHandler = swimlaneDefinition.getDelegation().getInstance();
                 assignmentHandler.assign(executionContext, swimlane);
             } catch (Exception e) {
-                throw new InternalApplicationException(swimlaneDefinition.toString(), e);
+                throw new WfException(swimlaneDefinition.toString(), e);
             }
         }
         return swimlane;
@@ -295,7 +295,7 @@ public class Process extends IdentifiableBase {
         // check if this process was started as a subprocess of a super process
         NodeProcess parentNodeProcess = executionContext.getParentNodeProcess();
         if (parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded()) {
-            Long superDefinitionId = parentNodeProcess.getProcess().getDefinition().getId();
+            Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
             ProcessDefinition superDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(superDefinitionId);
             ExecutionContext superExecutionContext = new ExecutionContext(superDefinition, parentNodeProcess.getParentToken());
             parentNodeProcess.getParentToken().signal(superExecutionContext);
@@ -316,7 +316,7 @@ public class Process extends IdentifiableBase {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("definition", definition).add("id", id).toString();
+        return Objects.toStringHelper(this).add("definition", deployment).add("id", id).toString();
     }
 
 }

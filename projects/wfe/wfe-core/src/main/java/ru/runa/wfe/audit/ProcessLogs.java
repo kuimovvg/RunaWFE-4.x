@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.lang.NodeType;
 
 import com.google.common.collect.Lists;
@@ -69,7 +69,7 @@ public class ProcessLogs implements Serializable {
                 String key = log.getProcessId() + ((TaskLog) log).getTaskName();
                 TaskCreateLog taskCreateLog = tmp.remove(key);
                 if (taskCreateLog == null) {
-                    throw new InternalApplicationException("No TaskCreateLog for " + log);
+                    throw new WfException("No TaskCreateLog for " + log);
                 }
                 result.put(taskCreateLog, (TaskEndLog) log);
             }

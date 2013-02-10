@@ -19,6 +19,7 @@ package ru.runa.wf.web.html;
 
 import java.util.Date;
 
+import ru.runa.common.web.html.BaseDateTDBuilder;
 import ru.runa.wfe.execution.dto.WfProcess;
 
 /**
@@ -27,15 +28,7 @@ import ru.runa.wfe.execution.dto.WfProcess;
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
  */
-public class ProcessEndDateTDBuilder extends ProcessBaseDateTDBuilder {
-
-    public ProcessEndDateTDBuilder() {
-    }
-
-    @Override
-    protected boolean hasDate(WfProcess process) {
-        return process.getEndDate() == null ? false : true;
-    }
+public class ProcessEndDateTDBuilder extends BaseDateTDBuilder<WfProcess> {
 
     @Override
     protected Date getDate(WfProcess process) {

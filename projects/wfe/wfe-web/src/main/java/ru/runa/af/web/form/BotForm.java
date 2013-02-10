@@ -29,14 +29,14 @@ public class BotForm extends ActionForm {
 
     public static final String USER_NAME = "wfeUser";
     public static final String PASSWORD = "wfePassword";
-    public static final String BOT_STATION_ID = "botStationID";
-    public static final String BOT_ID = "botID";
+    public static final String BOT_STATION_ID = "botStationId";
+    public static final String BOT_ID = "botId";
     public static final String BOT_TIMEOUT = "botTimeout";
 
     private String wfeUser;
     private String wfePassword;
-    private Long botID;
-    private Long botStationID;
+    private Long botId;
+    private Long botStationId;
     private Long botTimeout;
 
     public String getWfeUser() {
@@ -55,20 +55,20 @@ public class BotForm extends ActionForm {
         wfePassword = botPassword;
     }
 
-    public Long getBotStationID() {
-        return botStationID;
+    public Long getBotStationId() {
+        return botStationId;
     }
 
-    public void setBotStationID(Long botStationID) {
-        this.botStationID = botStationID;
+    public void setBotStationId(Long botStationId) {
+        this.botStationId = botStationId;
     }
 
-    public Long getBotID() {
-        return botID;
+    public Long getBotId() {
+        return botId;
     }
 
-    public void setBotID(Long botID) {
-        this.botID = botID;
+    public void setBotId(Long botId) {
+        this.botId = botId;
     }
 
     public Long getBotTimeout() {

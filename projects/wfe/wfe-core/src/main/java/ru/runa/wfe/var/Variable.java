@@ -45,7 +45,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.audit.VariableCreateLog;
 import ru.runa.wfe.audit.VariableDeleteLog;
 import ru.runa.wfe.audit.VariableUpdateLog;
@@ -163,7 +163,7 @@ public abstract class Variable<T extends Object> {
         Object newStorableValue;
         if (converter != null) {
             if (!converter.supports(newValue)) {
-                throw new InternalApplicationException("the converter '" + converter.getClass().getName() + "' in variable '"
+                throw new WfException("the converter '" + converter.getClass().getName() + "' in variable '"
                         + this.getClass().getName() + "' does not support values of type '" + newValue.getClass().getName() + "'.");
             }
             newStorableValue = converter.convert(newValue);
@@ -171,7 +171,7 @@ public abstract class Variable<T extends Object> {
             newStorableValue = newValue;
         }
         if (newStorableValue != null && !this.isStorable(newStorableValue)) {
-            throw new InternalApplicationException("variable '" + this.getClass().getName() + "' does not support values of type '"
+            throw new WfException("variable '" + this.getClass().getName() + "' does not support values of type '"
                     + newStorableValue.getClass().getName() + "'.");
         }
         Object oldValue = getStorableValue();

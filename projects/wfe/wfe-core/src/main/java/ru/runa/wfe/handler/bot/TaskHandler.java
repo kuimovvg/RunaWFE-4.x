@@ -19,7 +19,6 @@ package ru.runa.wfe.handler.bot;
 
 import java.util.Map;
 
-
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;

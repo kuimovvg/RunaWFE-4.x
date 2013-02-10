@@ -24,9 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
-import ru.runa.wfe.ApplicationException;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.LocalizableException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
@@ -46,9 +45,7 @@ import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
-import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
-import ru.runa.wfe.user.ExecutorNotInGroupException;
 import ru.runa.wfe.user.Group;
 
 import com.google.common.base.Throwables;
@@ -90,17 +87,9 @@ public class ActionExceptionHelper {
             } else {
                 actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_EXECUTOR_DOES_NOT_EXISTS, exception.getExecutorName());
             }
-        } else if (e instanceof ExecutorAlreadyInGroupException) {
-            ExecutorAlreadyInGroupException exception = (ExecutorAlreadyInGroupException) e;
-            actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_EXECUTOR_ALREADY_IN_GROUP, exception.getExecutorName(),
-                    exception.getGroupName());
         } else if (e instanceof ExecutorAlreadyExistsException) {
             ExecutorAlreadyExistsException exception = (ExecutorAlreadyExistsException) e;
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_EXECUTOR_ALREADY_EXISTS, exception.getExecutorName());
-        } else if (e instanceof ExecutorNotInGroupException) {
-            ExecutorNotInGroupException exception = (ExecutorNotInGroupException) e;
-            actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_EXECUTOR_ALREADY_IN_GROUP, exception.getExecutorName(),
-                    exception.getGroupName());
         } else if (e instanceof ProcessDoesNotExistException) {
             actionMessage = new ActionMessage(Messages.ERROR_WEB_CLIENT_PROCESS_DOES_NOT_EXIST, e.getMessage());
         } else if (e instanceof DefinitionAlreadyExistException) {
@@ -114,7 +103,8 @@ public class ActionExceptionHelper {
         } else if (e instanceof DefinitionArchiveFormatException) {
             actionMessage = new ActionMessage(Messages.DEFINITION_ARCHIVE_FORMAT_ERROR);
         } else if (e instanceof InvalidDefinitionException) {
-            actionMessage = new ActionMessage(Messages.DEFINITION_FILE_FORMAT_ERROR, ((InvalidDefinitionException) e).getDefinitionName());
+            actionMessage = new ActionMessage(Messages.DEFINITION_FILE_FORMAT_ERROR, ((InvalidDefinitionException) e).getDefinitionName(),
+                    e.getMessage());
         } else if (e instanceof DefinitionNameMismatchException) {
             DefinitionNameMismatchException exception = (DefinitionNameMismatchException) e;
             actionMessage = new ActionMessage(Messages.ERROR_WEB_CLIENT_DEFINITION_NAME_MISMATCH, exception.getDeployedProcessDefinitionName(),
@@ -140,9 +130,9 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_EXISTS, e.getMessage());
         } else if (e instanceof LocalizableException) {
             actionMessage = new ActionMessage(e.getLocalizedMessage(), false);
-        } else if (e instanceof ApplicationException) {
+        } else if (e instanceof WfException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.getMessage());
-        } else if (e instanceof InternalApplicationException) {
+        } else if (e instanceof WfException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.getMessage());
         } else {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.getMessage());

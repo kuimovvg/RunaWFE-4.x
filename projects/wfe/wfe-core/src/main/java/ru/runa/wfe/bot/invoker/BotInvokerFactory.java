@@ -20,7 +20,6 @@ package ru.runa.wfe.bot.invoker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 
 /**
@@ -33,15 +32,11 @@ public class BotInvokerFactory {
     private static final Log log = LogFactory.getLog(BotInvokerFactory.class);
 
     public static BotInvoker getBotInvoker() {
-        try {
-            if (INSTANCE == null) {
-                INSTANCE = ClassLoaderUtil.instantiate(Resources.getBotInvokerClassName());
-                log.info("Using " + INSTANCE.getClass().getName());
-            }
-            return INSTANCE;
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
+        if (INSTANCE == null) {
+            INSTANCE = ClassLoaderUtil.instantiate(Resources.getBotInvokerClassName());
+            log.info("Using " + INSTANCE.getClass().getName());
         }
+        return INSTANCE;
     }
 
     private static final long MILLISECONDS_IN_SEC = 1000;

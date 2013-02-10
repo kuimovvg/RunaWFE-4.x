@@ -30,10 +30,10 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.user.Actor;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
 
 /**
  * Created on 14.12.2004
@@ -81,7 +81,7 @@ class ActorPassword {
         try {
             setPassword(MessageDigest.getInstance(DIGEST_ALGORITHM).digest(password.getBytes()));
         } catch (NoSuchAlgorithmException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

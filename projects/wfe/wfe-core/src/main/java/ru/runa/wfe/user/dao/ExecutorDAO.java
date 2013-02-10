@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.user.dao;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
@@ -41,10 +39,8 @@ import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
-import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorGroupMembership;
-import ru.runa.wfe.user.ExecutorNotInGroupException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.cache.ExecutorCache;
 import ru.runa.wfe.user.cache.ExecutorCacheCtrl;
@@ -99,7 +95,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded executor name.
      * @return Executor with specified name.
      */
-    public Executor getExecutor(String name) throws ExecutorDoesNotExistException {
+    public Executor getExecutor(String name) {
         return getExecutor(Executor.class, name);
     }
 
@@ -111,7 +107,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded executor identity.
      * @return {@linkplain Executor} with specified identity.
      */
-    public Executor getExecutor(Long id) throws ExecutorDoesNotExistException {
+    public Executor getExecutor(Long id) {
         return getExecutor(Executor.class, id);
     }
 
@@ -123,7 +119,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded actor name.
      * @return {@linkplain Actor} with specified name.
      */
-    public Actor getActor(String name) throws ExecutorDoesNotExistException {
+    public Actor getActor(String name) {
         return getExecutor(Actor.class, name);
     }
 
@@ -137,11 +133,11 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded actor name.
      * @return {@linkplain Actor} with specified name (case insensitive).
      */
-    public Actor getActorCaseInsensitive(final String name) throws ExecutorDoesNotExistException {
+    public Actor getActorCaseInsensitive(final String name) {
         return getHibernateTemplate().execute(new HibernateCallback<Actor>() {
 
             @Override
-            public Actor doInHibernate(Session session) throws HibernateException, SQLException {
+            public Actor doInHibernate(Session session) {
                 Criteria criteria = session.createCriteria(Actor.class);
                 criteria.add(Restrictions.ilike(NAME_PROPERTY_NAME, name, MatchMode.EXACT));
                 Actor actor = (Actor) getFirstOrNull(criteria.list());
@@ -158,7 +154,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded actor identity.
      * @return {@linkplain Actor} with specified identity.
      */
-    public Actor getActor(Long id) throws ExecutorDoesNotExistException {
+    public Actor getActor(Long id) {
         return getExecutor(Actor.class, id);
     }
 
@@ -169,7 +165,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded actor code.
      * @return {@linkplain Actor} with specified code.
      */
-    public Actor getActorByCode(Long code) throws ExecutorDoesNotExistException {
+    public Actor getActorByCode(Long code) {
         Actor actor = getActorByCodeInternal(code);
         return checkExecutorNotNull(actor, "with code " + code, Actor.class);
     }
@@ -182,7 +178,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded group name.
      * @return {@linkplain Group} with specified name.
      */
-    public Group getGroup(String name) throws ExecutorDoesNotExistException {
+    public Group getGroup(String name) {
         return getExecutor(Group.class, name);
     }
 
@@ -194,7 +190,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded group identity.
      * @return {@linkplain Group} with specified identity.
      */
-    public Group getGroup(Long id) throws ExecutorDoesNotExistException {
+    public Group getGroup(Long id) {
         return getExecutor(Group.class, id);
     }
 
@@ -205,7 +201,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loading {@linkplain Executor}'s identities.
      * @return Loaded executors in same order, as identities.
      */
-    public List<Executor> getExecutors(List<Long> ids) throws ExecutorDoesNotExistException {
+    public List<Executor> getExecutors(List<Long> ids) {
         return getExecutors(Executor.class, ids, false);
     }
 
@@ -216,7 +212,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loading {@linkplain Actor}'s identities.
      * @return Loaded actors in same order, as identities.
      */
-    public List<Actor> getActors(List<Long> ids) throws ExecutorDoesNotExistException {
+    public List<Actor> getActors(List<Long> ids) {
         return getExecutors(Actor.class, ids, false);
     }
 
@@ -228,7 +224,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Executors identities, to load actors.
      * @return Loaded actors, belongs to executor identities.
      */
-    public List<Actor> getActorsByExecutorIds(List<Long> executorIds) throws ExecutorDoesNotExistException {
+    public List<Actor> getActorsByExecutorIds(List<Long> executorIds) {
         Set<Actor> actorSet = new HashSet<Actor>();
         for (Executor executor : getExecutors(executorIds)) {
             if (executor instanceof Actor) {
@@ -247,7 +243,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loading {@linkplain Actor}'s codes.
      * @return Loaded actors in same order, as codes.
      */
-    public List<Actor> getActorsByCodes(List<Long> codes) throws ExecutorDoesNotExistException {
+    public List<Actor> getActorsByCodes(List<Long> codes) {
         return getExecutors(Actor.class, codes, true);
     }
 
@@ -292,7 +288,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loading {@linkplain Group}'s identities.
      * @return Loaded groups in same order, as identities.
      */
-    public List<Group> getGroups(List<Long> ids) throws ExecutorDoesNotExistException {
+    public List<Group> getGroups(List<Long> ids) {
         return getExecutors(Group.class, ids, false);
     }
 
@@ -306,7 +302,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Creating executor.
      * @return Returns created executor.
      */
-    public <T extends Executor> T create(T executor) throws ExecutorAlreadyExistsException {
+    public <T extends Executor> T create(T executor) {
         if (isExecutorExist(executor.getName())) {
             throw new ExecutorAlreadyExistsException(executor.getName());
         }
@@ -325,7 +321,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Creating executors
      * @return Returns created executors.
      */
-    public void create(List<? extends Executor> executors) throws ExecutorAlreadyExistsException {
+    public void create(List<? extends Executor> executors) {
         for (Executor executor : executors) {
             create(executor);
         }
@@ -339,7 +335,7 @@ public class ExecutorDAO extends CommonDAO {
      * @param password
      *            New actor password.
      */
-    public void setPassword(Actor actor, String password) throws ExecutorDoesNotExistException {
+    public void setPassword(Actor actor, String password) {
         Preconditions.checkNotNull(password, "Password must be specified.");
         ActorPassword actorPassword = getActorPassword(actor);
         if (actorPassword == null) {
@@ -361,7 +357,7 @@ public class ExecutorDAO extends CommonDAO {
      * @return Returns true, if password is correct for actor and false
      *         otherwise.
      */
-    public boolean isPasswordValid(Actor actor, String password) throws ExecutorDoesNotExistException {
+    public boolean isPasswordValid(Actor actor, String password) {
         Preconditions.checkNotNull(password, "Password must be specified.");
         ActorPassword actorPassword = new ActorPassword(actor, password);
         ActorPassword result = getActorPassword(actor);
@@ -377,7 +373,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Flag, equals true to set actor active and false, to set actor
      *            inactive.
      */
-    public void setStatus(Actor actor, boolean isActive) throws ExecutorDoesNotExistException {
+    public void setStatus(Actor actor, boolean isActive) {
         actor.setActive(isActive);
         getHibernateTemplate().merge(actor);
     }
@@ -391,7 +387,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Updated executor new state.
      * @return Returns updated executor state after update.
      */
-    public <T extends Executor> T update(T newExecutor) throws ExecutorAlreadyExistsException, ExecutorDoesNotExistException {
+    public <T extends Executor> T update(T newExecutor) {
         T oldExecutor = (T) getExecutor(newExecutor.getId());
         if (!Objects.equal(oldExecutor.getName(), newExecutor.getName())) {
             if (isExecutorExist(newExecutor.getName())) {
@@ -414,11 +410,10 @@ public class ExecutorDAO extends CommonDAO {
      * 
      * @param groupId
      *            Clearing group id.
-     * @throws ExecutorDoesNotExistException
      */
-    public void clearGroup(Long groupId) throws ExecutorDoesNotExistException {
+    public void clearGroup(Long groupId) {
         Group group = getGroup(groupId);
-        List<ExecutorGroupMembership> list = getRelationGroupWithExecutors(group);
+        List<ExecutorGroupMembership> list = getGroupMemberships(group);
         getHibernateTemplate().deleteAll(list);
     }
 
@@ -468,10 +463,9 @@ public class ExecutorDAO extends CommonDAO {
      * @param group
      *            {@linkplain Group}, to add executors in.
      */
-    public void addExecutorsToGroup(Collection<? extends Executor> executors, Group group) throws ExecutorDoesNotExistException,
-            ExecutorAlreadyInGroupException {
+    public void addExecutorsToGroup(Collection<? extends Executor> executors, Group group) {
         for (Executor executor : executors) {
-            checkAndAddExecutorToGroup(executor, group);
+            createMembership(executor, group);
         }
     }
 
@@ -483,9 +477,9 @@ public class ExecutorDAO extends CommonDAO {
      * @param group
      *            {@linkplain Group}s, to add executors in.
      */
-    public void addExecutorToGroups(Executor executor, List<Group> groups) throws ExecutorDoesNotExistException, ExecutorAlreadyInGroupException {
+    public void addExecutorToGroups(Executor executor, List<Group> groups) {
         for (Group group : groups) {
-            checkAndAddExecutorToGroup(executor, group);
+            createMembership(executor, group);
         }
     }
 
@@ -497,10 +491,9 @@ public class ExecutorDAO extends CommonDAO {
      * @param group
      *            {@linkplain Group}, to remove executors from.
      */
-    public void removeExecutorsFromGroup(List<? extends Executor> executors, Group group) throws ExecutorDoesNotExistException,
-            ExecutorNotInGroupException {
+    public void removeExecutorsFromGroup(List<? extends Executor> executors, Group group) {
         for (Executor executor : executors) {
-            checkAndRemoveExecutorFromGroup(executor, group);
+            removeMembership(executor, group);
         }
     }
 
@@ -512,9 +505,9 @@ public class ExecutorDAO extends CommonDAO {
      * @param group
      *            {@linkplain Group}s, to remove executors from.
      */
-    public void removeExecutorFromGroups(Executor executor, List<Group> groups) throws ExecutorDoesNotExistException, ExecutorNotInGroupException {
+    public void removeExecutorFromGroups(Executor executor, List<Group> groups) {
         for (Group group : groups) {
-            checkAndRemoveExecutorFromGroup(executor, group);
+            removeMembership(executor, group);
         }
     }
 
@@ -530,7 +523,7 @@ public class ExecutorDAO extends CommonDAO {
      * @return true if executor belongs to group recursively; false in any other
      *         case.
      */
-    public boolean isExecutorInGroup(Executor executor, Group group) throws ExecutorDoesNotExistException {
+    public boolean isExecutorInGroup(Executor executor, Group group) {
         return getExecutorParentsAll(executor).contains(group);
     }
 
@@ -552,27 +545,22 @@ public class ExecutorDAO extends CommonDAO {
             return result;
         }
         result = new HashSet<Executor>();
-        for (ExecutorGroupMembership relation : getRelationGroupWithExecutors(group)) {
+        for (ExecutorGroupMembership relation : getGroupMemberships(group)) {
             result.add(relation.getExecutor());
         }
         return result;
     }
 
-    private List<ExecutorGroupMembership> getRelationGroupWithExecutors(Group group) {
+    private List<ExecutorGroupMembership> getGroupMemberships(Group group) {
         return getHibernateTemplate().find("from ExecutorGroupMembership where group=?", group);
     }
 
-    private List<ExecutorGroupMembership> getRelationExecutorWithGroups(Executor executor) {
+    private List<ExecutorGroupMembership> getExecutorMemberships(Executor executor) {
         return getHibernateTemplate().find("from ExecutorGroupMembership where executor=?", executor);
     }
 
-    private ExecutorGroupMembership getRelationExecutorWithGroup(Group group, Executor executor) {
-        List<ExecutorGroupMembership> list = getHibernateTemplate()
-                .find("from ExecutorGroupMembership where group=? and executor=?", group, executor);
-        if (list.size() > 0) {
-            return list.get(0);
-        }
-        return null;
+    private ExecutorGroupMembership getMembership(Group group, Executor executor) {
+        return findFirstOrNull("from ExecutorGroupMembership where group=? and executor=?", group, executor);
     }
 
     /**
@@ -586,7 +574,7 @@ public class ExecutorDAO extends CommonDAO {
      *            {@linkplain Group} to load {@linkplain Actor} children's
      * @return Set of actor children's.
      */
-    public Set<Actor> getGroupActors(Group group) throws ExecutorDoesNotExistException {
+    public Set<Actor> getGroupActors(Group group) {
         Set<Actor> result = executorCache.getGroupActorsAll(group);
         if (result == null) {
             result = getGroupActors(group, new HashSet<Group>());
@@ -619,7 +607,7 @@ public class ExecutorDAO extends CommonDAO {
      *            {@linkplain Group}, to load actor children's.
      * @return Array of executors from group.
      */
-    public List<Executor> getAllNonGroupExecutorsFromGroup(Group group) throws ExecutorDoesNotExistException {
+    public List<Executor> getAllNonGroupExecutorsFromGroup(Group group) {
         Set<Executor> childrenSet = getGroupChildren(group);
         List<Executor> retVal = new ArrayList<Executor>();
         for (Executor executor : childrenSet) {
@@ -631,9 +619,9 @@ public class ExecutorDAO extends CommonDAO {
     }
 
     public void remove(Executor executor) {
-        getHibernateTemplate().deleteAll(getRelationExecutorWithGroups(executor));
+        getHibernateTemplate().deleteAll(getExecutorMemberships(executor));
         if (executor instanceof Group) {
-            getHibernateTemplate().deleteAll(getRelationGroupWithExecutors((Group) executor));
+            getHibernateTemplate().deleteAll(getGroupMemberships((Group) executor));
         } else {
             ActorPassword actorPassword = getActorPassword((Actor) executor);
             if (actorPassword != null) {
@@ -653,11 +641,11 @@ public class ExecutorDAO extends CommonDAO {
      * @param actor
      *            Actor to generate code if not set.
      */
-    private void checkActorCode(Actor actor) throws ExecutorAlreadyExistsException {
+    private void checkActorCode(Actor actor) {
         if (actor.getCode() == null) {
             Long nextCode = getHibernateTemplate().execute(new HibernateCallback<Long>() {
                 @Override
-                public Long doInHibernate(Session session) throws HibernateException, SQLException {
+                public Long doInHibernate(Session session) {
                     Criteria criteria = session.createCriteria(Actor.class);
                     criteria.setMaxResults(1);
                     criteria.addOrder(Order.asc(CODE_PROPERTY_NAME));
@@ -686,24 +674,20 @@ public class ExecutorDAO extends CommonDAO {
         return retVal;
     }
 
-    private void checkAndAddExecutorToGroup(Executor executor, Group group) throws ExecutorAlreadyInGroupException {
-        if (getRelationExecutorWithGroup(group, executor) != null) { // TODO
-                                                                     // silently
-                                                                     // add
-            throw new ExecutorAlreadyInGroupException(executor.getName(), group.getName());
+    private void createMembership(Executor executor, Group group) {
+        if (getMembership(group, executor) == null) {
+            getHibernateTemplate().save(new ExecutorGroupMembership(group, executor));
         }
-        getHibernateTemplate().save(new ExecutorGroupMembership(group, executor));
     }
 
-    private void checkAndRemoveExecutorFromGroup(Executor executor, Group group) throws ExecutorNotInGroupException {
-        ExecutorGroupMembership mapping = getRelationExecutorWithGroup(group, executor);
-        if (mapping == null) {
-            throw new ExecutorNotInGroupException(executor.getName(), group.getName());
+    private void removeMembership(Executor executor, Group group) {
+        ExecutorGroupMembership membership = getMembership(group, executor);
+        if (membership != null) {
+            getHibernateTemplate().delete(membership);
         }
-        getHibernateTemplate().delete(mapping);
     }
 
-    private Set<Actor> getGroupActors(Group group, Set<Group> visited) throws ExecutorDoesNotExistException {
+    private Set<Actor> getGroupActors(Group group, Set<Group> visited) {
         Set<Actor> result = executorCache.getGroupActorsAll(group);
         if (result != null) {
             return result;
@@ -727,9 +711,8 @@ public class ExecutorDAO extends CommonDAO {
         Set<Group> result = executorCache.getExecutorParents(executor);
         if (result == null) {
             result = new HashSet<Group>();
-            List<ExecutorGroupMembership> relations = getHibernateTemplate().find("from ExecutorGroupMembership where executor=?", executor);
-            for (ExecutorGroupMembership relation : relations) {
-                result.add(relation.getGroup());
+            for (ExecutorGroupMembership membership : getExecutorMemberships(executor)) {
+                result.add(membership.getGroup());
             }
         }
         return result;
@@ -763,8 +746,7 @@ public class ExecutorDAO extends CommonDAO {
      *            executors by identity.
      * @return Loaded executors.
      */
-    private <T extends Executor> List<T> getExecutors(final Class<T> clazz, final List<Long> identifiers, boolean loadByCodes)
-            throws ExecutorDoesNotExistException {
+    private <T extends Executor> List<T> getExecutors(final Class<T> clazz, final List<Long> identifiers, boolean loadByCodes) {
         final String propertyName = loadByCodes ? CODE_PROPERTY_NAME : ID_PROPERTY_NAME;
         List<T> executors = getExecutorsFromCache(clazz, identifiers, loadByCodes);
         if (executors != null) {
@@ -773,7 +755,7 @@ public class ExecutorDAO extends CommonDAO {
         List<T> list = getHibernateTemplate().executeFind(new HibernateCallback<List<T>>() {
 
             @Override
-            public List<T> doInHibernate(Session session) throws HibernateException, SQLException {
+            public List<T> doInHibernate(Session session) {
                 Query query = session.createQuery("from " + clazz.getName() + " where " + propertyName + " in (:ids)");
                 query.setParameterList("ids", identifiers);
                 return query.list();
@@ -806,8 +788,7 @@ public class ExecutorDAO extends CommonDAO {
      *            executors by identity.
      * @return Loaded executors or null, if executors couldn't load from cache.
      */
-    private <T extends Executor> List<T> getExecutorsFromCache(Class<T> clazz, List<Long> identifiers, boolean loadByCodes)
-            throws ExecutorDoesNotExistException {
+    private <T extends Executor> List<T> getExecutorsFromCache(Class<T> clazz, List<Long> identifiers, boolean loadByCodes) {
         List<T> executors = Lists.newArrayListWithExpectedSize(identifiers.size());
         for (Long id : identifiers) {
             Preconditions.checkArgument(id != null, "id == null");
@@ -842,18 +823,18 @@ public class ExecutorDAO extends CommonDAO {
         }
     }
 
-    private <T extends Executor> T getExecutor(Class<T> clazz, Long id) throws ExecutorDoesNotExistException {
+    private <T extends Executor> T getExecutor(Class<T> clazz, Long id) {
         return checkExecutorNotNull(getExecutorById(clazz, id), id, clazz);
     }
 
-    private <T extends Executor> T getExecutor(Class<T> clazz, String name) throws ExecutorDoesNotExistException {
+    private <T extends Executor> T getExecutor(Class<T> clazz, String name) {
         if (Strings.isNullOrEmpty(name)) {
             throw new NullPointerException("Executor name must be specified");
         }
         return checkExecutorNotNull(getExecutorByName(clazz, name), name, clazz);
     }
 
-    private ActorPassword getActorPassword(Actor actor) throws HibernateException {
+    private ActorPassword getActorPassword(Actor actor) {
         return findFirstOrNull("from ActorPassword where actorId=?", actor.getId());
     }
 
@@ -865,14 +846,14 @@ public class ExecutorDAO extends CommonDAO {
         return findFirstOrNull("from Actor where code=?", code);
     }
 
-    private <T extends Executor> T checkExecutorNotNull(T executor, Long id, Class<T> clazz) throws ExecutorDoesNotExistException {
+    private <T extends Executor> T checkExecutorNotNull(T executor, Long id, Class<T> clazz) {
         if (executor == null) {
             throw new ExecutorDoesNotExistException(id, clazz);
         }
         return executor;
     }
 
-    private <T extends Executor> T checkExecutorNotNull(T executor, String name, Class<T> clazz) throws ExecutorDoesNotExistException {
+    private <T extends Executor> T checkExecutorNotNull(T executor, String name, Class<T> clazz) {
         if (executor == null) {
             throw new ExecutorDoesNotExistException(name, clazz);
         }

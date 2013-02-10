@@ -31,7 +31,7 @@ import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.DBType;
@@ -51,6 +51,7 @@ import ru.runa.wfe.user.SystemExecutors;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 /**
@@ -191,7 +192,7 @@ public class InitializerLogic {
             transaction.commit();
         } catch (Throwable th) {
             rollbackTransaction(transaction);
-            throw new InternalApplicationException(th);
+            throw Throwables.propagate(th);
         }
     }
 
@@ -275,7 +276,7 @@ public class InitializerLogic {
                 log.warn("Unable to rollback, status: " + status);
             }
         } catch (Exception e) {
-            throw new InternalApplicationException("Unable to rollback, status: " + status, e);
+            throw new WfException("Unable to rollback, status: " + status, e);
         }
     }
 

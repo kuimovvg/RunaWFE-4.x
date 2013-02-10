@@ -19,7 +19,7 @@ package ru.runa.wf.web;
 
 import java.util.List;
 
-public class VariablesFormatException extends Exception {
+public class VariablesFormatException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     private final List<String> errorFields;

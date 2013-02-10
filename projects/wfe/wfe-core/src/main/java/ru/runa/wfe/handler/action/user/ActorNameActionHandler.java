@@ -19,7 +19,7 @@ package ru.runa.wfe.handler.action.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.handler.CommonParamBasedHandler;
 import ru.runa.wfe.handler.HandlerData;
 import ru.runa.wfe.user.Actor;
@@ -40,7 +40,7 @@ public class ActorNameActionHandler extends CommonParamBasedHandler {
         } else if (actorLogin != null) {
             actor = executorDAO.getActor(actorLogin);
         } else {
-            throw new InternalApplicationException("Neither actor code and login are not defined in configuration.");
+            throw new WfException("Neither actor code and login are not defined in configuration.");
         }
         String result;
         if ("name".equals(format)) {

@@ -46,9 +46,7 @@ import ru.runa.common.web.form.ReturnActionForm;
 import ru.runa.common.web.form.SetSortingForm;
 import ru.runa.service.af.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.DefinitionService;
 import ru.runa.service.wf.ExecutionService;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.ClassPresentation;
@@ -56,7 +54,9 @@ import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * @author Gritsenko_S
@@ -85,16 +85,10 @@ public class ReflectionRowBuilder implements RowBuilder {
             if (basePartOfUrlToObject.equals(ru.runa.common.WebResources.ACTION_MAPPING_START_PROCESS)
                     && ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_PARAMETER)
                     || ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER)) {
-                DefinitionService definitionService = Delegates.getDefinitionService();
-                try {
-                    if (!(definitionService.getStartInteraction(getUser(), pid).hasForm() || definitionService.getOutputTransitionNames(getUser(),
-                            pid, null).size() > 1)) {
-                        String actionParameter = ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER;
-                        return ConfirmationPopupHelper.getInstance().getConfirmationPopupCodeHTML(actionParameter, getPageContext());
-                    }
-
-                } catch (Exception e) {
-                    throw new InternalApplicationException(e);
+                if (!(Delegates.getDefinitionService().getStartInteraction(getUser(), pid).hasForm() || Delegates.getDefinitionService()
+                        .getOutputTransitionNames(getUser(), pid, null).size() > 1)) {
+                    String actionParameter = ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER;
+                    return ConfirmationPopupHelper.getInstance().getConfirmationPopupCodeHTML(actionParameter, getPageContext());
                 }
             }
             return null;
@@ -102,7 +96,7 @@ public class ReflectionRowBuilder implements RowBuilder {
 
         @Override
         public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) {
-            boolean[] retVal = isAllowedCache.get(new Pair(permission, extractor));
+            boolean[] retVal = allowedCache.get(permission);
             if (retVal == null) {
                 AuthorizationService authorizationService = Delegates.getAuthorizationService();
                 if (extractor == null) {
@@ -114,7 +108,7 @@ public class ReflectionRowBuilder implements RowBuilder {
                     }
                     retVal = authorizationService.isAllowed(getUser(), permission, identifiables);
                 }
-                isAllowedCache.put(new Pair(permission, extractor), retVal);
+                allowedCache.put(permission, retVal);
             }
             return retVal[currentState.getItemIndex()];
         }
@@ -136,35 +130,8 @@ public class ReflectionRowBuilder implements RowBuilder {
             return cache.get(processIdExtractor.getIdentifiable(object, this).getIdentifiableId());
         }
 
-        private class Pair {
-            Permission perm;
-            IdentifiableExtractor ident;
-
-            public Pair(Permission perm, IdentifiableExtractor ident) {
-                this.perm = perm;
-                this.ident = ident;
-            }
-
-            @Override
-            public int hashCode() {
-                return perm.hashCode();
-            }
-
-            @Override
-            public boolean equals(Object other) {
-                if (other == null) {
-                    return false;
-                }
-                if (!(other instanceof Pair)) {
-                    return false;
-                }
-                Pair otherPair = (Pair) other;
-                return (perm.equals(otherPair.perm)) && (ident == null ? otherPair.ident == null : ident.equals(otherPair.ident));
-            }
-        }
-
-        private final Map<Pair, boolean[]> isAllowedCache = new HashMap<Pair, boolean[]>();
-        private final Map<String, Map<Long, Object>> taskVariableCache = new HashMap<String, Map<Long, Object>>();
+        private final Map<Permission, boolean[]> allowedCache = Maps.newHashMap();
+        private final Map<String, Map<Long, Object>> taskVariableCache = Maps.newHashMap();
 
     }
 
@@ -393,7 +360,7 @@ public class ReflectionRowBuilder implements RowBuilder {
                 String idValue = BeanUtils.getProperty(item, idPropertyName);
                 return Commons.getActionUrl(baseUrl, IdForm.ID_INPUT_NAME, idValue, context, PortletUrlType.Action);
             } catch (Exception e) {
-                throw new InternalApplicationException(e);
+                throw Throwables.propagate(e);
             }
         }
     }

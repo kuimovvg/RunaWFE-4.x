@@ -23,10 +23,10 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 /**
@@ -84,7 +84,7 @@ public class XmlUtils {
             reader.setErrorHandler(SimpleErrorHandler.getInstance());
             return reader.read(new BOMSkippingReader(new InputStreamReader(in, Charsets.UTF_8)));
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -95,7 +95,7 @@ public class XmlUtils {
             writer.write(node);
             return baos.toByteArray();
         } catch (IOException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

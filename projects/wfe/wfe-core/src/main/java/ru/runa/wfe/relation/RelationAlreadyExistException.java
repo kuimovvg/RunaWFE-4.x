@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.relation;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Exception, which was thrown, if {@link Relation} already found.
  */
-public class RelationAlreadyExistException extends ApplicationException {
+public class RelationAlreadyExistException extends WfException {
     private static final long serialVersionUID = 1L;
 
     /**

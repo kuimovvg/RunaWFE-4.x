@@ -43,6 +43,7 @@ public class ExecutorCacheCtrl extends BaseCacheCtrl<ExecutorCacheImpl> implemen
         return instance;
     }
 
+    @Override
     public ExecutorCacheImpl buildCache() {
         return new ExecutorCacheImpl();
     }
@@ -81,9 +82,9 @@ public class ExecutorCacheCtrl extends BaseCacheCtrl<ExecutorCacheImpl> implemen
             }
         } else if (object instanceof ExecutorGroupMembership) {
             boolean cleared = true;
-            ExecutorGroupMembership relation = (ExecutorGroupMembership) object;
-            cleared = cleared && cache.onExecutorInGroupChange(relation.getExecutor());
-            cleared = cleared && cache.onGroupMembersChange(relation.getGroup());
+            ExecutorGroupMembership membership = (ExecutorGroupMembership) object;
+            cleared = cleared && cache.onExecutorInGroupChange(membership.getExecutor());
+            cleared = cleared && cache.onGroupMembersChange(membership.getGroup());
             if (!cleared) {
                 uninitialize(object);
             }

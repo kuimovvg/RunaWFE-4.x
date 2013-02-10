@@ -30,7 +30,7 @@ public class UpdateBotStationAction extends ActionBase {
         BotStationForm botStationForm = (BotStationForm) form;
         try {
             BotService botService = Delegates.getBotService();
-            BotStation botStation = botService.getBotStation(botStationForm.getBotStationID());
+            BotStation botStation = botService.getBotStation(botStationForm.getBotStationId());
             botStation.setName(botStationForm.getBotStationName());
             botStation.setAddress(botStationForm.getBotStationRMIAddress());
             botService.updateBotStation(getLoggedUser(request), botStation);
@@ -40,6 +40,6 @@ public class UpdateBotStationAction extends ActionBase {
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
-        return new ActionForward("/bot_station.do?botStationID=" + botStationForm.getBotStationID());
+        return new ActionForward("/bot_station.do?botStationId=" + botStationForm.getBotStationId());
     }
 }

@@ -15,34 +15,46 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wf.web.html;
+package ru.runa.common.web.html;
 
 import java.util.Date;
 
 import org.apache.ecs.html.TD;
 
-import ru.runa.common.web.html.TDBuilder;
 import ru.runa.wfe.commons.CalendarUtil;
-import ru.runa.wfe.task.dto.WfTask;
 
-public class TaskDeadlineTDBuilder implements TDBuilder {
+/**
+ * Created on 14.11.2005
+ * 
+ * @author Vitaliy S aka Yilativs
+ * @author Gordienko_m
+ */
+public abstract class BaseDateTDBuilder<T extends Object> implements TDBuilder {
 
     @Override
     public TD build(Object object, Env env) {
-        TD td = new TD();
+        String dateString;
+        Date date = getDate((T) object);
+        if (date != null) {
+            dateString = CalendarUtil.formatDate(date);
+        } else {
+            dateString = "";
+        }
+        TD td = new TD(dateString);
         td.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
-        td.addElement(getValue(object, env));
         return td;
     }
 
     @Override
     public String getValue(Object object, Env env) {
-        Date deadlineDate = ((WfTask) object).getDeadlineDate();
-        if (deadlineDate == null) {
-            return "";
+        Date date = getDate((T) object);
+        if (date != null) {
+            return CalendarUtil.formatDateTime(date);
         }
-        return CalendarUtil.formatDateTime(deadlineDate);
+        return "";
     }
+
+    protected abstract Date getDate(T object);
 
     @Override
     public String[] getSeparatedValues(Object object, Env env) {

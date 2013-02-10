@@ -18,8 +18,10 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.CalendarUtil;
+
+import com.google.common.base.Throwables;
 
 /**
  * Converts java properties from/to alfresco {@link Serializable}.
@@ -35,7 +37,7 @@ public class JavaObjectAccessor {
         this.alfObject = alfObject;
     }
 
-    public void setProperty(AlfSerializerDesc desc, Serializable value) throws ApplicationException {
+    public void setProperty(AlfSerializerDesc desc, Serializable value) throws WfException {
         try {
             String fieldName = desc.getFieldName();
             if (desc.isNodeReference()) {
@@ -67,7 +69,7 @@ public class JavaObjectAccessor {
                 setTypedProperty(fieldName, value);
             }
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -75,7 +77,7 @@ public class JavaObjectAccessor {
         PropertyUtils.setProperty(alfObject, propertyName, value);
     }
 
-    public Map<QName, Serializable> getAlfrescoProperties(AlfTypeDesc typeDesc, boolean all, boolean includeName) throws ApplicationException {
+    public Map<QName, Serializable> getAlfrescoProperties(AlfTypeDesc typeDesc, boolean all, boolean includeName) throws WfException {
         Map<QName, Serializable> props = new HashMap<QName, Serializable>();
         Collection<AlfSerializerDesc> propDescs;
         if (all) {
@@ -97,7 +99,7 @@ public class JavaObjectAccessor {
         return props;
     }
 
-    public Serializable getProperty(AlfSerializerDesc desc) throws ApplicationException {
+    public Serializable getProperty(AlfSerializerDesc desc) throws WfException {
         try {
             String fieldName = desc.getFieldName();
             if (desc.isNodeReference()) {
@@ -124,7 +126,7 @@ public class JavaObjectAccessor {
                 return (Serializable) propValue;
             }
         } catch (Exception e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

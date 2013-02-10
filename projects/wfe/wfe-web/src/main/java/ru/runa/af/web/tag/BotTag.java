@@ -24,17 +24,17 @@ import com.google.common.base.Preconditions;
 public class BotTag extends TitledFormTag {
     private static final long serialVersionUID = 1L;
 
-    private Long botID;
+    private Long botId;
 
-    public void setBotID(Long botID) {
-        this.botID = botID;
+    public void setBotId(Long botId) {
+        this.botId = botId;
     }
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
      */
-    public Long getBotID() {
-        return botID;
+    public Long getBotId() {
+        return botId;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class BotTag extends TitledFormTag {
         Input botTimeoutInput = new Input(Input.TEXT, BotForm.BOT_TIMEOUT, String.valueOf(bot.getStartTimeout()));
 
         Input hiddenBotStationID = new Input(Input.HIDDEN, BotForm.BOT_STATION_ID, bot.getBotStation().getId().intValue());
-        Input hiddenBotID = new Input(Input.HIDDEN, BotForm.BOT_ID, String.valueOf(botID));
+        Input hiddenBotID = new Input(Input.HIDDEN, BotForm.BOT_ID, String.valueOf(botId));
         tdFormElement.addElement(hiddenBotStationID);
         tdFormElement.addElement(hiddenBotID);
 
@@ -68,7 +68,7 @@ public class BotTag extends TitledFormTag {
     }
 
     private Bot findBot() {
-        return Delegates.getBotService().getBot(getUser(), botID);
+        return Delegates.getBotService().getBot(getUser(), botId);
     }
 
     @Override

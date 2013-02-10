@@ -22,7 +22,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.AdminScriptForm;
 import ru.runa.service.client.AdminScriptClient;
 import ru.runa.service.client.AdminScriptClient.Handler;
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.IOCommons;
 
 import com.google.common.base.Charsets;
@@ -115,7 +115,7 @@ public class AdminkitScriptsAction extends ActionBase {
         if (form.getUploadFile() != null) {
             return form.getUploadFile().getFileData();
         }
-        throw new InternalApplicationException("No script parameter found");
+        throw new WfException("No script parameter found");
     }
 
     private void setErrors(boolean ajaxRequest, ActionMessages errors, HttpServletRequest request, HttpServletResponse response, String text) {

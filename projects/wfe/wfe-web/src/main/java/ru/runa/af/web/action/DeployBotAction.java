@@ -12,7 +12,6 @@ import ru.runa.af.web.form.DeployBotForm;
 import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
 
 /**
@@ -27,9 +26,8 @@ public class DeployBotAction extends ActionBase {
         ActionMessages errors = getErrors(request);
         DeployBotForm form = (DeployBotForm) actionForm;
         try {
-            BotService botService = Delegates.getBotService();
-            BotStation station = botService.getBotStation(form.getId());
-            botService.importBot(getLoggedUser(request), station, form.getFile().getFileData(), form.isReplace());
+            BotStation station = Delegates.getBotService().getBotStation(form.getBotStationId());
+            Delegates.getBotService().importBot(getLoggedUser(request), station, form.getFile().getFileData(), form.isReplace());
         } catch (Exception e) {
             ActionExceptionHelper.addException(errors, e);
         }
@@ -37,6 +35,6 @@ public class DeployBotAction extends ActionBase {
         if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
-        return new ActionForward("/bot_station.do?botStationID=" + form.getId());
+        return new ActionForward("/bot_station.do?botStationId=" + form.getId());
     }
 }

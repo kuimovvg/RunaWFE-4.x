@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.definition;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Signals that process definition does not exists in DB.
  */
-public class DefinitionDoesNotExistException extends ApplicationException {
+public class DefinitionDoesNotExistException extends WfException {
     private static final long serialVersionUID = 1L;
     private final String name;
 

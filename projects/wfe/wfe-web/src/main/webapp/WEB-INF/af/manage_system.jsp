@@ -60,9 +60,9 @@
 
 <tiles:put name="body" type="string" >
 <%
-	String substitutionCriteriaIDs = "";
-	if (request.getParameter("substitutionCriteriaIDs") != null) {
-	    substitutionCriteriaIDs = request.getParameter("substitutionCriteriaIDs");
+	String substitutionCriteriaIds = "";
+	if (request.getParameter("substitutionCriteriaIds") != null) {
+	    substitutionCriteriaIds = request.getParameter("substitutionCriteriaIds");
 	}
 %>
 
@@ -79,7 +79,7 @@
 	</table>
 </wf:updatePermissionsOnSystemForm>
 
-<wf:listSubstitutionCriteriasForm buttonAlignment="right" substitutionCriteriaIDs="<%= substitutionCriteriaIDs %>">
+<wf:listSubstitutionCriteriasForm buttonAlignment="right" substitutionCriteriaIds="<%= substitutionCriteriaIds %>">
 	<table width="100%">
 	<tr>
 		<td align="left">

@@ -26,9 +26,7 @@ import ru.runa.wfe.security.WeakPasswordException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
-import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
-import ru.runa.wfe.user.ExecutorNotInGroupException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 
@@ -67,29 +65,21 @@ public interface ExecutorService {
 
     public List<Actor> getAvailableActorsByCodes(User user, List<Long> codes) throws ExecutorDoesNotExistException;
 
-    public void addExecutorsToGroup(User user, List<? extends Executor> executors, Group group) throws ExecutorDoesNotExistException,
-            ExecutorAlreadyInGroupException;
+    public void addExecutorsToGroup(User user, List<? extends Executor> executors, Group group) throws ExecutorDoesNotExistException;
 
-    public void addExecutorsToGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorDoesNotExistException,
-            ExecutorAlreadyInGroupException;
+    public void addExecutorsToGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorDoesNotExistException;
 
-    public void addExecutorToGroups(User user, Executor executor, List<Group> groups) throws ExecutorDoesNotExistException,
-            ExecutorAlreadyInGroupException;
+    public void addExecutorToGroups(User user, Executor executor, List<Group> groups) throws ExecutorDoesNotExistException;
 
-    public void addExecutorToGroups(User user, Long executorId, List<Long> groupIds) throws ExecutorDoesNotExistException,
-            ExecutorAlreadyInGroupException;
+    public void addExecutorToGroups(User user, Long executorId, List<Long> groupIds) throws ExecutorDoesNotExistException;
 
-    public void removeExecutorsFromGroup(User user, List<? extends Executor> executors, Group group) throws ExecutorDoesNotExistException,
-            ExecutorNotInGroupException;
+    public void removeExecutorsFromGroup(User user, List<? extends Executor> executors, Group group) throws ExecutorDoesNotExistException;
 
-    public void removeExecutorsFromGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorDoesNotExistException,
-            ExecutorNotInGroupException;
+    public void removeExecutorsFromGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorDoesNotExistException;
 
-    public void removeExecutorFromGroups(User user, Executor executor, List<Group> groups) throws ExecutorDoesNotExistException,
-            ExecutorNotInGroupException;
+    public void removeExecutorFromGroups(User user, Executor executor, List<Group> groups) throws ExecutorDoesNotExistException;
 
-    public void removeExecutorFromGroups(User user, Long executorId, List<Long> groupIds) throws ExecutorDoesNotExistException,
-            ExecutorNotInGroupException;
+    public void removeExecutorFromGroups(User user, Long executorId, List<Long> groupIds) throws ExecutorDoesNotExistException;
 
     /**
      * Returns an array of executors from group.

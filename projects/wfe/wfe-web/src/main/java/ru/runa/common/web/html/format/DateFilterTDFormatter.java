@@ -41,7 +41,7 @@ public class DateFilterTDFormatter extends FilterTDFormatter {
             if (j != 0) {
                 filterInputTd.addElement(Entities.NBSP);
             }
-            String html = "<input class=\"inputDate\" name=\"" + TableViewSetupForm.FILTER_CRITERIA + "\" style=\"width: 100px;\" ";
+            String html = "<input class=\"inputDateTime\" name=\"" + TableViewSetupForm.FILTER_CRITERIA + "\" style=\"width: 100px;\" ";
             if (!Strings.isNullOrEmpty(stringConditions[j])) {
                 html += "value=\"" + stringConditions[j] + "\" ";
             }

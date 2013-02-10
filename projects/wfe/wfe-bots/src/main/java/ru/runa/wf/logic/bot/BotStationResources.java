@@ -17,9 +17,6 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.util.MissingResourceException;
-
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ResourceCommons;
 
@@ -37,17 +34,11 @@ public class BotStationResources extends ResourceCommons {
     }
 
     public static BotLogger createBotLogger() {
-        try {
-            String loggerClassName = readPropertyIfExist("bot.logger.class", BUNDLE);
-            if (loggerClassName == null) {
-                return null;
-            }
-            return (BotLogger) ClassLoaderUtil.instantiate(loggerClassName);
-        } catch (MissingResourceException mbe) {
+        String loggerClassName = readPropertyIfExist("bot.logger.class", BUNDLE);
+        if (loggerClassName == null) {
             return null;
-        } catch (Throwable e) {
-            throw new InternalApplicationException(e);
         }
+        return (BotLogger) ClassLoaderUtil.instantiate(loggerClassName);
     }
 
     public static int getThreadPoolSize() {
@@ -57,13 +48,13 @@ public class BotStationResources extends ResourceCommons {
             return 1;
         }
     }
-    
+
     public static String getSystemUsername() {
-    	return readProperty("botstation.system.username", BUNDLE);
+        return readProperty("botstation.system.username", BUNDLE);
     }
 
     public static String getSystemPassword() {
-    	return readProperty("botstation.system.password", BUNDLE);
+        return readProperty("botstation.system.password", BUNDLE);
     }
 
 }

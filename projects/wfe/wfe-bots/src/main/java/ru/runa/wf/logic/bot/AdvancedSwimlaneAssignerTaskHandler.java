@@ -20,7 +20,6 @@ package ru.runa.wf.logic.bot;
 import java.util.List;
 import java.util.Map;
 
-
 import ru.runa.wf.logic.bot.assigner.AssignerSettings;
 import ru.runa.wf.logic.bot.assigner.AssignerSettings.Condition;
 import ru.runa.wf.logic.bot.assigner.AssignerSettingsXmlParser;

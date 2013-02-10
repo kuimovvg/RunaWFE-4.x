@@ -47,7 +47,7 @@ public class HtmlFilterTag extends TitledFormTag {
 
     @Override
     protected String getTitle() {
-        return Messages.getMessage(DefinitionClassPresentation.PROCESS_DEFINITION_BATCH_PRESENTATION_DESCRIPTION, pageContext);
+        return Messages.getMessage(DefinitionClassPresentation.BATCH_PRESENTATION_DESCRIPTION, pageContext);
     }
 
     @Override

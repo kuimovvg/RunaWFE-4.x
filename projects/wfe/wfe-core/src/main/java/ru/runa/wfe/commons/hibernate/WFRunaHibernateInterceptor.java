@@ -39,15 +39,11 @@ public class WFRunaHibernateInterceptor extends EmptyInterceptor {
     private Boolean isOracle; // TODO another way of handling '' values?
 
     private void onChanges(Object entity, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        if (entity instanceof Task) {
-            CachingLogic.onTaskChange(entity, currentState, previousState, propertyNames, types);
-        } else if (entity instanceof Swimlane) {
+        if (entity instanceof Task || entity instanceof Swimlane) {
             CachingLogic.onTaskChange(entity, currentState, previousState, propertyNames, types);
         } else if (entity instanceof Substitution) {
             CachingLogic.onSubstitutionChange(entity, currentState, previousState, propertyNames, types);
-        } else if (entity instanceof Executor) {
-            CachingLogic.onExecutorChange(entity, currentState, previousState, propertyNames, types);
-        } else if (entity instanceof ExecutorGroupMembership) {
+        } else if (entity instanceof Executor || entity instanceof ExecutorGroupMembership) {
             CachingLogic.onExecutorChange(entity, currentState, previousState, propertyNames, types);
         } else if (entity instanceof Deployment) {
             CachingLogic.onProcessDefChange(entity, currentState, previousState, propertyNames, types);

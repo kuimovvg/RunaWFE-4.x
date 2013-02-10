@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.relation;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Exception, which was thrown, if {@link RelationPair} is not exists.
  */
-public class RelationPairDoesNotExistException extends ApplicationException {
+public class RelationPairDoesNotExistException extends WfException {
     private static final long serialVersionUID = 1L;
 
     /**

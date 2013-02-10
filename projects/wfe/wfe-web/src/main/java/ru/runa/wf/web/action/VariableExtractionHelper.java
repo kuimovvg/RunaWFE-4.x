@@ -30,7 +30,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
 
 import ru.runa.wf.web.VariablesFormatException;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.var.FileVariable;
@@ -39,6 +38,7 @@ import ru.runa.wfe.var.format.BooleanFormat;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 /**
@@ -125,10 +125,8 @@ class VariableExtractionHelper {
                 throw new VariablesFormatException(formatErrorsForFields);
             }
             return variablesMap;
-        } catch (VariablesFormatException e) {
-            throw e;
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

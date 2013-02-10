@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.definition;
 
+import java.util.Date;
+
 import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.DefaultDBSource;
 import ru.runa.wfe.presentation.FieldDescriptor;
@@ -31,10 +33,11 @@ import ru.runa.wfe.presentation.filter.AnywhereStringFilterCriteria;
  * @since 4.0
  */
 public class DefinitionClassPresentation extends ClassPresentation {
-    public static final String PROCESS_DEFINITION_BATCH_PRESENTATION_NAME = "batch_presentation.process_definition.name";
-    public static final String PROCESS_DEFINITION_BATCH_PRESENTATION_DESCRIPTION = "batch_presentation.process_definition.description";
-    public static final String PROCESS_DEFINITION_BATCH_PRESENTATION_VERSION = "batch_presentation.process_definition.version";
-    public static final String PROCESS_DEFINITION_BATCH_PRESENTATION_TYPE = "batch_presentation.process_definition.process_type";
+    public static final String BATCH_PRESENTATION_NAME = "batch_presentation.process_definition.name";
+    public static final String BATCH_PRESENTATION_DESCRIPTION = "batch_presentation.process_definition.description";
+    public static final String BATCH_PRESENTATION_VERSION = "batch_presentation.process_definition.version";
+    public static final String BATCH_PRESENTATION_TYPE = "batch_presentation.process_definition.process_type";
+    public static final String BATCH_PRESENTATION_DEPLOYMENT_DATE = "batch_presentation.process_definition.deployed";
 
     private static final ClassPresentation INSTANCE = new DefinitionClassPresentation();
 
@@ -43,15 +46,15 @@ public class DefinitionClassPresentation extends ClassPresentation {
                 + classNameSQL + ".name=temp.name)", false, new FieldDescriptor[] {
                 // display name field type DB source isSort filter mode
                 // get value/show in web getter parameters
-                new FieldDescriptor(PROCESS_DEFINITION_BATCH_PRESENTATION_NAME, String.class.getName(),
-                        new DefaultDBSource(Deployment.class, "name"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder",
-                        new Object[] { DefinitionPermission.START_PROCESS, "name" }),
-                new FieldDescriptor(PROCESS_DEFINITION_BATCH_PRESENTATION_DESCRIPTION, String.class.getName(), new SubstringDBSource(
-                        Deployment.class, "description"), true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.DescriptionProcessTDBuilder",
-                        new Object[] {}),
-                new FieldDescriptor(PROCESS_DEFINITION_BATCH_PRESENTATION_TYPE, AnywhereStringFilterCriteria.class.getName(), new DefaultDBSource(
-                        Deployment.class, "category"), true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TypeProcessTDBuilder", new Object[] {},
-                        true) });
+                new FieldDescriptor(BATCH_PRESENTATION_NAME, String.class.getName(), new DefaultDBSource(Deployment.class, "name"), true,
+                        FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { DefinitionPermission.START_PROCESS,
+                                "name" }),
+                new FieldDescriptor(BATCH_PRESENTATION_DESCRIPTION, String.class.getName(), new SubstringDBSource(Deployment.class, "description"),
+                        true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.DescriptionProcessTDBuilder", new Object[] {}),
+                new FieldDescriptor(BATCH_PRESENTATION_TYPE, AnywhereStringFilterCriteria.class.getName(), new DefaultDBSource(Deployment.class,
+                        "category"), true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TypeProcessTDBuilder", new Object[] {}, true),
+                new FieldDescriptor(BATCH_PRESENTATION_DEPLOYMENT_DATE, Date.class.getName(), new DefaultDBSource(Deployment.class, "deployedDate"),
+                        true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.DefinitionDeployedDateTDBuilder", new Object[] {}) });
     }
 
     public static final ClassPresentation getInstance() {

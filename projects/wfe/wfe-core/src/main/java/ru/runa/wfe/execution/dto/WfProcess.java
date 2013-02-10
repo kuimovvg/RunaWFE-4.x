@@ -52,9 +52,9 @@ public class WfProcess extends IdentifiableBase {
 
     public WfProcess(Process process) {
         id = process.getId();
-        name = process.getDefinition().getName();
-        processDefinitionId = process.getDefinition().getId();
-        version = process.getDefinition().getVersion().intValue();
+        name = process.getDeployment().getName();
+        processDefinitionId = process.getDeployment().getId();
+        version = process.getDeployment().getVersion().intValue();
         startDate = process.getStartDate();
         endDate = process.getEndDate();
         hierarchySubProcess = process.getHierarchySubProcess();

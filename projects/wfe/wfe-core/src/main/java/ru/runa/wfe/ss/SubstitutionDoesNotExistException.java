@@ -1,6 +1,6 @@
 package ru.runa.wfe.ss;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 /*
  * This file is part of the RUNA WFE project.
@@ -24,7 +24,7 @@ import ru.runa.wfe.ApplicationException;
  * 
  * Created on 03.02.2006
  */
-public class SubstitutionDoesNotExistException extends ApplicationException {
+public class SubstitutionDoesNotExistException extends WfException {
     private static final long serialVersionUID = 1L;
 
     public SubstitutionDoesNotExistException() {

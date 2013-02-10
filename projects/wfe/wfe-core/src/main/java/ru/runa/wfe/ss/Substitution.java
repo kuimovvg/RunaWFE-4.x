@@ -41,10 +41,10 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.PolymorphismType;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.OracleCommons;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
 
 /**
  * Created on 27.01.2006
@@ -159,8 +159,7 @@ public class Substitution implements Cloneable, Serializable {
             clone.version = null;
             return clone;
         } catch (CloneNotSupportedException e) {
-            // should never happen
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

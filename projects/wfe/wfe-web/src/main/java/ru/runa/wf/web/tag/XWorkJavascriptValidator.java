@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.validation.FieldValidator;
 import ru.runa.wfe.validation.Validator;
@@ -39,6 +38,7 @@ import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -76,7 +76,7 @@ public class XWorkJavascriptValidator {
 
             return new String(result.toByteArray(), Charsets.UTF_8);
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

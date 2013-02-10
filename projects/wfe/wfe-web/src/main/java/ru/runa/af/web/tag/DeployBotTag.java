@@ -37,17 +37,17 @@ import ru.runa.wfe.bot.BotStationPermission;
 public class DeployBotTag extends TitledFormTag {
     private static final long serialVersionUID = 1L;
 
-    private Long ID;
+    private Long botStationId;
 
-    public void setID(Long ID) {
-        this.ID = ID;
+    public void setBotStationId(Long botStationId) {
+        this.botStationId = botStationId;
     }
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
      */
-    public Long getID() {
-        return ID;
+    public Long getBotStationId() {
+        return botStationId;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class DeployBotTag extends TitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) {
         getForm().setEncType(Form.ENC_UPLOAD);
-        tdFormElement.addElement(new Input(Input.hidden, FileForm.ID_INPUT_NAME, Long.toString(ID)));
+        tdFormElement.addElement(new Input(Input.hidden, DeployBotForm.BOT_STATION_ID, Long.toString(botStationId)));
         Input boolInput = new Input(Input.CHECKBOX, DeployBotForm.REPLACE_OPTION_NAME);
         tdFormElement.addElement(boolInput);
         tdFormElement.addElement(Messages.getMessage(Messages.LABEL_REPLACE_BOT_TASKS, pageContext) + "<br>");

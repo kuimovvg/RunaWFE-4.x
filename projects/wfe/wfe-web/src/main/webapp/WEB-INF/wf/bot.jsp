@@ -13,17 +13,17 @@
 
 	<tiles:put name="body" type="string">
 <%
-	String parameterName = "botID";
+	String parameterName = "botId";
 	long id = Long.parseLong(request.getParameter(parameterName));
 	String returnAction="/bot.do?" + parameterName+ "=" +id;
 %>
-        <wf:botTag botID="<%= id %>"/>
+        <wf:botTag botId="<%= id %>"/>
         	<table width="100%">
                 <tr>
                     <td align="left"><wf:saveBotLink href="<%="save_bot.do?id=" + id %>"/></td>
                 </tr>
             </table>
-        <wf:botTaskListTag botID="<%= id %>">
+        <wf:botTaskListTag botId="<%= id %>">
 			<table width="100%">
                 <tr>
                     <td align="left"><wf:addBotTaskLink href="<%="create_bot_task.do?id=" + id %>"/></td>

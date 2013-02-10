@@ -98,8 +98,8 @@ class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCach
         }
         List<Deployment> result = deploymentDAO.findLatestDeployments();
         synchronized (this) {
-            for (Deployment processDeployment : result) {
-                latestProcessDefinition.add(getDefinition(deploymentDAO, processDeployment.getId()));
+            for (Deployment deployment : result) {
+                latestProcessDefinition.add(getDefinition(deploymentDAO, deployment.getId()));
             }
         }
         return latestProcessDefinition;
