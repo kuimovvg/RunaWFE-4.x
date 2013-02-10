@@ -44,7 +44,7 @@ public class WfProcess extends IdentifiableBase {
     private Date startDate;
     private Date endDate;
     private int version;
-    private Long processDefinitionId;
+    private Long definitionId;
     private String hierarchySubProcess;
 
     public WfProcess() {
@@ -53,7 +53,7 @@ public class WfProcess extends IdentifiableBase {
     public WfProcess(Process process) {
         id = process.getId();
         name = process.getDeployment().getName();
-        processDefinitionId = process.getDeployment().getId();
+        definitionId = process.getDeployment().getId();
         version = process.getDeployment().getVersion().intValue();
         startDate = process.getStartDate();
         endDate = process.getEndDate();
@@ -93,16 +93,30 @@ public class WfProcess extends IdentifiableBase {
         return version;
     }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
-    }
-
-    public Long getProcessDefinitionId() {
-        return processDefinitionId;
+    public Long getDefinitionId() {
+        return definitionId;
     }
 
     public String getHierarchySubProcess() {
         return hierarchySubProcess;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof WfProcess) {
+            return Objects.equal(id, ((WfProcess) obj).id);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
+    }
+
 }

@@ -13,6 +13,10 @@ public class ProcessExecutionException extends LocalizableException {
         super(message, details);
     }
 
+    public ProcessExecutionException(String message, Throwable cause, Object... details) {
+        super(message, cause, details);
+    }
+
     @Override
     protected String getResourceBaseName() {
         return "core.error";

@@ -10,7 +10,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class ProcessExecutionErrors { // TODO nodeID instead of taskName?
+public class ProcessExecutionErrors {
     // TODO "Date"
     private static Map<BotTaskIdentifier, Throwable> botTaskConfigurationErrors = Maps.newHashMap();
     private static Map<Long, Map<String, Throwable>> processErrors = Maps.newHashMap();
