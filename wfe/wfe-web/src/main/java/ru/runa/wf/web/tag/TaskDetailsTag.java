@@ -30,6 +30,7 @@ import ru.runa.common.web.tag.BatchReturningTitledFormTag;
 import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 
@@ -62,7 +63,7 @@ public class TaskDetailsTag extends BatchReturningTitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) {
         ExecutionService executionService = Delegates.getExecutionService();
-        BatchPresentation batchPresentation = getProfile().getActiveBatchPresentation("listTasksForm").clone();
+        BatchPresentation batchPresentation = getProfile().getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS).clone();
         batchPresentation.setFieldsToGroup(new int[0]);
         WfTask current = getTask(executionService);
         if (current == null) {
@@ -84,7 +85,7 @@ public class TaskDetailsTag extends BatchReturningTitledFormTag {
     }
 
     private WfTask getTask(ExecutionService executionService) {
-        List<WfTask> tasks = executionService.getTasks(getUser(), getProfile().getActiveBatchPresentation("listTasksForm").clone());
+        List<WfTask> tasks = executionService.getTasks(getUser(), getProfile().getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS));
         for (WfTask task : tasks) {
             if (Objects.equal(task.getId(), getTaskId())) {
                 return task;

@@ -114,7 +114,7 @@ public class TaskClassPresentation extends ClassPresentation {
                                 "description"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
                                 new Permission(), "description" }),
                         new FieldDescriptor(TASK_BATCH_PRESENTATION_DEFINITION_NAME, String.class.getName(), new DefaultDBSource(Task.class,
-                                "process.definition.name"), true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskProcessDefinitionTDBuilder",
+                                "process.deployment.name"), true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskProcessDefinitionTDBuilder",
                                 new Object[] {}),
                         new FieldDescriptor(TASK_BATCH_PRESENTATION_PROCESS_ID, Integer.class.getName(),
                                 new DefaultDBSource(Task.class, "process.id"), true, FieldFilterMode.DATABASE,

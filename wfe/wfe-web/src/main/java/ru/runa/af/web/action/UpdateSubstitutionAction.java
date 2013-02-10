@@ -23,10 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.SubstitutionForm;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.delegate.Delegates;
@@ -78,9 +76,7 @@ public class UpdateSubstitutionAction extends ActionBase {
             }
             return new ActionForward(RETURN_ACTION + substitution.getActorId(), true);
         } catch (Exception e) {
-            ActionMessages errors = new ActionMessages();
-            ActionExceptionHelper.addException(errors, e);
-            saveErrors(request, errors);
+            addError(request, e);
             return mapping.findForward(Resources.FORWARD_FAILURE);
         }
     }

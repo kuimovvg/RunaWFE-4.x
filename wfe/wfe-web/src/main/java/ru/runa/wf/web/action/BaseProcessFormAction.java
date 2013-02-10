@@ -27,9 +27,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
@@ -50,55 +48,48 @@ public abstract class BaseProcessFormAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         Map<String, String> userInputErrors = null;
-        ActionForward successForward = null;
+        ActionForward forward;
         try {
             Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
             if (request.getSession().getAttribute(Globals.TRANSACTION_TOKEN_KEY) == null || isTokenValid(request, true)) {
                 saveToken(request);
-                successForward = executeProcessFromAction(request, form, mapping, profile);
+                forward = executeProcessFromAction(request, form, mapping, profile);
+                addMessage(request, getMessage());
             } else {
-                return new ActionForward("/manage_tasks.do", true);
+                forward = new ActionForward("/manage_tasks.do", true);
             }
         } catch (TaskDoesNotExistException e) {
             // In this case we must go to success forwarding, because of this
             // task is absent and form can't be displayed
-            ActionExceptionHelper.addException(errors, e);
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             // save in request user input
-            request.setAttribute(USER_DEFINED_VARIABLES, VariableExtractionHelper.extractAllAvailableVariables(form));
+            // request.setAttribute(USER_DEFINED_VARIABLES,
+            // VariableExtractionHelper.extractAllAvailableVariables(form));
             // save in request user errors
-            request.setAttribute(USER_ERRORS, userInputErrors);
-            return mapping.findForward(Resources.FORWARD_SUCCESS);
+            // request.setAttribute(USER_ERRORS, userInputErrors);
+            forward = mapping.findForward(Resources.FORWARD_SUCCESS);
         } catch (ValidationException e) {
             userInputErrors = e.getConcatenatedFieldErrors();
             for (String msg : e.getGlobalErrors()) {
                 // we already have localized string
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(msg, false));
+                addError(request, new ActionMessage(msg, false));
             }
-            if (errors.size() == 0) {
+            if (getErrors(request).size() == 0) {
                 // we add at least 1 error message in order to prevent
                 // successful forward
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.MESSAGE_WEB_CLIENT_VALIDATION_ERROR));
+                addError(request, new ActionMessage(Messages.MESSAGE_WEB_CLIENT_VALIDATION_ERROR));
             }
-        } catch (VariablesFormatException e) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.MESSAGE_WEB_CLIENT_VARIABLE_FORMAT_ERROR, e.getErrorFields()));
+            forward = getErrorForward(mapping, form);
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
+            addError(request, e);
+            forward = getErrorForward(mapping, form);
         }
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
-            // save in request user input
-            request.setAttribute(USER_DEFINED_VARIABLES, VariableExtractionHelper.extractAllAvailableVariables(form));
-            // save in request user errors
-            request.setAttribute(USER_ERRORS, userInputErrors);
-            return getErrorForward(mapping, form);
-        }
-
-        ActionMessage userMessage = getMessage();
-        request.getSession().setAttribute(Resources.USER_MESSAGE_KEY, userMessage);
-        return successForward;
+        // save in request user input
+        request.setAttribute(USER_DEFINED_VARIABLES, VariableExtractionHelper.extractAllAvailableVariables(form));
+        // save in request user errors
+        request.setAttribute(USER_ERRORS, userInputErrors);
+        return forward;
     }
 
     protected Map<String, Object> getFormVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction)

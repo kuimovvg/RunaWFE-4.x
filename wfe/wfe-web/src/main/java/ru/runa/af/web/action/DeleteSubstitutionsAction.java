@@ -6,9 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.SubstitutionService;
@@ -29,16 +27,11 @@ public class DeleteSubstitutionsAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
-        ActionMessages errors = new ActionMessages();
         try {
             SubstitutionService substitutionService = Delegates.getSubstitutionService();
             substitutionService.deleteSubstitutions(getLoggedUser(request), Lists.newArrayList(((IdsForm) form).getIds()));
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return mapping.findForward(ru.runa.common.web.Resources.FORWARD_FAILURE);
         }
         return mapping.findForward(ru.runa.common.web.Resources.FORWARD_SUCCESS);

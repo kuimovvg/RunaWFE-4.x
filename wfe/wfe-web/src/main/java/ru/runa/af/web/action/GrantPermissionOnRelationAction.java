@@ -27,10 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.RelationIdsForm;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.IdentifiableAction;
@@ -68,9 +66,11 @@ public class GrantPermissionOnRelationAction extends IdentifiableAction {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         RelationIdsForm relationForm = (RelationIdsForm) form;
         List<Long> selectedIds = Lists.newArrayList(relationForm.getIds());
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("relationName", relationForm.getRelationName());
+        params.put("id", relationForm.getId());
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
             RelationService relationService = Delegates.getRelationService();
@@ -79,21 +79,14 @@ public class GrantPermissionOnRelationAction extends IdentifiableAction {
                 authorizationService.setPermissions(getLoggedUser(request), selectedIds, getIdentifiablePermissions(), identifiable);
             }
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("relationName", relationForm.getRelationName());
-        params.put("id", relationForm.getId());
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), params);
         }
         return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), params);
     }
 
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId) {
         return RelationsGroupSecure.INSTANCE;
     }
 }

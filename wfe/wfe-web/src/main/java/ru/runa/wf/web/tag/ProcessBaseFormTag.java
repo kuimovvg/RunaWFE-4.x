@@ -18,7 +18,6 @@
 package ru.runa.wf.web.tag;
 
 import ru.runa.common.web.tag.IdentifiableFormTag;
-import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.Identifiable;
@@ -33,11 +32,6 @@ public abstract class ProcessBaseFormTag extends IdentifiableFormTag {
     }
 
     protected WfProcess getProcess() {
-        try {
-            ExecutionService executionService = Delegates.getExecutionService();
-            return executionService.getProcess(getUser(), getIdentifiableId());
-        } catch (Exception e) {
-            return null;
-        }
+        return Delegates.getExecutionService().getProcess(getUser(), getIdentifiableId());
     }
 }

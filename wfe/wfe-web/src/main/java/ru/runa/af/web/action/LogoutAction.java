@@ -24,9 +24,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
@@ -48,7 +46,6 @@ public class LogoutAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         try {
             HttpSession session = request.getSession();
             SystemService systemService = Delegates.getSystemService();
@@ -58,10 +55,7 @@ public class LogoutAction extends ActionBase {
             TabHttpSessionHelper.removeTabForwardName(session);
             session.invalidate();
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
         }
         return mapping.findForward(Resources.FORWARD_SUCCESS);
     }

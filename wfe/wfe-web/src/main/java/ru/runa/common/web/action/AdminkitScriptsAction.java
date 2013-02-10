@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -29,7 +27,6 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 
 public class AdminkitScriptsAction extends ActionBase {
-    private static final Log log = LogFactory.getLog(AdminkitScriptsAction.class);
     public static final String PATH = "/admin_scripts";
 
     @Override

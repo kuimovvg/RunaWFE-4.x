@@ -134,18 +134,16 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
             }
             table.addElement(createTRWithLabelAndSelect(Messages.getMessage(Messages.LABEL_SUBSTITUTION_CRITERIA_TYPE, pageContext),
                     SubstitutionCriteriaForm.TYPE_INPUT_NAME, typeOptions, !enabled));
-            if (!Strings.isNullOrEmpty(criteriaType)) {
-                FunctionDef functionDef = SubstitutionCriteriaDefinitions.getByClassName(criteriaType);
-                if (functionDef != null) {
-                    for (int i = 0; i < functionDef.getParams().size(); i++) {
-                        ParamDef paramDef = functionDef.getParams().get(i);
-                        String value = "";
-                        if (substitutionCriteria != null) {
-                            value = substitutionCriteria.getConfiguration();
-                        }
-                        table.addElement(createParameterTR(i, paramDef.getMessage(pageContext),
-                                createEditElement(paramDef.getRenderer(), pageContext, value, i, true)));
+            FunctionDef functionDef = SubstitutionCriteriaDefinitions.getByClassName(criteriaType);
+            if (functionDef != null) {
+                for (int i = 0; i < functionDef.getParams().size(); i++) {
+                    ParamDef paramDef = functionDef.getParams().get(i);
+                    String value = "";
+                    if (substitutionCriteria != null) {
+                        value = substitutionCriteria.getConfiguration();
                     }
+                    table.addElement(createParameterTR(i, paramDef.getMessage(pageContext),
+                            createEditElement(paramDef.getRenderer(), pageContext, value, i, true)));
                 }
             }
             return table;

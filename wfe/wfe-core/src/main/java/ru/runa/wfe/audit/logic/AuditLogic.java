@@ -26,6 +26,7 @@ import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.audit.dao.ProcessLogDAO;
 import ru.runa.wfe.commons.logic.CommonLogic;
+import ru.runa.wfe.commons.logic.PresentationCompilerHelper;
 import ru.runa.wfe.execution.dao.NodeProcessDAO;
 import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -86,7 +87,8 @@ public class AuditLogic extends CommonLogic {
      */
     public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation) {
         checkPermissionAllowed(user, ASystem.INSTANCE, SystemPermission.READ);
-        return new BatchPresentationHibernateCompiler(batchPresentation).getBatch(true);
+        BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createAllSystemLogsCompiler(user, batchPresentation);
+        return compiler.getBatch(true);
     }
 
     /**
@@ -100,7 +102,8 @@ public class AuditLogic extends CommonLogic {
      */
     public int getSystemLogsCount(User user, BatchPresentation batchPresentation) {
         checkPermissionAllowed(user, ASystem.INSTANCE, SystemPermission.READ);
-        return new BatchPresentationHibernateCompiler(batchPresentation).getCount();
+        BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createAllSystemLogsCompiler(user, batchPresentation);
+        return compiler.getCount();
     }
 
 }

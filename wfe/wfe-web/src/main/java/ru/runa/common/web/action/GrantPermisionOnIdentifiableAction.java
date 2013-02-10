@@ -25,9 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.service.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
@@ -38,22 +36,18 @@ import com.google.common.collect.Lists;
 /**
  * Created on 23.08.2004
  */
-abstract public class GrantPermisionOnIdentifiableAction extends IdentifiableAction {
+public abstract class GrantPermisionOnIdentifiableAction extends IdentifiableAction {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         IdsForm listExecutorsForm = (IdsForm) form;
         List<Long> selectedIds = Lists.newArrayList(listExecutorsForm.getIds());
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Identifiable identifiable = getIdentifiable(getLoggedUser(request), listExecutorsForm.getId(), errors);
+            Identifiable identifiable = getIdentifiable(getLoggedUser(request), listExecutorsForm.getId());
             authorizationService.setPermissions(getLoggedUser(request), selectedIds, getIdentifiablePermissions(), identifiable);
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return getErrorForward(mapping, listExecutorsForm.getId());
         }
         return getSuccessForward(mapping, listExecutorsForm.getId());

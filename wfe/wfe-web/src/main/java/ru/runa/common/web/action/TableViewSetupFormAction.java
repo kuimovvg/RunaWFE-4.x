@@ -70,16 +70,14 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
     }
 
     public ActionForward apply(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
             BatchPresentation batchPresentation = getActiveBatchPresentation(profile, tableViewSetupForm.getBatchPresentationId());
             applyBatchPresentation(batchPresentation, tableViewSetupForm);
         } catch (Exception e) {
+            ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
         return new ActionForward(tableViewSetupForm.getReturnAction(), true);
@@ -159,7 +157,6 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
     }
 
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         try {
             apply(mapping, form, request, response);
@@ -170,16 +167,14 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             ProfileService profileService = Delegates.getProfileService();
             profileService.saveBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
         } catch (Exception e) {
+            ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
         return new ActionForward(tableViewSetupForm.getReturnAction(), true);
     }
 
     public ActionForward saveAs(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
@@ -196,16 +191,14 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             profile.addBatchPresentation(batchPresentationClone);
             profile.setActiveBatchPresentation(batchPresentationClone.getCategory(), batchPresentationClone.getName());
         } catch (Exception e) {
+            ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
         return new ActionForward(tableViewSetupForm.getReturnAction(), true);
     }
 
     public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
@@ -214,9 +207,8 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             profileService.deleteBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
             profile.deleteBatchPresentation(batchPresentation);
         } catch (Exception e) {
+            ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
             saveErrors(request.getSession(), errors);
         }
         return new ActionForward(tableViewSetupForm.getReturnAction(), true);

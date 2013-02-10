@@ -19,7 +19,6 @@ package ru.runa.common.web.action;
 
 import java.util.List;
 
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -29,6 +28,6 @@ public abstract class IdentifiableAction extends ActionBase {
 
     protected abstract List<Permission> getIdentifiablePermissions();
 
-    protected abstract Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors);
+    protected abstract Identifiable getIdentifiable(User user, Long identifiableId);
 
 }
