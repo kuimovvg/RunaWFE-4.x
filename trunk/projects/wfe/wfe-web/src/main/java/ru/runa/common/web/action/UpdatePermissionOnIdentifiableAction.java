@@ -26,10 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.UpdatePermissionsOnIdentifiableForm;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -44,10 +42,9 @@ abstract public class UpdatePermissionOnIdentifiableAction extends IdentifiableA
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         UpdatePermissionsOnIdentifiableForm form = (UpdatePermissionsOnIdentifiableForm) actionForm;
         try {
-            Identifiable identifiable = getIdentifiable(getLoggedUser(request), form.getId(), errors);
+            Identifiable identifiable = getIdentifiable(getLoggedUser(request), form.getId());
             List<Long> executorIds = Lists.newArrayList();
             List<Collection<Permission>> executorPermissions = Lists.newArrayList();
             Permission noPermission = identifiable.getSecuredObjectType().getNoPermission();
@@ -71,10 +68,7 @@ abstract public class UpdatePermissionOnIdentifiableAction extends IdentifiableA
             }
             Delegates.getAuthorizationService().setPermissions(getLoggedUser(request), executorIds, executorPermissions, identifiable);
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return getErrorForward(getLoggedUser(request), mapping, form.getId());
         }
         return getSuccessForward(getLoggedUser(request), mapping, form.getId());

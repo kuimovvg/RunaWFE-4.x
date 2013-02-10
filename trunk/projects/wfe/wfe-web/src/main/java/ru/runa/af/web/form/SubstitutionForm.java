@@ -60,7 +60,7 @@ public class SubstitutionForm extends IdForm {
                 if (params == null) {
                     errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(ERROR_KEY));
                 } else {
-                    FunctionDef fDef = SubstitutionDefinitions.getByClassName(function);
+                    FunctionDef fDef = SubstitutionDefinitions.getByClassNameNotNull(function);
                     if (fDef.getParams().size() != params.length) {
                         errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(ERROR_KEY));
                     } else {

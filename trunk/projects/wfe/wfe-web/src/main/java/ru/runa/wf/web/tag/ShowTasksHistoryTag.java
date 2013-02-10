@@ -64,8 +64,10 @@ public class ShowTasksHistoryTag extends ProcessBaseFormTag {
                         break;
                     }
                 }
-                TaskEndLog endLog = taskLogs.get(createLog);
-                result.add(populateTaskRow(createLog, endLog));
+                if (createLog != null) {
+                    TaskEndLog endLog = taskLogs.get(createLog);
+                    result.add(populateTaskRow(createLog, endLog));
+                }
             }
             if (log instanceof TaskCreateLog) {
                 TaskCreateLog createLog = (TaskCreateLog) log;

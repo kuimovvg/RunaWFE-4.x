@@ -18,7 +18,6 @@
 package ru.runa.wfe.presentation.filter;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
@@ -30,6 +29,8 @@ import ru.runa.wfe.var.impl.DoubleVariable;
 import ru.runa.wfe.var.impl.LongVariable;
 import ru.runa.wfe.var.impl.StringVariable;
 
+import com.google.common.collect.Maps;
+
 /**
  * 
  * Created on 12.02.2007
@@ -37,18 +38,18 @@ import ru.runa.wfe.var.impl.StringVariable;
  */
 public class FilterCriteriaFactory {
 
-    private static Map<String, FilterCriteria> filterCriterias = new HashMap<String, FilterCriteria>();
+    private static Map<String, Class<? extends FilterCriteria>> filterCriterias = Maps.newHashMap();
 
     static {
-        filterCriterias.put(String.class.getName(), new StringFilterCriteria());
-        filterCriterias.put(Integer.class.getName(), new IntegerFilterCriteria());
-        filterCriterias.put(Variable.class.getName(), new AnywhereStringFilterCriteria());
-        filterCriterias.put(ByteArrayVariable.class.getName(), new AnywhereStringFilterCriteria());
-        filterCriterias.put(DateVariable.class.getName(), new AnywhereStringFilterCriteria());
-        filterCriterias.put(DoubleVariable.class.getName(), new AnywhereStringFilterCriteria());
-        filterCriterias.put(LongVariable.class.getName(), new AnywhereStringFilterCriteria());
-        filterCriterias.put(StringVariable.class.getName(), new AnywhereStringFilterCriteria());
-        filterCriterias.put(Date.class.getName(), new DateFilterCriteria());
+        filterCriterias.put(String.class.getName(), StringFilterCriteria.class);
+        filterCriterias.put(Integer.class.getName(), IntegerFilterCriteria.class);
+        filterCriterias.put(Variable.class.getName(), AnywhereStringFilterCriteria.class);
+        filterCriterias.put(ByteArrayVariable.class.getName(), AnywhereStringFilterCriteria.class);
+        filterCriterias.put(DateVariable.class.getName(), AnywhereStringFilterCriteria.class);
+        filterCriterias.put(DoubleVariable.class.getName(), AnywhereStringFilterCriteria.class);
+        filterCriterias.put(LongVariable.class.getName(), AnywhereStringFilterCriteria.class);
+        filterCriterias.put(StringVariable.class.getName(), AnywhereStringFilterCriteria.class);
+        filterCriterias.put(Date.class.getName(), DateFilterCriteria.class);
     }
 
     public static FilterCriteria getFilterCriteria(BatchPresentation batchPresentation, int fieldId) {
@@ -57,9 +58,9 @@ public class FilterCriteriaFactory {
     }
 
     public static FilterCriteria getFilterCriteria(String fieldType) {
-        FilterCriteria filter = filterCriterias.get(fieldType);
-        if (filter != null) {
-            return filter.clone();
+        Class<? extends FilterCriteria> criteriaClass = filterCriterias.get(fieldType);
+        if (criteriaClass != null) {
+            return ClassLoaderUtil.instantiate(criteriaClass);
         }
         return ClassLoaderUtil.instantiate(fieldType);
     }

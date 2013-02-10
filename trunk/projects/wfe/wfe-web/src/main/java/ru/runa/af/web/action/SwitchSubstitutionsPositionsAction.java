@@ -25,9 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
@@ -54,7 +52,6 @@ public class SwitchSubstitutionsPositionsAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         IdsForm form = (IdsForm) actionForm;
         try {
             List<Substitution> substitutions = Delegates.getSubstitutionService().getSubstitutions(getLoggedUser(request), form.getId());
@@ -70,10 +67,7 @@ public class SwitchSubstitutionsPositionsAction extends ActionBase {
             substitution1.setPosition(substitution2.getPosition());
             Delegates.getSubstitutionService().updateSubstitution(getLoggedUser(request), substitution1);
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
-            saveErrors(request, errors);
+            addError(request, e);
             return mapping.findForward(Resources.FORWARD_FAILURE);
         }
         return mapping.findForward(Resources.FORWARD_SUCCESS);

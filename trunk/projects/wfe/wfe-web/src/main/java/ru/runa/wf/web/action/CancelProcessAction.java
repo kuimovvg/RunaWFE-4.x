@@ -24,9 +24,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
@@ -53,23 +51,15 @@ public class CancelProcessAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse responce) {
-        ActionMessages errors = new ActionMessages();
         IdForm form = (IdForm) actionForm;
         try {
             ExecutionService executionService = Delegates.getExecutionService();
             executionService.cancelProcess(getLoggedUser(request), form.getId());
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), IdForm.ID_INPUT_NAME, form.getId());
-        } else {
-            ActionMessages messages = new ActionMessages();
-            messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.PROCESS_CANCELED));
-            saveMessages(request.getSession(), messages);
         }
+        addMessage(request, new ActionMessage(Messages.PROCESS_CANCELED));
         return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), IdForm.ID_INPUT_NAME, form.getId());
     }
 

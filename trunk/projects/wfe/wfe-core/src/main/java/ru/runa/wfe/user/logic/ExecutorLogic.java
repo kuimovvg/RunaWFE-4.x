@@ -274,7 +274,7 @@ public class ExecutorLogic extends CommonLogic {
             throw new WeakPasswordException();
         }
         if (!isPermissionAllowed(user, actor, ExecutorPermission.UPDATE)) {
-            if (user.equals(actor)) {
+            if (user.getActor().equals(actor)) {
                 checkPermissionAllowed(user, ASystem.INSTANCE, SystemPermission.CHANGE_SELF_PASSWORD);
             } else {
                 throw new AuthorizationException(user + " hasn't permission to change password for actor " + actor);

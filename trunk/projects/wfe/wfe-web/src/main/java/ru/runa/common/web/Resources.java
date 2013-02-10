@@ -24,7 +24,6 @@ public class Resources {
     public static final String FORWARD_FAILURE = "failure";
     public static final String FORWARD_SUBMIT = "submitTask";
     public static final String FORWARD_TASKKIST = "tasksList";
-    public static final String USER_MESSAGE_KEY = "UserMessage";
 
     /* CSS classes */
     public static final String CLASS_BOX = "box";

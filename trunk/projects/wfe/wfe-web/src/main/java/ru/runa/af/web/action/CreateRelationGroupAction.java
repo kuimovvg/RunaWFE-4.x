@@ -23,10 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.CreateRelationGroupForm;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.RelationService;
@@ -47,17 +45,12 @@ public class CreateRelationGroupAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ActionMessages errors = new ActionMessages();
         CreateRelationGroupForm relationForm = (CreateRelationGroupForm) form;
         try {
             RelationService relationService = Delegates.getRelationService();
             relationService.createRelation(getLoggedUser(request), relationForm.getRelationName(), relationForm.getRelationDescription());
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return mapping.findForward(Resources.FORWARD_FAILURE);
         }
         return mapping.findForward(Resources.FORWARD_SUCCESS);

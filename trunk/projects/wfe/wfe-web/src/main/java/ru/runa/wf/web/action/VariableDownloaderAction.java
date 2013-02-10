@@ -24,8 +24,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -43,9 +41,6 @@ import ru.runa.wfe.var.FileVariable;
  * @struts:action path="/variableDownloader" name="variableForm" validate="true"
  */
 public class VariableDownloaderAction extends ActionBase {
-
-    private static final Log log = LogFactory.getLog(VariableDownloaderAction.class);
-
     public static final String ACTION_PATH = "/variableDownloader";
 
     @Override
@@ -63,7 +58,7 @@ public class VariableDownloaderAction extends ActionBase {
             os.write(fileVariable.getData());
             os.flush();
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("", e);
         }
         return null;
     }

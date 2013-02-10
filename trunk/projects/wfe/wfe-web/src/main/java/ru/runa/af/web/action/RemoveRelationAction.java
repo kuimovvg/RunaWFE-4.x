@@ -26,10 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.RelationIdsForm;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
@@ -49,7 +47,6 @@ public class RemoveRelationAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
-        ActionMessages errors = new ActionMessages();
         RelationIdsForm relationForm = (RelationIdsForm) form;
         try {
             RelationService relationService = Delegates.getRelationService();
@@ -57,11 +54,7 @@ public class RemoveRelationAction extends ActionBase {
                 relationService.removeRelationPair(getLoggedUser(request), relationId);
             }
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return getFailureForward(mapping, relationForm);
         }
         return getSucessForward(mapping, relationForm);

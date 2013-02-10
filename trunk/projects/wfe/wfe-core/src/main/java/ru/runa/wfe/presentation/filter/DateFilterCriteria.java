@@ -36,7 +36,7 @@ public class DateFilterCriteria extends FilterCriteria {
     private Date dateStart;
     private Date dateEnd;
 
-    protected DateFilterCriteria() {
+    public DateFilterCriteria() {
         filterTemplates = new String[] { "", "" };
         templatesCount = 2;
     }

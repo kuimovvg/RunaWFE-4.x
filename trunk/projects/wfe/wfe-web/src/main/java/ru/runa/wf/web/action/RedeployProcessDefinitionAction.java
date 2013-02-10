@@ -17,13 +17,12 @@
  */
 package ru.runa.wf.web.action;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
@@ -53,15 +52,11 @@ public class RedeployProcessDefinitionAction extends BaseDeployProcessDefinition
     private Long definitionId;
 
     @Override
-    protected void doAction(User user, FileForm fileForm, List<String> processType, ActionMessages errors) {
-        try {
-            WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(user, fileForm.getId());
-            byte[] data = Strings.isNullOrEmpty(fileForm.getFile().getFileName()) ? null : fileForm.getFile().getFileData();
-            definition = Delegates.getDefinitionService().redeployProcessDefinition(user, fileForm.getId(), data, processType);
-            definitionId = definition.getId();
-        } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
+    protected void doAction(User user, FileForm fileForm, List<String> processType) throws IOException {
+        WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(user, fileForm.getId());
+        byte[] data = Strings.isNullOrEmpty(fileForm.getFile().getFileName()) ? null : fileForm.getFile().getFileData();
+        definition = Delegates.getDefinitionService().redeployProcessDefinition(user, fileForm.getId(), data, processType);
+        definitionId = definition.getId();
     }
 
     @Override

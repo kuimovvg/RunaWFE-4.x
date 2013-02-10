@@ -168,7 +168,7 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
                 table.addElement(createTRWithLabelAndSelect(Messages.getMessage(Messages.LABEL_SWIMLANE_ORGFUNCTION, pageContext),
                         SubstitutionForm.FUNCTION_INPUT_NAME, functionOptions, false));
                 if (function.length() > 0) {
-                    FunctionDef functionDef = SubstitutionDefinitions.getByClassName(function);
+                    FunctionDef functionDef = SubstitutionDefinitions.getByClassNameNotNull(function);
                     if (functionDef != null) {
                         for (int i = 0; i < functionDef.getParams().size(); i++) {
                             String value = "";

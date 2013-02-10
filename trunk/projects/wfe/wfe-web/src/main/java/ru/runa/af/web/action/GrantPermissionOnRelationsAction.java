@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.GrantPermisionOnIdentifiableAction;
@@ -57,7 +56,7 @@ public class GrantPermissionOnRelationsAction extends GrantPermisionOnIdentifiab
     }
 
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId) {
         return RelationsGroupSecure.INSTANCE;
     }
 

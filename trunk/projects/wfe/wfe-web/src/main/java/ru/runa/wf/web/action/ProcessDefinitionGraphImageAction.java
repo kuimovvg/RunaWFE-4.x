@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -60,7 +59,7 @@ public class ProcessDefinitionGraphImageAction extends ActionBase {
             os.write(bytes);
             os.flush();
         } catch (Exception e) {
-            LogFactory.getLog(getClass()).error("Unable to fetch process diagram", e);
+            log.error("Unable to fetch process diagram", e);
         }
         return null;
     }

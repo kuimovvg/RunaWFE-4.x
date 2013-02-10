@@ -27,7 +27,6 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.WebResources;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
@@ -58,11 +57,9 @@ public class StartProcessAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         IdForm idForm = (IdForm) form;
         Long definitionId = idForm.getId();
         ActionForward successForward = null;
-        ActionMessages messages = new ActionMessages();
         try {
             saveToken(request);
             if (Delegates.getDefinitionService().getStartInteraction(getLoggedUser(request), definitionId).hasForm()
@@ -72,7 +69,12 @@ public class StartProcessAction extends ActionBase {
             } else {
                 WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(getLoggedUser(request), definitionId);
                 Long processId = Delegates.getExecutionService().startProcess(getLoggedUser(request), definition.getName(), null);
-                request.getSession().setAttribute(Resources.USER_MESSAGE_KEY, new ActionMessage(Messages.PROCESS_STARTED, processId.toString()));
+                addMessage(request, new ActionMessage(Messages.PROCESS_STARTED, processId.toString()));
+
+                ActionMessages messages = new ActionMessages();
+                messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.PROCESS_STARTED, processId.toString()));
+                saveMessages(request.getSession(), messages);
+
                 successForward = mapping.findForward(Resources.FORWARD_SUCCESS);
 
                 if (WebResources.isAutoShowForm()) {
@@ -84,14 +86,8 @@ public class StartProcessAction extends ActionBase {
                 }
             }
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
-        }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
+            addError(request, e);
             return mapping.findForward(Resources.FORWARD_FAILURE);
-        } else {
-            saveMessages(request.getSession(), messages);
         }
         return successForward;
     }

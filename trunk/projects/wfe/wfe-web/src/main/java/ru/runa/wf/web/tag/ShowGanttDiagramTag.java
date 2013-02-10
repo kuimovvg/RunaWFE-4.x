@@ -53,9 +53,11 @@ public class ShowGanttDiagramTag extends ProcessBaseFormTag {
                         break;
                     }
                 }
-                TaskEndLog endLog = taskLogs.get(createLog);
-                js += getBar(createLog.getId(), createLog.getTaskName(), createLog.getDate(), endLog.getDate(), "0ccc00", endLog.getActorName(),
-                        false, createLog.getProcessId(), null);
+                if (createLog != null) {
+                    TaskEndLog endLog = taskLogs.get(createLog);
+                    js += getBar(createLog.getId(), createLog.getTaskName(), createLog.getDate(), endLog.getDate(), "0ccc00", endLog.getActorName(),
+                            false, createLog.getProcessId(), null);
+                }
             }
             if (log instanceof TaskCreateLog) {
                 TaskCreateLog createLog = (TaskCreateLog) log;

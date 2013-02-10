@@ -23,7 +23,6 @@ import ru.runa.af.web.action.UpdatePermissionOnRelation;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.PermissionTableBuilder;
 import ru.runa.common.web.tag.IdentifiableFormTag;
-import ru.runa.service.RelationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.security.Identifiable;
@@ -45,12 +44,7 @@ public class UpdatePermissionOnRelationFormTag extends IdentifiableFormTag {
 
     @Override
     protected Identifiable getIdentifiable() {
-        try {
-            RelationService relationService = Delegates.getRelationService();
-            return relationService.getRelation(getUser(), getRelationName());
-        } catch (Exception e) {
-            return null;
-        }
+        return Delegates.getRelationService().getRelation(getUser(), getRelationName());
     }
 
     @Override

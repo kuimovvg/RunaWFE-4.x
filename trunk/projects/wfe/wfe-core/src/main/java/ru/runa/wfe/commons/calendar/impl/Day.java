@@ -21,7 +21,6 @@
  */
 package ru.runa.wfe.commons.calendar.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,12 +33,9 @@ import ru.runa.wfe.commons.calendar.BusinessCalendar;
 /**
  * is a day on a business calendar.
  */
-public class Day implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    public DayPart[] dayParts = null;
-    BusinessCalendar businessCalendar = null;
+public class Day {
+    private DayPart[] dayParts;
+    private BusinessCalendar businessCalendar;
 
     public static Day[] parseWeekDays(Properties calendarProperties, BusinessCalendar businessCalendar) {
         Day[] weekDays = new Day[8];
@@ -62,6 +58,10 @@ public class Day implements Serializable {
             dayPartsList.add(new DayPart(dayPartText, this, dayPartsList.size()));
         }
         dayParts = dayPartsList.toArray(new DayPart[dayPartsList.size()]);
+    }
+
+    public DayPart[] getDayParts() {
+        return dayParts;
     }
 
     public DayPart findNextDayPartStart(int dayPartIndex, Date date) {

@@ -445,26 +445,6 @@ public final class BatchPresentation implements Cloneable, Serializable {
         return Objects.toStringHelper(this).add("category", category).add("name", name).toString();
     }
 
-    public boolean strongEquals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof BatchPresentation)) {
-            return false;
-        }
-        BatchPresentation presentation = (BatchPresentation) obj;
-        boolean result = true;
-        result &= Objects.equal(getName(), presentation.getName());
-        result &= Objects.equal(getCategory(), presentation.getCategory());
-        result &= Objects.equal(classPresentationId, presentation.classPresentationId);
-        result &= Objects.equal(getFilteredFields(), presentation.getFilteredFields());
-        result &= Objects.equal(fields, presentation.fields);
-        return result;
-    }
-
     public boolean fieldEquals(BatchPresentation other) {
         return Objects.equal(classPresentationId, other.classPresentationId) && fields.equals(other.fields);
     }
@@ -702,6 +682,11 @@ public final class BatchPresentation implements Cloneable, Serializable {
             displayIds = ArraysCommons.createIntArray(newDisplayIdList);
             // end of calculate new displayPositionIds
             groupIds = ArraysCommons.createIntArray(newGroupingIdList);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(filters, groupIds, sortIds, sortModes, displayIds);
         }
 
         @Override

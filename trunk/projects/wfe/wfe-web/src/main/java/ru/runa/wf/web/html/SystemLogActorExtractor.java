@@ -31,27 +31,22 @@ import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.user.Actor;
 
 /**
- * Creates {@link Identifiable} to check permissions on {@link Actor}, executed action.
+ * Creates {@link Identifiable} to check permissions on {@link Actor}, executed
+ * action.
  */
 public class SystemLogActorExtractor implements IdentifiableExtractor {
     private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(SystemLogActorExtractor.class);
-    /**
-     * Map from actor code, to {@link Identifiable}.
-     */
     private final Map<Long, Identifiable> cache = new HashMap<Long, Identifiable>();
 
     @Override
     public Identifiable getIdentifiable(Object o, Env env) {
         SystemLog systemLog = (SystemLog) o;
         try {
-            if (cache.containsKey(systemLog.getActorId())) {
-                return cache.get(systemLog.getActorId());
+            if (!cache.containsKey(systemLog.getActorId())) {
+                cache.put(systemLog.getActorId(), Delegates.getExecutorService().getExecutor(env.getUser(), systemLog.getActorId()));
             }
-            Actor actor = Delegates.getExecutorService().getActorByCode(env.getUser(), systemLog.getActorId());
-            // Actor may be null, but it is correct result (if deleted).
-            cache.put(systemLog.getActorId(), actor);
-            return actor;
+            return cache.get(systemLog.getActorId());
         } catch (Exception e) {
             log.error("Can't load actor for system log with id " + systemLog.getId(), e);
         }

@@ -71,6 +71,12 @@ public final class PresentationCompilerHelper {
         return compiler;
     }
 
+    public static BatchPresentationHibernateCompiler createAllSystemLogsCompiler(User user, BatchPresentation batchPresentation) {
+        BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
+        compiler.setParameters(batchPresentation.getClassPresentation().getPresentationClass(), true);
+        return compiler;
+    }
+
     /**
      * Create {@linkplain BatchPresentationHibernateCompiler} for loading group
      * children's (or executors, which not children's for now). Only first level

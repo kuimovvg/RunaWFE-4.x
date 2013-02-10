@@ -10,32 +10,25 @@
 <%@page import="ru.runa.common.web.Commons"%>
 <af:globalExceptions/>
 
-<CENTER>
+<center>
+
 <%--Used for ajax errors displaying --%>
-<div id="ajaxErrorsDiv" class="error" style="font-weight: bold;">
+<div id="ajaxErrorsDiv" class="errors" style="font-weight: bold; color: #914b98;">
 </div>
 
-<%
-	ActionMessage m = (ActionMessage) Commons.getSessionAttribute(request.getSession(), Resources.USER_MESSAGE_KEY);
-	if (m != null) {
-	    String formatted = TagUtils.getInstance().message( 
-	            pageContext, null, null, m.getKey(), m.getValues());
-	    out.write("<font class=\"error\"><BR>" + formatted + "</font>");
-	    request.getSession().setAttribute(Resources.USER_MESSAGE_KEY, null);
-	}
-%>
-
 <%--Used for error message displaying --%>
-<logic:messagesPresent>
-	<font class="error">
-		<html:messages id="commonError" property="org.apache.struts.action.GLOBAL_MESSAGE">
-			<BR>
-			<B><bean:write name="commonError" /></B>
-		</html:messages>
-		<html:messages id="processError" property="processErrors">
-			<BR>
-			<B style="border: 1px solid gray;"><bean:write name="processError" /></B>
-		</html:messages>
-	</font>
-</logic:messagesPresent>
-</CENTER>
+<span class="errors">
+	<html:messages id="commonError" property="org.apache.struts.action.GLOBAL_MESSAGE">
+		<BR>
+		<B style="color: red;"><bean:write name="commonError" /></B>
+	</html:messages>
+	<html:messages id="processError" property="processErrors">
+		<BR>
+		<B style="color: brown;"><bean:write name="processError" /></B>
+	</html:messages>
+	<html:messages id="userMessage" property="userMessages">
+		<BR>
+		<B style="color: blue;"><bean:write name="userMessage" /></B>
+	</html:messages>
+</span>
+</center>

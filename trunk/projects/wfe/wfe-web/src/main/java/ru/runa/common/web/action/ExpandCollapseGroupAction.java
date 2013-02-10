@@ -23,9 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.GroupForm;
 import ru.runa.service.ProfileService;
@@ -54,9 +52,7 @@ public class ExpandCollapseGroupAction extends ActionBase {
             batchPresentation.setGroupBlockStatus(groupId, !batchPresentation.isGroupBlockExpanded(groupId));
             profileService.saveBatchPresentation(getLoggedUser(request), batchPresentation);
         } catch (Exception e) {
-            ActionMessages actionMessages = new ActionMessages();
-            ActionExceptionHelper.addException(actionMessages, e);
-            saveErrors(request.getSession(), actionMessages);
+            addError(request, e);
         }
         return new ActionForward(groupForm.getReturnAction(), true);
     }

@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
@@ -57,7 +56,7 @@ public class GrantReadPermissionOnProcessAction extends GrantPermisionOnIdentifi
     }
 
     @Override
-    protected Identifiable getIdentifiable(User user, Long identifiableId, ActionMessages errors) {
+    protected Identifiable getIdentifiable(User user, Long identifiableId) {
         return Delegates.getExecutionService().getProcess(user, identifiableId);
     }
 

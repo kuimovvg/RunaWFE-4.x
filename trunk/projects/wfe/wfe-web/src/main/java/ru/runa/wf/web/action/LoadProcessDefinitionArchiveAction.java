@@ -44,16 +44,20 @@ public class LoadProcessDefinitionArchiveAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        IdForm idForm = (IdForm) form;
-        DefinitionService definitionService = Delegates.getDefinitionService();
-        String parFileName = definitionService.getProcessDefinition(getLoggedUser(request), idForm.getId()).getName() + ".par";
-        byte[] bytes = definitionService.getFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.PAR_FILE);
-        response.setContentType("application/zip");
-        String encodedFileName = HTMLUtils.encodeFileName(parFileName, request.getHeader("User-Agent"));
-        response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFileName + "\"");
-        OutputStream os = response.getOutputStream();
-        os.write(bytes);
-        os.flush();
+        try {
+            IdForm idForm = (IdForm) form;
+            DefinitionService definitionService = Delegates.getDefinitionService();
+            String parFileName = definitionService.getProcessDefinition(getLoggedUser(request), idForm.getId()).getName() + ".par";
+            byte[] bytes = definitionService.getFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.PAR_FILE);
+            response.setContentType("application/zip");
+            String encodedFileName = HTMLUtils.encodeFileName(parFileName, request.getHeader("User-Agent"));
+            response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFileName + "\"");
+            OutputStream os = response.getOutputStream();
+            os.write(bytes);
+            os.flush();
+        } catch (Exception e) {
+            log.error("", e);
+        }
         return null;
     }
 

@@ -6,10 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
 import ru.runa.af.web.form.BotForm;
-import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.BotService;
 import ru.runa.service.delegate.Delegates;
@@ -26,7 +24,6 @@ public class UpdateBotAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        ActionMessages errors = new ActionMessages();
         BotForm botForm = (BotForm) form;
         try {
             BotService botService = Delegates.getBotService();
@@ -37,13 +34,8 @@ public class UpdateBotAction extends ActionBase {
             bot.setBotStation(botService.getBotStation(botForm.getBotStationId()));
             botService.updateBot(getLoggedUser(request), bot);
         } catch (Exception e) {
-            ActionExceptionHelper.addException(errors, e);
+            addError(request, e);
         }
-
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
-        }
-
         return new ActionForward("/bot.do?botId=" + botForm.getBotId());
     }
 }

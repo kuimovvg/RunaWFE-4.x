@@ -145,17 +145,9 @@ td.settings-link {
 	vertical-align: middle;
 }
 
-.error {
-	color: #ff0000;
+.errors {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10pt;
-	font-style: normal;
-	text-decoration: none;
-}
-
-span.errors {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12pt;
 	font-style: normal;
 	text-decoration: none;
 }

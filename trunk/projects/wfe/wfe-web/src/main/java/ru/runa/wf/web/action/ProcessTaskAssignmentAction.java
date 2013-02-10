@@ -22,19 +22,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessages;
 
-import ru.runa.common.web.ActionExceptionHelper;
-import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.StrIdsForm;
-import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.user.Executor;
@@ -53,18 +47,13 @@ import com.google.common.collect.Lists;
  *                        "false"
  */
 public class ProcessTaskAssignmentAction extends ActionBase {
-    private static final Log log = LogFactory.getLog(ProcessTaskAssignmentAction.class);
-
     public static final String ACTION_PATH = "/processTaskAssignment";
-
     private final String LOCAL_FORWARD_TASKS_LIST = "tasksList";
-
     private final String LOCAL_FORWARD_SUBMIT_TASK = "submitTask";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         String forwardName = LOCAL_FORWARD_TASKS_LIST;
-        ActionMessages errors = getErrors(request);
         StrIdsForm idsForm = (StrIdsForm) form;
         List<Long> taskIds = Lists.newArrayList();
         List<Executor> taskPreviousOwners = Lists.newArrayList();
@@ -84,29 +73,19 @@ public class ProcessTaskAssignmentAction extends ActionBase {
                 taskPreviousOwners.add(getExecutor(getLoggedUser(request), ids[1]));
             }
         }
-        try {
-            ExecutionService executionService = Delegates.getExecutionService();
-            ProfileHttpSessionHelper.getProfile(request.getSession());
-            for (int i = 0; i < taskIds.size(); i++) {
-                try {
-                    Long taskId = taskIds.get(i);
-                    Executor previousExecutor = taskPreviousOwners.get(i);
-                    executionService.assignTask(getLoggedUser(request), taskId, previousExecutor, getLoggedUser(request).getActor());
-                } catch (TaskAlreadyAcceptedException e) {
-                    // forward user to the tasks list screen cause current task
-                    // was already accepted by another user...
-                    forwardName = LOCAL_FORWARD_TASKS_LIST;
-                    ActionExceptionHelper.addException(errors, e);
-                } catch (Exception e) {
-                    ActionExceptionHelper.addException(errors, e);
-                }
+        for (int i = 0; i < taskIds.size(); i++) {
+            try {
+                Long taskId = taskIds.get(i);
+                Executor previousExecutor = taskPreviousOwners.get(i);
+                Delegates.getExecutionService().assignTask(getLoggedUser(request), taskId, previousExecutor, getLoggedUser(request).getActor());
+            } catch (TaskAlreadyAcceptedException e) {
+                // forward user to the tasks list screen cause current task
+                // was already accepted by another user...
+                forwardName = LOCAL_FORWARD_TASKS_LIST;
+                addError(request, e);
+            } catch (Exception e) {
+                addError(request, e);
             }
-        } catch (Exception e) {
-            log.error(e);
-            ActionExceptionHelper.addException(errors, e);
-        }
-        if (!errors.isEmpty()) {
-            saveErrors(request.getSession(), errors);
         }
         return mapping.findForward(forwardName);
     }
