@@ -96,7 +96,7 @@ public class Timer extends Job {
             }
             ProcessExecutionErrors.removeProcessError(getProcess().getId(), getToken().getNodeId());
         } catch (Throwable th) {
-            ProcessExecutionException pee = new ProcessExecutionException(ProcessExecutionException.TIMER_EXECUTION_FAILED, th.getMessage());
+            ProcessExecutionException pee = new ProcessExecutionException(ProcessExecutionException.TIMER_EXECUTION_FAILED, th, th.getMessage());
             ProcessExecutionErrors.addProcessError(getProcess().getId(), getToken().getNodeId(), pee);
             throw Throwables.propagate(th);
         }

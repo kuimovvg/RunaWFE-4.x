@@ -16,6 +16,11 @@ public abstract class LocalizableException extends WfException {
         this.details = details;
     }
 
+    public LocalizableException(String message, Throwable cause, Object... details) {
+        super(message, cause);
+        this.details = details;
+    }
+
     protected abstract String getResourceBaseName();
 
     @Override

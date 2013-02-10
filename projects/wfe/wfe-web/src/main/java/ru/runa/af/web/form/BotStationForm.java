@@ -60,6 +60,6 @@ public class BotStationForm extends ActionForm {
     }
 
     public void setBotStationId(Long botStationId) {
-        botStationId = botStationId;
+        this.botStationId = botStationId;
     }
 }

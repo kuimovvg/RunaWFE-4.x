@@ -26,7 +26,7 @@ public class ShowProcessAction extends ForwardAction {
         if (throwables != null) {
             ActionMessages errors = getErrors(request);
             for (Throwable throwable : throwables) {
-                ActionExceptionHelper.addException(errors, throwable);
+                ActionExceptionHelper.addProcessError(errors, throwable);
             }
             saveErrors(request.getSession(), errors);
         }

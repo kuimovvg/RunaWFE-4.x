@@ -126,6 +126,19 @@ public class WfDefinition implements Identifiable {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof WfDefinition) {
+            return Objects.equal(id, ((WfDefinition) obj).id);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("name", name).add("version", version).toString();
     }
