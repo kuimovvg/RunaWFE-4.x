@@ -18,7 +18,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import ru.runa.EqualsUtil;
 import ru.runa.alfresco.anno.Property;
 import ru.runa.alfresco.anno.Type;
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.CalendarUtil;
 
 /**
@@ -141,7 +141,7 @@ public class AlfObject implements Serializable {
         if (nodeRef != null) {
             return nodeRef.toString();
         }
-        throw new ApplicationException("No uuid found in " + this);
+        throw new WfException("No uuid found in " + this);
     }
 
     public Reference getReference() {

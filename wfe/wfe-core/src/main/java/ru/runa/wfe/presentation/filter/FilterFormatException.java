@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.presentation.filter;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Indicates about invalid format in {@link FilterCriteria} subclasses.
  */
-public class FilterFormatException extends ApplicationException {
+public class FilterFormatException extends WfException {
 
     private static final long serialVersionUID = 8250242532336258812L;
 

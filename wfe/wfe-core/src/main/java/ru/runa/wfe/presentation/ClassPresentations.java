@@ -3,7 +3,7 @@ package ru.runa.wfe.presentation;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.audit.SystemLogClassPresentation;
 import ru.runa.wfe.definition.DefinitionClassPresentation;
 import ru.runa.wfe.execution.ProcessClassPresentation;
@@ -36,7 +36,7 @@ public class ClassPresentations {
     public static ClassPresentation getClassPresentation(Integer id) {
         ClassPresentation result = map.get(id);
         if (result == null) {
-            throw new InternalApplicationException("Failed to found ClassPresentation with id " + id);
+            throw new WfException("Failed to found ClassPresentation with id " + id);
         }
         return result;
     }

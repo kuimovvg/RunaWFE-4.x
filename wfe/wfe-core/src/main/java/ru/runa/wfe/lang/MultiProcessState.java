@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.SubprocessEndLog;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
@@ -164,29 +163,25 @@ public class MultiProcessState extends SubProcessState {
 
     private Set<Actor> getActorsByRelation(String relationName, String rightExecutorName) {
         List<Executor> executorRightList = new ArrayList<Executor>();
-        try {
-            Executor executor = executorDAO.getExecutor(rightExecutorName);
-            executorRightList.add(executor);
-            // if (executor instanceof Actor) {
-            // BatchPresentation batchPresentation =
-            // AFProfileStrategy.EXECUTOR_DEAFAULT_BATCH_PRESENTATOIN_FACTORY.getDefaultBatchPresentation();
-            // executorRightList.addAll(executorDAO.getExecutorGroups(executor,
-            // batchPresentation));
-            // }
-            List<RelationPair> relationPairList = relationDAO.getExecutorsRelationPairsRight(relationName, executorRightList);
-            Set<Actor> actorList = new HashSet<Actor>();
-            for (RelationPair pair : relationPairList) {
-                Executor executorleft = pair.getLeft();
-                if (executorleft instanceof Actor) {
-                    actorList.add((Actor) executorleft);
-                } else if (executorleft instanceof Group) {
-                    actorList.addAll(executorDAO.getGroupActors((Group) executorleft));
-                }
+        Executor executor = executorDAO.getExecutor(rightExecutorName);
+        executorRightList.add(executor);
+        // if (executor instanceof Actor) {
+        // BatchPresentation batchPresentation =
+        // AFProfileStrategy.EXECUTOR_DEAFAULT_BATCH_PRESENTATOIN_FACTORY.getDefaultBatchPresentation();
+        // executorRightList.addAll(executorDAO.getExecutorGroups(executor,
+        // batchPresentation));
+        // }
+        List<RelationPair> relationPairList = relationDAO.getExecutorsRelationPairsRight(relationName, executorRightList);
+        Set<Actor> actorList = new HashSet<Actor>();
+        for (RelationPair pair : relationPairList) {
+            Executor executorleft = pair.getLeft();
+            if (executorleft instanceof Actor) {
+                actorList.add((Actor) executorleft);
+            } else if (executorleft instanceof Group) {
+                actorList.addAll(executorDAO.getGroupActors((Group) executorleft));
             }
-            return actorList;
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
         }
+        return actorList;
     }
 
     @Override

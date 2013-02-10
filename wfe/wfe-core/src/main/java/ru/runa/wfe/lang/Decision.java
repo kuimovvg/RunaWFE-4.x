@@ -24,7 +24,6 @@ package ru.runa.wfe.lang;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.handler.decision.DecisionHandler;
 
@@ -57,8 +56,7 @@ public class Decision extends Node {
             log.debug("decision " + name + " is taking '" + transition + "'");
             leave(executionContext, transition);
         } catch (Exception exception) {
-            Throwables.propagateIfInstanceOf(exception, RuntimeException.class);
-            throw new InternalApplicationException(exception);
+            throw Throwables.propagate(exception);
         }
     }
 

@@ -87,7 +87,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                         log.warn("taskBot == null");
                         continue;
                     }
-                    scheduledTasks.put(taskBot, executor.schedule(taskBot, taskBot.getBotDelay(), TimeUnit.MILLISECONDS));
+                    scheduledTasks.put(taskBot, executor.schedule(taskBot, taskBot.getBot().getStartTimeout(), TimeUnit.MILLISECONDS));
                 }
             } catch (AuthenticationException e) {
                 configurationVersion = -1;
@@ -142,10 +142,10 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                         User user = Delegates.getAuthenticationService().authenticateByLoginPassword(bot.getUsername(), bot.getPassword());
                         List<BotTask> tasks = Delegates.getBotService().getBotTasks(user, bot.getId());
                         botTemplates.add(new WorkflowBot(user, bot, tasks));
-                        ProcessExecutionErrors.removeBotTaskConfigurationError(bot.getUsername(), "*");
+                        ProcessExecutionErrors.removeBotTaskConfigurationError(bot, "*");
                     } catch (Exception e) {
                         log.error("Unable to configure bot " + bot);
-                        ProcessExecutionErrors.addBotTaskConfigurationError(bot.getUsername(), "*", e);
+                        ProcessExecutionErrors.addBotTaskConfigurationError(bot, "*", e);
                     }
                 }
                 configurationVersion = botStation.getVersion();

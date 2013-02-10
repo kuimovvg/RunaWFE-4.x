@@ -40,12 +40,12 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wf.web.action.LoadProcessDefinitionHtmlFileAction;
 import ru.runa.wf.web.form.DefinitionFileForm;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 /**
@@ -260,7 +260,7 @@ public class HTMLFormConverter {
             }
             return new String(HTMLUtils.writeHtml(document), Charsets.UTF_8);
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -377,7 +377,7 @@ public class HTMLFormConverter {
             }
             return HTMLUtils.writeHtml(document);
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

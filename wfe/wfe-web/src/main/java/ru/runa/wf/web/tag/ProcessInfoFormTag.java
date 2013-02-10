@@ -37,6 +37,7 @@ import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.web.action.CancelProcessAction;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wf.web.form.TaskIdForm;
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.definition.DefinitionClassPresentation;
 import ru.runa.wfe.definition.dto.WfDefinition;
@@ -45,7 +46,6 @@ import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.var.format.DateTimeFormat;
 
 import com.google.common.collect.Maps;
 
@@ -94,7 +94,7 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
 
         TR nameTR = new TR();
         table.addElement(nameTR);
-        String definitionName = Messages.getMessage(DefinitionClassPresentation.PROCESS_DEFINITION_BATCH_PRESENTATION_NAME, pageContext);
+        String definitionName = Messages.getMessage(DefinitionClassPresentation.BATCH_PRESENTATION_NAME, pageContext);
         nameTR.addElement(new TD(definitionName).setClass(Resources.CLASS_LIST_TABLE_TD));
 
         Element processDefinitionHref;
@@ -111,29 +111,28 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
 
         TR processIdTR = new TR();
         table.addElement(processIdTR);
-        String idName = Messages.getMessage(ProcessClassPresentation.PROCESS_BATCH_PRESENTATION_ID, pageContext);
+        String idName = Messages.getMessage(ProcessClassPresentation.BATCH_PRESENTATION_ID, pageContext);
         processIdTR.addElement(new TD(idName).setClass(Resources.CLASS_LIST_TABLE_TD));
         processIdTR.addElement(new TD(new Long(process.getId()).toString()).setClass(Resources.CLASS_LIST_TABLE_TD));
 
         TR versionTR = new TR();
         table.addElement(versionTR);
-        String definitionVersion = Messages.getMessage(DefinitionClassPresentation.PROCESS_DEFINITION_BATCH_PRESENTATION_VERSION, pageContext);
+        String definitionVersion = Messages.getMessage(DefinitionClassPresentation.BATCH_PRESENTATION_VERSION, pageContext);
         versionTR.addElement(new TD(definitionVersion).setClass(Resources.CLASS_LIST_TABLE_TD));
         versionTR.addElement(new TD(String.valueOf(process.getVersion())).setClass(Resources.CLASS_LIST_TABLE_TD));
 
-        DateTimeFormat dateTimeFormat = new DateTimeFormat();
         TR startedTR = new TR();
         table.addElement(startedTR);
-        String startedName = Messages.getMessage(ProcessClassPresentation.PROCESS_BATCH_PRESENTATION_STARTED, pageContext);
+        String startedName = Messages.getMessage(ProcessClassPresentation.BATCH_PRESENTATION_STARTED, pageContext);
         startedTR.addElement(new TD(startedName).setClass(Resources.CLASS_LIST_TABLE_TD));
-        startedTR.addElement(new TD(dateTimeFormat.format(process.getStartDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
+        startedTR.addElement(new TD(CalendarUtil.formatDateTime(process.getStartDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
 
         if (process.isEnded()) {
             TR endedTR = new TR();
             table.addElement(endedTR);
-            String endedName = Messages.getMessage(ProcessClassPresentation.PROCESS_BATCH_PRESENTATION_ENDED, pageContext);
+            String endedName = Messages.getMessage(ProcessClassPresentation.BATCH_PRESENTATION_ENDED, pageContext);
             endedTR.addElement(new TD(endedName).setClass(Resources.CLASS_LIST_TABLE_TD));
-            endedTR.addElement(new TD(dateTimeFormat.format(process.getEndDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
+            endedTR.addElement(new TD(CalendarUtil.formatDateTime(process.getEndDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
         }
 
         ExecutionService executionService = Delegates.getExecutionService();

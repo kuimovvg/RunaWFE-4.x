@@ -43,20 +43,19 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorAlreadyInGroupException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
-import ru.runa.wfe.user.ExecutorNotInGroupException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 /**
@@ -114,8 +113,7 @@ public class LDAPImporter implements LoginHandler {
             importExecutors(getGroupList());
             addExecutorsToGroups();
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new InternalApplicationException(e.getMessage());
+            throw Throwables.propagate(e);
         }
     }
 
@@ -148,7 +146,6 @@ public class LDAPImporter implements LoginHandler {
             if (!executorDAO.isExecutorInGroup(actor, group)) {
                 executorDAO.addExecutorsToGroup(Lists.newArrayList((Executor) actor), group);
             }
-        } catch (ExecutorAlreadyInGroupException e) {
         } catch (ExecutorDoesNotExistException e) {
         }
     }
@@ -159,7 +156,6 @@ public class LDAPImporter implements LoginHandler {
             if (executorDAO.isExecutorInGroup(actor, group)) {
                 executorDAO.removeExecutorsFromGroup(Lists.newArrayList((Executor) actor), group);
             }
-        } catch (ExecutorNotInGroupException e) {
         } catch (ExecutorDoesNotExistException e) {
         }
     }
@@ -330,7 +326,7 @@ public class LDAPImporter implements LoginHandler {
                     }
                 }
             } catch (NamingException e) {
-                throw new InternalApplicationException(e.getMessage());
+                throw new WfException(e.getMessage());
             }
         }
     }

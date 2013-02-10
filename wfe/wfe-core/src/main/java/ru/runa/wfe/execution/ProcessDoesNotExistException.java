@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.execution;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Signals that process does not exist in system.
  */
-public class ProcessDoesNotExistException extends ApplicationException {
+public class ProcessDoesNotExistException extends WfException {
     private static final long serialVersionUID = 1L;
 
     public ProcessDoesNotExistException(Object identity) {

@@ -35,7 +35,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
@@ -194,7 +194,7 @@ public class AdminScriptRunner {
         List<Element> nestedSet = element.elements(NAMED_IDENTITY_ELEMENT_NAME);
         for (Element e : nestedSet) {
             if (!e.attributeValue("type").equals(element.attributeValue("type"))) {
-                throw new InternalApplicationException("Nested nameIdentitySet type is differs from parent type (For element " + name + " and type "
+                throw new WfException("Nested nameIdentitySet type is differs from parent type (For element " + name + " and type "
                         + element.attributeValue("type"));
             }
             if (storage.containsKey(e.attributeValue("name"))) {
@@ -205,7 +205,7 @@ public class AdminScriptRunner {
         }
         if (isGlobal && name != null) {
             if (storage.put(name, result) != null) {
-                throw new InternalApplicationException("Duplicate nameIdentitySet is found for name " + name + " and type "
+                throw new WfException("Duplicate nameIdentitySet is found for name " + name + " and type "
                         + element.attributeValue("type"));
             }
         }

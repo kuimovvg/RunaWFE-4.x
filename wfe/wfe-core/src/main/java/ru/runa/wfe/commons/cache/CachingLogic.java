@@ -24,42 +24,50 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.hibernate.type.Type;
 
-import ru.runa.wfe.InternalApplicationException;
+import com.google.common.base.Throwables;
 
 /**
- * Main class for RunaWFE caching. Register {@link ChangeListener} there to receive events on objects change and transaction complete.
+ * Main class for RunaWFE caching. Register {@link ChangeListener} there to
+ * receive events on objects change and transaction complete.
  */
 public class CachingLogic {
 
     /**
-     * Map from {@link Thread} to change listeners, which must be notified on thread transaction complete. Then thread transaction change some objects, affected listeners stored
-     * there.
+     * Map from {@link Thread} to change listeners, which must be notified on
+     * thread transaction complete. Then thread transaction change some objects,
+     * affected listeners stored there.
      */
     private static Map<Thread, Set<ChangeListener>> dirtyThreads = new ConcurrentHashMap<Thread, Set<ChangeListener>>();
 
     /**
-     * {@link ChangeListener}, which must be notified, when unrecognized object change. All registered listeners contains in this collection.
+     * {@link ChangeListener}, which must be notified, when unrecognized object
+     * change. All registered listeners contains in this collection.
      */
     static Set<ChangeListener> genericListeners = new HashSet<ChangeListener>();
     /**
-     * {@link ChangeListener}, which must be notified, when executor related object change.
+     * {@link ChangeListener}, which must be notified, when executor related
+     * object change.
      */
     static Set<ChangeListener> executorListeners = new HashSet<ChangeListener>();
     /**
-     * {@link ChangeListener}, which must be notified, when substitution related object change.
+     * {@link ChangeListener}, which must be notified, when substitution related
+     * object change.
      */
     static Set<ChangeListener> substitutionListeners = new HashSet<ChangeListener>();
     /**
-     * {@link ChangeListener}, which must be notified, when task instance related object change.
+     * {@link ChangeListener}, which must be notified, when task instance
+     * related object change.
      */
     static Set<ChangeListener> taskListeners = new HashSet<ChangeListener>();
     /**
-     * {@link ChangeListener}, which must be notified, when process definition related object change.
+     * {@link ChangeListener}, which must be notified, when process definition
+     * related object change.
      */
     static Set<ChangeListener> processDefListeners = new HashSet<ChangeListener>();
 
     /**
-     * Register listener. Listener will be notified on events, according to implemented interfaces.
+     * Register listener. Listener will be notified on events, according to
+     * implemented interfaces.
      * 
      * @param listener
      *            Listener, which must receive events.
@@ -82,14 +90,17 @@ public class CachingLogic {
     }
 
     /**
-     * Notify registered listeners on unrecognized object change. All registered listeners will be notified.
+     * Notify registered listeners on unrecognized object change. All registered
+     * listeners will be notified.
      */
     public static synchronized void onGenericChange() {
         onWriteTransaction(genericListeners, null, null, null, null, null);
     }
 
     /**
-     * Notify registered listeners on executor related object change. Only registered listeners, implementing {@link ExecutorChangeListener} will be notified.
+     * Notify registered listeners on executor related object change. Only
+     * registered listeners, implementing {@link ExecutorChangeListener} will be
+     * notified.
      * 
      * @param object
      *            Changed object.
@@ -108,7 +119,9 @@ public class CachingLogic {
     }
 
     /**
-     * Notify registered listeners on substitution related object change. Only registered listeners, implementing {@link SubstitutionChangeListener} will be notified.
+     * Notify registered listeners on substitution related object change. Only
+     * registered listeners, implementing {@link SubstitutionChangeListener}
+     * will be notified.
      * 
      * @param object
      *            Changed object.
@@ -127,7 +140,9 @@ public class CachingLogic {
     }
 
     /**
-     * Notify registered listeners on task related object change. Only registered listeners, implementing {@link TaskChangeListener} will be notified.
+     * Notify registered listeners on task related object change. Only
+     * registered listeners, implementing {@link TaskChangeListener} will be
+     * notified.
      * 
      * @param object
      *            Changed object.
@@ -145,7 +160,9 @@ public class CachingLogic {
     }
 
     /**
-     * Notify registered listeners on process definition related object change. Only registered listeners, implementing {@link ProcessDefChangeListener} will be notified.
+     * Notify registered listeners on process definition related object change.
+     * Only registered listeners, implementing {@link ProcessDefChangeListener}
+     * will be notified.
      * 
      * @param object
      *            Changed object.
@@ -166,7 +183,8 @@ public class CachingLogic {
     /**
      * Check current thread transaction type.
      * 
-     * @return If transaction change some objects, return true; return false otherwise.
+     * @return If transaction change some objects, return true; return false
+     *         otherwise.
      */
     public static boolean isWriteTransaction() {
         return dirtyThreads.containsKey(Thread.currentThread());
@@ -206,8 +224,11 @@ public class CachingLogic {
     }
 
     /**
-     * Called, then thread transaction is completed. If thread transaction change nothing, when do nothing. If thread transaction change some objects, when all related listeners is
-     * notified on transaction complete. All related listeners first receive markTransactionComplete event, after what all related listeners receive onTransactionComplete event.
+     * Called, then thread transaction is completed. If thread transaction
+     * change nothing, when do nothing. If thread transaction change some
+     * objects, when all related listeners is notified on transaction complete.
+     * All related listeners first receive markTransactionComplete event, after
+     * what all related listeners receive onTransactionComplete event.
      */
     public static void onTransactionComplete() {
         Set<ChangeListener> toNotify = dirtyThreads.remove(Thread.currentThread());
@@ -225,8 +246,11 @@ public class CachingLogic {
     }
 
     /**
-     * Return cache instance from cache control instance. If control instance already initialized with cache instance, then returning it. If control instance not initialized with
-     * cache instance, then cache instance is created and cache control initialized with created cache (if cache instance is not locked).
+     * Return cache instance from cache control instance. If control instance
+     * already initialized with cache instance, then returning it. If control
+     * instance not initialized with cache instance, then cache instance is
+     * created and cache control initialized with created cache (if cache
+     * instance is not locked).
      * <p>
      * This call can be blocked until change transactions will be complete.
      * </p>
@@ -245,14 +269,20 @@ public class CachingLogic {
         boolean isInitiateInProcess = !isWriteTransaction();
         try {
             CacheImpl result = cache.buildCache();
-            if (!isWriteTransaction()) { // If this transaction is write to DB, return temporary cache object. Otherwise initiate cache with current cache object.
-                synchronized (CachingLogic.class) { // And notify all threads awaiting cache initialization
+            if (!isWriteTransaction()) { // If this transaction is write to DB,
+                                         // return temporary cache object.
+                                         // Otherwise initiate cache with
+                                         // current cache object.
+                synchronized (CachingLogic.class) { // And notify all threads
+                                                    // awaiting cache
+                                                    // initialization
                     cache.initCache(result);
                 }
             }
             return result;
         } finally {
-            if (isInitiateInProcess) { // In all case release initialize lock and notify others
+            if (isInitiateInProcess) { // In all case release initialize lock
+                                       // and notify others
                 synchronized (CachingLogic.class) {
                     cache.initiateComplete();
                     CachingLogic.class.notifyAll();
@@ -262,8 +292,10 @@ public class CachingLogic {
     }
 
     /**
-     * Try to get cache implementation from cache control. If no cache implementation in cache control or thread transaction is change some objects, then return null. If cache
-     * control is already processing initiation, then current thread blocking until initiation complete.
+     * Try to get cache implementation from cache control. If no cache
+     * implementation in cache control or thread transaction is change some
+     * objects, then return null. If cache control is already processing
+     * initiation, then current thread blocking until initiation complete.
      * 
      * @param <CacheImpl>
      *            Type of cache, controlled by cache control component.
@@ -283,20 +315,40 @@ public class CachingLogic {
                     if (cacheImpl != null) {
                         return cacheImpl;
                     }
-                    if (!cache.isLocked() && !cache.isInInitiate() && !isWriteTransaction()) { // Cache is steel not initiated and no initiate in progress - mark it as
-                                                                                               // initiateInProgress and initiate.
+                    if (!cache.isLocked() && !cache.isInInitiate() && !isWriteTransaction()) { // Cache
+                                                                                               // is
+                                                                                               // steel
+                                                                                               // not
+                                                                                               // initiated
+                                                                                               // and
+                                                                                               // no
+                                                                                               // initiate
+                                                                                               // in
+                                                                                               // progress
+                                                                                               // -
+                                                                                               // mark
+                                                                                               // it
+                                                                                               // as
+                                                                                               // initiateInProgress
+                                                                                               // and
+                                                                                               // initiate.
                         cache.initiateInProcess();
                         return null;
                     } else {
-                        // Cache is steel not initiated but it locked or initiating.
-                        if (isWriteTransaction()) { // Write transaction must be completed at all case. Moving to build cache stage
+                        // Cache is steel not initiated but it locked or
+                        // initiating.
+                        if (isWriteTransaction()) { // Write transaction must be
+                                                    // completed at all case.
+                                                    // Moving to build cache
+                                                    // stage
                             return null;
-                        } else { // Wait until cache is unlocked or initiate process finished
+                        } else { // Wait until cache is unlocked or initiate
+                                 // process finished
                             CachingLogic.class.wait();
                         }
                     }
                 } catch (InterruptedException e) {
-                    throw new InternalApplicationException(e);
+                    throw Throwables.propagate(e);
                 }
             }
         }

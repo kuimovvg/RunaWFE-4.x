@@ -17,15 +17,12 @@
  */
 package ru.runa.wfe.ss.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.user.Actor;
@@ -41,9 +38,8 @@ import com.google.common.collect.Lists;
 public class SubstitutionDAO extends GenericDAO<Substitution> {
 
     /**
-     * Load {@linkplain Substitution}'s by identity. Throws
-     * {@linkplain InternalApplicationException} if at least one substitution
-     * not found. Result {@linkplain Substitution}'s order is not specified.
+     * Load {@linkplain Substitution}'s by identity. Result
+     * {@linkplain Substitution}'s order is not specified.
      * 
      * @param ids
      *            {@linkplain Substitution}'s identity to load.
@@ -56,7 +52,7 @@ public class SubstitutionDAO extends GenericDAO<Substitution> {
         return getHibernateTemplate().executeFind(new HibernateCallback<List<Substitution>>() {
 
             @Override
-            public List<Substitution> doInHibernate(Session session) throws HibernateException, SQLException {
+            public List<Substitution> doInHibernate(Session session) {
                 Query query = session.createQuery("from Substitution where id in (:ids)");
                 query.setParameterList("ids", substitutionIds);
                 return query.list();

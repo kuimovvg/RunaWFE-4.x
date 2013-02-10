@@ -7,7 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.audit.SubprocessEndLog;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -89,7 +89,7 @@ public class SubProcessState extends VariableContainerNode {
     protected void performLeave(ExecutionContext executionContext) {
         List<Process> childProcesses = executionContext.getChildProcesses();
         if (childProcesses.size() != 1) {
-            throw new InternalApplicationException("ProcessState has " + childProcesses + " (instead of 1 instance) at leave stage!");
+            throw new WfException("ProcessState has " + childProcesses + " (instead of 1 instance) at leave stage!");
         }
         Process subProcess = childProcesses.get(0);
         ExecutionContext subExecutionContext = new ExecutionContext(getSubProcessDefinition(executionContext), subProcess);

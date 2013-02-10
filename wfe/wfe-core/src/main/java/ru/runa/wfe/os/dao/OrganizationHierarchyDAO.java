@@ -29,10 +29,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.SQLCommons;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 /**
@@ -64,7 +65,7 @@ public class OrganizationHierarchyDAO {
             ResultSet rs = ps.executeQuery();
             return getCodesFromResultSet(rs);
         } catch (SQLException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             SQLCommons.releaseResources(con, ps);
         }
@@ -93,7 +94,7 @@ public class OrganizationHierarchyDAO {
             getCodesRecursive(ps, codeSet, parameters);
             return codeSet;
         } catch (SQLException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             SQLCommons.releaseResources(con, ps);
         }
@@ -109,7 +110,7 @@ public class OrganizationHierarchyDAO {
             if (!codeSet.contains(code)) {
                 if (!codeSet.add(code)) {
                     // i.e. we have circle in hierarchy
-                    throw new InternalApplicationException("Code hierarchy contains cycle");
+                    throw new WfException("Code hierarchy contains cycle");
                 }
                 parameters[0] = code;
                 getCodesRecursive(ps, codeSet, parameters);
@@ -126,7 +127,7 @@ public class OrganizationHierarchyDAO {
             ResultSet rs = ps.executeQuery();
             directorsCodesList = getCodesFromResultSet(rs);
         } catch (SQLException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         } finally {
             SQLCommons.releaseResources(con, ps);
         }
@@ -159,7 +160,7 @@ public class OrganizationHierarchyDAO {
             }
             codes.remove(0);
         }
-        throw new InternalApplicationException("Code hierarchy contains no director for actor with code = " + code);
+        throw new WfException("Code hierarchy contains no director for actor with code = " + code);
     }
 
     private static List<Long> getCodesFromResultSet(ResultSet rs) throws SQLException {
@@ -183,7 +184,7 @@ public class OrganizationHierarchyDAO {
             try {
                 context = new InitialContext();
             } catch (NamingException e) {
-                throw new InternalApplicationException(e);
+                throw Throwables.propagate(e);
             }
         }
         return context;
@@ -193,11 +194,11 @@ public class OrganizationHierarchyDAO {
         try {
             DataSource ds = (DataSource) getInitialContext().lookup(Resources.getDataSourceName());
             if (ds == null) {
-                throw new InternalApplicationException("No DataSource found for " + Resources.getDataSourceName());
+                throw new WfException("No DataSource found for " + Resources.getDataSourceName());
             }
             return ds.getConnection();
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

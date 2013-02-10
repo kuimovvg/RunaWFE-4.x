@@ -31,8 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import ru.runa.wfe.InternalApplicationException;
-
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 /**
@@ -195,9 +194,7 @@ public class Duration implements Serializable {
      * </ul>
      */
     public Duration(String duration) {
-        if (duration == null) {
-            throw new InternalApplicationException("duration is null");
-        }
+        Preconditions.checkNotNull(duration, "duration is null");
         int index = indexOfNonWhite(duration, 0);
         char lead = duration.charAt(index);
         if (lead == '+' || lead == '-') {

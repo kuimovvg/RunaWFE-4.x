@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ProcessStartLog;
 import ru.runa.wfe.audit.SubprocessStartLog;
 import ru.runa.wfe.definition.DefinitionPermission;
@@ -69,7 +68,6 @@ public class ProcessFactory {
      *            submodule has been created and before the process-start event
      *            is fired, which is also before the execution of the initial
      *            node.
-     * @throws InternalApplicationException
      */
     public Process startProcess(ProcessDefinition processDefinition, Map<String, Object> variables, Actor actor, String transitionName) {
         Preconditions.checkNotNull(processDefinition, "can't start a process when processDefinition is null");
@@ -127,7 +125,7 @@ public class ProcessFactory {
         Preconditions.checkNotNull(processDefinition, "can't create a process when processDefinition is null");
         Process process = new Process();
         process.setStartDate(new Date());
-        process.setDefinition(processDefinition.getDeployment());
+        process.setDeployment(processDefinition.getDeployment());
         process.setSwimlanes(new HashSet<Swimlane>());
         process.setTasks(new HashSet<Task>());
         Token rootToken = new Token(processDefinition, process);

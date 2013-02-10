@@ -20,7 +20,7 @@ package ru.runa.wfe.presentation.hibernate;
 import java.util.Collection;
 import java.util.List;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.Task;
@@ -132,7 +132,7 @@ public class HibernateCompilerParameters {
         this.owners = owners;
         this.ownersDBPath = ownersDBPath;
         if (ownersDBPath != null && owners == null) {
-            throw new InternalApplicationException("No owners supplied to query with owner restrictions.");
+            throw new WfException("No owners supplied to query with owner restrictions.");
         }
         this.enablePaging = enablePaging;
         this.isCountQuery = isCountQuery;
@@ -140,7 +140,7 @@ public class HibernateCompilerParameters {
         this.permission = permission;
         this.securedObjectTypes = securedObjectTypes;
         if (executorIds == null || permission == null || securedObjectTypes == null) {
-            throw new InternalApplicationException("Can't build query with permission check. No secured parametes specified.");
+            throw new WfException("Can't build query with permission check. No secured parametes specified.");
         }
         this.requestedClass = requestedClass;
         this.idRestriction = idRestriction;
@@ -165,7 +165,7 @@ public class HibernateCompilerParameters {
         this.owners = owners;
         this.ownersDBPath = ownersDBPath;
         if (ownersDBPath != null && owners == null) {
-            throw new InternalApplicationException("No owners supplied to query with owner restrictions.");
+            throw new WfException("No owners supplied to query with owner restrictions.");
         }
         this.enablePaging = enablePaging;
         this.isCountQuery = isCountQuery;
@@ -196,7 +196,7 @@ public class HibernateCompilerParameters {
         this.owners = owners;
         this.ownersDBPath = ownersDBPath;
         if (ownersDBPath != null && owners == null) {
-            throw new InternalApplicationException("No owners supplied to query with owner restrictions.");
+            throw new WfException("No owners supplied to query with owner restrictions.");
         }
         this.enablePaging = enablePaging;
         this.isCountQuery = isCountQuery;

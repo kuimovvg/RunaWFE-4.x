@@ -1,6 +1,7 @@
 package ru.runa.common.web.tag;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,9 +10,10 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.action.AdminkitScriptsAction;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.commons.web.PortletUrlType;
+
+import com.google.common.base.Throwables;
 
 public class AdminkitScriptsTag extends TagSupport {
     private static final long serialVersionUID = 1L;
@@ -39,8 +41,8 @@ public class AdminkitScriptsTag extends TagSupport {
             }
             pageContext.getOut().write(html);
             return Tag.SKIP_BODY;
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
         }
     }
 

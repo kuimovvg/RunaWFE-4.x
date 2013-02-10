@@ -19,6 +19,7 @@ package ru.runa.wfe.definition.logic;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ProcessDefinitionDeleteLog;
 import ru.runa.wfe.audit.dao.SystemLogDAO;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
@@ -41,7 +41,6 @@ import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.par.ProcessArchive;
 import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.execution.Process;
-import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.image.SubprocessPermissionVisitor;
@@ -54,7 +53,6 @@ import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 
@@ -111,13 +109,13 @@ public class DefinitionLogic extends WFCommonLogic {
         return new WfDefinition(definition);
     }
 
-    public WfDefinition getLatestProcessDefinition(User user, String definitionName) throws DefinitionDoesNotExistException {
+    public WfDefinition getLatestProcessDefinition(User user, String definitionName) {
         ProcessDefinition definition = getLatestDefinition(definitionName);
         checkPermissionAllowed(user, definition, Permission.READ);
         return new WfDefinition(definition);
     }
 
-    public WfDefinition getProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException {
+    public WfDefinition getProcessDefinition(User user, Long definitionId) {
         try {
             ProcessDefinition processDefinition = getDefinition(definitionId);
             checkPermissionAllowed(user, processDefinition, Permission.READ);
@@ -129,7 +127,7 @@ public class DefinitionLogic extends WFCommonLogic {
         }
     }
 
-    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) throws ProcessDoesNotExistException {
+    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         checkPermissionAllowed(user, processDefinition, Permission.READ);
@@ -179,7 +177,7 @@ public class DefinitionLogic extends WFCommonLogic {
         return result;
     }
 
-    public void undeployProcessDefinition(User user, String definitionName) throws DefinitionDoesNotExistException, ParentProcessExistsException {
+    public void undeployProcessDefinition(User user, String definitionName) {
         Preconditions.checkNotNull(definitionName, "definitionName must be specified.");
         Deployment deployment = deploymentDAO.findLatestDeployment(definitionName);
         checkPermissionAllowed(user, deployment, DefinitionPermission.UNDEPLOY_DEFINITION);
@@ -189,7 +187,7 @@ public class DefinitionLogic extends WFCommonLogic {
         for (Process process : processes) {
             if (nodeProcessDAO.getNodeProcessByChild(process.getId()) != null) {
                 throw new ParentProcessExistsException(definitionName, nodeProcessDAO.getNodeProcessByChild(process.getId()).getProcess()
-                        .getDefinition().getName());
+                        .getDeployment().getName());
             }
         }
         deleteProcessDefinitionsByName(user, definitionName);
@@ -212,41 +210,33 @@ public class DefinitionLogic extends WFCommonLogic {
         }
     }
 
-    public Interaction getInteraction(User user, Long taskId) throws TaskDoesNotExistException {
-        try {
+    public Interaction getInteraction(User user, Long taskId) {
+        Task task = taskDAO.getNotNull(taskId);
+        ProcessDefinition definition = getDefinition(task);
+        if (!isPermissionAllowed(user, definition, DefinitionPermission.READ)) {
+            checkCanParticipate(user, task);
+        }
+        return definition.getInteractionNotNull(task.getNodeId());
+    }
+
+    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) {
+        List<Transition> transitions;
+        if (definitionId != null) {
+            ProcessDefinition processDefinition = getDefinition(definitionId);
+            transitions = processDefinition.getStartStateNotNull().getLeavingTransitions();
+        } else {
             Task task = taskDAO.getNotNull(taskId);
-            ProcessDefinition definition = getDefinition(task);
-            if (!isPermissionAllowed(user, definition, DefinitionPermission.READ)) {
-                checkCanParticipate(user, task);
-            }
-            return definition.getInteractionNotNull(task.getNodeId());
-        } catch (DefinitionDoesNotExistException e) {
-            throw new InternalApplicationException(e);
+            ProcessDefinition processDefinition = getDefinition(task);
+            transitions = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitions();
         }
+        List<String> result = new ArrayList<String>();
+        for (Transition transition : transitions) {
+            result.add(transition.getName());
+        }
+        return result;
     }
 
-    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) throws TaskDoesNotExistException {
-        try {
-            List<Transition> transitions;
-            if (definitionId != null) {
-                ProcessDefinition processDefinition = getDefinition(definitionId);
-                transitions = processDefinition.getStartStateNotNull().getLeavingTransitions();
-            } else {
-                Task task = taskDAO.getNotNull(taskId);
-                ProcessDefinition processDefinition = getDefinition(task);
-                transitions = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitions();
-            }
-            List<String> result = new ArrayList<String>();
-            for (Transition transition : transitions) {
-                result.add(transition.getName());
-            }
-            return result;
-        } catch (DefinitionDoesNotExistException e) {
-            throw new InternalApplicationException(e);
-        }
-    }
-
-    public byte[] getFile(User user, Long definitionId, String fileName) throws DefinitionDoesNotExistException {
+    public byte[] getFile(User user, Long definitionId, String fileName) {
         ProcessDefinition definition = getDefinition(definitionId);
         if (!ProcessArchive.UNSECURED_FILE_NAMES.contains(fileName)) {
             checkPermissionAllowed(user, definition, DefinitionPermission.READ);
@@ -257,7 +247,7 @@ public class DefinitionLogic extends WFCommonLogic {
         return definition.getFileData(fileName);
     }
 
-    public Interaction getStartInteraction(User user, Long definitionId) throws DefinitionDoesNotExistException {
+    public Interaction getStartInteraction(User user, Long definitionId) {
         ProcessDefinition definition = getDefinition(definitionId);
         checkPermissionAllowed(user, definition, DefinitionPermission.READ);
         Interaction interaction = definition.getInteractionNotNull(definition.getStartStateNotNull().getNodeId());
@@ -274,17 +264,18 @@ public class DefinitionLogic extends WFCommonLogic {
         return Lists.newArrayList(definition.getSwimlanes().values());
     }
 
-    public List<VariableDefinition> getProcessDefinitionVariables(User user, Long definitionId) throws DefinitionDoesNotExistException {
+    public List<VariableDefinition> getProcessDefinitionVariables(User user, Long definitionId) {
         ProcessDefinition definition = getDefinition(definitionId);
         checkPermissionAllowed(user, definition, DefinitionPermission.READ);
         return definition.getVariables();
     }
 
     private ProcessDefinition parseProcessDefinition(byte[] data) {
-        Deployment parDeployment = new Deployment();
-        parDeployment.setLanguage(Language.JPDL);
-        parDeployment.setContent(data);
-        ProcessArchive archive = new ProcessArchive(parDeployment);
+        Deployment deployment = new Deployment();
+        deployment.setDeployedDate(new Date());
+        deployment.setLanguage(Language.JPDL);
+        deployment.setContent(data);
+        ProcessArchive archive = new ProcessArchive(deployment);
         return archive.parseProcessDefinition();
     }
 

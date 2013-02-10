@@ -26,7 +26,7 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.logic.bot.updatepermission.Method;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsSettings;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsXmlParser;
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.handler.bot.TaskHandlerBase;
 import ru.runa.wfe.os.OrgFunction;
 import ru.runa.wfe.os.OrgFunctionHelper;
@@ -95,7 +95,7 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
             return Permission.subtractPermissions(oldPermissions, permissions);
         } else {
             // should never happened
-            throw new InternalApplicationException("Unknown method provided: " + method);
+            throw new WfException("Unknown method provided: " + method);
         }
     }
 }

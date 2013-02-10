@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.definition.dto;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -55,6 +57,8 @@ public class WfDefinition implements Identifiable {
     private boolean hasStartImage;
     @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private boolean hasDisabledImage;
+    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
+    private Date deployedDate;
 
     public WfDefinition() {
     }
@@ -72,6 +76,7 @@ public class WfDefinition implements Identifiable {
         name = deployment.getName();
         description = deployment.getDescription();
         categories = deployment.getCategories();
+        deployedDate = deployment.getDeployedDate();
     }
 
     @Override
@@ -114,6 +119,10 @@ public class WfDefinition implements Identifiable {
 
     public boolean hasDisabledImage() {
         return hasDisabledImage;
+    }
+
+    public Date getDeployedDate() {
+        return deployedDate;
     }
 
     @Override

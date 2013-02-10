@@ -55,17 +55,17 @@ import ru.runa.wfe.user.Actor;
  */
 public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
     private static final long serialVersionUID = 1L;
-    private String substitutionCriteriaIDs;
+    private String substitutionCriteriaIds;
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
      */
-    public String getSubstitutionCriteriaIDs() {
-        return substitutionCriteriaIDs;
+    public String getSubstitutionCriteriaIds() {
+        return substitutionCriteriaIds;
     }
 
-    public void setSubstitutionCriteriaIDs(String substitutionCriteriaIDs) {
-        this.substitutionCriteriaIDs = substitutionCriteriaIDs;
+    public void setSubstitutionCriteriaIds(String substitutionCriteriaIds) {
+        this.substitutionCriteriaIds = substitutionCriteriaIds;
     }
 
     private static ArrayList<Long> arrayFromString(String string) {
@@ -86,9 +86,9 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
         tdFormElement.addElement(tableBuilder.buildTable());
         tdFormElement.addElement(new Input(Input.HIDDEN, SubstitutionCriteriasForm.REMOVE_METHOD_INPUT_NAME,
                 SubstitutionCriteriasForm.REMOVE_METHOD_CONFIRM));
-        if (substitutionCriteriaIDs != null && !substitutionCriteriaIDs.isEmpty()) {
+        if (substitutionCriteriaIds != null && !substitutionCriteriaIds.isEmpty()) {
             String message = Messages.getMessage(Messages.LABEL_SUBSTITUTION_CRITERIA_USED_BY, pageContext) + ":<ul>";
-            ArrayList<Long> ids = arrayFromString(substitutionCriteriaIDs);
+            ArrayList<Long> ids = arrayFromString(substitutionCriteriaIds);
             ArrayList<Substitution> substitutions = new ArrayList<Substitution>();
             SubstitutionService substitutionService = Delegates.getSubstitutionService();
             for (Long id : ids) {
@@ -149,7 +149,7 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             table.addElement(createTableHeaderTR());
             SubstitutionService substitutionService = Delegates.getSubstitutionService();
             List<SubstitutionCriteria> substitutionCriterias = substitutionService.getAllCriterias(getUser());
-            ArrayList<Long> ids = arrayFromString(substitutionCriteriaIDs);
+            ArrayList<Long> ids = arrayFromString(substitutionCriteriaIds);
             for (SubstitutionCriteria substitutionCriteria : substitutionCriterias) {
                 table.addElement(createTR(substitutionCriteria, ids.contains(substitutionCriteria.getId())));
             }

@@ -17,7 +17,7 @@
  */
 package ru.runa.wfe.commons.sqltask;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Signals that problem occured Created on 01.04.2005
@@ -25,7 +25,7 @@ import ru.runa.wfe.ApplicationException;
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
  */
-public class DatabaseTaskXmlParserException extends ApplicationException {
+public class DatabaseTaskXmlParserException extends WfException {
 
     private static final long serialVersionUID = 3045717597605266465L;
 

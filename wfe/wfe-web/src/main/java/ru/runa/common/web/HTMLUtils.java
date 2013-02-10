@@ -37,9 +37,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import ru.runa.wfe.InternalApplicationException;
-
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 
 public class HTMLUtils {
 
@@ -55,7 +54,7 @@ public class HTMLUtils {
             transformer.transform(new DOMSource(document), new StreamResult(outputStream));
             return outputStream.toByteArray();
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -67,7 +66,7 @@ public class HTMLUtils {
             parser.parse(inputSource);
             return parser.getDocument();
         } catch (Exception e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -96,7 +95,7 @@ public class HTMLUtils {
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
         return fileName;
     }

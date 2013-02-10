@@ -52,7 +52,7 @@ public class DeleteSubstitutionCriteriasAction extends ActionBase {
             }
 
             if (SubstitutionCriteriasForm.REMOVE_METHOD_CONFIRM.equals(method) && !substitutions.isEmpty()) {
-                return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), "substitutionCriteriaIDs", Arrays.toString(ids));
+                return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), "substitutionCriteriaIds", Arrays.toString(ids));
             }
 
             if (SubstitutionCriteriasForm.REMOVE_METHOD_ALL.equals(method)) {

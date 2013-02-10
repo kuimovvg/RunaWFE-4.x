@@ -18,8 +18,8 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
     private Calendar to;
 
     public CalendarInterval(Calendar onDate) {
-        this.from = CalendarUtil.getZeroTimeCalendar(onDate);
-        this.to = CalendarUtil.getLastSecondTimeCalendar(onDate);
+        from = CalendarUtil.getZeroTimeCalendar(onDate);
+        to = CalendarUtil.getLastSecondTimeCalendar(onDate);
     }
 
     public CalendarInterval(Date from, Date to) {
@@ -89,7 +89,8 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
         return interval.getFrom().before(to) && interval.getTo().after(from);
     }
 
-    // returns true if there's an intersection or a gap between intervals is smaller than the gapInMillis
+    // returns true if there's an intersection or a gap between intervals is
+    // smaller than the gapInMillis
     public boolean intersectsWithGapScale(CalendarInterval interval, int gapInMillis) {
         CalendarInterval gap = this.getGapBetweenNotIntersecting(interval);
         if (gap == null) {
@@ -101,7 +102,8 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
         return false;
     }
 
-    // if the gap between the intervals is less or equal to gapInMillis they merge.
+    // if the gap between the intervals is less or equal to gapInMillis they
+    // merge.
     public static List<CalendarInterval> mergeIntersectingWithGapScaleIntervalsNotOrdered(List<CalendarInterval> intervals, int gapInMillis) {
         if (intervals == null || intervals.size() < 2) {
             return intervals;
@@ -127,14 +129,14 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
     public List<CalendarInterval> cropToFitInInterval(List<CalendarInterval> list) {
         List<CalendarInterval> result = new ArrayList<CalendarInterval>();
         for (CalendarInterval interval : list) {
-            if ((interval.getFrom().after(this.to)) || (interval.getTo().before(this.from))) {
+            if ((interval.getFrom().after(to)) || (interval.getTo().before(from))) {
                 continue;
             }
-            if (interval.getFrom().before(this.from)) {
-                interval.setFrom(this.from);
+            if (interval.getFrom().before(from)) {
+                interval.setFrom(from);
             }
-            if (interval.getTo().after(this.to)) {
-                interval.setTo(this.to);
+            if (interval.getTo().after(to)) {
+                interval.setTo(to);
             }
             result.add(interval);
         }
@@ -187,17 +189,17 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
             result.add(this);
             return result;
         }
-        if (this.from.before(interval.getFrom()) && (this.to.after(interval.getTo()))) {
-            result.add(new CalendarInterval(this.from, interval.getFrom()));
-            result.add(new CalendarInterval(interval.getTo(), this.to));
+        if (from.before(interval.getFrom()) && (to.after(interval.getTo()))) {
+            result.add(new CalendarInterval(from, interval.getFrom()));
+            result.add(new CalendarInterval(interval.getTo(), to));
             return result;
         }
-        if (this.from.after(interval.getFrom()) && (this.to.after(interval.getTo()))) {
-            result.add(new CalendarInterval(interval.getTo(), this.to));
+        if (from.after(interval.getFrom()) && (to.after(interval.getTo()))) {
+            result.add(new CalendarInterval(interval.getTo(), to));
             return result;
         }
-        if (this.from.before(interval.getFrom()) && (this.to.before(interval.getTo()))) {
-            result.add(new CalendarInterval(this.from, interval.getFrom()));
+        if (from.before(interval.getFrom()) && (to.before(interval.getTo()))) {
+            result.add(new CalendarInterval(from, interval.getFrom()));
             return result;
         }
         return result;
@@ -209,12 +211,12 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
         }
         Calendar gapFrom = Calendar.getInstance();
         Calendar gapTo = Calendar.getInstance();
-        if (this.from.before(interval.getFrom())) {
-            gapFrom.setTime(this.to.getTime());
+        if (from.before(interval.getFrom())) {
+            gapFrom.setTime(to.getTime());
             gapTo.setTime(interval.getFrom().getTime());
         } else {
             gapFrom.setTime(interval.getTo().getTime());
-            gapTo.setTime(this.from.getTime());
+            gapTo.setTime(from.getTime());
         }
         return new CalendarInterval(gapFrom, gapTo);
     }
@@ -233,35 +235,32 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(CalendarUtil.formatDateTime(from)).append("-").append(CalendarUtil.formatDateTime(to));
-        return sb.toString();
+        return CalendarUtil.format(from, CalendarUtil.HOURS_MINUTES_SECONDS_FORMAT) + "-"
+                + CalendarUtil.format(to, CalendarUtil.HOURS_MINUTES_SECONDS_FORMAT);
     }
 
     public String toDateRangeString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(CalendarUtil.formatDate(from)).append("-").append(CalendarUtil.formatDate(to));
-        return sb.toString();
+        return CalendarUtil.formatDate(from) + "-" + CalendarUtil.formatDate(to);
     }
 
     public boolean hasEqualDates(CalendarInterval o) {
-        if (this.from != null && o.getFrom() != null) {
+        if (from != null && o.getFrom() != null) {
             if (!CalendarUtil.areCalendarsEqualIgnoringTime(from, o.from)) {
                 return false;
             }
-        } else if (this.from == null && o.getFrom() != null) {
+        } else if (from == null && o.getFrom() != null) {
             return false;
-        } else if (o.getFrom() == null && this.from != null) {
+        } else if (o.getFrom() == null && from != null) {
             return false;
         }
 
-        if (this.to != null && o.getTo() != null) {
+        if (to != null && o.getTo() != null) {
             if (!CalendarUtil.areCalendarsEqualIgnoringTime(to, o.to)) {
                 return false;
             }
-        } else if (this.to == null && o.getTo() != null) {
+        } else if (to == null && o.getTo() != null) {
             return false;
-        } else if (o.getTo() == null && this.to != null) {
+        } else if (o.getTo() == null && to != null) {
             return false;
         }
         return true;

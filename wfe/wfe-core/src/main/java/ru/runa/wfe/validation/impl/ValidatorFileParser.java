@@ -26,7 +26,6 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.validation.ValidatorConfig;
 
@@ -37,16 +36,12 @@ public class ValidatorFileParser {
 
     public static Map<String, String> parseValidatorDefinitions(InputStream is) {
         Map<String, String> result = Maps.newHashMap();
-        try {
-            Document document = XmlUtils.parseWithoutValidation(is);
-            List<Element> nodes = document.getRootElement().elements("validator");
-            for (Element validatorElement : nodes) {
-                String name = validatorElement.attributeValue("name");
-                String className = validatorElement.attributeValue("class");
-                result.put(name, className);
-            }
-        } catch (Exception e) {
-            throw new InternalApplicationException(e);
+        Document document = XmlUtils.parseWithoutValidation(is);
+        List<Element> nodes = document.getRootElement().elements("validator");
+        for (Element validatorElement : nodes) {
+            String name = validatorElement.attributeValue("name");
+            String className = validatorElement.attributeValue("class");
+            result.put(name, className);
         }
         return result;
     }

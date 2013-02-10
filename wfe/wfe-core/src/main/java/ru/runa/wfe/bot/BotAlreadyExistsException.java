@@ -17,13 +17,13 @@
  */
 package ru.runa.wfe.bot;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * 
  * @author petr_mikheev
  */
-public class BotAlreadyExistsException extends ApplicationException {
+public class BotAlreadyExistsException extends WfException {
     private static final long serialVersionUID = -9186710256485510506L;
     private final String botName;
 

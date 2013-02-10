@@ -43,12 +43,12 @@ public class DeleteBotAction extends ActionBase {
         IdsForm idsForm = (IdsForm) form;
         Long[] botToDeleteIds = idsForm.getIds();
         if (botToDeleteIds.length == 0) {
-            return new ActionForward("/bot_station.do?botStationID=" + idsForm.getId());
+            return new ActionForward("/bot_station.do?botStationId=" + idsForm.getId());
         }
         BotService botService = Delegates.getBotService();
         for (Long botId : botToDeleteIds) {
             botService.removeBot(getLoggedUser(request), botId);
         }
-        return new ActionForward("/bot_station.do?botStationID=" + idsForm.getId());
+        return new ActionForward("/bot_station.do?botStationId=" + idsForm.getId());
     }
 }

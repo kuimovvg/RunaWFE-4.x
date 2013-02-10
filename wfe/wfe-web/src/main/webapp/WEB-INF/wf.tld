@@ -477,7 +477,7 @@
       <body-content>JSP</body-content>
 
       <attribute>
-         <name>botStationID</name>
+         <name>botStationId</name>
          <required>false</required>
 
            <rtexprvalue>true</rtexprvalue>
@@ -1919,7 +1919,7 @@
       <body-content>JSP</body-content>
 
       <attribute>
-         <name>botStationID</name>
+         <name>botStationId</name>
          <required>false</required>
 
            <rtexprvalue>true</rtexprvalue>
@@ -1988,7 +1988,7 @@
       <body-content>JSP</body-content>
 
       <attribute>
-         <name>botID</name>
+         <name>botId</name>
          <required>false</required>
 
            <rtexprvalue>true</rtexprvalue>
@@ -2839,7 +2839,7 @@
       <body-content>JSP</body-content>
 
       <attribute>
-         <name>substitutionCriteriaIDs</name>
+         <name>substitutionCriteriaIds</name>
          <required>false</required>
 
            <rtexprvalue>true</rtexprvalue>
@@ -3163,7 +3163,7 @@
       <body-content>JSP</body-content>
 
       <attribute>
-         <name>botID</name>
+         <name>botId</name>
          <required>false</required>
 
            <rtexprvalue>true</rtexprvalue>
@@ -3439,7 +3439,7 @@
       <body-content>JSP</body-content>
 
       <attribute>
-         <name>botStationID</name>
+         <name>botStationId</name>
          <required>false</required>
 
            <rtexprvalue>true</rtexprvalue>
@@ -5745,14 +5745,6 @@
       <name>deployBotStation</name>
       <tag-class>ru.runa.af.web.tag.DeployBotStationTag</tag-class>
       <body-content>empty</body-content>
-
-      <attribute>
-         <name>ID</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
       <attribute>
          <name>action</name>
          <required>false</required>
@@ -6178,7 +6170,7 @@
       <body-content>JSP</body-content>
 
       <attribute>
-         <name>botStationID</name>
+         <name>botStationId</name>
          <required>false</required>
 
            <rtexprvalue>true</rtexprvalue>

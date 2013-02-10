@@ -17,13 +17,11 @@
  */
 package ru.runa.wfe.relation.dao;
 
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate3.HibernateCallback;
@@ -61,10 +59,8 @@ public class RelationDAO extends CommonDAO {
      * @param description
      *            Relation description
      * @return Created relation.
-     * @throws RelationAlreadyExistException
-     *             Relation already exists.
      */
-    public Relation createRelation(String name, String description) throws RelationAlreadyExistException {
+    public Relation createRelation(String name, String description) {
         Relation relation = getRelation(name);
         if (relation != null) {
             throw new RelationAlreadyExistException(name);
@@ -82,10 +78,8 @@ public class RelationDAO extends CommonDAO {
      * @param id
      *            Relation identity.
      * @return Relation with specified name.
-     * @throws RelationDoesNotExistException
-     *             Relation with specified name is not exists.
      */
-    public Relation getRelationNotNull(Long id) throws RelationDoesNotExistException {
+    public Relation getRelationNotNull(Long id) {
         Relation relation = getHibernateTemplate().get(Relation.class, id);
         if (relation == null) {
             throw new RelationDoesNotExistException(id);
@@ -101,10 +95,8 @@ public class RelationDAO extends CommonDAO {
      * @param name
      *            Relation name
      * @return Relation with specified name.
-     * @throws RelationDoesNotExistException
-     *             Relation with specified name is not exists.
      */
-    public Relation getRelationNotNull(String name) throws RelationDoesNotExistException {
+    public Relation getRelationNotNull(String name) {
         Relation relation = getRelation(name);
         if (relation == null) {
             throw new RelationDoesNotExistException(name);
@@ -133,10 +125,8 @@ public class RelationDAO extends CommonDAO {
      * 
      * @param id
      *            Relation identity.
-     * @throws RelationDoesNotExistException
-     *             Relation with specified identity does not exists.
      */
-    public void removeRelation(Long id) throws RelationDoesNotExistException {
+    public void removeRelation(Long id) {
         Relation relation = getRelationNotNull(id);
         if (relation == null) {
             throw new RelationDoesNotExistException(id);
@@ -157,10 +147,8 @@ public class RelationDAO extends CommonDAO {
      * @param right
      *            Right part of relation pair.
      * @return Created relation pair.
-     * @throws RelationDoesNotExistException
-     *             Relation with specified name does not exists.
      */
-    public RelationPair addRelationPair(String relationName, Executor left, Executor right) throws RelationDoesNotExistException {
+    public RelationPair addRelationPair(String relationName, Executor left, Executor right) {
         Relation relation = getRelationNotNull(relationName);
         List<RelationPair> exists = getRelationPairs(relation, Lists.newArrayList(left), Lists.newArrayList(right));
         if (exists.size() > 0) {
@@ -176,10 +164,8 @@ public class RelationDAO extends CommonDAO {
      * 
      * @param id
      *            {@link RelationPair} identity.
-     * @throws RelationPairDoesnotExistException
-     *             {@link RelationPair} does not exists.
      */
-    public void removeRelationPair(Long id) throws RelationPairDoesNotExistException {
+    public void removeRelationPair(Long id) {
         RelationPair relationPair = get(RelationPair.class, id);
         if (relationPair == null) {
             throw new RelationPairDoesNotExistException(id);
@@ -198,10 +184,8 @@ public class RelationDAO extends CommonDAO {
      *            Collection of {@link Executor}, which contains in right part
      *            of {@link RelationPair}.
      * @return List of {@link RelationPair}.
-     * @throws RelationDoesNotExistException
-     *             {@link Relation} with specified name does not exists.
      */
-    public List<RelationPair> getExecutorsRelationPairsRight(String relationName, Collection<Executor> from) throws RelationDoesNotExistException {
+    public List<RelationPair> getExecutorsRelationPairsRight(String relationName, Collection<Executor> from) {
         Relation relation = null;
         if (relationName != null) {
             relation = getRelationNotNull(relationName);
@@ -220,10 +204,8 @@ public class RelationDAO extends CommonDAO {
      *            Collection of {@link Executor}, which contains in left part of
      *            {@link RelationPair}.
      * @return List of {@link RelationPair}.
-     * @throws RelationDoesNotExistException
-     *             {@link Relation} with specified name does not exists.
      */
-    public List<RelationPair> getExecutorsRelationPairsLeft(String relationName, Collection<Executor> from) throws RelationDoesNotExistException {
+    public List<RelationPair> getExecutorsRelationPairsLeft(String relationName, Collection<Executor> from) {
         Relation relation = null;
         if (relationName != null) {
             relation = getRelationNotNull(relationName);
@@ -237,10 +219,8 @@ public class RelationDAO extends CommonDAO {
      * @param id
      *            {@link RelationPair} identity.
      * @return {@link RelationPair} with specified identity.
-     * @throws RelationPairDoesNotExistException
-     *             {@link RelationPair} does not exists.
      */
-    public RelationPair getRelationPairNotNull(Long id) throws RelationPairDoesNotExistException {
+    public RelationPair getRelationPairNotNull(Long id) {
         RelationPair relationPair = getHibernateTemplate().get(RelationPair.class, id);
         if (relationPair == null) {
             throw new RelationPairDoesNotExistException(id);
@@ -257,9 +237,8 @@ public class RelationDAO extends CommonDAO {
      * @param batchPresentation
      *            Restrictions to get {@link RelationPair}.
      * @return
-     * @throws RelationDoesNotExistException
      */
-    public List<RelationPair> getRelationPairs(String relationsGroupName, BatchPresentation batchPresentation) throws RelationDoesNotExistException {
+    public List<RelationPair> getRelationPairs(String relationsGroupName, BatchPresentation batchPresentation) {
         Map<Integer, FilterCriteria> filters = batchPresentation.getFilteredFields();
         try {
             // for check
@@ -283,9 +262,8 @@ public class RelationDAO extends CommonDAO {
      * @param batchPresentation
      *            Restrictions to get {@link RelationPair}.
      * @return
-     * @throws RelationDoesNotExistException
      */
-    public List<RelationPair> getRelationPairs(Long id, BatchPresentation batchPresentation) throws RelationDoesNotExistException {
+    public List<RelationPair> getRelationPairs(Long id, BatchPresentation batchPresentation) {
         Map<Integer, FilterCriteria> filters = batchPresentation.getFilteredFields();
         try {
             Relation relation = getRelationNotNull(id);
@@ -313,7 +291,7 @@ public class RelationDAO extends CommonDAO {
         return getHibernateTemplate().execute(new HibernateCallback<List<RelationPair>>() {
 
             @Override
-            public List<RelationPair> doInHibernate(Session session) throws HibernateException, SQLException {
+            public List<RelationPair> doInHibernate(Session session) {
                 Criteria criteria = session.createCriteria(RelationPair.class);
                 if (relation != null) {
                     criteria.add(Restrictions.eq("relation", relation));

@@ -1,5 +1,6 @@
 package ru.runa.wfe.definition;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -35,6 +36,7 @@ public class Deployment implements Identifiable {
     private String description;
     private String category;
     private byte[] content;
+    private Date deployedDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
@@ -104,6 +106,15 @@ public class Deployment implements Identifiable {
         this.content = content;
     }
 
+    @Column(name = "DEPLOYED")
+    public Date getDeployedDate() {
+        return deployedDate;
+    }
+
+    public void setDeployedDate(Date deployedDate) {
+        this.deployedDate = deployedDate;
+    }
+
     @Transient
     @Override
     public Long getIdentifiableId() {
@@ -123,6 +134,20 @@ public class Deployment implements Identifiable {
 
     public void setCategories(List<String> categories) {
         category = Joiner.on("/").join(categories);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name, version);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Deployment) {
+            Deployment d = (Deployment) obj;
+            return Objects.equal(name, d.name) && Objects.equal(version, d.version);
+        }
+        return super.equals(obj);
     }
 
     @Override

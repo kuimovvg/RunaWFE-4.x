@@ -43,16 +43,15 @@ import ru.runa.wfe.user.Group;
  * @author Konstantinov Aleksey
  */
 public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
-
     /* Ehcaches names. */
-    public static final String actorsByCodesName = "ru.runa.wfe.wfe.af.caches.actorsByCodes";
-    public static final String executorsByIdName = "ru.runa.wfe.wfe.af.caches.executorsById";
-    public static final String executorsByNameName = "ru.runa.wfe.wfe.af.caches.executorsByName";
-    public static final String groupMembersName = "ru.runa.wfe.wfe.af.caches.groupMembers";
-    public static final String executorParentsName = "ru.runa.wfe.wfe.af.caches.executorParents";
-    public static final String allGroupActorsName = "ru.runa.wfe.wfe.af.caches.allGroupActors";
-    public static final String allExecutorGroupsName = "ru.runa.wfe.wfe.af.caches.allExecutorGroups";
-    public static final String allExecutorsListsName = "ru.runa.wfe.wfe.af.caches.allExecutorsLists";
+    public static final String actorsByCodesName = "ru.runa.wfe.user.cache.actorsByCodes";
+    public static final String executorsByIdName = "ru.runa.wfe.user.cache.executorsById";
+    public static final String executorsByNameName = "ru.runa.wfe.user.cache.executorsByName";
+    public static final String groupMembersName = "ru.runa.wfe.user.cache.groupMembers";
+    public static final String executorParentsName = "ru.runa.wfe.user.cache.executorParents";
+    public static final String allGroupActorsName = "ru.runa.wfe.user.cache.allGroupActors";
+    public static final String allExecutorGroupsName = "ru.runa.wfe.user.cache.allExecutorGroups";
+    public static final String allExecutorsListsName = "ru.runa.wfe.user.cache.allExecutorsLists";
 
     /* Caches implementation. */
     private final Cache<Long, Actor> codeToActorCache;
@@ -74,11 +73,11 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
         executorToAllParentGroupsCache = createCache(allExecutorGroupsName);
         batchAllExecutors = createCache(allExecutorsListsName);
         List<Executor> allExecutors = getAllExecutors();
-        List<ExecutorGroupMembership> relationsList = getAllRelations();
+        List<ExecutorGroupMembership> memberships = getAllMemberships();
         for (Executor executor : allExecutors) {
             addExecutorToCaches(executor);
         }
-        fillRelationsCaches(relationsList, allExecutors);
+        fillGroupMembersCaches(memberships, allExecutors);
         return;
     }
 
@@ -227,25 +226,28 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
         return retVal;
     }
 
-    private void fillMapGroupToMembers(List<ExecutorGroupMembership> relationsList) {
-        for (ExecutorGroupMembership relation : relationsList) {
-            Executor ex = relation.getExecutor();
-            Group gr = relation.getGroup();
-            getCollectionFromMap(groupToMembersCache, gr.getId()).add(nameToExecutorCache.get(ex.getName()));
+    private void fillMapGroupToMembers(List<ExecutorGroupMembership> memberships) {
+        for (ExecutorGroupMembership membership : memberships) {
+            Executor ex = membership.getExecutor();
+            Group gr = membership.getGroup();
+            Executor ex2 = nameToExecutorCache.get(ex.getName());
+            getCollectionFromMap(groupToMembersCache, gr.getId()).add(ex2);
         }
     }
 
-    private void fillMapExecutorToParents(List<ExecutorGroupMembership> relationsList) {
-        for (ExecutorGroupMembership relation : relationsList) {
-            Executor ex = relation.getExecutor();
-            Group gr = relation.getGroup();
-            getCollectionFromMap(executorToParentGroupsCache, ex.getId()).add((Group) (nameToExecutorCache.get(gr.getName())));
+    private void fillMapExecutorToParents(List<ExecutorGroupMembership> memberships) {
+        for (ExecutorGroupMembership membership : memberships) {
+            Executor ex = membership.getExecutor();
+            Group gr = membership.getGroup();
+            // TODO check equivalence
+            Group gr2 = (Group) nameToExecutorCache.get(gr.getName());
+            getCollectionFromMap(executorToParentGroupsCache, ex.getId()).add(gr2);
         }
     }
 
-    private void fillRelationsCaches(List<ExecutorGroupMembership> relationsList, List<Executor> executors) {
-        fillMapGroupToMembers(relationsList);
-        fillMapExecutorToParents(relationsList);
+    private void fillGroupMembersCaches(List<ExecutorGroupMembership> memberships, List<Executor> executors) {
+        fillMapGroupToMembers(memberships);
+        fillMapExecutorToParents(memberships);
         for (Executor executor : executors) {
             if (executorToParentGroupsCache.get(executor.getId()) == null) {
                 executorToParentGroupsCache.put(executor.getId(), new HashSet<Group>());
@@ -304,7 +306,7 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
         return criteria.list();
     }
 
-    private List<ExecutorGroupMembership> getAllRelations() {
+    private List<ExecutorGroupMembership> getAllMemberships() {
         return getAll(ExecutorGroupMembership.class);
     }
 

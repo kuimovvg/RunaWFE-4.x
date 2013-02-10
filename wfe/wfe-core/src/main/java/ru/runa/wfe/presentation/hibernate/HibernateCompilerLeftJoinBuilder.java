@@ -23,7 +23,7 @@ import java.util.List;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.SingleTableEntityPersister;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.ClassPresentation;
@@ -91,7 +91,7 @@ public class HibernateCompilerLeftJoinBuilder {
     private LeftJoinDescription applyLeftJoin(StringBuilder sqlRequest, FieldDescriptor field) {
         ClassMetadata meta = ApplicationContextFactory.getSessionFactory().getClassMetadata(field.dbSources[0].getSourceObject());
         if (!(meta instanceof SingleTableEntityPersister)) {
-            throw new InternalApplicationException("ClassMetadate for " + field.dbSources[0].getSourceObject().getName()
+            throw new WfException("ClassMetadate for " + field.dbSources[0].getSourceObject().getName()
                     + " is not SingleTableEntityPersister. Please call to developer.");
         }
         String tableName = ((SingleTableEntityPersister) meta).getTableName();

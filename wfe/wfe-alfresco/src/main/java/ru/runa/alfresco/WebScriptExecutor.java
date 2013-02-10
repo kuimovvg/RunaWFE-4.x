@@ -19,7 +19,7 @@ import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import ru.runa.wfe.ApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.var.FileVariable;
 
 import com.google.common.io.ByteStreams;
@@ -94,7 +94,7 @@ public class WebScriptExecutor {
                 int statusCode = response.getStatusLine().getStatusCode();
                 log.debug("WebScript status code = " + statusCode);
                 if (statusCode != 200 && throwExceptionOnErrorState) {
-                    throw new ApplicationException("WebScript " + request.getRequestLine() + " status code is " + statusCode);
+                    throw new WfException("WebScript " + request.getRequestLine() + " status code is " + statusCode);
                 }
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 response.getEntity().writeTo(baos);

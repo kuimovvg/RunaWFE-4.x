@@ -41,10 +41,10 @@ public class StartPeriodicBotsInvocationAction extends Action {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Long id = ((BotStationForm) form).getBotStationID();
+        Long id = ((BotStationForm) form).getBotStationId();
         BotService botService = Delegates.getBotService();
         BotStation botStation = botService.getBotStation(id);
         Delegates.getBotInvokerService(botStation.getAddress()).startPeriodicBotsInvocation(botStation);
-        return new ActionForward("/bot_station.do?botStationID=" + id);
+        return new ActionForward("/bot_station.do?botStationId=" + id);
     }
 }

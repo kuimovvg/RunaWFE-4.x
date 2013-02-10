@@ -19,7 +19,7 @@ package ru.runa.wfe.presentation;
 
 import java.util.Map;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 
 import com.google.common.collect.Maps;
 
@@ -49,7 +49,7 @@ public class BatchPresentations {
     public static BatchPresentation createDefault(String batchPresentationId) {
         BatchPresentationFactory factory = map.get(batchPresentationId);
         if (factory == null) {
-            throw new InternalApplicationException("No factory configured for id '" + batchPresentationId + "'");
+            throw new WfException("No factory configured for id '" + batchPresentationId + "'");
         }
         return factory.createDefault(batchPresentationId);
     }

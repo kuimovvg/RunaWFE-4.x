@@ -24,21 +24,18 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationAlreadyExistException;
 import ru.runa.wfe.relation.RelationDoesNotExistException;
 import ru.runa.wfe.relation.RelationPair;
-import ru.runa.wfe.relation.RelationPairDoesNotExistException;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.relation.dao.RelationDAO;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.User;
 
 /**
@@ -62,10 +59,8 @@ public class RelationLogic extends CommonLogic {
      * @param right
      *            Right part of relation pair.
      * @return Created relation pair.
-     * @throws RelationDoesNotExistException
-     *             Relation with specified name does not exists.
      */
-    public RelationPair addRelationPair(User user, String relationName, Executor left, Executor right) throws RelationDoesNotExistException {
+    public RelationPair addRelationPair(User user, String relationName, Executor left, Executor right) {
         checkPermissionAllowed(user, relationDAO.getRelationNotNull(relationName), RelationPermission.UPDATE_RELATION);
         return relationDAO.addRelationPair(relationName, left, right);
     }
@@ -82,16 +77,10 @@ public class RelationLogic extends CommonLogic {
      * @param description
      *            Relation description
      * @return Created relation.
-     * @throws RelationAlreadyExistException
-     *             Relation already exists.
      */
-    public Relation createRelation(User user, String name, String description) throws RelationAlreadyExistException {
-        try {
-            checkPermissionAllowed(user, RelationsGroupSecure.INSTANCE, RelationPermission.UPDATE_RELATION);
-            return relationDAO.createRelation(name, description);
-        } catch (ExecutorDoesNotExistException e) {
-            throw new InternalApplicationException(e);
-        }
+    public Relation createRelation(User user, String name, String description) {
+        checkPermissionAllowed(user, RelationsGroupSecure.INSTANCE, RelationPermission.UPDATE_RELATION);
+        return relationDAO.createRelation(name, description);
     }
 
     /**
@@ -125,11 +114,8 @@ public class RelationLogic extends CommonLogic {
      *            Collection of {@link Executor}, which contains in right part
      *            of {@link RelationPair}.
      * @return List of {@link RelationPair}.
-     * @throws RelationDoesNotExistException
-     *             {@link Relation} with specified name does not exists.
      */
-    public List<RelationPair> getExecutorRelationPairsRight(User user, String relationName, List<Executor> right)
-            throws RelationDoesNotExistException {
+    public List<RelationPair> getExecutorRelationPairsRight(User user, String relationName, List<Executor> right) {
         List<RelationPair> result = new ArrayList<RelationPair>();
         List<RelationPair> loadedPairs = relationDAO.getExecutorsRelationPairsRight(relationName, right);
         Set<Relation> allowedRelations = getRelationsWithReadPermission(user, loadedPairs);
@@ -154,10 +140,8 @@ public class RelationLogic extends CommonLogic {
      *            Collection of {@link Executor}, which contains in left part of
      *            {@link RelationPair}.
      * @return List of {@link RelationPair}.
-     * @throws RelationDoesNotExistException
-     *             {@link Relation} with specified name does not exists.
      */
-    public List<RelationPair> getExecutorRelationPairsLeft(User user, String relationName, List<Executor> left) throws RelationDoesNotExistException {
+    public List<RelationPair> getExecutorRelationPairsLeft(User user, String relationName, List<Executor> left) {
         List<RelationPair> result = new ArrayList<RelationPair>();
         List<RelationPair> loadedPairs = relationDAO.getExecutorsRelationPairsLeft(relationName, left);
         Set<Relation> allowedRelations = getRelationsWithReadPermission(user, loadedPairs);
@@ -179,10 +163,8 @@ public class RelationLogic extends CommonLogic {
      * @param relationName
      *            Relation name
      * @return Relation with specified name.
-     * @throws RelationDoesNotExistException
-     *             Relation with specified name is not exists.
      */
-    public Relation getRelation(User user, String relationName) throws RelationDoesNotExistException {
+    public Relation getRelation(User user, String relationName) {
         checkPermissionAllowed(user, relationDAO.getRelationNotNull(relationName), Permission.READ);
         return relationDAO.getRelationNotNull(relationName);
     }
@@ -197,10 +179,8 @@ public class RelationLogic extends CommonLogic {
      * @param relationId
      *            Relation identity.
      * @return Relation with specified name.
-     * @throws RelationDoesNotExistException
-     *             Relation with specified name is not exists.
      */
-    public Relation getRelation(User user, Long relationId) throws RelationDoesNotExistException {
+    public Relation getRelation(User user, Long relationId) {
         checkPermissionAllowed(user, relationDAO.getRelationNotNull(relationId), Permission.READ);
         return relationDAO.getRelationNotNull(relationId);
     }
@@ -216,9 +196,8 @@ public class RelationLogic extends CommonLogic {
      * @param batchPresentation
      *            Restrictions to get {@link RelationPair}.
      * @return
-     * @throws RelationDoesNotExistException
      */
-    public List<RelationPair> getRelations(User user, String relationName, BatchPresentation batchPresentation) throws RelationDoesNotExistException {
+    public List<RelationPair> getRelations(User user, String relationName, BatchPresentation batchPresentation) {
         checkPermissionAllowed(user, relationDAO.getRelationNotNull(relationName), Permission.READ);
         return relationDAO.getRelationPairs(relationName, batchPresentation);
     }
@@ -234,9 +213,8 @@ public class RelationLogic extends CommonLogic {
      * @param batchPresentation
      *            Restrictions to get {@link RelationPair}.
      * @return
-     * @throws RelationDoesNotExistException
      */
-    public List<RelationPair> getRelations(User user, Long relationId, BatchPresentation batchPresentation) throws RelationDoesNotExistException {
+    public List<RelationPair> getRelations(User user, Long relationId, BatchPresentation batchPresentation) {
         checkPermissionAllowed(user, relationDAO.getRelationNotNull(relationId), Permission.READ);
         return relationDAO.getRelationPairs(relationId, batchPresentation);
     }
@@ -248,10 +226,8 @@ public class RelationLogic extends CommonLogic {
      *            user, which perform operation.
      * @param relationPairId
      *            {@link RelationPair} identity.
-     * @throws RelationPairDoesnotExistException
-     *             {@link RelationPair} does not exists.
      */
-    public void removeRelationPair(User user, Long relationPairId) throws RelationPairDoesNotExistException {
+    public void removeRelationPair(User user, Long relationPairId) {
         RelationPair relationPair = relationDAO.getRelationPairNotNull(relationPairId);
         checkPermissionAllowed(user, relationPair.getRelation(), RelationPermission.UPDATE_RELATION);
         relationDAO.removeRelationPair(relationPairId);
@@ -264,10 +240,8 @@ public class RelationLogic extends CommonLogic {
      *            user, which perform operation.
      * @param relationId
      *            Relation identity.
-     * @throws RelationDoesNotExistException
-     *             Relation with specified identity does not exists.
      */
-    public void removeRelation(User user, Long relationId) throws RelationDoesNotExistException {
+    public void removeRelation(User user, Long relationId) {
         checkPermissionAllowed(user, RelationsGroupSecure.INSTANCE, RelationPermission.UPDATE_RELATION);
         relationDAO.removeRelation(relationId);
     }

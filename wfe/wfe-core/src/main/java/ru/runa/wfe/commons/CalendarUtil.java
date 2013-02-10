@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 
 /**
  * Helper for {@link Calendar} and {@link CalendarInterval}.
@@ -119,7 +119,7 @@ public class CalendarUtil {
     }
 
     public static String formatDateTime(Date date) {
-        return format(date, DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT);
+        return format(date, DATE_WITH_HOUR_MINUTES_FORMAT);
     }
 
     public static String formatTime(Date date) {
@@ -138,7 +138,11 @@ public class CalendarUtil {
     }
 
     public static String formatDateTime(Calendar calendar) {
-        return format(calendar, DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT);
+        return format(calendar, DATE_WITH_HOUR_MINUTES_FORMAT);
+    }
+
+    public static String formatTime(Calendar calendar) {
+        return format(calendar, HOURS_MINUTES_FORMAT);
     }
 
     public static Calendar dateToCalendar(Date date) {
@@ -219,7 +223,7 @@ public class CalendarUtil {
         List<CalendarInterval> source = Arrays.asList(interval1, interval2);
         List<CalendarInterval> merged = mergeIntersectingIntervalsNotOrdered(source);
         if (merged.size() != 1) {
-            throw new InternalApplicationException("Seems like intervals not intersecting " + source);
+            throw new WfException("Seems like intervals not intersecting " + source);
         }
         return merged.get(0);
     }
@@ -395,7 +399,7 @@ public class CalendarUtil {
                 return dateFormat.parse(dateAsString);
             }
         } catch (ParseException e) {
-            throw new InternalApplicationException("Unable parse " + dateAsString + " with format " + dateFormat, e);
+            throw new WfException("Unable parse " + dateAsString + " with format " + dateFormat, e);
         }
     }
 

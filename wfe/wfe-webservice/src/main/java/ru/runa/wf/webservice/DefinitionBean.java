@@ -18,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.WSLoggerInterceptor;
-import ru.runa.wfe.ApplicationException;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
@@ -33,6 +31,7 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.user.User;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
@@ -55,7 +54,7 @@ public class DefinitionBean {
             byte[] scriptBytes = Files.toByteArray(new File(file));
             deployProcessDefinition(user, scriptBytes, type);
         } catch (IOException e) {
-            throw new InternalApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -99,7 +98,7 @@ public class DefinitionBean {
             byte[] scriptBytes = Files.toByteArray(new File(file));
             redeployProcessDefinition(user, definitionId, scriptBytes, type);
         } catch (IOException e) {
-            throw new ApplicationException(e);
+            throw Throwables.propagate(e);
         }
     }
 

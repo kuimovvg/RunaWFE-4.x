@@ -22,8 +22,6 @@
 package ru.runa.wfe.commons.calendar.impl;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,25 +42,24 @@ public class Day implements Serializable {
     BusinessCalendar businessCalendar = null;
 
     public static Day[] parseWeekDays(Properties calendarProperties, BusinessCalendar businessCalendar) {
-        DateFormat dateFormat = new SimpleDateFormat(calendarProperties.getProperty("hour.format"));
         Day[] weekDays = new Day[8];
-        weekDays[Calendar.MONDAY] = new Day(calendarProperties.getProperty("weekday.monday"), dateFormat, businessCalendar);
-        weekDays[Calendar.TUESDAY] = new Day(calendarProperties.getProperty("weekday.tuesday"), dateFormat, businessCalendar);
-        weekDays[Calendar.WEDNESDAY] = new Day(calendarProperties.getProperty("weekday.wednesday"), dateFormat, businessCalendar);
-        weekDays[Calendar.THURSDAY] = new Day(calendarProperties.getProperty("weekday.thursday"), dateFormat, businessCalendar);
-        weekDays[Calendar.FRIDAY] = new Day(calendarProperties.getProperty("weekday.friday"), dateFormat, businessCalendar);
-        weekDays[Calendar.SATURDAY] = new Day(calendarProperties.getProperty("weekday.saturday"), dateFormat, businessCalendar);
-        weekDays[Calendar.SUNDAY] = new Day(calendarProperties.getProperty("weekday.sunday"), dateFormat, businessCalendar);
+        weekDays[Calendar.MONDAY] = new Day(calendarProperties.getProperty("weekday.monday"), businessCalendar);
+        weekDays[Calendar.TUESDAY] = new Day(calendarProperties.getProperty("weekday.tuesday"), businessCalendar);
+        weekDays[Calendar.WEDNESDAY] = new Day(calendarProperties.getProperty("weekday.wednesday"), businessCalendar);
+        weekDays[Calendar.THURSDAY] = new Day(calendarProperties.getProperty("weekday.thursday"), businessCalendar);
+        weekDays[Calendar.FRIDAY] = new Day(calendarProperties.getProperty("weekday.friday"), businessCalendar);
+        weekDays[Calendar.SATURDAY] = new Day(calendarProperties.getProperty("weekday.saturday"), businessCalendar);
+        weekDays[Calendar.SUNDAY] = new Day(calendarProperties.getProperty("weekday.sunday"), businessCalendar);
         return weekDays;
     }
 
-    public Day(String dayPartsText, DateFormat dateFormat, BusinessCalendar businessCalendar) {
+    public Day(String dayPartsText, BusinessCalendar businessCalendar) {
         this.businessCalendar = businessCalendar;
         List<DayPart> dayPartsList = new ArrayList<DayPart>();
         StringTokenizer tokenizer = new StringTokenizer(dayPartsText, "&");
         while (tokenizer.hasMoreTokens()) {
             String dayPartText = tokenizer.nextToken().trim();
-            dayPartsList.add(new DayPart(dayPartText, dateFormat, this, dayPartsList.size()));
+            dayPartsList.add(new DayPart(dayPartText, this, dayPartsList.size()));
         }
         dayParts = dayPartsList.toArray(new DayPart[dayPartsList.size()]);
     }

@@ -25,7 +25,7 @@ import org.apache.commons.codec.binary.Base64;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.service.wf.ExecutionService;
 import ru.runa.wf.logic.bot.WebServiceTaskHandler;
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.WfException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -77,7 +77,7 @@ public class WebServiceTaskHandlerXSLTHelper {
         if (var.getValue() != null) {
             return var.getValue().toString();
         }
-        throw new InternalApplicationException("Can't create SOAP request. WFE variable " + name + " not found");
+        throw new WfException("Can't create SOAP request. WFE variable " + name + " not found");
     }
 
     /**
@@ -95,7 +95,7 @@ public class WebServiceTaskHandlerXSLTHelper {
         if (var.getValue() != null) {
             return Base64.encodeBase64String(executionService.getProcessDiagram(user, (Long) var.getValue(), null, null));
         }
-        throw new InternalApplicationException("Can't create SOAP request. WFE variable " + processIdVariable + " not found");
+        throw new WfException("Can't create SOAP request. WFE variable " + processIdVariable + " not found");
     }
 
     /**
