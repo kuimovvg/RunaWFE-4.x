@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.dom4j.Element;
 
-import ru.runa.gpd.handler.VariableFormatRegistry;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 
 public class ValidatorDefinition {
     public static final String REQUIRED_VALIDATOR_NAME = "required";

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.BotTaskConfigHelper;
-import ru.runa.gpd.handler.action.ParamDefConfig;
+import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.lang.model.BotTask;
 
 import com.google.common.base.Charsets;

@@ -2,7 +2,7 @@ package ru.runa.gpd.property;
 
 import org.eclipse.jface.viewers.LabelProvider;
 
-import ru.runa.gpd.handler.LocalizationRegistry;
+import ru.runa.gpd.extension.LocalizationRegistry;
 
 public class LocalizationLabelProvider extends LabelProvider {
 
