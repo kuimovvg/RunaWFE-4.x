@@ -24,7 +24,7 @@ import java.util.Map;
 import ru.runa.service.ExecutionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.handler.bot.TaskHandlerBase;
+import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.filter.FilterCriteria;

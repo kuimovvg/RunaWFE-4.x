@@ -4,8 +4,8 @@ import java.util.List;
 
 import ru.runa.alfresco.AlfSession;
 import ru.runa.alfresco.AlfSessionWrapper;
-import ru.runa.wfe.os.OrgFunctionException;
-import ru.runa.wfe.os.func.GetActorsOrgFunctionBase;
+import ru.runa.wfe.extension.OrgFunctionException;
+import ru.runa.wfe.extension.orgfunction.GetActorsOrgFunctionBase;
 
 /**
  * Base class for RunaWFE organization function.

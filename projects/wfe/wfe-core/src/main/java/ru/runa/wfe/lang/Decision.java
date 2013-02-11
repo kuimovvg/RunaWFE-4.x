@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.handler.decision.DecisionHandler;
+import ru.runa.wfe.extension.DecisionHandler;
 
 import com.google.common.base.Throwables;
 

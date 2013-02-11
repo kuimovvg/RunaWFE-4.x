@@ -23,8 +23,8 @@ import java.util.List;
 import ru.runa.service.DefinitionService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.lang.SwimlaneDefinition;
-import ru.runa.wfe.os.ParamRenderer;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.User;
 

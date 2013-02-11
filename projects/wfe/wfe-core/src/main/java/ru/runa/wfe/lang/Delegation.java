@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
-import ru.runa.wfe.handler.Configurable;
+import ru.runa.wfe.extension.Configurable;
 
 import com.google.common.base.Objects;
 

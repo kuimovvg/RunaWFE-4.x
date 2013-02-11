@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.os.func.DemoSubordinateRecursive;
+import ru.runa.wfe.extension.orgfunction.DemoSubordinateRecursive;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationComparator;
 import ru.runa.wfe.presentation.BatchPresentationFactory;

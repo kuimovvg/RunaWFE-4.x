@@ -26,7 +26,7 @@ import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTask;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTaskXmlParser;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wfe.handler.bot.TaskHandlerBase;
+import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;

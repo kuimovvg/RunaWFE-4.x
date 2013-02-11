@@ -20,9 +20,9 @@ package ru.runa.af.web.orgfunction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.os.OrgFunction;
-import ru.runa.wfe.os.OrgFunctionHelper;
-import ru.runa.wfe.os.ParamRenderer;
+import ru.runa.wfe.extension.OrgFunction;
+import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
+import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.user.User;
 
 public class SubstitutionHelper {

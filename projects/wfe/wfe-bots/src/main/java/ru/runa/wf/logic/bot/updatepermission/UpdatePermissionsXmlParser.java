@@ -24,7 +24,7 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ProcessPermission;
-import ru.runa.wfe.os.OrgFunctionHelper;
+import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
 
 public class UpdatePermissionsXmlParser {
     private static final String CONDITION_ELEMENT_NAME = "condition";
