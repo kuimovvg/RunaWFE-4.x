@@ -10,7 +10,6 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.action.ViewLogsAction;
-import ru.runa.service.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.ASystem;
@@ -46,25 +45,25 @@ public class ViewLogsTag extends TagSupport {
             String html = "";
             File dirFile = new File(logDirPath);
             if (dirFile.exists() && dirFile.isDirectory()) {
-                AuthorizationService authorizationService = Delegates.getAuthorizationService();
-                if (authorizationService.isAllowed(getUser(), SystemPermission.VIEW_LOGS, ASystem.INSTANCE)) {
+                if (Delegates.getAuthorizationService().isAllowed(getUser(), SystemPermission.VIEW_LOGS, ASystem.INSTANCE)) {
                     for (File file : dirFile.listFiles()) {
                         if (file.isFile()) {
+                            long kiloBytes = file.length() / 1024;
                             Map<String, String> params = new HashMap<String, String>();
                             params.put("fileName", file.getName());
                             String href = Commons.getActionUrl(ViewLogsAction.ACTION_PATH, params, pageContext, PortletUrlType.Action);
-                            html = "<a href=\"" + href + "\">" + file.getName() + "</a>&nbsp;&nbsp;&nbsp;";
+                            html += "<a href=\"" + href + "\">" + file.getName() + " (" + kiloBytes + "KB)</a>&nbsp;&nbsp;&nbsp;";
                         }
                     }
                 } else {
-                    html = "<ul>";
+                    html += "<ul>";
                     for (File file : dirFile.listFiles()) {
-                        html = "<li>" + file.getName() + "</li>";
+                        html += "<li>" + file.getName() + "</li>";
                     }
-                    html = "</ul>";
+                    html += "</ul>";
                 }
             } else {
-                html = "unknown " + logDirPath;
+                html += "unknown " + logDirPath;
             }
             pageContext.getOut().write(html);
             return Tag.SKIP_BODY;

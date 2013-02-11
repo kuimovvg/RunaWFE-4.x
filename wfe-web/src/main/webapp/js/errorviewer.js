@@ -1,10 +1,14 @@
 $(document).ready(function() {
+	var buttons = {};
+	buttons[buttonCloseMessage] = function() {
+		$.errorDetailsDialog.dialog("close");
+	};
 	$.errorDetailsDialog = $("<div><pre id=\"errorDetails\"></pre></div>").dialog( {
 		modal: true, 
 		autoOpen: false, 
 		height: 500,
 		width: 700,
-		buttons: {}, 
+		buttons: buttons,  
 		overlay: {
 			backgroundColor: "#000", opacity: 0.5
 		}  
