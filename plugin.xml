@@ -1015,43 +1015,43 @@
    <extension
          point="ru.runa.gpd.orgFunctions">
       <orgfunction
-            className="ru.runa.wfe.os.func.ChiefFunction"
-            label="%ru.runa.wfe.os.func.ChiefFunction">
+            className="ru.runa.wfe.extension.orgfunction.SQLChiefFunction"
+            label="%ru.runa.wfe.extension.orgfunction.SQLChiefFunction">
          <parameter
                name="OrgFunction.ActorCode"
                type="java.lang.Object"/>
       </orgfunction>
       <orgfunction
-            className="ru.runa.wfe.os.func.DemoChiefFunction"
-            label="%ru.runa.wfe.os.func.DemoChiefFunction">
+            className="ru.runa.wfe.extension.orgfunction.DemoChiefFunction"
+            label="%ru.runa.wfe.extension.orgfunction.DemoChiefFunction">
          <parameter
                name="OrgFunction.ActorCode"
                type="java.lang.Object"/>
       </orgfunction>
       <orgfunction
-            className="ru.runa.wfe.os.func.ExecutorByCodeFunction"
-            label="%ru.runa.wfe.os.func.ExecutorByCodeFunction">
+            className="ru.runa.wfe.extension.orgfunction.GetActorsByCodesFunction"
+            label="%ru.runa.wfe.extension.orgfunction.GetActorsByCodesFunction">
          <parameter
                name="OrgFunction.ActorCode"
                type="java.lang.Object"/>
       </orgfunction>
       <orgfunction
-            className="ru.runa.wfe.os.func.DirectorFunction"
-            label="%ru.runa.wfe.os.func.DirectorFunction">
+            className="ru.runa.wfe.extension.orgfunction.SQLDirectorFunction"
+            label="%ru.runa.wfe.extension.orgfunction.SQLDirectorFunction">
          <parameter
                name="OrgFunction.ActorCode"
                type="java.lang.Object"/>
       </orgfunction>
       <orgfunction
-            className="ru.runa.wfe.os.func.ExecutorByNameFunction"
-            label="%ru.runa.wfe.os.func.ExecutorByNameFunction">
+            className="ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction"
+            label="%ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction">
          <parameter
                name="OrgFunction.ExecutorName"
                type="java.lang.String"/>
       </orgfunction>
       <orgfunction
-            className="ru.runa.wfe.os.func.SQLFunction"
-            label="%ru.runa.wfe.os.func.SQLFunction">
+            className="ru.runa.wfe.extension.orgfunction.SQLFunction"
+            label="%ru.runa.wfe.extension.orgfunction.SQLFunction">
          <parameter
                name="OrgFunction.SQLQuery"
                type="java.lang.String"/>
@@ -1064,228 +1064,228 @@
    <extension
          point="ru.runa.gpd.handlers">
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.decision.BSHDecisionProvider"
-            className="ru.runa.wfe.handler.decision.BSHDecisionHandler"
-            label="%ru.runa.wfe.handler.decision.BSHDecisionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.decision.BSHDecisionProvider"
+            className="ru.runa.wfe.extension.decision.BSHDecisionHandler"
+            label="%ru.runa.wfe.extension.decision.BSHDecisionHandler"
             enabled="true"
             type="decisionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.decision.BSHDecisionProvider"
-            className="ru.runa.wfe.handler.decision.GroovyDecisionHandler"
-            label="%ru.runa.wfe.handler.decision.GroovyDecisionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.decision.BSHDecisionProvider"
+            className="ru.runa.wfe.extension.decision.GroovyDecisionHandler"
+            label="%ru.runa.wfe.extension.decision.GroovyDecisionHandler"
             enabled="true"
             type="decisionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.SQLHandlerCellEditorProvider"
-            className="ru.runa.wfe.handler.action.SQLActionHandler"
-            label="%ru.runa.wfe.handler.action.SQLActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.SQLHandlerCellEditorProvider"
+            className="ru.runa.wfe.extension.handler.SQLActionHandler"
+            label="%ru.runa.wfe.extension.handler.SQLActionHandler"
             enabled="true"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.assign.SwimlaneInitializerProvider"
-            className="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"
-            label="%ru.runa.wfe.handler.assign.DefaultAssignmentHandler"
+            cellEditorProvider="ru.runa.gpd.extension.assign.SwimlaneInitializerProvider"
+            className="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"
+            label="%ru.runa.wfe.extension.assign.DefaultAssignmentHandler"
             enabled="true"
             type="assignmentHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.FormulaCellEditorProvider"
-            className="ru.runa.wfe.handler.action.var.FormulaActionHandler"
-            label="%ru.runa.wfe.handler.action.var.FormulaActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.FormulaCellEditorProvider"
+            className="ru.runa.wfe.extension.handler.var.FormulaActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.FormulaActionHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.SwimlaneAssignerCellEditorProvider"
-            className="ru.runa.wfe.handler.action.user.AssignSwimlaneActionHandler"
-            label="%ru.runa.wfe.handler.action.user.AssignSwimlaneActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.SwimlaneAssignerCellEditorProvider"
+            className="ru.runa.wfe.extension.handler.user.AssignSwimlaneActionHandler"
+            label="%ru.runa.wfe.extension.handler.user.AssignSwimlaneActionHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ActorNameEditorProvider"
-            className="ru.runa.wfe.handler.action.user.ActorNameActionHandler"
-            label="%ru.runa.wfe.handler.action.user.ActorNameActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ActorNameEditorProvider"
+            className="ru.runa.wfe.extension.handler.user.ActorNameActionHandler"
+            label="%ru.runa.wfe.extension.handler.user.ActorNameActionHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.GroovyActionHandlerProvider"
-            className="ru.runa.wfe.handler.action.BSHActionHandler"
-            label="%ru.runa.wfe.handler.action.BSHActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.GroovyActionHandlerProvider"
+            className="ru.runa.wfe.extension.handler.BSHActionHandler"
+            label="%ru.runa.wfe.extension.handler.BSHActionHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.SendEmailActionHandlerProvider"
-            className="ru.runa.wfe.handler.action.SendEmailActionHandler"
-            label="%ru.runa.wfe.handler.action.SendEmailActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.SendEmailActionHandlerProvider"
+            className="ru.runa.wfe.extension.handler.SendEmailActionHandler"
+            label="%ru.runa.wfe.extension.handler.SendEmailActionHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.EscalationActionHandlerProvider"
-            className="ru.runa.wfe.handler.action.EscalationActionHandler"
-            label="%ru.runa.wfe.handler.action.EscalationActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.EscalationActionHandlerProvider"
+            className="ru.runa.wfe.extension.handler.EscalationActionHandler"
+            label="%ru.runa.wfe.extension.handler.EscalationActionHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.CreateOptionActionHandler"
-            label="%ru.runa.wfe.handler.action.CreateOptionActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.CreateOptionActionHandler"
+            label="%ru.runa.wfe.extension.handler.CreateOptionActionHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.RemoveObjectFromListActionHandler"
-            label="%ru.runa.wfe.handler.action.var.RemoveObjectFromListActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.RemoveObjectFromListActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.RemoveObjectFromListActionHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.AddObjectToListActionHandler"
-            label="%ru.runa.wfe.handler.action.var.AddObjectToListActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.AddObjectToListActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.AddObjectToListActionHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.SortListActionHandler"
-            label="%ru.runa.wfe.handler.action.var.SortListActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.SortListActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.SortListActionHandler"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            className="ru.runa.service.bot.handler.BotInvokerActionHandler"
-            label="%ru.runa.service.bot.handler.BotInvokerActionHandler"
+            className="ru.runa.service.handler.BotInvokerActionHandler"
+            label="%ru.runa.service.handler.BotInvokerActionHandler"
             enabled="true"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.GroovyActionHandlerProvider"
-            className="ru.runa.wfe.handler.action.GroovyActionHandler"
-            label="%ru.runa.wfe.handler.action.GroovyActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.GroovyActionHandlerProvider"
+            className="ru.runa.wfe.extension.handler.GroovyActionHandler"
+            label="%ru.runa.wfe.extension.handler.GroovyActionHandler"
             enabled="true"
             type="actionHandler"/>
       <handler
-            className="ru.runa.wfe.handler.action.DebugActionHandler"
-            label="%ru.runa.wfe.handler.action.DebugActionHandler"
+            className="ru.runa.wfe.extension.handler.DebugActionHandler"
+            label="%ru.runa.wfe.extension.handler.DebugActionHandler"
             enabled="true"
             type="actionHandler"/>
       <handler
-            className="ru.runa.wfe.handler.action.EmailTaskNotifierActionHandler"
-            label="%ru.runa.wfe.handler.action.EmailTaskNotifierActionHandler"
+            className="ru.runa.wfe.extension.handler.EmailTaskNotifierActionHandler"
+            label="%ru.runa.wfe.extension.handler.EmailTaskNotifierActionHandler"
             enabled="true"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.SetObjectToListActionHandler"
-            label="%ru.runa.wfe.handler.action.var.SetObjectToListActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.SetObjectToListActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.SetObjectToListActionHandler"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.GetObjectFromListActionHandler"
-            label="%ru.runa.wfe.handler.action.var.GetObjectFromListActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.ListAggregateFunctionActionHandler"
-            label="%ru.runa.wfe.handler.action.var.ListAggregateFunctionActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.ListAggregateFunctionActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.ListAggregateFunctionActionHandler"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.ClearVariableActionHandler"
-            label="%ru.runa.wfe.handler.action.var.ClearVariableActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.ClearVariableActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.ClearVariableActionHandler"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.RemoveObjectFromMapActionHandler"
-            label="%ru.runa.wfe.handler.action.var.RemoveObjectFromMapActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.RemoveObjectFromMapActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.RemoveObjectFromMapActionHandler"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.PutObjectToMapActionHandler"
-            label="%ru.runa.wfe.handler.action.var.PutObjectToMapActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.PutObjectToMapActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.PutObjectToMapActionHandler"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.GetObjectFromMapActionHandler"
-            label="%ru.runa.wfe.handler.action.var.GetObjectFromMapActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.MapAggregateFunctionActionHandler"
-            label="%ru.runa.wfe.handler.action.var.MapAggregateFunctionActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.MapAggregateFunctionActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.MapAggregateFunctionActionHandler"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.ConvertMapKeysToListActionHandler"
-            label="%ru.runa.wfe.handler.action.var.ConvertMapKeysToListActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.ConvertMapKeysToListActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.ConvertMapKeysToListActionHandler"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.ConvertMapValuesToListActionHandler"
-            label="%ru.runa.wfe.handler.action.var.ConvertMapValuesToListActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.ConvertMapValuesToListActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.ConvertMapValuesToListActionHandler"
             type="actionHandler"/>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
-            className="ru.runa.wfe.handler.action.var.MergeMapsActionHandler"
-            label="%ru.runa.wfe.handler.action.var.MergeMapsActionHandler"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.var.MergeMapsActionHandler"
+            label="%ru.runa.wfe.extension.handler.var.MergeMapsActionHandler"
             type="actionHandler"/>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
       <element
-            className="ru.runa.gpd.orgfunction.SwimlaneRelationsElement"
+            className="ru.runa.gpd.extension.orgfunction.SwimlaneRelationsElement"
             name="SwimlaneElement.RelationLabel">
       </element>
       <element
-            className="ru.runa.gpd.orgfunction.SwimlaneGroupElement"
+            className="ru.runa.gpd.extension.orgfunction.SwimlaneGroupElement"
             name="SwimlaneElement.OrgFunctionsGroupLabel">
          <element
-               className="ru.runa.gpd.orgfunction.SwimlaneGeneralElement"
+               className="ru.runa.gpd.extension.orgfunction.SwimlaneGeneralElement"
                name="SwimlaneElement.ChiefFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
-                  value="ru.runa.wfe.os.func.ChiefFunction">
+                  value="ru.runa.wfe.extension.orgfunction.SQLChiefFunction">
             </param>
          </element>
          <element
-               className="ru.runa.gpd.orgfunction.SwimlaneGeneralElement"
+               className="ru.runa.gpd.extension.orgfunction.SwimlaneGeneralElement"
                name="SwimlaneElement.DirectorFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
-                  value="ru.runa.wfe.os.func.DirectorFunction">
+                  value="ru.runa.wfe.extension.orgfunction.SQLDirectorFunction">
             </param>
          </element>
          <element
-               className="ru.runa.gpd.orgfunction.SwimlaneGeneralElement"
+               className="ru.runa.gpd.extension.orgfunction.SwimlaneGeneralElement"
                name="SwimlaneElement.DemoChiefFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
-                  value="ru.runa.wfe.os.func.DemoChiefFunction">
+                  value="ru.runa.wfe.extension.orgfunction.DemoChiefFunction">
             </param>
          </element>
          <element
-               className="ru.runa.gpd.orgfunction.SwimlaneGeneralElement"
+               className="ru.runa.gpd.extension.orgfunction.SwimlaneGeneralElement"
                name="SwimlaneElement.ExecutorByNameFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
-                  value="ru.runa.wfe.os.func.ExecutorByNameFunction">
+                  value="ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction">
             </param>
          </element>
       </element>
       <element
-            className="ru.runa.gpd.orgfunction.SwimlaneWFGroupElement"
+            className="ru.runa.gpd.extension.orgfunction.SwimlaneWFGroupElement"
             name="SwimlaneElement.WFFunctionsGroupLabel">
          <param
                name="description"
                value="SwimlaneElement.WFFunctionsGroupDescription">
          </param>
          <element
-               className="ru.runa.gpd.orgfunction.SwimlaneWFElement"
+               className="ru.runa.gpd.extension.orgfunction.SwimlaneWFElement"
                name="SwimlaneElement.WFUsersLabel">
             <param
                   name="mask"
@@ -1293,7 +1293,7 @@
             </param>
          </element>
          <element
-               className="ru.runa.gpd.orgfunction.SwimlaneWFElement"
+               className="ru.runa.gpd.extension.orgfunction.SwimlaneWFElement"
                name="SwimlaneElement.WFGroupsLabel">
             <param
                   name="mask"
@@ -1301,7 +1301,7 @@
             </param>
          </element>
          <element
-               className="ru.runa.gpd.orgfunction.SwimlaneWFElement"
+               className="ru.runa.gpd.extension.orgfunction.SwimlaneWFElement"
                name="SwimlaneElement.WFUsersGroupsLabel">
             <param
                   name="mask"
@@ -1310,19 +1310,19 @@
          </element>
       </element>
       <element
-            className="ru.runa.gpd.orgfunction.SwimlaneGroupElement"
+            className="ru.runa.gpd.extension.orgfunction.SwimlaneGroupElement"
             name="SwimlaneElement.CustomFunctionsGroupLabel">
          <element
-               className="ru.runa.gpd.orgfunction.SwimlaneADElement"
+               className="ru.runa.gpd.extension.orgfunction.SwimlaneADElement"
                name="SwimlaneElement.ADExecutorsLabel">
          </element>
       </element>
       <element
-            className="ru.runa.gpd.orgfunction.SwimlaneManualElement"
+            className="ru.runa.gpd.extension.orgfunction.SwimlaneManualElement"
             name="SwimlaneElement.ManualLabel">
       </element>
       <element
-            className="ru.runa.gpd.orgfunction.SwimlaneBotElement"
+            className="ru.runa.gpd.extension.orgfunction.SwimlaneBotElement"
             name="SwimlaneElement.BotLabel">
       </element>
    </extension>

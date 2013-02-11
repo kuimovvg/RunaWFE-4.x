@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import ru.runa.gpd.handler.HandlerRegistry;
+import ru.runa.gpd.extension.HandlerRegistry;
 
 public class Activator extends AbstractUIPlugin implements PluginConstants {
     private static Activator plugin;

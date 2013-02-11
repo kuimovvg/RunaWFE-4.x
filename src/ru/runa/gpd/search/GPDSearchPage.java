@@ -20,9 +20,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.ProcessEditorBase;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.form.FormTypeProvider;
-import ru.runa.gpd.handler.DelegableProvider;
-import ru.runa.gpd.handler.HandlerRegistry;
 import ru.runa.gpd.lang.action.OpenFormValidationDelegate;
 import ru.runa.gpd.lang.action.SubprocessDelegate;
 import ru.runa.gpd.lang.model.Delegable;

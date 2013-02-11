@@ -21,9 +21,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.handler.LocalizationRegistry;
-import ru.runa.gpd.handler.VariableFormatArtifact;
-import ru.runa.gpd.handler.VariableFormatRegistry;
+import ru.runa.gpd.extension.LocalizationRegistry;
+import ru.runa.gpd.extension.VariableFormatArtifact;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.wfe.var.format.StringFormat;

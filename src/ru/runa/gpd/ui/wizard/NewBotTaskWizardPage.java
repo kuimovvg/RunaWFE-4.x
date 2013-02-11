@@ -115,7 +115,7 @@ public class NewBotTaskWizardPage extends WizardPage {
         } else if (!isBotTaskNameValid()) {
             setErrorMessage(Localization.getString("error.bottask_name_not_valid"));
             setPageComplete(false);
-        } else if (getBotFolder().getFile(getBotTaskName()).exists()) {
+        } else if (isBotFolderContainsBotTask()) {
             setErrorMessage(Localization.getString("error.bottask_already_exists"));
             setPageComplete(false);
         } else {
@@ -138,6 +138,14 @@ public class NewBotTaskWizardPage extends WizardPage {
             }
         }
         return null;
+    }
+
+    private boolean isBotFolderContainsBotTask() {
+        IFolder botFolder = getBotFolder();
+        if (botFolder != null) {
+            return botFolder.getFile(getBotTaskName()).exists();
+        }
+        return false;
     }
 
     private boolean isBotTaskNameEmpty() {

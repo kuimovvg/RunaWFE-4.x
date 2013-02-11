@@ -9,7 +9,7 @@ import org.dom4j.Element;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.BotTaskConfigHelper;
-import ru.runa.gpd.handler.action.ParamDefConfig;
+import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.wfe.commons.xml.PathEntityResolver;
 
