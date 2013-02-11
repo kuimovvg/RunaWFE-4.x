@@ -28,7 +28,6 @@ import ru.runa.common.web.portlet.PortletAuthenticator;
 import ru.runa.service.ProfileService;
 import ru.runa.service.SystemService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 
@@ -49,7 +48,7 @@ public class AuthenticateMandatory implements PortletAuthenticator {
             try {
                 SystemService systemService = Delegates.getSystemService();
                 User user = Delegates.getAuthenticationService().authenticateByCallerPrincipal();
-                systemService.login(user, ASystem.INSTANCE);
+                systemService.login(user);
                 ProfileService profileService = Delegates.getProfileService();
                 Profile profile = profileService.getProfile(user);
                 ProfileHttpSessionHelper.setProfile(profile, session);

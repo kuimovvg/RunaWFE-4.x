@@ -1,5 +1,6 @@
 package ru.runa.wfe.execution.dao;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +42,12 @@ public class ProcessDAO extends GenericDAO<Process> {
         return getHibernateTemplate().find("from Process where deployment.id=? order by startDate desc", definitionId);
     }
 
-    public Map<Long, Object> getVariableValueFromProcesses(final List<Long> processIds, final String variableName) {
-        return getHibernateTemplate().execute(new HibernateCallback<Map<Long, Object>>() {
+    public HashMap<Long, Object> getVariableValueFromProcesses(final List<Long> processIds, final String variableName) {
+        return getHibernateTemplate().execute(new HibernateCallback<HashMap<Long, Object>>() {
 
             @Override
-            public Map<Long, Object> doInHibernate(Session session) {
-                Map<Long, Object> result = Maps.newHashMap();
+            public HashMap<Long, Object> doInHibernate(Session session) {
+                HashMap<Long, Object> result = Maps.newHashMap();
                 if (!processIds.isEmpty()) {
                     for (int i = 0; i <= processIds.size() / 1000; ++i) {
                         int start = i * 1000; // TODO fails on 2000

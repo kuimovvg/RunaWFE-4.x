@@ -18,8 +18,8 @@
 package ru.runa.service;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.security.auth.Subject;
 
@@ -50,7 +50,7 @@ public interface AuthorizationService {
     /**
      * Sets permissions for performer on {@link Identifiable}.
      */
-    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable);
+    public void setPermissions(User user, Long executorId, Collection<Permission> permissions, Identifiable identifiable);
 
     public void setPermissions(User user, List<Long> executorsId, List<Collection<Permission>> permissions, Identifiable identifiable);
 
@@ -62,7 +62,7 @@ public interface AuthorizationService {
      * @return Map of {Permission, Is permission can be modifiable}, not
      *         <code>null</code>
      */
-    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable);
+    public HashMap<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable);
 
     /**
      * Load executor's which already has (or not has) some permission on

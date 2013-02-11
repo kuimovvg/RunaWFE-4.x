@@ -75,13 +75,8 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public <T extends Executor> T getExecutor(User user, String name) {
-        return (T) getExecutorService().getExecutor(user, name);
-    }
-
-    @Override
-    public void addExecutorsToGroup(User user, List<? extends Executor> executors, Group group) {
-        getExecutorService().addExecutorsToGroup(user, executors, group);
+    public <T extends Executor> T getExecutorByName(User user, String name) {
+        return (T) getExecutorService().getExecutorByName(user, name);
     }
 
     @Override

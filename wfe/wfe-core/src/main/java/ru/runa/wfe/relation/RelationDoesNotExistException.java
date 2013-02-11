@@ -27,41 +27,31 @@ public class RelationDoesNotExistException extends InternalApplicationException 
     private static final long serialVersionUID = 1L;
 
     /**
-     * If {@link Relation} identity is unspecified, when {@link #relationId} was set to {@link #UNSET_RELATION_ID}
+     * If {@link Relation} identity is unspecified, when {@link #relationId} was
+     * set to {@link #UNSET_RELATION_ID}
      */
     public final long UNSET_RELATION_ID = -1;
 
     /**
-     * Name of {@link Relation}, which can't be found. May be null, if {@link Relation} searching by id.
+     * Name of {@link Relation}, which can't be found. May be null, if
+     * {@link Relation} searching by id.
      */
     final String relationName;
 
     /**
-     * Identity of {@link Relation}, which can't be found. May be {@link #UNSET_RELATION_ID}, if {@link Relation} searching by name.
+     * Identity of {@link Relation}, which can't be found. May be
+     * {@link #UNSET_RELATION_ID}, if {@link Relation} searching by name.
      */
     final Long relationId;
 
     /**
-     * Return name of relation, which can't be found. May be null, if relation searching by identity.
+     * Return name of relation, which can't be found. May be null, if relation
+     * searching by identity.
      * 
      * @return Name of relation.
      */
     public String getName() {
         return relationName;
-    }
-
-    /**
-     * Create instance with specified relation name and inner exception.
-     * 
-     * @param name
-     *            Name of relation, which can't be found.
-     * @param exception
-     *            Exception, occurs when searching.
-     */
-    public RelationDoesNotExistException(String name, Throwable exception) {
-        super(exception);
-        relationName = name;
-        relationId = UNSET_RELATION_ID;
     }
 
     /**

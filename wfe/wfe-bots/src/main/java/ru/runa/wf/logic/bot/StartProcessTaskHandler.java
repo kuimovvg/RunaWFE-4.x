@@ -18,6 +18,7 @@
 package ru.runa.wf.logic.bot;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
         ExecutionService executionService = Delegates.getExecutionService();
         Map<String, Object> outputVariables = Maps.newHashMap();
 
-        Map<String, Object> variablesMap = Maps.newHashMap();
+        HashMap<String, Object> variables = Maps.newHashMap();
         for (StartProcessTask startProcessTask : startProcessTasks) {
             String processName = startProcessTask.getName();
             String startedProcessValueName = startProcessTask.getStartedProcessIdValueName();
@@ -81,11 +82,11 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
                 if (DatabaseTask.CURRENT_DATE_VARIABLE_NAME.equals(from)) {
                     value = new Date();
                 }
-                variablesMap.put(to, value);
+                variables.put(to, value);
             }
 
             // Start process
-            Long startedProcessId = executionService.startProcess(user, processName, variablesMap);
+            Long startedProcessId = executionService.startProcess(user, processName, variables);
 
             // add startedProcessId to variables
             if (startedProcessValueName != null) {
@@ -106,7 +107,7 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
                     for (Permission permission : authorizationService.getOwnPermissions(user, executor, process).keySet()) {
                         permissions.add(permission);
                     }
-                    authorizationService.setPermissions(user, executor, permissions, process);
+                    authorizationService.setPermissions(user, executor.getId(), permissions, process);
                 }
             } catch (Throwable th) {
                 log.error("Error in permission copy to new subprocess (step is ignored).", th);

@@ -314,20 +314,6 @@ public class ExecutorDAO extends CommonDAO {
     }
 
     /**
-     * Create executors (save it to database). Generate code property for
-     * {@linkplain Actor} with code == 0.
-     * 
-     * @param executors
-     *            Creating executors
-     * @return Returns created executors.
-     */
-    public void create(List<? extends Executor> executors) {
-        for (Executor executor : executors) {
-            create(executor);
-        }
-    }
-
-    /**
      * Updates password for {@linkplain Actor}.
      * 
      * @param actor

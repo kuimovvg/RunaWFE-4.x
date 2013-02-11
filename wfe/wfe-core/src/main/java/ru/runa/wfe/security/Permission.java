@@ -18,11 +18,13 @@
 package ru.runa.wfe.security;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -32,6 +34,7 @@ import com.google.common.collect.Lists;
  * {@link SecuredObject} can own subclass of this class which represent set of
  * allowed permissions.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Permission implements Serializable {
     private static final long serialVersionUID = -3672653529467591904L;
 
@@ -70,11 +73,6 @@ public class Permission implements Serializable {
      * is set to 1; otherwise permission bit is set to 0.
      */
     private final long mask;
-
-    /**
-     * Computed hash code for current instance.
-     */
-    private int hashCode;
 
     /**
      * Create permission with specified name and permission bit position.
@@ -177,35 +175,16 @@ public class Permission implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+        if (obj instanceof Permission) {
+            Permission p = (Permission) obj;
+            return Objects.equal(name, p.name) && mask == p.mask;
         }
-        if (this == obj) {
-            return true;
-        }
-        if (!(this.getClass().isInstance(obj))) {
-            return false;
-        }
-        Permission p = (Permission) obj;
-
-        if (mask == p.mask) {
-            if (name == null) {
-                return p.name == null;
-            } else {
-                return p.name != null && name.equals(p.name);
-            }
-        }
-        return false;
+        return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        if (hashCode == 0) {
-            hashCode = 17;
-            hashCode = 37 * hashCode + (int) (mask ^ (mask >>> 32));
-            hashCode = 37 * hashCode + name.hashCode();
-        }
-        return hashCode;
+        return Objects.hashCode(name, mask);
     }
 
     @Override
@@ -229,12 +208,6 @@ public class Permission implements Serializable {
         return set;
     }
 
-    public static Permission[] mergePermissions(Permission[] p1, Permission[] p2) {
-        Set<Permission> set = new HashSet<Permission>(Arrays.asList(p1));
-        set.addAll(Arrays.asList(p2));
-        return set.toArray(new Permission[set.size()]);
-    }
-
     /**
      * Remove permissions from permission array.
      * 
@@ -249,12 +222,6 @@ public class Permission implements Serializable {
         set.addAll(p1);
         set.removeAll(p2);
         return set;
-    }
-
-    public static Permission[] subtractPermissions(Permission[] p1, Permission[] p2) {
-        Set<Permission> set = new HashSet<Permission>(Arrays.asList(p1));
-        set.removeAll(Arrays.asList(p2));
-        return set.toArray(new Permission[set.size()]);
     }
 
     /**

@@ -91,7 +91,7 @@ public class Relation extends IdentifiableBase {
         return id;
     }
 
-    protected void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -105,7 +105,7 @@ public class Relation extends IdentifiableBase {
         return name;
     }
 
-    protected void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -119,7 +119,7 @@ public class Relation extends IdentifiableBase {
         return description;
     }
 
-    protected void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 

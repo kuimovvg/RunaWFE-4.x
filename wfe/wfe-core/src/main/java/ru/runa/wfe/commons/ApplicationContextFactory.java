@@ -32,10 +32,6 @@ public class ApplicationContextFactory {
         return applicationContext != null;
     }
 
-    public static void init(ApplicationContext applicationContext) {
-        ApplicationContextFactory.applicationContext = applicationContext;
-    }
-
     public static ApplicationContext getContext() {
         if (!isContextInitialized()) {
             BeanFactoryReference ref = ContextSingletonBeanFactoryLocator.getInstance().useBeanFactory(null);

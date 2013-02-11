@@ -79,22 +79,6 @@ public abstract class ResourceCommons {
         throw new MissingResourceException("CommonResources error: no property file or property array found.", null, null);
     }
 
-    protected Enumeration<String> getKeys(Locale locale) {
-        return getResourceBundle(locale).getKeys();
-    }
-
-    protected String readProperty(String propertyName, Locale locale) {
-        String value = getResourceBundle(locale).getString(propertyName);
-        if (value == null) {
-            throw new MissingResourceException("Property not found", resourceBundleName, propertyName);
-        }
-        return value;
-    }
-
-    protected Enumeration<String> getKeys() {
-        return getResourceBundle().getKeys();
-    }
-
     protected String readProperty(String propertyName) {
         String value = getResourceBundle().getString(propertyName);
         if (value == null) {
@@ -112,18 +96,6 @@ public abstract class ResourceCommons {
             }
         }
         return result;
-    }
-
-    protected static Enumeration<String> getKeys(String bundleName, Locale locale) {
-        return ResourceBundle.getBundle(bundleName, locale).getKeys();
-    }
-
-    protected static String readProperty(String propertyName, String bundleName, Locale locale) {
-        String value = ResourceBundle.getBundle(bundleName, locale).getString(propertyName);
-        if (value == null) {
-            throw new MissingResourceException("Property not found", bundleName, propertyName);
-        }
-        return value;
     }
 
     protected static Enumeration<String> getKeys(String bundleName) {

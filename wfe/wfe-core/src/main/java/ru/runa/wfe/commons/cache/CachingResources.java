@@ -20,13 +20,6 @@ package ru.runa.wfe.commons.cache;
 import ru.runa.wfe.commons.ResourceCommons;
 
 public class CachingResources extends ResourceCommons {
-    public CachingResources(String propertyFile) {
-        super(propertyFile);
-    }
-
-    public CachingResources(byte[] properties) {
-        super(properties);
-    }
 
     public CachingResources() {
         super("wfcache");

@@ -18,8 +18,8 @@
 package ru.runa.service.delegate;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ru.runa.service.AuthorizationService;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -54,8 +54,8 @@ public class AuthorizationServiceDelegate extends EJB3Delegate implements Author
     }
 
     @Override
-    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable) {
-        getAuthorizationService().setPermissions(user, performer, permissions, identifiable);
+    public void setPermissions(User user, Long executorId, Collection<Permission> permissions, Identifiable identifiable) {
+        getAuthorizationService().setPermissions(user, executorId, permissions, identifiable);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class AuthorizationServiceDelegate extends EJB3Delegate implements Author
     }
 
     @Override
-    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
+    public HashMap<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
         return getAuthorizationService().getOwnPermissions(user, performer, identifiable);
     }
 

@@ -71,10 +71,6 @@ public class TransitionFigureBase {
         this.timerInfo = timerInfo;
     }
 
-    public void addFailedAction(int index) {
-        failedActions.add(index);
-    }
-
     private Point getBendpoint(int pos) {
         BendpointModel bendpointModel = bendpoints.get(pos);
 

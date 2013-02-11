@@ -68,10 +68,6 @@ public class TransitionModel {
         bendpoints.add(bendpointModel);
     }
 
-    public boolean hasBendpoints() {
-        return bendpoints.size() > 0;
-    }
-
     public List<BendpointModel> getBendpoints() {
         return bendpoints;
     }

@@ -35,8 +35,6 @@ import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.security.Identifiable;
-import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.FormatCommons;
@@ -48,7 +46,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class ProcessDefinition extends GraphElement implements Identifiable, IFileDataProvider {
+public class ProcessDefinition extends GraphElement implements IFileDataProvider {
     private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(ProcessDefinition.class);
 
@@ -78,16 +76,6 @@ public class ProcessDefinition extends GraphElement implements Identifiable, IFi
 
     public Long getId() {
         return deployment.getId();
-    }
-
-    @Override
-    public Long getIdentifiableId() {
-        return new Long(getName().hashCode());
-    }
-
-    @Override
-    public SecuredObjectType getSecuredObjectType() {
-        return SecuredObjectType.DEFINITION;
     }
 
     @Override

@@ -46,7 +46,7 @@ public class ListExecutorsWithoutPermissionsOnRelationFormTag extends ListExecut
 
     @Override
     protected Identifiable getIdentifiable() {
-        return Delegates.getRelationService().getRelation(getUser(), getRelationName());
+        return Delegates.getRelationService().getRelationByName(getUser(), getRelationName());
     }
 
     @Override

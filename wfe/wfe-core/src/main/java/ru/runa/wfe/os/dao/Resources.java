@@ -21,10 +21,9 @@ import ru.runa.wfe.commons.ResourceCommons;
 
 /**
  * Created on 03.01.2006
- *
+ * 
  * @author Vitaliy S aka Yilativs
- * @author Gordienko_m
- * modified by miheev_a   19.05.2006
+ * @author Gordienko_m modified by miheev_a 19.05.2006
  */
 public class Resources extends ResourceCommons {
 
@@ -38,8 +37,6 @@ public class Resources extends ResourceCommons {
 
     private final static String CHIEF_CODE_BY_SUBORDINATE_CODE_SQL = "chief.code.by.subordinate.code.sql";
 
-    private final static String DIRECTOR_CODE_BY_SUBORDINATE_CODE_SQL = "director.code.by.subordinate.code.sql";
-
     private final static String SUBORDINATE_CODES_BY_CHIEF_CODE_SQL = "subordinate.codes.by.chief.code.sql";
 
     private final static String GET_ALL_DIRECTORS_CODES = "get.all.directors.codes.sql";
@@ -50,10 +47,6 @@ public class Resources extends ResourceCommons {
 
     public static String getAllDirectorsCodes() {
         return readProperty(GET_ALL_DIRECTORS_CODES, PROPERTIES);
-    }
-
-    public static String getDirectorCodeBySubordinateCodeSQL() {
-        return readProperty(DIRECTOR_CODE_BY_SUBORDINATE_CODE_SQL, PROPERTIES);
     }
 
     public static String getSubordinateCodesByChiefCodeSQL() {

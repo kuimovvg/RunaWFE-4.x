@@ -33,12 +33,6 @@ class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCach
 
     public static final String definitionIdToDefinitionName = "ru.runa.wfe.wfe.wf.caches.definitionIdToDefinition";
     public static final String definitionNameToLatestDefinitionName = "ru.runa.wfe.wfe.wf.caches.definitionNameToLatestDefinition";
-    public static final String definitionNameToSwimlaneNamesName = "ru.runa.wfe.wfe.wf.caches.definitionNameToSwimlaneNames";
-    public static final String definitionNameToTypeName = "ru.runa.wfe.wfe.wf.caches.definitionNameToType";
-    public static final String definitionIDtoFilesName = "ru.runa.wfe.wfe.wf.caches.definitionIDtoFiles";
-    public static final String definitionIDtoFormsName = "ru.runa.wfe.wfe.wf.caches.definitionIDtoForms";
-    public static final String instanceIDtoDefinitionName = "ru.runa.wfe.wfe.wf.caches.instanceIDtoDefinition";
-    public static final String taskIDtoDefinitionName = "ru.runa.wfe.wfe.wf.caches.taskIDtoDefinition";
 
     private final Cache<Long, ProcessDefinition> definitionIdToDefinition;
     private final Cache<String, Long> definitionNameToId;

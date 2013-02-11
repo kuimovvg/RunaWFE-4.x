@@ -18,7 +18,7 @@
 package ru.runa.wf.web.action;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,14 +54,14 @@ public class SubmitInfoPathFormAction extends ActionBase {
                 // execute task
                 Long taskId = new Long(taskIdParam);
                 Interaction interaction = definitionService.getTaskInteraction(getLoggedUser(request), taskId);
-                Map<String, Object> variables = VariableExtractionHelper.extractVariables(request.getSession(), actionForm, interaction);
+                HashMap<String, Object> variables = VariableExtractionHelper.extractVariables(request.getSession(), actionForm, interaction);
                 executionService.completeTask(getLoggedUser(request), taskId, variables);
                 userMessage = new ActionMessage(Messages.TASK_COMPLETED);
             } else {
                 // start process
                 Long definitionId = new Long(request.getParameter("definitionId"));
                 Interaction interaction = definitionService.getStartInteraction(getLoggedUser(request), definitionId);
-                Map<String, Object> variables = VariableExtractionHelper.extractVariables(request.getSession(), actionForm, interaction);
+                HashMap<String, Object> variables = VariableExtractionHelper.extractVariables(request.getSession(), actionForm, interaction);
                 String definitionName = definitionService.getProcessDefinition(getLoggedUser(request), definitionId).getName();
                 Long processId = executionService.startProcess(getLoggedUser(request), definitionName, variables);
                 userMessage = new ActionMessage(Messages.PROCESS_STARTED, processId.toString());

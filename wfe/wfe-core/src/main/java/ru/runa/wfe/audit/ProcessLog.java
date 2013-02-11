@@ -24,7 +24,7 @@ package ru.runa.wfe.audit;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -42,6 +42,8 @@ import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -63,6 +65,7 @@ import com.google.common.collect.Maps;
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.CHAR)
 @DiscriminatorValue(value = "V")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ProcessLog implements IAttributes, Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -71,7 +74,7 @@ public abstract class ProcessLog implements IAttributes, Serializable {
     private Long tokenId;
     private Date date;
     private Severity severity = Severity.DEBUG;
-    private Map<String, String> attributes = Maps.newHashMap();
+    private HashMap<String, String> attributes = Maps.newHashMap();
     private byte[] bytes;
 
     public ProcessLog() {
@@ -178,17 +181,4 @@ public abstract class ProcessLog implements IAttributes, Serializable {
         return MessageFormat.format(pattern, arguments);
     }
 
-    // @Override
-    // public boolean equals(Object obj) {
-    // if (!(obj instanceof ProcessLog)) {
-    // return false;
-    // }
-    // ProcessLog l = (ProcessLog) obj;
-    // return Objects.equal(id, l.id);
-    // }
-    //
-    // @Override
-    // public int hashCode() {
-    // return Objects.hashCode(id);
-    // }
 }

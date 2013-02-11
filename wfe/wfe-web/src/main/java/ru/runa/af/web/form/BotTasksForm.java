@@ -54,11 +54,13 @@ public class BotTasksForm extends IdsForm {
         return tasksMap;
     }
 
+    @Override
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
         tasksMap = new HashMap<Long, Object>();
     }
 
+    @Override
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = super.validate(mapping, request);
         if (getTasksMap() == null) {
@@ -69,15 +71,6 @@ public class BotTasksForm extends IdsForm {
 
     public void setTask(String taskId, Object taskObject) {
         tasksMap.put(new Long(taskId), taskObject);
-    }
-
-    public Object getTask(String taskId) {
-        Object o = tasksMap.get(Long.valueOf(taskId));
-        if (o == null) {
-            o = new BotTaskForm();
-            setTask(taskId, o);
-        }
-        return o;
     }
 
     public BotTaskForm getBotTaskForm(Long id) {
