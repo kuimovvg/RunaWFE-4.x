@@ -34,7 +34,7 @@ import org.eclipse.ui.ide.IDE;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveSwimlaneCommand;
-import ru.runa.gpd.handler.assign.SwimlaneConfigDialog;
+import ru.runa.gpd.extension.assign.SwimlaneConfigDialog;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Swimlane;

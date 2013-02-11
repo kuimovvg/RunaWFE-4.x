@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.handler.action.XmlBasedConstructorProvider;
+import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.office.resource.Messages;
 
 public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<MSWordConfig> {

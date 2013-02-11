@@ -2,8 +2,8 @@ package ru.runa.gpd.lang.action;
 
 import org.eclipse.jface.action.IAction;
 
-import ru.runa.gpd.handler.DelegableProvider;
-import ru.runa.gpd.handler.HandlerRegistry;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.Delegable;
 
 public class OpenDelegableConfigurationDelegate extends BaseModelActionDelegate {

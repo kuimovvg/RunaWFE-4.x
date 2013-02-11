@@ -26,7 +26,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.handler.action.XmlBasedConstructorProvider;
+import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.resource.Messages;

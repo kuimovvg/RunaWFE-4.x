@@ -10,8 +10,8 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.editor.gef.command.AddActionCommand;
-import ru.runa.gpd.handler.DelegableProvider;
-import ru.runa.gpd.handler.HandlerRegistry;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.Active;
 
 public class ActiveActionsDelegate extends BaseModelDropDownActionDelegate {

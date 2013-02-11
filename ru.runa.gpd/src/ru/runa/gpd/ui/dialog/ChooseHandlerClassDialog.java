@@ -4,8 +4,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.LabelProvider;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.handler.Artifact;
-import ru.runa.gpd.handler.HandlerRegistry;
+import ru.runa.gpd.extension.Artifact;
+import ru.runa.gpd.extension.HandlerRegistry;
 
 public class ChooseHandlerClassDialog extends ChooseItemDialog {
     private String type;

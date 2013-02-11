@@ -1,8 +1,8 @@
 package ru.runa.gpd.lang.model;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.handler.HandlerArtifact;
-import ru.runa.gpd.handler.LocalizationRegistry;
+import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.extension.LocalizationRegistry;
 
 public class Action extends GraphElement implements Delegable {
     @Override

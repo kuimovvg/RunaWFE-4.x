@@ -1,6 +1,6 @@
 package ru.runa.gpd.lang.model;
 
-import ru.runa.gpd.handler.VariableFormatArtifact;
+import ru.runa.gpd.extension.VariableFormatArtifact;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.wfe.var.format.ListFormat;
 
