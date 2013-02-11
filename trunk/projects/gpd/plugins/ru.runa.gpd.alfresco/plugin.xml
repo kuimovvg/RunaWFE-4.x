@@ -4,28 +4,28 @@
    <extension
          point="ru.runa.gpd.handlers">
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.bp.AlfSetContent"
             label="Alfresco: upload file data"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.bp.demo.ApproveMyDoc"
             label="alfdemo: approve document"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.bp.demo.CreateMyDoc"
             label="alfdemo: create document"
             enabled="true"
             type="actionHandler">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.handler.action.ConfigBasedProvider"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.bp.demo.RejectMyDoc"
             label="alfdemo: reject document"
             enabled="true"

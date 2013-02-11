@@ -52,17 +52,17 @@ import org.eclipse.ui.part.FileEditorInput;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
-import ru.runa.gpd.handler.DelegableConfigurationDialog;
-import ru.runa.gpd.handler.DelegableProvider;
-import ru.runa.gpd.handler.HandlerArtifact;
-import ru.runa.gpd.handler.HandlerRegistry;
-import ru.runa.gpd.handler.action.ParamDef;
-import ru.runa.gpd.handler.action.ParamDefConfig;
-import ru.runa.gpd.handler.action.ParamDefGroup;
+import ru.runa.gpd.extension.DelegableConfigurationDialog;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.extension.handler.ParamDef;
+import ru.runa.gpd.extension.handler.ParamDefConfig;
+import ru.runa.gpd.extension.handler.ParamDefGroup;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.ui.dialog.ChooseHandlerClassDialog;
-import ru.runa.gpd.ui.wizard.ParamDefWizard;
+import ru.runa.gpd.ui.wizard.BotTaskParamDefWizard;
 import ru.runa.gpd.util.BotTaskContentUtil;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
@@ -203,7 +203,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         gridData.minimumWidth = 300;
         handlerText.setLayoutData(gridData);
         chooseBotButton = new Button(dynaComposite, SWT.NONE);
-        chooseBotButton.setText(Localization.getString("BotTaskEditor.choose"));
+        chooseBotButton.setText(Localization.getString("button.choose"));
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.minimumWidth = 150;
         chooseBotButton.setLayoutData(gridData);
@@ -264,7 +264,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         label.setLayoutData(gridData);
         label.setText(Localization.getString("BotTaskEditor.configuration"));
         editConfButton = new Button(dynaComposite, SWT.NONE);
-        editConfButton.setText(Localization.getString("BotTaskEditor.change"));
+        editConfButton.setText(Localization.getString("button.change"));
         gridData = new GridData(GridData.BEGINNING);
         gridData.minimumWidth = 100;
         editConfButton.setLayoutData(gridData);
@@ -334,9 +334,9 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         dynaConfComposite.setLayout(new GridLayout(2, false));
         Label descriptionLabel = new Label(dynaConfComposite, SWT.NONE);
         if (ParamDefGroup.NAME_INPUT.equals(parameterType)) {
-            descriptionLabel.setText(Localization.getString("BotTaskEditor.inputParam"));
+            descriptionLabel.setText(Localization.getString("BotTaskEditor.inputParameters"));
         } else {
-            descriptionLabel.setText(Localization.getString("BotTaskEditor.outputParam"));
+            descriptionLabel.setText(Localization.getString("BotTaskEditor.inputParameters"));
         }
         data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
         data.horizontalSpan = 3;
@@ -356,8 +356,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         Table table = confTableViewer.getTable();
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
-        String[] columnNames = new String[] { Localization.getString("BotTaskEditor.name"), Localization.getString("BotTaskEditor.label"),
-                Localization.getString("BotTaskEditor.type"), Localization.getString("BotTaskEditor.defaultValue"), Localization.getString("BotTaskEditor.required") };
+        String[] columnNames = new String[] { Localization.getString("BotTaskEditor.name"), Localization.getString("BotTaskEditor.type") };
         int[] columnWidths = new int[] { 200, 200, 150, 200, 150 };
         int[] columnAlignments = new int[] { SWT.LEFT, SWT.LEFT, SWT.LEFT, SWT.LEFT, SWT.LEFT };
         for (int i = 0; i < columnNames.length; i++) {
@@ -373,7 +372,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         buttonArea.setLayoutData(data);
         buttonArea.setLayout(new GridLayout(3, false));
         Button addedParamDefButton = new Button(buttonArea, SWT.NONE);
-        addedParamDefButton.setText(Localization.getString("BotTaskEditor.add"));
+        addedParamDefButton.setText(Localization.getString("button.add"));
         GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
         gridData.minimumWidth = 150;
         addedParamDefButton.setEnabled(!configParamInPlugin);
@@ -383,7 +382,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
             public void widgetSelected(SelectionEvent e) {
                 for (ParamDefGroup group : task.getParamDefConfig().getGroups()) {
                     if (parameterType.equals(group.getName())) {
-                        ParamDefWizard wizard = new ParamDefWizard(group, null);
+                        BotTaskParamDefWizard wizard = new BotTaskParamDefWizard(group, null);
                         WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
                         if (dialog.open() == Window.OK) {
                             setTableInput(parameterType);
@@ -395,7 +394,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
             }
         });
         final Button editParamDefButton = new Button(buttonArea, SWT.NONE);
-        editParamDefButton.setText(Localization.getString("BotTaskEditor.edit"));
+        editParamDefButton.setText(Localization.getString("button.edit"));
         gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
         gridData.minimumWidth = 150;
         editParamDefButton.setLayoutData(gridData);
@@ -412,7 +411,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                         }
                         for (ParamDef paramDef : group.getParameters()) {
                             if (paramDef.getName().equals(row[0])) {
-                                ParamDefWizard wizard = new ParamDefWizard(group, paramDef);
+                                BotTaskParamDefWizard wizard = new BotTaskParamDefWizard(group, paramDef);
                                 WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
                                 if (dialog.open() == Window.OK) {
                                     setTableInput(parameterType);
@@ -426,7 +425,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
             }
         });
         final Button deleteParamDefButton = new Button(buttonArea, SWT.NONE);
-        deleteParamDefButton.setText(Localization.getString("BotTaskEditor.remove"));
+        deleteParamDefButton.setText(Localization.getString("button.remove"));
         gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
         gridData.minimumWidth = 150;
         deleteParamDefButton.setLayoutData(gridData);
@@ -473,11 +472,11 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         }
         List<String[]> input = new ArrayList<String[]>(paramDefs.size());
         for (ParamDef paramDef : paramDefs) {
-            String defFormat = "";
+            String type = "";
             if (paramDef.getFormatFilters().size() > 0) {
-                defFormat = paramDef.getFormatFilters().iterator().next();
+                type = paramDef.getFormatFilters().iterator().next();
             }
-            input.add(new String[] { paramDef.getName(), paramDef.getLabel(), defFormat, paramDef.getDefaultValue(), "" + paramDef.isOptional() });
+            input.add(new String[] { paramDef.getName(), type });
         }
         confTableViewer.setInput(input);
     }

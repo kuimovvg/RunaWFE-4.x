@@ -1,7 +1,7 @@
 package ru.runa.gpd.settings;
 
-import ru.runa.gpd.orgfunction.OrgFunctionDefinition;
-import ru.runa.gpd.orgfunction.OrgFunctionsRegistry;
+import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
+import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 
 public class OrgFunctionPreferencePage extends ArtifactPreferencePage<OrgFunctionDefinition> {
     public OrgFunctionPreferencePage() {

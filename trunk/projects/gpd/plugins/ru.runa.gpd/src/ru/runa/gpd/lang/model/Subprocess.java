@@ -8,8 +8,8 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.ProcessCache;
-import ru.runa.gpd.handler.VariableFormatArtifact;
-import ru.runa.gpd.handler.VariableFormatRegistry;
+import ru.runa.gpd.extension.VariableFormatArtifact;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.util.VariableMapping;
 
 import com.google.common.collect.Lists;

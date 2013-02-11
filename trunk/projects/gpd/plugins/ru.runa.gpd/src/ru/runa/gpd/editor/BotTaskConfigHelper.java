@@ -13,11 +13,11 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 import ru.runa.gpd.PluginConstants;
-import ru.runa.gpd.handler.DelegableProvider;
-import ru.runa.gpd.handler.HandlerRegistry;
-import ru.runa.gpd.handler.action.ParamDef;
-import ru.runa.gpd.handler.action.ParamDefConfig;
-import ru.runa.gpd.handler.action.ParamDefGroup;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.extension.handler.ParamDef;
+import ru.runa.gpd.extension.handler.ParamDefConfig;
+import ru.runa.gpd.extension.handler.ParamDefGroup;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.util.IOUtils;
 
@@ -103,7 +103,6 @@ public class BotTaskConfigHelper {
                 Element paramElement = DocumentHelper.createElement("param");
                 paramElement.addAttribute("name", param.getName());
                 paramElement.addAttribute("label", param.getName());
-                paramElement.addAttribute("variable", "" + param.isUseVariable());
                 if (param.getFormatFilters().size() > 0) {
                     paramElement.addAttribute("formatFilter", param.getFormatFilters().iterator().next());
                 }

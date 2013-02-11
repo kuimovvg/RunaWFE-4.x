@@ -11,12 +11,12 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 
 import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
 import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
-import ru.runa.gpd.handler.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.IOUtils;
 

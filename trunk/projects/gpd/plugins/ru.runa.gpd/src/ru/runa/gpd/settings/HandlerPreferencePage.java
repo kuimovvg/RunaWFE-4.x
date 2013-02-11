@@ -1,7 +1,7 @@
 package ru.runa.gpd.settings;
 
-import ru.runa.gpd.handler.HandlerArtifact;
-import ru.runa.gpd.handler.HandlerRegistry;
+import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.extension.HandlerRegistry;
 
 public class HandlerPreferencePage extends ArtifactPreferencePage<HandlerArtifact> {
     public HandlerPreferencePage() {

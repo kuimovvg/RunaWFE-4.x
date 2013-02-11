@@ -7,12 +7,12 @@ import org.dom4j.Element;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 
+import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
+import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
-import ru.runa.gpd.orgfunction.OrgFunctionDefinition;
-import ru.runa.gpd.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.util.BotTaskContentUtil;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.XmlUtil;
@@ -36,7 +36,7 @@ public class BotsXmlContentProvider extends AuxContentProvider {
         Document document = XmlUtil.parseWithoutValidation(file.getContents());
         List<Element> elements = document.getRootElement().elements(TASK_ELEMENT_NAME);
         for (Element element : elements) {
-            String variableName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+            String taskName = element.attributeValue(NAME_ATTRIBUTE_NAME);
             String className = element.attributeValue(CLASS_ATTRIBUTE_NAME);
             String botTaskName = element.attributeValue(BOT_TASK_NAME);
             Document confDocument = XmlUtil.createDocument(CONF_PARAM);
@@ -53,7 +53,7 @@ public class BotsXmlContentProvider extends AuxContentProvider {
                 confDocument = null;
             }
             for (TaskState taskState : definition.getChildren(TaskState.class)) {
-                if (taskState.getName().equals(variableName)) {
+                if (taskState.getName().equals(taskName)) {
                     BotTask botTask = new BotTask();
                     botTask.setName(botTaskName);
                     botTask.setClazz(className);

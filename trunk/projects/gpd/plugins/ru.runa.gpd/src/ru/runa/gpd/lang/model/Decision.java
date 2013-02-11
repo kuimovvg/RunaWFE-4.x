@@ -2,9 +2,9 @@ package ru.runa.gpd.lang.model;
 
 import java.util.Collection;
 
-import ru.runa.gpd.handler.HandlerArtifact;
-import ru.runa.gpd.handler.HandlerRegistry;
-import ru.runa.gpd.handler.decision.IDecisionProvider;
+import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.extension.decision.IDecisionProvider;
 import ru.runa.wfe.handler.decision.GroovyDecisionHandler;
 
 public class Decision extends Node implements Delegable, Active {
