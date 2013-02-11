@@ -52,13 +52,11 @@ public interface ExecutorService {
 
     public <T extends Executor> T getExecutor(User user, Long id) throws ExecutorDoesNotExistException;
 
-    public <T extends Executor> T getExecutor(User user, String name) throws ExecutorDoesNotExistException;
+    public <T extends Executor> T getExecutorByName(User user, String name) throws ExecutorDoesNotExistException;
 
     public void update(User user, Executor executor) throws ExecutorAlreadyExistsException;
 
     public void remove(User user, List<Long> ids);
-
-    public void addExecutorsToGroup(User user, List<? extends Executor> executors, Group group);
 
     public void addExecutorsToGroup(User user, List<Long> executorIds, Long groupId) throws ExecutorDoesNotExistException;
 

@@ -120,7 +120,7 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
                 } else if ("id".equals(fieldName)) {
                     actor = Delegates.getExecutorService().getExecutor(user, ((Long) newValue).longValue());
                 } else {
-                    actor = Delegates.getExecutorService().getExecutor(user, (String) newValue);
+                    actor = Delegates.getExecutorService().getExecutorByName(user, (String) newValue);
                 }
                 newValue = Long.toString(actor.getCode());
             } else if (result.isFieldSetup()) {

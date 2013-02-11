@@ -17,10 +17,8 @@
  */
 package ru.runa.af.web;
 
-import java.util.HashSet;
 import java.util.List;
 
-import ru.runa.service.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Permission;
@@ -31,20 +29,14 @@ import ru.runa.wfe.user.User;
 public class BatchExecutorPermissionHelper {
     private static final SecuredObjectType[] ACTOR_GROUP_CLASSESS = { SecuredObjectType.ACTOR, SecuredObjectType.GROUP };
 
-    public static boolean[] getEnabledCheckboxes(User user, List<? extends Executor> executors, BatchPresentation batchPresentation,
-            Permission permission) {
-        AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        // boolean[] enabledCheckboxed =
-        // authorizationServiceDelegate.isAllowed(subject,
-        // ExecutorPermission.UPDATE, executors);
-        HashSet<Executor> executorsWithUpdatePermissionSet = new HashSet<Executor>(authorizationService.getPersistentObjects(user, batchPresentation,
-                Executor.class, permission, ACTOR_GROUP_CLASSESS, false));
-        boolean[] enabledCheckboxed = new boolean[executors.size()];
+    public static boolean isAllowedForAnyone(User user, List<? extends Executor> executors, BatchPresentation batchPresentation, Permission permission) {
+        List<Executor> executorsWithPermission = Delegates.getAuthorizationService().getPersistentObjects(user, batchPresentation, Executor.class,
+                permission, ACTOR_GROUP_CLASSESS, false);
         for (int i = 0; i < executors.size(); i++) {
-            if (executorsWithUpdatePermissionSet.contains(executors.get(i))) {
-                enabledCheckboxed[i] = true;
+            if (executorsWithPermission.contains(executors.get(i))) {
+                return true;
             }
         }
-        return enabledCheckboxed;
+        return false;
     }
 }

@@ -71,7 +71,7 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
         ProcessForm form = (ProcessForm) actionForm;
         Long taskId = form.getId();
         Interaction wfForm = definitionService.getTaskInteraction(user, taskId);
-        Map<String, Object> variables = getFormVariables(request, actionForm, wfForm);
+        HashMap<String, Object> variables = getFormVariables(request, actionForm, wfForm);
 
         BatchPresentation batchPresentation = profile.getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS);
         List<WfTask> tasks = executionService.getTasks(user, batchPresentation);

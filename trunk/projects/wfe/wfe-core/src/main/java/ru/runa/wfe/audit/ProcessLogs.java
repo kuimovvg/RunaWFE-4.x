@@ -1,8 +1,12 @@
 package ru.runa.wfe.audit;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.lang.NodeType;
@@ -10,10 +14,15 @@ import ru.runa.wfe.lang.NodeType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ProcessLogs implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private final List<ProcessLog> logs = Lists.newArrayList();
-    private final Map<Long, Integer> processIdLevels = Maps.newHashMap();
+    private final HashMap<Long, Integer> processIdLevels = Maps.newHashMap();
+
+    public ProcessLogs() {
+    }
 
     public ProcessLogs(Long processId) {
         processIdLevels.put(processId, 0);

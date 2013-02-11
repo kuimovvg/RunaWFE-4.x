@@ -47,7 +47,6 @@
 		<mapping class="ru.runa.wfe.audit.SystemLog" />
 		<mapping class="ru.runa.wfe.audit.ProcessDeleteLog" />
 		<mapping class="ru.runa.wfe.audit.ProcessDefinitionDeleteLog" />
-		<mapping class="ru.runa.wfe.audit.ProcessDefinitionDeleteExceptionLog" />
 	    <mapping class="ru.runa.wfe.audit.ProcessLog" />
 	    <mapping class="ru.runa.wfe.audit.ProcessStartLog" />
 	    <mapping class="ru.runa.wfe.audit.ProcessCancelLog" />

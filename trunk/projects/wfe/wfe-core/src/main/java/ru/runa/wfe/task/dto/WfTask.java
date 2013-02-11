@@ -21,6 +21,9 @@ package ru.runa.wfe.task.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
@@ -33,24 +36,28 @@ import com.google.common.base.Objects;
  * @author Dofs
  * @since 4.0
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public final class WfTask implements Serializable {
     private static final long serialVersionUID = 3415182898189086844L;
 
-    private final Long id;
-    private final String name;
-    private final String description;
-    private final String swimlaneName;
-    private final Executor owner;
-    private final Long definitionId;
-    private final String definitionName;
-    private final Long processId;
+    private Long id;
+    private String name;
+    private String description;
+    private String swimlaneName;
+    private Executor owner;
+    private Long definitionId;
+    private String definitionName;
+    private Long processId;
 
-    private final Date creationDate;
-    private final Date deadlineDate;
-    private final Date deadlineWarningDate;
-    private final boolean escalated;
-    private final boolean groupAssigned;
-    private final boolean firstOpen;
+    private Date creationDate;
+    private Date deadlineDate;
+    private Date deadlineWarningDate;
+    private boolean escalated;
+    private boolean groupAssigned;
+    private boolean firstOpen;
+
+    public WfTask() {
+    }
 
     public WfTask(Task task, Long processId, Deployment deployment, Date deadlineWarningDate, boolean groupAssigned, boolean escalated) {
         id = task.getId();

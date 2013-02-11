@@ -15,7 +15,5 @@ public interface IAttributes {
     static final String ATTR_NEW_VALUE = "newValue";
     static final String ATTR_VARIABLE_NAME = "varName";
     static final String ATTR_TASK_NAME = "taskName";
-    // static final String ATTR_TASK_CREATE_DATE = "taskCreate";
-    // static final String ATTR_TASK_END_DATE = "taskEnd";
 
 }

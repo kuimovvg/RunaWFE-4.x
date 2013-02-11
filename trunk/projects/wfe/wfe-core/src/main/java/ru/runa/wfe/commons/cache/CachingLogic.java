@@ -91,7 +91,7 @@ public class CachingLogic {
 
     /**
      * Notify registered listeners on unrecognized object change. All registered
-     * listeners will be notified.
+     * listeners will be notified. TODO unused
      */
     public static synchronized void onGenericChange() {
         onWriteTransaction(genericListeners, null, null, null, null, null);

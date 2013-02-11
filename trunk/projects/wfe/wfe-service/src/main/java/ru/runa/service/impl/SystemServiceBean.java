@@ -17,12 +17,14 @@
  */
 package ru.runa.service.impl;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -44,26 +46,26 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@WebService
+@SOAPBinding
 public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemote {
     @Autowired
     private AuditLogic auditLogic;
 
     @Override
-    public void login(User user, ASystem system) {
+    public void login(User user) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(system);
-        auditLogic.login(user, system);
+        auditLogic.login(user, ASystem.INSTANCE);
     }
 
     @Override
-    public void logout(User user, ASystem system) {
+    public void logout(User user) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(system);
-        auditLogic.logout(user, system);
+        auditLogic.logout(user, ASystem.INSTANCE);
     }
 
     @Override
-    public Map<String, String> getLocalizations(User user) {
+    public HashMap<String, String> getLocalizations(User user) {
         Preconditions.checkNotNull(user);
         return auditLogic.getLocalizations(user);
     }
@@ -74,7 +76,7 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
     }
 
     @Override
-    public void saveLocalizations(User user, Map<String, String> localizations) {
+    public void saveLocalizations(User user, HashMap<String, String> localizations) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(localizations);
         auditLogic.saveLocalizations(user, localizations);

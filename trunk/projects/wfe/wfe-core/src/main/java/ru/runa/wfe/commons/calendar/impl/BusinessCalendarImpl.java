@@ -123,25 +123,6 @@ public class BusinessCalendarImpl implements BusinessCalendar {
         return null;
     }
 
-    public DayPart findNextDayPart(Date date) {
-        DayPart nextDayPart = null;
-        while (nextDayPart == null) {
-            nextDayPart = findDayPart(date);
-            if (nextDayPart != null) {
-                break;
-            }
-            date = findStartOfNextDay(date);
-            Day day = findDay(date);
-            nextDayPart = day.findNextDayPartStart(0, date);
-        }
-        return nextDayPart;
-    }
-
-    @Override
-    public boolean isInBusinessHours(Date date) {
-        return (findDayPart(date) != null);
-    }
-
     public static Calendar getCalendar() {
         return new GregorianCalendar();
     }

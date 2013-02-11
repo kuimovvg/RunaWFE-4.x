@@ -38,7 +38,7 @@ public class GroupMembersAutoCompletionVarTag extends AbstractAutoCompletionComb
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
 
-        Group group = Delegates.getExecutorService().getExecutor(user, varName);
+        Group group = Delegates.getExecutorService().getExecutorByName(user, varName);
         List<Executor> executors = Delegates.getExecutorService().getGroupChildren(user, group, batchPresentation, false);
         List<Actor> actors = Lists.newArrayList();
         for (Executor executor : executors) {

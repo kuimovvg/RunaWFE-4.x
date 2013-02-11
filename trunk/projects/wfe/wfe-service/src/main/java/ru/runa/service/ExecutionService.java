@@ -18,8 +18,8 @@
 package ru.runa.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
@@ -48,7 +48,7 @@ import ru.runa.wfe.var.dto.WfVariable;
  */
 public interface ExecutionService {
 
-    public Long startProcess(User user, String definitionName, Map<String, Object> variables) throws DefinitionDoesNotExistException,
+    public Long startProcess(User user, String definitionName, HashMap<String, Object> variables) throws DefinitionDoesNotExistException,
             ValidationException;
 
     public int getAllProcessesCount(User user, BatchPresentation batchPresentation);
@@ -69,7 +69,7 @@ public interface ExecutionService {
 
     public void assignTask(User user, Long taskId, Executor previousOwner, Actor actor) throws TaskAlreadyAcceptedException;
 
-    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException;
+    public void completeTask(User user, Long taskId, HashMap<String, Object> variables) throws TaskDoesNotExistException, ValidationException;
 
     public List<WfSwimlane> getSwimlanes(User user, Long processId) throws ProcessDoesNotExistException;
 
@@ -79,9 +79,9 @@ public interface ExecutionService {
 
     public WfVariable getVariable(User user, Long processId, String variableName) throws ProcessDoesNotExistException;
 
-    public Map<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName);
+    public HashMap<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName);
 
-    public void updateVariables(User user, Long processId, Map<String, Object> variables) throws ProcessDoesNotExistException;
+    public void updateVariables(User user, Long processId, HashMap<String, Object> variables) throws ProcessDoesNotExistException;
 
     public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId) throws ProcessDoesNotExistException;
 

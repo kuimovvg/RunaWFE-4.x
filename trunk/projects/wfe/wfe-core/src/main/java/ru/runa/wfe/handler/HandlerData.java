@@ -66,11 +66,11 @@ public class HandlerData {
     }
 
     public <T> T getInputParam(String name, T defaultValue) {
-        T result = paramsDef.getInputParamValue(name, variableProvider);
+        Object result = paramsDef.getInputParamValue(name, variableProvider);
         if (result == null) {
             return defaultValue;
         }
-        return result;
+        return (T) result;
     }
 
     public <T> T getInputParam(Class<T> clazz, String name) {

@@ -26,7 +26,6 @@ import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.User;
 
@@ -39,15 +38,6 @@ public abstract class EnvBaseImpl implements Env {
             user = Commons.getUser(getPageContext().getSession());
         }
         return user;
-    }
-
-    protected class DefaultIdentifiableExtractor implements Env.IdentifiableExtractor {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public Identifiable getIdentifiable(Object o, Env env) {
-            return (Identifiable) o;
-        }
     }
 
     @Override

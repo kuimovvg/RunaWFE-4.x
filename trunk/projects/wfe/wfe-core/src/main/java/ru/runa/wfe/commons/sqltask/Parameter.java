@@ -18,20 +18,13 @@
 package ru.runa.wfe.commons.sqltask;
 
 /**
- * Represents parameter of {@link ru.runa.commons.sqltask.AbstractQuery}Created on 01.04.2005
+ * Represents parameter of {@link ru.runa.commons.sqltask.AbstractQuery}Created
+ * on 01.04.2005
  * 
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m
  */
 public class Parameter extends QueryElement {
-
-    /**
-     * @param variableName
-     *            process variable name
-     */
-    public Parameter(String variableName) {
-        super(variableName);
-    }
 
     /**
      * @param variableName

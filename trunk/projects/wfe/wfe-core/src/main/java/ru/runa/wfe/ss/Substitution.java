@@ -44,7 +44,6 @@ import org.hibernate.annotations.PolymorphismType;
 import ru.runa.wfe.commons.OracleCommons;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Throwables;
 
 /**
  * Created on 27.01.2006
@@ -56,7 +55,7 @@ import com.google.common.base.Throwables;
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING, length = 1)
 @DiscriminatorValue(value = "N")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Substitution implements Cloneable, Serializable {
+public class Substitution implements Serializable {
     private final static long serialVersionUID = -9048255704644364624L;
 
     private Long id;
@@ -149,18 +148,6 @@ public class Substitution implements Cloneable, Serializable {
 
     public void setCriteria(SubstitutionCriteria criteria) {
         this.criteria = criteria;
-    }
-
-    @Override
-    public Object clone() {
-        try {
-            Substitution clone = (Substitution) super.clone();
-            clone.id = null;
-            clone.version = null;
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw Throwables.propagate(e);
-        }
     }
 
     @Override

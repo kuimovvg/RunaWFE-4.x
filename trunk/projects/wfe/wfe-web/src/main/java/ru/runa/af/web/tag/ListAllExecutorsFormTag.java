@@ -53,7 +53,7 @@ public class ListAllExecutorsFormTag extends BatchReturningTitledFormTag {
 
     private static final long serialVersionUID = -7478022960008761625L;
 
-    private boolean isButtonEnabled;
+    private boolean buttonEnabled;
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
@@ -61,7 +61,7 @@ public class ListAllExecutorsFormTag extends BatchReturningTitledFormTag {
         int executorsCount = executorService.getExecutorsCount(getUser(), getBatchPresentation());
         List<Executor> executors = executorService.getAll(getUser(), getBatchPresentation());
         BatchPresentation batchPresentation = getBatchPresentation();
-        setupFormButton(executors);
+        buttonEnabled = BatchExecutorPermissionHelper.isAllowedForAnyone(getUser(), executors, batchPresentation, ExecutorPermission.UPDATE);
         PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, executorsCount, getReturnAction());
         navigation.addPagingNavigationTable(tdFormElement);
         TableBuilder tableBuilder = new TableBuilder();
@@ -74,25 +74,6 @@ public class ListAllExecutorsFormTag extends BatchReturningTitledFormTag {
         navigation.addPagingNavigationTable(tdFormElement);
     }
 
-    /**
-     * Check, if exists executor to remove (to enable or disable form button).
-     * 
-     * @param subject
-     *            Current actor subject.
-     * @param executors
-     *            Executors, shown on form.
-     */
-    private void setupFormButton(List<Executor> executors) {
-        BatchPresentation batchPresentation = getBatchPresentation();
-        for (boolean isEnable : BatchExecutorPermissionHelper
-                .getEnabledCheckboxes(getUser(), executors, batchPresentation, ExecutorPermission.UPDATE)) {
-            if (isEnable) {
-                isButtonEnabled = true;
-                break;
-            }
-        }
-    }
-
     @Override
     public String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_REMOVE, pageContext);
@@ -100,7 +81,7 @@ public class ListAllExecutorsFormTag extends BatchReturningTitledFormTag {
 
     @Override
     protected boolean isFormButtonEnabled() {
-        return isButtonEnabled;
+        return buttonEnabled;
     }
 
     @Override

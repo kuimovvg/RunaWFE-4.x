@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -113,8 +114,8 @@ public class XmlUtils {
         return toString(document);
     }
 
-    public static Map<String, String> deserialize(String xml) {
-        Map<String, String> result = Maps.newHashMap();
+    public static HashMap<String, String> deserialize(String xml) {
+        HashMap<String, String> result = Maps.newHashMap();
         Document document = parseWithoutValidation(xml);
         List<Element> elements = document.getRootElement().elements();
         for (Element element : elements) {

@@ -11,13 +11,10 @@ import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.TemporaryGroup;
-import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
 public class AssignmentHelper {
     private static final Log log = LogFactory.getLog(AssignmentHelper.class);
-    @Autowired
-    protected ExecutorDAO executorDAO;
     @Autowired
     private ExecutorLogic executorLogic;
 

@@ -17,7 +17,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -47,7 +46,7 @@ import com.google.common.io.ByteStreams;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService(name = "BotWebService", serviceName = "BotWebServiceImpl")
+@WebService
 @SOAPBinding
 public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     @Autowired
@@ -61,7 +60,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
-    public BotStation getBotStation(@WebParam(name = "id") Long id) {
+    public BotStation getBotStation(Long id) {
         Preconditions.checkNotNull(id);
         return botLogic.getBotStationNotNull(id);
     }
@@ -69,7 +68,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     // @javax.xml.ws.RequestWrapper(className="ru.runa.service.wf.impl.UniqueClassName")
     // @javax.xml.ws.ResponseWrapper(className="ru.runa.service.wf.impl.UniqueClassNameResponse")
     @Override
-    public BotStation getBotStationByName(@WebParam(name = "name") String name) {
+    public BotStation getBotStationByName(String name) {
         Preconditions.checkNotNull(name);
         return botLogic.getBotStation(name);
     }

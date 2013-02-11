@@ -18,8 +18,8 @@
 package ru.runa.wfe.security.logic;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.commons.logic.PresentationCompilerHelper;
@@ -55,7 +55,7 @@ public class AuthorizationLogic extends CommonLogic {
      * @return Map of {Permission, Is permission can be modifiable}, not
      *         <code>null</code>
      */
-    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
+    public HashMap<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
         checkPermissionsOnExecutor(user, performer, Permission.READ);
         checkPermissionAllowed(user, identifiable, Permission.READ);
         return permissionDAO.getOwnPermissions(performer, identifiable);
@@ -76,6 +76,11 @@ public class AuthorizationLogic extends CommonLogic {
         for (int i = 0; i < executors.size(); i++) {
             setPermissions(user, executors.get(i), permissions.get(i), identifiable);
         }
+    }
+
+    public void setPermissions(User user, Long executorId, Collection<Permission> permissions, Identifiable identifiable) {
+        Executor executor = executorDAO.getExecutor(executorId);
+        setPermissions(user, executor, permissions, identifiable);
     }
 
     public void setPermissions(User user, Executor executor, Collection<Permission> permissions, Identifiable identifiable) {

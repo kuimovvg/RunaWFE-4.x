@@ -24,16 +24,14 @@ import javax.xml.bind.annotation.XmlType;
 import ru.runa.wfe.InternalApplicationException;
 
 /**
- * Signals that authorization failed during any {@link javax.security.auth.Subject}involved operation.
+ * Signals that authorization failed during any
+ * {@link javax.security.auth.Subject}involved operation.
  * <p>
  * Created on 27.07.2004
  * </p>
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AuthorizationException", namespace = "http://runa.ru/workflow/webservices")
 public class AuthorizationException extends InternalApplicationException {
-
     private static final long serialVersionUID = 939145271255203099L;
 
     public AuthorizationException(String message) {

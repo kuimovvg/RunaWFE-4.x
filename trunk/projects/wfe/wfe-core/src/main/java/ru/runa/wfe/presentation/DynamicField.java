@@ -23,37 +23,42 @@ import com.google.common.base.Objects;
 
 class DynamicField implements Serializable {
     private static final long serialVersionUID = 1L;
+    /**
+     * Index against classPresentation.getFields();
+     */
+    private Long fieldIdx;
+    /**
+     * Value inserted by user (variable name for example)
+     */
+    private String fieldValue;
 
-    private Long fieldIdx; // Index against classPresentation.getFields();
-    private String dynamicValue; // Value inserted by user (variable name for example)
-
-    protected DynamicField() {
+    public DynamicField() {
     }
 
     public DynamicField(long fieldIdx, String fieldValue) {
         this.fieldIdx = fieldIdx;
-        this.dynamicValue = fieldValue;
+        this.fieldValue = fieldValue;
     }
 
     public Long getFieldIdx() {
         return fieldIdx;
     }
 
-    protected void setFieldIdx(Long fieldIdx) {
+    public void setFieldIdx(Long fieldIdx) {
         this.fieldIdx = fieldIdx;
     }
 
     public String getDynamicValue() {
-        return dynamicValue;
+        return fieldValue;
     }
 
-    protected void setDynamicValue(String dynamicValue) {
-        this.dynamicValue = dynamicValue;
+    public void setDynamicValue(String fieldValue) {
+        this.fieldValue = fieldValue;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(fieldIdx, dynamicValue);
+        return Objects.hashCode(fieldIdx, fieldValue);
     }
 
     @Override
@@ -65,7 +70,7 @@ class DynamicField implements Serializable {
             return true;
         }
         DynamicField other = (DynamicField) obj;
-        return Objects.equal(fieldIdx, other.fieldIdx) && Objects.equal(dynamicValue, other.dynamicValue);
+        return Objects.equal(fieldIdx, other.fieldIdx) && Objects.equal(fieldValue, other.fieldValue);
     }
 
 }

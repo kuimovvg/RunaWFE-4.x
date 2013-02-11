@@ -21,15 +21,10 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.commons.OracleCommons;
-import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.security.SecuredObjectType;
 
 import com.google.common.base.Objects;
@@ -39,19 +34,13 @@ import com.google.common.base.Objects;
  */
 @Entity
 @DiscriminatorValue(value = "N")
-@XmlType(name = "Actor", namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Actor extends Executor {
     private static final long serialVersionUID = -582492651083909598L;
     public static final Actor UNAUTHORIZED_ACTOR = new Actor("__unauthorized__", null);
 
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long code;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private boolean active = true;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String email;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String phone;
 
     protected Actor() {
@@ -97,12 +86,12 @@ public class Actor extends Executor {
     @Override
     @Column(name = "FULL_NAME", nullable = false)
     public String getFullName() {
-        return fullName;
+        return super.getFullName();
     }
 
     @Override
     public void setFullName(String fullName) {
-        this.fullName = OracleCommons.fixNullString(fullName);
+        super.setFullName(OracleCommons.fixNullString(fullName));
     }
 
     @Column(name = "CODE")
@@ -151,7 +140,7 @@ public class Actor extends Executor {
             return false;
         }
         Actor actor = (Actor) obj;
-        return Objects.equal(code, actor.code) && Objects.equal(fullName, actor.fullName);
+        return Objects.equal(code, actor.code) && Objects.equal(getFullName(), actor.getFullName());
     }
 
     @Override

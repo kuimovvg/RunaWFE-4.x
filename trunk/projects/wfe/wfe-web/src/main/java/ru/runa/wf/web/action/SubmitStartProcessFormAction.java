@@ -17,7 +17,7 @@
  */
 package ru.runa.wf.web.action;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -63,7 +63,7 @@ public class SubmitStartProcessFormAction extends BaseProcessFormAction {
         User user = getLoggedUser(request);
         Long definitionId = ((CommonProcessForm) actionForm).getId();
         Interaction interaction = Delegates.getDefinitionService().getStartInteraction(user, definitionId);
-        Map<String, Object> variables = getFormVariables(request, actionForm, interaction);
+        HashMap<String, Object> variables = getFormVariables(request, actionForm, interaction);
         String transitionName = ((CommonProcessForm) actionForm).getSubmitButton();
         variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
         WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(user, definitionId);

@@ -29,6 +29,7 @@ public class ProcessDeleteLog extends SystemLog {
     protected ProcessDeleteLog() {
     }
 
+    // TODO not used now
     public ProcessDeleteLog(Long actorId, Long processId) {
         super(actorId);
         this.processId = processId;

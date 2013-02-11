@@ -21,8 +21,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.IFileDataProvider;
@@ -32,32 +30,18 @@ import ru.runa.wfe.security.SecuredObjectType;
 
 import com.google.common.base.Objects;
 
-/**
- * Created on 29.09.2004
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "WfDefinition", namespace = "http://runa.ru/workflow/webservices")
-public class WfDefinition implements Identifiable {
+public class WfDefinition extends Identifiable {
     private static final long serialVersionUID = -6032491529439317948L;
 
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private Long id;
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private String name;
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private String description;
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private String[] categories;
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private Long version;
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private boolean hasHtmlDescription;
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private boolean hasStartImage;
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private boolean hasDisabledImage;
-    @XmlElement(namespace = "http://runa.ru/workflow/webservices")
     private Date deployedDate;
 
     public WfDefinition() {

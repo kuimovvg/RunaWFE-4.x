@@ -22,7 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import ru.runa.wfe.InternalApplicationException;
 
@@ -35,12 +36,12 @@ import com.google.common.collect.Maps;
  * @author Dofs
  * @since 3.0
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ValidationException extends InternalApplicationException {
     private static final long serialVersionUID = 5L;
 
-    @XmlTransient
-    private Map<String, List<String>> fieldErrors = Maps.newHashMap();
-    private Collection<String> globalErrors = Lists.newArrayList();
+    private final HashMap<String, List<String>> fieldErrors = Maps.newHashMap();
+    private final List<String> globalErrors = Lists.newArrayList();
 
     public ValidationException() {
     }
@@ -51,10 +52,10 @@ public class ValidationException extends InternalApplicationException {
 
     public ValidationException(Map<String, List<String>> fieldErrors, Collection<String> globalErrors) {
         if (fieldErrors != null) {
-            this.fieldErrors = fieldErrors;
+            this.fieldErrors.putAll(fieldErrors);
         }
         if (globalErrors != null) {
-            this.globalErrors = globalErrors;
+            this.globalErrors.addAll(globalErrors);
         }
     }
 

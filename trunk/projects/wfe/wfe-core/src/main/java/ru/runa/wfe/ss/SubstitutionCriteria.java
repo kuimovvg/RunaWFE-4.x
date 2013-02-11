@@ -47,6 +47,7 @@ import com.google.common.base.Objects;
 @Table(name = "SUBSTITUTION_CRITERIA", uniqueConstraints = @UniqueConstraint(columnNames = { "DISCRIMINATOR", "CONF" }))
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+// TODO: test JAXB hierarchy through WS API
 public class SubstitutionCriteria implements Serializable {
     private static final long serialVersionUID = 1L;
 

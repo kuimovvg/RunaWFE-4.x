@@ -62,7 +62,6 @@ import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
@@ -245,18 +244,6 @@ public class Process extends IdentifiableBase {
             }
         }
         return result;
-    }
-
-    /**
-     * instructs the main path of execution to continue by taking the default
-     * transition on the current node.
-     * 
-     * @throws IllegalStateException
-     *             if the token is not active.
-     */
-    public void signal(ExecutionContext executionContext) {
-        Preconditions.checkState(endDate == null, "couldn't signal token : token has ended");
-        rootToken.signal(executionContext);
     }
 
     /**

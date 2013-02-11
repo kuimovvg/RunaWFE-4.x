@@ -42,7 +42,7 @@ public abstract class FilterCriteria implements Serializable {
         return filterTemplates;
     }
 
-    protected void setFilterTemplates(String[] filterTemplates) {
+    public void setFilterTemplates(String[] filterTemplates) {
         this.filterTemplates = filterTemplates;
     }
 
