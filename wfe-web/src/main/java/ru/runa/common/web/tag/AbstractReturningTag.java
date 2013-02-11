@@ -28,12 +28,8 @@ import org.apache.ecs.html.Form;
 public abstract class AbstractReturningTag extends TagSupport implements ReturningTag {
     private static final long serialVersionUID = 1L;
 
-    public static final String SUBMIT_BUTTON_NAME = "submit";
-
     private String returnAction;
-
     private String action;
-
     private String method = Form.POST;
 
     public void setAction(String action) {
@@ -61,10 +57,12 @@ public abstract class AbstractReturningTag extends TagSupport implements Returni
     /**
      * @jsp.attribute required = "true" rtexprvalue = "true"
      */
+    @Override
     public void setReturnAction(String forwardName) {
         returnAction = forwardName;
     }
 
+    @Override
     public String getReturnAction() {
         return returnAction;
     }

@@ -82,6 +82,6 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
      */
     private boolean checkPermission(ProcessDefinition processDefinition) {
         PermissionDAO permissionDAO = ApplicationContextFactory.getPermissionDAO();
-        return permissionDAO.isAllowed(user, DefinitionPermission.READ, processDefinition);
+        return permissionDAO.isAllowed(user, DefinitionPermission.READ, processDefinition.getDeployment());
     }
 }

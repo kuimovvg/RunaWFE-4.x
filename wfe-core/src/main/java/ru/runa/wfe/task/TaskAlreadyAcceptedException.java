@@ -17,10 +17,15 @@
  */
 package ru.runa.wfe.task;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+
 import ru.runa.wfe.InternalApplicationException;
 
 /**
- * Signal that task was already accepted by another user (during assignment on multiple actors).
+ * Signal that task was already accepted by another user (during assignment on
+ * multiple actors).
  */
 public class TaskAlreadyAcceptedException extends InternalApplicationException {
     private static final long serialVersionUID = 1L;

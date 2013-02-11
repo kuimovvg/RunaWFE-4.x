@@ -34,6 +34,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -49,6 +50,7 @@ import ru.runa.wfe.user.Actor;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("SL")
+@XmlSeeAlso({ ProcessDefinitionDeleteLog.class, ProcessDeleteLog.class })
 public abstract class SystemLog {
 
     /**

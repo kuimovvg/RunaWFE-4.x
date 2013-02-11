@@ -23,6 +23,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -33,6 +35,7 @@ import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.relation.Relation;
+import ru.runa.wfe.relation.RelationAlreadyExistException;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.relation.logic.RelationLogic;
 import ru.runa.wfe.user.Executor;
@@ -48,6 +51,8 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@WebService
+@SOAPBinding
 public class RelationServiceBean implements RelationServiceLocal, RelationServiceRemote {
     @Autowired
     private RelationLogic relationLogic;
@@ -61,7 +66,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public Relation createRelation(User user, String name, String description) {
+    public Relation createRelation(User user, String name, String description) throws RelationAlreadyExistException {
         Preconditions.checkNotNull(user);
         return relationLogic.createRelation(user, name, description);
     }
@@ -74,9 +79,9 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public Relation getRelation(User user, String relationsGroupName) {
+    public Relation getRelationByName(User user, String name) {
         Preconditions.checkNotNull(user);
-        return relationLogic.getRelation(user, relationsGroupName);
+        return relationLogic.getRelation(user, name);
     }
 
     @Override
@@ -100,17 +105,10 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public List<RelationPair> getRelationPairs(User user, String relationsGroupName, BatchPresentation batchPresentation) {
+    public List<RelationPair> getRelationPairs(User user, String relationName, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        return relationLogic.getRelations(user, relationsGroupName, batchPresentation);
-    }
-
-    @Override
-    public List<RelationPair> getRelationPairs(User user, Long relationId, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
-        return relationLogic.getRelations(user, relationId, batchPresentation);
+        return relationLogic.getRelations(user, relationName, batchPresentation);
     }
 
     @Override

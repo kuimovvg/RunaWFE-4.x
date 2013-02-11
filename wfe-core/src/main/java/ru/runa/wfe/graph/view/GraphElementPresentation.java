@@ -19,6 +19,9 @@ package ru.runa.wfe.graph.view;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
@@ -26,8 +29,10 @@ import ru.runa.wfe.lang.NodeType;
 /**
  * Interface for process definition graph elements presentation components.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class GraphElementPresentation implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private String nodeId;
     private NodeType nodeType;
     private String name;
@@ -44,9 +49,9 @@ public class GraphElementPresentation implements Serializable {
      * Initializes data.
      */
     public void initialize(Node node, NodeModel model) {
-        this.nodeId = node.getNodeId();
-        this.nodeType = node.getNodeType();
-        this.name = node.getName();
+        nodeId = node.getNodeId();
+        nodeType = node.getNodeType();
+        name = node.getName();
     }
 
     /**

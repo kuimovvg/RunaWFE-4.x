@@ -46,7 +46,7 @@ public class ManagePermissionOnRelationLinkTag extends LinkTag {
         try {
             RelationService relationService = Delegates.getRelationService();
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Relation relationGroup = relationService.getRelation(getUser(), getRelationName());
+            Relation relationGroup = relationService.getRelationByName(getUser(), getRelationName());
             return authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_PERMISSIONS, relationGroup);
         } catch (Exception e) {
             return false;
@@ -58,7 +58,7 @@ public class ManagePermissionOnRelationLinkTag extends LinkTag {
         try {
             RelationService relationService = Delegates.getRelationService();
             Relation relationGroup;
-            relationGroup = relationService.getRelation(getUser(), getRelationName());
+            relationGroup = relationService.getRelationByName(getUser(), getRelationName());
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("relationName", getRelationName());
             params.put("id", relationGroup.getId());

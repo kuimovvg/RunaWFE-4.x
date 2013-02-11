@@ -54,8 +54,8 @@ public class CreateRelationAction extends ActionBase {
         try {
             ExecutorService executorService = Delegates.getExecutorService();
             RelationService relationService = Delegates.getRelationService();
-            Executor executorFrom = executorService.getExecutor(getLoggedUser(request), relationForm.getRelationFrom());
-            Executor executorTo = executorService.getExecutor(getLoggedUser(request), relationForm.getRelationTo());
+            Executor executorFrom = executorService.getExecutorByName(getLoggedUser(request), relationForm.getRelationFrom());
+            Executor executorTo = executorService.getExecutorByName(getLoggedUser(request), relationForm.getRelationTo());
             relationService.addRelationPair(getLoggedUser(request), relationForm.getRelationName(), executorFrom, executorTo);
         } catch (Exception e) {
             addError(request, e);

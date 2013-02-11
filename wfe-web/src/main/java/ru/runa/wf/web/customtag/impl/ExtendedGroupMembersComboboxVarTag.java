@@ -38,7 +38,7 @@ public class ExtendedGroupMembersComboboxVarTag extends AbstractActorComboBoxVar
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
 
-        Group group = Delegates.getExecutorService().getExecutor(user, varName);
+        Group group = Delegates.getExecutorService().getExecutorByName(user, varName);
         List<Actor> actors = Lists.newArrayList();
         addActorsRecursive(user, group, batchPresentation, actors);
         return actors;

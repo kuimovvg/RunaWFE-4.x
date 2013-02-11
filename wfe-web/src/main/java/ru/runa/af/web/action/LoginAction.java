@@ -33,7 +33,6 @@ import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.ProfileService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 
@@ -56,7 +55,7 @@ public class LoginAction extends ActionBase {
         try {
             LoginForm form = (LoginForm) actionForm;
             User user = Delegates.getAuthenticationService().authenticateByLoginPassword(form.getLogin(), form.getPassword());
-            Delegates.getSystemService().login(user, ASystem.INSTANCE);
+            Delegates.getSystemService().login(user);
             HttpSession session = request.getSession();
             ProfileService profileService = Delegates.getProfileService();
             Profile profile = profileService.getProfile(user);

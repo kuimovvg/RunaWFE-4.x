@@ -17,6 +17,7 @@
  */
 package ru.runa.wfe.commons.logic;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -147,10 +148,10 @@ public class CommonLogic {
         return permissionDAO.getPersistentObjectCount(actorAndGroupsIds, batchPresentation, permission, securedObjectTypes);
     }
 
-    public Map<String, String> getLocalizations(User user) {
+    public HashMap<String, String> getLocalizations(User user) {
         // TODO permissions
         List<Localization> localizations = localizationDAO.getAll();
-        Map<String, String> result = Maps.newHashMapWithExpectedSize(localizations.size());
+        HashMap<String, String> result = Maps.newHashMapWithExpectedSize(localizations.size());
         for (Localization localization : localizations) {
             result.put(localization.getName(), localization.getValue());
         }

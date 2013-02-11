@@ -103,12 +103,6 @@ public class TaskNodeFigure extends AbstractFigure {
                 Point loc = ActionUtils.getActionLocationOnNode(i, getCoordsFromRectangle(getTextBoundsRectangle()), false);
                 graphics.setColor(DrawProperties.getBackgroundColor());
                 loc.translate(-1, -1);
-                // graphics.fillOval(loc.x, loc.y, ActionUtils.ACTION_SIZE-1,
-                // ActionUtils.ACTION_SIZE-1);
-                if (failedActions.contains(i)) {
-                    graphics.setColor(Color.RED);
-                    graphics.drawString("x", loc.x + 3, loc.y + 3);
-                }
                 graphics.setColor(color);
                 graphics.drawOval(loc.x, loc.y, ActionUtils.ACTION_SIZE, ActionUtils.ACTION_SIZE);
             }

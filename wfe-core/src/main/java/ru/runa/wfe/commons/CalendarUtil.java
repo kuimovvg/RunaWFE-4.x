@@ -67,13 +67,6 @@ public class CalendarUtil {
         }
     }
 
-    public static void setZeroSecondsCalendar(Calendar calendar) {
-        if (calendar != null) {
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-        }
-    }
-
     public static void setTimeFromCalendar(Calendar calendar, Calendar from) {
         if (calendar != null) {
             calendar.set(Calendar.HOUR_OF_DAY, from.get(Calendar.HOUR_OF_DAY));
@@ -184,15 +177,8 @@ public class CalendarUtil {
      * @return 0 if no intersection. Returns N milliseconds of total
      *         intersection time
      */
-    public static boolean isIntersectingStrong(Calendar oneStart, Calendar oneEnd, Calendar twoStart, Calendar twoEnd) {
+    private static boolean isIntersectionStrong(Calendar oneStart, Calendar oneEnd, Calendar twoStart, Calendar twoEnd) {
         if (oneEnd.compareTo(twoStart) < 0 || twoEnd.compareTo(oneStart) < 0) {
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean isIntersectingWeak(Calendar oneStart, Calendar oneEnd, Calendar twoStart, Calendar twoEnd) {
-        if (oneEnd.compareTo(twoStart) <= 0 || twoEnd.compareTo(oneStart) <= 0) {
             return false;
         }
         return true;
@@ -206,7 +192,7 @@ public class CalendarUtil {
         Collections.sort(intervals);
         CalendarInterval current = intervals.get(0);
         for (int i = 1; i < intervals.size(); i++) {
-            if (isIntersectingStrong(current.getFrom(), current.getTo(), intervals.get(i).getFrom(), intervals.get(i).getTo())) {
+            if (isIntersectionStrong(current.getFrom(), current.getTo(), intervals.get(i).getFrom(), intervals.get(i).getTo())) {
                 Calendar from = current.getFrom().after(intervals.get(i).getFrom()) ? intervals.get(i).getFrom() : current.getFrom();
                 Calendar to = current.getTo().before(intervals.get(i).getTo()) ? intervals.get(i).getTo() : current.getTo();
                 current = new CalendarInterval(from, to);
@@ -231,7 +217,7 @@ public class CalendarUtil {
 
     public static List<Calendar> subtract(Calendar oneStart, Calendar oneEnd, Calendar twoStart, Calendar twoEnd) {
         ArrayList<Calendar> result = new ArrayList<Calendar>(4);
-        if (!isIntersectingStrong(oneStart, oneEnd, twoStart, twoEnd)) {
+        if (!isIntersectionStrong(oneStart, oneEnd, twoStart, twoEnd)) {
             result.add((Calendar) oneStart.clone());
             result.add((Calendar) oneEnd.clone());
             return result;
@@ -306,7 +292,7 @@ public class CalendarUtil {
         return countMinutesFromMillis(resultInMillis);
     }
 
-    public static int compareHoursMinutes(Calendar time1, Calendar time2) {
+    public static int compareTime(Calendar time1, Calendar time2) {
         if (time1.get(Calendar.HOUR_OF_DAY) > time2.get(Calendar.HOUR_OF_DAY)) {
             return 1;
         } else if (time1.get(Calendar.HOUR_OF_DAY) < time2.get(Calendar.HOUR_OF_DAY)) {
@@ -318,14 +304,6 @@ public class CalendarUtil {
             return -1;
         }
         return 0;
-    }
-
-    public static boolean areCalendarEqualsIgnoringMilliseconds(Calendar c1, Calendar c2) {
-        c1 = clone(c1);
-        c1.set(Calendar.MILLISECOND, 0);
-        c2 = clone(c2);
-        c2.set(Calendar.MILLISECOND, 0);
-        return c1.equals(c2);
     }
 
     public static int compareOnlyDate(Calendar c1, Calendar c2) {

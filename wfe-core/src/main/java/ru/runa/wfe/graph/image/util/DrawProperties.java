@@ -44,6 +44,7 @@ public final class DrawProperties {
     static {
         try {
             bundle = ResourceBundle.getBundle("graph");
+            useEdgingMode = Boolean.parseBoolean(getProperty("edgingOnly", "true"));
         } catch (MissingResourceException e) {
             log.warn(e.getMessage());
         }
@@ -94,15 +95,7 @@ public final class DrawProperties {
     }
 
     public static boolean useEdgingOnly() {
-        return useEdgingMode && Boolean.parseBoolean(getProperty("edgingOnly", "true"));
-    }
-
-    public static void setUseEdgingMode(boolean edgingMode) {
-        useEdgingMode = edgingMode;
-    }
-
-    public static Color getBPMNTransitionColor() {
-        return getColorProperty("bpmn.transitionColor", new Color(0x99, 0x99, 0x99));
+        return useEdgingMode;
     }
 
     public static boolean showSwimlaneInBPMN() {

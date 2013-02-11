@@ -72,7 +72,7 @@ public class RelationPair extends IdentifiableBase {
      */
     private Relation relation;
 
-    protected RelationPair() {
+    public RelationPair() {
     }
 
     /**
@@ -107,8 +107,7 @@ public class RelationPair extends IdentifiableBase {
         return id;
     }
 
-    // This is need by hibernate.
-    protected void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -125,8 +124,7 @@ public class RelationPair extends IdentifiableBase {
         return Proxies.getImplementation(left);
     }
 
-    // This is need by hibernate.
-    protected void setLeft(Executor relationFrom) {
+    public void setLeft(Executor relationFrom) {
         left = relationFrom;
     }
 
@@ -143,8 +141,7 @@ public class RelationPair extends IdentifiableBase {
         return Proxies.getImplementation(right);
     }
 
-    // This is need by hibernate.
-    protected void setRight(Executor relationTo) {
+    public void setRight(Executor relationTo) {
         right = relationTo;
     }
 
@@ -161,8 +158,7 @@ public class RelationPair extends IdentifiableBase {
         return relation;
     }
 
-    // This is need by hibernate.
-    protected void setRelation(Relation relationsGroup) {
-        relation = relationsGroup;
+    public void setRelation(Relation relation) {
+        this.relation = relation;
     }
 }

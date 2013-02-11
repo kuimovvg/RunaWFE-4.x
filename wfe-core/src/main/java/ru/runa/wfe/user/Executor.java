@@ -29,17 +29,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.PolymorphismType;
 
 import ru.runa.wfe.commons.OracleCommons;
-import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.security.IdentifiableBase;
 
 import com.google.common.base.Objects;
@@ -58,21 +53,14 @@ import com.google.common.base.Objects;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING, length = 1)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@XmlType(name = "Executor", namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
-@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Executor extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long id;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long version;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String name;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String description;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
-    protected String fullName;
+    private String fullName;
 
     protected Executor() {
     }

@@ -59,7 +59,7 @@ public class DateFilterCriteria extends FilterCriteria {
     }
 
     @Override
-    protected void setFilterTemplates(String[] filterTemplates) {
+    public void setFilterTemplates(String[] filterTemplates) {
         if (filterTemplates == null || filterTemplates.length != 2) {
             this.filterTemplates = new String[] { "", "" };
         } else {

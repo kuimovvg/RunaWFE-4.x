@@ -57,7 +57,6 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.logic.AuthorizationLogic;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
-import ru.runa.wfe.ss.SubstitutionDoesNotExistException;
 import ru.runa.wfe.ss.TerminatorSubstitution;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
 import ru.runa.wfe.user.Actor;
@@ -749,16 +748,16 @@ public class AdminScriptRunner {
         return result;
     }
 
-    private List<Substitution> getDeletedSubstitution(List<Element> elements, Set<Actor> actors) {
+    private List<Long> getSubstitutionIdsToDelete(List<Element> elements, Set<Actor> actors) {
         if (elements.size() == 0) {
-            return new ArrayList<Substitution>();
+            return new ArrayList<Long>();
         }
-        List<Substitution> result = Lists.newArrayList();
+        List<Long> result = Lists.newArrayList();
         List<SubstitutionCriteria> criterias = Lists.newArrayList();
         List<String> orgFunctions = Lists.newArrayList();
-        for (Element e : elements) {
-            orgFunctions.add(e.attributeValue(ORGFUNC_ATTRIBUTE_NAME));
-            String criteria = e.attributeValue(CRITERIA_ATTRIBUTE_NAME);
+        for (Element element : elements) {
+            orgFunctions.add(element.attributeValue(ORGFUNC_ATTRIBUTE_NAME));
+            String criteria = element.attributeValue(CRITERIA_ATTRIBUTE_NAME);
             if (!Strings.isNullOrEmpty(criteria)) {
                 criterias.add(substitutionLogic.getCriteria(user, Long.parseLong(criteria)));
             } else {
@@ -770,7 +769,7 @@ public class AdminScriptRunner {
                 for (int i = 0; i < elements.size(); ++i) {
                     if (isCriteriaMatch(substitution.getCriteria(), criterias.get(i))
                             && isStringMatch(substitution.getOrgFunction(), tuneOrgFunc(orgFunctions.get(i), actor))) {
-                        result.add(substitution);
+                        result.add(substitution.getId());
                         break;
                     }
                 }
@@ -779,72 +778,31 @@ public class AdminScriptRunner {
         return result;
     }
 
-    private void addSubstitution(List<Element> elements, Set<Actor> actors) {
-        List<Substitution> firstSub = new ArrayList<Substitution>();
-        List<Substitution> lastSub = new ArrayList<Substitution>();
-        if (elements.size() == 0) {
-            return;
-        }
-        for (Element e : elements) {
-            String orgFunction = e.attributeValue(ORGFUNC_ATTRIBUTE_NAME);
+    private void addSubstitutions(List<Element> elements, Set<Actor> actors) {
+        for (Element element : elements) {
+            String orgFunction = element.attributeValue(ORGFUNC_ATTRIBUTE_NAME);
             SubstitutionCriteria criteria = null;
-            boolean enabled = Boolean.parseBoolean(e.attributeValue(ISENABLED_ATTRIBUTE_NAME, "true"));
-            boolean first = Boolean.parseBoolean(e.attributeValue(ISFIRST_ATTRIBUTE_NAME, "true"));
-            if (e.attribute(CRITERIA_ATTRIBUTE_NAME) != null) {
-                criteria = substitutionLogic.getCriteria(user, Long.parseLong(e.attributeValue(CRITERIA_ATTRIBUTE_NAME)));
+            boolean enabled = Boolean.parseBoolean(element.attributeValue(ISENABLED_ATTRIBUTE_NAME, "true"));
+            boolean first = Boolean.parseBoolean(element.attributeValue(ISFIRST_ATTRIBUTE_NAME, "true"));
+            if (element.attribute(CRITERIA_ATTRIBUTE_NAME) != null) {
+                criteria = substitutionLogic.getCriteria(user, Long.parseLong(element.attributeValue(CRITERIA_ATTRIBUTE_NAME)));
             }
-            Substitution substitution;
-            if (orgFunction == null) {
-                substitution = new TerminatorSubstitution();
-            } else {
-                substitution = new Substitution();
-                substitution.setOrgFunction(orgFunction);
-            }
-            substitution.setCriteria(criteria);
-            substitution.setEnabled(enabled);
-            if (first) {
-                firstSub.add(substitution);
-            } else {
-                lastSub.add(substitution);
-            }
-        }
-        List<Substitution> deletedSubstitutions = new ArrayList<Substitution>();
-        List<Substitution> createdSubstitutions = new ArrayList<Substitution>();
-        for (Actor actor : actors) {
-            List<Substitution> existing = substitutionLogic.getSubstitutions(user, actor.getId());
-            if (!firstSub.isEmpty()) {
-                for (Substitution sub : existing) {
-                    deletedSubstitutions.add(sub);
+            for (Actor actor : actors) {
+                Substitution substitution;
+                if (orgFunction == null) {
+                    substitution = new TerminatorSubstitution();
+                } else {
+                    substitution = new Substitution();
+                    substitution.setOrgFunction(orgFunction);
                 }
+                substitution.setActorId(actor.getId());
+                substitution.setCriteria(criteria);
+                substitution.setEnabled(enabled);
+                if (first) {
+                    substitution.setPosition(0);
+                }
+                substitutionLogic.create(user, substitution);
             }
-            int subIdx = 0;
-            for (Substitution sub : firstSub) {
-                Substitution clone = (Substitution) sub.clone();
-                clone.setOrgFunction(tuneOrgFunc(clone.getOrgFunction(), actor));
-                clone.setPosition(subIdx++);
-                clone.setActorId(actor.getId());
-                createdSubstitutions.add(clone);
-            }
-            for (Substitution sub : existing) {
-                Substitution clone = (Substitution) sub.clone();
-                clone.setOrgFunction(tuneOrgFunc(clone.getOrgFunction(), actor));
-                clone.setPosition(subIdx++);
-                clone.setActorId(actor.getId());
-                createdSubstitutions.add(clone);
-            }
-            for (Substitution sub : lastSub) {
-                Substitution clone = (Substitution) sub.clone();
-                clone.setOrgFunction(tuneOrgFunc(clone.getOrgFunction(), actor));
-                clone.setPosition(subIdx++);
-                clone.setActorId(actor.getId());
-                createdSubstitutions.add(clone);
-            }
-        }
-        for (Substitution substitution : deletedSubstitutions) {
-            substitutionLogic.delete(user, substitution);
-        }
-        for (Substitution substitution : createdSubstitutions) {
-            substitutionLogic.create(user, substitution);
         }
     }
 
@@ -854,15 +812,9 @@ public class AdminScriptRunner {
         for (Element e : executorsElements) {
             actors.addAll(getActors(e));
         }
-        try {
-            List<Substitution> deleted = getDeletedSubstitution(element.elements("delete"), actors);
-            for (Substitution substitution : deleted) {
-                substitutionLogic.delete(user, substitution);
-            }
-            addSubstitution(element.elements("add"), actors);
-        } catch (SubstitutionDoesNotExistException e) {
-            log.warn("Error in Substitution changing.", e);
-        }
+        List<Long> idsToDelete = getSubstitutionIdsToDelete(element.elements("delete"), actors);
+        substitutionLogic.delete(user, idsToDelete);
+        addSubstitutions(element.elements("add"), actors);
     }
 
     public void createBotStation(Element element) {

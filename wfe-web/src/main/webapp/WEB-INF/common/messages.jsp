@@ -4,11 +4,8 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/wf.tld" prefix="af" %>
-<%@page import="org.apache.struts.taglib.TagUtils"%>
-<%@page import="org.apache.struts.action.ActionMessage"%>
-<%@page import="ru.runa.common.web.Resources"%>
-<%@page import="ru.runa.common.web.Commons"%>
-<af:globalExceptions/>
+
+<af:globalExceptions />
 
 <center>
 

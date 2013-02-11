@@ -44,7 +44,7 @@ public class GroupMembersComboboxVarTag extends AbstractActorComboBoxVarTag {
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
         batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
 
-        Group group = Delegates.getExecutorService().getExecutor(user, varName);
+        Group group = Delegates.getExecutorService().getExecutorByName(user, varName);
         List<Executor> executors = Delegates.getExecutorService().getGroupChildren(user, group, batchPresentation, false);
         List<Actor> actors = Lists.newArrayList();
         for (Executor executor : executors) {

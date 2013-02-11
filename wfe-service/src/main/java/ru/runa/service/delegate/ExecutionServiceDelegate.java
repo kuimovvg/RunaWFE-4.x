@@ -18,8 +18,8 @@
 package ru.runa.service.delegate;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ru.runa.service.ExecutionService;
 import ru.runa.wfe.audit.ProcessLogFilter;
@@ -49,7 +49,7 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public Long startProcess(User user, String definitionName, Map<String, Object> variablesMap) {
+    public Long startProcess(User user, String definitionName, HashMap<String, Object> variablesMap) {
         return getExecutionService().startProcess(user, definitionName, variablesMap);
     }
 
@@ -99,17 +99,17 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public Map<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName) {
+    public HashMap<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName) {
         return getExecutionService().getVariableValuesFromProcesses(user, processIds, variableName);
     }
 
     @Override
-    public void updateVariables(User user, Long processId, Map<String, Object> variables) {
+    public void updateVariables(User user, Long processId, HashMap<String, Object> variables) {
         getExecutionService().updateVariables(user, processId, variables);
     }
 
     @Override
-    public void completeTask(User user, Long taskId, Map<String, Object> variables) {
+    public void completeTask(User user, Long taskId, HashMap<String, Object> variables) {
         getExecutionService().completeTask(user, taskId, variables);
     }
 

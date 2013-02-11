@@ -20,13 +20,6 @@ package ru.runa.wfe.user;
 import java.io.Serializable;
 import java.security.Principal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-import ru.runa.wfe.commons.SystemUtils;
-
 /**
  * <p>
  * This class implements the <code>Principal</code> interface and represents a
@@ -39,14 +32,11 @@ import ru.runa.wfe.commons.SystemUtils;
  * to achieve this. Authorization decisions can then be based upon the
  * Principals associated with a <code>Subject</code>. Created on 16.07.2004
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "User", namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
 public class User implements Principal, Serializable {
     private static final long serialVersionUID = 43549879345L;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
-    private byte[] securedKey;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
+
     private Actor actor;
+    private byte[] securedKey;
 
     protected User() {
     }
@@ -73,6 +63,10 @@ public class User implements Principal, Serializable {
 
     public byte[] getSecuredKey() {
         return securedKey;
+    }
+
+    public void setSecuredKey(byte[] securedKey) {
+        this.securedKey = securedKey;
     }
 
     @Override

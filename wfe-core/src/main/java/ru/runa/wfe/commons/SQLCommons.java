@@ -21,8 +21,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
-import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,110 +31,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class SQLCommons {
     private static final Log log = LogFactory.getLog(SQLCommons.class);
-
-    /**
-     * builds IN query part for given array if parameter = id and ids [1,2,3] the result will be "id in(1,2,3)"
-     * 
-     * @param parameter
-     * @param ids
-     * @return
-     */
-    public static final String buildINQueryPart(String parameter, Collection<Long> ids) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(parameter);
-        sb.append(" in (");
-        Iterator<Long> iter = ids.iterator();
-        while (iter.hasNext()) {
-            sb.append(iter.next().longValue());
-            if (iter.hasNext()) {
-                sb.append(",");
-            }
-        }
-        sb.append(")");
-        return sb.toString();
-    }
-
-    /**
-     * builds IN query part for given array if parameter = id and ids [1,2,3] the result will be "id in(1,2,3)"
-     * 
-     * @param parameter
-     * @param ids
-     * @return
-     */
-    public static final String buildINQueryPart(String parameter, long[] ids) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(parameter);
-        sb.append(" in (");
-        for (int i = 0; i < ids.length; i++) {
-            if (i > 0) {
-                sb.append(",");
-            }
-            sb.append(ids[i]);
-        }
-        sb.append(")");
-        return sb.toString();
-    }
-
-    /**
-     * builds IN query part for given array if ids = [1,2,3] the result will be " in (1,2,3)"
-     * 
-     * @param parameter
-     * @param ids
-     * @return
-     */
-    public static final String buildINQueryPart(long[] ids) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" in (");
-        for (int i = 0; i < ids.length; i++) {
-            if (i > 0) {
-                sb.append(",");
-            }
-            sb.append(ids[i]);
-        }
-        sb.append(")");
-        return sb.toString();
-    }
-
-    /**
-     * builds IN query part for given array if parameter = id and ids [1,2,3] the result will be "id in(1,2,3)"
-     * 
-     * @param parameter
-     * @param ids
-     * @return
-     */
-    public static final String buildINQueryPart(String parameter, Number[] ids) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(parameter);
-        sb.append(" in (");
-        for (int i = 0; i < ids.length; i++) {
-            if (i > 0) {
-                sb.append(",");
-            }
-            sb.append(ids[i]);
-        }
-        sb.append(")");
-        return sb.toString();
-    }
-
-    /**
-     * builds IN query part for given array if ids = [1,2,3] the result will be " in (1,2,3)"
-     * 
-     * @param parameter
-     * @param ids
-     * @return
-     */
-    public static final String buildINQueryPart(Number[] ids) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" in (");
-        for (int i = 0; i < ids.length; i++) {
-            if (i > 0) {
-                sb.append(",");
-            }
-            sb.append(ids[i]);
-        }
-        sb.append(")");
-        return sb.toString();
-    }
 
     /**
      * Closes connection suppressing any thrown exceptions.
@@ -155,7 +49,8 @@ public final class SQLCommons {
     }
 
     /**
-     * Closes connection and prepared statement suppressing any thrown exceptions.
+     * Closes connection and prepared statement suppressing any thrown
+     * exceptions.
      * 
      * @param connection
      *            connection to close

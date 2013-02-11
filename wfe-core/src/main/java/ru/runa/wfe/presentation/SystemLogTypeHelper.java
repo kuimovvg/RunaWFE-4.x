@@ -20,7 +20,6 @@ package ru.runa.wfe.presentation;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.runa.wfe.audit.ProcessDefinitionDeleteExceptionLog;
 import ru.runa.wfe.audit.ProcessDefinitionDeleteLog;
 import ru.runa.wfe.audit.ProcessDeleteLog;
 import ru.runa.wfe.audit.SystemLog;
@@ -32,7 +31,8 @@ import com.google.common.collect.Maps;
  */
 public final class SystemLogTypeHelper {
     /**
-     * {@link Map} from enumerated value (type descriminator value) to property display name (struts property).
+     * {@link Map} from enumerated value (type descriminator value) to property
+     * display name (struts property).
      */
     private static final Map<String, String> enumerationValues = new HashMap<String, String>();
 
@@ -43,12 +43,12 @@ public final class SystemLogTypeHelper {
 
     static {
         addType(ProcessDefinitionDeleteLog.class, "PDDel", "history.system.type.process_definition_delete");
-        addType(ProcessDefinitionDeleteExceptionLog.class, "PDExcDel", "history.system.type.exception_on_process_definition_delete");
         addType(ProcessDeleteLog.class, "PIDel", "history.system.type.process_delete");
     }
 
     /**
-     * {@link Map} from enumerated value ({@link SystemLog} discriminator value) to property display name (struts property).
+     * {@link Map} from enumerated value ({@link SystemLog} discriminator value)
+     * to property display name (struts property).
      */
     public static Map<String, String> getValues() {
         return new HashMap<String, String>(enumerationValues);

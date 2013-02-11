@@ -36,7 +36,6 @@ public class KrbSupportResources extends ResourceCommons {
 
     private static final String APP_NAME_PROPERTY = "appName";
     private static final String MODULE_CLASS_NAME_PROPERTY = "moduleClassName";
-    private static final String SERVER_PRINCIPAL_PROPERTY = "serverPrincipal";
 
     static {
         loginModuleParams = new HashMap<String, String>();
@@ -58,10 +57,6 @@ public class KrbSupportResources extends ResourceCommons {
 
     public static String getAppName() {
         return getParameter(APP_NAME_PROPERTY);
-    }
-
-    public static String getServerPrincipal() {
-        return getParameter(SERVER_PRINCIPAL_PROPERTY);
     }
 
     public static String getModuleClassName() {

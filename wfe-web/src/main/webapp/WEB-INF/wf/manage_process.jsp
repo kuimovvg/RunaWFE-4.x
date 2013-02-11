@@ -3,7 +3,6 @@
 <%@ page import="ru.runa.wf.web.form.TaskIdForm" %>
 <%@ page import="ru.runa.wf.web.action.ShowGraphModeHelper" %>
 <%@ page import="ru.runa.common.WebResources" %>
-<%@ page import="ru.runa.common.WebResources" %>
 
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles"%>
 <%@ taglib uri="/WEB-INF/wf.tld" prefix="wf" %>

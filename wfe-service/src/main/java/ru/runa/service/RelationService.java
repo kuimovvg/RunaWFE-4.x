@@ -76,7 +76,7 @@ public interface RelationService {
      * @throws RelationDoesNotExistException
      *             Relation with specified name is not exists.
      */
-    public Relation getRelation(User user, String relationsName) throws RelationDoesNotExistException;
+    public Relation getRelationByName(User user, String name) throws RelationDoesNotExistException;
 
     /**
      * Return {@link Relation} with specified identity or throws
@@ -85,13 +85,13 @@ public interface RelationService {
      * 
      * @param subject
      *            Subject, which perform operation.
-     * @param relationId
+     * @param id
      *            Relation identity.
      * @return Relation with specified name.
      * @throws RelationDoesNotExistException
      *             Relation with specified name is not exists.
      */
-    public Relation getRelation(User user, Long relationId) throws RelationDoesNotExistException;
+    public Relation getRelation(User user, Long id) throws RelationDoesNotExistException;
 
     /**
      * Remove {@link Relation} with specified identity.
@@ -149,21 +149,6 @@ public interface RelationService {
      */
     public List<RelationPair> getRelationPairs(User user, String relationsName, BatchPresentation batchPresentation)
             throws RelationDoesNotExistException;
-
-    /**
-     * Return {@link RelationPair} for specified {@link Relation}, according to
-     * specified {@link BatchPresentation}.
-     * 
-     * @param subject
-     *            Subject, which perform operation.
-     * @param relationId
-     *            Relation identity.
-     * @param batchPresentation
-     *            Restrictions to get {@link RelationPair}.
-     * @return
-     * @throws RelationDoesNotExistException
-     */
-    public List<RelationPair> getRelationPairs(User user, Long relationId, BatchPresentation batchPresentation) throws RelationDoesNotExistException;
 
     /**
      * Return {@link RelationPair} for specified {@link Relation}, which right

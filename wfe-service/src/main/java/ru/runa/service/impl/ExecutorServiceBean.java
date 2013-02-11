@@ -23,6 +23,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -46,6 +48,8 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@WebService
+@SOAPBinding
 public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServiceRemote {
     @Autowired
     private ExecutorLogic executorLogic;
@@ -85,7 +89,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public Executor getExecutor(User user, String name) {
+    public Executor getExecutorByName(User user, String name) {
         Preconditions.checkNotNull(user);
         return executorLogic.getExecutor(user, name);
     }
@@ -102,14 +106,6 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
         return executorLogic.create(user, executor);
-    }
-
-    @Override
-    public void addExecutorsToGroup(User user, List<? extends Executor> executors, Group group) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executors);
-        Preconditions.checkNotNull(group);
-        executorLogic.addExecutorsToGroup(user, executors, group);
     }
 
     @Override

@@ -52,8 +52,8 @@ public class RelationServiceDelegate extends EJB3Delegate implements RelationSer
     }
 
     @Override
-    public Relation getRelation(User user, String relationGroupName) {
-        return getRelationService().getRelation(user, relationGroupName);
+    public Relation getRelationByName(User user, String relationGroupName) {
+        return getRelationService().getRelationByName(user, relationGroupName);
     }
 
     @Override
@@ -77,13 +77,8 @@ public class RelationServiceDelegate extends EJB3Delegate implements RelationSer
     }
 
     @Override
-    public List<RelationPair> getRelationPairs(User user, String relationsGroupName, BatchPresentation batchPresentation) {
-        return getRelationService().getRelationPairs(user, relationsGroupName, batchPresentation);
-    }
-
-    @Override
-    public List<RelationPair> getRelationPairs(User user, Long relationId, BatchPresentation batchPresentation) {
-        return getRelationService().getRelationPairs(user, relationId, batchPresentation);
+    public List<RelationPair> getRelationPairs(User user, String relationName, BatchPresentation batchPresentation) {
+        return getRelationService().getRelationPairs(user, relationName, batchPresentation);
     }
 
     @Override

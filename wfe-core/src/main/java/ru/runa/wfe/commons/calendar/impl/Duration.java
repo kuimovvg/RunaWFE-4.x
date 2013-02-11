@@ -167,12 +167,6 @@ public class Duration implements Serializable {
         field = Calendar.MILLISECOND;
     }
 
-    public Duration(Duration duration) {
-        field = duration.field;
-        amount = duration.amount;
-        isBusinessTime = duration.isBusinessTime;
-    }
-
     /**
      * creates a duration from a textual description. syntax: {number} space
      * {unit} where number is parsable to a java.lang.Number and unit is one of

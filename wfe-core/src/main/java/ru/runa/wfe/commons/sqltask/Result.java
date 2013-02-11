@@ -27,14 +27,6 @@ package ru.runa.wfe.commons.sqltask;
 public class Result extends QueryElement {
 
     /**
-     * @param variableName
-     *            process variable name
-     */
-    public Result(String variableName) {
-        super(variableName);
-    }
-
-    /**
      * 
      * @param variableName
      *            process variable name

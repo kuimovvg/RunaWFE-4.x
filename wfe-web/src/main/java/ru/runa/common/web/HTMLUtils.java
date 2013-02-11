@@ -21,8 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.mail.internet.MimeUtility;
 import javax.xml.transform.OutputKeys;
@@ -33,8 +31,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.cyberneko.html.parsers.DOMParser;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import com.google.common.base.Charsets;
@@ -68,19 +64,6 @@ public class HTMLUtils {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    public static List<String> findImages(byte[] htmlBytes) {
-        List<String> list = new ArrayList<String>();
-        Document document = readHtml(htmlBytes);
-
-        NodeList imgElements = document.getElementsByTagName("img");
-        for (int i = 0; i < imgElements.getLength(); i++) {
-            Element imgElement = (Element) imgElements.item(i);
-            String path = imgElement.getAttribute("src");
-            list.add(path);
-        }
-        return list;
     }
 
     public static String encodeFileName(String fileName, String userAgent) {

@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.dao.ProcessLogDAO;
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.definition.dao.ProcessDefinitionLoader;
@@ -99,7 +98,7 @@ public class WFCommonLogic extends CommonLogic {
         return processDefinitionLoader.getDefinition(task);
     }
 
-    protected ProcessDefinition getLatestDefinition(String definitionName) throws DefinitionDoesNotExistException {
+    protected ProcessDefinition getLatestDefinition(String definitionName) {
         return processDefinitionLoader.getLatestDefinition(definitionName);
     }
 
@@ -138,7 +137,7 @@ public class WFCommonLogic extends CommonLogic {
         return false;
     }
 
-    protected void checkCanParticipate(User user, Task task) throws AuthorizationException {
+    protected void checkCanParticipate(User user, Task task) {
         Executor taskExecutor = task.getExecutor();
         if (taskExecutor == null) {
             throw new AuthorizationException("Unable to participate in unassigned task");
@@ -159,14 +158,15 @@ public class WFCommonLogic extends CommonLogic {
         throw new AuthorizationException("Executor " + user + " has no pemission to participate as " + taskExecutor + " in task " + task);
     }
 
-    protected void checkReadToVariablesAllowed(User user, Task task) throws AuthorizationException {
+    // TODO unused: variable permissions check
+    protected void checkReadToVariablesAllowed(User user, Task task) {
         if (isPermissionAllowed(user, task.getProcess(), ProcessPermission.READ)) {
             return;
         }
         checkCanParticipate(user, task);
     }
 
-    protected Set<Actor> getAssignedActors(Task task) throws ExecutorDoesNotExistException {
+    protected Set<Actor> getAssignedActors(Task task) {
         if (task.getExecutor() == null) {
             throw new InternalApplicationException("Unassigned tasks can't be in processing");
         }
@@ -206,7 +206,7 @@ public class WFCommonLogic extends CommonLogic {
      */
     public List<GraphElementPresentation> getDefinitionGraphElements(User user, Long id, GraphElementPresentationVisitor visitor) {
         ProcessDefinition definition = getDefinition(id);
-        checkPermissionAllowed(user, definition, DefinitionPermission.READ);
+        checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
         List<GraphElementPresentation> result = GraphElementPresentationBuilder.createElements(definition);
         if (visitor != null) {
             for (GraphElementPresentation elementPresentation : result) {

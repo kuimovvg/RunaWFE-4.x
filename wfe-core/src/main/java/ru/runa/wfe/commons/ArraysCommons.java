@@ -28,13 +28,6 @@ import java.util.List;
  */
 public class ArraysCommons {
 
-    public static long[] sum(long[] a, long[] b) {
-        long[] result = new long[a.length + b.length];
-        System.arraycopy(a, 0, result, 0, a.length);
-        System.arraycopy(b, 0, result, a.length, b.length);
-        return result;
-    }
-
     public static Object[] sum(Object[] a, Object[] b) {
         if (a.getClass() != b.getClass()) {
             throw new IllegalArgumentException("a and b arrays types differes.");
@@ -62,25 +55,8 @@ public class ArraysCommons {
         return array;
     }
 
-    public static long[] createLongArray(Collection<Long> collection) {
-        long[] array = new long[collection.size()];
-        int i = 0;
-        for (Long l : collection) {
-            array[i++] = l;
-        }
-        return array;
-    }
-
     public static Object[] createArrayValuesByIndex(Object[] values, int[] indexes) {
         Object[] result = (Object[]) Array.newInstance(values.getClass().getComponentType(), indexes.length);
-        for (int i = 0; i < result.length; i++) {
-            result[i] = values[indexes[i]];
-        }
-        return result;
-    }
-
-    public static int[] createArrayValuesByIndex(int[] values, int[] indexes) {
-        int[] result = new int[indexes.length];
         for (int i = 0; i < result.length; i++) {
             result[i] = values[indexes[i]];
         }
@@ -105,38 +81,6 @@ public class ArraysCommons {
     public static int findPosition(int[] values, int value) {
         for (int i = 0; i < values.length; i++) {
             if (values[i] == value) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Finds position of value in array of values.
-     * 
-     * @param values
-     * @param value
-     * @return position of value in array of value of -1 if position not found
-     */
-    public static int findPosition(long[] values, long value) {
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] == value) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Finds position of value in array of values.
-     * 
-     * @param values
-     * @param value
-     * @return position of value in array of value of -1 if position not found
-     */
-    public static int findPosition(Object[] values, Object value) {
-        for (int i = 0; i < values.length; i++) {
-            if (values[i].equals(value)) {
                 return i;
             }
         }
@@ -263,20 +207,6 @@ public class ArraysCommons {
         System.arraycopy(values, 0, result, 0, position);
         System.arraycopy(values, position + 1, result, position, values.length - position - 1);
         return result;
-    }
-
-    /**
-     * Changes position of an element in array
-     * 
-     * @param values
-     * @param oldPosition
-     * @param newPosition
-     * @return
-     */
-    public static Object[] changePosition(Object[] values, int oldPosition, int newPosition) {
-        Object value = values[oldPosition];
-        Object result[] = remove(values, oldPosition);
-        return insert(result, newPosition, value);
     }
 
     /**

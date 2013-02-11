@@ -70,7 +70,7 @@ public class ListExecutorLeftRelationMembersFormTag extends TitledFormTag {
         ExecutorService executorService = Delegates.getExecutorService();
         RelationService relationService = Delegates.getRelationService();
         AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        Relation currentRelation = relationService.getRelation(getUser(), getRelationName());
+        Relation currentRelation = relationService.getRelationByName(getUser(), getRelationName());
         isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, currentRelation);
         List<Executor> executors = new ArrayList<Executor>();
         Executor executor = executorService.getExecutor(getUser(), executorId);

@@ -258,7 +258,7 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
      */
     private void saveExecutionState(User user, WfTask task, Interaction interaction) {
         ExecutionService executionService = Delegates.getExecutionService();
-        Map<String, Object> variables = new HashMap<String, Object>();
+        HashMap<String, Object> variables = new HashMap<String, Object>();
         xsltHelper.get().MergeVariablesIn(variables);
         variables.put("WS_ITERATION_" + task.getId(), settings.interactions.indexOf(interaction));
         executionService.updateVariables(user, task.getProcessId(), variables);

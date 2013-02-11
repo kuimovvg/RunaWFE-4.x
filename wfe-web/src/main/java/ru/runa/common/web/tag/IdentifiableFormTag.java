@@ -21,7 +21,6 @@ import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.AuthorizationService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -57,16 +56,12 @@ public abstract class IdentifiableFormTag extends TitledFormTag {
 
     @Override
     protected boolean isFormButtonEnabled() {
-        if (getPermission() == null) {
-            return true;
-        }
         return isFormButtonEnabled(getIdentifiable(), getPermission());
     }
 
     @Override
     protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
-        AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        return (permission == null || authorizationService.isAllowed(getUser(), permission, identifiable));
+        return (permission == null || Delegates.getAuthorizationService().isAllowed(getUser(), permission, identifiable));
     }
 
     @Override

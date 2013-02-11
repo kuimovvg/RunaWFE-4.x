@@ -39,12 +39,6 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>wfe-webservice</artifactId>
-			<version>${project.version}</version>
-			<type>ejb</type>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
@@ -89,10 +83,6 @@
 						<ejbModule>
 							<groupId>${project.groupId}</groupId>
 							<artifactId>wfe-service</artifactId>
-						</ejbModule>
-						<ejbModule>
-							<groupId>${project.groupId}</groupId>
-							<artifactId>wfe-webservice</artifactId>
 						</ejbModule>
 					</modules>
 					<jboss>

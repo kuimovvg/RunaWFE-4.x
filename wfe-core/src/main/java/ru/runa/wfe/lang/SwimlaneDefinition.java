@@ -23,14 +23,19 @@ package ru.runa.wfe.lang;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.ExecutorFormat;
 
 /**
  * is a process role (aka participant).
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class SwimlaneDefinition extends GraphElement {
     private static final long serialVersionUID = 1L;
+
     private Delegation delegation;
     private String orgFunctionLabel;
     private List<String> flowNodeIds;
@@ -53,7 +58,7 @@ public class SwimlaneDefinition extends GraphElement {
     }
 
     public void setOrgFunctionLabel(String displayOrgFunction) {
-        this.orgFunctionLabel = displayOrgFunction;
+        orgFunctionLabel = displayOrgFunction;
     }
 
     public List<String> getFlowNodeIds() {

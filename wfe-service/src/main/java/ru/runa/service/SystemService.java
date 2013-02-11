@@ -17,9 +17,8 @@
  */
 package ru.runa.service;
 
-import java.util.Map;
+import java.util.HashMap;
 
-import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.user.User;
 
@@ -30,13 +29,13 @@ import ru.runa.wfe.user.User;
  */
 public interface SystemService {
 
-    public void login(User user, ASystem system) throws AuthorizationException;
+    public void login(User user) throws AuthorizationException;
 
-    public void logout(User user, ASystem system);
+    public void logout(User user);
 
-    public Map<String, String> getLocalizations(User user);
+    public HashMap<String, String> getLocalizations(User user);
 
     public String getLocalized(User user, String name);
 
-    public void saveLocalizations(User user, Map<String, String> localizations);
+    public void saveLocalizations(User user, HashMap<String, String> localizations);
 }
