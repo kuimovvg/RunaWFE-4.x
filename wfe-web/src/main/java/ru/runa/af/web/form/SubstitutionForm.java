@@ -28,7 +28,7 @@ import ru.runa.af.web.orgfunction.FunctionDef;
 import ru.runa.af.web.orgfunction.SubstitutionDefinitions;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.wfe.os.ParamRenderer;
+import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.user.User;
 
 /**

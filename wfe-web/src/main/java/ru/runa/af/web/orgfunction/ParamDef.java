@@ -20,7 +20,7 @@ package ru.runa.af.web.orgfunction;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.common.web.Messages;
-import ru.runa.wfe.os.ParamRenderer;
+import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 
 public class ParamDef {
     private final String messageKey;

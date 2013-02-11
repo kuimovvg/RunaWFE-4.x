@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.handler.action.ActionHandler;
+import ru.runa.wfe.extension.ActionHandler;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;

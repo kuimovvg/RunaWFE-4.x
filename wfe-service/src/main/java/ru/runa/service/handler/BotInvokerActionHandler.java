@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.handler.action.ActionHandler;
+import ru.runa.wfe.extension.ActionHandler;
 
 import com.google.common.base.Strings;
 
