@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.handler.DelegableProvider;
-import ru.runa.gpd.handler.HandlerArtifact;
-import ru.runa.gpd.handler.HandlerRegistry;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.util.Delay;

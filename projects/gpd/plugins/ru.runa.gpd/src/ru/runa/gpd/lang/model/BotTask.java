@@ -1,7 +1,7 @@
 package ru.runa.gpd.lang.model;
 
-import ru.runa.gpd.handler.HandlerArtifact;
-import ru.runa.gpd.handler.action.ParamDefConfig;
+import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.extension.handler.ParamDefConfig;
 
 public class BotTask implements Delegable {
     public static final String BOT_EXECUTOR_SWIMLANE_NAME = "ExecutorByNameFunction";

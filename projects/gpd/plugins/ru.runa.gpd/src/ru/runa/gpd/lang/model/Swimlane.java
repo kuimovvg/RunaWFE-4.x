@@ -9,9 +9,9 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
-import ru.runa.gpd.handler.HandlerArtifact;
-import ru.runa.gpd.orgfunction.OrgFunctionDefinition;
-import ru.runa.gpd.orgfunction.OrgFunctionsRegistry;
+import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
+import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.wfe.handler.assign.DefaultAssignmentHandler;
 import ru.runa.wfe.var.format.ExecutorFormat;
 

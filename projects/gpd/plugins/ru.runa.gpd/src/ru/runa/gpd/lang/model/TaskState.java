@@ -8,8 +8,8 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.orgfunction.OrgFunctionDefinition;
-import ru.runa.gpd.orgfunction.OrgFunctionsRegistry;
+import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
+import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
 import ru.runa.gpd.property.EscalationDurationPropertyDescriptor;
 import ru.runa.gpd.property.TimeOutDurationPropertyDescriptor;

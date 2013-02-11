@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
-import ru.runa.gpd.handler.VariableFormatRegistry;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;

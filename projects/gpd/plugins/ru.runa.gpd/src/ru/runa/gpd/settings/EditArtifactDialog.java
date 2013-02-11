@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.handler.Artifact;
+import ru.runa.gpd.extension.Artifact;
 
 public class EditArtifactDialog extends TrayDialog {
     private final Artifact artifact;

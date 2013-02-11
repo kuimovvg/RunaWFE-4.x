@@ -42,8 +42,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.handler.Artifact;
-import ru.runa.gpd.handler.ArtifactRegistry;
+import ru.runa.gpd.extension.Artifact;
+import ru.runa.gpd.extension.ArtifactRegistry;
 
 import com.google.common.collect.Lists;
 
