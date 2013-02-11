@@ -51,7 +51,7 @@ import ru.runa.wfe.audit.ProcessCancelLog;
 import ru.runa.wfe.audit.ProcessEndLog;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.Deployment;
-import ru.runa.wfe.handler.assign.AssignmentHandler;
+import ru.runa.wfe.extension.AssignmentHandler;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.ProcessDefinition;

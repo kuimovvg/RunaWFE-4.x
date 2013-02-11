@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.extension.TaskHandler;
 
 /**
  * User: stan79

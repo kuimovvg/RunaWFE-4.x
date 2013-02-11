@@ -35,7 +35,7 @@ import ru.runa.wf.logic.bot.startprocess.StartProcessVariableMapping;
 import ru.runa.wf.logic.bot.startprocess.StartProcessXmlParser;
 import ru.runa.wfe.commons.sqltask.DatabaseTask;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.handler.bot.TaskHandlerBase;
+import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Permission;

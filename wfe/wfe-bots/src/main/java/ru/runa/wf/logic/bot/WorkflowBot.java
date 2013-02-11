@@ -34,7 +34,7 @@ import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
-import ru.runa.wfe.handler.bot.TaskHandler;
+import ru.runa.wfe.extension.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;

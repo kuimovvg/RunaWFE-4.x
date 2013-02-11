@@ -19,7 +19,7 @@ package ru.runa.af.web.orgfunction;
 
 import java.util.List;
 
-import ru.runa.wfe.os.ParamRenderer;
+import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.user.User;
 
 public class StringRenderer implements ParamRenderer {

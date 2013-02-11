@@ -20,7 +20,7 @@ package ru.runa.wf.logic.bot.updatepermission;
 import java.util.Collection;
 import java.util.List;
 
-import ru.runa.wfe.os.OrgFunction;
+import ru.runa.wfe.extension.OrgFunction;
 import ru.runa.wfe.security.Permission;
 
 import com.google.common.base.Strings;

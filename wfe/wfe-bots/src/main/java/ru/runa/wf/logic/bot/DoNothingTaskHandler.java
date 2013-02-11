@@ -19,7 +19,7 @@ package ru.runa.wf.logic.bot;
 
 import java.util.Map;
 
-import ru.runa.wfe.handler.bot.TaskHandlerBase;
+import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;

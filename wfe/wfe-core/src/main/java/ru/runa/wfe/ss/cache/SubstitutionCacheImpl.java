@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.cache.BaseCacheImpl;
 import ru.runa.wfe.commons.cache.Cache;
-import ru.runa.wfe.os.OrgFunctionHelper;
+import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.TerminatorSubstitution;

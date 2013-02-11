@@ -44,7 +44,7 @@ import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.SwimlaneAssignLog;
 import ru.runa.wfe.commons.hibernate.Proxies;
-import ru.runa.wfe.handler.assign.Assignable;
+import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.task.Task;

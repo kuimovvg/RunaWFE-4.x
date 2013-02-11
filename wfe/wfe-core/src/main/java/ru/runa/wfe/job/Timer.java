@@ -15,7 +15,7 @@ import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.execution.logic.ProcessExecutionException;
-import ru.runa.wfe.handler.assign.AssignmentHelper;
+import ru.runa.wfe.extension.assign.AssignmentHelper;
 import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.task.Task;

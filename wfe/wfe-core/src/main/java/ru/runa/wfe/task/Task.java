@@ -50,7 +50,7 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
-import ru.runa.wfe.handler.assign.Assignable;
+import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.MultiTaskNode;

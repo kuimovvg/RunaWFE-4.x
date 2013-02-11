@@ -33,7 +33,7 @@ import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
-import ru.runa.wfe.handler.bot.TaskHandlerBase;
+import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
