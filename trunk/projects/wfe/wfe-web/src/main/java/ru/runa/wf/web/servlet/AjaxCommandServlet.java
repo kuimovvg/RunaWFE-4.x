@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.common.web.Commons;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.os.ParamRenderer;
+import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Charsets;

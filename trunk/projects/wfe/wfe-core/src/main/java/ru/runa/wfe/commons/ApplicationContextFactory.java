@@ -16,7 +16,7 @@ import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 import ru.runa.wfe.commons.calendar.BusinessCalendar;
 import ru.runa.wfe.commons.hibernate.Converters;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
-import ru.runa.wfe.handler.assign.AssignmentHelper;
+import ru.runa.wfe.extension.assign.AssignmentHelper;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.relation.dao.RelationDAO;
 import ru.runa.wfe.security.dao.PermissionDAO;

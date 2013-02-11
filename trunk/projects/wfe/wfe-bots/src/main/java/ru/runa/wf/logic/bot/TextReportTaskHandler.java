@@ -27,7 +27,7 @@ import java.util.Map;
 import ru.runa.wf.logic.bot.textreport.TextReportGenerator;
 import ru.runa.wf.logic.bot.textreport.TextReportSettings;
 import ru.runa.wf.logic.bot.textreport.TextReportSettingsXmlParser;
-import ru.runa.wfe.handler.bot.TaskHandlerBase;
+import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;

@@ -25,7 +25,7 @@ import ru.runa.wf.logic.bot.assigner.AssignerSettings.Condition;
 import ru.runa.wf.logic.bot.assigner.AssignerSettingsXmlParser;
 import ru.runa.wf.logic.bot.assigner.IEvaluationFunction;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.handler.bot.TaskHandlerBase;
+import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;

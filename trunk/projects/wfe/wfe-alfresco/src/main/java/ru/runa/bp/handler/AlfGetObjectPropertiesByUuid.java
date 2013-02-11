@@ -14,7 +14,7 @@ import ru.runa.alfresco.AlfSession;
 import ru.runa.alfresco.WSObjectAccessor;
 import ru.runa.bp.AlfHandler;
 import ru.runa.bp.AlfHandlerData;
-import ru.runa.wfe.handler.ParamDef;
+import ru.runa.wfe.extension.handler.ParamDef;
 
 public class AlfGetObjectPropertiesByUuid extends AlfHandler {
     private static final String DEFAULT_FORMAT_CLASS = String.class.getName();
