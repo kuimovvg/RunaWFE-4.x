@@ -44,6 +44,6 @@ public class ExecutorNameRenderer extends ExecutorRendererBase {
     @Override
     protected Executor getExecutor(User user, String name) throws Exception {
         ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getExecutor(user, name);
+        return executorService.getExecutorByName(user, name);
     }
 }

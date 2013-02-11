@@ -48,7 +48,7 @@ public class ProcessFactory {
     }
 
     private Set<Permission> getProcessPermissions(Executor executor, ProcessDefinition processDefinition) {
-        Map<Permission, Boolean> definitionPermissions = permissionDAO.getOwnPermissions(executor, processDefinition);
+        Map<Permission, Boolean> definitionPermissions = permissionDAO.getOwnPermissions(executor, processDefinition.getDeployment());
         Set<Permission> result = new HashSet<Permission>();
         for (Permission permission : definitionPermissions.keySet()) {
             if (DEFINITION_TO_PROCESS_PERMISSION_MAP.containsKey(permission)) {
@@ -79,7 +79,7 @@ public class ProcessFactory {
 
     private void grantProcessPermissions(ProcessDefinition processDefinition, Process process, Actor actor) {
         boolean permissionsAreSetToProcessStarter = false;
-        for (Executor executor : permissionDAO.getExecutorsWithPermission(processDefinition)) {
+        for (Executor executor : permissionDAO.getExecutorsWithPermission(processDefinition.getDeployment())) {
             Set<Permission> permissions = getProcessPermissions(executor, processDefinition);
             if (Objects.equal(actor, executor)) {
                 Executor processStarter = executorDAO.getExecutor(SystemExecutors.PROCESS_STARTER_NAME);
@@ -111,7 +111,7 @@ public class ProcessFactory {
 
     private void grantSubprocessPermissions(ProcessDefinition processDefinition, Process subProcess, Process parentProcess) {
         Set<Executor> executors = new HashSet<Executor>();
-        executors.addAll(permissionDAO.getExecutorsWithPermission(processDefinition));
+        executors.addAll(permissionDAO.getExecutorsWithPermission(processDefinition.getDeployment()));
         executors.addAll(permissionDAO.getExecutorsWithPermission(parentProcess));
         for (Executor executor : executors) {
             Map<Permission, Boolean> permissionsByParentProcess = permissionDAO.getOwnPermissions(executor, parentProcess);

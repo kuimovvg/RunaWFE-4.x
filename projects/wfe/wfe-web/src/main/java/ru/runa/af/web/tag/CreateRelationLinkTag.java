@@ -64,7 +64,7 @@ public class CreateRelationLinkTag extends LinkTag {
         try {
             RelationService relationService = Delegates.getRelationService();
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Relation relationGroup = relationService.getRelation(getUser(), getRelationName());
+            Relation relationGroup = relationService.getRelationByName(getUser(), getRelationName());
             return authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_PERMISSIONS, relationGroup);
         } catch (Exception e) {
             return false;

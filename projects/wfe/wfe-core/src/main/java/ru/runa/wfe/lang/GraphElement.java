@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,15 +41,17 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class GraphElement implements Serializable {
     private static final long serialVersionUID = 1L;
-
     private static final Log log = LogFactory.getLog(GraphElement.class);
 
     private String nodeId;
     protected String name;
     protected String description;
+    @XmlTransient
     protected ProcessDefinition processDefinition;
+    @XmlTransient
     protected Map<String, Event> events = Maps.newHashMap();
 
     public String getNodeId() {

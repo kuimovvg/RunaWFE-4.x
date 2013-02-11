@@ -44,7 +44,7 @@ public class UpdatePermissionOnRelationFormTag extends IdentifiableFormTag {
 
     @Override
     protected Identifiable getIdentifiable() {
-        return Delegates.getRelationService().getRelation(getUser(), getRelationName());
+        return Delegates.getRelationService().getRelationByName(getUser(), getRelationName());
     }
 
     @Override

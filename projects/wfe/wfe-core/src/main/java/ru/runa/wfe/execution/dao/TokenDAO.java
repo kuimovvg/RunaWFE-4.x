@@ -15,11 +15,6 @@ import ru.runa.wfe.lang.NodeType;
 @SuppressWarnings("unchecked")
 public class TokenDAO extends GenericDAO<Token> {
 
-    // @unused
-    public List<Token> findAllActiveTokens() {
-        return getHibernateTemplate().find("from Token where endDate is null");
-    }
-
     public List<Token> findActiveTokens(NodeType nodeType) {
         return getHibernateTemplate().find("from Token where nodeType=? and endDate is null", nodeType);
     }

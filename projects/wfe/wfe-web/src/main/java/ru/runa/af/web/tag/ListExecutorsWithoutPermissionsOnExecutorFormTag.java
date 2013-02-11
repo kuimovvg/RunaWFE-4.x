@@ -18,7 +18,6 @@
 package ru.runa.af.web.tag;
 
 import ru.runa.af.web.action.GrantReadPermissionOnExecutorAction;
-import ru.runa.service.ExecutorService;
 import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 
@@ -39,7 +38,6 @@ public class ListExecutorsWithoutPermissionsOnExecutorFormTag extends ListExecut
 
     @Override
     protected Identifiable getIdentifiable() {
-        ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getExecutor(getUser(), getIdentifiableId());
+        return Delegates.getExecutorService().getExecutor(getUser(), getIdentifiableId());
     }
 }

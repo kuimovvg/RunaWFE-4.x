@@ -23,15 +23,12 @@ import com.google.common.base.Strings;
 
 public class BotTaskConfigurationUtils {
     private static final Log log = LogFactory.getLog(BotTaskConfigurationUtils.class);
-    protected static final String INPUT_PARAM = "input";
-    protected static final String OUTPUT_PARAM = "output";
-    protected static final String PARAMETER_PARAM = "param";
-    protected static final String TASK_PARAM = "task";
-    protected static final String NAME_PARAM = "name";
-    protected static final String VALUE_PARAM = "value";
-    protected static final String VARIABLE_PARAM = "variable";
-    protected static final String PARAMETERS_PARAM = "parameters";
-    protected static final String BOTCONFIG_PARAM = "botconfig";
+    private static final String TASK_PARAM = "task";
+    private static final String BOT_TASK_NAME_PARAM = "botTaskName";
+    private static final String NAME_PARAM = "name";
+    private static final String PARAMETERS_PARAM = "parameters";
+    private static final String BOTCONFIG_PARAM = "botconfig";
+    private static final String CONFIG_PARAM = "config";
 
     public static boolean isExtendedBotTaskConfiguration(byte[] configuration) {
         try {
@@ -50,7 +47,7 @@ public class BotTaskConfigurationUtils {
     public static String getBotTaskName(User user, WfTask task) {
         Element taskElement = getBotTaskElement(user, task);
         if (taskElement != null) {
-            return taskElement.attributeValue("botTaskName");
+            return taskElement.attributeValue(BOT_TASK_NAME_PARAM);
         }
         return task.getName();
     }
@@ -62,9 +59,9 @@ public class BotTaskConfigurationUtils {
             return null;
         }
         Document document = XmlUtils.parseWithoutValidation(xml);
-        List<Element> elements = document.getRootElement().elements("task");
+        List<Element> elements = document.getRootElement().elements(TASK_PARAM);
         for (Element element : elements) {
-            if (Objects.equal(task.getName(), element.attributeValue("name"))) {
+            if (Objects.equal(task.getName(), element.attributeValue(NAME_PARAM))) {
                 return element;
             }
         }
@@ -77,12 +74,12 @@ public class BotTaskConfigurationUtils {
         }
         Document document = XmlUtils.parseWithoutValidation(extendedConfiguration);
         Element taskElement = getBotTaskElement(user, task);
-        Element configElement = taskElement.element("config");
+        Element configElement = taskElement.element(CONFIG_PARAM);
         if (configElement == null) {
             return extendedConfiguration;
         }
         Element parametersElement = document.getRootElement().element(PARAMETERS_PARAM);
-        ParamsDef botTaskParamsDef = ParamsDef.parse(parametersElement.element("config"));
+        ParamsDef botTaskParamsDef = ParamsDef.parse(parametersElement.element(CONFIG_PARAM));
         ParamsDef taskParamsDef = ParamsDef.parse(configElement);
         String substituted = document.getRootElement().element(BOTCONFIG_PARAM).getTextTrim();
         for (ParamDef botTaskParamDef : botTaskParamsDef.getInputParams().values()) {

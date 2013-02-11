@@ -23,6 +23,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -44,6 +46,8 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@WebService
+@SOAPBinding
 public class SubstitutionServiceBean implements SubstitutionServiceLocal, SubstitutionServiceRemote {
     @Autowired
     private SubstitutionLogic substitutionLogic;

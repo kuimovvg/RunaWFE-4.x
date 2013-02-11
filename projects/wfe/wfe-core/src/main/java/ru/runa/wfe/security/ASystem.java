@@ -17,9 +17,7 @@
  */
 package ru.runa.wfe.security;
 
-/**
- * Represents a system. Created on 30.08.2004
- */
+
 public class ASystem extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 

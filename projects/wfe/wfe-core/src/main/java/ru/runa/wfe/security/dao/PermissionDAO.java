@@ -19,6 +19,7 @@ package ru.runa.wfe.security.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -84,8 +85,8 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
      * @return Map of {Permission, Is permission can be modifiable}, not
      *         <code>null</code>
      */
-    public Map<Permission, Boolean> getOwnPermissions(Executor executor, Identifiable identifiable) {
-        Map<Permission, Boolean> permissions = Maps.newHashMap();
+    public HashMap<Permission, Boolean> getOwnPermissions(Executor executor, Identifiable identifiable) {
+        HashMap<Permission, Boolean> permissions = Maps.newHashMap();
         if (getPrivilegedExecutors(identifiable).contains(executor)) {
             for (Permission permission : identifiable.getSecuredObjectType().getAllPermissions()) {
                 permissions.put(permission, Boolean.FALSE);

@@ -44,7 +44,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.service.ProfileService;
 import ru.runa.service.SystemService;
 import ru.runa.service.delegate.Delegates;
-import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.user.Actor;
@@ -85,7 +84,7 @@ public class NTLMLoginAction extends ActionBase {
             User user = SubjectPrincipalsHelper.createUser(actor);
 
             SystemService systemService = Delegates.getSystemService();
-            systemService.login(user, ASystem.INSTANCE);
+            systemService.login(user);
 
             HttpSession session = request.getSession();
             ProfileService profileService = Delegates.getProfileService();

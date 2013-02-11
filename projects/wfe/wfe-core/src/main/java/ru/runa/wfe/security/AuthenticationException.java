@@ -17,17 +17,8 @@
  */
 package ru.runa.wfe.security;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 import ru.runa.wfe.InternalApplicationException;
 
-/**
- * Signals any {@link javax.security.auth.Subject} specific problem. Created on 12.11.2004
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AuthenticationException", namespace = "http://runa.ru/workflow/webservices")
 public class AuthenticationException extends InternalApplicationException {
 
     private static final long serialVersionUID = -6105784417275728348L;
@@ -44,7 +35,4 @@ public class AuthenticationException extends InternalApplicationException {
         super(cause);
     }
 
-    public AuthenticationException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

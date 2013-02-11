@@ -2,7 +2,7 @@ package ru.runa.wfe.security;
 
 import com.google.common.base.Objects;
 
-public abstract class IdentifiableBase implements Identifiable {
+public abstract class IdentifiableBase extends Identifiable {
     private static final long serialVersionUID = 1L;
 
     public abstract Long getId();

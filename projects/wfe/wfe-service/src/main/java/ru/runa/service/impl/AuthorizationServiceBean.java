@@ -18,13 +18,16 @@
 package ru.runa.service.impl;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -49,6 +52,8 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@WebService
+@SOAPBinding
 public class AuthorizationServiceBean implements AuthorizationServiceLocal, AuthorizationServiceRemote {
     @Autowired
     private AuthorizationLogic authorizationLogic;
@@ -61,6 +66,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
         return authorizationLogic.isAllowed(user, permission, identifiable);
     }
 
+    @WebMethod(exclude = true)
     @Override
     public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) {
         Preconditions.checkNotNull(user);
@@ -70,13 +76,14 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public Map<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
+    public HashMap<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(performer);
         Preconditions.checkNotNull(identifiable);
         return authorizationLogic.getOwnPermissions(user, performer, identifiable);
     }
 
+    @WebMethod(exclude = true)
     @Override
     public void setPermissions(User user, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable) {
         Preconditions.checkNotNull(user);
@@ -87,14 +94,15 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public void setPermissions(User user, Executor performer, Collection<Permission> permissions, Identifiable identifiable) {
+    public void setPermissions(User user, Long executorId, Collection<Permission> permissions, Identifiable identifiable) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(performer);
+        Preconditions.checkNotNull(executorId);
         Preconditions.checkNotNull(permissions);
         Preconditions.checkNotNull(identifiable);
-        authorizationLogic.setPermissions(user, performer, permissions, identifiable);
+        authorizationLogic.setPermissions(user, executorId, permissions, identifiable);
     }
 
+    @WebMethod(exclude = true)
     @Override
     public void setPermissions(User user, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable) {
         Preconditions.checkNotNull(user);

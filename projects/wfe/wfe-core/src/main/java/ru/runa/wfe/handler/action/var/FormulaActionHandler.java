@@ -767,10 +767,4 @@ public class FormulaActionHandler implements ActionHandler {
         inputData = configurationName;
     }
 
-    public FormulaActionHandler() {
-    }
-
-    public FormulaActionHandler(String configurationName) {
-        inputData = configurationName;
-    }
 }

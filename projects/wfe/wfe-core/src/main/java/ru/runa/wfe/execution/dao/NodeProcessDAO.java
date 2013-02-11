@@ -24,10 +24,6 @@ public class NodeProcessDAO extends GenericDAO<NodeProcess> {
         getHibernateTemplate().bulkUpdate("delete from NodeProcess where process=?", process);
     }
 
-    public void saveNodeProcess(NodeProcess nodeProcess) {
-        getHibernateTemplate().save(nodeProcess);
-    }
-
     public List<Process> getSubprocesses(Process process) {
         List<NodeProcess> nodeProcesses = getNodeProcesses(process.getId());
         List<Process> result = Lists.newArrayListWithExpectedSize(nodeProcesses.size());

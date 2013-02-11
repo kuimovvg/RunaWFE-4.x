@@ -109,18 +109,6 @@ public class RelationDAO extends CommonDAO {
     }
 
     /**
-     * Return list of {@link Relation}, according to specified
-     * {@link BatchPresentation}.
-     * 
-     * @param batchPresentation
-     *            Restrictions to get relations.
-     * @return List of {@link Relation}.
-     */
-    public List<Relation> getRelations(BatchPresentation batchPresentation) {
-        return new BatchPresentationHibernateCompiler(batchPresentation).getBatch(false);
-    }
-
-    /**
      * Remove {@link Relation} with specified identity.
      * 
      * @param id
@@ -238,12 +226,12 @@ public class RelationDAO extends CommonDAO {
      *            Restrictions to get {@link RelationPair}.
      * @return
      */
-    public List<RelationPair> getRelationPairs(String relationsGroupName, BatchPresentation batchPresentation) {
+    public List<RelationPair> getRelationPairs(String relationName, BatchPresentation batchPresentation) {
         Map<Integer, FilterCriteria> filters = batchPresentation.getFilteredFields();
         try {
             // for check
-            getRelationNotNull(relationsGroupName);
-            filters.put(0, new StringFilterCriteria(new String[] { relationsGroupName }));
+            getRelationNotNull(relationName);
+            filters.put(0, new StringFilterCriteria(new String[] { relationName }));
             batchPresentation.setFilteredFields(filters);
             List<RelationPair> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(false);
             batchPresentation.setFilteredFields(filters);

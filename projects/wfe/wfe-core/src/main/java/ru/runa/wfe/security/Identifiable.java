@@ -23,7 +23,9 @@ import java.io.Serializable;
  * Interface for all identifiable components, which can be secured using
  * permission.
  */
-public interface Identifiable extends Serializable {
+public abstract class Identifiable implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Return identity for current object. Object with same id and type has same
      * permissions, even if object is not equals. Object with same type but
@@ -31,7 +33,7 @@ public interface Identifiable extends Serializable {
      * 
      * @return Object identity
      */
-    public Long getIdentifiableId();
+    public abstract Long getIdentifiableId();
 
     /**
      * Returns object type identity. Object with same id and type has same
@@ -40,5 +42,5 @@ public interface Identifiable extends Serializable {
      * 
      * @return Object type identity.
      */
-    public SecuredObjectType getSecuredObjectType();
+    public abstract SecuredObjectType getSecuredObjectType();
 }

@@ -21,7 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -117,13 +116,6 @@ public class Commons {
         return getForwardUrl(forward, null, pageContext, portletUrlType);
     }
 
-    public static String getForwardUrl(String forward, String parameterName, Object parameterValue, PageContext pageContext,
-            PortletUrlType portletUrlType) {
-        Map<String, Object> parameters = new HashMap<String, Object>(1);
-        parameters.put(parameterName, parameterValue);
-        return getForwardUrl(forward, parameters, pageContext, portletUrlType);
-    }
-
     public static String getForwardUrl(String forward, Map<String, ? extends Object> parameters, PageContext pageContext,
             PortletUrlType portletUrlType) {
         try {
@@ -161,6 +153,9 @@ public class Commons {
         }
     }
 
+    /**
+     * Used from JSP
+     */
     public static Locale getLocale(PageContext pageContext) {
         return tagUtils.getUserLocale(pageContext, Globals.LOCALE_KEY);
     }

@@ -17,6 +17,7 @@
  */
 package ru.runa.wf.logic.bot;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -188,9 +189,10 @@ public class WorkflowBot implements Runnable {
             }
 
             log.info("Starting bot task " + task + " with config \n" + taskHandler.getConfiguration());
-            Map<String, Object> variables = taskHandler.handle(user, variableProvider, task);
-            if (variables == null) {
-                variables = Maps.newHashMap();
+            HashMap<String, Object> variables = new HashMap<String, Object>();
+            Map<String, Object> map = taskHandler.handle(user, variableProvider, task);
+            if (map != null) {
+                variables.putAll(map);
             }
             Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
             if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {

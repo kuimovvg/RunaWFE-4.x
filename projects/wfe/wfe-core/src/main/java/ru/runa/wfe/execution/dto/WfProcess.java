@@ -21,7 +21,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.security.IdentifiableBase;
@@ -34,7 +33,6 @@ import com.google.common.base.Objects;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "WfProcess", namespace = "http://runa.ru/workflow/webservices")
 public class WfProcess extends IdentifiableBase {
     private static final long serialVersionUID = 4862220986262286596L;
     public static final String SELECTED_TRANSITION_KEY = "_SELECTED_TRANSITION_";

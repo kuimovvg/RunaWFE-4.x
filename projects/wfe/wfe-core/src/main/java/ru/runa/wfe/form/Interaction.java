@@ -18,8 +18,12 @@
 package ru.runa.wfe.form;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import ru.runa.wfe.var.VariableDefinition;
 
@@ -29,6 +33,7 @@ import com.google.common.collect.Maps;
 /**
  * Contains data for user interaction with process execution.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Interaction implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -39,8 +44,8 @@ public class Interaction implements Serializable {
     private byte[] scriptData;
     private byte[] cssData;
     private final List<String> requiredVariableNames = Lists.newArrayList();
-    private final Map<String, VariableDefinition> variableDefinitions = Maps.newHashMap();
-    private final Map<String, Object> defaultVariableValues = Maps.newHashMap();
+    private final HashMap<String, VariableDefinition> variableDefinitions = Maps.newHashMap();
+    private final HashMap<String, Object> defaultVariableValues = Maps.newHashMap();
 
     protected Interaction() {
     }

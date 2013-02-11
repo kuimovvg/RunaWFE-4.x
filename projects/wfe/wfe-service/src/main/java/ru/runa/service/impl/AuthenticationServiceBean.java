@@ -35,6 +35,7 @@ import ru.runa.service.decl.AuthenticationServiceLocal;
 import ru.runa.service.decl.AuthenticationServiceRemote;
 import ru.runa.service.interceptors.EjbExceptionSupport;
 import ru.runa.service.interceptors.EjbTransactionSupport;
+import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
 import ru.runa.wfe.security.logic.AuthenticationLogic;
 import ru.runa.wfe.user.User;
@@ -47,18 +48,17 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService(name = "Authentication", serviceName = "AuthenticationWebService")
+@WebService
 @SOAPBinding
 public class AuthenticationServiceBean implements AuthenticationServiceLocal, AuthenticationServiceRemote {
     private static final Log log = LogFactory.getLog(AuthenticationServiceBean.class);
     @Autowired
     private AuthenticationLogic authenticationLogic;
-
     @Resource
     private SessionContext context;
 
     @Override
-    public User authenticateByCallerPrincipal() {
+    public User authenticateByCallerPrincipal() throws AuthenticationException {
         log.debug("Authenticating (principal)");
         User user = authenticationLogic.authenticate(context.getCallerPrincipal());
         log.debug("Authenticated (principal): " + user);
@@ -66,7 +66,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     }
 
     @Override
-    public User authenticateByKerberos(byte[] token) {
+    public User authenticateByKerberos(byte[] token) throws AuthenticationException {
         Preconditions.checkNotNull(token, "Kerberos authentication information");
         log.debug("Authenticating (kerberos)");
         User user = authenticationLogic.authenticate(token, KerberosLoginModuleResources.rtnKerberosResources);
@@ -75,7 +75,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     }
 
     @Override
-    public User authenticateByLoginPassword(String name, String password) {
+    public User authenticateByLoginPassword(String name, String password) throws AuthenticationException {
         log.debug("Authenticating (login) " + name);
         User user = authenticationLogic.authenticate(name, password);
         log.debug("Authenticated (login): " + user);

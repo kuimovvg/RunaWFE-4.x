@@ -87,13 +87,13 @@ public class ParamsDef {
     }
 
     public <T> T getInputParamValueNotNull(String name, IVariableProvider variableProvider) {
-        T result = getInputParamValue(name, variableProvider);
+        Object result = getInputParamValue(name, variableProvider);
         if (result == null) {
             // for more appropriate exception
             getInputParamNotNull(name);
             throw new NullPointerException("Input parameter '" + name + "' resolved as null.");
         }
-        return result;
+        return (T) result;
     }
 
     public ParamDef getOutputParam(String name) {

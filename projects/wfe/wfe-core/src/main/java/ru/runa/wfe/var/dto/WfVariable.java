@@ -2,13 +2,18 @@ package ru.runa.wfe.var.dto;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 import ru.runa.wfe.var.VariableDefinition;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class WfVariable implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private VariableDefinition definition;
     private Object value;
 

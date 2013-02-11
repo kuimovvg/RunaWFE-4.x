@@ -39,7 +39,6 @@ import com.google.common.base.Throwables;
  * 
  */
 public class InteractionsParser implements ProcessArchiveParser {
-    public static final String NS_URI = "http://runa.ru/xml";
     private final static String FORM_ELEMENT_NAME = "form";
     private final static String STATE_ATTRIBUTE_NAME = "state";
     private final static String FILE_ATTRIBUTE_NAME = "file";

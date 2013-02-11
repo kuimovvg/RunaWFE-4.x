@@ -90,7 +90,7 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
             List<Actor> actors = Lists.newArrayListWithExpectedSize(rangeSize);
             ExecutorService executorService = Delegates.getExecutorService();
             if (groupName != null && groupName.length() > 0) {
-                Group group = executorService.getExecutor(user, groupName);
+                Group group = executorService.getExecutorByName(user, groupName);
                 List<Actor> groupActors = executorService.getGroupActors(user, group);
                 for (Actor actor : groupActors) {
                     if (byLogin) {

@@ -1,10 +1,7 @@
 package ru.runa.wfe.commons;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import com.google.common.base.Objects;
 
@@ -102,47 +99,6 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
         return false;
     }
 
-    // if the gap between the intervals is less or equal to gapInMillis they
-    // merge.
-    public static List<CalendarInterval> mergeIntersectingWithGapScaleIntervalsNotOrdered(List<CalendarInterval> intervals, int gapInMillis) {
-        if (intervals == null || intervals.size() < 2) {
-            return intervals;
-        }
-        List<CalendarInterval> result = new ArrayList<CalendarInterval>();
-        Collections.sort(intervals);
-        CalendarInterval current = intervals.get(0);
-        for (int i = 1; i < intervals.size(); i++) {
-            if (current.intersectsWithGapScale(intervals.get(i), gapInMillis)) {
-                Calendar from = current.getFrom().after(intervals.get(i).getFrom()) ? intervals.get(i).getFrom() : current.getFrom();
-                Calendar to = current.getTo().before(intervals.get(i).getTo()) ? intervals.get(i).getTo() : current.getTo();
-                current = new CalendarInterval(from, to);
-            } else {
-                result.add(current);
-                current = intervals.get(i);
-            }
-        }
-        // add last element
-        result.add(current);
-        return result;
-    }
-
-    public List<CalendarInterval> cropToFitInInterval(List<CalendarInterval> list) {
-        List<CalendarInterval> result = new ArrayList<CalendarInterval>();
-        for (CalendarInterval interval : list) {
-            if ((interval.getFrom().after(to)) || (interval.getTo().before(from))) {
-                continue;
-            }
-            if (interval.getFrom().before(from)) {
-                interval.setFrom(from);
-            }
-            if (interval.getTo().after(to)) {
-                interval.setTo(to);
-            }
-            result.add(interval);
-        }
-        return result;
-    }
-
     public CalendarInterval intersect(CalendarInterval interval) {
         if (from.before(interval.getFrom())) {
             from.setTimeInMillis(interval.getFrom().getTimeInMillis());
@@ -157,52 +113,6 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
         CalendarInterval target = CalendarUtil.clone(this);
         target.intersect(interval);
         return target;
-    }
-
-    public CalendarInterval merge(CalendarInterval interval) {
-        if (from.after(interval.getFrom())) {
-            from.setTimeInMillis(interval.getFrom().getTimeInMillis());
-        }
-        if (to.before(interval.getTo())) {
-            to.setTimeInMillis(interval.getTo().getTimeInMillis());
-        }
-        return this;
-    }
-
-    public void subtractIntersecting(CalendarInterval interval) {
-        if (from.before(interval.getFrom())) {
-            to.setTimeInMillis(interval.getFrom().getTimeInMillis());
-            to.add(Calendar.DAY_OF_YEAR, -1);
-            CalendarUtil.setLastSecondTimeCalendar(to);
-        }
-        if (to.after(interval.getTo())) {
-            from.setTimeInMillis(interval.getTo().getTimeInMillis());
-            from.add(Calendar.DAY_OF_YEAR, 1);
-            CalendarUtil.setZeroTimeCalendar(from);
-        }
-    }
-
-    // subtracts interval from this.
-    public List<CalendarInterval> subtract(CalendarInterval interval) {
-        List<CalendarInterval> result = new ArrayList<CalendarInterval>();
-        if (!(this.intersects(interval))) {
-            result.add(this);
-            return result;
-        }
-        if (from.before(interval.getFrom()) && (to.after(interval.getTo()))) {
-            result.add(new CalendarInterval(from, interval.getFrom()));
-            result.add(new CalendarInterval(interval.getTo(), to));
-            return result;
-        }
-        if (from.after(interval.getFrom()) && (to.after(interval.getTo()))) {
-            result.add(new CalendarInterval(interval.getTo(), to));
-            return result;
-        }
-        if (from.before(interval.getFrom()) && (to.before(interval.getTo()))) {
-            result.add(new CalendarInterval(from, interval.getFrom()));
-            return result;
-        }
-        return result;
     }
 
     public CalendarInterval getGapBetweenNotIntersecting(CalendarInterval interval) {

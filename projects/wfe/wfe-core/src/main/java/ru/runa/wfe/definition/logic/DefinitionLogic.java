@@ -79,7 +79,7 @@ public class DefinitionLogic extends WFCommonLogic {
         definition.getDeployment().setCategories(processType);
         deploymentDAO.deploy(definition.getDeployment(), null);
         Collection<Permission> allPermissions = new DefinitionPermission().getAllPermissions();
-        permissionDAO.setPermissions(user.getActor(), allPermissions, definition);
+        permissionDAO.setPermissions(user.getActor(), allPermissions, definition.getDeployment());
         log.debug("Deployed process definition " + definition);
         return new WfDefinition(definition);
     }
@@ -111,14 +111,14 @@ public class DefinitionLogic extends WFCommonLogic {
 
     public WfDefinition getLatestProcessDefinition(User user, String definitionName) {
         ProcessDefinition definition = getLatestDefinition(definitionName);
-        checkPermissionAllowed(user, definition, Permission.READ);
+        checkPermissionAllowed(user, definition.getDeployment(), Permission.READ);
         return new WfDefinition(definition);
     }
 
     public WfDefinition getProcessDefinition(User user, Long definitionId) {
         try {
             ProcessDefinition processDefinition = getDefinition(definitionId);
-            checkPermissionAllowed(user, processDefinition, Permission.READ);
+            checkPermissionAllowed(user, processDefinition.getDeployment(), Permission.READ);
             return new WfDefinition(processDefinition);
         } catch (Exception e) {
             Deployment deployment = deploymentDAO.getNotNull(definitionId);
@@ -130,7 +130,7 @@ public class DefinitionLogic extends WFCommonLogic {
     public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
-        checkPermissionAllowed(user, processDefinition, Permission.READ);
+        checkPermissionAllowed(user, processDefinition.getDeployment(), Permission.READ);
         return new WfDefinition(processDefinition);
     }
 
@@ -213,7 +213,7 @@ public class DefinitionLogic extends WFCommonLogic {
     public Interaction getInteraction(User user, Long taskId) {
         Task task = taskDAO.getNotNull(taskId);
         ProcessDefinition definition = getDefinition(task);
-        if (!isPermissionAllowed(user, definition, DefinitionPermission.READ)) {
+        if (!isPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ)) {
             checkCanParticipate(user, task);
         }
         return definition.getInteractionNotNull(task.getNodeId());
@@ -239,7 +239,7 @@ public class DefinitionLogic extends WFCommonLogic {
     public byte[] getFile(User user, Long definitionId, String fileName) {
         ProcessDefinition definition = getDefinition(definitionId);
         if (!ProcessArchive.UNSECURED_FILE_NAMES.contains(fileName)) {
-            checkPermissionAllowed(user, definition, DefinitionPermission.READ);
+            checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
         }
         if (ProcessArchive.PAR_FILE.equals(fileName)) {
             return definition.getDeployment().getContent();
@@ -249,7 +249,7 @@ public class DefinitionLogic extends WFCommonLogic {
 
     public Interaction getStartInteraction(User user, Long definitionId) {
         ProcessDefinition definition = getDefinition(definitionId);
-        checkPermissionAllowed(user, definition, DefinitionPermission.READ);
+        checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
         Interaction interaction = definition.getInteractionNotNull(definition.getStartStateNotNull().getNodeId());
         Map<String, Object> defaultValues = definition.getDefaultVariableValues();
         for (Map.Entry<String, Object> entry : defaultValues.entrySet()) {
@@ -260,13 +260,13 @@ public class DefinitionLogic extends WFCommonLogic {
 
     public List<SwimlaneDefinition> getSwimlanes(User user, Long definitionId) {
         ProcessDefinition definition = processDefinitionLoader.getDefinition(definitionId);
-        checkPermissionAllowed(user, definition, DefinitionPermission.READ);
+        checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
         return Lists.newArrayList(definition.getSwimlanes().values());
     }
 
     public List<VariableDefinition> getProcessDefinitionVariables(User user, Long definitionId) {
         ProcessDefinition definition = getDefinition(definitionId);
-        checkPermissionAllowed(user, definition, DefinitionPermission.READ);
+        checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
         return definition.getVariables();
     }
 

@@ -33,9 +33,6 @@ public class Messages {
     public static final String BUTTON_SAVE = "button.save";
     public static final String BUTTON_SAVE_AS = "button.save_as";
 
-    public static final String BUTTON_ADD_SUBSTITUTION = "button.add_substitution";
-    public static final String BUTTON_ADD_TERMINATOR = "button.add_terminator";
-
     public static final String TITLE_RELATIONS = "title.relations";
     public static final String LINK_CREATE_RELATION = "link.create_relation";
     public static final String LABEL_CREATE_RELATION_TO = "label.create_relation.to";
@@ -64,20 +61,16 @@ public class Messages {
     public static final String TITLE_PROCESS_DEFINITIONS = "title.process_definitions";
     public static final String TITLE_DEPLOY_DEFINITION = "title.deploy_definition";
     public static final String TITLE_REDEPLOY_DEFINITION = "title.redeploy_definition";
-    public static final String BUTTON_VALIDATE_DEFINITION = "button.validate_definition";
     public static final String BUTTON_DEPLOY_DEFINITION = "button.deploy_definition";
-    public static final String BUTTON_REDEPLOY_DEFINITION = "button.redeploy_definition";
 
     public static final String TITLE_PROCESSES = "title.processes";
     public static final String TITLE_INSANCE_SWINLANE_LIST = "title.process_swimlane_list";
     public static final String TITLE_INSANCE_TASKS_LIST = "title.process_tasks_list";
-    public static final String TITLE_INSANCE_SUBPROCESS_LIST = "title.process_subprocess_list";
     public static final String TITLE_INSANCE_VARIABLE_LIST = "title.process_variable_list";
     public static final String TITLE_PROCESS = "title.process";
     public static final String TITLE_PROCESS_DEFINITION = "title.process_definition";
     public static final String TITLE_TASKS = "title.tasks";
     public static final String TITLE_PROCESS_GRAPH = "title.process_graph";
-    public static final String TITLE_LOGS = "title.logs";
 
     public static final String TITLE_HISTORY = "title.history";
     public static final String TITLE_SYSTEM_HISTORY = "title.system.history";
@@ -120,17 +113,14 @@ public class Messages {
     public static final String LABEL_SORTING_TYPE = "label.sorting_type";
     public static final String LABEL_SORTING_POSITION = "label.sorting_position";
     public static final String LABEL_FILTER_CRITERIA = "label.filter_criteria";
-    public static final String LABEL_FILTER_ENABLE = "label.filter_enable";
     public static final String LABEL_GROUPING = "label.grouping";
     public static final String LABEL_NONE = "label.none";
     public static final String LABEL_ASC = "label.asc";
     public static final String LABEL_DESC = "label.desc";
 
-    public static final String LABEL_CHOOSE_PAGE = "label.choose_page";
     public static final String LABEL_TOTAL = "label.total";
     public static final String LABEL_PAGING_NEXT_PAGE = "label.paging_next_page";
     public static final String LABEL_PAGING_PREV_PAGE = "label.paging_prev_page";
-    public static final String LABEL_PAGING_NEXT_RANGE = "label.paging_next_range";
     public static final String LABEL_PAGING_PREV_RANGE = "label.paging_prev_range";
 
     public static final String LABEL_SWIMLANE_NAME = "label.swimlane_name";
@@ -141,9 +131,6 @@ public class Messages {
 
     public static final String LABEL_STATE_NAME = "label.state_name";
     public static final String LABEL_PARENT_PROCESS = "label.parent_process";
-    public static final String LABEL_SUB_PROCESS = "label.sub_process";
-    public static final String LABEL_SWIMLANE = "label.swimlane";
-    public static final String LABEL_VARIABLES = "label.variables";
 
     public static final String LABEL_VARIABLE_NAME = "label.variable_name";
     public static final String LABEL_VARIABLE_VALUE = "label.variable_value";
@@ -160,11 +147,6 @@ public class Messages {
     public static final String LABEL_SUBSTITUTION_CRITERIA_TYPE = "label.substitution_criteria_type";
     public static final String LABEL_SUBSTITUTION_CRITERIA_CONF = "label.substitution_criteria_conf";
 
-    public static final String VAR_TAG_DATE_TIME_INPUT_LOCALIZATION_JS_PATH = "var_tag.date_time_input.localization_js";
-
-    /* error messages */
-    public static final String EXCEPTION_WEB_CLIENT_LOGIN_FAILED = "login.failed";
-
     public static final String EXCEPTION_WEB_CLIENT_UNKNOWN = "unknown.exception";
 
     public static final String EXCEPTION_WEB_CLIENT_SESSION_INVALID = "session.invalid";
@@ -179,17 +161,6 @@ public class Messages {
     public static final String EXCEPTION_WEB_CLIENT_EXECUTOR_DOES_NOT_EXISTS = "executor.does.not.exists.exception";
     public static final String EXCEPTION_ACTOR_DOES_NOT_EXISTS = "ru.runa.wf.web.actor.does.not.exists.exception";
     public static final String EXCEPTION_GROUP_DOES_NOT_EXISTS = "ru.runa.wf.web.group.does.not.exists.exception";
-    public static final String EXCEPTION_WEB_CLIENT_EXECUTOR_ALREADY_IN_GROUP = "executor.already.in.group";
-    public static final String EXCEPTION_WEB_CLIENT_EXECUTOR_NOT_IN_GROUP = "executor.not.in.group";
-
-    public static final String EXCEPTION_BROWSER_CAPABILITIES = "browser.incompatible.exception";
-
-    public static final String EXCEPTION_BOTSTATION_ALREADY_EXISTS = "botstation.already.exists.exception";
-    public static final String EXCEPTION_BOTSTATION_DOESNOT_EXISTS = "botstation.doesnot.exists.exception";
-    public static final String EXCEPTION_BOT_ALREADY_EXISTS = "bot.already.exists.exception";
-    public static final String EXCEPTION_BOT_DOESNOT_EXISTS = "bot.doesnot.exists.exception";
-    public static final String EXCEPTION_BOT_TASK_ALREADY_EXISTS = "bot.task.already.exists.exception";
-    public static final String EXCEPTION_BOT_TASK_DOESNOT_EXISTS = "bot.task.doesnot.exists.exception";
 
     public static final String ERROR_WEB_CLIENT_NULL_VALUE = "emptyvalue";
     public static final String ERROR_WEB_CLIENT_VALIDATION = "validation.error";
@@ -201,35 +172,21 @@ public class Messages {
     public static final String ERROR_WEB_CLIENT_DEFINITION_NAME_MISMATCH = "definition.name.mismatch.error";
     public static final String ERROR_WEB_CLIENT_PROCESS_DOES_NOT_EXIST = "process.does.not.exist.error";
     public static final String ERROR_WEB_CLIENT_TASK_DOES_NOT_EXIST = "task.does.not.exist.error";
-    public static final String EXCEPTION_WEB_CLIENT_DEFINITION_FILE_NOT_FOUND = "definition.file.not.found";
-    public static final String EXCEPTION_WEB_CLIENT_VARTAG_TYPE_MISMATCH = "vartag.type.mismatch";
 
     public static final String DEFINITION_ARCHIVE_FORMAT_ERROR = "definition.archive.format.error";
     public static final String DEFINITION_FILE_FORMAT_ERROR = "definition.file.format.error";
-    public static final String DEFINITION_DEPRECATED_FORMAT_ERROR = "definition.deprecated.format.error";
     public static final String DEFINITION_FILE_DOES_NOT_EXIST_ERROR = "definition.file.does.not.exist.error";
-    public static final String DEFINITION_DELEGATION_CLASS_CAN_NOT_BE_FOUND_ERROR = "definition.delegation.class.can.not.be.found.error";
     public static final String EXCEPTION_DEFINITION_TYPE_NOT_PRESENT = "definition.type.not.present";
-    public static final String DEFINITION_VARIABLE_NOT_PRESENT = "definition.variable.not.found";
 
     public static final String TASK_COMPLETED = "task.completed";
     public static final String PROCESS_STARTED = "process.started";
     public static final String PROCESS_CANCELED = "process.canceled";
 
-    public static final String TASK_FORM_NOT_DEFINED_ERROR = "task.form.not.defined.error";
-
     public static final String MESSAGE_WEB_CLIENT_VARIABLE_FORMAT_ERROR = "variable.format.error";
     public static final String MESSAGE_WEB_CLIENT_VALIDATION_ERROR = "validation.form.error";
 
-    public static final String TASK_FORM_ERROR = "task.form.error";
-
-    public static final String LABEL_PROCESS_VARIABLE_NAME = "label.process_variable_name";
-    public static final String LABEL_PROCESS_VARIABLE_VALUE = "label.process_variable_value";
-    public static final String LABEL_PROCESS_VARIABLE_FILTER_ON = "label.is_process_variable_filter_on";
-
     public static final String TASK_WAS_ALREADY_ACCEPTED = "task.was.already.accepted";
 
-    public static final String DEFINITION_HAS_UNEXISTENT_SUBPROCESS = "definition.has.unexistent.subprocess";
     public static final String PROCESS_HAS_SUPER_PROCESS = "process.has.super.process";
 
     public static final String BUTTON_BOT_STATION_CONFIGURE_PERMISSION = "button.bot_station_configure";
@@ -266,7 +223,6 @@ public class Messages {
     public static final String MESSAGE_BOTSTATION_OFF = "button.botstation_off";
     public static final String MESSAGE_PERIODIC_BOTS_INVOCATION_ON = "button.periodic_bots_invocation_on";
     public static final String MESSAGE_PERIODIC_BOTS_INVOCATION_OFF = "button.periodic_bots_invocation_off";
-    public static final String MESSAGE_INCORRECT_BOT_ARCHIVE = "label.incorrect_bot_archive";
     public static final String BUTTON_STOP_PERIODIC_BOTS_INVOCATION = "button.stop_periodic_bots_invocation";
     public static final String BUTTON_START_PERIODIC_BOTS_INVOCATION = "button.start_periodic_bots_invocation";
 
@@ -274,29 +230,12 @@ public class Messages {
 
     public static final String SYSTEM_LOG_PROCESS_DELETED = "system.log.process.delete";
     public static final String SYSTEM_LOG_DEFINITION_DELETED = "system.log.definition.delete";
-    public static final String SYSTEM_LOG_DEFINITION_LAST_VERSION_EXCEPTION = "system.log.definition.delete_last_version_attempt";
-    public static final String SYSTEM_LOG_DEFINITION_PROCESS_EXIST = "system.log.definition.processes_exist";
     public static final String SYSTEM_LOG_UNDEFINED_TYPE = "history.system.type.undefined";
     public static final String HISTORY_SYSTEM_PH_PI = "history.system.placeholders.process";
     public static final String HISTORY_SYSTEM_PH_PD = "history.system.placeholders.process_definition";
     public static final String HISTORY_SYSTEM_PH_VERSION = "history.system.placeholders.version";
 
     public static final String LABEL_SHOW_HISTORY = "label.manage_history";
-    public static final String HISTORY_DYNAMIC_GROUP_CREATED = "history.dynamic_group.created";
-    public static final String HISTORY_NODE_ENTER = "history.node_enter";
-    public static final String HISTORY_PROCESS_START = "history.process_start";
-    public static final String HISTORY_REASSIGN_SWIMLANE = "history.reassign_swimlane";
-    public static final String HISTORY_TASK_START = "history.task_start";
-    public static final String HISTORY_TASK_DONE = "history.task_done";
-    public static final String HISTORY_TASK_DONE_BY_TIMER = "history.task_done_by_timer";
-    public static final String HISTORY_FIRE_ACTION = "history.fire_action";
-    public static final String HISTORY_ASSIGN_SWIMLANE = "history.assign_swimlane";
-    public static final String HISTORY_ASSIGN_VARIABLE = "history.assign_variable";
-    public static final String HISTORY_CHANGE_VARIABLE = "history.change_variable";
-    public static final String HISTORY_CANCEL_PROCESS = "history.cancel_process";
-    public static final String HISTORY_END_PROCESS = "history.end_process";
-    public static final String HISTORY_SUBPROCESS_START = "history.subprocess_started";
-    public static final String HISTORY_SUBPROCESS_COMPLETE = "history.subprocess_complete";
 
     public static final String CONF_POPUP_BUTTON_OK = "confirmpopup.button.ok";
     public static final String CONF_POPUP_BUTTON_CANCEL = "confirmpopup.button.cancel";

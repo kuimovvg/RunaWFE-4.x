@@ -18,6 +18,7 @@
 package ru.runa.wfe.var.logic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +78,7 @@ public class VariableLogic extends WFCommonLogic {
         return new WfVariable(variableDefinition, variableValue);
     }
 
-    public Map<Long, Object> getVariableValueFromProcesses(User user, List<Long> processIds, String variableName) {
+    public HashMap<Long, Object> getVariableValueFromProcesses(User user, List<Long> processIds, String variableName) {
         List<Identifiable> idents = Lists.newArrayListWithExpectedSize(processIds.size());
         for (Long processId : processIds) {
             Process stub = new Process();

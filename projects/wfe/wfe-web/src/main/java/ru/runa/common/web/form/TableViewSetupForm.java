@@ -38,43 +38,25 @@ public class TableViewSetupForm extends IdsForm {
     private static final long serialVersionUID = -9191693914255904764L;
 
     public static final String VIEW_SIZE_NAME = "viewSize";
-
     public static final String FORM_NAME = "tableViewSetupForm";
-
-    public int viewSize;
-
     public static final String SAVE_AS_NAME = "saveAsBatchPresentationName";
-
     public static final String RETURN_ACTION = "returnAction";
-
     public static final String DISPLAY_POSITIONS = "displayPositionsIds";
-
     public static final String SORTING_POSITIONS = "sortPositionsIds";
-
     public static final String SORTING_MODE_NAMES = "sortingModeNames";
-
     public static final String ASC_SORTING_MODE = "ASC";
-
     public static final String DSC_SORTING_MODE = "DSC";
-
-    public static final String NONE_SORTING_MODE = "none";
-
     public static final String BATCH_PRESENTATION_ID = "batchPresentationId";
-
     public static final String FILTER_CRITERIA = "fieldsToFilterCriterias";
-
     public static final String FILTER_CRITERIA_ID = "fieldsToFilterIds";
-
     public static final String GROUPING_POSITIONS = "fieldsToGroupIds";
-
     public static final String FILTER_POSITIONS = "filterPositionsIds";
-
     public static final String EDITABLE_FIELDS = "editableFieldsValues";
-
     public static final String SORTING_FIELD_IDS = "sortingIds";
     public static final String FILTERING_FIELD_IDS = "filteringIds";
     public static final String REMOVABLE_FIELD_IDS = "removableIds";
 
+    private int viewSize;
     private String saveAsBatchPresentationName;
     private String batchPresentationId;
 
@@ -150,8 +132,10 @@ public class TableViewSetupForm extends IdsForm {
             return new int[0];
         }
         /*
-         * long[] ids = getIds(); // dumb convertion from long[] to int[] int[] tmpFieldsToFilterIds = new int[fieldsToFilterIds.length]; for (int i = 0; i <
-         * tmpFieldsToFilterIds.length; i++) { tmpFieldsToFilterIds[i] = (int)ids[fieldsToFilterIds[i]]; } return tmpFieldsToFilterIds;
+         * long[] ids = getIds(); // dumb convertion from long[] to int[] int[]
+         * tmpFieldsToFilterIds = new int[fieldsToFilterIds.length]; for (int i
+         * = 0; i < tmpFieldsToFilterIds.length; i++) { tmpFieldsToFilterIds[i]
+         * = (int)ids[fieldsToFilterIds[i]]; } return tmpFieldsToFilterIds;
          */
         return fieldsToFilterIds;
     }
@@ -260,6 +244,7 @@ public class TableViewSetupForm extends IdsForm {
             this.pos = pos;
         }
 
+        @Override
         public int compareTo(IdPos o) {
             int p = o.getPos();
             if (pos < p) {
@@ -281,7 +266,8 @@ public class TableViewSetupForm extends IdsForm {
     }
 
     /*
-     * Map of types (Integer, String[]) Here Integer - fieldId in class presentation String[] - filter criterias for field
+     * Map of types (Integer, String[]) Here Integer - fieldId in class
+     * presentation String[] - filter criterias for field
      */
     public Map<Integer, String[]> getFieldsToFilterCriteriasMap() {
         Map<Integer, String[]> filterCriterias = new HashMap<Integer, String[]>();

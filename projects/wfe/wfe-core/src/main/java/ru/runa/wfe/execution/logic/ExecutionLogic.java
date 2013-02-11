@@ -132,7 +132,7 @@ public class ExecutionLogic extends WFCommonLogic {
                 variables = Maps.newHashMap();
             }
             ProcessDefinition processDefinition = getLatestDefinition(definitionName);
-            checkPermissionAllowed(user, processDefinition, DefinitionPermission.START_PROCESS);
+            checkPermissionAllowed(user, processDefinition.getDeployment(), DefinitionPermission.START_PROCESS);
             Map<String, Object> defaultValues = processDefinition.getDefaultVariableValues();
             for (Map.Entry<String, Object> entry : defaultValues.entrySet()) {
                 if (!variables.containsKey(entry.getKey())) {

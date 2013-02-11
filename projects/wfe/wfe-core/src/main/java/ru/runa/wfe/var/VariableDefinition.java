@@ -24,11 +24,9 @@ import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Objects;
 
-/**
- * Created on 17.11.2004
- */
 public class VariableDefinition implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private String name;
     private String formatClassName;
     private String formatLabel;

@@ -37,8 +37,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,7 +46,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import ru.runa.wfe.commons.ArraysCommons;
 import ru.runa.wfe.commons.OracleCommons;
-import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 import ru.runa.wfe.presentation.filter.FilterCriteriaFactory;
 
@@ -62,30 +60,21 @@ import com.google.common.collect.Maps;
 @Entity
 @Table(name = "BATCH_PRESENTATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@XmlType(name = "BatchPresentation", namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class BatchPresentation implements Cloneable, Serializable {
     private static final long serialVersionUID = 6631653373163613071L;
     private static final Log log = LogFactory.getLog(BatchPresentation.class);
 
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long id;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Long version;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Integer classPresentationId;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String category;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private String name;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private boolean active;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private int rangeSize = 10;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private int pageNumber = 1;
-    @XmlElement(namespace = SystemUtils.WEB_SERVICE_NAMESPACE)
     private Fields fields;
+    @XmlTransient
     private final List<String> expandedBlockList = Lists.newArrayList();
     /**
      * Helper to hold fields set (such us fields to display, sort and so on).
@@ -478,7 +467,8 @@ public final class BatchPresentation implements Cloneable, Serializable {
         return fields != null;
     }
 
-    protected static class Fields implements Serializable {
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Fields implements Serializable {
         private static final long serialVersionUID = 1L;
 
         /**
@@ -506,7 +496,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
         /**
          * {@link Map} from field index to {@link FilterCriteria} for filter.
          */
-        final Map<Integer, FilterCriteria> filters = Maps.newHashMap();
+        final HashMap<Integer, FilterCriteria> filters = Maps.newHashMap();
 
         /**
          * Removable fields, created for editable fields (with values, inserted

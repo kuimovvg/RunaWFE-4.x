@@ -17,6 +17,7 @@
  */
 package ru.runa.wf.web.action;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +33,6 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.wf.web.VariablesFormatException;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Profile;
@@ -92,8 +92,7 @@ public abstract class BaseProcessFormAction extends ActionBase {
         return forward;
     }
 
-    protected Map<String, Object> getFormVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction)
-            throws VariablesFormatException {
+    protected HashMap<String, Object> getFormVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
         return VariableExtractionHelper.extractVariables(request.getSession(), actionForm, interaction);
     }
 

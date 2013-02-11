@@ -124,7 +124,7 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                     continue;
                 }
                 try {
-                    Executor executor = Delegates.getExecutorService().getExecutor(getUser(), name);
+                    Executor executor = Delegates.getExecutorService().getExecutorByName(getUser(), name);
                     result[i] = createExecutorLink(executor);
                 } catch (Exception e) {
                     log.error("could not get executor '" + name + "': " + e.getMessage());

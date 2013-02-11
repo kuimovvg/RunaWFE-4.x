@@ -74,7 +74,7 @@ public class GrantPermissionOnRelationAction extends IdentifiableAction {
         try {
             AuthorizationService authorizationService = Delegates.getAuthorizationService();
             RelationService relationService = Delegates.getRelationService();
-            Identifiable identifiable = relationService.getRelation(getLoggedUser(request), relationForm.getRelationName());
+            Identifiable identifiable = relationService.getRelationByName(getLoggedUser(request), relationForm.getRelationName());
             if (identifiable != null) {
                 authorizationService.setPermissions(getLoggedUser(request), selectedIds, getIdentifiablePermissions(), identifiable);
             }

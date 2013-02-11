@@ -24,7 +24,6 @@ import org.apache.ecs.html.TD;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.html.TDBuilder;
-import ru.runa.wfe.audit.ProcessDefinitionDeleteExceptionLog;
 import ru.runa.wfe.audit.ProcessDefinitionDeleteLog;
 import ru.runa.wfe.audit.ProcessDeleteLog;
 import ru.runa.wfe.audit.SystemLog;
@@ -82,18 +81,6 @@ public class SystemLogTDBuilder implements TDBuilder {
             Long version = processDefinitionDeleteLog.getVersion();
             return Messages.getMessage(Messages.SYSTEM_LOG_DEFINITION_DELETED, env.getPageContext())
                     .replaceAll("\\{" + PH_PROCESS_DEFINITION + "\\}", name).replaceAll("\\{" + PH_VERSION + "\\}", String.valueOf(version));
-        } else if (log instanceof ProcessDefinitionDeleteExceptionLog) {
-            ProcessDefinitionDeleteExceptionLog processDefinitionDeleteExceptionLog = (ProcessDefinitionDeleteExceptionLog) log;
-            String name = processDefinitionDeleteExceptionLog.getName();
-            Long version = processDefinitionDeleteExceptionLog.getVersion();
-            if (processDefinitionDeleteExceptionLog.isProcessExists()) {
-                return Messages.getMessage(Messages.SYSTEM_LOG_DEFINITION_PROCESS_EXIST, env.getPageContext())
-                        .replaceAll("\\{" + PH_PROCESS_DEFINITION + "\\}", name).replaceAll("\\{" + PH_VERSION + "\\}", String.valueOf(version));
-            }
-            if (processDefinitionDeleteExceptionLog.getLastVersion()) {
-                return Messages.getMessage(Messages.SYSTEM_LOG_DEFINITION_LAST_VERSION_EXCEPTION, env.getPageContext())
-                        .replaceAll("\\{" + PH_PROCESS_DEFINITION + "\\}", name).replaceAll("\\{" + PH_VERSION + "\\}", String.valueOf(version));
-            }
         }
         return "Unsupported log instance";
     }

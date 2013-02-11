@@ -4,9 +4,12 @@ import java.io.Serializable;
 
 public class ProcessLogFilter implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final Long processId;
+    private Long processId;
     private boolean includeSubprocessLogs;
     private Severity[] severities;
+
+    public ProcessLogFilter() {
+    }
 
     public ProcessLogFilter(Long processId) {
         this.processId = processId;
@@ -14,6 +17,10 @@ public class ProcessLogFilter implements Serializable {
 
     public Long getProcessId() {
         return processId;
+    }
+
+    public void setProcessId(Long processId) {
+        this.processId = processId;
     }
 
     public boolean isIncludeSubprocessLogs() {

@@ -27,7 +27,7 @@ import com.google.common.base.Objects;
 @Entity
 @Table(name = "BPM_PROCESS_DEFINITION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Deployment implements Identifiable {
+public class Deployment extends Identifiable {
     private static final long serialVersionUID = 1L;
     private Long id;
     private Long version;

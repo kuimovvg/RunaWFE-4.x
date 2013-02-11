@@ -29,8 +29,6 @@ public class WebResources {
     private static final Properties PROPERTIES = ClassLoaderUtil.getPropertiesNotNull("wfe.web.properties");
 
     public static final String ACTION_MAPPING_UPDATE_EXECUTOR = "/manage_executor";
-    public static final String ACTION_MAPPING_MANAGE_EXECUTORS = "/manage_executors";
-    public static final String ACTION_MAPPING_MANAGE_SYSTEM = "/manage_system";
     public static final String ACTION_MAPPING_MANAGE_RELATION = "/manage_relation";
 
     public static final String ACTION_MAPPING_MANAGE_EXECUTOR_RIGHT_RELATION = "/manage_executor_relation_right";
@@ -49,7 +47,6 @@ public class WebResources {
     public static final String ACTION_MAPPING_SUBMIT_TASK_DISPATCHER = "/submitTaskDispatcher";
     public static final String ACTION_MAPPING_REDEPLOY_PROCESS_DEFINITION = "/redeploy_process_definition";
     public static final String UNAUTHORIZED_EXECUTOR_NAME = "label.executor.unauthorized";
-    public static final String NON_EXISTING_EXECUTOR_NAME = "label.executor.non_existing";
     public static final String FORWARD_SUCCESS_DISPLAY_START_FORM = "success_display_start_form";
 
     public static final String START_PROCESS_IMAGE = "/images/start.gif";
@@ -98,6 +95,9 @@ public class WebResources {
         return getBooleanProperty("task.form.highlightRequiredFields", false);
     }
 
+    /**
+     * Used from JSP page
+     */
     public static int getDiagramRefreshInterval() {
         return getIntegerProperty("process.graph.autoRefreshInterval.seconds", 0);
     }
@@ -134,6 +134,9 @@ public class WebResources {
         return getBooleanProperty("task.form.autoShowNext", false);
     }
 
+    /**
+     * Used from JSP page
+     */
     public static String getAdditionalLinks() {
         try {
             String className = getStringProperty("menu.additional_links", null);

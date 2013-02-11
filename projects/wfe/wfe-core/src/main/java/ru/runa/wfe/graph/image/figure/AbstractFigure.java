@@ -31,9 +31,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -60,7 +58,6 @@ public abstract class AbstractFigure {
     protected String name;
     protected String swimlane;
     protected int actionsCount;
-    protected List<Integer> failedActions = new ArrayList<Integer>();
     protected boolean async;
     protected boolean minimized;
     protected boolean withTimer;
@@ -95,10 +92,6 @@ public abstract class AbstractFigure {
         this.renderHits = renderHits;
     }
 
-    public void addFailedAction(int index) {
-        failedActions.add(index);
-    }
-
     public Map<String, TransitionFigureBase> getTransitions() {
         return transitions;
     }
@@ -124,10 +117,6 @@ public abstract class AbstractFigure {
             for (int i = 0; i < actionsCount; i++) {
                 Point loc = ActionUtils.getActionLocationOnNode(i, coords, getClass() == TaskNodeFigure.class);
                 loc.translate(-1, -1);
-                if (failedActions.contains(i)) {
-                    graphics.setColor(Color.RED);
-                    graphics.drawString("x", loc.x + 3, loc.y + 3);
-                }
                 graphics.setColor(color);
                 graphics.drawOval(loc.x, loc.y, ActionUtils.ACTION_SIZE, ActionUtils.ACTION_SIZE);
             }

@@ -67,13 +67,13 @@ class VariableExtractionHelper {
         return variablesMap;
     }
 
-    public static Map<String, Object> extractVariables(HttpSession session, ActionForm actionForm, Interaction interaction)
+    public static HashMap<String, Object> extractVariables(HttpSession session, ActionForm actionForm, Interaction interaction)
             throws VariablesFormatException {
         try {
             Hashtable<String, Object> hashtable = actionForm.getMultipartRequestHandler().getAllElements();
             List<String> formatErrorsForFields = new ArrayList<String>();
 
-            Map<String, Object> variablesMap = Maps.newHashMap();
+            HashMap<String, Object> variablesMap = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
                 Object value = hashtable.get(variableDefinition.getName());
                 VariableFormat<?> format = FormatCommons.create(variableDefinition);

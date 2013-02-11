@@ -135,11 +135,6 @@ public class ExecutorLogic extends CommonLogic {
         }
     }
 
-    public void remove(User user, Executor executor) {
-        checkPermissionAllowed(user, executor, ExecutorPermission.UPDATE);
-        remove(executor);
-    }
-
     public void remove(Executor executor) {
         if (permissionDAO.isPrivilegedExecutor(executor)) {
             throw new AuthorizationException(executor.getName() + " can not be removed");
@@ -229,10 +224,6 @@ public class ExecutorLogic extends CommonLogic {
         return filterIdentifiable(user, executorDAO.getAllNonGroupExecutorsFromGroup(group), Permission.READ);
     }
 
-    public List<Actor> getAvailableActorsByCodes(User user, List<Long> codes) {
-        return checkPermissionsOnExecutors(user, executorDAO.getAvailableActorsByCodes(codes), Permission.READ);
-    }
-
     public void removeExecutorsFromGroup(User user, List<? extends Executor> executors, Group group) {
         removeExecutorsFromGroupInternal(user, executors, group);
     }
@@ -310,32 +301,12 @@ public class ExecutorLogic extends CommonLogic {
         return executorDAO.isExecutorInGroup(executor, group);
     }
 
-    public Group getGroup(User user, Long id) {
-        return checkPermissionsOnExecutor(user, executorDAO.getGroup(id), Permission.READ);
-    }
-
     public Executor getExecutor(User user, Long id) {
         return checkPermissionsOnExecutor(user, executorDAO.getExecutor(id), Permission.READ);
     }
 
     public List<Executor> getExecutors(User user, List<Long> ids) {
         return checkPermissionsOnExecutors(user, executorDAO.getExecutors(ids), Permission.READ);
-    }
-
-    public List<Actor> getActors(User user, List<Long> ids) {
-        return checkPermissionsOnExecutors(user, executorDAO.getActors(ids), Permission.READ);
-    }
-
-    public List<Actor> getActorsByCodes(User user, List<Long> codes) {
-        return checkPermissionsOnExecutors(user, executorDAO.getActorsByCodes(codes), Permission.READ);
-    }
-
-    public List<Actor> getActorsByExecutorIds(User user, List<Long> executorIds) {
-        return checkPermissionsOnExecutors(user, executorDAO.getActorsByExecutorIds(executorIds), Permission.READ);
-    }
-
-    public List<Group> getGroups(User user, List<Long> ids) {
-        return checkPermissionsOnExecutors(user, executorDAO.getGroups(ids), Permission.READ);
     }
 
     public Actor getActorByCode(User user, Long code) {

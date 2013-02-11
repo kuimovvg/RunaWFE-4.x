@@ -17,10 +17,9 @@
  */
 package ru.runa.service.delegate;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import ru.runa.service.SystemService;
-import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.user.User;
 
 /**
@@ -41,17 +40,17 @@ public class SystemServiceDelegate extends EJB3Delegate implements SystemService
     }
 
     @Override
-    public void login(User user, ASystem system) {
-        getSystemService().login(user, system);
+    public void login(User user) {
+        getSystemService().login(user);
     }
 
     @Override
-    public void logout(User user, ASystem system) {
-        getSystemService().logout(user, system);
+    public void logout(User user) {
+        getSystemService().logout(user);
     }
 
     @Override
-    public Map<String, String> getLocalizations(User user) {
+    public HashMap<String, String> getLocalizations(User user) {
         return getSystemService().getLocalizations(user);
     }
 
@@ -61,7 +60,7 @@ public class SystemServiceDelegate extends EJB3Delegate implements SystemService
     }
 
     @Override
-    public void saveLocalizations(User user, Map<String, String> localizations) {
+    public void saveLocalizations(User user, HashMap<String, String> localizations) {
         getSystemService().saveLocalizations(user, localizations);
     }
 
