@@ -53,6 +53,7 @@
 	var saveSuccessMessage = "<bean:message key="adminkit.script.save.success" />";
 	var executionSuccessMessage = "<bean:message key="adminkit.script.execution.success" />";
 	var executionFailedMessage = "<bean:message key="adminkit.script.execution.failed" />";
+	var buttonCloseMessage = "<bean:message key="button.close" />";
 	</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/xmleditor/codemirror.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/scripteditor.js" />">c=0;</script>
