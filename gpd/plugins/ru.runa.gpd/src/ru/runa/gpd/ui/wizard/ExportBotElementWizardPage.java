@@ -1,13 +1,10 @@
 package ru.runa.gpd.ui.wizard;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -150,12 +147,12 @@ public abstract class ExportBotElementWizardPage extends WizardArchiveFileResour
         saveDirtyEditors();
         // about to invoke the operation so save our state
         saveWidgetValues();
-        String selectedDefinitionName = getBotElementSelection();
-        if (selectedDefinitionName == null) {
-            setErrorMessage(Localization.getString("ExportParWizardPage.error.selectProcess"));
+        String selected = getBotElementSelection();
+        if (selected == null) {
+            setErrorMessage("select");
             return false;
         }
-        IResource exportResource = exportObjectNameFileMap.get(selectedDefinitionName);
+        IResource exportResource = exportObjectNameFileMap.get(selected);
         try {
             exportResource.refreshLocal(IResource.DEPTH_ONE, null);
             if (exportToFile) {
@@ -163,15 +160,16 @@ public abstract class ExportBotElementWizardPage extends WizardArchiveFileResour
             } else {
                 deployToServer(exportResource);
             }
+            return true;
         } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), e);
+            PluginLogger.logErrorWithoutDialog("botelement.error.export", e);
+            return false;
         }
-        return true;
     }
 
-    protected abstract void exportToZipFile(IResource exportResource) throws IOException, CoreException, InvocationTargetException, InterruptedException;
+    protected abstract void exportToZipFile(IResource exportResource) throws Exception;
 
-    protected abstract void deployToServer(IResource exportResource) throws IOException, CoreException, InvocationTargetException, InterruptedException;
+    protected abstract void deployToServer(IResource exportResource) throws Exception;
 
     @Override
     protected abstract String getOutputSuffix();

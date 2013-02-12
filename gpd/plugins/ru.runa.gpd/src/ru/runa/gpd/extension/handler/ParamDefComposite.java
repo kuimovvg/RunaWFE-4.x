@@ -1,6 +1,7 @@
 package ru.runa.gpd.extension.handler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -88,7 +89,7 @@ public class ParamDefComposite extends Composite {
         this.menuForSettingVariable = menuForSettingVariable;
     }
 
-    private List<String> getVariableNames(Set<String> typeFilters) {
+    private List<String> getVariableNames(Collection<String> typeFilters) {
         List<String> result = new ArrayList<String>();
         for (Variable variable : variables) {
             boolean applicable = typeFilters.size() == 0;

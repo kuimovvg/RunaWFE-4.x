@@ -31,7 +31,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.editor.BotTaskEditor;
@@ -66,6 +65,7 @@ import ru.runa.gpd.ui.wizard.NewBotWizard;
 import ru.runa.gpd.ui.wizard.NewProcessDefinitionWizard;
 import ru.runa.gpd.ui.wizard.NewProcessProjectWizard;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 
 public class WorkspaceOperations {
@@ -284,7 +284,7 @@ public class WorkspaceOperations {
         try {
             IProject botStationProject = (IProject) selection.getFirstElement();
             IFile botStationFile = botStationProject.getFolder("/src/botstation/").getFile("botstation");
-            BufferedReader botStationReader = new BufferedReader(new InputStreamReader(botStationFile.getContents(), PluginConstants.UTF_ENCODING));
+            BufferedReader botStationReader = new BufferedReader(new InputStreamReader(botStationFile.getContents(), Charsets.UTF_8));
             String oldName = botStationReader.readLine();
             String oldRmi = botStationReader.readLine();
             botStationReader.close();
@@ -309,21 +309,11 @@ public class WorkspaceOperations {
                     botStationProject = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
                     //rename in file
                     IFile file = botStationProject.getFolder("/src/botstation/").getFile("botstation");
-                    StringBuffer buffer = new StringBuffer();
-                    buffer.append(newName);
-                    buffer.append("\n");
-                    buffer.append(newRmi);
-                    buffer.append("\n");
-                    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes(PluginConstants.UTF_ENCODING)), true, true, null);
+                    file.setContents(BotTaskContentUtil.createBotStationInfo(newName, newRmi), true, true, null);
                     ResourcesPlugin.getWorkspace().getRoot().getProject(oldName).delete(true, null);
                 } else if (!newRmi.equals(oldRmi)) {
                     IFile file = botStationProject.getFolder("/src/botstation/").getFile("botstation");
-                    StringBuffer buffer = new StringBuffer();
-                    buffer.append(oldName);
-                    buffer.append("\n");
-                    buffer.append(newRmi);
-                    buffer.append("\n");
-                    file.setContents(new ByteArrayInputStream(buffer.toString().getBytes(PluginConstants.UTF_ENCODING)), true, true, null);
+                    file.setContents(BotTaskContentUtil.createBotStationInfo(newName, newRmi), true, true, null);
                     refreshResources(selection.toList());
                 }
             }

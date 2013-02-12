@@ -18,10 +18,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import ru.runa.gpd.BotStationNature;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.util.BotTaskContentUtil;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ProjectFinder;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 
 public class BotStationImportCommand extends BotImportCommand {
@@ -41,30 +42,26 @@ public class BotStationImportCommand extends BotImportCommand {
             String botStationName = "";
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals("botstation")) {
-                    BufferedReader r = new BufferedReader(new InputStreamReader(zin, PluginConstants.UTF_ENCODING));
+                    BufferedReader r = new BufferedReader(new InputStreamReader(zin, Charsets.UTF_8));
                     String name = r.readLine();
                     botStationName = name;
-                    String addr = r.readLine();
+                    String rmiAddress = r.readLine();
                     for (IProject botStationProject : ProjectFinder.getAllBotStations()) {
                         if (botStationProject.getName().equals(name)) {
                             throw new Exception(Localization.getString("ImportParWizardPage.error.processWithSameNameExists"));
                         }
                     }
                     IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-                    final IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(name);
+                    IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(name);
                     description.setNatureIds(new String[] { BotStationNature.NATURE_ID });
                     newProject.create(description, null);
                     newProject.open(IResource.BACKGROUND_REFRESH, null);
                     newProject.refreshLocal(IResource.DEPTH_INFINITE, null);
                     IFolder folder = newProject.getFolder("/src/botstation/");
                     IOUtils.createFolder(folder);
-                    IFile gpdFile = folder.getFile("botstation");
-                    StringBuffer buffer = new StringBuffer();
-                    buffer.append(botStationName);
-                    buffer.append("\n");
-                    buffer.append(addr);
-                    buffer.append("\n");
-                    gpdFile.create(new ByteArrayInputStream(buffer.toString().getBytes(PluginConstants.UTF_ENCODING)), true, null);
+                    IFile file = folder.getFile("botstation");
+                    file = IOUtils.createFileSafely(file);
+                    file.setContents(BotTaskContentUtil.createBotStationInfo(botStationName, rmiAddress), IResource.FORCE, null);
                     continue;
                 }
                 //deploy bot

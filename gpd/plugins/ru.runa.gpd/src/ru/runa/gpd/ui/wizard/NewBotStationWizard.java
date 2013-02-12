@@ -1,8 +1,5 @@
 package ru.runa.gpd.ui.wizard;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
@@ -24,8 +21,8 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import ru.runa.gpd.BotStationNature;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.util.BotTaskContentUtil;
 import ru.runa.gpd.util.IOUtils;
 
 public class NewBotStationWizard extends Wizard implements INewWizard {
@@ -68,7 +65,7 @@ public class NewBotStationWizard extends Wizard implements INewWizard {
                         IOUtils.createFolder(folder);
                         monitor.worked(1);
                         IFile gpdFile = folder.getFile("botstation");
-                        gpdFile.create(createBotStationInfo(), true, null);
+                        gpdFile.create(BotTaskContentUtil.createBotStationInfo(page.getProjectName(), page.getRmiAddress()), true, null);
                         monitor.worked(1);
                         monitor.done();
                     } catch (Exception e) {
@@ -84,7 +81,7 @@ public class NewBotStationWizard extends Wizard implements INewWizard {
         return true;
     }
 
-    private IProject createNewBotStation() throws Exception {
+    private IProject createNewBotStation() throws InvocationTargetException, InterruptedException {
         final IProject newProject = page.getProjectHandle();
         final IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(newProject.getName());
         if (!page.useDefaults()) {
@@ -107,22 +104,7 @@ public class NewBotStationWizard extends Wizard implements INewWizard {
                 }
             }
         };
-        try {
-            getContainer().run(true, true, op);
-        } catch (InterruptedException e) {
-            throw e;
-        } catch (InvocationTargetException e) {
-            throw (Exception) e.getTargetException();
-        }
+        getContainer().run(true, true, op);
         return newProject;
-    }
-
-    private InputStream createBotStationInfo() throws UnsupportedEncodingException {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(page.getProjectName());
-        buffer.append("\n");
-        buffer.append(page.getRmiAddress());
-        buffer.append("\n");
-        return new ByteArrayInputStream(buffer.toString().getBytes(PluginConstants.UTF_ENCODING));
     }
 }

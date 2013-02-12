@@ -36,4 +36,9 @@ public class HandlerArtifact extends Artifact {
     public void setConfigurerClassName(String configuratorClassName) {
         this.configurerClassName = configuratorClassName;
     }
+
+    @Override
+    public String toString() {
+        return type + ": " + getName();
+    }
 }

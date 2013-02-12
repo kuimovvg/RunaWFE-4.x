@@ -21,7 +21,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.wfe.SyncUIHelper;
-import ru.runa.wfe.os.func.ExecutorByCodeFunction;
+import ru.runa.wfe.extension.orgfunction.GetActorsByCodesFunction;
 
 public class SwimlaneRelationsElement extends SwimlaneElement {
     private Hyperlink chooseLink;
@@ -29,7 +29,7 @@ public class SwimlaneRelationsElement extends SwimlaneElement {
     private Combo combo;
 
     public SwimlaneRelationsElement() {
-        setOrgFunctionDefinitionName(ExecutorByCodeFunction.class.getName());
+        setOrgFunctionDefinitionName(GetActorsByCodesFunction.class.getName());
     }
 
     @Override

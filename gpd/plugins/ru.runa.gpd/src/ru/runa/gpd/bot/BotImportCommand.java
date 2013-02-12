@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.util.BotXmlUtil;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
 
 import com.google.common.io.ByteStreams;
@@ -38,7 +38,6 @@ public class BotImportCommand extends BotSyncCommand {
     @Override
     protected void execute(IProgressMonitor progressMonitor) throws InvocationTargetException {
         try {
-            //ZipInputStream botZin = new ZipInputStream(new ByteArrayInputStream(IOCommons.readBytesFromStream(zin)));
             ZipInputStream botZin = new ZipInputStream(inputStream);
             Map<String, byte[]> files = new HashMap<String, byte[]>();
             ZipEntry botEntry;
@@ -56,13 +55,13 @@ public class BotImportCommand extends BotSyncCommand {
                 folder.create(true, true, null);
             }
             InputStream script = new ByteArrayInputStream(files.get("script.xml"));
-            List<BotTask> botTasks = BotXmlUtil.getBotTaskFromScript(script);
+            List<BotTask> botTasks = BotXmlUtil.getBotTasksFromScript(script);
             for (BotTask botTask : botTasks) {
                 if (botTask.getConfig() != null && files.get(botTask.getConfig()) == null) {
                     botTask.setConfig(null);
                 }
                 IFile file = folder.getFile(botTask.getName());
-                file.create(new ByteArrayInputStream(new StringBuffer().toString().getBytes(PluginConstants.UTF_ENCODING)), true, null);
+                file = IOUtils.createFileSafely(file);
                 WorkspaceOperations.saveBotTask(file, botTask);
             }
             for (String fileName : files.keySet()) {
