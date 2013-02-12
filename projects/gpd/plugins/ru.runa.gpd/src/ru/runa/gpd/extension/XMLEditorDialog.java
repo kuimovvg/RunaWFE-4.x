@@ -1,15 +1,11 @@
 package ru.runa.gpd.extension;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
 import ru.runa.gpd.util.XmlUtil;
 
@@ -47,11 +43,10 @@ public class XMLEditorDialog extends DelegableConfigurationDialog {
     protected void okPressed() {
         try {
             String xml = styledText.getText();
-            InputStream xmlStream = new ByteArrayInputStream(xml.getBytes(PluginConstants.UTF_ENCODING));
             if (validateXSD) {
-                XmlUtil.parseWithXSDValidation(xmlStream);
+                XmlUtil.parseWithXSDValidation(xml);
             } else {
-                XmlUtil.parseWithoutValidation(xmlStream);
+                XmlUtil.parseWithoutValidation(xml);
             }
             super.okPressed();
         } catch (Exception e) {

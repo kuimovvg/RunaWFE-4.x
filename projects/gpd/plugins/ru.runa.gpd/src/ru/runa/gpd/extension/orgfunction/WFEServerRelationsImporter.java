@@ -13,11 +13,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.gpd.wfe.DataImporter;
 import ru.runa.gpd.wfe.WFEServerConnector;
-import ru.runa.service.af.RelationService;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.relation.Relation;
+import ru.runa.wfe.service.RelationService;
 
 public class WFEServerRelationsImporter extends DataImporter {
     private final List<String> relations = new ArrayList<String>();
@@ -69,7 +69,7 @@ public class WFEServerRelationsImporter extends DataImporter {
         RelationService executorService = WFEServerConnector.getInstance().getService("RelationServiceBean");
         BatchPresentation batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
         batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
-        List<Relation> loaded = executorService.getRelations(WFEServerConnector.getInstance().getSubject(), batchPresentation);
+        List<Relation> loaded = executorService.getRelations(WFEServerConnector.getInstance().getUser(), batchPresentation);
         for (Relation relation : loaded) {
             relations.add(relation.getName());
         }

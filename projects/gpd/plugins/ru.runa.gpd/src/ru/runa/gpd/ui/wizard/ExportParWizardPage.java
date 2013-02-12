@@ -224,8 +224,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
             }
             return true;
         } catch (Throwable th) {
-            th = Throwables.getRootCause(th);
-            setErrorMessage(th.getMessage() != null ? th.getMessage() : th.getClass().getName());
+            setErrorMessage(Throwables.getRootCause(th).getMessage());
             PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), th);
             return false;
         }

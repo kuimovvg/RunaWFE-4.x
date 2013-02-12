@@ -24,10 +24,19 @@ public class ParamDefConfig {
         this.name = name;
     }
 
-    public static ParamDefConfig parse(Document doc) {
-        Element configElement = doc.getRootElement();
-        ParamDefConfig config = new ParamDefConfig(configElement.getName());
-        List<Element> groupElements = configElement.elements();
+    public static ParamDefConfig parse(String xml) {
+        return parse(XmlUtil.parseWithoutValidation(xml));
+    }
+
+    public static ParamDefConfig parse(Document document) {
+        Element rootElement = document.getRootElement();
+        return parse(rootElement);
+    }
+
+    public static ParamDefConfig parse(Element rootElement) {
+        String name = rootElement.getName();
+        ParamDefConfig config = new ParamDefConfig(name);
+        List<Element> groupElements = rootElement.elements();
         for (Element groupElement : groupElements) {
             ParamDefGroup group = new ParamDefGroup(groupElement);
             List<Element> inputParamElements = groupElement.elements("param");

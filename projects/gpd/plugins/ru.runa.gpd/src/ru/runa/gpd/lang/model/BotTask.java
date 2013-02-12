@@ -44,7 +44,6 @@ public class BotTask implements Delegable {
         boolean stateChanged = this.dirty != dirty;
         if (stateChanged) {
             this.dirty = dirty;
-            //firePropertyChange(NotificationMessages.PROPERTY_DIRTY, !this.dirty, this.dirty);
         }
     }
 

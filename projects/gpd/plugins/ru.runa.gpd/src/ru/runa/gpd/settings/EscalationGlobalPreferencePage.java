@@ -14,7 +14,7 @@ import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.ui.dialog.DurationEditDialog;
 import ru.runa.gpd.util.Delay;
-import ru.runa.wfe.handler.action.EscalationActionHandler;
+import ru.runa.wfe.extension.handler.EscalationActionHandler;
 
 import com.google.common.base.Strings;
 

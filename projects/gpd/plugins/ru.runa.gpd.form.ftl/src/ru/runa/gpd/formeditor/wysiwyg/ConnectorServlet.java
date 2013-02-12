@@ -23,7 +23,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
 
 /**
@@ -167,7 +166,7 @@ public class ConnectorServlet extends HttpServlet {
         String fileUrl = "";
         String errorMessage = "";
         DiskFileUpload upload = new DiskFileUpload();
-        upload.setHeaderEncoding(PluginConstants.UTF_ENCODING);
+        upload.setHeaderEncoding("UTF-8");
         try {
             List<FileItem> items = upload.parseRequest(request);
             // We expect first item being 'NewFile'

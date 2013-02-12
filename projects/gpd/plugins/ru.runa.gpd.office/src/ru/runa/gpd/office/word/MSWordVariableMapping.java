@@ -15,7 +15,7 @@ public class MSWordVariableMapping extends Observable {
 
     public void setVariableName(String variableName, String format) {
         this.variableName = variableName;
-        if ("time".equals(format)) {
+        if ("time".equals(format)) { // FIXME
             formatClassName = "ru.runa.wf.web.forms.format.TimeFormat";
         } else if ("date".equals(format)) {
             formatClassName = "ru.runa.wf.web.forms.format.DateFormat";

@@ -38,6 +38,7 @@ import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
 import ru.runa.wfe.definition.dto.WfDefinition;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 public class ImportParWizardPage extends ImportWizardPage {
@@ -200,7 +201,7 @@ public class ImportParWizardPage extends ImportWizardPage {
             }
         } catch (Exception exception) {
             PluginLogger.logErrorWithoutDialog("import par", exception);
-            setErrorMessage(exception.getMessage());
+            setErrorMessage(Throwables.getRootCause(exception).getMessage());
             return false;
         }
         return true;

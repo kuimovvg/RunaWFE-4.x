@@ -10,10 +10,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.Localization;
-import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
+import ru.runa.wfe.service.BotService;
 
 public class WFEServerBotElementImporter extends DataImporter {
     private final Map<Bot, List<BotTask>> bots = new HashMap<Bot, List<BotTask>>();
@@ -49,8 +49,8 @@ public class WFEServerBotElementImporter extends DataImporter {
     protected void loadRemoteData(IProgressMonitor monitor) throws Exception {
         List<BotStation> botStations = getBotService().getBotStations();
         for (BotStation botStation : botStations) {
-            for (Bot bot : getBotService().getBots(WFEServerConnector.getInstance().getSubject(), botStation.getId())) {
-                List<BotTask> result = getBotService().getBotTasks(WFEServerConnector.getInstance().getSubject(), bot.getId());
+            for (Bot bot : getBotService().getBots(WFEServerConnector.getInstance().getUser(), botStation.getId())) {
+                List<BotTask> result = getBotService().getBotTasks(WFEServerConnector.getInstance().getUser(), bot.getId());
                 bots.put(bot, result);
             }
         }
@@ -81,22 +81,22 @@ public class WFEServerBotElementImporter extends DataImporter {
     }
 
     public byte[] getBotFile(Bot bot) throws Exception {
-        return getBotService().exportBot(WFEServerConnector.getInstance().getSubject(), bot);
+        return getBotService().exportBot(WFEServerConnector.getInstance().getUser(), bot);
     }
 
     public byte[] getBotTaskFile(Bot bot, String botTask) throws Exception {
-        return getBotService().exportBotTask(WFEServerConnector.getInstance().getSubject(), bot, botTask);
+        return getBotService().exportBotTask(WFEServerConnector.getInstance().getUser(), bot, botTask);
     }
 
     public void deployBot(String botStationName, byte[] archive) throws Exception {
         WFEServerConnector.getInstance().connect();
-        BotStation botStation = getBotService().getBotStation(botStationName);
+        BotStation botStation = getBotService().getBotStationByName(botStationName);
         if (botStation == null) {
             MessageDialog.openError(Display.getCurrent().getActiveShell(), Localization.getString("ExportBotWizardPage.page.title"),
                     Localization.getString("ExportBotWizardPage.page.notExistWarning"));
             return;
         }
-        getBotService().importBot(WFEServerConnector.getInstance().getSubject(), botStation, archive, true);
+        getBotService().importBot(WFEServerConnector.getInstance().getUser(), botStation, archive, true);
     }
 
     private BotService getBotService() throws Exception {

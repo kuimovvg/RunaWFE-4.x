@@ -1,31 +1,28 @@
 package ru.runa.gpd.extension.handler;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.dom4j.Element;
 
 import ru.runa.gpd.Localization;
 
-public class ParamDef {
+import com.google.common.collect.Lists;
 
+public class ParamDef {
     public static final int TYPE_AUTO = 0;
     public static final int TYPE_TEXT = 1;
     public static final int TYPE_COMBO = 2;
     public static final int TYPE_CHECKBOX = 3;
-
     public static final int XML_TYPE_ATTR = 1;
     public static final int XML_TYPE_NODE = 2;
-
     private int type = TYPE_AUTO;
     private int xmlNodeType = XML_TYPE_ATTR;
     private final String name;
     private final String label;
-    private final Set<String> formatFilters = new HashSet<String>();
+    private final List<String> formatFilters = Lists.newArrayList();
     private String help;
     private String[] comboItems = {};
     private String defaultValue;
-
     private boolean useVariable = true;
     private boolean optional = false;
 
@@ -89,7 +86,7 @@ public class ParamDef {
         return comboItems;
     }
 
-    public Set<String> getFormatFilters() {
+    public List<String> getFormatFilters() {
         return formatFilters;
     }
 
@@ -128,5 +125,4 @@ public class ParamDef {
     public String getDefaultValue() {
         return defaultValue;
     }
-
 }

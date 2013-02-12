@@ -33,26 +33,12 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 
 import ru.runa.gpd.Localization;
 
-/**
- * Standard main page for a wizard that is creates a bot station project resource.
- * <p>
- * This page may be used by clients as-is; it may be also be subclassed to suit.
- * </p>
- * <p>
- * Example usage:
- * <pre>
- * mainPage = new NewBotStationWizardPage("basicNewProjectPage");
- * mainPage.setTitle("Project");
- * mainPage.setDescription("Create a new project resource.");
- * </pre>
- * </p>
- */
 public class NewBotStationWizardPage extends WizardPage {
     // initial value stores
     private String initialProjectFieldValue;
     // widgets
-    Text projectNameField;
-    Text rmiAddressField;
+    private Text projectNameField;
+    private Text rmiAddressField;
     private final IWorkspaceRoot workspaceRoot;
     private Listener nameModifyListener = new Listener() {
         @Override
@@ -88,11 +74,16 @@ public class NewBotStationWizardPage extends WizardPage {
         Composite composite = new Composite(parent, SWT.NULL);
         initializeDialogUnits(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IIDEHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
-        composite.setLayout(new GridLayout());
+        composite.setLayout(new GridLayout(2, false));
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         createProjectNameGroup(composite);
         createRmiAddressGroup(composite);
-        locationArea = new ProjectContentsLocationArea(getErrorReporter(), composite);
+        Composite c = new Composite(composite, SWT.NONE);
+        c.setLayout(new GridLayout());
+        GridData data = new GridData(GridData.FILL_BOTH);
+        data.horizontalSpan = 2;
+        c.setLayoutData(data);
+        locationArea = new ProjectContentsLocationArea(getErrorReporter(), c);
         if (initialProjectFieldValue != null) {
             locationArea.updateProjectName(initialProjectFieldValue);
         }
@@ -160,19 +151,13 @@ public class NewBotStationWizardPage extends WizardPage {
      *
      * @param parent the parent composite
      */
-    private final void createProjectNameGroup(Composite parent) {
-        // project specification group
-        Composite projectGroup = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        projectGroup.setLayout(layout);
-        projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    private void createProjectNameGroup(Composite parent) {
         // new project label
-        Label projectLabel = new Label(projectGroup, SWT.NONE);
+        Label projectLabel = new Label(parent, SWT.NONE);
         projectLabel.setText(Localization.getString("NewBotStationWizardPage.page.name"));
         projectLabel.setFont(parent.getFont());
         // new project name entry field
-        projectNameField = new Text(projectGroup, SWT.BORDER);
+        projectNameField = new Text(parent, SWT.BORDER);
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.widthHint = SIZING_TEXT_FIELD_WIDTH;
         projectNameField.setLayoutData(data);
@@ -185,18 +170,11 @@ public class NewBotStationWizardPage extends WizardPage {
         projectNameField.addListener(SWT.Modify, nameModifyListener);
     }
 
-    private final void createRmiAddressGroup(Composite parent) {
-        // project specification group
-        Composite projectGroup = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        projectGroup.setLayout(layout);
-        projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        // new project label
-        Label projectLabel = new Label(projectGroup, SWT.NONE);
+    private void createRmiAddressGroup(Composite parent) {
+        Label projectLabel = new Label(parent, SWT.NONE);
         projectLabel.setText(Localization.getString("NewBotStationWizardPage.page.address"));
         projectLabel.setFont(parent.getFont());
-        rmiAddressField = new Text(projectGroup, SWT.BORDER);
+        rmiAddressField = new Text(parent, SWT.BORDER);
         GridData addressData = new GridData(GridData.FILL_HORIZONTAL);
         addressData.widthHint = SIZING_TEXT_FIELD_WIDTH;
         rmiAddressField.setLayoutData(addressData);
