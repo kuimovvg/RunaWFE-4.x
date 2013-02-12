@@ -27,7 +27,7 @@ public class UpdateSwimlaneFeature extends UpdateFeature {
     public boolean update(IUpdateContext context) {
         PictogramElement pe = context.getPictogramElement();
         Swimlane bo = (Swimlane) getBusinessObjectForPictogramElement(pe);
-        PropertyUtil.setProperty(pe, GaProperty.NAME, bo.getName());
+        PropertyUtil.setTextValueProperty(pe, GaProperty.NAME, bo.getName());
         return true;
     }
 }

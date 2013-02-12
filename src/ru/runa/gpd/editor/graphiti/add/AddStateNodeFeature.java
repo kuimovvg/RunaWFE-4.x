@@ -28,6 +28,7 @@ public class AddStateNodeFeature extends AddNodeFeature {
         ContainerShape containerShape = Graphiti.getPeCreateService().createContainerShape(context.getTargetContainer(), true);
         Rectangle main = Graphiti.getGaService().createInvisibleRectangle(containerShape);
         Graphiti.getGaService().setLocationAndSize(main, context.getX(), context.getY(), bounds.width, bounds.height);
+        main.getProperties().add(new GaProperty(GaProperty.ID, LayoutStateNodeFeature.MAIN_RECT));
         //
         RoundedRectangle border = Graphiti.getGaService().createRoundedRectangle(main, 20, 20);
         border.getProperties().add(new GaProperty(GaProperty.ID, LayoutStateNodeFeature.BORDER_RECT));
