@@ -35,8 +35,6 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.TableViewSetupForm;
 import ru.runa.common.web.html.format.FilterFormatsFactory;
-import ru.runa.service.ProfileService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ArraysCommons;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.ClassPresentation;
@@ -44,6 +42,8 @@ import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.presentation.FieldState;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 import ru.runa.wfe.presentation.filter.FilterFormatException;
+import ru.runa.wfe.service.ProfileService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 
 /**

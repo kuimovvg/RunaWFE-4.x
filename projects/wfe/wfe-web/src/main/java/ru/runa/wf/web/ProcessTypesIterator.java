@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import ru.runa.service.DefinitionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.service.DefinitionService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
 public class ProcessTypesIterator implements Iterator<String[]> {

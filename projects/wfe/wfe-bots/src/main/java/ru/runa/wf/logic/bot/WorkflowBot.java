@@ -27,8 +27,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.client.DelegateProcessVariableProvider;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
@@ -36,6 +34,8 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.extension.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.service.client.DelegateProcessVariableProvider;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;

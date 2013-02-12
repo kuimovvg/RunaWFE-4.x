@@ -31,8 +31,8 @@ import ru.runa.af.web.form.RelationIdsForm;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.RelationService;
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.RelationService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @struts:action path="/removeRelation" name="relationIdsForm" validate="false"

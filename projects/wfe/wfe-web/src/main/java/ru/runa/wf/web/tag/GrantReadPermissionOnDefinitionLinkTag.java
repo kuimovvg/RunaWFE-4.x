@@ -19,9 +19,9 @@ package ru.runa.wf.web.tag;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 03.09.2004
@@ -35,7 +35,7 @@ public class GrantReadPermissionOnDefinitionLinkTag extends IdLinkBaseTag {
     @Override
     protected boolean isLinkEnabled() {
         try {
-            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
+            AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS,
                     Delegates.getDefinitionService().getProcessDefinition(getUser(), getIdentifiableId()));
         } catch (Exception e) {

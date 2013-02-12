@@ -28,11 +28,11 @@ import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.StringsHeaderBuilder;
 import ru.runa.common.web.html.TableBuilder;
-import ru.runa.service.ExecutionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.html.ProcessSwimlaneAssignmentRowBuilder;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 

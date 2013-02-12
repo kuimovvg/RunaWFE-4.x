@@ -27,8 +27,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.customtag.VarTag;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.User;
 

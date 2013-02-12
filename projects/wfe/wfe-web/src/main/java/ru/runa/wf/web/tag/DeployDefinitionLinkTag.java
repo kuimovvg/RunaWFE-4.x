@@ -19,10 +19,10 @@ package ru.runa.wf.web.tag;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.WorkflowSystemPermission;
 import ru.runa.wfe.security.ASystem;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * 

@@ -9,9 +9,9 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.af.web.form.BotForm;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.BotService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.Bot;
+import ru.runa.wfe.service.BotService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @author petrmikheev

@@ -19,11 +19,11 @@ package ru.runa.wf.web.tag;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.ExecutionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @jsp.tag name = "grantReadPermissionOnProcessLink" body-content = "empty"
@@ -35,7 +35,7 @@ public class GrantReadPermissionOnProcessLinkTag extends IdLinkBaseTag {
     @Override
     protected boolean isLinkEnabled() {
         try {
-            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
+            AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
             ExecutionService executionService = Delegates.getExecutionService();
             WfProcess process = executionService.getProcess(getUser(), getIdentifiableId());
             return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, process);

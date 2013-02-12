@@ -29,7 +29,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
 

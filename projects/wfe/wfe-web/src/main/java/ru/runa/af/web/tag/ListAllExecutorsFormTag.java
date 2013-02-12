@@ -36,9 +36,9 @@ import ru.runa.common.web.html.SortingHeaderBuilder;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
-import ru.runa.service.ExecutorService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.service.ExecutorService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorPermission;
 

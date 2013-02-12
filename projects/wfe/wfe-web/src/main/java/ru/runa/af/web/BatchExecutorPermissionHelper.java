@@ -19,10 +19,10 @@ package ru.runa.af.web;
 
 import java.util.List;
 
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 

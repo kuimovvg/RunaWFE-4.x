@@ -9,9 +9,9 @@ import ru.runa.af.web.action.UpdateBotStationAction;
 import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @author petrmikheev

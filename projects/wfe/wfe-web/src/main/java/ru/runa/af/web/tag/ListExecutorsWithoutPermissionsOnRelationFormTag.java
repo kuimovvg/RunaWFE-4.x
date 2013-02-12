@@ -20,8 +20,8 @@ package ru.runa.af.web.tag;
 import java.util.Map;
 
 import ru.runa.af.web.action.GrantPermissionOnRelationAction;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Maps;
 

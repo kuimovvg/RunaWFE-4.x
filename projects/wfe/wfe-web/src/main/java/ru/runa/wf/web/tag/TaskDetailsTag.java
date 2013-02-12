@@ -27,10 +27,10 @@ import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
-import ru.runa.service.ExecutionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 

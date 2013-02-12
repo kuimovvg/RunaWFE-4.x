@@ -30,9 +30,9 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.DefinitionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.IFileDataProvider;
+import ru.runa.wfe.service.DefinitionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @struts:action path="/processDefinitionArchive" name="idForm"

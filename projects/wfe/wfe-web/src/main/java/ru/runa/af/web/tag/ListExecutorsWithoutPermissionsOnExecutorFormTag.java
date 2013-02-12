@@ -18,8 +18,8 @@
 package ru.runa.af.web.tag;
 
 import ru.runa.af.web.action.GrantReadPermissionOnExecutorAction;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 23.08.2004

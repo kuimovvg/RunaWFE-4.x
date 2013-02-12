@@ -22,8 +22,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.DefinitionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
@@ -31,6 +29,8 @@ import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.definition.par.FileDataProvider;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.service.DefinitionService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;

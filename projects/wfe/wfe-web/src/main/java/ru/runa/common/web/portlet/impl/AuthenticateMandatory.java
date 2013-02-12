@@ -25,9 +25,9 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.portlet.PortletAuthenticator;
-import ru.runa.service.ProfileService;
-import ru.runa.service.SystemService;
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.ProfileService;
+import ru.runa.wfe.service.SystemService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 

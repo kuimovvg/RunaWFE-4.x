@@ -19,10 +19,10 @@ package ru.runa.af.web.tag;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.ExecutorService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.ExecutorService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 
 /**

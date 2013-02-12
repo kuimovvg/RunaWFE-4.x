@@ -42,11 +42,11 @@ import ru.runa.common.web.form.IdsForm;
 import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.TableBuilder;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.SubstitutionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.SubstitutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.TerminatorSubstitution;
 import ru.runa.wfe.user.Actor;
@@ -80,7 +80,7 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
         try {
             Actor actor = (Actor) getExecutor();
             List<Substitution> substitutions = substitutionService.getSubstitutions(getUser(), actor.getId());
-            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
+            AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
             boolean disabled = !authorizationService.isAllowed(getUser(), ExecutorPermission.UPDATE, actor);
             RowBuilder substitutionRowBuilder = new SubstitutionRowBuilder(substitutions, disabled);
             HeaderBuilder substitutionHeaderBuilder = new SubstitutionHeaderBuilder();

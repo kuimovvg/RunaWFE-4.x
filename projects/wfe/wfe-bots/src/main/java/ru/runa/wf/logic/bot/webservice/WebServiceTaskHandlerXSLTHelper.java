@@ -22,10 +22,10 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 
-import ru.runa.service.ExecutionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.logic.bot.WebServiceTaskHandler;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;

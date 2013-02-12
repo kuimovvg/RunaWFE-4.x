@@ -23,10 +23,10 @@ import ru.runa.af.web.action.UpdatePermissionOnRelation;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.PermissionTableBuilder;
 import ru.runa.common.web.tag.IdentifiableFormTag;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @jsp.tag name = "updatePermissionsOnRelationForm" body-content = "JSP"
