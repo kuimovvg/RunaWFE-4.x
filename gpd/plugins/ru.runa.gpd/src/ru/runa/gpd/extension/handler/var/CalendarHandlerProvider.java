@@ -67,11 +67,6 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
     }
 
     @Override
-    protected boolean isValidateByXSD() {
-        return false;
-    }
-
-    @Override
     protected String getTitle() {
         return Localization.getString("ru.runa.wfe.extension.handler.var.CreateCalendarHandler");
     }

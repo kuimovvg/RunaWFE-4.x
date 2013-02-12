@@ -8,6 +8,7 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Timer;
@@ -23,6 +24,10 @@ public class MoveElementFeature extends DefaultMoveShapeFeature {
         GraphElement element = (GraphElement) getBusinessObjectForPictogramElement(shape);
         if (element instanceof Timer && element.getParent() instanceof ITimed) {
             return false;
+        }
+        if (element instanceof Swimlane) {
+            Object parentObject = getBusinessObjectForPictogramElement(context.getTargetContainer());
+            return parentObject instanceof ProcessDefinition;
         }
         return element != null;
     }

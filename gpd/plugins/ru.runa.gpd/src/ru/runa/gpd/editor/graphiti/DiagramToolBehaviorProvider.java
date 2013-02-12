@@ -14,11 +14,12 @@ import org.eclipse.graphiti.tb.ContextButtonEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
 
+import ru.runa.gpd.editor.graphiti.create.CreateAnnotationFeature;
 import ru.runa.gpd.editor.graphiti.create.CreateElementFeature;
+import ru.runa.gpd.editor.graphiti.create.CreateSwimlaneFeature;
 import ru.runa.gpd.editor.graphiti.update.OpenSubProcessFeature;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
-import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.EndTokenState;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -54,11 +55,11 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
     public IContextButtonPadData getContextButtonPad(IPictogramElementContext context) {
         IContextButtonPadData data = super.getContextButtonPad(context);
         PictogramElement pe = context.getPictogramElement();
-        setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE);
         GraphElement element = (GraphElement) getFeatureProvider().getBusinessObjectForPictogramElement(pe);
-        if (element == null) {
+        if (element == null || element instanceof Swimlane) {
             return null;
         }
+        setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE);
         //
         CreateConnectionContext createConnectionContext = new CreateConnectionContext();
         createConnectionContext.setSourcePictogramElement(pe);
@@ -78,24 +79,6 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
             createTaskStateButton.setText(taskStateDefinition.getLabel());
             createTaskStateButton.setIconId(taskStateDefinition.getPaletteIcon());
             data.getDomainSpecificContextButtons().add(createTaskStateButton);
-//            //
-//            NodeTypeDefinition decisionDefinition = NodeRegistry.getNodeTypeDefinition(Decision.class);
-//            CreateElementFeature decisionFeature = new CreateElementFeature();
-//            decisionFeature.setNodeDefinition(decisionDefinition);
-//            decisionFeature.setFeatureProvider(getFeatureProvider());
-//            ContextButtonEntry createExclusiveGatewayButton = new ContextButtonEntry(decisionFeature, createContext);
-//            createExclusiveGatewayButton.setText(decisionDefinition.getLabel());
-//            createExclusiveGatewayButton.setIconId(decisionDefinition.getPaletteIcon());
-//            data.getDomainSpecificContextButtons().add(createExclusiveGatewayButton);
-//            //
-//            NodeTypeDefinition endStateDefinition = NodeRegistry.getNodeTypeDefinition(EndState.class);
-//            CreateElementFeature endFeature = new CreateElementFeature();
-//            endFeature.setNodeDefinition(endStateDefinition);
-//            endFeature.setFeatureProvider(getFeatureProvider());
-//            ContextButtonEntry createEndStateButton = new ContextButtonEntry(endFeature, createContext);
-//            createEndStateButton.setText(endStateDefinition.getLabel());
-//            createEndStateButton.setIconId(endStateDefinition.getPaletteIcon());
-//            data.getDomainSpecificContextButtons().add(createEndStateButton);
         }
         //
         ContextButtonEntry createTransitionButton = new ContextButtonEntry(null, context);
@@ -116,9 +99,12 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
             ContextButtonEntry createElementButton = new ContextButtonEntry(null, null);
             createElementButton.setText("new element");
             createElementButton.setDescription("Create a new element");
-            createElementButton.setIconId("?.png");
+            createElementButton.setIconId("elements.png");
             data.getDomainSpecificContextButtons().add(createElementButton);
             for (ICreateFeature feature : getFeatureProvider().getCreateFeatures()) {
+                if (feature instanceof CreateSwimlaneFeature || feature instanceof CreateAnnotationFeature) {
+                    continue;
+                }
                 if (feature instanceof CreateElementFeature && feature.canCreate(createContext)) {
                     CreateElementFeature createElementFeature = (CreateElementFeature) feature;
                     ContextButtonEntry createButton = new ContextButtonEntry(feature, createContext);
