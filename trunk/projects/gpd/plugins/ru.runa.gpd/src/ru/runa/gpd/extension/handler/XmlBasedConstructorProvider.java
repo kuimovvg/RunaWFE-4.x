@@ -85,10 +85,6 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
         }
     }
 
-    protected boolean isValidateByXSD() {
-        return true;
-    }
-
     protected abstract String getTitle();
 
     protected abstract Composite createConstructorView(Composite parent);
@@ -151,7 +147,6 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
             scrolledComposite.setContent(constructorView);
             xmlContentView = new XmlContentView(tabFolder, SWT.NONE);
             xmlContentView.setLayoutData(new GridData(GridData.FILL_BOTH));
-            xmlContentView.setValidateXSD(isValidateByXSD());
             xmlContentView.setValue(initialValue);
             TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
             tabItem2.setText(" XML ");
@@ -216,7 +211,6 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
     public static class XmlContentView extends Composite {
         private final StyledText styledText;
         private final Label errorLabel;
-        private boolean validateXSD;
 
         public XmlContentView(Composite parent, int style) {
             super(parent, style);
@@ -232,10 +226,6 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
             styledText.setLineSpacing(2);
         }
 
-        public void setValidateXSD(boolean validateXSD) {
-            this.validateXSD = validateXSD;
-        }
-
         private void setErrorLabelText(String text) {
             errorLabel.setText(text);
             errorLabel.pack(true);
@@ -244,11 +234,7 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
         public boolean validate() {
             try {
                 String xml = styledText.getText();
-                if (validateXSD) {
-                    XmlUtil.parseWithXSDValidation(xml);
-                } else {
-                    XmlUtil.parseWithoutValidation(xml);
-                }
+                XmlUtil.parseWithoutValidation(xml);
                 return true;
             } catch (Exception e) {
                 setErrorLabelText(e.getMessage());

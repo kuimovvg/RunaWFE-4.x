@@ -39,11 +39,6 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
     }
 
     @Override
-    protected boolean isValidateByXSD() {
-        return false;
-    }
-
-    @Override
     protected String getTitle() {
         return Messages.getString("DocxActionHandlerConfig.title");
     }

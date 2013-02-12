@@ -34,8 +34,7 @@ public class ParamDefConfig {
     }
 
     public static ParamDefConfig parse(Element rootElement) {
-        String name = rootElement.getName();
-        ParamDefConfig config = new ParamDefConfig(name);
+        ParamDefConfig config = new ParamDefConfig("config");
         List<Element> groupElements = rootElement.elements();
         for (Element groupElement : groupElements) {
             ParamDefGroup group = new ParamDefGroup(groupElement);
