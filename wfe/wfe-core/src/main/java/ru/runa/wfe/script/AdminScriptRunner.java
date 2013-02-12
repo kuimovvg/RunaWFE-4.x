@@ -920,17 +920,14 @@ public class AdminScriptRunner {
         List<Element> taskNodeList = element.elements(BOT_CONFIGURATION_ELEMENT_NAME);
         for (Element taskElement : taskNodeList) {
             String name = taskElement.attributeValue(NAME_ATTRIBUTE_NAME);
-            String handler = taskElement.attributeValue(HANDLER_ATTRIBUTE_NAME);
+            String handler = taskElement.attributeValue(HANDLER_ATTRIBUTE_NAME, "");
             BotTask task = new BotTask();
             task.setBot(bot);
             task.setName(name);
-            if (handler == null) {
-                handler = "";
-            }
             task.setTaskHandlerClassName(handler);
             String config = taskElement.attributeValue(CONFIGURATION_STRING_ATTRIBUTE_NAME);
             byte[] configuration;
-            if (config == null || config.length() == 0) {
+            if (Strings.isNullOrEmpty(config)) {
                 String configContent = taskElement.attributeValue(CONFIGURATION_CONTENT_ATTRIBUTE_NAME);
                 if (configContent == null) {
                     configContent = taskElement.getTextTrim();
