@@ -287,7 +287,7 @@
 	<bean class="ru.runa.wfe.execution.logic.ExecutionLogic" />
 	<bean class="ru.runa.wfe.task.logic.TaskLogic" />
 	<bean class="ru.runa.wfe.var.logic.VariableLogic" />
-	<bean class="ru.runa.wfe.handler.assign.AssignmentHelper" />
+	<bean class="ru.runa.wfe.extension.assign.AssignmentHelper" />
 	<bean class="ru.runa.wfe.script.AdminScriptRunner" />
 
 	<bean class="ru.runa.wfe.commons.logic.InitializerLogic">

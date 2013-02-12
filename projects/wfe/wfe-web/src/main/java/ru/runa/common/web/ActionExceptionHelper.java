@@ -145,7 +145,11 @@ public class ActionExceptionHelper {
         } else if (e instanceof InternalApplicationException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.getMessage());
         } else {
-            actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, e.getMessage());
+            String message = e.getMessage();
+            if (message == null) {
+                message = e.getClass().getName();
+            }
+            actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, message);
         }
         return actionMessage;
     }
