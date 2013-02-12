@@ -91,7 +91,7 @@ public class AdminScriptClient {
                     for (Element element : chidren) {
                         document.getRootElement().add(element.createCopy());
                     }
-                    byte[] bs = XmlUtils.save(document);
+                    byte[] bs = XmlUtils.save(document);// XmlUtils.toString(document)
                     byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document.getRootElement());
                     try {
                         handler.onStartTransaction(bs);
