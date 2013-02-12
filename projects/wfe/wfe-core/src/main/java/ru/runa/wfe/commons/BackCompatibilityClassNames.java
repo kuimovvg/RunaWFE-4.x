@@ -72,6 +72,9 @@ public class BackCompatibilityClassNames {
         // action handlers renamed
         bcc.put("ru.runa.wf.jbpm.delegation.action.SetSubProcessPermissionsActionHandler", DebugActionHandler.class.getName());
         bcc.put("ru.runa.wf.jbpm.delegation.action.BotInvokerActionHandler", "ru.runa.wfe.service.handler.BotInvokerActionHandler");
+        bcc.put("ru.runa.wf.office.doc.DocxHandler", "ru.runa.wfe.office.doc.DocxHandler");
+        bcc.put("ru.runa.wf.office.excel.handlers.ReadHandler", "ru.runa.wfe.office.excel.handler.ExcelReadHandler");
+        bcc.put("ru.runa.wf.office.excel.handlers.SaveHandler", "ru.runa.wfe.office.excel.handler.ExcelSaveHandler");
         bcc.put("ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler", FormulaActionHandler.class.getName());
         bcc.put("ru.runa.wf.swimlane.AssignSwimlaneActionHandler", AssignSwimlaneActionHandler.class.getName());
         bcc.put("ru.runa.wf.users.ActorNameActionHandler", ActorNameActionHandler.class.getName());
