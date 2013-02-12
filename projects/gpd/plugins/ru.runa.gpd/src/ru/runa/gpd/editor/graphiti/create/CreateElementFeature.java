@@ -5,6 +5,7 @@ import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
@@ -97,7 +98,12 @@ public class CreateElementFeature extends AbstractCreateFeature implements GEFCo
             int xRight = sourceElement.getGraphicsAlgorithm().getX() + sourceElement.getGraphicsAlgorithm().getWidth();
             Dimension targetSize = target.getTypeDefinition().getGraphitiEntry().getDefaultSize();
             int yDelta = (targetSize.height - sourceElement.getGraphicsAlgorithm().getHeight()) / 2;
-            context.setLocation(xRight + 100, sourceElement.getGraphicsAlgorithm().getY() - yDelta);
+            int shift = 5 * GRID_SIZE;
+            GraphicsAlgorithm container = context.getTargetContainer().getGraphicsAlgorithm();
+            if (container.getWidth() < xRight + shift + targetSize.width) {
+                shift = 2 * GRID_SIZE;
+            }
+            context.setLocation(xRight + shift, sourceElement.getGraphicsAlgorithm().getY() - yDelta);
         }
     }
 }
