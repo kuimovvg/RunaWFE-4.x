@@ -56,7 +56,11 @@ public abstract class IdentifiableFormTag extends TitledFormTag {
 
     @Override
     protected boolean isFormButtonEnabled() {
-        return isFormButtonEnabled(getIdentifiable(), getPermission());
+        Permission permission = getPermission();
+        if (permission == null) {
+            return true;
+        }
+        return isFormButtonEnabled(getIdentifiable(), permission);
     }
 
     @Override
