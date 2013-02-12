@@ -37,7 +37,6 @@ public class Delegation implements Serializable {
 
     private String className;
     private String configuration;
-    private transient Object instance;
 
     public Delegation() {
     }
@@ -48,12 +47,9 @@ public class Delegation implements Serializable {
     }
 
     public <T extends Configurable> T getInstance() throws Exception {
-        if (instance == null) {
-            Configurable configurable = ApplicationContextFactory.createAutowiredBean(className);
-            configurable.setConfiguration(configuration);
-            instance = configurable;
-        }
-        return (T) instance;
+        Configurable configurable = ApplicationContextFactory.createAutowiredBean(className);
+        configurable.setConfiguration(configuration);
+        return (T) configurable;
     }
 
     public String getConfiguration() {
