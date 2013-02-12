@@ -30,8 +30,8 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.ExecutionService;
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 18.08.2004

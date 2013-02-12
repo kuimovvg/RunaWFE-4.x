@@ -19,10 +19,10 @@ package ru.runa.af.web.orgfunction;
 
 import java.util.List;
 
-import ru.runa.service.ExecutorService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.service.ExecutorService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 

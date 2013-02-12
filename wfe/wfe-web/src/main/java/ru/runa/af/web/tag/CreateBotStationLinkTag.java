@@ -19,9 +19,9 @@ package ru.runa.af.web.tag;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
-import ru.runa.service.AuthorizationService;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
+import ru.runa.wfe.service.AuthorizationService;
 
 /**
  * @jsp.tag name = "createBotStationLink" body-content = "empty"
@@ -32,7 +32,7 @@ public class CreateBotStationLinkTag extends LinkTag {
     @Override
     protected boolean isLinkEnabled() {
         try {
-            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
+            AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         } catch (Exception e) {
             return false;

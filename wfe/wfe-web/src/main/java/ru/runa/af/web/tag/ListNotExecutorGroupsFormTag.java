@@ -21,9 +21,9 @@ import java.util.List;
 
 import ru.runa.af.web.action.AddExecutorToGroupsAction;
 import ru.runa.common.web.Messages;
-import ru.runa.service.ExecutorService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.ExecutorService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.GroupPermission;
 

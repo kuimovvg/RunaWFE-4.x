@@ -18,9 +18,9 @@
 package ru.runa.wf.web.tag;
 
 import ru.runa.af.web.tag.ListExecutorsWithoutPermissionsBase;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.action.GrantReadPermissionOnProcessDefinitionAction;
 import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 31.08.2004

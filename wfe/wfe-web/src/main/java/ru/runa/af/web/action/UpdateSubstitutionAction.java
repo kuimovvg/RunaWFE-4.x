@@ -27,7 +27,7 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.af.web.form.SubstitutionForm;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.ss.TerminatorSubstitution;

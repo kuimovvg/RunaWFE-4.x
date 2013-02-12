@@ -10,11 +10,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.common.WebResources;
-import ru.runa.service.client.DelegateProcessVariableProvider;
 import ru.runa.wf.web.tag.HTMLFormConverter;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.service.client.DelegateProcessVariableProvider;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;

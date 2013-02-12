@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.logic.bot.updatepermission.Method;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsSettings;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsXmlParser;
@@ -32,6 +30,8 @@ import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
@@ -64,7 +64,7 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
         }
         if (allowed) {
             List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions());
-            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
+            AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
             List<Collection<Permission>> allPermissions = Lists.newArrayListWithExpectedSize(executors.size());
             Identifiable identifiable = Delegates.getExecutionService().getProcess(user, task.getProcessId());
             List<Long> executorIds = Lists.newArrayList();

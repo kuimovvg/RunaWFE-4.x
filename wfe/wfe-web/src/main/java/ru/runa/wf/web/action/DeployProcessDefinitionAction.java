@@ -24,7 +24,7 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
 /**

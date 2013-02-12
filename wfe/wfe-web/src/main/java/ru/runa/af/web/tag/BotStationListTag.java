@@ -30,13 +30,13 @@ import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdsForm;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.BotService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.BotService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @author: stan79 Date: 25.05.2008 Time: 20:04:19
