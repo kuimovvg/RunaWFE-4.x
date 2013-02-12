@@ -644,12 +644,12 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddStateNodeFeature"
+               add="ru.runa.gpd.editor.graphiti.add.AddTaskStateNodeFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
                fixedSize="false"
                height="7"
-               layout="ru.runa.gpd.editor.graphiti.layout.LayoutStateNodeFeature"
-               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature"
+               layout="ru.runa.gpd.editor.graphiti.layout.LayoutTaskStateFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateTaskStateNodeFeature"
                width="11">
          </graphiti>
       </element>
@@ -865,6 +865,20 @@
          <onVariableRenamed
                provider="ru.runa.gpd.ltk.ReceiveMessageRenameProvider">
          </onVariableRenamed>
+         <graphiti
+               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               height="4"
+               fixedSize="true"
+               width="4">
+         </graphiti>
+      </element>
+      <element
+            bpmn="serviceTask"
+            icon="serviceTask.png"
+            label="%label.element.servicetask"
+            model="ru.runa.gpd.lang.model.ServiceTask"
+            type="node">
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"

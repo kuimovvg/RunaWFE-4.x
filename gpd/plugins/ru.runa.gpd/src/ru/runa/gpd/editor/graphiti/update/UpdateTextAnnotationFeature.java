@@ -27,7 +27,7 @@ public class UpdateTextAnnotationFeature extends UpdateFeature {
     public boolean update(IUpdateContext context) {
         PictogramElement pe = context.getPictogramElement();
         TextAnnotation bo = (TextAnnotation) getBusinessObjectForPictogramElement(pe);
-        PropertyUtil.setProperty(pe, GaProperty.DESCRIPTION, bo.getDescription());
+        PropertyUtil.setTextValueProperty(pe, GaProperty.DESCRIPTION, bo.getDescription());
         return true;
     }
 }

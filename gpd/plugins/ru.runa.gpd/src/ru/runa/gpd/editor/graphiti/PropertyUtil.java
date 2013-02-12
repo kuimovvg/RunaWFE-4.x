@@ -23,6 +23,16 @@ public class PropertyUtil {
         return null;
     }
 
+    public static boolean setPropertyValue(PropertyContainer ga, String propertyName, String newValue) {
+        for (Property property : ga.getProperties()) {
+            if (Objects.equal(propertyName, property.getKey())) {
+                property.setValue(newValue);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static String findTextValueRecursive(PictogramElement pe, String name) {
         GraphicsAlgorithm ga = findGaRecursiveByName(pe, name);
         if (ga instanceof Text) {
@@ -80,7 +90,7 @@ public class PropertyUtil {
         return null;
     }
 
-    public static void setProperty(PictogramElement pe, String name, String value) {
+    public static void setTextValueProperty(PictogramElement pe, String name, String value) {
         GraphicsAlgorithm ga = findGaRecursiveByName(pe, name);
         if (ga instanceof Text) {
             ((Text) ga).setValue(value);
