@@ -31,7 +31,7 @@ public class UpdateStartNodeFeature extends UpdateFeature {
         PictogramElement pe = context.getPictogramElement();
         // retrieve name from business model
         StartState bo = (StartState) getBusinessObjectForPictogramElement(pe);
-        PropertyUtil.setProperty(pe, GaProperty.SWIMLANE_NAME, bo.getSwimlaneLabel());
+        PropertyUtil.setTextValueProperty(pe, GaProperty.SWIMLANE_NAME, bo.getSwimlaneLabel());
         return true;
     }
 }

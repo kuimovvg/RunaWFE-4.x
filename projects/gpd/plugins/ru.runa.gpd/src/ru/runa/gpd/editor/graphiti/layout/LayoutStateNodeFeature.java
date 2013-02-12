@@ -10,6 +10,7 @@ import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.PropertyUtil;
 
 public class LayoutStateNodeFeature extends ElementLayoutFeature {
+    public static final String MAIN_RECT = "mainRect";
     public static final String BORDER_RECT = "borderRect";
 
     @Override
@@ -19,6 +20,8 @@ public class LayoutStateNodeFeature extends ElementLayoutFeature {
         Dimension bounds = adjustBounds(context);
         int borderWidth = bounds.width - GRID_SIZE;
         int borderHeight = bounds.height - GRID_SIZE;
+        GraphicsAlgorithm mainRectangle = PropertyUtil.findGaRecursiveByName(ga, MAIN_RECT);
+        Graphiti.getGaService().setSize(mainRectangle, bounds.width, bounds.height);
         GraphicsAlgorithm borderRectangle = PropertyUtil.findGaRecursiveByName(ga, BORDER_RECT);
         Graphiti.getGaService().setLocationAndSize(borderRectangle, GRID_SIZE / 2, GRID_SIZE / 2, borderWidth, borderHeight);
         GraphicsAlgorithm swimlaneText = PropertyUtil.findGaRecursiveByName(ga, GaProperty.SWIMLANE_NAME);
