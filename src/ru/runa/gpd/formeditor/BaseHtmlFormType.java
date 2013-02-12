@@ -22,7 +22,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.formeditor.wysiwyg.WYSIWYGHTMLEditor;
@@ -144,7 +143,7 @@ public abstract class BaseHtmlFormType extends FormType {
     public static Document getDocument(InputStream is) throws IOException, SAXException {
         DOMParser parser = new DOMParser();
         InputSource inputSource = new InputSource(is);
-        inputSource.setEncoding(PluginConstants.UTF_ENCODING);
+        inputSource.setEncoding("UTF_8");
         parser.parse(inputSource);
         return parser.getDocument();
     }
