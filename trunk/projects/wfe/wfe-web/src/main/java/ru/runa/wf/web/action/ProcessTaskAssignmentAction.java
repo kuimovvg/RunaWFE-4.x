@@ -29,7 +29,7 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.StrIdsForm;
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;

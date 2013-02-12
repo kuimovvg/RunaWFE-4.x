@@ -47,14 +47,14 @@ import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.BotService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.commons.xml.XmlUtils;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.BotService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @author petrmikheev

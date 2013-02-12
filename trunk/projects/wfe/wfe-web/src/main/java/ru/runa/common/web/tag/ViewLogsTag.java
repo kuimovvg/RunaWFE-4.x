@@ -10,10 +10,10 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.action.ViewLogsAction;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.SystemPermission;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Throwables;

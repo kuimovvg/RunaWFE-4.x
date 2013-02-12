@@ -31,13 +31,13 @@ import org.apache.ecs.xhtml.br;
 
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.ProcessTypesIterator;
 import ru.runa.wf.web.action.RedeployProcessDefinitionAction;
 import ru.runa.wf.web.html.DefinitionFileOperationsFormBuilder;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
 /**

@@ -26,9 +26,9 @@ import ru.runa.af.web.form.DeployBotForm;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.service.AuthorizationService;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
+import ru.runa.wfe.service.AuthorizationService;
 
 /**
  * @author petrmikheev
@@ -53,7 +53,7 @@ public class DeployBotTag extends TitledFormTag {
     @Override
     protected boolean isFormButtonEnabled() {
         try {
-            AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
+            AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
             return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         } catch (Exception e) {
             return false;

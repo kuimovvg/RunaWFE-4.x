@@ -27,8 +27,8 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Strings;

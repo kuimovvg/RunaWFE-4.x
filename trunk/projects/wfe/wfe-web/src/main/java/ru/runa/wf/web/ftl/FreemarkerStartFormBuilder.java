@@ -5,11 +5,11 @@ import java.util.List;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.common.web.StrutsWebHelper;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.StartFormBuilder;
 import ru.runa.wfe.commons.ftl.FormHashModel;
 import ru.runa.wfe.definition.DefinitionVariableProvider;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;

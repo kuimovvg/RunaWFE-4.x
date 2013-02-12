@@ -24,12 +24,12 @@ import java.util.List;
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;

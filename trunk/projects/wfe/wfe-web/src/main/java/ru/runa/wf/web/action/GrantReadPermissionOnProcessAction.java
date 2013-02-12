@@ -26,9 +26,9 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.GrantPermisionOnIdentifiableAction;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;

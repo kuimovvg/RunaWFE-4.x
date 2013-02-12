@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.extension.OrgFunction;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;

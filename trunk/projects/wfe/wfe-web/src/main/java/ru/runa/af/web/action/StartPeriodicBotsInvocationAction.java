@@ -26,8 +26,8 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @author petrmikheev

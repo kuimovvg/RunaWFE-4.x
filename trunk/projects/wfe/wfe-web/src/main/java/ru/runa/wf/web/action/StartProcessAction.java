@@ -33,8 +33,8 @@ import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 
 /**

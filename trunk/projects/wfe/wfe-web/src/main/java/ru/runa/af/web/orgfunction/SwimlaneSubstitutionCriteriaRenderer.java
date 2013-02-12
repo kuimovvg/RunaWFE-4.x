@@ -20,12 +20,12 @@ package ru.runa.af.web.orgfunction;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.runa.service.DefinitionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.service.DefinitionService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
 public class SwimlaneSubstitutionCriteriaRenderer implements ParamRenderer {

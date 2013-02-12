@@ -34,15 +34,15 @@ import ru.runa.common.web.html.SortingHeaderBuilder;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.RelationService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.RelationService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @jsp.tag name = "listRelationsForm" body-content = "JSP"

@@ -3,10 +3,10 @@ package ru.runa.wf.web.ftl;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.common.web.StrutsWebHelper;
-import ru.runa.service.client.DelegateProcessVariableProvider;
 import ru.runa.wf.web.TaskFormBuilder;
 import ru.runa.wfe.commons.ftl.FormHashModel;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.service.client.DelegateProcessVariableProvider;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 

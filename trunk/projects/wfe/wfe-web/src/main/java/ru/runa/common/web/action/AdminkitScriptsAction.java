@@ -18,10 +18,10 @@ import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.AdminScriptForm;
-import ru.runa.service.client.AdminScriptClient;
-import ru.runa.service.client.AdminScriptClient.Handler;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.IOCommons;
+import ru.runa.wfe.service.client.AdminScriptClient;
+import ru.runa.wfe.service.client.AdminScriptClient.Handler;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;

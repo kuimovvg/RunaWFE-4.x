@@ -39,10 +39,10 @@ import ru.runa.af.web.orgfunction.ParamDef;
 import ru.runa.af.web.orgfunction.SubstitutionCriteriaDefinitions;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdentifiableFormTag;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 
 import com.google.common.base.Strings;

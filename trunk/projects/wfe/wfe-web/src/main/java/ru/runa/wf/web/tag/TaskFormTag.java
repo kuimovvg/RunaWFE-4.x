@@ -25,11 +25,11 @@ import org.apache.ecs.html.TD;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.TaskFormBuilder;
 import ru.runa.wf.web.html.FormBuilderFactory;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.lang.Transition;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 
 /**

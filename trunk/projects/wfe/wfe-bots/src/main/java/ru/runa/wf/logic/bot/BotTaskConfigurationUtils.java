@@ -7,12 +7,12 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.extension.handler.ParamDef;
 import ru.runa.wfe.extension.handler.ParamsDef;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;

@@ -17,11 +17,11 @@
  */
 package ru.runa.wf.web.ftl.method;
 
-import ru.runa.service.ExecutorService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.service.ExecutorService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.dto.WfVariable;
 import freemarker.template.TemplateModelException;
 
