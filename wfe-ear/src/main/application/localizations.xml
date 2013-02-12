@@ -1,49 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <artifacts>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.user.ActorNameActionHandler" label="Actor name operations"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.AddObjectToListActionHandler" label="Add object to list"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.ListAggregateFunctionActionHandler" label="Aggredate function on list elements"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.MapAggregateFunctionActionHandler" label="Aggredate function on map elements"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.AddObjectToListActionHandler" label="Add object to list"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.ListAggregateFunctionActionHandler" label="Aggredate function on list elements"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.MapAggregateFunctionActionHandler" label="Aggredate function on map elements"/>
   <artifact enabled="true" name="ru.runa.bp.AlfSetContent" label="Alfresco: upload file data"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.user.AssignSwimlaneActionHandler" label="Assign swimlane"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.decision.BSHDecisionHandler" label="BSH decision handler"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.ClearVariableActionHandler" label="Clear process variable"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.ConvertMapKeysToListActionHandler" label="Convert map keys to list"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.ConvertMapValuesToListActionHandler" label="Convert map values to list"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.CreateOptionActionHandler" label="Create option"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.DebugActionHandler" label="Debug (prints configuration)"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.assign.DefaultAssignmentHandler" label="Default assignment handler"/>
-  <artifact enabled="true" name="ru.runa.wf.office.doc.DocxHandler" label="Docx handler"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.EscalationActionHandler" label="Escalation"/>
-  <artifact enabled="true" name="ru.runa.wf.office.excel.handlers.ReadHandler" label="Excel: Read data from"/>
-  <artifact enabled="true" name="ru.runa.wf.office.excel.handlers.SaveHandler" label="Excel: Save data to"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.BSHActionHandler" label="Execute BeanShell script"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.GroovyActionHandler" label="Execute Groovy script"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.SQLActionHandler" label="Execute SQL"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.FormulaActionHandler" label="Execute formula"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.GetObjectFromListActionHandler" label="Get object from list"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.GetObjectFromMapActionHandler" label="Get object from map"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.decision.GroovyDecisionHandler" label="Groovy decision handler"/>
-  <artifact enabled="true" name="ru.runa.service.bot.handler.BotInvokerActionHandler" label="Invoke bot station"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.MergeMapsActionHandler" label="Merge maps"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.PutObjectToMapActionHandler" label="Put object to map"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.RemoveObjectFromListActionHandler" label="Remove object from list"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.RemoveObjectFromMapActionHandler" label="Remove object from map"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.SendEmailActionHandler" label="Send email"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.EmailTaskNotifierActionHandler" label="Send email notifications about uncompleted tasks"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.SetObjectToListActionHandler" label="Set object to list"/>
-  <artifact enabled="true" name="ru.runa.wfe.handler.action.var.SortListActionHandler" label="Sort list"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.user.AssignSwimlaneActionHandler" label="Assign swimlane"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.decision.BSHDecisionHandler" label="BSH decision handler"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.ClearVariableActionHandler" label="Clear process variable"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.ConvertMapKeysToListActionHandler" label="Convert map keys to list"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.ConvertMapValuesToListActionHandler" label="Convert map values to list"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.CreateOptionActionHandler" label="Create option"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.DebugActionHandler" label="Debug (prints configuration)"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.assign.DefaultAssignmentHandler" label="Default assignment handler"/>
+  <artifact enabled="true" name="ru.runa.wfe.office.doc.DocxHandler" label="Docx handler"/>
+  <artifact enabled="true" name="ru.runa.wfe.office.doc.DocxHandler" label="Docx handler"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.EscalationActionHandler" label="Escalation"/>
+  <artifact enabled="true" name="ru.runa.wfe.office.excel.handler.ExcelReadHandler" label="Excel: Read data from"/>
+  <artifact enabled="true" name="ru.runa.wfe.office.excel.handler.ExcelReadHandler" label="Excel: Read data from"/>
+  <artifact enabled="true" name="ru.runa.wfe.office.excel.handler.ExcelSaveHandler" label="Excel: Save data to"/>
+  <artifact enabled="true" name="ru.runa.wfe.office.excel.handler.ExcelSaveHandler" label="Excel: Save data to"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.BSHActionHandler" label="Execute BeanShell script"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.GroovyActionHandler" label="Execute Groovy script"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.SQLActionHandler" label="Execute SQL"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.FormulaActionHandler" label="Execute formula"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler" label="Get object from list"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler" label="Get object from map"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.user.ActorNameActionHandler" label="Get user name"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.decision.GroovyDecisionHandler" label="Groovy decision handler"/>
+  <artifact enabled="true" name="ru.runa.wfe.service.handler.BotInvokerActionHandler" label="Invoke bot station"/>
+  <artifact enabled="true" name="ru.runa.wfe.logic.bot.MSWordReportTaskHandler" label="MSWord ActiveX task handler"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.MergeMapsActionHandler" label="Merge maps"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.PutObjectToMapActionHandler" label="Put object to map"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.RemoveObjectFromListActionHandler" label="Remove object from list"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.RemoveObjectFromMapActionHandler" label="Remove object from map"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.SendEmailActionHandler" label="Send email"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.EmailTaskNotifierActionHandler" label="Send email notifications about uncompleted tasks"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.SetObjectToListActionHandler" label="Set object to list"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.SortListActionHandler" label="Sort list"/>
   <artifact enabled="true" name="ru.runa.bp.demo.ApproveMyDoc" label="alfdemo: approve document"/>
   <artifact enabled="true" name="ru.runa.bp.demo.CreateMyDoc" label="alfdemo: create document"/>
   <artifact enabled="true" name="ru.runa.bp.demo.RejectMyDoc" label="alfdemo: reject document"/>
-  <artifact enabled="true" name="ru.runa.wfe.os.func.ChiefFunction" label="Chief"/>
-  <artifact enabled="true" name="ru.runa.wfe.os.func.DemoChiefFunction" label="Demo chief"/>
-  <artifact enabled="true" name="ru.runa.wfe.os.func.DirectorFunction" label="Director"/>
-  <artifact enabled="true" name="ru.runa.wfe.os.func.ExecutorByCodeFunction" label="Executor by code"/>
-  <artifact enabled="true" name="ru.runa.wfe.os.func.ExecutorByNameFunction" label="Executor by name"/>
-  <artifact enabled="true" name="ru.runa.wfe.os.func.SQLFunction" label="SQL function"/>
-  <artifact enabled="true" name="ru.runa.wfe.var.format.ActorFormat" label="Actor"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.orgfunction.SQLChiefFunction" label="Chief"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.orgfunction.DemoChiefFunction" label="Demo chief"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.orgfunction.SQLDirectorFunction" label="Director"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction" label="Executor by name"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.orgfunction.SQLFunction" label="SQL function"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.orgfunction.GetActorsByCodesFunction" label="Users by codes"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.BigDecimalFormat" label="Big decimal"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.BooleanFormat" label="Boolean"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.DateFormat" label="Date"/>
@@ -58,4 +61,5 @@
   <artifact enabled="true" name="ru.runa.wfe.var.format.StringFormat" label="String"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.TextFormat" label="Text"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.TimeFormat" label="Time"/>
+  <artifact enabled="true" name="ru.runa.wfe.var.format.ActorFormat" label="User"/>
 </artifacts>

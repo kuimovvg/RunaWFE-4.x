@@ -3,7 +3,7 @@ $(document).ready(function() {
 	buttons[buttonCloseMessage] = function() {
 		$.errorDetailsDialog.dialog("close");
 	};
-	$.errorDetailsDialog = $("<div><pre id=\"errorDetails\"></pre></div>").dialog( {
+	$.errorDetailsDialog = $("<div style=\"padding: 10px;\"><pre id=\"errorDetails\"></pre></div>").dialog( {
 		modal: true, 
 		autoOpen: false, 
 		height: 500,
