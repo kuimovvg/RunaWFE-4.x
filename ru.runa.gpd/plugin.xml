@@ -1159,8 +1159,8 @@
             type="actionHandler">
       </handler>
       <handler
-            className="ru.runa.service.handler.BotInvokerActionHandler"
-            label="%ru.runa.service.handler.BotInvokerActionHandler"
+            className="ru.runa.wfe.service.handler.BotInvokerActionHandler"
+            label="%ru.runa.wfe.service.handler.BotInvokerActionHandler"
             enabled="true"
             type="actionHandler"/>
       <handler
@@ -1182,56 +1182,67 @@
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.SetObjectToListActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.SetObjectToListActionHandler"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.ListAggregateFunctionActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.ListAggregateFunctionActionHandler"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.ClearVariableActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.ClearVariableActionHandler"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.RemoveObjectFromMapActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.RemoveObjectFromMapActionHandler"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.PutObjectToMapActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.PutObjectToMapActionHandler"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.MapAggregateFunctionActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.MapAggregateFunctionActionHandler"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.ConvertMapKeysToListActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.ConvertMapKeysToListActionHandler"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.ConvertMapValuesToListActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.ConvertMapValuesToListActionHandler"
             type="actionHandler"/>
       <handler
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.MergeMapsActionHandler"
+            enabled="true"
             label="%ru.runa.wfe.extension.handler.var.MergeMapsActionHandler"
             type="actionHandler"/>
    </extension>
@@ -1639,14 +1650,14 @@
        </page>
        <page
 			 class="ru.runa.gpd.settings.EmptyPreferencePage"
-             id="gpd.pref.artifacts"
-             name="%pref.artifacts">
+             id="gpd.pref.extensions"
+             name="%pref.extensions">
        </page>
        <page
-             category="gpd.pref.artifacts"
+             category="gpd.pref.extensions"
              class="ru.runa.gpd.settings.LocalizationPreferencePage"
-             id="gpd.pref.artifacts.localization"
-             name="%pref.artifacts.localization">
+             id="gpd.pref.extensions.localization"
+             name="%pref.extensions.localization">
        </page>
     </extension>
    <extension

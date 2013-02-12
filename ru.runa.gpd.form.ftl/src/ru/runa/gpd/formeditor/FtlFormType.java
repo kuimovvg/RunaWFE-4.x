@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.VariableAccess;
@@ -31,8 +30,8 @@ public class FtlFormType extends BaseHtmlFormType {
         cfg.setObjectWrapper(new DefaultObjectWrapper());
         cfg.setLocalizedLookup(false);
         cfg.setTemplateExceptionHandler(new MyTemplateExceptionHandler());
-        String string = new String(formBytes, PluginConstants.UTF_ENCODING);
-        Template template = new Template("test", new StringReader(string), cfg, PluginConstants.UTF_ENCODING);
+        String string = new String(formBytes, "UTF-8");
+        Template template = new Template("test", new StringReader(string), cfg, "UTF-8");
         StringWriter out = new StringWriter();
         VariablesCollector validationHashModel = new VariablesCollector(formNode.getProcessDefinition().getVariableNames(true));
         template.process(validationHashModel, out);

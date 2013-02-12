@@ -428,11 +428,6 @@ public class XPDLImporter {
         EventType eventTypeNode = new EventImpl();
         eventTypeNode.setType("subprocess-created");
         processDefinition.getDescriptionOrSwimlaneOrStartState().add(eventTypeNode);
-        //        ActionType actionTypeNode = new ActionImpl();
-        //        actionTypeNode.setConfigType("configuration-property");
-        //        actionTypeNode.setClass2("ru.runa.wf.jbpm.delegation.action.SetSubProcessPermissionsActionHandler");
-        //        actionTypeNode.getContent().add(new String("<![CDATA[]]>"));
-        //        eventTypeNode.getActionOrScriptOrCreateTimer().add(actionTypeNode);
         List activityList = workflowProcess.getActivities().getActivity();
         for (Object _ac : activityList) {
             ru.runa.xpdl.generated.bpmnxpdl.ActivityType activityType = (ru.runa.xpdl.generated.bpmnxpdl.ActivityType) (_ac);

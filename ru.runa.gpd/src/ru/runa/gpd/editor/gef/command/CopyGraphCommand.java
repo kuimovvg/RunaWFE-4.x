@@ -16,7 +16,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.CopyBuffer;
 import ru.runa.gpd.editor.gef.CopyBuffer.ExtraCopyAction;
@@ -44,6 +43,8 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.CopyGraphRewriteDialog;
 import ru.runa.gpd.util.Delay;
 import ru.runa.gpd.util.VariableMapping;
+
+import com.google.common.base.Charsets;
 
 public class CopyGraphCommand extends Command {
     private final ProcessDefinition targetDefinition;
@@ -294,7 +295,7 @@ public class CopyGraphCommand extends Command {
                 file.delete(true, null);
             }
             file.create(is, true, null);
-            file.setCharset(PluginConstants.UTF_ENCODING, null);
+            file.setCharset(Charsets.UTF_8.name(), null);
             return file;
         }
 

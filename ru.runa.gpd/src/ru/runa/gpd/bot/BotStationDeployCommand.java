@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
-import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.wfe.WFEServerBotStationElementImporter;
 
@@ -29,7 +28,7 @@ public class BotStationDeployCommand extends BotStationExportCommand {
                         try {
                             WFEServerBotStationElementImporter.getInstance().deployBotStation(baos.toByteArray());
                         } catch (Exception e) {
-                            PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), e);
+                            PluginLogger.logErrorWithoutDialog("botstation.error.deploy", e);
                         }
                     }
                 });

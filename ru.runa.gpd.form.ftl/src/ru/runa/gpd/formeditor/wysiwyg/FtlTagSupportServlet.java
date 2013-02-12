@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
 import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
@@ -64,13 +63,14 @@ public class FtlTagSupportServlet extends HttpServlet {
                     newContent.append(fileContent.substring(idx + 12));
                     fileContent = newContent.toString();
                 }
-                response.getOutputStream().write(fileContent.getBytes(PluginConstants.UTF_ENCODING));
+                response.getOutputStream().write(fileContent.getBytes("UTF-8"));
                 return;
             }
             if ("GetMethodDialog".equals(commandStr)) {
                 response.setContentType("text/html; charset=UTF-8");
                 response.setHeader("Cache-Control", "no-cache");
-                IOUtils.writeToStream(response.getOutputStream(), CKEditorDialogCreatorHelper.createFtlMethodDialog());
+                response.getOutputStream().write(CKEditorDialogCreatorHelper.createFtlMethodDialog().getBytes("UTF-8"));
+                response.getOutputStream().flush();
                 return;
             }
             if ("GetTagImage".equals(commandStr)) {
@@ -193,7 +193,8 @@ public class FtlTagSupportServlet extends HttpServlet {
             } else {
                 WYSIWYGPlugin.logInfo("Unknown cmd: " + commandStr);
             }
-            IOUtils.writeToStream(response.getOutputStream(), resultHtml.toString());
+            response.getOutputStream().write(resultHtml.toString().getBytes("UTF-8"));
+            response.getOutputStream().flush();
         } catch (Throwable th) {
             WYSIWYGPlugin.logError("-- JS command error", th);
             response.setStatus(500);

@@ -4,7 +4,6 @@ import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.security.auth.Subject;
 import javax.security.auth.login.Configuration;
 
 import org.eclipse.jface.window.Window;
@@ -19,14 +18,15 @@ import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
-import ru.runa.service.af.AuthenticationService;
+import ru.runa.wfe.service.AuthenticationService;
+import ru.runa.wfe.user.User;
 
 public class WFEServerConnector implements IConnector, PrefConstants {
     static {
         Configuration.setConfiguration(new KerberosLoginConfiguration());
     }
     private InitialContext remoteContext;
-    private Subject subject;
+    private User user;
     private static WFEServerConnector instance;
     private String password;
 
@@ -40,8 +40,8 @@ public class WFEServerConnector implements IConnector, PrefConstants {
         return instance;
     }
 
-    public Subject getSubject() {
-        return subject;
+    public User getUser() {
+        return user;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class WFEServerConnector implements IConnector, PrefConstants {
                     return false;
                 }
             }
-            subject = service.authenticate(login, password);
+            user = service.authenticateByLoginPassword(login, password);
         } else {
             GSSManager manager = GSSManager.getInstance();
             GSSCredential clientCred = manager.createCredential(GSSCredential.INITIATE_ONLY);
@@ -99,7 +99,7 @@ public class WFEServerConnector implements IConnector, PrefConstants {
             context.requestMutualAuth(false);
             byte[] token = new byte[0];
             token = context.initSecContext(token, 0, token.length);
-            subject = service.authenticate(token);
+            user = service.authenticateByKerberos(token);
         }
         return true;
     }

@@ -27,7 +27,7 @@ public class BotTaskExportCommand extends BotExportCommand {
     }
 
     @Override
-    protected List<BotTask> getBotTaskForExport(IFolder botFolder) {
+    protected List<BotTask> getBotTaskForExport(IFolder botFolder) throws CoreException, IOException {
         List<IFile> botTaskFiles = ProjectFinder.getBotTaskFiles(botFolder);
         List<BotTask> botTaskForExport = new ArrayList<BotTask>();
         for (IFile botTaskFile : botTaskFiles) {

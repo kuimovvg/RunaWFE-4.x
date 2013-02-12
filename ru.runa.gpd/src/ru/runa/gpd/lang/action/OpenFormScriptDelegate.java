@@ -6,7 +6,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.ide.IDE;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.FormNodeSetScriptFileCommand;
 import ru.runa.gpd.lang.model.FormNode;
@@ -30,7 +29,6 @@ public class OpenFormScriptDelegate extends BaseModelActionDelegate {
                 file = IOUtils.createFileSafely(file);
                 byte[] template = IOUtils.readStreamAsBytes(getClass().getResourceAsStream("/conf/form.template.js"));
                 file.setContents(new ByteArrayInputStream(template), true, false, null);
-                file.setCharset(PluginConstants.UTF_ENCODING, null);
             }
             if (!formNode.hasFormScript()) {
                 setNewScriptFormFile(formNode, file.getName());

@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
+
+import com.google.common.base.Charsets;
 
 /**
  * Helper for problem in executing external processes
@@ -21,7 +22,7 @@ public class Streamer extends Thread {
     @Override
     public void run() {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, PluginConstants.UTF_ENCODING));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8));
             String line = null;
             while ((line = reader.readLine()) != null) {
                 PluginLogger.logInfo(line);

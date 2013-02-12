@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import ru.runa.service.wf.BotService;
 import ru.runa.wfe.bot.BotStation;
+import ru.runa.wfe.service.BotService;
 
 public class WFEServerBotStationElementImporter extends DataImporter {
     private final List<BotStation> botStations = new ArrayList<BotStation>();
@@ -52,12 +52,12 @@ public class WFEServerBotStationElementImporter extends DataImporter {
     }
 
     public byte[] getBotStationFile(BotStation botStation) throws Exception {
-        return getBotService().exportBotStation(WFEServerConnector.getInstance().getSubject(), botStation);
+        return getBotService().exportBotStation(WFEServerConnector.getInstance().getUser(), botStation);
     }
 
     public void deployBotStation(byte[] archive) throws Exception {
         WFEServerConnector.getInstance().connect();
-        getBotService().importBotStation(WFEServerConnector.getInstance().getSubject(), archive, true);
+        getBotService().importBotStation(WFEServerConnector.getInstance().getUser(), archive, true);
     }
 
     private BotService getBotService() throws Exception {

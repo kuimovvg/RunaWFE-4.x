@@ -16,7 +16,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
-import ru.runa.wfe.os.func.ExecutorByNameFunction;
+import ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction;
 
 public class SwimlaneWFElement extends SwimlaneElement {
     private int mask;

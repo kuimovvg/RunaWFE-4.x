@@ -7,9 +7,9 @@ public class ConstraintsModel {
     public static final int CELL = 0;
     public static final int ROW = 1;
     public static final int COLUMN = 2;
-    public static final String CELL_CLASS = "ru.runa.wf.office.excel.CellConstraints";
-    public static final String ROW_CLASS = "ru.runa.wf.office.excel.RowConstraints";
-    public static final String COLUMN_CLASS = "ru.runa.wf.office.excel.ColumnConstraints";
+    public static final String CELL_CLASS = "ru.runa.wfe.office.excel.CellConstraints";
+    public static final String ROW_CLASS = "ru.runa.wfe.office.excel.RowConstraints";
+    public static final String COLUMN_CLASS = "ru.runa.wfe.office.excel.ColumnConstraints";
     public String sheetName = "";
     public int sheetIndex = 0;
     public String variable;

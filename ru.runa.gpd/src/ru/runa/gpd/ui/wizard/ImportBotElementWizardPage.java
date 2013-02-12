@@ -50,6 +50,8 @@ import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 
+import com.google.common.base.Throwables;
+
 public abstract class ImportBotElementWizardPage extends ImportWizardPage {
     private Button importFromFileButton;
     private Composite fileSelectionArea;
@@ -244,8 +246,8 @@ public abstract class ImportBotElementWizardPage extends ImportWizardPage {
                 runImport(parInputStream, processName);
             }
         } catch (Exception exception) {
-            PluginLogger.logErrorWithoutDialog("import par", exception);
-            setErrorMessage(exception.getMessage());
+            PluginLogger.logErrorWithoutDialog("import bot element", exception);
+            setErrorMessage(Throwables.getRootCause(exception).getMessage());
             return false;
         }
         return true;

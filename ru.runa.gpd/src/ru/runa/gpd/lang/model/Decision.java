@@ -5,7 +5,7 @@ import java.util.Collection;
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.decision.IDecisionProvider;
-import ru.runa.wfe.handler.decision.GroovyDecisionHandler;
+import ru.runa.wfe.extension.decision.GroovyDecisionHandler;
 
 public class Decision extends Node implements Delegable, Active {
     public Decision() {

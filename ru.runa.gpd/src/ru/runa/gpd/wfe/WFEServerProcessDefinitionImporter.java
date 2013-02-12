@@ -6,12 +6,12 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import ru.runa.gpd.PluginLogger;
-import ru.runa.service.wf.DefinitionService;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.service.DefinitionService;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -51,13 +51,13 @@ public class WFEServerProcessDefinitionImporter extends DataImporter {
         DefinitionService definitionService = getDefinitionService();
         BatchPresentation batch = BatchPresentationFactory.DEFINITIONS.createDefault();
         batch.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
-        List<WfDefinition> latests = definitionService.getLatestProcessDefinitions(WFEServerConnector.getInstance().getSubject(), batch);
+        List<WfDefinition> latests = definitionService.getLatestProcessDefinitions(WFEServerConnector.getInstance().getUser(), batch);
         monitor.worked(30);
         double perDefinition = (double) 70 / latests.size();
         for (WfDefinition latest : latests) {
             List<WfDefinition> historyDefinitionStubs;
             try {
-                historyDefinitionStubs = definitionService.getProcessDefinitionHistory(WFEServerConnector.getInstance().getSubject(), latest.getName());
+                historyDefinitionStubs = definitionService.getProcessDefinitionHistory(WFEServerConnector.getInstance().getUser(), latest.getName());
             } catch (Exception e) {
                 PluginLogger.logErrorWithoutDialog("definitions sync", e);
                 historyDefinitionStubs = Lists.newArrayList();
@@ -73,7 +73,7 @@ public class WFEServerProcessDefinitionImporter extends DataImporter {
 
     public byte[] loadPar(WfDefinition definition) throws Exception {
         WFEServerConnector.getInstance().connect();
-        return getDefinitionService().getFile(WFEServerConnector.getInstance().getSubject(), definition.getId(), "par");
+        return getDefinitionService().getFile(WFEServerConnector.getInstance().getUser(), definition.getId(), "par");
     }
 
     public void uploadPar(String definitionName, byte[] par) throws Exception {
@@ -97,17 +97,16 @@ public class WFEServerProcessDefinitionImporter extends DataImporter {
                 types = new String[] { "GPD" };
             }
             try {
-                lastDefinition = getDefinitionService()
-                        .redeployProcessDefinition(WFEServerConnector.getInstance().getSubject(), oldVersion.getId(), par, Lists.newArrayList(types));
+                lastDefinition = getDefinitionService().redeployProcessDefinition(WFEServerConnector.getInstance().getUser(), oldVersion.getId(), par, Lists.newArrayList(types));
                 List<WfDefinition> oldHistory = definitions.remove(oldVersion);
                 lastHistory = Lists.newArrayList(oldVersion);
                 lastHistory.addAll(oldHistory);
             } catch (DefinitionDoesNotExistException e) {
-                lastDefinition = getDefinitionService().deployProcessDefinition(WFEServerConnector.getInstance().getSubject(), par, Lists.newArrayList("GPD"));
+                lastDefinition = getDefinitionService().deployProcessDefinition(WFEServerConnector.getInstance().getUser(), par, Lists.newArrayList("GPD"));
                 lastHistory = Lists.newArrayList();
             }
         } else {
-            lastDefinition = getDefinitionService().deployProcessDefinition(WFEServerConnector.getInstance().getSubject(), par, Lists.newArrayList("GPD"));
+            lastDefinition = getDefinitionService().deployProcessDefinition(WFEServerConnector.getInstance().getUser(), par, Lists.newArrayList("GPD"));
             lastHistory = Lists.newArrayList();
         }
         definitions.put(lastDefinition, lastHistory);

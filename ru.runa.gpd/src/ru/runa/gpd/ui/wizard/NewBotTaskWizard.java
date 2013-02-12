@@ -13,10 +13,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
 
-import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.BotTaskEditor;
-import ru.runa.gpd.util.BotTaskContentUtil;
+import ru.runa.gpd.util.IOUtils;
 
 public class NewBotTaskWizard extends Wizard implements INewWizard {
     private NewBotTaskWizardPage page;
@@ -42,14 +41,13 @@ public class NewBotTaskWizard extends Wizard implements INewWizard {
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException {
                     try {
-                        // TODO move to par provider
-                        monitor.beginTask(Localization.getString("NewProcessDefinitionWizard.monitor.title"), 4);
+                        monitor.beginTask("processing", 4);
                         IFolder folder = page.getBotFolder();
                         IFile botTaskFile = folder.getFile(page.getBotTaskName());
-                        botTaskFile.create(BotTaskContentUtil.createBotTaskInfo(), true, null);
+                        botTaskFile = IOUtils.createFileSafely(botTaskFile);
                         monitor.worked(1);
                         BotTaskEditor editor = (BotTaskEditor) IDE.openEditor(getActivePage(), botTaskFile, BotTaskEditor.ID, true);
-                        editor.setParameterized(parameterized);
+                        editor.initBotTaskTypeExtended(parameterized);
                         monitor.done();
                     } catch (Exception e) {
                         throw new InvocationTargetException(e);
@@ -57,7 +55,7 @@ public class NewBotTaskWizard extends Wizard implements INewWizard {
                 }
             });
         } catch (InvocationTargetException e) {
-            PluginLogger.logError(Localization.getString("NewProcessDefinitionWizard.error.creation"), e.getTargetException());
+            PluginLogger.logError("bottask.error.creation", e.getTargetException());
             return false;
         } catch (InterruptedException e) {
         }
