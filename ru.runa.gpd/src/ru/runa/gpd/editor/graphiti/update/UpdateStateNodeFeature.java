@@ -8,18 +8,18 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.PropertyUtil;
 import ru.runa.gpd.lang.model.Node;
+import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
+import ru.runa.gpd.lang.model.TaskState;
 
 import com.google.common.base.Objects;
 
 public class UpdateStateNodeFeature extends UpdateFeature {
     @Override
     public IReason updateNeeded(IUpdateContext context) {
-        // retrieve name from pictogram element
         PictogramElement pe = context.getPictogramElement();
-        // retrieve name from business model
         Node bo = (Node) getBusinessObjectForPictogramElement(pe);
-        if (bo instanceof SwimlanedNode) {
+        if (bo instanceof SwimlanedNode && !(bo.getParentContainer() instanceof Swimlane)) {
             String swimlaneName = PropertyUtil.findTextValueRecursive(pe, GaProperty.SWIMLANE_NAME);
             if (!Objects.equal(swimlaneName, ((SwimlanedNode) bo).getSwimlaneLabel())) {
                 return Reason.createTrueReason();
@@ -39,9 +39,9 @@ public class UpdateStateNodeFeature extends UpdateFeature {
         // retrieve name from business model
         Node bo = (Node) getBusinessObjectForPictogramElement(pe);
         if (bo instanceof SwimlanedNode) {
-            PropertyUtil.setProperty(pe, GaProperty.SWIMLANE_NAME, ((SwimlanedNode) bo).getSwimlaneLabel());
+            PropertyUtil.setTextValueProperty(pe, GaProperty.SWIMLANE_NAME, ((SwimlanedNode) bo).getSwimlaneLabel());
         }
-        PropertyUtil.setProperty(pe, GaProperty.NAME, bo.getName());
+        PropertyUtil.setTextValueProperty(pe, GaProperty.NAME, bo.getName());
         return true;
     }
 }

@@ -48,7 +48,7 @@ public class UpdateTransitionFeature extends UpdateFeature {
         PictogramElement pe = context.getPictogramElement();
         // retrieve name from business model
         Transition bo = (Transition) getBusinessObjectForPictogramElement(pe);
-        PropertyUtil.setProperty(pe, GaProperty.NAME, bo.getLabel());
+        PropertyUtil.setTextValueProperty(pe, GaProperty.NAME, bo.getLabel());
         GraphicsAlgorithm defaultFlowGa = PropertyUtil.findGaRecursiveByName(pe, GaProperty.DEFAULT_FLOW);
         if (defaultFlowGa != null) {
             defaultFlowGa.getPictogramElement().setVisible(bo.isDefaultFlow());
