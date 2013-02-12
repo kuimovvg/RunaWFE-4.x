@@ -1,4 +1,4 @@
-package ru.runa.wfe.office.excel.handlers;
+package ru.runa.wfe.office.excel.handler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import ru.runa.wfe.office.shared.FilesSupplierConfigParser;
 import ru.runa.wfe.office.shared.OfficeFilesSupplierHandler;
 import ru.runa.wfe.var.IVariableProvider;
 
-public class ReadHandler extends OfficeFilesSupplierHandler<ExcelBindings> {
+public class ExcelReadHandler extends OfficeFilesSupplierHandler<ExcelBindings> {
 
     @Override
     protected FilesSupplierConfigParser<ExcelBindings> createParser() {

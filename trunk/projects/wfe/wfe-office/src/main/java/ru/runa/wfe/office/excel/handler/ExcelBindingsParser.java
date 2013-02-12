@@ -1,4 +1,4 @@
-package ru.runa.wfe.office.excel.handlers;
+package ru.runa.wfe.office.excel.handler;
 
 import java.util.List;
 
