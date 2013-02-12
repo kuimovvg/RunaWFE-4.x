@@ -576,6 +576,42 @@
          </graphiti>
       </element>
       <element
+            bpmn="textAnnotation"
+            label="%label.element.textAnnotation"
+            icon="textAnnotation.png"
+            model="ru.runa.gpd.lang.model.TextAnnotation"
+            type="artifact">
+         <graphiti
+               add="ru.runa.gpd.editor.graphiti.add.AddTextAnnotationFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateAnnotationFeature"
+               fixedSize="false"
+               height="3"
+               layout="ru.runa.gpd.editor.graphiti.layout.LayoutTextAnnotationFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateTextAnnotationFeature"
+               width="8">
+         </graphiti>
+      </element>
+      <element
+            bpmn="lane"
+            jpdl="swimlane"
+            label="%default.swimlane.name"
+            icon="swimlane.png" 
+            model="ru.runa.gpd.lang.model.Swimlane"
+            type="artifact">
+         <gef 
+            treeEditPart="ru.runa.gpd.editor.gef.part.tree.SwimlaneTreeEditPart">
+         </gef>
+         <graphiti
+               add="ru.runa.gpd.editor.graphiti.add.AddSwimlaneFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateSwimlaneFeature"
+               fixedSize="false"
+               height="15"
+               layout="ru.runa.gpd.editor.graphiti.layout.LayoutSwimlaneFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateSwimlaneFeature"
+               width="40">
+         </graphiti>
+      </element>
+      <element
       		type="node"
             model="ru.runa.gpd.lang.model.StartState"
             jpdl="start-state"
@@ -618,6 +654,26 @@
          </graphiti>
       </element>
       <element
+            bpmn="timerEventDefinition"
+            jpdl="wait-state"
+            icon="timer.png"
+            label="%label.element.timer"
+            model="ru.runa.gpd.lang.model.Timer"
+            type="node">
+         <gef 
+            figure="ru.runa.gpd.editor.gef.figure.WaitStateFigure"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
+            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
+         </gef>
+         <graphiti
+               add="ru.runa.gpd.editor.graphiti.add.AddTimerFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateTimerFeature"
+               height="4"
+               fixedSize="true"
+               width="4">
+         </graphiti>
+      </element>
+      <element
       		type="node"
             model="ru.runa.gpd.lang.model.MultiTaskState"
             jpdl="multi-task-node"
@@ -628,46 +684,6 @@
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.TaskStateGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
-      </element>
-      <element
-      		type="node"
-            model="ru.runa.gpd.lang.model.EndState"
-            jpdl="end-state"
-            bpmn="endEvent"
-            icon="end.png"
-            label="%label.element.end">
-         <gef
-            figure="ru.runa.gpd.editor.gef.figure.EndStateFigure"
-            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
-            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
-         </gef>
-         <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
-               fixedSize="true"
-               height="4"
-               width="4">
-         </graphiti>
-      </element>
-      <element
-            bpmn="endPoint"
-            icon="endtoken.png"
-            jpdl="end-token-state"
-            label="%label.element.endtoken"
-            model="ru.runa.gpd.lang.model.EndTokenState"
-            type="node">
-         <gef
-            figure="ru.runa.gpd.editor.gef.figure.EndTokenStateFigure"
-            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
-            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
-         </gef>
-         <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
-               fixedSize="true"
-               height="4"
-               width="4">
-         </graphiti>
       </element>
       <element
             icon="fork.png"
@@ -744,42 +760,6 @@
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.ActionGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.ActionTreeEditPart">
          </gef>
-      </element>
-      <element
-            bpmn="lane"
-            jpdl="swimlane"
-            label="%default.swimlane.name"
-            icon="swimlane.png" 
-            model="ru.runa.gpd.lang.model.Swimlane"
-            type="artifact">
-         <gef 
-            treeEditPart="ru.runa.gpd.editor.gef.part.tree.SwimlaneTreeEditPart">
-         </gef>
-         <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddSwimlaneFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateSwimlaneFeature"
-               fixedSize="false"
-               height="15"
-               layout="ru.runa.gpd.editor.graphiti.layout.LayoutSwimlaneFeature"
-               update="ru.runa.gpd.editor.graphiti.update.UpdateSwimlaneFeature"
-               width="40">
-         </graphiti>
-      </element>
-      <element
-            bpmn="textAnnotation"
-            label="%label.element.textAnnotation"
-            icon="textAnnotation.png"
-            model="ru.runa.gpd.lang.model.TextAnnotation"
-            type="artifact">
-         <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddTextAnnotationFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
-               fixedSize="false"
-               height="3"
-               layout="ru.runa.gpd.editor.graphiti.layout.LayoutTextAnnotationFeature"
-               update="ru.runa.gpd.editor.graphiti.update.UpdateTextAnnotationFeature"
-               width="8">
-         </graphiti>
       </element>
       <element
             bpmn="ioSpecification"
@@ -905,22 +885,42 @@
          </gef>
       </element>
       <element
-            bpmn="timerEventDefinition"
-            jpdl="wait-state"
-            icon="timer.png"
-            label="%label.element.timer"
-            model="ru.runa.gpd.lang.model.Timer"
+            bpmn="endPoint"
+            icon="endtoken.png"
+            jpdl="end-token-state"
+            label="%label.element.endtoken"
+            model="ru.runa.gpd.lang.model.EndTokenState"
             type="node">
-         <gef 
-            figure="ru.runa.gpd.editor.gef.figure.WaitStateFigure"
+         <gef
+            figure="ru.runa.gpd.editor.gef.figure.EndTokenStateFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddTimerFeature"
-               create="ru.runa.gpd.editor.graphiti.create.CreateTimerFeature"
-               height="4"
+               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
                fixedSize="true"
+               height="4"
+               width="4">
+         </graphiti>
+      </element>
+      <element
+      		type="node"
+            model="ru.runa.gpd.lang.model.EndState"
+            jpdl="end-state"
+            bpmn="endEvent"
+            icon="end.png"
+            label="%label.element.end">
+         <gef
+            figure="ru.runa.gpd.editor.gef.figure.EndStateFigure"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.LabeledNodeGraphicalEditPart"
+            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
+         </gef>
+         <graphiti
+               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
+               create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               fixedSize="true"
+               height="4"
                width="4">
          </graphiti>
       </element>
