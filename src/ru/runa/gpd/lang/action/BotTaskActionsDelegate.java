@@ -1,11 +1,13 @@
 package ru.runa.gpd.lang.action;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -14,6 +16,7 @@ import org.eclipse.swt.widgets.Menu;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.BotTaskConfigHelper;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerRegistry;
@@ -87,8 +90,12 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
 
         @Override
         public void run() {
-            BotTask task = chooseBotTask();
-            bindFormalVariableWithReal(task);
+            try {
+                BotTask task = chooseBotTask();
+                bindFormalVariableWithReal(task);
+            } catch (Exception e) {
+                PluginLogger.logError(e);
+            }
         }
     }
 
@@ -133,7 +140,7 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
         }
     }
 
-    private BotTask chooseBotTask() {
+    private BotTask chooseBotTask() throws CoreException, IOException {
         BotTask task = null;
         List<String> botTaskNames = new ArrayList<String>();
         for (IFile file : ProjectFinder.getBotTaskFiles(botFolder)) {

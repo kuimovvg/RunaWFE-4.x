@@ -16,7 +16,7 @@ import ru.runa.gpd.property.TimeOutDurationPropertyDescriptor;
 import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.util.Delay;
 import ru.runa.gpd.util.ProjectFinder;
-import ru.runa.wfe.handler.action.EscalationActionHandler;
+import ru.runa.wfe.extension.handler.EscalationActionHandler;
 
 import com.google.common.base.Strings;
 

@@ -18,7 +18,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.settings.LDAPConnectionPreferencePage;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.wfe.SyncUIHelper;
-import ru.runa.wfe.os.func.ExecutorByNameFunction;
+import ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction;
 
 public class SwimlaneADElement extends SwimlaneElement {
     private Hyperlink chooseExecutorLink;

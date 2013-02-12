@@ -12,6 +12,8 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
+import com.google.common.base.Charsets;
+
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     private static final String PERSPECTIVE_ID = "ru.runa.gpd.perspective";
 
@@ -53,8 +55,8 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     private static void setUtfCharsetRecursively(IResource resource) throws CoreException {
         if (resource instanceof IFile) {
             IFile file = (IFile) resource;
-            if (!PluginConstants.UTF_ENCODING.equalsIgnoreCase(file.getCharset())) {
-                file.setCharset(PluginConstants.UTF_ENCODING, null);
+            if (!Charsets.UTF_8.name().equalsIgnoreCase(file.getCharset())) {
+                file.setCharset(Charsets.UTF_8.name(), null);
             }
         }
         if (resource instanceof IContainer) {
