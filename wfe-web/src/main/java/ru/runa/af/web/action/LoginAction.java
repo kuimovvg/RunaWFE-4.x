@@ -31,8 +31,8 @@ import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.ProfileService;
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.ProfileService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 

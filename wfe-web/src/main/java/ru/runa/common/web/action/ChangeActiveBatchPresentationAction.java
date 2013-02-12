@@ -26,8 +26,8 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.BatchPresentationForm;
-import ru.runa.service.ProfileService;
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.ProfileService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 
 /**

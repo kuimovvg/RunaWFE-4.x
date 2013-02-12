@@ -25,10 +25,10 @@ import org.apache.ecs.html.TD;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.StartFormBuilder;
 import ru.runa.wf.web.html.FormBuilderFactory;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 17.11.2004

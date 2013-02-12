@@ -27,9 +27,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
 

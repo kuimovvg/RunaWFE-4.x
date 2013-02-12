@@ -29,7 +29,6 @@ import javax.sql.DataSource;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.SQLCommons;
 import ru.runa.wfe.commons.sqltask.AbstractQuery;
 import ru.runa.wfe.commons.sqltask.DatabaseTask;
@@ -41,6 +40,7 @@ import ru.runa.wfe.commons.sqltask.StoredProcedureQuery;
 import ru.runa.wfe.commons.sqltask.SwimlaneParameter;
 import ru.runa.wfe.commons.sqltask.SwimlaneResult;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.User;

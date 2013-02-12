@@ -27,9 +27,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.ExecutionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.logic.bot.startprocess.StartProcessTask;
 import ru.runa.wf.logic.bot.startprocess.StartProcessVariableMapping;
 import ru.runa.wf.logic.bot.startprocess.StartProcessXmlParser;
@@ -39,6 +36,9 @@ import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
@@ -94,7 +94,7 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
             }
 
             try {
-                AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
+                AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
                 WfProcess process = executionService.getProcess(user, startedProcessId);
                 WfProcess parentProcess = executionService.getProcess(user, task.getProcessId());
                 BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();

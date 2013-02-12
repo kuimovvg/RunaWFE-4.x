@@ -28,9 +28,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.service.ExecutionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.form.TaskIdForm;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @struts:action path="/historyGraphImage" name="taskIdForm" validate="true"

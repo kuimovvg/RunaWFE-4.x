@@ -26,10 +26,10 @@ import ru.runa.af.web.form.DeployBotForm;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @author petrmikheev

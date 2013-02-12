@@ -31,11 +31,11 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.form.CommonProcessForm;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 

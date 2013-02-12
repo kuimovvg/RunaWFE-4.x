@@ -6,7 +6,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.delegate.Delegates;
 
 public class InitializeDBListener implements ServletContextListener {
     public static Log log = LogFactory.getLog(InitializeDBListener.class);

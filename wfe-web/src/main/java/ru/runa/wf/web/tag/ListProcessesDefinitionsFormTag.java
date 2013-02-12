@@ -37,9 +37,6 @@ import ru.runa.common.web.html.SortingHeaderBuilder;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.DefinitionService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wf.web.action.UndeployProcessDefinitionAction;
 import ru.runa.wf.web.html.DefinitionUrlStrategy;
 import ru.runa.wf.web.html.PropertiesProcessTDBuilder;
@@ -48,6 +45,9 @@ import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.DefinitionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 30.09.2004
@@ -92,7 +92,7 @@ public class ListProcessesDefinitionsFormTag extends BatchReturningTitledFormTag
     }
 
     private boolean isUndeployAllowed(List<WfDefinition> definitions) {
-        AuthorizationService authorizationService = ru.runa.service.delegate.Delegates.getAuthorizationService();
+        AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
         for (boolean undeploy : authorizationService.isAllowed(getUser(), DefinitionPermission.UNDEPLOY_DEFINITION, definitions)) {
             if (undeploy) {
                 return true;

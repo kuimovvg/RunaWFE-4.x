@@ -9,8 +9,8 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.service.SubstitutionService;
-import ru.runa.service.delegate.Delegates;
+import ru.runa.wfe.service.SubstitutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
 

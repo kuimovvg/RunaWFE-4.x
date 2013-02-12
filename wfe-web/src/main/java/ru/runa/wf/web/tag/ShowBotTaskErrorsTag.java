@@ -19,13 +19,13 @@ import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.TRRowBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.VisibleTag;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors.BotTaskIdentifier;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
 

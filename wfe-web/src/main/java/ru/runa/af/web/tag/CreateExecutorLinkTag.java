@@ -18,10 +18,10 @@
 package ru.runa.af.web.tag;
 
 import ru.runa.common.web.tag.LinkTag;
-import ru.runa.service.AuthorizationService;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.SystemPermission;
+import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 03.09.2004

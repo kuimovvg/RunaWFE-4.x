@@ -26,10 +26,10 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.extension.orgfunction.ParamRenderer;
+import ru.runa.wfe.service.delegate.Delegates;
 
 @SuppressWarnings("unchecked")
 public class SubstitutionCriteriaDefinitions {

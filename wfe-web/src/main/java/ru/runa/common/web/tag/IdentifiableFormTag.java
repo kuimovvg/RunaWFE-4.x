@@ -21,9 +21,9 @@ import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.form.IdForm;
-import ru.runa.service.delegate.Delegates;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 07.10.2004
