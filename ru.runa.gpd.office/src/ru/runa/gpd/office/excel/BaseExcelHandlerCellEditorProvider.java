@@ -40,11 +40,6 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
     }
 
     @Override
-    protected boolean isValidateByXSD() {
-        return false;
-    }
-
-    @Override
     protected ExcelModel createDefault() {
         return new ExcelModel(getMode());
     }
