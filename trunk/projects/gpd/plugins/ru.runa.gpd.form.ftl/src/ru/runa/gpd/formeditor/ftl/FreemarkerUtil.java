@@ -23,7 +23,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.formeditor.BaseHtmlFormType;
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
@@ -56,7 +55,7 @@ public class FreemarkerUtil {
     private static final String ATTR_STYLE = "style";
 
     public static String transformFromHtml(String html, List<String> variableNames) throws SAXException, IOException, TransformerFactoryConfigurationError, TransformerException {
-        Document document = BaseHtmlFormType.getDocument(new ByteArrayInputStream(html.getBytes(PluginConstants.UTF_ENCODING)));
+        Document document = BaseHtmlFormType.getDocument(new ByteArrayInputStream(html.getBytes("UTF-8")));
         NodeList spanElements = document.getElementsByTagName(METHOD_ELEMENT_NAME());
         int len = spanElements.getLength();
         int idx = 0;
@@ -129,14 +128,14 @@ public class FreemarkerUtil {
         }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         writeHtml(document, os);
-        return new String(os.toByteArray(), PluginConstants.UTF_ENCODING);
+        return new String(os.toByteArray(), "UTF-8");
     }
 
     private static void writeHtml(Document document, OutputStream os) throws TransformerFactoryConfigurationError, TransformerException {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "true");
-        transformer.setOutputProperty(OutputKeys.ENCODING, PluginConstants.UTF_ENCODING);
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.transform(new DOMSource(document), new StreamResult(os));
     }
 
@@ -152,7 +151,7 @@ public class FreemarkerUtil {
         Configuration cfg = new Configuration();
         cfg.setObjectWrapper(new DefaultObjectWrapper());
         cfg.setLocalizedLookup(false);
-        Template template = new Template("test", new StringReader(ftlText), cfg, PluginConstants.UTF_ENCODING);
+        Template template = new Template("test", new StringReader(ftlText), cfg, "UTF-8");
         StringWriter out = new StringWriter();
         template.process(new EditorHashModel(variableNames), out);
         out.flush();

@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -13,11 +12,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.ModalContext;
 
-import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.util.ProjectFinder;
 
 public class BotStationExportCommand extends BotExportCommand {
@@ -55,22 +53,17 @@ public class BotStationExportCommand extends BotExportCommand {
         }
     }
 
-    protected List<IFile> getResourceToExport(IResource exportResource) {
-        try {
-            List<IFile> resourcesToExport = new ArrayList<IFile>();
-            IProject processFolder = (IProject) exportResource;
-            processFolder.refreshLocal(1, null);
-            IFolder folder = processFolder.getFolder("/src/botstation/");
-            IResource[] members = folder.members();
-            for (IResource resource : members) {
-                if (resource instanceof IFile) {
-                    resourcesToExport.add((IFile) resource);
-                }
+    protected List<IFile> getResourceToExport(IResource exportResource) throws CoreException {
+        List<IFile> resourcesToExport = new ArrayList<IFile>();
+        IProject processFolder = (IProject) exportResource;
+        processFolder.refreshLocal(IResource.DEPTH_ONE, null);
+        IFolder folder = processFolder.getFolder("/src/botstation/");
+        IResource[] members = folder.members();
+        for (IResource resource : members) {
+            if (resource instanceof IFile) {
+                resourcesToExport.add((IFile) resource);
             }
-            return resourcesToExport;
-        } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), e);
-            return Collections.emptyList();
         }
+        return resourcesToExport;
     }
 }

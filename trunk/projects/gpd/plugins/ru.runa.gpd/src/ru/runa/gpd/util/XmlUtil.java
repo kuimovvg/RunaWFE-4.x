@@ -18,6 +18,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
@@ -45,6 +46,14 @@ public class XmlUtil {
 
     public static Document parseWithXSDValidation(InputStream in) {
         return parse(in, true, null);
+    }
+
+    public static Document parseWithXSDValidation(byte[] data) {
+        return parseWithXSDValidation(new ByteArrayInputStream(data));
+    }
+
+    public static Document parseWithXSDValidation(String data) {
+        return parseWithXSDValidation(data.getBytes(Charsets.UTF_8));
     }
 
     public static Document parseWithXSDValidation(InputStream in, InputStream xsdInputStream) {
@@ -128,5 +137,17 @@ public class XmlUtil {
         Document document = DocumentHelper.createDocument();
         document.addElement(rootElementName);
         return document;
+    }
+
+    public static String getParamDefConfig(Bundle bundle, String className) {
+        int dotIndex = className.lastIndexOf(".");
+        String simpleClassName = className.substring(dotIndex + 1);
+        String path = "/conf/" + simpleClassName + ".xml";
+        try {
+            InputStream is = bundle.getEntry(path).openStream();
+            return IOUtils.readStream(is);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to read config at " + path, e);
+        }
     }
 }

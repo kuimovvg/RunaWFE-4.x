@@ -1,7 +1,5 @@
 package ru.runa.gpd.extension.handler;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -26,7 +24,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
@@ -246,11 +243,11 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
 
         public boolean validate() {
             try {
-                InputStream xmlStream = new ByteArrayInputStream(styledText.getText().getBytes(PluginConstants.UTF_ENCODING));
+                String xml = styledText.getText();
                 if (validateXSD) {
-                    XmlUtil.parseWithXSDValidation(xmlStream);
+                    XmlUtil.parseWithXSDValidation(xml);
                 } else {
-                    XmlUtil.parseWithoutValidation(xmlStream);
+                    XmlUtil.parseWithoutValidation(xml);
                 }
                 return true;
             } catch (Exception e) {

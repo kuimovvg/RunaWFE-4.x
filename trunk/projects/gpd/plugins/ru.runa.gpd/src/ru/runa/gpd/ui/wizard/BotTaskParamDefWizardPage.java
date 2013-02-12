@@ -24,7 +24,7 @@ import ru.runa.gpd.extension.handler.ParamDefGroup;
 public class BotTaskParamDefWizardPage extends WizardPage {
     private ParamDefGroup paramDefGroup;
     private ParamDef paramDef;
-    private Text name;
+    private Text nameText;
     private Combo typeCombo;
 
     public BotTaskParamDefWizardPage(ParamDefGroup paramDefGroup, ParamDef paramDef) {
@@ -48,10 +48,12 @@ public class BotTaskParamDefWizardPage extends WizardPage {
         createVariableTypeField(composite);
         if (paramDef != null) {
             if (paramDef.getName() != null) {
-                name.setText(paramDef.getName());
+                nameText.setText(paramDef.getName());
             }
             if (paramDef.getFormatFilters().size() > 0) {
-                typeCombo.setText(paramDef.getFormatFilters().iterator().next());
+                String type = paramDef.getFormatFilters().get(0);
+                String label = VariableFormatRegistry.getInstance().getArtifactNotNull(type).getLabel();
+                typeCombo.setText(label);
             }
         }
         setControl(composite);
@@ -59,20 +61,20 @@ public class BotTaskParamDefWizardPage extends WizardPage {
         if (paramDef == null) {
             setPageComplete(false);
         }
-        name.setFocus();
+        nameText.setFocus();
     }
 
     private void createNameField(Composite parent) {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("ParamDefWizardPage.page.name"));
-        name = new Text(parent, SWT.BORDER);
-        name.addModifyListener(new ModifyListener() {
+        nameText = new Text(parent, SWT.BORDER);
+        nameText.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent e) {
                 verifyContentsValid();
             }
         });
-        name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     private void createVariableTypeField(Composite parent) {
@@ -80,7 +82,7 @@ public class BotTaskParamDefWizardPage extends WizardPage {
         label.setText(Localization.getString("ParamDefWizardPage.page.type"));
         List<String> types = new ArrayList<String>();
         for (VariableFormatArtifact artifact : VariableFormatRegistry.getInstance().getAll()) {
-            types.add(artifact.getVariableClassName());
+            types.add(artifact.getLabel());
         }
         typeCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
         typeCombo.setItems(types.toArray(new String[types.size()]));
@@ -88,39 +90,40 @@ public class BotTaskParamDefWizardPage extends WizardPage {
     }
 
     private void verifyContentsValid() {
-        if (isNameEmpty()) {
+        if (nameText.getText().length() == 0) {
             setErrorMessage(Localization.getString("error.paramDef.no_param_name"));
             setPageComplete(false);
-        } else if (!isNameValid() && paramDef == null) {
+        } else if (isDuplicated()) {
             setErrorMessage(Localization.getString("error.paramDef.param_exist"));
             setPageComplete(false);
+        } else {
+            setErrorMessage(null);
+            setPageComplete(true);
         }
     }
 
     @Override
     public String getName() {
-        if (name == null) {
+        if (nameText == null) {
             return "";
         }
-        return name.getText().trim();
+        return nameText.getText().trim();
     }
 
     public String getType() {
-        return typeCombo.getText();
+        return VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText()).getName();
     }
 
-    private boolean isNameEmpty() {
-        return name.getText().length() == 0;
-    }
-
-    private boolean isNameValid() {
-        boolean duplicate = false;
-        for (ParamDef paramDef : paramDefGroup.getParameters()) {
-            if (paramDef.getName().equals(name.getText())) {
-                duplicate = true;
+    private boolean isDuplicated() {
+        if (paramDef != null) {
+            return false;
+        }
+        for (ParamDef p : paramDefGroup.getParameters()) {
+            if (paramDef != p && p.getName().equals(nameText.getText())) {
+                return true;
             }
         }
-        return duplicate;
+        return false;
     }
 
     public ParamDefGroup getParamDefGroup() {

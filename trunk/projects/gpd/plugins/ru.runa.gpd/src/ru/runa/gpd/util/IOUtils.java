@@ -21,11 +21,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.lang.model.FormNode;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteStreams;
 
 public class IOUtils {
     private static final ByteArrayInputStream EMPTY_STREAM = new ByteArrayInputStream(new byte[0]);
@@ -65,33 +67,15 @@ public class IOUtils {
     }
 
     public static String readStream(InputStream in) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        copyStream(in, baos);
-        return new String(baos.toByteArray(), PluginConstants.UTF_ENCODING);
+        return new String(readStreamAsBytes(in), Charsets.UTF_8);
     }
 
     public static byte[] readStreamAsBytes(InputStream in) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        copyStream(in, baos);
-        return baos.toByteArray();
-    }
-
-    public static void writeToStream(OutputStream out, String str) throws IOException {
-        out.write(str.getBytes(PluginConstants.UTF_ENCODING));
-        out.flush();
+        return ByteStreams.toByteArray(in);
     }
 
     public static void copyStream(InputStream in, OutputStream out) throws IOException {
-        try {
-            byte[] buf = new byte[1024 * 8];
-            int length = 0;
-            while ((length = in.read(buf)) != -1) {
-                out.write(buf, 0, length);
-            }
-        } finally {
-            in.close();
-            out.close();
-        }
+        ByteStreams.copy(in, out);
     }
 
     public static IFile getAdjacentFile(IFile file, String fileName) {
@@ -158,7 +142,7 @@ public class IOUtils {
                 file.create(EMPTY_STREAM, true, null);
             }
         }
-        file.setCharset(PluginConstants.UTF_ENCODING, null);
+        file.setCharset(Charsets.UTF_8.name(), null);
         return file;
     }
 
@@ -232,10 +216,7 @@ public class IOUtils {
                 while ((n = zis.read(buf, 0, 1024)) > -1) {
                     baos.write(buf, 0, n);
                 }
-                baos.close();
-                InputStream entryStream = new ByteArrayInputStream(baos.toByteArray());
-                file.create(entryStream, true, null);
-                file.setCharset(PluginConstants.UTF_ENCODING, null);
+                createFileSafely(file);
             }
             zis.closeEntry();
             entry = zis.getNextEntry();

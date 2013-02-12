@@ -113,7 +113,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
                 Label label = new Label(this, SWT.NONE);
                 label.setText(Messages.getString("MSWordConfig.label.resultVariableName"));
                 final Combo combo = new Combo(this, SWT.READ_ONLY);
-                for (Map.Entry<String, String> entry : variables.entrySet()) {
+                for (Map.Entry<String, String> entry : variables.entrySet()) { // FIXME
                     if ("ru.runa.wf.web.forms.format.FileFormat".equals(entry.getValue()) || "file".equals(entry.getValue())) {
                         combo.add(entry.getKey());
                     }

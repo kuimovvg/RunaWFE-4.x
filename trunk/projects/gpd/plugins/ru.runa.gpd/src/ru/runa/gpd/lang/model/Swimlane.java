@@ -12,7 +12,7 @@ import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
-import ru.runa.wfe.handler.assign.DefaultAssignmentHandler;
+import ru.runa.wfe.extension.assign.DefaultAssignmentHandler;
 import ru.runa.wfe.var.format.ExecutorFormat;
 
 public class Swimlane extends NamedGraphElement implements Delegable {

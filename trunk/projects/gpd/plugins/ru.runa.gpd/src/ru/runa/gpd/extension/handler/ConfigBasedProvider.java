@@ -1,17 +1,12 @@
 package ru.runa.gpd.extension.handler;
 
-import java.io.InputStream;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.model.Delegable;
-import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.util.XmlUtil;
 
 public class ConfigBasedProvider extends ParamBasedProvider {
-
     @Override
     protected ImageDescriptor getLogo() {
         return SharedImages.getImageDescriptor(bundle, "/icons/logo.gif", false);
@@ -19,20 +14,7 @@ public class ConfigBasedProvider extends ParamBasedProvider {
 
     @Override
     protected ParamDefConfig getParamConfig(Delegable delegable) {
-        String path = "/conf/" + getSimpleClassName(delegable.getDelegationClassName()) + ".xml";
-        try {
-            InputStream is = bundle.getEntry(path).openStream();
-            Document doc = DocumentHelper.parseText(IOUtils.readStream(is));
-            ParamDefConfig config = ParamDefConfig.parse(doc);
-            return config;
-        } catch (Exception e) {
-            throw new RuntimeException("Unable parse config at " + path, e);
-        }
+        String xml = XmlUtil.getParamDefConfig(bundle, delegable.getDelegationClassName());
+        return ParamDefConfig.parse(xml);
     }
-
-    private String getSimpleClassName(String className) {
-        int dotIndex = className.lastIndexOf(".");
-        return className.substring(dotIndex + 1);
-    }
-
 }

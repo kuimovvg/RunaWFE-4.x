@@ -5,6 +5,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.graphics.Image;
 
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.BotTaskConfigHelper;
 import ru.runa.gpd.lang.model.BotTask;
@@ -20,9 +21,13 @@ public class BotResourcesLabelProvider extends ResourcesLabelProvider {
             return SharedImages.getImage("icons/bot.gif");
         }
         if (element instanceof IFile) {
-            BotTask task = BotTaskContentUtil.getBotTaskFromFile((IFile) element);
-            if (!BotTaskConfigHelper.isParamDefConfigEmpty(task.getParamDefConfig())) {
-                return SharedImages.getImage("icons/bot_task_formal.gif");
+            try {
+                BotTask task = BotTaskContentUtil.getBotTaskFromFile((IFile) element);
+                if (!BotTaskConfigHelper.isParamDefConfigEmpty(task.getParamDefConfig())) {
+                    return SharedImages.getImage("icons/bot_task_formal.gif");
+                }
+            } catch (Exception e) {
+                PluginLogger.logErrorWithoutDialog("", e);
             }
         }
         return SharedImages.getImage("icons/bot_task.gif");
