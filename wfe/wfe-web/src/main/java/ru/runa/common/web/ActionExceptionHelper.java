@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
 import ru.runa.wf.web.VariablesFormatException;
+import ru.runa.wf.web.action.ProcessDefinitionTypeNotPresentException;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.LocalizableException;
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
@@ -49,6 +50,7 @@ import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.validation.impl.ValidationException;
 
 import com.google.common.base.Throwables;
 
@@ -127,7 +129,7 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_SESSION_INVALID);
         } else if (e instanceof FilterFormatException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_TABLE_VIEW_SETUP_FORMAT_INCORRECT);
-        } else if (e instanceof ru.runa.wf.web.action.ProcessDefinitionTypeNotPresentException) {
+        } else if (e instanceof ProcessDefinitionTypeNotPresentException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_DEFINITION_TYPE_NOT_PRESENT);
         } else if (e instanceof TaskAlreadyAcceptedException) {
             actionMessage = new ActionMessage(Messages.TASK_WAS_ALREADY_ACCEPTED, e.getMessage());
@@ -140,6 +142,8 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_EXISTS, e.getMessage());
         } else if (e instanceof VariablesFormatException) {
             actionMessage = new ActionMessage(Messages.MESSAGE_WEB_CLIENT_VARIABLE_FORMAT_ERROR, ((VariablesFormatException) e).getErrorFields());
+        } else if (e instanceof ValidationException) {
+            actionMessage = new ActionMessage(Messages.MESSAGE_WEB_CLIENT_VALIDATION_ERROR);
         } else if (e instanceof LocalizableException) {
             actionMessage = new ActionMessage(e.getLocalizedMessage(), false);
         } else if (e instanceof InternalApplicationException) {

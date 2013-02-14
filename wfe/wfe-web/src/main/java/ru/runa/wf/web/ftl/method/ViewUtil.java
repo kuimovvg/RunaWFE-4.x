@@ -22,21 +22,21 @@ public class ViewUtil {
     public static String createExecutorSelect(User user, WfVariable variable) {
         ExecutorService executorService = Delegates.getExecutorService();
         BatchPresentation batchPresentation;
-        if (ActorFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
+        if (ActorFormat.class.getName().equals(variable.getFormatClassNameNotNull())) {
             batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
-        } else if (ExecutorFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
+        } else if (ExecutorFormat.class.getName().equals(variable.getFormatClassNameNotNull())) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-        } else if (GroupFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
+        } else if (GroupFormat.class.getName().equals(variable.getFormatClassNameNotNull())) {
             batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
         } else {
-            throw new InternalApplicationException("Unexpected format " + variable.getDefinition().getFormatClassName());
+            throw new InternalApplicationException("Unexpected format " + variable.getFormatClassNameNotNull());
         }
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
         List<Executor> executors = executorService.getAll(user, batchPresentation);
 
-        String html = "<select name=\"" + variable.getDefinition().getName() + "\">";
+        String html = "<select name=\"" + variable.getName() + "\">";
         for (Executor executor : executors) {
             html += "<option value=\"ID" + executor.getId() + "\"";
             if (Objects.equal(executor, variable.getValue())) {

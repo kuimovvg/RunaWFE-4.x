@@ -17,7 +17,7 @@ public class DisplayFormattedTextTag extends DisplayVariableTag {
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        return variable.getDefinition().getFormat().format(variable.getValue());
+        return variable.getFormatNotNull().format(variable.getValue());
     }
 
 }
