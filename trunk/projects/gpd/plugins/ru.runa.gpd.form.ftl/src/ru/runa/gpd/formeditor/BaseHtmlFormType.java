@@ -143,7 +143,7 @@ public abstract class BaseHtmlFormType extends FormType {
     public static Document getDocument(InputStream is) throws IOException, SAXException {
         DOMParser parser = new DOMParser();
         InputSource inputSource = new InputSource(is);
-        inputSource.setEncoding("UTF_8");
+        inputSource.setEncoding("UTF-8");
         parser.parse(inputSource);
         return parser.getDocument();
     }
