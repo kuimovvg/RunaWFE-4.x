@@ -14,18 +14,35 @@ import com.google.common.base.Preconditions;
 public class WfVariable implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private String name;
     private VariableDefinition definition;
     private Object value;
 
     public WfVariable() {
     }
 
+    public WfVariable(String name, Object value) {
+        Preconditions.checkNotNull(name);
+        this.name = name;
+        this.value = value;
+    }
+
     public WfVariable(VariableDefinition definition, Object value) {
         Preconditions.checkNotNull(definition);
+        this.name = definition.getName();
         this.definition = definition;
         this.value = value;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Can be <code>null</code>.
+     * 
+     * @return
+     */
     public VariableDefinition getDefinition() {
         return definition;
     }

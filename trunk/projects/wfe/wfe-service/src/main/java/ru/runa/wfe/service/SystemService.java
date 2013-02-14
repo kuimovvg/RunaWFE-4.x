@@ -17,8 +17,9 @@
  */
 package ru.runa.wfe.service;
 
-import java.util.HashMap;
+import java.util.List;
 
+import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.user.User;
 
@@ -33,9 +34,9 @@ public interface SystemService {
 
     public void logout(User user);
 
-    public HashMap<String, String> getLocalizations(User user);
+    public List<Localization> getLocalizations(User user);
 
     public String getLocalized(User user, String name);
 
-    public void saveLocalizations(User user, HashMap<String, String> localizations);
+    public void saveLocalizations(User user, List<Localization> localizations);
 }

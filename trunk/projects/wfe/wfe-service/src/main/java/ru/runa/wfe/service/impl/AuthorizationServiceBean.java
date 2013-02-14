@@ -18,7 +18,6 @@
 package ru.runa.wfe.service.impl;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -76,11 +75,11 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     }
 
     @Override
-    public HashMap<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
+    public List<Permission> getIssuedPermissions(User user, Executor performer, Identifiable identifiable) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(performer);
         Preconditions.checkNotNull(identifiable);
-        return authorizationLogic.getOwnPermissions(user, performer, identifiable);
+        return authorizationLogic.getIssuedPermissions(user, performer, identifiable);
     }
 
     @WebMethod(exclude = true)

@@ -17,9 +17,7 @@
  */
 package ru.runa.wfe.commons.logic;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.security.auth.Subject;
 
@@ -41,7 +39,6 @@ import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Created on 14.03.2005
@@ -148,14 +145,9 @@ public class CommonLogic {
         return permissionDAO.getPersistentObjectCount(actorAndGroupsIds, batchPresentation, permission, securedObjectTypes);
     }
 
-    public HashMap<String, String> getLocalizations(User user) {
+    public List<Localization> getLocalizations(User user) {
         // TODO permissions
-        List<Localization> localizations = localizationDAO.getAll();
-        HashMap<String, String> result = Maps.newHashMapWithExpectedSize(localizations.size());
-        for (Localization localization : localizations) {
-            result.put(localization.getName(), localization.getValue());
-        }
-        return result;
+        return localizationDAO.getAll();
     }
 
     public String getLocalized(User user, String name) {
@@ -163,7 +155,7 @@ public class CommonLogic {
         return localizationDAO.getLocalized(name);
     }
 
-    public void saveLocalizations(User user, Map<String, String> localizations) {
+    public void saveLocalizations(User user, List<Localization> localizations) {
         // TODO permissions
         localizationDAO.saveLocalizations(localizations, true);
     }

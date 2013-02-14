@@ -17,7 +17,7 @@
  */
 package ru.runa.wfe.service.impl;
 
-import java.util.HashMap;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.audit.logic.AuditLogic;
+import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.service.decl.SystemServiceLocal;
 import ru.runa.wfe.service.decl.SystemServiceRemote;
@@ -65,7 +66,7 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
     }
 
     @Override
-    public HashMap<String, String> getLocalizations(User user) {
+    public List<Localization> getLocalizations(User user) {
         Preconditions.checkNotNull(user);
         return auditLogic.getLocalizations(user);
     }
@@ -76,7 +77,7 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
     }
 
     @Override
-    public void saveLocalizations(User user, HashMap<String, String> localizations) {
+    public void saveLocalizations(User user, List<Localization> localizations) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(localizations);
         auditLogic.saveLocalizations(user, localizations);

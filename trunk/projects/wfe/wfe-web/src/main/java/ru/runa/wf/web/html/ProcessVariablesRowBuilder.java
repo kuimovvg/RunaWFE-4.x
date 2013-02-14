@@ -34,7 +34,6 @@ import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableDisplaySupport;
 import ru.runa.wfe.var.format.VariableFormat;
 
@@ -73,7 +72,7 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
             formattedValue = Messages.getMessage("label.unset_empty.value", pageContext);
         } else {
             try {
-                VariableFormat variableFormat = FormatCommons.create(variable);
+                VariableFormat variableFormat = variable.getDefinition().getFormat();
                 if (variableFormat instanceof VariableDisplaySupport) {
                     User user = Commons.getUser(pageContext.getSession());
                     formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(user, new StrutsWebHelper(pageContext), processId, variable

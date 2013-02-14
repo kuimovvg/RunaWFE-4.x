@@ -43,9 +43,8 @@ public class DateTimeInputTag extends FreemarkerTag {
         String variableName = getParameterAs(String.class, 0);
         String view = getParameterAs(String.class, 1);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        // String format = variable.getDefinition().getFormat();
         Date date = (Date) variable.getValue();
-        String html = ""; // TODO refactor
+        String html = "";
         if ("date".equals(view)) {
             html += "<input type=\"text\" class=\"inputDate\" name=\"" + variableName + "\" style=\"width: 100px;\" ";
             if (date != null) {
@@ -68,7 +67,7 @@ public class DateTimeInputTag extends FreemarkerTag {
             html += "/>";
         }
         if (html.length() == 0) {
-            log.warn("No HTML built (" + variableName + ") for format " + variable.getDefinition().getFormatClassName());
+            log.warn("No HTML built (" + variableName + ") for variable " + variable);
         }
         return html;
     }
