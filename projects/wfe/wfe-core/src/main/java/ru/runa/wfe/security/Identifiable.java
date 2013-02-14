@@ -19,10 +19,13 @@ package ru.runa.wfe.security;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * Interface for all identifiable components, which can be secured using
  * permission.
  */
+@XmlType
 public abstract class Identifiable implements Serializable {
     private static final long serialVersionUID = 1L;
 
