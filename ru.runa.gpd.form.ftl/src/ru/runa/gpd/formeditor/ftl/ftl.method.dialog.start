@@ -39,7 +39,7 @@ function LoadSelected() {
 	var paramsStr = eSelected.getAttribute("ftltagparams");
 	var paramsArray = paramsStr.split("|");
 	for (var i=0; i<paramsArray.length; i++) {
-		var combo = $("pc_"+i);
+		var combo = $("pt_"+i);
 		if (combo != null) {
 			combo.value = paramsArray[i];
 			if (combo.value != paramsArray[i]) {
