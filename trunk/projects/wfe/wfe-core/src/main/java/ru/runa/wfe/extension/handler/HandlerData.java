@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.dto.WfTask;
@@ -78,7 +79,8 @@ public class HandlerData {
         return TypeConversionUtil.convertTo(object, clazz);
     }
 
-    public <T> T getInputParam(Class<T> clazz, String name, T defaultValue) {
+    public <T> T getInputParam(Class<T> clazz, String name, T defaultValue) { // TODO
+                                                                              // rename
         Object object = getInputParam(name, defaultValue);
         return TypeConversionUtil.convertTo(object, clazz);
     }
@@ -102,10 +104,7 @@ public class HandlerData {
     public void setOutputParam(String name, Object value) {
         ParamDef paramDef = paramsDef.getOutputParam(name);
         if (paramDef == null) {
-            log.warn(processId + ": Want to set " + name + "=" + value);
-            return;
-            // throw new NullPointerException("Output parameter " + name +
-            // " not defined in configuration.");
+            throw new InternalApplicationException(processId + ": Output parameter is not defined: '" + name + "'");
         }
         if (paramDef.getVariableName() == null) {
             throw new NullPointerException("Variable not set for output parameter " + paramDef + " in configuration.");

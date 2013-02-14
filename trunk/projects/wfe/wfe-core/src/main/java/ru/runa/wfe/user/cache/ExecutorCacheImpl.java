@@ -228,20 +228,13 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
 
     private void fillMapGroupToMembers(List<ExecutorGroupMembership> memberships) {
         for (ExecutorGroupMembership membership : memberships) {
-            Executor ex = membership.getExecutor();
-            Group gr = membership.getGroup();
-            Executor ex2 = nameToExecutorCache.get(ex.getName());
-            getCollectionFromMap(groupToMembersCache, gr.getId()).add(ex2);
+            getCollectionFromMap(groupToMembersCache, membership.getGroup().getId()).add(membership.getExecutor());
         }
     }
 
     private void fillMapExecutorToParents(List<ExecutorGroupMembership> memberships) {
         for (ExecutorGroupMembership membership : memberships) {
-            Executor ex = membership.getExecutor();
-            Group gr = membership.getGroup();
-            // TODO check equivalence
-            Group gr2 = (Group) nameToExecutorCache.get(gr.getName());
-            getCollectionFromMap(executorToParentGroupsCache, ex.getId()).add(gr2);
+            getCollectionFromMap(executorToParentGroupsCache, membership.getExecutor().getId()).add(membership.getGroup());
         }
     }
 

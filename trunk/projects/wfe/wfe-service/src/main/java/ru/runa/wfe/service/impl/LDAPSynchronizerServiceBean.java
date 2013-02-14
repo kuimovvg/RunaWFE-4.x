@@ -35,7 +35,7 @@ import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService
+@WebService(name = "LDAPSynchronizerAPI", serviceName = "LDAPSynchronizerWebService")
 @SOAPBinding
 public class LDAPSynchronizerServiceBean implements LDAPSynchronizerService {
     @Autowired

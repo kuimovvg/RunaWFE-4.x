@@ -27,4 +27,6 @@ public class WfVariables {
         }
         return map;
     }
+
+    // TODO post proc public static List<WfVariable> p
 }

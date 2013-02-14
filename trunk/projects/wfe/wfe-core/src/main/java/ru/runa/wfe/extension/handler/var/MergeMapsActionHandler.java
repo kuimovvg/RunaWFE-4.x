@@ -21,7 +21,7 @@ public class MergeMapsActionHandler extends CommonParamBasedHandler {
         }
         Map resultMap = new HashMap(map1);
         resultMap.putAll(map2);
-        handlerData.setOutputVariable("map", resultMap);
+        handlerData.setOutputParam("map", resultMap);
         log.debug("Merged to the map " + resultMap);
     }
 

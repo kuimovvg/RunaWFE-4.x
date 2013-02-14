@@ -35,7 +35,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
-import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
 
@@ -70,11 +69,11 @@ public class PrivelegedMapping {
         this.id = id;
     }
 
-    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false)
     @ForeignKey(name = "FK_PM_EXECUTOR")
     public Executor getExecutor() {
-        return Proxies.getImplementation(executor);
+        return executor;
     }
 
     public void setExecutor(Executor executor) {

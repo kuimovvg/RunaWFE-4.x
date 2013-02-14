@@ -25,6 +25,12 @@ import ru.runa.wfe.extension.handler.HandlerData;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
+/**
+ * 
+ * @author Dofs
+ * @since 3.3
+ * @deprecated Use {@link GetExecutorInfoHandler}.
+ */
 public class ActorNameActionHandler extends CommonParamBasedHandler {
     @Autowired
     private ExecutorDAO executorDAO;
@@ -54,7 +60,7 @@ public class ActorNameActionHandler extends CommonParamBasedHandler {
         } else {
             result = actor.getFullName();
         }
-        handlerData.setOutputVariable("result", result);
+        handlerData.setOutputParam("result", result);
     }
 
 }

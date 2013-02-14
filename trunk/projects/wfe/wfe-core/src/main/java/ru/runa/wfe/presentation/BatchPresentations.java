@@ -37,8 +37,8 @@ public class BatchPresentations {
         map.put(BatchPresentationConsts.ID_EXECUTORS_WITHOUT_PERMISSIONS_ON_PROCESS, BatchPresentationFactory.EXECUTORS);
         map.put(BatchPresentationConsts.ID_EXECUTORS_WITHOUT_PERMISSIONS_ON_RELATIONS, BatchPresentationFactory.EXECUTORS);
         map.put(BatchPresentationConsts.ID_EXECUTORS_WITHOUT_BOT_STATION_PERMISSION, BatchPresentationFactory.EXECUTORS);
-        map.put(BatchPresentationConsts.ID_RELATIONS, BatchPresentationFactory.RELATIONS);
-        map.put(BatchPresentationConsts.ID_RELATION_GROUPS, BatchPresentationFactory.RELATION_GROUPS);
+        map.put(BatchPresentationConsts.ID_RELATIONS, BatchPresentationFactory.RELATION_PAIRS);
+        map.put(BatchPresentationConsts.ID_RELATION_GROUPS, BatchPresentationFactory.RELATIONS);
         //
         map.put(BatchPresentationConsts.ID_PROCESSES, BatchPresentationFactory.PROCESSES);
         map.put(BatchPresentationConsts.ID_DEFINITIONS, BatchPresentationFactory.DEFINITIONS);

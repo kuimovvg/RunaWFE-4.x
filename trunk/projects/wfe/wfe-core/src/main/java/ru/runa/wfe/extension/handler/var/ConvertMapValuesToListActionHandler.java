@@ -22,6 +22,6 @@ public class ConvertMapValuesToListActionHandler extends CommonParamBasedHandler
         if (list.size() > 0 && list.get(0) instanceof Comparable) {
             Collections.sort(list);
         }
-        handlerData.setOutputVariable("list", list);
+        handlerData.setOutputParam("list", list);
     }
 }

@@ -35,8 +35,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
-import ru.runa.wfe.commons.hibernate.Proxies;
-
 import com.google.common.base.Objects;
 
 /**
@@ -60,24 +58,24 @@ public class ExecutorGroupMembership {
         this.executor = executor;
     }
 
-    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_MEMBER_EXECUTOR")
     @Index(name = "IX_MEMBER_EXECUTOR")
     public Executor getExecutor() {
-        return Proxies.getImplementation(executor);
+        return executor;
     }
 
     public void setExecutor(Executor executor) {
         this.executor = executor;
     }
 
-    @ManyToOne(targetEntity = Group.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Group.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "GROUP_ID", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_MEMBER_GROUP")
     @Index(name = "IX_MEMBER_GROUP")
     public Group getGroup() {
-        return Proxies.getImplementation(group);
+        return group;
     }
 
     public void setGroup(Group group) {

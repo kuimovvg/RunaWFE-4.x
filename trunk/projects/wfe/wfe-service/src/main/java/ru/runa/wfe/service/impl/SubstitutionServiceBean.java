@@ -46,7 +46,7 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService
+@WebService(name = "SubstitutionAPI", serviceName = "SubstitutionWebService")
 @SOAPBinding
 public class SubstitutionServiceBean implements SubstitutionServiceLocal, SubstitutionServiceRemote {
     @Autowired

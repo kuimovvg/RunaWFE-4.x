@@ -18,6 +18,7 @@ import ru.runa.wfe.extension.handler.var.AddObjectToListActionHandler;
 import ru.runa.wfe.extension.handler.var.ClearVariableActionHandler;
 import ru.runa.wfe.extension.handler.var.ConvertMapKeysToListActionHandler;
 import ru.runa.wfe.extension.handler.var.ConvertMapValuesToListActionHandler;
+import ru.runa.wfe.extension.handler.var.CreateCalendarHandler;
 import ru.runa.wfe.extension.handler.var.FormulaActionHandler;
 import ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler;
 import ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler;
@@ -99,6 +100,7 @@ public class BackCompatibilityClassNames {
         bcc.put("ru.runa.wf.GroovyActionHandler", GroovyActionHandler.class.getName());
         bcc.put("ru.runa.wf.SendEmailActionHandler", SendEmailActionHandler.class.getName());
         bcc.put("ru.runa.wf.SQLActionHandler", SQLActionHandler.class.getName());
+        bcc.put("ru.runa.wf.var.CreateCalendarActionHandler", CreateCalendarHandler.class.getName());
         // org functions renamed
         bcc.put("ru.runa.af.organizationfunction.DemoChiefFunction", DemoChiefFunction.class.getName());
         bcc.put("ru.runa.af.organizationfunction.ExecutorByCodeFunction", GetActorsByCodesFunction.class.getName());

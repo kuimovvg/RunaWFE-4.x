@@ -88,7 +88,7 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
         }
         TableBuilder tableBuilder = new TableBuilder();
 
-        TDBuilder[] builders = getBuilders(new TDBuilder[] {}, BatchPresentationFactory.RELATION_GROUPS.createDefault(), new TDBuilder[] {});
+        TDBuilder[] builders = getBuilders(new TDBuilder[] {}, BatchPresentationFactory.RELATIONS.createDefault(), new TDBuilder[] {});
 
         RowBuilder rowBuilder = new ReflectionRowBuilder(Lists.newArrayList(relations), executorBatchPresentation, pageContext,
                 WebResources.ACTION_MAPPING_MANAGE_EXECUTOR_RIGHT_RELATION, "", new RelationURLStrategy(), builders);
@@ -118,7 +118,7 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
     }
 
     protected String[] getNames() {
-        BatchPresentation batchPresentation = BatchPresentationFactory.RELATION_GROUPS.createDefault();
+        BatchPresentation batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
         FieldDescriptor[] fields = batchPresentation.getDisplayFields();
         String[] result = new String[fields.length];
         for (int i = 0; i < fields.length; ++i) {

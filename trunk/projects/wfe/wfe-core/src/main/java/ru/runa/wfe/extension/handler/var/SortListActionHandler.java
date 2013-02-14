@@ -17,7 +17,7 @@ public class SortListActionHandler extends CommonParamBasedHandler {
         if ("desc".equals(mode)) {
             Collections.reverse(list);
         }
-        handlerData.setOutputVariable("list", list);
+        handlerData.setOutputParam("list", list);
         log.debug("Sorted [" + mode + "] list " + list);
     }
 

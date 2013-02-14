@@ -114,6 +114,7 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
     }
 
     public static class TasksCssClassStrategy implements CssClassStrategy {
+        private final Date currentDate = new Date();
 
         @Override
         public String getClassName(Object item, User user) {
@@ -122,11 +123,11 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
             if (deadlineDate == null) {
                 return null;
             }
-            if (task.getDeadlineWarningDate() != null && task.getDeadlineWarningDate().before(new Date())) {
-                return "deadlineAlmostExpired";
-            }
-            if (deadlineDate.before(new Date())) {
+            if (deadlineDate.before(currentDate)) {
                 return "deadlineExpired";
+            }
+            if (task.getDeadlineWarningDate() != null && task.getDeadlineWarningDate().before(currentDate)) {
+                return "deadlineAlmostExpired";
             }
             if (task.isEscalated()) {
                 return "escalatedTask";

@@ -102,6 +102,13 @@ public class WebResources {
         return getIntegerProperty("process.graph.autoRefreshInterval.seconds", 0);
     }
 
+    /**
+     * Used from JSP page
+     */
+    public static String getTaskExpiredWarningThreshold() {
+        return getStringProperty("task.form.almostDeadline.percents", "90%");
+    }
+
     public static boolean isGroupBySubprocessEnabled() {
         return getBooleanProperty("group.subprocess.enabled", false);
     }
