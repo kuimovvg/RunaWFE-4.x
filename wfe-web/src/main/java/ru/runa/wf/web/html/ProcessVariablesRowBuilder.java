@@ -61,8 +61,9 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
         WfVariable variable = variables.get(idx);
         Object value = variable.getValue();
         TR tr = new TR();
-        tr.addElement(new TD(variable.getDefinition().getName()).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(variable.getDefinition().getFormatLabel()).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(variable.getName()).setClass(Resources.CLASS_LIST_TABLE_TD));
+        String fl = variable.getDefinition() != null ? variable.getDefinition().getFormatLabel() : "-";
+        tr.addElement(new TD(fl).setClass(Resources.CLASS_LIST_TABLE_TD));
         if (WebResources.isDisplayVariablesJavaType()) {
             String className = value != null ? value.getClass().getName() : "";
             tr.addElement(new TD(className).setClass(Resources.CLASS_LIST_TABLE_TD));
@@ -72,16 +73,16 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
             formattedValue = Messages.getMessage("label.unset_empty.value", pageContext);
         } else {
             try {
-                VariableFormat variableFormat = variable.getDefinition().getFormat();
+                VariableFormat variableFormat = variable.getFormatNotNull();
                 if (variableFormat instanceof VariableDisplaySupport) {
                     User user = Commons.getUser(pageContext.getSession());
-                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(user, new StrutsWebHelper(pageContext), processId, variable
-                            .getDefinition().getName(), value);
+                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(user, new StrutsWebHelper(pageContext), processId,
+                            variable.getName(), value);
                 } else {
                     formattedValue = variableFormat.format(value);
                 }
             } catch (Exception e) {
-                log.warn("Unable to format value " + value + " of decl " + variable.getDefinition() + " in " + processId, e);
+                log.warn("Unable to format value " + value + " of decl " + variable + " in " + processId, e);
                 formattedValue = value.toString() + " <span class=\"error\">(" + e.getMessage() + ")</span>";
             }
         }

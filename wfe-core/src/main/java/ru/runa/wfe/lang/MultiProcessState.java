@@ -205,7 +205,7 @@ public class MultiProcessState extends SubProcessState {
                     String subprocessVariableName = variableMapping.getMappedName();
                     String processVariableName = variableMapping.getName();
                     WfVariable variable = executionContext.getVariableProvider().getVariable(processVariableName);
-                    if (variable == null || ListFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
+                    if (variable == null || ListFormat.class.getName().equals(variable.getFormatClassNameNotNull())) {
                         List<Object> value = new ArrayList<Object>();
                         for (Process subprocess : subprocesses) {
                             ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocess);
