@@ -18,7 +18,6 @@
 package ru.runa.wf.logic.bot;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,9 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -67,7 +68,7 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
         ExecutionService executionService = Delegates.getExecutionService();
         Map<String, Object> outputVariables = Maps.newHashMap();
 
-        HashMap<String, Object> variables = Maps.newHashMap();
+        List<WfVariable> variables = Lists.newArrayList();
         for (StartProcessTask startProcessTask : startProcessTasks) {
             String processName = startProcessTask.getName();
             String startedProcessValueName = startProcessTask.getStartedProcessIdValueName();
@@ -82,7 +83,7 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
                 if (DatabaseTask.CURRENT_DATE_VARIABLE_NAME.equals(from)) {
                     value = new Date();
                 }
-                variables.put(to, value);
+                variables.add(new WfVariable(to, value));
             }
 
             // Start process
@@ -101,13 +102,16 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
                 List<Executor> executors = authorizationService.getExecutorsWithPermission(user, parentProcess, batchPresentation, true);
                 for (Executor executor : executors) {
                     Set<Permission> permissions = new HashSet<Permission>();
-                    for (Permission permission : authorizationService.getOwnPermissions(user, executor, parentProcess).keySet()) {
+                    for (Permission permission : authorizationService.getIssuedPermissions(user, executor, parentProcess)) {
                         permissions.add(permission);
                     }
-                    for (Permission permission : authorizationService.getOwnPermissions(user, executor, process).keySet()) {
+                    for (Permission permission : authorizationService.getIssuedPermissions(user, executor, process)) {
                         permissions.add(permission);
                     }
-                    authorizationService.setPermissions(user, executor.getId(), permissions, process);
+                    if (permissions.size() > 0) {
+                        // priveleged permissions wasn't acquired
+                        authorizationService.setPermissions(user, executor.getId(), permissions, process);
+                    }
                 }
             } catch (Throwable th) {
                 log.error("Error in permission copy to new subprocess (step is ignored).", th);

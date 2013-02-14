@@ -30,7 +30,6 @@ import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
@@ -64,16 +63,15 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
         }
         if (allowed) {
             List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions());
-            AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
             List<Collection<Permission>> allPermissions = Lists.newArrayListWithExpectedSize(executors.size());
             Identifiable identifiable = Delegates.getExecutionService().getProcess(user, task.getProcessId());
             List<Long> executorIds = Lists.newArrayList();
             for (Executor executor : executors) {
-                Map<Permission, Boolean> oldPermissions = authorizationService.getOwnPermissions(user, executor, identifiable);
-                allPermissions.add(getNewPermissions(oldPermissions.keySet(), settings.getPermissions(), settings.getMethod()));
+                List<Permission> oldPermissions = Delegates.getAuthorizationService().getIssuedPermissions(user, executor, identifiable);
+                allPermissions.add(getNewPermissions(oldPermissions, settings.getPermissions(), settings.getMethod()));
                 executorIds.add(executor.getId());
             }
-            authorizationService.setPermissions(user, executorIds, allPermissions, identifiable);
+            Delegates.getAuthorizationService().setPermissions(user, executorIds, allPermissions, identifiable);
         }
         return null;
     }

@@ -117,7 +117,7 @@ public class WebServiceTaskHandlerXSLTHelper {
      * @param mergedTo
      *            Storage to merge in variables.
      */
-    public void MergeVariablesIn(Map<String, Object> mergedTo) {
+    public void mergeVariablesIn(Map<String, Object> mergedTo) {
         mergedTo.putAll(variables);
     }
 }

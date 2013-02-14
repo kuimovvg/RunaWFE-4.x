@@ -512,8 +512,8 @@ public class AdminScriptRunner {
     private void addPermissionOnIdentifiable(Element element, Identifiable identifiable) {
         Executor executor = executorLogic.getExecutor(user, element.attributeValue(EXECUTOR_ATTRIBUTE_NAME));
         Collection<Permission> permissions = getPermissions(element, identifiable);
-        Map<Permission, Boolean> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
-        permissions = Permission.mergePermissions(permissions, ownPermissions.keySet());
+        List<Permission> ownPermissions = authorizationLogic.getIssuedPermissions(user, executor, identifiable);
+        permissions = Permission.mergePermissions(permissions, ownPermissions);
         authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 
@@ -526,8 +526,8 @@ public class AdminScriptRunner {
     private void removePermissionOnIdentifiable(Element element, Identifiable identifiable) {
         Executor executor = executorLogic.getExecutor(user, element.attributeValue(EXECUTOR_ATTRIBUTE_NAME));
         Collection<Permission> permissions = getPermissions(element, identifiable);
-        Map<Permission, Boolean> ownPermissions = authorizationLogic.getOwnPermissions(user, executor, identifiable);
-        permissions = Permission.subtractPermissions(ownPermissions.keySet(), permissions);
+        List<Permission> ownPermissions = authorizationLogic.getIssuedPermissions(user, executor, identifiable);
+        permissions = Permission.subtractPermissions(ownPermissions, permissions);
         authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 

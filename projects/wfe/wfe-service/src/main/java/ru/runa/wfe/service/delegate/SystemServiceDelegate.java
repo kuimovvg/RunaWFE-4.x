@@ -17,8 +17,9 @@
  */
 package ru.runa.wfe.service.delegate;
 
-import java.util.HashMap;
+import java.util.List;
 
+import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.service.SystemService;
 import ru.runa.wfe.user.User;
 
@@ -50,7 +51,7 @@ public class SystemServiceDelegate extends EJB3Delegate implements SystemService
     }
 
     @Override
-    public HashMap<String, String> getLocalizations(User user) {
+    public List<Localization> getLocalizations(User user) {
         return getSystemService().getLocalizations(user);
     }
 
@@ -60,7 +61,7 @@ public class SystemServiceDelegate extends EJB3Delegate implements SystemService
     }
 
     @Override
-    public void saveLocalizations(User user, HashMap<String, String> localizations) {
+    public void saveLocalizations(User user, List<Localization> localizations) {
         getSystemService().saveLocalizations(user, localizations);
     }
 
