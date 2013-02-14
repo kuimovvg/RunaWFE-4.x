@@ -26,7 +26,6 @@ import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.ISelectable;
 import ru.runa.wfe.var.VariableDefinition;
-import ru.runa.wfe.var.dto.WfVariable;
 
 public class FormatCommons {
 
@@ -36,10 +35,6 @@ public class FormatCommons {
 
     public static VariableFormat create(VariableDefinition variableDefinition) {
         return create(variableDefinition.getFormatClassName());
-    }
-
-    public static VariableFormat create(WfVariable variable) {
-        return create(variable.getDefinition());
     }
 
     public static String getVarOut(Object object, WebHelper webHelper, Long instanceId, String name, int listIndex, Object mapKey) {

@@ -61,6 +61,10 @@ public class User implements Principal, Serializable {
         return actor;
     }
 
+    public void setActor(Actor actor) {
+        this.actor = actor;
+    }
+
     public byte[] getSecuredKey() {
         return securedKey;
     }

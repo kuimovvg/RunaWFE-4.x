@@ -112,15 +112,12 @@ public class PermissionTableBuilder {
                 PortletUrlType.Render);
         ConcreteElement tdElement = new A(url, ExecutorNameConverter.getName(executor, pageContext));
         tr.addElement(new TD(tdElement).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
-        Map<Permission, Boolean> ownPermissions = Delegates.getAuthorizationService().getOwnPermissions(user, executor, identifiable);
+        List<Permission> ownPermissions = Delegates.getAuthorizationService().getIssuedPermissions(user, executor, identifiable);
         for (Permission permission : permissions) {
             String name = UpdatePermissionsOnIdentifiableForm.EXECUTOR_INPUT_NAME_PREFIX + "(" + executor.getId() + ")."
                     + UpdatePermissionsOnIdentifiableForm.PERMISSION_INPUT_NAME_PREFIX + "(" + permission.getMask() + ")";
-            boolean checked = ownPermissions.containsKey(permission);
+            boolean checked = ownPermissions.contains(permission);
             boolean enabled = allowedUpdatePermissions && !unmodifiablePermissions.contains(permission);
-            if (checked) {
-                enabled &= ownPermissions.get(permission);
-            }
             executorCheckboxDisabled &= !enabled;
             Input checkbox = new Input(Input.CHECKBOX, name);
             checkbox.setChecked(checked);

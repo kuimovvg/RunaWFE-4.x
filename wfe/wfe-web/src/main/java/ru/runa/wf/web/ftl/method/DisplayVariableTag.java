@@ -2,7 +2,6 @@ package ru.runa.wf.web.ftl.method;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableDisplaySupport;
 import ru.runa.wfe.var.format.VariableFormat;
 import freemarker.template.TemplateModelException;
@@ -14,7 +13,7 @@ public class DisplayVariableTag extends FreemarkerTag {
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        VariableFormat<Object> format = FormatCommons.create(variable);
+        VariableFormat<Object> format = variable.getDefinition().getFormat();
         String html = "<span class=\"displayVariable\">";
         if (format instanceof VariableDisplaySupport) {
             if (webHelper == null || variableProvider.getProcessId() == null) {

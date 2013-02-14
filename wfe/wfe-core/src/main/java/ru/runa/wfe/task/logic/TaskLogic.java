@@ -40,11 +40,12 @@ import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.dto.WfVariables;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Task logic.
@@ -61,24 +62,22 @@ public class TaskLogic extends WFCommonLogic {
     @Autowired
     private AssignmentHelper assignmentHelper;
 
-    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException {
+    public void completeTask(User user, Long taskId, List<WfVariable> variables) throws TaskDoesNotExistException, ValidationException {
         Task task = taskDAO.getNotNull(taskId);
         if (!task.isActive()) {
             throw new TaskAlreadyCompletedException(task.toString());
         }
         try {
+            Map<String, Object> variablesMap = WfVariables.toMap(variables);
             ProcessDefinition processDefinition = getDefinition(task);
             ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
-            if (variables == null) {
-                variables = Maps.newHashMap();
-            }
-            String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
+            String transitionName = (String) variablesMap.remove(WfProcess.SELECTED_TRANSITION_KEY);
             checkCanParticipate(user, task);
             checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
             assignmentHelper.reassignTask(executionContext, task, user.getActor(), true);
             validateVariables(processDefinition, task.getNodeId(),
-                    new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
-            executionContext.setVariables(variables);
+                    new MapDelegableVariableProvider(variablesMap, executionContext.getVariableProvider()));
+            executionContext.setVariables(variablesMap);
             Transition transition = null;
             if (transitionName != null) {
                 transition = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitionNotNull(transitionName);

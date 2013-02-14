@@ -29,6 +29,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -53,6 +55,7 @@ import com.google.common.base.Objects;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING, length = 1)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Executor extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 
@@ -79,9 +82,17 @@ public abstract class Executor extends IdentifiableBase {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Column(name = "NAME", unique = true, nullable = false)
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = OracleCommons.fixNullString(name);
     }
 
     @Column(name = "DESCRIPTION")
@@ -91,14 +102,6 @@ public abstract class Executor extends IdentifiableBase {
 
     public void setDescription(String description) {
         this.description = OracleCommons.fixNullString(description);
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = OracleCommons.fixNullString(name);
     }
 
     @Version

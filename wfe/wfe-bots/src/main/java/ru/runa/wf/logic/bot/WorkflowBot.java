@@ -39,6 +39,7 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.dto.WfVariables;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
@@ -189,16 +190,15 @@ public class WorkflowBot implements Runnable {
             }
 
             log.info("Starting bot task " + task + " with config \n" + taskHandler.getConfiguration());
-            HashMap<String, Object> variables = new HashMap<String, Object>();
             Map<String, Object> map = taskHandler.handle(user, variableProvider, task);
-            if (map != null) {
-                variables.putAll(map);
+            if (map == null) {
+                map = new HashMap<String, Object>();
             }
-            Object skipTaskCompletion = variables.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
+            Object skipTaskCompletion = map.remove(TaskHandler.SKIP_TASK_COMPLETION_VARIABLE_NAME);
             if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
                 log.info("Bot task " + task + " postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
             } else {
-                Delegates.getExecutionService().completeTask(user, task.getId(), variables);
+                Delegates.getExecutionService().completeTask(user, task.getId(), WfVariables.toList(map));
                 log.debug("Handled bot task " + task + ", " + bot + " by " + taskHandler.getClass());
             }
             ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getName());
