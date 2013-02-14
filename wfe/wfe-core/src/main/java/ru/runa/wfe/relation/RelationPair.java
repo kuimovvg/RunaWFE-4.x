@@ -34,7 +34,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
-import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
@@ -116,12 +115,12 @@ public class RelationPair extends IdentifiableBase {
      * 
      * @return Left part of relation pair.
      */
-    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "EXECUTOR_FROM", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_ERP_EXECUTOR_FROM")
     @Index(name = "IX_ERP_EXECUTOR_FROM")
     public Executor getLeft() {
-        return Proxies.getImplementation(left);
+        return left;
     }
 
     public void setLeft(Executor relationFrom) {
@@ -133,12 +132,12 @@ public class RelationPair extends IdentifiableBase {
      * 
      * @return Right part of relation pair.
      */
-    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "EXECUTOR_TO", nullable = false, insertable = true, updatable = false)
     @ForeignKey(name = "FK_ERP_EXECUTOR_TO")
     @Index(name = "IX_ERP_EXECUTOR_TO")
     public Executor getRight() {
-        return Proxies.getImplementation(right);
+        return right;
     }
 
     public void setRight(Executor relationTo) {

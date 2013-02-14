@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.decl.ExecutorServiceLocal;
 import ru.runa.wfe.service.decl.ExecutorServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
@@ -48,7 +49,7 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService
+@WebService(name = "ExecutorAPI", serviceName = "ExecutorWebService")
 @SOAPBinding
 public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServiceRemote {
     @Autowired
@@ -64,21 +65,27 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     @Override
     public List<Executor> getAll(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+        }
         return executorLogic.getAll(user, batchPresentation);
     }
 
     @Override
     public int getExecutorsCount(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+        }
         return executorLogic.getAllCount(user, batchPresentation);
     }
 
     @Override
     public List<Actor> getActors(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
+        }
         return executorLogic.getActors(user, batchPresentation);
     }
 
@@ -126,7 +133,9 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     public List<Executor> getGroupChildren(User user, Group group, BatchPresentation batchPresentation, boolean isExclude) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(group);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+        }
         return executorLogic.getGroupChildren(user, group, batchPresentation, isExclude);
     }
 
@@ -134,7 +143,9 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     public int getGroupChildrenCount(User user, Group group, BatchPresentation batchPresentation, boolean isExclude) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(group);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+        }
         return executorLogic.getGroupChildrenCount(user, group, batchPresentation, isExclude);
     }
 
@@ -176,7 +187,9 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     public List<Group> getExecutorGroups(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.GROUPS.createDefault();
+        }
         return executorLogic.getExecutorGroups(user, executor, batchPresentation, isExclude);
     }
 
@@ -184,7 +197,9 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     public int getExecutorGroupsCount(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(executor);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.GROUPS.createDefault();
+        }
         return executorLogic.getExecutorGroupsCount(user, executor, batchPresentation, isExclude);
     }
 

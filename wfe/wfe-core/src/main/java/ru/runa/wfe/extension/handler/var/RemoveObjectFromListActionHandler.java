@@ -17,7 +17,7 @@ public class RemoveObjectFromListActionHandler extends CommonParamBasedHandler {
         } else {
             list.remove(object);
         }
-        handlerData.setOutputVariable("list", list);
+        handlerData.setOutputParam("list", list);
         log.debug("Object " + object + " removed from the list " + list);
     }
 

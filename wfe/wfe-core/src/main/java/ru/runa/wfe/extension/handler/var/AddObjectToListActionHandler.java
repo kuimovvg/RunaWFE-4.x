@@ -22,7 +22,7 @@ public class AddObjectToListActionHandler extends CommonParamBasedHandler {
         } else {
             list.add(object);
         }
-        handlerData.setOutputVariable("list", list);
+        handlerData.setOutputParam("list", list);
         log.debug("Object " + object + " added to the list " + list);
     }
 

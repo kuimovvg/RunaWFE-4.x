@@ -41,7 +41,7 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService
+@WebService(name = "ProfileAPI", serviceName = "ProfileWebService")
 @SOAPBinding
 public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRemote {
     @Autowired

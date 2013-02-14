@@ -45,7 +45,6 @@ import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.TaskAssignLog;
 import ru.runa.wfe.audit.TaskEndLog;
-import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Swimlane;
@@ -217,12 +216,12 @@ public class Task implements Assignable {
         this.process = process;
     }
 
-    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "EXECUTOR_ID")
     @ForeignKey(name = "FK_TASK_EXECUTOR")
     @Index(name = "IX_TASK_EXECUTOR")
     public Executor getExecutor() {
-        return Proxies.getImplementation(executor);
+        return executor;
     }
 
     public void setExecutor(Executor executor) {

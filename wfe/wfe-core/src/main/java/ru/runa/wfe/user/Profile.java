@@ -155,7 +155,7 @@ public final class Profile implements Serializable {
 
     public BatchPresentation getActiveBatchPresentation(String batchPresentationId) {
         for (BatchPresentation batch : batchPresentations) {
-            if (batch.getCategory().equals(batchPresentationId) && batch.isActive() && batch.isValid()) {
+            if (batch.getCategory().equals(batchPresentationId) && batch.isActive()) {
                 return batch;
             }
         }

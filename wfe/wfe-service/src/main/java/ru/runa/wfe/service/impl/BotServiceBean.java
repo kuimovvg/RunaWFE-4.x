@@ -46,7 +46,7 @@ import com.google.common.io.ByteStreams;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService
+@WebService(name = "BotAPI", serviceName = "BotWebService")
 @SOAPBinding
 public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     @Autowired

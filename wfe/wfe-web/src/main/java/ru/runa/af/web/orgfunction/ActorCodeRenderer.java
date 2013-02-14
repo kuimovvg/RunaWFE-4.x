@@ -21,7 +21,6 @@ import java.util.List;
 
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -31,10 +30,9 @@ public class ActorCodeRenderer extends ExecutorRendererBase {
 
     @Override
     protected List<? extends Executor> loadExecutors(User user) throws Exception {
-        ExecutorService executorService = Delegates.getExecutorService();
         BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
         batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
-        return executorService.getActors(user, batchPresentation);
+        return Delegates.getExecutorService().getActors(user, batchPresentation);
     }
 
     @Override
@@ -44,7 +42,6 @@ public class ActorCodeRenderer extends ExecutorRendererBase {
 
     @Override
     protected Executor getExecutor(User user, String code) throws Exception {
-        ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getActorByCode(user, Long.valueOf(code));
+        return Delegates.getExecutorService().getActorByCode(user, Long.valueOf(code));
     }
 }
