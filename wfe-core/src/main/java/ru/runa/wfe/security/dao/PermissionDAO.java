@@ -19,7 +19,6 @@ package ru.runa.wfe.security.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +42,7 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -74,28 +74,13 @@ public class PermissionDAO extends CommonDAO implements InitializingBean {
         }
     }
 
-    /**
-     * Returns an array of Permission that executor itself has on identifiable.
-     * Inherited permissions are not returned.
-     * 
-     * @param executor
-     *            Executor for loading permissions.
-     * @param identifiable
-     *            Identifiable for loading permissions.
-     * @return Map of {Permission, Is permission can be modifiable}, not
-     *         <code>null</code>
-     */
-    public HashMap<Permission, Boolean> getOwnPermissions(Executor executor, Identifiable identifiable) {
-        HashMap<Permission, Boolean> permissions = Maps.newHashMap();
-        if (getPrivilegedExecutors(identifiable).contains(executor)) {
-            for (Permission permission : identifiable.getSecuredObjectType().getAllPermissions()) {
-                permissions.put(permission, Boolean.FALSE);
-            }
-        } else {
+    public List<Permission> getIssuedPermissions(Executor executor, Identifiable identifiable) {
+        List<Permission> permissions = Lists.newArrayList();
+        if (!getPrivilegedExecutors(identifiable).contains(executor)) {
             List<PermissionMapping> permissionMappings = getOwnPermissionMappings(executor, identifiable);
             Permission noPermission = identifiable.getSecuredObjectType().getNoPermission();
             for (PermissionMapping pm : permissionMappings) {
-                permissions.put(noPermission.getPermission(pm.getMask()), Boolean.TRUE);
+                permissions.add(noPermission.getPermission(pm.getMask()));
             }
         }
         return permissions;

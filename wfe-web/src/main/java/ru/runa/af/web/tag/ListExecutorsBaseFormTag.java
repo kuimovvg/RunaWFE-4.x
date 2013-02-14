@@ -44,7 +44,7 @@ import ru.runa.wfe.user.Executor;
  * @author Gordienko_m
  * @author Vitaliy S aka Yilativs
  */
-abstract public class ListExecutorsBaseFormTag extends UpdateExecutorBaseFormTag implements BatchedTag, ReturningTag {
+public abstract class ListExecutorsBaseFormTag extends UpdateExecutorBaseFormTag implements BatchedTag, ReturningTag {
     private static final long serialVersionUID = 1L;
     protected boolean buttonEnabled;
 
@@ -77,7 +77,7 @@ abstract public class ListExecutorsBaseFormTag extends UpdateExecutorBaseFormTag
     protected void fillFormData(TD tdFormElement) {
         int executorsCount = getExecutorsCount();
         List<? extends Executor> executors = getExecutors();
-        if (!super.isFormButtonEnabled()) {
+        if (super.isFormButtonEnabled()) {
             buttonEnabled = BatchExecutorPermissionHelper.isAllowedForAnyone(getUser(), executors, getBatchPresentation(), getExecutorsPermission());
         }
         BatchPresentation batchPresentation = getBatchPresentation();

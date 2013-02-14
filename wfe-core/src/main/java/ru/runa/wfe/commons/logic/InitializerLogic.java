@@ -20,7 +20,6 @@ package ru.runa.wfe.commons.logic;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
@@ -36,6 +35,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.commons.dao.ConstantDAO;
+import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
@@ -161,7 +161,7 @@ public class InitializerLogic {
             if (stream == null) {
                 stream = ClassLoaderUtil.getAsStreamNotNull("localizations.xml", getClass());
             }
-            Map<String, String> localizations = LocalizationParser.parseLocalizations(stream);
+            List<Localization> localizations = LocalizationParser.parseLocalizations(stream);
             localizationDAO.saveLocalizations(localizations, false);
         } catch (Exception e) {
             log.error("initialization failed", e);

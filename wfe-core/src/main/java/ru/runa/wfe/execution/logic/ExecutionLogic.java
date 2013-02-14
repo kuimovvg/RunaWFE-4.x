@@ -45,10 +45,11 @@ import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.dto.WfVariables;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Process execution logic.
@@ -114,10 +115,6 @@ public class ExecutionLogic extends WFCommonLogic {
         return new WfProcess(nodeProcess.getProcess());
     }
 
-    public Long startProcess(User user, String definitionName, Map<String, Object> variablesMap) {
-        return startProcessInternal(user, definitionName, variablesMap);
-    }
-
     private List<WfProcess> getProcesses(List<Process> processes) {
         List<WfProcess> result = Lists.newArrayListWithExpectedSize(processes.size());
         for (Process process : processes) {
@@ -126,23 +123,21 @@ public class ExecutionLogic extends WFCommonLogic {
         return result;
     }
 
-    private Long startProcessInternal(User user, String definitionName, Map<String, Object> variables) {
+    public Long startProcess(User user, String definitionName, List<WfVariable> variables) {
         try {
-            if (variables == null) {
-                variables = Maps.newHashMap();
-            }
+            Map<String, Object> variablesMap = WfVariables.toMap(variables);
             ProcessDefinition processDefinition = getLatestDefinition(definitionName);
             checkPermissionAllowed(user, processDefinition.getDeployment(), DefinitionPermission.START_PROCESS);
             Map<String, Object> defaultValues = processDefinition.getDefaultVariableValues();
             for (Map.Entry<String, Object> entry : defaultValues.entrySet()) {
-                if (!variables.containsKey(entry.getKey())) {
-                    variables.put(entry.getKey(), entry.getValue());
+                if (!variablesMap.containsKey(entry.getKey())) {
+                    variablesMap.put(entry.getKey(), entry.getValue());
                 }
             }
-            validateVariables(processDefinition, processDefinition.getStartStateNotNull().getNodeId(), new MapDelegableVariableProvider(variables,
+            validateVariables(processDefinition, processDefinition.getStartStateNotNull().getNodeId(), new MapDelegableVariableProvider(variablesMap,
                     null));
-            String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
-            Process process = processFactory.startProcess(processDefinition, variables, user.getActor(), transitionName);
+            String transitionName = (String) variablesMap.remove(WfProcess.SELECTED_TRANSITION_KEY);
+            Process process = processFactory.startProcess(processDefinition, variablesMap, user.getActor(), transitionName);
             log.info("Process " + process + " was successfully started");
             return process.getId();
         } catch (Exception e) {

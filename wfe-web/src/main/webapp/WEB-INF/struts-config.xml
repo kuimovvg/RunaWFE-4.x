@@ -279,9 +279,6 @@
 			<forward name="success" path="/manage_relation.do" redirect="true" />
 			<forward name="failure" path="/manage_relation.do" redirect="true" />
 		</action>
-		<action path="/submitInfoPathForm" type="ru.runa.wf.web.action.SubmitInfoPathFormAction"
-			name="processForm" scope="request" unknown="false" validate="false">
-		</action>
 		<action path="/update_bot_station" type="ru.runa.af.web.action.UpdateBotStationAction"
 			name="botStationForm" scope="request" input="/WEB-INF/wf/bot_station.jsp"
 			unknown="false" validate="false">

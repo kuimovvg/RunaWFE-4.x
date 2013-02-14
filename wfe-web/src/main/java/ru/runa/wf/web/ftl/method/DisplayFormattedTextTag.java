@@ -1,7 +1,6 @@
 package ru.runa.wf.web.ftl.method;
 
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.FormatCommons;
 import freemarker.template.TemplateModelException;
 
 /**
@@ -18,7 +17,7 @@ public class DisplayFormattedTextTag extends DisplayVariableTag {
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        return FormatCommons.create(variable).format(variable.getValue());
+        return variable.getDefinition().getFormat().format(variable.getValue());
     }
 
 }

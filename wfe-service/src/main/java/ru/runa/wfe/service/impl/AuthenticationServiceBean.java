@@ -48,7 +48,7 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService
+@WebService(name = "AuthenticationAPI", serviceName = "AuthenticationWebService")
 @SOAPBinding
 public class AuthenticationServiceBean implements AuthenticationServiceLocal, AuthenticationServiceRemote {
     private static final Log log = LogFactory.getLog(AuthenticationServiceBean.class);

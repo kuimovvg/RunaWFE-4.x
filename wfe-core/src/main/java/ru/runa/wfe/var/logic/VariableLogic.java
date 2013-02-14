@@ -33,6 +33,7 @@ import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.dto.WfVariables;
 
 import com.google.common.collect.Lists;
 
@@ -93,12 +94,12 @@ public class VariableLogic extends WFCommonLogic {
         return processDAO.getVariableValueFromProcesses(processIds, variableName);
     }
 
-    public void updateVariables(User user, Long processId, Map<String, Object> variables) {
+    public void updateVariables(User user, Long processId, List<WfVariable> variables) {
         Process process = processDAO.getNotNull(processId);
         checkPermissionAllowed(user, process, ProcessPermission.UPDATE_PERMISSIONS);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
-        executionContext.setVariables(variables);
+        executionContext.setVariables(WfVariables.toMap(variables));
     }
 
 }

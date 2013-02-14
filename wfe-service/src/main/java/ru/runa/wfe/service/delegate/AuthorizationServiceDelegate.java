@@ -18,7 +18,6 @@
 package ru.runa.wfe.service.delegate;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -69,8 +68,8 @@ public class AuthorizationServiceDelegate extends EJB3Delegate implements Author
     }
 
     @Override
-    public HashMap<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable) {
-        return getAuthorizationService().getOwnPermissions(user, performer, identifiable);
+    public List<Permission> getIssuedPermissions(User user, Executor performer, Identifiable identifiable) {
+        return getAuthorizationService().getIssuedPermissions(user, performer, identifiable);
     }
 
     @Override

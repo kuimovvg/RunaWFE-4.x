@@ -18,7 +18,6 @@
 package ru.runa.wfe.service;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.security.auth.Subject;
@@ -58,11 +57,12 @@ public interface AuthorizationService {
 
     /**
      * Returns permissions that executor himself has on {@link Identifiable}.
+     * Permissions by privelege will not return.
      * 
      * @return Map of {Permission, Is permission can be modifiable}, not
      *         <code>null</code>
      */
-    public HashMap<Permission, Boolean> getOwnPermissions(User user, Executor performer, Identifiable identifiable);
+    public List<Permission> getIssuedPermissions(User user, Executor performer, Identifiable identifiable);
 
     /**
      * Load executor's which already has (or not has) some permission on

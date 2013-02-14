@@ -34,6 +34,8 @@ import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.dto.WfVariables;
 import ru.runa.wfe.var.format.BooleanFormat;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
@@ -67,7 +69,7 @@ class VariableExtractionHelper {
         return variablesMap;
     }
 
-    public static HashMap<String, Object> extractVariables(HttpSession session, ActionForm actionForm, Interaction interaction)
+    public static List<WfVariable> extractVariables(HttpSession session, ActionForm actionForm, Interaction interaction)
             throws VariablesFormatException {
         try {
             Hashtable<String, Object> hashtable = actionForm.getMultipartRequestHandler().getAllElements();
@@ -124,7 +126,7 @@ class VariableExtractionHelper {
             if (formatErrorsForFields.size() > 0) {
                 throw new VariablesFormatException(formatErrorsForFields);
             }
-            return variablesMap;
+            return WfVariables.toList(variablesMap);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }

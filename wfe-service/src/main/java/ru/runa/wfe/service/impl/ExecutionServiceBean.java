@@ -18,13 +18,14 @@
 package ru.runa.wfe.service.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -57,7 +58,7 @@ import com.google.common.base.Preconditions;
 @Stateless(name = "ExecutionServiceBean")
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService
+@WebService(name = "ExecutionAPI", serviceName = "ExecutionWebService")
 @SOAPBinding
 public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionServiceRemote {
     @Autowired
@@ -70,7 +71,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     private AuditLogic auditLogic;
 
     @Override
-    public Long startProcess(User user, String definitionName, HashMap<String, Object> variables) {
+    public Long startProcess(User user, String definitionName, List<WfVariable> variables) {
         Preconditions.checkNotNull(user);
         return executionLogic.startProcess(user, definitionName, variables);
     }
@@ -120,8 +121,9 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         return variableLogic.getVariables(user, processId);
     }
 
+    @WebMethod(exclude = true)
     @Override
-    public HashMap<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName) {
+    public Map<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName) {
         Preconditions.checkNotNull(user);
         return variableLogic.getVariableValueFromProcesses(user, processIds, variableName);
     }
@@ -133,13 +135,13 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
-    public void updateVariables(User user, Long processId, HashMap<String, Object> variables) {
+    public void updateVariables(User user, Long processId, List<WfVariable> variables) {
         Preconditions.checkNotNull(user);
         variableLogic.updateVariables(user, processId, variables);
     }
 
     @Override
-    public void completeTask(User user, Long taskId, HashMap<String, Object> variables) {
+    public void completeTask(User user, Long taskId, List<WfVariable> variables) {
         Preconditions.checkNotNull(user);
         taskLogic.completeTask(user, taskId, variables);
     }

@@ -1,5 +1,6 @@
 package ru.runa.wfe.commons.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -49,9 +50,9 @@ public class LocalizationDAO extends GenericDAO<Localization> {
      * @param rewrite
      *            rewrite existing localization
      */
-    public void saveLocalizations(Map<String, String> localizations, boolean rewrite) {
-        for (Map.Entry<String, String> entry : localizations.entrySet()) {
-            saveLocalization(entry.getKey(), entry.getValue(), rewrite);
+    public void saveLocalizations(List<Localization> localizations, boolean rewrite) {
+        for (Localization localization : localizations) {
+            saveLocalization(localization.getName(), localization.getValue(), rewrite);
         }
     }
 
