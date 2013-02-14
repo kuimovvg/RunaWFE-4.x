@@ -187,8 +187,7 @@ public class TypeConversionUtil {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
-        throw new InternalApplicationException("No conversion found between '" + object.getClass() + "' and '" + classConvertTo
-                + "'. Add yours or don't use this method.");
+        throw new InternalApplicationException("No conversion found between '" + object.getClass() + "' and '" + classConvertTo + "'");
     }
 
     public static int getArraySize(Object value) {

@@ -20,7 +20,6 @@ package ru.runa.wf.web.ftl.method;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.dto.WfVariable;
 import freemarker.template.TemplateModelException;
@@ -44,12 +43,11 @@ public class ChooseActorTag extends FreemarkerTag {
             WfVariable variable = variableProvider.getVariableNotNull(actorVarName);
             return ViewUtil.createExecutorSelect(user, variable);
         } else if ("raw".equals(view)) {
-            ExecutorService executorService = Delegates.getExecutorService();
             BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
             int[] sortIds = { 1 };
             boolean[] sortOrder = { true };
             batchPresentation.setFieldsToSort(sortIds, sortOrder);
-            return executorService.getActors(user, batchPresentation);
+            return Delegates.getExecutorService().getActors(user, batchPresentation);
         } else {
             throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
         }

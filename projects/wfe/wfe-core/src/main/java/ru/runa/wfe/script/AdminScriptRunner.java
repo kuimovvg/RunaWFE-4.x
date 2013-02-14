@@ -1098,7 +1098,7 @@ public class AdminScriptRunner {
         String relationName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String relationDescription = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
         boolean isExists = false;
-        for (Relation group : relationLogic.getRelations(user, BatchPresentationFactory.RELATION_GROUPS.createNonPaged())) {
+        for (Relation group : relationLogic.getRelations(user, BatchPresentationFactory.RELATIONS.createNonPaged())) {
             isExists = isExists || (group.getName().compareToIgnoreCase(relationName) == 0);
         }
         if (!isExists) {

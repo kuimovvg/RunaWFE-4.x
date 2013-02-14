@@ -203,7 +203,7 @@ public class GraphImageBuilder {
     private static int processActionsInEvent(Event event) {
         int result = 0;
         for (Action action : event.getActions()) {
-            if (action instanceof CreateTimerAction || action instanceof CancelTimerAction) {
+            if (action instanceof CreateTimerAction || action instanceof CancelTimerAction || Timer.ESCALATION_NAME.equals(action.getName())) {
                 continue;
             }
             result++;

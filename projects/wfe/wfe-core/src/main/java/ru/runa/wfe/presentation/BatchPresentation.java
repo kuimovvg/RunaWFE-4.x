@@ -49,6 +49,7 @@ import ru.runa.wfe.commons.OracleCommons;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 import ru.runa.wfe.presentation.filter.FilterCriteriaFactory;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -85,17 +86,32 @@ public final class BatchPresentation implements Cloneable, Serializable {
     protected BatchPresentation() {
     }
 
-    public BatchPresentation(String name, String category, ClassPresentation classPresentation, int[] fieldSortIds, boolean[] fieldSortModes,
-            int[] fieldDisplayIds, Map<Integer, FilterCriteria> fieldFilters, int[] fieldGroupIds) {
+    public BatchPresentation(String name, String category, ClassPresentation classPresentation) {
         setName(name);
         setCategory(category);
         classPresentationId = ClassPresentations.getClassPresentationId(classPresentation);
-        fields = new Fields();
-        fields.sortIds = fieldSortIds;
-        fields.sortModes = fieldSortModes;
-        fields.displayIds = fieldDisplayIds;
-        fields.filters.putAll(fieldFilters);
-        fields.groupIds = fieldGroupIds;
+        fields = createDefaultFields(classPresentation);
+    }
+
+    private Fields createDefaultFields(ClassPresentation classPresentation) {
+        Fields fields = new Fields();
+        fields.sortIds = new int[0];
+        fields.sortModes = new boolean[0];
+        fields.groupIds = new int[0];
+        int displayedFieldsCount = classPresentation.getFields().length;
+        for (FieldDescriptor field : classPresentation.getFields()) {
+            if (field.displayName.startsWith(ClassPresentation.editable_prefix)) {
+                displayedFieldsCount--;
+            }
+        }
+        fields.displayIds = new int[displayedFieldsCount];
+        for (int i = classPresentation.getFields().length - 1; i >= 0; i--) {
+            if (classPresentation.getFields()[i].displayName.startsWith(ClassPresentation.editable_prefix)) {
+                continue;
+            }
+            fields.displayIds[--displayedFieldsCount] = i;
+        }
+        return fields;
     }
 
     /**
@@ -204,13 +220,9 @@ public final class BatchPresentation implements Cloneable, Serializable {
     }
 
     public void setFieldsData(byte[] data) {
-        try {
-            fieldsData = data;
-            fields = FieldsSerializer.fromData(data);
-            storage = null;
-        } catch (Exception e) {
-            log.error("Unable to load batch presentation state", e);
-        }
+        fieldsData = data;
+        fields = getFields();
+        storage = null;
     }
 
     /**
@@ -219,6 +231,21 @@ public final class BatchPresentation implements Cloneable, Serializable {
     @Column(name = "RANGE_SIZE")
     public int getRangeSize() {
         return rangeSize;
+    }
+
+    @Transient
+    private Fields getFields() {
+        if (fields == null) {
+            try {
+                fields = FieldsSerializer.fromData(fieldsData);
+                storage = null;
+            } catch (Exception e) {
+                String xml = fieldsData != null ? new String(fieldsData, Charsets.UTF_8) : "NULL";
+                log.error("Unable to load batch presentation state from " + xml, e);
+                fields = createDefaultFields(ClassPresentations.getClassPresentation(classPresentationId));
+            }
+        }
+        return fields;
     }
 
     /**
@@ -248,36 +275,36 @@ public final class BatchPresentation implements Cloneable, Serializable {
 
     @Transient
     public int[] getFieldsToDisplayIds() {
-        return fields.displayIds;
+        return getFields().displayIds;
     }
 
     @Transient
     public int[] getFieldsToSortIds() {
-        return fields.sortIds;
+        return getFields().sortIds;
     }
 
     @Transient
     public boolean[] getFieldsToSortModes() {
-        return fields.sortModes;
+        return getFields().sortModes;
     }
 
     @Transient
     public int[] getFieldsToGroupIds() {
-        return fields.groupIds;
+        return getFields().groupIds;
     }
 
     @Transient
     public Map<Integer, FilterCriteria> getFilteredFields() {
-        return fields.filters;
+        return getFields().filters;
     }
 
     @Transient
     public List<DynamicField> getDynamicFields() {
-        return fields.dynamics;
+        return getFields().dynamics;
     }
 
     public void setFilteredFields(Map<Integer, FilterCriteria> newFilteredFieldsMap) {
-        if (fields.setFilteredFields(newFilteredFieldsMap)) {
+        if (getFields().setFilteredFields(newFilteredFieldsMap)) {
             setPageNumber(1);
         }
         storage = null;
@@ -316,11 +343,11 @@ public final class BatchPresentation implements Cloneable, Serializable {
         if (!getAllFields()[fieldIndex].isSortable) {
             return false;
         }
-        return ArraysCommons.findPosition(fields.sortIds, fieldIndex) >= 0;
+        return ArraysCommons.findPosition(getFields().sortIds, fieldIndex) >= 0;
     }
 
     public int getSortingFieldPosition(int fieldIndex) {
-        return ArraysCommons.findPosition(fields.sortIds, fieldIndex);
+        return ArraysCommons.findPosition(getFields().sortIds, fieldIndex);
     }
 
     @Transient
@@ -349,27 +376,27 @@ public final class BatchPresentation implements Cloneable, Serializable {
     }
 
     public void setFieldsToDisplayIds(int[] fieldsToDisplayIds) {
-        fields.displayIds = fieldsToDisplayIds;
+        getFields().displayIds = fieldsToDisplayIds;
         storage = null;
     }
 
     public void setFieldsToSort(int[] fieldsToSortIds, boolean[] sortingModes) {
-        fields.setFieldsToSort(fieldsToSortIds, sortingModes, getAllFields());
+        getFields().setFieldsToSort(fieldsToSortIds, sortingModes, getAllFields());
         storage = null;
     }
 
     public void setFirstFieldToSort(int newSortFieldId) {
-        fields.setFirstFieldToSort(newSortFieldId, getAllFields());
+        getFields().setFirstFieldToSort(newSortFieldId, getAllFields());
         storage = null;
     }
 
     public void addDynamicField(long fieldIdx, String fieldValue) {
-        fields.addDynamicField(fieldIdx, fieldValue);
+        getFields().addDynamicField(fieldIdx, fieldValue);
         storage = null;
     }
 
     public void removeDynamicField(long fieldIdx) {
-        fields.removeDynamicField(fieldIdx);
+        getFields().removeDynamicField(fieldIdx);
         storage = null;
     }
 
@@ -377,18 +404,18 @@ public final class BatchPresentation implements Cloneable, Serializable {
         if (getAllFields()[fieldId].filterMode == FieldFilterMode.NONE) {
             return false;
         }
-        return fields.filters.containsKey(fieldId);
+        return getFields().filters.containsKey(fieldId);
     }
 
     public boolean isFieldGroupped(int fieldId) {
         if (!getAllFields()[fieldId].isSortable) {
             return false;
         }
-        return ArraysCommons.contains(fields.groupIds, fieldId);
+        return ArraysCommons.contains(getFields().groupIds, fieldId);
     }
 
     public FilterCriteria getFieldFilteredCriteria(int fieldId) {
-        FilterCriteria filterCriteria = fields.filters.get(fieldId);
+        FilterCriteria filterCriteria = getFields().filters.get(fieldId);
         if (filterCriteria == null) {
             String fieldType = getAllFields()[fieldId].fieldType;
             filterCriteria = FilterCriteriaFactory.getFilterCriteria(fieldType);
@@ -397,7 +424,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
     }
 
     public void setFieldsToGroup(int[] fieldsToGroupIds) {
-        fields.setFieldsToGroup(fieldsToGroupIds, getAllFields());
+        getFields().setFieldsToGroup(fieldsToGroupIds, getAllFields());
         storage = null;
     }
 
@@ -435,7 +462,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
     }
 
     public boolean fieldEquals(BatchPresentation other) {
-        return Objects.equal(classPresentationId, other.classPresentationId) && fields.equals(other.fields);
+        return Objects.equal(classPresentationId, other.classPresentationId) && getFields().equals(other.getFields());
     }
 
     @Override
@@ -460,11 +487,6 @@ public final class BatchPresentation implements Cloneable, Serializable {
             storage = new Store(this);
         }
         return storage;
-    }
-
-    @Transient
-    public boolean isValid() {
-        return fields != null;
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)

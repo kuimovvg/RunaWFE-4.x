@@ -43,7 +43,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.SwimlaneAssignLog;
-import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -106,11 +105,11 @@ public class Swimlane implements Serializable, Assignable {
         this.name = name;
     }
 
-    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "EXECUTOR_ID")
     @ForeignKey(name = "FK_SWIMLANE_EXECUTOR")
     public Executor getExecutor() {
-        return Proxies.getImplementation(executor);
+        return executor;
     }
 
     public void setExecutor(Executor executor) {

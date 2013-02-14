@@ -20,7 +20,7 @@ public class SetObjectToListActionHandler extends CommonParamBasedHandler {
             list.add(null);
         }
         list.set(index, object);
-        handlerData.setOutputVariable("list", list);
+        handlerData.setOutputParam("list", list);
         log.debug("Object " + object + " set to the list " + list + " at index " + index);
     }
 

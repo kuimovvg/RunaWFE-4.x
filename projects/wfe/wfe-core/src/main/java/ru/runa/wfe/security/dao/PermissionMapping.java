@@ -37,7 +37,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
-import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
@@ -107,12 +106,12 @@ public class PermissionMapping {
         this.type = type;
     }
 
-    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false)
     @ForeignKey(name = "FK_PERMISSION_EXECUTOR")
     @Index(name = "IX_PERMISSION_EXECUTOR")
     public Executor getExecutor() {
-        return Proxies.getImplementation(executor);
+        return executor;
     }
 
     private void setExecutor(Executor executor) {

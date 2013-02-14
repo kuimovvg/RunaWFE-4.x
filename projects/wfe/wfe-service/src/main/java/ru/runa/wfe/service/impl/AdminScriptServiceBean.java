@@ -38,7 +38,7 @@ import ru.runa.wfe.user.User;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService
+@WebService(name = "AdminScriptAPI", serviceName = "AdminScriptWebService")
 @SOAPBinding
 public class AdminScriptServiceBean implements AdminScriptService {
     @Autowired

@@ -15,7 +15,7 @@ public class GetObjectFromMapActionHandler extends CommonParamBasedHandler {
             map = Maps.newHashMap();
         }
         Object object = map.get(handlerData.getInputParam("key"));
-        handlerData.setOutputVariable("object", object);
+        handlerData.setOutputParam("object", object);
     }
 
 }

@@ -79,7 +79,7 @@ public class MapAggregateFunctionActionHandler extends CommonParamBasedHandler {
         } else {
             throw new Exception("Unknown function '" + function + "'");
         }
-        handlerData.setOutputVariable("object", result);
+        handlerData.setOutputParam("object", result);
     }
 
     private Number getSum(Collection<?> collection) {

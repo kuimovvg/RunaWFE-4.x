@@ -8,7 +8,7 @@ public class CreateOptionActionHandler extends CommonParamBasedHandler {
     protected void executeAction(HandlerData handlerData) throws Exception {
         String value = handlerData.getInputParam(String.class, "value");
         String text = handlerData.getInputParam(String.class, "text");
-        handlerData.setOutputVariable("option", new Option(value, text));
+        handlerData.setOutputParam("option", new Option(value, text));
     }
 
 }
