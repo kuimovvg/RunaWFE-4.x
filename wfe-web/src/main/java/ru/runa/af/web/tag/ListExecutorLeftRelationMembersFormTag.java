@@ -91,7 +91,7 @@ public class ListExecutorLeftRelationMembersFormTag extends TitledFormTag {
             }
         };
 
-        BatchPresentation batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
+        BatchPresentation batchPresentation = BatchPresentationFactory.RELATION_PAIRS.createDefault();
         TDBuilder[] builders = getBuilders(new TDBuilder[] { checkboxBuilder }, batchPresentation, new TDBuilder[] {});
 
         RowBuilder rowBuilder = new ReflectionRowBuilder(relationPairs, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,

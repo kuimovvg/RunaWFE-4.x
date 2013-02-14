@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
 
-import ru.runa.wfe.commons.hibernate.Proxies;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.task.Task;
 
@@ -28,11 +27,11 @@ public class EscalationGroup extends TemporaryGroup {
     private Executor originalExecutor;
     private int level;
 
-    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "ESCALATION_EXECUTOR_ID")
     @ForeignKey(name = "FK_GROUP_ESCALATION_EXECUTOR")
     public Executor getOriginalExecutor() {
-        return Proxies.getImplementation(originalExecutor);
+        return originalExecutor;
     }
 
     public void setOriginalExecutor(Executor originalExecutor) {

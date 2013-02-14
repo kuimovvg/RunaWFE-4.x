@@ -35,6 +35,7 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.decl.DefinitionServiceLocal;
 import ru.runa.wfe.service.decl.DefinitionServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
@@ -47,7 +48,7 @@ import com.google.common.base.Preconditions;
 @Stateless(name = "DefinitionServiceBean")
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService
+@WebService(name = "DefinitionAPI", serviceName = "DefinitionWebService")
 @SOAPBinding
 public class DefinitionServiceBean implements DefinitionServiceLocal, DefinitionServiceRemote {
     @Autowired
@@ -89,7 +90,9 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     @Override
     public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.DEFINITIONS.createDefault();
+        }
         return definitionLogic.getLatestProcessDefinitions(user, batchPresentation);
     }
 

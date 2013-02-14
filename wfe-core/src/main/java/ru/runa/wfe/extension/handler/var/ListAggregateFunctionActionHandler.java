@@ -72,7 +72,7 @@ public class ListAggregateFunctionActionHandler extends CommonParamBasedHandler 
         } else {
             throw new Exception("Unknown function '" + function + "'");
         }
-        handlerData.setOutputVariable("object", result);
+        handlerData.setOutputParam("object", result);
     }
 
     private Number getSum(List<?> list) {

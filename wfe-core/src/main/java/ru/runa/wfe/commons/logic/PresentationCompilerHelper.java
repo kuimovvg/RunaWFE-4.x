@@ -49,9 +49,6 @@ public final class PresentationCompilerHelper {
 
     static ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
 
-    public PresentationCompilerHelper() {
-    }
-
     /**
      * Create {@linkplain BatchPresentationHibernateCompiler} for loading all
      * executors. <b>Paging is enabled on executors loading.</b>

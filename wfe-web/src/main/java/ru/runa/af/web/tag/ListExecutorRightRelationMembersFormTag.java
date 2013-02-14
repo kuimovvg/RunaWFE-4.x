@@ -91,7 +91,7 @@ public class ListExecutorRightRelationMembersFormTag extends TitledFormTag {
             }
         };
 
-        BatchPresentation batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
+        BatchPresentation batchPresentation = BatchPresentationFactory.RELATION_PAIRS.createDefault();
         TDBuilder[] builders = getBuilders(new TDBuilder[] { checkboxBuilder }, batchPresentation, new TDBuilder[] {});
 
         RowBuilder rowBuilder = new ReflectionRowBuilder(relationPairs, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
@@ -174,7 +174,7 @@ public class ListExecutorRightRelationMembersFormTag extends TitledFormTag {
     }
 
     protected String[] getNames() {
-        BatchPresentation batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
+        BatchPresentation batchPresentation = BatchPresentationFactory.RELATION_PAIRS.createDefault();
         FieldDescriptor[] fields = batchPresentation.getDisplayFields();
         String[] result = new String[fields.length + 1];
         result[0] = "";

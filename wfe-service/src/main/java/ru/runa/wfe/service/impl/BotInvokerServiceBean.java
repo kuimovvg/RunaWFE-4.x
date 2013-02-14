@@ -39,7 +39,7 @@ import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Interceptors({ EjbExceptionSupport.class })
-@WebService
+@WebService(name = "BotInvokerAPI", serviceName = "BotInvokerWebService")
 @SOAPBinding
 public class BotInvokerServiceBean implements BotInvokerService {
     private static final Log log = LogFactory.getLog(BotInvokerServiceBean.class);

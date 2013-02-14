@@ -22,7 +22,7 @@ public class GetObjectFromListActionHandler extends CommonParamBasedHandler {
         } else {
             object = null;
         }
-        handlerData.setOutputVariable("object", object);
+        handlerData.setOutputParam("object", object);
     }
 
 }

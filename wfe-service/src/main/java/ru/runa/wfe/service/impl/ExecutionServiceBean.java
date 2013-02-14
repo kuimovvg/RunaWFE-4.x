@@ -41,6 +41,7 @@ import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.decl.ExecutionServiceLocal;
 import ru.runa.wfe.service.decl.ExecutionServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
@@ -79,14 +80,18 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     public int getAllProcessesCount(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.PROCESSES.createDefault();
+        }
         return executionLogic.getAllProcessesCount(user, batchPresentation);
     }
 
     @Override
     public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.PROCESSES.createDefault();
+        }
         return executionLogic.getProcesses(user, batchPresentation);
     }
 
@@ -105,7 +110,9 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.TASKS.createDefault();
+        }
         return taskLogic.getTasks(user, batchPresentation);
     }
 
@@ -216,21 +223,25 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     public void removeProcesses(User user, Date startDate, Date finishDate, String name, int version, Long id, Long idTill, boolean onlyFinished,
             boolean dateInterval) {
         Preconditions.checkNotNull(user);
-        // archivingLogic.removeProcesses(user, startDate, finishDate, name,
-        // version, id, idTill, onlyFinished, dateInterval);
+        // TODO removeProcesses
     }
 
     @Override
     public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createDefault();
+        }
         return auditLogic.getSystemLogs(user, batchPresentation);
     }
 
     @Override
     public int getSystemLogsCount(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createDefault();
+        }
         return auditLogic.getSystemLogsCount(user, batchPresentation);
     }
+
 }

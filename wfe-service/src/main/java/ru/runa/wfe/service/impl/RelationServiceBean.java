@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationAlreadyExistException;
 import ru.runa.wfe.relation.RelationPair;
@@ -51,7 +52,7 @@ import com.google.common.base.Preconditions;
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
-@WebService
+@WebService(name = "RelationAPI", serviceName = "RelationWebService")
 @SOAPBinding
 public class RelationServiceBean implements RelationServiceLocal, RelationServiceRemote {
     @Autowired
@@ -74,7 +75,9 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     @Override
     public List<Relation> getRelations(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
+        }
         return relationLogic.getRelations(user, batchPresentation);
     }
 
@@ -107,7 +110,9 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     @Override
     public List<RelationPair> getRelationPairs(User user, String relationName, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.RELATION_PAIRS.createDefault();
+        }
         return relationLogic.getRelations(user, relationName, batchPresentation);
     }
 

@@ -20,6 +20,7 @@ package ru.runa.wf.web.tag;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TH;
@@ -159,6 +160,8 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                 params.put(IdForm.ID_INPUT_NAME, processId);
                 String url = Commons.getActionUrl(ShowGraphModeHelper.getManageProcessAction(), params, pageContext, PortletUrlType.Render);
                 result[i] = new A(url, processId.toString()).setClass(Resources.CLASS_LINK).toString();
+            } else if (arguments[i] instanceof String) {
+                result[i] = StringEscapeUtils.escapeHtml((String) arguments[i]);
             } else {
                 result[i] = arguments[i];
             }
