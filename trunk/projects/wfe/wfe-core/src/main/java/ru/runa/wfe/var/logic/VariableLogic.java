@@ -69,14 +69,10 @@ public class VariableLogic extends WFCommonLogic {
             SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlane(variableName);
             if (swimlaneDefinition != null) {
                 variableDefinition = swimlaneDefinition.toVariableDefinition();
-            } else {
-                variableDefinition = new VariableDefinition();
-                variableDefinition.setName(variableName);
             }
         }
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
-        Object variableValue = executionContext.getVariable(variableName);
-        return new WfVariable(variableDefinition, variableValue);
+        return executionContext.getVariableProvider().getVariable(variableName);
     }
 
     public HashMap<Long, Object> getVariableValueFromProcesses(User user, List<Long> processIds, String variableName) {

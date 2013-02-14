@@ -45,7 +45,7 @@ public abstract class MSWordReportBuilder {
         if (variable == null || variable.getValue() == null) {
             throw new MSWordReportException(MSWordReportException.VARIABLE_NOT_FOUND_IN_PROCESS, mapping.getVariableName());
         }
-        return variable.getDefinition().getFormat().format(variable.getValue());
+        return variable.getFormatNotNull().format(variable.getValue());
     }
 
 }

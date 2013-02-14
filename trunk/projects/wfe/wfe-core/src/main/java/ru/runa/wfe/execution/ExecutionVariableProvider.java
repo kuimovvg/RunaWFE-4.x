@@ -1,6 +1,7 @@
 package ru.runa.wfe.execution;
 
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -26,11 +27,19 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
     public WfVariable getVariable(String variableName) {
         ProcessDefinition processDefinition = executionContext.getProcessDefinition();
         if (!processDefinition.isVariablePublic(variableName)) {
-            // TODO checkReadToVariablesAllowed(subject, task); // Duplicated
-            // code in VariableLogic
+            // TODO checkReadToVariablesAllowed(subject, task);
         }
         VariableDefinition variableDefinition = processDefinition.getVariable(variableName);
+        if (variableDefinition == null) {
+            SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlane(variableName);
+            if (swimlaneDefinition != null) {
+                variableDefinition = swimlaneDefinition.toVariableDefinition();
+            }
+        }
         Object variableValue = getValue(variableName);
-        return new WfVariable(variableDefinition, variableValue);
+        if (variableDefinition != null) {
+            return new WfVariable(variableDefinition, variableValue);
+        }
+        return new WfVariable(variableName, variableValue);
     }
 }

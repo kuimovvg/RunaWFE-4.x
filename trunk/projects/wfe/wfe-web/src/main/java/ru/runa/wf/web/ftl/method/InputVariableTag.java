@@ -32,56 +32,56 @@ public class InputVariableTag extends FreemarkerTag {
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String format = variable.getDefinition().getFormatClassName();
+        String formatClassName = variable.getFormatClassNameNotNull();
         Object value = variable.getValue();
         String html = ""; // TODO refactor
-        if (StringFormat.class.getName().equals(format)) {
+        if (StringFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" ";
             if (value != null) {
                 html += "value=\"" + value + "\" ";
             }
             html += "/>";
         }
-        if (TextFormat.class.getName().equals(format)) {
+        if (TextFormat.class.getName().equals(formatClassName)) {
             html += "<textarea name=\"" + variableName + "\" class=\"inputText\">";
             if (value != null) {
                 html += value;
             }
             html += "</textarea>";
         }
-        if (LongFormat.class.getName().equals(format) || DoubleFormat.class.getName().equals(format)
-                || BigDecimalFormat.class.getName().equals(format)) {
+        if (LongFormat.class.getName().equals(formatClassName) || DoubleFormat.class.getName().equals(formatClassName)
+                || BigDecimalFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"text\" class=\"inputNumber\" name=\"" + variableName + "\" ";
             if (value instanceof Number) {
                 html += "value=\"" + value + "\" ";
             }
             html += "/>";
         }
-        if (FileFormat.class.getName().equals(format)) {
+        if (FileFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"file\" name=\"" + variableName + "\" class=\"inputFile\" />";
         }
-        if (BooleanFormat.class.getName().equals(format)) {
+        if (BooleanFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" ";
             if (value instanceof Boolean && ((Boolean) value)) {
                 html += "checked=\"checked\" ";
             }
             html += "/>";
         }
-        if (DateFormat.class.getName().equals(format)) {
+        if (DateFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"text\" class=\"inputDate\" name=\"" + variableName + "\" style=\"width: 100px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDate((Date) value) + "\" ";
             }
             html += "/>";
         }
-        if (TimeFormat.class.getName().equals(format)) {
+        if (TimeFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"text\" class=\"inputTime\" name=\"" + variableName + "\" style=\"width: 50px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatTime((Date) value) + "\" ";
             }
             html += "/>";
         }
-        if (DateTimeFormat.class.getName().equals(format)) {
+        if (DateTimeFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"text\" class=\"inputDateTime\" name=\"" + variableName + "\" style=\"width: 150px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDateTime((Date) value) + "\" ";
@@ -97,16 +97,17 @@ public class InputVariableTag extends FreemarkerTag {
         // }
         // html = ViewUtil.createActorSelect(subject, variableName, value);
         // }
-        if (ActorFormat.class.getName().equals(format) || ExecutorFormat.class.getName().equals(format) || GroupFormat.class.getName().equals(format)) {
+        if (ActorFormat.class.getName().equals(formatClassName) || ExecutorFormat.class.getName().equals(formatClassName)
+                || GroupFormat.class.getName().equals(formatClassName)) {
             html = ViewUtil.createExecutorSelect(user, variable);
         }
-        if (ListFormat.class.getName().equals(format)) {
+        if (ListFormat.class.getName().equals(formatClassName)) {
             EditStringListTag tag = new EditStringListTag();
             tag.init(user, webHelper, variableProvider);
             html = tag.renderRequest();
         }
         if (html.length() == 0) {
-            log.warn("No HTML built (" + variableName + ") for format " + format);
+            log.warn("No HTML built (" + variableName + ") for format " + formatClassName);
         }
         return html;
     }
