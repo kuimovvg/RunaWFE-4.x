@@ -31,7 +31,7 @@ public interface Validator {
 
     public void setValidatorContext(ValidatorContext validatorContext);
 
-    public void validate() throws Exception;
+    public void validate();
 
     public void setValidatorType(String type);
 

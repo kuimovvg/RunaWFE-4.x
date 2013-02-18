@@ -17,15 +17,6 @@
  */
 package ru.runa.wfe.presentation;
 
-import ru.runa.wfe.audit.SystemLogClassPresentation;
-import ru.runa.wfe.definition.DefinitionClassPresentation;
-import ru.runa.wfe.execution.ProcessClassPresentation;
-import ru.runa.wfe.relation.RelationClassPresentation;
-import ru.runa.wfe.relation.RelationGroupClassPresentation;
-import ru.runa.wfe.task.TaskClassPresentation;
-import ru.runa.wfe.user.ActorClassPresentation;
-import ru.runa.wfe.user.ExecutorClassPresentation;
-import ru.runa.wfe.user.GroupClassPresentation;
 
 /**
  * Default batch presentation factory.
@@ -34,25 +25,25 @@ import ru.runa.wfe.user.GroupClassPresentation;
  * @since 4.0
  */
 public class BatchPresentationFactory {
-    public static final BatchPresentationFactory EXECUTORS = new BatchPresentationFactory(ExecutorClassPresentation.class, 100);
-    public static final BatchPresentationFactory ACTORS = new BatchPresentationFactory(ActorClassPresentation.class, 100);
-    public static final BatchPresentationFactory GROUPS = new BatchPresentationFactory(GroupClassPresentation.class, 100);
-    public static final BatchPresentationFactory RELATIONS = new BatchPresentationFactory(RelationGroupClassPresentation.class);
-    public static final BatchPresentationFactory RELATION_PAIRS = new BatchPresentationFactory(RelationClassPresentation.class);
-    public static final BatchPresentationFactory SYSTEM_LOGS = new BatchPresentationFactory(SystemLogClassPresentation.class);
-    public static final BatchPresentationFactory PROCESSES = new BatchPresentationFactory(ProcessClassPresentation.class, 100);
-    public static final BatchPresentationFactory DEFINITIONS = new BatchPresentationFactory(DefinitionClassPresentation.class);
-    public static final BatchPresentationFactory TASKS = new BatchPresentationFactory(TaskClassPresentation.class);
+    public static final BatchPresentationFactory EXECUTORS = new BatchPresentationFactory(ClassPresentationType.EXECUTOR, 100);
+    public static final BatchPresentationFactory ACTORS = new BatchPresentationFactory(ClassPresentationType.ACTOR, 100);
+    public static final BatchPresentationFactory GROUPS = new BatchPresentationFactory(ClassPresentationType.GROUP, 100);
+    public static final BatchPresentationFactory RELATIONS = new BatchPresentationFactory(ClassPresentationType.RELATION);
+    public static final BatchPresentationFactory RELATION_PAIRS = new BatchPresentationFactory(ClassPresentationType.RELATIONPAIR);
+    public static final BatchPresentationFactory SYSTEM_LOGS = new BatchPresentationFactory(ClassPresentationType.SYSTEM_LOG);
+    public static final BatchPresentationFactory PROCESSES = new BatchPresentationFactory(ClassPresentationType.PROCESS);
+    public static final BatchPresentationFactory DEFINITIONS = new BatchPresentationFactory(ClassPresentationType.DEFINITION);
+    public static final BatchPresentationFactory TASKS = new BatchPresentationFactory(ClassPresentationType.TASK);
 
-    private final ClassPresentation classPresentation;
+    private final ClassPresentationType type;
     private final int defaultPageRangeSize;
 
-    public BatchPresentationFactory(Class<?> classPresentationClass) {
-        this(classPresentationClass, BatchPresentationConsts.getAllowedViewSizes()[0]);
+    public BatchPresentationFactory(ClassPresentationType type) {
+        this(type, BatchPresentationConsts.getAllowedViewSizes()[0]);
     }
 
-    public BatchPresentationFactory(Class<?> classPresentationClass, int defaultPageRangeSize) {
-        this.classPresentation = ClassPresentations.getClassPresentation(classPresentationClass);
+    public BatchPresentationFactory(ClassPresentationType type, int defaultPageRangeSize) {
+        this.type = type;
         this.defaultPageRangeSize = defaultPageRangeSize;
     }
 
@@ -61,7 +52,7 @@ public class BatchPresentationFactory {
     }
 
     public BatchPresentation createDefault(String batchPresentationId) {
-        BatchPresentation result = new BatchPresentation(BatchPresentationConsts.DEFAULT_NAME, batchPresentationId, classPresentation);
+        BatchPresentation result = new BatchPresentation(type, BatchPresentationConsts.DEFAULT_NAME, batchPresentationId);
         result.setRangeSize(defaultPageRangeSize);
         return result;
     }

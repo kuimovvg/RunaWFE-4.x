@@ -17,6 +17,7 @@
  */
 package ru.runa.wf.web.html;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.jsp.PageContext;
@@ -61,7 +62,11 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
         WfVariable variable = variables.get(idx);
         Object value = variable.getValue();
         TR tr = new TR();
-        tr.addElement(new TD(variable.getName()).setClass(Resources.CLASS_LIST_TABLE_TD));
+        TD nameTd = new TD(variable.getDefinition().getName());
+        if (variable.getDefinition().isSyntetic()) {
+            nameTd.setStyle("color: #aaaaaa;");
+        }
+        tr.addElement(nameTd.setClass(Resources.CLASS_LIST_TABLE_TD));
         String fl = variable.getDefinition() != null ? variable.getDefinition().getFormatLabel() : "-";
         tr.addElement(new TD(fl).setClass(Resources.CLASS_LIST_TABLE_TD));
         if (WebResources.isDisplayVariablesJavaType()) {
@@ -76,14 +81,21 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
                 VariableFormat variableFormat = variable.getFormatNotNull();
                 if (variableFormat instanceof VariableDisplaySupport) {
                     User user = Commons.getUser(pageContext.getSession());
-                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(user, new StrutsWebHelper(pageContext), processId,
-                            variable.getName(), value);
+                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(user, new StrutsWebHelper(pageContext), processId, variable
+                            .getDefinition().getName(), value);
                 } else {
                     formattedValue = variableFormat.format(value);
                 }
             } catch (Exception e) {
-                log.warn("Unable to format value " + value + " of decl " + variable + " in " + processId, e);
-                formattedValue = value.toString() + " <span class=\"error\">(" + e.getMessage() + ")</span>";
+                log.warn("Unable to format value " + variable + " in " + processId, e);
+                if (value.getClass().isArray()) {
+                    formattedValue = Arrays.toString((Object[]) value);
+                } else {
+                    formattedValue = value.toString();
+                    if (!variable.getDefinition().isSyntetic()) {
+                        formattedValue += " <span style=\"color: #cccccc;\">(" + e.getMessage() + ")</span>";
+                    }
+                }
             }
         }
         tr.addElement(new TD(formattedValue).setClass(Resources.CLASS_LIST_TABLE_TD));

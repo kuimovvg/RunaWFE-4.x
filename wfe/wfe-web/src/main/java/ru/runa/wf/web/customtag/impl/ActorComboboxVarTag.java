@@ -37,7 +37,7 @@ public class ActorComboboxVarTag extends AbstractActorComboBoxVarTag {
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
-        return Delegates.getExecutorService().getActors(user, batchPresentation);
+        return (List<Actor>) Delegates.getExecutorService().getExecutors(user, batchPresentation);
     }
 
     @Override

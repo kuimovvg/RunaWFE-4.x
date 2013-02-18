@@ -34,9 +34,9 @@ public class ViewUtil {
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
-        List<Executor> executors = executorService.getAll(user, batchPresentation);
+        List<Executor> executors = (List<Executor>) executorService.getExecutors(user, batchPresentation);
 
-        String html = "<select name=\"" + variable.getName() + "\">";
+        String html = "<select name=\"" + variable.getDefinition().getName() + "\">";
         for (Executor executor : executors) {
             html += "<option value=\"ID" + executor.getId() + "\"";
             if (Objects.equal(executor, variable.getValue())) {

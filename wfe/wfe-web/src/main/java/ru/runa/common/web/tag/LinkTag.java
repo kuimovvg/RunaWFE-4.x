@@ -49,10 +49,6 @@ public class LinkTag extends VisibleTag {
             link.setClass(Resources.CLASS_LINK);
             concreteElement = link;
         } else {
-            // TODO Mihail insists on hiding links instead disabling. Disabled
-            // links now will be hidden
-            // concreteElement = new Span(getLinkText());
-            // concreteElement.setClass(Resources.CLASS_DISABLED_LINK);
             concreteElement = new StringElement();
         }
         concreteElement.setClass(Resources.CLASS_LINK);

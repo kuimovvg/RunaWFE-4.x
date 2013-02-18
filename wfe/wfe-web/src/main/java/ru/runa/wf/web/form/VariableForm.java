@@ -17,14 +17,6 @@
  */
 package ru.runa.wf.web.form;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
-
-import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 
 /**
@@ -33,14 +25,20 @@ import ru.runa.common.web.form.IdForm;
  * @struts:form name = "variableForm"
  */
 public class VariableForm extends IdForm {
-
     private static final long serialVersionUID = 6826950808617370338L;
 
-    public static final String VARIABLE_NAME_INPUT_NAME = "variableName";
-
+    private Long logId;
     private String variableName;
     private int listIndex;
     private String mapKey;
+
+    public Long getLogId() {
+        return logId;
+    }
+
+    public void setLogId(Long historyLogId) {
+        this.logId = historyLogId;
+    }
 
     public String getVariableName() {
         return variableName;
@@ -66,13 +64,4 @@ public class VariableForm extends IdForm {
         this.mapKey = mapKey;
     }
 
-    @Override
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
-        ActionErrors errors = super.validate(mapping, request);
-
-        if (variableName == null || variableName.length() < 1) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_NULL_VALUE));
-        }
-        return errors;
-    }
 }

@@ -23,7 +23,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.task.Task;
@@ -45,7 +44,6 @@ public final class WfTask implements Serializable {
     private String name;
     private String description;
     private String swimlaneName;
-    @XmlTransient
     private Executor owner;
     private Long definitionId;
     private String definitionName;

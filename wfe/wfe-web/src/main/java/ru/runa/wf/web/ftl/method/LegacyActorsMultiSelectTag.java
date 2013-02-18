@@ -1,5 +1,6 @@
 package ru.runa.wf.web.ftl.method;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import ru.runa.wfe.presentation.filter.StringFilterCriteria;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 
@@ -84,50 +84,42 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
         response.getOutputStream().write(json.toString().getBytes(Charsets.UTF_8));
     }
 
-    private List<Actor> getActors(User user, String groupName, boolean byLogin, String hint) throws TemplateModelException {
-        try {
-            int rangeSize = 50;
-            List<Actor> actors = Lists.newArrayListWithExpectedSize(rangeSize);
-            ExecutorService executorService = Delegates.getExecutorService();
-            if (groupName != null && groupName.length() > 0) {
-                Group group = executorService.getExecutorByName(user, groupName);
-                List<Actor> groupActors = executorService.getGroupActors(user, group);
-                for (Actor actor : groupActors) {
-                    if (byLogin) {
-                        if (actor.getName().startsWith(hint)) {
-                            actors.add(actor);
-                        }
-                    } else {
-                        if (actor.getFullName().startsWith(hint)) {
-                            actors.add(actor);
-                        }
+    private List<Actor> getActors(User user, String groupName, boolean byLogin, String hint) {
+        int rangeSize = 50;
+        List<Actor> actors = Lists.newArrayListWithExpectedSize(rangeSize);
+        ExecutorService executorService = Delegates.getExecutorService();
+        if (groupName != null && groupName.length() > 0) {
+            Group group = executorService.getExecutorByName(user, groupName);
+            List<Actor> groupActors = executorService.getGroupActors(user, group);
+            for (Actor actor : groupActors) {
+                if (byLogin) {
+                    if (actor.getName().startsWith(hint)) {
+                        actors.add(actor);
                     }
-                }
-            } else {
-                BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
-                batchPresentation.setRangeSize(rangeSize);
-                batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
-                if (hint.length() > 0) {
-                    int filterIndex = byLogin ? 0 : 1;
-                    Map<Integer, FilterCriteria> filterFieldsMap = batchPresentation.getFilteredFields();
-                    StringFilterCriteria filterCriteriaEnd = (StringFilterCriteria) FilterCriteriaFactory.getFilterCriteria(batchPresentation,
-                            filterIndex);
-                    filterCriteriaEnd.applyFilterTemplates(new String[] { hint + "%" });
-                    filterFieldsMap.put(filterIndex, filterCriteriaEnd);
-                }
-                // thid method used instead of getActors due to lack paging in
-                // that
-                // method
-                for (Executor executor : executorService.getAll(user, batchPresentation)) {
-                    if (executor instanceof Actor) {
-                        actors.add((Actor) executor);
+                } else {
+                    if (actor.getFullName().startsWith(hint)) {
+                        actors.add(actor);
                     }
                 }
             }
-            return actors;
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
+        } else {
+            BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
+            batchPresentation.setRangeSize(rangeSize);
+            batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
+            if (hint.length() > 0) {
+                int filterIndex = byLogin ? 0 : 1;
+                Map<Integer, FilterCriteria> filterFieldsMap = batchPresentation.getFilteredFields();
+                StringFilterCriteria filterCriteriaEnd = (StringFilterCriteria) FilterCriteriaFactory.getFilterCriteria(batchPresentation,
+                        filterIndex);
+                filterCriteriaEnd.applyFilterTemplates(new String[] { hint + "%" });
+                filterFieldsMap.put(filterIndex, filterCriteriaEnd);
+            }
+            // thid method used instead of getActors due to lack paging in
+            // that
+            // method
+            actors.addAll((Collection<? extends Actor>) executorService.getExecutors(user, batchPresentation));
         }
+        return actors;
     }
 
 }

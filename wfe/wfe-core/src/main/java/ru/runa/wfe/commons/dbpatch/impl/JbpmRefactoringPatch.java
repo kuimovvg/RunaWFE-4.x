@@ -77,8 +77,10 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameColumn("BATCH_PRESENTATION", "PRESENTATION_ID", new ColumnDef("CATEGORY", Types.VARCHAR)));
         sql.add(getDDLCreateColumn("BATCH_PRESENTATION", new ColumnDef("IS_ACTIVE", Types.TINYINT)));
         sql.add(getDDLCreateColumn("BATCH_PRESENTATION", new ColumnDef("FIELDS", Types.VARBINARY)));
+        sql.add(getDDLCreateColumn("BATCH_PRESENTATION", new ColumnDef("CLASS_TYPE", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
         sql.add(getDDLRemoveIndex("BATCH_PRESENTATION", "PRESENTATION_NAME_ID_IDX"));
         sql.add(getDDLCreateIndex("BATCH_PRESENTATION", "IX_BATCH_PRESENTATION_PROFILE", "PROFILE_ID"));
+        sql.add(getDDLRemoveColumn("BATCH_PRESENTATION", "CLASS_PRESENTATION_ID"));
         // ru.runa.wfe.user.dao.ActorPassword
         sql.add(getDDLRenameTable("PASSWORDS", "ACTOR_PASSWORD"));
         sql.add(getDDLRenameColumn("ACTOR_PASSWORD", "PASSWD", new ColumnDef("PASSWORD", Types.VARBINARY)));
@@ -254,8 +256,8 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveIndex("BPM_TASK", "IDX_TASKINST_TSK"));
         sql.add(getDDLRemoveForeignKey("BPM_TASK", "FK_TASKINST_TASK"));
         sql.add(getDDLRemoveForeignKey("BPM_TASK", "FK_TASKINST_TMINST"));
-        sql.add(getDDLRemoveColumn("BPM_TASK", "ISOPEN_")); // TODO 1 | 0
-        sql.add(getDDLRemoveColumn("BPM_TASK", "ISSIGNALLING_")); // TODO 1 | 0
+        sql.add(getDDLRemoveColumn("BPM_TASK", "ISOPEN_"));
+        sql.add(getDDLRemoveColumn("BPM_TASK", "ISSIGNALLING_"));
         sql.add(getDDLRenameColumn("BPM_TASK", "ID_", new ColumnDef("ID", Types.BIGINT)));
         sql.add(getDDLRenameColumn("BPM_TASK", "NAME_", new ColumnDef("NAME", Types.VARCHAR)));
         sql.add(getDDLRenameColumn("BPM_TASK", "DESCRIPTION_", new ColumnDef("DESCRIPTION", Types.VARCHAR)));

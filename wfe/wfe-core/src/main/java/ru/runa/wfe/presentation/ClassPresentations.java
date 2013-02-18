@@ -8,49 +8,36 @@ import ru.runa.wfe.audit.SystemLogClassPresentation;
 import ru.runa.wfe.definition.DefinitionClassPresentation;
 import ru.runa.wfe.execution.ProcessClassPresentation;
 import ru.runa.wfe.relation.RelationClassPresentation;
-import ru.runa.wfe.relation.RelationGroupClassPresentation;
+import ru.runa.wfe.relation.RelationPairClassPresentation;
 import ru.runa.wfe.task.TaskClassPresentation;
 import ru.runa.wfe.user.ActorClassPresentation;
 import ru.runa.wfe.user.ExecutorClassPresentation;
 import ru.runa.wfe.user.GroupClassPresentation;
 
 public class ClassPresentations {
-    private static final Map<Integer, ClassPresentation> map = new HashMap<Integer, ClassPresentation>();
+    private static final Map<ClassPresentationType, ClassPresentation> map = new HashMap<ClassPresentationType, ClassPresentation>();
     static {
-        registerClassPresentation(ExecutorClassPresentation.getInstance());
-        registerClassPresentation(ActorClassPresentation.getInstance());
-        registerClassPresentation(GroupClassPresentation.getInstance());
-        registerClassPresentation(DefinitionClassPresentation.getInstance());
-        registerClassPresentation(ProcessClassPresentation.getInstance());
-        registerClassPresentation(TaskClassPresentation.getInstance());
-        registerClassPresentation(RelationClassPresentation.getInstance());
-        registerClassPresentation(RelationGroupClassPresentation.getInstance());
-        registerClassPresentation(SystemLogClassPresentation.getInstance());
+        registerClassPresentation(ClassPresentationType.EXECUTOR, ExecutorClassPresentation.getInstance());
+        registerClassPresentation(ClassPresentationType.ACTOR, ActorClassPresentation.getInstance());
+        registerClassPresentation(ClassPresentationType.GROUP, GroupClassPresentation.getInstance());
+        registerClassPresentation(ClassPresentationType.DEFINITION, DefinitionClassPresentation.getInstance());
+        registerClassPresentation(ClassPresentationType.PROCESS, ProcessClassPresentation.getInstance());
+        registerClassPresentation(ClassPresentationType.TASK, TaskClassPresentation.getInstance());
+        registerClassPresentation(ClassPresentationType.RELATIONPAIR, RelationPairClassPresentation.getInstance());
+        registerClassPresentation(ClassPresentationType.RELATION, RelationClassPresentation.getInstance());
+        registerClassPresentation(ClassPresentationType.SYSTEM_LOG, SystemLogClassPresentation.getInstance());
     }
 
-    private static void registerClassPresentation(ClassPresentation classPresentation) {
-        map.put(getClassPresentationId(classPresentation.getPresentationClass()), classPresentation);
-        map.put(getClassPresentationId(classPresentation.getClass()), classPresentation);
+    private static void registerClassPresentation(ClassPresentationType type, ClassPresentation classPresentation) {
+        map.put(type, classPresentation);
     }
 
-    public static ClassPresentation getClassPresentation(Integer id) {
-        ClassPresentation result = map.get(id);
+    public static ClassPresentation getClassPresentation(ClassPresentationType type) {
+        ClassPresentation result = map.get(type);
         if (result == null) {
-            throw new InternalApplicationException("Failed to found ClassPresentation with id " + id);
+            throw new InternalApplicationException("Failed to found ClassPresentation for '" + type + "'");
         }
         return result;
-    }
-
-    public static ClassPresentation getClassPresentation(Class<?> classPresentationClass) {
-        return getClassPresentation(getClassPresentationId(classPresentationClass));
-    }
-
-    public static int getClassPresentationId(ClassPresentation classPresentation) {
-        return getClassPresentationId(classPresentation.getPresentationClass());
-    }
-
-    public static int getClassPresentationId(Class<?> classPresentationClass) {
-        return classPresentationClass.getName().hashCode();
     }
 
 }

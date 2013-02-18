@@ -22,9 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-
 import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.collect.Lists;
@@ -36,27 +33,18 @@ import com.google.common.collect.Maps;
  * @author Dofs
  * @since 3.0
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 public class ValidationException extends InternalApplicationException {
     private static final long serialVersionUID = 5L;
-
     private final HashMap<String, List<String>> fieldErrors = Maps.newHashMap();
     private final List<String> globalErrors = Lists.newArrayList();
 
     public ValidationException() {
     }
 
-    public ValidationException(Exception e) {
-        super(e);
-    }
-
     public ValidationException(Map<String, List<String>> fieldErrors, Collection<String> globalErrors) {
-        if (fieldErrors != null) {
-            this.fieldErrors.putAll(fieldErrors);
-        }
-        if (globalErrors != null) {
-            this.globalErrors.addAll(globalErrors);
-        }
+        super("Global: " + globalErrors + ", field: " + fieldErrors);
+        this.fieldErrors.putAll(fieldErrors);
+        this.globalErrors.addAll(globalErrors);
     }
 
     public Map<String, List<String>> getFieldErrors() {
@@ -67,8 +55,8 @@ public class ValidationException extends InternalApplicationException {
         return globalErrors;
     }
 
-    public Map<String, String> getConcatenatedFieldErrors() {
-        Map<String, String> concatenated = new HashMap<String, String>();
+    public HashMap<String, String> getConcatenatedFieldErrors() {
+        HashMap<String, String> concatenated = new HashMap<String, String>();
         for (String key : fieldErrors.keySet()) {
             List<String> values = fieldErrors.get(key);
             String concat = null;

@@ -44,7 +44,7 @@ public class FormatCommons {
         } else if (object instanceof Date) {
             value = CalendarUtil.formatDate((Date) object);
         } else if (object instanceof FileVariable) {
-            value = FileFormat.getHtml((FileVariable) object, webHelper, instanceId, name, listIndex, mapKey);
+            value = FileFormat.getHtml(((FileVariable) object).getName(), webHelper, instanceId, name, listIndex, mapKey);
         } else if (object == null) {
             value = "";
         } else {

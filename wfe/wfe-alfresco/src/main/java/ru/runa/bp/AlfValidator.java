@@ -14,7 +14,7 @@ public abstract class AlfValidator extends FieldValidatorSupport {
     protected abstract void validate(AlfSession session) throws Exception;
 
     @Override
-    public final void validate() throws Exception {
+    public final void validate() {
         new AlfSessionWrapper<Object>() {
 
             @Override

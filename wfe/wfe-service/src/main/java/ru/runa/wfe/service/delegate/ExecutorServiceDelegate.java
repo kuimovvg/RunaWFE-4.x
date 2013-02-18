@@ -55,18 +55,13 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     }
 
     @Override
-    public List<Executor> getAll(User user, BatchPresentation batchPresentation) {
-        return getExecutorService().getAll(user, batchPresentation);
+    public List<? extends Executor> getExecutors(User user, BatchPresentation batchPresentation) {
+        return getExecutorService().getExecutors(user, batchPresentation);
     }
 
     @Override
     public int getExecutorsCount(User user, BatchPresentation batchPresentation) {
         return getExecutorService().getExecutorsCount(user, batchPresentation);
-    }
-
-    @Override
-    public List<Actor> getActors(User user, BatchPresentation batchPresentation) {
-        return getExecutorService().getActors(user, batchPresentation);
     }
 
     @Override
@@ -137,11 +132,6 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
     @Override
     public <T extends Executor> T getExecutor(User user, Long id) {
         return (T) getExecutorService().getExecutor(user, id);
-    }
-
-    @Override
-    public List<Executor> getExecutors(User user, List<Long> ids) {
-        return getExecutorService().getExecutors(user, ids);
     }
 
     @Override

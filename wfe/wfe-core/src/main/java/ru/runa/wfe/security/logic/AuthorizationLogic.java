@@ -110,7 +110,7 @@ public class AuthorizationLogic extends CommonLogic {
         if (hasPermission) {
             List<Executor> executors = compiler.getBatch();
             for (Executor privelegedExecutor : permissionDAO.getPrivilegedExecutors(identifiable)) {
-                if (batchPresentation.getClassPresentation().getPresentationClass().isAssignableFrom(privelegedExecutor.getClass())
+                if (batchPresentation.getClassPresentation().getPresentationClass().isInstance(privelegedExecutor)
                         && isAllowed(user, Permission.READ, privelegedExecutor)) {
                     executors.add(0, privelegedExecutor);
                 }
