@@ -56,7 +56,7 @@ public class ValidatorParser {
                 }
             }
             if (!validationFile.exists()) {
-                validationFile = IOUtils.createFileSafely(validationFile);
+                IOUtils.createFile(validationFile);
             }
             byte[] bytes = XmlUtil.writeXml(document);
             validationFile.setContents(new ByteArrayInputStream(bytes), true, false, null);

@@ -16,7 +16,7 @@ public class OpenDescriptionEditorDelegate extends BaseModelActionDelegate {
         try {
             IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), ParContentProvider.PROCESS_DEFINITION_DESCRIPTION_FILE_NAME);
             if (!file.exists()) {
-                file = IOUtils.createFileSafely(file);
+                IOUtils.createFile(file);
             }
             IDE.openEditor(getWorkbenchPage(), file, EDITOR_ID);
         } catch (Exception e) {
