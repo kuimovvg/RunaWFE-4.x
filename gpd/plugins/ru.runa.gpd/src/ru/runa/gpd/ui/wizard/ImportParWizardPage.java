@@ -98,7 +98,6 @@ public class ImportParWizardPage extends ImportWizardPage {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.MULTI);
-                // dialog.setFileName(startingDirectory.getPath());
                 dialog.setFilterExtensions(new String[] { "*.par" });
                 if (dialog.open() != null) {
                     selectedDirFileName = dialog.getFilterPath();
@@ -111,8 +110,6 @@ public class ImportParWizardPage extends ImportWizardPage {
                 }
             }
         });
-        // editor = new FileFieldEditor("fileSelect", Messages.getString("ImportParWizardPage.page.parFile"), fileSelectionArea);
-        // editor.setFileExtensions(new String[] { "*.par" });
         importFromServerButton = new Button(importGroup, SWT.RADIO);
         importFromServerButton.setText(Localization.getString("ImportParWizardPage.page.importFromServerButton"));
         SyncUIHelper.createHeader(importGroup, WFEServerProcessDefinitionImporter.getInstance(), WFEConnectionPreferencePage.class);
@@ -122,7 +119,6 @@ public class ImportParWizardPage extends ImportWizardPage {
 
     private void setImportMode() {
         boolean fromFile = importFromFileButton.getSelection();
-        // editor.setEnabled(fromFile, fileSelectionArea);
         selectParsButton.setEnabled(fromFile);
         if (fromFile) {
             serverDefinitionViewer.setInput(new Object());
