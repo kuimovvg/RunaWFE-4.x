@@ -79,8 +79,7 @@ public class HandlerData {
         return TypeConversionUtil.convertTo(object, clazz);
     }
 
-    public <T> T getInputParam(Class<T> clazz, String name, T defaultValue) { // TODO
-                                                                              // rename
+    public <T> T getInputParam(Class<T> clazz, String name, T defaultValue) {
         Object object = getInputParam(name, defaultValue);
         return TypeConversionUtil.convertTo(object, clazz);
     }
@@ -116,8 +115,6 @@ public class HandlerData {
         if (value == null) {
             log.warn(processId + ": Setting output variable " + variableName + " value to null.");
         }
-        if (value != null) {
-            outputVariables.put(variableName, value);
-        }
+        outputVariables.put(variableName, value);
     }
 }

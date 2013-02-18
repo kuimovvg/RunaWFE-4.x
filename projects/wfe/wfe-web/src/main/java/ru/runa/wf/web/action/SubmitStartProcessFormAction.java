@@ -17,7 +17,7 @@
  */
 package ru.runa.wf.web.action;
 
-import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,7 +38,6 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.dto.WfVariable;
 
 /**
  * Created on 18.08.2004
@@ -63,9 +62,9 @@ public class SubmitStartProcessFormAction extends BaseProcessFormAction {
         User user = getLoggedUser(request);
         Long definitionId = ((CommonProcessForm) actionForm).getId();
         Interaction interaction = Delegates.getDefinitionService().getStartInteraction(user, definitionId);
-        List<WfVariable> variables = getFormVariables(request, actionForm, interaction);
+        Map<String, Object> variables = getFormVariables(request, actionForm, interaction);
         String transitionName = ((CommonProcessForm) actionForm).getSubmitButton();
-        variables.add(new WfVariable(WfProcess.SELECTED_TRANSITION_KEY, transitionName));
+        variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
         WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(user, definitionId);
         processId = Delegates.getExecutionService().startProcess(user, definition.getName(), variables);
 

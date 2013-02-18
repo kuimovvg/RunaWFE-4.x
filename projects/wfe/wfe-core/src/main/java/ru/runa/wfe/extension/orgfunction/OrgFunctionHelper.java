@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.extension.OrgFunction;
 import ru.runa.wfe.extension.OrgFunctionException;
 import ru.runa.wfe.relation.RelationPair;
@@ -46,15 +47,14 @@ import com.google.common.collect.Sets;
  * 'ru.runa.af.organizationfunction.ExecutorByNameFunction(userName)' 2)
  * 
  * @relationName(FQDN class name(param1, param2, ...)) for example
- *                    '@boss(ru.runa.af.organizationfunction.ExecutorByNameFunction(${processVariableName
- *                    } ) ) ' Each param can be given as string or as
+ *                    '@boss(ru.runa.af.organizationfunction.ExecutorByNameFunction(${processVariableNam
+ *                    e } ) ) ' Each param can be given as string or as
  *                    substituted variable name in form of ${userVarName}.
  * 
  * @author Dofs
  * @since 2.0
  */
 public class OrgFunctionHelper {
-    private static final Pattern VARIABLE_PATTERN = Pattern.compile("^\\$\\{(.*)\\}$");
     private static final String ORG_FUNCTION_PATTERN = "^(\\w+[\\w\\.]*)\\(([^\\)]*)\\)$";
     private static final Map<String, OrgFunction> CACHE = new HashMap<String, OrgFunction>();
 
@@ -109,14 +109,7 @@ public class OrgFunctionHelper {
         String[] parameterNames = orgFunction.getParameterNames();
         Object[] parameters = new Object[parameterNames.length];
         for (int i = 0; i < parameterNames.length; i++) {
-            Matcher matcher = VARIABLE_PATTERN.matcher(parameterNames[i]);
-            if (matcher.matches()) {
-                String processVariableName = matcher.group(1);
-                Preconditions.checkNotNull(variableProvider, "variableProvider required for this orgfunction");
-                parameters[i] = variableProvider.getValue(processVariableName);
-            } else {
-                parameters[i] = parameterNames[i];
-            }
+            parameters[i] = ExpressionEvaluator.evaluateVariable(variableProvider, parameterNames[i]);
         }
         return parameters;
     }

@@ -43,7 +43,6 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Objects;
 
@@ -72,7 +71,7 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
         ProcessForm form = (ProcessForm) actionForm;
         Long taskId = form.getId();
         Interaction wfForm = definitionService.getTaskInteraction(user, taskId);
-        List<WfVariable> variables = getFormVariables(request, actionForm, wfForm);
+        Map<String, Object> variables = getFormVariables(request, actionForm, wfForm);
 
         BatchPresentation batchPresentation = profile.getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS);
         List<WfTask> tasks = executionService.getTasks(user, batchPresentation);
@@ -84,7 +83,7 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
         }
 
         String transitionName = form.getSubmitButton();
-        variables.add(new WfVariable(WfProcess.SELECTED_TRANSITION_KEY, transitionName));
+        variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
         executionService.completeTask(user, taskId, variables);
 
         if (WebResources.isAutoShowForm()) {

@@ -24,11 +24,29 @@ import com.google.common.base.Objects;
 public class VariableDefinition implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private boolean syntetic;
     private String name;
     private String formatClassName;
     private String formatLabel;
     private boolean publicAccess;
     private String defaultValue;
+
+    public VariableDefinition() {
+    }
+
+    public VariableDefinition(boolean syntetic, String name, String formatClassName) {
+        this.syntetic = syntetic;
+        this.name = name;
+        this.formatClassName = formatClassName;
+    }
+
+    public boolean isSyntetic() {
+        return syntetic;
+    }
+
+    public void setSyntetic(boolean syntetic) {
+        this.syntetic = syntetic;
+    }
 
     public String getName() {
         return name;
@@ -71,6 +89,20 @@ public class VariableDefinition implements Serializable {
 
     public void setFormatLabel(String displayFormat) {
         formatLabel = displayFormat;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof VariableDefinition) {
+            VariableDefinition d = (VariableDefinition) obj;
+            return Objects.equal(name, d.name);
+        }
+        return super.equals(obj);
     }
 
     @Override

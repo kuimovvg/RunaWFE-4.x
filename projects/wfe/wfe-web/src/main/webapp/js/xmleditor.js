@@ -4,9 +4,9 @@ function openDocumentEditor(url, saveUrl, saveButton, cancelButton) {
 	$.editor = $('<div><textarea id="documentArea" style="width:100%; height:98%; display: none; "></textarea></div>').dialog( {
 		modal:true, autoOpen: false, draggable: false, 
 		overlay: {backgroundColor: '#000', opacity: 0.5},
-	        close: function(event, ui) {
-	        	destroyEditor();
-	        }  
+	    close: function(event, ui) {
+	    	destroyEditor();
+		}  
 	} );
 		 
 	$.editor.dialog("option", "height", 500);

@@ -449,7 +449,7 @@
 			<forward name="failure" path="/manage_relations.do" redirect="true" />
 		</action>
 		<action path="/variableDownloader" type="ru.runa.wf.web.action.VariableDownloaderAction"
-			name="variableForm" scope="request" unknown="false" validate="true">
+			name="variableForm" scope="request" unknown="false" validate="false">
 		</action>
 		<action path="/create_bot_task" type="ru.runa.af.web.action.CreateBotTaskAction"
 			name="idForm" scope="request" input="/WEB-INF/wf/bot.jsp" unknown="false"

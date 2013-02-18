@@ -26,6 +26,7 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -33,6 +34,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -140,6 +142,7 @@ public abstract class ProcessLog implements IAttributes, Serializable {
     }
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column(length = 16777216, name = "BYTES")
     public byte[] getBytes() {
         return bytes;

@@ -31,37 +31,33 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
+import com.google.common.base.Defaults;
 import com.google.common.base.Throwables;
+import com.google.common.primitives.Primitives;
 
 public class TypeConversionUtil {
 
     @SuppressWarnings("unchecked")
     public static <T> T convertTo(Object object, Class<T> classConvertTo) {
         try {
-            if (object == null || (object instanceof String && ((String) object).length() == 0)) {
-                if (classConvertTo == long.class) {
-                    return (T) new Long(0);
-                } else if (classConvertTo == int.class) {
-                    return (T) new Integer(0);
-                } else if (classConvertTo == byte.class) {
-                    return (T) new Byte((byte) 0);
-                } else if (classConvertTo == double.class) {
-                    return (T) new Double(0);
-                } else if (classConvertTo == float.class) {
-                    return (T) new Float(0);
-                } else if (classConvertTo == boolean.class) {
-                    return (T) Boolean.FALSE;
-                } else {
-                    return null;
-                }
+            if (object == null) {
+                return Defaults.defaultValue(classConvertTo);
             }
-            if (classConvertTo.isAssignableFrom(object.getClass())) {
-                return (T) object;
+            if (classConvertTo.isPrimitive()) {
+                classConvertTo = Primitives.wrap(classConvertTo);
+            }
+            if (classConvertTo.isInstance(object)) {
+                return classConvertTo.cast(object);
             }
             if (classConvertTo == String.class) {
                 return (T) object.toString();
             }
             if (object instanceof String) {
+                String s = (String) object;
+                if (s.length() == 0) {
+                    // ??? treat as null
+                    // return Defaults.defaultValue(classConvertTo);
+                }
                 // try to use 'valueOf(String)'
                 try {
                     Method valueOfMethod = classConvertTo.getMethod("valueOf", String.class);

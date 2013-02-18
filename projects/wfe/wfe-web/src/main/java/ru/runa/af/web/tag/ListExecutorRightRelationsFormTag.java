@@ -49,7 +49,6 @@ import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.Group;
 
 import com.google.common.collect.Lists;
 
@@ -79,9 +78,7 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
         List<Executor> executors = new ArrayList<Executor>();
         executors.add(getIdentifiable());
         BatchPresentation executorBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-        for (Group group : executorService.getExecutorGroups(getUser(), getIdentifiable(), executorBatchPresentation, false)) {
-            executors.add(group);
-        }
+        executors.addAll(executorService.getExecutorGroups(getUser(), getIdentifiable(), executorBatchPresentation, false));
         Set<Relation> relations = new HashSet<Relation>();
         for (RelationPair pair : relationService.getExecutorsRelationPairsRight(getUser(), null, executors)) {
             relations.add(pair.getRelation());

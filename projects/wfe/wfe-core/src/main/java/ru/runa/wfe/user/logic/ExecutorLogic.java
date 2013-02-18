@@ -35,7 +35,6 @@ import ru.runa.wfe.relation.dao.RelationDAO;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.security.WeakPasswordException;
 import ru.runa.wfe.user.Actor;
@@ -94,21 +93,15 @@ public class ExecutorLogic extends CommonLogic {
         executorDAO.update(executor);
     }
 
-    public List<Executor> getAll(User user, BatchPresentation batchPresentation) {
+    public List<? extends Executor> getExecutors(User user, BatchPresentation batchPresentation) {
         BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createAllExecutorsCompiler(user, batchPresentation);
         List<Executor> executorList = compiler.getBatch();
         return executorList;
     }
 
-    public int getAllCount(User user, BatchPresentation batchPresentation) {
+    public int getExecutorsCount(User user, BatchPresentation batchPresentation) {
         BatchPresentationHibernateCompiler compiler = PresentationCompilerHelper.createAllExecutorsCompiler(user, batchPresentation);
         return compiler.getCount();
-    }
-
-    public List<Actor> getActors(User user, BatchPresentation batchPresentation) {
-        List<Actor> executorList = getPersistentObjects(user, batchPresentation, Permission.READ,
-                new SecuredObjectType[] { SecuredObjectType.ACTOR }, false);
-        return executorList;
     }
 
     public Actor getActor(User user, String name) {

@@ -29,7 +29,6 @@ public class AssignmentHelper {
 
     public void assignSwimlane(ExecutionContext executionContext, Assignable assignable, Collection<? extends Executor> executors) {
         try {
-            // TODO backwardCompatibilitySwimlanes
             if (executors.size() == 1) {
                 Executor aloneExecutor = (executors.iterator().next());
                 assignable.assignExecutor(executionContext, aloneExecutor, true);

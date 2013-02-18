@@ -2,11 +2,10 @@ package ru.runa.wf.web.ftl.method;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Group;
-import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.var.dto.WfVariable;
 import freemarker.template.TemplateModelException;
 
@@ -19,14 +18,12 @@ import freemarker.template.TemplateModelException;
 @Deprecated
 public class ChooseGroupTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
-    @Autowired
-    private ExecutorDAO executorDAO;
 
     @Override
     protected Object executeTag() throws TemplateModelException {
         String varName = getParameterAs(String.class, 0);
         String view = getParameterAs(String.class, 1);
-        List<Group> groups = executorDAO.getAllGroups();
+        List<Group> groups = (List<Group>) Delegates.getExecutorService().getExecutors(user, BatchPresentationFactory.GROUPS.createNonPaged());
         if ("raw".equals(view)) {
             return groups;
         } else if ("selectName".equals(view)) {

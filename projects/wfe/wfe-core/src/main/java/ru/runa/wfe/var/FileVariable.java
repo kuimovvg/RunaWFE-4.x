@@ -64,4 +64,9 @@ public class FileVariable implements Serializable {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

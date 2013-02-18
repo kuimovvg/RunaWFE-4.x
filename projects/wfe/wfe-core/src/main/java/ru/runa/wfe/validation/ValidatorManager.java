@@ -11,7 +11,6 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.validation.impl.ValidatorFileParser;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -74,11 +73,7 @@ public class ValidatorManager {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Running validator: " + validator);
             }
-            try {
-                validator.validate();
-            } catch (Exception e) {
-                throw new ValidationException(e);
-            }
+            validator.validate();
         }
         return validatorContext;
     }

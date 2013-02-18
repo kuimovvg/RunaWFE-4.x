@@ -21,6 +21,8 @@
  */
 package ru.runa.wfe.var;
 
+import java.util.Arrays;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -49,6 +51,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.VariableCreateLog;
 import ru.runa.wfe.audit.VariableDeleteLog;
 import ru.runa.wfe.audit.VariableUpdateLog;
+import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 
@@ -135,7 +138,7 @@ public abstract class Variable<T extends Object> {
      * Get the value of the variable.
      */
     @Transient
-    protected abstract T getStorableValue();
+    public abstract T getStorableValue();
 
     /**
      * Set new variable value
@@ -178,8 +181,8 @@ public abstract class Variable<T extends Object> {
         if (converter != null && oldValue != null) {
             oldValue = converter.revert(oldValue);
         }
-        addLog(executionContext, oldValue, newValue);
         setStorableValue((T) newStorableValue);
+        addLog(executionContext, oldValue, newValue);
     }
 
     @Transient
@@ -192,6 +195,9 @@ public abstract class Variable<T extends Object> {
     }
 
     public String toString(Object value) {
+        if (SystemUtils.isV3CompatibilityMode() && value != null && String[].class == value.getClass()) {
+            return Arrays.toString((String[]) value);
+        }
         return String.valueOf(value);
     }
 

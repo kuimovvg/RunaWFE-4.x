@@ -285,6 +285,12 @@ public class Task implements Assignable {
         return endDate == null;
     }
 
+    public void checkNotCompleted() {
+        if (!isActive()) {
+            throw new TaskAlreadyCompletedException(name);
+        }
+    }
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("process", getProcess()).add("id", id).add("name", name).toString();

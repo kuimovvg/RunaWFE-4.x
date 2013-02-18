@@ -56,7 +56,6 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.dto.WfVariables;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.NullOutputStream;
@@ -262,7 +261,7 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
         HashMap<String, Object> variables = new HashMap<String, Object>();
         xsltHelper.get().mergeVariablesIn(variables);
         variables.put("WS_ITERATION_" + task.getId(), settings.interactions.indexOf(interaction));
-        executionService.updateVariables(user, task.getProcessId(), WfVariables.toList(variables));
+        executionService.updateVariables(user, task.getProcessId(), variables);
     }
 
     /**

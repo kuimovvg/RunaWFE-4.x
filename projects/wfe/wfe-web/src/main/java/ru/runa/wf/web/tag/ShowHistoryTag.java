@@ -31,6 +31,7 @@ import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.RowBuilder;
@@ -43,6 +44,7 @@ import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.presentation.ExecutorIdsValue;
 import ru.runa.wfe.audit.presentation.ExecutorNameValue;
+import ru.runa.wfe.audit.presentation.FileValue;
 import ru.runa.wfe.audit.presentation.ProcessIdValue;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
@@ -51,6 +53,7 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.var.format.FileFormat;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -160,6 +163,9 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                 params.put(IdForm.ID_INPUT_NAME, processId);
                 String url = Commons.getActionUrl(ShowGraphModeHelper.getManageProcessAction(), params, pageContext, PortletUrlType.Render);
                 result[i] = new A(url, processId.toString()).setClass(Resources.CLASS_LINK).toString();
+            } else if (arguments[i] instanceof FileValue) {
+                FileValue fileValue = (FileValue) arguments[i];
+                result[i] = FileFormat.getHtml(fileValue.getFileName(), new StrutsWebHelper(pageContext), fileValue.getLogId());
             } else if (arguments[i] instanceof String) {
                 result[i] = StringEscapeUtils.escapeHtml((String) arguments[i]);
             } else {

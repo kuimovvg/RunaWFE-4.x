@@ -42,7 +42,7 @@ public class DoubleVariable extends Variable<Double> {
 
     @Column(name = "DOUBLEVALUE")
     @Override
-    protected Double getStorableValue() {
+    public Double getStorableValue() {
         return object;
     }
 

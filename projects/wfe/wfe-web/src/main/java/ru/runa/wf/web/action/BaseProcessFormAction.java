@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.web.action;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +36,6 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.validation.impl.ValidationException;
-import ru.runa.wfe.var.dto.WfVariable;
 
 /**
  * Created on 15.12.2005
@@ -93,7 +91,7 @@ public abstract class BaseProcessFormAction extends ActionBase {
         return forward;
     }
 
-    protected List<WfVariable> getFormVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
+    protected Map<String, Object> getFormVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
         return VariableExtractionHelper.extractVariables(request.getSession(), actionForm, interaction);
     }
 

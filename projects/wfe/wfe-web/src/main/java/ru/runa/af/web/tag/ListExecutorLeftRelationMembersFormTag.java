@@ -43,12 +43,8 @@ import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
-import ru.runa.wfe.service.ExecutorService;
-import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.Group;
 
 /**
  * @jsp.tag name = "listExecutorLeftRelationMembersForm" body-content = "JSP"
@@ -67,22 +63,16 @@ public class ListExecutorLeftRelationMembersFormTag extends TitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        ExecutorService executorService = Delegates.getExecutorService();
-        RelationService relationService = Delegates.getRelationService();
-        AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        Relation currentRelation = relationService.getRelationByName(getUser(), getRelationName());
-        isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, currentRelation);
+        Relation currentRelation = Delegates.getRelationService().getRelationByName(getUser(), getRelationName());
+        isFormButtonVisible = Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE_RELATION, currentRelation);
         List<Executor> executors = new ArrayList<Executor>();
-        Executor executor = executorService.getExecutor(getUser(), executorId);
+        Executor executor = Delegates.getExecutorService().getExecutor(getUser(), executorId);
         executors.add(executor);
-        BatchPresentation executorBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-        for (Group group : executorService.getExecutorGroups(getUser(), executor, executorBatchPresentation, false)) {
-            executors.add(group);
-        }
-        List<RelationPair> relationPairs = relationService.getExecutorsRelationPairsLeft(getUser(), null, executors);
+        BatchPresentation groupsBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
+        executors.addAll(Delegates.getExecutorService().getExecutorGroups(getUser(), executor, groupsBatchPresentation, false));
+        List<RelationPair> relationPairs = Delegates.getRelationService().getExecutorsRelationPairsLeft(getUser(), null, executors);
 
         TableBuilder tableBuilder = new TableBuilder();
-
         TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
 
             @Override

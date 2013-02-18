@@ -48,4 +48,9 @@ public abstract class VariableLog extends ProcessLog {
     public String getVariableName() {
         return getAttributeNotNull(ATTR_VARIABLE_NAME);
     }
+
+    @Transient
+    public boolean isFileValue() {
+        return "true".equals(getAttribute(ATTR_IS_FILE_VALUE));
+    }
 }

@@ -63,12 +63,12 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public List<Executor> getAll(User user, BatchPresentation batchPresentation) {
+    public List<? extends Executor> getExecutors(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
         }
-        return executorLogic.getAll(user, batchPresentation);
+        return executorLogic.getExecutors(user, batchPresentation);
     }
 
     @Override
@@ -77,16 +77,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
         }
-        return executorLogic.getAllCount(user, batchPresentation);
-    }
-
-    @Override
-    public List<Actor> getActors(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
-        if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
-        }
-        return executorLogic.getActors(user, batchPresentation);
+        return executorLogic.getExecutorsCount(user, batchPresentation);
     }
 
     @Override
@@ -228,13 +219,6 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     public Executor getExecutor(User user, Long id) {
         Preconditions.checkNotNull(user);
         return executorLogic.getExecutor(user, id);
-    }
-
-    @Override
-    public List<Executor> getExecutors(User user, List<Long> ids) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(ids);
-        return executorLogic.getExecutors(user, ids);
     }
 
     @Override

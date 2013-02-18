@@ -13,8 +13,15 @@ public class ProcessHierarchyUtils {
         return parentHierarchy + "/" + processId;
     }
 
+    public static String[] getProcessIdsArray(String hierarchy) {
+        if (hierarchy == null) {
+            return null;
+        }
+        return hierarchy.split("/");
+    }
+
     public static List<Long> getProcessIds(String hierarchy) {
-        String[] stringIds = hierarchy.split("/");
+        String[] stringIds = getProcessIdsArray(hierarchy);
         List<Long> processIdsHierarchy = Lists.newArrayListWithExpectedSize(stringIds.length);
         for (String stringId : stringIds) {
             processIdsHierarchy.add(Long.parseLong(stringId));
@@ -22,4 +29,11 @@ public class ProcessHierarchyUtils {
         return processIdsHierarchy;
     }
 
+    public static String getRootProcessIdString(String hierarchy) {
+        if (hierarchy == null) {
+            return null;
+        }
+        String[] stringIds = hierarchy.split("/");
+        return stringIds[0];
+    }
 }
