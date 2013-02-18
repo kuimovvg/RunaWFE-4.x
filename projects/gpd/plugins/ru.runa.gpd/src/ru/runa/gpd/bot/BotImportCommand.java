@@ -61,7 +61,7 @@ public class BotImportCommand extends BotSyncCommand {
                     botTask.setConfig(null);
                 }
                 IFile file = folder.getFile(botTask.getName());
-                file = IOUtils.createFileSafely(file);
+                IOUtils.createFile(file);
                 WorkspaceOperations.saveBotTask(file, botTask);
             }
             for (String fileName : files.keySet()) {

@@ -60,8 +60,7 @@ public class BotStationImportCommand extends BotImportCommand {
                     IFolder folder = newProject.getFolder("/src/botstation/");
                     IOUtils.createFolder(folder);
                     IFile file = folder.getFile("botstation");
-                    file = IOUtils.createFileSafely(file);
-                    file.setContents(BotTaskContentUtil.createBotStationInfo(botStationName, rmiAddress), IResource.FORCE, null);
+                    IOUtils.createFile(file, BotTaskContentUtil.createBotStationInfo(botStationName, rmiAddress));
                     continue;
                 }
                 //deploy bot
