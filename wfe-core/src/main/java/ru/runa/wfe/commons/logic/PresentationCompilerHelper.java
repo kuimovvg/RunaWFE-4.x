@@ -63,14 +63,13 @@ public final class PresentationCompilerHelper {
     public static BatchPresentationHibernateCompiler createAllExecutorsCompiler(User user, BatchPresentation batchPresentation) {
         List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        compiler.setParameters(batchPresentation.getClassPresentation().getPresentationClass(), null, null, true, executorIds,
-                ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, null);
+        compiler.setParameters(null, null, null, true, executorIds, ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, null);
         return compiler;
     }
 
     public static BatchPresentationHibernateCompiler createAllSystemLogsCompiler(User user, BatchPresentation batchPresentation) {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        compiler.setParameters(batchPresentation.getClassPresentation().getPresentationClass(), true);
+        compiler.setParameters(true);
         return compiler;
     }
 
@@ -102,7 +101,7 @@ public final class PresentationCompilerHelper {
                 + " as relation WHERE relation.group.id=" + group.getId() + ")";
         String[] idRestrictions = { notInRestriction, "<> " + group.getId() };
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        compiler.setParameters(Executor.class, null, null, true, executorIds, ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, idRestrictions);
+        compiler.setParameters(null, null, null, true, executorIds, ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, idRestrictions);
         return compiler;
     }
 
@@ -167,8 +166,7 @@ public final class PresentationCompilerHelper {
         String inClause = hasPermission ? "IN" : "NOT IN";
         String idRestriction = inClause + " (SELECT pm.executor.id from " + PermissionMapping.class.getName() + " as pm where pm.identifiableId="
                 + identifiable.getIdentifiableId() + " and pm.type='" + identifiable.getSecuredObjectType() + "')";
-        compiler.setParameters(batchPresentation.getClassPresentation().getPresentationClass(), null, null, true, executorIds, Permission.READ,
-                ALL_EXECUTORS_CLASSES, new String[] { idRestriction });
+        compiler.setParameters(null, null, null, true, executorIds, Permission.READ, ALL_EXECUTORS_CLASSES, new String[] { idRestriction });
         return compiler;
     }
 }

@@ -44,7 +44,7 @@ public class ByteArrayVariable extends Variable<byte[]> {
     @Lob
     @Column(length = 16777216, name = "BYTES")
     @Override
-    protected byte[] getStorableValue() {
+    public byte[] getStorableValue() {
         return object;
     }
 
@@ -52,6 +52,5 @@ public class ByteArrayVariable extends Variable<byte[]> {
     public void setStorableValue(byte[] object) {
         this.object = object;
     }
-    // TODO bytes history
 
 }

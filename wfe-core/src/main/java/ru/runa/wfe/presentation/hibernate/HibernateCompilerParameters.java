@@ -31,12 +31,15 @@ import ru.runa.wfe.task.Task;
 public class HibernateCompilerParameters {
 
     /**
-     * Collection of owners id (Long for example). If this collection and ownersDBPath is set, when only objects, which has specified owners will be queried.
+     * Collection of owners id (Long for example). If this collection and
+     * ownersDBPath is set, when only objects, which has specified owners will
+     * be queried.
      */
     private final Collection<?> owners;
 
     /**
-     * HQL path from root object to calculate object owner (actorId for {@link Task} for example).
+     * HQL path from root object to calculate object owner (actorId for
+     * {@link Task} for example).
      */
     private final String ownersDBPath;
 
@@ -51,44 +54,54 @@ public class HibernateCompilerParameters {
     private final boolean isCountQuery;
 
     /**
-     * Executors, which must has permission on queried objects. Queries only objects with condition: at least one executor from executorIds must have 'permission' with
-     * 'securedObjectTypes'
+     * Executors, which must has permission on queried objects. Queries only
+     * objects with condition: at least one executor from executorIds must have
+     * 'permission' with 'securedObjectTypes'
      */
     private final List<Long> executorIds;
 
     /**
-     * Permission, which at least one executors must has on queried objects. Queries only objects with condition: at least one executor from executorIds must have 'permission' with
-     * 'securedObjectTypes'
+     * Permission, which at least one executors must has on queried objects.
+     * Queries only objects with condition: at least one executor from
+     * executorIds must have 'permission' with 'securedObjectTypes'
      */
     private final Permission permission;
 
     /**
-     * Type of secured object for queried objects. Queries only objects with condition: at least one executor from executorIds must have 'permission' with 'securedObjectTypes'
+     * Type of secured object for queried objects. Queries only objects with
+     * condition: at least one executor from executorIds must have 'permission'
+     * with 'securedObjectTypes'
      */
     private final SecuredObjectType[] securedObjectTypes;
 
     /**
-     * Subclass of root persisted object, to be queried. May be null, if root persistent object and all it's subclasses must be queried.
+     * Subclass of root persisted object, to be queried. May be null, if root
+     * persistent object and all it's subclasses must be queried.
      */
     private final Class<?> requestedClass;
 
     /**
-     * Restrictions, applied to object identity. Must be HQL query string or null. If set, added to query in form 'object id in (idRestriction)'.
+     * Restrictions, applied to object identity. Must be HQL query string or
+     * null. If set, added to query in form 'object id in (idRestriction)'.
      */
     private final String[] idRestriction;
 
     /**
-     * Flag, equals true, if only identity of objects must be loaded; false to load entire object. <br/>
+     * Flag, equals true, if only identity of objects must be loaded; false to
+     * load entire object. <br/>
      * <b>Loaded object must have id property.</b>
      */
     private final boolean onlyIdentityLoad;
 
     /**
-     * Creates parameter object for building HQL query using other {@linkplain HibernateCompilerParameters} as source. Copy all parameters from source
-     * {@linkplain HibernateCompilerParameters}, except isCountQuery flag.
+     * Creates parameter object for building HQL query using other
+     * {@linkplain HibernateCompilerParameters} as source. Copy all parameters
+     * from source {@linkplain HibernateCompilerParameters}, except isCountQuery
+     * flag.
      * 
      * @param src
-     *            {@linkplain HibernateCompilerParameters} to copy parameters from.
+     *            {@linkplain HibernateCompilerParameters} to copy parameters
+     *            from.
      * @param isCountQuery
      *            Flag, equals true, if only objects count must be queried.
      */
@@ -111,21 +124,25 @@ public class HibernateCompilerParameters {
      * @param owners
      *            Collection of owners id (Long for example).
      * @param ownersDBPath
-     *            HQL path from root object to calculate object owner (actorId for {@link Task} for example).
+     *            HQL path from root object to calculate object owner (actorId
+     *            for {@link Task} for example).
      * @param enablePaging
-     *            Flag, equals true, if paging must be used in request; false otherwise.
+     *            Flag, equals true, if paging must be used in request; false
+     *            otherwise.
      * @param isCountQuery
      *            Flag, equals true, if only objects count must be queried.
      * @param executorIds
      *            Executors, which must has permission on queried objects.
      * @param permission
-     *            Permission, which at least one executors must has on queried objects.
+     *            Permission, which at least one executors must has on queried
+     *            objects.
      * @param securedObjectTypes
      *            Type of secured object for queried objects.
      * @param requestedClass
      *            Subclass of root persisted object, to be queried.
      * @param idRestriction
-     *            Restrictions, applied to object identity. Must be HQL query string or null.
+     *            Restrictions, applied to object identity. Must be HQL query
+     *            string or null.
      */
     public HibernateCompilerParameters(Collection<?> owners, String ownersDBPath, boolean enablePaging, boolean isCountQuery, List<Long> executorIds,
             Permission permission, SecuredObjectType[] securedObjectTypes, Class<?> requestedClass, String[] idRestriction) {
@@ -153,9 +170,11 @@ public class HibernateCompilerParameters {
      * @param owners
      *            Collection of owners id (Long for example).
      * @param ownersDBPath
-     *            HQL path from root object to calculate object owner (actorId for {@link Task} for example).
+     *            HQL path from root object to calculate object owner (actorId
+     *            for {@link Task} for example).
      * @param enablePaging
-     *            Flag, equals true, if paging must be used in request; false otherwise.
+     *            Flag, equals true, if paging must be used in request; false
+     *            otherwise.
      * @param isCountQuery
      *            Flag, equals true, if only objects count must be queried.
      * @param requestedClass
@@ -183,16 +202,15 @@ public class HibernateCompilerParameters {
      * @param owners
      *            Collection of owners id (Long for example).
      * @param ownersDBPath
-     *            HQL path from root object to calculate object owner (actorId for {@link Task} for example).
+     *            HQL path from root object to calculate object owner (actorId
+     *            for {@link Task} for example).
      * @param enablePaging
-     *            Flag, equals true, if paging must be used in request; false otherwise.
+     *            Flag, equals true, if paging must be used in request; false
+     *            otherwise.
      * @param isCountQuery
      *            Flag, equals true, if only objects count must be queried.
-     * @param requestedClass
-     *            Subclass of root persisted object, to be queried.
      */
-    public HibernateCompilerParameters(Collection<?> owners, String ownersDBPath, boolean enablePaging, boolean isCountQuery,
-            Class<?> requestedClass, boolean onlyIdentityLoad) {
+    public HibernateCompilerParameters(Collection<?> owners, String ownersDBPath, boolean enablePaging, boolean isCountQuery, boolean onlyIdentityLoad) {
         this.owners = owners;
         this.ownersDBPath = ownersDBPath;
         if (ownersDBPath != null && owners == null) {
@@ -203,7 +221,7 @@ public class HibernateCompilerParameters {
         executorIds = null;
         permission = null;
         securedObjectTypes = null;
-        this.requestedClass = requestedClass;
+        requestedClass = null;
         idRestriction = null;
         this.onlyIdentityLoad = onlyIdentityLoad;
     }
@@ -220,7 +238,8 @@ public class HibernateCompilerParameters {
     /**
      * Check, if HQL/SQL query must return only objects count.
      * 
-     * @return true, if HQL/SQL query must return only objects count; false, if list of objects must be returned.
+     * @return true, if HQL/SQL query must return only objects count; false, if
+     *         list of objects must be returned.
      */
     public boolean isCountQuery() {
         return isCountQuery;
@@ -245,7 +264,8 @@ public class HibernateCompilerParameters {
     }
 
     /**
-     * Subclass of root persisted object, to be queried. May be null, if root persistent object and all it's subclasses must be queried.
+     * Subclass of root persisted object, to be queried. May be null, if root
+     * persistent object and all it's subclasses must be queried.
      * 
      * @return Subclass of root persisted object, to be queried.
      */
@@ -263,7 +283,8 @@ public class HibernateCompilerParameters {
     }
 
     /**
-     * HQL path from root object to calculate object owner (actorId for {@link Task} for example).
+     * HQL path from root object to calculate object owner (actorId for
+     * {@link Task} for example).
      * 
      * @return HQL path from root object to calculate object owner.
      */
@@ -299,7 +320,8 @@ public class HibernateCompilerParameters {
     }
 
     /**
-     * Restrictions, applied to object identity. Must be HQL query string or null. If set, added to query in form 'object id in (idRestriction)'.
+     * Restrictions, applied to object identity. Must be HQL query string or
+     * null. If set, added to query in form 'object id in (idRestriction)'.
      * 
      * @return Return array of restrictions, applied to object identity.
      */
@@ -308,7 +330,8 @@ public class HibernateCompilerParameters {
     }
 
     /**
-     * Flag, equals true, if only identity of objects must be loaded; false to load entire object. <br/>
+     * Flag, equals true, if only identity of objects must be loaded; false to
+     * load entire object. <br/>
      * <b>Loaded object must have id property.</b>
      * 
      * @return true, if only identity must be loaded.

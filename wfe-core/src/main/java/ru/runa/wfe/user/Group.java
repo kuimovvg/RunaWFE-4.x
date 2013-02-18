@@ -22,6 +22,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.security.SecuredObjectType;
 
 /**
@@ -45,7 +46,8 @@ public class Group extends Executor {
      * @param name
      *            {@link Group}name
      * @param description
-     *            {@link Group}description. If description is null, constructor changes it to empty String value
+     *            {@link Group}description. If description is null, constructor
+     *            changes it to empty String value
      * @throws NullPointerException
      *             if {@link Group}name is null
      */
@@ -85,4 +87,11 @@ public class Group extends Executor {
         this.activeDirectoryGroup = activeDirectoryGroup;
     }
 
+    @Override
+    public String toString() {
+        if (SystemUtils.isV3CompatibilityMode()) {
+            return "G" + getId();
+        }
+        return super.toString();
+    }
 }

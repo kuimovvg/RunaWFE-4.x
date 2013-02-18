@@ -27,6 +27,8 @@ import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -68,7 +70,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
 
     private Long id;
     private Long version;
-    private Integer classPresentationId;
+    private ClassPresentationType type;
     private String category;
     private String name;
     private boolean active;
@@ -86,14 +88,15 @@ public final class BatchPresentation implements Cloneable, Serializable {
     protected BatchPresentation() {
     }
 
-    public BatchPresentation(String name, String category, ClassPresentation classPresentation) {
+    public BatchPresentation(ClassPresentationType type, String name, String category) {
         setName(name);
         setCategory(category);
-        classPresentationId = ClassPresentations.getClassPresentationId(classPresentation);
-        fields = createDefaultFields(classPresentation);
+        this.type = type;
+        fields = createDefaultFields();
     }
 
-    private Fields createDefaultFields(ClassPresentation classPresentation) {
+    private Fields createDefaultFields() {
+        ClassPresentation classPresentation = ClassPresentations.getClassPresentation(type);
         Fields fields = new Fields();
         fields.sortIds = new int[0];
         fields.sortModes = new boolean[0];
@@ -148,19 +151,14 @@ public final class BatchPresentation implements Cloneable, Serializable {
         this.version = version;
     }
 
-    /**
-     * {@link ClassPresentation}, refers by this {@link BatchPresentation}.
-     */
-    @Column(name = "CLASS_PRESENTATION_ID")
-    protected Integer getClassPresentationId() {
-        return classPresentationId;
+    @Column(name = "CLASS_TYPE")
+    @Enumerated(value = EnumType.STRING)
+    public ClassPresentationType getType() {
+        return type;
     }
 
-    /**
-     * {@link ClassPresentation}, refers by this {@link BatchPresentation}.
-     */
-    protected void setClassPresentationId(Integer classPresentationId) {
-        this.classPresentationId = classPresentationId;
+    public void setType(ClassPresentationType type) {
+        this.type = type;
     }
 
     /**
@@ -242,7 +240,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
             } catch (Exception e) {
                 String xml = fieldsData != null ? new String(fieldsData, Charsets.UTF_8) : "NULL";
                 log.error("Unable to load batch presentation state from " + xml, e);
-                fields = createDefaultFields(ClassPresentations.getClassPresentation(classPresentationId));
+                fields = createDefaultFields();
             }
         }
         return fields;
@@ -433,7 +431,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
      */
     @Transient
     public ClassPresentation getClassPresentation() {
-        return ClassPresentations.getClassPresentation(classPresentationId);
+        return ClassPresentations.getClassPresentation(type);
     }
 
     @Override
@@ -462,7 +460,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
     }
 
     public boolean fieldEquals(BatchPresentation other) {
-        return Objects.equal(classPresentationId, other.classPresentationId) && getFields().equals(other.getFields());
+        return Objects.equal(type, other.type) && getFields().equals(other.getFields());
     }
 
     @Override
@@ -470,7 +468,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
         BatchPresentation clone = new BatchPresentation();
         clone.category = category;
         clone.name = name;
-        clone.classPresentationId = classPresentationId;
+        clone.type = type;
         clone.fields = FieldsSerializer.fromData(FieldsSerializer.toData(fields));
         return clone;
     }

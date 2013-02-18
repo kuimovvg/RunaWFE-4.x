@@ -17,7 +17,6 @@ import com.google.common.base.Preconditions;
 public class WfVariable implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String name;
     private VariableDefinition definition;
     private Object value;
 
@@ -26,26 +25,16 @@ public class WfVariable implements Serializable {
 
     public WfVariable(String name, Object value) {
         Preconditions.checkNotNull(name);
-        this.name = name;
+        this.definition = new VariableDefinition(true, name, StringFormat.class.getName());
         this.value = value;
     }
 
     public WfVariable(VariableDefinition definition, Object value) {
         Preconditions.checkNotNull(definition);
-        this.name = definition.getName();
         this.definition = definition;
         this.value = value;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Can be <code>null</code>.
-     * 
-     * @return
-     */
     public VariableDefinition getDefinition() {
         return definition;
     }
@@ -67,15 +56,20 @@ public class WfVariable implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name);
+        return Objects.hashCode(definition);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof WfVariable) {
-            return Objects.equal(definition, ((WfVariable) obj).name);
+            return Objects.equal(definition.getName(), ((WfVariable) obj).definition.getName());
         }
         return super.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("definition", definition).add("value", value).toString();
     }
 
 }

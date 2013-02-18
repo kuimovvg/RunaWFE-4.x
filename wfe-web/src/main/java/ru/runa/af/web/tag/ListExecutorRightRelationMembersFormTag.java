@@ -48,7 +48,6 @@ import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.Group;
 
 /**
  * @jsp.tag name = "listExecutorRightRelationMembersForm" body-content = "JSP"
@@ -76,9 +75,7 @@ public class ListExecutorRightRelationMembersFormTag extends TitledFormTag {
         Executor executor = executorService.getExecutor(getUser(), executorId);
         executors.add(executor);
         BatchPresentation executorBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-        for (Group group : executorService.getExecutorGroups(getUser(), executor, executorBatchPresentation, false)) {
-            executors.add(group);
-        }
+        executors.addAll(executorService.getExecutorGroups(getUser(), executor, executorBatchPresentation, false));
         List<RelationPair> relationPairs = relationService.getExecutorsRelationPairsRight(getUser(), null, executors);
 
         TableBuilder tableBuilder = new TableBuilder();

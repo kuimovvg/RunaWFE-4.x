@@ -413,7 +413,7 @@ public class ExecutorDAO extends CommonDAO {
      * @return {@linkplain Executor}s, loaded according to
      *         {@linkplain BatchPresentation}.
      */
-    public List<Executor> getAll(BatchPresentation batchPresentation) {
+    public List<Executor> getAllExecutors(BatchPresentation batchPresentation) {
         return getAll(Executor.class, batchPresentation);
     }
 

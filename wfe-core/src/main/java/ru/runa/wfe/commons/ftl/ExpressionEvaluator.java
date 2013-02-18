@@ -14,6 +14,7 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 public class ExpressionEvaluator {
     private static final Pattern VARIABLE_REGEXP = Pattern.compile("\\$\\{(.*?[^\\\\])\\}");
@@ -37,7 +38,7 @@ public class ExpressionEvaluator {
         } else {
             durationString = expression;
         }
-        if (baseDate != null && (durationString == null || durationString.length() == 0)) {
+        if (baseDate != null && Strings.isNullOrEmpty(durationString)) {
             return baseDate;
         } else {
             Duration duration = new Duration(durationString);

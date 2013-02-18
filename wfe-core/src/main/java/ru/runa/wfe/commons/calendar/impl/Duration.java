@@ -52,18 +52,18 @@ import com.google.common.collect.Maps;
 public class Duration implements Serializable {
     private static final long serialVersionUID = 2L;
 
-    static final long SECOND = 1000;
-    static final long MINUTE = 60 * SECOND;
-    static final long HOUR = 60 * MINUTE;
-    static final long DAY = 24 * HOUR;
-    static final long WEEK = 7 * DAY;
-    static final long MONTH = 30 * DAY;
-    static final long YEAR = 365 * DAY;
+    public static final long SECOND = 1000;
+    public static final long MINUTE = 60 * SECOND;
+    public static final long HOUR = 60 * MINUTE;
+    public static final long DAY = 24 * HOUR;
+    public static final long WEEK = 7 * DAY;
+    public static final long MONTH = 30 * DAY;
+    public static final long YEAR = 365 * DAY;
 
-    static final long BUSINESS_DAY;
-    static final long BUSINESS_WEEK;
-    static final long BUSINESS_MONTH;
-    static final long BUSINESS_YEAR;
+    public static final long BUSINESS_DAY;
+    public static final long BUSINESS_WEEK;
+    public static final long BUSINESS_MONTH;
+    public static final long BUSINESS_YEAR;
 
     static {
         Properties businessCalendarProperties = BusinessCalendarImpl.getBusinessCalendarProperties();
@@ -157,7 +157,7 @@ public class Duration implements Serializable {
 
     private int field;
     private long amount;
-    private boolean isBusinessTime;
+    private boolean businessTime;
 
     Duration() {
     }
@@ -213,7 +213,7 @@ public class Duration implements Serializable {
 
             field = Calendar.MILLISECOND;
             amount = multiply(quantity, unit.longValue());
-            isBusinessTime = true;
+            businessTime = true;
         } else {
             // parse unit
             Integer unit = calendarFields.get(unitText);
@@ -309,7 +309,7 @@ public class Duration implements Serializable {
     }
 
     public boolean isBusinessTime() {
-        return isBusinessTime;
+        return businessTime;
     }
 
 }

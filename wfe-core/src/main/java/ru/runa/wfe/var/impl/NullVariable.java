@@ -17,7 +17,7 @@ public class NullVariable extends Variable<Object> {
 
     @Override
     @Transient
-    protected Object getStorableValue() {
+    public Object getStorableValue() {
         return null;
     }
 

@@ -21,15 +21,6 @@ public class VariableDAO extends GenericDAO<Variable> {
      */
     public Map<String, Object> getAll(Process process) {
         Map<String, Object> variables = Maps.newHashMap();
-        // if (backwardCompatibilityVariablesMode) { for compatibility
-        // for (Swimlane swimlane : process.getSwimlanes()) {
-        // Executor executor = swimlane.getExecutor();
-        // if (executor == null) {
-        // continue;
-        // }
-        // variables.put(swimlane.getName(), executor);
-        // }
-        // }
         List<Variable<?>> list = getHibernateTemplate().find("from Variable where process=?", process);
         for (Variable<?> variable : list) {
             variables.put(variable.getName(), variable.getValue());

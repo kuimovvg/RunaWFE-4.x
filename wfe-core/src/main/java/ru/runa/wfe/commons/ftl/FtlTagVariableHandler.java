@@ -18,7 +18,8 @@
 package ru.runa.wfe.commons.ftl;
 
 /**
- * Interface allowed freemerker tags make transforms of user input values in form.
+ * Interface allowed freemerker tags make transforms of user input values in
+ * form.
  * 
  * @author dofs
  */

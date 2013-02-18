@@ -36,7 +36,7 @@ public abstract class BaseDateTDBuilder<T extends Object> implements TDBuilder {
         String dateString;
         Date date = getDate((T) object);
         if (date != null) {
-            dateString = CalendarUtil.formatDate(date);
+            dateString = CalendarUtil.formatDateTime(date);
         } else {
             dateString = "";
         }

@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.extension.OrgFunctionException;
-import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -57,9 +56,7 @@ public class DemoSubordinateRecursive {
             LinkedList<Actor> list = new LinkedList<Actor>();
             LinkedList<Actor> subordinatesList = new LinkedList<Actor>();
             Actor actor = executorDAO.getActorByCode(Long.parseLong((String) parameters[0]));
-
-            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-            List<Executor> executors = executorDAO.getAll(batchPresentation);
+            List<Executor> executors = executorDAO.getAllExecutors(BatchPresentationFactory.EXECUTORS.createNonPaged());
             DemoChiefFunction demoChiefFunction = new DemoChiefFunction();
             for (Executor executor : executors) {
                 if (executor instanceof Actor) {

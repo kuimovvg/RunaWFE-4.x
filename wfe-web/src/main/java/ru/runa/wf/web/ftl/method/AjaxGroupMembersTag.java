@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.web.ftl.method;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
-import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 
@@ -56,7 +52,7 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
             html.append(exportScript("scripts/AjaxGroupMembersTag.js", substitutions, true));
             html.append("<span class=\"ajaxGroupMembers\" id=\"ajaxGroupMembers_").append(groupVarName).append("\">");
             html.append("<select id=\"").append(groupVarName).append("\" name=\"").append(groupVarName).append("\">");
-            List<Group> groups = getGroups();
+            List<Group> groups = (List<Group>) Delegates.getExecutorService().getExecutors(user, BatchPresentationFactory.GROUPS.createNonPaged());
             Group defaultGroup = getSavedValue(Group.class, groupVarName);
             if (defaultGroup == null && groups.size() > 0) {
                 defaultGroup = groups.get(0);
@@ -126,17 +122,4 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
         return Delegates.getExecutorService().getGroupActors(user, group);
     }
 
-    private List<Group> getGroups() throws TemplateModelException {
-        ExecutorService executorService = Delegates.getExecutorService();
-        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-        // TODO add executorService.getAllGroups
-        List<Executor> executors = executorService.getAll(user, batchPresentation);
-        List<Group> groupList = new ArrayList<Group>();
-        for (Executor executor : executors) {
-            if (executor instanceof Group) {
-                groupList.add((Group) executor);
-            }
-        }
-        return groupList;
-    }
 }

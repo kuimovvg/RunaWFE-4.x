@@ -10,4 +10,11 @@ public class SystemUtils {
     public static boolean isDevMode() {
         return developmentMode;
     }
+
+    /**
+     * Process-level compatibility with version 3.x.
+     */
+    public static boolean isV3CompatibilityMode() {
+        return developmentMode;
+    }
 }

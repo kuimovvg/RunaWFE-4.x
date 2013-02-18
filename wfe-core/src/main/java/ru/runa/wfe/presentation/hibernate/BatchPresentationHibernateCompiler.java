@@ -123,7 +123,7 @@ public class BatchPresentationHibernateCompiler {
      * @return {@link Query} to load data. TODO unused
      */
     public List<Number> getIdentities(Collection<?> owners, String ownersDBPath, boolean enablePaging) {
-        parameters = new HibernateCompilerParameters(owners, ownersDBPath, enablePaging, false, null, true);
+        parameters = new HibernateCompilerParameters(owners, ownersDBPath, enablePaging, false, true);
         return getBatchQuery(parameters).list();
     }
 
@@ -180,7 +180,6 @@ public class BatchPresentationHibernateCompiler {
      * @return {@link Query} to load data.
      */
     public <T extends Object> List<T> getBatch(Class<T> concretteClass, boolean enablePaging) {
-        // TODO get concretteClass from batchPresentation, check usage
         parameters = new HibernateCompilerParameters(null, null, enablePaging, false, concretteClass);
         return getBatchQuery(parameters).list();
     }
@@ -212,14 +211,12 @@ public class BatchPresentationHibernateCompiler {
      */
     public void setParameters(Class<?> concretteClass, Collection<?> owners, String ownersDBPath, boolean enablePaging, List<Long> executorIds,
             Permission permission, SecuredObjectType[] securedObjectTypes, String[] idRestrictions) {
-        // TODO get concretteClass from batchPresentation, check usage
         parameters = new HibernateCompilerParameters(owners, ownersDBPath, enablePaging, false, executorIds, permission, securedObjectTypes,
                 concretteClass, idRestrictions);
     }
 
-    public void setParameters(Class<?> concretteClass, boolean enablePaging) {
-        // TODO get concretteClass from batchPresentation, check usage
-        parameters = new HibernateCompilerParameters(null, null, enablePaging, false, concretteClass);
+    public void setParameters(boolean enablePaging) {
+        parameters = new HibernateCompilerParameters(null, null, enablePaging, false, null);
     }
 
     /**

@@ -186,6 +186,7 @@ public class Messages {
     public static final String MESSAGE_WEB_CLIENT_VALIDATION_ERROR = "validation.form.error";
 
     public static final String TASK_WAS_ALREADY_ACCEPTED = "task.was.already.accepted";
+    public static final String TASK_WAS_ALREADY_COMPLETED = "task.was.already.completed";
 
     public static final String PROCESS_HAS_SUPER_PROCESS = "process.has.super.process";
 

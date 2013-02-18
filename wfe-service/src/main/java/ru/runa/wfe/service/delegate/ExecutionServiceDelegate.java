@@ -24,13 +24,13 @@ import java.util.Map;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
+import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.task.dto.WfTask;
-import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -49,8 +49,13 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public Long startProcess(User user, String definitionName, List<WfVariable> variablesMap) {
+    public Long startProcess(User user, String definitionName, Map<String, Object> variablesMap) {
         return getExecutionService().startProcess(user, definitionName, variablesMap);
+    }
+
+    @Override
+    public Long startProcessWS(User user, String definitionName, List<WfVariable> variables) {
+        throw new UnsupportedOperationException("This method designed for WebServices API only. Use startProcess(User, String, Map<String, Object>)");
     }
 
     @Override
@@ -104,13 +109,23 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public void updateVariables(User user, Long processId, List<WfVariable> variables) {
+    public void updateVariables(User user, Long processId, Map<String, Object> variables) {
         getExecutionService().updateVariables(user, processId, variables);
     }
 
     @Override
-    public void completeTask(User user, Long taskId, List<WfVariable> variables) {
+    public void updateVariablesWS(User user, Long processId, List<WfVariable> variables) throws ProcessDoesNotExistException {
+        throw new UnsupportedOperationException("This method designed for WebServices API only. Use updateVariables(User, Long, List<WfVariable>)");
+    }
+
+    @Override
+    public void completeTask(User user, Long taskId, Map<String, Object> variables) {
         getExecutionService().completeTask(user, taskId, variables);
+    }
+
+    @Override
+    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables) {
+        throw new UnsupportedOperationException("This method designed for WebServices API only. Use completeTask(User, Long, Map<String, Object>)");
     }
 
     @Override
@@ -149,8 +164,8 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public void assignTask(User user, Long taskId, Executor previousOwner, Actor actor) {
-        getExecutionService().assignTask(user, taskId, previousOwner, actor);
+    public void assignTask(User user, Long taskId, Executor previousOwner, Executor newExecutor) {
+        getExecutionService().assignTask(user, taskId, previousOwner, newExecutor);
     }
 
     @Override
@@ -177,5 +192,10 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     @Override
     public int getSystemLogsCount(User user, BatchPresentation batchPresentation) {
         return getExecutionService().getSystemLogsCount(user, batchPresentation);
+    }
+
+    @Override
+    public byte[] getProcessLogValue(User user, Long logId) {
+        return getExecutionService().getProcessLogValue(user, logId);
     }
 }

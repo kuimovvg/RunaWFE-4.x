@@ -25,6 +25,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.commons.OracleCommons;
+import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.security.SecuredObjectType;
 
 import com.google.common.base.Objects;
@@ -150,6 +151,9 @@ public class Actor extends Executor {
 
     @Override
     public String toString() {
+        if (SystemUtils.isV3CompatibilityMode()) {
+            return String.valueOf(code);
+        }
         return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).add("code", getCode()).toString();
     }
 
