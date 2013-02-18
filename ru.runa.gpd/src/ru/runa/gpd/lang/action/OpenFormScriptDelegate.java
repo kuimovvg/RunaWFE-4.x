@@ -26,9 +26,7 @@ public class OpenFormScriptDelegate extends BaseModelActionDelegate {
             }
             IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), fileName);
             if (!file.exists()) {
-                file = IOUtils.createFileSafely(file);
-                byte[] template = IOUtils.readStreamAsBytes(getClass().getResourceAsStream("/conf/form.template.js"));
-                file.setContents(new ByteArrayInputStream(template), true, false, null);
+                file = IOUtils.createFileSafely(file, getClass().getResourceAsStream("/conf/form.template.js"));
             }
             if (!formNode.hasFormScript()) {
                 setNewScriptFormFile(formNode, file.getName());

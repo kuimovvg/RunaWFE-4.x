@@ -21,7 +21,7 @@ import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.util.WorkspaceOperations;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public class BotTaskConfigRenameProvider implements VariableRenameProvider {
     private BotTask botTask;
     private IFile botTaskInfoFile;
@@ -36,10 +36,8 @@ public class BotTaskConfigRenameProvider implements VariableRenameProvider {
         List<Change> changes = new ArrayList<Change>();
         if (botTask != null) {
             String conf = botTask.getConfig();
-            if (conf != null && conf.length() > 0) {
-                if (conf.contains(variableName)) {
-                    changes.add(new ConfigChange(variableName, replacement));
-                }
+            if (conf != null && conf.contains(variableName)) {
+                changes.add(new ConfigChange(variableName, replacement));
             }
         }
         return changes;
@@ -59,16 +57,16 @@ public class BotTaskConfigRenameProvider implements VariableRenameProvider {
         public Change perform(IProgressMonitor pm) throws CoreException {
             if (botTask != null) {
                 String conf = botTask.getConfig();
-                if (conf != null && conf.length() > 0) {
-                    if (conf.contains(currentVariableName)) {
-                        botTask.setConfig(conf.replaceAll(currentVariableName, replacementVariableName));
-                        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                if (conf != null && conf.contains(currentVariableName)) {
+                    botTask.setConfig(conf.replaceAll(currentVariableName, replacementVariableName));
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    if (page != null) {
                         IEditorPart editor = page.findEditor(new FileEditorInput(botTaskInfoFile));
                         if (editor != null) {
                             page.closeEditor(editor, false);
                         }
-                        WorkspaceOperations.saveBotTask(botTaskInfoFile, botTask);
                     }
+                    WorkspaceOperations.saveBotTask(botTaskInfoFile, botTask);
                 }
             }
             return new NullChange("TaskState");

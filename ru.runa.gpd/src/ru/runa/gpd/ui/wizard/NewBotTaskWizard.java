@@ -44,7 +44,7 @@ public class NewBotTaskWizard extends Wizard implements INewWizard {
                         monitor.beginTask("processing", 4);
                         IFolder folder = page.getBotFolder();
                         IFile botTaskFile = folder.getFile(page.getBotTaskName());
-                        botTaskFile = IOUtils.createFileSafely(botTaskFile);
+                        IOUtils.createFile(botTaskFile);
                         monitor.worked(1);
                         BotTaskEditor editor = (BotTaskEditor) IDE.openEditor(getActivePage(), botTaskFile, BotTaskEditor.ID, true);
                         editor.initBotTaskTypeExtended(parameterized);

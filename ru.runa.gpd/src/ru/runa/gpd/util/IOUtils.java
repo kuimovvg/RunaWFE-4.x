@@ -106,13 +106,17 @@ public class IOUtils {
     }
 
     public static IFile createFileSafely(IFile file) throws CoreException {
+        return createFileSafely(file, EMPTY_STREAM);
+    }
+
+    public static IFile createFileSafely(IFile file, InputStream stream) throws CoreException {
         IFolder folder = (IFolder) file.getParent();
         String fileName = file.getName();
         if (file.exists()) {
             throw new CoreException(new Status(IStatus.WARNING, "ru.runa.gpd", 0, "File already exist", null));
         }
         try {
-            file.create(EMPTY_STREAM, true, null);
+            file.create(stream, true, null);
         } catch (CoreException e) {
             // If error caused by many symbols in fileName - decreasing it
             if (fileName.length() < 10) {
@@ -139,11 +143,23 @@ public class IOUtils {
                 }
             }
             if (!file.exists()) {
-                file.create(EMPTY_STREAM, true, null);
+                file.create(stream, true, null);
             }
         }
         file.setCharset(Charsets.UTF_8.name(), null);
         return file;
+    }
+
+    public static void createFile(IFile file) throws CoreException {
+        createFile(file, EMPTY_STREAM);
+    }
+
+    public static void createFile(IFile file, InputStream stream) throws CoreException {
+        if (file.exists()) {
+            throw new CoreException(new Status(IStatus.WARNING, "ru.runa.gpd", 0, "File already exist", null));
+        }
+        file.create(stream, true, null);
+        file.setCharset(Charsets.UTF_8.name(), null);
     }
 
     public static IFile moveFileSafely(IFile file, String fileName) throws CoreException {
@@ -216,7 +232,7 @@ public class IOUtils {
                 while ((n = zis.read(buf, 0, 1024)) > -1) {
                     baos.write(buf, 0, n);
                 }
-                createFileSafely(file);
+                createFile(file, new ByteArrayInputStream(baos.toByteArray()));
             }
             zis.closeEntry();
             entry = zis.getNextEntry();
