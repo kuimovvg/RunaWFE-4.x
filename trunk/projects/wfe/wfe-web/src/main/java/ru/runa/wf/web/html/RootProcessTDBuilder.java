@@ -3,6 +3,7 @@ package ru.runa.wf.web.html;
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.html.TDBuilder;
+import ru.runa.wfe.execution.ProcessHierarchyUtils;
 import ru.runa.wfe.execution.dto.WfProcess;
 
 public class RootProcessTDBuilder implements TDBuilder {
@@ -20,25 +21,20 @@ public class RootProcessTDBuilder implements TDBuilder {
 
     @Override
     public String[] getSeparatedValues(Object object, Env env) {
-        WfProcess pd = (WfProcess) object;
-        return pd.getHierarchySubProcess().split("/");
+        WfProcess process = (WfProcess) object;
+        return ProcessHierarchyUtils.getProcessIdsArray(process.getHierarchySubProcess());
     }
 
     @Override
     public int getSeparatedValuesCount(Object object, Env env) {
-        WfProcess pd = (WfProcess) object;
-        return pd.getHierarchySubProcess().split("/").length;
+        WfProcess process = (WfProcess) object;
+        return ProcessHierarchyUtils.getProcessIdsArray(process.getHierarchySubProcess()).length;
     }
 
     @Override
     public String getValue(Object object, Env env) {
-        WfProcess pd = (WfProcess) object;
-        String[] ids = pd.getHierarchySubProcess().split("/");
-        String result = ids[ids.length - 1];
-        if (result == null) {
-            result = "";
-        }
-        return result;
+        WfProcess process = (WfProcess) object;
+        return ProcessHierarchyUtils.getRootProcessIdString(process.getHierarchySubProcess());
     }
 
 }

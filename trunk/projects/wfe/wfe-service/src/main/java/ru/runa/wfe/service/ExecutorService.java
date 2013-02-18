@@ -37,14 +37,9 @@ public interface ExecutorService {
 
     public <T extends Executor> T create(User user, T executor) throws ExecutorAlreadyExistsException;
 
-    public List<Executor> getAll(User user, BatchPresentation batchPresentation);
-
-    // TODO combine methods to 'getExecutors'
-    public List<Actor> getActors(User user, BatchPresentation batchPresentation);
+    public List<? extends Executor> getExecutors(User user, BatchPresentation batchPresentation);
 
     public int getExecutorsCount(User user, BatchPresentation batchPresentation);
-
-    public List<Executor> getExecutors(User user, List<Long> ids) throws ExecutorDoesNotExistException;
 
     public Actor getActorByCode(User user, Long code) throws ExecutorDoesNotExistException;
 

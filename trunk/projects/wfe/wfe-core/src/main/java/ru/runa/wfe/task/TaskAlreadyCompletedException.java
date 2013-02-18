@@ -10,8 +10,8 @@ import ru.runa.wfe.InternalApplicationException;
 public class TaskAlreadyCompletedException extends InternalApplicationException {
     private static final long serialVersionUID = 1L;
 
-    public TaskAlreadyCompletedException(String message) {
-        super(message);
+    public TaskAlreadyCompletedException(String taskName) {
+        super(taskName);
     }
 
 }

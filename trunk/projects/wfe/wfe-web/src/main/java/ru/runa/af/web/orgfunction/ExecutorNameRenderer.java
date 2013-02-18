@@ -33,7 +33,7 @@ public class ExecutorNameRenderer extends ExecutorRendererBase {
         ExecutorService executorService = Delegates.getExecutorService();
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
-        return executorService.getAll(user, batchPresentation);
+        return executorService.getExecutors(user, batchPresentation);
     }
 
     @Override

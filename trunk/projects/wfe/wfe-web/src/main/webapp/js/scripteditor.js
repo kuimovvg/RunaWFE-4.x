@@ -20,6 +20,9 @@ function editScript(fileName, saveButtonText, executeButtonText, cancelButtonTex
 		width: 700,
 		overlay: {
 			backgroundColor: "#000", opacity: 0.5
+		},
+	    close: function(event, ui) {
+	    	closeEditor();
 		}  
 	});
 	$("#fileName").val(fileName);

@@ -28,7 +28,6 @@ import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
-import ru.runa.wfe.task.TaskAlreadyCompletedException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.TasklistBuilder;
 import ru.runa.wfe.task.dto.WfTask;
@@ -38,14 +37,12 @@ import ru.runa.wfe.user.ActorPermission;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
-import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.dto.WfVariables;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Task logic.
@@ -62,22 +59,22 @@ public class TaskLogic extends WFCommonLogic {
     @Autowired
     private AssignmentHelper assignmentHelper;
 
-    public void completeTask(User user, Long taskId, List<WfVariable> variables) throws TaskDoesNotExistException, ValidationException {
+    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException {
         Task task = taskDAO.getNotNull(taskId);
-        if (!task.isActive()) {
-            throw new TaskAlreadyCompletedException(task.toString());
-        }
+        task.checkNotCompleted();
         try {
-            Map<String, Object> variablesMap = WfVariables.toMap(variables);
+            if (variables == null) {
+                variables = Maps.newHashMap();
+            }
             ProcessDefinition processDefinition = getDefinition(task);
             ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
-            String transitionName = (String) variablesMap.remove(WfProcess.SELECTED_TRANSITION_KEY);
+            String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
             checkCanParticipate(user, task);
             checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
             assignmentHelper.reassignTask(executionContext, task, user.getActor(), true);
             validateVariables(processDefinition, task.getNodeId(),
-                    new MapDelegableVariableProvider(variablesMap, executionContext.getVariableProvider()));
-            executionContext.setVariables(variablesMap);
+                    new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
+            executionContext.setVariables(variables);
             Transition transition = null;
             if (transitionName != null) {
                 transition = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitionNotNull(transitionName);
@@ -168,14 +165,16 @@ public class TaskLogic extends WFCommonLogic {
         assignmentHelper.assignSwimlane(new ExecutionContext(processDefinition, process), swimlane, Lists.newArrayList(executor));
     }
 
-    public void assignTask(User user, Long taskId, Executor previousOwner, Actor actor) throws TaskAlreadyAcceptedException {
+    public void assignTask(User user, Long taskId, Executor previousOwner, Executor newExecutor) throws TaskAlreadyAcceptedException {
         // check assigned executor for the task
         Task task = taskDAO.getNotNull(taskId);
-        if (!task.isActive() || !Objects.equal(previousOwner, task.getExecutor())) {
+        task.checkNotCompleted();
+        if (!Objects.equal(previousOwner, task.getExecutor())) {
             throw new TaskAlreadyAcceptedException(task.getName());
         }
+        ;
         ProcessDefinition processDefinition = getDefinition(task);
-        assignmentHelper.reassignTask(new ExecutionContext(processDefinition, task), task, actor, false);
+        assignmentHelper.reassignTask(new ExecutionContext(processDefinition, task), task, newExecutor, false);
     }
 
 }

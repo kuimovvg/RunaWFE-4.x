@@ -21,6 +21,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
+
 /**
  * Converts java properties from/to alfresco {@link NamedValue}.
  * 
@@ -92,24 +94,12 @@ public class WSObjectAccessor {
     }
 
     private Object alfrescoToJava(String value, Class<?> fieldClass) throws Exception {
-        if (value == null) {
-            return null;
-        }
-        if (fieldClass == Long.class || fieldClass == long.class) {
-            return Long.parseLong(value);
-        }
-        if (fieldClass == Integer.class || fieldClass == int.class) {
-            return Integer.parseInt(value);
-        }
-        if (fieldClass == Boolean.class || fieldClass == boolean.class) {
-            return Boolean.parseBoolean(value);
-        }
-        if (fieldClass == Calendar.class) {
+        if (value != null && fieldClass == Calendar.class) {
             Calendar c = Calendar.getInstance();
             c.setTime(ISO8601DateFormat.parse(value));
             return c;
         }
-        return value;
+        return TypeConversionUtil.convertTo(value, fieldClass);
     }
 
     public NamedValue[] getAlfrescoProperties(AlfTypeDesc typeDesc, boolean all, boolean includeName) throws Exception {

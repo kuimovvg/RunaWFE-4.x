@@ -42,7 +42,7 @@ public class LongVariable extends Variable<Long> {
 
     @Column(name = "LONGVALUE")
     @Override
-    protected Long getStorableValue() {
+    public Long getStorableValue() {
         return object;
     }
 

@@ -32,9 +32,9 @@ import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
+import ru.runa.wfe.task.TaskAlreadyCompletedException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
-import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.impl.ValidationException;
@@ -48,8 +48,10 @@ import ru.runa.wfe.var.dto.WfVariable;
  */
 public interface ExecutionService {
 
-    public Long startProcess(User user, String definitionName, List<WfVariable> variables) throws DefinitionDoesNotExistException,
+    public Long startProcess(User user, String definitionName, Map<String, Object> variables) throws DefinitionDoesNotExistException,
             ValidationException;
+
+    public Long startProcessWS(User user, String definitionName, List<WfVariable> variables) throws DefinitionDoesNotExistException;
 
     public int getAllProcessesCount(User user, BatchPresentation batchPresentation);
 
@@ -67,9 +69,23 @@ public interface ExecutionService {
 
     public List<WfTask> getActiveTasks(User user, Long processId) throws ProcessDoesNotExistException;
 
-    public void assignTask(User user, Long taskId, Executor previousOwner, Actor actor) throws TaskAlreadyAcceptedException;
+    /**
+     * Reassigns task to another executor.
+     * 
+     * @param previousOwner
+     *            old executor (check for multi-threaded change)
+     * @param newOwner
+     *            new executor
+     * @throws TaskAlreadyAcceptedException
+     *             if previous owner differs from provided
+     */
+    public void assignTask(User user, Long taskId, Executor previousOwner, Executor newOwner) throws TaskAlreadyAcceptedException,
+            TaskAlreadyCompletedException;
 
-    public void completeTask(User user, Long taskId, List<WfVariable> variables) throws TaskDoesNotExistException, ValidationException;
+    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException,
+            TaskAlreadyCompletedException;
+
+    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables) throws TaskDoesNotExistException, TaskAlreadyCompletedException;
 
     public List<WfSwimlane> getSwimlanes(User user, Long processId) throws ProcessDoesNotExistException;
 
@@ -81,7 +97,9 @@ public interface ExecutionService {
 
     public Map<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName);
 
-    public void updateVariables(User user, Long processId, List<WfVariable> variables) throws ProcessDoesNotExistException;
+    public void updateVariables(User user, Long processId, Map<String, Object> variables) throws ProcessDoesNotExistException;
+
+    public void updateVariablesWS(User user, Long processId, List<WfVariable> variables) throws ProcessDoesNotExistException;
 
     public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId) throws ProcessDoesNotExistException;
 
@@ -94,6 +112,8 @@ public interface ExecutionService {
     public void markTaskOpened(User user, Long taskId) throws TaskDoesNotExistException;
 
     public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter);
+
+    public byte[] getProcessLogValue(User user, Long logId);
 
     public void removeProcesses(User user, Date startDate, Date finishDate, String name, int version, Long id, Long idTill, boolean onlyFinished,
             boolean dateInterval) throws ProcessDoesNotExistException, ParentProcessExistsException;

@@ -22,7 +22,6 @@ import java.util.List;
 import ru.runa.af.web.action.AddExecutorToGroupsAction;
 import ru.runa.common.web.Messages;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.GroupPermission;
@@ -48,14 +47,12 @@ public class ListNotExecutorGroupsFormTag extends ListExecutorsBaseFormTag {
 
     @Override
     protected List<? extends Executor> getExecutors() {
-        ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getExecutorGroups(getUser(), getExecutor(), getBatchPresentation(), true);
+        return Delegates.getExecutorService().getExecutorGroups(getUser(), getExecutor(), getBatchPresentation(), true);
     }
 
     @Override
     protected int getExecutorsCount() {
-        ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getExecutorGroupsCount(getUser(), getExecutor(), getBatchPresentation(), true);
+        return Delegates.getExecutorService().getExecutorGroupsCount(getUser(), getExecutor(), getBatchPresentation(), true);
     }
 
     @Override

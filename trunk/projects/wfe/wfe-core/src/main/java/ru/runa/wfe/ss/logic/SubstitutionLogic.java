@@ -98,20 +98,6 @@ public class SubstitutionLogic extends CommonLogic {
         return substitutionDAO.getNotNull(id);
     }
 
-    // public List<Substitution> getAllSubstitutions(User user) {
-    // List<Actor> actors =
-    // executorDAO.getAllActors(BatchPresentationFactory.ACTORS.createNonPaged());
-    // // this is workaround for n*1000 records
-    // try {
-    // checkPermissionsOnExecutors(user, actors, Permission.READ);
-    // } catch (AuthorizationException e) {
-    // throw e;
-    // } catch (Exception e) {
-    // LogFactory.getLog(getClass()).error("", e);
-    // }
-    // return substitutionDAO.getAll();
-    // }
-
     public void update(User user, Substitution substitution) {
         Actor actor = executorDAO.getActor(substitution.getActorId());
         checkPermissionsOnExecutor(user, actor, ExecutorPermission.UPDATE);
@@ -140,13 +126,13 @@ public class SubstitutionLogic extends CommonLogic {
             substitutionDAO.delete(substitution.getId());
             substitutionDAO.delete(substitutionWithNewPosition.getId());
             substitutionDAO.flushPendingChanges();
-            int pos0 = substitutionWithNewPosition.getPosition();
             substitutionWithNewPosition.setId(null);
-            substitutionWithNewPosition.setPosition(substitution.getPosition());
             substitution.setId(null);
-            substitution.setPosition(pos0);
-            update(user, substitutionWithNewPosition);
-            update(user, substitutionWithNewPosition);
+            substitutionWithNewPosition.setPosition(oldPosition);
+            log.info("Creating " + substitutionWithNewPosition);
+            substitutionDAO.create(substitutionWithNewPosition);
+            log.info("Creating " + substitution);
+            substitutionDAO.create(substitution);
         }
     }
 

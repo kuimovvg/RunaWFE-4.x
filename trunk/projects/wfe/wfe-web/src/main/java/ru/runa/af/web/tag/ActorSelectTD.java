@@ -75,7 +75,7 @@ public class ActorSelectTD extends TD {
         select.setName(name);
         boolean exist = false;
         ExecutorService executorService = Delegates.getExecutorService();
-        List<Executor> executors = executorService.getAll(user, BatchPresentationFactory.EXECUTORS.createNonPaged());
+        List<Executor> executors = (List<Executor>) executorService.getExecutors(user, BatchPresentationFactory.EXECUTORS.createNonPaged());
         ArrayList<Option> options = new ArrayList<Option>();
         for (Executor executor : executors) {
             if (!(executor instanceof Actor) && actorOnly) {

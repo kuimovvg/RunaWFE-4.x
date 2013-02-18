@@ -31,14 +31,15 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.wf.web.form.VariableForm;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.converter.SerializableToByteArrayConverter;
 
 /**
  * Created on 27.09.2005
  * 
- * @struts:action path="/variableDownloader" name="variableForm" validate="true"
+ * @struts:action path="/variableDownloader" name="variableForm"
+ *                validate="false"
  */
 public class VariableDownloaderAction extends ActionBase {
     public static final String ACTION_PATH = "/variableDownloader";
@@ -65,10 +66,12 @@ public class VariableDownloaderAction extends ActionBase {
 
     private FileVariable getVariable(ActionForm actionForm, HttpServletRequest request) {
         VariableForm form = (VariableForm) actionForm;
-        ExecutionService executionService = Delegates.getExecutionService();
-        Object object = executionService.getVariable(getLoggedUser(request), form.getId(), form.getVariableName()).getValue();
-        if (object == null) {
-            return null;
+        Object object;
+        if (form.getLogId() != null) {
+            byte[] bytes = Delegates.getExecutionService().getProcessLogValue(getLoggedUser(request), form.getLogId());
+            object = new SerializableToByteArrayConverter().revert(bytes);
+        } else {
+            object = Delegates.getExecutionService().getVariable(getLoggedUser(request), form.getId(), form.getVariableName()).getValue();
         }
         if (object instanceof FileVariable) {
             return (FileVariable) object;
@@ -81,7 +84,7 @@ public class VariableDownloaderAction extends ActionBase {
             Map<?, FileVariable> map = (Map) object;
             return map.get(form.getMapKey());
         }
-        throw new IllegalArgumentException("Unexpected variable type: " + object.getClass());
+        throw new IllegalArgumentException("Unexpected variable type: " + object);
     }
 
 }

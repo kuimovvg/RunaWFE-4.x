@@ -45,7 +45,7 @@ public class DateVariable extends Variable<Date> {
 
     @Column(name = "DATEVALUE")
     @Override
-    protected Date getStorableValue() {
+    public Date getStorableValue() {
         return object;
     }
 

@@ -6,7 +6,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.TypeConversionUtil;
 
 import com.google.common.base.Throwables;
 
@@ -63,10 +62,8 @@ public class JavaObjectAccessor {
                     log.error("Unable to deserialize property to field " + propertyDescriptor.getName() + ": array or list expected.");
                 }
             } else {
-                if (value instanceof Date) {
-                    value = CalendarUtil.dateToCalendar((Date) value);
-                }
-                setTypedProperty(fieldName, value);
+                Object v = TypeConversionUtil.convertTo(value, propertyDescriptor.getPropertyType());
+                setTypedProperty(fieldName, v);
             }
         } catch (Exception e) {
             throw Throwables.propagate(e);

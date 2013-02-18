@@ -15,7 +15,7 @@ public class GroovyExpressionValidator extends ValidatorSupport {
     }
 
     @Override
-    public void validate() throws Exception {
+    public void validate() {
         try {
             GroovyScriptExecutor scriptExecutor = new GroovyScriptExecutor();
             Boolean valid = scriptExecutor.evaluateScript(expression, validatorContext.getVariableProvider());

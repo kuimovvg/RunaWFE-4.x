@@ -97,7 +97,6 @@ public abstract class EJB3Delegate {
                 }
                 String customProviderUrl = getCustomProviderUrl();
                 if (!Strings.isNullOrEmpty(customProviderUrl)) {
-                    // TODO check format without protocol (remote://, jnp://)
                     env.put(Context.PROVIDER_URL, customProviderUrl);
                 }
                 initialContext = new InitialContext(env);

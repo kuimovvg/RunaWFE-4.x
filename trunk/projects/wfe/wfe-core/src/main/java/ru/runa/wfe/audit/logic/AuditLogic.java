@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
@@ -74,6 +75,13 @@ public class AuditLogic extends CommonLogic {
             }
         }
         return result;
+    }
+
+    public byte[] getProcessLogValue(User user, Long logId) {
+        // TODO checkPermissionAllowed(user, identifiable, permission);
+        Preconditions.checkNotNull(logId, "logId");
+        ProcessLog processLog = processLogDAO.getNotNull(logId);
+        return processLog.getBytes();
     }
 
     /**

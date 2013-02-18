@@ -95,4 +95,10 @@ public class WFRunaHibernateInterceptor extends EmptyInterceptor {
         onChanges(entity, currentState, previousState, propertyNames, types);
         return isModify;
     }
+
+    @Override
+    public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+        // TODO instead of OracleCommons
+        return super.onLoad(entity, id, state, propertyNames, types);
+    }
 }

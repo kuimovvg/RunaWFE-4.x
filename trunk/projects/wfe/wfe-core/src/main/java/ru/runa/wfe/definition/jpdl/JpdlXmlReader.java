@@ -9,6 +9,7 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.definition.logic.SwimlaneUtils;
@@ -38,8 +39,8 @@ import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.lang.VariableContainerNode;
 import ru.runa.wfe.lang.WaitState;
-import ru.runa.wfe.lang.jpdl.JpdlEndTokenNode;
 import ru.runa.wfe.lang.jpdl.Join;
+import ru.runa.wfe.lang.jpdl.JpdlEndTokenNode;
 import ru.runa.wfe.var.VariableMapping;
 
 import com.google.common.base.Strings;
@@ -304,11 +305,15 @@ public class JpdlXmlReader {
 
     private void readNodeTimers(ProcessDefinition processDefinition, Element parentElement, GraphElement node) {
         List<Element> elements = parentElement.elements(TIMER_NODE);
-        // int timerNumber = 1;
+        int timerNumber = 1;
         for (Element element : elements) {
-            // TODO 1 timer for compatibility timer names with 3.x
-            // String name = node.getNodeId() + "/timer-" + (timerNumber++);
-            String name = element.attributeValue(NAME_ATTR, node.getNodeId());
+            // 1 timer for compatibility timer names with 3.x
+            String name;
+            if (SystemUtils.isV3CompatibilityMode()) {
+                name = element.attributeValue(NAME_ATTR, node.getNodeId());
+            } else {
+                name = node.getNodeId() + "/timer-" + (timerNumber++);
+            }
             CreateTimerAction createTimerAction = ApplicationContextFactory.createAutowiredBean(CreateTimerAction.class);
             createTimerAction.setName(name);
             createTimerAction.setTransitionName(element.attributeValue(TRANSITION_ATTR));

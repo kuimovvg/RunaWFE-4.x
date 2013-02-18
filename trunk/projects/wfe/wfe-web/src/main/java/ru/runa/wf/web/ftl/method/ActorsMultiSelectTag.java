@@ -1,5 +1,6 @@
 package ru.runa.wf.web.ftl.method;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import ru.runa.wfe.presentation.filter.StringFilterCriteria;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 
@@ -101,11 +101,7 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
             // thid method used instead of getActors due to lack paging in
             // that
             // method
-            for (Executor executor : executorService.getAll(user, batchPresentation)) {
-                if (executor instanceof Actor) {
-                    actors.add((Actor) executor);
-                }
-            }
+            actors.addAll((Collection<? extends Actor>) executorService.getExecutors(user, batchPresentation));
         }
         return actors;
     }

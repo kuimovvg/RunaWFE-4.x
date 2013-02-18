@@ -32,10 +32,12 @@ import javax.jws.soap.SOAPBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.audit.logic.AuditLogic;
+import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
@@ -46,15 +48,19 @@ import ru.runa.wfe.service.decl.ExecutionServiceLocal;
 import ru.runa.wfe.service.decl.ExecutionServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
+import ru.runa.wfe.task.TaskAlreadyCompletedException;
+import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.task.logic.TaskLogic;
-import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.converter.SerializableToByteArrayConverter;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.logic.VariableLogic;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 
 @Stateless(name = "ExecutionServiceBean")
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -71,8 +77,9 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Autowired
     private AuditLogic auditLogic;
 
+    @WebMethod(exclude = true)
     @Override
-    public Long startProcess(User user, String definitionName, List<WfVariable> variables) {
+    public Long startProcess(User user, String definitionName, Map<String, Object> variables) {
         Preconditions.checkNotNull(user);
         return executionLogic.startProcess(user, definitionName, variables);
     }
@@ -141,14 +148,16 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         return variableLogic.getVariable(user, processId, variableName);
     }
 
+    @WebMethod(exclude = true)
     @Override
-    public void updateVariables(User user, Long processId, List<WfVariable> variables) {
+    public void updateVariables(User user, Long processId, Map<String, Object> variables) {
         Preconditions.checkNotNull(user);
         variableLogic.updateVariables(user, processId, variables);
     }
 
+    @WebMethod(exclude = true)
     @Override
-    public void completeTask(User user, Long taskId, List<WfVariable> variables) {
+    public void completeTask(User user, Long taskId, Map<String, Object> variables) {
         Preconditions.checkNotNull(user);
         taskLogic.completeTask(user, taskId, variables);
     }
@@ -202,15 +211,20 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
-    public void assignTask(User user, Long taskId, Executor previousOwner, Actor actor) {
+    public void assignTask(User user, Long taskId, Executor previousOwner, Executor newExecutor) {
         Preconditions.checkNotNull(user);
-        taskLogic.assignTask(user, taskId, previousOwner, actor);
+        taskLogic.assignTask(user, taskId, previousOwner, newExecutor);
     }
 
     @Override
     public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter) {
         Preconditions.checkNotNull(user);
         return auditLogic.getProcessLogs(user, filter);
+    }
+
+    @Override
+    public byte[] getProcessLogValue(User user, Long logId) {
+        return auditLogic.getProcessLogValue(user, logId);
     }
 
     @Override
@@ -244,4 +258,44 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         return auditLogic.getSystemLogsCount(user, batchPresentation);
     }
 
+    // workaround for web services
+    private Map<String, Object> toVariablesMap(List<WfVariable> variables) {
+        Map<String, Object> map = Maps.newHashMap();
+        if (variables != null) {
+            for (WfVariable variable : variables) {
+                Preconditions.checkNotNull(variable.getDefinition(), "variable.definition");
+                Object value = variable.getValue();
+                if (variable.getDefinition().getFormatClassName() != null) {
+                    try {
+                        if (value instanceof String) {
+                            value = variable.getFormatNotNull().parse(new String[] { (String) value });
+                        } else if (value instanceof byte[]) {
+                            value = new SerializableToByteArrayConverter().revert(value);
+                        } else {
+                            throw new InternalApplicationException("Expected value of type String or byte[] when formatClassName is set");
+                        }
+                    } catch (Exception e) {
+                        throw Throwables.propagate(e);
+                    }
+                }
+                map.put(variable.getDefinition().getName(), value);
+            }
+        }
+        return map;
+    }
+
+    @Override
+    public Long startProcessWS(User user, String definitionName, List<WfVariable> variables) {
+        return startProcess(user, definitionName, toVariablesMap(variables));
+    }
+
+    @Override
+    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables) throws TaskDoesNotExistException, TaskAlreadyCompletedException {
+        completeTask(user, taskId, toVariablesMap(variables));
+    }
+
+    @Override
+    public void updateVariablesWS(User user, Long processId, List<WfVariable> variables) throws ProcessDoesNotExistException {
+        updateVariables(user, processId, toVariablesMap(variables));
+    }
 }

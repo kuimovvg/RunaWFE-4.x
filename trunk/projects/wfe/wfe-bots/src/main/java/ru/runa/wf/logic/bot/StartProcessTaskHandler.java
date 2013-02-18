@@ -42,9 +42,7 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
-import ru.runa.wfe.var.dto.WfVariable;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -68,7 +66,7 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
         ExecutionService executionService = Delegates.getExecutionService();
         Map<String, Object> outputVariables = Maps.newHashMap();
 
-        List<WfVariable> variables = Lists.newArrayList();
+        Map<String, Object> variables = Maps.newHashMap();
         for (StartProcessTask startProcessTask : startProcessTasks) {
             String processName = startProcessTask.getName();
             String startedProcessValueName = startProcessTask.getStartedProcessIdValueName();
@@ -83,7 +81,7 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
                 if (DatabaseTask.CURRENT_DATE_VARIABLE_NAME.equals(from)) {
                     value = new Date();
                 }
-                variables.add(new WfVariable(to, value));
+                variables.put(to, value);
             }
 
             // Start process

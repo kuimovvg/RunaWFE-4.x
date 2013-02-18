@@ -631,7 +631,7 @@ public class AdminScriptRunner {
         if (replicationDescr.isEmpty()) {
             return;
         }
-        List<Actor> allActors = executorLogic.getActors(user, BatchPresentationFactory.ACTORS.createNonPaged());
+        List<Actor> allActors = (List<Actor>) executorLogic.getExecutors(user, BatchPresentationFactory.ACTORS.createNonPaged());
         List<Long> actorsIds = Lists.newArrayListWithExpectedSize(allActors.size());
         for (Actor actor : allActors) {
             actorsIds.add(actor.getId());

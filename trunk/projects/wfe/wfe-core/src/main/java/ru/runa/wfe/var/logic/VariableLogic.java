@@ -28,12 +28,10 @@ import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.dto.WfVariables;
 
 import com.google.common.collect.Lists;
 
@@ -52,8 +50,13 @@ public class VariableLogic extends WFCommonLogic {
         checkPermissionAllowed(user, process, ProcessPermission.READ);
         Map<String, Object> variables = variableDAO.getAll(process);
         for (VariableDefinition variableDefinition : processDefinition.getVariables()) {
-            Object value = variables.get(variableDefinition.getName());
-            result.add(new WfVariable(variableDefinition, value));
+            Object value = variables.remove(variableDefinition.getName());
+            if (value != null) {
+                result.add(new WfVariable(variableDefinition, value));
+            }
+        }
+        for (Map.Entry<String, Object> entry : variables.entrySet()) {
+            result.add(new WfVariable(entry.getKey(), entry.getValue()));
         }
         return result;
     }
@@ -61,16 +64,6 @@ public class VariableLogic extends WFCommonLogic {
     public WfVariable getVariable(User user, Long processId, String variableName) throws ProcessDoesNotExistException {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
-        if (!processDefinition.isVariablePublic(variableName)) {
-            // TODO checkReadToVariablesAllowed(user, task);
-        }
-        VariableDefinition variableDefinition = processDefinition.getVariable(variableName);
-        if (variableDefinition == null) {
-            SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlane(variableName);
-            if (swimlaneDefinition != null) {
-                variableDefinition = swimlaneDefinition.toVariableDefinition();
-            }
-        }
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         return executionContext.getVariableProvider().getVariable(variableName);
     }
@@ -90,12 +83,12 @@ public class VariableLogic extends WFCommonLogic {
         return processDAO.getVariableValueFromProcesses(processIds, variableName);
     }
 
-    public void updateVariables(User user, Long processId, List<WfVariable> variables) {
+    public void updateVariables(User user, Long processId, Map<String, Object> variables) {
         Process process = processDAO.getNotNull(processId);
         checkPermissionAllowed(user, process, ProcessPermission.UPDATE_PERMISSIONS);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
-        executionContext.setVariables(WfVariables.toMap(variables));
+        executionContext.setVariables(variables);
     }
 
 }

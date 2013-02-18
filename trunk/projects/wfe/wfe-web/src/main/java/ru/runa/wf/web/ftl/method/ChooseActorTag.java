@@ -47,7 +47,7 @@ public class ChooseActorTag extends FreemarkerTag {
             int[] sortIds = { 1 };
             boolean[] sortOrder = { true };
             batchPresentation.setFieldsToSort(sortIds, sortOrder);
-            return Delegates.getExecutorService().getActors(user, batchPresentation);
+            return Delegates.getExecutorService().getExecutors(user, batchPresentation);
         } else {
             throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
         }

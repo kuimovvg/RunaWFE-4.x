@@ -44,7 +44,7 @@ public class StringVariable extends Variable<String> {
 
     @Column(name = "STRINGVALUE", length = 1024)
     @Override
-    protected String getStorableValue() {
+    public String getStorableValue() {
         return object;
     }
 

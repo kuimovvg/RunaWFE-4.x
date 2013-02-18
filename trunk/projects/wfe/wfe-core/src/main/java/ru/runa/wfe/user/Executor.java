@@ -31,7 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -39,6 +39,7 @@ import org.hibernate.annotations.PolymorphismType;
 
 import ru.runa.wfe.commons.OracleCommons;
 import ru.runa.wfe.security.IdentifiableBase;
+import ru.runa.wfe.user.jaxb.ExecutorAdapter;
 
 import com.google.common.base.Objects;
 
@@ -57,7 +58,7 @@ import com.google.common.base.Objects;
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING, length = 1)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({ Actor.class, Group.class, TemporaryGroup.class, EscalationGroup.class })
+@XmlJavaTypeAdapter(ExecutorAdapter.class)
 public abstract class Executor extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 
