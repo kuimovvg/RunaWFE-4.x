@@ -114,6 +114,10 @@ public abstract class GenericDAO<T extends Object> extends CommonDAO {
         return getHibernateTemplate().merge(entity);
     }
 
+    public void evict(Object object) {
+        getHibernateTemplate().evict(object);
+    }
+
     /**
      * Flush all pending saves, updates and deletes to the database.
      */

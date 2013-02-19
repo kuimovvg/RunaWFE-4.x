@@ -46,7 +46,7 @@ public class TaskNodeFigure extends AbstractFigure {
     @Override
     public void fill(Graphics2D graphics) {
         Rectangle rect = getTextBoundsRectangle();
-        if (minimized) {
+        if (minimized && !graphiti) {
             graphics.fillRect(rect.x, rect.y, rect.width, rect.height);
         } else {
             graphics.fillRoundRect(rect.x, rect.y, rect.width, rect.height, 20, 20);
@@ -59,12 +59,12 @@ public class TaskNodeFigure extends AbstractFigure {
             graphics.setColor(BORDER_COLOR);
         }
         Rectangle rect = getTextBoundsRectangle();
-        if (minimized) {
+        if (minimized && !graphiti) {
             graphics.drawRect(rect.x, rect.y, rect.width, rect.height);
         } else {
             graphics.drawRoundRect(rect.x, rect.y, rect.width, rect.height, 20, 20);
         }
-        if (withTimer && !minimized) {
+        if (withTimer && !minimized && !graphiti) {
             // Clean area for timer
             Color orig = graphics.getColor();
             graphics.setColor(DrawProperties.getBackgroundColor());
@@ -82,7 +82,7 @@ public class TaskNodeFigure extends AbstractFigure {
             graphics.drawLine(coords[0] + 3 * DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE / 2, coords[0] + 3
                     * DrawProperties.GRID_SIZE / 2 + 5, coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE / 2 - 5);
         }
-        if (!minimized) {
+        if (!minimized && !graphiti) {
             drawActions(graphics);
             if (!DrawProperties.useEdgingOnly() && DrawProperties.showSwimlaneInBPMN()) {
                 drawTextInfo(graphics, 1 + DrawProperties.GRID_SIZE / 2);
@@ -125,8 +125,12 @@ public class TaskNodeFigure extends AbstractFigure {
     @Override
     public Rectangle getRectangle() {
         if (minimized) {
-            return new Rectangle(coords[0] + DrawProperties.GRID_SIZE / 2, coords[1] + DrawProperties.GRID_SIZE / 2, coords[2]
-                    - DrawProperties.GRID_SIZE, coords[3] - DrawProperties.GRID_SIZE);
+            if (graphiti) {
+                return new Rectangle(coords[0], coords[1], 3 * DrawProperties.GRID_SIZE, 3 * DrawProperties.GRID_SIZE);
+            } else {
+                return new Rectangle(coords[0] + DrawProperties.GRID_SIZE / 2, coords[1] + DrawProperties.GRID_SIZE / 2, coords[2]
+                        - DrawProperties.GRID_SIZE, coords[3] - DrawProperties.GRID_SIZE);
+            }
         }
         if (graphiti) {
             return super.getRectangle();

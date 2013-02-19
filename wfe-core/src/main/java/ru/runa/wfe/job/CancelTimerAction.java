@@ -34,7 +34,7 @@ public class CancelTimerAction extends Action {
     private JobDAO jobDAO;
 
     @Override
-    public void execute(ExecutionContext executionContext) throws Exception {
+    public void execute(ExecutionContext executionContext) {
         jobDAO.deleteTimersByName(getName(), executionContext.getToken());
     }
 

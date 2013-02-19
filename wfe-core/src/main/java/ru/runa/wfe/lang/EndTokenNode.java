@@ -39,7 +39,7 @@ public class EndTokenNode extends Node {
 
     @Override
     public void execute(ExecutionContext executionContext) {
-        executionContext.getToken().end(executionContext);
+        executionContext.getToken().end(executionContext, null);
     }
 
     @Override

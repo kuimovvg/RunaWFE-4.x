@@ -20,6 +20,7 @@ import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.task.Task;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 
 @Entity
@@ -64,8 +65,8 @@ public class Timer extends Job {
                 for (Action timerAction : event.getActions()) {
                     // in case of multiple timers on node we discriminate
                     // actions by name
-                    if (getName().equals(timerAction.getName())) {
-                        executionContext.getNode().executeAction(timerAction, executionContext);
+                    if (Objects.equal(getName(), timerAction.getName())) {
+                        timerAction.execute(executionContext);
                     }
                 }
             }

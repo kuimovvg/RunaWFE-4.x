@@ -87,7 +87,7 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
                     formattedValue = variableFormat.format(value);
                 }
             } catch (Exception e) {
-                log.warn("Unable to format value " + variable + " in " + processId, e);
+                log.debug("Unable to format value " + variable + " in " + processId, e);
                 if (value.getClass().isArray()) {
                     formattedValue = Arrays.toString((Object[]) value);
                 } else {

@@ -24,16 +24,17 @@ package ru.runa.wfe.lang;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.audit.ActionLog;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 
 public class Action extends GraphElement {
     private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(Action.class);
-    private boolean propagationAllowed = true;
     private Delegation delegation;
     private Event event;
     private GraphElement parent;
@@ -60,24 +61,17 @@ public class Action extends GraphElement {
         Preconditions.checkNotNull(parent, "parent");
     }
 
-    public void execute(ExecutionContext executionContext) throws Exception {
-        ActionHandler actionHandler = delegation.getInstance();
+    public void execute(ExecutionContext executionContext) {
         try {
+            executionContext.addLog(new ActionLog(this));
+            ActionHandler actionHandler = delegation.getInstance();
             log.info("Executing ActionHandler " + this); // TODO debug
             actionHandler.execute(executionContext);
             log.info("ActionHandler finished");
         } catch (Exception e) {
             log.error("ActionHandler failed " + this);
-            throw e;
+            throw Throwables.propagate(e);
         }
-    }
-
-    public boolean isPropagationAllowed() {
-        return propagationAllowed;
-    }
-
-    public void setPropagationAllowed(boolean propagationAllowed) {
-        this.propagationAllowed = propagationAllowed;
     }
 
     public Event getEvent() {
