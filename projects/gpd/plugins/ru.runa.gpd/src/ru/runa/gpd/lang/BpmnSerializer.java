@@ -22,6 +22,7 @@ import ru.runa.gpd.lang.model.ParallelGateway;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.ReceiveMessageNode;
 import ru.runa.gpd.lang.model.SendMessageNode;
+import ru.runa.gpd.lang.model.ServiceTask;
 import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
@@ -57,7 +58,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String TEXT_ANNOTATION = "textAnnotation";
     private static final String TEXT = "text";
     private static final String END_TOKEN_STATE = "endPoint";
-    private static final String IO_SPECIFICATION = "ioSpecification";
+    private static final String SERVICE_TASK = "serviceTask";
     private static final String DATA_INPUT = "dataInput";
     private static final String DATA_OUTPUT = "dataOutput";
     private static final String INPUT_SET = "inputSet";
@@ -199,6 +200,10 @@ public class BpmnSerializer extends ProcessSerializer {
             Element intermediateEventElement = process.addElement(INTERMEDIATE_EVENT);
             writeTimer(intermediateEventElement, timer);
             writeTransitions(process, timer);
+        }
+        List<ServiceTask> serviceTasks = definition.getChildren(ServiceTask.class);
+        for (ServiceTask serviceTask : serviceTasks) {
+            writeNode(process, serviceTask);
         }
         List<ParallelGateway> parallelGateways = definition.getChildren(ParallelGateway.class);
         for (ParallelGateway gateway : parallelGateways) {
@@ -356,9 +361,11 @@ public class BpmnSerializer extends ProcessSerializer {
             }
         }
         for (Map.Entry<String, ? extends Object> entry : properties.entrySet()) {
-            Element propertyElement = extensionsElement.addElement(RUNA_PREFIX + ":" + PROPERTY);
-            propertyElement.addAttribute(NAME, entry.getKey());
-            propertyElement.addAttribute(VALUE, String.valueOf(entry.getValue()));
+            if (entry.getValue() != null) {
+                Element propertyElement = extensionsElement.addElement(RUNA_PREFIX + ":" + PROPERTY);
+                propertyElement.addAttribute(NAME, entry.getKey());
+                propertyElement.addAttribute(VALUE, entry.getValue().toString());
+            }
         }
         return extensionsElement;
     }
@@ -578,6 +585,10 @@ public class BpmnSerializer extends ProcessSerializer {
             //                        }
             //                    }
             //                }
+        }
+        List<Element> serviceTaskElements = process.elements(SERVICE_TASK);
+        for (Element node : serviceTaskElements) {
+            create(node, definition);
         }
         List<Element> parallelGatewayElements = process.elements(PARALLEL_GATEWAY);
         for (Element node : parallelGatewayElements) {

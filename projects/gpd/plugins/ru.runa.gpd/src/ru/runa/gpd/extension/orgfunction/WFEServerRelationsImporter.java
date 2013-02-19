@@ -67,8 +67,7 @@ public class WFEServerRelationsImporter extends DataImporter {
     @Override
     protected void loadRemoteData(IProgressMonitor monitor) throws Exception {
         RelationService executorService = WFEServerConnector.getInstance().getService("RelationServiceBean");
-        BatchPresentation batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
-        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        BatchPresentation batchPresentation = BatchPresentationFactory.RELATIONS.createNonPaged();
         List<Relation> loaded = executorService.getRelations(WFEServerConnector.getInstance().getUser(), batchPresentation);
         for (Relation relation : loaded) {
             relations.add(relation.getName());
