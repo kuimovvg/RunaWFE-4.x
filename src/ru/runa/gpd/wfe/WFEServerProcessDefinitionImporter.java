@@ -9,7 +9,6 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.DefinitionService;
 
@@ -49,8 +48,7 @@ public class WFEServerProcessDefinitionImporter extends DataImporter {
     @Override
     protected void loadRemoteData(IProgressMonitor monitor) throws Exception {
         DefinitionService definitionService = getDefinitionService();
-        BatchPresentation batch = BatchPresentationFactory.DEFINITIONS.createDefault();
-        batch.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        BatchPresentation batch = BatchPresentationFactory.DEFINITIONS.createNonPaged();
         List<WfDefinition> latests = definitionService.getLatestProcessDefinitions(WFEServerConnector.getInstance().getUser(), batch);
         monitor.worked(30);
         double perDefinition = (double) 70 / latests.size();

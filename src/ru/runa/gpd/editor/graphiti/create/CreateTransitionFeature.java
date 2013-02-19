@@ -55,7 +55,7 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
     public boolean canCreate(ICreateConnectionContext context) {
         Object source = getBusinessObjectForPictogramElement(context.getSourcePictogramElement());
         Object target = getBusinessObjectForPictogramElement(context.getTargetPictogramElement());
-        return (target != null && source != target);
+        return (target instanceof Node && source != target);
     }
 
     @Override

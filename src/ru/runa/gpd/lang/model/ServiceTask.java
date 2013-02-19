@@ -1,29 +1,27 @@
 package ru.runa.gpd.lang.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import ru.runa.gpd.Localization;
+import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.extension.LocalizationRegistry;
 
-public class ServiceTask extends Node implements Active {
+public class ServiceTask extends Node implements Delegable {
+
     @Override
-    protected void validate() {
-        super.validate();
-        int nodeActionsCount = getNodeActions().size();
-        if (nodeActionsCount == 0) {
-            addError("nodeAction.required");
-        }
-        if (nodeActionsCount > 1) {
-            addError("nodeAction.single", nodeActionsCount);
-        }
+    public String getDelegationType() {
+        return HandlerArtifact.ACTION;
     }
 
-    public List<Action> getNodeActions() {
-        List<Action> result = new ArrayList<Action>();
-        for (ActionImpl action : getChildren(ActionImpl.class)) {
-            if (Event.NODE_ACTION.equals(action.getEventType())) {
-                result.add(action);
-            }
+    public String getLabel() {
+        String className = getDelegationClassName();
+        if (className == null || className.length() == 0) {
+            className = Localization.getString("label.new");
         }
-        return result;
+        return LocalizationRegistry.getLabel(className);
+    }
+
+    @Override
+    public String toString() {
+        return getLabel();
     }
 
 }
