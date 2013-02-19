@@ -387,10 +387,6 @@ public class JpdlXmlReader {
         Action action = new Action();
         action.setName(element.attributeValue(NAME_ATTR));
         action.setDelegation(readDelegation(processDefinition, element));
-        String acceptPropagatedEvents = element.attributeValue("accept-propagated-events");
-        if ("false".equalsIgnoreCase(acceptPropagatedEvents)) {
-            action.setPropagationAllowed(false);
-        }
         return action;
     }
 

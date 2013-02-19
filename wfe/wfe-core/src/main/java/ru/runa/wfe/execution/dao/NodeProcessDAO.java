@@ -34,8 +34,9 @@ public class NodeProcessDAO extends GenericDAO<NodeProcess> {
     }
 
     public List<Process> getSubprocessesRecursive(Process process) {
-        List<Process> result = getSubprocesses(process);
-        for (Process subprocess : result) {
+        List<Process> result = Lists.newArrayList();
+        for (Process subprocess : getSubprocesses(process)) {
+            result.add(subprocess);
             result.addAll(getSubprocessesRecursive(subprocess));
         }
         return result;

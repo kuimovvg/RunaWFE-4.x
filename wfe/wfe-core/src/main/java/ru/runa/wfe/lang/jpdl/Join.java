@@ -62,7 +62,7 @@ public class Join extends Node {
                 leave(new ExecutionContext(executionContext.getProcessDefinition(), parentToken));
             }
         }
-        token.end(executionContext);
+        token.end(executionContext, null);
     }
 
 }
