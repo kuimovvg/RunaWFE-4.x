@@ -39,7 +39,7 @@ public class EndNode extends Node {
 
     @Override
     public void execute(ExecutionContext executionContext) {
-        executionContext.getProcess().end(executionContext);
+        executionContext.getProcess().end(executionContext, null);
     }
 
     @Override

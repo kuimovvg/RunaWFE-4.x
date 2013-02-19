@@ -40,7 +40,7 @@ public class CreateTimerAction extends Action {
     private JobDAO jobDAO;
 
     @Override
-    public void execute(ExecutionContext executionContext) throws Exception {
+    public void execute(ExecutionContext executionContext) {
         Timer timer = new Timer(executionContext.getToken());
         timer.setName(getName());
         timer.setDueDate(ExpressionEvaluator.evaluateDuration(executionContext, dueDate));

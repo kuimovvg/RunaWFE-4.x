@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.presentation;
 
-
 /**
  * Default batch presentation factory.
  * 
@@ -59,7 +58,7 @@ public class BatchPresentationFactory {
 
     public BatchPresentation createNonPaged() {
         BatchPresentation batchPresentation = createDefault(BatchPresentationConsts.DEFAULT_ID);
-        batchPresentation.setRangeSize(BatchPresentationConsts.MAX_UNPAGED_REQUEST_SIZE);
+        batchPresentation.setRangeSize(10000);
         return batchPresentation;
     }
 

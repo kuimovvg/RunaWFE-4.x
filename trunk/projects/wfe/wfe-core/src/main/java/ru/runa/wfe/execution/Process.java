@@ -247,51 +247,43 @@ public class Process extends IdentifiableBase {
     }
 
     /**
-     * Cancels this process and all the tokens in it.
+     * Ends this process and all the tokens in it.
+     * 
+     * @param canceller
+     *            actor who cancels process (if any), can be <code>null</code>
      */
-    public void cancel(ExecutionContext executionContext, Actor actor) {
+    public void end(ExecutionContext executionContext, Actor canceller) {
         if (!hasEnded()) {
-            for (Task task : tasks) {
-                task.setEndDate(new Date());
+            // end the main path of execution
+            rootToken.end(executionContext, canceller);
+            // mark this process as ended
+            setEndDate(new Date());
+            executionContext.getProcessDefinition().fireEvent(executionContext, Event.EVENTTYPE_PROCESS_END);
+
+            // check if this process was started as a subprocess of a super
+            // process
+            NodeProcess parentNodeProcess = executionContext.getParentNodeProcess();
+            if (parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded()) {
+                Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
+                ProcessDefinition superDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(superDefinitionId);
+                ExecutionContext superExecutionContext = new ExecutionContext(superDefinition, parentNodeProcess.getParentToken());
+                parentNodeProcess.getParentToken().signal(superExecutionContext);
             }
-            endInternal(executionContext);
-            executionContext.addLog(new ProcessCancelLog(actor));
+
+            // make sure all the timers for this process are canceled
+            // after the process end updates are posted to the database
+            JobDAO jobDAO = ApplicationContextFactory.getJobDAO();
+            jobDAO.deleteAll(this);
+            if (canceller != null) {
+                // end all active tasks
+                for (Task task : tasks) {
+                    task.setEndDate(new Date());
+                }
+                executionContext.addLog(new ProcessCancelLog(canceller));
+            } else {
+                executionContext.addLog(new ProcessEndLog());
+            }
         }
-    }
-
-    /**
-     * ends this process and all the tokens in it.
-     */
-    public void end(ExecutionContext executionContext) {
-        if (!hasEnded()) {
-            endInternal(executionContext);
-            executionContext.addLog(new ProcessEndLog());
-        }
-    }
-
-    private void endInternal(ExecutionContext executionContext) {
-        // end the main path of execution
-        rootToken.end(executionContext);
-        // mark this process as ended
-        setEndDate(new Date());
-        // fire the process-end event
-        // OLD stuff ExecutionContext executionContext = new
-        // ExecutionContext(rootToken);
-        executionContext.getProcessDefinition().fireEvent(executionContext, Event.EVENTTYPE_PROCESS_END);
-
-        // check if this process was started as a subprocess of a super process
-        NodeProcess parentNodeProcess = executionContext.getParentNodeProcess();
-        if (parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded()) {
-            Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
-            ProcessDefinition superDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(superDefinitionId);
-            ExecutionContext superExecutionContext = new ExecutionContext(superDefinition, parentNodeProcess.getParentToken());
-            parentNodeProcess.getParentToken().signal(superExecutionContext);
-        }
-
-        // make sure all the timers for this process are canceled
-        // after the process end updates are posted to the database
-        JobDAO jobDAO = ApplicationContextFactory.getJobDAO();
-        jobDAO.deleteAll(this);
     }
 
     /**

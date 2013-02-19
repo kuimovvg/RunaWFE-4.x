@@ -107,6 +107,14 @@ public class ProfileLogic extends CommonLogic {
         if (BatchPresentationConsts.DEFAULT_NAME.equals(batchPresentation.getName())) {
             throw new InternalApplicationException("default batch presentation cannot be changed");
         }
+        // if (profile.getBatchPresentations().contains(batchPresentation)) {
+        // // in order to update existing batch presentation
+        // profile.getBatchPresentations().remove(batchPresentation);
+        // profileDAO.update(profile);
+        // profileDAO.flushPendingChanges();
+        // profileDAO.evict(profile);
+        // profile = profileDAO.get(user.getActor());
+        // } TODO
         profile.addBatchPresentation(batchPresentation);
     }
 }

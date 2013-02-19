@@ -51,7 +51,7 @@ public class DatabaseTaskXmlParser {
      *            process variables to substitute values in query string
      */
     public static DatabaseTask[] parse(String configuration, IVariableProvider variableProvider) {
-        Document document = XmlUtils.parseWithXSDValidation(configuration, "database-tasks.xsd");
+        Document document = XmlUtils.parseWithoutValidation(configuration);
         List<Element> taskElementList = document.getRootElement().elements(TASK_ELEMENT_NAME);
         DatabaseTask[] databaseTasks = new DatabaseTask[taskElementList.size()];
         for (int i = 0; i < databaseTasks.length; i++) {

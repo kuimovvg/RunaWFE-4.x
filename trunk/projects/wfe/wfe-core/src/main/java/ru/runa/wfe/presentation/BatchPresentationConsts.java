@@ -22,9 +22,11 @@ package ru.runa.wfe.presentation;
  * 
  * @author Konstantinov Aleksey 11.02.2012
  */
-public class BatchPresentationConsts { // TODO move constants to BatchPresentation
+public class BatchPresentationConsts { // TODO move constants to
+                                       // BatchPresentation
     /**
-     * Allowed sizes for paged {@link BatchPresentation}. This sizes will be available in web interface.
+     * Allowed sizes for paged {@link BatchPresentation}. This sizes will be
+     * available in web interface.
      */
     private static final int[] ALLOWED_VIEW_SIZES = { 10, 50, 100, 500 };
 
@@ -49,12 +51,8 @@ public class BatchPresentationConsts { // TODO move constants to BatchPresentati
     public static final boolean DSC = false;
 
     /**
-     * Recommended maximum range size for requests with paging.
-     */
-    public static final int MAX_UNPAGED_REQUEST_SIZE = 10000;
-
-    /**
-     * Allowed sizes for paged {@link BatchPresentation}. This sizes will be available in web interface.
+     * Allowed sizes for paged {@link BatchPresentation}. This sizes will be
+     * available in web interface.
      * 
      * @return Allowed sizes for paged {@link BatchPresentation}.
      */

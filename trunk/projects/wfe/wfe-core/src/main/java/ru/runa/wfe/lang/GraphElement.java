@@ -33,12 +33,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.audit.ActionLog;
 import ru.runa.wfe.execution.ExecutionContext;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -133,16 +131,11 @@ public abstract class GraphElement implements Serializable {
 
     public void fireEvent(ExecutionContext executionContext, String eventType) {
         log.debug("event '" + eventType + "' on '" + this + "' for '" + executionContext.getToken() + "'");
-        // calculate if the event was fired on this element or if it was a
-        // propagated event
-        // boolean isPropagated =
-        // !(this.equals(executionContext.getEventSource()));
-
         // execute static actions
         Event event = getEvent(eventType);
         if (event != null) {
             // execute the static actions specified in the process definition
-            executeActions(event.getActions(), executionContext, false);
+            executeActions(executionContext, event.getActions());
         }
         // propagate the event to the parent element
         GraphElement parent = getParent();
@@ -151,22 +144,9 @@ public abstract class GraphElement implements Serializable {
         }
     }
 
-    protected void executeActions(List<Action> actions, ExecutionContext executionContext, boolean propagated) {
+    protected void executeActions(ExecutionContext executionContext, List<Action> actions) {
         for (Action action : actions) {
-            if (action.isPropagationAllowed() || !propagated) {
-                executeAction(action, executionContext);
-            }
-        }
-    }
-
-    public void executeAction(Action action, ExecutionContext executionContext) {
-        try {
-            executionContext.addLog(new ActionLog(action));
-            // execute the action
-            log.debug("executing action '" + action + "'");
             action.execute(executionContext);
-        } catch (Exception exception) {
-            throw Throwables.propagate(exception);
         }
     }
 
