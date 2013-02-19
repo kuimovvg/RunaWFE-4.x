@@ -184,7 +184,7 @@
   <extension
         name="Graph actions"
         point="org.eclipse.ui.popupMenus">
-    <objectContribution id="graph.deleteElement"
+    <objectContribution id="jpdl.element.delete"
   		objectClass="ru.runa.gpd.lang.model.GraphElement">
     <filter
           name="language"
@@ -199,7 +199,7 @@
     </objectContribution>
      <objectContribution
            adaptable="false"
-           id="graph.transitionHandlers"
+           id="jpdl.transition.handlers"
            objectClass="ru.runa.gpd.lang.model.Transition">
         <filter
               name="language"
@@ -215,7 +215,7 @@
     </objectContribution>
     <objectContribution
            adaptable="false"
-           id="graph.features"
+           id="element.features"
            objectClass="ru.runa.gpd.lang.model.GraphElement">
        <menu
              id="features"
@@ -228,7 +228,7 @@
     </objectContribution>
     <objectContribution
            adaptable="false"
-           id="graph.stateHandlers"
+           id="jpdl.state.handlers"
            objectClass="ru.runa.gpd.lang.model.State">
         <filter
               name="language"
@@ -244,7 +244,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.escalation"
+          id="jpdl.task.escalation"
           objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
              name="language"
@@ -259,7 +259,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.botTask"
+          id="task.bot"
           objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
              name="bindSwimlaneExists"
@@ -275,7 +275,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.async"
+          id="synchronizable.async"
           objectClass="ru.runa.gpd.lang.model.Synchronizable">
        <action
              class="ru.runa.gpd.lang.action.AsyncFeatureDelegate"
@@ -286,7 +286,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.compactView"
+          id="state.compactview"
           objectClass="ru.runa.gpd.lang.model.State">
        <action
              class="ru.runa.gpd.lang.action.CompactViewFeatureDelegate"
@@ -297,7 +297,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.swimlane"
+          id="node.swimlanes"
           objectClass="ru.runa.gpd.lang.model.SwimlanedNode">
        <filter
              name="disableSwimlaneSelection"
@@ -313,7 +313,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.multiTaskNode"
+          id="multitask.node"
           objectClass="ru.runa.gpd.lang.model.MultiTaskState">
        <action
              class="ru.runa.gpd.lang.action.MultiTaskExecutorsActionsDelegate"
@@ -332,10 +332,10 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.formdata"
+          id="data"
           objectClass="ru.runa.gpd.lang.model.FormNode">
        <menu
-             id="form"
+             id="formdata"
              label="%label.action.formdata"
              path="additions">
           <separator
@@ -349,19 +349,19 @@
              class="ru.runa.gpd.lang.action.EnableJSValidationDelegate"
              id="jsValidation"
              label="%label.action.javaScriptValidation"
-             menubarPath="form/sp2"
+             menubarPath="formdata/sp2"
              style="toggle"
              />
        <action
              class="ru.runa.gpd.lang.action.OpenFormValidationDelegate"
              id="formValidation"
              label="%label.action.validationOfForm"
-             menubarPath="form/sp2"
+             menubarPath="formdata/sp2"
              />
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.formNotExist"
+          id="data.noformexists"
           objectClass="ru.runa.gpd.lang.model.FormNode">
        <filter
              name="formExists"
@@ -371,12 +371,12 @@
              class="ru.runa.gpd.lang.action.CreateFormDelegate"
              id="createForm"
              label="%label.action.createForm"
-             menubarPath="form/sp1"
+             menubarPath="formdata/sp1"
              />
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.formExist"
+          id="data.formexists"
           objectClass="ru.runa.gpd.lang.model.FormNode">
        <filter
              name="formExists"
@@ -386,30 +386,30 @@
              class="ru.runa.gpd.lang.action.DeleteFormDelegate"
              id="deleteForm"
              label="%label.action.deleteForm"
-             menubarPath="form/sp1"
+             menubarPath="formdata/sp1"
              />
        <action
              class="ru.runa.gpd.lang.action.OpenExternalFormEditorDelegate"
              id="editFormEditors"
              label="%label.action.editFormExternal"
-             menubarPath="form/sp1"
+             menubarPath="formdata/sp1"
              />
        <action
              class="ru.runa.gpd.lang.action.OpenVisualFormEditorDelegate"
              id="visualEditForm"
              label="%label.action.editForm"
-             menubarPath="form/sp1"
+             menubarPath="formdata/sp1"
              />
        <action
              class="ru.runa.gpd.lang.action.OpenFormScriptDelegate"
              id="editFormScript"
              label="%label.action.editFormScript"
-             menubarPath="form/additions">
+             menubarPath="formdata/additions">
        </action>
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.process"
+          id="process"
           objectClass="ru.runa.gpd.lang.model.ProcessDefinition">
        <action
              class="ru.runa.gpd.lang.action.OpenDescriptionEditorDelegate"
@@ -423,7 +423,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.process"
+          id="jpdl.process"
           objectClass="ru.runa.gpd.lang.model.ProcessDefinition">
        <filter
              name="language"
@@ -442,7 +442,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.delegable"
+          id="delegable.configuration"
           objectClass="ru.runa.gpd.lang.model.Delegable">
        <filter
              name="delegable"
@@ -455,7 +455,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.subprocess"
+          id="subprocess.mapping"
           objectClass="ru.runa.gpd.lang.model.Subprocess">
        <action
              class="ru.runa.gpd.lang.action.SubprocessDelegate"
@@ -465,7 +465,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.rotateForkJoin"
+          id="jpdl.forkjoin.rotate"
           objectClass="ru.runa.gpd.lang.model.Node">
        <visibility>
           <and>
@@ -486,7 +486,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.sendMessage"
+          id="sendmessage.configuration"
           objectClass="ru.runa.gpd.lang.model.SendMessageNode">
        <action
              class="ru.runa.gpd.lang.action.SendMessageConfAction"
@@ -497,7 +497,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.receiveMessage"
+          id="receivemessage.configuration"
           objectClass="ru.runa.gpd.lang.model.ReceiveMessageNode">
        <action
              class="ru.runa.gpd.lang.action.ReceiveMessageConfAction"
@@ -508,7 +508,7 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="graph.timed"
+          id="jpdl.timer"
           objectClass="ru.runa.gpd.lang.model.ITimed">
        <filter
              name="language"
