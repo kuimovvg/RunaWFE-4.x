@@ -31,6 +31,7 @@ import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.ReceiveMessage;
 import ru.runa.wfe.lang.SendMessage;
+import ru.runa.wfe.lang.ServiceTask;
 import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -62,6 +63,7 @@ public class BpmnXmlReader {
     private static final String PROPERTY = "property";
     private static final String END_STATE = "endEvent";
     private static final String TEXT_ANNOTATION = "textAnnotation";
+    private static final String SERVICE_TASK = "serviceTask";
     private static final String TEXT = "text";
     private static final String END_TOKEN_STATE = "endPoint";
     private static final String IO_SPECIFICATION = "ioSpecification";
@@ -101,7 +103,6 @@ public class BpmnXmlReader {
     private static final String ID = "id";
     private static final String SEND_MESSAGE = "sendTask";
     private static final String RECEIVE_MESSAGE = "receiveTask";
-    private static final String TIMER_GLOBAL = "__GLOBAL";//
     private static final String BOUNDARY_EVENT = "boundaryEvent";
     private static final String INTERMEDIATE_EVENT = "intermediateCatchEvent";
     private static final String CANCEL_ACTIVITY = "cancelActivity";
@@ -125,6 +126,7 @@ public class BpmnXmlReader {
         nodeTypes.put(MULTI_SUBPROCESS, MultiProcessState.class);
         nodeTypes.put(SEND_MESSAGE, SendMessage.class);
         nodeTypes.put(RECEIVE_MESSAGE, ReceiveMessage.class);
+        nodeTypes.put(SERVICE_TASK, ServiceTask.class);
     }
 
     public BpmnXmlReader(Document document) {
@@ -257,6 +259,10 @@ public class BpmnXmlReader {
             for (Element intermediateEventElement : intermediateEventElements) {
                 readTimer(processDefinition, intermediateEventElement, waitState);
             }
+        }
+        if (node instanceof ServiceTask) {
+            ServiceTask serviceTask = (ServiceTask) node;
+            serviceTask.setDelegation(readDelegation(element));
         }
     }
 

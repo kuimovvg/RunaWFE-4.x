@@ -25,8 +25,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import ru.runa.wfe.lang.Action;
-
 /**
  * Logging action execution.
  * 
@@ -40,7 +38,7 @@ public class ActionLog extends ProcessLog {
     public ActionLog() {
     }
 
-    public ActionLog(Action action) {
+    public ActionLog(Object action) {
         addAttribute(ATTR_ACTION, action.toString());
     }
 

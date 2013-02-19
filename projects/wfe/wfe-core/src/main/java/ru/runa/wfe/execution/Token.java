@@ -57,6 +57,7 @@ import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.user.Actor;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -268,8 +269,11 @@ public class Token implements Serializable {
 
     /**
      * ends this token and all of its children (if any).
+     * 
+     * @param canceller
+     *            actor who cancels process (if any), can be <code>null</code>
      */
-    public void end(ExecutionContext executionContext) {
+    public void end(ExecutionContext executionContext, Actor canceller) {
         // if not already ended
         if (endDate == null) {
             // ended tokens cannot reactivate parents
@@ -281,11 +285,11 @@ public class Token implements Serializable {
             // end all this token's children
             for (Token child : getChildren()) {
                 if (!child.hasEnded()) {
-                    child.end(executionContext);
+                    child.end(executionContext, canceller);
                 }
             }
             for (Process subProcess : executionContext.getChildProcesses()) {
-                subProcess.end(executionContext);
+                subProcess.end(executionContext, canceller);
             }
         }
     }
