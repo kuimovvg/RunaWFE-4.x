@@ -84,7 +84,7 @@ public class VariableDownloaderAction extends ActionBase {
             Map<?, FileVariable> map = (Map) object;
             return map.get(form.getMapKey());
         }
-        throw new IllegalArgumentException("Unexpected variable type: " + object);
+        throw new IllegalArgumentException("Unexpected variable type: " + object + " by name " + form.getVariableName());
     }
 
 }

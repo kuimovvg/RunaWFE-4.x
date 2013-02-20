@@ -42,13 +42,28 @@ public class TransitionLog extends ProcessLog {
     }
 
     public TransitionLog(Transition transition) {
-        addAttribute(ATTR_TRANSITION_ID, transition.getName());
-        addAttribute(ATTR_NODE_ID_FROM, transition.getFrom().getNodeId());
-        addAttribute(ATTR_NODE_ID_TO, transition.getTo().getNodeId());
+        addAttribute(ATTR_TRANSITION_ID, wrapNodeId(transition.getName()));
+        addAttribute(ATTR_NODE_ID_FROM, wrapNodeId(transition.getFrom().getNodeId()));
+        addAttribute(ATTR_NODE_ID_TO, wrapNodeId(transition.getTo().getNodeId()));
+    }
+
+    @Transient
+    public String getFromNodeId() {
+        return unwrapNodeId(getAttributeNotNull(ATTR_NODE_ID_FROM));
+    }
+
+    @Transient
+    public String getToNodeId() {
+        return unwrapNodeId(getAttributeNotNull(ATTR_NODE_ID_TO));
+    }
+
+    @Transient
+    public String getTransitionId() {
+        return unwrapNodeId(getAttributeNotNull(ATTR_TRANSITION_ID));
     }
 
     public Transition getTransition(ProcessDefinition processDefinition) {
-        return processDefinition.getTransitionNotNull(getAttributeNotNull(ATTR_NODE_ID_FROM), getAttributeNotNull(ATTR_TRANSITION_ID));
+        return processDefinition.getTransitionNotNull(getFromNodeId(), getTransitionId());
     }
 
     @Override

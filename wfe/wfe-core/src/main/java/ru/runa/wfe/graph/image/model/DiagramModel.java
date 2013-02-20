@@ -51,7 +51,7 @@ public class DiagramModel {
         return nodes.values();
     }
 
-    public NodeModel getNode(String name) {
+    public NodeModel getNodeNotNull(String name) {
         return nodes.get(name);
     }
 

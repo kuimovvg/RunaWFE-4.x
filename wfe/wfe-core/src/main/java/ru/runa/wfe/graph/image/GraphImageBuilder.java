@@ -53,6 +53,7 @@ import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 /**
@@ -86,7 +87,7 @@ public class GraphImageBuilder {
         }
         // Create all nodes
         for (Node node : processDefinition.getNodes()) {
-            NodeModel nodeModel = diagramModel.getNode(node.getNodeId());
+            NodeModel nodeModel = diagramModel.getNodeNotNull(node.getNodeId());
             if (diagramModel.isShowActions()) {
                 nodeModel.setActionsCount(getNodeActionsCount(node));
             }
@@ -96,7 +97,9 @@ public class GraphImageBuilder {
             allNodeFigures.put(nodeModel.getNodeId(), nodeFigure);
         }
         for (Node node : processDefinition.getNodes()) {
-            NodeModel nodeModel = allNodes.get(node.getNodeId());
+            String nodeId = node.getNodeId();
+            NodeModel nodeModel = allNodes.get(nodeId);
+            Preconditions.checkNotNull(nodeModel, "Node model not found by id " + nodeId);
             AbstractFigure nodeFigure = allNodeFigures.get(node.getNodeId());
             if (!DrawProperties.useEdgingOnly()) {
                 nodeFigures.put(nodeFigure, new RenderHits(DrawProperties.getBaseColor()));
