@@ -40,10 +40,12 @@ public class ExpressionEvaluator {
         }
         if (baseDate != null && Strings.isNullOrEmpty(durationString)) {
             return baseDate;
-        } else {
+        } else if (durationString != null) {
             Duration duration = new Duration(durationString);
             BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
             return businessCalendar.add((baseDate != null) ? baseDate : new Date(), duration);
+        } else {
+            return new Date();
         }
     }
 
