@@ -25,7 +25,7 @@ public class GraphElementPresentationBuilder {
         DiagramModel diagramModel = DiagramModel.load(definition);
         List<GraphElementPresentation> result = new ArrayList<GraphElementPresentation>();
         for (Node node : definition.getNodes()) {
-            NodeModel model = diagramModel.getNode(node.getNodeId());
+            NodeModel model = diagramModel.getNodeNotNull(node.getNodeId());
             GraphElementPresentation presentation;
             switch (node.getNodeType()) {
             case Subprocess:

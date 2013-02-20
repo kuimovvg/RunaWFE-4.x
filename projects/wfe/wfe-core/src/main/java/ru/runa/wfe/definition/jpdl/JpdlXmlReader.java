@@ -439,11 +439,12 @@ public class JpdlXmlReader {
         transition.setName(element.attributeValue(NAME_ATTR));
         transition.setDescription(element.elementTextTrim(DESCRIPTION_NODE));
         // set destinationNode of the transition
-        String to = element.attributeValue(TO_ATTR);
-        if (to == null) {
+        String toId = element.attributeValue(TO_ATTR);
+        if (toId == null) {
             throw new InvalidDefinitionException(processDefinition.getName(), "node '" + node + "' has a transition without a 'to'-attribute");
         }
-        processDefinition.getNodeNotNull(to).addArrivingTransition(transition);
+        Node to = processDefinition.getNodeNotNull(toId);
+        to.addArrivingTransition(transition);
         // read the actions
         readActions(processDefinition, element, transition, Event.EVENTTYPE_TRANSITION);
     }

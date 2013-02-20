@@ -166,6 +166,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             applyBatchPresentation(batchPresentation, tableViewSetupForm);
             ProfileService profileService = Delegates.getProfileService();
             profileService.saveBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
+            batchPresentation.setVersion(batchPresentation.getVersion() + 1);
         } catch (Exception e) {
             ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);

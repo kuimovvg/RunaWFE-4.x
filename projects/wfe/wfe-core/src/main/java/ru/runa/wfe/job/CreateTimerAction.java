@@ -23,11 +23,14 @@ package ru.runa.wfe.job;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.audit.CreateTimerActionLog;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Event;
+
+import com.google.common.base.Objects;
 
 public class CreateTimerAction extends Action {
     private static final long serialVersionUID = 1L;
@@ -48,6 +51,7 @@ public class CreateTimerAction extends Action {
         timer.setOutTransitionName(transitionName);
         getParent().fireEvent(executionContext, Event.EVENTTYPE_TIMER_CREATE);
         jobDAO.create(timer);
+        executionContext.addLog(new CreateTimerActionLog(this, timer.getDueDate()));
     }
 
     public String getDueDate() {
@@ -68,6 +72,6 @@ public class CreateTimerAction extends Action {
 
     @Override
     public String toString() {
-        return getEvent() + ": " + getClass().getName();
+        return Objects.toStringHelper(this).add("event", getEvent()).add("dueDate", dueDate).toString();
     }
 }
