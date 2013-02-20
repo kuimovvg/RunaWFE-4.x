@@ -231,6 +231,16 @@ public final class BatchPresentation implements Cloneable, Serializable {
         return rangeSize;
     }
 
+    /**
+     * Page size for paged {@link BatchPresentation}.
+     */
+    public void setRangeSize(int rangeSize) {
+        if (this.rangeSize != rangeSize) {
+            this.rangeSize = rangeSize;
+            pageNumber = 1;
+        }
+    }
+
     @Transient
     private Fields getFields() {
         if (fields == null) {
@@ -244,16 +254,6 @@ public final class BatchPresentation implements Cloneable, Serializable {
             }
         }
         return fields;
-    }
-
-    /**
-     * Page size for paged {@link BatchPresentation}.
-     */
-    public void setRangeSize(int rangeSize) {
-        if (this.rangeSize != rangeSize) {
-            this.rangeSize = rangeSize;
-            pageNumber = 1;
-        }
     }
 
     /**
@@ -324,12 +324,6 @@ public final class BatchPresentation implements Cloneable, Serializable {
      */
     public boolean isGroupBlockExpanded(String key) {
         return expandedBlockList.contains(key);
-    }
-
-    public void setPredefinedRangeSize(int rangeSize) {
-        if (ArraysCommons.contains(BatchPresentationConsts.getAllowedViewSizes(), rangeSize)) {
-            setRangeSize(rangeSize);
-        }
     }
 
     @Transient

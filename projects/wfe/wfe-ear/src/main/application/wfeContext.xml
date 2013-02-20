@@ -164,6 +164,9 @@
 
 
 
+	<bean class="ru.runa.wfe.presentation.dao.BatchPresentationDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
 	<bean class="ru.runa.wfe.bot.dao.BotStationDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
