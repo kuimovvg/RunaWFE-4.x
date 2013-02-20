@@ -25,6 +25,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
+import ru.runa.wfe.presentation.dao.BatchPresentationDAO;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ActorPermission;
@@ -45,6 +46,8 @@ import com.google.common.collect.Lists;
 public class ProfileLogic extends CommonLogic {
     @Autowired
     private ProfileDAO profileDAO;
+    @Autowired
+    private BatchPresentationDAO batchPresentationDAO;
 
     public void updateProfiles(User user, List<Profile> profiles) {
         for (Profile profile : profiles) {
@@ -91,8 +94,7 @@ public class ProfileLogic extends CommonLogic {
     }
 
     public void deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
-        Profile profile = profileDAO.get(user.getActor());
-        profile.deleteBatchPresentation(batchPresentation);
+        batchPresentationDAO.delete(batchPresentation);
     }
 
     public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) {
@@ -103,18 +105,9 @@ public class ProfileLogic extends CommonLogic {
     }
 
     public void saveBatchPresentation(User user, BatchPresentation batchPresentation) {
-        Profile profile = profileDAO.get(user.getActor());
         if (BatchPresentationConsts.DEFAULT_NAME.equals(batchPresentation.getName())) {
             throw new InternalApplicationException("default batch presentation cannot be changed");
         }
-        // if (profile.getBatchPresentations().contains(batchPresentation)) {
-        // // in order to update existing batch presentation
-        // profile.getBatchPresentations().remove(batchPresentation);
-        // profileDAO.update(profile);
-        // profileDAO.flushPendingChanges();
-        // profileDAO.evict(profile);
-        // profile = profileDAO.get(user.getActor());
-        // } TODO
-        profile.addBatchPresentation(batchPresentation);
+        batchPresentationDAO.update(batchPresentation);
     }
 }

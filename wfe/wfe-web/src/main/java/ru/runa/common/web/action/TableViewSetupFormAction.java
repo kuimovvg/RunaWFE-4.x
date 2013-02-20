@@ -129,7 +129,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
                 batchPresentation.setFieldsToGroup(groupFields);
             }
         }
-        batchPresentation.setPredefinedRangeSize(tableViewSetupForm.getViewSize());
+        batchPresentation.setRangeSize(tableViewSetupForm.getViewSize());
         {
             FieldDescriptor[] fields = batchPresentation.getAllFields();
             int[] activeRemovable = tableViewSetupForm.getRemovableIds();
