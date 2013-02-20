@@ -28,7 +28,7 @@ public class BatchPresentationConsts { // TODO move constants to
      * Allowed sizes for paged {@link BatchPresentation}. This sizes will be
      * available in web interface.
      */
-    private static final int[] ALLOWED_VIEW_SIZES = { 10, 50, 100, 500 };
+    private static final int[] ALLOWED_VIEW_SIZES = { 20, 50, 100, 500 };
 
     /**
      * Identity of default presentation group.
