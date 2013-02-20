@@ -23,7 +23,7 @@ public class ExpressionEvaluator {
         Date baseDate = null;
         String durationString = null;
 
-        if (expression.startsWith("#")) {
+        if (expression != null && expression.startsWith("#")) {
             String baseDateVariableName = expression.substring(2, expression.indexOf("}"));
             Object o = executionContext.getVariable(baseDateVariableName);
             baseDate = TypeConversionUtil.convertTo(o, Date.class);
