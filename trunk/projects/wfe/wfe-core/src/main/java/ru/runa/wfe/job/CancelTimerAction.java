@@ -23,6 +23,7 @@ package ru.runa.wfe.job;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.audit.ActionLog;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.Action;
@@ -36,6 +37,7 @@ public class CancelTimerAction extends Action {
     @Override
     public void execute(ExecutionContext executionContext) {
         jobDAO.deleteTimersByName(getName(), executionContext.getToken());
+        executionContext.addLog(new ActionLog(this));
     }
 
 }

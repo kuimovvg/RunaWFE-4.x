@@ -74,8 +74,9 @@ public final class BatchPresentation implements Cloneable, Serializable {
     private String category;
     private String name;
     private boolean active;
-    private int rangeSize = 10;
+    private int rangeSize;
     private int pageNumber = 1;
+    private byte[] fieldsData;
     private Fields fields;
     @XmlTransient
     private final List<String> expandedBlockList = Lists.newArrayList();
@@ -83,7 +84,6 @@ public final class BatchPresentation implements Cloneable, Serializable {
      * Helper to hold fields set (such us fields to display, sort and so on).
      */
     private transient Store storage;
-    private transient byte[] fieldsData;
 
     protected BatchPresentation() {
     }
@@ -140,14 +140,14 @@ public final class BatchPresentation implements Cloneable, Serializable {
      */
     @Version
     @Column(name = "VERSION", nullable = false)
-    protected Long getVersion() {
+    public Long getVersion() {
         return version;
     }
 
     /**
      * Object version (need by hibernate for correct updating).
      */
-    protected void setVersion(Long version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 
@@ -211,16 +211,16 @@ public final class BatchPresentation implements Cloneable, Serializable {
     @Lob
     @Column(name = "FIELDS")
     public byte[] getFieldsData() {
-        if (fields == null) {
-            return fieldsData;
-        }
-        return FieldsSerializer.toData(fields);
+        return fieldsData;
     }
 
     public void setFieldsData(byte[] data) {
         fieldsData = data;
-        fields = getFields();
         storage = null;
+    }
+
+    public void serializeFields() {
+        fieldsData = FieldsSerializer.toData(fields);
     }
 
     /**

@@ -41,14 +41,14 @@ public abstract class NodeLog extends ProcessLog {
     }
 
     public NodeLog(Node node) {
-        addAttribute(ATTR_NODE_ID, node.getNodeId());
+        addAttribute(ATTR_NODE_ID, wrapNodeId(node.getNodeId()));
         addAttribute(ATTR_NODE_NAME, node.getName());
         addAttribute(ATTR_NODE_TYPE, node.getNodeType().name());
     }
 
     @Transient
     public String getNodeId() {
-        return getAttributeNotNull(ATTR_NODE_ID);
+        return unwrapNodeId(getAttributeNotNull(ATTR_NODE_ID));
     }
 
     @Transient
