@@ -145,8 +145,8 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
 
     @Override
     public String toString() {
-        return CalendarUtil.format(from, CalendarUtil.HOURS_MINUTES_SECONDS_FORMAT) + "-"
-                + CalendarUtil.format(to, CalendarUtil.HOURS_MINUTES_SECONDS_FORMAT);
+        return CalendarUtil.format(from, CalendarUtil.DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT) + "-"
+                + CalendarUtil.format(to, CalendarUtil.DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT);
     }
 
     public String toDateRangeString() {

@@ -23,6 +23,7 @@ import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -49,7 +50,7 @@ public class ShowProcessErrorsTag extends VisibleTag {
                 tr.addElement(new TD(taskEntry.getKey()).setClass(Resources.CLASS_LIST_TABLE_TD));
                 String url = "javascript:showProcessError(" + processEntry.getKey() + ", '" + taskEntry.getKey() + "')";
                 String message = taskEntry.getValue().getLocalizedMessage();
-                if (message == null) {
+                if (Strings.isNullOrEmpty(message)) {
                     taskEntry.getValue().getClass().getName();
                 }
                 tr.addElement(new TD(new A(url, message)).setClass(Resources.CLASS_LIST_TABLE_TD));

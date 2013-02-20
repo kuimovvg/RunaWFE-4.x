@@ -99,6 +99,7 @@ public class ProfileLogic extends CommonLogic {
 
     public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) {
         Profile profile = profileDAO.get(user.getActor());
+        batchPresentation.serializeFields();
         profile.addBatchPresentation(batchPresentation);
         profile.setActiveBatchPresentation(batchPresentation.getCategory(), batchPresentation.getName());
         return batchPresentation;
@@ -108,6 +109,8 @@ public class ProfileLogic extends CommonLogic {
         if (BatchPresentationConsts.DEFAULT_NAME.equals(batchPresentation.getName())) {
             throw new InternalApplicationException("default batch presentation cannot be changed");
         }
-        batchPresentationDAO.update(batchPresentation);
+        batchPresentation.serializeFields();
+        batchPresentation = batchPresentationDAO.update(batchPresentation);
+        batchPresentationDAO.flushPendingChanges();
     }
 }
