@@ -52,6 +52,7 @@
 	    <mapping class="ru.runa.wfe.audit.ProcessCancelLog" />
 	    <mapping class="ru.runa.wfe.audit.ProcessEndLog" />
 	    <mapping class="ru.runa.wfe.audit.ActionLog" />
+	    <mapping class="ru.runa.wfe.audit.CreateTimerActionLog" />
 	    <mapping class="ru.runa.wfe.audit.NodeEnterLog" />
 	    <mapping class="ru.runa.wfe.audit.NodeLeaveLog" />
 	    <mapping class="ru.runa.wfe.audit.SubprocessStartLog" />
