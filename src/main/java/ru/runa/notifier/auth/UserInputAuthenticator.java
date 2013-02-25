@@ -3,8 +3,6 @@ package ru.runa.notifier.auth;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
@@ -24,8 +22,8 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.notifier.GUI;
 import ru.runa.notifier.util.ResourcesManager;
-import ru.runa.service.af.AuthenticationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.User;
 
 public class UserInputAuthenticator implements Authenticator {
     private static final Log log = LogFactory.getLog(UserInputAuthenticator.class);
@@ -33,23 +31,24 @@ public class UserInputAuthenticator implements Authenticator {
     private String login = null;
     private String password = null;
 
-    public Subject authenticate() throws Exception {
+    @Override
+    public User authenticate() throws Exception {
         try {
-            AuthenticationService authenticationServiceDelegate = DelegateFactory.getAuthenticationService();
             if (ResourcesManager.isLoginSilently()) {
                 try {
                     login = ResourcesManager.getDefaultLogin();
                     password = ResourcesManager.getDefaultPassword();
-                    return authenticationServiceDelegate.authenticate(login, password);
+                    return Delegates.getAuthenticationService().authenticateByLoginPassword(login, password);
                 } catch (Exception e) {
                     log.warn("Auth with default credentials failed, requesting", e);
                 }
             }
             if (login != null) {
-                return authenticationServiceDelegate.authenticate(login, password);
+                return Delegates.getAuthenticationService().authenticateByLoginPassword(login, password);
             }
             if (GUI.display != null) {
                 GUI.display.syncExec(new Runnable() {
+                    @Override
                     public void run() {
                         LoginDialog loginDialog = new LoginDialog(GUI.shell);
                         String[] userInput = loginDialog.open();
@@ -61,7 +60,7 @@ public class UserInputAuthenticator implements Authenticator {
                 });
             }
             if (login != null) {
-                return authenticationServiceDelegate.authenticate(login, password);
+                return Delegates.getAuthenticationService().authenticateByLoginPassword(login, password);
             }
         } catch (Exception e) {
             log.warn("Auth exception.", e);
@@ -72,18 +71,20 @@ public class UserInputAuthenticator implements Authenticator {
         return null;
     }
 
+    @Override
     public String getParamForWeb() {
         String param;
-		try {
-			param = "login=" + URLEncoder.encode(login, "utf-8") + "&password=" + URLEncoder.encode(password, "utf-8");
-	        log.info("Web params is " + param);
-	        return param;
-		} catch (UnsupportedEncodingException e) {
-			log.error("Can't create we parameters", e);
-			return null;
-		}
+        try {
+            param = "login=" + URLEncoder.encode(login, "utf-8") + "&password=" + URLEncoder.encode(password, "utf-8");
+            log.info("Web params is " + param);
+            return param;
+        } catch (UnsupportedEncodingException e) {
+            log.error("Can't create we parameters", e);
+            return null;
+        }
     }
 
+    @Override
     public boolean isRetryDialogEnabled() {
         return true;
     }
@@ -128,28 +129,33 @@ public class UserInputAuthenticator implements Authenticator {
             buttonData.horizontalAlignment = GridData.END;
             buttonLogin.setLayoutData(buttonData);
             buttonLogin.addListener(SWT.Selection, new Listener() {
+                @Override
                 public void handleEvent(Event event) {
                     harvestDataAndClose();
                 }
             });
 
             loginField.addKeyListener(new KeyListener() {
+                @Override
                 public void keyPressed(KeyEvent keyEvent) {
                     if (keyEvent.keyCode == 13) {
                         harvestDataAndClose();
                     }
                 }
 
+                @Override
                 public void keyReleased(KeyEvent keyEvent) {
                 }
             });
             passwordField.addKeyListener(new KeyListener() {
+                @Override
                 public void keyPressed(KeyEvent keyEvent) {
                     if (keyEvent.keyCode == 13) {
                         harvestDataAndClose();
                     }
                 }
 
+                @Override
                 public void keyReleased(KeyEvent keyEvent) {
                 }
             });

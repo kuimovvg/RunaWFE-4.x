@@ -21,7 +21,6 @@ package ru.runa.notifier.auth;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.Subject;
 import javax.security.auth.login.Configuration;
 
 import org.apache.commons.logging.Log;
@@ -32,6 +31,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import ru.runa.notifier.GUI;
 import ru.runa.notifier.util.ResourcesManager;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 2006
@@ -41,7 +41,7 @@ import ru.runa.wfe.InternalApplicationException;
 public class LoginHelper {
     private static final Log log = LogFactory.getLog(LoginHelper.class);
 
-    private static Subject subject = null;
+    private static User user = null;
     private static String webParam = null;
     private static boolean tryLogin = true;
 
@@ -56,11 +56,11 @@ public class LoginHelper {
     }
 
     public static boolean isLogged() {
-        return (subject != null);
+        return (user != null);
     }
 
-    public static Subject getSubject() {
-        return subject;
+    public static User getUser() {
+        return user;
     }
 
     public static String getWebParameters() {
@@ -82,13 +82,13 @@ public class LoginHelper {
         } catch (Exception e) {
             throw new InternalApplicationException("Unable to create authenticator for key: " + authType, e);
         }
-        while (subject == null) {
+        while (user == null) {
             if (!tryLogin) {
                 return;
             }
             try {
-                subject = authenticator.authenticate();
-                if (subject != null) {
+                user = authenticator.authenticate();
+                if (user != null) {
                     webParam = authenticator.getParamForWeb();
                     if (log.isDebugEnabled()) {
                         log.debug("Authenticated.");
@@ -113,7 +113,7 @@ public class LoginHelper {
     }
 
     public static void reset() {
-        subject = null;
+        user = null;
         webParam = null;
     }
 
