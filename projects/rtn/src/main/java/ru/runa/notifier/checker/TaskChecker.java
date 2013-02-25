@@ -34,10 +34,9 @@ import ru.runa.notifier.auth.LoginHelper;
 import ru.runa.notifier.tray.SystemTray;
 import ru.runa.notifier.util.AePlayWave;
 import ru.runa.notifier.util.ResourcesManager;
-import ru.runa.service.delegate.DelegateFactory;
-import ru.runa.service.wf.ExecutionService;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 
 /**
@@ -61,9 +60,9 @@ public class TaskChecker {
     private String onNewTaskTriggerCommand = ResourcesManager.getOnNewTaskTriggerCommand();
 
     public TaskChecker(SystemTray systemTray) {
-        this.tasksChecker = new TasksChecker(systemTray);
-        this.errorOccured = true;
-        this.unreadTaskNotifier = new UnreadTaskNotifier();
+        tasksChecker = new TasksChecker(systemTray);
+        errorOccured = true;
+        unreadTaskNotifier = new UnreadTaskNotifier();
     }
 
     private Timer timer1;
@@ -115,15 +114,12 @@ public class TaskChecker {
     private class TasksChecker extends TimerTask {
         private final Set<WfTask> existingTasks = new HashSet<WfTask>();
 
-        private final ExecutionService executionService;
-
         protected SystemTray systemTray;
 
         private int errorCount = 0;
 
         public TasksChecker(SystemTray systemTray) {
             this.systemTray = systemTray;
-            this.executionService = DelegateFactory.getExecutionService();
         }
 
         @Override
@@ -139,7 +135,8 @@ public class TaskChecker {
                 }
                 if (LoginHelper.isLogged()) {
                     errorCount = 0;
-                    List<WfTask> tasks = executionService.getTasks(LoginHelper.getSubject(), BatchPresentationFactory.TASKS.createDefault());
+                    List<WfTask> tasks = Delegates.getExecutionService().getTasks(LoginHelper.getUser(),
+                            BatchPresentationFactory.TASKS.createNonPaged());
                     final int unreadTasksCount = getUnreadTasksCount(tasks);
                     final int newTasksCount = getNewTasksCount(tasks);
                     existingTasks.clear();

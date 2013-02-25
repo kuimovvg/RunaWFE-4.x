@@ -20,7 +20,11 @@
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="lib" path="lib/platform.jar"/>
 	<classpathentry kind="lib" path="src/main/resources"/>
-	<classpathentry kind="lib" path="lib/wfe-core-4.0.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/wfe-service-4.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/wfe-core.jar"/>
+	<classpathentry kind="lib" path="lib/wfe-service.jar"/>
+	<classpathentry kind="lib" path="lib/guava-13.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-ejb3-client.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-aop-jdk50-client.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-aspect-jdk50-client.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
