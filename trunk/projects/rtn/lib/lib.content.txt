@@ -12,5 +12,5 @@ jnp-client.jar
 log4j.jar
 swt-nl.jar
 swt.jar
-wfe-core-4.0.0-SNAPSHOT.jar
-wfe-service-4.0.0-SNAPSHOT.jar
+wfe-core.jar
+wfe-service.jar

@@ -1,7 +1,5 @@
 package ru.runa.notifier.auth;
 
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ietf.jgss.GSSContext;
@@ -10,14 +8,14 @@ import org.ietf.jgss.GSSManager;
 import org.ietf.jgss.GSSName;
 import org.ietf.jgss.Oid;
 
-import ru.runa.service.af.AuthenticationService;
-import ru.runa.service.delegate.DelegateFactory;
+import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.User;
 
 public class KerberosAuthenticator implements Authenticator {
     private static final Log log = LogFactory.getLog(KerberosAuthenticator.class);
 
-    public Subject authenticate() throws Exception {
-        AuthenticationService authenticationService = DelegateFactory.getAuthenticationService();
+    @Override
+    public User authenticate() throws Exception {
         GSSManager manager = GSSManager.getInstance();
         GSSCredential clientCred = manager.createCredential(GSSCredential.INITIATE_ONLY);
         if (log.isDebugEnabled()) {
@@ -29,14 +27,16 @@ public class KerberosAuthenticator implements Authenticator {
 
         byte[] token = new byte[0];
         token = context.initSecContext(token, 0, token.length);
-        return authenticationService.authenticate(token);
-    }
-    
-    public String getParamForWeb(){
-    	return "";
+        return Delegates.getAuthenticationService().authenticateByKerberos(token);
     }
 
-    public boolean isRetryDialogEnabled(){
-    	return false;
+    @Override
+    public String getParamForWeb() {
+        return "";
+    }
+
+    @Override
+    public boolean isRetryDialogEnabled() {
+        return false;
     }
 }

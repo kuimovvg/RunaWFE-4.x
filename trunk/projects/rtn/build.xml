@@ -52,13 +52,10 @@
 			<fileset refid="local.lib.fileset" />
 		</unjar>
 
-		<copy file="${resources.dir}/wf_delegate.properties" todir="${classes.dir}" overwrite="true" />
 		<replace dir="${classes.dir}" includes="*.properties" token="#To rtn:" value=""/>
 
 		<jar jarfile="${deploy.dir}/rtn.jar" basedir="${classes.dir}">
-			<exclude name="application*.properties" />
-			<exclude name="af_delegate.properties" />
-			<exclude name="kerberos_module.properties" />
+			<exclude name="*.properties" />
 			<manifest>
 				<attribute name="Main-Class" value="ru.runa.notifier.PlatformLoader" />
 				<attribute name="Class-Path" value="." />
@@ -67,9 +64,7 @@
 
 		<!-- copy file="${nsis.dir}/runa_tasks.exe" todir="${deploy.dir}" / -->
 		<copy todir="${deploy.dir}" overwrite="true">
-			<fileset dir="${resources.dir}" includes="application*.properties" />
-			<fileset dir="${resources.dir}" includes="af_delegate.properties" />
-			<fileset dir="${resources.dir}" includes="kerberos_module.properties" />
+			<fileset dir="${resources.dir}" includes="*.properties" />
 			<fileset dir="${resources.dir}" includes="run.*" />
 			<fileset dir="${resources.dir}" includes="*.wav" />
 		</copy>
@@ -78,24 +73,4 @@
 		</copy>
 	</target>
 	
-	<target name="copy.libs">
-		<property name="jboss.deploy.dir" value="${jboss.home.dir}/server/default/deploy/"/>
-		<property name="jboss.lib.dir" value="${jboss.home.dir}/server/default/lib/"/>
-		<property name="jboss.client.dir" value="${jboss.home.dir}/client/"/>
-		<copy file="${jboss.deploy.dir}/wfe.core.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.deploy.dir}/wfe.service.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.client.dir}/jboss-client.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.client.dir}/jboss-common-client.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.client.dir}/jboss-j2ee.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.client.dir}/jboss-transaction-client.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.lib.dir}/jcifs.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.client.dir}/jnp-client.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.client.dir}/log4j.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.client.dir}/jboss-serialization.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.client.dir}/jboss-remoting.jar" todir="${lib.dir}" overwrite="true"/>
-		<copy file="${jboss.client.dir}/concurrent.jar" todir="${lib.dir}" overwrite="true"/>
-	</target>
-	
-	<target name="abs-build" depends="copy.libs,build" />
-	<target name="abs-test" />
 </project>

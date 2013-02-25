@@ -1,10 +1,12 @@
 package ru.runa.notifier.auth;
 
-import javax.security.auth.Subject;
+import ru.runa.wfe.user.User;
 
 public interface Authenticator {
 
-    Subject authenticate() throws Exception;
+    User authenticate() throws Exception;
+
     String getParamForWeb();
+
     boolean isRetryDialogEnabled();
 }
