@@ -13,6 +13,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import com.google.common.base.Strings;
 
 public abstract class AuxContentProvider {
+    protected static final String ID_ATTRIBUTE_NAME = "id";
     protected static final String NAME_ATTRIBUTE_NAME = "name";
 
     public abstract void saveToFile(IFolder folder, ProcessDefinition definition) throws Exception;

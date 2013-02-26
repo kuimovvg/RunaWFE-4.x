@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.dom4j.Branch;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -14,14 +15,21 @@ import org.dom4j.Element;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.util.XmlUtil;
 
+import com.google.common.base.Strings;
+
 @SuppressWarnings("unchecked")
 public class ParamDefConfig {
+    public static final String NAME_CONFIG = "config";
     private static final Pattern VARIABLE_REGEXP = Pattern.compile("\\$\\{(.*?[^\\\\])\\}");
     private final String name;
     private final List<ParamDefGroup> groups = new ArrayList<ParamDefGroup>();
 
     public ParamDefConfig(String name) {
         this.name = name;
+    }
+
+    public ParamDefConfig() {
+        this(NAME_CONFIG);
     }
 
     public static ParamDefConfig parse(String xml) {
@@ -34,7 +42,7 @@ public class ParamDefConfig {
     }
 
     public static ParamDefConfig parse(Element rootElement) {
-        ParamDefConfig config = new ParamDefConfig("config");
+        ParamDefConfig config = new ParamDefConfig();
         List<Element> groupElements = rootElement.elements();
         for (Element groupElement : groupElements) {
             ParamDefGroup group = new ParamDefGroup(groupElement);
@@ -55,55 +63,81 @@ public class ParamDefConfig {
         return groups;
     }
 
+    /**
+     * Retrieves all founded parameter to variable mappings
+     * @param configuration param-based xml or <code>null</code> or empty string
+     */
+    public static Map<String, String> getAllParameters(String configuration) {
+        Map<String, String> properties = new HashMap<String, String>();
+        if (Strings.isNullOrEmpty(configuration)) {
+            return properties;
+        }
+        Document doc = XmlUtil.parseWithoutValidation(configuration);
+        List<Element> groupElements = doc.getRootElement().elements();
+        for (Element groupElement : groupElements) {
+            List<Element> paramElements = groupElement.elements("param");
+            for (Element element : paramElements) {
+                String value;
+                if (element.attributeValue("variable") != null) {
+                    value = element.attributeValue("variable");
+                } else {
+                    value = element.attributeValue("value");
+                }
+                String name = element.attributeValue("name");
+                properties.put(name, value);
+            }
+        }
+        return properties;
+    }
+
+    /**
+     * Retrieves all founded parameter to variable mappings based on this definition.
+     * @param configuration valid param-based xml
+     */
     public Map<String, String> parseConfiguration(String configuration) {
         Map<String, String> properties = new HashMap<String, String>();
-        if (configuration == null || configuration.trim().length() == 0) {
+        if (Strings.isNullOrEmpty(configuration)) {
             return properties;
         }
-        try {
-            Document doc = DocumentHelper.parseText(configuration);
-            Map<String, String> allProperties = new HashMap<String, String>();
-            for (ParamDefGroup group : groups) {
-                Element groupElement = doc.getRootElement().element(group.getName());
-                if (groupElement != null) {
-                    List<Element> pElements = groupElement.elements();
-                    for (Element element : pElements) {
-                        if ("param".equals(element.getName())) {
-                            String value;
-                            if (element.attributeValue("variable") != null) {
-                                value = element.attributeValue("variable");
-                            } else {
-                                value = element.attributeValue("value");
-                            }
-                            String name = element.attributeValue("name");
-                            allProperties.put(name, value);
+        Document doc = XmlUtil.parseWithoutValidation(configuration);
+        Map<String, String> allProperties = new HashMap<String, String>();
+        for (ParamDefGroup group : groups) {
+            Element groupElement = doc.getRootElement().element(group.getName());
+            if (groupElement != null) {
+                List<Element> pElements = groupElement.elements();
+                for (Element element : pElements) {
+                    if ("param".equals(element.getName())) {
+                        String value;
+                        if (element.attributeValue("variable") != null) {
+                            value = element.attributeValue("variable");
                         } else {
-                            allProperties.put(element.getName(), element.getTextTrim());
+                            value = element.attributeValue("value");
                         }
+                        String name = element.attributeValue("name");
+                        allProperties.put(name, value);
+                    } else {
+                        allProperties.put(element.getName(), element.getTextTrim());
                     }
                 }
             }
-            for (ParamDefGroup group : groups) {
-                Element groupElement = doc.getRootElement().element(group.getName());
-                if (groupElement != null) {
-                    List<Element> pElements = groupElement.elements();
-                    for (Element element : pElements) {
-                        String name = "param".equals(element.getName()) ? element.attributeValue("name") : element.getName();
-                        String value = allProperties.get(name);
-                        String fName = fixParamName(name, allProperties);
-                        if (fName == null) {
-                            group.getDynaProperties().put(name, value);
-                        } else {
-                            properties.put(fName, value);
-                        }
+        }
+        for (ParamDefGroup group : groups) {
+            Element groupElement = doc.getRootElement().element(group.getName());
+            if (groupElement != null) {
+                List<Element> pElements = groupElement.elements();
+                for (Element element : pElements) {
+                    String name = "param".equals(element.getName()) ? element.attributeValue("name") : element.getName();
+                    String value = allProperties.get(name);
+                    String fName = fixParamName(name, allProperties);
+                    if (fName == null) {
+                        group.getDynaProperties().put(name, value);
+                    } else {
+                        properties.put(fName, value);
                     }
                 }
             }
-            return properties;
-        } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("Invalid configuration " + configuration, e);
-            return null;
         }
+        return properties;
     }
 
     public String fixParamName(String name, Map<String, String> properties) {
@@ -159,10 +193,10 @@ public class ParamDefConfig {
     }
 
     public String toConfiguration(Map<String, String> properties) {
-        return XmlUtil.toString(toConfigurationDocument(properties));
+        return XmlUtil.toString(toConfigurationXml(properties));
     }
 
-    public Document toConfigurationDocument(Map<String, String> properties) {
+    public Document toConfigurationXml(Map<String, String> properties) {
         Document doc = DocumentHelper.createDocument();
         doc.add(DocumentHelper.createElement(name));
         Element root = doc.getRootElement();
@@ -222,5 +256,20 @@ public class ParamDefConfig {
         }
         matcher.appendTail(buffer);
         return buffer.toString();
+    }
+
+    public void writeXml(Branch parent) {
+        Element root = parent.addElement("config");
+        for (ParamDefGroup group : getGroups()) {
+            Element groupParamElement = root.addElement(group.getName());
+            for (ParamDef param : group.getParameters()) {
+                Element paramElement = groupParamElement.addElement("param");
+                paramElement.addAttribute("name", param.getName());
+                paramElement.addAttribute("label", param.getLabel());
+                if (param.getFormatFilters().size() > 0) {
+                    paramElement.addAttribute("formatFilter", param.getFormatFilters().get(0));
+                }
+            }
+        }
     }
 }

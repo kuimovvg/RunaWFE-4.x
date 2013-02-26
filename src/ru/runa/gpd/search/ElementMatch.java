@@ -4,18 +4,20 @@ import org.eclipse.core.resources.IFile;
 
 import ru.runa.gpd.lang.model.GraphElement;
 
+import com.google.common.base.Objects;
+
 public class ElementMatch {
     public static String CONTEXT_SWIMLANE = "swimlane";
     public static String CONTEXT_TIMED_VARIABLE = "itimed_conf";
     public static String CONTEXT_FORM = "form";
     public static String CONTEXT_FORM_VALIDATION = "form_validation";
-    
+    public static String CONTEXT_BOT_TASK_LINK = "botTaskLink";
+    public static String CONTEXT_BOT_TASK = "botTask";
     private String context;
     private IFile file;
     private GraphElement graphElement;
     private int matchesCount;
     private int potentialMatchesCount;
-    
     private ElementMatch parent;
 
     public ElementMatch(GraphElement graphElement, IFile file, String context) {
@@ -70,18 +72,15 @@ public class ElementMatch {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        return hashCode() == obj.hashCode();
+        if (obj instanceof ElementMatch) {
+            ElementMatch m = (ElementMatch) obj;
+            return Objects.equal(graphElement, m.graphElement) && Objects.equal(context, m.context);
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        int hash = graphElement.hashCode();
-        if (context != null) {
-            hash += 37*context.hashCode();
-        }
-        return hash;
+        return Objects.hashCode(graphElement, context);
     }
-    
 }

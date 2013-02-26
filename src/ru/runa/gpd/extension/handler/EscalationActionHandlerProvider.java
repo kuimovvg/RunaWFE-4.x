@@ -19,7 +19,7 @@ import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.lang.model.Delegable;
-import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
+import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 
 public class EscalationActionHandlerProvider extends DelegableProvider {
     @Override

@@ -17,7 +17,6 @@ public class ActorNameEditorProvider extends ParamBasedProvider {
 
     public static class Config extends ParamDefConfig {
         public Config() {
-            super("config");
             ParamDef p;
             ParamDefGroup inputGroup = new ParamDefGroup(ParamDefGroup.NAME_INPUT);
             p = new ParamDef(ACTOR_CODE, Localization.getString("ActorNameEditorProvider.param.actorCode"));

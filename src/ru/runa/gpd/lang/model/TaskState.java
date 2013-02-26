@@ -2,20 +2,17 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
-import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
 import ru.runa.gpd.property.EscalationDurationPropertyDescriptor;
 import ru.runa.gpd.property.TimeOutDurationPropertyDescriptor;
 import ru.runa.gpd.settings.PrefConstants;
+import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.Delay;
-import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.wfe.extension.handler.EscalationActionHandler;
 
 import com.google.common.base.Strings;
@@ -27,7 +24,7 @@ public class TaskState extends State implements Synchronizable {
     private Delay escalationDelay = new Delay();
     private boolean async;
     private boolean asyncTaskCompleteOnProcessComplete;
-    private BotTask botTask;
+    private BotTaskLink botTaskLink;
 
     public boolean isAsyncTaskCompleteOnProcessComplete() {
         return asyncTaskCompleteOnProcessComplete; // TODO
@@ -39,19 +36,7 @@ public class TaskState extends State implements Synchronizable {
             return true;
         }
         if ("bindSwimlaneExists".equals(name)) {
-            if (getSwimlane() != null && getSwimlane().getDelegationConfiguration() != null) {
-                OrgFunctionDefinition definition = OrgFunctionsRegistry.parseSwimlaneConfiguration(getSwimlane().getDelegationConfiguration());
-                if (definition != null && BotTask.BOT_EXECUTOR_SWIMLANE_NAME.equals(definition.getName())) {
-                    if (definition.getParameters().size() > 0) {
-                        String botFolderValue = definition.getParameters().get(0).getValue();
-                        for (IFolder folder : ProjectFinder.getAllBotFolders()) {
-                            if (folder.getName().equals(botFolderValue)) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
+            return BotTaskUtils.getBotName(getSwimlane()) != null;
         }
         return false;
     }
@@ -69,13 +54,14 @@ public class TaskState extends State implements Synchronizable {
         }
     }
 
-    public BotTask getBotTask() {
-        return botTask;
+    public BotTaskLink getBotTaskLink() {
+        return botTaskLink;
     }
 
-    public void setBotTask(BotTask botTask) {
-        // TODO dirty
-        this.botTask = botTask;
+    public void setBotTaskLink(BotTaskLink botTaskLink) {
+        this.botTaskLink = botTaskLink;
+        // fire always
+        firePropertyChange(PROPERTY_BOT_TASK_NAME, null, "");
     }
 
     public TimerAction getEscalationAction() {
@@ -142,7 +128,7 @@ public class TaskState extends State implements Synchronizable {
             list.add(new EscalationActionPropertyDescriptor(PROPERTY_ESCALATION_ACTION, Localization.getString("escalation.action"), this));
             list.add(new EscalationDurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, this));
         }
-        if (botTask != null) {
+        if (botTaskLink != null) {
             list.add(new PropertyDescriptor(PROPERTY_BOT_TASK_NAME, Localization.getString("property.botTaskName")));
         }
         list.add(new PropertyDescriptor(PROPERTY_ASYNC, Localization.getString("property.execution.async")));
@@ -174,7 +160,7 @@ public class TaskState extends State implements Synchronizable {
             return async ? Localization.getString("message.yes") : Localization.getString("message.no");
         }
         if (PROPERTY_BOT_TASK_NAME.equals(id)) {
-            return botTask == null ? "" : botTask.getName();
+            return botTaskLink == null ? "" : botTaskLink.getBotTaskName();
         }
         return super.getPropertyValue(id);
     }
@@ -193,7 +179,7 @@ public class TaskState extends State implements Synchronizable {
     @Override
     protected void validate() {
         super.validate();
-        if (getBotTask() != null && (getBotTask().getDelegationConfiguration() == null || getBotTask().getDelegationConfiguration().trim().length() == 0)) {
+        if (getBotTaskLink() != null && Strings.isNullOrEmpty(getBotTaskLink().getDelegationConfiguration())) {
             addError("taskState.createBotTaskConfig");
         }
     }

@@ -15,16 +15,19 @@ import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.BotTaskEditor;
-import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.lang.model.BotTask;
+import ru.runa.gpd.lang.model.BotTaskType;
+import ru.runa.gpd.util.BotTaskUtils;
+import ru.runa.gpd.util.WorkspaceOperations;
 
 public class NewBotTaskWizard extends Wizard implements INewWizard {
     private NewBotTaskWizardPage page;
-    private boolean parameterized;
+    private boolean extendedMode;
     private IStructuredSelection selection;
     private IWorkbench workbench;
 
-    public NewBotTaskWizard(boolean parameterized) {
-        this.parameterized = parameterized;
+    public NewBotTaskWizard(boolean extendedMode) {
+        this.extendedMode = extendedMode;
     }
 
     @Override
@@ -43,11 +46,17 @@ public class NewBotTaskWizard extends Wizard implements INewWizard {
                     try {
                         monitor.beginTask("processing", 4);
                         IFolder folder = page.getBotFolder();
-                        IFile botTaskFile = folder.getFile(page.getBotTaskName());
-                        IOUtils.createFile(botTaskFile);
+                        BotTask botTask = new BotTask();
+                        botTask.setName(page.getBotTaskName());
+                        if (extendedMode) {
+                            botTask.setType(BotTaskType.EXTENDED);
+                            botTask.setParamDefConfig(BotTaskUtils.createEmptyParamDefConfig());
+                        }
+                        IFile botTaskFile = folder.getFile(botTask.getName());
+                        WorkspaceOperations.saveBotTask(botTaskFile, botTask);
                         monitor.worked(1);
                         BotTaskEditor editor = (BotTaskEditor) IDE.openEditor(getActivePage(), botTaskFile, BotTaskEditor.ID, true);
-                        editor.initBotTaskTypeExtended(parameterized);
+                        editor.setExtendedMode(extendedMode);
                         monitor.done();
                     } catch (Exception e) {
                         throw new InvocationTargetException(e);

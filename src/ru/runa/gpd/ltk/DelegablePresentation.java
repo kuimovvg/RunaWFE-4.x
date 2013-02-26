@@ -14,37 +14,30 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 
 import ru.runa.gpd.lang.model.Delegable;
-import ru.runa.gpd.lang.model.GraphElement;
 
-@SuppressWarnings("unchecked")
-public class DelegablePresentation implements VariableRenameProvider {
-
-    private Delegable delegable;
+public class DelegablePresentation extends VariableRenameProvider<Delegable> {
     private final Document document = new Document();
     private final String name;
 
     public DelegablePresentation(final Delegable delegable, String name) {
         this.name = name;
+        setElement(delegable);
         document.addDocumentListener(new IDocumentListener() {
-
+            @Override
             public void documentAboutToBeChanged(DocumentEvent de) {
             }
 
+            @Override
             public void documentChanged(DocumentEvent de) {
                 delegable.setDelegationConfiguration(de.getDocument().get());
             }
         });
-        setElement((GraphElement) delegable);
     }
 
-    public void setElement(GraphElement element) {
-        this.delegable = (Delegable) element;
-    }
-
+    @Override
     public List<Change> getChanges(String variableName, String replacement) throws Exception {
         List<Change> changes = new ArrayList<Change>();
-        document.set(delegable.getDelegationConfiguration());
-
+        document.set(element.getDelegationConfiguration());
         int offset = 0;
         MultiTextEdit multiEdit = new MultiTextEdit();
         int len = variableName.length();
@@ -60,7 +53,6 @@ public class DelegablePresentation implements VariableRenameProvider {
             multiEdit.addChild(replaceEdit);
             offset += len; // to avoid overlapping
         }
-
         if (multiEdit.getChildrenSize() > 0) {
             DocumentChange change = new DocumentChangeExt(name, document);
             change.setEdit(multiEdit);
@@ -70,7 +62,6 @@ public class DelegablePresentation implements VariableRenameProvider {
     }
 
     private class DocumentChangeExt extends DocumentChange {
-
         public DocumentChangeExt(String name, IDocument document) {
             super(name, document);
         }
@@ -78,7 +69,7 @@ public class DelegablePresentation implements VariableRenameProvider {
         @Override
         public Object getAdapter(Class adapter) {
             if (adapter == TextEditChangeNode.class) {
-                return new GPDChangeNode(this, delegable);
+                return new GPDChangeNode(this, element);
             }
             return super.getAdapter(adapter);
         }

@@ -29,6 +29,8 @@ import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.gpd.wfe.WFEServerBotElementImporter;
 
+import com.google.common.base.Throwables;
+
 public abstract class ExportBotElementWizardPage extends WizardArchiveFileResourceExportPage1 {
     protected Map<String, IResource> exportObjectNameFileMap;
     protected final IResource exportResource;
@@ -161,8 +163,9 @@ public abstract class ExportBotElementWizardPage extends WizardArchiveFileResour
                 deployToServer(exportResource);
             }
             return true;
-        } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("botelement.error.export", e);
+        } catch (Throwable th) {
+            PluginLogger.logErrorWithoutDialog("botelement.error.export", th);
+            setErrorMessage(Throwables.getRootCause(th).getMessage());
             return false;
         }
     }

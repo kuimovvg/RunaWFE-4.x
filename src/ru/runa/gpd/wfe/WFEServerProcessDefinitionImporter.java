@@ -74,7 +74,7 @@ public class WFEServerProcessDefinitionImporter extends DataImporter {
         return getDefinitionService().getFile(WFEServerConnector.getInstance().getUser(), definition.getId(), "par");
     }
 
-    public void uploadPar(String definitionName, byte[] par) throws Exception {
+    public void uploadPar(String definitionName, byte[] par) {
         WfDefinition oldVersion = null;
         if (!hasCachedData()) {
             synchronize();
@@ -110,7 +110,7 @@ public class WFEServerProcessDefinitionImporter extends DataImporter {
         definitions.put(lastDefinition, lastHistory);
     }
 
-    private DefinitionService getDefinitionService() throws Exception {
+    private DefinitionService getDefinitionService() {
         return WFEServerConnector.getInstance().getService("DefinitionServiceBean");
     }
 }

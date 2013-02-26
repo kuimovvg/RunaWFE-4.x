@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.util.ProjectFinder;
 
@@ -64,8 +65,8 @@ public class NewBotTaskWizardPage extends WizardPage {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("NewBotTaskWizardPage.bot.name"));
         botCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-        for (IFolder folder : ProjectFinder.getAllBotFolders()) {
-            botCombo.add(folder.getName());
+        for (String botName : BotCache.getAllBotNames()) {
+            botCombo.add(botName);
         }
         botCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         IFolder resource = getInitialBotElement(selection);

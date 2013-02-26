@@ -1,14 +1,30 @@
 package ru.runa.gpd.lang.model;
 
 import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
+import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
+import ru.runa.gpd.util.XmlUtil;
+import ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction;
 
-public class BotTask implements Delegable {
-    public static final String BOT_EXECUTOR_SWIMLANE_NAME = "ExecutorByNameFunction";
+public class BotTask implements Delegable, Comparable<BotTask> {
+    public static final String SWIMLANE_DEFINITION_NAME = ExecutorByNameFunction.class.getName();
+    private BotTaskType type = BotTaskType.SIMPLE;
     private String name;
-    private String clazz;
-    private String config;
+    private String delegationClassName = "";
+    private String delegationConfiguration = "";
     private ParamDefConfig paramDefConfig;
+
+    public BotTask() {
+    }
+
+    public BotTaskType getType() {
+        return type;
+    }
+
+    public void setType(BotTaskType type) {
+        this.type = type;
+    }
 
     public String getName() {
         return name;
@@ -18,51 +34,14 @@ public class BotTask implements Delegable {
         this.name = name;
     }
 
-    public String getClazz() {
-        return clazz;
+    @Override
+    public String getDelegationType() {
+        return HandlerArtifact.TASK_HANDLER;
     }
-
-    public void setClazz(String clazz) {
-        this.clazz = clazz;
-    }
-
-    public String getConfig() {
-        return config;
-    }
-
-    public void setConfig(String config) {
-        this.config = config;
-    }
-
-    private boolean dirty;
-
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    public void setDirty(boolean dirty) {
-        boolean stateChanged = this.dirty != dirty;
-        if (stateChanged) {
-            this.dirty = dirty;
-        }
-    }
-
-    private String delegationClassName;
-    private String delegationConfiguration = "";
 
     @Override
     public String getDelegationClassName() {
         return delegationClassName;
-    }
-
-    @Override
-    public String getDelegationConfiguration() {
-        return delegationConfiguration;
-    }
-
-    @Override
-    public String getDelegationType() {
-        return HandlerArtifact.TASK_HANDLER;
     }
 
     @Override
@@ -71,25 +50,47 @@ public class BotTask implements Delegable {
     }
 
     @Override
+    public String getDelegationConfiguration() {
+        return delegationConfiguration;
+    }
+
+    @Override
     public void setDelegationConfiguration(String configuration) {
         delegationConfiguration = configuration;
     }
 
-    private ProcessDefinition processDefinition;
-
-    public ProcessDefinition getProcessDefinition() {
-        return processDefinition;
+    public boolean isDelegationConfigurationInXml() {
+        try {
+            if (HandlerRegistry.getProvider(delegationClassName) instanceof XmlBasedConstructorProvider) {
+                return true;
+            }
+            XmlUtil.parseWithoutValidation(delegationConfiguration);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    public void setProcessDefinition(ProcessDefinition processDefinition) {
-        this.processDefinition = processDefinition;
-    }
-
+    /**
+     * param-based config
+     * @return null for simple bot task type 
+     */
     public ParamDefConfig getParamDefConfig() {
         return paramDefConfig;
     }
 
+    /**
+     * param-based config
+     */
     public void setParamDefConfig(ParamDefConfig paramDefConfig) {
         this.paramDefConfig = paramDefConfig;
+    }
+
+    @Override
+    public int compareTo(BotTask o) {
+        if (name == null || o == null || o.name == null) {
+            return -1;
+        }
+        return name.compareTo(o.name);
     }
 }

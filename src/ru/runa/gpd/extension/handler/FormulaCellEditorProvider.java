@@ -30,9 +30,9 @@ import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.ui.custom.HighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
-import ru.runa.gpd.ui.dialog.HighlightTextStyling;
 import ru.runa.gpd.util.IOUtils;
 
 public class FormulaCellEditorProvider extends DelegableProvider {

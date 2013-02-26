@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 
 public class ParamDefComposite extends Composite {
@@ -54,9 +55,11 @@ public class ParamDefComposite extends Composite {
             setMessages(null, Localization.getString("ParamBasedProvider.parseError"));
         }
         for (ParamDefGroup group : config.getGroups()) {
-            if (config.getGroups().indexOf(group) != 0) {
-                addSeparator(group.getLabel());
-            }
+            //if (config.getGroups().indexOf(group) != 0) {
+            GridData strokeData = new GridData(GridData.FILL_HORIZONTAL);
+            strokeData.horizontalSpan = 2;
+            SWTUtils.createStrokeComposite(this, strokeData, Localization.getString("ParamDefGroup.group." + group.getName()), 3);
+            //}
             for (ParamDef param : group.getParameters()) {
                 if (helpInlined) {
                     Label helpLabel = new Label(this, SWT.WRAP);
@@ -158,14 +161,6 @@ public class ParamDefComposite extends Composite {
             });
         }
         return textInput;
-    }
-
-    private void addSeparator(String header) {
-        Label label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
-        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        gridData.horizontalSpan = 2;
-        label.setLayoutData(gridData);
-        label.setText(header);
     }
 
     private Combo addComboField(final ParamDef paramDef) {

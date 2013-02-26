@@ -26,12 +26,14 @@ import org.eclipse.swt.widgets.TabItem;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.VariableFormatArtifact;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
+import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.collect.Lists;
@@ -49,7 +51,8 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
         this.swimlaneNames.clear();
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
         for (Variable variable : definition.getVariables()) {
-            variables.put(variable.getName(), variable.getFormat());
+            VariableFormatArtifact artifact = VariableFormatRegistry.getInstance().getArtifactNotNull(variable.getFormat());
+            variables.put(variable.getName(), artifact.getVariableClassName());
         }
         for (Swimlane swimlane : definition.getSwimlanes()) {
             swimlaneNames.add(swimlane.getName());

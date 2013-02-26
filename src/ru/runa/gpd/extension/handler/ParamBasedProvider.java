@@ -30,15 +30,23 @@ public abstract class ParamBasedProvider extends DelegableProvider {
     protected abstract ParamDefConfig getParamConfig(Delegable delegable);
 
     protected ImageDescriptor getLogo() {
-        return SharedImages.getImageDescriptor("/icons/logo.gif");
+        return SharedImages.getImageDescriptor(bundle, "/icons/logo.gif", false);
     }
 
     @Override
     public String showConfigurationDialog(Delegable delegable) {
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
         ParamDefConfig config = getParamConfig(delegable);
-        ConfigurationWizardPage page = new ConfigurationWizardPage(definition.getVariablesWithSwimlanes(), config.parseConfiguration(delegable.getDelegationConfiguration()),
-                config, LocalizationRegistry.getLabel(delegable.getDelegationClassName()));
+        return showConfigurationDialog(definition, delegable, config, getLogo());
+    }
+
+    public String showConfigurationDialog(ProcessDefinition definition, Delegable delegable) {
+        ParamDefConfig config = getParamConfig(delegable);
+        return showConfigurationDialog(definition, delegable, config, getLogo());
+    }
+
+    public static String showConfigurationDialog(ProcessDefinition definition, Delegable delegable, ParamDefConfig config, ImageDescriptor logo) {
+        ConfigurationWizardPage page = new ConfigurationWizardPage(definition, delegable, config, logo);
         final ConfigurationWizard wizard = new ConfigurationWizard(page);
         WizardDialog dialog = new WizardDialog(Display.getCurrent().getActiveShell(), wizard) {
             @Override
@@ -66,7 +74,7 @@ public abstract class ParamBasedProvider extends DelegableProvider {
         return getParamConfig(delegable).validate(delegable.getDelegationConfiguration());
     }
 
-    public class ConfigurationWizard extends Wizard {
+    public static class ConfigurationWizard extends Wizard {
         private final ConfigurationWizardPage wizardPage;
         private String configuration;
 
@@ -96,17 +104,22 @@ public abstract class ParamBasedProvider extends DelegableProvider {
         }
     }
 
-    public class ConfigurationWizardPage extends WizardPage {
+    public static class ConfigurationWizardPage extends WizardPage {
         private ParamDefComposite paramDefComposite;
         private final ParamDefConfig config;
         private final List<Variable> variables;
         private final Map<String, String> properties;
 
-        protected ConfigurationWizardPage(List<Variable> variables, Map<String, String> properties, ParamDefConfig config, String headerText) {
-            super("config", headerText, getLogo());
+        protected ConfigurationWizardPage(List<Variable> variables, Map<String, String> properties, ParamDefConfig config, String headerText, ImageDescriptor logo) {
+            super("config", headerText, logo);
             this.variables = variables;
             this.properties = properties;
             this.config = config;
+        }
+
+        protected ConfigurationWizardPage(ProcessDefinition definition, Delegable delegable, ParamDefConfig config, ImageDescriptor logo) {
+            this(definition.getVariablesWithSwimlanes(), config.parseConfiguration(delegable.getDelegationConfiguration()), config, LocalizationRegistry.getLabel(delegable
+                    .getDelegationClassName()), logo);
         }
 
         @Override

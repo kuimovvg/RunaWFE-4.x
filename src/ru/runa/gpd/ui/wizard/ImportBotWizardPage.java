@@ -22,7 +22,7 @@ public class ImportBotWizardPage extends ImportBotElementWizardPage {
         super(pageName, selection);
         setTitle(Localization.getString("ImportBotWizardPage.page.title"));
         setDescription(Localization.getString("ImportBotWizardPage.page.description"));
-        for (IProject resource : ProjectFinder.getAllBotStations()) {
+        for (IProject resource : ProjectFinder.getAllBotStationProjects()) {
             importObjectNameFileMap.put(resource.getName(), resource);
         }
     }
