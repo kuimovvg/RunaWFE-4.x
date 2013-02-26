@@ -20,7 +20,7 @@ public class DeployBotStationAction extends ActionBase {
     public static final String ACTION_PATH = "/deploy_bot_station";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, final HttpServletRequest request, HttpServletResponse responce) {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, final HttpServletRequest request, HttpServletResponse response) {
         DeployBotForm fileForm = (DeployBotForm) form;
         try {
             BotService botService = Delegates.getBotService();
@@ -28,6 +28,6 @@ public class DeployBotStationAction extends ActionBase {
         } catch (Exception e) {
             addError(request, e);
         }
-        return new ActionForward("/configure_bot_station.do");
+        return new ActionForward("/configure_bot_station.do?botStationId=" + fileForm.getBotStationId());
     }
 }
