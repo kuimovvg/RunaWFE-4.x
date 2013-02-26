@@ -17,8 +17,6 @@
  */
 package ru.runa.wfe.service.impl;
 
-import java.io.ByteArrayInputStream;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -48,6 +46,6 @@ public class AdminScriptServiceBean implements AdminScriptService {
     public void run(User user, byte[] configData, byte[][] processDefinitionsBytes) {
         runner.setUser(user);
         runner.setProcessDefinitionsBytes(processDefinitionsBytes);
-        runner.runScript(new ByteArrayInputStream(configData));
+        runner.runScript(configData);
     }
 }
