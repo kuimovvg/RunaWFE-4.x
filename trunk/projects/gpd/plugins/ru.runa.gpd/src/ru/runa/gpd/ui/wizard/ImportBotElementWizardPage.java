@@ -245,9 +245,9 @@ public abstract class ImportBotElementWizardPage extends ImportWizardPage {
                 InputStream parInputStream = parInputStreams[i];
                 runImport(parInputStream, processName);
             }
-        } catch (Exception exception) {
-            PluginLogger.logErrorWithoutDialog("import bot element", exception);
-            setErrorMessage(Throwables.getRootCause(exception).getMessage());
+        } catch (Throwable th) {
+            PluginLogger.logErrorWithoutDialog("import bot element", th);
+            setErrorMessage(Throwables.getRootCause(th).getMessage());
             return false;
         }
         return true;

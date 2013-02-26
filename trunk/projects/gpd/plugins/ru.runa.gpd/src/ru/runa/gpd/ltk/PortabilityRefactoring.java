@@ -11,12 +11,14 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.BotTask;
+import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -25,8 +27,7 @@ import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
-import ru.runa.gpd.util.BotTaskContentUtil;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.BotTaskUtils;
 
 public class PortabilityRefactoring extends Refactoring {
     private final List<VariableRenameProvider<?>> cache = new ArrayList<VariableRenameProvider<?>>();
@@ -61,9 +62,20 @@ public class PortabilityRefactoring extends Refactoring {
                 for (Timer timer : timers) {
                     cache.add(new TimerPresentation(timer));
                 }
-                List<TaskState> taskStateNodes = definition.getChildren(TaskState.class);
-                for (TaskState taskStateNode : taskStateNodes) {
-                    cache.add(new BotTaskParamRenameProvider(taskStateNode));
+                List<TaskState> taskStates = definition.getChildren(TaskState.class);
+                for (TaskState taskState : taskStates) {
+                    if (taskState.getBotTaskLink() != null) {
+                        cache.add(new BotTaskLinkParametersRenameProvider(taskState.getBotTaskLink()));
+                    } else {
+                        String botName = BotTaskUtils.getBotName(taskState.getSwimlane());
+                        if (botName != null) {
+                            // if bot task exists with same as task name
+                            BotTask botTask = BotCache.getBotTask(botName, taskState.getName());
+                            if (botTask != null && botTask.getType() == BotTaskType.SIMPLE) {
+                                cache.add(new BotTaskConfigRenameProvider(botTask));
+                            }
+                        }
+                    }
                 }
                 List<Action> actions = definition.getChildrenRecursive(Action.class);
                 for (Action action : actions) {
@@ -85,10 +97,6 @@ public class PortabilityRefactoring extends Refactoring {
                         provider.setElement(graphElement);
                         cache.add(provider);
                     }
-                }
-                for (IFile file : ProjectFinder.getAllBotTask()) {
-                    BotTask botTask = BotTaskContentUtil.getBotTaskFromFile(file);
-                    cache.add(new BotTaskConfigRenameProvider(botTask, file));
                 }
             }
         } catch (Exception e) {

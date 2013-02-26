@@ -2,11 +2,8 @@ package ru.runa.gpd.lang.action;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -14,29 +11,22 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Menu;
 
-import ru.runa.gpd.Activator;
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.editor.BotTaskConfigHelper;
-import ru.runa.gpd.extension.DelegableProvider;
-import ru.runa.gpd.extension.HandlerRegistry;
-import ru.runa.gpd.extension.handler.BotConfigBasedProvider;
-import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
-import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.lang.model.BotTask;
-import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.Swimlane;
+import ru.runa.gpd.lang.model.BotTaskLink;
+import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.ui.dialog.ChooseBotTaskDialog;
-import ru.runa.gpd.util.BotTaskContentUtil;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
 
+import com.google.common.collect.Lists;
+
 public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
-    private Swimlane selectedSwimlane;
-    private ProcessDefinition currentDefinition;
     private TaskState currentNode;
-    private IFolder botFolder;
+    private String botName;
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
@@ -45,28 +35,14 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
         if (currentNode == null) {
             return;
         }
-        selectedSwimlane = currentNode.getSwimlane();
-        currentDefinition = currentNode.getProcessDefinition();
-        if (currentNode instanceof TaskState && selectedSwimlane != null && selectedSwimlane.getDelegationConfiguration() != null) {
-            OrgFunctionDefinition definition = OrgFunctionsRegistry.parseSwimlaneConfiguration(selectedSwimlane.getDelegationConfiguration());
-            if (definition != null && BotTask.BOT_EXECUTOR_SWIMLANE_NAME.equals(definition.getName())) {
-                if (definition.getParameters().size() > 0) {
-                    String value = definition.getParameters().get(0).getValue();
-                    for (IFolder folder : ProjectFinder.getAllBotFolders()) {
-                        if (folder.getName().equals(value)) {
-                            this.botFolder = folder;
-                        }
-                    }
-                }
-            }
-        }
+        this.botName = BotTaskUtils.getBotName(currentNode.getSwimlane());
     }
 
     @Override
     protected void fillMenu(Menu menu) {
         Action action;
         ActionContributionItem item;
-        if (currentNode.getBotTask() == null) {
+        if (currentNode.getBotTaskLink() == null) {
             action = new BindBotTaskWithNodeAction();
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
@@ -91,8 +67,12 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
         @Override
         public void run() {
             try {
-                BotTask task = chooseBotTask();
-                bindFormalVariableWithReal(task);
+                String botTaskName = chooseBotTask();
+                if (botTaskName != null) {
+                    BotTaskLink botTaskLink = new BotTaskLink();
+                    botTaskLink.setBotTaskName(botTaskName);
+                    linkWithBotTask(botTaskLink);
+                }
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }
@@ -106,9 +86,11 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
 
         @Override
         public void run() {
-            //delete delegation configuration
-            currentNode.setBotTask(null);
-            currentDefinition.setDirty(true);
+            try {
+                linkWithBotTask(null);
+            } catch (Exception e) {
+                PluginLogger.logError(e);
+            }
         }
     }
 
@@ -119,58 +101,43 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
 
         @Override
         public void run() {
-            BotTask task = currentNode.getBotTask();
-            bindFormalVariableWithReal(task);
+            try {
+                linkWithBotTask(currentNode.getBotTaskLink());
+            } catch (Exception e) {
+                PluginLogger.logError(e);
+            }
         }
     }
 
     public class OpenBotTaskAction extends Action {
         public OpenBotTaskAction() {
-            setText(MessageFormat.format(Localization.getString("BotTaskActionsDelegate.gotobottask"), currentNode.getBotTask().getName()));
+            setText(MessageFormat.format(Localization.getString("BotTaskActionsDelegate.gotobottask"), currentNode.getBotTaskLink().getBotTaskName()));
         }
 
         @Override
         public void run() {
-            BotTask task = currentNode.getBotTask();
-            for (IFile file : ProjectFinder.getBotTaskFiles(botFolder)) {
-                if (task.getName().equals(file.getName())) {
-                    WorkspaceOperations.openBotTask(file);
-                }
-            }
+            String botTaskName = currentNode.getBotTaskLink().getBotTaskName();
+            BotTask botTask = BotCache.getBotTask(botName, botTaskName);
+            WorkspaceOperations.openBotTask(BotCache.getBotTaskFile(botTask));
         }
     }
 
-    private BotTask chooseBotTask() throws CoreException, IOException {
-        BotTask task = null;
-        List<String> botTaskNames = new ArrayList<String>();
-        for (IFile file : ProjectFinder.getBotTaskFiles(botFolder)) {
-            botTaskNames.add(file.getName());
+    private String chooseBotTask() throws CoreException, IOException {
+        List<BotTask> botTasks = BotCache.getBotTasks(botName);
+        List<String> botTaskNames = Lists.newArrayList();
+        for (BotTask botTask : botTasks) {
+            if (botTask.getType() != BotTaskType.SIMPLE) {
+                botTaskNames.add(botTask.getName());
+            }
         }
         ChooseBotTaskDialog dialog = new ChooseBotTaskDialog(botTaskNames);
-        String botTaskName = dialog.openDialog();
-        if (botTaskName != null) {
-            for (IFile file : ProjectFinder.getBotTaskFiles(botFolder)) {
-                if (botTaskName.equals(file.getName())) {
-                    task = BotTaskContentUtil.getBotTaskFromFile(file);
-                    task.setDelegationClassName(task.getClazz());
-                    task.setProcessDefinition(currentDefinition);
-                }
-            }
-        }
-        return task;
+        return dialog.openDialog();
     }
 
-    private void bindFormalVariableWithReal(BotTask task) {
-        DelegableProvider provider = HandlerRegistry.getProvider(task.getDelegationClassName());
-        if (!BotTaskConfigHelper.isTaskConfigurationInPlugin(task.getDelegationClassName())) {
-            provider = new BotConfigBasedProvider();
-            provider.setBundle(Activator.getDefault().getBundle());
+    private void linkWithBotTask(BotTaskLink botTaskLink) {
+        currentNode.setBotTaskLink(botTaskLink);
+        if (botTaskLink != null) {
+            BotTaskUtils.editBotTaskLinkConfiguration(currentNode);
         }
-        String newConfig = provider.showConfigurationDialog(task);
-        if (newConfig != null) {
-            task.setDelegationConfiguration(newConfig);
-            currentDefinition.setDirty(true);
-        }
-        currentNode.setBotTask(task);
     }
 }

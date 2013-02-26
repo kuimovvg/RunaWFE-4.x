@@ -2,12 +2,11 @@ package ru.runa.gpd.editor.gef.part.graph;
 
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.util.WorkspaceOperations;
 
@@ -22,8 +21,8 @@ public class SubprocessGraphicalEditPart extends LabeledNodeGraphicalEditPart {
         if (request.getType() == RequestConstants.REQ_OPEN) {
             String subprocessName = getModel().getSubProcessName();
             if (subprocessName != null) {
-                IFile definitionFile = ProcessCache.getProcessDefinitionFile(subprocessName);
-                WorkspaceOperations.openProcessDefinition((IFolder) definitionFile.getParent());
+                ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(subprocessName);
+                WorkspaceOperations.openProcessDefinition(processDefinition);
             }
         } else {
             super.performRequest(request);

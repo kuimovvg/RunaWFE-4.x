@@ -1,5 +1,6 @@
 package ru.runa.gpd.office.excel;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -26,6 +27,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
@@ -204,14 +206,12 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 tx.addModifyListener(new ModifyListener() {
                     @Override
                     public void modifyText(ModifyEvent arg0) {
-                        int x;
                         try {
-                            x = Integer.parseInt(tx.getText());
+                            int x = Integer.parseInt(tx.getText());
+                            cmodel.setColumn(x);
                         } catch (Exception e) {
-                            x = 0;
+                            tx.setText("0");
                         }
-                        cmodel.setColumn(x);
-                        tx.setText("" + x);
                     }
                 });
                 l = new Label(group, SWT.None);
@@ -223,14 +223,12 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 ty.addModifyListener(new ModifyListener() {
                     @Override
                     public void modifyText(ModifyEvent arg0) {
-                        int y;
                         try {
-                            y = Integer.parseInt(ty.getText());
+                            int y = Integer.parseInt(ty.getText());
+                            cmodel.setRow(y);
                         } catch (Exception e) {
-                            y = 0;
+                            ty.setText("0");
                         }
-                        cmodel.setRow(y);
-                        ty.setText("" + y);
                     }
                 });
                 layout(true, true);
@@ -251,8 +249,8 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 }
             }
 
-            public boolean isImportant(String vFormat) { // FIXME
-                return vFormat.equals("ru.runa.wf.web.forms.format.ArrayListFormat") || vFormat.equals("list");
+            protected boolean isImportant(String javaType) {
+                return VariableFormatRegistry.isAssignableFrom(List.class, javaType);
             }
 
             public abstract String getTitle();
@@ -272,8 +270,8 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
             }
 
             @Override
-            public boolean isImportant(String vFormat) {
-                return !(vFormat.equals("ru.runa.wf.web.forms.format.ArrayListFormat") || vFormat.equals("list")); // FIXME
+            public boolean isImportant(String javaType) {
+                return !VariableFormatRegistry.isAssignableFrom(List.class, javaType);
             }
 
             @Override

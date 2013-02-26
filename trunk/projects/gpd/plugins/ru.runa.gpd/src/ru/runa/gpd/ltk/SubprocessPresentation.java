@@ -12,28 +12,22 @@ import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.util.VariableMapping;
 
-public class SubprocessPresentation implements VariableRenameProvider<Subprocess> {
-    private Subprocess subprocess;
-
+public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
     public SubprocessPresentation(Subprocess subprocess) {
         setElement(subprocess);
     }
 
-    public void setElement(Subprocess subprocess) {
-        this.subprocess = subprocess;
-    }
-
+    @Override
     public List<Change> getChanges(String variableName, String replacement) throws Exception {
         List<VariableMapping> mappingsToChange = new ArrayList<VariableMapping>();
-        for (VariableMapping mapping : subprocess.getVariableMappings()) {
+        for (VariableMapping mapping : element.getVariableMappings()) {
             if (mapping.getProcessVariable().equals(variableName)) {
                 mappingsToChange.add(mapping);
             }
         }
-
         List<Change> changes = new ArrayList<Change>();
         if (mappingsToChange.size() > 0) {
-            changes.add(new SubprocessChange(subprocess, variableName, replacement, mappingsToChange));
+            changes.add(new SubprocessChange(element, variableName, replacement, mappingsToChange));
         }
         return changes;
     }
@@ -41,8 +35,7 @@ public class SubprocessPresentation implements VariableRenameProvider<Subprocess
     private class SubprocessChange extends TextCompareChange {
         private final List<VariableMapping> mappingsToChange;
 
-        public SubprocessChange(NamedGraphElement element, String currentVariableName, String replacementVariableName,
-                List<VariableMapping> mappingsToChange) {
+        public SubprocessChange(NamedGraphElement element, String currentVariableName, String replacementVariableName, List<VariableMapping> mappingsToChange) {
             super(element, currentVariableName, replacementVariableName);
             this.mappingsToChange = mappingsToChange;
         }

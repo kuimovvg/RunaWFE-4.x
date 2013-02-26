@@ -10,13 +10,12 @@ import org.eclipse.jface.window.Window;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
 
 public class LDAPConnector implements IConnector, PrefConstants {
-
     private DirContext dirContext;
-
     private static LDAPConnector instance;
 
     private LDAPConnector() {
@@ -34,7 +33,7 @@ public class LDAPConnector implements IConnector, PrefConstants {
     }
 
     @Override
-    public boolean connect() throws Exception {
+    public void connect() throws Exception {
         String serverURL = Activator.getPrefString(P_CONNECTION_LDAP_SERVER_URL);
         String dc = Activator.getPrefString(P_CONNECTION_LDAP_DC);
         Hashtable<String, String> env = new Hashtable<String, String>();
@@ -49,7 +48,8 @@ public class LDAPConnector implements IConnector, PrefConstants {
                     password = userInputDialog.getUserInput();
                 }
                 if (password.length() == 0) {
-                    return false;
+                    PluginLogger.logInfo("[ldapconnector] empty password");
+                    return;
                 }
             }
             env.put(Context.SECURITY_AUTHENTICATION, "simple");
@@ -60,7 +60,6 @@ public class LDAPConnector implements IConnector, PrefConstants {
         }
         env.put("java.naming.ldap.version", "3");
         this.dirContext = new InitialDirContext(env);
-        return true;
     }
 
     @Override
@@ -80,5 +79,4 @@ public class LDAPConnector implements IConnector, PrefConstants {
     public void disconnect() throws Exception {
         dirContext.close();
     }
-
 }

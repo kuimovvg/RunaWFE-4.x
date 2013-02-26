@@ -19,8 +19,8 @@ import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
-import ru.runa.gpd.ui.dialog.JavaHighlightTextStyling;
 
 public class GroovyActionHandlerProvider extends DelegableProvider {
 

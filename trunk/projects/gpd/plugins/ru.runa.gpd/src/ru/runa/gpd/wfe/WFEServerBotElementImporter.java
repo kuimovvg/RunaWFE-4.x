@@ -88,7 +88,7 @@ public class WFEServerBotElementImporter extends DataImporter {
         return getBotService().exportBotTask(WFEServerConnector.getInstance().getUser(), bot, botTask);
     }
 
-    public void deployBot(String botStationName, byte[] archive) throws Exception {
+    public void deployBot(String botStationName, byte[] archive) {
         WFEServerConnector.getInstance().connect();
         BotStation botStation = getBotService().getBotStationByName(botStationName);
         if (botStation == null) {
@@ -99,7 +99,7 @@ public class WFEServerBotElementImporter extends DataImporter {
         getBotService().importBot(WFEServerConnector.getInstance().getUser(), botStation, archive, true);
     }
 
-    private BotService getBotService() throws Exception {
+    private BotService getBotService() {
         return WFEServerConnector.getInstance().getService("BotServiceBean");
     }
 }

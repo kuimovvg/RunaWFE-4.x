@@ -8,28 +8,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.NullChange;
 
-import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.util.Delay;
 
-public class TimerPresentation implements VariableRenameProvider {
-    private Timer timer;
-
+public class TimerPresentation extends VariableRenameProvider<Timer> {
     public TimerPresentation(Timer timer) {
         setElement(timer);
     }
 
     @Override
-    public void setElement(GraphElement element) {
-        this.timer = (Timer) element;
-    }
-
-    @Override
     public List<Change> getChanges(String variableName, String replacement) throws Exception {
         List<Change> changes = new ArrayList<Change>();
-        if (variableName.equals(timer.getDelay().getVariableName())) {
-            changes.add(new TimedChange(timer, variableName, replacement));
+        if (variableName.equals(element.getDelay().getVariableName())) {
+            changes.add(new TimedChange(element, variableName, replacement));
         }
         return changes;
     }
@@ -41,14 +33,14 @@ public class TimerPresentation implements VariableRenameProvider {
 
         @Override
         public Change perform(IProgressMonitor pm) throws CoreException {
-            timer.getDelay().setVariableName(replacementVariableName);
+            element.getDelay().setVariableName(replacementVariableName);
             return new NullChange("ITimed");
         }
 
         @Override
         protected String toPreviewContent(String varName) {
             StringBuffer buffer = new StringBuffer();
-            Delay durationTmp = new Delay(timer.getDelay().getDuration());
+            Delay durationTmp = new Delay(element.getDelay().getDuration());
             durationTmp.setVariableName(varName);
             buffer.append(durationTmp.getDuration());
             return buffer.toString();

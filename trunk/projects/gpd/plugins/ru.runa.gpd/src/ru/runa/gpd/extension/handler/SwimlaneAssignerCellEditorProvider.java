@@ -28,7 +28,7 @@ import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
-import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
+import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.util.XmlUtil;
 
 public class SwimlaneAssignerCellEditorProvider extends DelegableProvider {

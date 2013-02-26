@@ -1,12 +1,10 @@
 package ru.runa.gpd.ui.wizard;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -15,10 +13,11 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.BotTask;
-import ru.runa.gpd.util.BotTaskContentUtil;
+import ru.runa.gpd.util.WorkspaceOperations;
 
 public class CopyBotTaskWizard extends Wizard implements INewWizard {
     private IStructuredSelection selection;
@@ -58,10 +57,10 @@ public class CopyBotTaskWizard extends Wizard implements INewWizard {
                         IFile confFile = ResourcesPlugin.getWorkspace().getRoot()
                                 .getFile(sourceBotTask.getParent().getFullPath().append(new Path(sourceBotTask.getName() + ".conf")));
                         if (confFile.exists()) {
-                            BotTask botTask = BotTaskContentUtil.getBotTaskFromFile(sourceBotTask);
+                            BotTask botTask = BotCache.getBotTaskNotNull(sourceBotTask);
                             botTask.setName(page.getBotTaskName());
                             sourceBotTask = ResourcesPlugin.getWorkspace().getRoot().getFile(targetFolder.getFullPath().append(page.getBotTaskName()));
-                            saveBotTask(sourceBotTask, botTask);
+                            WorkspaceOperations.saveBotTask(sourceBotTask, botTask);
                         }
                         monitor.done();
                     } catch (Exception e) {
@@ -74,9 +73,5 @@ public class CopyBotTaskWizard extends Wizard implements INewWizard {
             return false;
         }
         return true;
-    }
-
-    public static void saveBotTask(IFile botTaskFile, BotTask botTask) throws CoreException, UnsupportedEncodingException {
-        botTaskFile.setContents(BotTaskContentUtil.createBotTaskInfo(botTask, (IFolder) botTaskFile.getParent()), true, true, null);
     }
 }

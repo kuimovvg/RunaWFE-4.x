@@ -2,7 +2,6 @@ package ru.runa.gpd.bot;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -12,9 +11,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.lang.model.BotTask;
-import ru.runa.gpd.util.BotTaskContentUtil;
-import ru.runa.gpd.util.ProjectFinder;
+
+import com.google.common.collect.Lists;
 
 public class BotTaskExportCommand extends BotExportCommand {
     public BotTaskExportCommand(IResource exportResource, OutputStream outputStream) {
@@ -27,17 +27,8 @@ public class BotTaskExportCommand extends BotExportCommand {
     }
 
     @Override
-    protected List<BotTask> getBotTaskForExport(IFolder botFolder) throws CoreException, IOException {
-        List<IFile> botTaskFiles = ProjectFinder.getBotTaskFiles(botFolder);
-        List<BotTask> botTaskForExport = new ArrayList<BotTask>();
-        for (IFile botTaskFile : botTaskFiles) {
-            if (exportResource.getName().equals(botTaskFile.getName())) {
-                BotTask task = BotTaskContentUtil.getBotTaskFromFile(botTaskFile);
-                botTaskForExport.add(task);
-                break;
-            }
-        }
-        return botTaskForExport;
+    protected List<BotTask> getBotTasksForExport(IFolder botFolder) throws CoreException, IOException {
+        return Lists.newArrayList(BotCache.getBotTaskNotNull(botFolder.getName(), exportResource.getName()));
     }
 
     @Override

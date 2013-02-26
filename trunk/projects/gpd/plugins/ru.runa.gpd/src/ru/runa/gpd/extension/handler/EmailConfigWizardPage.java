@@ -44,8 +44,8 @@ import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
-import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.var.format.FileFormat;
@@ -99,6 +99,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
             if (variable.getName().indexOf(" ") == -1) {
                 ftlVariableNames.add(variable.getName());
             }
+            // TODO make comparison by java class name
             if (FileFormat.class.getName().equals(variable.getFormat())) {
                 fileVariableNames.add(variable.getName());
             }
@@ -326,7 +327,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         summaryProperties.putAll(messageComposite.readUserInput());
         summaryProperties.put("bodyInlined", String.valueOf(contentComposite.isUseFormFromTaskForm()));
         summaryProperties.put("body", contentComposite.getMessage());
-        Document document = summaryConfig.toConfigurationDocument(summaryProperties);
+        Document document = summaryConfig.toConfigurationXml(summaryProperties);
         EmailAttachmentsConfig.addAttachments(document, contentComposite.getAttachments());
         String c = XmlUtil.toString(document);
         styledText.setText(c);
