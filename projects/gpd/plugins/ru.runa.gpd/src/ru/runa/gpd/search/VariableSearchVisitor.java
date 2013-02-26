@@ -24,7 +24,11 @@ import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.Match;
 
+import ru.runa.gpd.BotCache;
+import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.lang.model.Action;
+import ru.runa.gpd.lang.model.BotTask;
+import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.FormNode;
@@ -33,12 +37,16 @@ import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.SwimlanedNode;
+import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
+import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableMapping;
 
-public class ProcessDefinitionSearchVisitor {
-    private final GPDSearchQuery query;
+import com.google.common.base.Objects;
+
+public class VariableSearchVisitor {
+    private final VariableSearchQuery query;
     private IProgressMonitor progressMonitor;
     private int numberOfScannedElements;
     private int numberOfElementsToScan;
@@ -48,7 +56,7 @@ public class ProcessDefinitionSearchVisitor {
     private final Matcher matcher;
     private final Matcher matcherWithBrackets;
 
-    public ProcessDefinitionSearchVisitor(GPDSearchQuery query) {
+    public VariableSearchVisitor(VariableSearchQuery query) {
         this.query = query;
         this.status = new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
         this.fileCharSequenceProvider = new FileCharSequenceProvider();
@@ -56,7 +64,7 @@ public class ProcessDefinitionSearchVisitor {
         this.matcherWithBrackets = Pattern.compile(Pattern.quote("\"" + query.getSearchText() + "\"")).matcher("");
     }
 
-    public IStatus search(GPDSearchResult searchResult, IProgressMonitor monitor) {
+    public IStatus search(SearchResult searchResult, IProgressMonitor monitor) {
         progressMonitor = monitor == null ? new NullProgressMonitor() : monitor;
         numberOfScannedElements = 0;
         numberOfElementsToScan = query.getProcessDefinition().getChildrenRecursive(GraphElement.class).size();
@@ -91,8 +99,9 @@ public class ProcessDefinitionSearchVisitor {
             try {
                 List<GraphElement> children = query.getProcessDefinition().getChildrenRecursive(GraphElement.class);
                 for (GraphElement child : children) {
-                    if (!processNode(query.getDefinitionFile(), child)) {
-                        break;
+                    processNode(query.getDefinitionFile(), child);
+                    if (progressMonitor.isCanceled()) {
+                        throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
                     }
                 }
                 return status;
@@ -108,7 +117,7 @@ public class ProcessDefinitionSearchVisitor {
         return search(query.getSearchResult(), monitor);
     }
 
-    private boolean processNode(IFile definitionFile, GraphElement graphElement) {
+    private void processNode(IFile definitionFile, GraphElement graphElement) {
         try {
             currentElement = graphElement;
             if (graphElement instanceof FormNode) {
@@ -128,14 +137,9 @@ public class ProcessDefinitionSearchVisitor {
             }
         } catch (Exception e) {
             status.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
-            return false;
         } finally {
             numberOfScannedElements++;
         }
-        if (progressMonitor.isCanceled()) {
-            throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
-        }
-        return true;
     }
 
     private void processDelegableNode(IFile definitionFile, Delegable delegable) throws Exception {
@@ -176,12 +180,12 @@ public class ProcessDefinitionSearchVisitor {
     }
 
     private void processFormNode(IFile definitionFile, FormNode formNode) throws Exception {
-        ElementMatch formElementMatch = new ElementMatch(formNode, definitionFile, ElementMatch.CONTEXT_SWIMLANE);
+        ElementMatch nodeElementMatch = new ElementMatch(formNode, definitionFile, ElementMatch.CONTEXT_SWIMLANE);
         if (formNode.hasForm()) {
             IFile file = IOUtils.getAdjacentFile(definitionFile, formNode.getFormFileName());
             Map<String, Integer> formVariables = formNode.getFormVariables((IFolder) definitionFile.getParent());
             ElementMatch elementMatch = new ElementMatch(formNode, file, ElementMatch.CONTEXT_FORM);
-            elementMatch.setParent(formElementMatch);
+            elementMatch.setParent(nodeElementMatch);
             int matchesCount = 0;
             if (formVariables.keySet().contains(query.getSearchText())) {
                 matchesCount++;
@@ -197,7 +201,7 @@ public class ProcessDefinitionSearchVisitor {
             IFile file = IOUtils.getAdjacentFile(definitionFile, formNode.getValidationFileName());
             Set<String> validationVariables = formNode.getValidationVariables((IFolder) definitionFile.getParent());
             ElementMatch elementMatch = new ElementMatch(formNode, file, ElementMatch.CONTEXT_FORM_VALIDATION);
-            elementMatch.setParent(formElementMatch);
+            elementMatch.setParent(nodeElementMatch);
             int matchesCount = 0;
             if (validationVariables.contains(query.getSearchText())) {
                 matchesCount++;
@@ -211,8 +215,37 @@ public class ProcessDefinitionSearchVisitor {
         }
         String swimlaneName = ((SwimlanedNode) formNode).getSwimlaneName();
         if (query.getSearchText().equals(swimlaneName)) {
-            formElementMatch.setMatchesCount(1);
-            query.getSearchResult().addMatch(new Match(formElementMatch, 0, 0));
+            nodeElementMatch.setMatchesCount(1);
+            query.getSearchResult().addMatch(new Match(nodeElementMatch, 0, 0));
+        }
+        if (formNode instanceof TaskState) {
+            TaskState taskState = (TaskState) formNode;
+            if (taskState.getBotTaskLink() != null) {
+                ElementMatch elementMatch = new ElementMatch(taskState, null, ElementMatch.CONTEXT_BOT_TASK_LINK);
+                elementMatch.setParent(nodeElementMatch);
+                Map<String, String> parameters = ParamDefConfig.getAllParameters(taskState.getBotTaskLink().getDelegationConfiguration());
+                for (Map.Entry<String, String> entry : parameters.entrySet()) {
+                    if (Objects.equal(query.getSearchText(), entry.getValue())) {
+                        query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
+                        elementMatch.setMatchesCount(elementMatch.getMatchesCount() + 1);
+                    }
+                }
+            } else {
+                String botName = BotTaskUtils.getBotName(taskState.getSwimlane());
+                if (botName != null) {
+                    // if bot task exists with same as task name
+                    BotTask botTask = BotCache.getBotTask(botName, taskState.getName());
+                    if (botTask != null && botTask.getType() == BotTaskType.SIMPLE) {
+                        ElementMatch elementMatch = new ElementMatch(taskState, BotCache.getBotTaskFile(botTask), ElementMatch.CONTEXT_BOT_TASK);
+                        elementMatch.setParent(nodeElementMatch);
+                        List<Match> matches = findInString(elementMatch, botTask.getDelegationConfiguration(), matcher);
+                        elementMatch.setPotentialMatchesCount(matches.size());
+                        for (Match match : matches) {
+                            query.getSearchResult().addMatch(match);
+                        }
+                    }
+                }
+            }
         }
     }
 

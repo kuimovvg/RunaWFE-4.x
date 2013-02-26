@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.util.ProjectFinder;
 
@@ -59,8 +60,8 @@ public class NewBotWizardPage extends WizardPage {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("NewBotWizardPage.botstation.name"));
         botStationCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-        for (IProject project : ProjectFinder.getAllBotStations()) {
-            botStationCombo.add(project.getName());
+        for (String name : BotCache.getAllBotStationNames()) {
+            botStationCombo.add(name);
         }
         botStationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         IProject project = getInitialBotStationElement(selection);

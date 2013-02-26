@@ -7,7 +7,6 @@ import org.dom4j.Element;
 public class MSWordVariableMapping extends Observable {
     private String variableName = "";
     private String bookmarkName = "";
-    private String formatClassName;
 
     public String getVariableName() {
         return variableName;
@@ -15,15 +14,6 @@ public class MSWordVariableMapping extends Observable {
 
     public void setVariableName(String variableName, String format) {
         this.variableName = variableName;
-        if ("time".equals(format)) { // FIXME
-            formatClassName = "ru.runa.wf.web.forms.format.TimeFormat";
-        } else if ("date".equals(format)) {
-            formatClassName = "ru.runa.wf.web.forms.format.DateFormat";
-        } else if ("datetime".equals(format)) {
-            formatClassName = "ru.runa.wf.web.forms.format.DateTimeFormat";
-        } else {
-            formatClassName = null;
-        }
     }
 
     public String getBookmarkName() {
@@ -38,19 +28,12 @@ public class MSWordVariableMapping extends Observable {
         Element element = parent.addElement("mapping");
         element.addAttribute("variable", variableName);
         element.addAttribute("bookmark", bookmarkName);
-        if (formatClassName != null) {
-            element.addAttribute("format-class", formatClassName);
-        }
     }
 
     public static MSWordVariableMapping deserialize(Element element) {
         MSWordVariableMapping model = new MSWordVariableMapping();
         model.variableName = element.attributeValue("variable");
         model.bookmarkName = element.attributeValue("bookmark");
-        String f = element.attributeValue("format-class");
-        if (f != null && f.length() > 0) {
-            model.formatClassName = f;
-        }
         return model;
     }
 }

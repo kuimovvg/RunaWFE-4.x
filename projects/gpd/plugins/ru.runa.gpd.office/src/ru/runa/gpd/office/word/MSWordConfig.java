@@ -62,7 +62,7 @@ public class MSWordConfig extends Observable {
     @Override
     public String toString() {
         try {
-            Document document = XmlUtil.createDocument("msword-report-task");
+            Document document = XmlUtil.createDocument("msword-report-task", XmlUtil.RUNA_NAMESPACE, "msword-report-task.xsd");
             Element reportElement = document.getRootElement().addElement("report");
             reportElement.addAttribute("template-path", templatePath);
             reportElement.addAttribute("output-variable", resultVariableName);

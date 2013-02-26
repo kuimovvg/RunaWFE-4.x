@@ -1,6 +1,7 @@
 package ru.runa.gpd.extension.handler.var;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -35,18 +36,13 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.util.Delay;
-import ru.runa.wfe.var.format.DateFormat;
-import ru.runa.wfe.var.format.DateTimeFormat;
 import ru.runa.wfe.var.format.LongFormat;
-import ru.runa.wfe.var.format.TimeFormat;
 
 public class CalendarHandlerProvider extends XmlBasedConstructorProvider<CalendarConfig> {
     private static List<String> dateFormats = new ArrayList<String>();
     private static List<String> setFormats = new ArrayList<String>();
     static {
-        dateFormats.add(DateFormat.class.getName());
-        dateFormats.add(DateTimeFormat.class.getName());
-        dateFormats.add(TimeFormat.class.getName());
+        dateFormats.add(Date.class.getName());
         setFormats.addAll(dateFormats);
         setFormats.add(LongFormat.class.getName());
     }

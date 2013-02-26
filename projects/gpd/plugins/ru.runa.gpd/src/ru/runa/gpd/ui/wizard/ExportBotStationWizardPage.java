@@ -19,7 +19,7 @@ public class ExportBotStationWizardPage extends ExportBotElementWizardPage {
         setTitle(Localization.getString("ExportBotStationWizardPage.page.title"));
         setDescription(Localization.getString("ExportBotStationWizardPage.page.description"));
         this.exportObjectNameFileMap = new TreeMap<String, IResource>();
-        for (IProject resource : ProjectFinder.getAllBotStations()) {
+        for (IProject resource : ProjectFinder.getAllBotStationProjects()) {
             exportObjectNameFileMap.put(resource.getName(), resource);
         }
     }

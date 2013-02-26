@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.eclipse.ltk.core.refactoring.Change;
 
-import ru.runa.gpd.lang.model.GraphElement;
+public abstract class VariableRenameProvider<T> {
+    protected T element;
 
-public interface VariableRenameProvider<T extends GraphElement> {
+    public final void setElement(T element) {
+        this.element = element;
+    }
 
-    void setElement(T element);
-
-    List<Change> getChanges(String variableName, String replacement) throws Exception;
-
+    public abstract List<Change> getChanges(String variableName, String replacement) throws Exception;
 }

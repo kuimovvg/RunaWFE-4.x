@@ -28,7 +28,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.decision.BSHDecisionModel.IfExpr;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.ui.dialog.JavaHighlightTextStyling;
+import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
 
 public class BSHEditorDialog extends Dialog {

@@ -55,12 +55,12 @@ public class WFEServerBotStationElementImporter extends DataImporter {
         return getBotService().exportBotStation(WFEServerConnector.getInstance().getUser(), botStation);
     }
 
-    public void deployBotStation(byte[] archive) throws Exception {
+    public void deployBotStation(byte[] archive) {
         WFEServerConnector.getInstance().connect();
         getBotService().importBotStation(WFEServerConnector.getInstance().getUser(), archive, true);
     }
 
-    private BotService getBotService() throws Exception {
+    private BotService getBotService() {
         return WFEServerConnector.getInstance().getService("BotServiceBean");
     }
 }

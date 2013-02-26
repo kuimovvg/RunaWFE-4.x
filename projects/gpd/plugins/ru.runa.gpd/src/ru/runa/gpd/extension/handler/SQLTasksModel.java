@@ -36,15 +36,11 @@ public class SQLTasksModel extends Observable {
 
     @Override
     public String toString() {
-        try {
-            Document document = XmlUtil.createDocument("database-tasks");
-            for (SQLTaskModel model : tasks) {
-                model.serialize(document, document.getRootElement());
-            }
-            return XmlUtil.toString(document);
-        } catch (Exception e) {
-            throw new RuntimeException("Unable serialize model to XML", e);
+        Document document = XmlUtil.createDocument("database-tasks", XmlUtil.RUNA_NAMESPACE, "database-tasks.xsd");
+        for (SQLTaskModel model : tasks) {
+            model.serialize(document, document.getRootElement());
         }
+        return XmlUtil.toString(document);
     }
 
     public static SQLTasksModel fromXml(String xml) throws Exception {
@@ -132,7 +128,7 @@ public class SQLTasksModel extends Observable {
             notifyObservers();
         }
 
-        public void serialize(Document document, Element parent) throws Exception {
+        public void serialize(Document document, Element parent) {
             Element taskElement = parent.addElement("task");
             taskElement.addAttribute("datasource", dsName);
             Element queriesElement = taskElement.addElement("queries");
@@ -141,7 +137,7 @@ public class SQLTasksModel extends Observable {
             }
         }
 
-        public static SQLTaskModel deserialize(Element element) throws Exception {
+        public static SQLTaskModel deserialize(Element element) {
             SQLTaskModel model = new SQLTaskModel();
             model.dsName = element.attributeValue("datasource");
             Element queriesElement = element.element("queries");
@@ -184,7 +180,7 @@ public class SQLTasksModel extends Observable {
             }
         }
 
-        public static SQLQueryModel deserialize(Element element) throws Exception {
+        public static SQLQueryModel deserialize(Element element) {
             SQLQueryModel model = new SQLQueryModel();
             model.query = element.attributeValue("sql");
             List<Element> childs = element.elements();
@@ -230,7 +226,7 @@ public class SQLTasksModel extends Observable {
             }
         }
 
-        public static SQLQueryParameterModel deserialize(Element element) throws Exception {
+        public static SQLQueryParameterModel deserialize(Element element) {
             SQLQueryParameterModel model = new SQLQueryParameterModel();
             String elementName = element.getName();
             if ("swimlane-result".equals(elementName)) {

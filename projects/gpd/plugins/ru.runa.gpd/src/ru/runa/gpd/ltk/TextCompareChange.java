@@ -8,26 +8,22 @@ import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
 
-import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.NamedGraphElement;
-
 public abstract class TextCompareChange extends TextEditBasedChange {
-    protected final GraphElement element;
+    protected final Object object;
     protected final String currentVariableName;
     protected final String replacementVariableName;
 
-    public TextCompareChange(NamedGraphElement element, String currentVariableName, String replacementVariableName) {
-        super(element.getName());
-        this.element = element;
+    public TextCompareChange(Object element, String currentVariableName, String replacementVariableName) {
+        super(element.toString());
+        this.object = element;
         this.currentVariableName = currentVariableName;
         this.replacementVariableName = replacementVariableName;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Object getAdapter(Class adapter) {
+    public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
         if (adapter == TextEditChangeNode.class) {
-            return new GPDChangeNode(this, element);
+            return new GPDChangeNode(this, object);
         }
         return super.getAdapter(adapter);
     }
@@ -48,14 +44,13 @@ public abstract class TextCompareChange extends TextEditBasedChange {
     }
 
     @Override
-    public String getPreviewContent(TextEditBasedChangeGroup[] groups, IRegion region, boolean arg2, int arg3, IProgressMonitor pm)
-            throws CoreException {
+    public String getPreviewContent(TextEditBasedChangeGroup[] groups, IRegion region, boolean arg2, int arg3, IProgressMonitor pm) throws CoreException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Object getModifiedElement() {
-        return element;
+        return object;
     }
 
     @Override
@@ -68,5 +63,4 @@ public abstract class TextCompareChange extends TextEditBasedChange {
     }
 
     protected abstract String toPreviewContent(String variableName);
-
 }

@@ -25,8 +25,10 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.office.resource.Messages;
+import ru.runa.gpd.ui.custom.SWTUtils;
 
 public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<MSWordConfig> {
     @Override
@@ -113,8 +115,8 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
                 Label label = new Label(this, SWT.NONE);
                 label.setText(Messages.getString("MSWordConfig.label.resultVariableName"));
                 final Combo combo = new Combo(this, SWT.READ_ONLY);
-                for (Map.Entry<String, String> entry : variables.entrySet()) { // FIXME
-                    if ("ru.runa.wf.web.forms.format.FileFormat".equals(entry.getValue()) || "file".equals(entry.getValue())) {
+                for (Map.Entry<String, String> entry : variables.entrySet()) {
+                    if (VariableFormatRegistry.isAssignableFrom("ru.runa.wfe.var.FileVariable", entry.getValue())) {
                         combo.add(entry.getKey());
                     }
                 }
@@ -141,19 +143,9 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
             GridData data = new GridData(GridData.FILL_HORIZONTAL);
             data.horizontalSpan = 3;
             composite.setLayoutData(data);
-            Composite strokeComposite = new Composite(composite, SWT.NONE);
             data = new GridData(GridData.FILL_HORIZONTAL);
             data.horizontalSpan = 3;
-            strokeComposite.setLayoutData(data);
-            strokeComposite.setLayout(new GridLayout(4, false));
-            Label strokeLabel = new Label(strokeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
-            data = new GridData();
-            data.widthHint = 50;
-            strokeLabel.setLayoutData(data);
-            Label headerLabel = new Label(strokeComposite, SWT.NONE);
-            headerLabel.setText(Messages.getString("MSWordConfig.label.mappings"));
-            strokeLabel = new Label(strokeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
-            strokeLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            Composite strokeComposite = SWTUtils.createStrokeComposite(composite, data, Messages.getString("MSWordConfig.label.mappings"), 4);
             Hyperlink hl2 = new Hyperlink(strokeComposite, SWT.NONE);
             hl2.setText(Localization.getString("button.add"));
             hl2.addHyperlinkListener(new HyperlinkAdapter() {

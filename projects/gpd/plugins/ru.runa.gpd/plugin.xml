@@ -1259,6 +1259,13 @@
             enabled="true"
             label="%ru.runa.wfe.extension.handler.var.MergeMapsActionHandler"
             type="actionHandler"/>
+      <handler
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.user.GetExecutorInfoHandler"
+            enabled="true"
+            label="%ru.runa.wfe.extension.handler.user.GetExecutorInfoHandler"
+            type="botHandler">
+      </handler>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
@@ -1419,9 +1426,9 @@
     	id="FileSearchPage"
         point="org.eclipse.search.searchResultViewPages">
 		<viewPage
-			id="editor.GPDSearchResultPage"
-			searchResultClass="ru.runa.gpd.search.GPDSearchResult"
-			class="ru.runa.gpd.search.GPDSearchPage">
+			id="ru.runa.gpd.search.SearchPage"
+			searchResultClass="ru.runa.gpd.search.SearchResult"
+			class="ru.runa.gpd.search.SearchPage">
 		</viewPage>
 	</extension>
     <extension

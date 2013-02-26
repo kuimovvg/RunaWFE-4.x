@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -31,7 +32,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
+import ru.runa.gpd.search.BaseSearchQuery;
+import ru.runa.gpd.search.BotSearchQuery;
+import ru.runa.gpd.search.BotTaskSearchQuery;
 import ru.runa.gpd.ui.wizard.ExportBotStationWizardPage;
 import ru.runa.gpd.ui.wizard.ExportBotTaskWizardPage;
 import ru.runa.gpd.ui.wizard.ExportBotWizardPage;
@@ -106,9 +111,9 @@ public class BotExplorerTreeView extends ViewPart implements ISelectionListener 
         final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
         final Object selectedObject = selection.getFirstElement();
         final List<IResource> resources = selection.toList();
-        boolean menuOnBotStation = selectedObject instanceof IProject;
-        boolean menuOnBot = selectedObject instanceof IFolder;
-        boolean menuOnBotTask = selectedObject instanceof IFile;
+        final boolean menuOnBotStation = selectedObject instanceof IProject;
+        final boolean menuOnBot = selectedObject instanceof IFolder;
+        final boolean menuOnBotTask = selectedObject instanceof IFile;
         manager.add(new Action(Localization.getString("BotExplorerTreeView.menu.label.newBotStation"), SharedImages.getImageDescriptor("icons/add_bot_station.gif")) {
             @Override
             public void run() {
@@ -216,6 +221,25 @@ public class BotExplorerTreeView extends ViewPart implements ISelectionListener 
                 @Override
                 public void run() {
                     WorkspaceOperations.deleteBotResources(resources);
+                }
+            });
+        }
+        if (menuOnBot || menuOnBotTask) {
+            manager.add(new Action(Localization.getString("button.findReferences"), SharedImages.getImageDescriptor("icons/search.gif")) {
+                @Override
+                public void run() {
+                    try {
+                        IResource resource = (IResource) selectedObject;
+                        BaseSearchQuery query;
+                        if (menuOnBot) {
+                            query = new BotSearchQuery(resource.getName());
+                        } else {
+                            query = new BotTaskSearchQuery(resource.getParent().getName(), resource.getName());
+                        }
+                        NewSearchUI.runQueryInBackground(query);
+                    } catch (Exception ex) {
+                        PluginLogger.logError(ex);
+                    }
                 }
             });
         }

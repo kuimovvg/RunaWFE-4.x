@@ -8,7 +8,10 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 
 import ru.runa.gpd.Activator;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Variable;
+
+import com.google.common.base.Objects;
 
 public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtifact> {
     private static final String XML_FILE_NAME = "variableFormats.xml";
@@ -44,9 +47,19 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
 
     public static boolean isAssignableFrom(String superClassName, String className) {
         try {
-            return Class.forName(superClassName).isAssignableFrom(Class.forName(className));
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            return isAssignableFrom(Class.forName(superClassName), className);
+        } catch (Throwable th) {
+            PluginLogger.logErrorWithoutDialog(superClassName, th);
+            return false;
+        }
+    }
+
+    public static boolean isAssignableFrom(Class<?> superClass, String className) {
+        try {
+            Class<?> testingClass = Class.forName(className);
+            return superClass.isAssignableFrom(testingClass);
+        } catch (Throwable th) {
+            PluginLogger.logErrorWithoutDialog(className, th);
             return false;
         }
     }
@@ -54,5 +67,22 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
     public static boolean isApplicable(Variable variable, String classNameFilter) {
         String className = getInstance().getArtifact(variable.getFormat()).getVariableClassName();
         return isAssignableFrom(classNameFilter, className);
+    }
+
+    public VariableFormatArtifact getArtifactByJavaClassName(String javaClassName) {
+        for (VariableFormatArtifact artifact : getAll()) {
+            if (Objects.equal(javaClassName, artifact.getVariableClassName())) {
+                return artifact;
+            }
+        }
+        return null;
+    }
+
+    public VariableFormatArtifact getArtifactNotNullByJavaClassName(String javaClassName) {
+        VariableFormatArtifact artifact = getArtifactByJavaClassName(javaClassName);
+        if (artifact == null) {
+            throw new RuntimeException("Artifact javaClassName='" + javaClassName + "' does not exist");
+        }
+        return artifact;
     }
 }

@@ -11,16 +11,10 @@ import org.eclipse.ltk.core.refactoring.NullChange;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.util.VariableMapping;
 
-public abstract class MessageRenameProvider<T extends NamedGraphElement> implements VariableRenameProvider<T> {
-
-    protected T element;
-
-    public void setElement(T element) {
-        this.element = element;
-    }
-
+public abstract class MessageRenameProvider<T extends NamedGraphElement> extends VariableRenameProvider<T> {
     protected abstract List<VariableMapping> getVariableMappings();
 
+    @Override
     public List<Change> getChanges(String variableName, String replacement) throws Exception {
         List<VariableMapping> mappingsToChange = new ArrayList<VariableMapping>();
         for (VariableMapping mapping : getVariableMappings()) {
@@ -28,7 +22,6 @@ public abstract class MessageRenameProvider<T extends NamedGraphElement> impleme
                 mappingsToChange.add(mapping);
             }
         }
-
         List<Change> changes = new ArrayList<Change>();
         if (mappingsToChange.size() > 0) {
             changes.add(new VariableMappingChange(element, variableName, replacement, mappingsToChange));
@@ -37,11 +30,9 @@ public abstract class MessageRenameProvider<T extends NamedGraphElement> impleme
     }
 
     private class VariableMappingChange extends TextCompareChange {
-
         private final List<VariableMapping> mappingsToChange;
 
-        public VariableMappingChange(NamedGraphElement element, String currentVariableName, String replacementVariableName,
-                List<VariableMapping> mappingsToChange) {
+        public VariableMappingChange(NamedGraphElement element, String currentVariableName, String replacementVariableName, List<VariableMapping> mappingsToChange) {
             super(element, currentVariableName, replacementVariableName);
             this.mappingsToChange = mappingsToChange;
         }
@@ -64,5 +55,4 @@ public abstract class MessageRenameProvider<T extends NamedGraphElement> impleme
             return buffer.toString();
         }
     }
-
 }

@@ -50,7 +50,7 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
-import ru.runa.gpd.search.GPDSearchQuery;
+import ru.runa.gpd.search.VariableSearchQuery;
 import ru.runa.gpd.ui.dialog.CreateVariableDialog;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
 
@@ -230,7 +230,7 @@ public class VariableEditorPage extends EditorPartBase {
             try {
                 IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
                 Variable variable = (Variable) selection.getFirstElement();
-                GPDSearchQuery query = new GPDSearchQuery(editor.getDefinitionFile(), getDefinition(), variable.getName());
+                VariableSearchQuery query = new VariableSearchQuery(editor.getDefinitionFile(), getDefinition(), variable.getName());
                 NewSearchUI.runQueryInBackground(query);
             } catch (Exception ex) {
                 PluginLogger.logError(ex);
