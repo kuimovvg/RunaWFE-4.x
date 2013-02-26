@@ -22,7 +22,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import ru.runa.gpd.BotStationNature;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.util.BotTaskContentUtil;
+import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.IOUtils;
 
 public class NewBotStationWizard extends Wizard implements INewWizard {
@@ -64,8 +64,8 @@ public class NewBotStationWizard extends Wizard implements INewWizard {
                         IFolder folder = newBotStation.getProject().getFolder("/src/botstation/");
                         IOUtils.createFolder(folder);
                         monitor.worked(1);
-                        IFile gpdFile = folder.getFile("botstation");
-                        gpdFile.create(BotTaskContentUtil.createBotStationInfo(page.getProjectName(), page.getRmiAddress()), true, null);
+                        IFile file = folder.getFile("botstation");
+                        IOUtils.createFile(file, BotTaskUtils.createBotStationInfo(page.getProjectName(), page.getRmiAddress()));
                         monitor.worked(1);
                         monitor.done();
                     } catch (Exception e) {

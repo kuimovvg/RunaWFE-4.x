@@ -70,7 +70,7 @@ public abstract class ImportWizardPage extends WizardPage {
             }
         });
         projectViewer.setContentProvider(new ArrayContentProvider());
-        projectViewer.setInput(ProjectFinder.getAllProjects());
+        projectViewer.setInput(ProjectFinder.getAllProcessDefinitionProjects());
         if (project != null) {
             projectViewer.setSelection(new StructuredSelection(project));
         }

@@ -13,15 +13,15 @@ import org.eclipse.search.internal.ui.text.IFileSearchContentProvider;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 
-public class GPDTreeContentProvider implements ITreeContentProvider, IFileSearchContentProvider {
+public class SearchTreeContentProvider implements ITreeContentProvider, IFileSearchContentProvider {
 
     private final Object[] EMPTY_ARR = new Object[0];
 
-    private GPDSearchResult result;
+    private SearchResult result;
     private final AbstractTreeViewer treeViewer;
     private Map<Object, Set<Object>> fChildrenMap;
 
-    public GPDTreeContentProvider(AbstractTreeViewer viewer) {
+    public SearchTreeContentProvider(AbstractTreeViewer viewer) {
         this.treeViewer = viewer;
     }
 
@@ -45,12 +45,12 @@ public class GPDTreeContentProvider implements ITreeContentProvider, IFileSearch
     }
 
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        if (newInput instanceof GPDSearchResult) {
-            initialize((GPDSearchResult) newInput);
+        if (newInput instanceof SearchResult) {
+            initialize((SearchResult) newInput);
         }
     }
 
-    protected synchronized void initialize(GPDSearchResult result) {
+    protected synchronized void initialize(SearchResult result) {
         this.result = result;
         fChildrenMap = new HashMap<Object, Set<Object>>();
         if (result != null) {

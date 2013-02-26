@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -17,10 +16,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.ModalContext;
 
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.lang.model.BotTask;
-import ru.runa.gpd.util.BotTaskContentUtil;
-import ru.runa.gpd.util.BotXmlUtil;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.BotScriptUtils;
 import ru.runa.gpd.util.XmlUtil;
 
 public class BotExportCommand extends BotSyncCommand {
@@ -53,8 +51,8 @@ public class BotExportCommand extends BotSyncCommand {
     protected void getBotStream(OutputStream out, IFolder botFolder) throws IOException, CoreException {
         ZipOutputStream zipStream = new ZipOutputStream(out);
         zipStream.putNextEntry(new ZipEntry("script.xml"));
-        List<BotTask> botTaskForExport = getBotTaskForExport(botFolder);
-        Document document = BotXmlUtil.createScriptForBotLoading(botFolder.getName(), botTaskForExport);
+        List<BotTask> botTaskForExport = getBotTasksForExport(botFolder);
+        Document document = BotScriptUtils.createScriptForBotLoading(botFolder.getName(), botTaskForExport);
         XmlUtil.writeXml(document, zipStream);
         writeConfigurationFiles(botFolder, zipStream);
         zipStream.close();
@@ -65,14 +63,8 @@ public class BotExportCommand extends BotSyncCommand {
         return (IFolder) exportResource;
     }
 
-    protected List<BotTask> getBotTaskForExport(IFolder botFolder) throws CoreException, IOException {
-        List<IFile> botTaskFiles = ProjectFinder.getBotTaskFiles(botFolder);
-        List<BotTask> botTaskForExport = new ArrayList<BotTask>();
-        for (IFile botTaskFile : botTaskFiles) {
-            BotTask task = BotTaskContentUtil.getBotTaskFromFile(botTaskFile);
-            botTaskForExport.add(task);
-        }
-        return botTaskForExport;
+    protected List<BotTask> getBotTasksForExport(IFolder botFolder) throws CoreException, IOException {
+        return BotCache.getBotTasks(botFolder.getName());
     }
 
     protected void writeConfigurationFiles(IFolder botFolder, ZipOutputStream zipStream) throws CoreException, IOException {

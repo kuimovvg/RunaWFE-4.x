@@ -73,7 +73,7 @@ public class CopyProcessDefinitionWizardPage extends WizardPage {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("label.project"));
         projectCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-        for (IProject project : ProjectFinder.getAllProjects()) {
+        for (IProject project : ProjectFinder.getAllProcessDefinitionProjects()) {
             projectCombo.add(project.getName());
         }
         projectCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

@@ -41,7 +41,7 @@ import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
-import ru.runa.gpd.search.GPDSearchQuery;
+import ru.runa.gpd.search.VariableSearchQuery;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
 
 public class SwimlaneEditorPage extends EditorPartBase {
@@ -212,7 +212,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
             try {
                 IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
                 Swimlane swimlane = (Swimlane) selection.getFirstElement();
-                GPDSearchQuery query = new GPDSearchQuery(editor.getDefinitionFile(), getDefinition(), swimlane.getName());
+                VariableSearchQuery query = new VariableSearchQuery(editor.getDefinitionFile(), getDefinition(), swimlane.getName());
                 NewSearchUI.runQueryInBackground(query);
             } catch (Exception ex) {
                 PluginLogger.logError(ex);

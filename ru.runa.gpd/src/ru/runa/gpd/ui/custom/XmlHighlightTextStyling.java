@@ -1,4 +1,4 @@
-package ru.runa.gpd.ui.dialog;
+package ru.runa.gpd.ui.custom;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,116 +2,83 @@ package ru.runa.gpd.ltk;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.NullChange;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
-import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.lang.model.BotTask;
-import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.util.WorkspaceOperations;
 
-@SuppressWarnings("rawtypes")
-public class BotTaskConfigRenameProvider implements VariableRenameProvider {
-    private BotTask botTask;
-    private IFile botTaskInfoFile;
+import com.google.common.base.Preconditions;
 
-    public BotTaskConfigRenameProvider(BotTask botTask, IFile botTaskInfoFile) {
-        this.botTask = botTask;
-        this.botTaskInfoFile = botTaskInfoFile;
+public class BotTaskConfigRenameProvider extends VariableRenameProvider<BotTask> {
+    public BotTaskConfigRenameProvider(BotTask botTask) {
+        Preconditions.checkNotNull(botTask);
+        setElement(botTask);
     }
 
     @Override
     public List<Change> getChanges(String variableName, String replacement) throws Exception {
         List<Change> changes = new ArrayList<Change>();
-        if (botTask != null) {
-            String conf = botTask.getConfig();
-            if (conf != null && conf.contains(variableName)) {
-                changes.add(new ConfigChange(variableName, replacement));
-            }
+        if (element.getDelegationConfiguration() != null && element.getDelegationConfiguration().contains(Pattern.quote("\"" + variableName + "\""))) {
+            changes.add(new ConfigChange(variableName, replacement));
         }
         return changes;
     }
 
-    private class ConfigChange extends TextEditBasedChange {
-        protected final String currentVariableName;
-        protected final String replacementVariableName;
-
+    private class ConfigChange extends TextCompareChange {
         public ConfigChange(String currentVariableName, String replacementVariableName) {
-            super("");
-            this.currentVariableName = currentVariableName;
-            this.replacementVariableName = replacementVariableName;
+            super(element, currentVariableName, replacementVariableName);
+            // unchecked by default
+            setEnabled(false);
         }
 
         @Override
         public Change perform(IProgressMonitor pm) throws CoreException {
-            if (botTask != null) {
-                String conf = botTask.getConfig();
-                if (conf != null && conf.contains(currentVariableName)) {
-                    botTask.setConfig(conf.replaceAll(currentVariableName, replacementVariableName));
-                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                    if (page != null) {
-                        IEditorPart editor = page.findEditor(new FileEditorInput(botTaskInfoFile));
-                        if (editor != null) {
-                            page.closeEditor(editor, false);
-                        }
-                    }
-                    WorkspaceOperations.saveBotTask(botTaskInfoFile, botTask);
+            String newConfiguration = getConfigurationReplacement();
+            element.setDelegationConfiguration(newConfiguration);
+            IFile botTaskFile = BotCache.getBotTaskFile(element);
+            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+            if (page != null) {
+                IEditorPart editor = page.findEditor(new FileEditorInput(botTaskFile));
+                if (editor != null) {
+                    page.closeEditor(editor, false);
                 }
             }
-            return new NullChange("TaskState");
+            WorkspaceOperations.saveBotTask(botTaskFile, element);
+            return new NullChange("BotTask");
+        }
+
+        private String getConfigurationReplacement() {
+            String oldString = Pattern.quote("\"" + currentVariableName + "\"");
+            String newString = Matcher.quoteReplacement("\"" + replacementVariableName + "\"");
+            String newConfiguration = element.getDelegationConfiguration().replaceAll(oldString, newString);
+            return newConfiguration;
         }
 
         @Override
         public String getCurrentContent(IProgressMonitor pm) throws CoreException {
-            return toPreviewContent(currentVariableName);
-        }
-
-        @Override
-        public String getCurrentContent(IRegion region, boolean arg1, int arg2, IProgressMonitor pm) throws CoreException {
-            throw new UnsupportedOperationException();
+            return element.getDelegationConfiguration();
         }
 
         @Override
         public String getPreviewContent(IProgressMonitor pm) throws CoreException {
-            return toPreviewContent(replacementVariableName);
+            return getConfigurationReplacement();
         }
 
         @Override
-        public String getPreviewContent(TextEditBasedChangeGroup[] groups, IRegion region, boolean arg2, int arg3, IProgressMonitor pm) throws CoreException {
+        protected String toPreviewContent(String variableName) {
             throw new UnsupportedOperationException();
         }
-
-        @Override
-        public Object getModifiedElement() {
-            return null;
-        }
-
-        @Override
-        public void initializeValidationData(IProgressMonitor pm) {
-        }
-
-        @Override
-        public RefactoringStatus isValid(IProgressMonitor pm) {
-            return RefactoringStatus.createInfoStatus("Ok");
-        }
-
-        protected String toPreviewContent(String variableName) {
-            return variableName;
-        }
-    }
-
-    @Override
-    public void setElement(GraphElement element) {
     }
 }
