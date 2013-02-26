@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
@@ -230,15 +229,13 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
                 byte[] bytes = ByteStreams.toByteArray(zin);
                 files.put(entry.getName(), bytes);
             }
-            if (files.get("script.xml") == null) {
-                throw new IOException("Incorrect bot archive");
-            }
-            InputStream script = new ByteArrayInputStream(files.get("script.xml"));
+            byte[] scriptXml = files.remove("script.xml");
+            Preconditions.checkNotNull(scriptXml, "Incorrect bot archive: no script.xml inside");
             WfeScriptForBotStations wfeScriptForBotStations = new WfeScriptForBotStations(user, replace);
             ApplicationContextFactory.autowireBean(wfeScriptForBotStations);
             wfeScriptForBotStations.setBotStation(station);
             wfeScriptForBotStations.setConfigs(files);
-            wfeScriptForBotStations.runScript(script);
+            wfeScriptForBotStations.runScript(scriptXml);
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }

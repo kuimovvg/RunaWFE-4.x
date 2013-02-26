@@ -36,6 +36,26 @@ import com.google.common.collect.Maps;
  * @author Dofs
  */
 public class XmlUtils {
+    public static final String RUNA_NAMESPACE = "http://runa.ru/xml";
+
+    public static Document createDocument(String rootElementName) {
+        Document document = DocumentHelper.createDocument();
+        document.addElement(rootElementName);
+        return document;
+    }
+
+    public static Document createDocument(String rootElementName, String defaultNamespaceUri) {
+        Document document = createDocument(rootElementName);
+        document.getRootElement().addNamespace("", defaultNamespaceUri);
+        return document;
+    }
+
+    public static Document createDocument(String rootElementName, String defaultNamespaceUri, String xsdLocation) {
+        Document document = createDocument(rootElementName, defaultNamespaceUri);
+        document.getRootElement().addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        document.getRootElement().addAttribute("xsi:schemaLocation", defaultNamespaceUri + " " + xsdLocation);
+        return document;
+    }
 
     public static Document parseWithoutValidation(String data) {
         return parseWithoutValidation(data.getBytes(Charsets.UTF_8));

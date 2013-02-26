@@ -54,19 +54,19 @@ public class WfeScriptForBotStations extends AdminScriptRunner {
     public static byte[] createScriptForBotLoading(Bot bot, List<BotTask> tasks) {
         Document script = AdminScriptUtils.createScriptDocument();
         Element root = script.getRootElement();
-        Element createBotElement = root.addElement("createBot");
+        Element createBotElement = root.addElement("createBot", XmlUtils.RUNA_NAMESPACE);
         createBotElement.addAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
         createBotElement.addAttribute(PASSWORD_ATTRIBUTE_NAME, "");
         createBotElement.addAttribute(STARTTIMEOUT_ATTRIBUTE_NAME, "" + bot.getStartTimeout());
 
         if (tasks.size() > 0) {
-            Element removeTasks = root.addElement("removeConfigurationsFromBot");
+            Element removeTasks = root.addElement("removeConfigurationsFromBot", XmlUtils.RUNA_NAMESPACE);
             removeTasks.addAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
             for (BotTask task : tasks) {
                 Element taskElement = removeTasks.addElement("botConfiguration");
                 taskElement.addAttribute(NAME_ATTRIBUTE_NAME, task.getName());
             }
-            Element addTasks = root.addElement("addConfigurationsToBot");
+            Element addTasks = root.addElement("addConfigurationsToBot", XmlUtils.RUNA_NAMESPACE);
             addTasks.addAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
             for (BotTask task : tasks) {
                 Element taskElement = addTasks.addElement("botConfiguration");

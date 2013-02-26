@@ -19,7 +19,6 @@ package ru.runa.wfe.script;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -144,11 +143,11 @@ public class AdminScriptRunner {
         this.processDefinitionsBytes = processDefinitionsBytes;
     }
 
-    public void runScript(InputStream inputStream) throws AdminScriptException {
+    public void runScript(byte[] scriptXml) throws AdminScriptException {
         processDeployed = 0;
         namedProcessDefinitionIdentities.clear();
         namedExecutorIdentities.clear();
-        Document document = XmlUtils.parseWithXSDValidation(inputStream, "workflowScript.xsd");
+        Document document = XmlUtils.parseWithXSDValidation(scriptXml, "workflowScript.xsd");
         Element scriptElement = document.getRootElement();
         List<Element> elements = scriptElement.elements();
         for (Element element : elements) {
@@ -833,7 +832,7 @@ public class AdminScriptRunner {
         createBotCommon(element, station);
     }
 
-    protected void createBotCommon(Element element, BotStation station) {
+    protected void createBotCommon(Element element, BotStation botStation) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String pass = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
         String timeout = element.attributeValue(STARTTIMEOUT_ATTRIBUTE_NAME);
@@ -842,14 +841,17 @@ public class AdminScriptRunner {
             executorLogic.create(user, actor);
             executorLogic.setPassword(user, actor, pass);
         }
-        Bot bot = new Bot();
-        bot.setBotStation(station);
-        bot.setUsername(name);
-        bot.setPassword(pass);
-        if (!Strings.isNullOrEmpty(timeout)) {
-            bot.setStartTimeout(Long.parseLong(timeout));
+        Bot bot = botLogic.getBot(user, botStation.getId(), name);
+        if (bot == null) {
+            bot = new Bot();
+            bot.setBotStation(botStation);
+            bot.setUsername(name);
+            bot.setPassword(pass);
+            if (!Strings.isNullOrEmpty(timeout)) {
+                bot.setStartTimeout(Long.parseLong(timeout));
+            }
+            botLogic.createBot(user, bot);
         }
-        botLogic.createBot(user, bot);
     }
 
     public void updateBot(Element element) {
@@ -974,8 +976,10 @@ public class AdminScriptRunner {
         List<Element> taskNodeList = element.elements(BOT_CONFIGURATION_ELEMENT_NAME);
         for (Element taskElement : taskNodeList) {
             String name = taskElement.attributeValue(NAME_ATTRIBUTE_NAME);
-            BotTask task = botLogic.getBotTaskNotNull(user, bot.getId(), name);
-            botLogic.removeBotTask(user, task.getId());
+            BotTask botTask = botLogic.getBotTask(user, bot.getId(), name);
+            if (botTask != null) {
+                botLogic.removeBotTask(user, botTask.getId());
+            }
         }
     }
 

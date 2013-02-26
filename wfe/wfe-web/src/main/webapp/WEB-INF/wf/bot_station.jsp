@@ -8,7 +8,6 @@
 	<tiles:put name="body" type="string">
 <%
 	long botStationId = Long.parseLong(request.getParameter("botStationId"));
-	String returnAction="/bot_station.do?botStationId=" + botStationId;
 %>
         <wf:botStationTag botStationId="<%= botStationId %>"/>
         <table width="100%">

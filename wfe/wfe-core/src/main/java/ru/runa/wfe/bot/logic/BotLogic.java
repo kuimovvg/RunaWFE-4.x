@@ -116,7 +116,7 @@ public class BotLogic extends CommonLogic {
         return botDAO.getNotNull(id);
     }
 
-    private Bot getBot(User user, Long botStationId, String name) {
+    public Bot getBot(User user, Long botStationId, String name) {
         checkReadPermissionOnBotStations(user);
         BotStation botStation = getBotStationNotNull(botStationId);
         return botDAO.get(botStation, name);
@@ -173,7 +173,7 @@ public class BotLogic extends CommonLogic {
         return botTaskDAO.getNotNull(id);
     }
 
-    private BotTask getBotTask(User user, Long botId, String name) {
+    public BotTask getBotTask(User user, Long botId, String name) {
         checkReadPermissionOnBotStations(user);
         Bot bot = getBotNotNull(user, botId);
         return botTaskDAO.get(bot, name);
