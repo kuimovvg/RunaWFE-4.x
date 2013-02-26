@@ -6,6 +6,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 
+import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.FormNodeSetFileCommand;
 import ru.runa.gpd.form.FormTypeProvider;
@@ -25,7 +26,7 @@ public class CreateFormDelegate extends BaseModelActionDelegate {
             }
             formNode.setFormType(chooseFormTypeDialog.getType());
             if (!FormTypeProvider.getFormType(formNode.getFormType()).isCreationAllowed()) {
-                ErrorDialog.open("DEPRACATED. Creation does not allowed.");
+                ErrorDialog.open(Localization.getString("FormType.creationNotAllowed"));
                 return;
             }
             String fileName = formNode.getId().concat(".").concat(formNode.getFormType());

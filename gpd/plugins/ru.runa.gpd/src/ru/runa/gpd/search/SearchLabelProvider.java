@@ -10,10 +10,10 @@ import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 
-public class GPDTreeLabelProvider extends LabelProvider {
-    private final GPDSearchPage page;
+public class SearchLabelProvider extends LabelProvider {
+    private final SearchPage page;
 
-    public GPDTreeLabelProvider(GPDSearchPage page) {
+    public SearchLabelProvider(SearchPage page) {
         this.page = page;
     }
 
@@ -26,22 +26,24 @@ public class GPDTreeLabelProvider extends LabelProvider {
             text = Localization.getString("Search.formNode.form");
         } else if (ElementMatch.CONTEXT_FORM_VALIDATION.equals(elementMatch.getContext())) {
             text = Localization.getString("Search.formNode.validation");
+        } else if (ElementMatch.CONTEXT_BOT_TASK.equals(elementMatch.getContext())) {
+            text = Localization.getString("Search.taskNode.botTask");
+        } else if (ElementMatch.CONTEXT_BOT_TASK_LINK.equals(elementMatch.getContext())) {
+            text = Localization.getString("Search.taskNode.botTaskLink");
         } else if (graphElement instanceof NamedGraphElement) {
             text = ((NamedGraphElement) graphElement).getName();
         } else {
             text = graphElement.toString();
         }
-
         if (ElementMatch.CONTEXT_TIMED_VARIABLE.equals(elementMatch.getContext())) {
             text += " [" + Localization.getString("Timer.baseDate") + "]";
         }
         if (ElementMatch.CONTEXT_SWIMLANE.equals(elementMatch.getContext()) && elementMatch.getMatchesCount() > 0) {
             text += " [" + Localization.getString("default.swimlane.name") + "]";
         }
-
         int strictMatchCount = 0;
         int potentialMatchCount = 0;
-        GPDSearchResult result = (GPDSearchResult) page.getInput();
+        SearchResult result = (SearchResult) page.getInput();
         if (result != null) {
             strictMatchCount = result.getStrictMatchCount(elementMatch);
             potentialMatchCount = result.getPotentialMatchCount(elementMatch) - strictMatchCount;
@@ -67,6 +69,12 @@ public class GPDTreeLabelProvider extends LabelProvider {
         ElementMatch elementMatch = (ElementMatch) element;
         if (ElementMatch.CONTEXT_FORM.equals(elementMatch.getContext()) || ElementMatch.CONTEXT_FORM_VALIDATION.equals(elementMatch.getContext())) {
             return SharedImages.getImage("icons/show_in_file.gif");
+        }
+        if (ElementMatch.CONTEXT_BOT_TASK.equals(elementMatch.getContext())) {
+            return SharedImages.getImage("icons/bot_task.gif");
+        }
+        if (ElementMatch.CONTEXT_BOT_TASK_LINK.equals(elementMatch.getContext())) {
+            return SharedImages.getImage("icons/bot_task_formal.gif");
         }
         return elementMatch.getGraphElement().getEntryImage();
     }

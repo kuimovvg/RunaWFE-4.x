@@ -52,7 +52,7 @@ public class BotTaskParamDefWizardPage extends WizardPage {
             }
             if (paramDef.getFormatFilters().size() > 0) {
                 String type = paramDef.getFormatFilters().get(0);
-                String label = VariableFormatRegistry.getInstance().getArtifactNotNull(type).getLabel();
+                String label = VariableFormatRegistry.getInstance().getArtifactNotNullByJavaClassName(type).getLabel();
                 typeCombo.setText(label);
             }
         }
@@ -111,7 +111,7 @@ public class BotTaskParamDefWizardPage extends WizardPage {
     }
 
     public String getType() {
-        return VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText()).getName();
+        return VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText()).getVariableClassName();
     }
 
     private boolean isDuplicated() {

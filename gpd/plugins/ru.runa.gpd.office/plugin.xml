@@ -50,6 +50,7 @@
             cellEditorProvider="ru.runa.gpd.office.word.MSWordTaskHandlerConfigurator"
             className="ru.runa.wfe.logic.bot.MSWordReportTaskHandler"
             label="%ActionHandler.MSWordHandler"
+            enabled="true"
             type="botHandler">
       </handler>
    </extension>

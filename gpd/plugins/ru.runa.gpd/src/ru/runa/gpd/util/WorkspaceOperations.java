@@ -30,19 +30,17 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.editor.BotTaskEditor;
+import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
-import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
-import ru.runa.gpd.extension.orgfunction.OrgFunctionParameter;
-import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ui.dialog.InfoWithDetailsDialog;
@@ -95,28 +93,6 @@ public class WorkspaceOperations {
         }
         for (IFile definitionFile : deletedDefinitions) {
             ProcessCache.processDefinitionWasDeleted(definitionFile);
-        }
-    }
-
-    public static void deleteBotResources(List<IResource> resources) {
-        for (IResource resource : resources) {
-            try {
-                resource.refreshLocal(IResource.DEPTH_INFINITE, null);
-                String message = Localization.getString(getConfirmMessage(resource));
-                if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("message.confirm.operation"),
-                        MessageFormat.format(message, resource.getName()))) {
-                    if (resource instanceof IFile) {
-                        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                        IEditorPart editor = page.findEditor(new FileEditorInput((IFile) resource));
-                        if (editor != null) {
-                            page.closeEditor(editor, false);
-                        }
-                    }
-                    resource.delete(true, null);
-                }
-            } catch (CoreException e) {
-                PluginLogger.logError("Error deleting", e);
-            }
         }
     }
 
@@ -202,19 +178,25 @@ public class WorkspaceOperations {
         definitionFile.setContents(new ByteArrayInputStream(bytes), true, true, null);
     }
 
-    public static void openProcessDefinition(IFolder definitionFolder) {
+    public static ProcessEditorBase openProcessDefinition(IFolder definitionFolder) {
+        IFile definitionFile = ProjectFinder.getProcessDefinitionFile(definitionFolder);
+        ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
+        return openProcessDefinition(processDefinition);
+    }
+
+    public static ProcessEditorBase openProcessDefinition(ProcessDefinition processDefinition) {
         try {
-            IFile definitionFile = ProjectFinder.getProcessDefinitionFile(definitionFolder);
-            ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
+            IFile definitionFile = ProcessCache.getProcessDefinitionFile(processDefinition.getName());
             String editorId;
             if (processDefinition.isBPMNNotation()) {
                 editorId = GraphitiProcessEditor.ID;
             } else {
                 editorId = GEFProcessEditor.ID;
             }
-            IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), definitionFile, editorId, true);
+            return (ProcessEditorBase) IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), definitionFile, editorId, true);
         } catch (PartInitException e) {
             PluginLogger.logError("Unable open diagram", e);
+            return null;
         }
     }
 
@@ -229,21 +211,50 @@ public class WorkspaceOperations {
         ImportParWizard wizard = new ImportParWizard();
         wizard.init(PlatformUI.getWorkbench(), selection);
         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
-        dialog.open();
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            BotCache.reload();
+        }
+    }
+
+    public static void deleteBotResources(List<IResource> resources) {
+        for (IResource resource : resources) {
+            try {
+                resource.refreshLocal(IResource.DEPTH_INFINITE, null);
+                String message = Localization.getString(getConfirmMessage(resource));
+                if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("message.confirm.operation"),
+                        MessageFormat.format(message, resource.getName()))) {
+                    if (resource instanceof IFile) {
+                        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                        IEditorPart editor = page.findEditor(new FileEditorInput((IFile) resource));
+                        if (editor != null) {
+                            page.closeEditor(editor, false);
+                        }
+                    }
+                    resource.delete(true, null);
+                }
+            } catch (CoreException e) {
+                PluginLogger.logError("Error deleting", e);
+            }
+        }
+        BotCache.reload();
     }
 
     public static void createNewBotStation(IStructuredSelection selection) {
         NewBotStationWizard wizard = new NewBotStationWizard();
         wizard.init(PlatformUI.getWorkbench(), selection);
         WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
-        dialog.open();
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            BotCache.reload();
+        }
     }
 
     public static void createNewBot(IStructuredSelection selection) {
         NewBotWizard wizard = new NewBotWizard();
         wizard.init(PlatformUI.getWorkbench(), selection);
         WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
-        dialog.open();
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            BotCache.reload();
+        }
     }
 
     public static void createNewBotTask(IStructuredSelection selection, boolean parameterized) {
@@ -254,7 +265,15 @@ public class WorkspaceOperations {
     }
 
     public static void saveBotTask(IFile botTaskFile, BotTask botTask) throws CoreException {
-        botTaskFile.setContents(BotTaskContentUtil.createBotTaskInfo(botTask, (IFolder) botTaskFile.getParent()), true, true, null);
+        boolean createdNew = false;
+        if (!botTaskFile.exists()) {
+            IOUtils.createFile(botTaskFile);
+            createdNew = true;
+        }
+        botTaskFile.setContents(BotTaskUtils.createBotTaskInfo((IFolder) botTaskFile.getParent(), botTask), true, true, null);
+        if (createdNew) {
+            BotCache.reload();
+        }
     }
 
     public static void openBotTask(IFile botTaskFile) {
@@ -276,7 +295,9 @@ public class WorkspaceOperations {
         ImportBotWizard wizard = new ImportBotWizard(page);
         wizard.init(PlatformUI.getWorkbench(), selection);
         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
-        dialog.open();
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            BotCache.reload();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -309,14 +330,15 @@ public class WorkspaceOperations {
                     botStationProject = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
                     //rename in file
                     IFile file = botStationProject.getFolder("/src/botstation/").getFile("botstation");
-                    file.setContents(BotTaskContentUtil.createBotStationInfo(newName, newRmi), true, true, null);
+                    file.setContents(BotTaskUtils.createBotStationInfo(newName, newRmi), true, true, null);
                     ResourcesPlugin.getWorkspace().getRoot().getProject(oldName).delete(true, null);
                 } else if (!newRmi.equals(oldRmi)) {
                     IFile file = botStationProject.getFolder("/src/botstation/").getFile("botstation");
-                    file.setContents(BotTaskContentUtil.createBotStationInfo(newName, newRmi), true, true, null);
+                    file.setContents(BotTaskUtils.createBotStationInfo(newName, newRmi), true, true, null);
                     refreshResources(selection.toList());
                 }
             }
+            BotCache.reload();
         } catch (Exception e) {
             PluginLogger.logError(e);
         }
@@ -342,6 +364,7 @@ public class WorkspaceOperations {
                 botFolder.copy(newPath, true, null);
                 botFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder(newPath);
                 ResourcesPlugin.getWorkspace().getRoot().getFolder(oldPath).delete(true, null);
+                BotCache.reload();
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }
@@ -353,9 +376,8 @@ public class WorkspaceOperations {
         RenameBotTaskDialog dialog = new RenameBotTaskDialog(botTaskFile);
         dialog.setName(botTaskFile.getName());
         if (dialog.open() == IDialogConstants.OK_ID) {
-            IFolder folder = (IFolder) botTaskFile.getParent();
-            String botName = folder.getName();
-            List<String> dependentDefinitions = validateDependentTasks(botName, botTaskFile.getName());
+            IFolder botFolder = (IFolder) botTaskFile.getParent();
+            List<String> dependentDefinitions = validateDependentTasks(botFolder, botTaskFile.getName());
             if (dependentDefinitions.size() > 0) {
                 showDependentTasksDialog(dependentDefinitions);
                 return;
@@ -372,46 +394,34 @@ public class WorkspaceOperations {
                 botTaskFile.copy(newPath, true, null);
                 IFile confFile = ResourcesPlugin.getWorkspace().getRoot().getFile(botTaskFile.getParent().getFullPath().append(new Path(botTaskFile.getName() + ".conf")));
                 if (confFile.exists()) {
-                    BotTask botTask = BotTaskContentUtil.getBotTaskFromFile(botTaskFile);
+                    BotTask botTask = BotCache.getBotTaskNotNull(botTaskFile);
                     botTask.setName(newName);
                     botTaskFile = ResourcesPlugin.getWorkspace().getRoot().getFile(newPath);
                     saveBotTask(botTaskFile, botTask);
                     confFile.delete(true, null);
                 }
                 ResourcesPlugin.getWorkspace().getRoot().getFile(oldPath).delete(true, null);
+                BotCache.reload();
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }
         }
     }
 
-    private static List<String> validateDependentTasks(String botName, String botTaskName) {
+    private static List<String> validateDependentTasks(IFolder botFolder, String botTaskName) {
         List<String> dependentDefinitions = new ArrayList<String>();
         Set<ProcessDefinition> definitions = ProcessCache.getAllProcessDefinitions();
         for (ProcessDefinition definition : definitions) {
             for (TaskState taskState : definition.getChildren(TaskState.class)) {
                 if (botTaskName.equals(taskState.getName())) {
-                    if (taskState.getSwimlane() != null) {
-                        Swimlane swimlane = taskState.getSwimlane();
-                        if (swimlaneIsBotElement(botName, swimlane)) {
-                            dependentDefinitions.add(definition.getName());
-                            break;
-                        }
+                    if (Objects.equal(botFolder.getName(), BotTaskUtils.getBotName(taskState.getSwimlane()))) {
+                        dependentDefinitions.add(definition.getName());
+                        break;
                     }
                 }
             }
         }
         return dependentDefinitions;
-    }
-
-    private static boolean swimlaneIsBotElement(String botName, Swimlane swimlane) {
-        OrgFunctionDefinition orgFunctionDefinition = OrgFunctionsRegistry.parseSwimlaneConfiguration(swimlane.getDelegationConfiguration());
-        OrgFunctionParameter param = orgFunctionDefinition.getParameter("OrgFunction.ExecutorName");
-        if (orgFunctionDefinition != null && param != null && BotTask.BOT_EXECUTOR_SWIMLANE_NAME.equals(orgFunctionDefinition.getName())
-                && Objects.equal(param.getValue(), botName)) {
-            return true;
-        }
-        return false;
     }
 
     private static void showDependentTasksDialog(List<String> dependentDefinitions) {
@@ -431,5 +441,6 @@ public class WorkspaceOperations {
         wizard.init(PlatformUI.getWorkbench(), selection);
         WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
         dialog.open();
+        BotCache.reload();
     }
 }

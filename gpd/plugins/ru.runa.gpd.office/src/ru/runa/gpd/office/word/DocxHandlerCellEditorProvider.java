@@ -1,5 +1,6 @@
 package ru.runa.gpd.office.word;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -27,6 +28,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
@@ -196,8 +198,8 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
 
         private void addColumnSection(Composite parent, final DocxColumnModel columnModel, final int tableIndex, final int columnIndex) {
             final Combo combo = new Combo(parent, SWT.READ_ONLY);
-            for (String varName : variables.keySet()) { // FIXME
-                if (variables.get(varName).equals("ru.runa.wf.web.forms.format.ArrayListFormat") || variables.get(varName).equals("list")) {
+            for (String varName : variables.keySet()) {
+                if (VariableFormatRegistry.isAssignableFrom(List.class, variables.get(varName))) {
                     combo.add(varName);
                 }
             }

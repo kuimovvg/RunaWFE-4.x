@@ -18,8 +18,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.util.IOUtils;
 
-public class FormNodePresentation implements VariableRenameProvider<FormNode> {
-    private FormNode formNode;
+public class FormNodePresentation extends VariableRenameProvider<FormNode> {
     private final IFolder folder;
 
     public FormNodePresentation(IFolder folder, FormNode formNode) {
@@ -27,18 +26,15 @@ public class FormNodePresentation implements VariableRenameProvider<FormNode> {
         setElement(formNode);
     }
 
-    public void setElement(FormNode element) {
-        this.formNode = element;
-    }
-
+    @Override
     public List<Change> getChanges(String variableName, String replacement) throws Exception {
-        CompositeChange result = new CompositeChange(formNode.getName());
-        if (formNode.hasForm()) {
-            IFile file = folder.getFile(formNode.getFormFileName());
+        CompositeChange result = new CompositeChange(element.getName());
+        if (element.hasForm()) {
+            IFile file = folder.getFile(element.getFormFileName());
             result.addAll(processFile(file, Localization.getString("Search.formNode.form"), variableName, replacement));
         }
-        if (formNode.hasFormValidation()) {
-            IFile file = folder.getFile(formNode.getValidationFileName());
+        if (element.hasFormValidation()) {
+            IFile file = folder.getFile(element.getValidationFileName());
             result.addAll(processFile(file, Localization.getString("Search.formNode.validation"), variableName, replacement));
         }
         if (result.getChildren().length > 0) {
@@ -51,9 +47,7 @@ public class FormNodePresentation implements VariableRenameProvider<FormNode> {
         Document document = new Document();
         String text = IOUtils.readStream(file.getContents());
         document.set(text);
-
         List<Change> changes = new ArrayList<Change>();
-
         int offset = 0; // TODO in forms use "\" + varName + "\"
         MultiTextEdit multiEdit = new MultiTextEdit();
         int len = variableName.length();
@@ -66,14 +60,12 @@ public class FormNodePresentation implements VariableRenameProvider<FormNode> {
             multiEdit.addChild(replaceEdit);
             offset += len; // to avoid overlapping
         }
-
         if (multiEdit.getChildrenSize() > 0) {
             TextFileChange fileChange = new TextFileChange(file.getName(), file) {
-                @SuppressWarnings("unchecked")
                 @Override
                 public Object getAdapter(Class adapter) {
                     if (adapter == TextEditChangeNode.class) {
-                        return new GPDChangeNode(this, formNode, label);
+                        return new GPDChangeNode(this, element, label);
                     }
                     return super.getAdapter(adapter);
                 }

@@ -224,8 +224,8 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
             }
             return true;
         } catch (Throwable th) {
-            setErrorMessage(Throwables.getRootCause(th).getMessage());
             PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), th);
+            setErrorMessage(Throwables.getRootCause(th).getMessage());
             return false;
         }
     }
@@ -322,11 +322,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                 Display.getDefault().syncExec(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            WFEServerProcessDefinitionImporter.getInstance().uploadPar(definitionName, baos.toByteArray());
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
+                        WFEServerProcessDefinitionImporter.getInstance().uploadPar(definitionName, baos.toByteArray());
                     }
                 });
             } catch (Exception e) {

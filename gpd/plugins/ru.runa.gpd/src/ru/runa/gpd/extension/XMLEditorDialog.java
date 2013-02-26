@@ -6,7 +6,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import ru.runa.gpd.ui.dialog.XmlHighlightTextStyling;
+import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.util.XmlUtil;
 
 public class XMLEditorDialog extends DelegableConfigurationDialog {

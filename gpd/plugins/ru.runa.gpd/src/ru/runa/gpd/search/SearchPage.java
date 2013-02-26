@@ -19,6 +19,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.editor.BotTaskEditor;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerRegistry;
@@ -28,11 +29,14 @@ import ru.runa.gpd.lang.action.SubprocessDelegate;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.TaskState;
+import ru.runa.gpd.util.BotTaskUtils;
+import ru.runa.gpd.util.WorkspaceOperations;
 
-public class GPDSearchPage extends AbstractTextSearchViewPage {
+public class SearchPage extends AbstractTextSearchViewPage {
     private IFileSearchContentProvider contentProvider;
 
-    public GPDSearchPage() {
+    public SearchPage() {
         super(FLAG_LAYOUT_TREE);
     }
 
@@ -45,9 +49,9 @@ public class GPDSearchPage extends AbstractTextSearchViewPage {
         for (IContributionItem contributionItem : items) {
             if (contributionItem instanceof ActionContributionItem) {
                 ActionContributionItem aci = (ActionContributionItem) contributionItem;
-                if ("SearchHistoryDropDownAction".equals(aci.getAction().getClass().getSimpleName())) {
-                    toolBarManager.getParent().remove(contributionItem);
-                }
+                //                        if ("SearchHistoryDropDownAction".equals(aci.getAction().getClass().getSimpleName())) {
+                //                            toolBarManager.getParent().remove(contributionItem);
+                //                        }
                 if ("PinSearchViewAction".equals(aci.getAction().getClass().getSimpleName())) {
                     toolBarManager.getParent().remove(contributionItem);
                 }
@@ -63,9 +67,9 @@ public class GPDSearchPage extends AbstractTextSearchViewPage {
     @Override
     protected void configureTreeViewer(TreeViewer viewer) {
         viewer.setUseHashlookup(true);
-        GPDTreeLabelProvider innerLabelProvider = new GPDTreeLabelProvider(this);
+        SearchLabelProvider innerLabelProvider = new SearchLabelProvider(this);
         viewer.setLabelProvider(new DecoratingLabelProvider(innerLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
-        viewer.setContentProvider(new GPDTreeContentProvider(viewer));
+        viewer.setContentProvider(new SearchTreeContentProvider(viewer));
         contentProvider = (IFileSearchContentProvider) viewer.getContentProvider();
     }
 
@@ -85,6 +89,10 @@ public class GPDSearchPage extends AbstractTextSearchViewPage {
             FormNode formNode = (FormNode) elementMatch.getGraphElement();
             OpenFormValidationDelegate delegate = new OpenFormValidationDelegate();
             delegate.openValidationFile(formNode, elementMatch.getFile());
+        } else if (ElementMatch.CONTEXT_BOT_TASK_LINK.equals(elementMatch.getContext())) {
+            BotTaskUtils.editBotTaskLinkConfiguration((TaskState) elementMatch.getGraphElement());
+        } else if (ElementMatch.CONTEXT_BOT_TASK.equals(elementMatch.getContext())) {
+            IDE.openEditor(getSite().getPage(), elementMatch.getFile(), BotTaskEditor.ID);
         } else if (elementMatch.getGraphElement().isDelegable()) {
             Delegable delegable = (Delegable) elementMatch.getGraphElement();
             DelegableProvider provider = HandlerRegistry.getProvider(delegable.getDelegationClassName());
@@ -96,8 +104,8 @@ public class GPDSearchPage extends AbstractTextSearchViewPage {
             SubprocessDelegate delegate = new SubprocessDelegate();
             delegate.openDetails((Subprocess) elementMatch.getGraphElement());
         } else if (elementMatch.getGraphElement() != null) {
-            ProcessEditorBase designerEditor = (ProcessEditorBase) IDE.openEditor(getSite().getPage(), elementMatch.getFile());
-            designerEditor.select(elementMatch.getGraphElement());
+            ProcessEditorBase processEditor = WorkspaceOperations.openProcessDefinition(elementMatch.getGraphElement().getProcessDefinition());
+            processEditor.select(elementMatch.getGraphElement());
         }
         if (editor == null) {
             return;

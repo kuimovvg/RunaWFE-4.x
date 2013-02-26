@@ -15,6 +15,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -32,6 +33,8 @@ import com.google.common.base.Charsets;
  * @author Dofs
  */
 public class XmlUtil {
+    public static final String RUNA_NAMESPACE = "http://runa.ru/xml";
+
     public static Document parseWithoutValidation(String data) {
         return parseWithoutValidation(data.getBytes(Charsets.UTF_8));
     }
@@ -52,12 +55,16 @@ public class XmlUtil {
         return parseWithXSDValidation(new ByteArrayInputStream(data));
     }
 
+    public static Document parseWithXSDValidation(byte[] data, String xsdFileName) {
+        return parseWithXSDValidation(new ByteArrayInputStream(data), xsdFileName);
+    }
+
     public static Document parseWithXSDValidation(String data) {
         return parseWithXSDValidation(data.getBytes(Charsets.UTF_8));
     }
 
-    public static Document parseWithXSDValidation(InputStream in, InputStream xsdInputStream) {
-        return parse(in, true, xsdInputStream);
+    public static Document parseWithXSDValidation(InputStream in, String xsdFileName) {
+        return parse(in, true, XmlUtil.class.getResourceAsStream("/schema/" + xsdFileName));
     }
 
     private static Document parse(InputStream in, boolean xsdValidation, InputStream xsdInputStream) {
@@ -97,45 +104,58 @@ public class XmlUtil {
         }
     }
 
-    public static byte[] writeXml(Document document) {
+    public static byte[] writeXml(Node node) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        writeXml(document, baos);
+        writeXml(node, baos);
         return baos.toByteArray();
     }
 
-    public static byte[] writeXml(Document document, OutputFormat outputFormat) {
+    public static byte[] writeXml(Node node, OutputFormat outputFormat) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        writeXml(document, baos, outputFormat);
+        writeXml(node, baos, outputFormat);
         return baos.toByteArray();
     }
 
-    public static void writeXml(Document document, OutputStream outputStream) {
+    public static void writeXml(Node node, OutputStream outputStream) {
         OutputFormat format = new OutputFormat("  ", true);
         format.setPadText(true);
-        writeXml(document, outputStream, format);
+        writeXml(node, outputStream, format);
     }
 
-    public static void writeXml(Document document, OutputStream outputStream, OutputFormat outputFormat) {
+    public static void writeXml(Node node, OutputStream outputStream, OutputFormat outputFormat) {
         try {
             XMLWriter writer = new XMLWriter(outputStream, outputFormat);
-            writer.write(document);
+            writer.write(node);
             writer.flush();
         } catch (IOException e) {
             throw new InternalApplicationException(e);
         }
     }
 
-    public static String toString(Document document) {
-        return new String(writeXml(document), Charsets.UTF_8);
+    public static String toString(Node node) {
+        return new String(writeXml(node), Charsets.UTF_8);
     }
 
-    public static String toString(Document document, OutputFormat outputFormat) {
-        return new String(writeXml(document, outputFormat), Charsets.UTF_8);
+    public static String toString(Node node, OutputFormat outputFormat) {
+        return new String(writeXml(node, outputFormat), Charsets.UTF_8);
     }
 
     public static Document createDocument(String rootElementName) {
         Document document = DocumentHelper.createDocument();
         document.addElement(rootElementName);
+        return document;
+    }
+
+    public static Document createDocument(String rootElementName, String defaultNamespaceUri) {
+        Document document = createDocument(rootElementName);
+        document.getRootElement().addNamespace("", defaultNamespaceUri);
+        return document;
+    }
+
+    public static Document createDocument(String rootElementName, String defaultNamespaceUri, String xsdLocation) {
+        Document document = createDocument(rootElementName, defaultNamespaceUri);
+        document.getRootElement().addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        document.getRootElement().addAttribute("xsi:schemaLocation", defaultNamespaceUri + " " + xsdLocation);
         return document;
     }
 

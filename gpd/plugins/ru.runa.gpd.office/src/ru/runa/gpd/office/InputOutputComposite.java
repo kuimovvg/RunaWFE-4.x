@@ -19,11 +19,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.office.resource.Messages;
 
 public class InputOutputComposite extends Composite {
     public final InputOutputModel model;
-    private final Map<String, String> variables; // FIXME
+    private final Map<String, String> variables;
 
     public InputOutputComposite(Composite parent, final InputOutputModel model, Map<String, String> variables, FilesSupplierMode mode) {
         super(parent, SWT.NONE);
@@ -126,8 +127,8 @@ public class InputOutputComposite extends Composite {
             }
             final Combo combo = new Combo(composite, SWT.READ_ONLY);
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            for (String varName : variables.keySet()) { // FIXME
-                if ("ru.runa.wf.web.forms.format.FileFormat".equals(variables.get(varName)) || "file".equals(variables.get(varName))) {
+            for (String varName : variables.keySet()) {
+                if (VariableFormatRegistry.isAssignableFrom("ru.runa.wfe.var.FileVariable", variables.get(varName))) {
                     combo.add(varName);
                 }
             }

@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.wfe.WFEServerBotElementImporter;
 
 public class BotTaskDeployCommand extends BotTaskExportCommand {
@@ -25,11 +24,7 @@ public class BotTaskDeployCommand extends BotTaskExportCommand {
                 Display.getDefault().syncExec(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            WFEServerBotElementImporter.getInstance().deployBot(exportResource.getProject().getName(), baos.toByteArray());
-                        } catch (Exception e) {
-                            PluginLogger.logErrorWithoutDialog("bottask.error.deploy", e);
-                        }
+                        WFEServerBotElementImporter.getInstance().deployBot(exportResource.getProject().getName(), baos.toByteArray());
                     }
                 });
             } catch (Exception e) {

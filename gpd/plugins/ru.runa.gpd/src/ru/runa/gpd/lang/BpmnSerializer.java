@@ -380,7 +380,7 @@ public class BpmnSerializer extends ProcessSerializer {
     @Override
     public void validateProcessDefinitionXML(IFile file) {
         try {
-            XmlUtil.parseWithXSDValidation(file.getContents(), getClass().getResourceAsStream("/schema/BPMN20.xsd"));
+            XmlUtil.parseWithXSDValidation(file.getContents(), "BPMN20.xsd");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
