@@ -20,7 +20,9 @@ public abstract class ActionBase extends Action {
     }
 
     protected void addError(HttpServletRequest request, Exception e) {
-        addError(request, ActionExceptionHelper.getActionMessage(e));
+        ActionMessages errors = getErrors(request);
+        ActionExceptionHelper.addException(errors, e);
+        saveErrors(request.getSession(), errors);
     }
 
     protected void addError(HttpServletRequest request, ActionMessage message) {

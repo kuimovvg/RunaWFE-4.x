@@ -22,7 +22,7 @@ function editScript(fileName, saveButtonText, executeButtonText, cancelButtonTex
 			backgroundColor: "#000", opacity: 0.5
 		},
 	    close: function(event, ui) {
-	    	closeEditor();
+	    	destroyEditor();
 		}  
 	});
 	$("#fileName").val(fileName);
@@ -73,6 +73,10 @@ function initEditor(msg) {
 
 function closeEditor() {
 	$.editor.dialog("close");
+	destroyEditor();
+}
+
+function destroyEditor() {
 	$.editor.dialog("destroy").remove();
 	xmleditor = null;
 }

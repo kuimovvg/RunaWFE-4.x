@@ -96,7 +96,7 @@
 	<deployProcessDefinition file="../samples/BotDemo.par" />
 	<deployProcessDefinition file="../samples/TextFileCreation.par" />
 	<deployProcessDefinition file="../samples/WebService - who is.par" />
-	<deployProcessDefinition file="../samples/MSWordReport/MSWordReport.par" />
+	<deployProcessDefinition file="../samples/MSWordReport.par" />
 
 	<addPermissionsOnDefinition executor="all">
 		<namedIdentitySet name="allProcesses" type="ProcessDefinition"/>

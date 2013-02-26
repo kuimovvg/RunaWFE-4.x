@@ -45,6 +45,7 @@ public class ProcessArchive extends FileDataProvider {
         UNSECURED_FILE_NAMES.add(FORM_CSS_FILE_NAME);
         UNSECURED_FILE_NAMES.add(START_IMAGE_FILE_NAME);
         UNSECURED_FILE_NAMES.add(START_DISABLED_IMAGE_FILE_NAME);
+        UNSECURED_FILE_NAMES.add(BOTS_XML_FILE);
     }
 
     static List<ProcessArchiveParser> processArchiveParsers = new ArrayList<ProcessArchiveParser>();
