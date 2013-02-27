@@ -114,7 +114,7 @@ public abstract class ProcessLog implements IAttributes, Serializable {
         this.tokenId = tokenId;
     }
 
-    @Column(name = "DATE")
+    @Column(name = "LOG_DATE")
     public Date getDate() {
         return date;
     }
