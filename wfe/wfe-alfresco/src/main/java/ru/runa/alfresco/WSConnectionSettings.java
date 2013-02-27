@@ -31,6 +31,12 @@ public class WSConnectionSettings extends Settings {
         }
     }
 
+    public static void setConnectionInfo(String hostname, int port, String login, String password) {
+        systemLogin = login;
+        systemPassword = password;
+        endpointAddress = "http://" + hostname + ":" + port + "/alfresco/api";
+    }
+
     public static String getEndpointAddress() {
         return endpointAddress;
     }
@@ -44,10 +50,8 @@ public class WSConnectionSettings extends Settings {
     }
 
     public static String getAlfBaseUrl() {
-        return endpointAddress.substring(0, endpointAddress.length() - 3); // remove
-                                                                           // 'api'
-                                                                           // at
-                                                                           // end
+        // 'api' removal at the end
+        return endpointAddress.substring(0, endpointAddress.length() - 3);
     }
 
 }
