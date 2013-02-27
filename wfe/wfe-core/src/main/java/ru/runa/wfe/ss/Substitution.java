@@ -41,8 +41,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.PolymorphismType;
 
-import ru.runa.wfe.commons.OracleCommons;
-
 import com.google.common.base.Objects;
 
 /**
@@ -115,7 +113,7 @@ public class Substitution implements Serializable {
     }
 
     public void setOrgFunction(String orgFunction) {
-        this.orgFunction = OracleCommons.fixNullString(orgFunction);
+        this.orgFunction = orgFunction;
     }
 
     @Version

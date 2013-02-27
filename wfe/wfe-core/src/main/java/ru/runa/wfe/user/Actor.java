@@ -24,7 +24,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Index;
 
-import ru.runa.wfe.commons.OracleCommons;
 import ru.runa.wfe.commons.SystemUtils;
 import ru.runa.wfe.security.SecuredObjectType;
 
@@ -84,17 +83,6 @@ public class Actor extends Executor {
         return SecuredObjectType.ACTOR;
     }
 
-    @Override
-    @Column(name = "FULL_NAME", nullable = false)
-    public String getFullName() {
-        return super.getFullName();
-    }
-
-    @Override
-    public void setFullName(String fullName) {
-        super.setFullName(OracleCommons.fixNullString(fullName));
-    }
-
     @Column(name = "CODE")
     @Index(name = "IX_EXECUTOR_CODE")
     public Long getCode() {
@@ -141,12 +129,12 @@ public class Actor extends Executor {
             return false;
         }
         Actor actor = (Actor) obj;
-        return Objects.equal(code, actor.code) && Objects.equal(getFullName(), actor.getFullName());
+        return Objects.equal(code, actor.code);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(super.hashCode(), getFullName(), getCode());
+        return Objects.hashCode(super.hashCode(), getCode());
     }
 
     @Override

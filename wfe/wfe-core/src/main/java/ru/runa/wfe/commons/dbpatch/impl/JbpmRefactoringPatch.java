@@ -290,7 +290,7 @@ public class JbpmRefactoringPatch extends DBPatch {
             sql.add(getDDLRemoveIndex("BPM_LOG", "LOG_TOKEN_IDX"));
         }
         sql.add(getDDLRemoveColumn("BPM_LOG", "INDEX_"));
-        sql.add(getDDLRenameColumn("BPM_LOG", "DATE_", new ColumnDef("DATE", Types.DATE)));
+        sql.add(getDDLRenameColumn("BPM_LOG", "DATE_", new ColumnDef("LOG_DATE", Types.DATE)));
         sql.add(getDDLRemoveForeignKey("BPM_LOG", "FK_LOG_TOKEN"));
         sql.add(getDDLRenameColumn("BPM_LOG", "TOKEN_", new ColumnDef("TOKEN_ID", Types.BIGINT)));
         sql.add(getDDLRemoveForeignKey("BPM_LOG", "FK_LOG_PARENT"));

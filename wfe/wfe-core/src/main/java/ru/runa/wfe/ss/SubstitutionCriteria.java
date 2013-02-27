@@ -33,7 +33,6 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import ru.runa.wfe.commons.OracleCommons;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
@@ -76,7 +75,7 @@ public class SubstitutionCriteria implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = OracleCommons.fixNullString(name);
+        this.name = name;
     }
 
     @Column(name = "CONF")
@@ -84,8 +83,8 @@ public class SubstitutionCriteria implements Serializable {
         return configuration;
     }
 
-    public void setConfiguration(String conf) {
-        configuration = OracleCommons.fixNullString(conf);
+    public void setConfiguration(String configuration) {
+        this.configuration = configuration;
     }
 
     @Override
