@@ -58,20 +58,28 @@ public class BotCache {
                         for (IResource taskResource : botFolder.members()) {
                             if (taskResource instanceof IFile && taskResource.getFileExtension() == null) {
                                 IFile botTaskFile = (IFile) taskResource;
-                                List<String> lines = CharStreams.readLines(new InputStreamReader(botTaskFile.getContents(), Charsets.UTF_8));
-                                String configurationFileData = "";
-                                if (lines.size() > 1) {
-                                    String configurationFileName = lines.get(1);
-                                    if (!Strings.isNullOrEmpty(configurationFileName)) {
-                                        IFile confFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
-                                        if (confFile.exists()) {
-                                            configurationFileData = IOUtils.readStream(confFile.getContents());
+                                InputStreamReader reader = null;
+                                try {
+                                    reader = new InputStreamReader(botTaskFile.getContents(), Charsets.UTF_8);
+                                    List<String> lines = CharStreams.readLines(reader);
+                                    String configurationFileData = "";
+                                    if (lines.size() > 1) {
+                                        String configurationFileName = lines.get(1);
+                                        if (!Strings.isNullOrEmpty(configurationFileName)) {
+                                            IFile confFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
+                                            if (confFile.exists()) {
+                                                configurationFileData = IOUtils.readStream(confFile.getContents());
+                                            }
                                         }
                                     }
+                                    BotTask botTask = BotTaskUtils.createBotTask(botTaskFile.getName(), lines.get(0), configurationFileData);
+                                    botTasks.add(botTask);
+                                    BOT_TASK_FILES.put(botTask, botTaskFile);
+                                } finally {
+                                    if (reader != null) {
+                                        reader.close();
+                                    }
                                 }
-                                BotTask botTask = BotTaskUtils.createBotTask(botTaskFile.getName(), lines.get(0), configurationFileData);
-                                botTasks.add(botTask);
-                                BOT_TASK_FILES.put(botTask, botTaskFile);
                             }
                         }
                         BOT_TASKS.put(botName, botTasks);
@@ -91,6 +99,14 @@ public class BotCache {
                 PluginLogger.logErrorWithoutDialog("BotCache.unabletoload", e);
             }
         }
+    }
+
+    /**
+     * Notify cache about new bot task.
+     */
+    public static void newBotTaskHasBeenCreated(String botName, IFile botTaskFile, BotTask botTask) {
+        BOT_TASKS.get(botName).add(botTask);
+        BOT_TASK_FILES.put(botTask, botTaskFile);
     }
 
     /**

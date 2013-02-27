@@ -39,7 +39,6 @@ import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
-import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableMapping;
 
@@ -231,7 +230,7 @@ public class VariableSearchVisitor {
                     }
                 }
             } else {
-                String botName = BotTaskUtils.getBotName(taskState.getSwimlane());
+                String botName = taskState.getSwimlaneBotName();
                 if (botName != null) {
                     // if bot task exists with same as task name
                     BotTask botTask = BotCache.getBotTask(botName, taskState.getName());

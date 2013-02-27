@@ -7,8 +7,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Menu;
 
 import ru.runa.gpd.BotCache;
@@ -25,27 +23,26 @@ import ru.runa.gpd.util.WorkspaceOperations;
 import com.google.common.collect.Lists;
 
 public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
-    private TaskState currentNode;
-    private String botName;
-
-    @Override
-    public void selectionChanged(IAction action, ISelection selection) {
-        super.selectionChanged(action, selection);
-        currentNode = getSelection();
-        if (currentNode == null) {
-            return;
-        }
-        this.botName = BotTaskUtils.getBotName(currentNode.getSwimlane());
+    private TaskState getTaskStateNotNull() {
+        return getSelection();
     }
 
     @Override
     protected void fillMenu(Menu menu) {
         Action action;
         ActionContributionItem item;
-        if (currentNode.getBotTaskLink() == null) {
-            action = new BindBotTaskWithNodeAction();
-            item = new ActionContributionItem(action);
-            item.fill(menu, -1);
+        if (getTaskStateNotNull().getBotTaskLink() == null) {
+            BotTask botTask = BotCache.getBotTask(getTaskStateNotNull().getSwimlaneBotName(), getTaskStateNotNull().getName());
+            if (botTask != null && botTask.getType() == BotTaskType.SIMPLE) {
+                // we are supposing that bot task bound by name
+                action = new OpenBotTaskAction(getTaskStateNotNull().getName());
+                item = new ActionContributionItem(action);
+                item.fill(menu, -1);
+            } else {
+                action = new BindBotTaskWithNodeAction();
+                item = new ActionContributionItem(action);
+                item.fill(menu, -1);
+            }
         } else {
             action = new EditBotTaskWithNodeAction();
             item = new ActionContributionItem(action);
@@ -53,7 +50,7 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
             action = new UnbindBotTaskFromNodeAction();
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
-            action = new OpenBotTaskAction();
+            action = new OpenBotTaskAction(getTaskStateNotNull().getBotTaskLink().getBotTaskName());
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
         }
@@ -102,7 +99,7 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
         @Override
         public void run() {
             try {
-                linkWithBotTask(currentNode.getBotTaskLink());
+                linkWithBotTask(getTaskStateNotNull().getBotTaskLink());
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }
@@ -110,20 +107,22 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
     }
 
     public class OpenBotTaskAction extends Action {
-        public OpenBotTaskAction() {
-            setText(MessageFormat.format(Localization.getString("BotTaskActionsDelegate.gotobottask"), currentNode.getBotTaskLink().getBotTaskName()));
+        private final String botTaskName;
+
+        public OpenBotTaskAction(String botTaskName) {
+            this.botTaskName = botTaskName;
+            setText(MessageFormat.format(Localization.getString("BotTaskActionsDelegate.gotobottask"), botTaskName));
         }
 
         @Override
         public void run() {
-            String botTaskName = currentNode.getBotTaskLink().getBotTaskName();
-            BotTask botTask = BotCache.getBotTask(botName, botTaskName);
+            BotTask botTask = BotCache.getBotTask(getTaskStateNotNull().getSwimlaneBotName(), botTaskName);
             WorkspaceOperations.openBotTask(BotCache.getBotTaskFile(botTask));
         }
     }
 
     private String chooseBotTask() throws CoreException, IOException {
-        List<BotTask> botTasks = BotCache.getBotTasks(botName);
+        List<BotTask> botTasks = BotCache.getBotTasks(getTaskStateNotNull().getSwimlaneBotName());
         List<String> botTaskNames = Lists.newArrayList();
         for (BotTask botTask : botTasks) {
             if (botTask.getType() != BotTaskType.SIMPLE) {
@@ -135,9 +134,9 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
     }
 
     private void linkWithBotTask(BotTaskLink botTaskLink) {
-        currentNode.setBotTaskLink(botTaskLink);
+        getTaskStateNotNull().setBotTaskLink(botTaskLink);
         if (botTaskLink != null) {
-            BotTaskUtils.editBotTaskLinkConfiguration(currentNode);
+            BotTaskUtils.editBotTaskLinkConfiguration(getTaskStateNotNull());
         }
     }
 }
