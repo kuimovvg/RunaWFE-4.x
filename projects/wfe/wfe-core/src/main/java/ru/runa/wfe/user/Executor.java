@@ -37,7 +37,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.PolymorphismType;
 
-import ru.runa.wfe.commons.OracleCommons;
 import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.user.jaxb.ExecutorAdapter;
 
@@ -95,7 +94,7 @@ public abstract class Executor extends IdentifiableBase {
     }
 
     public void setName(String name) {
-        this.name = OracleCommons.fixNullString(name);
+        this.name = name;
     }
 
     @Column(name = "DESCRIPTION")
@@ -104,7 +103,7 @@ public abstract class Executor extends IdentifiableBase {
     }
 
     public void setDescription(String description) {
-        this.description = OracleCommons.fixNullString(description);
+        this.description = description;
     }
 
     @Version

@@ -27,6 +27,7 @@ import com.google.common.base.Throwables;
 
 public class ApplicationContextFactory {
     private static ApplicationContext applicationContext = null;
+    private static DBType dbType;
 
     public static boolean isContextInitialized() {
         return applicationContext != null;
@@ -85,23 +86,23 @@ public class ApplicationContextFactory {
     }
 
     public static DBType getDBType() {
-        String hibernateDialect = getConfiguration().getProperty("hibernate.dialect");
-        if (hibernateDialect.contains("HSQL")) {
-            return DBType.HSQL;
+        if (dbType == null) {
+            String hibernateDialect = getConfiguration().getProperty("hibernate.dialect");
+            if (hibernateDialect.contains("HSQL")) {
+                dbType = DBType.HSQL;
+            } else if (hibernateDialect.contains("Oracle")) {
+                dbType = DBType.Oracle;
+            } else if (hibernateDialect.contains("Postgre")) {
+                dbType = DBType.PostgreSQL;
+            } else if (hibernateDialect.contains("MySQL")) {
+                dbType = DBType.MySQL;
+            } else if (hibernateDialect.contains("SQLServer")) {
+                dbType = DBType.MSSQL;
+            } else {
+                dbType = DBType.GENERIC;
+            }
         }
-        if (hibernateDialect.contains("Oracle")) {
-            return DBType.Oracle;
-        }
-        if (hibernateDialect.contains("Postgre")) {
-            return DBType.PostgreSQL;
-        }
-        if (hibernateDialect.contains("MySQL")) {
-            return DBType.MySQL;
-        }
-        if (hibernateDialect.contains("SQLServer")) {
-            return DBType.MSSQL;
-        }
-        return DBType.GENERIC;
+        return dbType;
     }
 
     public static ExecutorDAO getExecutorDAO() {
