@@ -165,7 +165,7 @@ public class BotTaskUtils {
     public static void editBotTaskLinkConfiguration(TaskState taskState) {
         ProcessDefinition processDefinition = taskState.getProcessDefinition();
         BotTaskLink botTaskLink = taskState.getBotTaskLink();
-        BotTask botTask = BotCache.getBotTaskNotNull(BotTaskUtils.getBotName(taskState.getSwimlane()), botTaskLink.getBotTaskName());
+        BotTask botTask = BotCache.getBotTaskNotNull(taskState.getSwimlaneBotName(), botTaskLink.getBotTaskName());
         botTaskLink.setDelegationClassName(botTask.getDelegationClassName());
         ParamDefConfig config = botTask.getParamDefConfig();
         String newConfiguration = null;
