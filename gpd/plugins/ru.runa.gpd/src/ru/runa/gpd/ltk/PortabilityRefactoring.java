@@ -27,7 +27,6 @@ import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
-import ru.runa.gpd.util.BotTaskUtils;
 
 public class PortabilityRefactoring extends Refactoring {
     private final List<VariableRenameProvider<?>> cache = new ArrayList<VariableRenameProvider<?>>();
@@ -67,7 +66,7 @@ public class PortabilityRefactoring extends Refactoring {
                     if (taskState.getBotTaskLink() != null) {
                         cache.add(new BotTaskLinkParametersRenameProvider(taskState.getBotTaskLink()));
                     } else {
-                        String botName = BotTaskUtils.getBotName(taskState.getSwimlane());
+                        String botName = taskState.getSwimlaneBotName();
                         if (botName != null) {
                             // if bot task exists with same as task name
                             BotTask botTask = BotCache.getBotTask(botName, taskState.getName());

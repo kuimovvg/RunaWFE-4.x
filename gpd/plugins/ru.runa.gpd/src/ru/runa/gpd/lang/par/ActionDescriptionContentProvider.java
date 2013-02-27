@@ -88,11 +88,13 @@ public class ActionDescriptionContentProvider extends AuxContentProvider {
             }
             String actionName = components[components.length - 1];
             int actionIndex = Integer.parseInt(actionName.substring(ACTION_INDEX.length()));
-            return element.getActions().get(actionIndex);
+            if (element.getActions().size() > actionIndex) {
+                return element.getActions().get(actionIndex);
+            }
         } catch (Exception e) {
             PluginLogger.logErrorWithoutDialog("findByPath " + path + " in " + definition, e);
-            return null;
         }
+        return null;
     }
 
     private String getPath(GraphElement element) {

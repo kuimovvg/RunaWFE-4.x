@@ -262,7 +262,7 @@
           id="task.bot"
           objectClass="ru.runa.gpd.lang.model.TaskState">
        <filter
-             name="bindSwimlaneExists"
+             name="swimlanePointsToBot"
              value="true">
        </filter>
        <action
