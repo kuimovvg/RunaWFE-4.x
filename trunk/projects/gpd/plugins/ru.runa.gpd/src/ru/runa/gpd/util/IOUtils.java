@@ -28,6 +28,7 @@ import ru.runa.gpd.lang.model.FormNode;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 
 public class IOUtils {
     private static final ByteArrayInputStream EMPTY_STREAM = new ByteArrayInputStream(new byte[0]);
@@ -71,11 +72,19 @@ public class IOUtils {
     }
 
     public static byte[] readStreamAsBytes(InputStream in) throws IOException {
-        return ByteStreams.toByteArray(in);
+        try {
+            return ByteStreams.toByteArray(in);
+        } finally {
+            Closeables.closeQuietly(in);
+        }
     }
 
     public static void copyStream(InputStream in, OutputStream out) throws IOException {
-        ByteStreams.copy(in, out);
+        try {
+            ByteStreams.copy(in, out);
+        } finally {
+            Closeables.closeQuietly(in);
+        }
     }
 
     public static IFile getAdjacentFile(IFile file, String fileName) {

@@ -6,6 +6,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Activator;
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
 import ru.runa.gpd.property.EscalationDurationPropertyDescriptor;
@@ -30,13 +31,22 @@ public class TaskState extends State implements Synchronizable {
         return asyncTaskCompleteOnProcessComplete; // TODO
     }
 
+    /**
+     * @see BotTaskUtils#getBotName(org.jbpm.ui.common.model.Swimlane)
+     * @return bot name or <code>null</code>
+     */
+    public String getSwimlaneBotName() {
+        return BotTaskUtils.getBotName(getSwimlane());
+    }
+
     @Override
     public boolean testAttribute(Object target, String name, String value) {
         if (super.testAttribute(target, name, value)) {
             return true;
         }
-        if ("bindSwimlaneExists".equals(name)) {
-            return BotTaskUtils.getBotName(getSwimlane()) != null;
+        if ("swimlanePointsToBot".equals(name)) {
+            String botName = getSwimlaneBotName();
+            return botName != null && BotCache.getAllBotNames().contains(botName);
         }
         return false;
     }

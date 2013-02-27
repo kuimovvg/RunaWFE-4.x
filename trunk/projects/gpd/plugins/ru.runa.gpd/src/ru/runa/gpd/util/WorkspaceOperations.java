@@ -414,7 +414,7 @@ public class WorkspaceOperations {
         for (ProcessDefinition definition : definitions) {
             for (TaskState taskState : definition.getChildren(TaskState.class)) {
                 if (botTaskName.equals(taskState.getName())) {
-                    if (Objects.equal(botFolder.getName(), BotTaskUtils.getBotName(taskState.getSwimlane()))) {
+                    if (Objects.equal(botFolder.getName(), taskState.getSwimlaneBotName())) {
                         dependentDefinitions.add(definition.getName());
                         break;
                     }
