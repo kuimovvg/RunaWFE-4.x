@@ -47,7 +47,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import ru.runa.wfe.commons.ArraysCommons;
-import ru.runa.wfe.commons.OracleCommons;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 import ru.runa.wfe.presentation.filter.FilterCriteriaFactory;
 
@@ -190,7 +189,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
      * Presentation name. Displays in web interface.
      */
     public void setName(String name) {
-        this.name = OracleCommons.fixNullString(name);
+        this.name = name;
     }
 
     /**

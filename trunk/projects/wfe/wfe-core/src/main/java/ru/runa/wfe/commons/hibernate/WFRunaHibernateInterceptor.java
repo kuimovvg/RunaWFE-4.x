@@ -35,10 +35,24 @@ import ru.runa.wfe.user.ExecutorGroupMembership;
 
 public class WFRunaHibernateInterceptor extends EmptyInterceptor {
     private static final long serialVersionUID = 1L;
-    public final static String ORACLE_EMPTY_TOKEN = " ";
-    private Boolean isOracle; // TODO another way of handling '' values?
 
-    private void onChanges(Object entity, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
+    private boolean isOracleDatabase() {
+        return ApplicationContextFactory.getDBType() == DBType.Oracle;
+    }
+
+    private boolean onChanges(Object entity, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types,
+            boolean fixOracleStrings) {
+        boolean modified = false;
+        if (fixOracleStrings && isOracleDatabase()) {
+            // Oracle handles empty strings as NULLs so we change empty strings
+            // to ' '.
+            for (int i = 0; i < currentState.length; ++i) {
+                if (currentState[i] instanceof String && ((String) currentState[i]).length() == 0) {
+                    currentState[i] = " ";
+                    modified = true;
+                }
+            }
+        }
         if (entity instanceof Task || entity instanceof Swimlane) {
             CachingLogic.onTaskChange(entity, currentState, previousState, propertyNames, types);
         } else if (entity instanceof Substitution) {
@@ -48,57 +62,22 @@ public class WFRunaHibernateInterceptor extends EmptyInterceptor {
         } else if (entity instanceof Deployment) {
             CachingLogic.onProcessDefChange(entity, currentState, previousState, propertyNames, types);
         }
-    }
-
-    private boolean isOracle() {
-        if (isOracle == null) {
-            isOracle = ApplicationContextFactory.getDBType() == DBType.Oracle;
-        }
-        return isOracle;
+        return modified;
     }
 
     @Override
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
-        boolean isModify = false;
-        if (isOracle()) {
-            for (int i = 0; i < state.length; ++i) {
-                if (state[i] instanceof String) {
-                    if (((String) state[i]).length() == 0) {
-                        state[i] = ORACLE_EMPTY_TOKEN;
-                        isModify = true;
-                    }
-                }
-            }
-        }
-        onChanges(entity, state, null, propertyNames, types);
-        return isModify;
+        return onChanges(entity, state, null, propertyNames, types, true);
     }
 
     @Override
     public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
-        onChanges(entity, state, null, propertyNames, types);
+        onChanges(entity, state, null, propertyNames, types, false);
     }
 
     @Override
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        boolean isModify = false;
-        if (isOracle()) {
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof String) {
-                    if (((String) currentState[i]).length() == 0) {
-                        currentState[i] = ORACLE_EMPTY_TOKEN;
-                        isModify = true;
-                    }
-                }
-            }
-        }
-        onChanges(entity, currentState, previousState, propertyNames, types);
-        return isModify;
+        return onChanges(entity, currentState, previousState, propertyNames, types, true);
     }
 
-    @Override
-    public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-        // TODO instead of OracleCommons
-        return super.onLoad(entity, id, state, propertyNames, types);
-    }
 }
