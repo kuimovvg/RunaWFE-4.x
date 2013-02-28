@@ -28,7 +28,8 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 @SuppressWarnings("unchecked")
 public class WSObjectAccessor {
     private final AlfObject alfObject;
-    private static final ISO8601DateConverter DATE_CONVERTER = new ISO8601DateConverter();
+    private static final FromStringDateConverter FROM_STRING_DATE_CONVERTER = new FromStringDateConverter();
+    private static final ToStringDateConverter TO_STRING_DATE_CONVERTER = new ToStringDateConverter();
 
     public WSObjectAccessor(AlfObject alfObject) {
         this.alfObject = alfObject;
@@ -50,7 +51,7 @@ public class WSObjectAccessor {
         } else {
             alfrescoValue = prop.getValue();
         }
-        Object javaValue = TypeConversionUtil.convertTo(alfrescoValue, propertyDescriptor.getPropertyType(), DATE_CONVERTER, null);
+        Object javaValue = TypeConversionUtil.convertTo(alfrescoValue, propertyDescriptor.getPropertyType(), FROM_STRING_DATE_CONVERTER, null);
         PropertyUtils.setProperty(alfObject, fieldName, javaValue);
     }
 
@@ -93,15 +94,15 @@ public class WSObjectAccessor {
         }
         Object javaValue = PropertyUtils.getProperty(alfObject, fieldName);
         if (javaValue != null && (javaValue.getClass().isArray() || javaValue instanceof Collection<?>)) {
-            String[] alfrescoStrings = TypeConversionUtil.convertTo(javaValue, String[].class, DATE_CONVERTER, null);
+            String[] alfrescoStrings = TypeConversionUtil.convertTo(javaValue, String[].class, TO_STRING_DATE_CONVERTER, null);
             return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), alfrescoStrings);
         } else {
-            String alfrescoString = TypeConversionUtil.convertTo(javaValue, String.class, DATE_CONVERTER, null);
+            String alfrescoString = TypeConversionUtil.convertTo(javaValue, String.class, TO_STRING_DATE_CONVERTER, null);
             return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), alfrescoString);
         }
     }
 
-    private static class ISO8601DateConverter implements ITypeConvertor {
+    private static class FromStringDateConverter implements ITypeConvertor {
 
         @Override
         public <T> T convertTo(Object object, Class<T> classConvertTo) {
@@ -116,6 +117,23 @@ public class WSObjectAccessor {
                         }
                         return (T) date;
                     }
+                }
+            }
+            return null;
+        }
+
+    }
+
+    private static class ToStringDateConverter implements ITypeConvertor {
+
+        @Override
+        public <T> T convertTo(Object object, Class<T> classConvertTo) {
+            if (object instanceof Calendar) {
+                object = ((Calendar) object).getTime();
+            }
+            if (object instanceof Date) {
+                synchronized (ISO8601DateFormat.class) {
+                    return (T) ISO8601DateFormat.format((Date) object);
                 }
             }
             return null;

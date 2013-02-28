@@ -6,6 +6,9 @@
   <artifact enabled="true" name="ru.runa.wfe.office.excel.handler.ExcelReadHandler" label="Excel: Прочесть данные из файла"/>
   <artifact enabled="true" name="ru.runa.wfe.office.excel.handler.ExcelSaveHandler" label="Excel: Сохранить данные в файл"/>
   <artifact enabled="true" name="ru.runa.wfe.office.excel.handler.ExcelSaveHandler" label="Excel: Сохранить данные в файл"/>
+  <artifact enabled="true" name="ru.runa.wfe.office.doc.DocxHandler" label="Word: Формирование документа DOCX используя шаблон"/>
+  <artifact enabled="true" name="ru.runa.wfe.office.doc.DocxHandler" label="Word: Формирование документа DOCX используя шаблон"/>
+  <artifact enabled="true" name="ru.runa.wfe.logic.bot.MSWordReportTaskHandler" label="Word: Формирование документа используя шаблон (используя MSWord ActiveX)"/>
   <artifact enabled="true" name="ru.runa.bp.demo.ApproveMyDoc" label="alfdemo: approve document"/>
   <artifact enabled="true" name="ru.runa.bp.demo.CreateMyDoc" label="alfdemo: create document"/>
   <artifact enabled="true" name="ru.runa.bp.demo.RejectMyDoc" label="alfdemo: reject document"/>
@@ -22,9 +25,6 @@
   <artifact enabled="true" name="ru.runa.wfe.extension.decision.GroovyDecisionHandler" label="Исполнить код Groovy"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.user.AssignSwimlaneActionHandler" label="Назначить роль"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.ClearVariableActionHandler" label="Обнулить переменную"/>
-  <artifact enabled="true" name="ru.runa.wfe.logic.bot.MSWordReportTaskHandler" label="Обработчик MSWord (используя ActiveX)"/>
-  <artifact enabled="true" name="ru.runa.wfe.office.doc.DocxHandler" label="Обработчик файов Docx"/>
-  <artifact enabled="true" name="ru.runa.wfe.office.doc.DocxHandler" label="Обработчик файов Docx"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.MergeMapsActionHandler" label="Объединить карты"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.SendEmailActionHandler" label="Отправить email"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.ConvertMapValuesToListActionHandler" label="Перевести значения карты в список"/>
@@ -32,6 +32,7 @@
   <artifact enabled="true" name="ru.runa.wfe.extension.assign.DefaultAssignmentHandler" label="По умолчанию"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.PutObjectToMapActionHandler" label="Положить элемент в карту"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.user.ActorNameActionHandler" label="Получить имя пользователя"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.user.GetExecutorInfoHandler" label="Получить информацию об исполнителе"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler" label="Получить элемент карты"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler" label="Получить элемент списка"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.CreateOptionActionHandler" label="Создать опцию для выбора"/>
@@ -61,5 +62,5 @@
   <artifact enabled="true" name="ru.runa.wfe.var.format.FileFormat" label="Файл"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.BooleanFormat" label="Флаг (логическое выражение)"/>
   <artifact enabled="true" name="ru.runa.wfe.var.format.LongFormat" label="Целое число"/>
-  <artifact enabled="true" name="ru.runa.wfe.var.format.BigDecimalFormat" label="Число повышенной точности"/>
+  <artifact enabled="false" name="ru.runa.wfe.var.format.BigDecimalFormat" label="Число повышенной точности"/>
 </artifacts>

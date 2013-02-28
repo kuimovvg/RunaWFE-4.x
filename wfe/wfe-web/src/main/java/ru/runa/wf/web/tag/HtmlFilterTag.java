@@ -38,9 +38,6 @@ public class HtmlFilterTag extends TitledFormTag {
         byte[] htmlBytes = (byte[]) pageContext.getRequest().getAttribute("htmlBytes");
         Long processDefinitionId = (Long) pageContext.getRequest().getAttribute("processDefinitionId");
         String pageHref = (String) pageContext.getRequest().getAttribute("pageHref");
-
-        // we do not move HTMLPageFilter to action since we need pageContext for
-        // processing
         byte[] filteredBytes = HTMLFormConverter.changeUrls(pageContext, processDefinitionId, pageHref, htmlBytes);
         tdFormElement.addElement(new String(filteredBytes, Charsets.UTF_8));
     }
