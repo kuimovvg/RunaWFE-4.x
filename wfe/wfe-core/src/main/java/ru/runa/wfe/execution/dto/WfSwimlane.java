@@ -32,8 +32,14 @@ import com.google.common.base.Preconditions;
 public class WfSwimlane implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final SwimlaneDefinition definition;
-    private final Executor executor;
+    private SwimlaneDefinition definition;
+    private Executor executor;
+
+    /**
+     * for web services
+     */
+    public WfSwimlane() {
+    }
 
     public WfSwimlane(SwimlaneDefinition definition, Executor assignedExecutor) {
         Preconditions.checkNotNull(definition);
