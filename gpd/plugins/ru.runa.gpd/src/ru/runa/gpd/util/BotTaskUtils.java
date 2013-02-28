@@ -14,6 +14,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.handler.ConfigBasedProvider;
 import ru.runa.gpd.extension.handler.ParamBasedProvider;
@@ -79,8 +80,11 @@ public class BotTaskUtils {
     }
 
     public static boolean isTaskHandlerParameterized(String className) {
-        DelegableProvider provider = HandlerRegistry.getProvider(className);
-        return provider instanceof ConfigBasedProvider;
+        if (HandlerRegistry.getInstance().getAll(HandlerArtifact.TASK_HANDLER, false).contains(className)) {
+            DelegableProvider provider = HandlerRegistry.getProvider(className);
+            return provider instanceof ConfigBasedProvider;
+        }
+        return false;
     }
 
     public static InputStream createBotStationInfo(String botStationName, String rmiAddress) {
