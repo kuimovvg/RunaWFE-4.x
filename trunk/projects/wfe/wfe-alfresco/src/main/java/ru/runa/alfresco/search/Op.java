@@ -1,15 +1,5 @@
 package ru.runa.alfresco.search;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.regex.Matcher;
-
-import org.apache.commons.logging.LogFactory;
-
-import ru.runa.alfresco.AlfObject;
-import ru.runa.alfresco.WSObjectAccessor;
-import ru.runa.wfe.commons.CalendarUtil;
-
 /**
  * Operator for query condition.
  * 
@@ -23,39 +13,11 @@ public enum Op {
 
     private String regexp;
 
-    private Op(String name) {
-        this.regexp = name;
+    private Op(String regexp) {
+        this.regexp = regexp;
     }
 
-    public String toExpression(N operand, Object[] params) {
-        String result = regexp;
-        result = result.replaceAll("\\$operand", Matcher.quoteReplacement(operand.toString()));
-        for (int i = 0; i < params.length; i++) {
-            String p;
-            if (params[i] != null) {
-                p = formatParam(params[i]);
-            } else {
-                p = "NULL";
-                LogFactory.getLog(getClass()).warn("Null param [" + i + "] in " + this);
-            }
-            result = result.replaceAll("\\$" + i, Matcher.quoteReplacement(p));
-        }
-        return result;
-    }
-
-    private String formatParam(Object param) {
-        if (param == null) {
-            throw new NullPointerException(regexp);
-        }
-        if (param instanceof Calendar) {
-            param = ((Calendar) param).getTime();
-        }
-        if (param instanceof Date) {
-            return CalendarUtil.format((Date) param, WSObjectAccessor.ALF_DATE_FORMAT);
-        }
-        if (param instanceof AlfObject) {
-            return ((AlfObject) param).getUuidRef();
-        }
-        return param.toString();
+    public String getRegexp() {
+        return regexp;
     }
 }
