@@ -51,8 +51,8 @@ public abstract class EJB3Delegate {
      */
     public EJB3Delegate(Class<?> baseInterfaceClass) {
         beanName = baseInterfaceClass.getSimpleName() + "Bean";
-        localInterfaceClassName = baseInterfaceClass.getName() + "Local";
-        remoteInterfaceClassName = baseInterfaceClass.getName() + "Remote";
+        localInterfaceClassName = "ru.runa.wfe.service.decl." + baseInterfaceClass.getSimpleName() + "Local";
+        remoteInterfaceClassName = "ru.runa.wfe.service.decl." + baseInterfaceClass.getSimpleName() + "Remote";
     }
 
     public void setEjbType(String ejbType) {
