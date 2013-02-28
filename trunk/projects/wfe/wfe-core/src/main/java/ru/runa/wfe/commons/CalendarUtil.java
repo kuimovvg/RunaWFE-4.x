@@ -19,18 +19,19 @@ import ru.runa.wfe.InternalApplicationException;
  * @since 4.0
  */
 public class CalendarUtil {
-    // TODO define in settings default formats
-    public static final DateFormat DATE_WITHOUT_TIME_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-    public static final DateFormat DATE_WITH_HOUR_MINUTES_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-    public static final DateFormat DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    public static final DateFormat DATE_WITHOUT_TIME_FORMAT = new SimpleDateFormat(SystemProperties.getDateFormatPattern());
+    public static final DateFormat DATE_WITH_HOUR_MINUTES_FORMAT = new SimpleDateFormat(SystemProperties.getDateFormatPattern() + " HH:mm");
+    public static final DateFormat DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT = new SimpleDateFormat(SystemProperties.getDateFormatPattern() + " HH:mm:ss");
     public static final DateFormat HOURS_MINUTES_FORMAT = new SimpleDateFormat("HH:mm");
     public static final DateFormat HOURS_MINUTES_SECONDS_FORMAT = new SimpleDateFormat("HH:mm:ss");
 
-    private static final Calendar UNLIMITED_DATE = Calendar.getInstance();
-    private static final Calendar ZERO_DATE = Calendar.getInstance();
+    private static final Calendar UNLIMITED_DATE = getZeroTimeCalendar(Calendar.getInstance());
+    private static final Calendar ZERO_DATE = getZeroTimeCalendar(Calendar.getInstance());
     static {
         ZERO_DATE.set(Calendar.YEAR, 1900);
+        ZERO_DATE.set(Calendar.DAY_OF_YEAR, 1);
         UNLIMITED_DATE.set(Calendar.YEAR, 2100);
+        UNLIMITED_DATE.set(Calendar.DAY_OF_YEAR, 1);
     }
 
     public static Calendar getZero() {

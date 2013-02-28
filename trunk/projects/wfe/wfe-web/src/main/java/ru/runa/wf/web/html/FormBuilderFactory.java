@@ -20,7 +20,7 @@ package ru.runa.wf.web.html;
 import ru.runa.common.WebResources;
 import ru.runa.wf.web.StartFormBuilder;
 import ru.runa.wf.web.TaskFormBuilder;
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 
 /**
  * Created on 17.11.2004
@@ -36,10 +36,7 @@ public class FormBuilderFactory {
      */
     public static TaskFormBuilder createTaskFormBuilder(String formFileType) {
         String taskFormBuilderClassName = WebResources.getTaskFormBuilderClassName(formFileType);
-        if (taskFormBuilderClassName == null) {
-            throw new InternalApplicationException("No task form builder registered for form type '" + formFileType + "'");
-        }
-        return ru.runa.wfe.commons.ClassLoaderUtil.instantiate(taskFormBuilderClassName);
+        return ClassLoaderUtil.instantiate(taskFormBuilderClassName);
     }
 
     /**
@@ -52,10 +49,7 @@ public class FormBuilderFactory {
      */
     public static StartFormBuilder createStartFormBuilder(String formFileType) {
         String taskFormBuilderClassName = WebResources.getStartFormBuilderClassName(formFileType);
-        if (taskFormBuilderClassName == null) {
-            throw new InternalApplicationException("No start task form builder registered for form type '" + formFileType + "'");
-        }
-        return ru.runa.wfe.commons.ClassLoaderUtil.instantiate(taskFormBuilderClassName);
+        return ClassLoaderUtil.instantiate(taskFormBuilderClassName);
     }
 
 }

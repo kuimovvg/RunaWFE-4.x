@@ -251,23 +251,23 @@
 
 
 	<bean class="ru.runa.wfe.commons.logic.CommonLogic" />
+
+	<bean class="ru.runa.wfe.security.auth.LoginModuleConfiguration">
+		<property name="loginModuleClassNames">
+			<list>
+				<value>ru.runa.wfe.security.auth.InternalDBPasswordLoginModule</value>
+				<!-- value>ru.runa.wfe.security.auth.ADPasswordLoginModule</value -->
+				<!-- value>ru.runa.wfe.security.auth.KerberosLoginModule</value -->
+				<value>ru.runa.wfe.security.auth.PrincipalLoginModule</value>
+			</list>
+		</property>
+	</bean>
+	
 	<bean class="ru.runa.wfe.security.logic.AuthenticationLogic">
 		<property name="loginHandlers">
 			<list>
 				<!-- bean class="ru.runa.wfe.security.logic.LDAPImporter" / -->
 			</list>
-		</property>
-		<property name="loginModuleConfiguration">
-			<bean class="ru.runa.wfe.security.auth.LoginModuleConfiguration">
-				<property name="loginModuleClassNames">
-					<list>
-						<value>ru.runa.wfe.security.auth.InternalDBPasswordLoginModule</value>
-						<!-- value>ru.runa.wfe.security.auth.ADPasswordLoginModule</value -->
-						<!-- value>ru.runa.wfe.security.auth.KerberosLoginModule</value -->
-						<value>ru.runa.wfe.security.auth.PrincipalLoginModule</value>
-					</list>
-				</property>
-			</bean>
 		</property>
 	</bean>
 	<bean class="ru.runa.wfe.security.logic.AuthorizationLogic" />
@@ -293,13 +293,7 @@
 	<bean class="ru.runa.wfe.extension.assign.AssignmentHelper" />
 	<bean class="ru.runa.wfe.script.AdminScriptRunner" />
 
-	<bean class="ru.runa.wfe.commons.logic.InitializerLogic">
-		<property name="administratorName" value="${default.administrator.name}" />
-		<property name="administratorDescription" value="${default.administrator.description}" />
-		<property name="administratorPassword" value="${default.administrator.password}" />
-		<property name="administratorGroupName" value="${default.administrators.group.name}" />
-		<property name="administratorGroupDescription" value="${default.administrators.group.description}" />
-	</bean>
+	<bean class="ru.runa.wfe.commons.logic.InitializerLogic" />
 
 
 

@@ -17,8 +17,8 @@
  */
 package ru.runa.wfe.extension.orgfunction;
 
-import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import ru.runa.wfe.extension.OrgFunctionException;
@@ -36,10 +36,9 @@ public class DemoChiefFunction extends ActorOrgFunctionBase {
     @Override
     protected List<Long> getActorCodes(Long actorCode) {
         Actor actor = executorDAO.getActorByCode(actorCode);
-        Enumeration<String> patternsEnumeration = DemoChiefResources.getPatterns();
+        Set<String> patterns = DemoChiefResources.getPatterns();
         String chiefName = null;
-        while (patternsEnumeration.hasMoreElements()) {
-            String pattern = patternsEnumeration.nextElement();
+        for (String pattern : patterns) {
             if (Pattern.matches(pattern, actor.getName())) {
                 chiefName = DemoChiefResources.getChiefName(pattern);
                 break;

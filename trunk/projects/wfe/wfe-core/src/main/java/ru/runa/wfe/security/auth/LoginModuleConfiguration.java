@@ -30,33 +30,54 @@ import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
 import javax.security.auth.login.Configuration;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
  * 
  * Created on 19.07.2004
  */
-public class LoginModuleConfiguration extends Configuration {
+public class LoginModuleConfiguration extends Configuration implements InitializingBean {
+    public static final String APP_NAME = LoginModuleConfiguration.class.getSimpleName();
     private List<String> loginModuleClassNames;
 
-    private final Configuration delegation = Configuration.getConfiguration();
+    static {
+        // for kerberos
+        System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        setConfiguration(this);
+    }
+
+    public static void checkThisIsDefaultConfiguration() {
+        if (!(getConfiguration() instanceof LoginModuleConfiguration)) {
+            setConfiguration(new LoginModuleConfiguration());
+        }
+    }
 
     @Required
     public void setLoginModuleClassNames(List<String> loginModuleClassNames) {
         this.loginModuleClassNames = loginModuleClassNames;
     }
 
-    // TODO KerberosLoginModuleConfiguration
-
     @Override
     public AppConfigurationEntry[] getAppConfigurationEntry(String applicationName) {
-        if (LoginModuleConfiguration.class.getSimpleName().equals(applicationName)) {
+        if (APP_NAME.equals(applicationName)) {
             AppConfigurationEntry[] entries = new AppConfigurationEntry[loginModuleClassNames.size()];
             for (int i = 0; i < entries.length; i++) {
                 entries[i] = new AppConfigurationEntry(loginModuleClassNames.get(i), LoginModuleControlFlag.SUFFICIENT, new HashMap<String, Object>());
             }
             return entries;
         }
-        return delegation.getAppConfigurationEntry(applicationName);
+        if (KerberosLoginModuleResources.getApplicationName().equals(applicationName)) {
+            AppConfigurationEntry appConfigurationEntry = new AppConfigurationEntry(KerberosLoginModuleResources.getLoginModuleClassName(),
+                    AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, KerberosLoginModuleResources.getInitParameters());
+
+            return new AppConfigurationEntry[] { appConfigurationEntry };
+
+        }
+        return null;
     }
 }
