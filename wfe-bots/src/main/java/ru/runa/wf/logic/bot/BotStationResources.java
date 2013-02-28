@@ -18,7 +18,7 @@
 package ru.runa.wf.logic.bot;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.commons.ResourceCommons;
+import ru.runa.wfe.commons.PropertyResources;
 
 /**
  * Bot station configuration.
@@ -26,15 +26,11 @@ import ru.runa.wfe.commons.ResourceCommons;
  * @author dofs
  * @since 4.0
  */
-public class BotStationResources extends ResourceCommons {
-    private static final String BUNDLE = "botstation";
-
-    private BotStationResources() {
-        super(BUNDLE);
-    }
+public class BotStationResources {
+    private static final PropertyResources RESOURCES = new PropertyResources("botstation.properties");
 
     public static BotLogger createBotLogger() {
-        String loggerClassName = readPropertyIfExist("bot.logger.class", BUNDLE);
+        String loggerClassName = RESOURCES.getStringProperty("bot.logger.class");
         if (loggerClassName == null) {
             return null;
         }
@@ -43,18 +39,18 @@ public class BotStationResources extends ResourceCommons {
 
     public static int getThreadPoolSize() {
         try {
-            return Integer.parseInt(readPropertyIfExist("thread.pool.size", BUNDLE, "1"));
+            return RESOURCES.getIntegerProperty("thread.pool.size", 1);
         } catch (Exception e) {
             return 1;
         }
     }
 
     public static String getSystemUsername() {
-        return readProperty("botstation.system.username", BUNDLE);
+        return RESOURCES.getStringPropertyNotNull("botstation.system.username");
     }
 
     public static String getSystemPassword() {
-        return readProperty("botstation.system.password", BUNDLE);
+        return RESOURCES.getStringPropertyNotNull("botstation.system.password");
     }
 
 }

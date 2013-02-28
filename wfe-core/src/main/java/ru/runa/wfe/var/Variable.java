@@ -51,7 +51,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.VariableCreateLog;
 import ru.runa.wfe.audit.VariableDeleteLog;
 import ru.runa.wfe.audit.VariableUpdateLog;
-import ru.runa.wfe.commons.SystemUtils;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 
@@ -195,7 +195,7 @@ public abstract class Variable<T extends Object> {
     }
 
     public String toString(Object value) {
-        if (SystemUtils.isV3CompatibilityMode() && value != null && String[].class == value.getClass()) {
+        if (SystemProperties.isV3CompatibilityMode() && value != null && String[].class == value.getClass()) {
             return Arrays.toString((String[]) value);
         }
         return String.valueOf(value);

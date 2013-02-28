@@ -28,12 +28,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.DBType;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.dao.ConstantDAO;
 import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
@@ -101,40 +101,6 @@ public class InitializerLogic {
     private PermissionDAO permissionDAO;
     @Autowired
     private LocalizationDAO localizationDAO;
-    private String administratorName;
-    private String administratorDescription;
-    private String administratorPassword;
-    private String administratorGroupName;
-    private String administratorGroupDescription;
-
-    private String botsGroupName = "Bots";
-
-    // TODO localize predefined groups
-
-    @Required
-    public void setAdministratorName(String administratorName) {
-        this.administratorName = administratorName;
-    }
-
-    @Required
-    public void setAdministratorDescription(String administratorDescription) {
-        this.administratorDescription = administratorDescription;
-    }
-
-    @Required
-    public void setAdministratorPassword(String administratorPassword) {
-        this.administratorPassword = administratorPassword;
-    }
-
-    @Required
-    public void setAdministratorGroupName(String administratorGroupName) {
-        this.administratorGroupName = administratorGroupName;
-    }
-
-    @Required
-    public void setAdministratorGroupDescription(String administratorGroupDescription) {
-        this.administratorGroupDescription = administratorGroupDescription;
-    }
 
     private boolean isAlreadyIntialized() {
         String version = constantDAO.getValue(IS_DATABASE_INITIALIZED_VARIABLE_NAME);
@@ -199,11 +165,12 @@ public class InitializerLogic {
 
     private void insertInitialData() {
         // create privileged Executors
-        Actor admin = new Actor(administratorName, administratorDescription, administratorDescription);
+        String administratorDescription = "Default System Administrator";
+        Actor admin = new Actor(SystemProperties.getAdministratorName(), administratorDescription, administratorDescription);
         admin = executorDAO.create(admin);
-        executorDAO.setPassword(admin, administratorPassword);
-        Group adminGroup = executorDAO.create(new Group(administratorGroupName, administratorGroupDescription));
-        executorDAO.create(new Group(botsGroupName, botsGroupName));
+        executorDAO.setPassword(admin, "wf");
+        Group adminGroup = executorDAO.create(new Group(SystemProperties.getAdministratorsGroupName(), "Default Group For System Administrators"));
+        executorDAO.create(new Group(SystemProperties.getBotsGroupName(), SystemProperties.getBotsGroupName()));
         List<? extends Executor> adminWithGroupExecutors = Lists.newArrayList(adminGroup, admin);
         executorDAO.addExecutorToGroup(admin, adminGroup);
         executorDAO.create(new Actor(SystemExecutors.PROCESS_STARTER_NAME, SystemExecutors.PROCESS_STARTER_DESCRIPTION));

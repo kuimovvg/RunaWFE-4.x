@@ -34,6 +34,7 @@ import ru.runa.wfe.ss.cache.SubstitutionCacheCtrl;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.cache.ExecutorCacheCtrl;
 import ru.runa.wfe.user.cache.ExecutorCacheImpl;
@@ -61,30 +62,30 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
             return;
         }
         if (object instanceof Task) {
-            int idx = 0; // TODO check this (actorId) -> executor
-            while (!propertyNames[idx].equals("actorId")) {
+            int idx = 0;
+            while (!propertyNames[idx].equals("executor")) {
                 ++idx;
             }
             if (idx == propertyNames.length) {
                 uninitialize(object);
                 return;
             }
-            clearCacheForActors((String) currentState[idx]);
+            clearCacheForActors((Executor) currentState[idx]);
             if (previousState != null) {
-                clearCacheForActors((String) previousState[idx]);
+                clearCacheForActors((Executor) previousState[idx]);
             }
         } else if (object instanceof Swimlane) {
             int idx = 0;
-            while (!propertyNames[idx].equals("actorId")) {
+            while (!propertyNames[idx].equals("executor")) {
                 ++idx;
             }
             if (idx == propertyNames.length) {
                 uninitialize(object);
                 return;
             }
-            clearCacheForActors((String) currentState[idx]);
+            clearCacheForActors((Executor) currentState[idx]);
             if (previousState != null) {
-                clearCacheForActors((String) previousState[idx]);
+                clearCacheForActors((Executor) previousState[idx]);
             }
         } else {
             uninitialize(object);
@@ -118,31 +119,26 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
         return CachingLogic.getCacheImpl(this).getCacheVersion();
     }
 
-    private void clearCacheForActors(String executorStr) {
+    private void clearCacheForActors(Executor executor) {
         TaskCacheImpl cache = getCache();
         if (cache == null) {
             return;
         }
-        if (executorStr == null) {
+        if (executor == null) {
             return;
         }
-        Set<Actor> ex = new HashSet<Actor>();
-        try {
-            ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
-            if (executorCache == null) {
-                uninitialize(executorStr);
-                return;
-            }
-            if (executorStr.charAt(0) == 'G') {
-                ex = executorCache.getGroupActorsAll((Group) executorCache.getExecutor(Long.parseLong(executorStr.substring(1))));
-            } else {
-                ex.add(executorCache.getActor(Long.parseLong(executorStr)));
-            }
-        } catch (Throwable e) {
-            uninitialize(executorStr);
+        Set<Actor> actors = new HashSet<Actor>();
+        ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
+        if (executorCache == null) {
+            uninitialize(executor);
             return;
         }
-        for (Actor actor : ex) {
+        if (executor instanceof Group) {
+            actors = executorCache.getGroupActorsAll((Group) executor);
+        } else {
+            actors.add((Actor) executor);
+        }
+        for (Actor actor : actors) {
             clearActorCache(actor);
         }
     }

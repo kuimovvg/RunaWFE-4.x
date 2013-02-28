@@ -17,31 +17,23 @@
  */
 package ru.runa.wfe.bot.invoker;
 
-import ru.runa.wfe.commons.ResourceCommons;
+import ru.runa.wfe.commons.PropertyResources;
 
 /**
- *
+ * 
  * Created 21.06.2005
+ * 
  * @author Gordienko_m
  * @author Vitaliy S aka Yilativs
  */
-class Resources extends ResourceCommons {
-
-    private final static String PROPERTIES = "bot_invoker";
-
-    private Resources() {
-        super(PROPERTIES);
-    }
-
-    public static final String BOT_INVOKER_CLASS_NAME = "BotInvoker.class";
-
-    public static final String INVOCATION_PERIOD = "invocation.period";
+class Resources {
+    private static final PropertyResources RESOURCES = new PropertyResources("bot_invoker.properties");
 
     public static String getBotInvokerClassName() {
-        return readProperty(BOT_INVOKER_CLASS_NAME, PROPERTIES);
+        return RESOURCES.getStringPropertyNotNull("BotInvoker.class");
     }
 
     public static String getBotInvocationPeriod() {
-        return readProperty(INVOCATION_PERIOD, PROPERTIES);
+        return RESOURCES.getStringPropertyNotNull("invocation.period");
     }
 }

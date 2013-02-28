@@ -31,7 +31,7 @@ public class SQLChiefFunction extends ActorOrgFunctionBase {
 
     @Override
     protected List<Long> getActorCodes(Long code) {
-        List<Long> allChiefsCodes = OrganizationHierarchyDAO.getActorCodes(Resources.getChiefCodeBySubordinateCodeSQL(), new Long[] { code });
+        List<Long> allChiefsCodes = SQLFunctionDAO.getActorCodes(SQLFunctionResources.getChiefCodeBySubordinateCodeSQL(), new Long[] { code });
         if (allChiefsCodes != null && allChiefsCodes.size() > 1) {
             return Lists.newArrayList(allChiefsCodes.get(0));
         } else {
