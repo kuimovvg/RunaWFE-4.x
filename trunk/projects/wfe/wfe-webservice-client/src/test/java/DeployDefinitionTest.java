@@ -9,7 +9,7 @@ import ru.runa.wfe.webservice.User;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
-public class DeployDefinition {
+public class DeployDefinitionTest {
 
     public static void main(String[] args) {
         try {
