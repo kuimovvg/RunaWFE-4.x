@@ -1,15 +1,11 @@
 package ru.runa.alfresco;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Array;
-import java.lang.reflect.Modifier;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.alfresco.util.ISO8601DateFormat;
@@ -18,88 +14,44 @@ import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.ITypeConvertor;
 import ru.runa.wfe.commons.TypeConversionUtil;
 
 /**
  * Converts java properties from/to alfresco {@link NamedValue}.
  * 
+ * Limitations: list of strings only supported.
+ * 
  * @author dofs
  */
+@SuppressWarnings("unchecked")
 public class WSObjectAccessor {
-    protected static Log log = LogFactory.getLog(WSObjectAccessor.class);
-    public static final DateFormat ALF_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000Z");
     private final AlfObject alfObject;
+    private static final ISO8601DateConverter DATE_CONVERTER = new ISO8601DateConverter();
 
     public WSObjectAccessor(AlfObject alfObject) {
         this.alfObject = alfObject;
     }
 
-    @SuppressWarnings("unchecked")
     public void setProperty(AlfSerializerDesc desc, NamedValue prop) throws Exception {
         String fieldName = desc.getFieldName();
         if (desc.isNodeReference()) {
             alfObject.refFields.put(fieldName, prop.getValue());
             return;
         }
-        PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(alfObject, fieldName);
-        if (descriptor == null) {
+        PropertyDescriptor propertyDescriptor = PropertyUtils.getPropertyDescriptor(alfObject, fieldName);
+        if (propertyDescriptor == null) {
             throw new IllegalArgumentException("No property '" + fieldName + "' found in " + getClass());
         }
+        Object alfrescoValue;
         if (prop.getIsMultiValue()) {
-            String[] stringValues = prop.getValues();
-            Class<?> componentType = descriptor.getPropertyType().getComponentType();
-            PropertyDescriptor propertyDescriptor = PropertyUtils.getPropertyDescriptor(alfObject, fieldName);
-            Object propValue = null;
-            if (propertyDescriptor.getPropertyType().isArray()) {
-                propValue = Array.newInstance(componentType, stringValues.length);
-                for (int i = 0; i < stringValues.length; i++) {
-                    Object value = alfrescoToJava(stringValues[i], componentType);
-                    Array.set(propValue, i, value);
-                }
-            } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                try {
-                    if (stringValues != null) {
-                        List<Object> list = null;
-                        int modifiers = propertyDescriptor.getPropertyType().getModifiers();
-                        if (!Modifier.isAbstract(modifiers)) {
-                            list = (List<Object>) propertyDescriptor.getPropertyType().newInstance();
-                        } else {
-                            list = new ArrayList<Object>();
-                        }
-                        for (int i = 0; i < stringValues.length; i++) {
-                            Object value = alfrescoToJava(stringValues[i], componentType);
-                            list.add(value);
-                        }
-                        propValue = list;
-                    }
-                } catch (Throwable e) {
-                    log.error("Unable to deserialize property to field " + propertyDescriptor.getName(), e);
-                }
-            } else {
-                log.error("Unable to deserialize property to field " + propertyDescriptor.getName() + ": array or list expected.");
-            }
-            setTypedProperty(fieldName, propValue);
+            alfrescoValue = prop.getValues();
         } else {
-            String stringValue = prop.getValue();
-            Object value = alfrescoToJava(stringValue, descriptor.getPropertyType());
-            setTypedProperty(fieldName, value);
+            alfrescoValue = prop.getValue();
         }
-    }
-
-    protected void setTypedProperty(String propertyName, Object value) throws Exception {
-        PropertyUtils.setProperty(alfObject, propertyName, value);
-    }
-
-    private Object alfrescoToJava(String value, Class<?> fieldClass) throws Exception {
-        if (value != null && fieldClass == Calendar.class) {
-            Calendar c = Calendar.getInstance();
-            c.setTime(ISO8601DateFormat.parse(value));
-            return c;
-        }
-        return TypeConversionUtil.convertTo(value, fieldClass);
+        Object javaValue = TypeConversionUtil.convertTo(alfrescoValue, propertyDescriptor.getPropertyType(), DATE_CONVERTER, null);
+        PropertyUtils.setProperty(alfObject, fieldName, javaValue);
     }
 
     public NamedValue[] getAlfrescoProperties(AlfTypeDesc typeDesc, boolean all, boolean includeName) throws Exception {
@@ -126,7 +78,7 @@ public class WSObjectAccessor {
         return new ArrayList<NamedValue>(props.values()).toArray(new NamedValue[props.size()]);
     }
 
-    public NamedValue getProperty(AlfSerializerDesc desc) throws Exception {
+    private NamedValue getProperty(AlfSerializerDesc desc) throws Exception {
         String fieldName = desc.getFieldName();
         if (desc.isNodeReference()) {
             Object uuidObject = alfObject.refFields.get(fieldName);
@@ -139,32 +91,36 @@ public class WSObjectAccessor {
             }
             return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), uuidString);
         }
-        Object propValue = PropertyUtils.getProperty(alfObject, fieldName);
-        if (propValue == null) {
-            return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), (String) null);
-        }
-        if (propValue.getClass().isArray()) {
-            String[] result = new String[Array.getLength(propValue)];
-            for (int i = 0; i < result.length; i++) {
-                result[i] = Array.get(propValue, i).toString();
-            }
-            return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), result);
-        } else if (propValue instanceof List<?>) {
-            List<?> list = (List<?>) propValue;
-            String[] result = new String[list.size()];
-            for (int i = 0; i < result.length; i++) {
-                result[i] = list.get(i).toString();
-            }
-            return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), result);
+        Object javaValue = PropertyUtils.getProperty(alfObject, fieldName);
+        if (javaValue != null && (javaValue.getClass().isArray() || javaValue instanceof Collection<?>)) {
+            String[] alfrescoStrings = TypeConversionUtil.convertTo(javaValue, String[].class, DATE_CONVERTER, null);
+            return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), alfrescoStrings);
         } else {
-            String formattedPropValue;
-            if (propValue instanceof Calendar) {
-                Calendar c = (Calendar) propValue;
-                formattedPropValue = ISO8601DateFormat.format(c.getTime());
-            } else {
-                formattedPropValue = propValue.toString();
-            }
-            return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), formattedPropValue);
+            String alfrescoString = TypeConversionUtil.convertTo(javaValue, String.class, DATE_CONVERTER, null);
+            return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), alfrescoString);
         }
     }
+
+    private static class ISO8601DateConverter implements ITypeConvertor {
+
+        @Override
+        public <T> T convertTo(Object object, Class<T> classConvertTo) {
+            if (object instanceof String) {
+                if (classConvertTo == Date.class || classConvertTo == Calendar.class) {
+                    synchronized (ISO8601DateFormat.class) {
+                        Date date = ISO8601DateFormat.parse((String) object);
+                        if (classConvertTo == Calendar.class) {
+                            Calendar c = Calendar.getInstance();
+                            c.setTime(date);
+                            return (T) c;
+                        }
+                        return (T) date;
+                    }
+                }
+            }
+            return null;
+        }
+
+    }
+
 }
