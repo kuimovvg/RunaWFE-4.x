@@ -2,6 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import ru.runa.gpd.extension.handler.ParamDef;
 
+// TODO define 3different images for user
 public enum BotTaskType {
     /**
      * This bot task has a fixed configuration
