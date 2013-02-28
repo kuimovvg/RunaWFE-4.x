@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "AdminScriptWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8888/runawfe-wfe-service-4.0.0/AdminScriptServiceBean?wsdl")
+@WebServiceClient(name = "AdminScriptWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8080/runawfe-wfe-service-4.0.0/AdminScriptServiceBean?wsdl")
 public class AdminScriptWebService
     extends Service
 {
@@ -30,7 +30,7 @@ public class AdminScriptWebService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8888/runawfe-wfe-service-4.0.0/AdminScriptServiceBean?wsdl");
+            url = new URL("http://localhost:8080/runawfe-wfe-service-4.0.0/AdminScriptServiceBean?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

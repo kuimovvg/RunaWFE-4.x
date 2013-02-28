@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "BotWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8888/runawfe-wfe-service-4.0.0/BotServiceBean?wsdl")
+@WebServiceClient(name = "BotWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8080/runawfe-wfe-service-4.0.0/BotServiceBean?wsdl")
 public class BotWebService
     extends Service
 {
@@ -30,7 +30,7 @@ public class BotWebService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8888/runawfe-wfe-service-4.0.0/BotServiceBean?wsdl");
+            url = new URL("http://localhost:8080/runawfe-wfe-service-4.0.0/BotServiceBean?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

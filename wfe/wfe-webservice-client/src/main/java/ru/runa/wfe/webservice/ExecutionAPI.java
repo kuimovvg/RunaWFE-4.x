@@ -84,8 +84,8 @@ public interface ExecutionAPI {
      * @param arg2
      * @param arg1
      * @param arg0
-     * @throws TaskDoesNotExistException_Exception
      * @throws TaskAlreadyCompletedException_Exception
+     * @throws TaskDoesNotExistException_Exception
      */
     @WebMethod
     @RequestWrapper(localName = "completeTaskWS", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CompleteTaskWS")
