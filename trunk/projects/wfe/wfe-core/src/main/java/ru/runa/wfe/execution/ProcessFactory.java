@@ -100,6 +100,12 @@ public class ProcessFactory {
     public Process startSubprocess(ExecutionContext parentExecutionContext, ProcessDefinition processDefinition, Map<String, Object> variables) {
         Process parentProcess = parentExecutionContext.getProcess();
         Node subProcessNode = parentExecutionContext.getNode();
+        Map<String, Object> defaultValues = processDefinition.getDefaultVariableValues();
+        for (Map.Entry<String, Object> entry : defaultValues.entrySet()) {
+            if (!variables.containsKey(entry.getKey())) {
+                variables.put(entry.getKey(), entry.getValue());
+            }
+        }
         Process subProcess = startProcessInternal(processDefinition, variables, null, null);
         subProcess.setHierarchySubProcess(ProcessHierarchyUtils.createHierarchy(parentProcess.getHierarchySubProcess(), subProcess.getId()));
         nodeProcessDAO.create(new NodeProcess(parentExecutionContext.getToken(), subProcess, subProcessNode));

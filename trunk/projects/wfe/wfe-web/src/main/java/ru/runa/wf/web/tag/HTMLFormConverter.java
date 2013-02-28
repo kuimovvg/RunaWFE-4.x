@@ -34,6 +34,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.w3c.dom.html.HTMLOptionElement;
 
+import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
@@ -88,6 +89,15 @@ public class HTMLFormConverter {
                 if (htmlTagElements.getLength() > 0) {
                     String attributeName = tagNameTagAttributeEntry.getValue();
                     handleElements(htmlTagElements, attributeName, htmlHref, pageContext, id);
+                }
+            }
+            if (WebResources.getBooleanProperty("form.tr.title.clean", true)) {
+                NodeList trElements = document.getElementsByTagName("tr");
+                for (int i = 0; i < trElements.getLength(); i++) {
+                    Node node = trElements.item(i);
+                    if (node.getAttributes().getNamedItem("title") != null) {
+                        node.getAttributes().removeNamedItem("title");
+                    }
                 }
             }
         }

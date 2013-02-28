@@ -46,9 +46,9 @@ class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCach
     public void clear(Deployment deployment) {
         if (deployment.getId() != null) {
             definitionIdToDefinition.remove(deployment.getId());
-            definitionNameToId.remove(deployment.getName());
-            latestProcessDefinition.clear();
         }
+        definitionNameToId.remove(deployment.getName());
+        latestProcessDefinition.clear();
     }
 
     @Override

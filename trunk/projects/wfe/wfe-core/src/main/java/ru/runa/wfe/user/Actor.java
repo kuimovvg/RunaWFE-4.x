@@ -77,6 +77,12 @@ public class Actor extends Executor {
         this.phone = phone;
     }
 
+    @Override
+    @Column(name = "FULL_NAME", nullable = false)
+    public String getFullName() {
+        return super.getFullName();
+    }
+
     @Transient
     @Override
     public SecuredObjectType getSecuredObjectType() {

@@ -1,17 +1,10 @@
 package ru.runa.alfresco;
 
 import org.alfresco.webservice.authentication.AuthenticationFault;
-import org.alfresco.webservice.repository.RepositoryFault;
 import org.alfresco.webservice.util.AuthenticationUtils;
 import org.alfresco.webservice.util.WebServiceFactory;
-import org.apache.axis.AxisFault;
-import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import ru.runa.wfe.InternalApplicationException;
-
-import com.google.common.base.Throwables;
 
 /**
  * Authenticated wrapper for {@link AlfSession}.
@@ -57,31 +50,17 @@ public abstract class AlfSessionWrapper<T> {
         try {
             sessionStart();
             return code();
-        } catch (RepositoryFault e) {
-            log.error(e.getMessage1());
-            throw new InternalApplicationException(e.getMessage1());
-        } catch (AxisFault e) {
-            String s = getDetail(e);
-            log.error(e.dumpToString());
-            throw new RuntimeException(s);
         } catch (Exception e) {
             if (ConnectionException.MESSAGE.equals(e.getMessage())) {
                 throw new ConnectionException();
             }
-            throw Throwables.propagate(e);
+            throw AlfSession.propagate(e);
         } finally {
             sessionEnd();
         }
     }
 
     protected abstract T code() throws Exception;
-
-    private String getDetail(AxisFault e) {
-        if (e.getFaultDetails().length > 0) {
-            return XMLUtils.getInnerXMLString(e.getFaultDetails()[0]);
-        }
-        return e.dumpToString();
-    }
 
     static class SessionData {
         final int id = sessionIdCounter++;

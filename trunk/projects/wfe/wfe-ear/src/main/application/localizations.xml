@@ -13,8 +13,6 @@
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.CreateOptionActionHandler" label="Create option"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.DebugActionHandler" label="Debug (prints configuration)"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.assign.DefaultAssignmentHandler" label="Default assignment handler"/>
-  <artifact enabled="true" name="ru.runa.wfe.office.doc.DocxHandler" label="Docx handler"/>
-  <artifact enabled="true" name="ru.runa.wfe.office.doc.DocxHandler" label="Docx handler"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.EscalationActionHandler" label="Escalation"/>
   <artifact enabled="true" name="ru.runa.wfe.office.excel.handler.ExcelReadHandler" label="Excel: Read data from"/>
   <artifact enabled="true" name="ru.runa.wfe.office.excel.handler.ExcelReadHandler" label="Excel: Read data from"/>
@@ -24,12 +22,12 @@
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.GroovyActionHandler" label="Execute Groovy script"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.SQLActionHandler" label="Execute SQL"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.FormulaActionHandler" label="Execute formula"/>
+  <artifact enabled="true" name="ru.runa.wfe.extension.handler.user.GetExecutorInfoHandler" label="Get executor info"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler" label="Get object from list"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler" label="Get object from map"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.user.ActorNameActionHandler" label="Get user name"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.decision.GroovyDecisionHandler" label="Groovy decision handler"/>
   <artifact enabled="true" name="ru.runa.wfe.service.handler.BotInvokerActionHandler" label="Invoke bot station"/>
-  <artifact enabled="true" name="ru.runa.wfe.logic.bot.MSWordReportTaskHandler" label="MSWord ActiveX task handler"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.MergeMapsActionHandler" label="Merge maps"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.PutObjectToMapActionHandler" label="Put object to map"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.RemoveObjectFromListActionHandler" label="Remove object from list"/>
@@ -38,6 +36,9 @@
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.EmailTaskNotifierActionHandler" label="Send email notifications about uncompleted tasks"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.SetObjectToListActionHandler" label="Set object to list"/>
   <artifact enabled="true" name="ru.runa.wfe.extension.handler.var.SortListActionHandler" label="Sort list"/>
+  <artifact enabled="true" name="ru.runa.wfe.office.doc.DocxHandler" label="Word: Generate DOCX document using template"/>
+  <artifact enabled="true" name="ru.runa.wfe.office.doc.DocxHandler" label="Word: Generate DOCX document using template"/>
+  <artifact enabled="true" name="ru.runa.wfe.logic.bot.MSWordReportTaskHandler" label="Word: Generate document using template (using MSWord ActiveX)"/>
   <artifact enabled="true" name="ru.runa.bp.demo.ApproveMyDoc" label="alfdemo: approve document"/>
   <artifact enabled="true" name="ru.runa.bp.demo.CreateMyDoc" label="alfdemo: create document"/>
   <artifact enabled="true" name="ru.runa.bp.demo.RejectMyDoc" label="alfdemo: reject document"/>
