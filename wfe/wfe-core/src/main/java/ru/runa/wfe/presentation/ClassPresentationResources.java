@@ -17,14 +17,10 @@
  */
 package ru.runa.wfe.presentation;
 
-import ru.runa.wfe.commons.ResourceCommons;
+import ru.runa.wfe.commons.PropertyResources;
 
-public class ClassPresentationResources extends ResourceCommons {
-    private static String bundleName = "presentationFields";
-
-    public ClassPresentationResources() {
-        super(bundleName);
-    }
+public class ClassPresentationResources {
+    private static final PropertyResources RESOURCES = new PropertyResources("presentationFields.properties");
 
     public FieldState getFieldState(String property) {
         if (property.startsWith("batch_presentation.")) {
@@ -33,7 +29,7 @@ public class ClassPresentationResources extends ResourceCommons {
         if (property.startsWith(ClassPresentation.editable_prefix + "name:batch_presentation.")) {
             property = property.substring((ClassPresentation.editable_prefix + "name:batch_presentation.").length());
         }
-        String value = readPropertyIfExist(property);
+        String value = RESOURCES.getStringProperty(property);
         if (value == null) {
             return FieldState.ENABLED;
         }

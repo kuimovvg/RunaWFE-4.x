@@ -40,7 +40,7 @@ import com.google.common.collect.Lists;
  * Created on 10.05.2005
  * 
  */
-public class OrganizationHierarchyDAO {
+public class SQLFunctionDAO {
     private static List<Long> directorsCodesList;
 
     /**
@@ -150,7 +150,7 @@ public class OrganizationHierarchyDAO {
             return result;
         }
         while (codes.size() > 0) {
-            List<Long> chiefsCodes = getActorCodes(Resources.getChiefCodeBySubordinateCodeSQL(), new Long[] { codes.get(0) });
+            List<Long> chiefsCodes = getActorCodes(SQLFunctionResources.getChiefCodeBySubordinateCodeSQL(), new Long[] { codes.get(0) });
             for (Long chiefCode : chiefsCodes) {
                 if (directorsCodesList.contains(chiefCode)) {
                     result.add(chiefCode);
@@ -192,9 +192,9 @@ public class OrganizationHierarchyDAO {
 
     private static Connection getConnection() throws SQLException {
         try {
-            DataSource ds = (DataSource) getInitialContext().lookup(Resources.getDataSourceName());
+            DataSource ds = (DataSource) getInitialContext().lookup(SQLFunctionResources.getDataSourceName());
             if (ds == null) {
-                throw new InternalApplicationException("No DataSource found for " + Resources.getDataSourceName());
+                throw new InternalApplicationException("No DataSource found for " + SQLFunctionResources.getDataSourceName());
             }
             return ds.getConnection();
         } catch (Exception e) {

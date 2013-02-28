@@ -17,7 +17,7 @@
  */
 package ru.runa.wfe.extension.orgfunction;
 
-import ru.runa.wfe.commons.ResourceCommons;
+import ru.runa.wfe.commons.PropertyResources;
 
 /**
  * Created on 03.01.2006
@@ -25,35 +25,23 @@ import ru.runa.wfe.commons.ResourceCommons;
  * @author Vitaliy S aka Yilativs
  * @author Gordienko_m modified by miheev_a 19.05.2006
  */
-public class Resources extends ResourceCommons {
+public class SQLFunctionResources {
+    private static final PropertyResources RESOURCES = new PropertyResources("orgfunction.organization_hierarchy_dao.properties");
 
-    private Resources() {
-        super(PROPERTIES);
+    public static String getDataSourceName() {
+        return RESOURCES.getStringPropertyNotNull("datasource");
     }
 
-    private static final String PROPERTIES = "orgfunction.organization_hierarchy_dao";
-
-    private static final String DATA_SOURCE_NAME = "datasource";
-
-    private final static String CHIEF_CODE_BY_SUBORDINATE_CODE_SQL = "chief.code.by.subordinate.code.sql";
-
-    private final static String SUBORDINATE_CODES_BY_CHIEF_CODE_SQL = "subordinate.codes.by.chief.code.sql";
-
-    private final static String GET_ALL_DIRECTORS_CODES = "get.all.directors.codes.sql";
-
     public static String getChiefCodeBySubordinateCodeSQL() {
-        return readProperty(CHIEF_CODE_BY_SUBORDINATE_CODE_SQL, PROPERTIES);
+        return RESOURCES.getStringPropertyNotNull("chief.code.by.subordinate.code.sql");
     }
 
     public static String getAllDirectorsCodes() {
-        return readProperty(GET_ALL_DIRECTORS_CODES, PROPERTIES);
+        return RESOURCES.getStringPropertyNotNull("get.all.directors.codes.sql");
     }
 
     public static String getSubordinateCodesByChiefCodeSQL() {
-        return readProperty(SUBORDINATE_CODES_BY_CHIEF_CODE_SQL, PROPERTIES);
+        return RESOURCES.getStringPropertyNotNull("subordinate.codes.by.chief.code.sql");
     }
 
-    public static String getDataSourceName() {
-        return readProperty(DATA_SOURCE_NAME, PROPERTIES);
-    }
 }

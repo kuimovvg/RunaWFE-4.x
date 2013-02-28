@@ -29,7 +29,7 @@ public class SQLSubordinateRecursiveFunction extends ActorOrgFunctionBase {
 
     @Override
     protected List<Long> getActorCodes(Long code) {
-        return OrganizationHierarchyDAO.getActorCodesRecurisve(Resources.getSubordinateCodesByChiefCodeSQL(), new Long[] { code });
+        return SQLFunctionDAO.getActorCodesRecurisve(SQLFunctionResources.getSubordinateCodesByChiefCodeSQL(), new Long[] { code });
     }
 
 }

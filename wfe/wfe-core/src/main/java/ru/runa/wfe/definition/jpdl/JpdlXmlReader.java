@@ -9,7 +9,7 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
-import ru.runa.wfe.commons.SystemUtils;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.definition.logic.SwimlaneUtils;
@@ -309,7 +309,7 @@ public class JpdlXmlReader {
         for (Element element : elements) {
             // 1 timer for compatibility timer names with 3.x
             String name;
-            if (SystemUtils.isV3CompatibilityMode()) {
+            if (SystemProperties.isV3CompatibilityMode()) {
                 name = element.attributeValue(NAME_ATTR, node.getNodeId());
             } else {
                 name = node.getNodeId() + "/timer-" + (timerNumber++);

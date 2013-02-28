@@ -25,9 +25,7 @@ import javax.security.auth.callback.Callback;
  * 
  */
 public class KerberosCallback implements Callback {
-
     private byte[] authToken;
-    private KerberosLoginModuleResources resources;
 
     public byte[] getAuthToken() {
         return authToken;
@@ -37,11 +35,4 @@ public class KerberosCallback implements Callback {
         this.authToken = authToken;
     }
 
-    public KerberosLoginModuleResources getResources() {
-        return resources;
-    }
-
-    public void setResources(KerberosLoginModuleResources res) {
-        resources = res;
-    }
 }

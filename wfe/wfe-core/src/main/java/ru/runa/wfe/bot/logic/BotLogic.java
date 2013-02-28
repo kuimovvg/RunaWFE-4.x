@@ -35,6 +35,7 @@ import ru.runa.wfe.bot.BotTaskDoesNotExistException;
 import ru.runa.wfe.bot.dao.BotDAO;
 import ru.runa.wfe.bot.dao.BotStationDAO;
 import ru.runa.wfe.bot.dao.BotTaskDAO;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.User;
@@ -98,8 +99,7 @@ public class BotLogic extends CommonLogic {
         if (getBot(user, bot.getBotStation().getId(), bot.getUsername()) != null) {
             throw new BotAlreadyExistsException(bot.getUsername());
         }
-        // TODO names to settings
-        executorDAO.addExecutorToGroup(executorDAO.getExecutor(bot.getUsername()), executorDAO.getGroup("Bots"));
+        executorDAO.addExecutorToGroup(executorDAO.getExecutor(bot.getUsername()), executorDAO.getGroup(SystemProperties.getBotsGroupName()));
         bot = botDAO.create(bot);
         incrementBotStationVersion(bot);
         return bot;
@@ -146,8 +146,7 @@ public class BotLogic extends CommonLogic {
             removeBotTask(user, botTask.getId());
         }
         Bot bot = getBotNotNull(user, id);
-        // TODO names to settings
-        executorDAO.removeExecutorFromGroup(executorDAO.getExecutor(bot.getUsername()), executorDAO.getGroup("Bots"));
+        executorDAO.removeExecutorFromGroup(executorDAO.getExecutor(bot.getUsername()), executorDAO.getGroup(SystemProperties.getBotsGroupName()));
         botDAO.delete(id);
     }
 

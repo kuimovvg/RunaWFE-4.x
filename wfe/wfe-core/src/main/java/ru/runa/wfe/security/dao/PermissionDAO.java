@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
@@ -52,7 +51,7 @@ import com.google.common.collect.Sets;
  * @author Konstantinov Aleksey 19.02.2012
  */
 @SuppressWarnings("unchecked")
-public class PermissionDAO extends CommonDAO implements InitializingBean {
+public class PermissionDAO extends CommonDAO {
     @Autowired
     private ExecutorDAO executorDAO;
 
