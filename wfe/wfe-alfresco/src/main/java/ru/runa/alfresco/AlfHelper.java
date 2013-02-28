@@ -340,7 +340,7 @@ public class AlfHelper implements AlfConn {
         if (typeDesc.isClassDefinitionLoaded()) {
             return;
         }
-        log.info("Loading definition for " + typeDesc.getAlfrescoTypeNameWithPrefix());
+        log.info("Loading definition for " + typeDesc);
         QName typeName = QName.createQName(typeDesc.getAlfrescoTypeNameWithNamespace());
         ClassDefinition definition;
         if (typeDesc.isAspect()) {
@@ -353,13 +353,17 @@ public class AlfHelper implements AlfConn {
         }
         typeDesc.setTitle(definition.getTitle());
         for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
-            PropertyDefinition d = registry.getDictionaryService().getProperty(desc.getPropertyQName());
-            if (d != null) {
-                desc.setTitle(d.getTitle());
-                desc.setDataType(d.getDataType().getJavaClassName());
-                desc.setDefaultValue(d.getDefaultValue());
-            } else {
-                log.debug("No property found in Alfresco for " + desc.getPropertyQName());
+            PropertyDefinition propertyDefinition = registry.getDictionaryService().getProperty(desc.getPropertyQName());
+            if (propertyDefinition != null) {
+                desc.setTitle(propertyDefinition.getTitle());
+                if (propertyDefinition.isMultiValued()) {
+                    desc.setDataType(List.class.getName());
+                } else {
+                    desc.setDataType(propertyDefinition.getDataType().getJavaClassName());
+                }
+                desc.setDefaultValue(propertyDefinition.getDefaultValue());
+            } else if (desc.getProperty() != null) {
+                throw new InternalApplicationException("No property found in Alfresco for " + desc + " of type " + typeDesc);
             }
         }
         typeDesc.setClassDefinitionLoaded(true);
