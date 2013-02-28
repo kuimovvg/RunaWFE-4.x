@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 
 import org.apache.commons.logging.Log;
@@ -32,7 +33,6 @@ import org.springframework.beans.factory.annotation.Required;
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.auth.KerberosCallbackHandler;
-import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
 import ru.runa.wfe.security.auth.LoginModuleConfiguration;
 import ru.runa.wfe.security.auth.PasswordLoginModuleCallbackHandler;
 import ru.runa.wfe.security.auth.PrincipalCallbackHandler;
@@ -46,26 +46,19 @@ import ru.runa.wfe.user.User;
  */
 public class AuthenticationLogic extends CommonLogic {
     private static final Log log = LogFactory.getLog(AuthenticationLogic.class);
-    private static final String LOGIN_MODULE_CONFIGURATION = "LoginModuleConfiguration";
     private List<LoginHandler> loginHandlers;
-    private LoginModuleConfiguration loginModuleConfiguration;
 
     @Required
     public void setLoginHandlers(List<LoginHandler> loginHandlers) {
         this.loginHandlers = loginHandlers;
     }
 
-    @Required
-    public void setLoginModuleConfiguration(LoginModuleConfiguration loginModuleConfiguration) {
-        this.loginModuleConfiguration = loginModuleConfiguration;
-    }
-
     public User authenticate(Principal principal) throws AuthenticationException {
         return authenticate(new PrincipalCallbackHandler(principal), AuthType.OTHER);
     }
 
-    public User authenticate(byte[] kerberosToken, KerberosLoginModuleResources res) throws AuthenticationException {
-        return authenticate(new KerberosCallbackHandler(kerberosToken, res), AuthType.KERBEROS);
+    public User authenticate(byte[] kerberosToken) throws AuthenticationException {
+        return authenticate(new KerberosCallbackHandler(kerberosToken), AuthType.KERBEROS);
     }
 
     public User authenticate(String name, String password) throws AuthenticationException {
@@ -74,7 +67,7 @@ public class AuthenticationLogic extends CommonLogic {
 
     private User authenticate(CallbackHandler callbackHandler, AuthType authType) throws AuthenticationException {
         try {
-            LoginContext loginContext = new LoginContext(LOGIN_MODULE_CONFIGURATION, null, callbackHandler, loginModuleConfiguration);
+            LoginContext loginContext = new LoginContext(LoginModuleConfiguration.APP_NAME, null, callbackHandler, Configuration.getConfiguration());
             loginContext.login();
             Subject subject = loginContext.getSubject();
             callHandlers(SubjectPrincipalsHelper.getUser(subject).getActor(), authType);

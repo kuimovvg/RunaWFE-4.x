@@ -38,17 +38,16 @@ public class KerberosLoginModule extends LoginModuleBase {
 
     @Override
     protected Actor login(CallbackHandler callbackHandler) throws Exception {
-        Callback[] callbacks = new Callback[1];
-        callbacks[0] = new KerberosCallback();
-        callbackHandler.handle(callbacks);
+        KerberosCallback kerberosCallback = new KerberosCallback();
+        callbackHandler.handle(new Callback[] { kerberosCallback });
 
         GSSManager manager = GSSManager.getInstance();
-        GSSName serverName = manager.createName(((KerberosCallback) callbacks[0]).getResources().getServerPrincipal(), null);
+        GSSName serverName = manager.createName(KerberosLoginModuleResources.getServerPrincipal(), null);
         GSSCredential credential = manager.createCredential(serverName, GSSCredential.INDEFINITE_LIFETIME, (Oid) null, GSSCredential.ACCEPT_ONLY);
         GSSContext context = manager.createContext(credential);
         context.requestMutualAuth(false);
 
-        byte[] authToken = ((KerberosCallback) callbacks[0]).getAuthToken();
+        byte[] authToken = kerberosCallback.getAuthToken();
         context.acceptSecContext(authToken, 0, authToken.length);
 
         String domainActorName = context.getSrcName().toString();

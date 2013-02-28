@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
 import ru.runa.wfe.security.logic.AuthenticationLogic;
 import ru.runa.wfe.service.decl.AuthenticationServiceLocal;
 import ru.runa.wfe.service.decl.AuthenticationServiceRemote;
@@ -69,7 +68,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     public User authenticateByKerberos(byte[] token) throws AuthenticationException {
         Preconditions.checkNotNull(token, "Kerberos authentication information");
         log.debug("Authenticating (kerberos)");
-        User user = authenticationLogic.authenticate(token, KerberosLoginModuleResources.rtnKerberosResources);
+        User user = authenticationLogic.authenticate(token);
         log.debug("Authenticated (kerberos): " + user);
         return user;
     }

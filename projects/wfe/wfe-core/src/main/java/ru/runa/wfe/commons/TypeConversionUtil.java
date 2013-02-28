@@ -32,14 +32,26 @@ import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.base.Defaults;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.primitives.Primitives;
 
+@SuppressWarnings("unchecked")
 public class TypeConversionUtil {
 
-    @SuppressWarnings("unchecked")
     public static <T> T convertTo(Object object, Class<T> classConvertTo) {
+        return convertTo(object, classConvertTo, null, null);
+    }
+
+    public static <T> T convertTo(Object object, Class<T> classConvertTo, ITypeConvertor preConvertor, ITypeConvertor postConvertor) {
         try {
+            Preconditions.checkNotNull(classConvertTo, "classConvertTo is null");
+            if (preConvertor != null) {
+                T result = preConvertor.convertTo(object, classConvertTo);
+                if (result != null) {
+                    return result;
+                }
+            }
             if (object == null) {
                 return Defaults.defaultValue(classConvertTo);
             }
@@ -65,15 +77,6 @@ public class TypeConversionUtil {
                 } catch (NoSuchMethodException e) {
                 }
             }
-            if (object instanceof Object[] && classConvertTo == String[].class) {
-                Object[] source = (Object[]) object;
-                String[] result = new String[source.length];
-                int i = 0;
-                for (Object o : source) {
-                    result[i++] = o.toString();
-                }
-                return (T) result;
-            }
             if (object instanceof Number && Number.class.isAssignableFrom(classConvertTo)) {
                 Number n = (Number) object;
                 if (classConvertTo == Long.class) {
@@ -92,11 +95,12 @@ public class TypeConversionUtil {
                     return (T) new Float(n.floatValue());
                 }
             }
-            if (List.class.isAssignableFrom(object.getClass()) && classConvertTo.isArray()) {
-                List<?> list = (List<?>) object;
-                Object array = Array.newInstance(classConvertTo.getComponentType(), list.size());
+            if (classConvertTo.isArray()) {
+                List<?> list = convertTo(object, List.class, preConvertor, postConvertor);
+                Class<?> componentType = classConvertTo.getComponentType();
+                Object array = Array.newInstance(componentType, list.size());
                 for (int i = 0; i < list.size(); i++) {
-                    Array.set(array, i, list.get(i));
+                    Array.set(array, i, convertTo(list.get(i), componentType, preConvertor, postConvertor));
                 }
                 return (T) array;
             }
@@ -116,6 +120,9 @@ public class TypeConversionUtil {
             }
             if (object instanceof Date && classConvertTo == Calendar.class) {
                 return (T) CalendarUtil.dateToCalendar((Date) object);
+            }
+            if (object instanceof Calendar && classConvertTo == Date.class) {
+                return (T) ((Calendar) object).getTime();
             }
             if (object instanceof String && (classConvertTo == Calendar.class || classConvertTo == Date.class)) {
                 Date date;
@@ -154,10 +161,10 @@ public class TypeConversionUtil {
                         return null;
                     }
                     if (s.startsWith("ID")) {
-                        Long executorId = convertTo(s.substring(2), Long.class);
+                        Long executorId = convertTo(s.substring(2), Long.class, preConvertor, postConvertor);
                         return (T) executorDAO.getExecutor(executorId);
                     } else if (s.startsWith("G")) {
-                        Long executorId = convertTo(s.substring(1), Long.class);
+                        Long executorId = convertTo(s.substring(1), Long.class, preConvertor, postConvertor);
                         return (T) executorDAO.getExecutor(executorId);
                     } else {
                         Long actorCode = Long.parseLong(s);
@@ -173,12 +180,18 @@ public class TypeConversionUtil {
             if (object instanceof Actor) {
                 // compatibility: client code expecting 'actorCode'
                 Long actorCode = ((Actor) object).getCode();
-                return convertTo(actorCode, classConvertTo);
+                return convertTo(actorCode, classConvertTo, preConvertor, postConvertor);
             }
             if (object instanceof Group) {
                 // compatibility: client code expecting 'groupCode'
                 String groupCode = "G" + ((Group) object).getId();
-                return convertTo(groupCode, classConvertTo);
+                return convertTo(groupCode, classConvertTo, preConvertor, postConvertor);
+            }
+            if (postConvertor != null) {
+                T result = postConvertor.convertTo(object, classConvertTo);
+                if (result != null) {
+                    return result;
+                }
             }
         } catch (Exception e) {
             throw Throwables.propagate(e);

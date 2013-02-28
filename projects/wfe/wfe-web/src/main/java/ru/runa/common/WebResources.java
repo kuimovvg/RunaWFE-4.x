@@ -17,16 +17,19 @@
  */
 package ru.runa.common;
 
-import java.util.Properties;
+import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.PropertyResources;
+
+import com.google.common.base.Strings;
 
 /**
  * Created on 30.09.2004
  * 
  */
 public class WebResources {
-    private static final Properties PROPERTIES = ClassLoaderUtil.getPropertiesNotNull("wfe.web.properties");
+    private static final PropertyResources RESOURCES = new PropertyResources("wfe.web.properties");
 
     public static final String ACTION_MAPPING_UPDATE_EXECUTOR = "/manage_executor";
     public static final String ACTION_MAPPING_MANAGE_RELATION = "/manage_relation";
@@ -55,90 +58,66 @@ public class WebResources {
     public static final String HIDDEN_ONE_TASK_INDICATOR = "one_task_hidden_field";
     public static final String HIDDEN_TASK_PREVIOUS_OWNER_ID = "taskOwnerId_hidden_field";
 
-    public static String getStringProperty(String name) {
-        return PROPERTIES.getProperty(name);
-    }
-
-    public static String getStringProperty(String name, String defaultValue) {
-        String result = getStringProperty(name);
-        if (result == null) {
-            return defaultValue;
-        }
-        return result;
-    }
-
     public static boolean getBooleanProperty(String name, boolean defaultValue) {
-        String result = getStringProperty(name);
-        if (result == null) {
-            return defaultValue;
-        }
-        return Boolean.parseBoolean(result);
-    }
-
-    public static int getIntegerProperty(String name, int defaultValue) {
-        String result = getStringProperty(name);
-        if (result == null) {
-            return defaultValue;
-        }
-        return Integer.parseInt(result);
+        return RESOURCES.getBooleanProperty(name, defaultValue);
     }
 
     public static String getTaskFormBuilderClassName(String formFileType) {
-        return getStringProperty("task.form.builder." + formFileType);
+        return RESOURCES.getStringPropertyNotNull("task.form.builder." + formFileType);
     }
 
     public static String getStartFormBuilderClassName(String formFileType) {
-        return getStringProperty("task.form.builder.start." + formFileType);
+        return RESOURCES.getStringPropertyNotNull("task.form.builder.start." + formFileType);
     }
 
     public static boolean isHighlightRequiredFields() {
-        return getBooleanProperty("task.form.highlightRequiredFields", false);
+        return RESOURCES.getBooleanProperty("task.form.highlightRequiredFields", false);
     }
 
     /**
      * Used from JSP page
      */
     public static int getDiagramRefreshInterval() {
-        return getIntegerProperty("process.graph.autoRefreshInterval.seconds", 0);
+        return RESOURCES.getIntegerProperty("process.graph.autoRefreshInterval.seconds", 0);
     }
 
     /**
      * Used from JSP page
      */
     public static String getTaskExpiredWarningThreshold() {
-        return getStringProperty("task.form.almostDeadline.percents", "90%");
+        return RESOURCES.getStringProperty("task.form.almostDeadline.percents", "90%");
     }
 
     public static boolean isGroupBySubprocessEnabled() {
-        return getBooleanProperty("group.subprocess.enabled", false);
+        return RESOURCES.getBooleanProperty("group.subprocess.enabled", false);
     }
 
     public static boolean isShowGraphMode() {
-        return getBooleanProperty("process.showGraphMode", false);
+        return RESOURCES.getBooleanProperty("process.showGraphMode", false);
     }
 
     public static boolean isNTLMSupported() {
-        return getBooleanProperty("ntlm.enabled", false);
+        return RESOURCES.getBooleanProperty("ntlm.enabled", false);
     }
 
     public static boolean isKrbSupported() {
-        return getBooleanProperty("kerberos.enabled", false);
+        return RESOURCES.getBooleanProperty("kerberos.enabled", false);
     }
 
     public static String getDomainName() {
-        return getStringProperty("ntlm.domain");
+        return RESOURCES.getStringPropertyNotNull("ntlm.domain");
     }
 
     public static String getVersion() {
-        return getStringProperty("version", "UNDEFINED");
+        return RESOURCES.getStringProperty("version", "UNDEFINED");
     }
 
     public static boolean isVersionDisplay() {
-        return getBooleanProperty("version.display", false);
+        return RESOURCES.getBooleanProperty("version.display", false);
     }
 
     public static boolean isAutoShowForm() {
-        return getBooleanProperty("task.form.autoShowNext", false);
+        return RESOURCES.getBooleanProperty("task.form.autoShowNext", false);
     }
 
     /**
@@ -146,26 +125,26 @@ public class WebResources {
      */
     public static String getAdditionalLinks() {
         try {
-            String className = getStringProperty("menu.additional_links", null);
-            if (className != null && className.length() > 0) {
+            String className = RESOURCES.getStringProperty("menu.additional_links");
+            if (!Strings.isNullOrEmpty(className)) {
                 Class<?> getter = ClassLoaderUtil.loadClass(className);
                 return getter.getDeclaredMethod("getAdditionalLinks", (Class[]) null).invoke(getter, (Object[]) null).toString();
             }
         } catch (Exception e) {
-
+            LogFactory.getLog(WebResources.class).error("Unable to get additional links", e);
         }
         return "";
     }
 
     public static int getViewLogsLimitLinesCount() {
-        return getIntegerProperty("view.logs.limit.lines.count", 10000);
+        return RESOURCES.getIntegerProperty("view.logs.limit.lines.count", 10000);
     }
 
     public static int getViewLogsAutoReloadTimeout() {
-        return getIntegerProperty("view.logs.timeout.autoreload.seconds", 15);
+        return RESOURCES.getIntegerProperty("view.logs.timeout.autoreload.seconds", 15);
     }
 
     public static boolean isDisplayVariablesJavaType() {
-        return getBooleanProperty("process.variables.displayJavaType", true);
+        return RESOURCES.getBooleanProperty("process.variables.displayJavaType", true);
     }
 }

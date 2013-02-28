@@ -21,47 +21,39 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.PropertyResources;
 
 /**
  * Created on 23.03.2005
  * 
  */
 public class BotInvokerFactory {
+    private static final Log log = LogFactory.getLog(BotInvokerFactory.class);
+    private static final PropertyResources RESOURCES = new PropertyResources("bot_invoker.properties");
+
     private static BotInvoker INSTANCE = null;
 
-    private static final Log log = LogFactory.getLog(BotInvokerFactory.class);
+    private static String getBotInvokerClassName() {
+        return RESOURCES.getStringPropertyNotNull("BotInvoker.class");
+    }
 
     public static BotInvoker getBotInvoker() {
         if (INSTANCE == null) {
-            INSTANCE = ClassLoaderUtil.instantiate(Resources.getBotInvokerClassName());
+            INSTANCE = ClassLoaderUtil.instantiate(getBotInvokerClassName());
             log.info("Using " + INSTANCE.getClass().getName());
         }
         return INSTANCE;
     }
 
-    private static final long MILLISECONDS_IN_SEC = 1000;
-    private static final long DEFAULT_INVOCATION_PERIOD = MILLISECONDS_IN_SEC * 30;
-
     public static long getBotInvocationPeriod() {
-        long period = DEFAULT_INVOCATION_PERIOD;
-        try {
-            period = Long.parseLong(Resources.getBotInvocationPeriod()) * MILLISECONDS_IN_SEC;
-            if (period < MILLISECONDS_IN_SEC) {
-                log.warn("bot_ivoker.properies invocation.period is less than 1 sec. Invocation period was set to 30 sec.");
-                period = DEFAULT_INVOCATION_PERIOD;
-            } else {
-                log.info("Invocation period was set to " + Resources.getBotInvocationPeriod() + " sec.");
-            }
-        } catch (NumberFormatException e) {
-            log.warn("bot_ivoker.properies invocation.period does not represent a number. Invocation period was set to 30 sec.");
+        long periodInSeconds = RESOURCES.getLongProperty("invocation.period", 30);
+        if (periodInSeconds < 1) {
+            log.warn("bot_ivoker.properies invocation.period is less than 1 sec. Invocation period was set to 30 sec.");
+            periodInSeconds = 30;
+        } else {
+            log.info("Invocation period was set to " + periodInSeconds + " sec.");
         }
-        return period;
+        return periodInSeconds * 1000;
     }
 
-    /**
-     * prevents instantiation
-     */
-    private BotInvokerFactory() {
-        // prevents creation
-    }
 }

@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.security.auth.login.Configuration;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -36,9 +35,8 @@ import jcifs.smb.SmbException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.af.web.KrbSupportResources;
-import ru.runa.wfe.security.auth.KerberosLoginModuleConfiguration;
 import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
+import ru.runa.wfe.security.auth.LoginModuleConfiguration;
 
 /**
  * This class in conjunction with {@link ru.runa.af.web.action.KrbLoginAction}
@@ -57,7 +55,7 @@ public class KrbFilter implements Filter {
 
         public CustomFilterConfig(ServletContext context) {
             this.context = context;
-            initParams.putAll(KrbSupportResources.getInitParameters());
+            initParams.putAll(KerberosLoginModuleResources.getInitParameters());
         }
 
         @Override
@@ -89,13 +87,11 @@ public class KrbFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (!(Configuration.getConfiguration() instanceof KerberosLoginModuleConfiguration)) {
-            Configuration.setConfiguration(new KerberosLoginModuleConfiguration(KerberosLoginModuleResources.webKerberosResources));
-        }
+        LoginModuleConfiguration.checkThisIsDefaultConfiguration();
         try {
-            AuthenticationFilter NegFilter = new AuthenticationFilter();
-            NegFilter.init(filter);
-            NegFilter.doFilter(request, response, chain);
+            AuthenticationFilter authenticationFilter = new AuthenticationFilter();
+            authenticationFilter.init(filter);
+            authenticationFilter.doFilter(request, response, chain);
         } catch (SmbException e) {
             log.error(e.getMessage(), e);
             chain.doFilter(request, response);

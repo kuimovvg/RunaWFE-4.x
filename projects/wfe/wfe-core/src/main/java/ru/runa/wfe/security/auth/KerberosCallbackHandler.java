@@ -28,21 +28,18 @@ import javax.security.auth.callback.UnsupportedCallbackException;
  * 
  */
 public class KerberosCallbackHandler implements CallbackHandler {
-
     private final byte[] authToken;
-    private final KerberosLoginModuleResources resources;
 
-    public KerberosCallbackHandler(byte[] authToken, KerberosLoginModuleResources res) {
+    public KerberosCallbackHandler(byte[] authToken) {
         this.authToken = authToken;
-        resources = res;
     }
 
+    @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (int i = 0; i < callbacks.length; i++) {
             if (callbacks[i] instanceof KerberosCallback) {
                 KerberosCallback callback = (KerberosCallback) callbacks[i];
                 callback.setAuthToken(authToken);
-                callback.setResources(resources);
             } else {
                 throw new UnsupportedCallbackException(callbacks[i], "Unrecognized Callback"
                         + ((callbacks[i] != null) ? " of type " + callbacks[i].getClass().getName() + " value " + callbacks[i].toString() : ""));

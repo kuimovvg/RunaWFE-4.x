@@ -29,6 +29,6 @@ public class SQLChiefRecursiveFunction extends ActorOrgFunctionBase {
 
     @Override
     protected List<Long> getActorCodes(Long code) {
-        return OrganizationHierarchyDAO.getActorCodesRecurisve(Resources.getChiefCodeBySubordinateCodeSQL(), new Long[] { code });
+        return SQLFunctionDAO.getActorCodesRecurisve(SQLFunctionResources.getChiefCodeBySubordinateCodeSQL(), new Long[] { code });
     }
 }

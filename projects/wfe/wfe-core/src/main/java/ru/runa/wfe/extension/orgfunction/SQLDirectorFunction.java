@@ -27,7 +27,7 @@ public class SQLDirectorFunction extends ActorOrgFunctionBase {
 
     @Override
     protected List<Long> getActorCodes(Long actorCode) {
-        return OrganizationHierarchyDAO.getDirectorCode(Resources.getAllDirectorsCodes(), Resources.getChiefCodeBySubordinateCodeSQL(), actorCode);
+        return SQLFunctionDAO.getDirectorCode(SQLFunctionResources.getAllDirectorsCodes(), SQLFunctionResources.getChiefCodeBySubordinateCodeSQL(), actorCode);
     }
 
 }
