@@ -12,6 +12,9 @@ import com.google.common.collect.Maps;
 
 public class ProcessExecutionErrors {
     // TODO "Date"
+    // TODO update errors
+    // TODO links in process view
+    // TODO report sending by email
     private static Map<BotTaskIdentifier, Throwable> botTaskConfigurationErrors = Maps.newHashMap();
     private static Map<Long, Map<String, Throwable>> processErrors = Maps.newHashMap();
 

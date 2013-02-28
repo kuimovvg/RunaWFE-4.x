@@ -53,7 +53,8 @@ public abstract class BaseDetailTableBuilder {
     protected TR createTRWith2TD(String label, String name, String value, boolean areInputsDisabled, String type) {
         TR tr = new TR();
         tr.addElement(new TD(label).setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(new Input(type, name, value).setDisabled(areInputsDisabled)).setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(new Input(type, name, String.valueOf(value)).setDisabled(areInputsDisabled))
+                .setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }
 }

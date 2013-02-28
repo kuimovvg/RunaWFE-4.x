@@ -78,27 +78,9 @@ public class Transition extends GraphElement {
     public void take(ExecutionContext executionContext) {
         // update the runtime context information
         executionContext.getToken().setTransitionId(getNodeId());
-
-        // if ((condition != null) && (isConditionEnforced)) {
-        // Object result = JbpmExpressionEvaluator.evaluate(condition,
-        // executionContext);
-        // if (result == null) {
-        // throw new InternalApplicationException("transition condition " +
-        // condition + " evaluated to null");
-        // } else if (!(result instanceof Boolean)) {
-        // throw new InternalApplicationException("transition condition " +
-        // condition + " evaluated to non-boolean: " +
-        // result.getClass().getName());
-        // } else if (!((Boolean) result).booleanValue()) {
-        // throw new InternalApplicationException("transition condition " +
-        // condition + " evaluated to 'false'");
-        // }
-        // }
-
         executionContext.addLog(new TransitionLog(this));
         // fire the transition event (if any)
         fireEvent(executionContext, Event.EVENTTYPE_TRANSITION);
-
         // pass the token to the destinationNode node
         to.enter(executionContext);
     }

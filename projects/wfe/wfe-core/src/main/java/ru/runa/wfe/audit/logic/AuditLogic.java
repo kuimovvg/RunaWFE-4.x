@@ -33,6 +33,7 @@ import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
 import ru.runa.wfe.security.ASystem;
+import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.user.User;
 
@@ -64,8 +65,8 @@ public class AuditLogic extends CommonLogic {
     }
 
     public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter) {
-        // TODO checkPermissionAllowed(user, identifiable, permission);
         Preconditions.checkNotNull(filter.getProcessId(), "filter.processId");
+        checkPermissionAllowed(user, processDAO.getNotNull(filter.getProcessId()), Permission.READ);
         ProcessLogs result = new ProcessLogs(filter.getProcessId());
         result.addLogs(processLogDAO.getAll(filter.getProcessId()));
         if (filter.isIncludeSubprocessLogs()) {
@@ -78,9 +79,9 @@ public class AuditLogic extends CommonLogic {
     }
 
     public byte[] getProcessLogValue(User user, Long logId) {
-        // TODO checkPermissionAllowed(user, identifiable, permission);
         Preconditions.checkNotNull(logId, "logId");
         ProcessLog processLog = processLogDAO.getNotNull(logId);
+        checkPermissionAllowed(user, processDAO.getNotNull(processLog.getProcessId()), Permission.READ);
         return processLog.getBytes();
     }
 

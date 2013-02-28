@@ -121,6 +121,7 @@ public class MultiProcessState extends SubProcessState {
             leave(executionContext);
             log.warn("Leaving multiinstance due to 0 fork count");
         }
+        int endedProcessesCount = 0;
         for (int idx = 0; idx < forkProcessesCount; idx++) {
             Map<String, Object> variables = Maps.newHashMap();
             for (VariableMapping variableMapping : variableMappings) {
@@ -149,7 +150,14 @@ public class MultiProcessState extends SubProcessState {
                 variables.put(miVarSubName, value);
             }
 
-            processFactory.startSubprocess(executionContext, getSubProcessDefinition(executionContext), variables);
+            Process subProcess = processFactory.startSubprocess(executionContext, getSubProcessDefinition(executionContext), variables);
+            if (subProcess.hasEnded()) {
+                endedProcessesCount++;
+            }
+        }
+        if (endedProcessesCount == forkProcessesCount) {
+            log.debug("Immediately leaving state");
+            leave(executionContext);
         }
     }
 
