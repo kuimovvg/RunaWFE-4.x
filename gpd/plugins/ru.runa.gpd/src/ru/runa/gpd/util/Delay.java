@@ -9,6 +9,7 @@ import ru.runa.gpd.Localization;
 
 public class Delay {
     public static final String CURRENT_DATE_MESSAGE = Localization.getString("duration.baseDateNow");
+    public static final String NO_DELAY_MESSAGE = Localization.getString("duration.nodelay");
     private static Pattern PATTERN_VAR = Pattern.compile("#\\{(.*)}");
     private static final List<Unit> units = new ArrayList<Unit>();
     static {
@@ -65,7 +66,7 @@ public class Delay {
     }
 
     public boolean hasDuration() {
-        return !"0".equals(delay) && variableName == null;
+        return !"0".equals(delay) || variableName != null;
     }
 
     public String getDuration() {
@@ -81,27 +82,6 @@ public class Delay {
             delay = delay.replaceAll(" ", "");
         }
         duration += delay + " " + unit.value;
-        return duration;
-    }
-
-    public String getDisplayLabel() {
-        String duration = "";
-        if (variableName != null) {
-            duration = "#{" + variableName + "} ";
-            if (delay.charAt(0) != '-' && delay.charAt(0) != '+') {
-                delay = "+ " + delay;
-            } else if (delay.charAt(1) != ' ') {
-                delay = delay.substring(0, 1) + " " + delay.substring(1);
-            }
-        } else {
-            delay = delay.replaceAll(" ", "");
-        }
-        PhraseDecliner decliner = PhraseDecliner.getDecliner();
-        if (decliner != null) {
-            duration += decliner.declineDuration(delay, unit.label);
-        } else {
-            duration += delay + " " + unit.label;
-        }
         return duration;
     }
 
@@ -138,7 +118,32 @@ public class Delay {
 
     @Override
     public String toString() {
-        return getDisplayLabel();
+        if (!hasDuration()) {
+            return NO_DELAY_MESSAGE;
+        }
+        String duration = "";
+        String delayValue;
+        if (variableName != null) {
+            duration = variableName;
+            if (delay.charAt(0) != '-' && delay.charAt(0) != '+') {
+                delayValue = "+ " + delay;
+            } else if (delay.charAt(1) != ' ') {
+                delayValue = delay.substring(0, 1) + " " + delay.substring(1);
+            } else {
+                delayValue = delay;
+            }
+        } else {
+            delayValue = delay.replaceAll(" ", "");
+        }
+        if (!"0".equals(delayValue)) {
+            PhraseDecliner decliner = PhraseDecliner.getDecliner();
+            if (decliner != null) {
+                duration += " "+decliner.declineDuration(delayValue, unit.label);
+            } else {
+                duration += " " + delayValue + " " + unit.label;
+            }
+        }
+        return duration;
     }
 
     public static class Unit {
