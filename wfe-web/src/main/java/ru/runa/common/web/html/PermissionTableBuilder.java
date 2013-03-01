@@ -116,7 +116,8 @@ public class PermissionTableBuilder {
         for (Permission permission : permissions) {
             String name = UpdatePermissionsOnIdentifiableForm.EXECUTOR_INPUT_NAME_PREFIX + "(" + executor.getId() + ")."
                     + UpdatePermissionsOnIdentifiableForm.PERMISSION_INPUT_NAME_PREFIX + "(" + permission.getMask() + ")";
-            boolean checked = ownPermissions.contains(permission);
+            // empty ownPermissions means that executor is privileged
+            boolean checked = ownPermissions.isEmpty() || ownPermissions.contains(permission);
             boolean enabled = allowedUpdatePermissions && !unmodifiablePermissions.contains(permission);
             executorCheckboxDisabled &= !enabled;
             Input checkbox = new Input(Input.CHECKBOX, name);
