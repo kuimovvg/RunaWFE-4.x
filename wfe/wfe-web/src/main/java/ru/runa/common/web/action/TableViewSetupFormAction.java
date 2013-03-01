@@ -166,7 +166,13 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             applyBatchPresentation(batchPresentation, tableViewSetupForm);
             ProfileService profileService = Delegates.getProfileService();
             profileService.saveBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
-            batchPresentation.setVersion(batchPresentation.getVersion() + 1);
+            // don't want load updated batch presentation, just update hibernate
+            // version for optimistic locking
+            if (batchPresentation.getVersion() != null) {
+                batchPresentation.setVersion(batchPresentation.getVersion() + 1);
+            } else {
+                batchPresentation.setVersion(1L);
+            }
         } catch (Exception e) {
             ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);

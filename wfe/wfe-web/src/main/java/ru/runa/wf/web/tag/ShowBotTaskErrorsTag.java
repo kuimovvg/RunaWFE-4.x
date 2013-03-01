@@ -27,6 +27,7 @@ import ru.runa.wfe.execution.logic.ProcessExecutionErrors.BotTaskIdentifier;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class ShowBotTaskErrorsTag extends VisibleTag {
@@ -52,7 +53,11 @@ public class ShowBotTaskErrorsTag extends VisibleTag {
             tr.addElement(new TD(botNameElement).setClass(Resources.CLASS_LIST_TABLE_TD));
             tr.addElement(new TD(entry.getKey().getBotTaskName()).setClass(Resources.CLASS_LIST_TABLE_TD));
             String url = "javascript:showBotTaskConfigurationError(" + bot.getId() + ", '" + entry.getKey().getBotTaskName() + "')";
-            tr.addElement(new TD(new A(url, entry.getValue().getLocalizedMessage())).setClass(Resources.CLASS_LIST_TABLE_TD));
+            String message = entry.getValue().getLocalizedMessage();
+            if (Strings.isNullOrEmpty(message)) {
+                message = entry.getValue().getClass().getName();
+            }
+            tr.addElement(new TD(new A(url, message)).setClass(Resources.CLASS_LIST_TABLE_TD));
             rows.add(tr);
         }
         ErrorsHeaderBuilder tasksHistoryHeaderBuilder = new ErrorsHeaderBuilder();
