@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-diagram name="MainProcess" notation="uml" width="1069" height="479" showActions="false" showGrid="false">
+<process-diagram name="MainProcess" notation="uml" width="621" height="457" showActions="false" showGrid="false">
   <node name="start" x="84" y="24" width="120" height="48">
     <transition name="tr1"/>
   </node>

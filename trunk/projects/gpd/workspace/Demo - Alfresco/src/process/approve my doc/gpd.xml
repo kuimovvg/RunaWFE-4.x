@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-diagram name="approve my doc" notation="uml" width="475" height="384" showActions="true" showGrid="false">
+  <node name="Upload document" x="96" y="0" width="120" height="72">
+    <transition name="tr1"/>
+  </node>
+  <node name="Approve document" x="84" y="96" width="132" height="84" minimizedView="false">
+    <transition name="Approve">
+      <bendpoint x="36" y="132"/>
+      <bendpoint x="36" y="252"/>
+    </transition>
+    <transition name="Reject">
+      <bendpoint x="276" y="132"/>
+      <bendpoint x="276" y="252"/>
+    </transition>
+  </node>
+  <node name="Result" x="84" y="216" width="132" height="84" minimizedView="false">
+    <transition name="tr1">
+      <bendpoint x="156" y="300"/>
+    </transition>
+  </node>
+  <node name="End" x="312" y="288" width="120" height="72"/>
+</process-diagram>

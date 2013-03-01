@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="InterProcessCommunication.Receiver">
+  <swimlane id="ID11" name="swimlane">
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state id="Start" name="Start">
+    <task name="Start" swimlane="swimlane"/>
+    <transition id="tr1" name="tr1" to="Receive data"/>
+  </start-state>
+  <task-node id="Output data" name="Output data" async="false">
+    <task name="Output data" swimlane="swimlane"/>
+    <transition id="tr1" name="tr1" to="ID14"/>
+  </task-node>
+  <task-node id="ID8" name="No message" async="false">
+    <task name="No message" swimlane="swimlane"/>
+    <transition id="ID10" name="tr1" to="End"/>
+  </task-node>
+  <send-message id="ID14" name="Reply to sender">
+    <transition id="ID15" name="tr1" to="End"/>
+    <variable name="processInstanceId" mapped-name="${senderProcessId}" access="selector"/>
+    <variable name="reply" mapped-name="reply" access="read"/>
+  </send-message>
+  <receive-message id="Receive data" name="Receive data">
+    <transition id="tr1" name="tr1" to="Output data"/>
+    <transition id="ID9" name="time-out-transition" to="ID8"/>
+    <variable name="processDefinitionName" mapped-name="${currentDefinitionName}" access="selector"/>
+    <variable name="msg_rec" mapped-name="msg_send" access="read"/>
+    <variable name="senderProcessId" mapped-name="process id" access="read"/>
+    <timer duedate="#{waitUntil} + 0 minutes" transition="time-out-transition"/>
+  </receive-message>
+  <end-state id="End" name="End"/>
+</process-definition>

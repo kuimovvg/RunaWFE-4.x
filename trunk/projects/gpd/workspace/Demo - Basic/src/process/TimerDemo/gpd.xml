@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-diagram name="TimerDemo" notation="uml" width="1069" height="479" showActions="true" showGrid="false">
+<process-diagram name="TimerDemo" notation="uml" width="638" height="383" showActions="true" showGrid="false">
   <node name="start" x="240" y="24" width="72" height="48">
     <transition name="tr1"/>
   </node>

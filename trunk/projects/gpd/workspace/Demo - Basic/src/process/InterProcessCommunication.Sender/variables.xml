@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<variables>
+  <variable name="msg_send" format="ru.runa.wfe.var.format.StringFormat" description=""/>
+  <variable name="senderProcessId" format="ru.runa.wfe.var.format.LongFormat"/>
+  <variable name="reply" format="ru.runa.wfe.var.format.StringFormat" defaultValue="this is reply from message receiver process"/>
+  <variable name="swimlane" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true" description=""/>
+</variables>
