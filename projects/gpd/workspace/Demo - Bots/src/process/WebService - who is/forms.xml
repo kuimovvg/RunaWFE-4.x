@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<forms>
+  <form state="Start" file="Start.ftl" type="ftl" validationFile="Start.validation.xml" jsValidation="false"/>
+  <form state="Read DNS address information" file="Read DNS address information.ftl" type="ftl" validationFile="Read DNS address information.validation.xml" jsValidation="false"/>
+</forms>

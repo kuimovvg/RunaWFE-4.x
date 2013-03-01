@@ -3,7 +3,7 @@
 <process-definition name="MainProcess">
   <description><![CDATA[MainProcess for subprocess demonstration (no start form provided)]]></description>
   <swimlane id="a_role" name="a_role">
-    <assignment class="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
   </swimlane>
   <start-state id="start" name="start">
     <task name="start" swimlane="a_role"/>
@@ -23,8 +23,8 @@
     <transition id="tr1" name="tr1" to="after subprocess"/>
     <sub-process name="SubProcess"/>
     <variable name="a_role" mapped-name="role1" access="read"/>
-    <variable name="число" mapped-name="n" access="read,write"/>
-    <variable name="дата" mapped-name="d" access="read,write"/>
+    <variable name="number" mapped-name="n" access="read,write"/>
+    <variable name="date" mapped-name="d" access="read,write"/>
   </process-state>
   <end-state id="end" name="end"/>
 </process-definition>

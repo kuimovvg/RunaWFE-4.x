@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="MSWordReport" xmlns="urn:jbpm.org:jpdl-3.2">
+  <description><![CDATA[Demonstrates usage of MSWordReportTaskHandler]]></description>
+  <swimlane name="bot">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[ru.runa.af.organizationfunction.ExecutorByNameFunction(UniversalBot)]]></assignment>
+  </swimlane>
+  <swimlane name="requester">
+    <assignment
+      class="ru.runa.wf.jbpm.delegation.assignment.AssignmentHandler" config-type="configuration-property"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state name="Submit Report Data">
+    <task name="Submit Report Data" swimlane="requester"/>
+    <transition name="tr1" to="Generate MS Word Report"/>
+  </start-state>
+  <task-node name="Read Report">
+    <task name="Read Report" swimlane="requester"/>
+    <transition name="tr1" to="end"/>
+  </task-node>
+  <task-node name="Generate MS Word Report">
+    <task name="Generate MS Word Report" swimlane="bot"/>
+    <transition name="tr1" to="Read Report"/>
+  </task-node>
+  <end-state name="end"/>
+</process-definition>

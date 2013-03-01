@@ -2,14 +2,11 @@
 
 <process-definition name="SubProcess">
   <description><![CDATA[SubProcess for subprocess demonstration]]></description>
-  <swimlane id="startedrole" name="startedrole">
-    <assignment class="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
-  </swimlane>
   <swimlane id="role1" name="role1">
-    <assignment class="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
   </swimlane>
   <start-state id="start" name="start">
-    <task name="start" swimlane="startedrole"/>
+    <task name="start" swimlane="role1"/>
     <transition id="tr1" name="tr1" to="fork1"/>
   </start-state>
   <task-node id="state1" name="state1" async="false">

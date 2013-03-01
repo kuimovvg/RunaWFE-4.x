@@ -3,6 +3,5 @@
 <variables>
   <variable name="n" format="ru.runa.wfe.var.format.LongFormat" description=""/>
   <variable name="d" format="ru.runa.wfe.var.format.DateFormat" description=""/>
-  <variable name="startedrole" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true" description=""/>
   <variable name="role1" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true" description=""/>
 </variables>
