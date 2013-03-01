@@ -3,7 +3,7 @@
 <process-definition name="Hello World">
   <description><![CDATA[This is the simpliest process]]></description>
   <swimlane id="requester" name="requester">
-    <assignment class="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
   </swimlane>
   <start-state id="start" name="start">
     <task name="start" swimlane="requester"/>

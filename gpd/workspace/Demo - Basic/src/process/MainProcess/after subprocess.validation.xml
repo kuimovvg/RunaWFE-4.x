@@ -1,10 +1,10 @@
 <validators>
 
-<field name="дата">
+<field name="date">
 
 </field>
 
-<field name="число">
+<field name="number">
 
 </field>
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-diagram name="InterProcessCommunication.Receiver" notation="uml" width="621" height="433" showActions="true" showGrid="false">
+  <node name="Start" x="324" y="12" width="120" height="60">
+    <transition name="tr1"/>
+  </node>
+  <node name="Output data" x="312" y="192" width="132" height="84" minimizedView="false">
+    <transition name="tr1"/>
+  </node>
+  <node name="ID8" x="72" y="240" width="132" height="84" minimizedView="false">
+    <transition name="tr1">
+      <bendpoint x="144" y="396"/>
+    </transition>
+  </node>
+  <node name="ID14" x="324" y="288" width="120" height="72">
+    <transition name="tr1"/>
+  </node>
+  <node name="Receive data" x="312" y="108" width="132" height="72">
+    <transition name="tr1"/>
+    <transition name="time-out-transition">
+      <bendpoint x="144" y="168"/>
+    </transition>
+  </node>
+  <node name="End" x="348" y="384" width="72" height="48"/>
+</process-diagram>

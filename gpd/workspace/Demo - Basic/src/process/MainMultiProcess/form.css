@@ -1,0 +1,11 @@
+.displayLinkedLists {
+	width: 500px;
+}
+.displayLinkedLists tr.header {
+	font-weight: bold;
+}
+.displayLinkedLists tr td {
+	margin: 0px;
+	padding: 5px;
+	border: 1px solid gray;
+}

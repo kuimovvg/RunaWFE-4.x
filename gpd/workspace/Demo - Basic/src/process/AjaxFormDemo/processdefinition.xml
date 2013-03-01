@@ -3,7 +3,7 @@
 <process-definition name="AjaxFormDemo">
   <description><![CDATA[AJAX support demo]]></description>
   <swimlane id="Swimlane" name="Swimlane">
-    <assignment class="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
   </swimlane>
   <start-state id="Start" name="Start">
     <task name="Start" swimlane="Swimlane"/>

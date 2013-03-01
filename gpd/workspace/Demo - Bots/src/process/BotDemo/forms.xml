@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<forms>
+  <form state="after bot activity" file="after bot activity.ftl" type="ftl" validationFile="after bot activity.validation.xml" jsValidation="false"/>
+  <form state="before bot activity" file="before bot activity.ftl" type="ftl" validationFile="before bot activity.validation.xml" jsValidation="false"/>
+</forms>
