@@ -38,6 +38,8 @@ import ru.runa.wfe.bot.dao.BotTaskDAO;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Objects;
@@ -99,7 +101,11 @@ public class BotLogic extends CommonLogic {
         if (getBot(user, bot.getBotStation().getId(), bot.getUsername()) != null) {
             throw new BotAlreadyExistsException(bot.getUsername());
         }
-        executorDAO.addExecutorToGroup(executorDAO.getExecutor(bot.getUsername()), executorDAO.getGroup(SystemProperties.getBotsGroupName()));
+        if (executorDAO.isExecutorExist(bot.getUsername()) && executorDAO.isExecutorExist(SystemProperties.getBotsGroupName())) {
+            Actor botActor = executorDAO.getActor(bot.getUsername());
+            Group botsGroup = executorDAO.getGroup(SystemProperties.getBotsGroupName());
+            executorDAO.addExecutorToGroup(botActor, botsGroup);
+        }
         bot = botDAO.create(bot);
         incrementBotStationVersion(bot);
         return bot;
@@ -146,7 +152,11 @@ public class BotLogic extends CommonLogic {
             removeBotTask(user, botTask.getId());
         }
         Bot bot = getBotNotNull(user, id);
-        executorDAO.removeExecutorFromGroup(executorDAO.getExecutor(bot.getUsername()), executorDAO.getGroup(SystemProperties.getBotsGroupName()));
+        if (executorDAO.isExecutorExist(bot.getUsername()) && executorDAO.isExecutorExist(SystemProperties.getBotsGroupName())) {
+            Actor botActor = executorDAO.getActor(bot.getUsername());
+            Group botsGroup = executorDAO.getGroup(SystemProperties.getBotsGroupName());
+            executorDAO.removeExecutorFromGroup(botActor, botsGroup);
+        }
         botDAO.delete(id);
     }
 
