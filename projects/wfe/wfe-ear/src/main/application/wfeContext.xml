@@ -340,8 +340,6 @@
 	</bean>
 
 
-	<bean id="businessCalendar" class="ru.runa.wfe.commons.calendar.impl.BusinessCalendarImpl">
-		<!-- property name="" value="" / -->
-	</bean>
+	<bean id="businessCalendar" class="ru.runa.wfe.commons.calendar.impl.BusinessCalendarImpl" />
 
 </beans>
