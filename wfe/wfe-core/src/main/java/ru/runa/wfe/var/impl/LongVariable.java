@@ -34,10 +34,7 @@ public class LongVariable extends Variable<Long> {
 
     @Override
     public boolean isStorable(Object value) {
-        if (value == null) {
-            return true;
-        }
-        return (Long.class == value.getClass());
+        return value instanceof Long;
     }
 
     @Column(name = "LONGVALUE")

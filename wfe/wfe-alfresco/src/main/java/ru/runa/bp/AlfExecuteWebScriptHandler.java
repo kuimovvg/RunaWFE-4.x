@@ -33,13 +33,12 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
 
     @Override
     protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
-        ByteArrayOutputStream baos = getResponse(session, alfHandlerData);
-        byte[] response = baos.toByteArray();
+        byte[] response = getResponse(session, alfHandlerData);
         log.debug(new String(response, "UTF-8"));
         handleResponse(alfHandlerData, response);
     }
 
-    protected ByteArrayOutputStream getResponse(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
+    protected byte[] getResponse(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         httpClient.getCredentialsProvider().setCredentials(new AuthScope(null, -1, null),
                 new UsernamePasswordCredentials(WSConnectionSettings.getSystemLogin(), WSConnectionSettings.getSystemPassword()));
@@ -58,7 +57,7 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
         }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         response.getEntity().writeTo(baos);
-        return baos;
+        return baos.toByteArray();
     }
 
     protected HttpGet formHttpGetRequest(String alfBaseUrl, AlfHandlerData alfHandlerData) throws Exception {

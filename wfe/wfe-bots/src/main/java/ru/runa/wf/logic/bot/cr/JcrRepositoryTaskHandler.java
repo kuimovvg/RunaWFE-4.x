@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -41,6 +42,7 @@ import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 
 public class JcrRepositoryTaskHandler extends TaskHandlerBase {
     private static final String NT_FILE = "nt:file";
@@ -119,9 +121,15 @@ public class JcrRepositoryTaskHandler extends TaskHandlerBase {
         Node fileNode = folderNode.getNode(fileName);
         Node file = fileNode.getNode(JCR_CONTENT);
         String contentType = file.getProperty(JCR_MIME_TYPE).getString();
-        InputStream is = file.getProperty(JCR_DATA).getStream();
-        byte[] content = ByteStreams.toByteArray(is);
-        return new FileVariable(fileNode.getName(), content, contentType);
+        Property dataProperty = file.getProperty(JCR_DATA);
+        InputStream stream = null;
+        try {
+            stream = dataProperty.getBinary().getStream();
+            byte[] content = ByteStreams.toByteArray(stream);
+            return new FileVariable(fileNode.getName(), content, contentType);
+        } finally {
+            Closeables.closeQuietly(stream);
+        }
     }
 
     public void deleteFile(Session session, String path, String fileName) throws RepositoryException, IOException {

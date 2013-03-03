@@ -22,20 +22,18 @@
 package ru.runa.wfe.var.converter;
 
 import ru.runa.wfe.var.Converter;
+import ru.runa.wfe.var.Variable;
 
 public class IntegerToLongConverter implements Converter {
     private static final long serialVersionUID = 1L;
 
     @Override
     public boolean supports(Object value) {
-        if (value == null) {
-            return true;
-        }
-        return (Integer.class.equals(value.getClass()));
+        return value instanceof Integer;
     }
 
     @Override
-    public Object convert(Object o) {
+    public Object convert(Variable<?> variable, Object o) {
         return new Long(((Number) o).longValue());
     }
 

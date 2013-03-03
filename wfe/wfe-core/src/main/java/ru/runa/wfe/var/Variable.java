@@ -156,6 +156,9 @@ public abstract class Variable<T extends Object> {
     }
 
     public boolean supports(Object value) {
+        if (value == null) {
+            return true;
+        }
         if (converter != null) {
             return converter.supports(value);
         }
@@ -164,12 +167,12 @@ public abstract class Variable<T extends Object> {
 
     public void setValue(ExecutionContext executionContext, Object newValue) {
         Object newStorableValue;
-        if (converter != null) {
+        if (converter != null && newValue != null) {
             if (!converter.supports(newValue)) {
                 throw new InternalApplicationException("the converter '" + converter.getClass().getName() + "' in variable '"
                         + this.getClass().getName() + "' does not support values of type '" + newValue.getClass().getName() + "'.");
             }
-            newStorableValue = converter.convert(newValue);
+            newStorableValue = converter.convert(this, newValue);
         } else {
             newStorableValue = newValue;
         }

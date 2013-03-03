@@ -36,4 +36,16 @@ public class SystemProperties {
         return RESOURCES.getStringPropertyNotNull("date.format.pattern");
     }
 
+    public static boolean isLocalFileStorageEnabled() {
+        return RESOURCES.getBooleanProperty("file.variable.local.storage.enabled", true);
+    }
+
+    public static String getLocalFileStoragePath() {
+        return RESOURCES.getStringProperty("file.variable.local.storage.path", IOCommons.getInstallationDirPath() + "/filedata");
+    }
+
+    public static int getLocalFileStorageFileLimit() {
+        return RESOURCES.getIntegerProperty("file.variable.local.storage.enableforfilesgreaterthan", 100000);
+    }
+
 }

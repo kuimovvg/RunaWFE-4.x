@@ -20,6 +20,18 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
+/**
+ * It is important to understand that in a BMT, the message consumed by the MDB
+ * is not part of the transaction. When an MDB uses container-managed
+ * transactions, the message it handles is a part of the transaction, so if the
+ * transaction is rolled back, the consumption of the message is also rolled
+ * back, forcing the JMS provider to re-deliver the message. But with
+ * bean-managed transactions, the message is not part of the transaction, so if
+ * the BMT is rolled back, the JMS provider will not be aware of the
+ * transaction’s failure. However, all is not lost, because the JMS provider can
+ * still rely on message acknowledgment to determine whether the message was
+ * delivered successfully.
+ */
 public class EjbTransactionSupport {
     @Resource
     private EJBContext ejbContext;
@@ -40,7 +52,6 @@ public class EjbTransactionSupport {
             return result;
         } catch (Throwable th) {
             rollbackTransaction(transaction);
-            Throwables.propagateIfInstanceOf(th, Exception.class);
             throw Throwables.propagate(th);
         } finally {
             CachingLogic.onTransactionComplete();
@@ -50,9 +61,11 @@ public class EjbTransactionSupport {
     private void rollbackTransaction(UserTransaction transaction) {
         int status = -1;
         try {
-            status = transaction.getStatus();
-            if (status != Status.STATUS_NO_TRANSACTION) {
-                transaction.rollback();
+            if (transaction != null) {
+                status = transaction.getStatus();
+                if (status != Status.STATUS_NO_TRANSACTION) {
+                    transaction.rollback();
+                }
             }
         } catch (Exception e) {
             throw new InternalApplicationException("Unable to rollback, status: " + status, e);

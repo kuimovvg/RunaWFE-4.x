@@ -231,8 +231,8 @@ public class FormulaActionHandler implements ActionHandler {
             return;
         }
         if (FileVariable.class.isInstance(value)) {
-            FileVariable file = (FileVariable) value;
-            value = new FileVariable(file.getName(), file.getData().clone(), file.getContentType());
+            FileVariable fileVariable = (FileVariable) value;
+            value = new FileVariable(fileVariable);
         }
         context.setVariable(newVariable, value);
     }

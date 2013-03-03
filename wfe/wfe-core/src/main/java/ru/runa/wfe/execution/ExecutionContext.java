@@ -184,7 +184,6 @@ public class ExecutionContext {
             }
             log.debug("update variable '" + name + "' in '" + this + "' to value '" + value + "'");
             variable.setValue(this, value);
-            // TODO merge variableDAO.update(variable);
         }
     }
 

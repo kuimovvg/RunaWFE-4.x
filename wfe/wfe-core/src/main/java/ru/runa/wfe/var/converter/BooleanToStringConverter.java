@@ -22,6 +22,7 @@
 package ru.runa.wfe.var.converter;
 
 import ru.runa.wfe.var.Converter;
+import ru.runa.wfe.var.Variable;
 
 public class BooleanToStringConverter implements Converter {
     private static final long serialVersionUID = 1L;
@@ -30,14 +31,11 @@ public class BooleanToStringConverter implements Converter {
 
     @Override
     public boolean supports(Object value) {
-        if (value == null) {
-            return true;
-        }
-        return (value.getClass() == Boolean.class);
+        return value instanceof Boolean;
     }
 
     @Override
-    public Object convert(Object o) {
+    public Object convert(Variable<?> variable, Object o) {
         String convertedValue = FALSE_TEXT;
         if (((Boolean) o).booleanValue()) {
             convertedValue = TRUE_TEXT;

@@ -153,6 +153,14 @@ public abstract class ProcessLog implements IAttributes, Serializable {
         this.bytes = bytes;
     }
 
+    /**
+     * @return bytes implementation (if any).
+     */
+    @Transient
+    public Object getBytesObject() {
+        return getBytes();
+    }
+
     protected void addAttribute(String name, String value) {
         attributes.put(name, value);
     }
