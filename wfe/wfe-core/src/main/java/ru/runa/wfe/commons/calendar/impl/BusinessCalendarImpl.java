@@ -35,7 +35,7 @@ import ru.runa.wfe.commons.calendar.BusinessCalendar;
  * gavrusev_sergei
  */
 public class BusinessCalendarImpl implements BusinessCalendar {
-    private static Properties businessCalendarProperties = ClassLoaderUtil.getPropertiesNotNull("business.calendar.properties");
+    private static Properties businessCalendarProperties = ClassLoaderUtil.getPropertiesNotNull("business_calendar.properties");
     private final Day[] weekDays;
     private final List<Holiday> holidays;
 
