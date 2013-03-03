@@ -16,7 +16,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -35,6 +34,7 @@ import org.eclipse.ui.part.ViewPart;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.ProcessEditorBase;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
 import ru.runa.gpd.util.WorkspaceOperations;
 
 public class ExplorerTreeView extends ViewPart implements ISelectionListener {
@@ -85,9 +85,9 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
                 }
             }
         });
-        viewer.addDoubleClickListener(new IDoubleClickListener() {
+        viewer.addDoubleClickListener(new LoggingDoubleClickListener() {
             @Override
-            public void doubleClick(DoubleClickEvent event) {
+            public void onDoubleClick(DoubleClickEvent event) {
                 Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
                 if (element instanceof IFolder) {
                     WorkspaceOperations.openProcessDefinition((IFolder) element);

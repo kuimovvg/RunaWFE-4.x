@@ -14,7 +14,6 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -44,6 +43,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.Artifact;
 import ru.runa.gpd.extension.ArtifactRegistry;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
 
 import com.google.common.collect.Lists;
 
@@ -138,9 +138,9 @@ public class ArtifactPreferencePage<T extends Artifact> extends PreferencePage i
         //                return true;
         //            }
         //        });
-        tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+        tableViewer.addDoubleClickListener(new LoggingDoubleClickListener() {
             @Override
-            public void doubleClick(DoubleClickEvent e) {
+            public void onDoubleClick(DoubleClickEvent e) {
                 edit();
             }
         });
