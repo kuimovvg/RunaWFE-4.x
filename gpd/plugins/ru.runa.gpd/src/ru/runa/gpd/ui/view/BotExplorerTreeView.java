@@ -15,7 +15,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -37,6 +36,7 @@ import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.search.BaseSearchQuery;
 import ru.runa.gpd.search.BotSearchQuery;
 import ru.runa.gpd.search.BotTaskSearchQuery;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
 import ru.runa.gpd.ui.wizard.ExportBotStationWizardPage;
 import ru.runa.gpd.ui.wizard.ExportBotTaskWizardPage;
 import ru.runa.gpd.ui.wizard.ExportBotWizardPage;
@@ -83,9 +83,9 @@ public class BotExplorerTreeView extends ViewPart implements ISelectionListener 
                 }
             }
         });
-        viewer.addDoubleClickListener(new IDoubleClickListener() {
+        viewer.addDoubleClickListener(new LoggingDoubleClickListener() {
             @Override
-            public void doubleClick(DoubleClickEvent event) {
+            public void onDoubleClick(DoubleClickEvent event) {
                 Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
                 if (element instanceof IFile) {
                     WorkspaceOperations.openBotTask((IFile) element);
