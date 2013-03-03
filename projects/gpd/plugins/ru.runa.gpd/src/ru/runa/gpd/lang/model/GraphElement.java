@@ -166,16 +166,13 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         try {
             String nodeId = child.getId();
             if (nodeId == null) {
-//                if (child instanceof NamedGraphElement) {
-//                    child.setId(((NamedGraphElement) child).getName());
-//                } else {
-                    child.setId("ID" + getProcessDefinition().getNextNodeId());
-//                }
+                child.setId("ID" + getProcessDefinition().getNextNodeId());
             } else {
                 nodeId = nodeId.substring(2);
                 int nodeIdInt = Integer.parseInt(nodeId);
                 getProcessDefinition().setNextNodeIdIfApplicable(nodeIdInt);
             }
+        } catch (StringIndexOutOfBoundsException e) {
         } catch (NumberFormatException e) {
         }
     }
