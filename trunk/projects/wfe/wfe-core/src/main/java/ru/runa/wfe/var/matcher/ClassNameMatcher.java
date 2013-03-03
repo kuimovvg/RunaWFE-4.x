@@ -23,34 +23,19 @@ package ru.runa.wfe.var.matcher;
 
 import org.springframework.beans.factory.annotation.Required;
 
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.var.VariableTypeMatcher;
 
 public class ClassNameMatcher implements VariableTypeMatcher {
-    private String className;
-    
+    private Class<?> baseClass;
+
     @Required
     public void setClassName(String className) {
-        this.className = className;
+        baseClass = ClassLoaderUtil.loadClass(className);
     }
 
+    @Override
     public boolean matches(Object value) {
-        boolean matches = false;
-        Class<?> valueClass = value.getClass();
-        while (!matches && valueClass != null) {
-            if (className.equals(valueClass.getName())) {
-                matches = true;
-            } else {
-                Class<?>[] interfaces = valueClass.getInterfaces();
-                for (int i = 0; (i < interfaces.length) && (!matches); i++) {
-                    if (className.equals(interfaces[i].getName())) {
-                        matches = true;
-                    }
-                }
-                if (!matches) {
-                    valueClass = valueClass.getSuperclass();
-                }
-            }
-        }
-        return matches;
+        return baseClass.isAssignableFrom(value.getClass());
     }
 }

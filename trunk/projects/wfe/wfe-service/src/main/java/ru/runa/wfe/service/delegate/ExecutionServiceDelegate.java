@@ -195,7 +195,7 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public byte[] getProcessLogValue(User user, Long logId) {
+    public Object getProcessLogValue(User user, Long logId) {
         return getExecutionService().getProcessLogValue(user, logId);
     }
 }

@@ -36,8 +36,9 @@ public interface Converter extends Serializable {
 
     /**
      * converts a given object to its persistable format.
+     * @param variable TODO
      */
-    Object convert(Object o);
+    Object convert(Variable<?> variable, Object o);
 
     /**
      * reverts a persisted object to its original form.

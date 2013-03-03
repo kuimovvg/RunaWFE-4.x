@@ -36,13 +36,10 @@ public class StringVariable extends Variable<String> {
 
     @Override
     public boolean isStorable(Object value) {
-        if (value == null) {
-            return true;
-        }
-        return (String.class == value.getClass()) && ((String) value).length() < MAX_STRING_SIZE;
+        return (value instanceof String) && ((String) value).length() < MAX_STRING_SIZE;
     }
 
-    @Column(name = "STRINGVALUE", length = 1024)
+    @Column(name = "STRINGVALUE", length = MAX_STRING_SIZE)
     @Override
     public String getStorableValue() {
         return object;

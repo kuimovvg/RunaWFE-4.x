@@ -31,20 +31,18 @@ import java.io.Serializable;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.Converter;
+import ru.runa.wfe.var.Variable;
 
 public class SerializableToByteArrayConverter implements Converter {
     private static final long serialVersionUID = 1L;
 
     @Override
     public boolean supports(Object value) {
-        if (value == null) {
-            return true;
-        }
-        return Serializable.class.isAssignableFrom(value.getClass());
+        return value instanceof Serializable;
     }
 
     @Override
-    public Object convert(Object o) {
+    public Object convert(Variable<?> variable, Object o) {
         try {
             ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
             ObjectOutputStream objectStream = new ObjectOutputStream(memoryStream);

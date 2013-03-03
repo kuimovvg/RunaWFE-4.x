@@ -33,7 +33,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.wf.web.form.VariableForm;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.FileVariable;
-import ru.runa.wfe.var.converter.SerializableToByteArrayConverter;
 
 /**
  * Created on 27.09.2005
@@ -68,8 +67,7 @@ public class VariableDownloaderAction extends ActionBase {
         VariableForm form = (VariableForm) actionForm;
         Object object;
         if (form.getLogId() != null) {
-            byte[] bytes = Delegates.getExecutionService().getProcessLogValue(getLoggedUser(request), form.getLogId());
-            object = new SerializableToByteArrayConverter().revert(bytes);
+            object = Delegates.getExecutionService().getProcessLogValue(getLoggedUser(request), form.getLogId());
         } else {
             object = Delegates.getExecutionService().getVariable(getLoggedUser(request), form.getId(), form.getVariableName()).getValue();
         }

@@ -113,7 +113,7 @@ public interface ExecutionService {
 
     public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter);
 
-    public byte[] getProcessLogValue(User user, Long logId);
+    public Object getProcessLogValue(User user, Long logId);
 
     public void removeProcesses(User user, Date startDate, Date finishDate, String name, int version, Long id, Long idTill, boolean onlyFinished,
             boolean dateInterval) throws ProcessDoesNotExistException, ParentProcessExistsException;

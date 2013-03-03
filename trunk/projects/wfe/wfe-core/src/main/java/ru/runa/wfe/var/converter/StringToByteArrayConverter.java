@@ -1,12 +1,13 @@
 package ru.runa.wfe.var.converter;
 
 import ru.runa.wfe.var.Converter;
+import ru.runa.wfe.var.Variable;
 
 public class StringToByteArrayConverter implements Converter {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Object convert(Object o) {
+    public Object convert(Variable<?> variable, Object o) {
         return ((String) o).getBytes();
     }
 
@@ -17,10 +18,7 @@ public class StringToByteArrayConverter implements Converter {
 
     @Override
     public boolean supports(Object value) {
-        if (value == null) {
-            return true;
-        }
-        return value.getClass().equals(String.class);
+        return value instanceof String;
     }
 
 }
