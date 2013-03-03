@@ -208,7 +208,11 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     public void modifyText(ModifyEvent arg0) {
                         try {
                             int x = Integer.parseInt(tx.getText());
-                            cmodel.setColumn(x);
+                            if (x >= 0 && x < 65535) {
+                                cmodel.setColumn(x);
+                            } else {
+                                tx.setText("0");
+                            }
                         } catch (Exception e) {
                             tx.setText("0");
                         }
@@ -225,7 +229,11 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     public void modifyText(ModifyEvent arg0) {
                         try {
                             int y = Integer.parseInt(ty.getText());
-                            cmodel.setRow(y);
+                            if (y >= 0 && y < 65535) {
+                                cmodel.setRow(y);
+                            } else {
+                                ty.setText("0");
+                            }
                         } catch (Exception e) {
                             ty.setText("0");
                         }
