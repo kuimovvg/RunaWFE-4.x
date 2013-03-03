@@ -88,9 +88,13 @@ public class IOCommons {
 
     private static String adminkitScriptsDirPath;
 
+    public static String getInstallationDirPath() {
+        return System.getProperty("jboss.home.dir");
+    }
+
     public static String getAdminkitScriptsDirPath() {
         if (adminkitScriptsDirPath == null) {
-            adminkitScriptsDirPath = System.getProperty("jboss.home.dir") + "/adminkit/scripts/";
+            adminkitScriptsDirPath = getInstallationDirPath() + "/adminkit/scripts/";
             if (adminkitScriptsDirPath == null) {
                 adminkitScriptsDirPath = "";
             }

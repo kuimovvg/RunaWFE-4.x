@@ -37,10 +37,7 @@ public class DateVariable extends Variable<Date> {
 
     @Override
     public boolean isStorable(Object value) {
-        if (value == null) {
-            return true;
-        }
-        return Date.class.isAssignableFrom(value.getClass());
+        return value instanceof Date;
     }
 
     @Column(name = "DATEVALUE")

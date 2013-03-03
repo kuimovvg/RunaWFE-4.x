@@ -28,7 +28,7 @@ public class EjbExceptionSupport {
         } catch (Throwable th) {
             if (th instanceof MessagePostponedException) {
                 log.info(th); // TODO debug
-                return null;
+                throw (MessagePostponedException) th;
             }
             log.error("ejb call", th);
             if (th instanceof EJBException) {

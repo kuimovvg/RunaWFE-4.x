@@ -78,11 +78,11 @@ public class AuditLogic extends CommonLogic {
         return result;
     }
 
-    public byte[] getProcessLogValue(User user, Long logId) {
+    public Object getProcessLogValue(User user, Long logId) {
         Preconditions.checkNotNull(logId, "logId");
         ProcessLog processLog = processLogDAO.getNotNull(logId);
         checkPermissionAllowed(user, processDAO.getNotNull(processLog.getProcessId()), Permission.READ);
-        return processLog.getBytes();
+        return processLog.getBytesObject();
     }
 
     /**

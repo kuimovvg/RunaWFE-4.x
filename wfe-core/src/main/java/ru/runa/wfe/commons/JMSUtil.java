@@ -62,7 +62,7 @@ public class JMSUtil {
         MessageProducer sender = null;
         try {
             connection = connectionFactory.createConnection();
-            session = connection.createSession(true, 0);
+            session = connection.createSession(true, Session.SESSION_TRANSACTED);
             sender = session.createProducer(queue);
 
             HashMap<String, Object> map = new HashMap<String, Object>();
@@ -79,7 +79,8 @@ public class JMSUtil {
                     message.setObjectProperty(variableMapping.getName(), v);
                 }
             }
-            long ttl = 24 * 60 * 60 * 1000; // TODO get from process
+            // long ttl = 24 * 60 * 60 * 1000; // TODO get from process
+            long ttl = 24 * 60 * 60 * 1000;
             sender.send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, ttl);
             sender.close();
             log.info("message sent: " + message);

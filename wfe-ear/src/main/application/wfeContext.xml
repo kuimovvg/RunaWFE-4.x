@@ -46,9 +46,9 @@
 	<bean id="stringToByteArrayConverter" class="ru.runa.wfe.var.converter.StringToByteArrayConverter" />
 	<bean id="booleanToStringConverter" class="ru.runa.wfe.var.converter.BooleanToStringConverter" />
 	<bean id="intToLongConverter" class="ru.runa.wfe.var.converter.IntegerToLongConverter" />
-	<bean id="serializableToByteArrayConverter"
-		class="ru.runa.wfe.var.converter.SerializableToByteArrayConverter" />
+	<bean id="serializableToByteArrayConverter" class="ru.runa.wfe.var.converter.SerializableToByteArrayConverter" />
 	<bean id="executorToLongConverter" class="ru.runa.wfe.var.converter.ExecutorToLongConverter" />
+	<bean id="fileToByteArrayConverter" class="ru.runa.wfe.var.converter.FileVariableToByteArrayConverter" />
 
 	<bean id="converters" class="ru.runa.wfe.commons.hibernate.Converters">
 		<property name="mappings">
@@ -58,6 +58,7 @@
 				<entry key="R" value-ref="serializableToByteArrayConverter" />
 				<entry key="S" value-ref="stringToByteArrayConverter" />
 				<entry key="E" value-ref="executorToLongConverter" />
+				<entry key="F" value-ref="fileToByteArrayConverter" />
 			</map>
 		</property>
 	</bean>
@@ -149,6 +150,16 @@
 					</property>
 					<property name="variableClass" value="ru.runa.wfe.var.impl.LongVariable" />
 					<property name="converter" ref="executorToLongConverter" />
+				</bean>
+				<!-- ru.runa.wfe.var.FileVariable -->
+				<bean class="ru.runa.wfe.var.VariableType">
+					<property name="matcher">
+						<bean class="ru.runa.wfe.var.matcher.ClassNameMatcher">
+							<property name="className" value="ru.runa.wfe.var.FileVariable" />
+						</bean>
+					</property>
+					<property name="variableClass" value="ru.runa.wfe.var.impl.ByteArrayVariable" />
+					<property name="converter" ref="fileToByteArrayConverter" />
 				</bean>
 				<!-- java.io.Serializable -->
 				<bean class="ru.runa.wfe.var.VariableType">
@@ -333,7 +344,7 @@
 		<property name="scheduledTimerTasks">
 			<list>
 				<ref bean="jobExecutorTask" />
-				<ref bean="cacheUsageStatisticTask" />
+				<!-- ref bean="cacheUsageStatisticTask" / -->
 				<ref bean="tasksAssignTask" />
 			</list>
 		</property>

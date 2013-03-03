@@ -27,8 +27,9 @@ import ru.runa.wfe.var.VariableTypeMatcher;
 
 public class SerializableMatcher implements VariableTypeMatcher {
 
+    @Override
     public boolean matches(Object value) {
-        return Serializable.class.isAssignableFrom(value.getClass());
+        return value instanceof Serializable;
     }
 
 }

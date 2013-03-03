@@ -40,10 +40,15 @@ import org.springframework.beans.factory.annotation.Required;
 public class LoginModuleConfiguration extends Configuration implements InitializingBean {
     public static final String APP_NAME = LoginModuleConfiguration.class.getSimpleName();
     private List<String> loginModuleClassNames;
+    private Configuration delegatedConfiguration;
 
     static {
         // for kerberos
         System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+    }
+
+    public LoginModuleConfiguration() {
+        delegatedConfiguration = getConfiguration();
     }
 
     @Override
@@ -78,6 +83,6 @@ public class LoginModuleConfiguration extends Configuration implements Initializ
             return new AppConfigurationEntry[] { appConfigurationEntry };
 
         }
-        return null;
+        return delegatedConfiguration.getAppConfigurationEntry(applicationName);
     }
 }

@@ -49,9 +49,6 @@ import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.var.VariableMapping;
 
-/**
- * Created on 14.01.2012
- */
 @MessageDriven(activationConfig = { @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/jbpmQueue"),
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue") })
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -116,6 +113,7 @@ public class ReceiveMessageBean implements MessageListener {
             if (!handled) {
                 throw new MessagePostponedException(loggedMessage);
             }
+            message.acknowledge();
             CachingLogic.onTaskChange(null, null, null, null, null);
         } catch (JMSException e) {
             log.error("", e);

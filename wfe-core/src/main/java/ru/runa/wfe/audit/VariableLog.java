@@ -26,6 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import ru.runa.wfe.var.Variable;
+import ru.runa.wfe.var.converter.FileVariableToByteArrayConverter;
 
 /**
  * Variables base logging class.
@@ -52,5 +53,15 @@ public abstract class VariableLog extends ProcessLog {
     @Transient
     public boolean isFileValue() {
         return "true".equals(getAttribute(ATTR_IS_FILE_VALUE));
+    }
+
+    @Transient
+    @Override
+    public Object getBytesObject() {
+        byte[] bytes = getBytes();
+        if (bytes != null) {
+            return new FileVariableToByteArrayConverter().revert(bytes);
+        }
+        return super.getBytesObject();
     }
 }
