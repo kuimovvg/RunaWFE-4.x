@@ -223,7 +223,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
-    public byte[] getProcessLogValue(User user, Long logId) {
+    public Object getProcessLogValue(User user, Long logId) {
         return auditLogic.getProcessLogValue(user, logId);
     }
 

@@ -35,10 +35,7 @@ public class ByteArrayVariable extends Variable<byte[]> {
 
     @Override
     public boolean isStorable(Object value) {
-        if (value == null) {
-            return true;
-        }
-        return byte[].class.isAssignableFrom(value.getClass());
+        return value instanceof byte[];
     }
 
     @Lob

@@ -34,10 +34,7 @@ public class DoubleVariable extends Variable<Double> {
 
     @Override
     public boolean isStorable(Object value) {
-        if (value == null) {
-            return true;
-        }
-        return (Double.class == value.getClass());
+        return value instanceof Double;
     }
 
     @Column(name = "DOUBLEVALUE")
