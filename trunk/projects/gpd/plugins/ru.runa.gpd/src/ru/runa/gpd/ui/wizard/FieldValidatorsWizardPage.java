@@ -8,7 +8,6 @@ import java.util.Map;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -33,6 +32,7 @@ import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.DefaultParamsComposite;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.ValidatorInfoControl;
 import ru.runa.gpd.util.ValidationUtil;
@@ -101,9 +101,9 @@ public class FieldValidatorsWizardPage extends WizardPage {
                 updateSelection();
             }
         });
-        variablesTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+        variablesTableViewer.addDoubleClickListener(new LoggingDoubleClickListener() {
             @Override
-            public void doubleClick(DoubleClickEvent event) {
+            public void onDoubleClick(DoubleClickEvent event) {
                 String variableName = getCurrentVariableName();
                 if (fieldConfigs.containsKey(variableName)) {
                     removeField(variableName);
@@ -125,9 +125,9 @@ public class FieldValidatorsWizardPage extends WizardPage {
                 updateSelection();
             }
         });
-        swimlanesTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+        swimlanesTableViewer.addDoubleClickListener(new LoggingDoubleClickListener() {
             @Override
-            public void doubleClick(DoubleClickEvent event) {
+            public void onDoubleClick(DoubleClickEvent event) {
                 String variableName = getCurrentVariableName();
                 if (fieldConfigs.containsKey(variableName)) {
                     removeField(variableName);
@@ -159,9 +159,9 @@ public class FieldValidatorsWizardPage extends WizardPage {
                 updateValidatorSelection();
             }
         });
-        validatorsTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+        validatorsTableViewer.addDoubleClickListener(new LoggingDoubleClickListener() {
             @Override
-            public void doubleClick(DoubleClickEvent event) {
+            public void onDoubleClick(DoubleClickEvent event) {
                 Map<String, ValidatorConfig> configs = fieldConfigs.get(getCurrentVariableName());
                 if (configs.containsKey(getCurrentDefinition().getName())) {
                     removeFieldValidator(getCurrentDefinition());
