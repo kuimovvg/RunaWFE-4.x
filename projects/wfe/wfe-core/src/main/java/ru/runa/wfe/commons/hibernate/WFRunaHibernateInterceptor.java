@@ -29,6 +29,7 @@ import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.ss.Substitution;
+import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorGroupMembership;
@@ -55,7 +56,7 @@ public class WFRunaHibernateInterceptor extends EmptyInterceptor {
         }
         if (entity instanceof Task || entity instanceof Swimlane) {
             CachingLogic.onTaskChange(entity, currentState, previousState, propertyNames, types);
-        } else if (entity instanceof Substitution) {
+        } else if (entity instanceof Substitution || entity instanceof SubstitutionCriteria) {
             CachingLogic.onSubstitutionChange(entity, currentState, previousState, propertyNames, types);
         } else if (entity instanceof Executor || entity instanceof ExecutorGroupMembership) {
             CachingLogic.onExecutorChange(entity, currentState, previousState, propertyNames, types);

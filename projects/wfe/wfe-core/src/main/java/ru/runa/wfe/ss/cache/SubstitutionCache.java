@@ -29,17 +29,25 @@ import ru.runa.wfe.user.Actor;
  */
 public interface SubstitutionCache {
     /**
-     * Returns for specified inactive {@link Actor} {@link Map} from substitution rule to {@link Set} of substituter id's. 
-     * If {@link Actor} is active, when empty result is returned.
-     * @param actor Actor, which substitution rules will be returned.
-     * @return {@link Map} from substitution rule to {@link Set} of substituter id's.
+     * Returns for specified inactive {@link Actor} {@link Map} from
+     * substitution rule to {@link Set} of substitutor id's. If {@link Actor} is
+     * active, when empty result is returned.
+     * 
+     * @param actor
+     *            Actor, which substitution rules will be returned.
+     * @return {@link Map} from substitution rule to {@link Set} of substitutor
+     *         id's.
      */
     public TreeMap<Substitution, Set<Long>> getSubstitutors(Actor actor);
 
     /**
-     * Returns all inactive {@link Actor} id's, which has at least one substitution rule with specified actor as substituter. 
-     * @param actor {@link Actor}, which substituted actors will be returned.
-     * @return All inactive {@link Actor} id's, which has at least one substitution rule with specified actor as substituter.
+     * Returns all inactive {@link Actor} id's, which has at least one
+     * substitution rule with specified actor as substitutor.
+     * 
+     * @param actor
+     *            {@link Actor}, which substituted actors will be returned.
+     * @return All inactive {@link Actor} id's, which has at least one
+     *         substitution rule with specified actor as substitutor.
      */
     public Set<Long> getSubstituted(Actor actor);
 }
