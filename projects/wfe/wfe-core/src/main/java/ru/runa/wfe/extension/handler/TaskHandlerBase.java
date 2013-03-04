@@ -1,6 +1,5 @@
 package ru.runa.wfe.extension.handler;
 
-
 import ru.runa.wfe.extension.Configurable;
 import ru.runa.wfe.extension.TaskHandler;
 
@@ -11,7 +10,9 @@ public abstract class TaskHandlerBase implements TaskHandler, Configurable {
 
     @Override
     public final void setConfiguration(byte[] config) throws Exception {
-        this.configuration = new String(config, Charsets.UTF_8);
+        if (config != null) {
+            this.configuration = new String(config, Charsets.UTF_8);
+        }
         setConfiguration(configuration);
     }
 
