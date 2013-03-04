@@ -31,8 +31,8 @@ import com.google.common.collect.Lists;
 
 class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCache {
 
-    public static final String definitionIdToDefinitionName = "ru.runa.wfe.wfe.wf.caches.definitionIdToDefinition";
-    public static final String definitionNameToLatestDefinitionName = "ru.runa.wfe.wfe.wf.caches.definitionNameToLatestDefinition";
+    public static final String definitionIdToDefinitionName = "ru.runa.wfe.definition.cache.definitionIdToDefinition";
+    public static final String definitionNameToLatestDefinitionName = "ru.runa.wfe.definition.cache.definitionNameToLatestDefinition";
 
     private final Cache<Long, ProcessDefinition> definitionIdToDefinition;
     private final Cache<String, Long> definitionNameToId;

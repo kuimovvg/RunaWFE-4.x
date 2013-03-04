@@ -94,8 +94,8 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
 
     @Override
     public List<WfTask> getTasks(Long actorId, BatchPresentation batchPresentation) {
-        synchronized (CachingLogic.class) { // Do not wait until cache is
-                                            // released
+        synchronized (CachingLogic.class) {
+            // Do not wait until cache is released
             if (isLocked()) {
                 return null;
             }
@@ -105,8 +105,8 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
 
     @Override
     public void setTasks(int cacheVersion, Long actorId, BatchPresentation batchPresentation, List<WfTask> tasks) {
-        synchronized (CachingLogic.class) { // Do not wait until cache is
-                                            // released
+        synchronized (CachingLogic.class) {
+            // Do not wait until cache is released
             if (isLocked()) {
                 return;
             }

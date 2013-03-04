@@ -269,20 +269,18 @@ public class CachingLogic {
         boolean isInitiateInProcess = !isWriteTransaction();
         try {
             CacheImpl result = cache.buildCache();
-            if (!isWriteTransaction()) { // If this transaction is write to DB,
-                                         // return temporary cache object.
-                                         // Otherwise initiate cache with
-                                         // current cache object.
-                synchronized (CachingLogic.class) { // And notify all threads
-                                                    // awaiting cache
-                                                    // initialization
+            // return temporary cache object on write transaction.
+            // Otherwise initiate cache with current cache object.
+            if (!isWriteTransaction()) {
+                synchronized (CachingLogic.class) {
+                    // And notify all threads awaiting cache initialization
                     cache.initCache(result);
                 }
             }
             return result;
         } finally {
-            if (isInitiateInProcess) { // In all case release initialize lock
-                                       // and notify others
+            if (isInitiateInProcess) {
+                // In all case release initialize lock and notify others
                 synchronized (CachingLogic.class) {
                     cache.initiateComplete();
                     CachingLogic.class.notifyAll();
@@ -315,35 +313,22 @@ public class CachingLogic {
                     if (cacheImpl != null) {
                         return cacheImpl;
                     }
-                    if (!cache.isLocked() && !cache.isInInitiate() && !isWriteTransaction()) { // Cache
-                                                                                               // is
-                                                                                               // steel
-                                                                                               // not
-                                                                                               // initiated
-                                                                                               // and
-                                                                                               // no
-                                                                                               // initiate
-                                                                                               // in
-                                                                                               // progress
-                                                                                               // -
-                                                                                               // mark
-                                                                                               // it
-                                                                                               // as
-                                                                                               // initiateInProgress
-                                                                                               // and
-                                                                                               // initiate.
+                    if (!cache.isLocked() && !cache.isInInitiate() && !isWriteTransaction()) {
+                        // Cache is steel not initiated and no initiate in
+                        // progress - mark it as initiateInProgress and
+                        // initiate.
                         cache.initiateInProcess();
                         return null;
                     } else {
                         // Cache is steel not initiated but it locked or
                         // initiating.
-                        if (isWriteTransaction()) { // Write transaction must be
-                                                    // completed at all case.
-                                                    // Moving to build cache
-                                                    // stage
+                        if (isWriteTransaction()) {
+                            // Write transaction must be completed at all case.
+                            // Moving to build cache stage
                             return null;
-                        } else { // Wait until cache is unlocked or initiate
-                                 // process finished
+                        } else {
+                            // Wait until cache is unlocked or initiate
+                            // process finished
                             CachingLogic.class.wait();
                         }
                     }

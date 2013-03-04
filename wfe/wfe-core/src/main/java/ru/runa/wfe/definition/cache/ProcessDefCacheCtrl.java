@@ -50,7 +50,7 @@ public class ProcessDefCacheCtrl extends BaseCacheCtrl<ProcessDefCacheImpl> impl
             return;
         }
         ProcessDefCacheImpl cache = getCache();
-        if (cache != null) {
+        if (cache != null && object instanceof Deployment) {
             cache.clear((Deployment) object);
         }
     }

@@ -13,6 +13,13 @@ import ru.runa.wfe.var.Variable;
 
 import com.google.common.io.Files;
 
+/**
+ * Besides straightforward functionality this class persist large file variables
+ * in local disc storage.
+ * 
+ * @author dofs
+ * @since 4.0
+ */
 public class FileVariableToByteArrayConverter extends SerializableToByteArrayConverter implements InitializingBean {
     private static final long serialVersionUID = 1L;
     private File storageDir = new File(SystemProperties.getLocalFileStoragePath());
