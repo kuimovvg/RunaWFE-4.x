@@ -44,7 +44,7 @@ public class TaskClassPresentation extends ClassPresentation {
 
     private static class VariableDBSource extends DefaultDBSource {
         public VariableDBSource(Class<?> sourceObject) {
-            super(sourceObject, "object");
+            super(sourceObject, "storableValue");
         }
 
         public VariableDBSource(Class<?> sourceObject, String valueDBPath) {

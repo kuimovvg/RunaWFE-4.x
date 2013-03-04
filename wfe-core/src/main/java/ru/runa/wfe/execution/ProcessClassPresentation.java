@@ -59,7 +59,7 @@ public class ProcessClassPresentation extends ClassPresentation {
 
     private static class VariableDBSource extends DefaultDBSource {
         public VariableDBSource(Class<?> sourceObject) {
-            this(sourceObject, "object");
+            this(sourceObject, "storableValue");
         }
 
         public VariableDBSource(Class<?> sourceObject, String valueDBPath) {
@@ -74,7 +74,7 @@ public class ProcessClassPresentation extends ClassPresentation {
 
     private static class StringVariableDBSource extends DefaultDBSource {
         public StringVariableDBSource(Class<?> sourceObject) {
-            this(sourceObject, "object");
+            this(sourceObject, "storableValue");
         }
 
         public StringVariableDBSource(Class<?> sourceObject, String valueDBPath) {
@@ -110,11 +110,11 @@ public class ProcessClassPresentation extends ClassPresentation {
                 new FieldDescriptor(BATCH_PRESENTATION_DEFINITION_VERSION, Integer.class.getName(), new DefaultDBSource(Process.class,
                         "deployment.version"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
                         new Permission(), "version" }),
+                new FieldDescriptor(TASK_VARIABLE, Variable.class.getName(), variableClasses, true, FieldFilterMode.DATABASE,
+                        "ru.runa.wf.web.html.ProcessVariableTDBuilder", new Object[] {}, true),
                 new FieldDescriptor(filterable_prefix + "batch_presentation.process.id", AnywhereStringFilterCriteria.class.getName(),
                         new DefaultDBSource(Process.class, "hierarchySubProcess"), true, FieldFilterMode.DATABASE,
-                        "ru.runa.wf.web.html.RootProcessTDBuilder", new Object[] {}, true),
-                new FieldDescriptor(TASK_VARIABLE, Variable.class.getName(), variableClasses, true, FieldFilterMode.DATABASE,
-                        "ru.runa.wf.web.html.ProcessVariableTDBuilder", new Object[] {}, true) });
+                        "ru.runa.wf.web.html.RootProcessTDBuilder", new Object[] {}, true) });
     }
 
     public static final ClassPresentation getInstance() {
