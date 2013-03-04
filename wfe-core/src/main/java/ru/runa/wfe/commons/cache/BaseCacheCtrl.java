@@ -46,7 +46,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
     /**
      * Logging support.
      */
-    private final Log log;
+    private final Log log = LogFactory.getLog(this.getClass());
 
     /**
      * Current cache implementation. May be null, if no cache implementation
@@ -65,10 +65,6 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
      * transaction completes, it removes from this set.
      */
     private final Set<Thread> dirtyThreads = new HashSet<Thread>();
-
-    protected BaseCacheCtrl() {
-        log = LogFactory.getLog(this.getClass());
-    }
 
     @Override
     public final CacheImpl getCache() {

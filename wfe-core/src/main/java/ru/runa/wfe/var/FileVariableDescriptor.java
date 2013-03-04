@@ -1,5 +1,11 @@
 package ru.runa.wfe.var;
 
+/**
+ * This class eliminates need to persist large bytes array in database.
+ * 
+ * @author dofs
+ * @since 4.0
+ */
 public class FileVariableDescriptor extends FileVariable {
     private static final long serialVersionUID = 1L;
     private String variablePath;
