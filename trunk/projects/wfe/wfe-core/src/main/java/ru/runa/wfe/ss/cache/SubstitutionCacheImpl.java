@@ -46,8 +46,8 @@ import com.google.common.base.Objects;
 
 class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
     private static final Log log = LogFactory.getLog(SubstitutionCacheImpl.class);
-    public static final String substitutorsName = "ru.runa.wfe.wfe.af.caches.substitutors";
-    public static final String substitutedName = "ru.runa.wfe.wfe.af.caches.substituted";
+    public static final String substitutorsName = "ru.runa.wfe.ss.cache.substitutors";
+    public static final String substitutedName = "ru.runa.wfe.ss.cache.substituted";
     private final Cache<Long, TreeMap<Substitution, HashSet<Long>>> actorToSubstitutors;
     private final Cache<Long, HashSet<Long>> actorToSubstituted;
     private ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();

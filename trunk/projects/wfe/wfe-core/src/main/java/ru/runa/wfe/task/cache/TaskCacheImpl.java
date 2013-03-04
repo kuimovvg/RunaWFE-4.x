@@ -28,7 +28,7 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.dto.WfTask;
 
 class TaskCacheImpl extends BaseCacheImpl implements TaskCache {
-    public static final String taskCacheName = "ru.runa.wfe.wfe.wf.caches.taskLists";
+    public static final String taskCacheName = "ru.runa.wfe.task.cache.taskLists";
     private final Cache<Long, ConcurrentHashMap<TaskCacheImpl.BatchPresentationFieldEquals, List<WfTask>>> actorToTasksCache;
 
     public TaskCacheImpl() {
