@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.web.tag;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,12 +29,12 @@ import java.util.Map;
 import java.util.Set;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.FieldValidator;
 import ru.runa.wfe.validation.Validator;
 import ru.runa.wfe.validation.ValidatorContext;
 import ru.runa.wfe.validation.ValidatorManager;
-import ru.runa.wfe.var.IVariableProvider;
-import ru.runa.wfe.var.MapDelegableVariableProvider;
+import ru.runa.wfe.var.EmptyVariableProvider;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
@@ -45,7 +44,7 @@ import freemarker.template.Template;
 
 public class XWorkJavascriptValidator {
 
-    public static String getJavascript(byte[] validationXmlBytes) {
+    public static String getJavascript(User user, byte[] validationXmlBytes) {
         try {
             InputStream is = ClassLoaderUtil.getAsStreamNotNull("wfform-validate.ftl", XWorkJavascriptValidator.class);
             Configuration cfg = new Configuration();
@@ -60,8 +59,10 @@ public class XWorkJavascriptValidator {
 
             Set<String> tagNames = new HashSet<String>();
 
-            List<Validator> allValidators = ValidatorManager.getInstance().getValidators(new ByteArrayInputStream(validationXmlBytes));
-            for (Validator validator : allValidators) {
+            ValidatorContext validatorContext = new ValidatorContext();
+            List<Validator> validators = ValidatorManager.getInstance().createValidators(user, validationXmlBytes, validatorContext,
+                    new EmptyVariableProvider());
+            for (Validator validator : validators) {
                 if (validator instanceof FieldValidator) {
                     tagNames.add(((FieldValidator) validator).getFieldName());
                 }
@@ -69,7 +70,7 @@ public class XWorkJavascriptValidator {
             parameters.put("tagNames", tagNames);
 
             model.put("parameters", parameters);
-            model.put("tag", new ValidatorCallback(allValidators));
+            model.put("tag", new ValidatorCallback(validators));
 
             ByteArrayOutputStream result = new ByteArrayOutputStream();
             template.process(model, new OutputStreamWriter(result, Charsets.UTF_8));
@@ -81,27 +82,25 @@ public class XWorkJavascriptValidator {
     }
 
     public static class ValidatorCallback {
-        List<Validator> all;
+        private List<Validator> validators;
 
-        public ValidatorCallback(List<Validator> all) {
-            this.all = all;
-            IVariableProvider variableProvider = new MapDelegableVariableProvider(new HashMap<String, Object>(), null);
-            ValidatorContext validatorContext = new ValidatorContext(variableProvider);
-            for (Validator validator : all) {
-                validator.setValidatorContext(validatorContext);
-            }
+        public ValidatorCallback(List<Validator> validators) {
+            this.validators = validators;
         }
 
+        /**
+         * Get all field validators. Used from web.
+         */
         public List<Validator> getValidators(String name) {
-            List<Validator> validators = new ArrayList<Validator>();
-            for (Validator validator : all) {
+            List<Validator> fieldValidators = new ArrayList<Validator>();
+            for (Validator validator : validators) {
                 if (validator instanceof FieldValidator) {
                     if (((FieldValidator) validator).getFieldName().equals(name)) {
-                        validators.add(validator);
+                        fieldValidators.add(validator);
                     }
                 }
             }
-            return validators;
+            return fieldValidators;
         }
     }
 }

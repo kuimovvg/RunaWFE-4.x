@@ -118,11 +118,6 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
             return false;
         }
 
-        @Override
-        public Object getTaskVariable(Object object, IdentifiableExtractor taskIdExtractor, String variableName) {
-            return null;
-        }
-
         BatchPresentation batchPresentation = null;
     }
 

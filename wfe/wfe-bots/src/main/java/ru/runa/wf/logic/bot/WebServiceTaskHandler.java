@@ -164,8 +164,7 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
         try {
             return new URL(settings.url);
         } catch (MalformedURLException e) {
-            ExecutionService executionService = Delegates.getExecutionService();
-            WfVariable var = executionService.getVariable(user, task.getProcessId(), settings.url);
+            WfVariable var = Delegates.getExecutionService().getVariable(user, task.getProcessId(), settings.url);
             return new URL(var.getValue() != null ? var.getValue().toString() : "");
         }
     }

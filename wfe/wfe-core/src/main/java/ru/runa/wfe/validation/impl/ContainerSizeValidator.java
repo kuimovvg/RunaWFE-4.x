@@ -21,25 +21,9 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 
-public class ContainerSizeValidator extends FieldValidatorSupport {
-    private int minLength = -1;
-    private int maxLength = -1;
+import ru.runa.wfe.validation.FieldValidator;
 
-    public int getMaxLength() {
-        return maxLength;
-    }
-
-    public void setMaxLength(int maxLength) {
-        this.maxLength = maxLength;
-    }
-
-    public int getMinLength() {
-        return minLength;
-    }
-
-    public void setMinLength(int minLength) {
-        this.minLength = minLength;
-    }
+public class ContainerSizeValidator extends FieldValidator {
 
     @Override
     public void validate() {
@@ -56,13 +40,15 @@ public class ContainerSizeValidator extends FieldValidatorSupport {
         } else if (container instanceof Map<?, ?>) {
             size = ((Map<?, ?>) container).size();
         } else {
-            addFieldError();
+            addError();
             return;
         }
+        int minLength = getParameter(int.class, "minLength", -1);
+        int maxLength = getParameter(int.class, "maxLength", -1);
         if ((minLength > -1) && (size < minLength)) {
-            addFieldError();
+            addError();
         } else if ((maxLength > -1) && (size > maxLength)) {
-            addFieldError();
+            addError();
         }
     }
 }

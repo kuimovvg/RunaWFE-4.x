@@ -17,27 +17,10 @@
  */
 package ru.runa.wfe.validation.impl;
 
+import ru.runa.wfe.validation.FieldValidator;
 import ru.runa.wfe.var.FileVariable;
 
-public class FileSizeValidator extends FieldValidatorSupport {
-    private int minLength = -1;
-    private int maxLength = -1;
-
-    public int getMaxLength() {
-        return maxLength;
-    }
-
-    public void setMaxLength(int maxLength) {
-        this.maxLength = maxLength;
-    }
-
-    public int getMinLength() {
-        return minLength;
-    }
-
-    public void setMinLength(int minLength) {
-        this.minLength = minLength;
-    }
+public class FileSizeValidator extends FieldValidator {
 
     @Override
     public void validate() {
@@ -48,11 +31,12 @@ public class FileSizeValidator extends FieldValidatorSupport {
         }
 
         int fileSize = fileVariable.getData().length;
-
+        int minLength = getParameter(int.class, "minLength", -1);
+        int maxLength = getParameter(int.class, "maxLength", -1);
         if ((minLength > -1) && (fileSize < minLength)) {
-            addFieldError();
+            addError();
         } else if ((maxLength > -1) && (fileSize > maxLength)) {
-            addFieldError();
+            addError();
         }
     }
 }

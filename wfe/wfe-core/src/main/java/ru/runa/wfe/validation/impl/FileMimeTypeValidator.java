@@ -17,18 +17,10 @@
  */
 package ru.runa.wfe.validation.impl;
 
+import ru.runa.wfe.validation.FieldValidator;
 import ru.runa.wfe.var.FileVariable;
 
-public class FileMimeTypeValidator extends FieldValidatorSupport {
-    private String contentType = "";
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
+public class FileMimeTypeValidator extends FieldValidator {
 
     @Override
     public void validate() {
@@ -37,10 +29,9 @@ public class FileMimeTypeValidator extends FieldValidatorSupport {
             // use a required validator for these
             return;
         }
-
-        String contentType = fileVariable.getContentType();
-        if (!this.contentType.equals(contentType)) {
-            addFieldError();
+        String contentType = getParameterNotNull(String.class, "contentType");
+        if (!contentType.equals(fileVariable.getContentType())) {
+            addError();
         }
     }
 }

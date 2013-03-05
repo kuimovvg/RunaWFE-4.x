@@ -53,8 +53,8 @@ public class ProfileServiceDelegate extends EJB3Delegate implements ProfileServi
     }
 
     @Override
-    public void saveBatchPresentation(User user, BatchPresentation batchPresentation) {
-        getProfileService().saveBatchPresentation(user, batchPresentation);
+    public BatchPresentation saveBatchPresentation(User user, BatchPresentation batchPresentation) {
+        return getProfileService().saveBatchPresentation(user, batchPresentation);
     }
 
 }

@@ -22,23 +22,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.wfe.var.IVariableProvider;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ValidatorContext {
     private Collection<String> globalErrors = Lists.newArrayList();
     private Map<String, List<String>> fieldErrors = Maps.newHashMap();
-    private final IVariableProvider variableProvider;
-
-    public ValidatorContext(IVariableProvider variableProvider) {
-        this.variableProvider = variableProvider;
-    }
-
-    public IVariableProvider getVariableProvider() {
-        return variableProvider;
-    }
 
     public Collection<String> getGlobalErrors() {
         return globalErrors;
@@ -48,7 +37,7 @@ public class ValidatorContext {
         return fieldErrors;
     }
 
-    public void addActionError(String anErrorMessage) {
+    public void addGlobalError(String anErrorMessage) {
         globalErrors.add(anErrorMessage);
     }
 
@@ -61,7 +50,7 @@ public class ValidatorContext {
         thisFieldErrors.add(errorMessage);
     }
 
-    public boolean hasActionErrors() {
+    public boolean hasGlobalErrors() {
         return !globalErrors.isEmpty();
     }
 

@@ -35,8 +35,8 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
-import ru.runa.wfe.var.FileVariable;
 
 public class FormulaActionHandlerOperations {
     private static final Log log = LogFactory.getLog(FormulaActionHandlerOperations.class);
@@ -197,9 +197,6 @@ public class FormulaActionHandlerOperations {
     }
 
     public Object translate(Object o, Class<?> c) {
-        if (c.isInstance(o)) {
-            return o;
-        }
         if (c == String.class && Date.class.isInstance(o)) {
             Date date = (Date) o;
             Calendar calendar = new GregorianCalendar();
@@ -212,35 +209,7 @@ public class FormulaActionHandlerOperations {
             }
             return CalendarUtil.format(date, CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
         }
-        if (c == String.class && FileVariable.class.isInstance(o)) {
-            return ((FileVariable) o).getName();
-        }
-        if (c == String.class) {
-            return "" + o;
-        }
-        if (c == Double.class && Long.class.isInstance(o)) {
-            return new Double(((Long) o).longValue());
-        }
-        if (c == Long.class && Double.class.isInstance(o)) {
-            return new Long(((Double) o).longValue());
-        }
-        if (c == Double.class && Integer.class.isInstance(o)) {
-            return new Double(((Integer) o).longValue());
-        }
-        if (c == Long.class && Integer.class.isInstance(o)) {
-            return new Long(((Integer) o).longValue());
-        }
-        if (c == Integer.class && Long.class.isInstance(o)) {
-            return new Integer(((Long) o).intValue());
-        }
-        if (c == Integer.class && Double.class.isInstance(o)) {
-            return new Integer(((Double) o).intValue());
-        }
-        if (Date.class.isAssignableFrom(c) && Date.class.isInstance(o)) {
-            return o;
-        }
-        log.error("Cannot translate " + o.getClass() + " to " + c);
-        return null;
+        return TypeConversionUtil.convertTo(o, c);
     }
 
     public Object dateFunction(Object p) {

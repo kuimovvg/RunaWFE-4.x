@@ -42,6 +42,7 @@ public class ProcessDAO extends GenericDAO<Process> {
         return getHibernateTemplate().find("from Process where deployment.id=? order by startDate desc", definitionId);
     }
 
+    // TODO not used now
     public HashMap<Long, Object> getVariableValueFromProcesses(final List<Long> processIds, final String variableName) {
         return getHibernateTemplate().execute(new HibernateCallback<HashMap<Long, Object>>() {
 

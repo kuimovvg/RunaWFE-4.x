@@ -31,6 +31,6 @@ public interface ProfileService {
 
     public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation);
 
-    public void saveBatchPresentation(User user, BatchPresentation batchPresentation);
+    public BatchPresentation saveBatchPresentation(User user, BatchPresentation batchPresentation);
 
 }

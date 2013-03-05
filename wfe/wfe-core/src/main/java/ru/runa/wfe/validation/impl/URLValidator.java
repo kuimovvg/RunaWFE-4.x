@@ -20,38 +20,30 @@ package ru.runa.wfe.validation.impl;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class URLValidator extends FieldValidatorSupport {
+import ru.runa.wfe.validation.FieldValidator;
+
+import com.google.common.base.Strings;
+
+public class URLValidator extends FieldValidator {
 
     @Override
     public void validate() {
-        Object value = getFieldValue();
+        String url = (String) getFieldValue();
         // if there is no value - don't do comparison
         // if a value is required, a required validator should be added to the
         // field
-        if (value == null || value.toString().length() == 0) {
+        if (Strings.isNullOrEmpty(url)) {
             return;
         }
-        if (!(value.getClass().equals(String.class)) || !verifyUrl((String) value)) {
-            addFieldError();
-        }
-    }
-
-    public final static boolean verifyUrl(String url) {
-        if (url == null) {
-            return false;
-        }
-
         if (url.startsWith("https://")) {
             // URL doesn't understand the https protocol, hack it
             url = "http://" + url.substring(8);
         }
-
         try {
             new URL(url);
-
-            return true;
         } catch (MalformedURLException e) {
-            return false;
+            addError();
         }
     }
+
 }

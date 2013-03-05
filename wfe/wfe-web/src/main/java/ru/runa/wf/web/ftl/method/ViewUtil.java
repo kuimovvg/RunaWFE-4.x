@@ -3,6 +3,7 @@ package ru.runa.wf.web.ftl.method;
 import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.ExecutorService;
@@ -14,6 +15,8 @@ import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.ActorFormat;
 import ru.runa.wfe.var.format.ExecutorFormat;
 import ru.runa.wfe.var.format.GroupFormat;
+import ru.runa.wfe.var.format.VariableDisplaySupport;
+import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Objects;
 
@@ -49,4 +52,17 @@ public class ViewUtil {
         return html;
     }
 
+    public static String getVariableValueHtml(User user, WebHelper webHelper, Long processId, WfVariable variable) {
+        VariableFormat<Object> format = variable.getFormatNotNull();
+        String html = "<span class=\"displayVariable\">";
+        if (format instanceof VariableDisplaySupport) {
+            if (webHelper == null || processId == null) {
+                return "";
+            }
+            VariableDisplaySupport<Object> displaySupport = (VariableDisplaySupport<Object>) format;
+            return displaySupport.getHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue());
+        } else {
+            return format.format(variable.getValue());
+        }
+    }
 }
