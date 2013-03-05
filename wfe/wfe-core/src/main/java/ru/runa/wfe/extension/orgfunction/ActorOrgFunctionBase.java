@@ -12,7 +12,7 @@ public abstract class ActorOrgFunctionBase extends GetActorsOrgFunctionBase {
     protected List<Long> getActorCodes(Object... parameters) {
         Preconditions.checkNotNull(parameters, "parameters");
         Preconditions.checkArgument(parameters.length == 1, "expected parameters with 1 element");
-        Long actorCode = TypeConversionUtil.convertTo(parameters[0], Long.class);
+        Long actorCode = TypeConversionUtil.convertTo(Long.class, parameters[0]);
         return getActorCodes(actorCode);
     }
 

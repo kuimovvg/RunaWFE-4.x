@@ -168,7 +168,7 @@ public class HibernateCompilerInheritanceFiltersBuilder {
      * @return HQL condition string to filter by database source.
      */
     private String createDbSourceFilterCriteria(FieldDescriptor field, DBSource dbSource, String[] filterTemplates) {
-        FilterCriteria fieldsToFilterCriteria = FilterCriteriaFactory.getFilterCriteria(dbSource.getSourceObject().getName());
+        FilterCriteria fieldsToFilterCriteria = FilterCriteriaFactory.createFilterCriteria(dbSource.getSourceObject().getName());
         if (fieldsToFilterCriteria == null) {
             return null;
         }

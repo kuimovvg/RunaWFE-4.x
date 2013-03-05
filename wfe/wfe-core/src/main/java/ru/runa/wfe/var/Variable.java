@@ -67,11 +67,13 @@ import com.google.common.base.Objects;
 @DiscriminatorValue(value = "V")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public abstract class Variable<T extends Object> {
+    public static final int MAX_STRING_SIZE = 1024;
     protected Long id;
     private Long version;
     private String name;
     private Process process;
     private Converter converter;
+    private String stringValue;
 
     public Variable() {
     }
@@ -129,10 +131,15 @@ public abstract class Variable<T extends Object> {
         this.process = process;
     }
 
-    /**
-     * is true if this variable supports the given value, false otherwise.
-     */
-    public abstract boolean isStorable(Object value);
+    // TODO may be add index on this field
+    @Column(name = "STRINGVALUE", length = MAX_STRING_SIZE)
+    public String getStringValue() {
+        return stringValue;
+    }
+
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
 
     /**
      * Get the value of the variable.
@@ -159,10 +166,7 @@ public abstract class Variable<T extends Object> {
         if (value == null) {
             return true;
         }
-        if (converter != null) {
-            return converter.supports(value);
-        }
-        return isStorable(value);
+        return converter == null || converter.supports(value);
     }
 
     public void setValue(ExecutionContext executionContext, Object newValue) {
@@ -176,15 +180,12 @@ public abstract class Variable<T extends Object> {
         } else {
             newStorableValue = newValue;
         }
-        if (newStorableValue != null && !this.isStorable(newStorableValue)) {
-            throw new InternalApplicationException("variable '" + this.getClass().getName() + "' does not support values of type '"
-                    + newStorableValue.getClass().getName() + "'.");
-        }
         Object oldValue = getStorableValue();
         if (converter != null && oldValue != null) {
             oldValue = converter.revert(oldValue);
         }
         setStorableValue((T) newStorableValue);
+        setStringValue(newValue != null ? toString(newValue) : null);
         addLog(executionContext, oldValue, newValue);
     }
 
@@ -198,10 +199,16 @@ public abstract class Variable<T extends Object> {
     }
 
     public String toString(Object value) {
+        String string;
         if (SystemProperties.isV3CompatibilityMode() && value != null && String[].class == value.getClass()) {
-            return Arrays.toString((String[]) value);
+            string = Arrays.toString((String[]) value);
+        } else {
+            string = String.valueOf(value);
         }
-        return String.valueOf(value);
+        if (string.length() > MAX_STRING_SIZE) {
+            string = string.substring(0, MAX_STRING_SIZE - 1);
+        }
+        return string;
     }
 
     @Override

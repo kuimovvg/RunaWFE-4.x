@@ -26,7 +26,7 @@ public class ExpressionEvaluator {
         if (expression != null && expression.startsWith("#")) {
             String baseDateVariableName = expression.substring(2, expression.indexOf("}"));
             Object o = executionContext.getVariable(baseDateVariableName);
-            baseDate = TypeConversionUtil.convertTo(o, Date.class);
+            baseDate = TypeConversionUtil.convertTo(Date.class, o);
             int endOfELIndex = expression.indexOf("}");
             if (endOfELIndex < (expression.length() - 1)) {
                 String durationSeparator = expression.substring(endOfELIndex + 1).trim().substring(0, 1);

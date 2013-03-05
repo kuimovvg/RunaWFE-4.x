@@ -39,11 +39,11 @@ import com.google.common.primitives.Primitives;
 @SuppressWarnings("unchecked")
 public class TypeConversionUtil {
 
-    public static <T> T convertTo(Object object, Class<T> classConvertTo) {
-        return convertTo(object, classConvertTo, null, null);
+    public static <T> T convertTo(Class<T> classConvertTo, Object object) {
+        return convertTo(classConvertTo, object, null, null);
     }
 
-    public static <T> T convertTo(Object object, Class<T> classConvertTo, ITypeConvertor preConvertor, ITypeConvertor postConvertor) {
+    public static <T> T convertTo(Class<T> classConvertTo, Object object, ITypeConvertor preConvertor, ITypeConvertor postConvertor) {
         try {
             Preconditions.checkNotNull(classConvertTo, "classConvertTo is null");
             if (preConvertor != null) {
@@ -96,11 +96,11 @@ public class TypeConversionUtil {
                 }
             }
             if (classConvertTo.isArray()) {
-                List<?> list = convertTo(object, List.class, preConvertor, postConvertor);
+                List<?> list = convertTo(List.class, object, preConvertor, postConvertor);
                 Class<?> componentType = classConvertTo.getComponentType();
                 Object array = Array.newInstance(componentType, list.size());
                 for (int i = 0; i < list.size(); i++) {
-                    Array.set(array, i, convertTo(list.get(i), componentType, preConvertor, postConvertor));
+                    Array.set(array, i, convertTo(componentType, list.get(i), preConvertor, postConvertor));
                 }
                 return (T) array;
             }
@@ -161,10 +161,10 @@ public class TypeConversionUtil {
                         return null;
                     }
                     if (s.startsWith("ID")) {
-                        Long executorId = convertTo(s.substring(2), Long.class, preConvertor, postConvertor);
+                        Long executorId = convertTo(Long.class, s.substring(2), preConvertor, postConvertor);
                         return (T) executorDAO.getExecutor(executorId);
                     } else if (s.startsWith("G")) {
-                        Long executorId = convertTo(s.substring(1), Long.class, preConvertor, postConvertor);
+                        Long executorId = convertTo(Long.class, s.substring(1), preConvertor, postConvertor);
                         return (T) executorDAO.getExecutor(executorId);
                     } else {
                         Long actorCode = Long.parseLong(s);
@@ -180,12 +180,12 @@ public class TypeConversionUtil {
             if (object instanceof Actor) {
                 // compatibility: client code expecting 'actorCode'
                 Long actorCode = ((Actor) object).getCode();
-                return convertTo(actorCode, classConvertTo, preConvertor, postConvertor);
+                return convertTo(classConvertTo, actorCode, preConvertor, postConvertor);
             }
             if (object instanceof Group) {
                 // compatibility: client code expecting 'groupCode'
                 String groupCode = "G" + ((Group) object).getId();
-                return convertTo(groupCode, classConvertTo, preConvertor, postConvertor);
+                return convertTo(classConvertTo, groupCode, preConvertor, postConvertor);
             }
             if (postConvertor != null) {
                 T result = postConvertor.convertTo(object, classConvertTo);

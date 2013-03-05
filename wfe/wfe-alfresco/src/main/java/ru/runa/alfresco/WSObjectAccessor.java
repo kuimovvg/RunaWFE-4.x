@@ -51,7 +51,7 @@ public class WSObjectAccessor {
         } else {
             alfrescoValue = prop.getValue();
         }
-        Object javaValue = TypeConversionUtil.convertTo(alfrescoValue, propertyDescriptor.getPropertyType(), FROM_STRING_DATE_CONVERTER, null);
+        Object javaValue = TypeConversionUtil.convertTo(propertyDescriptor.getPropertyType(), alfrescoValue, FROM_STRING_DATE_CONVERTER, null);
         PropertyUtils.setProperty(alfObject, fieldName, javaValue);
     }
 
@@ -94,10 +94,10 @@ public class WSObjectAccessor {
         }
         Object javaValue = PropertyUtils.getProperty(alfObject, fieldName);
         if (javaValue != null && (javaValue.getClass().isArray() || javaValue instanceof Collection<?>)) {
-            String[] alfrescoStrings = TypeConversionUtil.convertTo(javaValue, String[].class, TO_STRING_DATE_CONVERTER, null);
+            String[] alfrescoStrings = TypeConversionUtil.convertTo(String[].class, javaValue, TO_STRING_DATE_CONVERTER, null);
             return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), alfrescoStrings);
         } else {
-            String alfrescoString = TypeConversionUtil.convertTo(javaValue, String.class, TO_STRING_DATE_CONVERTER, null);
+            String alfrescoString = TypeConversionUtil.convertTo(String.class, javaValue, TO_STRING_DATE_CONVERTER, null);
             return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), alfrescoString);
         }
     }

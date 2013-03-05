@@ -47,7 +47,7 @@ public class FileVariableValueDownloadVarTag implements VarTag {
         if (processIdParam == null) {
             throw new InternalApplicationException("id param was not passed correctly to FileVariableValueDownloadVarTag");
         }
-        FileVariable fileVariable = TypeConversionUtil.convertTo(var, FileVariable.class);
+        FileVariable fileVariable = TypeConversionUtil.convertTo(FileVariable.class, var);
         A ahref = new A();
         ahref.addElement(new StringElement(fileVariable.getName()));
 

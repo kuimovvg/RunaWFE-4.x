@@ -30,12 +30,7 @@ import ru.runa.wfe.var.Variable;
 @Entity
 @DiscriminatorValue(value = "L")
 public class LongVariable extends Variable<Long> {
-    protected Long object;
-
-    @Override
-    public boolean isStorable(Object value) {
-        return value instanceof Long;
-    }
+    private Long object;
 
     @Column(name = "LONGVALUE")
     @Override

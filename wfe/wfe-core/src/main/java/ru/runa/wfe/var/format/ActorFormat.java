@@ -19,7 +19,7 @@ public class ActorFormat implements VariableFormat<Actor>, VariableDisplaySuppor
 
     @Override
     public Actor parse(String[] source) throws Exception {
-        return TypeConversionUtil.convertTo(source[0], Actor.class);
+        return TypeConversionUtil.convertTo(Actor.class, source[0]);
     }
 
     @Override

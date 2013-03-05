@@ -160,7 +160,7 @@ public class ExecutionContext {
         SwimlaneDefinition swimlaneDefinition = getProcessDefinition().getSwimlane(name);
         if (swimlaneDefinition != null) {
             Swimlane swimlane = getProcess().getSwimlaneNotNull(swimlaneDefinition);
-            swimlane.assignExecutor(this, TypeConversionUtil.convertTo(value, Executor.class), true);
+            swimlane.assignExecutor(this, TypeConversionUtil.convertTo(Executor.class, value), true);
             return;
         }
         Variable<?> variable = variableDAO.get(getProcess(), name);

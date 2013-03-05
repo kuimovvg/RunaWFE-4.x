@@ -361,6 +361,6 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
     private int getStartInteraction(User user, WfTask task) {
         ExecutionService executionService = Delegates.getExecutionService();
         WfVariable variable = executionService.getVariable(user, task.getProcessId(), "WS_ITERATION_" + task.getId());
-        return TypeConversionUtil.convertTo(variable.getValue(), int.class);
+        return TypeConversionUtil.convertTo(int.class, variable.getValue());
     }
 }
