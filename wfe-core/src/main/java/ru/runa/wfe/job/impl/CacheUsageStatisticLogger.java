@@ -17,6 +17,11 @@
  */
 package ru.runa.wfe.job.impl;
 
+import java.util.TimerTask;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.commons.cache.CacheStatistic;
 
 /**
@@ -24,16 +29,16 @@ import ru.runa.wfe.commons.cache.CacheStatistic;
  * 
  * @author Konstantinov Aleksey
  */
-public class CacheUsageStatisticLogger extends TransactionalTaskBase {
+public class CacheUsageStatisticLogger extends TimerTask {
+    private static final Log log = LogFactory.getLog(CacheUsageStatisticLogger.class);
 
     @Override
-    protected boolean doPrerequsites() {
-        CacheStatistic.logCounters();
-        return false;
-    }
-
-    @Override
-    protected void doExecute() {
+    public final void run() {
+        try {
+            CacheStatistic.logCounters();
+        } catch (Throwable th) {
+            log.error("timer task error", th);
+        }
     }
 
 }

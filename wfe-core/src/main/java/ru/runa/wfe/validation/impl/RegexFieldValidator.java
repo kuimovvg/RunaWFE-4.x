@@ -37,7 +37,7 @@ public class RegexFieldValidator extends FieldValidator {
 
     @Override
     public void validate() {
-        String value = TypeConversionUtil.convertTo(getFieldValue(), String.class);
+        String value = TypeConversionUtil.convertTo(String.class, getFieldValue());
         // if there is no value - don't do comparison
         // if a value is required, a required validator should be added to the
         // field

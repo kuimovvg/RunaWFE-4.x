@@ -88,30 +88,36 @@ public class ProfileLogic extends CommonLogic {
         profileDAO.delete(actor);
     }
 
-    public void changeActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
+    public Profile changeActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
         Profile profile = profileDAO.get(user.getActor());
         profile.setActiveBatchPresentation(batchPresentationId, newActiveBatchName);
+        // batchPresentationDAO.flushPendingChanges();
+        return profileDAO.get(user.getActor());
     }
 
-    public void deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
-        batchPresentationDAO.delete(batchPresentation);
+    public Profile deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
+        Profile profile = profileDAO.get(user.getActor());
+        profile.deleteBatchPresentation(batchPresentation);
+        // batchPresentationDAO.delete(batchPresentation);
+        // batchPresentationDAO.flushPendingChanges();
+        return profile;
     }
 
-    public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public Profile createBatchPresentation(User user, BatchPresentation batchPresentation) {
         Profile profile = profileDAO.get(user.getActor());
         batchPresentation.serializeFields();
         profile.addBatchPresentation(batchPresentation);
         profile.setActiveBatchPresentation(batchPresentation.getCategory(), batchPresentation.getName());
-        return batchPresentation;
+        return profile;
     }
 
-    public BatchPresentation saveBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public Profile saveBatchPresentation(User user, BatchPresentation batchPresentation) {
         if (BatchPresentationConsts.DEFAULT_NAME.equals(batchPresentation.getName())) {
             throw new InternalApplicationException("default batch presentation cannot be changed");
         }
         batchPresentation.serializeFields();
         batchPresentation = batchPresentationDAO.update(batchPresentation);
         batchPresentationDAO.flushPendingChanges();
-        return batchPresentation;
+        return profileDAO.get(user.getActor());
     }
 }

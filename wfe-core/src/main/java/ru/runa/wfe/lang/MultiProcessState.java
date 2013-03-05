@@ -95,13 +95,13 @@ public class MultiProcessState extends SubProcessState {
                 discriminatorValue = executionContext.getVariable(miVarName);
             } else if ("group".equals(miDiscriminatorType) && miVarName != null) {
                 Object miVar = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
-                Group group = TypeConversionUtil.convertTo(miVar, Group.class);
+                Group group = TypeConversionUtil.convertTo(Group.class, miVar);
                 ;
                 discriminatorValue = getActorCodes(executorDAO.getGroupActors(group));
             } else if ("relation".equals(miDiscriminatorType) && miVarName != null && miRelationDiscriminatorTypeParam != null) {
                 String relationName = (String) ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
                 Object relationParam = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miRelationDiscriminatorTypeParam);
-                Executor rightExecutor = TypeConversionUtil.convertTo(relationParam, Executor.class);
+                Executor rightExecutor = TypeConversionUtil.convertTo(Executor.class, relationParam);
                 discriminatorValue = getActorCodes(getActorsByRelation(relationName, rightExecutor));
             }
         } else {

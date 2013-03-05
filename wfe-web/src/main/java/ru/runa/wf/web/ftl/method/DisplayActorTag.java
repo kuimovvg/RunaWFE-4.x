@@ -38,7 +38,7 @@ public class DisplayActorTag extends FreemarkerTag {
     protected Object executeTag() throws TemplateModelException {
         String actorVarName = getParameterAs(String.class, 0);
         Object actorIdentity = variableProvider.getValueNotNull(actorVarName);
-        Executor executor = TypeConversionUtil.convertTo(actorIdentity, Executor.class);
+        Executor executor = TypeConversionUtil.convertTo(Executor.class, actorIdentity);
         if (executor instanceof Group) {
             return "<p style='color: blue;'>" + executor.getName() + "</p>";
         }

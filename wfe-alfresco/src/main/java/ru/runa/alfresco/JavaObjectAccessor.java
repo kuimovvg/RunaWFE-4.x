@@ -45,7 +45,7 @@ public class JavaObjectAccessor {
             if (propertyDescriptor == null) {
                 throw new IllegalArgumentException("No property '" + fieldName + "' found in " + getClass());
             }
-            Object javaValue = TypeConversionUtil.convertTo(alfrescoValue, propertyDescriptor.getPropertyType());
+            Object javaValue = TypeConversionUtil.convertTo(propertyDescriptor.getPropertyType(), alfrescoValue);
             PropertyUtils.setProperty(alfObject, fieldName, javaValue);
         } catch (Exception e) {
             throw Throwables.propagate(e);
@@ -82,7 +82,7 @@ public class JavaObjectAccessor {
             }
             Object javaValue = PropertyUtils.getProperty(alfObject, fieldName);
             Class<? extends Serializable> alfrescoType = (Class<? extends Serializable>) ClassLoaderUtil.loadClass(desc.getDataType());
-            return TypeConversionUtil.convertTo(javaValue, alfrescoType);
+            return TypeConversionUtil.convertTo(alfrescoType, javaValue);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }

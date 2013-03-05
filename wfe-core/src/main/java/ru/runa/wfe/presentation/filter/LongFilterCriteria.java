@@ -19,38 +19,26 @@ package ru.runa.wfe.presentation.filter;
 
 import java.util.Map;
 
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
-
 import ru.runa.wfe.presentation.hibernate.QueryParameter;
 
 /**
  * Created on 01.09.2005
  */
-public class IntegerFilterCriteria extends FilterCriteria {
+public class LongFilterCriteria extends FilterCriteria {
     private static final long serialVersionUID = 642103915780987672L;
 
-    public IntegerFilterCriteria() {
-        filterTemplates = new String[] { "" };
-        templatesCount = 1;
+    public LongFilterCriteria() {
+        super(1);
     }
 
     @Override
     protected void validate(String[] newTemplates) throws FilterFormatException {
-        if (newTemplates.length != templatesCount) {
-            throw new IllegalArgumentException("Incorrect parameters count");
-        }
+        super.validate(newTemplates);
         try {
-            Integer.parseInt(newTemplates[0]);
+            Long.parseLong(newTemplates[0]);
         } catch (NumberFormatException nfe) {
             throw new FilterFormatException(nfe.getMessage());
         }
-    }
-
-    @Override
-    public Criterion buildCriterion(String fieldName) {
-        Criterion criterion = Restrictions.eqProperty(fieldName, filterTemplates[0]);
-        return criterion;
     }
 
     @Override
@@ -59,15 +47,8 @@ public class IntegerFilterCriteria extends FilterCriteria {
         whereStringBuilder.append(".").append(fieldName);
         whereStringBuilder.append(" = :").append(fieldName.replaceAll("\\.", ""));
         whereStringBuilder.append(" ");
-        placeholders.put(fieldName.replaceAll("\\.", ""), new QueryParameter(fieldName.replaceAll("\\.", ""), Long.valueOf(filterTemplates[0])));
+        placeholders.put(fieldName.replaceAll("\\.", ""), new QueryParameter(fieldName.replaceAll("\\.", ""), Long.valueOf(getFilterTemplates()[0])));
         return whereStringBuilder.toString();
     }
 
-    @Override
-    public void buildWhereClausePart(StringBuilder query, String persistetObjectFieldName, String persistetObjectQueryAlias,
-            Map<String, Object> queryNamedParameterNameValueMap) {
-        query.append(persistetObjectQueryAlias).append(".").append(persistetObjectFieldName);
-        query.append(" = :").append(persistetObjectFieldName.replaceAll("\\.", ""));
-        queryNamedParameterNameValueMap.put(persistetObjectFieldName.replaceAll("\\.", ""), Long.valueOf(filterTemplates[0]));
-    }
 }
