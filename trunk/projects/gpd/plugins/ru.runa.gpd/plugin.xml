@@ -1493,6 +1493,11 @@
              label="%validator.dateRelativeToCurrent.name"
              name="dateRelativeToCurrent">
           <param
+                label="%validator.dateRelativeToCurrent.param.business"
+                name="useBusinessCalendar"
+                type="java.lang.Boolean">
+          </param>
+          <param
                 label="%validator.dateRelativeToCurrent.param.min"
                 name="min"
                 type="java.lang.Number">
