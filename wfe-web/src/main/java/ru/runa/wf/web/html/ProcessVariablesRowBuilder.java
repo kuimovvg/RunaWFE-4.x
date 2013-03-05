@@ -33,10 +33,9 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.common.web.html.RowBuilder;
+import ru.runa.wf.web.ftl.method.ViewUtil;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.VariableDisplaySupport;
-import ru.runa.wfe.var.format.VariableFormat;
 
 public class ProcessVariablesRowBuilder implements RowBuilder {
     private static final Log log = LogFactory.getLog(ProcessVariablesRowBuilder.class);
@@ -78,14 +77,8 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
             formattedValue = Messages.getMessage("label.unset_empty.value", pageContext);
         } else {
             try {
-                VariableFormat variableFormat = variable.getFormatNotNull();
-                if (variableFormat instanceof VariableDisplaySupport) {
-                    User user = Commons.getUser(pageContext.getSession());
-                    formattedValue = ((VariableDisplaySupport) variableFormat).getHtml(user, new StrutsWebHelper(pageContext), processId, variable
-                            .getDefinition().getName(), value);
-                } else {
-                    formattedValue = variableFormat.format(value);
-                }
+                User user = Commons.getUser(pageContext.getSession());
+                formattedValue = ViewUtil.getVariableValueHtml(user, new StrutsWebHelper(pageContext), processId, variable);
             } catch (Exception e) {
                 log.debug("Unable to format value " + variable + " in " + processId, e);
                 if (value.getClass().isArray()) {

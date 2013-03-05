@@ -53,6 +53,7 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -114,24 +115,22 @@ public class ReflectionRowBuilder implements RowBuilder {
         }
 
         @Override
-        public Object getTaskVariable(Object object, IdentifiableExtractor processIdExtractor, String variableName) {
-            Map<Long, Object> cache = taskVariableCache.get(variableName);
+        public WfVariable getProcessVariable(Object object, IdentifiableExtractor processIdExtractor, String variableName) {
+            Map<Long, WfVariable> cache = taskVariableCache.get(variableName);
             if (cache == null) {
-                cache = new HashMap<Long, Object>();
-                taskVariableCache.put(variableName, cache);
                 List<Long> ids = Lists.newArrayListWithExpectedSize(items.size());
                 for (int i = 0; i < items.size(); ++i) {
                     ids.add(processIdExtractor.getIdentifiable(items.get(i), this).getIdentifiableId());
                 }
                 ExecutionService executionService = Delegates.getExecutionService();
-                Map<Long, Object> variables = executionService.getVariableValuesFromProcesses(getUser(), ids, variableName);
-                cache.putAll(variables);
+                cache = executionService.getVariablesFromProcesses(getUser(), ids, variableName);
+                taskVariableCache.put(variableName, cache);
             }
             return cache.get(processIdExtractor.getIdentifiable(object, this).getIdentifiableId());
         }
 
         private final Map<Permission, boolean[]> allowedCache = Maps.newHashMap();
-        private final Map<String, Map<Long, Object>> taskVariableCache = Maps.newHashMap();
+        private final Map<String, Map<Long, WfVariable>> taskVariableCache = Maps.newHashMap();
 
     }
 

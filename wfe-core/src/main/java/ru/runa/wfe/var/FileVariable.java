@@ -31,6 +31,9 @@ public class FileVariable implements Serializable {
     private String name;
     private String contentType;
 
+    public FileVariable() {
+    }
+
     public FileVariable(String name, byte[] data, String contentType) {
         this.data = data;
         this.name = name;

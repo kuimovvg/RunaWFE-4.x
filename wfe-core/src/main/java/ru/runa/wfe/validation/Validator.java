@@ -17,24 +17,86 @@
  */
 package ru.runa.wfe.validation;
 
-import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-public interface Validator {
+import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
+import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.MapDelegableVariableProvider;
 
-    public void init(Map<String, String> parameters) throws Exception;
+import com.google.common.base.Objects;
 
-    public Object getParameter(String name);
+public abstract class Validator {
+    protected final Log log = LogFactory.getLog(getClass());
+    private User user;
+    private ValidatorConfig config;
+    private ValidatorContext validatorContext;
+    private IVariableProvider variableProvider;
 
-    public void setMessage(String message);
+    public void init(User user, ValidatorConfig config, ValidatorContext validatorContext, IVariableProvider variableProvider) {
+        this.user = user;
+        this.config = config;
+        this.validatorContext = validatorContext;
+        this.variableProvider = new MapDelegableVariableProvider(config.getParams(), variableProvider);
+    }
 
-    public String getMessage();
+    protected User getUser() {
+        return user;
+    }
 
-    public void setValidatorContext(ValidatorContext validatorContext);
+    protected ValidatorContext getValidatorContext() {
+        return validatorContext;
+    }
 
-    public void validate();
+    protected IVariableProvider getVariableProvider() {
+        return variableProvider;
+    }
 
-    public void setValidatorType(String type);
+    private <T extends Object> T getParameter(Class<T> clazz, String name) {
+        String stringValue = config.getParams().get(name);
+        if (stringValue == null) {
+            return null;
+        }
+        Object value = ExpressionEvaluator.evaluateVariableNotNull(variableProvider, stringValue);
+        return TypeConversionUtil.convertTo(value, clazz);
+    }
 
-    public String getValidatorType();
+    protected <T extends Object> T getParameter(Class<T> clazz, String name, T defaultValue) {
+        T value = getParameter(clazz, name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return TypeConversionUtil.convertTo(value, clazz);
+    }
 
+    protected <T extends Object> T getParameterNotNull(Class<T> clazz, String name) {
+        T value = getParameter(clazz, name);
+        if (value == null) {
+            throw new InternalApplicationException("parameter '" + name + "' is null");
+        }
+        return TypeConversionUtil.convertTo(value, clazz);
+    }
+
+    public String getMessage() {
+        String m = ExpressionEvaluator.substitute(config.getMessage(), variableProvider);
+        return m.replaceAll("\t", " ").replaceAll("\n", " ").trim();
+    }
+
+    protected void addError(String userMessage) {
+        validatorContext.addGlobalError(userMessage);
+    }
+
+    protected void addError() {
+        addError(getMessage());
+    }
+
+    public abstract void validate();
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("config", config).toString();
+    }
 }

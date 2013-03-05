@@ -4,8 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.validation.FieldValidator;
 
-public class InThisYearDateFieldValidator extends FieldValidatorSupport {
+public class InThisYearDateFieldValidator extends FieldValidator {
 
     @Override
     public void validate() {
@@ -18,7 +19,7 @@ public class InThisYearDateFieldValidator extends FieldValidatorSupport {
         Calendar check = Calendar.getInstance();
         check.setTime(checkValue);
         if (current.get(Calendar.YEAR) != check.get(Calendar.YEAR)) {
-            addFieldError();
+            addError();
         }
     }
 

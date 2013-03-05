@@ -30,8 +30,7 @@ public class UserHolder {
         return users.get();
     }
 
-    // TODO not for validators
     public static void reset() {
-        // users.remove();
+        users.remove();
     }
 }

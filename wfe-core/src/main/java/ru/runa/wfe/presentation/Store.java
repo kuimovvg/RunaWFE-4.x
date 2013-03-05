@@ -62,8 +62,9 @@ class Store {
         List<DynamicField> dynamicFields = batchPresentation.getDynamicFields();
         allFields = new FieldDescriptor[batchPresentation.getClassPresentation().getFields().length + dynamicFields.size()];
         for (int idx = 0; idx < dynamicFields.size(); ++idx) {
-            allFields[idx] = batchPresentation.getClassPresentation().getFields()[dynamicFields.get(idx).getFieldIdx().intValue()]
-                    .createConcretteEditableField(dynamicFields.get(idx).getDynamicValue(), idx);
+            DynamicField dynamicField = dynamicFields.get(idx);
+            allFields[idx] = batchPresentation.getClassPresentation().getFields()[dynamicField.getFieldIdx().intValue()].createConcreteEditableField(
+                    dynamicField.getDynamicValue(), idx);
         }
         for (int idx = 0; idx < batchPresentation.getClassPresentation().getFields().length; ++idx) {
             allFields[idx + dynamicFields.size()] = batchPresentation.getClassPresentation().getFields()[idx].createConcreteField(idx

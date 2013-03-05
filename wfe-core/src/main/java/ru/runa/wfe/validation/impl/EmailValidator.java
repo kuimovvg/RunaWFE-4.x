@@ -5,15 +5,16 @@
 package ru.runa.wfe.validation.impl;
 
 public class EmailValidator extends RegexFieldValidator {
+    public static final String emailAddressPattern = "\\b(^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@([A-Za-z0-9-])+(\\.[A-Za-z0-9-]+)*((\\.[A-Za-z0-9]{2,})|(\\.[A-Za-z0-9]{2,}\\.[A-Za-z0-9]{2,}))$)\\b";
 
-    public static final String emailAddressPattern =
-    	"\\b(^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@([A-Za-z0-9-])+(\\.[A-Za-z0-9-]+)*((\\.[A-Za-z0-9]{2,})|(\\.[A-Za-z0-9]{2,}\\.[A-Za-z0-9]{2,}))$)\\b";
+    @Override
+    protected String getExpression() {
+        return emailAddressPattern;
+    }
 
-    public EmailValidator() {
-        setExpression(emailAddressPattern);
-        setCaseSensitive(false);
+    @Override
+    protected boolean isCaseSensitive() {
+        return false;
     }
 
 }
-
-

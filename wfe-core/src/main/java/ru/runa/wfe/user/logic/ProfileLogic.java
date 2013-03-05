@@ -105,12 +105,13 @@ public class ProfileLogic extends CommonLogic {
         return batchPresentation;
     }
 
-    public void saveBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public BatchPresentation saveBatchPresentation(User user, BatchPresentation batchPresentation) {
         if (BatchPresentationConsts.DEFAULT_NAME.equals(batchPresentation.getName())) {
             throw new InternalApplicationException("default batch presentation cannot be changed");
         }
         batchPresentation.serializeFields();
         batchPresentation = batchPresentationDAO.update(batchPresentation);
         batchPresentationDAO.flushPendingChanges();
+        return batchPresentation;
     }
 }

@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.var.logic;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +27,12 @@ import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Process execution logic.
@@ -68,19 +67,26 @@ public class VariableLogic extends WFCommonLogic {
         return executionContext.getVariableProvider().getVariable(variableName);
     }
 
-    public HashMap<Long, Object> getVariableValueFromProcesses(User user, List<Long> processIds, String variableName) {
-        List<Identifiable> idents = Lists.newArrayListWithExpectedSize(processIds.size());
+    public HashMap<Long, WfVariable> getVariableValueFromProcesses(User user, List<Long> processIds, String variableName) {
+        // List<Identifiable> idents =
+        // Lists.newArrayListWithExpectedSize(processIds.size());
+        // for (Long processId : processIds) {
+        // Process stub = new Process();
+        // stub.setId(processId);
+        // idents.add(stub);
+        // }
+        // idents = filterIdentifiable(user, idents, ProcessPermission.READ);
+        // List<Long> readableProcesses = new ArrayList<Long>();
+        // for (Identifiable identifiable : idents) {
+        // readableProcesses.add(identifiable.getIdentifiableId());
+        // }
+        // return processDAO.getVariableValueFromProcesses(processIds,
+        // variableName);
+        HashMap<Long, WfVariable> map = Maps.newHashMapWithExpectedSize(processIds.size());
         for (Long processId : processIds) {
-            Process stub = new Process();
-            stub.setId(processId);
-            idents.add(stub);
+            map.put(processId, getVariable(user, processId, variableName));
         }
-        idents = filterIdentifiable(user, idents, ProcessPermission.READ);
-        List<Long> readableProcesses = new ArrayList<Long>();
-        for (Identifiable identifiable : idents) {
-            readableProcesses.add(identifiable.getIdentifiableId());
-        }
-        return processDAO.getVariableValueFromProcesses(processIds, variableName);
+        return map;
     }
 
     public void updateVariables(User user, Long processId, Map<String, Object> variables) {

@@ -70,13 +70,12 @@ public abstract class BaseProcessFormAction extends ActionBase {
             forward = mapping.findForward(Resources.FORWARD_SUCCESS);
         } catch (ValidationException e) {
             userInputErrors = e.getConcatenatedFieldErrors();
-            for (String msg : e.getGlobalErrors()) {
-                // we already have localized string
-                addError(request, new ActionMessage(msg, false));
-            }
-            if (getErrors(request).size() == 0) {
-                // we add at least 1 error message in order to prevent
-                // successful forward
+            if (e.getGlobalErrors().size() > 0) {
+                for (String msg : e.getGlobalErrors()) {
+                    // we already have localized string
+                    addError(request, new ActionMessage(msg, false));
+                }
+            } else {
                 addError(request, new ActionMessage(Messages.MESSAGE_WEB_CLIENT_VALIDATION_ERROR));
             }
             forward = getErrorForward(mapping, form);

@@ -49,15 +49,8 @@ public class ExpressionEvaluator {
         }
     }
 
-    public static Object evaluateVariable(ExecutionContext executionContext, String expression) {
-        if (expression.startsWith("${") && expression.endsWith("}")) {
-            String variableName = expression.substring(2, expression.length() - 1);
-            return executionContext.getVariable(variableName);
-        }
-        return expression;
-    }
-
-    public static Object evaluateVariable(IVariableProvider variableProvider, String expression) {
+    public static Object evaluateVariableNotNull(IVariableProvider variableProvider, String expression) {
+        Preconditions.checkNotNull(expression);
         if (expression.startsWith("${") && expression.endsWith("}")) {
             String variableName = expression.substring(2, expression.length() - 1);
             return variableProvider.getValueNotNull(variableName);
@@ -81,7 +74,6 @@ public class ExpressionEvaluator {
         return buffer.toString();
     }
 
-    // TODO ref
     public static String substitute(String value, IVariableProvider variableProvider) {
         Preconditions.checkNotNull(value, "invalid string to substitute");
         Matcher matcher = VARIABLE_REGEXP.matcher(value);

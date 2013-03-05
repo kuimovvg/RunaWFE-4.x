@@ -22,15 +22,12 @@ import java.util.Map;
 import com.google.common.base.Objects;
 
 public class ValidatorConfig {
-
     private final String type;
-
     private final Map<String, String> params;
-
     private final String message;
 
-    public ValidatorConfig(String validatorType, Map<String, String> params, String message) {
-        type = validatorType;
+    public ValidatorConfig(String type, Map<String, String> params, String message) {
+        this.type = type;
         this.params = params;
         this.message = message;
     }

@@ -21,26 +21,36 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.validation.FieldValidator;
 
 import com.google.common.base.Strings;
 
-public class RegexFieldValidator extends FieldValidatorSupport {
+public class RegexFieldValidator extends FieldValidator {
 
-    private String expression;
-    private boolean caseSensitive = true;
-    private boolean trim = true;
+    protected String getExpression() {
+        return getParameterNotNull(String.class, "expression");
+    }
+
+    protected boolean isCaseSensitive() {
+        return getParameter(boolean.class, "caseSensitive", true);
+    }
 
     @Override
     public void validate() {
         String value = TypeConversionUtil.convertTo(getFieldValue(), String.class);
         // if there is no value - don't do comparison
-        // if a value is required, a required validator should be added to the field
-        if (Strings.isNullOrEmpty(value) || expression == null) {
+        // if a value is required, a required validator should be added to the
+        // field
+        if (Strings.isNullOrEmpty(value)) {
             return;
         }
+        String expression = getExpression();
+        boolean caseSensitive = isCaseSensitive();
+        boolean trim = getParameter(boolean.class, "trim", true);
+
         // match against expression
         Pattern pattern;
-        if (isCaseSensitive()) {
+        if (caseSensitive) {
             pattern = Pattern.compile(expression);
         } else {
             pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
@@ -53,41 +63,8 @@ public class RegexFieldValidator extends FieldValidatorSupport {
         Matcher matcher = pattern.matcher(compare);
 
         if (!matcher.matches()) {
-            addFieldError();
+            addError();
         }
-    }
-
-    /**
-     * @return Returns the regular expression to be matched.
-     */
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
-    }
-
-    /**
-     * @return Returns whether the expression should be matched against in a case-sensitive way. Default is <code>true</code>.
-     */
-    public boolean isCaseSensitive() {
-        return caseSensitive;
-    }
-
-    public void setCaseSensitive(boolean caseSensitive) {
-        this.caseSensitive = caseSensitive;
-    }
-
-    /**
-     * @return Returns whether the expression should be trimed before matching. Default is <code>true</code>.
-     */
-    public boolean isTrimed() {
-        return trim;
-    }
-
-    public void setTrim(boolean trim) {
-        this.trim = trim;
     }
 
 }

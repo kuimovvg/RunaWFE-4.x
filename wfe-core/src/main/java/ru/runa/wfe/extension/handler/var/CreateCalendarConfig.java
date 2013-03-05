@@ -59,7 +59,7 @@ public class CreateCalendarConfig {
                 return object;
             }
         };
-        Object value = ExpressionEvaluator.evaluateVariable(delegableVariableProvider, operation.expression);
+        Object value = ExpressionEvaluator.evaluateVariableNotNull(delegableVariableProvider, operation.expression);
         return TypeConversionUtil.convertTo(value, Integer.class).toString();
     }
 

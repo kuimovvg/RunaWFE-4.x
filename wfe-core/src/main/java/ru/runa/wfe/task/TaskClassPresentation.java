@@ -124,12 +124,7 @@ public class TaskClassPresentation extends ClassPresentation {
                         new FieldDescriptor(TASK_SWIMLINE, String.class.getName(), new DefaultDBSource(Task.class, "swimlane.name"), true,
                                 FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskRoleTDBuilder", new Object[] {}),
                         new FieldDescriptor(TASK_VARIABLE, Variable.class.getName(), variableClasses, true, FieldFilterMode.DATABASE,
-                                "ru.runa.wf.web.html.TaskVariableTDBuilder", new Object[] {}, true/*
-                                                                                                   * THIS
-                                                                                                   * FIELD
-                                                                                                   * IS
-                                                                                                   * WEAK
-                                                                                                   */),
+                                "ru.runa.wf.web.html.TaskVariableTDBuilder", new Object[] {}, true),
                         new FieldDescriptor(TASK_DEADLINE, Date.class.getName(),
                                 new DeadlineDBSource[] { new DeadlineDBSource(Job.class, "dueDate") }, true, FieldFilterMode.DATABASE,
                                 "ru.runa.wf.web.html.TaskDeadlineTDBuilder", new Object[] {}, true) });
