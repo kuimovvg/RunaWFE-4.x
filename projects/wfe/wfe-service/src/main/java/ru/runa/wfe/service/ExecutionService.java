@@ -95,7 +95,7 @@ public interface ExecutionService {
 
     public WfVariable getVariable(User user, Long processId, String variableName) throws ProcessDoesNotExistException;
 
-    public Map<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName);
+    public Map<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName);
 
     public void updateVariables(User user, Long processId, Map<String, Object> variables) throws ProcessDoesNotExistException;
 

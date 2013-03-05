@@ -44,6 +44,7 @@ import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.service.client.FileVariableProxy;
 import ru.runa.wfe.service.decl.ExecutionServiceLocal;
 import ru.runa.wfe.service.decl.ExecutionServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
@@ -54,6 +55,7 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.task.logic.TaskLogic;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.converter.SerializableToByteArrayConverter;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.logic.VariableLogic;
@@ -132,14 +134,22 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     public List<WfVariable> getVariables(User user, Long processId) {
         Preconditions.checkNotNull(user);
-        return variableLogic.getVariables(user, processId);
+        List<WfVariable> list = variableLogic.getVariables(user, processId);
+        for (WfVariable variable : list) {
+            convertValueToProxy(user, processId, variable);
+        }
+        return list;
     }
 
     @WebMethod(exclude = true)
     @Override
-    public Map<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName) {
+    public Map<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName) {
         Preconditions.checkNotNull(user);
-        return variableLogic.getVariableValueFromProcesses(user, processIds, variableName);
+        Map<Long, WfVariable> map = variableLogic.getVariableValueFromProcesses(user, processIds, variableName);
+        for (Map.Entry<Long, WfVariable> entry : map.entrySet()) {
+            convertValueToProxy(user, entry.getKey(), entry.getValue());
+        }
+        return map;
     }
 
     @Override
@@ -256,6 +266,16 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
             batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createDefault();
         }
         return auditLogic.getSystemLogsCount(user, batchPresentation);
+    }
+
+    private boolean convertValueToProxy(User user, Long processId, WfVariable variable) {
+        if (variable.getValue() instanceof FileVariable) {
+            FileVariable fileVariable = (FileVariable) variable.getValue();
+            FileVariableProxy proxy = new FileVariableProxy(user, processId, variable.getDefinition().getName(), fileVariable);
+            variable.setValue(proxy);
+            return true;
+        }
+        return false;
     }
 
     // workaround for web services

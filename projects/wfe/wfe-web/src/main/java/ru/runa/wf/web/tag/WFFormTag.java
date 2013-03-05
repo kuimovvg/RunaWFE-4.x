@@ -69,7 +69,7 @@ public abstract class WFFormTag extends TitledFormTag {
             }
             if (interaction.isUseJSValidation()) {
                 log.debug("Using javascript validation.");
-                String javaScript = XWorkJavascriptValidator.getJavascript(interaction.getValidationData());
+                String javaScript = XWorkJavascriptValidator.getJavascript(getUser(), interaction.getValidationData());
                 getForm().setOnSubmit("return validateForm_".concat(FORM_NAME).concat("();"));
                 tdFormElement.addElement(new StringElement(javaScript));
             }

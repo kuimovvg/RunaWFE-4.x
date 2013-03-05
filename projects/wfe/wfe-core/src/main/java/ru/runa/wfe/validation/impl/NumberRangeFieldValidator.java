@@ -18,22 +18,8 @@
 package ru.runa.wfe.validation.impl;
 
 public class NumberRangeFieldValidator extends AbstractRangeValidator<Number> {
-    private Double max;
-    private Double min;
-    private boolean inclusive;
 
-    public void setMax(Double max) {
-        this.max = max;
-    }
-
-    public void setMin(Double min) {
-        this.min = min;
-    }
-
-    public void setInclusive(boolean inclusive) {
-        this.inclusive = inclusive;
-    }
-
+    // this is here due to comparison with any numbers
     @Override
     protected Comparable getComparableValue() {
         Number number = (Number) getFieldValue();
@@ -41,21 +27,6 @@ public class NumberRangeFieldValidator extends AbstractRangeValidator<Number> {
             return number.doubleValue();
         }
         return super.getComparableValue();
-    }
-
-    @Override
-    protected boolean isInclusive() {
-        return inclusive;
-    }
-
-    @Override
-    protected Number getMinComparatorValue() {
-        return min;
-    }
-
-    @Override
-    protected Number getMaxComparatorValue() {
-        return max;
     }
 
 }

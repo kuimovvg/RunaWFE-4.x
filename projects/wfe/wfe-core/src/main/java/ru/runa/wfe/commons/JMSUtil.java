@@ -75,7 +75,7 @@ public class JMSUtil {
             for (VariableMapping variableMapping : data) {
                 if (variableMapping.isPropertySelector()) {
                     String value = variableMapping.getMappedName();
-                    Object v = ExpressionEvaluator.evaluateVariable(variableProvider, value);
+                    Object v = ExpressionEvaluator.evaluateVariableNotNull(variableProvider, value);
                     message.setObjectProperty(variableMapping.getName(), v);
                 }
             }

@@ -462,7 +462,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
         clone.category = category;
         clone.name = name;
         clone.type = type;
-        clone.fields = FieldsSerializer.fromData(FieldsSerializer.toData(fields));
+        clone.fields = FieldsSerializer.fromData(FieldsSerializer.toData(getFields()));
         return clone;
     }
 

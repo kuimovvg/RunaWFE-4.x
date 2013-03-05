@@ -73,7 +73,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
-            BatchPresentation batchPresentation = getActiveBatchPresentation(profile, tableViewSetupForm.getBatchPresentationId());
+            BatchPresentation batchPresentation = profile.getActiveBatchPresentation(tableViewSetupForm.getBatchPresentationId());
             applyBatchPresentation(batchPresentation, tableViewSetupForm);
         } catch (Exception e) {
             ActionMessages errors = getErrors(request);
@@ -162,17 +162,12 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             apply(mapping, form, request, response);
             Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
             tableViewSetupForm = (TableViewSetupForm) form;
-            BatchPresentation batchPresentation = getActiveBatchPresentation(profile, tableViewSetupForm.getBatchPresentationId());
+            BatchPresentation batchPresentation = profile.getActiveBatchPresentation(tableViewSetupForm.getBatchPresentationId());
             applyBatchPresentation(batchPresentation, tableViewSetupForm);
             ProfileService profileService = Delegates.getProfileService();
-            profileService.saveBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
-            // don't want load updated batch presentation, just update hibernate
-            // version for optimistic locking
-            if (batchPresentation.getVersion() != null) {
-                batchPresentation.setVersion(batchPresentation.getVersion() + 1);
-            } else {
-                batchPresentation.setVersion(1L);
-            }
+            BatchPresentation saved = profileService.saveBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
+            profile.deleteBatchPresentation(batchPresentation);
+            profile.addBatchPresentation(saved);
         } catch (Exception e) {
             ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);
@@ -185,7 +180,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
-            BatchPresentation presentation = getActiveBatchPresentation(profile, tableViewSetupForm.getBatchPresentationId());
+            BatchPresentation presentation = profile.getActiveBatchPresentation(tableViewSetupForm.getBatchPresentationId());
             String newName = tableViewSetupForm.getSaveAsBatchPresentationName();
             if (newName == null || newName.length() == 0) {
                 newName = DEFAULT_VIEW_SETUP_NAME;
@@ -209,7 +204,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
-            BatchPresentation batchPresentation = getActiveBatchPresentation(profile, tableViewSetupForm.getBatchPresentationId());
+            BatchPresentation batchPresentation = profile.getActiveBatchPresentation(tableViewSetupForm.getBatchPresentationId());
             ProfileService profileService = Delegates.getProfileService();
             profileService.deleteBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
             profile.deleteBatchPresentation(batchPresentation);
@@ -221,7 +216,4 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         return new ActionForward(tableViewSetupForm.getReturnAction(), true);
     }
 
-    private BatchPresentation getActiveBatchPresentation(Profile profile, String batchPresentationId) {
-        return profile.getActiveBatchPresentation(batchPresentationId);
-    }
 }

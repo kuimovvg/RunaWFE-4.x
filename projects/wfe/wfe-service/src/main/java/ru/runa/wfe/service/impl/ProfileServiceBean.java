@@ -76,10 +76,10 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     }
 
     @Override
-    public void saveBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public BatchPresentation saveBatchPresentation(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        profileLogic.saveBatchPresentation(user, batchPresentation);
+        return profileLogic.saveBatchPresentation(user, batchPresentation);
     }
 
 }

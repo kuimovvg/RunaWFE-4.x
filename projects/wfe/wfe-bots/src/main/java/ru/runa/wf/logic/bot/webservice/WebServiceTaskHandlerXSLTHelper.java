@@ -24,7 +24,6 @@ import org.apache.commons.codec.binary.Base64;
 
 import ru.runa.wf.logic.bot.WebServiceTaskHandler;
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
@@ -72,8 +71,7 @@ public class WebServiceTaskHandlerXSLTHelper {
      * @return Variable value converted to string.
      */
     public String getVariable(String name) {
-        ExecutionService executionService = Delegates.getExecutionService();
-        WfVariable var = executionService.getVariable(user, task.getProcessId(), name);
+        WfVariable var = Delegates.getExecutionService().getVariable(user, task.getProcessId(), name);
         if (var.getValue() != null) {
             return var.getValue().toString();
         }
@@ -90,10 +88,9 @@ public class WebServiceTaskHandlerXSLTHelper {
      *         {@link Base64}.
      */
     public String getProcessGraph(String processIdVariable) {
-        ExecutionService executionService = Delegates.getExecutionService();
-        WfVariable var = executionService.getVariable(user, task.getProcessId(), processIdVariable);
+        WfVariable var = Delegates.getExecutionService().getVariable(user, task.getProcessId(), processIdVariable);
         if (var.getValue() != null) {
-            return Base64.encodeBase64String(executionService.getProcessDiagram(user, (Long) var.getValue(), null, null));
+            return Base64.encodeBase64String(Delegates.getExecutionService().getProcessDiagram(user, (Long) var.getValue(), null, null));
         }
         throw new InternalApplicationException("Can't create SOAP request. WFE variable " + processIdVariable + " not found");
     }

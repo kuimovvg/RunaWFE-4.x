@@ -46,9 +46,9 @@ public class ValidatorFileParser {
         return result;
     }
 
-    public static List<ValidatorConfig> parseValidatorConfigs(InputStream is) {
+    public static List<ValidatorConfig> parseValidatorConfigs(byte[] validationXml) {
         List<ValidatorConfig> configs = new ArrayList<ValidatorConfig>();
-        Document doc = XmlUtils.parseWithoutValidation(is);
+        Document doc = XmlUtils.parseWithoutValidation(validationXml);
         List<Element> fieldElements = doc.getRootElement().elements("field");
         List<Element> validatorElements = doc.getRootElement().elements("validator");
         addValidatorConfigs(validatorElements, new HashMap<String, String>(), configs);

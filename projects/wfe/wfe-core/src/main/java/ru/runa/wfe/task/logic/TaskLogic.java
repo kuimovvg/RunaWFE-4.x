@@ -72,7 +72,7 @@ public class TaskLogic extends WFCommonLogic {
             checkCanParticipate(user, task);
             checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
             assignmentHelper.reassignTask(executionContext, task, user.getActor(), true);
-            validateVariables(processDefinition, task.getNodeId(),
+            validateVariables(user, processDefinition, task.getNodeId(),
                     new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
             executionContext.setVariables(variables);
             Transition transition = null;

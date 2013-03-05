@@ -28,6 +28,7 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.dto.WfVariable;
 
 public abstract class EnvBaseImpl implements Env {
     private User user;
@@ -54,6 +55,11 @@ public abstract class EnvBaseImpl implements Env {
         } catch (AuthorizationException e) {
             return false;
         }
+    }
+
+    @Override
+    public WfVariable getProcessVariable(Object object, IdentifiableExtractor processIdExtractor, String variableName) {
+        return null;
     }
 
     private final Map<Long, Boolean> processDefPermissionCache = new HashMap<Long, Boolean>();

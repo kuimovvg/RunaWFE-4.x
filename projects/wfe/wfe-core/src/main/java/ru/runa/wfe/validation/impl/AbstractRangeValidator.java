@@ -17,13 +17,23 @@
  */
 package ru.runa.wfe.validation.impl;
 
+import ru.runa.wfe.validation.FieldValidator;
+
 /**
  * Base class for range based validators.
  */
-public abstract class AbstractRangeValidator<T extends Object> extends FieldValidatorSupport {
+public abstract class AbstractRangeValidator<T extends Object> extends FieldValidator {
 
     protected Comparable getComparableValue() {
         return (Comparable<T>) getFieldValue();
+    }
+
+    protected T getMinComparatorValue() {
+        return (T) getParameterNotNull(Object.class, "min");
+    }
+
+    protected T getMaxComparatorValue() {
+        return (T) getParameterNotNull(Object.class, "max");
     }
 
     @Override
@@ -36,37 +46,32 @@ public abstract class AbstractRangeValidator<T extends Object> extends FieldVali
             return;
         }
 
-        if (getMinComparatorValue() != null) {
-            if (isInclusive()) {
-                if (value.compareTo(getMinComparatorValue()) < 0) {
-                    addFieldError();
+        boolean inclusive = getParameter(boolean.class, "inclusive", true);
+        T minValue = getMinComparatorValue();
+        if (minValue != null) {
+            if (inclusive) {
+                if (value.compareTo(minValue) < 0) {
+                    addError();
                 }
             } else {
-                if (value.compareTo(getMinComparatorValue()) <= 0) {
-                    addFieldError();
+                if (value.compareTo(minValue) <= 0) {
+                    addError();
                 }
             }
         }
 
-        if (getMaxComparatorValue() != null) {
-            if (isInclusive()) {
-                if (value.compareTo(getMaxComparatorValue()) > 0) {
-                    addFieldError();
+        T maxValue = getMaxComparatorValue();
+        if (maxValue != null) {
+            if (inclusive) {
+                if (value.compareTo(maxValue) > 0) {
+                    addError();
                 }
             } else {
-                if (value.compareTo(getMaxComparatorValue()) >= 0) {
-                    addFieldError();
+                if (value.compareTo(maxValue) >= 0) {
+                    addError();
                 }
             }
         }
     }
-
-    protected boolean isInclusive() {
-        return true;
-    }
-
-    protected abstract T getMinComparatorValue();
-
-    protected abstract T getMaxComparatorValue();
 
 }

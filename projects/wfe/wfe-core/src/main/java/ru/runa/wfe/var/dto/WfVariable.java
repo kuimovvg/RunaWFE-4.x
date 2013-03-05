@@ -25,7 +25,7 @@ public class WfVariable implements Serializable {
 
     public WfVariable(String name, Object value) {
         Preconditions.checkNotNull(name);
-        this.definition = new VariableDefinition(true, name, StringFormat.class.getName());
+        definition = new VariableDefinition(true, name, StringFormat.class.getName());
         this.value = value;
     }
 
@@ -52,6 +52,10 @@ public class WfVariable implements Serializable {
 
     public Object getValue() {
         return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     @Override
