@@ -29,7 +29,7 @@ public class SubprocessStartLog extends NodeEnterLog {
 
     @Transient
     public Long getSubprocessId() {
-        return TypeConversionUtil.convertTo(getAttributeNotNull(ATTR_PROCESS_ID), Long.class);
+        return TypeConversionUtil.convertTo(Long.class, getAttributeNotNull(ATTR_PROCESS_ID));
     }
 
     @Override

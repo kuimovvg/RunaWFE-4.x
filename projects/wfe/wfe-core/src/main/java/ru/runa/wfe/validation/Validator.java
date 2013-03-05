@@ -61,7 +61,7 @@ public abstract class Validator {
             return null;
         }
         Object value = ExpressionEvaluator.evaluateVariableNotNull(variableProvider, stringValue);
-        return TypeConversionUtil.convertTo(value, clazz);
+        return TypeConversionUtil.convertTo(clazz, value);
     }
 
     protected <T extends Object> T getParameter(Class<T> clazz, String name, T defaultValue) {
@@ -69,7 +69,7 @@ public abstract class Validator {
         if (value == null) {
             return defaultValue;
         }
-        return TypeConversionUtil.convertTo(value, clazz);
+        return TypeConversionUtil.convertTo(clazz, value);
     }
 
     protected <T extends Object> T getParameterNotNull(Class<T> clazz, String name) {
@@ -77,7 +77,7 @@ public abstract class Validator {
         if (value == null) {
             throw new InternalApplicationException("parameter '" + name + "' is null");
         }
-        return TypeConversionUtil.convertTo(value, clazz);
+        return TypeConversionUtil.convertTo(clazz, value);
     }
 
     public String getMessage() {

@@ -63,7 +63,7 @@ public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
             if (variableValue == null) {
                 return true;
             }
-            executor = TypeConversionUtil.convertTo(variableValue, Executor.class);
+            executor = TypeConversionUtil.convertTo(Executor.class, variableValue);
         }
         Set<Executor> confActors = new HashSet<Executor>();
         if (executor instanceof Group) {

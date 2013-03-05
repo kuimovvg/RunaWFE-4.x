@@ -11,11 +11,6 @@ import ru.runa.wfe.var.Variable;
 public class NullVariable extends Variable<Object> {
 
     @Override
-    public boolean isStorable(Object value) {
-        return value == null;
-    }
-
-    @Override
     @Transient
     public Object getStorableValue() {
         return null;

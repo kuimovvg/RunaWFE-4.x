@@ -25,7 +25,6 @@ import ru.runa.wfe.presentation.DefaultDBSource;
 import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.presentation.FieldFilterMode;
 import ru.runa.wfe.presentation.SystemLogTypeFilterCriteria;
-import ru.runa.wfe.presentation.filter.AnywhereStringFilterCriteria;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
 
@@ -93,12 +92,12 @@ public class SystemLogClassPresentation extends ClassPresentation {
                         new FieldDescriptor(SYSTEM_LOG_TIME, Date.class.getName(), new DefaultDBSource(SystemLog.class, "actionTime"), true,
                                 FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "actionTime",
                                         true }),
-                        new FieldDescriptor(SYSTEM_LOG_ACTOR, AnywhereStringFilterCriteria.class.getName(), new DBSource[] { new ActorDBSource() },
-                                true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.SystemLogActorTDBuilder", new Object[] {}, true),
+                        new FieldDescriptor(SYSTEM_LOG_ACTOR, String.class.getName(), new DBSource[] { new ActorDBSource() }, true,
+                                FieldFilterMode.DATABASE, "ru.runa.wf.web.html.SystemLogActorTDBuilder", new Object[] {}, true),
                         new FieldDescriptor(SYSTEM_LOG_TYPE, SystemLogTypeFilterCriteria.class.getName(), new DefaultDBSource(SystemLog.class,
                                 "class"), true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.SystemLogTypeTDBuilder", new Object[] {}),
-                        new FieldDescriptor(SYSTEM_LOG_MESSAGE, AnywhereStringFilterCriteria.class.getName(), new DefaultDBSource(SystemLog.class,
-                                "id"), false, FieldFilterMode.NONE, "ru.runa.wf.web.html.SystemLogTDBuilder", new Object[] {}) });
+                        new FieldDescriptor(SYSTEM_LOG_MESSAGE, String.class.getName(), new DefaultDBSource(SystemLog.class, "id"), false,
+                                FieldFilterMode.NONE, "ru.runa.wf.web.html.SystemLogTDBuilder", new Object[] {}) });
     }
 
     /**

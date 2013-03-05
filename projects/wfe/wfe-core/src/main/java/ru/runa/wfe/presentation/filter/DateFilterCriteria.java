@@ -22,9 +22,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
 
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.presentation.hibernate.QueryParameter;
@@ -37,15 +34,12 @@ public class DateFilterCriteria extends FilterCriteria {
     private Date dateEnd;
 
     public DateFilterCriteria() {
-        filterTemplates = new String[] { "", "" };
-        templatesCount = 2;
+        super(2);
     }
 
     @Override
     protected void validate(String[] newTemplates) throws FilterFormatException {
-        if (newTemplates.length != templatesCount) {
-            throw new IllegalArgumentException("Incorrect parameters count");
-        }
+        super.validate(newTemplates);
         try {
             if (newTemplates[0].length() > 0) {
                 CalendarUtil.convertToDate(newTemplates[0], CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
@@ -58,69 +52,16 @@ public class DateFilterCriteria extends FilterCriteria {
         }
     }
 
-    @Override
-    public void setFilterTemplates(String[] filterTemplates) {
-        if (filterTemplates == null || filterTemplates.length != 2) {
-            this.filterTemplates = new String[] { "", "" };
-        } else {
-            this.filterTemplates = filterTemplates;
-        }
-    }
-
     private void initDates() {
         try {
-            if (filterTemplates[0].length() > 0) {
-                dateStart = CalendarUtil.convertToDate(filterTemplates[0], CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
+            if (getFilterTemplates()[0].length() > 0) {
+                dateStart = CalendarUtil.convertToDate(getFilterTemplates()[0], CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
             }
-            if (filterTemplates[1].length() > 0) {
-                dateEnd = CalendarUtil.convertToDate(filterTemplates[1], CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
+            if (getFilterTemplates()[1].length() > 0) {
+                dateEnd = CalendarUtil.convertToDate(getFilterTemplates()[1], CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
             }
         } catch (Exception e) {
             log.error("date parsing error: " + e);
-        }
-    }
-
-    @Override
-    public Criterion buildCriterion(String fieldName) {
-        return Restrictions.like(fieldName, filterTemplates[0], MatchMode.EXACT);
-    }
-
-    @Override
-    public void buildWhereClausePart(StringBuilder query, String persistetObjectFieldName, String persistentObjectQueryAlias,
-            Map<String, Object> queryNamedParameterNameValueMap) {
-        initDates();
-
-        String placeholderStart = (persistetObjectFieldName + "Start").replaceAll("\\.", "");
-        String placeholderEnd = (persistetObjectFieldName + "End").replaceAll("\\.", "");
-
-        query.append(persistentObjectQueryAlias).append(".").append(persistetObjectFieldName);
-
-        if (dateStart == null) {
-            if (dateEnd == null) {
-                // empty date (NULL value)
-                query.append(" is null");
-            } else {
-                // less than
-                query.append(" < :").append(placeholderEnd);
-            }
-        } else {
-            if (dateEnd == null) {
-                // more than
-                query.append(" > :").append(placeholderStart);
-            } else {
-                // between
-                query.append(" between :");
-                query.append(placeholderStart);
-                query.append(" and :");
-                query.append(placeholderEnd);
-            }
-        }
-
-        if (dateStart != null) {
-            queryNamedParameterNameValueMap.put(placeholderStart, dateStart);
-        }
-        if (dateEnd != null) {
-            queryNamedParameterNameValueMap.put(placeholderEnd, dateEnd);
         }
     }
 

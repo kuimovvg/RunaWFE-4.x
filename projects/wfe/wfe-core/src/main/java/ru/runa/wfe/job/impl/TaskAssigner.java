@@ -17,11 +17,24 @@
  */
 package ru.runa.wfe.job.impl;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.runa.wfe.task.logic.TaskLogic;
+import ru.runa.wfe.definition.dao.ProcessDefinitionLoader;
+import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
+import ru.runa.wfe.execution.logic.ProcessExecutionException;
+import ru.runa.wfe.extension.AssignmentHandler;
+import ru.runa.wfe.lang.Delegation;
+import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.task.Task;
+import ru.runa.wfe.task.dao.TaskDAO;
 
 /**
  * Try to assign unassigned tasks.
@@ -29,13 +42,41 @@ import ru.runa.wfe.task.logic.TaskLogic;
  * @author Konstantinov Aleksey
  */
 public class TaskAssigner {
+    private static final Log log = LogFactory.getLog(TaskAssigner.class);
 
     @Autowired
-    private TaskLogic taskLogic;
+    private ProcessDefinitionLoader processDefinitionLoader;
+    @Autowired
+    private TaskDAO taskDAO;
+
+    public boolean areUnassignedTasksExist() {
+        return taskDAO.findUnassignedActiveTasks().size() > 0;
+    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void execute() {
-        taskLogic.assignUnassignedTasks();
+        List<Task> unassignedTasks = taskDAO.findUnassignedActiveTasks();
+        for (Task task : unassignedTasks) {
+            if (task.getProcess().hasEnded()) {
+                log.warn("Ending task for finished process " + task);
+                task.setEndDate(new Date());
+                continue;
+            }
+            try {
+                ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task);
+                if (task.getSwimlane() != null) {
+                    Delegation delegation = task.getSwimlane().getDefinition(processDefinition).getDelegation();
+                    AssignmentHandler handler = delegation.getInstance();
+                    handler.assign(new ExecutionContext(processDefinition, task), task);
+                }
+                ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getName());
+            } catch (Throwable th) {
+                log.warn("Unable to assign task '" + task + "' with swimlane '" + task.getSwimlane() + "'", th);
+                ProcessExecutionException e = new ProcessExecutionException(ProcessExecutionException.TASK_ASSIGNMENT_FAILED, th, task.getName());
+                ProcessExecutionErrors.addProcessError(task.getProcess().getId(), task.getName(), e);
+            }
+        }
+
     }
 
 }

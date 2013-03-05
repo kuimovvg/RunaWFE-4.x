@@ -30,12 +30,7 @@ import ru.runa.wfe.var.Variable;
 @Entity
 @DiscriminatorValue(value = "O")
 public class DoubleVariable extends Variable<Double> {
-    protected Double object;
-
-    @Override
-    public boolean isStorable(Object value) {
-        return value instanceof Double;
-    }
+    private Double object;
 
     @Column(name = "DOUBLEVALUE")
     @Override

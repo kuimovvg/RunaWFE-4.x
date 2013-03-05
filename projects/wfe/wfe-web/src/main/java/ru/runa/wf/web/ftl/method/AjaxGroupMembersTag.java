@@ -101,7 +101,7 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
     @Override
     public void processAjaxRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         StringBuffer json = new StringBuffer("[");
-        Group group = TypeConversionUtil.convertTo(request.getParameter("groupId"), Group.class);
+        Group group = TypeConversionUtil.convertTo(Group.class, request.getParameter("groupId"));
         List<Actor> actors = getActors(user, group);
         if (actors.size() == 0) {
             json.append("{\"id\": \"\", \"name\": \"No users in this group\"}");

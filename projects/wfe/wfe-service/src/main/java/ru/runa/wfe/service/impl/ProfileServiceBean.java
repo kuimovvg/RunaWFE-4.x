@@ -54,29 +54,29 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     }
 
     @Override
-    public void setActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
+    public Profile setActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentationId);
         Preconditions.checkNotNull(newActiveBatchName);
-        profileLogic.changeActiveBatchPresentation(user, batchPresentationId, newActiveBatchName);
+        return profileLogic.changeActiveBatchPresentation(user, batchPresentationId, newActiveBatchName);
     }
 
     @Override
-    public void deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public Profile deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
-        profileLogic.deleteBatchPresentation(user, batchPresentation);
+        return profileLogic.deleteBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public Profile createBatchPresentation(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
         return profileLogic.createBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public BatchPresentation saveBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public Profile saveBatchPresentation(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(batchPresentation);
         return profileLogic.saveBatchPresentation(user, batchPresentation);

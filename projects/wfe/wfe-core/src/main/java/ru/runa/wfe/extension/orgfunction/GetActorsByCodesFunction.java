@@ -36,7 +36,7 @@ public class GetActorsByCodesFunction extends GetActorsOrgFunctionBase {
     protected List<Long> getActorCodes(Object... parameters) {
         List<Long> codes = Lists.newArrayListWithExpectedSize(parameters.length);
         for (int i = 0; i < parameters.length; i++) {
-            codes.add(TypeConversionUtil.convertTo(parameters[i], Long.class));
+            codes.add(TypeConversionUtil.convertTo(Long.class, parameters[i]));
         }
         return codes;
     }

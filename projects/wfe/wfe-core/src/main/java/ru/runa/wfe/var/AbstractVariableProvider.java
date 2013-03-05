@@ -23,7 +23,7 @@ public abstract class AbstractVariableProvider implements IVariableProvider {
     @Override
     public <T> T getValue(Class<T> clazz, String variableName) {
         Object object = getValue(variableName);
-        return TypeConversionUtil.convertTo(object, clazz);
+        return TypeConversionUtil.convertTo(clazz, object);
     }
 
     @Override

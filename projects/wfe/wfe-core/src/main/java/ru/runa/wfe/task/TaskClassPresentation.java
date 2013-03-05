@@ -24,7 +24,6 @@ import java.util.Date;
 
 import ru.runa.wfe.job.Job;
 import ru.runa.wfe.presentation.ClassPresentation;
-import ru.runa.wfe.presentation.DBSource;
 import ru.runa.wfe.presentation.DefaultDBSource;
 import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.presentation.FieldFilterMode;
@@ -32,10 +31,6 @@ import ru.runa.wfe.presentation.SubstringDBSource;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.Variable;
-import ru.runa.wfe.var.impl.DateVariable;
-import ru.runa.wfe.var.impl.DoubleVariable;
-import ru.runa.wfe.var.impl.LongVariable;
-import ru.runa.wfe.var.impl.StringVariable;
 
 /**
  * Created on 22.10.2005
@@ -44,33 +39,13 @@ public class TaskClassPresentation extends ClassPresentation {
 
     private static class VariableDBSource extends DefaultDBSource {
         public VariableDBSource(Class<?> sourceObject) {
-            super(sourceObject, "storableValue");
-        }
-
-        public VariableDBSource(Class<?> sourceObject, String valueDBPath) {
-            super(sourceObject, valueDBPath);
+            super(sourceObject, "stringValue");
         }
 
         @Override
         public String getJoinExpression(String alias) {
             return classNameSQL + ".process=" + alias + ".process";
         }
-    }
-
-    private static class StringVariableDBSource extends VariableDBSource {
-        public StringVariableDBSource(Class<?> sourceObject) {
-            super(sourceObject);
-        }
-
-        // @Override
-        // public String getValueDBPath(String alias) {
-        // Dialect dialect = ApplicationContextFactory.getDialect();
-        // String typeName =
-        // dialect.getCastTypeName(Hibernate.STRING.sqlType());
-        // return alias == null ? valueDBPath : "CAST(" + alias + "." +
-        // valueDBPath + " AS " + typeName + ")";
-        // }
-
     }
 
     private static class DeadlineDBSource extends DefaultDBSource {
@@ -92,14 +67,6 @@ public class TaskClassPresentation extends ClassPresentation {
     public static final String TASK_SWIMLINE = "batch_presentation.task.swimlane";
     public static final String TASK_VARIABLE = editable_prefix + "name:batch_presentation.task.variable";
     public static final String TASK_DEADLINE = "batch_presentation.task.deadline";
-
-    private static final DBSource[] variableClasses;
-
-    static {
-        variableClasses = new DBSource[] { new VariableDBSource(Variable.class, null), new VariableDBSource(DateVariable.class),
-                new VariableDBSource(DoubleVariable.class), new VariableDBSource(LongVariable.class),
-                new StringVariableDBSource(StringVariable.class) };
-    }
 
     private static final ClassPresentation INSTANCE = new TaskClassPresentation();
 
@@ -123,8 +90,8 @@ public class TaskClassPresentation extends ClassPresentation {
                                 FieldFilterMode.NONE, "ru.runa.wf.web.html.TaskOwnerTDBuilder", new Object[] {}),
                         new FieldDescriptor(TASK_SWIMLINE, String.class.getName(), new DefaultDBSource(Task.class, "swimlane.name"), true,
                                 FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskRoleTDBuilder", new Object[] {}),
-                        new FieldDescriptor(TASK_VARIABLE, Variable.class.getName(), variableClasses, true, FieldFilterMode.DATABASE,
-                                "ru.runa.wf.web.html.TaskVariableTDBuilder", new Object[] {}, true),
+                        new FieldDescriptor(TASK_VARIABLE, String.class.getName(), new VariableDBSource(Variable.class), true,
+                                FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskVariableTDBuilder", new Object[] {}, true),
                         new FieldDescriptor(TASK_DEADLINE, Date.class.getName(),
                                 new DeadlineDBSource[] { new DeadlineDBSource(Job.class, "dueDate") }, true, FieldFilterMode.DATABASE,
                                 "ru.runa.wf.web.html.TaskDeadlineTDBuilder", new Object[] {}, true) });

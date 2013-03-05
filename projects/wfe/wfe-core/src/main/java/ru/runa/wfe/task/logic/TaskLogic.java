@@ -1,6 +1,5 @@
 package ru.runa.wfe.task.logic;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,10 +17,7 @@ import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
-import ru.runa.wfe.execution.logic.ProcessExecutionException;
-import ru.runa.wfe.extension.AssignmentHandler;
 import ru.runa.wfe.extension.assign.AssignmentHelper;
-import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.Transition;
@@ -96,30 +92,6 @@ public class TaskLogic extends WFCommonLogic {
     public WfTask getTask(User user, Long taskId) {
         Task task = taskDAO.getNotNull(taskId);
         return taskObjectFactory.create(task, user.getActor(), null);
-    }
-
-    public void assignUnassignedTasks() {
-        List<Task> unassignedTasks = taskDAO.findUnassignedActiveTasks();
-        for (Task task : unassignedTasks) {
-            if (task.getProcess().hasEnded()) {
-                log.warn("Ending task for finished process " + task);
-                task.setEndDate(new Date());
-                continue;
-            }
-            try {
-                ProcessDefinition processDefinition = getDefinition(task);
-                if (task.getSwimlane() != null) {
-                    Delegation delegation = task.getSwimlane().getDefinition(processDefinition).getDelegation();
-                    AssignmentHandler handler = delegation.getInstance();
-                    handler.assign(new ExecutionContext(processDefinition, task), task);
-                }
-                ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getName());
-            } catch (Throwable th) {
-                log.warn("Unable to assign task '" + task + "' with swimlane '" + task.getSwimlane() + "'", th);
-                ProcessExecutionException e = new ProcessExecutionException(ProcessExecutionException.TASK_ASSIGNMENT_FAILED, th, task.getName());
-                ProcessExecutionErrors.addProcessError(task.getProcess().getId(), task.getName(), e);
-            }
-        }
     }
 
     public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) {

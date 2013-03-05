@@ -22,12 +22,6 @@ import java.util.Map;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.var.Variable;
-import ru.runa.wfe.var.impl.ByteArrayVariable;
-import ru.runa.wfe.var.impl.DateVariable;
-import ru.runa.wfe.var.impl.DoubleVariable;
-import ru.runa.wfe.var.impl.LongVariable;
-import ru.runa.wfe.var.impl.StringVariable;
 
 import com.google.common.collect.Maps;
 
@@ -42,22 +36,16 @@ public class FilterCriteriaFactory {
 
     static {
         filterCriterias.put(String.class.getName(), StringFilterCriteria.class);
-        filterCriterias.put(Integer.class.getName(), IntegerFilterCriteria.class);
-        filterCriterias.put(Variable.class.getName(), AnywhereStringFilterCriteria.class);
-        filterCriterias.put(ByteArrayVariable.class.getName(), AnywhereStringFilterCriteria.class);
-        filterCriterias.put(DateVariable.class.getName(), AnywhereStringFilterCriteria.class);
-        filterCriterias.put(DoubleVariable.class.getName(), AnywhereStringFilterCriteria.class);
-        filterCriterias.put(LongVariable.class.getName(), AnywhereStringFilterCriteria.class);
-        filterCriterias.put(StringVariable.class.getName(), AnywhereStringFilterCriteria.class);
+        filterCriterias.put(Integer.class.getName(), LongFilterCriteria.class);
         filterCriterias.put(Date.class.getName(), DateFilterCriteria.class);
     }
 
-    public static FilterCriteria getFilterCriteria(BatchPresentation batchPresentation, int fieldId) {
+    public static FilterCriteria createFilterCriteria(BatchPresentation batchPresentation, int fieldId) {
         String fieldType = batchPresentation.getAllFields()[fieldId].fieldType;
-        return getFilterCriteria(fieldType);
+        return createFilterCriteria(fieldType);
     }
 
-    public static FilterCriteria getFilterCriteria(String fieldType) {
+    public static FilterCriteria createFilterCriteria(String fieldType) {
         Class<? extends FilterCriteria> criteriaClass = filterCriterias.get(fieldType);
         if (criteriaClass != null) {
             return ClassLoaderUtil.instantiate(criteriaClass);

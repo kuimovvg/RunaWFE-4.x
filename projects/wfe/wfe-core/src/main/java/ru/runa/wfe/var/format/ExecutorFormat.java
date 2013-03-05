@@ -19,7 +19,7 @@ public class ExecutorFormat implements VariableFormat<Executor>, VariableDisplay
 
     @Override
     public Executor parse(String[] source) throws Exception {
-        return TypeConversionUtil.convertTo(source[0], Executor.class);
+        return TypeConversionUtil.convertTo(Executor.class, source[0]);
     }
 
     @Override

@@ -31,12 +31,7 @@ import ru.runa.wfe.var.Variable;
 @Entity
 @DiscriminatorValue(value = "B")
 public class ByteArrayVariable extends Variable<byte[]> {
-    protected byte[] object;
-
-    @Override
-    public boolean isStorable(Object value) {
-        return value instanceof byte[];
-    }
+    private byte[] object;
 
     @Lob
     @Column(length = 16777216, name = "BYTES")

@@ -19,7 +19,7 @@ public class GroupFormat implements VariableFormat<Group>, VariableDisplaySuppor
 
     @Override
     public Group parse(String[] source) throws Exception {
-        return TypeConversionUtil.convertTo(source[0], Group.class);
+        return TypeConversionUtil.convertTo(Group.class, source[0]);
     }
 
     @Override

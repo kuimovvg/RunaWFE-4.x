@@ -314,7 +314,7 @@ public class HTMLFormConverter {
                     String checkBoxValue = node.getAttribute(VALUE_ATTR);
                     Object variableValue = variableProvider.getValue(inputName);
                     if (variableValue instanceof String[]) {
-                        List<String> selectedValues = TypeConversionUtil.convertTo(variableValue, List.class);
+                        List<String> selectedValues = TypeConversionUtil.convertTo(List.class, variableValue);
                         if (selectedValues.contains(checkBoxValue)) {
                             node.setAttribute(CHECKED_ATTR, CHECKED_ATTR);
                         } else {

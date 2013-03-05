@@ -231,7 +231,7 @@ public class RelationDAO extends CommonDAO {
         try {
             // for check
             getRelationNotNull(relationName);
-            filters.put(0, new StringFilterCriteria(new String[] { relationName }));
+            filters.put(0, new StringFilterCriteria(relationName));
             batchPresentation.setFilteredFields(filters);
             List<RelationPair> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(false);
             batchPresentation.setFilteredFields(filters);
@@ -255,7 +255,7 @@ public class RelationDAO extends CommonDAO {
         Map<Integer, FilterCriteria> filters = batchPresentation.getFilteredFields();
         try {
             Relation relation = getRelationNotNull(id);
-            filters.put(0, new StringFilterCriteria(new String[] { relation.getName() }));
+            filters.put(0, new StringFilterCriteria(relation.getName()));
             batchPresentation.setFilteredFields(filters);
             List<RelationPair> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(false);
             batchPresentation.setFilteredFields(filters);
