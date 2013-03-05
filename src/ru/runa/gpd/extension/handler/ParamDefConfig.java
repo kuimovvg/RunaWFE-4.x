@@ -93,49 +93,54 @@ public class ParamDefConfig {
     /**
      * Retrieves all founded parameter to variable mappings based on this definition.
      * @param configuration valid param-based xml
+     * @return not <code>null</code> parameters (empty parameters on parsing error)
      */
     public Map<String, String> parseConfiguration(String configuration) {
         Map<String, String> properties = new HashMap<String, String>();
         if (Strings.isNullOrEmpty(configuration)) {
             return properties;
         }
-        Document doc = XmlUtil.parseWithoutValidation(configuration);
-        Map<String, String> allProperties = new HashMap<String, String>();
-        for (ParamDefGroup group : groups) {
-            Element groupElement = doc.getRootElement().element(group.getName());
-            if (groupElement != null) {
-                List<Element> pElements = groupElement.elements();
-                for (Element element : pElements) {
-                    if ("param".equals(element.getName())) {
-                        String value;
-                        if (element.attributeValue("variable") != null) {
-                            value = element.attributeValue("variable");
+        try {
+            Document doc = XmlUtil.parseWithoutValidation(configuration);
+            Map<String, String> allProperties = new HashMap<String, String>();
+            for (ParamDefGroup group : groups) {
+                Element groupElement = doc.getRootElement().element(group.getName());
+                if (groupElement != null) {
+                    List<Element> pElements = groupElement.elements();
+                    for (Element element : pElements) {
+                        if ("param".equals(element.getName())) {
+                            String value;
+                            if (element.attributeValue("variable") != null) {
+                                value = element.attributeValue("variable");
+                            } else {
+                                value = element.attributeValue("value");
+                            }
+                            String name = element.attributeValue("name");
+                            allProperties.put(name, value);
                         } else {
-                            value = element.attributeValue("value");
+                            allProperties.put(element.getName(), element.getTextTrim());
                         }
-                        String name = element.attributeValue("name");
-                        allProperties.put(name, value);
-                    } else {
-                        allProperties.put(element.getName(), element.getTextTrim());
                     }
                 }
             }
-        }
-        for (ParamDefGroup group : groups) {
-            Element groupElement = doc.getRootElement().element(group.getName());
-            if (groupElement != null) {
-                List<Element> pElements = groupElement.elements();
-                for (Element element : pElements) {
-                    String name = "param".equals(element.getName()) ? element.attributeValue("name") : element.getName();
-                    String value = allProperties.get(name);
-                    String fName = fixParamName(name, allProperties);
-                    if (fName == null) {
-                        group.getDynaProperties().put(name, value);
-                    } else {
-                        properties.put(fName, value);
+            for (ParamDefGroup group : groups) {
+                Element groupElement = doc.getRootElement().element(group.getName());
+                if (groupElement != null) {
+                    List<Element> pElements = groupElement.elements();
+                    for (Element element : pElements) {
+                        String name = "param".equals(element.getName()) ? element.attributeValue("name") : element.getName();
+                        String value = allProperties.get(name);
+                        String fName = fixParamName(name, allProperties);
+                        if (fName == null) {
+                            group.getDynaProperties().put(name, value);
+                        } else {
+                            properties.put(fName, value);
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog(configuration, e);
         }
         return properties;
     }
@@ -171,9 +176,6 @@ public class ParamDefConfig {
     public boolean validate(String configuration) {
         try {
             Map<String, String> props = parseConfiguration(configuration);
-            if (props == null) {
-                return false;
-            }
             for (ParamDefGroup group : groups) {
                 for (ParamDef paramDef : group.getParameters()) {
                     if (!paramDef.isOptional() && !isValid(props.get(paramDef.getName()))) {
