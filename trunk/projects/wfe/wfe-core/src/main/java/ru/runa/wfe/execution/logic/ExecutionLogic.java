@@ -134,7 +134,8 @@ public class ExecutionLogic extends WFCommonLogic {
                 variables.put(entry.getKey(), entry.getValue());
             }
         }
-        validateVariables(processDefinition, processDefinition.getStartStateNotNull().getNodeId(), new MapDelegableVariableProvider(variables, null));
+        validateVariables(user, processDefinition, processDefinition.getStartStateNotNull().getNodeId(), new MapDelegableVariableProvider(variables,
+                null));
         String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
         Process process = processFactory.startProcess(processDefinition, variables, user.getActor(), transitionName);
         log.info("Process " + process + " was successfully started");

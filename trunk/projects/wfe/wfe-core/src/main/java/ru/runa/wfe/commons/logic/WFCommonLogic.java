@@ -17,8 +17,6 @@
  */
 package ru.runa.wfe.commons.logic;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -102,13 +100,12 @@ public class WFCommonLogic extends CommonLogic {
         return processDefinitionLoader.getLatestDefinition(definitionName);
     }
 
-    protected void validateVariables(ProcessDefinition processDefinition, String nodeId, IVariableProvider variableProvider)
+    protected void validateVariables(User user, ProcessDefinition processDefinition, String nodeId, IVariableProvider variableProvider)
             throws ValidationException {
         Interaction interaction = processDefinition.getInteractionNotNull(nodeId);
         if (interaction.getValidationData() != null) {
-            InputStream is = new ByteArrayInputStream(interaction.getValidationData());
-            ValidatorContext context = ValidatorManager.getInstance().validate(is, variableProvider);
-            if (context.hasActionErrors() || context.hasFieldErrors()) {
+            ValidatorContext context = ValidatorManager.getInstance().validate(user, interaction.getValidationData(), variableProvider);
+            if (context.hasGlobalErrors() || context.hasFieldErrors()) {
                 throw new ValidationException(context.getFieldErrors(), context.getGlobalErrors());
             }
         }

@@ -24,31 +24,39 @@ import java.util.Calendar;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 
 import com.google.common.base.Objects;
 
 /**
- * Description for field, available via {@link ClassPresentation}. Contains almost all aspects of field behavior.
+ * Description for field, available via {@link ClassPresentation}. Contains
+ * almost all aspects of field behavior.
  */
 public class FieldDescriptor {
     private static final Log log = LogFactory.getLog(FieldDescriptor.class);
 
     /**
      * Struts property, which will be used to get field display name.<br/>
-     * ATTENTION: If this field contains {@link ClassPresentation} editable or removable prefix, it must be treated in special way (see {@link ClassPresentation} for more details).
+     * ATTENTION: If this field contains {@link ClassPresentation} editable or
+     * removable prefix, it must be treated in special way (see
+     * {@link ClassPresentation} for more details).
      */
     public final String displayName;
 
     /**
-     * Field type as class name (i. e. String.class.getName()). Used to get appreciate {@link FilterCriteria} and FilterTDFormatter (see web project). So, filter representation is
-     * depends on this field. {@link Calendar} will be created for {@link Date}, editor field for String and so on.
+     * Field type as class name (i. e. String.class.getName()). Used to get
+     * appreciate {@link FilterCriteria} and FilterTDFormatter (see web
+     * project). So, filter representation is depends on this field.
+     * {@link Calendar} will be created for {@link Date}, editor field for
+     * String and so on.
      */
     public final String fieldType;
 
     /**
-     * Flag, equals true, if this field can be grouped or sorted; false otherwise.
+     * Flag, equals true, if this field can be grouped or sorted; false
+     * otherwise.
      */
     public final boolean isSortable;
 
@@ -58,7 +66,8 @@ public class FieldDescriptor {
     public final FieldFilterMode filterMode;
 
     /**
-     * Preferred way to get value of this field and show this field in web interface. (Class name)
+     * Preferred way to get value of this field and show this field in web
+     * interface. (Class name)
      */
     public final String tdBuilder;
 
@@ -68,20 +77,24 @@ public class FieldDescriptor {
     public final Object[] tdBuilderParams;
 
     /**
-     * Components, to access field values from HQL/SQL. If more then one components supplied, then first component must describe access to base class and other components must
-     * describe access to inherited objects.
+     * Components, to access field values from HQL/SQL. If more then one
+     * components supplied, then first component must describe access to base
+     * class and other components must describe access to inherited objects.
      */
     public final DBSource[] dbSources;
 
     /**
-     * If this field is true, JoinExpression (field.getJoinExpression()) is applied only if this field is sorting/filtering/grouping. TODO: It's seems, what all weak field is a
-     * field with persistent class, differs from root and vice verse.
+     * If this field is true, JoinExpression (field.getJoinExpression()) is
+     * applied only if this field is sorting/filtering/grouping. TODO: It's
+     * seems, what all weak field is a field with persistent class, differs from
+     * root and vice verse.
      */
     public final boolean isWeakJoin;
 
     /**
-     * Ordinal field index in {@link BatchPresentation}. All fields in {@link ClassPresentation} has -1, but {@link BatchPresentation} creates fields with indexes using
-     * createConcretteField.
+     * Ordinal field index in {@link BatchPresentation}. All fields in
+     * {@link ClassPresentation} has -1, but {@link BatchPresentation} creates
+     * fields with indexes using createConcretteField.
      */
     public final int fieldIdx;
 
@@ -100,7 +113,8 @@ public class FieldDescriptor {
      * @param dbSources
      *            Components, to access field values from HQL/SQL.
      * @param isSortable
-     *            Flag, equals true, if this field can be grouped or sorted; false otherwise.
+     *            Flag, equals true, if this field can be grouped or sorted;
+     *            false otherwise.
      * @param filterMode
      *            Field filter mode.
      * @param fieldState
@@ -121,11 +135,13 @@ public class FieldDescriptor {
      * @param dbSource
      *            Component, to access field values from HQL/SQL.
      * @param isSortable
-     *            Flag, equals true, if this field can be grouped or sorted; false otherwise.
+     *            Flag, equals true, if this field can be grouped or sorted;
+     *            false otherwise.
      * @param filterMode
      *            Field filter mode.
      * @param tdBuilder
-     *            Preferred way to get value of this field and show this field in web interface. (Class name)
+     *            Preferred way to get value of this field and show this field
+     *            in web interface. (Class name)
      * @param tdBuilderParams
      *            Parameters, passed to tdBuilder constructor.
      */
@@ -144,15 +160,19 @@ public class FieldDescriptor {
      * @param dbSource
      *            Component, to access field values from HQL/SQL.
      * @param isSortable
-     *            Flag, equals true, if this field can be grouped or sorted; false otherwise.
+     *            Flag, equals true, if this field can be grouped or sorted;
+     *            false otherwise.
      * @param filterMode
      *            Field filter mode.
      * @param tdBuilder
-     *            Preferred way to get value of this field and show this field in web interface. (Class name)
+     *            Preferred way to get value of this field and show this field
+     *            in web interface. (Class name)
      * @param tdBuilderParams
      *            Parameters, passed to tdBuilder constructor.
      * @param isWeakJoin
-     *            If this field is true, JoinExpression (field.getJoinExpression()) is applied only if this field is sorting/filtering/grouping.
+     *            If this field is true, JoinExpression
+     *            (field.getJoinExpression()) is applied only if this field is
+     *            sorting/filtering/grouping.
      */
     public FieldDescriptor(String displayName, String fieldType, DBSource dbSource, boolean isSortable, FieldFilterMode filterMode, String tdBuilder,
             Object[] tdBuilderParams, boolean isWeakJoin) {
@@ -169,11 +189,13 @@ public class FieldDescriptor {
      * @param dbSources
      *            Components, to access field values from HQL/SQL.
      * @param isSortable
-     *            Flag, equals true, if this field can be grouped or sorted; false otherwise.
+     *            Flag, equals true, if this field can be grouped or sorted;
+     *            false otherwise.
      * @param filterMode
      *            Field filter mode.
      * @param tdBuilder
-     *            Preferred way to get value of this field and show this field in web interface. (Class name)
+     *            Preferred way to get value of this field and show this field
+     *            in web interface. (Class name)
      * @param tdBuilderParams
      *            Parameters, passed to tdBuilder constructor.
      */
@@ -192,15 +214,19 @@ public class FieldDescriptor {
      * @param dbSources
      *            Components, to access field values from HQL/SQL.
      * @param isSortable
-     *            Flag, equals true, if this field can be grouped or sorted; false otherwise.
+     *            Flag, equals true, if this field can be grouped or sorted;
+     *            false otherwise.
      * @param filterMode
      *            Field filter mode.
      * @param tdBuilder
-     *            Preferred way to get value of this field and show this field in web interface. (Class name)
+     *            Preferred way to get value of this field and show this field
+     *            in web interface. (Class name)
      * @param tdBuilderParams
      *            Parameters, passed to tdBuilder constructor.
      * @param isWeakJoin
-     *            If this field is true, JoinExpression (field.getJoinExpression()) is applied only if this field is sorting/filtering/grouping.
+     *            If this field is true, JoinExpression
+     *            (field.getJoinExpression()) is applied only if this field is
+     *            sorting/filtering/grouping.
      */
     public FieldDescriptor(String displayName, String fieldType, DBSource[] dbSources, boolean isSortable, FieldFilterMode filterMode,
             String tdBuilder, Object[] tdBuilderParams, boolean isWeakJoin) {
@@ -217,15 +243,19 @@ public class FieldDescriptor {
      * @param dbSources
      *            Components, to access field values from HQL/SQL.
      * @param isSortable
-     *            Flag, equals true, if this field can be grouped or sorted; false otherwise.
+     *            Flag, equals true, if this field can be grouped or sorted;
+     *            false otherwise.
      * @param filterMode
      *            Field filter mode.
      * @param tdBuilder
-     *            Preferred way to get value of this field and show this field in web interface. (Class name)
+     *            Preferred way to get value of this field and show this field
+     *            in web interface. (Class name)
      * @param tdBuilderParams
      *            Parameters, passed to tdBuilder constructor.
      * @param isWeakJoin
-     *            If this field is true, JoinExpression (field.getJoinExpression()) is applied only if this field is sorting/filtering/grouping.
+     *            If this field is true, JoinExpression
+     *            (field.getJoinExpression()) is applied only if this field is
+     *            sorting/filtering/grouping.
      * @param fieldIdx
      *            Ordinal field index in {@link BatchPresentation}.
      * @param fieldState
@@ -264,7 +294,8 @@ public class FieldDescriptor {
     }
 
     /**
-     * Creates {@link FieldDescriptor} instance with same parameters as current, but with provided field index.
+     * Creates {@link FieldDescriptor} instance with same parameters as current,
+     * but with provided field index.
      * 
      * @param fieldIdx
      *            Index, assigned to field.
@@ -276,17 +307,19 @@ public class FieldDescriptor {
     }
 
     /**
-     * Creates removable field for editable field. If this method called not to editable field, null will be returned.
+     * Creates removable field for editable field. If this method called not to
+     * editable field, null will be returned.
      * 
      * @param value
      *            Value, inserted by user to editable field editor.
      * @param fieldIdx
      *            New removable field index.
-     * @return {@link FieldDescriptor} for removable field, constructed based on editable field.
+     * @return {@link FieldDescriptor} for removable field, constructed based on
+     *         editable field.
      */
-    public FieldDescriptor createConcretteEditableField(String value, int fieldIdx) {
+    public FieldDescriptor createConcreteEditableField(String value, int fieldIdx) {
         if (!displayName.startsWith(ClassPresentation.editable_prefix)) {
-            return null;
+            throw new InternalApplicationException("Field '" + displayName + " is not editable");
         }
         return new FieldDescriptor(displayName.replace(ClassPresentation.editable_prefix, ClassPresentation.removable_prefix) + ":" + value,
                 fieldType, dbSources, isSortable, filterMode, tdBuilder, tdBuilderParams, isWeakJoin, fieldIdx, fieldState);
@@ -334,7 +367,8 @@ public class FieldDescriptor {
     }
 
     /**
-     * Load field state from properties file. If property loading fails, return ENABLED.
+     * Load field state from properties file. If property loading fails, return
+     * ENABLED.
      * 
      * @param displayName
      *            Field display name.

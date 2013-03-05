@@ -94,12 +94,15 @@ public class MultiProcessState extends SubProcessState {
             if ("variable".equals(miDiscriminatorType) && miVarName != null) {
                 discriminatorValue = executionContext.getVariable(miVarName);
             } else if ("group".equals(miDiscriminatorType) && miVarName != null) {
-                Group group = executorDAO.getGroup((String) ExpressionEvaluator.evaluateVariable(executionContext, miVarName));
+                Object miVar = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
+                Group group = TypeConversionUtil.convertTo(miVar, Group.class);
+                ;
                 discriminatorValue = getActorCodes(executorDAO.getGroupActors(group));
             } else if ("relation".equals(miDiscriminatorType) && miVarName != null && miRelationDiscriminatorTypeParam != null) {
-                String relationName = (String) ExpressionEvaluator.evaluateVariable(executionContext, miVarName);
-                String rightExecutorName = (String) ExpressionEvaluator.evaluateVariable(executionContext, miRelationDiscriminatorTypeParam);
-                discriminatorValue = getActorCodes(getActorsByRelation(relationName, rightExecutorName));
+                String relationName = (String) ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
+                Object relationParam = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miRelationDiscriminatorTypeParam);
+                Executor rightExecutor = TypeConversionUtil.convertTo(relationParam, Executor.class);
+                discriminatorValue = getActorCodes(getActorsByRelation(relationName, rightExecutor));
             }
         } else {
             for (VariableMapping variableMapping : variableMappings) {
@@ -169,16 +172,9 @@ public class MultiProcessState extends SubProcessState {
         return actorCodes;
     }
 
-    private Set<Actor> getActorsByRelation(String relationName, String rightExecutorName) {
+    private Set<Actor> getActorsByRelation(String relationName, Executor rightExecutor) {
         List<Executor> executorRightList = new ArrayList<Executor>();
-        Executor executor = executorDAO.getExecutor(rightExecutorName);
-        executorRightList.add(executor);
-        // if (executor instanceof Actor) {
-        // BatchPresentation batchPresentation =
-        // AFProfileStrategy.EXECUTOR_DEAFAULT_BATCH_PRESENTATOIN_FACTORY.getDefaultBatchPresentation();
-        // executorRightList.addAll(executorDAO.getExecutorGroups(executor,
-        // batchPresentation));
-        // }
+        executorRightList.add(rightExecutor);
         List<RelationPair> relationPairList = relationDAO.getExecutorsRelationPairsRight(relationName, executorRightList);
         Set<Actor> actorList = new HashSet<Actor>();
         for (RelationPair pair : relationPairList) {

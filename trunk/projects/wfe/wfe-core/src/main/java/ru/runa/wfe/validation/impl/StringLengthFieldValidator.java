@@ -17,35 +17,9 @@
  */
 package ru.runa.wfe.validation.impl;
 
-public class StringLengthFieldValidator extends FieldValidatorSupport {
+import ru.runa.wfe.validation.FieldValidator;
 
-    private boolean doTrim = true;
-    private int maxLength = -1;
-    private int minLength = -1;
-
-    public void setMaxLength(int maxLength) {
-        this.maxLength = maxLength;
-    }
-
-    public int getMaxLength() {
-        return maxLength;
-    }
-
-    public void setMinLength(int minLength) {
-        this.minLength = minLength;
-    }
-
-    public int getMinLength() {
-        return minLength;
-    }
-
-    public void setTrim(boolean trim) {
-        doTrim = trim;
-    }
-
-    public boolean getTrim() {
-        return doTrim;
-    }
+public class StringLengthFieldValidator extends FieldValidator {
 
     @Override
     public void validate() {
@@ -54,17 +28,19 @@ public class StringLengthFieldValidator extends FieldValidatorSupport {
             // use a required validator for these
             return;
         }
-        if (doTrim) {
+        boolean trim = getParameter(boolean.class, "doTrim", true);
+        if (trim) {
             val = val.trim();
             if (val.length() == 0) {
                 return;
             }
         }
-
+        int minLength = getParameter(int.class, "minLength", -1);
+        int maxLength = getParameter(int.class, "maxLength", -1);
         if ((minLength > -1) && (val.length() < minLength)) {
-            addFieldError();
+            addError();
         } else if ((maxLength > -1) && (val.length() > maxLength)) {
-            addFieldError();
+            addError();
         }
     }
 }

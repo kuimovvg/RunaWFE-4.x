@@ -72,13 +72,9 @@ public class ProcessClassPresentation extends ClassPresentation {
         }
     }
 
-    private static class StringVariableDBSource extends DefaultDBSource {
+    private static class StringVariableDBSource extends VariableDBSource {
         public StringVariableDBSource(Class<?> sourceObject) {
-            this(sourceObject, "storableValue");
-        }
-
-        public StringVariableDBSource(Class<?> sourceObject, String valueDBPath) {
-            super(sourceObject, valueDBPath);
+            super(sourceObject);
         }
 
         @Override
@@ -88,10 +84,6 @@ public class ProcessClassPresentation extends ClassPresentation {
             return alias == null ? valueDBPath : "CAST(" + alias + "." + valueDBPath + " AS " + typeName + ")";
         }
 
-        @Override
-        public String getJoinExpression(String alias) {
-            return classNameSQL + ".id=" + alias + ".process";
-        }
     }
 
     private ProcessClassPresentation() {

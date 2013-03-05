@@ -104,8 +104,8 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public Map<Long, Object> getVariableValuesFromProcesses(User user, List<Long> processIds, String variableName) {
-        return getExecutionService().getVariableValuesFromProcesses(user, processIds, variableName);
+    public Map<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName) {
+        return getExecutionService().getVariablesFromProcesses(user, processIds, variableName);
     }
 
     @Override

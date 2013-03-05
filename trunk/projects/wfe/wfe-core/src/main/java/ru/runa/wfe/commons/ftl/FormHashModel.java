@@ -20,7 +20,6 @@ public class FormHashModel extends SimpleHash {
         super(ObjectWrapper.BEANS_WRAPPER);
         this.user = user;
         this.variableProvider = variableProvider;
-        // TODO PATCHED VERSION SubjectHolder.setSubject(subject);
         this.webHelper = webHelper;
     }
 

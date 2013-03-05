@@ -11,6 +11,9 @@ public class FileVariableDescriptor extends FileVariable {
     private String variablePath;
     private transient byte[] localData;
 
+    public FileVariableDescriptor() {
+    }
+
     public FileVariableDescriptor(Variable<?> variable, FileVariable fileVariable) {
         super(fileVariable.getName(), null, fileVariable.getContentType());
         long version = variable.getVersion() != null ? variable.getVersion() + 1 : 0;

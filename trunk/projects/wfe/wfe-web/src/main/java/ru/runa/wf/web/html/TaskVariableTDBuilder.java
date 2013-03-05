@@ -19,11 +19,14 @@ package ru.runa.wf.web.html;
 
 import org.apache.ecs.html.TD;
 
+import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TDBuilder.Env.IdentifiableExtractor;
+import ru.runa.wf.web.ftl.method.ViewUtil;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.var.dto.WfVariable;
 
 public class TaskVariableTDBuilder implements TDBuilder {
 
@@ -38,10 +41,10 @@ public class TaskVariableTDBuilder implements TDBuilder {
         }
     }
 
-    String varName = null;
+    private String variableName = null;
 
     public TaskVariableTDBuilder(String varName) {
-        this.varName = varName;
+        variableName = varName;
     }
 
     @Override
@@ -54,9 +57,10 @@ public class TaskVariableTDBuilder implements TDBuilder {
 
     @Override
     public String getValue(Object object, Env env) {
-        Object val = env.getTaskVariable(object, new ProcessIdExtractor(), varName);
-        if (val != null) {
-            return val.toString();
+        WfVariable variable = env.getProcessVariable(object, new ProcessIdExtractor(), variableName);
+        if (variable.getValue() != null) {
+            WfTask task = (WfTask) object;
+            return ViewUtil.getVariableValueHtml(env.getUser(), new StrutsWebHelper(env.getPageContext()), task.getProcessId(), variable);
         }
         return "";
     }

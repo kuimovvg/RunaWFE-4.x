@@ -109,7 +109,7 @@ public class OrgFunctionHelper {
         String[] parameterNames = orgFunction.getParameterNames();
         Object[] parameters = new Object[parameterNames.length];
         for (int i = 0; i < parameterNames.length; i++) {
-            parameters[i] = ExpressionEvaluator.evaluateVariable(variableProvider, parameterNames[i]);
+            parameters[i] = ExpressionEvaluator.evaluateVariableNotNull(variableProvider, parameterNames[i]);
         }
         return parameters;
     }

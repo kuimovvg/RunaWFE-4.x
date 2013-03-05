@@ -17,19 +17,21 @@
  */
 package ru.runa.wfe.validation.impl;
 
-public class RequiredFieldValidator extends FieldValidatorSupport {
+import ru.runa.wfe.validation.FieldValidator;
+
+public class RequiredFieldValidator extends FieldValidator {
 
     @Override
     public void validate() {
         Object value = getFieldValue();
         if (value == null) {
-            addFieldError();
+            addError();
             return;
         }
         if (value instanceof String) {
             String s = (String) value;
             if (s.length() == 0) {
-                addFieldError();
+                addError();
             }
         }
     }
