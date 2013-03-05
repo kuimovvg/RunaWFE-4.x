@@ -21,29 +21,48 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.hibernate.criterion.Criterion;
-
 import ru.runa.wfe.presentation.hibernate.QueryParameter;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 public abstract class FilterCriteria implements Serializable {
     private static final long serialVersionUID = 1L;
-    protected String[] filterTemplates;
-    protected int templatesCount;
+    private String[] filterTemplates;
+    private int templatesCount;
+
+    /**
+     * For web services only
+     */
+    protected FilterCriteria() {
+    }
+
+    protected FilterCriteria(String[] filterTemplates) {
+        Preconditions.checkNotNull(filterTemplates);
+        this.filterTemplates = filterTemplates;
+        templatesCount = filterTemplates.length;
+    }
+
+    protected FilterCriteria(int templatesCount) {
+        this.templatesCount = templatesCount;
+        filterTemplates = new String[templatesCount];
+        for (int i = 0; i < filterTemplates.length; i++) {
+            filterTemplates[i] = "";
+        }
+    }
 
     public int getTemplatesCount() {
         return templatesCount;
     }
 
-    protected abstract void validate(String[] newTemplates) throws FilterFormatException;
-
     public String[] getFilterTemplates() {
         return filterTemplates;
     }
 
-    public void setFilterTemplates(String[] filterTemplates) {
-        this.filterTemplates = filterTemplates;
+    protected void validate(String[] newTemplates) throws FilterFormatException {
+        if (newTemplates.length != templatesCount) {
+            throw new IllegalArgumentException("Incorrect parameters count");
+        }
     }
 
     public void applyFilterTemplates(String[] filterTemplates) throws FilterFormatException {
@@ -52,11 +71,6 @@ public abstract class FilterCriteria implements Serializable {
     }
 
     public abstract String buildWhereCondition(String fieldName, String persistetObjectQueryAlias, Map<String, QueryParameter> placeholders);
-
-    public abstract void buildWhereClausePart(StringBuilder query, String persistetObjectFieldName, String persistetObjectQueryAlias,
-            Map<String, Object> queryNamedParameterNameValueMap);
-
-    public abstract Criterion buildCriterion(String fieldName);
 
     @Override
     public boolean equals(Object obj) {

@@ -41,7 +41,7 @@ public abstract class AbstractActorVarTag implements VarTag {
             log.warn("Vartag variable is not set: " + varName);
             return "<p class='error'>null</p>";
         }
-        Long code = TypeConversionUtil.convertTo(var, Long.class);
+        Long code = TypeConversionUtil.convertTo(Long.class, var);
         Actor actor = getActor(user, code);
         return actorToString(actor);
     }

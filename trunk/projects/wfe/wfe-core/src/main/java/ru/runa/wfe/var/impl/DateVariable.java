@@ -33,12 +33,7 @@ import ru.runa.wfe.var.Variable;
 @Entity
 @DiscriminatorValue(value = "D")
 public class DateVariable extends Variable<Date> {
-    protected Date object;
-
-    @Override
-    public boolean isStorable(Object value) {
-        return value instanceof Date;
-    }
+    private Date object;
 
     @Column(name = "DATEVALUE")
     @Override

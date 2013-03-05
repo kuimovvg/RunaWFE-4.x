@@ -19,36 +19,10 @@ package ru.runa.wfe.presentation.filter;
 
 import java.util.Map;
 
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
-
 import ru.runa.wfe.presentation.hibernate.QueryParameter;
 
-public class AnywhereStringFilterCriteria extends FilterCriteria {
+public class AnywhereStringFilterCriteria extends StringFilterCriteria {
     private static final long serialVersionUID = -1849845246809052465L;
-
-    public AnywhereStringFilterCriteria() {
-        this(new String[] { "" });
-    }
-
-    public AnywhereStringFilterCriteria(String[] filterTemplates) {
-        this.filterTemplates = filterTemplates;
-        templatesCount = 1;
-    }
-
-    @Override
-    protected void validate(String[] newTemplates) throws FilterFormatException {
-        if (newTemplates.length != templatesCount) {
-            throw new IllegalArgumentException("Incorrect parameters count");
-        }
-    }
-
-    @Override
-    public Criterion buildCriterion(String fieldName) {
-        Criterion criterion = Restrictions.like(fieldName, filterTemplates[0], MatchMode.ANYWHERE);
-        return criterion;
-    }
 
     @Override
     public String buildWhereCondition(String fieldName, String persistetObjectQueryAlias, Map<String, QueryParameter> placeholders) {
@@ -57,15 +31,8 @@ public class AnywhereStringFilterCriteria extends FilterCriteria {
         whereStringBuilder.append(".").append(fieldName).append(" as char(50))");
         whereStringBuilder.append(" like :").append(alias);
         whereStringBuilder.append(" ");
-        placeholders.put(alias, new QueryParameter(alias, "%" + filterTemplates[0] + "%"));
+        placeholders.put(alias, new QueryParameter(alias, "%" + getFilterTemplates()[0] + "%"));
         return whereStringBuilder.toString();
     }
 
-    @Override
-    public void buildWhereClausePart(StringBuilder query, String persistetObjectFieldName, String persistetObjectQueryAlias,
-            Map<String, Object> queryNamedParameterNameValueMap) {
-        query.append(persistetObjectQueryAlias).append(".").append(persistetObjectFieldName);
-        query.append(" like :").append(persistetObjectFieldName.replaceAll("\\.", ""));
-        queryNamedParameterNameValueMap.put(persistetObjectFieldName.replaceAll("\\.", ""), "%" + filterTemplates[0] + "%");
-    }
 }

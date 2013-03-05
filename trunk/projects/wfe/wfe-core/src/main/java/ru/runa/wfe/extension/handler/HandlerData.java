@@ -76,12 +76,12 @@ public class HandlerData {
 
     public <T> T getInputParam(Class<T> clazz, String name) {
         Object object = getInputParam(name);
-        return TypeConversionUtil.convertTo(object, clazz);
+        return TypeConversionUtil.convertTo(clazz, object);
     }
 
     public <T> T getInputParam(Class<T> clazz, String name, T defaultValue) {
         Object object = getInputParam(name, defaultValue);
-        return TypeConversionUtil.convertTo(object, clazz);
+        return TypeConversionUtil.convertTo(clazz, object);
     }
 
     public IVariableProvider getVariableProvider() {

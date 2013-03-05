@@ -32,7 +32,7 @@ public class SQLFunction extends GetActorsOrgFunctionBase {
 
     @Override
     protected List<Long> getActorCodes(Object... parameters) {
-        String sql = TypeConversionUtil.convertTo(parameters[0], String.class);
+        String sql = TypeConversionUtil.convertTo(String.class, parameters[0]);
         return SQLFunctionDAO.getActorCodes(sql, ArraysCommons.remove(parameters, 0));
     }
 }

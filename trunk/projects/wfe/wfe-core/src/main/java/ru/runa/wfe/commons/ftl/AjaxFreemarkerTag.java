@@ -59,7 +59,7 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
                 o = map.get(varName)[0];
             }
         }
-        return TypeConversionUtil.convertTo(o, clazz);
+        return TypeConversionUtil.convertTo(clazz, o);
     }
 
     protected abstract String renderRequest() throws TemplateModelException;

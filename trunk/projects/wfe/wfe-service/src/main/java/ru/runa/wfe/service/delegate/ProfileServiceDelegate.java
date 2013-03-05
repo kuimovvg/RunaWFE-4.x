@@ -38,22 +38,22 @@ public class ProfileServiceDelegate extends EJB3Delegate implements ProfileServi
     }
 
     @Override
-    public void setActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
-        getProfileService().setActiveBatchPresentation(user, batchPresentationId, newActiveBatchName);
+    public Profile setActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
+        return getProfileService().setActiveBatchPresentation(user, batchPresentationId, newActiveBatchName);
     }
 
     @Override
-    public void deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
-        getProfileService().deleteBatchPresentation(user, batchPresentation);
+    public Profile deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
+        return getProfileService().deleteBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public Profile createBatchPresentation(User user, BatchPresentation batchPresentation) {
         return getProfileService().createBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public BatchPresentation saveBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public Profile saveBatchPresentation(User user, BatchPresentation batchPresentation) {
         return getProfileService().saveBatchPresentation(user, batchPresentation);
     }
 

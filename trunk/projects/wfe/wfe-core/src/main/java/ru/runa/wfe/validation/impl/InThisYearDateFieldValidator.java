@@ -10,7 +10,7 @@ public class InThisYearDateFieldValidator extends FieldValidator {
 
     @Override
     public void validate() {
-        Date checkValue = TypeConversionUtil.convertTo(getFieldValue(), Date.class);
+        Date checkValue = TypeConversionUtil.convertTo(Date.class, getFieldValue());
         if (checkValue == null) {
             // Use required validator for this
             return;

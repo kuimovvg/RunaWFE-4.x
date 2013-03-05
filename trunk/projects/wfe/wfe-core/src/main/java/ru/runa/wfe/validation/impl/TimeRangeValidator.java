@@ -26,8 +26,8 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 public class TimeRangeValidator extends AbstractRangeValidator<Date> {
 
     private Date getParameter(String name) {
-        Calendar baseDate = TypeConversionUtil.convertTo(getFieldValue(), Calendar.class);
-        Calendar param = TypeConversionUtil.convertTo(getParameter(name), Calendar.class);
+        Calendar baseDate = TypeConversionUtil.convertTo(Calendar.class, getFieldValue());
+        Calendar param = TypeConversionUtil.convertTo(Calendar.class, getParameter(name));
         CalendarUtil.setDateFromCalendar(param, baseDate);
         return param.getTime();
     }

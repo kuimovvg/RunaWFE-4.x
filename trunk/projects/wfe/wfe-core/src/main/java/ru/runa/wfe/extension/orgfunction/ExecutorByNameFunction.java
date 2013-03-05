@@ -38,7 +38,7 @@ public class ExecutorByNameFunction extends OrgFunction {
     public List<? extends Executor> getExecutors(Object... parameters) throws OrgFunctionException {
         List<Executor> result = Lists.newArrayListWithExpectedSize(parameters.length);
         for (int i = 0; i < parameters.length; i++) {
-            String executorName = TypeConversionUtil.convertTo(parameters[i], String.class);
+            String executorName = TypeConversionUtil.convertTo(String.class, parameters[i]);
             result.add(executorDAO.getExecutor(executorName));
         }
         return result;

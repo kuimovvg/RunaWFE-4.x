@@ -209,7 +209,7 @@ public class FormulaActionHandlerOperations {
             }
             return CalendarUtil.format(date, CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
         }
-        return TypeConversionUtil.convertTo(o, c);
+        return TypeConversionUtil.convertTo(c, o);
     }
 
     public Object dateFunction(Object p) {

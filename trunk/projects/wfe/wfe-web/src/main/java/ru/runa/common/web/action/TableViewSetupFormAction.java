@@ -42,7 +42,6 @@ import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.presentation.FieldState;
 import ru.runa.wfe.presentation.filter.FilterCriteria;
 import ru.runa.wfe.presentation.filter.FilterFormatException;
-import ru.runa.wfe.service.ProfileService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 
@@ -164,10 +163,8 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             tableViewSetupForm = (TableViewSetupForm) form;
             BatchPresentation batchPresentation = profile.getActiveBatchPresentation(tableViewSetupForm.getBatchPresentationId());
             applyBatchPresentation(batchPresentation, tableViewSetupForm);
-            ProfileService profileService = Delegates.getProfileService();
-            BatchPresentation saved = profileService.saveBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
-            profile.deleteBatchPresentation(batchPresentation);
-            profile.addBatchPresentation(saved);
+            profile = Delegates.getProfileService().saveBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
+            ProfileHttpSessionHelper.setProfile(profile, request.getSession());
         } catch (Exception e) {
             ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);
@@ -180,18 +177,16 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
-            BatchPresentation presentation = profile.getActiveBatchPresentation(tableViewSetupForm.getBatchPresentationId());
+            BatchPresentation sourceBatchPresentation = profile.getActiveBatchPresentation(tableViewSetupForm.getBatchPresentationId());
             String newName = tableViewSetupForm.getSaveAsBatchPresentationName();
             if (newName == null || newName.length() == 0) {
                 newName = DEFAULT_VIEW_SETUP_NAME;
             }
-            BatchPresentation batchPresentationClone = presentation.clone();
-            batchPresentationClone.setName(newName);
-            applyBatchPresentation(batchPresentationClone, tableViewSetupForm);
-            ProfileService profileService = Delegates.getProfileService();
-            profileService.createBatchPresentation(Commons.getUser(request.getSession()), batchPresentationClone);
-            profile.addBatchPresentation(batchPresentationClone);
-            profile.setActiveBatchPresentation(batchPresentationClone.getCategory(), batchPresentationClone.getName());
+            BatchPresentation batchPresentation = sourceBatchPresentation.clone();
+            batchPresentation.setName(newName);
+            applyBatchPresentation(batchPresentation, tableViewSetupForm);
+            profile = Delegates.getProfileService().createBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
+            ProfileHttpSessionHelper.setProfile(profile, request.getSession());
         } catch (Exception e) {
             ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);
@@ -205,9 +200,8 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
             BatchPresentation batchPresentation = profile.getActiveBatchPresentation(tableViewSetupForm.getBatchPresentationId());
-            ProfileService profileService = Delegates.getProfileService();
-            profileService.deleteBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
-            profile.deleteBatchPresentation(batchPresentation);
+            profile = Delegates.getProfileService().deleteBatchPresentation(Commons.getUser(request.getSession()), batchPresentation);
+            ProfileHttpSessionHelper.setProfile(profile, request.getSession());
         } catch (Exception e) {
             ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);

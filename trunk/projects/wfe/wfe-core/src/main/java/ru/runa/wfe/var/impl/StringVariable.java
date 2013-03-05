@@ -21,32 +21,24 @@
  */
 package ru.runa.wfe.var.impl;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import ru.runa.wfe.var.Variable;
 
 @Entity
 @DiscriminatorValue(value = "S")
 public class StringVariable extends Variable<String> {
-    public static final int MAX_STRING_SIZE = 1024;
 
-    protected String object;
-
-    @Override
-    public boolean isStorable(Object value) {
-        return (value instanceof String) && ((String) value).length() < MAX_STRING_SIZE;
-    }
-
-    @Column(name = "STRINGVALUE", length = MAX_STRING_SIZE)
+    @Transient
     @Override
     public String getStorableValue() {
-        return object;
+        return getStringValue();
     }
 
     @Override
-    public void setStorableValue(String object) {
-        this.object = object;
+    protected void setStorableValue(String object) {
     }
+
 }

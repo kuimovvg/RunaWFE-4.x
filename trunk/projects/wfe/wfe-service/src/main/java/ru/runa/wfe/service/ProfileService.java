@@ -21,16 +21,48 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 
+/**
+ * Service to operate with actor profiles.
+ * 
+ * @author dofs
+ * @since 4.0
+ */
 public interface ProfileService {
 
+    /**
+     * Loads profile
+     */
     public Profile getProfile(User user);
 
-    public void setActiveBatchPresentation(User user, String batchPresentationId, String newName);
+    /**
+     * Sets specified by category and name batch presentation as active for this
+     * category.
+     * 
+     * @return updated profile
+     */
+    public Profile setActiveBatchPresentation(User user, String batchPresentationId, String newName);
 
-    public void deleteBatchPresentation(User user, BatchPresentation batchPresentation);
+    /**
+     * 
+     * @param user
+     * @param batchPresentation
+     * @return updated profile
+     */
+    public Profile deleteBatchPresentation(User user, BatchPresentation batchPresentation);
 
-    public BatchPresentation createBatchPresentation(User user, BatchPresentation batchPresentation);
+    /**
+     * 
+     * @param user
+     * @param batchPresentation
+     * @return updated profile
+     */
+    public Profile createBatchPresentation(User user, BatchPresentation batchPresentation);
 
-    public BatchPresentation saveBatchPresentation(User user, BatchPresentation batchPresentation);
+    /**
+     * Saves batch presentation.
+     * 
+     * @return updated profile
+     */
+    public Profile saveBatchPresentation(User user, BatchPresentation batchPresentation);
 
 }

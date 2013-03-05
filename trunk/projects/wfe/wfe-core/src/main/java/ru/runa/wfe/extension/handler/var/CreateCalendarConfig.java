@@ -60,7 +60,7 @@ public class CreateCalendarConfig {
             }
         };
         Object value = ExpressionEvaluator.evaluateVariableNotNull(delegableVariableProvider, operation.expression);
-        return TypeConversionUtil.convertTo(value, Integer.class).toString();
+        return TypeConversionUtil.convertTo(Integer.class, value).toString();
     }
 
     public static class CalendarOperation {

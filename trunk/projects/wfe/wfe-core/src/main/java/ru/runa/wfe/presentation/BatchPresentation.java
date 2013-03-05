@@ -409,7 +409,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
         FilterCriteria filterCriteria = getFields().filters.get(fieldId);
         if (filterCriteria == null) {
             String fieldType = getAllFields()[fieldId].fieldType;
-            filterCriteria = FilterCriteriaFactory.getFilterCriteria(fieldType);
+            filterCriteria = FilterCriteriaFactory.createFilterCriteria(fieldType);
         }
         return filterCriteria;
     }

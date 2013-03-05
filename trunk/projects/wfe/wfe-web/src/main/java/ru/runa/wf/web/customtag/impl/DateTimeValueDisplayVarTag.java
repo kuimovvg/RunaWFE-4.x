@@ -33,6 +33,6 @@ public class DateTimeValueDisplayVarTag implements VarTag {
         if (var == null) {
             return "<p class='error'>null</p>";
         }
-        return CalendarUtil.formatDateTime(TypeConversionUtil.convertTo(var, Date.class));
+        return CalendarUtil.formatDateTime(TypeConversionUtil.convertTo(Date.class, var));
     }
 }

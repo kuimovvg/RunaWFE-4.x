@@ -32,7 +32,7 @@ import ru.runa.wfe.presentation.filter.FilterCriteriaFactory;
 public class FilterParserImpl implements FiltersParser {
 
     private FilterCriteria createFilterCriteria(String fieldType) {
-        return FilterCriteriaFactory.getFilterCriteria(fieldType);
+        return FilterCriteriaFactory.createFilterCriteria(fieldType);
     }
 
     @Override

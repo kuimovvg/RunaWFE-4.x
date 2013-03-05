@@ -44,7 +44,7 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
         if (i < arguments.size()) {
             paramValue = BeansWrapper.getDefaultInstance().unwrap(arguments.get(i));
         }
-        return TypeConversionUtil.convertTo(paramValue, clazz);
+        return TypeConversionUtil.convertTo(clazz, paramValue);
     }
 
 }

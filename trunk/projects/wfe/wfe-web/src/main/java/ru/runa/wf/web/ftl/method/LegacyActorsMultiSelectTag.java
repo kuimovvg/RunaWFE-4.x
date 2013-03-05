@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.presentation.filter.FilterCriteria;
-import ru.runa.wfe.presentation.filter.FilterCriteriaFactory;
 import ru.runa.wfe.presentation.filter.StringFilterCriteria;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -108,11 +106,7 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
             batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
             if (hint.length() > 0) {
                 int filterIndex = byLogin ? 0 : 1;
-                Map<Integer, FilterCriteria> filterFieldsMap = batchPresentation.getFilteredFields();
-                StringFilterCriteria filterCriteriaEnd = (StringFilterCriteria) FilterCriteriaFactory.getFilterCriteria(batchPresentation,
-                        filterIndex);
-                filterCriteriaEnd.applyFilterTemplates(new String[] { hint + "%" });
-                filterFieldsMap.put(filterIndex, filterCriteriaEnd);
+                batchPresentation.getFilteredFields().put(filterIndex, new StringFilterCriteria(hint + "%"));
             }
             // thid method used instead of getActors due to lack paging in
             // that

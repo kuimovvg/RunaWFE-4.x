@@ -26,7 +26,6 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.BatchPresentationForm;
-import ru.runa.wfe.service.ProfileService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 
@@ -44,10 +43,10 @@ public class ChangeActiveBatchPresentationAction extends ActionBase {
         BatchPresentationForm batchPresentationForm = (BatchPresentationForm) form;
         Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
         try {
-            ProfileService profileService = Delegates.getProfileService();
-            profileService.setActiveBatchPresentation(getLoggedUser(request), batchPresentationForm.getBatchPresentationId(),
-                    batchPresentationForm.getBatchPresentationName());
-            profile.setActiveBatchPresentation(batchPresentationForm.getBatchPresentationId(), batchPresentationForm.getBatchPresentationName());
+            String category = batchPresentationForm.getBatchPresentationId();
+            String name = batchPresentationForm.getBatchPresentationName();
+            profile = Delegates.getProfileService().setActiveBatchPresentation(getLoggedUser(request), category, name);
+            ProfileHttpSessionHelper.setProfile(profile, request.getSession());
         } catch (Exception e) {
             addError(request, e);
         }
