@@ -206,7 +206,7 @@ public abstract class Variable<T extends Object> {
             string = String.valueOf(value);
         }
         if (string.length() > MAX_STRING_SIZE) {
-            string = string.substring(0, MAX_STRING_SIZE - 1);
+            string = string.substring(0, MAX_STRING_SIZE);
         }
         return string;
     }
