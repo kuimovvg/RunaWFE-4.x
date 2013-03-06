@@ -21,13 +21,12 @@
  */
 package ru.runa.wfe.var.converter;
 
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.var.Converter;
 import ru.runa.wfe.var.Variable;
 
 public class BooleanToStringConverter implements Converter {
     private static final long serialVersionUID = 1L;
-    public static final String TRUE_TEXT = "T";
-    public static final String FALSE_TEXT = "F";
 
     @Override
     public boolean supports(Object value) {
@@ -36,19 +35,17 @@ public class BooleanToStringConverter implements Converter {
 
     @Override
     public Object convert(Variable<?> variable, Object o) {
-        String convertedValue = FALSE_TEXT;
-        if (((Boolean) o).booleanValue()) {
-            convertedValue = TRUE_TEXT;
-        }
-        return convertedValue;
+        return ((Boolean) o).toString();
     }
 
     @Override
     public Object revert(Object o) {
-        Boolean revertedValue = Boolean.FALSE;
-        if (TRUE_TEXT.equals(o)) {
-            revertedValue = Boolean.TRUE;
+        if ("true".equals(o)) {
+            return Boolean.TRUE;
         }
-        return revertedValue;
+        if (SystemProperties.isV3CompatibilityMode() && "T".equals(o)) {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 }

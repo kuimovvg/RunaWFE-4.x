@@ -180,12 +180,12 @@ public abstract class Variable<T extends Object> {
         } else {
             newStorableValue = newValue;
         }
+        setStringValue(newValue != null ? toString(newValue) : null);
         Object oldValue = getStorableValue();
         if (converter != null && oldValue != null) {
             oldValue = converter.revert(oldValue);
         }
         setStorableValue((T) newStorableValue);
-        setStringValue(newValue != null ? toString(newValue) : null);
         addLog(executionContext, oldValue, newValue);
     }
 
