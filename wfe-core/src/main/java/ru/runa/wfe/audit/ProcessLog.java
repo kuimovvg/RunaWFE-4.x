@@ -51,7 +51,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
-import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.base.Preconditions;
@@ -194,16 +193,18 @@ public abstract class ProcessLog implements IAttributes, Serializable {
     }
 
     protected String wrapNodeId(String id) {
-        if (SystemProperties.isV3CompatibilityMode() && (id.startsWith(" ") || id.endsWith(" "))) {
-            return "!" + id + "!";
-        }
+        // if (SystemProperties.isV3CompatibilityMode() && (id.startsWith(" ")
+        // || id.endsWith(" "))) {
+        // return "!" + id + "!";
+        // }
         return id;
     }
 
     protected String unwrapNodeId(String id) {
-        if (SystemProperties.isV3CompatibilityMode() && id != null && id.startsWith("!") && id.endsWith("!")) {
-            return id.substring(1, id.length() - 1);
-        }
+        // if (SystemProperties.isV3CompatibilityMode() && id != null &&
+        // id.startsWith("!") && id.endsWith("!")) {
+        // return id.substring(1, id.length() - 1);
+        // }
         return id;
     }
 }
