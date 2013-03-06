@@ -29,4 +29,14 @@ public class NumberRangeFieldValidator extends AbstractRangeValidator<Number> {
         return super.getComparableValue();
     }
 
+    @Override
+    protected Number getMinComparatorValue() {
+        return getParameterNotNull(Double.class, "min");
+    }
+
+    @Override
+    protected Number getMaxComparatorValue() {
+        return getParameterNotNull(Double.class, "max");
+    }
+
 }

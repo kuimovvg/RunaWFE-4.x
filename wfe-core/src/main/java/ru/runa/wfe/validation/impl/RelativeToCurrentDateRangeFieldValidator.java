@@ -13,14 +13,17 @@ public class RelativeToCurrentDateRangeFieldValidator extends AbstractRangeValid
     @Autowired
     private BusinessCalendar businessCalendar;
 
+    protected boolean useBusinessCalendar() {
+        return getParameter(boolean.class, "useBusinessCalendar", false);
+    }
+
     private Date getParameter(String name, boolean add) {
         int daysCount = getParameter(int.class, name, 0);
         if (!add) {
             daysCount = -1 * daysCount - 1;
         }
         Calendar current = Calendar.getInstance();
-        boolean useBusinessCalendar = getParameter(boolean.class, "useBusinessCalendar", false);
-        if (useBusinessCalendar) {
+        if (useBusinessCalendar()) {
             Date date = businessCalendar.add(new Date(), new Duration(daysCount + " business days"));
             current.setTime(date);
         } else {
