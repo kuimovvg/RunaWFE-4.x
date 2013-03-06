@@ -20,6 +20,7 @@ package ru.runa.wf.web.customtag;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.IVariableProvider;
 
 /**
  * @since 1.0
@@ -27,5 +28,5 @@ import ru.runa.wfe.user.User;
  */
 @Deprecated
 public interface VarTag {
-    public String getHtml(User user, String varName, Object varValue, PageContext pageContext) throws Exception;
+    public String getHtml(User user, String varName, Object varValue, PageContext pageContext, IVariableProvider variableProvider) throws Exception;
 }

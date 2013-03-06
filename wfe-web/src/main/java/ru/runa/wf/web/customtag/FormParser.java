@@ -74,7 +74,7 @@ public class FormParser {
             try {
                 className = BackCompatibilityClassNames.getClassName(className);
                 VarTag customTag = (VarTag) ApplicationContextFactory.createAutowiredBean(className);
-                replacement = customTag.getHtml(user, varName, variableProvider.getValue(varName), pageContext);
+                replacement = customTag.getHtml(user, varName, variableProvider.getValue(varName), pageContext, variableProvider);
             } catch (Exception e) {
                 log.warn("Exception processing vartags", e);
                 replacement = "<p class='error'>" + e.getMessage() + "</p>";

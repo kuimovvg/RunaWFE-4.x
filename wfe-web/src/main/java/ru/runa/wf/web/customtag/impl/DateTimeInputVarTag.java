@@ -24,6 +24,7 @@ import javax.servlet.jsp.PageContext;
 import ru.runa.wf.web.customtag.VarTag;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.IVariableProvider;
 
 /**
  * Created 12.05.2005
@@ -32,7 +33,7 @@ import ru.runa.wfe.user.User;
 public class DateTimeInputVarTag implements VarTag {
 
     @Override
-    public String getHtml(User user, String varName, Object var, PageContext pageContext) throws Exception {
+    public String getHtml(User user, String varName, Object var, PageContext pageContext, IVariableProvider variableProvider) throws Exception {
         String html = "<input type=\"text\" class=\"inputDateTime\" name=\"" + varName + "\" style=\"width: 150px;\" ";
         if (var instanceof Date) {
             html += "value=\"" + CalendarUtil.formatDateTime((Date) var) + "\" ";
