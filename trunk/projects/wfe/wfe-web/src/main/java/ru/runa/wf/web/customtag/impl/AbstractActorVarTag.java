@@ -27,6 +27,7 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.IVariableProvider;
 
 /**
  * Created on 09.05.2005
@@ -36,7 +37,7 @@ public abstract class AbstractActorVarTag implements VarTag {
     private static final Log log = LogFactory.getLog(AbstractActorVarTag.class);
 
     @Override
-    final public String getHtml(User user, String varName, Object var, PageContext pageContext) throws Exception {
+    final public String getHtml(User user, String varName, Object var, PageContext pageContext, IVariableProvider variableProvider) throws Exception {
         if (var == null) {
             log.warn("Vartag variable is not set: " + varName);
             return "<p class='error'>null</p>";

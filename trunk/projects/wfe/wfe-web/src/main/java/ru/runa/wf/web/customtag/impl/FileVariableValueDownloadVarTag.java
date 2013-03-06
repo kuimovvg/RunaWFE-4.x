@@ -17,7 +17,7 @@
  */
 package ru.runa.wf.web.customtag.impl;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.jsp.PageContext;
 
@@ -26,11 +26,13 @@ import org.apache.ecs.html.A;
 
 import ru.runa.common.web.Commons;
 import ru.runa.wf.web.customtag.VarTag;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.IVariableProvider;
+
+import com.google.common.collect.Maps;
 
 /**
  * Created on 14.06.2005
@@ -39,20 +41,16 @@ import ru.runa.wfe.var.FileVariable;
 public class FileVariableValueDownloadVarTag implements VarTag {
 
     @Override
-    public String getHtml(User user, String varName, Object var, PageContext pageContext) {
+    public String getHtml(User user, String varName, Object var, PageContext pageContext, IVariableProvider variableProvider) {
         if (pageContext == null || var == null) {
             return "";
-        }
-        String processIdParam = pageContext.getRequest().getParameter("id");
-        if (processIdParam == null) {
-            throw new InternalApplicationException("id param was not passed correctly to FileVariableValueDownloadVarTag");
         }
         FileVariable fileVariable = TypeConversionUtil.convertTo(FileVariable.class, var);
         A ahref = new A();
         ahref.addElement(new StringElement(fileVariable.getName()));
 
-        HashMap<String, String> parametersMap = new HashMap<String, String>();
-        parametersMap.put("id", processIdParam);
+        Map<String, Object> parametersMap = Maps.newHashMap();
+        parametersMap.put("id", variableProvider.getProcessId());
         parametersMap.put("variableName", varName);
         ahref.setHref(Commons.getActionUrl("/variableDownloader", parametersMap, pageContext, PortletUrlType.Render));
         return ahref.toString();
