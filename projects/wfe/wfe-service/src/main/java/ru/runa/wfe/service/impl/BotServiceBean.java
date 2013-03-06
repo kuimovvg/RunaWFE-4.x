@@ -34,6 +34,7 @@ import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.user.User;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -200,9 +201,9 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ZipOutputStream zipStream = new ZipOutputStream(baos);
             zipStream.putNextEntry(new ZipEntry("botstation"));
-            zipStream.write(station.getName().getBytes());
+            zipStream.write(station.getName().getBytes(Charsets.UTF_8));
             zipStream.write('\n');
-            zipStream.write(station.getAddress().getBytes());
+            zipStream.write(station.getAddress().getBytes(Charsets.UTF_8));
             for (Bot bot : getBots(user, station.getId())) {
                 zipStream.putNextEntry(new ZipEntry(bot.getUsername() + ".bot"));
                 byte[] botArchive = exportBot(user, bot);
@@ -251,7 +252,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
             BotStation station = null;
             while ((entry = zin.getNextEntry()) != null) {
                 if (entry.getName().equals("botstation")) {
-                    BufferedReader r = new BufferedReader(new InputStreamReader(zin));
+                    BufferedReader r = new BufferedReader(new InputStreamReader(zin, Charsets.UTF_8));
                     String name = r.readLine();
                     String addr = r.readLine();
                     station = getBotStationByName(name);
