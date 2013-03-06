@@ -28,13 +28,9 @@ public abstract class AbstractRangeValidator<T extends Object> extends FieldVali
         return (Comparable<T>) getFieldValue();
     }
 
-    protected T getMinComparatorValue() {
-        return (T) getParameterNotNull(Object.class, "min");
-    }
+    protected abstract T getMinComparatorValue();
 
-    protected T getMaxComparatorValue() {
-        return (T) getParameterNotNull(Object.class, "max");
-    }
+    protected abstract T getMaxComparatorValue();
 
     @Override
     public void validate() {
