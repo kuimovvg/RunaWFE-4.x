@@ -112,7 +112,9 @@ public class XmlUtils {
     public static byte[] save(Node node) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            XMLWriter writer = new XMLWriter(baos, OutputFormat.createPrettyPrint());
+            OutputFormat outputFormat = OutputFormat.createPrettyPrint();
+            outputFormat.setTrimText(false);
+            XMLWriter writer = new XMLWriter(baos, outputFormat);
             writer.write(node);
             return baos.toByteArray();
         } catch (IOException e) {
