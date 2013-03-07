@@ -88,6 +88,10 @@
 			<groupId>jcifs</groupId>
 			<artifactId>jcifs</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>jcifs</groupId>
+			<artifactId>jcifs-ext</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>
