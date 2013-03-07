@@ -48,7 +48,7 @@ public class Expr {
                 p = formatParam(params[i]);
             } else {
                 p = "NULL";
-                LogFactory.getLog(getClass()).warn("Null param [" + i + "] in " + this);
+                LogFactory.getLog(getClass()).warn("Null param [" + i + "] in " + result);
             }
             result = result.replaceAll("\\$" + i, Matcher.quoteReplacement(p));
         }
