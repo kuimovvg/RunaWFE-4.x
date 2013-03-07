@@ -24,13 +24,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
-
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.InvalidSessionException;
-import ru.runa.common.web.Messages;
 
 /**
  * This filter checks that the user session is active.
@@ -47,21 +42,18 @@ public class HTTPSessionFilter extends HTTPFilterBase {
             try {
                 Commons.getUser(request.getSession());
             } catch (InvalidSessionException e) {
-                ActionMessages errors = new ActionMessages();
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_SESSION_INVALID));
-                request.setAttribute(Globals.ERROR_KEY, errors);
-                request.getRequestDispatcher("start.do").forward(request, response);
+                forwardToLoginPage(request, response, e);
                 return;
             }
         }
-        try {
-            chain.doFilter(request, response);
-        } catch (ServletException e) {
-            if (e.getRootCause() instanceof InvalidSessionException) {
-                log.warn("session expired while accessing " + query);
-            }
-            throw e;
-        }
+        // try { TODO test graceful session invalidation in web
+        chain.doFilter(request, response);
+        // } catch (ServletException e) {
+        // if (e.getRootCause() instanceof InvalidSessionException) {
+        // log.warn("session expired while accessing " + query);
+        // }
+        // throw e;
+        // }
     }
 
 }
