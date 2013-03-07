@@ -20,12 +20,7 @@ package ru.runa.wfe.security;
 import ru.runa.wfe.InternalApplicationException;
 
 public class AuthenticationException extends InternalApplicationException {
-
     private static final long serialVersionUID = -6105784417275728348L;
-
-    public AuthenticationException() {
-        super();
-    }
 
     public AuthenticationException(String message) {
         super(message);

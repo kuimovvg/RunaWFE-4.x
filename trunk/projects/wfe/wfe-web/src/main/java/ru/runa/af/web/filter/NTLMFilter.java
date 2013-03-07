@@ -29,8 +29,9 @@ import ru.runa.common.WebResources;
 import ru.runa.common.web.filter.HTTPFilterBase;
 
 /**
- * This class in conjunction with {@link ru.runa.af.web.action.NTLMLoginAction}provides NTLM support for IE. Created on 10.11.2005 If user-agent name contails MSIE than filter ask
- * him to pass NTLM authentication again.
+ * This class in conjunction with {@link ru.runa.af.web.action.NTLMLoginAction}
+ * provides NTLM support for IE. Created on 10.11.2005 If user-agent name
+ * contails MSIE than filter ask him to pass NTLM authentication again.
  * 
  * @web.filter name="ntlmfilter"
  * @web.filter-mapping url-pattern = "/*"
@@ -42,12 +43,13 @@ public class NTLMFilter extends HTTPFilterBase {
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String userAgentName = request.getHeader(USER_AGENT);
-        boolean isMSIEUserAgentBrowser = userAgentName != null && userAgentName.indexOf(MSIE) > 0;
-        boolean isPostRequest = METHOD.equalsIgnoreCase(request.getMethod());
-        if (WebResources.isNTLMSupported() && isMSIEUserAgentBrowser && isPostRequest
-                && NTLMLoginAction.getNTLMPasswordAuthentication(request, response) == null) {
-            return;
+        if (WebResources.isNTLMSupported()) {
+            String userAgentName = request.getHeader(USER_AGENT);
+            boolean isMSIEUserAgentBrowser = userAgentName != null && userAgentName.indexOf(MSIE) > 0;
+            boolean isPostRequest = METHOD.equalsIgnoreCase(request.getMethod());
+            if (isMSIEUserAgentBrowser && isPostRequest && NTLMLoginAction.getNTLMPasswordAuthentication(request, response) == null) {
+                return;
+            }
         }
         chain.doFilter(request, response);
     }
