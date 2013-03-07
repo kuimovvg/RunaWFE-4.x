@@ -31,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.logic.AuthenticationLogic;
 import ru.runa.wfe.service.decl.AuthenticationServiceLocal;
 import ru.runa.wfe.service.decl.AuthenticationServiceRemote;
@@ -57,7 +56,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     private SessionContext context;
 
     @Override
-    public User authenticateByCallerPrincipal() throws AuthenticationException {
+    public User authenticateByCallerPrincipal() {
         log.debug("Authenticating (principal)");
         User user = authenticationLogic.authenticate(context.getCallerPrincipal());
         log.debug("Authenticated (principal): " + user);
@@ -65,7 +64,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     }
 
     @Override
-    public User authenticateByKerberos(byte[] token) throws AuthenticationException {
+    public User authenticateByKerberos(byte[] token) {
         Preconditions.checkNotNull(token, "Kerberos authentication information");
         log.debug("Authenticating (kerberos)");
         User user = authenticationLogic.authenticate(token);
@@ -74,7 +73,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     }
 
     @Override
-    public User authenticateByLoginPassword(String name, String password) throws AuthenticationException {
+    public User authenticateByLoginPassword(String name, String password) {
         log.debug("Authenticating (login) " + name);
         User user = authenticationLogic.authenticate(name, password);
         log.debug("Authenticated (login): " + user);
