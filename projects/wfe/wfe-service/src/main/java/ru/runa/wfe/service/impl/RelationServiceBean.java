@@ -32,7 +32,6 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.relation.Relation;
-import ru.runa.wfe.relation.RelationAlreadyExistException;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.relation.logic.RelationLogic;
 import ru.runa.wfe.service.decl.RelationServiceLocal;
@@ -67,7 +66,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public Relation createRelation(User user, String name, String description) throws RelationAlreadyExistException {
+    public Relation createRelation(User user, String name, String description) {
         Preconditions.checkNotNull(user);
         return relationLogic.createRelation(user, name, description);
     }
