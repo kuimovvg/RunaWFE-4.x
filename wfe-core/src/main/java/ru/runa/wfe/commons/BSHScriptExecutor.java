@@ -1,6 +1,8 @@
 package ru.runa.wfe.commons;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +35,10 @@ public class BSHScriptExecutor extends GroovyScriptExecutor {
     }
 
     private static String adjustScript(String script) {
-        return script.replaceAll("void", "null").replaceAll("transition", WfProcess.SELECTED_TRANSITION_KEY);
+    	script = script.replaceAll(Pattern.quote("}"), Matcher.quoteReplacement("};"));
+    	script = script.replaceAll("transition", Matcher.quoteReplacement(WfProcess.SELECTED_TRANSITION_KEY));
+    	script = script.replaceAll("void", Matcher.quoteReplacement("null"));
+        return script;
     }
 
 }
