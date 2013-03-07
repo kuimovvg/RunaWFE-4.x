@@ -152,7 +152,7 @@ public class ClassLoaderUtil {
     public static InputStream getAsStreamNotNull(String resourceName, Class<?> callingClass) {
         InputStream stream = getAsStream(resourceName, callingClass);
         if (stream == null) {
-            throw new InternalApplicationException("No resource found by '" + resourceName + "'");
+            throw new InternalApplicationException("No resource found by name '" + resourceName + "'");
         }
         return stream;
     }
