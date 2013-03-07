@@ -37,7 +37,6 @@ import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.audit.logic.AuditLogic;
-import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
@@ -49,8 +48,6 @@ import ru.runa.wfe.service.decl.ExecutionServiceLocal;
 import ru.runa.wfe.service.decl.ExecutionServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
-import ru.runa.wfe.task.TaskAlreadyCompletedException;
-import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.task.logic.TaskLogic;
 import ru.runa.wfe.user.Executor;
@@ -310,12 +307,12 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
-    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables) throws TaskDoesNotExistException, TaskAlreadyCompletedException {
+    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables) {
         completeTask(user, taskId, toVariablesMap(variables));
     }
 
     @Override
-    public void updateVariablesWS(User user, Long processId, List<WfVariable> variables) throws ProcessDoesNotExistException {
+    public void updateVariablesWS(User user, Long processId, List<WfVariable> variables) {
         updateVariables(user, processId, toVariablesMap(variables));
     }
 }
