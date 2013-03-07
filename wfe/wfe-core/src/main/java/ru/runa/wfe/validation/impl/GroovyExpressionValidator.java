@@ -2,14 +2,19 @@ package ru.runa.wfe.validation.impl;
 
 import groovy.lang.MissingPropertyException;
 import ru.runa.wfe.commons.GroovyScriptExecutor;
+import ru.runa.wfe.commons.IScriptExecutor;
 import ru.runa.wfe.validation.Validator;
 
 public class GroovyExpressionValidator extends Validator {
+	
+	protected IScriptExecutor getScriptExecutor() {
+		return new GroovyScriptExecutor();
+	}
 
     @Override
     public void validate() {
         try {
-            GroovyScriptExecutor scriptExecutor = new GroovyScriptExecutor();
+            IScriptExecutor scriptExecutor = getScriptExecutor();
             String expression = getParameterNotNull(String.class, "expression");
             Boolean valid = scriptExecutor.evaluateScript(expression, getVariableProvider());
             if (valid == null || !valid) {
