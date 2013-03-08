@@ -41,6 +41,8 @@ import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableMapping;
 
+import com.google.common.base.Throwables;
+
 public class JMSUtil {
     private static Log log = LogFactory.getLog(JMSUtil.class);
 
@@ -55,12 +57,12 @@ public class JMSUtil {
         }
     }
 
-    public static ObjectMessage sendMessage(List<VariableMapping> data, IVariableProvider variableProvider) throws JMSException, NamingException {
-        init();
+    public static ObjectMessage sendMessage(List<VariableMapping> data, IVariableProvider variableProvider, long ttl) {
         Connection connection = null;
         Session session = null;
         MessageProducer sender = null;
         try {
+            init();
             connection = connectionFactory.createConnection();
             session = connection.createSession(true, Session.SESSION_TRANSACTED);
             sender = session.createProducer(queue);
@@ -79,13 +81,13 @@ public class JMSUtil {
                     message.setObjectProperty(variableMapping.getName(), v);
                 }
             }
-            // long ttl = 24 * 60 * 60 * 1000; // TODO get from process
-            long ttl = 24 * 60 * 60 * 1000;
             sender.send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, ttl);
             sender.close();
             log.info("message sent: " + message);
             log.debug(JMSUtil.toString(message, false));
             return message;
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
         } finally {
             if (sender != null) {
                 try {
@@ -109,26 +111,30 @@ public class JMSUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static String toString(ObjectMessage message, boolean html) throws JMSException {
-        StringBuffer buffer = new StringBuffer();
-        if (message.getJMSExpiration() != 0) {
-            buffer.append("{JMSExpiration=").append(new Date(message.getJMSExpiration())).append("}");
-            buffer.append(html ? "<br>" : "\n");
-        }
-        Enumeration<String> propertyNames = message.getPropertyNames();
-        Map<String, String> propertyMap = new HashMap<String, String>();
-        while (propertyNames.hasMoreElements()) {
-            String propertyName = propertyNames.nextElement();
-            Object propertyValue = message.getObjectProperty(propertyName);
-            if (propertyValue == null) {
-                propertyValue = "(null)";
+    public static String toString(ObjectMessage message, boolean html) {
+        try {
+            StringBuffer buffer = new StringBuffer();
+            if (message.getJMSExpiration() != 0) {
+                buffer.append("{JMSExpiration=").append(new Date(message.getJMSExpiration())).append("}");
+                buffer.append(html ? "<br>" : "\n");
             }
-            propertyMap.put(propertyName, propertyValue.toString());
+            Enumeration<String> propertyNames = message.getPropertyNames();
+            Map<String, String> propertyMap = new HashMap<String, String>();
+            while (propertyNames.hasMoreElements()) {
+                String propertyName = propertyNames.nextElement();
+                Object propertyValue = message.getObjectProperty(propertyName);
+                if (propertyValue == null) {
+                    propertyValue = "(null)";
+                }
+                propertyMap.put(propertyName, propertyValue.toString());
+            }
+            buffer.append(propertyMap);
+            buffer.append(html ? "<br>" : "\n");
+            buffer.append(message.getObject());
+            return buffer.toString();
+        } catch (JMSException e) {
+            throw Throwables.propagate(e);
         }
-        buffer.append(propertyMap);
-        buffer.append(html ? "<br>" : "\n");
-        buffer.append(message.getObject());
-        return buffer.toString();
     }
 
 }

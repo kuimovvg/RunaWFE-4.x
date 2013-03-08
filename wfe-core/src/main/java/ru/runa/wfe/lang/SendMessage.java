@@ -21,11 +21,9 @@ import java.util.Map;
 
 import javax.jms.ObjectMessage;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.audit.SendMessageLog;
 import ru.runa.wfe.commons.JMSUtil;
+import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
@@ -33,8 +31,9 @@ import com.google.common.collect.Maps;
 
 public class SendMessage extends VariableContainerNode {
     private static final long serialVersionUID = 1L;
-    private static Log log = LogFactory.getLog(SendMessage.class);
     private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE };
+
+    private String ttlDuration;
 
     @Override
     public NodeType getNodeType() {
@@ -46,24 +45,28 @@ public class SendMessage extends VariableContainerNode {
         return supportedEventTypes;
     }
 
+    public String getTtlDuration() {
+        return ttlDuration;
+    }
+
+    public void setTtlDuration(String ttlDuration) {
+        this.ttlDuration = ttlDuration;
+    }
+
     @Override
     public void execute(ExecutionContext executionContext) {
-        try {
-            Map<String, Object> variables = Maps.newHashMap();
-            variables.put("currentProcessId", executionContext.getProcess().getId());
-            variables.put("currentInstanceId", executionContext.getProcess().getId());
-            variables.put("currentDefinitionName", executionContext.getProcessDefinition().getName());
-            variables.put("currentNodeName", executionContext.getNode().getName());
-            variables.put("currentNodeId", executionContext.getNode().getNodeId());
-            MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(variables, executionContext.getVariableProvider());
-            ObjectMessage message = JMSUtil.sendMessage(variableMappings, variableProvider);
-            String log = JMSUtil.toString(message, true);
-            executionContext.addLog(new SendMessageLog(this, log));
-            leave(executionContext);
-        } catch (Exception e) {
-            log.error("", e);
-            throw new RuntimeException(e);
-        }
+        Map<String, Object> variables = Maps.newHashMap();
+        variables.put("currentProcessId", executionContext.getProcess().getId());
+        variables.put("currentInstanceId", executionContext.getProcess().getId());
+        variables.put("currentDefinitionName", executionContext.getProcessDefinition().getName());
+        variables.put("currentNodeName", executionContext.getNode().getName());
+        variables.put("currentNodeId", executionContext.getNode().getNodeId());
+        MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(variables, executionContext.getVariableProvider());
+        long ttl = ExpressionEvaluator.evaluateDuration(executionContext, ttlDuration);
+        ObjectMessage message = JMSUtil.sendMessage(variableMappings, variableProvider, ttl);
+        String log = JMSUtil.toString(message, true);
+        executionContext.addLog(new SendMessageLog(this, log));
+        leave(executionContext);
     }
 
 }
