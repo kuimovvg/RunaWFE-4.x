@@ -1,5 +1,6 @@
 package ru.runa.gpd;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.PlatformUI;
 
 import ru.runa.gpd.lang.model.BotTask;
@@ -58,28 +60,7 @@ public class BotCache {
                         for (IResource taskResource : botFolder.members()) {
                             if (taskResource instanceof IFile && taskResource.getFileExtension() == null) {
                                 IFile botTaskFile = (IFile) taskResource;
-                                InputStreamReader reader = null;
-                                try {
-                                    reader = new InputStreamReader(botTaskFile.getContents(), Charsets.UTF_8);
-                                    List<String> lines = CharStreams.readLines(reader);
-                                    String configurationFileData = "";
-                                    if (lines.size() > 1) {
-                                        String configurationFileName = lines.get(1);
-                                        if (!Strings.isNullOrEmpty(configurationFileName)) {
-                                            IFile confFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
-                                            if (confFile.exists()) {
-                                                configurationFileData = IOUtils.readStream(confFile.getContents());
-                                            }
-                                        }
-                                    }
-                                    BotTask botTask = BotTaskUtils.createBotTask(botTaskFile.getName(), lines.get(0), configurationFileData);
-                                    botTasks.add(botTask);
-                                    BOT_TASK_FILES.put(botTask, botTaskFile);
-                                } finally {
-                                    if (reader != null) {
-                                        reader.close();
-                                    }
-                                }
+                                cacheBotTask(botTaskFile, botTasks);
                             }
                         }
                         BOT_TASKS.put(botName, botTasks);
@@ -101,10 +82,43 @@ public class BotCache {
         }
     }
 
+    private static void cacheBotTask(IFile botTaskFile, List<BotTask> botTasks) throws CoreException, IOException {
+        InputStreamReader reader = null;
+        try {
+            reader = new InputStreamReader(botTaskFile.getContents(), Charsets.UTF_8);
+            List<String> lines = CharStreams.readLines(reader);
+            String configurationFileData = "";
+            if (lines.size() > 1) {
+                String configurationFileName = lines.get(1);
+                if (!Strings.isNullOrEmpty(configurationFileName)) {
+                    IFile confFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
+                    if (confFile.exists()) {
+                        configurationFileData = IOUtils.readStream(confFile.getContents());
+                    }
+                }
+            }
+            BotTask botTask = BotTaskUtils.createBotTask(botTaskFile.getName(), lines.get(0), configurationFileData);
+            botTasks.add(botTask);
+            BOT_TASK_FILES.put(botTask, botTaskFile);
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
+
+    public static synchronized void invalidateBotTask(IFile botTaskFile, BotTask botTask) throws CoreException, IOException {
+        String botName = botTaskFile.getParent().getName();
+        List<BotTask> botTasks = BOT_TASKS.get(botName);
+        botTasks.remove(botTask);
+        BOT_TASK_FILES.remove(botTask);
+        cacheBotTask(botTaskFile, botTasks);
+    }
+
     /**
      * Notify cache about new bot task.
      */
-    public static void newBotTaskHasBeenCreated(String botName, IFile botTaskFile, BotTask botTask) {
+    public static synchronized void newBotTaskHasBeenCreated(String botName, IFile botTaskFile, BotTask botTask) {
         BOT_TASKS.get(botName).add(botTask);
         BOT_TASK_FILES.put(botTask, botTaskFile);
     }

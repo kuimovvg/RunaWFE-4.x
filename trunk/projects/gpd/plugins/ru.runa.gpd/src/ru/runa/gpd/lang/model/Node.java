@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.gpd.PluginConstants;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 
 public abstract class Node extends NamedGraphElement implements Describable {
     @Override
@@ -25,7 +25,7 @@ public abstract class Node extends NamedGraphElement implements Describable {
                 // ignore, edit was canceled
                 return;
             }
-            ((ITimed) this).getTimer().setDelay((Delay) value);
+            ((ITimed) this).getTimer().setDelay((Duration) value);
         } else if (PROPERTY_TIMER_ACTION.equals(id)) {
             ((ITimed) this).getTimer().setAction((TimerAction) value);
         } else {

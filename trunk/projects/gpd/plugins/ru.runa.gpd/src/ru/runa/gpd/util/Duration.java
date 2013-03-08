@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import ru.runa.gpd.Localization;
 
-public class Delay {
+public class Duration {
     public static final String CURRENT_DATE_MESSAGE = Localization.getString("duration.baseDateNow");
     public static final String NO_DELAY_MESSAGE = Localization.getString("duration.nodelay");
     private static Pattern PATTERN_VAR = Pattern.compile("#\\{(.*)}");
@@ -31,11 +31,11 @@ public class Delay {
     private Unit unit;
     private String variableName;
 
-    public Delay() {
+    public Duration() {
         this("0 minutes");
     }
 
-    public Delay(String duration) {
+    public Duration(String duration) {
         if (duration == null) {
             throw new NullPointerException("duration is null");
         }
@@ -59,10 +59,10 @@ public class Delay {
         delay = delay.trim();
     }
 
-    public Delay(Delay delay) {
-        this.delay = delay.getDelay();
-        this.unit = delay.getUnit();
-        this.variableName = delay.getVariableName();
+    public Duration(Duration duration) {
+        this.delay = duration.getDelay();
+        this.unit = duration.getUnit();
+        this.variableName = duration.getVariableName();
     }
 
     public boolean hasDuration() {

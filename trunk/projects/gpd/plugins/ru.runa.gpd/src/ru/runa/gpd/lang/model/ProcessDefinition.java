@@ -19,10 +19,10 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.orgfunction.SwimlaneGUIConfiguration;
 import ru.runa.gpd.lang.Language;
-import ru.runa.gpd.property.DefaultTaskDueDatePropertyDescriptor;
+import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.StartImagePropertyDescriptor;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 import com.google.common.base.Objects;
@@ -36,8 +36,8 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private boolean dirty;
     private boolean showActions;
     private boolean showGrid;
-    private Delay defaultTaskTimeoutDelay = new Delay();
-    private Delay timeOutDelay = new Delay();
+    private Duration defaultTaskTimeoutDelay = new Duration();
+    private Duration timeOutDelay = new Duration();
     private TimerAction timeOutAction = null;
     private boolean invalid;
     private int nextNodeId;
@@ -54,11 +54,11 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         this.swimlaneDisplayMode = swimlaneDisplayMode;
     }
 
-    public Delay getDefaultTaskTimeoutDelay() {
+    public Duration getDefaultTaskTimeoutDelay() {
         return defaultTaskTimeoutDelay;
     }
 
-    public void setDefaultTaskTimeoutDelay(Delay defaultTaskTimeoutDelay) {
+    public void setDefaultTaskTimeoutDelay(Duration defaultTaskTimeoutDelay) {
         this.defaultTaskTimeoutDelay = defaultTaskTimeoutDelay;
         firePropertyChange(PROPERTY_TIMEOUT_DELAY, null, defaultTaskTimeoutDelay);
     }
@@ -416,7 +416,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
         list.add(new StartImagePropertyDescriptor("startProcessImage", Localization.getString("ProcessDefinition.property.startImage")));
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
-        list.add(new DefaultTaskDueDatePropertyDescriptor(PROPERTY_DEFAULT_TASK_DURATION, this));
+        list.add(new DurationPropertyDescriptor(PROPERTY_DEFAULT_TASK_DURATION, this, getDefaultTaskTimeoutDelay(), Localization.getString("default.task.duedate")));
         return list;
     }
 
@@ -442,14 +442,14 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (PROPERTY_DEFAULT_TASK_DURATION.equals(id)) {
-            setDefaultTaskTimeoutDelay((Delay) value);
+            setDefaultTaskTimeoutDelay((Duration) value);
             firePropertyChange(PROPERTY_DEFAULT_TASK_DURATION, null, null);
         } else if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
             if (value == null) {
                 // ignore, edit was canceled
                 return;
             }
-            setTimeOutDelay((Delay) value);
+            setTimeOutDelay((Duration) value);
         } else if (PROPERTY_TIMEOUT_ACTION.equals(id)) {
             setTimeOutAction((TimerAction) value);
         } else {
@@ -468,7 +468,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     }
 
     @Override
-    public Delay getTimeOutDelay() {
+    public Duration getTimeOutDelay() {
         return timeOutDelay;
     }
 
@@ -480,7 +480,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     }
 
     @Override
-    public void setTimeOutDelay(Delay delay) {
-        this.timeOutDelay = delay;
+    public void setTimeOutDelay(Duration duration) {
+        this.timeOutDelay = duration;
     }
 }

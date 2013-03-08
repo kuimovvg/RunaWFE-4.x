@@ -1,12 +1,12 @@
 package ru.runa.gpd.lang.model;
 
 import ru.runa.gpd.PluginConstants;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 
 import com.google.common.base.Objects;
 
 public abstract class State extends FormNode implements Active, ITimed, ITimeOut {
-    private Delay timeOutDelay = new Delay();
+    private Duration timeOutDelay = new Duration();
     private boolean reassignmentEnabled = false;
     private boolean minimizedView = false;
 
@@ -52,13 +52,13 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
     }
 
     @Override
-    public void setTimeOutDelay(Delay timeOutDuration) {
+    public void setTimeOutDelay(Duration timeOutDuration) {
         this.timeOutDelay = timeOutDuration;
         firePropertyChange(PROPERTY_TIMEOUT_DELAY, null, null);
     }
 
     @Override
-    public Delay getTimeOutDelay() {
+    public Duration getTimeOutDelay() {
         return timeOutDelay;
     }
 
@@ -85,7 +85,7 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
                 // ignore, edit was canceled
                 return;
             }
-            setTimeOutDelay((Delay) value);
+            setTimeOutDelay((Duration) value);
         } else {
             super.setPropertyValue(id, value);
         }
