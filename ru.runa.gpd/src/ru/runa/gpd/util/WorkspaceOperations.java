@@ -265,15 +265,10 @@ public class WorkspaceOperations {
     }
 
     public static void saveBotTask(IFile botTaskFile, BotTask botTask) throws CoreException {
-        boolean createdNew = false;
         if (!botTaskFile.exists()) {
             IOUtils.createFile(botTaskFile);
-            createdNew = true;
         }
         botTaskFile.setContents(BotTaskUtils.createBotTaskInfo((IFolder) botTaskFile.getParent(), botTask), true, true, null);
-        if (createdNew) {
-            BotCache.reload();
-        }
     }
 
     public static void openBotTask(IFile botTaskFile) {

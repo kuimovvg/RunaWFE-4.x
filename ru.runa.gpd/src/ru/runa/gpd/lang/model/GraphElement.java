@@ -21,9 +21,9 @@ import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
+import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.DelegableClassPropertyDescriptor;
 import ru.runa.gpd.property.DelegableConfPropertyDescriptor;
-import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 
 import com.google.common.base.Objects;
@@ -354,7 +354,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         if (this instanceof ITimed && getProcessDefinition().getLanguage() == Language.JPDL) {
             Timer timer = ((ITimed) this).getTimer();
             if (timer != null) {
-                descriptors.add(new DurationPropertyDescriptor(PROPERTY_TIMER_DELAY, timer));
+                descriptors.add(new DurationPropertyDescriptor(PROPERTY_TIMER_DELAY, timer.getProcessDefinition(), timer.getDelay(), Localization.getString("property.duration")));
                 descriptors.add(new TimerActionPropertyDescriptor(PROPERTY_TIMER_ACTION, Localization.getString("Timer.action"), timer));
             }
         }

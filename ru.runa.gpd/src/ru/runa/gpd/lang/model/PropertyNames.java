@@ -48,4 +48,5 @@ public interface PropertyNames {
     public static final String PROPERTY_ASYNC = "async";
     public static final String PROPERTY_TASK_EXECUTION_MODE = "taskExecutionMode";
     public static final String PROPERTY_BOT_TASK_NAME = "botTaskName";
+    public static final String PROPERTY_TTL = "ttl";
 }

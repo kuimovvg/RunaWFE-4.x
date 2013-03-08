@@ -10,7 +10,7 @@ import org.eclipse.ltk.core.refactoring.NullChange;
 
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Timer;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 
 public class TimerPresentation extends VariableRenameProvider<Timer> {
     public TimerPresentation(Timer timer) {
@@ -40,7 +40,7 @@ public class TimerPresentation extends VariableRenameProvider<Timer> {
         @Override
         protected String toPreviewContent(String varName) {
             StringBuffer buffer = new StringBuffer();
-            Delay durationTmp = new Delay(element.getDelay().getDuration());
+            Duration durationTmp = new Duration(element.getDelay().getDuration());
             durationTmp.setVariableName(varName);
             buffer.append(durationTmp.getDuration());
             return buffer.toString();

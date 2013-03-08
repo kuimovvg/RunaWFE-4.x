@@ -8,20 +8,20 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.TimerActionPropertyDescriptor;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 
 public class Timer extends Node {
-    private Delay delay = new Delay();
+    private Duration duration = new Duration();
     private TimerAction action;
 
-    public Delay getDelay() {
-        return delay;
+    public Duration getDelay() {
+        return duration;
     }
 
-    public void setDelay(Delay delay) {
-        Delay old = this.delay;
-        this.delay = delay;
-        firePropertyChange(PROPERTY_TIMER_DELAY, old, delay);
+    public void setDelay(Duration duration) {
+        Duration old = this.duration;
+        this.duration = duration;
+        firePropertyChange(PROPERTY_TIMER_DELAY, old, duration);
     }
 
     public TimerAction getAction() {
@@ -40,7 +40,7 @@ public class Timer extends Node {
     @Override
     protected void validate() {
         super.validate();
-        if (delay.getVariableName() != null && !getProcessDefinition().getVariableNames(false).contains(delay.getVariableName())) {
+        if (duration.getVariableName() != null && !getProcessDefinition().getVariableNames(false).contains(duration.getVariableName())) {
             addError("timerState.invalidVariable");
         }
         if (action != null) {
@@ -51,7 +51,7 @@ public class Timer extends Node {
     @Override
     public List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
-        list.add(new DurationPropertyDescriptor(PROPERTY_TIMER_DELAY, this));
+        list.add(new DurationPropertyDescriptor(PROPERTY_TIMER_DELAY, getProcessDefinition(), getDelay(), Localization.getString("property.duration")));
         list.add(new TimerActionPropertyDescriptor(PROPERTY_TIMER_ACTION, Localization.getString("Timer.action"), this));
         return list;
     }
@@ -59,7 +59,7 @@ public class Timer extends Node {
     @Override
     public Object getPropertyValue(Object id) {
         if (PROPERTY_TIMER_DELAY.equals(id)) {
-            return delay;
+            return duration;
         }
         if (PROPERTY_TIMER_ACTION.equals(id)) {
             return action;
@@ -74,7 +74,7 @@ public class Timer extends Node {
                 // ignore, edit was canceled
                 return;
             }
-            setDelay((Delay) value);
+            setDelay((Duration) value);
         } else if (PROPERTY_TIMER_ACTION.equals(id)) {
             setAction((TimerAction) value);
         } else {

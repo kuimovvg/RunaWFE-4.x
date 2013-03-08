@@ -42,7 +42,7 @@ import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
@@ -160,7 +160,7 @@ public class JpdlSerializer extends ProcessSerializer {
             writeTimer(stateElement, state.getTimer());
             if (state.isUseEscalation()) {
                 String timerName = TIMER_ESCALATION;
-                Delay escalationDuration = state.getEscalationDelay();
+                Duration escalationDuration = state.getEscalationDelay();
                 Element timerElement = stateElement.addElement(TIMER_NODE);
                 setAttribute(timerElement, NAME_ATTR, timerName);
                 if (escalationDuration != null && escalationDuration.hasDuration()) {
@@ -204,6 +204,7 @@ public class JpdlSerializer extends ProcessSerializer {
         List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
         for (SendMessageNode messageNode : sendMessageNodes) {
             Element messageElement = writeNode(root, messageNode, null);
+            messageElement.addAttribute(DUEDATE_ATTR, messageNode.getTtlDuration().getDuration());
             for (VariableMapping variable : messageNode.getVariablesList()) {
                 Element variableElement = messageElement.addElement(VARIABLE_NODE);
                 setAttribute(variableElement, NAME_ATTR, variable.getProcessVariable());
@@ -419,7 +420,7 @@ public class JpdlSerializer extends ProcessSerializer {
         ProcessDefinition definition = create(root, null);
         String defaultTaskTimeoutDuration = root.attributeValue(DEFAULT_DUEDATE_ATTR);
         if (!Strings.isNullOrEmpty(defaultTaskTimeoutDuration)) {
-            definition.setDefaultTaskTimeoutDelay(new Delay(defaultTaskTimeoutDuration));
+            definition.setDefaultTaskTimeoutDelay(new Duration(defaultTaskTimeoutDuration));
         }
         List<Element> swimlanes = root.elements(SWIMLANE_NODE);
         for (Element node : swimlanes) {
@@ -510,7 +511,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     }
                     String duedateAttr = stateNodeChild.attributeValue(DUEDATE_ATTR);
                     if (!Strings.isNullOrEmpty(duedateAttr)) {
-                        ((State) state).setTimeOutDelay(new Delay(duedateAttr));
+                        ((State) state).setTimeOutDelay(new Duration(duedateAttr));
                     }
                     List<Element> aaa = stateNodeChild.elements();
                     for (Element a : aaa) {
@@ -531,21 +532,21 @@ public class JpdlSerializer extends ProcessSerializer {
                     if (TIMER_ESCALATION.equals(nameTimer)) {
                         ((TaskState) state).setUseEscalation(true);
                         if (!Strings.isNullOrEmpty(dueDate)) {
-                            ((TaskState) state).setEscalationDelay(new Delay(dueDate));
+                            ((TaskState) state).setEscalationDelay(new Duration(dueDate));
                         }
                     } else if (TIMER_GLOBAL_NAME.equals(nameTimer) && !Strings.isNullOrEmpty(dueDate)) {
-                        definition.setTimeOutDelay(new Delay(dueDate));
+                        definition.setTimeOutDelay(new Duration(dueDate));
                     } else {
                         if (State.class.isInstance(state)) {
                             Timer timer = new Timer();
                             if (dueDate != null) {
-                                timer.setDelay(new Delay(dueDate));
+                                timer.setDelay(new Duration(dueDate));
                             }
                             state.addChild(timer);
                         }
                         if (Timer.class.isInstance(state)) {
                             if (dueDate != null) {
-                                ((Timer) state).setDelay(new Delay(dueDate));
+                                ((Timer) state).setDelay(new Duration(dueDate));
                             }
                         }
                     }
@@ -576,7 +577,7 @@ public class JpdlSerializer extends ProcessSerializer {
                 if (TIMER_NODE.equals(stateNodeChild.getName())) {
                     String dueDate = stateNodeChild.attributeValue(DUEDATE_ATTR);
                     if (dueDate != null) {
-                        timer.setDelay(new Delay(dueDate));
+                        timer.setDelay(new Duration(dueDate));
                     }
                     List<Element> actionNodes = stateNodeChild.elements();
                     for (Element aa : actionNodes) {
@@ -644,6 +645,8 @@ public class JpdlSerializer extends ProcessSerializer {
         List<Element> sendMessageNodes = root.elements(SEND_MESSAGE_NODE);
         for (Element node : sendMessageNodes) {
             SendMessageNode messageNode = create(node, definition);
+            String duration = node.attributeValue(DUEDATE_ATTR, "1 days");
+            messageNode.setTtlDuration(new Duration(duration));
             List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
             List<Element> nodeList = node.elements();
             for (Element childNode : nodeList) {
@@ -672,7 +675,7 @@ public class JpdlSerializer extends ProcessSerializer {
                 }
                 if (TIMER_NODE.equals(childNode.getName())) {
                     Timer timer = create(childNode, messageNode, WAIT_STATE_NODE);
-                    timer.setDelay(new Delay(childNode.attributeValue(DUEDATE_ATTR)));
+                    timer.setDelay(new Duration(childNode.attributeValue(DUEDATE_ATTR)));
                     List<Element> actionNodes = childNode.elements();
                     for (Element aa : actionNodes) {
                         if (ACTION_NODE.equals(aa.getName())) {
