@@ -31,6 +31,7 @@ import ru.runa.wfe.user.dao.ExecutorDAO;
  * @since 3.3
  * @deprecated Use {@link GetExecutorInfoHandler}.
  */
+@Deprecated
 public class ActorNameActionHandler extends CommonParamBasedHandler {
     @Autowired
     private ExecutorDAO executorDAO;
@@ -57,6 +58,8 @@ public class ActorNameActionHandler extends CommonParamBasedHandler {
             result = actor.getEmail();
         } else if ("description".equals(format)) {
             result = actor.getDescription();
+        } else if ("phone".equals(format)) {
+            result = actor.getPhone();
         } else {
             result = actor.getFullName();
         }

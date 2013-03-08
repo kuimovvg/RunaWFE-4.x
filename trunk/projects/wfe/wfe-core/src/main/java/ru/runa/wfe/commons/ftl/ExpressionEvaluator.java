@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.CalendarInterval;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.calendar.BusinessCalendar;
 import ru.runa.wfe.commons.calendar.impl.Duration;
@@ -19,34 +20,46 @@ import com.google.common.base.Strings;
 public class ExpressionEvaluator {
     private static final Pattern VARIABLE_REGEXP = Pattern.compile("\\$\\{(.*?[^\\\\])\\}");
 
-    public static Date evaluateDuration(ExecutionContext executionContext, String expression) {
-        Date baseDate = null;
-        String durationString = null;
-
+    public static Date evaluateDueDate(ExecutionContext executionContext, String expression) {
+        Date baseDate;
+        String delayString = null;
         if (expression != null && expression.startsWith("#")) {
             String baseDateVariableName = expression.substring(2, expression.indexOf("}"));
             Object o = executionContext.getVariable(baseDateVariableName);
             baseDate = TypeConversionUtil.convertTo(Date.class, o);
+            if (baseDate == null) {
+                throw new InternalApplicationException("Invalid base date, not defined by name '" + baseDateVariableName + "'");
+            }
             int endOfELIndex = expression.indexOf("}");
             if (endOfELIndex < (expression.length() - 1)) {
                 String durationSeparator = expression.substring(endOfELIndex + 1).trim().substring(0, 1);
                 if (!(durationSeparator.equals("+") || durationSeparator.equals("-"))) {
                     throw new InternalApplicationException("Invalid duedate, + or - missing after EL");
                 }
-                durationString = expression.substring(endOfELIndex + 1).trim();
+                delayString = expression.substring(endOfELIndex + 1).trim();
             }
         } else {
-            durationString = expression;
+            delayString = expression;
+            baseDate = new Date();
         }
-        if (baseDate != null && Strings.isNullOrEmpty(durationString)) {
+        if (Strings.isNullOrEmpty(delayString)) {
             return baseDate;
-        } else if (durationString != null) {
-            Duration duration = new Duration(durationString);
-            BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
-            return businessCalendar.add((baseDate != null) ? baseDate : new Date(), duration);
         } else {
-            return new Date();
+            Duration duration = new Duration(delayString);
+            BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
+            return businessCalendar.add(baseDate, duration);
         }
+    }
+
+    /**
+     * Calculates duration between current moment and due date.
+     * 
+     * @return duration in milliseconds, always >= 0
+     */
+    public static long evaluateDuration(ExecutionContext executionContext, String expression) {
+        Date dueDate = evaluateDueDate(executionContext, expression);
+        long duration = new CalendarInterval(new Date(), dueDate).getLengthInMillis();
+        return duration > 0 ? duration : 0;
     }
 
     public static Object evaluateVariableNotNull(IVariableProvider variableProvider, String expression) {

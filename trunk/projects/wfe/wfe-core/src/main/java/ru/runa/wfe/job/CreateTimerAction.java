@@ -46,7 +46,7 @@ public class CreateTimerAction extends Action {
     public void execute(ExecutionContext executionContext) {
         Timer timer = new Timer(executionContext.getToken());
         timer.setName(getName());
-        timer.setDueDate(ExpressionEvaluator.evaluateDuration(executionContext, dueDate));
+        timer.setDueDate(ExpressionEvaluator.evaluateDueDate(executionContext, dueDate));
         timer.setRepeatDurationString(repeatDurationString);
         timer.setOutTransitionName(transitionName);
         getParent().fireEvent(executionContext, Event.EVENTTYPE_TIMER_CREATE);

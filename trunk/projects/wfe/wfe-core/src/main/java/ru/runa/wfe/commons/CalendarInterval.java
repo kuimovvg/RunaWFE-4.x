@@ -14,19 +14,46 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
     private Calendar from;
     private Calendar to;
 
+    /**
+     * Creates new calendar interval for whole day.
+     */
     public CalendarInterval(Calendar onDate) {
         from = CalendarUtil.getZeroTimeCalendar(onDate);
         to = CalendarUtil.getLastSecondTimeCalendar(onDate);
     }
 
+    /**
+     * Creates new calendar interval by dates.
+     */
     public CalendarInterval(Date from, Date to) {
-        this(CalendarUtil.dateToCalendar(from), CalendarUtil.dateToCalendar(to), true);
+        this(from, to, false);
     }
 
+    /**
+     * Creates new calendar interval by dates.
+     * 
+     * @param expandTimeInBounds
+     *            if <code>true</code> then from time will be set to 00:00:00
+     *            and to time to 23:59:59
+     */
+    public CalendarInterval(Date from, Date to, boolean expandTimeInBounds) {
+        this(CalendarUtil.dateToCalendar(from), CalendarUtil.dateToCalendar(to), expandTimeInBounds);
+    }
+
+    /**
+     * Creates new calendar interval by calendars.
+     */
     public CalendarInterval(Calendar from, Calendar to) {
         this(from, to, false);
     }
 
+    /**
+     * Creates new calendar interval by calendars.
+     * 
+     * @param expandTimeInBounds
+     *            if <code>true</code> then from time will be set to 00:00:00
+     *            and to time to 23:59:59
+     */
     public CalendarInterval(Calendar from, Calendar to, boolean expandTimeInBounds) {
         this.from = CalendarUtil.clone(from);
         this.to = CalendarUtil.clone(to);
@@ -52,7 +79,9 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
         this.to = to;
     }
 
-    // right order, length > 0
+    /**
+     * Check the right ordering of the dates
+     */
     public boolean isValid() {
         return to.after(from);
     }
@@ -61,7 +90,9 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
         return CalendarUtil.daysBetween(from, to);
     }
 
-    // by default it is inclusive
+    /**
+     * by default it is inclusive operation
+     */
     public boolean contains(Calendar calendar) {
         return !calendar.before(from) && !calendar.after(to);
     }
