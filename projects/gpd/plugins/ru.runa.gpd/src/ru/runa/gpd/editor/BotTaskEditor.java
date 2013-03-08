@@ -120,6 +120,19 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
     }
 
     @Override
+    public void dispose() {
+        // If bot task has been changed but not saved we should reload it from XML
+        if (isDirty()) {
+            try {
+                BotCache.invalidateBotTask(botTaskFile, botTask);
+            } catch (Exception e) {
+                PluginLogger.logError(e);
+            }
+        }
+        super.dispose();
+    }
+
+    @Override
     public void doSaveAs() {
     }
 

@@ -37,7 +37,7 @@ public class GlobalTimeOut implements PrefConstants {
         return null;
     }
 
-    public Delay getTimeOutDuration() {
+    public Duration getTimeOutDuration() {
         //return timeOutDuration;
         return null;
     }
