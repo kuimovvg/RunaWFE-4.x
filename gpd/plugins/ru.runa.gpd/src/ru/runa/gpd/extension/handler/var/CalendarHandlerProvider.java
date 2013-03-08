@@ -35,7 +35,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 import ru.runa.wfe.var.format.LongFormat;
 
 public class CalendarHandlerProvider extends XmlBasedConstructorProvider<CalendarConfig> {
@@ -105,7 +105,7 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
                 Label label = new Label(this, SWT.NONE);
                 label.setText(Localization.getString("property.duration.baseDate"));
                 final Combo combo = new Combo(this, SWT.READ_ONLY);
-                combo.add(Delay.CURRENT_DATE_MESSAGE);
+                combo.add(Duration.CURRENT_DATE_MESSAGE);
                 for (Map.Entry<String, String> entry : variables.entrySet()) {
                     if (dateFormats.contains(entry.getValue())) {
                         combo.add(entry.getKey());
@@ -115,13 +115,13 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
                 if (model.getBaseVariableName() != null) {
                     combo.setText(model.getBaseVariableName());
                 } else {
-                    combo.setText(Delay.CURRENT_DATE_MESSAGE);
+                    combo.setText(Duration.CURRENT_DATE_MESSAGE);
                 }
                 combo.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         model.setBaseVariableName(combo.getText());
-                        if (Delay.CURRENT_DATE_MESSAGE.equals(model.getBaseVariableName())) {
+                        if (Duration.CURRENT_DATE_MESSAGE.equals(model.getBaseVariableName())) {
                             model.setBaseVariableName(null);
                         }
                     }

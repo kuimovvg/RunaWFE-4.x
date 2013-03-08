@@ -1,19 +1,19 @@
 package ru.runa.gpd.lang.model;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 
 import com.google.common.base.Strings;
 
 public class TimerAction extends Action {
     public final static TimerAction NONE = new TimerAction();
-    private Delay repeatDelay = new Delay();
+    private Duration repeatDelay = new Duration();
     private ProcessDefinition definition;
 
     public TimerAction() {
     }
 
-    public Delay getRepeatDelay() {
+    public Duration getRepeatDelay() {
         return repeatDelay;
     }
 
@@ -33,7 +33,7 @@ public class TimerAction extends Action {
 
     public void setRepeatDuration(String duration) {
         if (!Strings.isNullOrEmpty(duration)) {
-            this.repeatDelay = new Delay(duration);
+            this.repeatDelay = new Duration(duration);
         }
     }
 
