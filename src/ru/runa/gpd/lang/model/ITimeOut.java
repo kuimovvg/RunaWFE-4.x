@@ -1,11 +1,11 @@
 package ru.runa.gpd.lang.model;
 
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 
 public interface ITimeOut {
-    public Delay getTimeOutDelay();
+    public Duration getTimeOutDelay();
 
-    public void setTimeOutDelay(Delay delay);
+    public void setTimeOutDelay(Duration duration);
 
     public TimerAction getTimeOutAction();
 }

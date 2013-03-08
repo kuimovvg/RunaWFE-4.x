@@ -13,7 +13,7 @@ import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.ui.dialog.DurationEditDialog;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 import ru.runa.wfe.extension.handler.EscalationActionHandler;
 
 import com.google.common.base.Strings;
@@ -59,9 +59,9 @@ public class EscalationGlobalPreferencePage extends FieldEditorPreferencePage im
         @Override
         protected String changePressed() {
             DurationEditDialog dialog = new DurationEditDialog(null, initialDuration);
-            Delay delay = (Delay) dialog.openDialog();
-            if (delay != null) {
-                return delay.getDuration();
+            Duration duration = (Duration) dialog.openDialog();
+            if (duration != null) {
+                return duration.getDuration();
             }
             return initialDuration;
         }

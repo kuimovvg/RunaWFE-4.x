@@ -49,18 +49,19 @@ public class CopyBotTaskWizard extends Wizard implements INewWizard {
                     try {
                         monitor.beginTask(Localization.getString("CopyProcessDefinitionWizard.monitor.title"), 3);
                         monitor.worked(1);
-                        IFolder targetFolder = page.getBotFolder();
+                        IFolder botFolder = page.getBotFolder();
                         IFile sourceBotTask = (IFile) selection.getFirstElement();
-                        sourceBotTask.copy(targetFolder.getFullPath().append(page.getBotTaskName()), true, monitor);
+                        sourceBotTask.copy(botFolder.getFullPath().append(page.getBotTaskName()), true, monitor);
                         monitor.worked(1);
-                        //rename                        
+                        //rename
                         IFile confFile = ResourcesPlugin.getWorkspace().getRoot()
                                 .getFile(sourceBotTask.getParent().getFullPath().append(new Path(sourceBotTask.getName() + ".conf")));
                         if (confFile.exists()) {
-                            BotTask botTask = BotCache.getBotTaskNotNull(sourceBotTask);
-                            botTask.setName(page.getBotTaskName());
-                            sourceBotTask = ResourcesPlugin.getWorkspace().getRoot().getFile(targetFolder.getFullPath().append(page.getBotTaskName()));
-                            WorkspaceOperations.saveBotTask(sourceBotTask, botTask);
+                            BotTask botTaskCopy = BotCache.getBotTaskNotNull(sourceBotTask);
+                            botTaskCopy.setName(page.getBotTaskName());
+                            IFile botTaskFileCopy = ResourcesPlugin.getWorkspace().getRoot().getFile(botFolder.getFullPath().append(page.getBotTaskName()));
+                            WorkspaceOperations.saveBotTask(botTaskFileCopy, botTaskCopy);
+                            BotCache.newBotTaskHasBeenCreated(botFolder.getName(), botTaskFileCopy, botTaskCopy);
                         }
                         monitor.done();
                     } catch (Exception e) {

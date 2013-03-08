@@ -8,12 +8,11 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
-import ru.runa.gpd.property.EscalationDurationPropertyDescriptor;
-import ru.runa.gpd.property.TimeOutDurationPropertyDescriptor;
 import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.util.BotTaskUtils;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 import ru.runa.wfe.extension.handler.EscalationActionHandler;
 
 import com.google.common.base.Strings;
@@ -22,7 +21,7 @@ public class TaskState extends State implements Synchronizable {
     private TimerAction escalationAction;
     private boolean ignoreSubstitution;
     private boolean useEscalation;
-    private Delay escalationDelay = new Delay();
+    private Duration escalationDelay = new Duration();
     private boolean async;
     private boolean asyncTaskCompleteOnProcessComplete;
     private BotTaskLink botTaskLink;
@@ -82,11 +81,11 @@ public class TaskState extends State implements Synchronizable {
         this.escalationAction = escalationAction;
     }
 
-    public Delay getEscalationDelay() {
+    public Duration getEscalationDelay() {
         return escalationDelay;
     }
 
-    public void setEscalationDelay(Delay escalationDelay) {
+    public void setEscalationDelay(Duration escalationDelay) {
         this.escalationDelay = escalationDelay;
         firePropertyChange(PROPERTY_ESCALATION, null, escalationDelay);
     }
@@ -107,7 +106,7 @@ public class TaskState extends State implements Synchronizable {
             }
             String expirationTime = Activator.getPrefString(PrefConstants.P_ESCALATION_DURATION);
             if (!Strings.isNullOrEmpty(expirationTime)) {
-                escalationDelay = new Delay(expirationTime);
+                escalationDelay = new Duration(expirationTime);
             }
         }
         this.useEscalation = useEscalation;
@@ -133,10 +132,10 @@ public class TaskState extends State implements Synchronizable {
     public List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
         list.add(new PropertyDescriptor(PROPERTY_IGNORE_SUBSTITUTION, Localization.getString("property.ignoreSubstitution")));
-        list.add(new TimeOutDurationPropertyDescriptor(PROPERTY_TIMEOUT_DELAY, this));
+        list.add(new DurationPropertyDescriptor(PROPERTY_TIMEOUT_DELAY, getProcessDefinition(), getTimeOutDelay(), Localization.getString("timeout.property.duration")));
         if (useEscalation) {
             list.add(new EscalationActionPropertyDescriptor(PROPERTY_ESCALATION_ACTION, Localization.getString("escalation.action"), this));
-            list.add(new EscalationDurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, this));
+            list.add(new DurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, getProcessDefinition(), getEscalationDelay(), Localization.getString("escalation.duration")));
         }
         if (botTaskLink != null) {
             list.add(new PropertyDescriptor(PROPERTY_BOT_TASK_NAME, Localization.getString("property.botTaskName")));
@@ -154,7 +153,7 @@ public class TaskState extends State implements Synchronizable {
             return "";
         }
         if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
-            Delay d = getTimeOutDelay();
+            Duration d = getTimeOutDelay();
             if (d == null || !d.hasDuration()) {
                 return "";
             }
@@ -180,7 +179,7 @@ public class TaskState extends State implements Synchronizable {
         if (PROPERTY_ESCALATION_ACTION.equals(id)) {
             setEscalationAction((TimerAction) value);
         } else if (PROPERTY_ESCALATION_DURATION.equals(id)) {
-            setEscalationDelay((Delay) value);
+            setEscalationDelay((Duration) value);
         } else {
             super.setPropertyValue(id, value);
         }

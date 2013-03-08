@@ -84,17 +84,13 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
     @Override
     public void dispose() {
         try {
-            if (definition != null) {
-                definition.removePropertyChangeListener(this);
-            }
+            definition.removePropertyChangeListener(this);
             // If process definition is dirty (hasn't been saved) we should
             // reload it from XML
-            if (definition != null && definition.isDirty()) {
+            if (definition.isDirty()) {
                 ProcessCache.invalidateProcessDefinition(definitionFile);
             }
-            if (definitionFile != null && definitionFile.exists()) {
-                definitionFile.deleteMarkers(ValidationErrorsView.ID, true, IResource.DEPTH_INFINITE);
-            }
+            definitionFile.deleteMarkers(ValidationErrorsView.ID, true, IResource.DEPTH_INFINITE);
         } catch (Exception e) {
             PluginLogger.logError(e);
         }

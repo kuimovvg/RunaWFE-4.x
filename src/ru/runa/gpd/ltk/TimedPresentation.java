@@ -10,7 +10,7 @@ import org.eclipse.ltk.core.refactoring.NullChange;
 
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.Timer;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 
 public class TimedPresentation extends VariableRenameProvider<ITimed> {
     public TimedPresentation(ITimed timed) {
@@ -41,7 +41,7 @@ public class TimedPresentation extends VariableRenameProvider<ITimed> {
         @Override
         protected String toPreviewContent(String varName) {
             StringBuffer buffer = new StringBuffer();
-            Delay durationTmp = new Delay(element.getTimer().getDelay().getDuration());
+            Duration durationTmp = new Duration(element.getTimer().getDelay().getDuration());
             durationTmp.setVariableName(varName);
             buffer.append(durationTmp.getDuration());
             return buffer.toString();

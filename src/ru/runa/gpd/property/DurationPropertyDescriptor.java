@@ -7,16 +7,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-import ru.runa.gpd.Localization;
-import ru.runa.gpd.lang.model.Timer;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.ui.dialog.DurationEditDialog;
+import ru.runa.gpd.util.Duration;
 
 public class DurationPropertyDescriptor extends PropertyDescriptor {
-    private final Timer timer;
+    private final ProcessDefinition definition;
+    private final Duration duration;
 
-    public DurationPropertyDescriptor(Object id, Timer timer) {
-        super(id, Localization.getString("property.duration"));
-        this.timer = timer;
+    public DurationPropertyDescriptor(Object id, ProcessDefinition definition, Duration duration, String label) {
+        super(id, label);
+        this.definition = definition;
+        this.duration = duration;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class DurationPropertyDescriptor extends PropertyDescriptor {
 
         @Override
         protected Object openDialogBox(Control cellEditorWindow) {
-            DurationEditDialog dialog = new DurationEditDialog(timer.getProcessDefinition(), timer.getDelay());
+            DurationEditDialog dialog = new DurationEditDialog(definition, duration);
             return dialog.openDialog();
         }
     }

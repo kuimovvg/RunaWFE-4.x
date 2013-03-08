@@ -17,14 +17,14 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.util.Delay;
-import ru.runa.gpd.util.Delay.Unit;
+import ru.runa.gpd.util.Duration;
+import ru.runa.gpd.util.Duration.Unit;
 
 import com.google.common.base.Strings;
 
 public class DurationEditDialog extends Dialog {
     private static final int CLEAR_ID = 111;
-    private Delay editable;
+    private Duration editable;
     private final ProcessDefinition definition;
     private Text baseDateField;
     private Text delayField;
@@ -34,14 +34,14 @@ public class DurationEditDialog extends Dialog {
         super(Display.getCurrent().getActiveShell());
         this.definition = definition;
         if (!Strings.isNullOrEmpty(duration)) {
-            editable = new Delay(duration);
+            editable = new Duration(duration);
         } else {
-            editable = new Delay();
+            editable = new Duration();
         }
     }
 
-    public DurationEditDialog(ProcessDefinition definition, Delay delay) {
-        this(definition, delay.getDuration());
+    public DurationEditDialog(ProcessDefinition definition, Duration duration) {
+        this(definition, duration.getDuration());
     }
 
     @Override
@@ -66,7 +66,7 @@ public class DurationEditDialog extends Dialog {
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    ChooseDateVariableDialog dialog = new ChooseDateVariableDialog(definition, Delay.CURRENT_DATE_MESSAGE);
+                    ChooseDateVariableDialog dialog = new ChooseDateVariableDialog(definition, Duration.CURRENT_DATE_MESSAGE);
                     editable.setVariableName(dialog.openDialog());
                     updateGUI();
                 }
@@ -118,7 +118,7 @@ public class DurationEditDialog extends Dialog {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     ChooseItemDialog dialog = new ChooseItemDialog(label.getText(), "", false);
-                    dialog.setItems(Delay.getUnits());
+                    dialog.setItems(Duration.getUnits());
                     if (dialog.open() == IDialogConstants.OK_ID) {
                         editable.setUnit((Unit) dialog.getSelectedItem());
                         updateGUI();
@@ -133,13 +133,13 @@ public class DurationEditDialog extends Dialog {
         if (editable.getVariableName() != null) {
             baseDateField.setText(editable.getVariableName());
         } else {
-            baseDateField.setText(Delay.CURRENT_DATE_MESSAGE);
+            baseDateField.setText(Duration.CURRENT_DATE_MESSAGE);
         }
         delayField.setText(editable.getDelay());
         unitField.setText(editable.getUnit().toString());
         boolean valid = false;
         try {
-            new Delay(editable.getDuration());
+            new Duration(editable.getDuration());
             valid = true;
         } catch (Throwable th) {
         }
@@ -160,7 +160,7 @@ public class DurationEditDialog extends Dialog {
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                editable = new Delay();
+                editable = new Duration();
                 updateGUI();
             }
         });

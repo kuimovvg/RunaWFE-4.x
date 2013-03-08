@@ -33,7 +33,7 @@ import ru.runa.gpd.lang.model.TextAnnotation;
 import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
@@ -218,6 +218,7 @@ public class BpmnSerializer extends ProcessSerializer {
         List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
         for (SendMessageNode messageNode : sendMessageNodes) {
             Element messageElement = writeNode(process, messageNode);
+            messageElement.addAttribute(RUNA_PREFIX + ":" + TIMER_DURATION, messageNode.getTtlDuration().getDuration());
             writeVariables(messageElement, messageNode.getVariablesList());
         }
         List<ReceiveMessageNode> receiveMessageNodes = definition.getChildren(ReceiveMessageNode.class);
@@ -406,7 +407,7 @@ public class BpmnSerializer extends ProcessSerializer {
                 ((Describable) element).setDescription(childNode.getTextTrim());
             }
             if (TIMER_DURATION.equals(childNode.getName())) {
-                ((Timer) element).setDelay(new Delay(childNode.getTextTrim()));
+                ((Timer) element).setDelay(new Duration(childNode.getTextTrim()));
                 //                                List<Element> actionNodes = childNode.elements();
                 //                                for (Element aa : actionNodes) {
                 //                                    if (ACTION_NODE.equals(aa.getName())) {
@@ -488,7 +489,7 @@ public class BpmnSerializer extends ProcessSerializer {
         Map<String, String> processProperties = parseExtensionProperties(process);
         String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMOUT);
         if (!Strings.isNullOrEmpty(defaultTaskTimeout)) {
-            definition.setDefaultTaskTimeoutDelay(new Delay(defaultTaskTimeout));
+            definition.setDefaultTaskTimeoutDelay(new Duration(defaultTaskTimeout));
         }
         String swimlaneDisplayModeName = processProperties.get(SWIMLANE_DISPLAY_MODE);
         if (swimlaneDisplayModeName != null) {
@@ -613,6 +614,8 @@ public class BpmnSerializer extends ProcessSerializer {
         List<Element> sendMessageElements = process.elements(SEND_MESSAGE);
         for (Element messageElement : sendMessageElements) {
             SendMessageNode messageNode = create(messageElement, definition);
+            String duration = messageElement.attributeValue(RUNA_PREFIX + ":" + TIMER_DURATION, "1 days");
+            messageNode.setTtlDuration(new Duration(duration));
             messageNode.setVariablesList(parseVariableMappings(messageElement));
         }
         List<Element> receiveMessageElements = process.elements(RECEIVE_MESSAGE);

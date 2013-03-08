@@ -41,7 +41,7 @@ import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.CopyGraphRewriteDialog;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.VariableMapping;
 
 import com.google.common.base.Charsets;
@@ -98,7 +98,7 @@ public class CopyGraphCommand extends Command {
                         Timer timer = ((ITimed) node).getTimer();
                         if (timer != null) {
                             Timer copyTimer = new Timer();
-                            copyTimer.setDelay(new Delay(timer.getDelay()));
+                            copyTimer.setDelay(new Duration(timer.getDelay()));
                             String variableName = timer.getDelay().getVariableName();
                             if (variableName != null) {
                                 Variable variable = copyBuffer.getSourceDefinition().getVariable(variableName, false);

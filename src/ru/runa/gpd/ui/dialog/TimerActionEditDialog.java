@@ -22,7 +22,7 @@ import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TimerAction;
-import ru.runa.gpd.util.Delay;
+import ru.runa.gpd.util.Duration;
 
 public class TimerActionEditDialog extends Dialog {
     protected static final int DELETE_ID = 111;
@@ -146,7 +146,7 @@ public class TimerActionEditDialog extends Dialog {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     DurationEditDialog dialog = new DurationEditDialog(definition, editable.getRepeatDelay());
-                    Delay duration = (Delay) dialog.openDialog();
+                    Duration duration = (Duration) dialog.openDialog();
                     if (duration != null) {
                         editable.setRepeatDuration(duration.getDuration());
                         updateGUI();
