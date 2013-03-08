@@ -48,7 +48,7 @@ public class TaskFactory {
         task.setToken(token);
         task.setProcess(process);
         executionContext.addLog(new TaskCreateLog(task));
-        task.setDeadlineDate(ExpressionEvaluator.evaluateDuration(executionContext, getDeadlineDuration(taskDefinition)));
+        task.setDeadlineDate(ExpressionEvaluator.evaluateDueDate(executionContext, getDeadlineDuration(taskDefinition)));
         taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_CREATE);
         process.getTasks().add(task);
         return task;

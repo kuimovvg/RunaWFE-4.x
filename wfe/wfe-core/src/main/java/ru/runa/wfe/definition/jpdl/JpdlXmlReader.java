@@ -300,6 +300,10 @@ public class JpdlXmlReader {
             }
             decision.setDelegation(readDelegation(processDefinition, decisionHandlerElement));
         }
+        if (node instanceof SendMessage) {
+            SendMessage sendMessage = (SendMessage) node;
+            sendMessage.setTtlDuration(element.attributeValue(DUEDATE_ATTR, "1 days"));
+        }
         readNodeTimers(processDefinition, element, node);
     }
 

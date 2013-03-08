@@ -264,6 +264,10 @@ public class BpmnXmlReader {
             ServiceTask serviceTask = (ServiceTask) node;
             serviceTask.setDelegation(readDelegation(element));
         }
+        if (node instanceof SendMessage) {
+            SendMessage sendMessage = (SendMessage) node;
+            sendMessage.setTtlDuration(element.attributeValue(QName.get(TIMER_DURATION, RUNA_NAMESPACE), "1 days"));
+        }
     }
 
     private void readTimer(ProcessDefinition processDefinition, Element eventElement, GraphElement node) {
