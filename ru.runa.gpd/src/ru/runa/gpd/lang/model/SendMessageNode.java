@@ -50,8 +50,10 @@ public class SendMessageNode extends Node implements Active {
     @Override
     protected void validate() {
         super.validate();
+        int selectorRulesCount = 0;
         for (VariableMapping variableMapping : variablesList) {
             if (VariableMapping.USAGE_SELECTOR.equals(variableMapping.getUsage())) {
+                selectorRulesCount++;
                 continue;
             }
             String processVarName = variableMapping.getProcessVariable();
@@ -59,6 +61,9 @@ public class SendMessageNode extends Node implements Active {
                 addError("message.processVariableDoesNotExist", processVarName);
                 continue;
             }
+        }
+        if (selectorRulesCount == 0) {
+            addWarning("model.validation.message.selectorRulesEmpty");
         }
     }
 
