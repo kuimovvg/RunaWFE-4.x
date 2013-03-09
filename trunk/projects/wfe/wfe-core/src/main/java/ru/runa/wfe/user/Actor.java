@@ -127,23 +127,6 @@ public class Actor extends Executor {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (!(obj instanceof Actor)) {
-            return false;
-        }
-        Actor actor = (Actor) obj;
-        return Objects.equal(code, actor.code);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(super.hashCode(), getCode());
-    }
-
-    @Override
     public String toString() {
         if (SystemProperties.isV3CompatibilityMode()) {
             return String.valueOf(code);

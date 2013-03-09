@@ -53,7 +53,7 @@ import com.google.common.base.Objects;
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING, length = 1)
 @DiscriminatorValue(value = "N")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Substitution implements Serializable {
+public class Substitution implements Comparable<Substitution>, Serializable {
     private final static long serialVersionUID = -9048255704644364624L;
 
     private Long id;
@@ -64,9 +64,6 @@ public class Substitution implements Serializable {
     private String orgFunction;
     private SubstitutionCriteria criteria;
     private boolean external;
-
-    public Substitution() {
-    }
 
     @Column(name = "ENABLED_FLAG", nullable = false)
     public boolean isEnabled() {
@@ -146,6 +143,11 @@ public class Substitution implements Serializable {
 
     public void setCriteria(SubstitutionCriteria criteria) {
         this.criteria = criteria;
+    }
+
+    @Override
+    public int compareTo(Substitution o) {
+        return getPosition() < o.getPosition() ? -1 : Objects.equal(getPosition(), o.getPosition()) ? 0 : 1;
     }
 
     @Override

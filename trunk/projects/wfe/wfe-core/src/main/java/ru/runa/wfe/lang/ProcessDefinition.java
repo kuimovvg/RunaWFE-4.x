@@ -288,7 +288,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return node.getLeavingTransitionNotNull(transitionName);
     }
 
-    public boolean isSubsitutionIgnoredFor(Task task) {
+    public boolean ignoreSubsitutionRulesForTask(Task task) {
         return taskNamesToignoreSubstitutionRules.contains(task.getNodeId());
     }
 
