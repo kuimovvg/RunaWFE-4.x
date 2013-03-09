@@ -154,6 +154,10 @@ public abstract class ExportBotElementWizardPage extends WizardArchiveFileResour
             setErrorMessage("select");
             return false;
         }
+        if (exportToFile && !ensureTargetIsValid()) {
+            setErrorMessage(Localization.getString("ExportParWizardPage.error.selectDestinationPath"));
+            return false;
+        }
         IResource exportResource = exportObjectNameFileMap.get(selected);
         try {
             exportResource.refreshLocal(IResource.DEPTH_ONE, null);
