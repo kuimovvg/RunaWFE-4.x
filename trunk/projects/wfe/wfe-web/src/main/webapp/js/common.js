@@ -21,6 +21,12 @@ function unify(url) {
 	return url + "?t="+(new Date().getTime());
 }
 
+function escapeQuotesForHtmlContext(s) {
+	s = s.replace('"', '\\&quot;');
+	s = s.replace("'", '\\&quot;');
+	return s;
+}
+
 function clearErrorMessages(form) {
 	$(".errorFor").each(function(){
 		$(this).remove();
