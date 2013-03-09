@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.commons.logic;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +56,7 @@ import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dao.VariableDAO;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -112,19 +112,16 @@ public class WFCommonLogic extends CommonLogic {
         }
     }
 
-    protected boolean canParticipateAsSubstitutor(User user, Task task) {
+    private boolean canParticipateAsSubstitutor(User user, Task task) {
         try {
-            Set<Long> canSubIds = substitutionLogic.getSubstituted(user.getActor());
-            Set<Actor> canSub = new HashSet<Actor>();
-            for (Long id : canSubIds) {
-                canSub.add(executorDAO.getActor(id));
-            }
+            Set<Long> substitutedActorIds = substitutionLogic.getSubstituted(user.getActor());
+            List<Actor> substitutedActors = executorDAO.getActors(Lists.newArrayList(substitutedActorIds));
             Executor taskExecutor = task.getExecutor();
             if (taskExecutor instanceof Actor) {
-                return canSub.contains(taskExecutor);
+                return substitutedActors.contains(taskExecutor);
             } else {
-                for (Actor assignActor : getAssignedActors(task)) {
-                    if (canSub.contains(assignActor)) {
+                for (Actor actor : getAssignedActors(task)) {
+                    if (substitutedActors.contains(actor)) {
                         return true;
                     }
                 }
@@ -164,7 +161,7 @@ public class WFCommonLogic extends CommonLogic {
         checkCanParticipate(user, task);
     }
 
-    protected Set<Actor> getAssignedActors(Task task) {
+    private Set<Actor> getAssignedActors(Task task) {
         if (task.getExecutor() == null) {
             throw new InternalApplicationException("Unassigned tasks can't be in processing");
         }

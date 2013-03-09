@@ -41,15 +41,18 @@ public class SubstitutionCacheCtrl extends BaseCacheCtrl<SubstitutionCacheImpl> 
         return instance;
     }
 
+    @Override
     public SubstitutionCacheImpl buildCache() {
         return new SubstitutionCacheImpl();
     }
 
+    @Override
     public TreeMap<Substitution, Set<Long>> getSubstitutors(Actor actor) {
         SubstitutionCacheImpl cache = CachingLogic.getCacheImpl(this);
         return cache.getSubstitutors(actor);
     }
 
+    @Override
     public Set<Long> getSubstituted(Actor actor) {
         SubstitutionCacheImpl cache = CachingLogic.getCacheImpl(this);
         return cache.getSubstituted(actor);
@@ -93,6 +96,7 @@ public class SubstitutionCacheCtrl extends BaseCacheCtrl<SubstitutionCacheImpl> 
         }
     }
 
+    @Override
     public void onTransactionComplete() {
         super.onTransactionComplete();
         SubstitutionCacheImpl cache = getCache();
