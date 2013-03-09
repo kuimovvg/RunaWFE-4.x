@@ -25,13 +25,16 @@ public class ListFormat implements VariableFormat<List<?>>, VariableDisplaySuppo
     @Override
     public String getHtml(User user, WebHelper webHelper, Long processId, String name, List<?> list) {
         StringBuffer html = new StringBuffer();
-        html.append("<div class=\"listFormatItem\">");
+        html.append("[");
         for (int i = 0; i < list.size(); i++) {
+            if (i != 0) {
+                html.append(", ");
+            }
             Object object = list.get(i);
             String value = FormatCommons.getVarOut(object, webHelper, processId, name, i, null);
             html.append(value);
         }
-        html.append("</div>");
+        html.append("]");
         return html.toString();
     }
 

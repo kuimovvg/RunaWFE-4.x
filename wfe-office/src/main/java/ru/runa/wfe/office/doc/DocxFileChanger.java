@@ -18,6 +18,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.office.doc.DocxConfig.TableConfig;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.VariableFormat;
 
 public class DocxFileChanger {
@@ -30,7 +31,7 @@ public class DocxFileChanger {
     public DocxFileChanger(DocxConfig config, IVariableProvider variableProvider) throws IOException {
         this.config = config;
         this.variableProvider = variableProvider;
-        this.document = new XWPFDocument(config.getFileInputStream(variableProvider, true));
+        document = new XWPFDocument(config.getFileInputStream(variableProvider, true));
     }
 
     public XWPFDocument changeAll() throws Exception {
@@ -141,20 +142,21 @@ public class DocxFileChanger {
                 }
                 // TODO document.insertTable(0, table);
             } else {
-                Object value = variableProvider.getValue(placeholder);
-                if (value == null) {
+                WfVariable variable = variableProvider.getVariable(placeholder);
+                if (variable == null || variable.getValue() == null) {
                     if (config.isStrictMode()) {
                         throw new InternalApplicationException("No template variable defined in process: '" + placeholder + "'");
                     }
                     continue;
                 }
                 VariableFormat format = config.getTypeHints().get(placeholder);
-                if (format != null) {
-                    value = format.format(value);
+                if (format == null) {
+                    format = variable.getFormatNotNull();
                 }
+                String replacement = format.format(variable.getValue());
                 paragraph.removeRun(i);
                 XWPFRun newRun = paragraph.insertNewRun(i);
-                newRun.setText(value + remainder);
+                newRun.setText(replacement + remainder);
                 stylesHolder.applyStyles(newRun);
             }
         }

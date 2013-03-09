@@ -100,7 +100,7 @@ public class ProcessExecutionErrors {
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(bot, botTaskName);
+            return Objects.hashCode(bot.getUsername(), botTaskName);
         }
 
         @Override

@@ -19,6 +19,7 @@ package ru.runa.wfe.commons.logic;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -49,9 +50,9 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.validation.ValidationException;
 import ru.runa.wfe.validation.ValidatorContext;
 import ru.runa.wfe.validation.ValidatorManager;
-import ru.runa.wfe.validation.impl.ValidationException;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dao.VariableDAO;
 
@@ -100,11 +101,11 @@ public class WFCommonLogic extends CommonLogic {
         return processDefinitionLoader.getLatestDefinition(definitionName);
     }
 
-    protected void validateVariables(User user, ProcessDefinition processDefinition, String nodeId, IVariableProvider variableProvider)
-            throws ValidationException {
+    protected void validateVariables(User user, ProcessDefinition processDefinition, String nodeId, Map<String, Object> variables,
+            IVariableProvider variableProvider) throws ValidationException {
         Interaction interaction = processDefinition.getInteractionNotNull(nodeId);
         if (interaction.getValidationData() != null) {
-            ValidatorContext context = ValidatorManager.getInstance().validate(user, interaction.getValidationData(), variableProvider);
+            ValidatorContext context = ValidatorManager.getInstance().validate(user, interaction.getValidationData(), variables, variableProvider);
             if (context.hasGlobalErrors() || context.hasFieldErrors()) {
                 throw new ValidationException(context.getFieldErrors(), context.getGlobalErrors());
             }

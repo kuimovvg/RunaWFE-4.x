@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.validation;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,11 +38,12 @@ public abstract class Validator {
     private ValidatorContext validatorContext;
     private IVariableProvider variableProvider;
 
-    public void init(User user, ValidatorConfig config, ValidatorContext validatorContext, IVariableProvider variableProvider) {
+    public void init(User user, ValidatorConfig config, ValidatorContext validatorContext, Map<String, Object> variables,
+            IVariableProvider variableProvider) {
         this.user = user;
         this.config = config;
         this.validatorContext = validatorContext;
-        this.variableProvider = new MapDelegableVariableProvider(config.getParams(), variableProvider);
+        this.variableProvider = new MapDelegableVariableProvider(config.getParams(), new MapDelegableVariableProvider(variables, variableProvider));
     }
 
     protected User getUser() {
