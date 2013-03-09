@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.office.excel.ExcelDataStore;
 import ru.runa.wfe.office.excel.ExcelStorable;
 import ru.runa.wfe.office.shared.FilesSupplierConfigParser;
@@ -19,14 +20,17 @@ public class ExcelReadHandler extends OfficeFilesSupplierHandler<ExcelBindings> 
     }
 
     @SuppressWarnings("rawtypes")
-	@Override
+    @Override
     protected Map<String, Object> executeAction(IVariableProvider variableProvider) throws Exception {
         Map<String, Object> result = new HashMap<String, Object>();
         ExcelDataStore dataStore = new ExcelDataStore();
-        Workbook workbook = dataStore.loadWorkbook(config.getFileInputStream(variableProvider, true), config.isInputFileXLSX(variableProvider, false));
+        Workbook workbook = dataStore
+                .loadWorkbook(config.getFileInputStream(variableProvider, true), config.isInputFileXLSX(variableProvider, false));
         for (ExcelBinding binding : config.getBindings()) {
             ExcelStorable storable = dataStore.load(workbook, binding.getConstraints());
-            result.put(binding.getVariableName(), storable.getData());
+            String[] readValue = TypeConversionUtil.convertTo(String[].class, storable.getData());
+            Object outValue = variableProvider.getVariableNotNull(binding.getVariableName()).getFormatNotNull().parse(readValue);
+            result.put(binding.getVariableName(), outValue);
         }
         return result;
     }

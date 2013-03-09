@@ -54,7 +54,6 @@ public class ViewUtil {
 
     public static String getVariableValueHtml(User user, WebHelper webHelper, Long processId, WfVariable variable) {
         VariableFormat<Object> format = variable.getFormatNotNull();
-        String html = "<span class=\"displayVariable\">";
         if (format instanceof VariableDisplaySupport) {
             if (webHelper == null || processId == null) {
                 return "";

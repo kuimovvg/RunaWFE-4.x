@@ -46,7 +46,7 @@ public class AlfObject implements Serializable {
     // protected boolean versionable;
 
     public void setLazyLoader(AlfConn lazyLoader) {
-        this.conn = lazyLoader;
+        conn = lazyLoader;
     }
 
     public void markInitialState(AlfTypeDesc mapping) {
@@ -72,7 +72,7 @@ public class AlfObject implements Serializable {
                     } else if (object instanceof Calendar) {
                         initialFieldValues.put(fieldName, CalendarUtil.clone((Calendar) object));
                     } else if (object.getClass().isArray()) {
-                        // TODO arrays are immutable
+                        // arrays are immutable
                     } else if (List.class.isAssignableFrom(object.getClass())) {
                         initialFieldValues.put(fieldName, ((List) object).toArray());
                     } else {

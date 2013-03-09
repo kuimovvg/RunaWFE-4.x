@@ -4,6 +4,8 @@
  */
 package ru.runa.wfe.validation;
 
+import java.util.Map;
+
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -12,11 +14,14 @@ import ru.runa.wfe.var.IVariableProvider;
  */
 public abstract class FieldValidator extends Validator {
     private String fieldName;
+    private Object fieldValue;
 
     @Override
-    public void init(User user, ValidatorConfig config, ValidatorContext validatorContext, IVariableProvider variableProvider) {
-        super.init(user, config, validatorContext, variableProvider);
+    public void init(User user, ValidatorConfig config, ValidatorContext validatorContext, Map<String, Object> variables,
+            IVariableProvider variableProvider) {
+        super.init(user, config, validatorContext, variables, variableProvider);
         fieldName = config.getParams().get("fieldName");
+        fieldValue = variables.get(fieldName);
     }
 
     public String getFieldName() {
@@ -24,7 +29,7 @@ public abstract class FieldValidator extends Validator {
     }
 
     protected Object getFieldValue() {
-        return getVariableProvider().getValue(fieldName);
+        return fieldValue;
     }
 
     @Override

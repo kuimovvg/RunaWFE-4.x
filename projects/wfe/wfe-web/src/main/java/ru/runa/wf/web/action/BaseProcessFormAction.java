@@ -32,18 +32,17 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
+import ru.runa.wf.web.FormUtils;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Profile;
-import ru.runa.wfe.validation.impl.ValidationException;
+import ru.runa.wfe.validation.ValidationException;
 
 /**
  * Created on 15.12.2005
  * 
  */
 public abstract class BaseProcessFormAction extends ActionBase {
-    public static final String USER_DEFINED_VARIABLES = "UserDefinedVariables";
-    public static final String USER_ERRORS = "UserErrors";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
@@ -62,11 +61,6 @@ public abstract class BaseProcessFormAction extends ActionBase {
             // In this case we must go to success forwarding, because of this
             // task is absent and form can't be displayed
             addError(request, e);
-            // save in request user input
-            // request.setAttribute(USER_DEFINED_VARIABLES,
-            // VariableExtractionHelper.extractAllAvailableVariables(form));
-            // save in request user errors
-            // request.setAttribute(USER_ERRORS, userInputErrors);
             forward = mapping.findForward(Resources.FORWARD_SUCCESS);
         } catch (ValidationException e) {
             userInputErrors = e.getConcatenatedFieldErrors();
@@ -83,15 +77,12 @@ public abstract class BaseProcessFormAction extends ActionBase {
             addError(request, e);
             forward = getErrorForward(mapping, form);
         }
-        // save in request user input
-        request.setAttribute(USER_DEFINED_VARIABLES, VariableExtractionHelper.extractAllAvailableVariables(form));
-        // save in request user errors
-        request.setAttribute(USER_ERRORS, userInputErrors);
+        FormUtils.saveUserFormInput(request, form, userInputErrors);
         return forward;
     }
 
     protected Map<String, Object> getFormVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
-        return VariableExtractionHelper.extractVariables(request.getSession(), actionForm, interaction);
+        return FormUtils.extractVariables(request.getSession(), actionForm, interaction);
     }
 
     protected abstract ActionMessage getMessage();

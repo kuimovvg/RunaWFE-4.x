@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
+
+import ru.runa.wfe.commons.ftl.AjaxJsonFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.filter.StringFilterCriteria;
@@ -18,12 +21,12 @@ import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
 import freemarker.template.TemplateModelException;
 
-public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
+@SuppressWarnings("unchecked")
+public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -41,30 +44,27 @@ public class ActorsMultiSelectTag extends AjaxFreemarkerTag {
     }
 
     @Override
-    public void processAjaxRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected JSONAware processAjaxRequest(HttpServletRequest request) throws Exception {
+        JSONArray jsonArray = new JSONArray();
         String displayFormat = getParameterAs(String.class, 1);
         Group group = getParameterAs(Group.class, 2);
         boolean byLogin = "login".equals(displayFormat);
-        StringBuffer json = new StringBuffer("[");
         String hint = request.getParameter("hint");
         List<Actor> actors = getActors(user, group, byLogin, hint);
         if (actors.size() == 0) {
-            json.append("{\"id\": \"\", \"name\": \"\"}");
+            jsonArray.add(createJsonObject(null, ""));
         }
         for (Actor actor : actors) {
-            if (json.length() > 10) {
-                json.append(", ");
-            }
-            json.append("{\"id\": \"ID").append(actor.getId()).append("\", \"name\": \"");
-            if (byLogin) {
-                json.append(actor.getName());
-            } else {
-                json.append(actor.getFullName());
-            }
-            json.append("\"}");
+            jsonArray.add(createJsonObject(actor.getId(), byLogin ? actor.getName() : actor.getFullName()));
         }
-        json.append("]");
-        response.getOutputStream().write(json.toString().getBytes(Charsets.UTF_8));
+        return jsonArray;
+    }
+
+    private JSONObject createJsonObject(Long id, String name) {
+        JSONObject object = new JSONObject();
+        object.put("id", id != null ? "ID" + id : "");
+        object.put("name", name);
+        return object;
     }
 
     private List<Actor> getActors(User user, Group group, boolean byLogin, String hint) {

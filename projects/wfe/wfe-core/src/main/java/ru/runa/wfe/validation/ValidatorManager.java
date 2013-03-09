@@ -43,27 +43,28 @@ public class ValidatorManager {
         }
     }
 
-    private static Validator createValidator(User user, ValidatorConfig config, ValidatorContext validatorContext, IVariableProvider variableProvider) {
+    private static Validator createValidator(User user, ValidatorConfig config, ValidatorContext validatorContext, Map<String, Object> variables,
+            IVariableProvider variableProvider) {
         String className = validators.get(config.getType());
         Preconditions.checkNotNull(className, "There is no validator class mapped to the name '" + config.getType() + "'");
         Validator validator = ApplicationContextFactory.createAutowiredBean(className);
-        validator.init(user, config, validatorContext, variableProvider);
+        validator.init(user, config, validatorContext, variables, variableProvider);
         return validator;
     }
 
     public synchronized List<Validator> createValidators(User user, byte[] validationXml, ValidatorContext validatorContext,
-            IVariableProvider variableProvider) {
+            Map<String, Object> variables, IVariableProvider variableProvider) {
         List<ValidatorConfig> configs = ValidatorFileParser.parseValidatorConfigs(validationXml);
         ArrayList<Validator> validators = new ArrayList<Validator>(configs.size());
         for (ValidatorConfig config : configs) {
-            validators.add(createValidator(user, config, validatorContext, variableProvider));
+            validators.add(createValidator(user, config, validatorContext, variables, variableProvider));
         }
         return validators;
     }
 
-    public ValidatorContext validate(User user, byte[] validationXml, IVariableProvider variableProvider) {
+    public ValidatorContext validate(User user, byte[] validationXml, Map<String, Object> variables, IVariableProvider variableProvider) {
         ValidatorContext validatorContext = new ValidatorContext();
-        List<Validator> validators = createValidators(user, validationXml, validatorContext, variableProvider);
+        List<Validator> validators = createValidators(user, validationXml, validatorContext, variables, variableProvider);
         for (Validator validator : validators) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Running validator: " + validator);

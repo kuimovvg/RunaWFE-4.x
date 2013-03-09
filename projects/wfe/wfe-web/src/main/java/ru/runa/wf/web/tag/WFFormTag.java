@@ -32,33 +32,26 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.wf.web.action.BaseProcessFormAction;
+import ru.runa.wf.web.FormUtils;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 
 import com.google.common.base.Charsets;
 
-/**
- * Created on 11.05.2005
- * 
- */
 public abstract class WFFormTag extends TitledFormTag {
     private static final long serialVersionUID = 1L;
     public static final String FORM_NAME = "processForm";
 
-    private boolean isButtonVisible = false;
+    private boolean formButtonVisible;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void fillFormElement(TD tdFormElement) {
-        isButtonVisible = false;
         try {
             Interaction interaction = getInteraction();
             String wfFormContent = buildForm(interaction);
-            Map<String, String[]> userDefinedVariables = (Map<String, String[]>) pageContext.getRequest().getAttribute(
-                    BaseProcessFormAction.USER_DEFINED_VARIABLES);
+            Map<String, String[]> userDefinedVariables = FormUtils.getUserFormInputVariables(pageContext.getRequest());
             if (userDefinedVariables != null) {
-                Map<String, String> userErrors = (Map<String, String>) pageContext.getRequest().getAttribute(BaseProcessFormAction.USER_ERRORS);
+                Map<String, String> userErrors = FormUtils.getUserFormValidationErrors(pageContext.getRequest());
                 wfFormContent = HTMLFormConverter.fillForm(pageContext, wfFormContent, userDefinedVariables, userErrors);
             }
             if (interaction.getCssData() != null) {
@@ -82,7 +75,7 @@ public abstract class WFFormTag extends TitledFormTag {
             }
 
             tdFormElement.addElement(new StringElement(wfFormContent));
-            isButtonVisible = true;
+            formButtonVisible = true;
         } catch (TaskDoesNotExistException e) {
             log.warn(e.getMessage());
             P p = new P();
@@ -104,7 +97,7 @@ public abstract class WFFormTag extends TitledFormTag {
 
     @Override
     public boolean isFormButtonVisible() {
-        return isButtonVisible;
+        return formButtonVisible;
     }
 
     @Override
@@ -112,9 +105,9 @@ public abstract class WFFormTag extends TitledFormTag {
         return Messages.getMessage(Messages.BUTTON_COMPLETE, pageContext);
     }
 
-    abstract protected Long getDefinitionId();
+    protected abstract Long getDefinitionId();
 
-    abstract protected Interaction getInteraction();
+    protected abstract Interaction getInteraction();
 
-    abstract protected String buildForm(Interaction interaction);
+    protected abstract String buildForm(Interaction interaction);
 }

@@ -28,6 +28,6 @@ public class DeployBotAction extends ActionBase {
         } catch (Exception e) {
             addError(request, e);
         }
-        return new ActionForward("/bot_station.do?botStationId=" + form.getId());
+        return new ActionForward("/bot_station.do?botStationId=" + form.getBotStationId());
     }
 }
