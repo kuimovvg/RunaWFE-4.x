@@ -1,23 +1,17 @@
 package ru.runa.wfe.execution.dao;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
-import ru.runa.wfe.var.Variable;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -40,39 +34,6 @@ public class ProcessDAO extends GenericDAO<Process> {
 
     public List<Process> findAllProcesses(Long definitionId) {
         return getHibernateTemplate().find("from Process where deployment.id=? order by startDate desc", definitionId);
-    }
-
-    // TODO not used now
-    public HashMap<Long, Object> getVariableValueFromProcesses(final List<Long> processIds, final String variableName) {
-        return getHibernateTemplate().execute(new HibernateCallback<HashMap<Long, Object>>() {
-
-            @Override
-            public HashMap<Long, Object> doInHibernate(Session session) {
-                HashMap<Long, Object> result = Maps.newHashMap();
-                if (!processIds.isEmpty()) {
-                    for (int i = 0; i <= processIds.size() / 1000; ++i) {
-                        int start = i * 1000; // TODO fails on 2000
-                        int end = (i + 1) * 1000 > processIds.size() ? processIds.size() : (i + 1) * 1000;
-                        Set<Long> requested = new HashSet<Long>(end - start);
-                        for (int j = start; j < end; j++) {
-                            requested.add(processIds.get(j));
-                        }
-                        if (requested.size() == 0) {
-                            continue;
-                        }
-                        Criteria query = session.createCriteria(Variable.class);
-                        query.add(Expression.in("process.id", requested));
-                        query.add(Expression.eq("name", variableName));
-                        List<Variable<?>> vars = query.list();
-                        for (Variable<?> var : vars) { // TODO check
-                                                       // permissions!
-                            result.put(var.getProcess().getId(), var.getValue());
-                        }
-                    }
-                }
-                return result;
-            }
-        });
     }
 
     public List<Process> getProcesses(final ProcessFilter filter) {

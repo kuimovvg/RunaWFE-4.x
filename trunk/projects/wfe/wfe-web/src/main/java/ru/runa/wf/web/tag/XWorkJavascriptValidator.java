@@ -34,7 +34,6 @@ import ru.runa.wfe.validation.FieldValidator;
 import ru.runa.wfe.validation.Validator;
 import ru.runa.wfe.validation.ValidatorContext;
 import ru.runa.wfe.validation.ValidatorManager;
-import ru.runa.wfe.var.EmptyVariableProvider;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
@@ -61,7 +60,7 @@ public class XWorkJavascriptValidator {
 
             ValidatorContext validatorContext = new ValidatorContext();
             List<Validator> validators = ValidatorManager.getInstance().createValidators(user, validationXmlBytes, validatorContext,
-                    new EmptyVariableProvider());
+                    new HashMap<String, Object>(), null);
             for (Validator validator : validators) {
                 if (validator instanceof FieldValidator) {
                     tagNames.add(((FieldValidator) validator).getFieldName());

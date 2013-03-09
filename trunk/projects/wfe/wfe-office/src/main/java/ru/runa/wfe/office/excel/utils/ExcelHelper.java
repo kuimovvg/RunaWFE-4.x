@@ -10,6 +10,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
+
 import com.google.common.base.Preconditions;
 
 public class ExcelHelper {
@@ -60,18 +62,18 @@ public class ExcelHelper {
         }
     }
 
-    public static Object getCellValue(Cell cell) {
+    public static String getCellValue(Cell cell) {
         switch (cell.getCellType()) {
         case Cell.CELL_TYPE_STRING:
             return cell.getRichStringCellValue().getString();
         case Cell.CELL_TYPE_NUMERIC:
             if (DateUtil.isCellDateFormatted(cell)) {
-                return cell.getDateCellValue();
+                return TypeConversionUtil.convertTo(String.class, cell.getDateCellValue());
             } else {
-                return cell.getNumericCellValue();
+                return TypeConversionUtil.convertTo(String.class, cell.getNumericCellValue());
             }
         case Cell.CELL_TYPE_BOOLEAN:
-            return cell.getBooleanCellValue();
+            return TypeConversionUtil.convertTo(String.class, cell.getBooleanCellValue());
         case Cell.CELL_TYPE_FORMULA:
             return cell.getCellFormula();
         default:
