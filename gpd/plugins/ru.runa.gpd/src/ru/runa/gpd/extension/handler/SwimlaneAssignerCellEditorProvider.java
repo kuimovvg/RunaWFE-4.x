@@ -116,6 +116,7 @@ public class SwimlaneAssignerCellEditorProvider extends DelegableProvider {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     Swimlane swimlane = new Swimlane();
+                    swimlane.setParent(definition);
                     swimlane.setName("TEST");
                     swimlane.setDelegationConfiguration(swimlaneInitializerText.getText());
                     SwimlaneConfigDialog dialog = new SwimlaneConfigDialog(definition, swimlane, "");
