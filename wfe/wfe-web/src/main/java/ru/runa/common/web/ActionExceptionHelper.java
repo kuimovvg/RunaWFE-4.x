@@ -51,7 +51,7 @@ import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
-import ru.runa.wfe.validation.impl.ValidationException;
+import ru.runa.wfe.validation.ValidationException;
 
 import com.google.common.base.Throwables;
 

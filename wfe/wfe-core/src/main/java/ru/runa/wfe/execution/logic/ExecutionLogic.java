@@ -44,7 +44,6 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.MapDelegableVariableProvider;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -134,8 +133,7 @@ public class ExecutionLogic extends WFCommonLogic {
                 variables.put(entry.getKey(), entry.getValue());
             }
         }
-        validateVariables(user, processDefinition, processDefinition.getStartStateNotNull().getNodeId(), new MapDelegableVariableProvider(variables,
-                null));
+        validateVariables(user, processDefinition, processDefinition.getStartStateNotNull().getNodeId(), variables, null);
         String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
         Process process = processFactory.startProcess(processDefinition, variables, user.getActor(), transitionName);
         log.info("Process " + process + " was successfully started");

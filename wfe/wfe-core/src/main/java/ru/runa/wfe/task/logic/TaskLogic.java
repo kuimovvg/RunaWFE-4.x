@@ -33,7 +33,6 @@ import ru.runa.wfe.user.ActorPermission;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.MapDelegableVariableProvider;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
@@ -68,8 +67,7 @@ public class TaskLogic extends WFCommonLogic {
             checkCanParticipate(user, task);
             checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
             assignmentHelper.reassignTask(executionContext, task, user.getActor(), true);
-            validateVariables(user, processDefinition, task.getNodeId(),
-                    new MapDelegableVariableProvider(variables, executionContext.getVariableProvider()));
+            validateVariables(user, processDefinition, task.getNodeId(), variables, executionContext.getVariableProvider());
             executionContext.setVariables(variables);
             Transition transition = null;
             if (transitionName != null) {

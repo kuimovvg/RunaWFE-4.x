@@ -1,21 +1,4 @@
-/*
- * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
- */
-package ru.runa.wf.web.action;
+package ru.runa.wf.web;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,13 +6,15 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
 
-import ru.runa.wf.web.VariablesFormatException;
 import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.var.FileVariable;
@@ -41,14 +26,34 @@ import ru.runa.wfe.var.format.VariableFormat;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
-/**
- * Created on 18.07.2005
- * 
- */
 @SuppressWarnings("unchecked")
-class VariableExtractionHelper {
+public class FormUtils {
+    private static final Log log = LogFactory.getLog(FormUtils.class);
+    public static final String USER_DEFINED_VARIABLES = "UserDefinedVariables";
+    public static final String USER_ERRORS = "UserErrors";
 
-    private VariableExtractionHelper() {
+    /**
+     * save in request user input with errors
+     * 
+     * @param userInputErrors
+     *            validation errors
+     */
+    public static void saveUserFormInput(HttpServletRequest request, ActionForm form, Map<String, String> userInputErrors) {
+        request.setAttribute(USER_DEFINED_VARIABLES, extractAllAvailableVariables(form));
+        // save in request user errors
+        request.setAttribute(USER_ERRORS, userInputErrors);
+    }
+
+    /**
+     * @return saved in request values from previous form submit (used to
+     *         re-open form in case of validation errors)
+     */
+    public static Map<String, String[]> getUserFormInputVariables(ServletRequest request) {
+        return (Map<String, String[]>) request.getAttribute(USER_DEFINED_VARIABLES);
+    }
+
+    public static Map<String, String> getUserFormValidationErrors(ServletRequest request) {
+        return (Map<String, String>) request.getAttribute(USER_ERRORS);
     }
 
     public static Map<String, String[]> extractAllAvailableVariables(ActionForm actionForm) {
@@ -103,7 +108,7 @@ class VariableExtractionHelper {
                     try {
                         variableValue = format.parse(valuesToFormat);
                     } catch (Exception e) {
-                        LogFactory.getLog(VariableExtractionHelper.class).warn(e);
+                        log.warn(e);
                         if (valuesToFormat[0].length() > 0) {
                             // in other case we put validation in logic
                             formatErrorsForFields.add(variableDefinition.getName());
@@ -128,4 +133,5 @@ class VariableExtractionHelper {
             throw Throwables.propagate(e);
         }
     }
+
 }

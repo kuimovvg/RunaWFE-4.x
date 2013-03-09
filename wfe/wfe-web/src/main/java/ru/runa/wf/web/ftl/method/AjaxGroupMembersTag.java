@@ -22,22 +22,24 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
+import ru.runa.wfe.commons.ftl.AjaxJsonFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
-import ru.runa.wfe.user.User;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 
 import freemarker.template.TemplateModelException;
 
-public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
+@SuppressWarnings("unchecked")
+public class AjaxGroupMembersTag extends AjaxJsonFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -70,7 +72,7 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
             html.append("</select>");
             html.append("<select id=\"").append(userVarName).append("\" name=\"").append(userVarName).append("\">");
             if (defaultGroup != null) {
-                List<Actor> actors = getActors(user, defaultGroup);
+                List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, defaultGroup);
                 Actor defaultActor = getSavedValue(Actor.class, userVarName);
                 if (defaultActor == null && actors.size() > 0) {
                     defaultActor = actors.get(0);
@@ -99,27 +101,26 @@ public class AjaxGroupMembersTag extends AjaxFreemarkerTag {
     }
 
     @Override
-    public void processAjaxRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        StringBuffer json = new StringBuffer("[");
+    protected JSONAware processAjaxRequest(HttpServletRequest request) throws Exception {
+        JSONArray json = new JSONArray();
         Group group = TypeConversionUtil.convertTo(Group.class, request.getParameter("groupId"));
-        List<Actor> actors = getActors(user, group);
+        List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, group);
         if (actors.size() == 0) {
-            json.append("{\"id\": \"\", \"name\": \"No users in this group\"}");
+            json.add(createJsonObject(null, "No users in this group"));
         } else {
-            json.append("{\"id\": \"\", \"name\": \"None\"}");
+            json.add(createJsonObject(null, "None"));
         }
         for (Actor actor : actors) {
-            if (json.length() > 10) {
-                json.append(", ");
-            }
-            json.append("{\"id\": \"ID").append(actor.getId()).append("\", \"name\": \"").append(actor.getFullName()).append("\"}");
+            json.add(createJsonObject(actor.getId(), actor.getFullName()));
         }
-        json.append("]");
-        response.getOutputStream().write(json.toString().getBytes(Charsets.UTF_8));
+        return json;
     }
 
-    private List<Actor> getActors(User user, Group group) throws TemplateModelException {
-        return Delegates.getExecutorService().getGroupActors(user, group);
+    private JSONObject createJsonObject(Long id, String name) {
+        JSONObject object = new JSONObject();
+        object.put("id", id != null ? "ID" + id : "");
+        object.put("name", name);
+        return object;
     }
 
 }

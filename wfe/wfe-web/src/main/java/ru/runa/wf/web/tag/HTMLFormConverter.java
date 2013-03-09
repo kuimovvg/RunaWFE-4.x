@@ -42,6 +42,7 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.wf.web.action.LoadProcessDefinitionHtmlFileAction;
 import ru.runa.wf.web.form.DefinitionFileForm;
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -189,8 +190,10 @@ public class HTMLFormConverter {
                 String inputName = node.getAttribute(NAME_ATTR);
 
                 String[] valueArray = variables.get(inputName);
-                String stringValue = getString(valueArray);
-
+                String stringValue = getStringForFillingUserInputValues(valueArray);
+                if (stringValue == null) {
+                    continue;
+                }
                 // handle input (type='text, password')
                 if (hasValue(STD_INPUT_NAMES, typeName, true)) {
                     node.setAttribute(VALUE_ATTR, stringValue);
@@ -223,7 +226,10 @@ public class HTMLFormConverter {
                 String inputName = node.getAttribute(NAME_ATTR);
                 if (inputName != null && inputName.length() > 0) {
                     String[] valueArray = variables.get(inputName);
-                    String stringValue = getString(valueArray);
+                    String stringValue = getStringForFillingUserInputValues(valueArray);
+                    if (stringValue == null) {
+                        continue;
+                    }
                     stringValue = stringValue.replaceAll("\r\n", "\n");
                     if (node.getFirstChild() != null) {
                         node.getFirstChild().setNodeValue(stringValue);
@@ -280,7 +286,7 @@ public class HTMLFormConverter {
             // we don't know user format of date
             return null;
         }
-        if (value instanceof List<?>) {
+        if (value instanceof List<?> || (value != null && value.getClass().isArray())) {
             // we don't handle them
             return null;
         }
@@ -402,11 +408,27 @@ public class HTMLFormConverter {
         element.setAttribute(CSS_CLASS_ATTR, cssClasses);
     }
 
-    private static String getString(String[] valueArray) {
-        if ((valueArray != null) && (valueArray.length > 0)) {
+    /**
+     * Rules:
+     * 
+     * 1) don't handling multiple input (we cannot do this properly; they are
+     * handled in {@link FreemarkerTag#exec(List)})
+     * 
+     * 2) Don't don't fill long strings due to
+     * java.lang.ArrayIndexOutOfBoundsException at
+     * java.lang.String.getChars(String.java:854) at
+     * org.apache.xml.serializer.WriterToUTF8Buffered
+     * .write(WriterToUTF8Buffered.java:347)
+     * 
+     * @param valueArray
+     *            http values
+     * @return <code>null</code> or replacement value
+     */
+    private static String getStringForFillingUserInputValues(String[] valueArray) {
+        if (valueArray != null && valueArray.length == 1 && valueArray[0].length() < 1000) {
             return valueArray[0];
         }
-        return "";
+        return null;
     }
 
     private static boolean hasValue(String[] array, String value, boolean ignoreCase) {
