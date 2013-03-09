@@ -24,7 +24,7 @@ function updateDialogContent_VARIABLE() {
         {tag: "ActorsMultiSelect", hint: $("#dialogFilter_VARIABLE").val()},
         function(data) {
             $.each(data, function(i, item) {
-                $("#dialogContent_VARIABLE").append("<div><a href='javascript:addActor_VARIABLE(\""+item.id+"\", \""+item.name+"\");'>"+item.name+"</a></div>");
+                $("#dialogContent_VARIABLE").append("<div><a href='javascript:addActor_VARIABLE(\""+item.id+"\", \""+escapeQuotesForHtmlContext(item.name)+"\");'>"+item.name+"</a></div>");
             });
         }
     );
