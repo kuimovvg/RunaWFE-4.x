@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 
-	<id>server-full-${version}</id>
+	<id>server-base-${version}</id>
 
 	<formats>
 		<format>zip</format>
@@ -17,15 +17,4 @@
 			<outputDirectory>jboss</outputDirectory>
 		</fileSet>
 	</fileSets>
-
-	<dependencySets>
-		<dependencySet>
-			<includes>
-				<include>ru.runa.wfe:wfe-ear</include>
-			</includes>
-			<unpack>true</unpack>
-			<outputDirectory>jboss/server/default/deploy/runawfe.ear</outputDirectory>
-		</dependencySet>
-	</dependencySets>
-
 </assembly>
