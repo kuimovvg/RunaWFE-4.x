@@ -36,6 +36,7 @@ import ru.runa.wfe.extension.TaskHandler;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.client.DelegateProcessVariableProvider;
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.task.TaskAlreadyCompletedException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
@@ -201,6 +202,9 @@ public class WorkflowBot implements Runnable {
                 Delegates.getExecutionService().completeTask(user, task.getId(), variables);
                 log.debug("Handled bot task " + task + ", " + bot + " by " + taskHandler.getClass());
             }
+            ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getName());
+        } catch (TaskAlreadyCompletedException e) {
+            log.warn(task + " already handled");
             ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getName());
         } catch (Throwable th) {
             ProcessExecutionErrors.addProcessError(task.getProcessId(), task.getName(), th);
