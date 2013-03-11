@@ -22,8 +22,10 @@ import java.util.Set;
 
 import org.hibernate.type.Type;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.BaseCacheCtrl;
 import ru.runa.wfe.commons.cache.CachingLogic;
+import ru.runa.wfe.commons.cache.Change;
 import ru.runa.wfe.commons.cache.ExecutorChangeListener;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.user.Actor;
@@ -49,9 +51,9 @@ public class ExecutorCacheCtrl extends BaseCacheCtrl<ExecutorCacheImpl> implemen
     }
 
     @Override
-    public void doOnChange(Object object, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
+    public void doOnChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
         if (!isSmartCache()) {
-            uninitialize(object);
+            uninitialize(object, change);
             return;
         }
         ExecutorCacheImpl cache = getCache();
@@ -66,37 +68,40 @@ public class ExecutorCacheCtrl extends BaseCacheCtrl<ExecutorCacheImpl> implemen
                     break;
                 }
             }
+            boolean createOrDelete = change == Change.CREATE || change == Change.DELETE;
             if (object instanceof Actor) {
-                cleared = cache.onExecutorChange((String) currentState[i], Actor.class, previousState == null);
+                cleared = cache.onExecutorChange((String) currentState[i], Actor.class, createOrDelete);
                 if (previousState != null) {
-                    cleared = cleared && cache.onExecutorChange((String) previousState[i], Actor.class, previousState == null);
+                    cleared = cleared && cache.onExecutorChange((String) previousState[i], Actor.class, createOrDelete);
                 }
             } else {
-                cleared = cache.onExecutorChange((String) currentState[i], Executor.class, previousState == null);
+                cleared = cache.onExecutorChange((String) currentState[i], Executor.class, createOrDelete);
                 if (previousState != null) {
-                    cleared = cleared && cache.onExecutorChange((String) previousState[i], Executor.class, previousState == null);
+                    cleared = cleared && cache.onExecutorChange((String) previousState[i], Executor.class, createOrDelete);
                 }
             }
             if (!cleared) {
-                uninitialize(object);
+                uninitialize(object, change);
             }
-        } else if (object instanceof ExecutorGroupMembership) {
+            return;
+        }
+        if (object instanceof ExecutorGroupMembership) {
             boolean cleared = true;
             ExecutorGroupMembership membership = (ExecutorGroupMembership) object;
             cleared = cleared && cache.onExecutorInGroupChange(membership.getExecutor());
             cleared = cleared && cache.onGroupMembersChange(membership.getGroup());
             if (!cleared) {
-                uninitialize(object);
+                uninitialize(object, change);
             }
-        } else {
-            uninitialize(object);
+            return;
         }
+        throw new InternalApplicationException("Unexpected object " + object);
     }
 
     @Override
     protected void doMarkTransactionComplete() {
         if (!isLocked()) {
-            uninitialize(this);
+            uninitialize(this, Change.REFRESH);
         }
     }
 

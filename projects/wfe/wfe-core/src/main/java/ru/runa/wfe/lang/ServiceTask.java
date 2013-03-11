@@ -35,12 +35,11 @@ public class ServiceTask extends Node {
         try {
             executionContext.addLog(new ActionLog(this));
             ActionHandler actionHandler = delegation.getInstance();
-            log.info("Executing ActionHandler " + this); // TODO debug
+            log.info("Executing " + this); // TODO debug
             actionHandler.execute(executionContext);
-            log.info("ActionHandler finished");
             leave(executionContext);
         } catch (Exception e) {
-            log.error("ActionHandler failed " + this);
+            log.error("Failed " + this);
             throw Throwables.propagate(e);
         }
     }

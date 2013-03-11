@@ -26,13 +26,7 @@ import org.hibernate.type.Type;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.commons.cache.CachingLogic;
-import ru.runa.wfe.definition.Deployment;
-import ru.runa.wfe.execution.Swimlane;
-import ru.runa.wfe.ss.Substitution;
-import ru.runa.wfe.ss.SubstitutionCriteria;
-import ru.runa.wfe.task.Task;
-import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorGroupMembership;
+import ru.runa.wfe.commons.cache.Change;
 
 public class WFRunaHibernateInterceptor extends EmptyInterceptor {
     private static final long serialVersionUID = 1L;
@@ -41,44 +35,36 @@ public class WFRunaHibernateInterceptor extends EmptyInterceptor {
         return ApplicationContextFactory.getDBType() == DBType.Oracle;
     }
 
-    private boolean onChanges(Object entity, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types,
+    private boolean onChanges(Object entity, Change change, Object[] state, Object[] previousState, String[] propertyNames, Type[] types,
             boolean fixOracleStrings) {
         boolean modified = false;
         if (fixOracleStrings && isOracleDatabase()) {
             // Oracle handles empty strings as NULLs so we change empty strings
             // to ' '.
-            for (int i = 0; i < currentState.length; ++i) {
-                if (currentState[i] instanceof String && ((String) currentState[i]).length() == 0) {
-                    currentState[i] = " ";
+            for (int i = 0; i < state.length; ++i) {
+                if (state[i] instanceof String && ((String) state[i]).length() == 0) {
+                    state[i] = " ";
                     modified = true;
                 }
             }
         }
-        if (entity instanceof Task || entity instanceof Swimlane) {
-            CachingLogic.onTaskChange(entity, currentState, previousState, propertyNames, types);
-        } else if (entity instanceof Substitution || entity instanceof SubstitutionCriteria) {
-            CachingLogic.onSubstitutionChange(entity, currentState, previousState, propertyNames, types);
-        } else if (entity instanceof Executor || entity instanceof ExecutorGroupMembership) {
-            CachingLogic.onExecutorChange(entity, currentState, previousState, propertyNames, types);
-        } else if (entity instanceof Deployment) {
-            CachingLogic.onProcessDefChange(entity, currentState, previousState, propertyNames, types);
-        }
+        CachingLogic.onChange(entity, change, state, previousState, propertyNames, types);
         return modified;
     }
 
     @Override
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
-        return onChanges(entity, state, null, propertyNames, types, true);
+        return onChanges(entity, Change.CREATE, state, null, propertyNames, types, true);
     }
 
     @Override
     public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
-        onChanges(entity, state, null, propertyNames, types, false);
+        onChanges(entity, Change.DELETE, state, null, propertyNames, types, false);
     }
 
     @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        return onChanges(entity, currentState, previousState, propertyNames, types, true);
+    public boolean onFlushDirty(Object entity, Serializable id, Object[] state, Object[] previousState, String[] propertyNames, Type[] types) {
+        return onChanges(entity, Change.UPDATE, state, previousState, propertyNames, types, true);
     }
 
 }

@@ -56,12 +56,11 @@ public class TasklistBuilder {
         if (result != null) {
             return result;
         }
-        int cacheVersion = taskCache.getCacheVersion();
         result = Lists.newArrayList();
         Set<Executor> executorsToGetTasksByMembership = getExecutorsToGetTasks(actor, false);
         Set<Executor> executorsToGetTasks = Sets.newHashSet(executorsToGetTasksByMembership);
-        for (Long substitutedActor : substitutionLogic.getSubstituted(actor)) {
-            executorsToGetTasks.addAll(getExecutorsToGetTasks(executorDAO.getActor(substitutedActor), true));
+        for (Actor substitutedActor : substitutionLogic.getSubstituted(actor)) {
+            executorsToGetTasks.addAll(getExecutorsToGetTasks(substitutedActor, true));
         }
         List<Task> tasks = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(executorsToGetTasks, "executor", false);
         for (Task task : tasks) {
@@ -96,7 +95,7 @@ public class TasklistBuilder {
                 log.error("Unable build task " + task, e);
             }
         }
-        taskCache.setTasks(cacheVersion, actor.getId(), batchPresentation, result);
+        taskCache.setTasks(taskCache.getCacheVersion(), actor.getId(), batchPresentation, result);
         return result;
     }
 
@@ -117,11 +116,10 @@ public class TasklistBuilder {
     }
 
     private boolean isTaskAcceptableBySubstitutionRules(ExecutionContext executionContext, Task task, Actor assignedActor, Actor substitutorActor) {
-        TreeMap<Substitution, Set<Long>> mapOfSubstitionRule = substitutionLogic.getSubstitutors(assignedActor);
-        for (Map.Entry<Substitution, Set<Long>> substitutionRule : mapOfSubstitionRule.entrySet()) {
+        TreeMap<Substitution, Set<Actor>> mapOfSubstitionRule = substitutionLogic.getSubstitutors(assignedActor);
+        for (Map.Entry<Substitution, Set<Actor>> substitutionRule : mapOfSubstitionRule.entrySet()) {
             Substitution substitution = substitutionRule.getKey();
             SubstitutionCriteria criteria = substitution.getCriteria();
-            Set<Long> substitutors = substitutionRule.getValue();
             if (substitution instanceof TerminatorSubstitution) {
                 if (criteria == null || criteria.isSatisfied(executionContext, task, assignedActor, substitutorActor)) {
                     return false;
@@ -130,8 +128,7 @@ public class TasklistBuilder {
             }
             boolean canISubstitute = false;
             boolean substitutionApplies = false;
-            for (Long actorId : substitutors) {
-                Actor actor = executorDAO.getActor(actorId);
+            for (Actor actor : substitutionRule.getValue()) {
                 if (actor.isActive() && (criteria == null || criteria.isSatisfied(executionContext, task, assignedActor, actor))) {
                     substitutionApplies = true;
                 }

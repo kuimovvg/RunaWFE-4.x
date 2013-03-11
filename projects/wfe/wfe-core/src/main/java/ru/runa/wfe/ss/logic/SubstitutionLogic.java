@@ -176,11 +176,11 @@ public class SubstitutionLogic extends CommonLogic {
         fixPositionsForDeletedSubstitution(substitution.getActorId());
     }
 
-    public TreeMap<Substitution, Set<Long>> getSubstitutors(Actor actor) {
+    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor) {
         return substitutionCache.getSubstitutors(actor);
     }
 
-    public Set<Long> getSubstituted(Actor actor) {
+    public Set<Actor> getSubstituted(Actor actor) {
         return substitutionCache.getSubstituted(actor);
     }
 

@@ -17,30 +17,37 @@
  */
 package ru.runa.wfe.task.cache;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.type.Type;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.BaseCacheCtrl;
 import ru.runa.wfe.commons.cache.CachingLogic;
+import ru.runa.wfe.commons.cache.Change;
 import ru.runa.wfe.commons.cache.TaskChangeListener;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.ss.Substitution;
+import ru.runa.wfe.ss.SubstitutionCriteria;
+import ru.runa.wfe.ss.TerminatorSubstitution;
 import ru.runa.wfe.ss.cache.SubstitutionCacheCtrl;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.ExecutorGroupMembership;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.cache.ExecutorCacheCtrl;
 import ru.runa.wfe.user.cache.ExecutorCacheImpl;
 
+import com.google.common.collect.Sets;
+
 public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskChangeListener, TaskCache {
     private static final TaskCacheCtrl instance = new TaskCacheCtrl();
+    private static final String EXECUTOR_PROPERTY_NAME = "executor";
 
     private TaskCacheCtrl() {
         CachingLogic.registerChangeListener(this);
@@ -56,70 +63,106 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
     }
 
     @Override
-    public void doOnChange(Object object, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
+    public void doOnChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
         if (!isSmartCache()) {
-            uninitialize(object);
+            uninitialize(object, change);
             return;
         }
         if (object instanceof Task) {
             int idx = 0;
-            while (!propertyNames[idx].equals("executor")) {
+            while (!propertyNames[idx].equals(EXECUTOR_PROPERTY_NAME)) {
                 ++idx;
             }
             if (idx == propertyNames.length) {
-                uninitialize(object);
-                return;
+                throw new InternalApplicationException("No '" + EXECUTOR_PROPERTY_NAME + "' found in " + object);
             }
-            clearCacheForActors((Executor) currentState[idx]);
+            clearCacheForActors((Executor) currentState[idx], change);
             if (previousState != null) {
-                clearCacheForActors((Executor) previousState[idx]);
+                clearCacheForActors((Executor) previousState[idx], change);
             }
-        } else if (object instanceof Swimlane) {
-            int idx = 0;
-            while (!propertyNames[idx].equals("executor")) {
-                ++idx;
-            }
-            if (idx == propertyNames.length) {
-                uninitialize(object);
-                return;
-            }
-            clearCacheForActors((Executor) currentState[idx]);
-            if (previousState != null) {
-                clearCacheForActors((Executor) previousState[idx]);
-            }
-        } else {
-            uninitialize(object);
+            return;
         }
+        if (object instanceof Swimlane) {
+            int idx = 0;
+            while (!propertyNames[idx].equals(EXECUTOR_PROPERTY_NAME)) {
+                ++idx;
+            }
+            if (idx == propertyNames.length) {
+                throw new InternalApplicationException("No '" + EXECUTOR_PROPERTY_NAME + "' found in " + object);
+            }
+            clearCacheForActors((Executor) currentState[idx], change);
+            if (previousState != null) {
+                clearCacheForActors((Executor) previousState[idx], change);
+            }
+            return;
+        }
+        if (object instanceof ExecutorGroupMembership) {
+            ExecutorGroupMembership membership = (ExecutorGroupMembership) object;
+            clearCacheForActors(membership.getExecutor(), change);
+            return;
+        }
+        if (object instanceof Substitution) {
+            Substitution substitution = (Substitution) object;
+            ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
+            if (executorCache == null) {
+                uninitialize(object, change);
+                return;
+            }
+            Actor actor = (Actor) executorCache.getExecutor(substitution.getActorId());
+            if (!actor.isActive()) {
+                clearCacheForActors(actor, change);
+            }
+            return;
+        }
+        if (object instanceof SubstitutionCriteria) {
+            // TODO clear cache for affected actors only
+            uninitialize(object, change);
+            return;
+        }
+        throw new InternalApplicationException("Unexpected object " + object);
+    }
+
+    /**
+     * Do not wait until cache is released
+     * 
+     * @return cache or <code>null</code> in case of locked
+     */
+    private TaskCacheImpl getCacheNoWait() {
+        TaskCacheImpl cache = getCache();
+        if (cache == null && !isLocked()) {
+            cache = CachingLogic.getCacheImpl(this);
+        }
+        return cache;
     }
 
     @Override
     public List<WfTask> getTasks(Long actorId, BatchPresentation batchPresentation) {
-        synchronized (CachingLogic.class) {
-            // Do not wait until cache is released
-            if (isLocked()) {
-                return null;
-            }
+        TaskCacheImpl cache = getCacheNoWait();
+        if (cache == null) {
+            return null;
         }
-        return CachingLogic.getCacheImpl(this).getTasks(actorId, batchPresentation);
+        return cache.getTasks(actorId, batchPresentation);
     }
 
     @Override
     public void setTasks(int cacheVersion, Long actorId, BatchPresentation batchPresentation, List<WfTask> tasks) {
-        synchronized (CachingLogic.class) {
-            // Do not wait until cache is released
-            if (isLocked()) {
-                return;
-            }
+        TaskCacheImpl cache = getCacheNoWait();
+        if (cache == null) {
+            return;
         }
-        CachingLogic.getCacheImpl(this).setTasks(cacheVersion, actorId, batchPresentation, tasks);
+        cache.setTasks(cacheVersion, actorId, batchPresentation, tasks);
     }
 
     @Override
     public int getCacheVersion() {
-        return CachingLogic.getCacheImpl(this).getCacheVersion();
+        TaskCacheImpl cache = getCacheNoWait();
+        if (cache == null) {
+            return 0;
+        }
+        return cache.getCacheVersion();
     }
 
-    private void clearCacheForActors(Executor executor) {
+    private void clearCacheForActors(Executor executor, Change change) {
         TaskCacheImpl cache = getCache();
         if (cache == null) {
             return;
@@ -127,39 +170,41 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
         if (executor == null) {
             return;
         }
-        Set<Actor> actors = new HashSet<Actor>();
-        ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
-        if (executorCache == null) {
-            uninitialize(executor);
-            return;
-        }
+        Set<Actor> actors;
         if (executor instanceof Group) {
+            // TODO make caches retrieval not blocking and remove
+            // uninitialize(...)
+            // call for this cache
+            ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
+            if (executorCache == null) {
+                uninitialize(executor, change);
+                return;
+            }
             actors = executorCache.getGroupActorsAll((Group) executor);
+            if (actors == null) {
+                log.error("No group actors found in cache for " + executor);
+                uninitialize(executor, change);
+                return;
+            }
         } else {
-            actors.add((Actor) executor);
+            actors = Sets.newHashSet((Actor) executor);
         }
         for (Actor actor : actors) {
-            clearActorCache(actor);
-        }
-    }
-
-    private void clearActorCache(Actor actor) {
-        TaskCacheImpl cache = getCache();
-        if (cache == null) {
-            return;
-        }
-        cache.clearActorTasks(actor.getId());
-        Map<Substitution, Set<Long>> sub = SubstitutionCacheCtrl.getInstance().tryToGetSubstitutors(actor);
-        if (sub == null) {
-            uninitialize(this);
-            return;
-        }
-        for (Set<Long> substitutors : sub.values()) {
-            if (substitutors != null) {
-                for (Long substitutorActor : substitutors) {
-                    cache.clearActorTasks(substitutorActor);
+            cache.clearActorTasks(actor.getId());
+            Map<Substitution, Set<Actor>> substitutors = SubstitutionCacheCtrl.getInstance().tryToGetSubstitutors(actor);
+            if (substitutors == null) {
+                uninitialize(this, change);
+                return;
+            }
+            for (Map.Entry<Substitution, Set<Actor>> entry : substitutors.entrySet()) {
+                if (entry.getKey() instanceof TerminatorSubstitution) {
+                    continue;
+                }
+                for (Actor substitutorActor : entry.getValue()) {
+                    cache.clearActorTasks(substitutorActor.getId());
                 }
             }
         }
     }
+
 }

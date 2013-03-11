@@ -46,7 +46,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
     /**
      * Logging support.
      */
-    private final Log log = LogFactory.getLog(this.getClass());
+    protected final Log log = LogFactory.getLog(this.getClass());
 
     /**
      * Current cache implementation. May be null, if no cache implementation
@@ -99,15 +99,10 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
     }
 
     @Override
-    public final void onChange() {
+    public final void onChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
         registerChange();
-        doOnChange();
-    }
-
-    @Override
-    public final void onChange(Object object, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        registerChange();
-        doOnChange(object, currentState, previousState, propertyNames, types);
+        log.debug("On " + change + ": " + object);
+        doOnChange(object, change, currentState, previousState, propertyNames, types);
     }
 
     @Override
@@ -119,26 +114,10 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
         doMarkTransactionComplete();
     }
 
-    @Override
-    public void onTransactionComplete() {
-    }
-
     /**
      * <b>Override this method if you need some additional actions on
-     * {@link #onChange()}. Default implementation is called
-     * {@linkplain #uninitialize()}.</b>
-     * <p/>
-     * 
-     * Called, then unrecognized object changed.
-     */
-    protected void doOnChange() {
-        uninitialize(null);
-    }
-
-    /**
-     * <b>Override this method if you need some additional actions on
-     * {@link #onChange(Object, Object[], Object[], String[], Type[])}. Default
-     * implementation is called {@linkplain #uninitialize()}.</b>
+     * {@link #onChange(Object, Change, Object[], Object[], String[], Type[])}
+     * .</b>
      * <p/>
      * 
      * Called, then changed one of predefined object (e. q. specific sub
@@ -146,7 +125,9 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
      * 
      * @param object
      *            Changed object.
-     * @param currentState
+     * @param change
+     *            operation type
+     * @param state
      *            Current state of object properties.
      * @param previousState
      *            Previous state of object properties.
@@ -155,9 +136,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
      * @param types
      *            Property types.
      */
-    protected void doOnChange(Object object, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        uninitialize(object);
-    }
+    protected abstract void doOnChange(Object object, Change change, Object[] state, Object[] previousState, String[] propertyNames, Type[] types);
 
     /**
      * <b>Override this method if you need some additional actions on
@@ -184,13 +163,9 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
      * @param object
      *            Changed object, which leads to cache drop.
      */
-    protected void uninitialize(Object object) {
+    protected void uninitialize(Object object, Change change) {
         if (impl.get() != null) {
-            if (object == null) {
-                log.info("Cache is uninitialized. Unknown reason.");
-            } else {
-                log.info("Cache is uninitialized. Changed object of type " + object.getClass().getName());
-            }
+            log.info("Cache is uninitialized. Due to " + change + " of " + object);
         }
         impl.set(null);
     }

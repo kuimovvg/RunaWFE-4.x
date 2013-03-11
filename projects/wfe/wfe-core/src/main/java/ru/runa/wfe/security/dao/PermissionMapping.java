@@ -87,6 +87,7 @@ public class PermissionMapping {
     }
 
     @Column(name = "IDENTIFIABLE_ID", nullable = false)
+    @Index(name = "IX_PERMISSION_IDENTIFIABLE_ID")
     public Long getIdentifiableId() {
         return identifiableId;
     }
