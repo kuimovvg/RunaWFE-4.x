@@ -359,9 +359,9 @@ public class ExecutorDAO extends CommonDAO {
      *            Flag, equals true to set actor active and false, to set actor
      *            inactive.
      */
-    public void setStatus(Actor actor, boolean isActive) {
+    public Actor setStatus(Actor actor, boolean isActive) {
         actor.setActive(isActive);
-        getHibernateTemplate().merge(actor);
+        return getHibernateTemplate().merge(actor);
     }
 
     /**

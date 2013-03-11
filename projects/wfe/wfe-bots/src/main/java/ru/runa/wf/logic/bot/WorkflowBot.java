@@ -172,15 +172,16 @@ public class WorkflowBot implements Runnable {
     }
 
     private void doHandle() throws Exception {
+        TaskHandler taskHandler = null;
+        IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
         try {
             String botTaskName = BotTaskConfigurationUtils.getBotTaskName(user, task);
-            TaskHandler taskHandler = taskHandlers.get(botTaskName);
+            taskHandler = taskHandlers.get(botTaskName);
             if (taskHandler == null) {
                 log.warn("No handler for bot task " + botTaskName + ", " + bot);
                 ProcessExecutionErrors.addBotTaskNotFoundProcessError(task, bot, botTaskName);
                 return;
             }
-            IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
 
             byte[] extendedConfiguration = extendedConfigurations.get(botTaskName);
             if (extendedConfiguration != null) {
@@ -203,7 +204,13 @@ public class WorkflowBot implements Runnable {
             ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getName());
         } catch (Throwable th) {
             ProcessExecutionErrors.addProcessError(task.getProcessId(), task.getName(), th);
-            Throwables.propagateIfInstanceOf(th, Exception.class);
+            if (taskHandler != null) {
+                try {
+                    taskHandler.onRollback(user, variableProvider, task);
+                } catch (Exception e) {
+                    log.error("onRollbacl failed in task handler " + taskHandler, e);
+                }
+            }
             throw Throwables.propagate(th);
         }
     }

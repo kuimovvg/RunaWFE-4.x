@@ -22,7 +22,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     @Override
     public Map<String, Object> executeScript(String script, IVariableProvider variableProvider) {
         try {
-            Binding binding = new CustomBinding(variableProvider);
+            Binding binding = createBinding(variableProvider);
             GroovyShell shell = new GroovyShell(binding);
             shell.evaluate(script);
             return binding.getVariables();
@@ -38,7 +38,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     @Override
     public <T extends Object> T evaluateScript(String script, IVariableProvider variableProvider) {
         try {
-            Binding binding = new CustomBinding(variableProvider);
+            Binding binding = createBinding(variableProvider);
             GroovyShell shell = new GroovyShell(binding);
             return (T) shell.evaluate(script);
         } catch (Exception e) {
@@ -48,6 +48,10 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             // will unable to show exception
             throw new InternalApplicationException(e.getMessage());
         }
+    }
+
+    protected Binding createBinding(IVariableProvider variableProvider) {
+        return new CustomBinding(variableProvider);
     }
 
     private static class CustomBinding extends Binding {

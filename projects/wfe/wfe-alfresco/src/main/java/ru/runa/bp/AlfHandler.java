@@ -52,8 +52,20 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
      * @throws Exception
      *             if error occurs TODO unsed yet in 4.x (move to wfe bots ?)
      */
-    protected void compensateAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
+    protected void onRollback(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
         log.debug("onRollback in " + alfHandlerData.getProcessId());
+    }
+
+    @Override
+    public void onRollback(final User user, final IVariableProvider variableProvider, final WfTask task) throws Exception {
+        new AlfSessionWrapper<Object>() {
+            @Override
+            protected Object code() throws Exception {
+                AlfHandlerData alfHandlerData = new AlfHandlerData(paramsDef, user, variableProvider, task);
+                onRollback(session, alfHandlerData);
+                return null;
+            }
+        }.runInSession();
     }
 
     @Override
