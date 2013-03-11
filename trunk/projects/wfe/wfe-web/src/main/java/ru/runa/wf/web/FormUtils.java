@@ -108,7 +108,7 @@ public class FormUtils {
                     try {
                         variableValue = format.parse(valuesToFormat);
                     } catch (Exception e) {
-                        log.warn(e);
+                        log.error(e);
                         if (valuesToFormat[0].length() > 0) {
                             // in other case we put validation in logic
                             formatErrorsForFields.add(variableDefinition.getName());

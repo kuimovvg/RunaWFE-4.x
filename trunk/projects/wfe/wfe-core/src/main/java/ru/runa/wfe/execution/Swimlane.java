@@ -152,7 +152,7 @@ public class Swimlane implements Serializable, Assignable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("process", process).add("name", name).toString();
+        return Objects.toStringHelper(this).add("name", name).add("value", executor).toString();
     }
 
 }

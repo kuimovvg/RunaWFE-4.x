@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.calendar.BusinessCalendar;
 import ru.runa.wfe.commons.calendar.impl.Duration;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -28,6 +29,7 @@ import com.google.common.base.Throwables;
 public class Timer extends Job {
     private static Log log = LogFactory.getLog(Timer.class);
     public static final String ESCALATION_NAME = "__ESCALATION";
+    public static final String STOP_RE_EXECUTION = "STOP_RE_EXECUTION";
 
     private String repeatDurationString;
     private String outTransitionName;
@@ -69,6 +71,7 @@ public class Timer extends Job {
                         timerAction.execute(executionContext);
                     }
                 }
+
             }
             if (outTransitionName != null) {
                 // CancelTimerAction should cancel this timer
@@ -82,17 +85,21 @@ public class Timer extends Job {
                 } else {
                     log.warn("Task is null in timer node '" + getToken().getNodeId() + "' when leaving by transition: " + outTransitionName);
                 }
+                log.info("Leaving " + this + " by transition " + outTransitionName);
                 getToken().signal(executionContext, executionContext.getNode().getLeavingTransitionNotNull(outTransitionName));
+            } else if (Boolean.TRUE == executionContext.getTransientVariable(STOP_RE_EXECUTION)) {
+                log.info("Deleting " + this + " due to STOP_RE_EXECUTION");
+                ApplicationContextFactory.getJobDAO().deleteTimersByName(getName(), getToken());
             } else if (repeatDurationString != null) {
                 // restart timer
                 Duration repeatDuration = new Duration(repeatDurationString);
                 if (repeatDuration.getMilliseconds() > 0) {
                     BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
                     setDueDate(businessCalendar.add(getDueDate(), repeatDuration));
-                    log.debug("updated '" + this + "' for repetition on '" + getDueDate() + "'");
+                    log.info("Restarting " + this + " for repeat execution at " + CalendarUtil.formatDateTime(getDueDate()));
                 }
             } else {
-                // end timer explicitly
+                log.info("Deleting " + this + " after execution");
                 ApplicationContextFactory.getJobDAO().deleteTimersByName(getName(), getToken());
             }
             ProcessExecutionErrors.removeProcessError(getProcess().getId(), getToken().getNodeId());

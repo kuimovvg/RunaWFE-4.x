@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 
+import ru.runa.common.WebResources;
 import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
 
 public class KrbFilterConfig implements FilterConfig {
@@ -15,7 +16,9 @@ public class KrbFilterConfig implements FilterConfig {
 
     public KrbFilterConfig(ServletContext context) {
         this.context = context;
-        initParams.putAll(KerberosLoginModuleResources.getInitParameters());
+        if (WebResources.isKrbSupported()) {
+            initParams.putAll(KerberosLoginModuleResources.getInitParameters());
+        }
     }
 
     @Override

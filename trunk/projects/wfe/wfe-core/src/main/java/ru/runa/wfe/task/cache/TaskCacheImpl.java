@@ -47,6 +47,7 @@ class TaskCacheImpl extends BaseCacheImpl implements TaskCache {
     @Override
     public void setTasks(int cacheVersion, Long actorId, BatchPresentation batchPresentation, List<WfTask> tasks) {
         if (cacheVersion != currentCacheVersion) {
+            log.warn("Don't set tasks due to differenent version: " + currentCacheVersion + " != " + cacheVersion);
             return;
         }
         ConcurrentHashMap<TaskCacheImpl.BatchPresentationFieldEquals, List<WfTask>> lists = actorToTasksCache.get(actorId);

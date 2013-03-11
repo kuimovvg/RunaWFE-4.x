@@ -22,8 +22,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.type.Type;
 
+import ru.runa.wfe.definition.Deployment;
+import ru.runa.wfe.execution.Swimlane;
+import ru.runa.wfe.ss.Substitution;
+import ru.runa.wfe.ss.SubstitutionCriteria;
+import ru.runa.wfe.task.Task;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.ExecutorGroupMembership;
+
+import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
 /**
@@ -39,11 +50,6 @@ public class CachingLogic {
      */
     private static Map<Thread, Set<ChangeListener>> dirtyThreads = new ConcurrentHashMap<Thread, Set<ChangeListener>>();
 
-    /**
-     * {@link ChangeListener}, which must be notified, when unrecognized object
-     * change. All registered listeners contains in this collection.
-     */
-    static Set<ChangeListener> genericListeners = new HashSet<ChangeListener>();
     /**
      * {@link ChangeListener}, which must be notified, when executor related
      * object change.
@@ -74,7 +80,6 @@ public class CachingLogic {
      */
     public static synchronized void registerChangeListener(ChangeListener listener) {
         ChangeListenerGuard guarded = new ChangeListenerGuard(listener);
-        genericListeners.add(guarded);
         if (listener instanceof ExecutorChangeListener) {
             executorListeners.add(guarded);
         }
@@ -90,20 +95,12 @@ public class CachingLogic {
     }
 
     /**
-     * Notify registered listeners on unrecognized object change. All registered
-     * listeners will be notified. TODO unused
-     */
-    public static synchronized void onGenericChange() {
-        onWriteTransaction(genericListeners, null, null, null, null, null);
-    }
-
-    /**
-     * Notify registered listeners on executor related object change. Only
-     * registered listeners, implementing {@link ExecutorChangeListener} will be
-     * notified.
+     * Notify registered listeners on entity change.
      * 
-     * @param object
+     * @param entity
      *            Changed object.
+     * @param change
+     *            operation type
      * @param currentState
      *            Current state of object properties.
      * @param previousState
@@ -113,71 +110,23 @@ public class CachingLogic {
      * @param types
      *            Property types.
      */
-    public static synchronized void onExecutorChange(Object changed, Object[] currentState, Object[] previousState, String[] propertyNames,
+    public static synchronized void onChange(Object entity, Change change, Object[] currentState, Object[] previousState, String[] propertyNames,
             Type[] types) {
-        onWriteTransaction(executorListeners, changed, currentState, previousState, propertyNames, types);
-    }
-
-    /**
-     * Notify registered listeners on substitution related object change. Only
-     * registered listeners, implementing {@link SubstitutionChangeListener}
-     * will be notified.
-     * 
-     * @param object
-     *            Changed object.
-     * @param currentState
-     *            Current state of object properties.
-     * @param previousState
-     *            Previous state of object properties.
-     * @param propertyNames
-     *            Property names (same order as in currentState).
-     * @param types
-     *            Property types.
-     */
-    public static synchronized void onSubstitutionChange(Object changed, Object[] currentState, Object[] previousState, String[] propertyNames,
-            Type[] types) {
-        onWriteTransaction(substitutionListeners, changed, currentState, previousState, propertyNames, types);
-    }
-
-    /**
-     * Notify registered listeners on task related object change. Only
-     * registered listeners, implementing {@link TaskChangeListener} will be
-     * notified.
-     * 
-     * @param object
-     *            Changed object.
-     * @param currentState
-     *            Current state of object properties.
-     * @param previousState
-     *            Previous state of object properties.
-     * @param propertyNames
-     *            Property names (same order as in currentState).
-     * @param types
-     *            Property types.
-     */
-    public static synchronized void onTaskChange(Object changed, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        onWriteTransaction(taskListeners, changed, currentState, previousState, propertyNames, types);
-    }
-
-    /**
-     * Notify registered listeners on process definition related object change.
-     * Only registered listeners, implementing {@link ProcessDefChangeListener}
-     * will be notified.
-     * 
-     * @param object
-     *            Changed object.
-     * @param currentState
-     *            Current state of object properties.
-     * @param previousState
-     *            Previous state of object properties.
-     * @param propertyNames
-     *            Property names (same order as in currentState).
-     * @param types
-     *            Property types.
-     */
-    public static synchronized void onProcessDefChange(Object changed, Object[] currentState, Object[] previousState, String[] propertyNames,
-            Type[] types) {
-        onWriteTransaction(processDefListeners, changed, currentState, previousState, propertyNames, types);
+        // TODO move qualification of change listeners to
+        // ChangeListener.getInterestedEntityClasses ?
+        if (entity instanceof Task || entity instanceof Swimlane || entity instanceof Substitution || entity instanceof SubstitutionCriteria
+                || entity instanceof ExecutorGroupMembership) {
+            onWriteTransaction(taskListeners, entity, change, currentState, previousState, propertyNames, types);
+        }
+        if (entity instanceof Substitution || entity instanceof Actor) {
+            onWriteTransaction(substitutionListeners, entity, change, currentState, previousState, propertyNames, types);
+        }
+        if (entity instanceof Executor || entity instanceof ExecutorGroupMembership) {
+            onWriteTransaction(executorListeners, entity, change, currentState, previousState, propertyNames, types);
+        }
+        if (entity instanceof Deployment) {
+            onWriteTransaction(processDefListeners, entity, change, currentState, previousState, propertyNames, types);
+        }
     }
 
     /**
@@ -206,8 +155,9 @@ public class CachingLogic {
      * @param types
      *            Property types.
      */
-    private static synchronized void onWriteTransaction(Set<ChangeListener> notifyThis, Object changed, Object[] currentState,
+    private static synchronized void onWriteTransaction(Set<ChangeListener> notifyThis, Object changed, Change change, Object[] currentState,
             Object[] previousState, String[] propertyNames, Type[] types) {
+        Preconditions.checkNotNull(changed);
         Set<ChangeListener> toNotify = dirtyThreads.get(Thread.currentThread());
         if (toNotify == null) {
             toNotify = new HashSet<ChangeListener>();
@@ -215,11 +165,7 @@ public class CachingLogic {
         }
         toNotify.addAll(notifyThis);
         for (ChangeListener listener : notifyThis) {
-            if (changed == null) {
-                listener.onChange();
-            } else {
-                listener.onChange(changed, currentState, previousState, propertyNames, types);
-            }
+            listener.onChange(changed, change, currentState, previousState, propertyNames, types);
         }
     }
 
@@ -238,9 +184,6 @@ public class CachingLogic {
         synchronized (CachingLogic.class) {
             for (ChangeListener listener : toNotify) {
                 listener.markTransactionComplete();
-            }
-            for (ChangeListener listener : toNotify) {
-                listener.onTransactionComplete();
             }
         }
     }
@@ -268,6 +211,7 @@ public class CachingLogic {
         }
         boolean isInitiateInProcess = !isWriteTransaction();
         try {
+            LogFactory.getLog(cache.getClass()).info("Cache initializing");
             CacheImpl result = cache.buildCache();
             // return temporary cache object on write transaction.
             // Otherwise initiate cache with current cache object.

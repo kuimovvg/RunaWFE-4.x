@@ -56,7 +56,6 @@ import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dao.VariableDAO;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -114,8 +113,7 @@ public class WFCommonLogic extends CommonLogic {
 
     private boolean canParticipateAsSubstitutor(User user, Task task) {
         try {
-            Set<Long> substitutedActorIds = substitutionLogic.getSubstituted(user.getActor());
-            List<Actor> substitutedActors = executorDAO.getActors(Lists.newArrayList(substitutedActorIds));
+            Set<Actor> substitutedActors = substitutionLogic.getSubstituted(user.getActor());
             Executor taskExecutor = task.getExecutor();
             if (taskExecutor instanceof Actor) {
                 return substitutedActors.contains(taskExecutor);
