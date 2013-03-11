@@ -68,7 +68,6 @@ public class ExecutionLogic extends WFCommonLogic {
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         checkPermissionAllowed(user, process, ProcessPermission.CANCEL_PROCESS);
         process.end(executionContext, user.getActor());
-        ProcessExecutionErrors.removeProcessErrors(processId);
         log.info("Process " + process + " was cancelled by " + user);
     }
 

@@ -51,6 +51,7 @@ import ru.runa.wfe.audit.ProcessCancelLog;
 import ru.runa.wfe.audit.ProcessEndLog;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.Deployment;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.extension.AssignmentHandler;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.Event;
@@ -254,6 +255,7 @@ public class Process extends IdentifiableBase {
      */
     public void end(ExecutionContext executionContext, Actor canceller) {
         if (!hasEnded()) {
+            ProcessExecutionErrors.removeProcessErrors(id);
             // end the main path of execution
             rootToken.end(executionContext, canceller);
             // mark this process as ended
