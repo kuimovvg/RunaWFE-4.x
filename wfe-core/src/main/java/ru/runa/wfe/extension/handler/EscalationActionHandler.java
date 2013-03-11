@@ -32,6 +32,7 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.extension.ActionHandler;
 import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
+import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
@@ -67,22 +68,23 @@ public class EscalationActionHandler implements ActionHandler {
     public void execute(ExecutionContext executionContext) throws Exception {
         if (!escalationEnabled) {
             log.info("Escalation disabled");
+            executionContext.setTransientVariable(Timer.STOP_RE_EXECUTION, Boolean.TRUE);
             return;
         }
         if (executionContext.getNode() instanceof TaskNode) {
             Task task = executionContext.getTask();
-            Executor swimlaneExecutor = task.getSwimlane() != null ? task.getSwimlane().getExecutor() : null;
-            if (swimlaneExecutor == null) {
-                log.warn("Task swimlane '" + task + "' is not assigned");
+            Executor taskExecutor = task.getExecutor();
+            if (taskExecutor == null) {
+                log.warn("Task is not assigned: " + task + ", swimlane = " + task.getSwimlane());
                 return;
             }
-            log.info("Escalation for '" + task + "' with current swimlane value '" + swimlaneExecutor + "'");
+            log.info("Escalation for " + task + " with " + task.getSwimlane());
             Executor originalExecutor;
             int previousEscalationLevel = 0;
             Set<Actor> previousSwimlaneActors = new HashSet<Actor>();
 
-            if (swimlaneExecutor instanceof Group) {
-                Group swimlaneGroup = (Group) swimlaneExecutor;
+            if (taskExecutor instanceof Group) {
+                Group swimlaneGroup = (Group) taskExecutor;
                 if (swimlaneGroup instanceof EscalationGroup) {
                     EscalationGroup escalationGroup = (EscalationGroup) swimlaneGroup;
                     originalExecutor = escalationGroup.getOriginalExecutor();
@@ -98,7 +100,7 @@ public class EscalationActionHandler implements ActionHandler {
                     }
                 }
             } else {
-                Actor swimlaneActor = (Actor) swimlaneExecutor;
+                Actor swimlaneActor = (Actor) taskExecutor;
                 originalExecutor = swimlaneActor;
                 previousSwimlaneActors.add(swimlaneActor);
             }
@@ -118,6 +120,7 @@ public class EscalationActionHandler implements ActionHandler {
             }
             if (assignedExecutors.size() == previousSwimlaneActors.size()) {
                 log.debug("Escalation ignored. No new members found for " + previousSwimlaneActors);
+                executionContext.setTransientVariable(Timer.STOP_RE_EXECUTION, Boolean.TRUE);
                 return;
             }
             int escalationLevel = previousEscalationLevel + 1;
@@ -127,7 +130,7 @@ public class EscalationActionHandler implements ActionHandler {
             executionContext.addLog(new TaskEscalationLog(task, assignedExecutors));
             task.assignExecutor(executionContext, escalationGroup, false);
         } else {
-            log.warn("Incorrect NodeType for escalation: " + executionContext.getNode());
+            log.error("Incorrect NodeType for escalation: " + executionContext.getNode());
         }
     }
 }

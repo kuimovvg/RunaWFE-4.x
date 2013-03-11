@@ -101,6 +101,8 @@ public abstract class Variable<T extends Object> {
     }
 
     @Column(name = "NAME")
+    // causes VERY long time to load processes with variable filter
+    // @Index(name = "IX_VARIABLE_NAME")
     public String getName() {
         return name;
     }

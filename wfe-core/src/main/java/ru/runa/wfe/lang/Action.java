@@ -64,12 +64,11 @@ public class Action extends GraphElement {
     public void execute(ExecutionContext executionContext) {
         try {
             ActionHandler actionHandler = delegation.getInstance();
-            log.info("Executing ActionHandler " + this); // TODO debug
+            log.info("Executing " + this);
             actionHandler.execute(executionContext);
-            log.info("ActionHandler finished");
             executionContext.addLog(new ActionLog(this));
         } catch (Exception e) {
-            log.error("ActionHandler failed " + this);
+            log.error("Failed " + this);
             throw Throwables.propagate(e);
         }
     }

@@ -37,7 +37,6 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.audit.ReceiveMessageLog;
 import ru.runa.wfe.commons.JMSUtil;
-import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
@@ -113,8 +112,6 @@ public class ReceiveMessageBean implements MessageListener {
             if (!handled) {
                 throw new MessagePostponedException(loggedMessage);
             }
-            message.acknowledge();
-            CachingLogic.onTaskChange(null, null, null, null, null);
         } catch (JMSException e) {
             log.error("", e);
             throw new RuntimeException(e);

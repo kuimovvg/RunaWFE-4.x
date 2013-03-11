@@ -123,4 +123,9 @@ public class ExecutorGroupMembership {
     public int hashCode() {
         return Objects.hashCode(getExecutor(), getGroup());
     }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("group", getGroup()).add("executor", getExecutor()).toString();
+    }
 }

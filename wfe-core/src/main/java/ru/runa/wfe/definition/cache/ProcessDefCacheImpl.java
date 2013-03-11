@@ -21,6 +21,7 @@ import java.util.List;
 
 import ru.runa.wfe.commons.cache.BaseCacheImpl;
 import ru.runa.wfe.commons.cache.Cache;
+import ru.runa.wfe.commons.cache.Change;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.dao.DeploymentDAO;
@@ -43,7 +44,8 @@ class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCach
         definitionNameToId = createCache(definitionNameToLatestDefinitionName);
     }
 
-    public void clear(Deployment deployment) {
+    public void onDeploymentChange(Deployment deployment, Change change) {
+        // TODO different calc depending on change
         if (deployment.getId() != null) {
             definitionIdToDefinition.remove(deployment.getId());
         }

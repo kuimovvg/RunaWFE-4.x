@@ -34,9 +34,8 @@ public class ExpiredJobCheckerTask extends TimerTask {
                     try {
                         // in new transaction
                         executor.executeJob(job.getId());
+                    } finally {
                         CachingLogic.onTransactionComplete();
-                    } catch (Exception e) {
-                        // already logged
                     }
                 }
             }

@@ -21,8 +21,10 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
- * Created on 27.01.2006
+ * Represents a special type of the substitution rule.
  * 
+ * It can be used to specify tasks which should not be propagated to
+ * substitutors.
  */
 @Entity
 @DiscriminatorValue(value = "Y")
