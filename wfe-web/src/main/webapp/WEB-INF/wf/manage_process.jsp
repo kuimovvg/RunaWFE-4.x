@@ -39,12 +39,12 @@ function Reload() {
 	Long id = Long.parseLong(request.getParameter(parameterName));
 	Long taskId = null;
 	String taskIdString = request.getParameter(TaskIdForm.TASK_ID_INPUT_NAME);
-	if (taskIdString != null) {
+	if (taskIdString != null && !"null".equals(taskIdString)) {
 		taskId = Long.parseLong(taskIdString);
 	}
 	Long childProcessId = null;
 	String childProcessIdString = request.getParameter("childProcessId");
-	if (childProcessIdString != null) {
+	if (childProcessIdString != null && !"null".equals(childProcessIdString)) {
 		childProcessId = Long.parseLong(childProcessIdString);
 	}
 	

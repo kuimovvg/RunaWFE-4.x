@@ -57,4 +57,16 @@ public interface TaskHandler {
      *            task to be processed.
      */
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception;
+
+    /**
+     * Invoked if task completion fails.
+     * 
+     * @param user
+     *            bot subject.
+     * @param variableProvider
+     *            access process variables
+     * @param task
+     *            task to be processed.
+     */
+    public void onRollback(User user, IVariableProvider variableProvider, WfTask task) throws Exception;
 }
