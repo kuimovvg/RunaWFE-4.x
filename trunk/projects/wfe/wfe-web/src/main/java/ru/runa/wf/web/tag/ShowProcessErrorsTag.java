@@ -20,8 +20,10 @@ import ru.runa.common.web.html.TRRowBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.VisibleTag;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors.TokenErrorDetail;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -38,20 +40,21 @@ public class ShowProcessErrorsTag extends VisibleTag {
     @Override
     protected ConcreteElement getEndElement() {
         List<TR> rows = Lists.newArrayList();
-        for (Map.Entry<Long, Map<String, Throwable>> processEntry : ProcessExecutionErrors.getProcessErrors().entrySet()) {
+        for (Map.Entry<Long, List<TokenErrorDetail>> processEntry : ProcessExecutionErrors.getProcessErrors().entrySet()) {
             Map<String, Object> params = Maps.newHashMap();
             params.put(IdForm.ID_INPUT_NAME, processEntry.getKey());
             A processIdElement = new A(
                     Commons.getActionUrl(ShowGraphModeHelper.getManageProcessAction(), params, pageContext, PortletUrlType.Render), processEntry
                             .getKey().toString());
-            for (Map.Entry<String, Throwable> taskEntry : processEntry.getValue().entrySet()) {
+            for (TokenErrorDetail detail : processEntry.getValue()) {
                 TR tr = new TR();
                 tr.addElement(new TD(processIdElement).setClass(Resources.CLASS_LIST_TABLE_TD));
-                tr.addElement(new TD(taskEntry.getKey()).setClass(Resources.CLASS_LIST_TABLE_TD));
-                String url = "javascript:showProcessError(" + processEntry.getKey() + ", '" + taskEntry.getKey() + "')";
-                String message = taskEntry.getValue().getLocalizedMessage();
+                tr.addElement(new TD(CalendarUtil.formatDateTime(detail.getOccuredDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
+                tr.addElement(new TD(detail.getTaskName()).setClass(Resources.CLASS_LIST_TABLE_TD));
+                String url = "javascript:showProcessError(" + processEntry.getKey() + ", '" + detail.getTaskName() + "')";
+                String message = detail.getThrowable().getLocalizedMessage();
                 if (Strings.isNullOrEmpty(message)) {
-                    message = taskEntry.getValue().getClass().getName();
+                    message = detail.getThrowable().getClass().getName();
                 }
                 tr.addElement(new TD(new A(url, message)).setClass(Resources.CLASS_LIST_TABLE_TD));
                 rows.add(tr);
@@ -69,6 +72,7 @@ public class ShowProcessErrorsTag extends VisibleTag {
         public TR build() {
             TR tr = new TR();
             tr.addElement(new TH(Messages.getMessage("errors.process.id", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
+            tr.addElement(new TH(Messages.getMessage("errors.occured", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
             tr.addElement(new TH(Messages.getMessage("errors.task.name", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
             tr.addElement(new TH(Messages.getMessage("errors.error", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
             return tr;

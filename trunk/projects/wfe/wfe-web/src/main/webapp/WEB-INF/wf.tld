@@ -5002,7 +5002,7 @@
       </icon>
       <name>processGraphForm</name>
       <tag-class>ru.runa.wf.web.tag.ProcessGraphFormTag</tag-class>
-      <body-content>empty</body-content>
+      <body-content>JSP</body-content>
 
       <attribute>
          <name>taskId</name>

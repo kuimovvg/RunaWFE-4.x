@@ -109,7 +109,8 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
                 return;
             }
             Actor actor = (Actor) executorCache.getExecutor(substitution.getActorId());
-            if (!actor.isActive()) {
+            // actor can be null if created in same transaction
+            if (actor != null && !actor.isActive()) {
                 clearCacheForActors(actor, change);
             }
             return;

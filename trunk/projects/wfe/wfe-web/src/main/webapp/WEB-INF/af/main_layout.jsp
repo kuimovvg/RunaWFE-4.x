@@ -22,6 +22,12 @@
   	<meta http-equiv="Pragma" content="no-cache">
 	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/main.css" />">
 	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/jquery-ui-1.9.2.custom.css" />">
+	<script type="text/javascript">
+		var saveSuccessMessage = "<bean:message key="adminkit.script.save.success" />";
+		var executionSuccessMessage = "<bean:message key="adminkit.script.execution.success" />";
+		var executionFailedMessage = "<bean:message key="adminkit.script.execution.failed" />";
+		var buttonCloseMessage = "<bean:message key="button.close" />";
+	</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery-1.7.1.min.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery.cookie.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery-ui-1.9.2.custom.min.js" />">c=0;</script>
@@ -30,6 +36,7 @@
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery.ui.timepicker.js" />">c=0;</script>
 	<script type="text/javascript" src="/wfe/js/i18n/jquery.ui.timepicker-<%= Commons.getLocale(pageContext).getLanguage() %>.js">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/common.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/errorviewer.js" />">c=0;</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 		  $(document).ajaxError(function(event, request, settings, exception) {

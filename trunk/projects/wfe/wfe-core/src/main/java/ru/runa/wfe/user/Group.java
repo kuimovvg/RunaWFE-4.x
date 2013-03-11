@@ -22,7 +22,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.security.SecuredObjectType;
 
 /**
@@ -89,9 +88,10 @@ public class Group extends Executor {
 
     @Override
     public String toString() {
-        if (SystemProperties.isV3CompatibilityMode()) {
-            return "G" + getId();
-        }
+        // ru.runa.wfe.commons.BSHScriptExecutor.BackCompatibilityBinding
+        // if (SystemProperties.isV3CompatibilityMode()) {
+        // return "G" + getId();
+        // }
         return super.toString();
     }
 }

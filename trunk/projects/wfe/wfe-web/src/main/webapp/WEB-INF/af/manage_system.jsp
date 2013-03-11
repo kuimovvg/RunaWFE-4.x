@@ -50,14 +50,9 @@
 			});
 		});
 	});
-	var saveSuccessMessage = "<bean:message key="adminkit.script.save.success" />";
-	var executionSuccessMessage = "<bean:message key="adminkit.script.execution.success" />";
-	var executionFailedMessage = "<bean:message key="adminkit.script.execution.failed" />";
-	var buttonCloseMessage = "<bean:message key="button.close" />";
 	</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/xmleditor/codemirror.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/scripteditor.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/js/errorviewer.js" />">c=0;</script>
 </tiles:put>
 
 <tiles:put name="body" type="string" >
@@ -140,7 +135,7 @@
 	<div>
 		<a id="processErrorsButton" href="javascript:void(0)" class="link">
 			<img id="processErrorsImg" class="hidableblock" src="/wfe/images/view_setup_hidden.gif">
-			&nbsp;<bean:message key="errors.process" />
+			&nbsp;<bean:message key="errors.processes" />
 		</a>
 	</div>
 	<div id="processErrorsContentDiv" style="display: none;">

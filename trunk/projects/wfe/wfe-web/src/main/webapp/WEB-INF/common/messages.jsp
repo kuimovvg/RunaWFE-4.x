@@ -9,6 +9,17 @@
 
 <center>
 
+<%--Used for process errors displaying --%>
+<%
+	Object processErrors = request.getAttribute("processErrors");
+	if (processErrors != null) {
+		out.write("<div class=\"errors\" style=\"color: #914b98;\">");
+		out.write("<b>"+ru.runa.common.web.Commons.getMessage("errors.process", pageContext)+"</b><br>");
+		out.write("" + processErrors);
+		out.write("</div>");
+	}
+%>
+
 <%--Used for ajax errors displaying --%>
 <div id="ajaxErrorsDiv" class="errors" style="font-weight: bold; color: #914b98;">
 </div>
