@@ -44,8 +44,10 @@ import org.hibernate.annotations.PolymorphismType;
 import com.google.common.base.Objects;
 
 /**
- * Created on 27.01.2006
+ * Represents substitution rule.
  * 
+ * In case of inactive owner tasks will be propagated to executors calculated by
+ * specified org function (with criteria check).
  */
 @Entity
 @org.hibernate.annotations.Entity(polymorphism = PolymorphismType.EXPLICIT)

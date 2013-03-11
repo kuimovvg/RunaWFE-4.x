@@ -22,25 +22,28 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.type.Type;
 
 /**
- * Safety guard for {@linkplain ChangeListener}.
- * Catches all exceptions during call and log it. 
+ * Safety guard for {@linkplain ChangeListener}. Catches all exceptions during
+ * call and log it.
+ * 
  * @author Konstantinov Aleksey
  */
 public class ChangeListenerGuard implements ChangeListener {
 
     /**
-     * Logging support. 
+     * Logging support.
      */
     private static final Log log = LogFactory.getLog(ChangeListenerGuard.class);
 
     /**
-     * {@linkplain ChangeListener}, used to delegate calls. 
+     * {@linkplain ChangeListener}, used to delegate calls.
      */
     private final ChangeListener delegated;
 
     /**
-     * Create guard for specified {@linkplain ChangeListener}. 
-     * @param delegated {@linkplain ChangeListener}, which must be guarded.
+     * Create guard for specified {@linkplain ChangeListener}.
+     * 
+     * @param delegated
+     *            {@linkplain ChangeListener}, which must be guarded.
      */
     public ChangeListenerGuard(ChangeListener delegated) {
         super();
@@ -57,29 +60,12 @@ public class ChangeListenerGuard implements ChangeListener {
     }
 
     @Override
-    public void onChange() {
+    public void onChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
         try {
-            delegated.onChange();
-        } catch (Exception e) {
-            log.error("onChange() call failed on " + delegated.getClass().getName(), e);
-        }
-    }
-
-    @Override
-    public void onChange(Object object, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        try {
-            delegated.onChange(object, currentState, previousState, propertyNames, types);
+            delegated.onChange(object, change, currentState, previousState, propertyNames, types);
         } catch (Exception e) {
             log.error("onChange(object, currentState, previousState, propertyNames, types) call failed on " + delegated.getClass().getName(), e);
         }
     }
 
-    @Override
-    public void onTransactionComplete() {
-        try {
-            delegated.onTransactionComplete();
-        } catch (Exception e) {
-            log.error("onTransactionComplete() call failed on " + delegated.getClass().getName(), e);
-        }
-    }
 }

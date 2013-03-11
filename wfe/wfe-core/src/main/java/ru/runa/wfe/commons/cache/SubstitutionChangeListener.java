@@ -18,9 +18,10 @@
 package ru.runa.wfe.commons.cache;
 
 /**
- * Specific sub interface of {@link ChangeListener} interface for components, receiving events from substitution related
- * objects.
+ * Specific sub interface of {@link ChangeListener} interface for components,
+ * receiving events from substitution related objects.
+ * 
  * @see {@link ChangeListener}
  */
-public interface SubstitutionChangeListener extends ExecutorChangeListener {
+public interface SubstitutionChangeListener extends ChangeListener {
 }

@@ -612,9 +612,6 @@
 		<action path="/manage_executor_permissions" type="org.apache.struts.actions.ForwardAction"
 			parameter="/WEB-INF/af/manage_executor_permissions.jsp" />
 
-		<action path="/manage_executor" type="org.apache.struts.actions.ForwardAction"
-			parameter="/WEB-INF/af/manage_executor.jsp" />
-
 		<action path="/editSubstitution" type="org.apache.struts.actions.ForwardAction"
 			parameter="/WEB-INF/af/edit_substitution.jsp" />
 

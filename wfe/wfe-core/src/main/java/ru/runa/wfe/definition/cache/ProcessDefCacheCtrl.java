@@ -22,8 +22,10 @@ import java.util.List;
 import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.BaseCacheCtrl;
 import ru.runa.wfe.commons.cache.CachingLogic;
+import ru.runa.wfe.commons.cache.Change;
 import ru.runa.wfe.commons.cache.ProcessDefChangeListener;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
@@ -44,15 +46,20 @@ public class ProcessDefCacheCtrl extends BaseCacheCtrl<ProcessDefCacheImpl> impl
     }
 
     @Override
-    public void doOnChange(Object object, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
+    public void doOnChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
         if (!isSmartCache()) {
-            uninitialize(object);
+            uninitialize(object, change);
             return;
         }
         ProcessDefCacheImpl cache = getCache();
-        if (cache != null && object instanceof Deployment) {
-            cache.clear((Deployment) object);
+        if (cache == null) {
+            return;
         }
+        if (object instanceof Deployment) {
+            cache.onDeploymentChange((Deployment) object, change);
+            return;
+        }
+        throw new InternalApplicationException("Unexpected object " + object);
     }
 
     public ProcessDefinition getDefinition(Long definitionId) throws DefinitionDoesNotExistException {
