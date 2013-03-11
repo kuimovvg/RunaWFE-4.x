@@ -88,9 +88,9 @@ public class ExecutorLogic extends CommonLogic {
         return true;
     }
 
-    public void update(User user, Executor executor) {
+    public Executor update(User user, Executor executor) {
         checkPermissionsOnExecutor(user, executor, ExecutorPermission.UPDATE);
-        executorDAO.update(executor);
+        return executorDAO.update(executor);
     }
 
     public List<? extends Executor> getExecutors(User user, BatchPresentation batchPresentation) {
@@ -267,10 +267,11 @@ public class ExecutorLogic extends CommonLogic {
         executorDAO.setPassword(actor, password);
     }
 
-    public void setStatus(User user, Actor actor, boolean isActive) {
+    public Actor setStatus(User user, Actor actor, boolean isActive) {
         checkPermissionsOnExecutor(user, actor, ActorPermission.UPDATE_STATUS);
-        executorDAO.setStatus(actor, isActive);
+        Actor updated = executorDAO.setStatus(actor, isActive);
         callSetStatusHandlers(actor, isActive);
+        return updated;
     }
 
     public List<Group> getExecutorGroups(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude) {
