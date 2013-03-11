@@ -13,19 +13,12 @@
 
 	<fileSets>
 		<fileSet>
-			<directory>${project.build.directory}/jboss4</directory>
+			<directory>target/jboss4</directory>
 			<outputDirectory>jboss</outputDirectory>
 		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/runawfe</directory>
+			<outputDirectory>/server/default/deploy/runawfe.ear</outputDirectory>
+		</fileSet>
 	</fileSets>
-
-	<dependencySets>
-		<dependencySet>
-			<includes>
-				<include>ru.runa.wfe:wfe-ear</include>
-			</includes>
-			<unpack>true</unpack>
-			<outputDirectory>jboss/server/default/deploy/runawfe.ear</outputDirectory>
-		</dependencySet>
-	</dependencySets>
-
 </assembly>
