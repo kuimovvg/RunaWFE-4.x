@@ -376,14 +376,16 @@ public class ExecutorDAO extends CommonDAO {
     public <T extends Executor> T update(T newExecutor) {
         T oldExecutor = (T) getExecutor(newExecutor.getId());
         if (!Objects.equal(oldExecutor.getName(), newExecutor.getName())) {
-            if (isExecutorExist(newExecutor.getName())) {
+            Executor testExecutor = getExecutorByName(Executor.class, newExecutor.getName());
+            if (testExecutor != null && !Objects.equal(testExecutor.getId(), newExecutor.getId())) {
                 throw new ExecutorAlreadyExistsException(newExecutor.getName());
             }
         }
         if (newExecutor instanceof Actor) {
             Actor newActor = (Actor) newExecutor;
             if (!Objects.equal(((Actor) oldExecutor).getCode(), newActor.getCode())) {
-                if (isActorExist(newActor.getCode())) {
+                Actor testActor = getActorByCodeInternal(newActor.getCode());
+                if (testActor != null && !Objects.equal(testActor.getId(), newActor.getId())) {
                     throw new ExecutorAlreadyExistsException(newActor.getCode());
                 }
             }
