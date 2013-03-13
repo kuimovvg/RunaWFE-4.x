@@ -43,14 +43,10 @@ public abstract class AbstractActorVarTag implements VarTag {
             return "<p class='error'>null</p>";
         }
         Long code = TypeConversionUtil.convertTo(Long.class, var);
-        Actor actor = getActor(user, code);
+        Actor actor = Delegates.getExecutorService().getActorByCode(user, code);
         return actorToString(actor);
     }
 
     public abstract String actorToString(Actor actor);
-
-    private Actor getActor(User user, long code) {
-        return Delegates.getExecutorService().getActorByCode(user, code);
-    }
 
 }
