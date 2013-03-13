@@ -127,13 +127,6 @@ public class DefinitionLogic extends WFCommonLogic {
         }
     }
 
-    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) {
-        Process process = processDAO.getNotNull(processId);
-        ProcessDefinition processDefinition = getDefinition(process);
-        checkPermissionAllowed(user, processDefinition.getDeployment(), Permission.READ);
-        return new WfDefinition(processDefinition);
-    }
-
     /**
      * Loads graph presentation elements for process definition and set readable
      * flag.

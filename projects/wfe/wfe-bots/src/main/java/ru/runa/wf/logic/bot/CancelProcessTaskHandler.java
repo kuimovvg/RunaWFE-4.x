@@ -24,8 +24,8 @@ import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTask;
 import ru.runa.wf.logic.bot.cancelprocess.CancelProcessTaskXmlParser;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
-import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
@@ -52,8 +52,8 @@ public class CancelProcessTaskHandler extends TaskHandlerBase {
         Long processId = variableProvider.getValue(Long.class, processToCancelTask.getProcessIdVariableName());
         if (processId != null && processId != 0) {
             Delegates.getExecutionService().cancelProcess(user, processId);
-            DefinitionService definitionService = Delegates.getDefinitionService();
-            WfDefinition definition = definitionService.getProcessDefinitionByProcessId(user, processId);
+            WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
+            WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(user, process.getDefinitionId());
             String processDefinitionName = definition.getName();
             String configurationName = processToCancelTask.getDatabaseTaskMap().get(processDefinitionName);
             if (configurationName == null) {

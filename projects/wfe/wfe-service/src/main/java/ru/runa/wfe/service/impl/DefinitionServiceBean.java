@@ -82,12 +82,6 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
-    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) {
-        Preconditions.checkNotNull(user);
-        return definitionLogic.getProcessDefinitionByProcessId(user, processId);
-    }
-
-    @Override
     public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         if (batchPresentation == null) {
