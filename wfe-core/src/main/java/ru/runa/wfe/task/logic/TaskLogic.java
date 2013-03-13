@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
@@ -33,6 +34,8 @@ import ru.runa.wfe.user.ActorPermission;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.MapDelegableVariableProvider;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
@@ -63,16 +66,24 @@ public class TaskLogic extends WFCommonLogic {
             }
             ProcessDefinition processDefinition = getDefinition(task);
             ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
-            String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
             checkCanParticipate(user, task);
             checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
             assignmentHelper.reassignTask(executionContext, task, user.getActor(), true);
-            validateVariables(user, processDefinition, task.getNodeId(), variables, executionContext.getVariableProvider());
+            // don't persist selected transition name
+            String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
+            Map<String, Object> transitionMap = Maps.newHashMap();
+            transitionMap.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
+            if (SystemProperties.isV3CompatibilityMode()) {
+                transitionMap.put("transition", transitionName);
+            }
+            IVariableProvider validationVariableProvider = new MapDelegableVariableProvider(transitionMap, executionContext.getVariableProvider());
+            validateVariables(user, processDefinition, task.getNodeId(), variables, validationVariableProvider);
             executionContext.setVariables(variables);
             Transition transition = null;
             if (transitionName != null) {
                 transition = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitionNotNull(transitionName);
             }
+            executionContext.setTransientVariable(WfProcess.SELECTED_TRANSITION_KEY, transition.getName());
             task.end(executionContext, transition, true);
             log.info("Task '" + task.getName() + "' was done by " + user + " in process " + task.getProcess());
             ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getName());
