@@ -42,7 +42,7 @@ public class MultipleSelectTag extends FreemarkerTag implements FtlTagVariableHa
             html.append("<input id=\"").append(id).append("\"");
             html.append(" type=\"checkbox\" value=\"").append(option.getValue()).append("\"");
             html.append(" name=\"").append(outputVarName).append("\"");
-            if (selectedValues != null && selectedValues.contains(option.getValue())) {
+            if (selectedValues != null && (selectedValues.contains(option.getValue()) || selectedValues.contains(option))) {
                 html.append(" checked=\"true\"");
             }
             html.append(">");
