@@ -20,6 +20,7 @@ package ru.runa.wfe.service.delegate;
 import java.util.Map;
 import java.util.Properties;
 
+import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.service.AdminScriptService;
 import ru.runa.wfe.service.AuthenticationService;
@@ -36,6 +37,7 @@ import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.SubstitutionService;
 import ru.runa.wfe.service.SystemService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
@@ -111,13 +113,11 @@ public class Delegates {
         return getDelegate(AdminScriptServiceDelegate.class);
     }
 
-    public static BotInvokerService getBotInvokerService() {
-        return getDelegate(BotInvokerServiceDelegate.class);
-    }
-
-    public static BotInvokerService getBotInvokerService(String serverAddress) {
+    public static BotInvokerService getBotInvokerService(BotStation botStation) {
         BotInvokerServiceDelegate botInvokerService = getDelegate(BotInvokerServiceDelegate.class);
-        botInvokerService.setCustomProviderUrl(serverAddress);
+        if (botStation != null && !Strings.isNullOrEmpty(botStation.getAddress())) {
+            botInvokerService.setCustomProviderUrl(botStation.getAddress());
+        }
         return botInvokerService;
     }
 
