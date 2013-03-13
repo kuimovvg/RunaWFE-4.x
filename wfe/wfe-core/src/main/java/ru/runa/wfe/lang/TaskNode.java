@@ -27,6 +27,8 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskFactory;
 
+import com.google.common.base.Objects;
+
 /**
  * is a node that relates to one or more tasks. Property <code>signal</code>
  * specifies how task completion triggers continuation of execution.
@@ -66,20 +68,19 @@ public class TaskNode extends InteractionNode implements Synchronizable {
             leave(executionContext);
         }
     }
-    // DO NOT END ASSYNC TASKS IN CASE OF UNCOMMENT
-    // @Override
-    // public void leave(ExecutionContext executionContext, Transition
-    // transition) {
-    // for (Task task : executionContext.getProcess().getTasks()) {
-    // if (executionContext.getToken().equals(task.getToken())) {
-    // // if this is a non-finished task and all those tasks should be
-    // // finished
-    // if (task.isActive()) {
-    // // end this task
-    // task.end(executionContext, transition, false);
-    // }
-    // }
-    // }
-    // super.leave(executionContext, transition);
-    // }
+
+    // invoked from timer
+    @Override
+    public void leave(ExecutionContext executionContext, Transition transition) {
+        if (!async) {
+            for (Task task : executionContext.getProcess().getTasks()) {
+                if (task.isActive() && Objects.equal(task.getNodeId(), getNodeId())) {
+                    // if this is a non-finished task and all those tasks should
+                    // be finished
+                    task.end(executionContext, transition, false);
+                }
+            }
+        }
+        super.leave(executionContext, transition);
+    }
 }

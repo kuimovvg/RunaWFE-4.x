@@ -42,6 +42,7 @@ import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorGroupMembership;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.IExecutorLoader;
 import ru.runa.wfe.user.cache.ExecutorCache;
 import ru.runa.wfe.user.cache.ExecutorCacheCtrl;
 
@@ -57,7 +58,7 @@ import com.google.common.collect.Maps;
  * @since 2.0
  */
 @SuppressWarnings("unchecked")
-public class ExecutorDAO extends CommonDAO {
+public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     private final ExecutorCache executorCache = ExecutorCacheCtrl.getInstance();
     private static final String NAME_PROPERTY_NAME = "name";
     private static final String ID_PROPERTY_NAME = "id";
@@ -95,6 +96,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded executor name.
      * @return Executor with specified name.
      */
+    @Override
     public Executor getExecutor(String name) {
         return getExecutor(Executor.class, name);
     }
@@ -107,6 +109,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded executor identity.
      * @return {@linkplain Executor} with specified identity.
      */
+    @Override
     public Executor getExecutor(Long id) {
         return getExecutor(Executor.class, id);
     }
@@ -165,6 +168,7 @@ public class ExecutorDAO extends CommonDAO {
      *            Loaded actor code.
      * @return {@linkplain Actor} with specified code.
      */
+    @Override
     public Actor getActorByCode(Long code) {
         Actor actor = getActorByCodeInternal(code);
         return checkExecutorNotNull(actor, "with code " + code, Actor.class);

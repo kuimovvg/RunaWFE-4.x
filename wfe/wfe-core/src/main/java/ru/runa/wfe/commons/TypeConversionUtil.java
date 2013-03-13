@@ -29,7 +29,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
-import ru.runa.wfe.user.dao.ExecutorDAO;
+import ru.runa.wfe.user.IExecutorLoader;
 
 import com.google.common.base.Defaults;
 import com.google.common.base.Preconditions;
@@ -164,28 +164,7 @@ public class TypeConversionUtil {
                 return (T) date;
             }
             if (Executor.class.isAssignableFrom(classConvertTo)) {
-                ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
-                try {
-                    String s = object.toString();
-                    if (s.length() == 0) {
-                        return null;
-                    }
-                    if (s.startsWith("ID")) {
-                        Long executorId = convertTo(Long.class, s.substring(2), preConvertor, postConvertor);
-                        return (T) executorDAO.getExecutor(executorId);
-                    } else if (s.startsWith("G")) {
-                        Long executorId = convertTo(Long.class, s.substring(1), preConvertor, postConvertor);
-                        return (T) executorDAO.getExecutor(executorId);
-                    } else {
-                        Long actorCode = Long.parseLong(s);
-                        return (T) executorDAO.getActorByCode(actorCode);
-                    }
-                } catch (NumberFormatException nfe) {
-                    String executorIdentity = object.toString();
-                    if (executorDAO.isExecutorExist(executorIdentity)) {
-                        return (T) executorDAO.getExecutor(executorIdentity);
-                    }
-                }
+                return (T) convertToExecutor(object, ApplicationContextFactory.getExecutorDAO());
             }
             if (postConvertor != null) {
                 T result = postConvertor.convertTo(object, classConvertTo);
@@ -229,4 +208,28 @@ public class TypeConversionUtil {
         }
     }
 
+    public static Executor convertToExecutor(Object object, IExecutorLoader executorLoader) {
+        if (object == null || object instanceof Executor) {
+            return (Executor) object;
+        }
+        try {
+            String s = object.toString();
+            if (s.length() == 0) {
+                return null;
+            }
+            if (s.startsWith("ID")) {
+                Long executorId = convertTo(Long.class, s.substring(2));
+                return executorLoader.getExecutor(executorId);
+            } else if (s.startsWith("G")) {
+                Long executorId = convertTo(Long.class, s.substring(1));
+                return executorLoader.getExecutor(executorId);
+            } else {
+                Long actorCode = Long.parseLong(s);
+                return executorLoader.getActorByCode(actorCode);
+            }
+        } catch (NumberFormatException nfe) {
+            String executorIdentity = object.toString();
+            return executorLoader.getExecutor(executorIdentity);
+        }
+    }
 }

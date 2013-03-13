@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wf.logic.bot.startprocess.StartProcessTask;
 import ru.runa.wf.logic.bot.startprocess.StartProcessVariableMapping;
 import ru.runa.wf.logic.bot.startprocess.StartProcessXmlParser;
@@ -35,8 +32,6 @@ import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
@@ -52,8 +47,6 @@ import com.google.common.collect.Maps;
  *         added 9.06.2009 by gavrusev_sergei from version 2
  */
 public class StartProcessTaskHandler extends TaskHandlerBase {
-    private static final Log log = LogFactory.getLog(StartProcessTaskHandler.class);
-
     private List<StartProcessTask> startProcessTasks;
 
     @Override
@@ -63,9 +56,7 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
 
     @Override
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) {
-        ExecutionService executionService = Delegates.getExecutionService();
         Map<String, Object> outputVariables = Maps.newHashMap();
-
         Map<String, Object> variables = Maps.newHashMap();
         for (StartProcessTask startProcessTask : startProcessTasks) {
             String processName = startProcessTask.getName();
@@ -83,37 +74,34 @@ public class StartProcessTaskHandler extends TaskHandlerBase {
                 }
                 variables.put(to, value);
             }
-
             // Start process
-            Long startedProcessId = executionService.startProcess(user, processName, variables);
-
+            Long startedProcessId = Delegates.getExecutionService().startProcess(user, processName, variables);
             // add startedProcessId to variables
             if (startedProcessValueName != null) {
                 outputVariables.put(startedProcessValueName, startedProcessId);
             }
-
-            try {
-                AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
-                WfProcess process = executionService.getProcess(user, startedProcessId);
-                WfProcess parentProcess = executionService.getProcess(user, task.getProcessId());
-                BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-                List<Executor> executors = authorizationService.getExecutorsWithPermission(user, parentProcess, batchPresentation, true);
-                for (Executor executor : executors) {
-                    Set<Permission> permissions = new HashSet<Permission>();
-                    for (Permission permission : authorizationService.getIssuedPermissions(user, executor, parentProcess)) {
-                        permissions.add(permission);
-                    }
-                    for (Permission permission : authorizationService.getIssuedPermissions(user, executor, process)) {
-                        permissions.add(permission);
-                    }
-                    if (permissions.size() > 0) {
-                        // priveleged permissions wasn't acquired
-                        authorizationService.setPermissions(user, executor.getId(), permissions, process);
-                    }
+            // try {
+            WfProcess process = Delegates.getExecutionService().getProcess(user, startedProcessId);
+            WfProcess parentProcess = Delegates.getExecutionService().getProcess(user, task.getProcessId());
+            BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
+            List<Executor> executors = Delegates.getAuthorizationService().getExecutorsWithPermission(user, parentProcess, batchPresentation, true);
+            for (Executor executor : executors) {
+                Set<Permission> permissions = new HashSet<Permission>();
+                for (Permission permission : Delegates.getAuthorizationService().getIssuedPermissions(user, executor, parentProcess)) {
+                    permissions.add(permission);
                 }
-            } catch (Throwable th) {
-                log.error("Error in permission copy to new subprocess (step is ignored).", th);
+                for (Permission permission : Delegates.getAuthorizationService().getIssuedPermissions(user, executor, process)) {
+                    permissions.add(permission);
+                }
+                if (permissions.size() > 0) {
+                    // priveleged permissions wasn't acquired
+                    Delegates.getAuthorizationService().setPermissions(user, executor.getId(), permissions, process);
+                }
             }
+            // } catch (Throwable th) {
+            // log.error("Error in permission copy to new subprocess (step is ignored).",
+            // th);
+            // }
         }
         return outputVariables;
     }

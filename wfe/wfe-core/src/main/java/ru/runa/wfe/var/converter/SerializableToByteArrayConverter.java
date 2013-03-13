@@ -27,9 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.BackCompatibilityClassNames;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.var.Converter;
 import ru.runa.wfe.var.Variable;
 
@@ -56,11 +59,10 @@ public class SerializableToByteArrayConverter implements Converter {
 
     @Override
     public Object revert(Object o) {
-        byte[] bytes = (byte[]) o;
-        InputStream memoryStream = new ByteArrayInputStream(bytes);
         try {
-            ObjectInputStream objectStream = new ObjectInputStream(memoryStream);
-            return objectStream.readObject();
+            byte[] bytes = (byte[]) o;
+            InputStream memoryStream = new ByteArrayInputStream(bytes);
+            return new BackCompatibleObjectInputStream(memoryStream).readObject();
         } catch (IOException ex) {
             throw new InternalApplicationException("failed to read object", ex);
         } catch (ClassNotFoundException ex) {
@@ -68,4 +70,33 @@ public class SerializableToByteArrayConverter implements Converter {
         }
     }
 
+    public static class BackCompatibleObjectInputStream extends ObjectInputStream {
+
+        public BackCompatibleObjectInputStream(InputStream in) throws IOException {
+            super(in);
+        }
+
+        @Override
+        protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+            try {
+                return super.resolveClass(desc);
+            } catch (ClassNotFoundException ex) {
+                String className = desc.getName();
+                if (className.startsWith("[L")) {
+                    // arrays
+                    String componentClassName = className.substring(2, className.length() - 1);
+                    componentClassName = BackCompatibilityClassNames.getClassName(componentClassName);
+                    className = "[L" + componentClassName + ";";
+                }
+                int childClassIndex = className.indexOf("$");
+                if (childClassIndex > 0) {
+                    String surroundingClassName = className.substring(0, childClassIndex);
+                    String childClassName = className.substring(childClassIndex + 1);
+                    surroundingClassName = BackCompatibilityClassNames.getClassName(surroundingClassName);
+                    className = surroundingClassName + "$" + childClassName;
+                }
+                return ClassLoaderUtil.loadClass(className);
+            }
+        }
+    }
 }
