@@ -21,6 +21,7 @@ import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.extension.assign.AssignmentHelper;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
+import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.Task;
@@ -79,9 +80,12 @@ public class TaskLogic extends WFCommonLogic {
             IVariableProvider validationVariableProvider = new MapDelegableVariableProvider(transitionMap, executionContext.getVariableProvider());
             validateVariables(user, processDefinition, task.getNodeId(), variables, validationVariableProvider);
             executionContext.setVariables(variables);
-            Transition transition = null;
+            Transition transition;
             if (transitionName != null) {
                 transition = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitionNotNull(transitionName);
+            } else {
+                TaskDefinition taskDefinition = executionContext.getProcessDefinition().getTaskNotNull(task.getNodeId());
+                transition = taskDefinition.getNode().getDefaultLeavingTransitionNotNull();
             }
             executionContext.setTransientVariable(WfProcess.SELECTED_TRANSITION_KEY, transition.getName());
             task.end(executionContext, transition, true);
