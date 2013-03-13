@@ -43,7 +43,7 @@ public class StartPeriodicBotsInvocationAction extends ActionBase {
         Long id = ((BotStationForm) form).getBotStationId();
         try {
             BotStation botStation = Delegates.getBotService().getBotStation(id);
-            Delegates.getBotInvokerService(botStation.getAddress()).startPeriodicBotsInvocation(botStation);
+            Delegates.getBotInvokerService(botStation).startPeriodicBotsInvocation(botStation);
         } catch (Exception e) {
             addError(request, e);
         }

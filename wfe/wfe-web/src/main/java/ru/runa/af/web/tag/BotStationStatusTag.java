@@ -41,7 +41,7 @@ public class BotStationStatusTag extends TitledFormTag {
     private void renewValues() {
         try {
             BotStation botStation = Delegates.getBotService().getBotStation(botStationId);
-            periodicInvocationOn = Delegates.getBotInvokerService(botStation.getAddress()).isRunning();
+            periodicInvocationOn = Delegates.getBotInvokerService(botStation).isRunning();
             stationOn = true;
         } catch (Exception e) {
             stationOn = false;

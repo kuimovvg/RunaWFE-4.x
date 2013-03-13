@@ -43,7 +43,7 @@ public class StopPeriodicBotsInvocationAction extends ActionBase {
         Long id = ((BotStationForm) form).getBotStationId();
         try {
             BotStation botStation = Delegates.getBotService().getBotStation(id);
-            Delegates.getBotInvokerService(botStation.getAddress()).cancelPeriodicBotsInvocation();
+            Delegates.getBotInvokerService(botStation).cancelPeriodicBotsInvocation();
         } catch (Exception e) {
             addError(request, e);
         }
