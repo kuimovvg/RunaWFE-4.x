@@ -13,14 +13,15 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 public abstract class EJB3Delegate {
     public static final String EJB_REMOTE = "remote";
-    private static InitialContext initialContext;
+    public static final String EJB_LOCAL = "local";
+    private static Map<String, InitialContext> initialContexts = Maps.newHashMap();
     private static Map<String, Object> services = new HashMap<String, Object>();
     private String ejbType;
     private String ejbJndiNameFormat;
@@ -87,7 +88,8 @@ public abstract class EJB3Delegate {
     }
 
     private InitialContext getInitialContext() {
-        if (initialContext == null) {
+        String providerUrl = Objects.firstNonNull(getCustomProviderUrl(), EJB_LOCAL);
+        if (!initialContexts.containsKey(providerUrl)) {
             try {
                 Properties env = new Properties();
                 InputStream is = ClassLoaderUtil.getAsStream("jndi.properties", getClass());
@@ -95,16 +97,15 @@ public abstract class EJB3Delegate {
                     Preconditions.checkNotNull(is, "jndi.properties is not in classpath");
                     env.load(is);
                 }
-                String customProviderUrl = getCustomProviderUrl();
-                if (!Strings.isNullOrEmpty(customProviderUrl)) {
-                    env.put(Context.PROVIDER_URL, customProviderUrl);
+                if (!Objects.equal(EJB_LOCAL, providerUrl)) {
+                    env.put(Context.PROVIDER_URL, providerUrl);
                 }
-                initialContext = new InitialContext(env);
+                initialContexts.put(providerUrl, new InitialContext(env));
             } catch (Exception e) {
                 throw Throwables.propagate(e);
             }
         }
-        return initialContext;
+        return initialContexts.get(providerUrl);
     }
 
 }
