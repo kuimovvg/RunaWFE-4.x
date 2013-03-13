@@ -61,6 +61,16 @@ public class TypeConversionUtil {
             if (classConvertTo.isInstance(object)) {
                 return classConvertTo.cast(object);
             }
+            if (object instanceof Actor) {
+                // compatibility: client code expecting 'actorCode'
+                Long actorCode = ((Actor) object).getCode();
+                return convertTo(classConvertTo, actorCode, preConvertor, postConvertor);
+            }
+            if (object instanceof Group) {
+                // compatibility: client code expecting 'groupCode'
+                String groupCode = "G" + ((Group) object).getId();
+                return convertTo(classConvertTo, groupCode, preConvertor, postConvertor);
+            }
             if (classConvertTo == String.class) {
                 return (T) object.toString();
             }
@@ -176,16 +186,6 @@ public class TypeConversionUtil {
                         return (T) executorDAO.getExecutor(executorIdentity);
                     }
                 }
-            }
-            if (object instanceof Actor) {
-                // compatibility: client code expecting 'actorCode'
-                Long actorCode = ((Actor) object).getCode();
-                return convertTo(classConvertTo, actorCode, preConvertor, postConvertor);
-            }
-            if (object instanceof Group) {
-                // compatibility: client code expecting 'groupCode'
-                String groupCode = "G" + ((Group) object).getId();
-                return convertTo(classConvertTo, groupCode, preConvertor, postConvertor);
             }
             if (postConvertor != null) {
                 T result = postConvertor.convertTo(object, classConvertTo);

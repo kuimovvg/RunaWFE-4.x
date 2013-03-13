@@ -28,24 +28,26 @@ import ru.runa.wfe.var.ISelectable;
 public class Option implements ISelectable, Serializable {
     private static final long serialVersionUID = 1L;
     private final String value;
-    private final String text;
+    private final String label;
 
-    public Option(String value, String text) {
+    public Option(String value, String label) {
         this.value = value;
-        this.text = text;
+        this.label = label;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
 
-    public String getDisplayName() {
-        return text;
+    @Override
+    public String getLabel() {
+        return label;
     }
 
     @Override
     public String toString() {
-        return value + "(" + text + ")";
+        return value + "(" + label + ")";
     }
 
     @Override
@@ -77,18 +79,20 @@ public class Option implements ISelectable, Serializable {
 
         public SerializationProxy(Option option) {
             value = option.value;
-            text = option.text;
+            text = option.label;
         }
 
         Object readResolve() {
             return new Option(value, text);
         }
 
+        @Override
         public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
             value = (String) in.readObject();
             text = (String) in.readObject();
         }
 
+        @Override
         public void writeExternal(ObjectOutput out) throws IOException {
             out.writeObject(value);
             out.writeObject(text);

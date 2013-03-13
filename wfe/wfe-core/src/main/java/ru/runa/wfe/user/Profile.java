@@ -92,7 +92,7 @@ public final class Profile implements Serializable {
     }
 
     @Version
-    @Column(name = "VERSION", nullable = false)
+    @Column(name = "VERSION")
     protected Long getVersion() {
         return version;
     }
