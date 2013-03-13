@@ -1,7 +1,6 @@
 package ru.runa.wfe.service.delegate;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -20,9 +19,9 @@ import com.google.common.collect.Maps;
 
 public abstract class EJB3Delegate {
     public static final String EJB_REMOTE = "remote";
-    public static final String EJB_LOCAL = "local";
+    private static final String EJB_LOCAL = "";
     private static Map<String, InitialContext> initialContexts = Maps.newHashMap();
-    private static Map<String, Object> services = new HashMap<String, Object>();
+    private static Map<String, Map<String, Object>> services = Maps.newHashMap();
     private String ejbType;
     private String ejbJndiNameFormat;
     private final String beanName;
@@ -70,7 +69,13 @@ public abstract class EJB3Delegate {
 
     @SuppressWarnings("unchecked")
     protected <T> T getService() {
-        if (!services.containsKey(beanName)) {
+        String providerUrl = Objects.firstNonNull(getCustomProviderUrl(), EJB_LOCAL);
+        Map<String, Object> providerServices = services.get(providerUrl);
+        if (providerServices == null) {
+            providerServices = Maps.newHashMap();
+            providerServices.put(providerUrl, providerServices);
+        }
+        if (!providerServices.containsKey(beanName)) {
             Map<String, String> variables = Maps.newHashMap();
             variables.put("bean.name", beanName);
             variables.put("ejb.type", ejbType);
@@ -79,12 +84,12 @@ public abstract class EJB3Delegate {
             String jndiName = ExpressionEvaluator.substitute(ejbJndiNameFormat, variables);
             try {
                 Object service = getInitialContext().lookup(jndiName);
-                services.put(beanName, service);
+                providerServices.put(beanName, service);
             } catch (NamingException e) {
                 throw new InternalApplicationException("Unable to locate bean by jndi name '" + jndiName + "'", e);
             }
         }
-        return (T) services.get(beanName);
+        return (T) providerServices.get(beanName);
     }
 
     private InitialContext getInitialContext() {

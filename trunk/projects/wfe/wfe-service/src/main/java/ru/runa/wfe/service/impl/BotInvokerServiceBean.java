@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.invoker.BotInvokerFactory;
 import ru.runa.wfe.service.BotInvokerService;
-import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 
 @Stateless
@@ -74,6 +73,10 @@ public class BotInvokerServiceBean implements BotInvokerService {
 
     @Override
     public void invokeBots(BotStation botStation) {
+        invokeBotsImpl(botStation);
+    }
+
+    private static void invokeBotsImpl(BotStation botStation) {
         BotInvokerFactory.getBotInvoker().invokeBots(botStation);
     }
 
@@ -88,7 +91,7 @@ public class BotInvokerServiceBean implements BotInvokerService {
         public void run() {
             try {
                 log.debug("Invoking bots...");
-                Delegates.getBotInvokerService(botStation).invokeBots(botStation);
+                invokeBotsImpl(botStation);
             } catch (Throwable th) {
                 log.error("Unable to invoke bots", th);
             }
