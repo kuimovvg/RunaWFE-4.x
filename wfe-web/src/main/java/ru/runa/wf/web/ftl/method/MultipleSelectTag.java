@@ -34,14 +34,17 @@ public class MultipleSelectTag extends FreemarkerTag implements FtlTagVariableHa
         String outputVarName = getParameterAs(String.class, 0);
         registerVariableHandler(outputVarName);
         String inputVarName = getParameterAs(String.class, 1);
+        List<Object> selectedValues = variableProvider.getValue(List.class, outputVarName);
         List<ISelectable> options = variableProvider.getValueNotNull(List.class, inputVarName);
         StringBuffer html = new StringBuffer();
         for (ISelectable option : options) {
             String id = outputVarName + "_" + option.getValue();
             html.append("<input id=\"").append(id).append("\"");
-            html.append(" type=\"checkbox\" value=\"");
-            html.append(option.getValue()).append("\" name=\"");
-            html.append(outputVarName).append("\"");
+            html.append(" type=\"checkbox\" value=\"").append(option.getValue()).append("\"");
+            html.append(" name=\"").append(outputVarName).append("\"");
+            if (selectedValues != null && selectedValues.contains(option.getValue())) {
+                html.append(" checked=\"true\"");
+            }
             html.append(">");
             html.append("<label for=\"").append(id).append("\">");
             html.append(option.getLabel());
