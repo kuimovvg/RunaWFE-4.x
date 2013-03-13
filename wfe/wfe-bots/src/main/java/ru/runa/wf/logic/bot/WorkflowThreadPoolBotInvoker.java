@@ -48,9 +48,9 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
     private final Log log = LogFactory.getLog(WorkflowThreadPoolBotInvoker.class);
     private ScheduledExecutorService executor = null;
     private long configurationVersion = -1;
-    private List<WorkflowBot> botTemplates;
+    private List<WorkflowBotTaskExecutor> botTemplates;
     private Future<?> botInvokerInvocation = null;
-    private final Map<WorkflowBot, ScheduledFuture<?>> scheduledTasks = new HashMap<WorkflowBot, ScheduledFuture<?>>();
+    private final Map<WorkflowBotTaskExecutor, ScheduledFuture<?>> scheduledTasks = new HashMap<WorkflowBotTaskExecutor, ScheduledFuture<?>>();
 
     private final long STUCK_TIMEOUT_SECONDS = 300;
     private BotStation botStation;
@@ -78,11 +78,11 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
             log.warn("executor(ScheduledExecutorService) == null");
             return;
         }
-        for (WorkflowBot bot : botTemplates) {
+        for (WorkflowBotTaskExecutor bot : botTemplates) {
             try {
                 Set<WfTask> tasks = bot.getNewTasks();
                 for (WfTask task : tasks) {
-                    WorkflowBot taskBot = bot.createTask(task);
+                    WorkflowBotTaskExecutor taskBot = bot.createTask(task);
                     if (taskBot == null) {
                         log.warn("taskBot == null");
                         continue;
@@ -101,8 +101,8 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
     private void checkStuckBots() {
         try {
             long criticalStartThreadTime = System.currentTimeMillis() - STUCK_TIMEOUT_SECONDS * 1000;
-            for (Iterator<Entry<WorkflowBot, ScheduledFuture<?>>> iter = scheduledTasks.entrySet().iterator(); iter.hasNext();) {
-                Entry<WorkflowBot, ScheduledFuture<?>> entry = iter.next();
+            for (Iterator<Entry<WorkflowBotTaskExecutor, ScheduledFuture<?>>> iter = scheduledTasks.entrySet().iterator(); iter.hasNext();) {
+                Entry<WorkflowBotTaskExecutor, ScheduledFuture<?>> entry = iter.next();
                 if (entry.getValue().isDone()) {
                     iter.remove();
                     continue;
@@ -141,7 +141,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                         log.info("Configuring " + bot.getUsername());
                         User user = Delegates.getAuthenticationService().authenticateByLoginPassword(bot.getUsername(), bot.getPassword());
                         List<BotTask> tasks = Delegates.getBotService().getBotTasks(user, bot.getId());
-                        botTemplates.add(new WorkflowBot(user, bot, tasks));
+                        botTemplates.add(new WorkflowBotTaskExecutor(user, bot, tasks));
                         ProcessExecutionErrors.removeBotTaskConfigurationError(bot, "*");
                     } catch (Exception e) {
                         log.error("Unable to configure bot " + bot);
