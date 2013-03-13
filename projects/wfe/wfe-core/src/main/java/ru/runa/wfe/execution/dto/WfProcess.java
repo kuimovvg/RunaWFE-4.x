@@ -35,7 +35,7 @@ import com.google.common.base.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WfProcess extends IdentifiableBase {
     private static final long serialVersionUID = 4862220986262286596L;
-    public static final String SELECTED_TRANSITION_KEY = "_SELECTED_TRANSITION_";
+    public static final String SELECTED_TRANSITION_KEY = "RUNAWFE_SELECTED_TRANSITION";
 
     private Long id;
     private String name;
