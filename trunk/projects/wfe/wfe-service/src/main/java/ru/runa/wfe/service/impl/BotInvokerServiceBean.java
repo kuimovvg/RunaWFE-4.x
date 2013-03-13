@@ -50,7 +50,7 @@ public class BotInvokerServiceBean implements BotInvokerService {
         if (timer == null) {
             log.info("Starting periodic bot execution...");
             timer = new Timer();
-            timer.schedule(new IvokerTimerTask(botStation), 0, BotInvokerFactory.getBotInvocationPeriod());
+            timer.schedule(new InvokerTimerTask(botStation), 0, BotInvokerFactory.getBotInvocationPeriod());
         } else {
             log.info("BotRunner is running. skipping start...");
         }
@@ -77,10 +77,10 @@ public class BotInvokerServiceBean implements BotInvokerService {
         BotInvokerFactory.getBotInvoker().invokeBots(botStation);
     }
 
-    private static class IvokerTimerTask extends TimerTask {
+    private static class InvokerTimerTask extends TimerTask {
         private final BotStation botStation;
 
-        public IvokerTimerTask(BotStation botStation) {
+        public InvokerTimerTask(BotStation botStation) {
             this.botStation = botStation;
         }
 
@@ -88,7 +88,7 @@ public class BotInvokerServiceBean implements BotInvokerService {
         public void run() {
             try {
                 log.debug("Invoking bots...");
-                Delegates.getBotInvokerService().invokeBots(botStation);
+                Delegates.getBotInvokerService(botStation).invokeBots(botStation);
             } catch (Throwable th) {
                 log.error("Unable to invoke bots", th);
             }
