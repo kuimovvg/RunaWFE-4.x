@@ -705,6 +705,9 @@ public class JbpmRefactoringPatch extends DBPatch {
         q = "UPDATE BPM_SUBPROCESS SET PARENT_TOKEN_ID = (SELECT p.SUPERPROCESSTOKEN_ FROM BPM_PROCESS p WHERE p.ID=PROCESS_ID), PARENT_NODE_ID = (SELECT n.NAME_ FROM JBPM_NODE n WHERE n.ID_=NODE_)";
         log.info("Updated subprocesses " + session.createSQLQuery(q).executeUpdate());
         //
+        log.info("Updated BOT_STATION.VERSION " + session.createQuery("UPDATE BOT_STATION set VERSION=1").executeUpdate());
+        log.info("Updated BOT.VERSION " + session.createQuery("UPDATE BOT set VERSION=1").executeUpdate());
+        log.info("Updated BOT_TASK.VERSION " + session.createQuery("UPDATE BOT_TASK set VERSION=1").executeUpdate());
     }
 
     /*

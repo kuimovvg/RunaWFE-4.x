@@ -116,7 +116,7 @@ public class Substitution implements Comparable<Substitution>, Serializable {
     }
 
     @Version
-    @Column(name = "VERSION", nullable = false)
+    @Column(name = "VERSION")
     public Long getVersion() {
         return version;
     }

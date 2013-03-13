@@ -107,7 +107,7 @@ public abstract class Executor extends IdentifiableBase {
     }
 
     @Version
-    @Column(name = "VERSION", nullable = false)
+    @Column(name = "VERSION")
     public Long getVersion() {
         return version;
     }

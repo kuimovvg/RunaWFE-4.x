@@ -82,7 +82,7 @@ public class BotStation extends IdentifiableBase {
         this.id = id;
     }
 
-    @Column(name = "VERSION", nullable = false)
+    @Column(name = "VERSION")
     public Long getVersion() {
         return version;
     }
