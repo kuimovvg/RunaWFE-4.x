@@ -93,3 +93,16 @@ function openSubstitutionCriteriasConfirmPopup(formId, message, allMethod, allBu
 	$.confirmDialog.dialog("option", "buttons", buttons);
 	$.confirmDialog.dialog("open");
 }
+
+var visibleBlock = false; // TODO unimplementd; use jQuery.Collection plugin for this
+function viewBlock(blockId) {
+	if (visibleBlock) {
+		$("#"+blockId).hide();
+		$("#"+blockId+"Img").attr("src", "/wfe/images/view_setup_hidden.gif");
+		visibleBlock = false;
+	} else {
+		$("#"+blockId).show();
+		$("#"+blockId+"Img").attr("src", "/wfe/images/view_setup_visible.gif");
+		visibleBlock = true;
+	}
+}

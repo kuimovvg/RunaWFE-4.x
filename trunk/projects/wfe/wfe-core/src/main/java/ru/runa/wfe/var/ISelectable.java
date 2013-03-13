@@ -7,7 +7,7 @@ package ru.runa.wfe.var;
  */
 public interface ISelectable {
 
-    String getDisplayName();
+    String getLabel();
 
     String getValue();
 }

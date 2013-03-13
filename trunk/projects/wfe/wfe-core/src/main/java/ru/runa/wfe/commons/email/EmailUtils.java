@@ -26,6 +26,7 @@ import javax.mail.util.ByteArrayDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.email.EmailConfig.Attachment;
 import ru.runa.wfe.commons.ftl.FormHashModel;
 import ru.runa.wfe.commons.ftl.FreemarkerProcessor;
@@ -132,10 +133,15 @@ public class EmailUtils {
         config.applySubstitutions(variableProvider);
         byte[] formBytes;
         if (config.isUseMessageFromTaskForm()) {
-            if (!interaction.hasForm()) {
-                throw new Exception("Set property 'UseMessageFromTaskForm' but form does not exist");
+            if (interaction.hasForm()) {
+                formBytes = interaction.getFormData();
+            } else {
+                if (SystemProperties.isV3CompatibilityMode()) {
+                    formBytes = " ".getBytes();
+                } else {
+                    throw new Exception("Set property 'UseMessageFromTaskForm' but form does not exist");
+                }
             }
-            formBytes = interaction.getFormData();
         } else {
             formBytes = config.getMessage().getBytes(Charsets.UTF_8);
         }

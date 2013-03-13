@@ -35,6 +35,7 @@ public class ProcessExecutionErrors {
         botTaskConfigurationErrors.remove(new BotTaskIdentifier(bot, botTaskName));
     }
 
+    // TODO unused in AsyncWorkflowBot
     public static synchronized void addBotTaskNotFoundProcessError(WfTask task, Bot bot, String botTaskName) {
         Throwable ce = botTaskConfigurationErrors.get(new BotTaskIdentifier(bot, botTaskName));
         Exception throwable;
