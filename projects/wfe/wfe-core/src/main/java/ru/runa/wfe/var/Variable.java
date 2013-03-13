@@ -182,8 +182,8 @@ public abstract class Variable<T extends Object> {
         } else {
             newStorableValue = newValue;
         }
-        setStringValue(newValue != null ? toString(newValue) : null);
         Object oldValue = getStorableValue();
+        setStringValue(newValue != null ? toString(newValue) : null);
         if (converter != null && oldValue != null) {
             oldValue = converter.revert(oldValue);
         }

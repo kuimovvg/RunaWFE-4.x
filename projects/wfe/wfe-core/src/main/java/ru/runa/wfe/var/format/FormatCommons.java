@@ -40,7 +40,7 @@ public class FormatCommons {
     public static String getVarOut(Object object, WebHelper webHelper, Long instanceId, String name, int listIndex, Object mapKey) {
         String value;
         if (object instanceof ISelectable) {
-            value = ((ISelectable) object).getDisplayName();
+            value = ((ISelectable) object).getLabel();
         } else if (object instanceof Date) {
             value = CalendarUtil.formatDate((Date) object);
         } else if (object instanceof FileVariable) {

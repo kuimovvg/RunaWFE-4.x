@@ -138,7 +138,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
      * Object version (need by hibernate for correct updating).
      */
     @Version
-    @Column(name = "VERSION", nullable = false)
+    @Column(name = "VERSION")
     public Long getVersion() {
         return version;
     }

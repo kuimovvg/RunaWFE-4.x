@@ -44,7 +44,7 @@ public class MultipleSelectTag extends FreemarkerTag implements FtlTagVariableHa
             html.append(outputVarName).append("\"");
             html.append(">");
             html.append("<label for=\"").append(id).append("\">");
-            html.append(option.getDisplayName());
+            html.append(option.getLabel());
             html.append("</label><br>");
         }
         return html;

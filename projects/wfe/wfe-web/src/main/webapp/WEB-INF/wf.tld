@@ -6366,7 +6366,7 @@
       <icon>    
       </icon>
       <name>viewControlsHideableBlock</name>
-      <tag-class>ru.runa.common.web.tag.ViewControlsHideableBlockTag</tag-class>
+      <tag-class>ru.runa.common.web.tag.ViewControlsHideableBlockAjaxTag</tag-class>
       <body-content>JSP</body-content>
 
       <attribute>

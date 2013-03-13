@@ -110,10 +110,14 @@ public class XmlUtils {
     }
 
     public static byte[] save(Node node) {
+        OutputFormat outputFormat = OutputFormat.createPrettyPrint();
+        outputFormat.setTrimText(false);
+        return save(node, outputFormat);
+    }
+
+    public static byte[] save(Node node, OutputFormat outputFormat) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            OutputFormat outputFormat = OutputFormat.createPrettyPrint();
-            outputFormat.setTrimText(false);
             XMLWriter writer = new XMLWriter(baos, outputFormat);
             writer.write(node);
             return baos.toByteArray();
@@ -126,6 +130,10 @@ public class XmlUtils {
         return new String(save(node), Charsets.UTF_8);
     }
 
+    public static String toString(Node node, OutputFormat outputFormat) {
+        return new String(save(node, outputFormat), Charsets.UTF_8);
+    }
+
     public static String serialize(Map<String, String> map) {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("r");
@@ -133,7 +141,10 @@ public class XmlUtils {
             Element e = root.addElement(entry.getKey());
             e.addText(String.valueOf(entry.getValue()));
         }
-        return toString(document);
+        OutputFormat outputFormat = OutputFormat.createCompactFormat();
+        outputFormat.setTrimText(false);
+        outputFormat.setSuppressDeclaration(true);
+        return toString(document, outputFormat);
     }
 
     public static HashMap<String, String> deserialize(String xml) {

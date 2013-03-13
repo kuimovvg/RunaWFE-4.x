@@ -65,7 +65,7 @@ public class BotTask implements Serializable {
     }
 
     @Version
-    @Column(name = "VERSION", nullable = false)
+    @Column(name = "VERSION")
     public Long getVersion() {
         return version;
     }
