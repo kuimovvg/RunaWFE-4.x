@@ -30,6 +30,7 @@ import org.json.simple.JSONObject;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.AjaxJsonFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.service.client.DelegateExecutorLoader;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
@@ -103,7 +104,7 @@ public class AjaxGroupMembersTag extends AjaxJsonFreemarkerTag {
     @Override
     protected JSONAware processAjaxRequest(HttpServletRequest request) throws Exception {
         JSONArray json = new JSONArray();
-        Group group = TypeConversionUtil.convertTo(Group.class, request.getParameter("groupId"));
+        Group group = (Group) TypeConversionUtil.convertToExecutor(request.getParameter("groupId"), new DelegateExecutorLoader(user));
         List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, group);
         if (actors.size() == 0) {
             json.add(createJsonObject(null, "No users in this group"));

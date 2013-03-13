@@ -43,6 +43,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.TaskAssignLog;
 import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -264,13 +265,17 @@ public class Task implements Assignable {
         // verify if the end of this task triggers continuation of execution
         // ending start tasks always leads to a signal
         if (!leaveNode) {
+            log.debug("completion of task '" + name + "' rejected due to leaveNode=false");
             return;
         }
-        if (!Objects.equal(nodeId, token.getNodeId())) {
-            return;
+        if (!Objects.equal(nodeId, token.getNodeId())) { // TODO why this can
+                                                         // be?
+            throw new InternalApplicationException("completion of task '" + name + "' rejected due to different token node id: '" + nodeId + "' != '"
+                    + token.getNodeId() + "'");
         }
         InteractionNode node = taskDefinition.getNode();
         if (node instanceof MultiTaskNode && !((MultiTaskNode) node).isCompletionTriggersSignal(this)) {
+            log.debug("completion of task '" + name + "' results in taking transition '" + transition + "'");
             return;
         }
         if (transition == null) {

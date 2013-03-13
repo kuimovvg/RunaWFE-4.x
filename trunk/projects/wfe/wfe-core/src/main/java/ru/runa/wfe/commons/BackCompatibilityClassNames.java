@@ -127,6 +127,8 @@ public class BackCompatibilityClassNames {
         bcc.put("ru.runa.wf.web.html.vartag.TimeValueDisplayVarTag", "ru.runa.wf.web.customtag.impl.TimeValueDisplayVarTag");
         bcc.put("ru.runa.wf.web.html.vartag.TimeInputVarTag", "ru.runa.wf.web.customtag.impl.TimeInputVarTag");
         bcc.put("ru.runa.wf.web.html.vartag.VariableValueDisplayVarTag", "ru.runa.wf.web.customtag.impl.VariableValueDisplayVarTag");
+        // serializable variables
+        bcc.put("ru.runa.wf.web.Option", "ru.runa.wfe.commons.web.Option");
     }
 
     /**
