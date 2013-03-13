@@ -67,11 +67,6 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
-    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) {
-        return getDefinitionService().getProcessDefinitionByProcessId(user, processId);
-    }
-
-    @Override
     public void undeployProcessDefinition(User user, String processName) {
         getDefinitionService().undeployProcessDefinition(user, processName);
     }
