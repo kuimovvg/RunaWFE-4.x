@@ -25,7 +25,6 @@ import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionNameMismatchException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.execution.ParentProcessExistsException;
-import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -52,8 +51,6 @@ public interface DefinitionService {
             DefinitionDoesNotExistException;
 
     public WfDefinition getProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException, DefinitionDoesNotExistException;
-
-    public WfDefinition getProcessDefinitionByProcessId(User user, Long processId) throws ProcessDoesNotExistException;
 
     public void undeployProcessDefinition(User user, String definitionName) throws DefinitionDoesNotExistException, ParentProcessExistsException;
 
