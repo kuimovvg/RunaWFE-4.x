@@ -9,9 +9,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.IVariableProvider;
-import ru.runa.wfe.var.VariableDoesNotExistException;
 
 import com.google.common.base.Throwables;
 
@@ -28,10 +26,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             return binding.getVariables();
         } catch (Exception e) {
             log.error("Groovy", e);
-            Throwables.propagateIfInstanceOf(e, VariableDoesNotExistException.class);
-            // This is because calling side has not Groovy generated classes and
-            // will unable to show exception
-            throw new InternalApplicationException(e.getMessage());
+            throw Throwables.propagate(e);
         }
     }
 
@@ -43,10 +38,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             return (T) shell.evaluate(script);
         } catch (Exception e) {
             log.error("Groovy", e);
-            Throwables.propagateIfInstanceOf(e, VariableDoesNotExistException.class);
-            // This is because calling side has not Groovy generated classes and
-            // will unable to show exception
-            throw new InternalApplicationException(e.getMessage());
+            throw Throwables.propagate(e);
         }
     }
 
