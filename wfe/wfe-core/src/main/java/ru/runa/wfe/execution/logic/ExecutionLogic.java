@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -39,10 +40,12 @@ import ru.runa.wfe.graph.image.GraphImageBuilder;
 import ru.runa.wfe.graph.image.StartedSubprocessesVisitor;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.dto.WfTaskFactory;
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Throwables;
@@ -135,6 +138,13 @@ public class ExecutionLogic extends WFCommonLogic {
         validateVariables(user, processDefinition, processDefinition.getStartStateNotNull().getNodeId(), variables, null);
         String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
         Process process = processFactory.startProcess(processDefinition, variables, user.getActor(), transitionName);
+        SwimlaneDefinition startTaskSwimlaneDefinition = processDefinition.getStartStateNotNull().getFirstTaskNotNull().getSwimlane();
+        Object predefinedProcessStarterObject = variables.get(startTaskSwimlaneDefinition.getName());
+        if (predefinedProcessStarterObject != null) {
+            Executor predefinedProcessStarter = TypeConversionUtil.convertTo(Executor.class, predefinedProcessStarterObject);
+            ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
+            process.getSwimlaneNotNull(startTaskSwimlaneDefinition).assignExecutor(executionContext, predefinedProcessStarter, true);
+        }
         log.info("Process " + process + " was successfully started");
         return process.getId();
     }
