@@ -69,12 +69,13 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
     protected void fillFormData(TD tdFormElement) {
         String withSubprocesses = Objects.firstNonNull(pageContext.getRequest().getParameter("withSubprocesses"), "false");
         String[] severityNames = pageContext.getRequest().getParameterValues("severities");
+        if (severityNames == null) {
+            severityNames = new String[] { Severity.DEBUG.name(), Severity.ERROR.name(), Severity.INFO.name() };
+        }
         ProcessLogFilter filter = new ProcessLogFilter(getIdentifiableId());
         filter.setIncludeSubprocessLogs(Boolean.valueOf(withSubprocesses));
-        if (severityNames != null) {
-            for (String severityName : severityNames) {
-                filter.addSeverity(Severity.valueOf(severityName));
-            }
+        for (String severityName : severityNames) {
+            filter.addSeverity(Severity.valueOf(severityName));
         }
         // filter
         String filterHtml = "\n";
@@ -87,6 +88,7 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
             filterHtml += " checked=\"true\"";
         }
         filterHtml += ">" + Commons.getMessage("title.process_subprocess_list", pageContext) + "\n";
+        filterHtml += "<span class=\"width: 100px;\">";
         for (Severity severity : Severity.values()) {
             filterHtml += "<input type=\"checkbox\" name=\"severities\" value=\"" + severity.name() + "\"";
             if (filter.getSeverities().contains(severity)) {
