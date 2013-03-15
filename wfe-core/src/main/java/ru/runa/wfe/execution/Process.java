@@ -39,6 +39,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -73,6 +75,7 @@ import com.google.common.collect.Lists;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Process extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
+    private static final Log log = LogFactory.getLog(Process.class);
 
     private Long id;
     private Long version;
@@ -254,37 +257,44 @@ public class Process extends IdentifiableBase {
      *            actor who cancels process (if any), can be <code>null</code>
      */
     public void end(ExecutionContext executionContext, Actor canceller) {
-        if (!hasEnded()) {
-            ProcessExecutionErrors.removeProcessErrors(id);
-            // end the main path of execution
-            rootToken.end(executionContext, canceller);
-            // mark this process as ended
-            setEndDate(new Date());
-            executionContext.getProcessDefinition().fireEvent(executionContext, Event.EVENTTYPE_PROCESS_END);
+        if (hasEnded()) {
+            log.debug(this + " already ended");
+            return;
+        }
+        log.info("Cancelling " + this + " by " + canceller);
+        ProcessExecutionErrors.removeProcessErrors(id);
+        // end the main path of execution
+        rootToken.end(executionContext, canceller);
+        // mark this process as ended
+        setEndDate(new Date());
+        executionContext.getProcessDefinition().fireEvent(executionContext, Event.EVENTTYPE_PROCESS_END);
 
-            // check if this process was started as a subprocess of a super
-            // process
-            NodeProcess parentNodeProcess = executionContext.getParentNodeProcess();
-            if (parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded()) {
-                Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
-                ProcessDefinition superDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(superDefinitionId);
-                ExecutionContext superExecutionContext = new ExecutionContext(superDefinition, parentNodeProcess.getParentToken());
-                parentNodeProcess.getParentToken().signal(superExecutionContext);
-            }
+        // check if this process was started as a subprocess of a super
+        // process
+        NodeProcess parentNodeProcess = executionContext.getParentNodeProcess();
+        if (parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded()) {
+            Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
+            parentNodeProcess.getProcess().getDeployment().getId();
+            ProcessDefinition superDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(superDefinitionId);
+            ExecutionContext superExecutionContext = new ExecutionContext(superDefinition, parentNodeProcess.getParentToken());
+            log.info("Signalling to parent " + parentNodeProcess.getProcess());
+            parentNodeProcess.getParentToken().signal(superExecutionContext);
+            // parentNodeProcess.getProcess().end(superExecutionContext,
+            // canceller);
+        }
 
-            // make sure all the timers for this process are canceled
-            // after the process end updates are posted to the database
-            JobDAO jobDAO = ApplicationContextFactory.getJobDAO();
-            jobDAO.deleteAll(this);
-            if (canceller != null) {
-                // end all active tasks
-                for (Task task : tasks) {
-                    task.setEndDate(new Date());
-                }
-                executionContext.addLog(new ProcessCancelLog(canceller));
-            } else {
-                executionContext.addLog(new ProcessEndLog());
+        // make sure all the timers for this process are canceled
+        // after the process end updates are posted to the database
+        JobDAO jobDAO = ApplicationContextFactory.getJobDAO();
+        jobDAO.deleteAll(this);
+        if (canceller != null) {
+            // end all active tasks
+            for (Task task : tasks) {
+                task.setEndDate(new Date());
             }
+            executionContext.addLog(new ProcessCancelLog(canceller));
+        } else {
+            executionContext.addLog(new ProcessEndLog());
         }
     }
 

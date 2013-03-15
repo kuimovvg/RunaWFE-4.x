@@ -35,6 +35,10 @@ import javax.persistence.Transient;
 public class ProcessEndLog extends ProcessLog {
     private static final long serialVersionUID = 1L;
 
+    public ProcessEndLog() {
+        setSeverity(Severity.INFO);
+    }
+
     @Override
     @Transient
     public Object[] getPatternArguments() {

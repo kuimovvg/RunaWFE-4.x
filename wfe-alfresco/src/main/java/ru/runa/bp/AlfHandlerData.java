@@ -31,7 +31,17 @@ public class AlfHandlerData extends HandlerData {
         processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(process.getHierarchySubProcess());
     }
 
+    /**
+     * @return subprocess ids hierarchy from root process to current process
+     */
     public List<Long> getProcessIdsHierarchy() {
+        return processIdsHierarchy;
+    }
+
+    /**
+     * @return subprocess ids hierarchy from current process to root process
+     */
+    public List<Long> getProcessIdsHierarchyInversed() {
         return processIdsHierarchy;
     }
 
