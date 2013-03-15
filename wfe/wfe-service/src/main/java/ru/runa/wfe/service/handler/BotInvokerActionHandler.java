@@ -45,29 +45,33 @@ public class BotInvokerActionHandler implements ActionHandler {
 
     @Override
     public void execute(ExecutionContext executionContext) {
-        List<BotStation> botStations = Delegates.getBotService().getBotStations();
-        BotStation botStation = null;
-        if (!Strings.isNullOrEmpty(configuration)) {
-            // old way: search by address
-            for (BotStation bs : botStations) {
-                if (configuration.equals(bs.getAddress())) {
-                    botStation = bs;
-                    break;
+        try {
+            List<BotStation> botStations = Delegates.getBotService().getBotStations();
+            BotStation botStation = null;
+            if (!Strings.isNullOrEmpty(configuration)) {
+                // old way: search by address
+                for (BotStation bs : botStations) {
+                    if (configuration.equals(bs.getAddress())) {
+                        botStation = bs;
+                        break;
+                    }
+                }
+                if (botStation == null) {
+                    botStation = Delegates.getBotService().getBotStationByName(configuration);
+                }
+            } else {
+                if (botStations.size() > 0) {
+                    botStation = botStations.get(0);
                 }
             }
             if (botStation == null) {
-                botStation = Delegates.getBotService().getBotStationByName(configuration);
+                log.warn("No botstation can be found for invocation " + configuration);
+                return;
             }
-        } else {
-            if (botStations.size() > 0) {
-                botStation = botStations.get(0);
-            }
+            Delegates.getBotInvokerService(botStation).invokeBots(botStation);
+        } catch (Exception e) {
+            log.error("Unable to invoke bot station due to " + e);
         }
-        if (botStation == null) {
-            log.warn("No botstation can be found for invocation " + configuration);
-            return;
-        }
-        Delegates.getBotInvokerService(botStation).invokeBots(botStation);
     }
 
 }
