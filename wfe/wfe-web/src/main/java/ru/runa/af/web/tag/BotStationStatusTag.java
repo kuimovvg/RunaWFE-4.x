@@ -44,6 +44,7 @@ public class BotStationStatusTag extends TitledFormTag {
             periodicInvocationOn = Delegates.getBotInvokerService(botStation).isRunning();
             stationOn = true;
         } catch (Exception e) {
+            log.warn("Unable to obtain status of botstation " + botStationId, e);
             stationOn = false;
             periodicInvocationOn = false;
         }

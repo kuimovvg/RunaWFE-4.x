@@ -15,6 +15,7 @@ import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 
 import ru.runa.wfe.commons.calendar.BusinessCalendar;
 import ru.runa.wfe.commons.hibernate.Converters;
+import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.extension.assign.AssignmentHelper;
 import ru.runa.wfe.job.dao.JobDAO;
@@ -107,6 +108,10 @@ public class ApplicationContextFactory {
 
     public static ExecutorDAO getExecutorDAO() {
         return getContext().getBean(ExecutorDAO.class);
+    }
+
+    public static DeploymentDAO getDeploymentDAO() {
+        return getContext().getBean(DeploymentDAO.class);
     }
 
     public static PermissionDAO getPermissionDAO() {

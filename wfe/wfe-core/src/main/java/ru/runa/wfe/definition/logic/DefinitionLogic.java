@@ -85,19 +85,24 @@ public class DefinitionLogic extends WFCommonLogic {
     }
 
     public WfDefinition redeployProcessDefinition(User user, Long definitionId, byte[] processArchiveBytes, List<String> processType) {
-        Deployment deployment = deploymentDAO.getNotNull(definitionId);
-        checkPermissionAllowed(user, deployment, DefinitionPermission.REDEPLOY_DEFINITION);
+        Deployment oldDeployment = deploymentDAO.getNotNull(definitionId);
+        checkPermissionAllowed(user, oldDeployment, DefinitionPermission.REDEPLOY_DEFINITION);
         if (processArchiveBytes == null) {
-            // update only categories
-            deployment.setCategories(processType);
+            Preconditions.checkNotNull(processType, "In mode 'update only categories' process type is required");
+            oldDeployment.setCategories(processType);
             return getProcessDefinition(user, definitionId);
         }
         ProcessDefinition definition = parseProcessDefinition(processArchiveBytes);
-        if (!deployment.getName().equals(definition.getName())) {
-            throw new DefinitionNameMismatchException("Expected definition name " + deployment.getName(), definition.getName(), deployment.getName());
+        if (!oldDeployment.getName().equals(definition.getName())) {
+            throw new DefinitionNameMismatchException("Expected definition name " + oldDeployment.getName(), definition.getName(),
+                    oldDeployment.getName());
         }
-        definition.getDeployment().setCategories(processType);
-        deploymentDAO.deploy(definition.getDeployment(), deployment);
+        if (processType != null) {
+            definition.getDeployment().setCategories(processType);
+        } else {
+            definition.getDeployment().setCategory(oldDeployment.getCategory());
+        }
+        deploymentDAO.deploy(definition.getDeployment(), oldDeployment);
         // for (Executor executor :
         // permissionDAO.getExecutorsWithPermission(deployment)) {
         // Map<Permission, Boolean> permissions =
@@ -105,7 +110,7 @@ public class DefinitionLogic extends WFCommonLogic {
         // permissionDAO.setPermissions(executor, permissions.keySet(),
         // definition);
         // }
-        log.debug("Process definition " + deployment + " was successfully redeployed");
+        log.debug("Process definition " + oldDeployment + " was successfully redeployed");
         return new WfDefinition(definition);
     }
 

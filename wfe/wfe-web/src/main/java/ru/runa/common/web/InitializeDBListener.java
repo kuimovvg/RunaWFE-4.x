@@ -6,6 +6,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.ftl.FreemarkerConfiguration;
 import ru.runa.wfe.service.delegate.Delegates;
 
 public class InitializeDBListener implements ServletContextListener {
@@ -16,6 +17,7 @@ public class InitializeDBListener implements ServletContextListener {
         log.info("initializing database");
         Delegates.getInitializerService().init(false);
         log.info("initialization done");
+        log.info("Initialized FTL tags: " + FreemarkerConfiguration.getInstance());
     }
 
     @Override
