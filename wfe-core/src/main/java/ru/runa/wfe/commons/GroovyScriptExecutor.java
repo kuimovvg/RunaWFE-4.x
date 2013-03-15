@@ -8,7 +8,9 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.groovy.GroovyExceptionInterface;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Throwables;
@@ -25,7 +27,10 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             shell.evaluate(script);
             return binding.getVariables();
         } catch (Exception e) {
-            log.error("Groovy", e);
+            if (e instanceof GroovyExceptionInterface) {
+                log.error("Groovy", e);
+                throw new InternalApplicationException(e.getMessage());
+            }
             throw Throwables.propagate(e);
         }
     }
@@ -37,7 +42,10 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             GroovyShell shell = new GroovyShell(binding);
             return (T) shell.evaluate(script);
         } catch (Exception e) {
-            log.error("Groovy", e);
+            if (e instanceof GroovyExceptionInterface) {
+                log.error("Groovy", e);
+                throw new InternalApplicationException(e.getMessage());
+            }
             throw Throwables.propagate(e);
         }
     }
