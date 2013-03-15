@@ -51,8 +51,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -68,7 +70,7 @@ import com.google.common.collect.Maps;
 @DiscriminatorValue(value = "V")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ProcessLog implements IAttributes, Serializable {
+public abstract class ProcessLog implements IAttributes, Serializable, Comparable<ProcessLog> {
     private static final long serialVersionUID = 1L;
 
     private Long id;
@@ -94,7 +96,7 @@ public abstract class ProcessLog implements IAttributes, Serializable {
         this.id = id;
     }
 
-    @Column(name = "PROCESS_ID")
+    @Column(name = "PROCESS_ID", nullable = false)
     @Index(name = "IX_LOG_PROCESS")
     public Long getProcessId() {
         return processId;
@@ -104,7 +106,7 @@ public abstract class ProcessLog implements IAttributes, Serializable {
         this.processId = processId;
     }
 
-    @Column(name = "TOKEN_ID")
+    @Column(name = "TOKEN_ID", nullable = false)
     public Long getTokenId() {
         return tokenId;
     }
@@ -113,7 +115,7 @@ public abstract class ProcessLog implements IAttributes, Serializable {
         this.tokenId = tokenId;
     }
 
-    @Column(name = "LOG_DATE")
+    @Column(name = "LOG_DATE", nullable = false)
     public Date getDate() {
         return date;
     }
@@ -122,7 +124,7 @@ public abstract class ProcessLog implements IAttributes, Serializable {
         this.date = date;
     }
 
-    @Column(name = "SEVERITY")
+    @Column(name = "SEVERITY", nullable = false)
     @Enumerated(EnumType.STRING)
     public Severity getSeverity() {
         return severity;
@@ -206,5 +208,16 @@ public abstract class ProcessLog implements IAttributes, Serializable {
         // return id.substring(1, id.length() - 1);
         // }
         return id;
+    }
+
+    @Override
+    public int compareTo(ProcessLog o) {
+        return date.compareTo(o.date);
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("id", id).add("processId", processId).add("tokenId", tokenId)
+                .add("date", CalendarUtil.formatDateTime(date)).toString();
     }
 }

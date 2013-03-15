@@ -41,6 +41,7 @@ public class NodeLeaveLog extends NodeLog {
 
     public NodeLeaveLog(Node node) {
         super(node);
+        setSeverity(Severity.INFO);
     }
 
 }

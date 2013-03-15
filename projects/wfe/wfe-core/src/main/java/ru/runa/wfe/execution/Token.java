@@ -43,6 +43,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -50,6 +52,8 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import ru.runa.wfe.audit.ProcessLogs;
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
@@ -71,6 +75,8 @@ import com.google.common.collect.Lists;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Token implements Serializable {
     private static final long serialVersionUID = 1L;
+    private static final Log log = LogFactory.getLog(ProcessLogs.class);
+
     private Long id;
     private Long version;
     private String name;
@@ -274,23 +280,26 @@ public class Token implements Serializable {
      *            actor who cancels process (if any), can be <code>null</code>
      */
     public void end(ExecutionContext executionContext, Actor canceller) {
-        // if not already ended
-        if (endDate == null) {
-            // ended tokens cannot reactivate parents
-            // ableToReactivateParent = false;
-            // set the end date
-            // the end date is also the flag that indicates that this token has
-            // ended.
-            endDate = new Date();
-            // end all this token's children
-            for (Token child : getChildren()) {
-                if (!child.hasEnded()) {
-                    child.end(executionContext, canceller);
-                }
+        if (hasEnded()) {
+            log.debug(this + " already ended");
+            return;
+        }
+        log.info("Cancelling " + this + " by " + canceller);
+        // ended tokens cannot reactivate parents
+        // ableToReactivateParent = false;
+        // set the end date
+        // the end date is also the flag that indicates that this token has
+        // ended.
+        endDate = new Date();
+        // end all this token's children
+        for (Token child : getChildren()) {
+            if (!child.hasEnded()) {
+                child.end(executionContext, canceller);
             }
-            for (Process subProcess : executionContext.getChildProcesses()) {
-                subProcess.end(executionContext, canceller);
-            }
+        }
+        for (Process subProcess : executionContext.getChildProcesses()) {
+            ProcessDefinition subProcessDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(subProcess);
+            subProcess.end(new ExecutionContext(subProcessDefinition, subProcess), canceller);
         }
     }
 

@@ -42,6 +42,7 @@ import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
+import ru.runa.wfe.audit.Severity;
 import ru.runa.wfe.audit.presentation.ExecutorIdsValue;
 import ru.runa.wfe.audit.presentation.ExecutorNameValue;
 import ru.runa.wfe.audit.presentation.FileValue;
@@ -50,7 +51,6 @@ import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.format.FileFormat;
@@ -67,10 +67,38 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) {
-        ExecutionService executionService = Delegates.getExecutionService();
+        String withSubprocesses = Objects.firstNonNull(pageContext.getRequest().getParameter("withSubprocesses"), "false");
+        String[] severityNames = pageContext.getRequest().getParameterValues("severities");
         ProcessLogFilter filter = new ProcessLogFilter(getIdentifiableId());
-        filter.setIncludeSubprocessLogs(true);
-        ProcessLogs logs = executionService.getProcessLogs(getUser(), filter);
+        filter.setIncludeSubprocessLogs(Boolean.valueOf(withSubprocesses));
+        if (severityNames != null) {
+            for (String severityName : severityNames) {
+                filter.addSeverity(Severity.valueOf(severityName));
+            }
+        }
+        // filter
+        String filterHtml = "\n";
+        filterHtml += "<form action=\"" + Commons.getActionUrl("/show_history", pageContext, PortletUrlType.Action) + "\" method=\"get\">\n";
+        filterHtml += "<input type=\"hidden\" name=\"id\" value=\"" + filter.getProcessId() + "\">\n";
+        filterHtml += "<table class=\"box\"><tr><th class=\"box\">" + Commons.getMessage("label.filter_criteria", pageContext) + "</th></tr>\n";
+        filterHtml += "<tr><td>\n";
+        filterHtml += "<input type=\"checkbox\" name=\"withSubprocesses\" value=\"true\"";
+        if (filter.isIncludeSubprocessLogs()) {
+            filterHtml += " checked=\"true\"";
+        }
+        filterHtml += ">" + Commons.getMessage("title.process_subprocess_list", pageContext) + "\n";
+        for (Severity severity : Severity.values()) {
+            filterHtml += "<input type=\"checkbox\" name=\"severities\" value=\"" + severity.name() + "\"";
+            if (filter.getSeverities().contains(severity)) {
+                filterHtml += " checked=\"true\"";
+            }
+            filterHtml += "> " + severity.name() + "\n";
+        }
+        filterHtml += "<button type=\"submit\">" + Commons.getMessage("button.form", pageContext) + "</button>\n";
+        filterHtml += "</td></tr></table>\n";
+        tdFormElement.addElement(filterHtml);
+        // content
+        ProcessLogs logs = Delegates.getExecutionService().getProcessLogs(getUser(), filter);
         int maxLevel = logs.getMaxSubprocessLevel();
         List<TR> rows = Lists.newArrayList();
         TD mergedEventDateTD = null;
@@ -87,11 +115,14 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                 description = log.toString();
             }
             TR tr = new TR();
-            int currentLevel = logs.getLevel(log);
-            for (int i = 0; i < currentLevel; i++) {
-                tr.addElement(new TD().addElement("x").setClass(Resources.CLASS_EMPTY20_TABLE_TD));
+            List<Long> processIds = logs.getSubprocessIds(log);
+            for (Long processId : processIds) {
+                Map<String, Object> params = Maps.newHashMap();
+                params.put(IdForm.ID_INPUT_NAME, processId);
+                String url = Commons.getActionUrl(ShowGraphModeHelper.getManageProcessAction(), params, pageContext, PortletUrlType.Render);
+                tr.addElement(new TD().addElement(new A(url, processId.toString())).setClass(Resources.CLASS_EMPTY20_TABLE_TD));
             }
-            for (int i = currentLevel; i < maxLevel; i++) {
+            for (int i = processIds.size(); i < maxLevel; i++) {
                 tr.addElement(new TD().addElement("").setClass(Resources.CLASS_EMPTY20_TABLE_TD));
             }
             String eventDateString = CalendarUtil.format(log.getDate(), CalendarUtil.DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT);

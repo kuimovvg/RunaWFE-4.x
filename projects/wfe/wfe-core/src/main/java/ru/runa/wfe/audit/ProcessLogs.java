@@ -1,6 +1,7 @@
 package ru.runa.wfe.audit;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.SafeIndefiniteLoop;
 import ru.runa.wfe.lang.NodeType;
 
 import com.google.common.collect.Lists;
@@ -19,29 +21,60 @@ public class ProcessLogs implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final List<ProcessLog> logs = Lists.newArrayList();
-    private final HashMap<Long, Integer> processIdLevels = Maps.newHashMap();
+    private final HashMap<Long, Long> subprocessToProcessIds = Maps.newHashMap();
 
     public ProcessLogs() {
     }
 
     public ProcessLogs(Long processId) {
-        processIdLevels.put(processId, 0);
+        subprocessToProcessIds.put(processId, null);
     }
 
-    public void addLogs(List<ProcessLog> processLogs) {
+    public void addLogs(List<ProcessLog> processLogs, boolean withSubprocesses) {
         logs.addAll(processLogs);
-        for (ProcessLog log : processLogs) {
-            if (log instanceof SubprocessStartLog) {
-                Long subprocessId = ((SubprocessStartLog) log).getSubprocessId();
-                int superProcessLevel = getLevel(log);
-                processIdLevels.put(subprocessId, superProcessLevel + 1);
+        if (withSubprocesses) {
+            for (ProcessLog log : processLogs) {
+                if (log instanceof SubprocessStartLog) {
+                    Long subprocessId = ((SubprocessStartLog) log).getSubprocessId();
+                    subprocessToProcessIds.put(subprocessId, log.getProcessId());
+                }
             }
         }
+        Collections.sort(logs);
     }
 
     public int getMaxSubprocessLevel() {
+        final Map<Long, Long> tmpIds = Maps.newHashMap(subprocessToProcessIds);
+        final Map<Long, Integer> levels = Maps.newHashMap();
+        new SafeIndefiniteLoop(100) {
+
+            @Override
+            protected boolean continueLoop() {
+                return !tmpIds.isEmpty();
+            }
+
+            @Override
+            protected void doOp() {
+                for (Map.Entry<Long, Long> entry : tmpIds.entrySet()) {
+                    if (levels.containsKey(entry.getKey())) {
+                        continue;
+                    }
+                    if (entry.getValue() == null) {
+                        levels.put(entry.getKey(), 0);
+                        tmpIds.remove(entry.getKey());
+                        break;
+                    }
+                    if (levels.containsKey(entry.getValue())) {
+                        levels.put(entry.getKey(), levels.get(entry.getValue()) + 1);
+                        tmpIds.remove(entry.getKey());
+                        break;
+                    }
+                }
+            }
+
+        }.doLoop();
         int level = 0;
-        for (Integer l : processIdLevels.values()) {
+        for (Integer l : levels.values()) {
             if (l > level) {
                 level = l;
             }
@@ -49,8 +82,15 @@ public class ProcessLogs implements Serializable {
         return level;
     }
 
-    public int getLevel(ProcessLog processLog) {
-        return processIdLevels.get(processLog.getProcessId());
+    public List<Long> getSubprocessIds(ProcessLog processLog) {
+        List<Long> result = Lists.newArrayList();
+        Long processId = processLog.getProcessId();
+        while (subprocessToProcessIds.get(processId) != null) {
+            result.add(processId);
+            processId = subprocessToProcessIds.get(processId);
+        }
+        Collections.reverse(result);
+        return result;
     }
 
     public List<ProcessLog> getLogs() {

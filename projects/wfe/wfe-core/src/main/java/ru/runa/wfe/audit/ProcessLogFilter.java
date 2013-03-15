@@ -1,12 +1,15 @@
 package ru.runa.wfe.audit;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 public class ProcessLogFilter implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long processId;
     private boolean includeSubprocessLogs;
-    private Severity[] severities;
+    private List<Severity> severities = Lists.newArrayList();
 
     public ProcessLogFilter() {
     }
@@ -31,12 +34,12 @@ public class ProcessLogFilter implements Serializable {
         this.includeSubprocessLogs = includeSubprocessLogs;
     }
 
-    public Severity[] getSeverities() {
+    public List<Severity> getSeverities() {
         return severities;
     }
 
-    public void setSeverities(Severity[] severities) {
-        this.severities = severities;
+    public void addSeverity(Severity severity) {
+        this.severities.add(severity);
     }
 
 }

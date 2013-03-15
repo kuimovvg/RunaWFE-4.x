@@ -24,6 +24,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Token;
@@ -119,7 +120,8 @@ public abstract class Job {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", id).add("name", name).add("dueDate", dueDate).add("process", getProcess()).toString();
+        return Objects.toStringHelper(this).add("id", id).add("name", name).add("dueDate", CalendarUtil.formatDateTime(dueDate))
+                .add("process", getProcess()).toString();
     }
 
 }

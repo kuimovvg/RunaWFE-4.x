@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
+import ru.runa.wfe.audit.Severity;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.audit.dao.ProcessLogDAO;
 import ru.runa.wfe.commons.logic.CommonLogic;
@@ -68,11 +69,23 @@ public class AuditLogic extends CommonLogic {
         Preconditions.checkNotNull(filter.getProcessId(), "filter.processId");
         checkPermissionAllowed(user, processDAO.getNotNull(filter.getProcessId()), Permission.READ);
         ProcessLogs result = new ProcessLogs(filter.getProcessId());
-        result.addLogs(processLogDAO.getAll(filter.getProcessId()));
+        boolean filterBySeverity = filter.getSeverities().size() != 0 && filter.getSeverities().size() != Severity.values().length;
+        List<ProcessLog> logs;
+        if (filterBySeverity) {
+            logs = processLogDAO.getAll(filter.getProcessId(), filter.getSeverities());
+        } else {
+            logs = processLogDAO.getAll(filter.getProcessId());
+        }
+        result.addLogs(logs, filter.isIncludeSubprocessLogs());
         if (filter.isIncludeSubprocessLogs()) {
             ru.runa.wfe.execution.Process process = processDAO.getNotNull(filter.getProcessId());
             for (ru.runa.wfe.execution.Process subprocess : nodeProcessDAO.getSubprocessesRecursive(process)) {
-                result.addLogs(processLogDAO.getAll(subprocess.getId()));
+                if (filterBySeverity) {
+                    logs = processLogDAO.getAll(subprocess.getId(), filter.getSeverities());
+                } else {
+                    logs = processLogDAO.getAll(subprocess.getId());
+                }
+                result.addLogs(logs, filter.isIncludeSubprocessLogs());
             }
         }
         return result;

@@ -50,6 +50,7 @@ public class TaskAssignLog extends TaskLog {
         if (newExecutor != null) {
             addAttribute(ATTR_NEW_VALUE, newExecutor.getName());
         }
+        setSeverity(Severity.INFO);
     }
 
     @Override

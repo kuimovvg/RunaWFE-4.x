@@ -6,21 +6,18 @@
 
 <tiles:put name="body" type="string" >
 <%
-	String parameterName = IdForm.ID_INPUT_NAME;
-	long id = Long.parseLong(request.getParameter(parameterName));
+	long id = Long.parseLong(request.getParameter(IdForm.ID_INPUT_NAME));
 %>
 
 <wf:showHistory identifiableId="<%= id %>" >
 <table width="100%">
 	<tr>
 		<td align="right">
-			<wf:updateProcessLink identifiableId='<%=id %>' href='<%= "/manage_process.do?" + parameterName+ "=" + id %>'  />
+			<wf:updateProcessLink identifiableId='<%=id %>' href='<%= "/manage_process.do?" + IdForm.ID_INPUT_NAME + "=" + id %>'  />
 		</td>
 	</tr>
 </table>
-	 
 </wf:showHistory>
-
 
 </tiles:put>
 <tiles:put name="messages" value="../common/messages.jsp" />

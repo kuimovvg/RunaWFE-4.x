@@ -44,6 +44,7 @@ public class ProcessCancelLog extends ProcessLog {
 
     public ProcessCancelLog(Actor actor) {
         addAttribute(ATTR_ACTOR_NAME, actor.getName());
+        setSeverity(Severity.INFO);
     }
 
     @Override

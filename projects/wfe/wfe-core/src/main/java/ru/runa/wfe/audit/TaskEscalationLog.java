@@ -34,6 +34,7 @@ public class TaskEscalationLog extends TaskLog {
             ids.add(executor.getId());
         }
         addAttribute(ATTR_MESSAGE, Joiner.on(ExecutorIdsValue.DELIM).join(ids));
+        setSeverity(Severity.INFO);
     }
 
     @Override
