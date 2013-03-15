@@ -1,15 +1,14 @@
 package ru.runa.wfe.validation.impl;
 
-import groovy.lang.MissingPropertyException;
 import ru.runa.wfe.commons.GroovyScriptExecutor;
 import ru.runa.wfe.commons.IScriptExecutor;
 import ru.runa.wfe.validation.Validator;
 
 public class GroovyExpressionValidator extends Validator {
-	
-	protected IScriptExecutor getScriptExecutor() {
-		return new GroovyScriptExecutor();
-	}
+
+    protected IScriptExecutor getScriptExecutor() {
+        return new GroovyScriptExecutor();
+    }
 
     @Override
     public void validate() {
@@ -20,7 +19,7 @@ public class GroovyExpressionValidator extends Validator {
             if (valid == null || !valid) {
                 addError();
             }
-        } catch (MissingPropertyException e) {
+        } catch (NullPointerException e) {
             // this means that some of the beans are null, we ignoring it due to
             // required validator check
             log.warn(e.getMessage());
