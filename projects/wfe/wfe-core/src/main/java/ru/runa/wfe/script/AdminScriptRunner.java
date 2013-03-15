@@ -39,6 +39,7 @@ import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.logic.BotLogic;
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.dto.WfDefinition;
@@ -445,12 +446,18 @@ public class AdminScriptRunner {
     public void redeployProcessDefinition(Element element) {
         String file = element.attributeValue(FILE_ATTRIBUTE_NAME);
         String type = element.attributeValue(TYPE_ATTRIBUTE_NAME);
-        String id = element.attributeValue(DEFINITION_ID_ATTRIBUTE_NAME);
-        Long definitionId = Strings.isNullOrEmpty(id) ? null : new Long(id);
-        List<String> parsedType = Lists.newArrayList();
-        if (type == null || type.equals("")) {
-            parsedType.add("Script");
+        String definitionName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        Long definitionId;
+        if (definitionName != null) {
+            definitionId = ApplicationContextFactory.getDeploymentDAO().findLatestDeployment(definitionName).getId();
         } else {
+            String id = element.attributeValue(DEFINITION_ID_ATTRIBUTE_NAME);
+            Preconditions.checkNotNull(id, DEFINITION_ID_ATTRIBUTE_NAME);
+            definitionId = Long.parseLong(id);
+        }
+        List<String> parsedType = null;
+        if (type != null) {
+            parsedType = Lists.newArrayList();
             int slashIdx = 0;
             while (true) {
                 if (type.indexOf('/', slashIdx) != -1) {

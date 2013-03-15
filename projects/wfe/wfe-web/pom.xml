@@ -57,6 +57,12 @@
 			<artifactId>javaee-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<artifactId>antlr</artifactId>
+			<groupId>antlr</groupId>
+			<version>2.7.6</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- Include in WAR -->
 		<dependency>
 			<groupId>ecs</groupId>
@@ -65,12 +71,6 @@
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>antlr</artifactId>
-					<groupId>antlr</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.struts</groupId>
@@ -128,19 +128,5 @@
 			<artifactId>jcifs-ext</artifactId>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-		        <configuration>
-					<!-- archiveClasses>true</archiveClasses -->
-					<attachClasses>true</attachClasses>
-		        	<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-		        	<!-- packagingExcludes>WEB-INF/lib/wfe-web-4.0.0.jar</packagingExcludes -->
-		        </configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>
