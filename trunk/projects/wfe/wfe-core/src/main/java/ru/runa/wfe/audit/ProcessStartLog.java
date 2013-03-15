@@ -39,11 +39,11 @@ public class ProcessStartLog extends ProcessLog {
     private static final long serialVersionUID = 1L;
 
     public ProcessStartLog() {
-
     }
 
     public ProcessStartLog(Actor actor) {
         addAttribute(ATTR_ACTOR_NAME, actor != null ? actor.getName() : "system");
+        setSeverity(Severity.INFO);
     }
 
     @Transient

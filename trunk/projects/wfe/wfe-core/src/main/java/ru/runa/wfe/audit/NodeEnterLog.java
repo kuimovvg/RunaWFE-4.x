@@ -41,6 +41,7 @@ public class NodeEnterLog extends NodeLog {
 
     public NodeEnterLog(Node node) {
         super(node);
+        setSeverity(Severity.INFO);
     }
 
 }
