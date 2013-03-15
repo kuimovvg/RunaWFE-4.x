@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.SQLQuery;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -214,6 +216,8 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRemoveIndex("BPM_TOKEN", "IDX_TOKEN_NODE"));
         sql.add(getDDLRemoveForeignKey("BPM_TOKEN", "FK_TOKEN_NODE"));
         sql.add(getDDLRemoveIndex("BPM_TOKEN", "IDX_TOKEN_SUBPI"));
+        sql.add(getDDLRemoveIndex("BPM_TOKEN", "IDX_TOKEN_PROCIN"));
+        sql.add(getDDLRemoveIndex("BPM_TOKEN", "IDX_TOKEN_PARENT"));
         sql.add(getDDLRemoveForeignKey("BPM_TOKEN", "FK_TOKEN_SUBPI"));
         sql.add(getDDLRemoveColumn("BPM_TOKEN", "NODEENTER_"));
         sql.add(getDDLRemoveColumn("BPM_TOKEN", "NEXTLOGINDEX_"));
@@ -223,10 +227,8 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameColumn("BPM_TOKEN", "START_", new ColumnDef("START_DATE", Types.DATE)));
         sql.add(getDDLRenameColumn("BPM_TOKEN", "END_", new ColumnDef("END_DATE", Types.DATE)));
         sql.add(getDDLRenameColumn("BPM_TOKEN", "PROCESSINSTANCE_", new ColumnDef("PROCESS_ID", Types.BIGINT)));
-        sql.add(getDDLRenameIndex("BPM_TOKEN", "IDX_TOKEN_PROCIN", "IX_TOKEN_PROCESS"));
         sql.add(getDDLRenameForeignKey("FK_TOKEN_PROCINST", "FK_TOKEN_PROCESS"));
         sql.add(getDDLRenameColumn("BPM_TOKEN", "PARENT_", new ColumnDef("PARENT_ID", Types.BIGINT)));
-        sql.add(getDDLRenameIndex("BPM_TOKEN", "IDX_TOKEN_PARENT", "IX_TOKEN_PARENT"));
         sql.add(getDDLRenameColumn("BPM_TOKEN", "ISABLETOREACTIVATEPARENT_", new ColumnDef("REACTIVATE_PARENT", Types.VARCHAR)));
         sql.add(getDDLCreateColumn("BPM_TOKEN", new ColumnDef("NODE_TYPE", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
         sql.add(getDDLCreateColumn("BPM_TOKEN", new ColumnDef("NODE_ID", dialect.getTypeName(Types.VARCHAR, 255, 255, 255))));
@@ -430,6 +432,11 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLRenameColumn("JBPM_PASSTRANS", "PROCESSINSTANCE_", new ColumnDef("PROCESS_ID", Types.BIGINT)));
         sql.add(getDDLRemoveForeignKey("JBPM_PASSTRANS", "FK_PASSTRANS_PROCINST"));
         sql.add(getDDLRemoveForeignKey("JBPM_PASSTRANS", "FK_PASSTRANS_TRANS"));
+
+        sql.add(getDDLRemoveIndex("PERMISSION_MAPPINGS", "PERM_MAPPINGS_SEC_OBJ_ID_IDX"));
+        sql.add(getDDLRemoveIndex("PERMISSION_MAPPINGS", "PERM_MAPPINGS_EXEC_ID_IDX"));
+        // sql.add(getDDLRemoveIndex("PERMISSION_MAPPINGS",
+        // "PK__PERMISSION_MAPPI__7D046EF2"));
         return sql;
     }
 
@@ -504,6 +511,8 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLCreateIndex("BPM_SWIMLANE", "IX_SWIMLANE_PROCESS", "PROCESS_ID"));
         // sql.add(getDDLCreateIndex("BPM_VARIABLE", "IX_VARIABLE_NAME",
         // "NAME"));
+        sql.add(getDDLCreateIndex("BPM_TOKEN", "IX_TOKEN_PROCESS", "PROCESS_ID"));
+        sql.add(getDDLCreateIndex("BPM_TOKEN", "IX_TOKEN_PARENT", "PARENT_ID"));
         return sql;
     }
 
@@ -536,6 +545,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         }
         String q;
         List<Object[]> list;
+        ScrollableResults scrollableResults;
 
         Map<Integer, Long> actorIdByCode = Maps.newHashMap();
         q = "SELECT ID, CODE FROM EXECUTOR WHERE CODE IS NOT NULL";
@@ -552,11 +562,11 @@ public class JbpmRefactoringPatch extends DBPatch {
         log.info("Cleaned keepAlive jobs: " + session.createSQLQuery("DELETE FROM BPM_JOB WHERE LOCKOWNER_ = 'keepAlive'").executeUpdate());
         log.info("update process definition PAR file");
         q = "SELECT md.PROCESSDEFINITION_, f.BYTES_ FROM JBPM_PROCESSFILES f, JBPM_MODULEDEFINITION md WHERE f.DEFINITION_ID_=md.ID_ AND f.NAME_='par'";
-        list = session.createSQLQuery(q).list();
-        for (Object[] objects : list) {
-            Blob blob = (Blob) objects[1];
+        scrollableResults = session.createSQLQuery(q).scroll(ScrollMode.FORWARD_ONLY);
+        while (scrollableResults.next()) {
+            Blob blob = (Blob) scrollableResults.get(1);
             SQLQuery query = session.createSQLQuery("UPDATE BPM_PROCESS_DEFINITION SET BYTES=:par WHERE ID=:id");
-            query.setParameter("id", objects[0]);
+            query.setParameter("id", scrollableResults.get(0));
             query.setParameter("par", ByteStreams.toByteArray(blob.getBinaryStream()));
             query.executeUpdate();
         }
@@ -572,26 +582,26 @@ public class JbpmRefactoringPatch extends DBPatch {
         session.createSQLQuery("UPDATE BPM_PROCESS_DEFINITION SET LANGUAGE='" + Language.JPDL + "'").executeUpdate();
         log.info("Update BPM_TOKEN.PROCESS_ID FROM BPM_PROCESS.ROOT_TOKEN_ID");
         q = "SELECT t.ID, p.ID FROM BPM_TOKEN t, BPM_PROCESS p WHERE p.ROOT_TOKEN_ID=t.ID AND PROCESS_ID IS NULL";
-        list = session.createSQLQuery(q).list();
-        for (Object[] objects : list) {
+        scrollableResults = session.createSQLQuery(q).scroll(ScrollMode.FORWARD_ONLY);
+        while (scrollableResults.next()) {
             SQLQuery query = session.createSQLQuery("UPDATE BPM_TOKEN SET PROCESS_ID=:processId WHERE ID=:tokenId");
-            query.setParameter("tokenId", objects[0]);
-            query.setParameter("processId", objects[1]);
+            query.setParameter("tokenId", scrollableResults.get(0));
+            query.setParameter("processId", scrollableResults.get(1));
             query.executeUpdate();
         }
         log.info("Deleted broken tokens [by PROCESS_ID]: " + session.createSQLQuery("DELETE FROM BPM_TOKEN WHERE PROCESS_ID IS NULL").executeUpdate());
         log.info("Updating BPM_TOKEN.NODE_TYPE");
         q = "SELECT t.ID, n.CLASS_, n.NAME_ FROM BPM_TOKEN t, JBPM_NODE n WHERE t.NODE_= n.ID_";
-        list = session.createSQLQuery(q).list();
-        for (Object[] objects : list) {
+        scrollableResults = session.createSQLQuery(q).scroll(ScrollMode.FORWARD_ONLY);
+        while (scrollableResults.next()) {
             SQLQuery query = session.createSQLQuery("UPDATE BPM_TOKEN SET NODE_TYPE=:nodeType, NODE_ID=:nodeId WHERE ID=:id");
-            query.setParameter("id", objects[0]);
-            NodeType nodeType = nodeTypes.get(objects[1].toString());
+            query.setParameter("id", scrollableResults.get(0));
+            NodeType nodeType = nodeTypes.get(scrollableResults.get(1).toString());
             if (nodeType == null) {
-                throw new InternalApplicationException("nodeType == null for " + objects[1]);
+                throw new InternalApplicationException("nodeType == null for " + scrollableResults.get(1));
             }
             query.setParameter("nodeType", nodeType.name());
-            query.setParameter("nodeId", objects[2]);
+            query.setParameter("nodeId", scrollableResults.get(2));
             query.executeUpdate();
         }
         // TRANSITION_ID used only for bpmn2, leave it empty
@@ -601,29 +611,30 @@ public class JbpmRefactoringPatch extends DBPatch {
         session.createSQLQuery("UPDATE BPM_TASK SET FIRST_OPEN=0").executeUpdate();
         q = "SELECT t.ID, t.ACTORID_, mi.PROCESSINSTANCE_, d.NAME_ FROM BPM_TASK t, JBPM_MODULEINSTANCE mi, JBPM_TASK d WHERE t.TASKMGMTINSTANCE_= mi.ID_ and t.TASK_=d.ID_";
         log.info("UPDATE BPM_TASK.EXECUTOR_ID");
-        list = session.createSQLQuery(q).list();
-        for (Object[] objects : list) {
-            String executorIdentity = (String) objects[1];
+        scrollableResults = session.createSQLQuery(q).scroll(ScrollMode.FORWARD_ONLY);
+        while (scrollableResults.next()) {
+            String executorIdentity = (String) scrollableResults.get(1);
             Long executorId = null;
             if (Strings.isNullOrEmpty(executorIdentity)) {
             } else if (executorIdentity.startsWith("G")) {
                 executorId = Long.parseLong(executorIdentity.substring(1));
                 if (!executorIds.contains(executorId)) {
-                    log.warn("No executor found by ID=" + executorId + ", set it to null; task " + objects[0] + " (ACTORID_='" + objects[1] + "')");
+                    log.warn("No executor found by ID=" + executorId + ", set it to null; task " + scrollableResults.get(0) + " (ACTORID_='"
+                            + scrollableResults.get(1) + "')");
                     executorId = null;
                 }
             } else {
                 executorId = actorIdByCode.get(Integer.parseInt(executorIdentity));
             }
             if (executorId == null) {
-                log.debug("Null executorId for task " + objects[0] + " (ACTORID_='" + objects[1] + "')");
+                log.debug("Null executorId for task " + scrollableResults.get(0) + " (ACTORID_='" + scrollableResults.get(1) + "')");
             }
             SQLQuery query = session
                     .createSQLQuery("UPDATE BPM_TASK SET EXECUTOR_ID=:executorId, PROCESS_ID=:processId, NODE_ID=:nodeId WHERE ID=:id");
-            query.setParameter("id", objects[0]);
+            query.setParameter("id", scrollableResults.get(0));
             query.setParameter("executorId", executorId);
-            query.setParameter("processId", objects[2]);
-            query.setParameter("nodeId", objects[3]);
+            query.setParameter("processId", scrollableResults.get(2));
+            query.setParameter("nodeId", scrollableResults.get(3));
             query.executeUpdate();
         }
         log.info("Deleted broken tasks [by NODE_ID]: " + session.createSQLQuery("DELETE FROM BPM_TASK WHERE NODE_ID IS NULL").executeUpdate());
@@ -635,28 +646,28 @@ public class JbpmRefactoringPatch extends DBPatch {
         log.info("Deleted swimlanes for completed processes: " + session.createSQLQuery(q).executeUpdate());
         q = "SELECT t.ID, t.ACTORID_, mi.PROCESSINSTANCE_ FROM BPM_SWIMLANE t, JBPM_MODULEINSTANCE mi WHERE t.TASKMGMTINSTANCE_= mi.ID_";
         log.info("UPDATE BPM_SWIMLANE.EXECUTOR_ID");
-        list = session.createSQLQuery(q).list();
-        for (Object[] objects : list) {
-            String executorIdentity = (String) objects[1];
+        scrollableResults = session.createSQLQuery(q).scroll(ScrollMode.FORWARD_ONLY);
+        while (scrollableResults.next()) {
+            String executorIdentity = (String) scrollableResults.get(1);
             Long executorId = null;
             if (Strings.isNullOrEmpty(executorIdentity)) {
             } else if (executorIdentity.startsWith("G")) {
                 executorId = Long.parseLong(executorIdentity.substring(1));
                 if (!executorIds.contains(executorId)) {
-                    log.warn("No executor found by ID=" + executorId + ", set it to null: swimlane " + objects[0] + " (ACTORID_='" + objects[1]
-                            + "')");
+                    log.warn("No executor found by ID=" + executorId + ", set it to null: swimlane " + scrollableResults.get(0) + " (ACTORID_='"
+                            + scrollableResults.get(1) + "')");
                     executorId = null;
                 }
             } else {
                 executorId = actorIdByCode.get(Integer.parseInt(executorIdentity));
             }
             if (executorId == null) {
-                log.debug("Null executorId for swimlane " + objects[0] + " (ACTORID_='" + objects[1] + "')");
+                log.debug("Null executorId for swimlane " + scrollableResults.get(0) + " (ACTORID_='" + scrollableResults.get(1) + "')");
             }
             SQLQuery query = session.createSQLQuery("UPDATE BPM_SWIMLANE SET EXECUTOR_ID=:executorId, PROCESS_ID=:processId WHERE ID=:id");
-            query.setParameter("id", objects[0]);
+            query.setParameter("id", scrollableResults.get(0));
             query.setParameter("executorId", executorId);
-            query.setParameter("processId", objects[2]);
+            query.setParameter("processId", scrollableResults.get(2));
             query.executeUpdate();
         }
         log.info("Deleted broken swimlanes: " + session.createSQLQuery("DELETE FROM BPM_SWIMLANE WHERE PROCESS_ID IS NULL").executeUpdate());
@@ -705,9 +716,9 @@ public class JbpmRefactoringPatch extends DBPatch {
         q = "UPDATE BPM_SUBPROCESS SET PARENT_TOKEN_ID = (SELECT p.SUPERPROCESSTOKEN_ FROM BPM_PROCESS p WHERE p.ID=PROCESS_ID), PARENT_NODE_ID = (SELECT n.NAME_ FROM JBPM_NODE n WHERE n.ID_=NODE_)";
         log.info("Updated subprocesses " + session.createSQLQuery(q).executeUpdate());
         //
-        log.info("Updated BOT_STATION.VERSION " + session.createQuery("UPDATE BOT_STATION set VERSION=1").executeUpdate());
-        log.info("Updated BOT.VERSION " + session.createQuery("UPDATE BOT set VERSION=1").executeUpdate());
-        log.info("Updated BOT_TASK.VERSION " + session.createQuery("UPDATE BOT_TASK set VERSION=1").executeUpdate());
+        log.info("Updated BOT_STATION.VERSION " + session.createSQLQuery("UPDATE BOT_STATION SET VERSION=1").executeUpdate());
+        log.info("Updated BOT.VERSION " + session.createSQLQuery("UPDATE BOT SET VERSION=1").executeUpdate());
+        log.info("Updated BOT_TASK.VERSION " + session.createSQLQuery("UPDATE BOT_TASK SET VERSION=1").executeUpdate());
     }
 
     /*

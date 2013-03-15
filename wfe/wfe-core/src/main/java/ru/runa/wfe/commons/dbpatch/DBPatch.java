@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
 
@@ -41,6 +42,7 @@ public abstract class DBPatch {
      */
     public final void executeDML() throws Exception {
         Session session = ApplicationContextFactory.getCurrentSession();
+        session.setCacheMode(CacheMode.IGNORE);
         applyPatch(session);
         session.flush();
     }
