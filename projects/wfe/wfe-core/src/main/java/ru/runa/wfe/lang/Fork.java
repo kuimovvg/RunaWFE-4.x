@@ -21,6 +21,7 @@
  */
 package ru.runa.wfe.lang;
 
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 
@@ -41,6 +42,7 @@ public class Fork extends Node {
         checkCyclicExecution(token);
         for (Transition leavingTransition : getLeavingTransitions()) {
             Token childToken = new Token(token, leavingTransition.getName());
+            ApplicationContextFactory.getCurrentSession().flush();
             ExecutionContext childExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), childToken);
             leave(childExecutionContext, leavingTransition);
         }
