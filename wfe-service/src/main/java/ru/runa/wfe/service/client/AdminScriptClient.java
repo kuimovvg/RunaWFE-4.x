@@ -28,7 +28,6 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.commons.xml.XmlUtils;
-import ru.runa.wfe.service.AdminScriptService;
 import ru.runa.wfe.service.AdminScriptUtils;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
@@ -67,13 +66,12 @@ public class AdminScriptClient {
 
             });
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             System.exit(-1);
         }
     }
 
     public static void run(User user, byte[] scriptBytes, Handler handler) throws IOException {
-        AdminScriptService delegate = Delegates.getAdminScriptService();
         InputStream scriptInputStream = new ByteArrayInputStream(scriptBytes);
         Document allDocument = XmlUtils.parseWithXSDValidation(scriptInputStream, "workflowScript.xsd");
         Element root = allDocument.getRootElement();
@@ -81,7 +79,7 @@ public class AdminScriptClient {
         String defaultTransactionScope = root.attributeValue("defaultTransactionScope");
         if (transactionScopeElements.size() == 0 && "all".equals(defaultTransactionScope)) {
             byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(root);
-            delegate.run(user, scriptBytes, processDefinitionsBytes);
+            Delegates.getAdminScriptService().run(user, scriptBytes, processDefinitionsBytes);
         } else {
             if (transactionScopeElements.size() > 0) {
                 System.out.println("multiple docs [by <transactionScope>]: " + transactionScopeElements.size());
@@ -95,7 +93,7 @@ public class AdminScriptClient {
                     byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document.getRootElement());
                     try {
                         handler.onStartTransaction(bs);
-                        delegate.run(user, bs, processDefinitionsBytes);
+                        Delegates.getAdminScriptService().run(user, bs, processDefinitionsBytes);
                         handler.onEndTransaction();
                     } catch (Exception e) {
                         handler.onTransactionException(e);
@@ -111,7 +109,7 @@ public class AdminScriptClient {
                     byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document.getRootElement());
                     try {
                         handler.onStartTransaction(bs);
-                        delegate.run(user, bs, processDefinitionsBytes);
+                        Delegates.getAdminScriptService().run(user, bs, processDefinitionsBytes);
                         handler.onEndTransaction();
                     } catch (Exception e) {
                         handler.onTransactionException(e);
