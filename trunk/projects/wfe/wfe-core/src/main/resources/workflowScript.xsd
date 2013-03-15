@@ -149,6 +149,7 @@
 	
 	<xs:element name="redeployProcessDefinition">
 		<xs:complexType>
+			<xs:attribute name="name" type="xs:string"/>
 			<xs:attribute name="definitionId" type="xs:long"/>
 			<xs:attribute name="file" type="xs:string" use="required"/>
 			<xs:attribute name="type" type="xs:string"/>
