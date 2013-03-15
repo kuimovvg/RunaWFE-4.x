@@ -2,7 +2,12 @@ package ru.runa.wfe.audit.dao;
 
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.orm.hibernate3.HibernateCallback;
+
 import ru.runa.wfe.audit.ProcessLog;
+import ru.runa.wfe.audit.Severity;
 import ru.runa.wfe.audit.TransitionLog;
 import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.execution.Process;
@@ -25,6 +30,22 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
      */
     public List<ProcessLog> getAll(Long processId) {
         return getHibernateTemplate().find("from ProcessLog where processId=? order by id asc", processId);
+    }
+
+    /**
+     * @return process logs.
+     */
+    public List<ProcessLog> getAll(final Long processId, final List<Severity> severities) {
+        return getHibernateTemplate().executeFind(new HibernateCallback<List<ProcessLog>>() {
+
+            @Override
+            public List<ProcessLog> doInHibernate(Session session) {
+                Query query = session.createQuery("from ProcessLog where processId=:processId and severity in (:severities)");
+                query.setParameter("processId", processId);
+                query.setParameterList("severities", severities);
+                return query.list();
+            }
+        });
     }
 
     /**

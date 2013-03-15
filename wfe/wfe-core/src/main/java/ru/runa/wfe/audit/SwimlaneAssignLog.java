@@ -29,6 +29,7 @@ public class SwimlaneAssignLog extends ProcessLog {
         if (newExecutor != null) {
             addAttribute(ATTR_NEW_VALUE, newExecutor.getName());
         }
+        setSeverity(Severity.INFO);
     }
 
     @Override
