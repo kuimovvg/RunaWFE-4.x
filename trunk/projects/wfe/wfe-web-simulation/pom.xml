@@ -54,7 +54,15 @@
 		<replace file="${project.build.directory}/wfe-web-${project.version}/WEB-INF/af/login.jsp" token="&lt;/html:form&gt;">
 			<replacevalue><![CDATA[
 </html:form>
-<% if ( ru.runa.common.web.Resources.readProperty("simulation", "skipLoginLinks") == null || !ru.runa.common.web.Resources.readProperty("simulation", "skipLoginLinks").trim().toLowerCase().equals("true") ){ %>
+<% 
+String pr = null;
+try {
+	java.util.ResourceBundle resources = java.util.ResourceBundle.getBundle("simulation");
+	pr = resources.getString("skipLoginLinks");
+} catch (Throwable e) {
+}
+if ( pr == null || !pr.trim().toLowerCase().equals("true") ){ 
+%>
 <table>
 	<tr><td><bean:message key="login.page.login.as"/></td></tr>
 	<tr><td><html:link action="/login.do?login=julius&amp;password=123">julius (manager)</html:link></td></tr>
