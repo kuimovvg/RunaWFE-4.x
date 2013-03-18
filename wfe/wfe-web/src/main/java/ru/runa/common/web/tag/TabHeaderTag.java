@@ -39,7 +39,6 @@ import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
@@ -137,8 +136,7 @@ public class TabHeaderTag extends TagSupport {
     private boolean isMenuForwardVisible(Identifiable menuSecuredObject) {
         if (menuSecuredObject != null) {
             try {
-                AuthorizationService authorizationService = Delegates.getAuthorizationService();
-                return authorizationService.isAllowed(getUser(), Permission.READ, menuSecuredObject);
+                return Delegates.getAuthorizationService().isAllowed(getUser(), Permission.READ, menuSecuredObject);
             } catch (Exception e) {
                 return false;
             }

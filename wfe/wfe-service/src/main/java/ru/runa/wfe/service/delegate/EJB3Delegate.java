@@ -40,7 +40,7 @@ public abstract class EJB3Delegate {
         this.beanName = beanName;
         localInterfaceClassName = null;
         remoteInterfaceClassName = remoteInterfaceClass.getName();
-        setEjbType(EJB_REMOTE);
+        setEjbType(EJB_REMOTE, true);
     }
 
     /**
@@ -55,7 +55,10 @@ public abstract class EJB3Delegate {
         remoteInterfaceClassName = "ru.runa.wfe.service.decl." + baseInterfaceClass.getSimpleName() + "Remote";
     }
 
-    public void setEjbType(String ejbType) {
+    public void setEjbType(String ejbType, boolean override) {
+        if (this.ejbType != null && !override) {
+            return;
+        }
         this.ejbType = ejbType;
     }
 

@@ -32,6 +32,7 @@ public class DoNothingTaskHandler extends TaskHandlerBase {
 
     @Override
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) {
+        System.out.println(task.getName());
         return null;
     }
 
