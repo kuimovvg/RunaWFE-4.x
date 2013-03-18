@@ -17,9 +17,6 @@
  */
 package ru.runa.wfe.commons.logic;
 
-import java.util.List;
-
-import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
 import ru.runa.wfe.security.Identifiable;
@@ -31,7 +28,6 @@ import ru.runa.wfe.user.ExecutorGroupMembership;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.user.dao.ExecutorDAO;
 
 /**
  * Contains method to create {@linkplain BatchPresentationHibernateCompiler}'s,
@@ -47,8 +43,6 @@ public final class PresentationCompilerHelper {
      */
     private static final SecuredObjectType[] ALL_EXECUTORS_CLASSES = { SecuredObjectType.ACTOR, SecuredObjectType.GROUP };
 
-    static ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
-
     /**
      * Create {@linkplain BatchPresentationHibernateCompiler} for loading all
      * executors. <b>Paging is enabled on executors loading.</b>
@@ -61,9 +55,8 @@ public final class PresentationCompilerHelper {
      *         executors.
      */
     public static BatchPresentationHibernateCompiler createAllExecutorsCompiler(User user, BatchPresentation batchPresentation) {
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        compiler.setParameters(null, null, null, true, executorIds, ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, null);
+        compiler.setParameters(null, true, user, ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, null);
         return compiler;
     }
 
@@ -95,13 +88,12 @@ public final class PresentationCompilerHelper {
      */
     public static BatchPresentationHibernateCompiler createGroupChildrenCompiler(User user, Group group, BatchPresentation batchPresentation,
             boolean hasExecutor) {
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         String inClause = hasExecutor ? "IN" : "NOT IN";
         String notInRestriction = inClause + " (SELECT relation.executor.id FROM " + ExecutorGroupMembership.class.getName()
                 + " as relation WHERE relation.group.id=" + group.getId() + ")";
         String[] idRestrictions = { notInRestriction, "<> " + group.getId() };
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        compiler.setParameters(null, null, null, true, executorIds, ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, idRestrictions);
+        compiler.setParameters(null, true, user, ExecutorPermission.READ, ALL_EXECUTORS_CLASSES, idRestrictions);
         return compiler;
     }
 
@@ -128,13 +120,11 @@ public final class PresentationCompilerHelper {
     public static BatchPresentationHibernateCompiler createExecutorGroupsCompiler(User user, Executor executor, BatchPresentation batchPresentation,
             boolean hasGroup) {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         String inClause = hasGroup ? "IN" : "NOT IN";
         String inRestriction = inClause + " (SELECT relation.group.id FROM " + ExecutorGroupMembership.class.getName()
                 + " as relation WHERE relation.executor.id=" + executor.getId() + ")";
         String[] idRestrictions = { inRestriction, "<> " + executor.getId() };
-        compiler.setParameters(Group.class, null, null, true, executorIds, ExecutorPermission.READ,
-                new SecuredObjectType[] { SecuredObjectType.GROUP }, idRestrictions);
+        compiler.setParameters(Group.class, true, user, ExecutorPermission.READ, new SecuredObjectType[] { SecuredObjectType.GROUP }, idRestrictions);
         return compiler;
     }
 
@@ -162,11 +152,10 @@ public final class PresentationCompilerHelper {
     public static BatchPresentationHibernateCompiler createExecutorWithPermissionCompiler(User user, Identifiable identifiable,
             BatchPresentation batchPresentation, boolean hasPermission) {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
-        List<Long> executorIds = executorDAO.getActorAndGroupsIds(user.getActor());
         String inClause = hasPermission ? "IN" : "NOT IN";
         String idRestriction = inClause + " (SELECT pm.executor.id from " + PermissionMapping.class.getName() + " as pm where pm.identifiableId="
                 + identifiable.getIdentifiableId() + " and pm.type='" + identifiable.getSecuredObjectType() + "')";
-        compiler.setParameters(null, null, null, true, executorIds, Permission.READ, ALL_EXECUTORS_CLASSES, new String[] { idRestriction });
+        compiler.setParameters(null, true, user, Permission.READ, ALL_EXECUTORS_CLASSES, new String[] { idRestriction });
         return compiler;
     }
 }

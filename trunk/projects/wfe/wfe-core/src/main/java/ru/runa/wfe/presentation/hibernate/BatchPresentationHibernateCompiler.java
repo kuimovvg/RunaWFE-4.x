@@ -28,6 +28,7 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 
@@ -112,18 +113,13 @@ public class BatchPresentationHibernateCompiler {
      * Creates query to load data according to {@link BatchPresentation}.
      * Restrictions may not be set (if null).
      * 
-     * @param owners
-     *            Collection of owners id (Long for example).
-     * @param ownersDBPath
-     *            HQL path from root object to calculate object owner (actorId
-     *            for {@link Task} for example).
      * @param enablePaging
      *            Flag, equals true, if paging must be used in query; false
      *            otherwise.
      * @return {@link Query} to load data. TODO unused
      */
-    public List<Number> getIdentities(Collection<?> owners, String ownersDBPath, boolean enablePaging) {
-        parameters = new HibernateCompilerParameters(owners, ownersDBPath, enablePaging, false, true);
+    public List<Number> getIdentities(boolean enablePaging) {
+        parameters = new HibernateCompilerParameters(null, null, enablePaging, false, true);
         return getBatchQuery(parameters).list();
     }
 
@@ -134,8 +130,8 @@ public class BatchPresentationHibernateCompiler {
      * @param enablePaging
      *            Flag, equals true, if paging must be used in query; false
      *            otherwise.
-     * @param executorIds
-     *            Executors, which must has permission on queried objects.
+     * @param user
+     *            User which must has permission on queried objects.
      * @param permission
      *            Permission, which at least one executors must has on queried
      *            objects.
@@ -143,9 +139,8 @@ public class BatchPresentationHibernateCompiler {
      *            Type of secured object for queried objects.
      * @return {@link Query} to load data.
      */
-    public <T extends Object> List<T> getBatch(boolean enablePaging, List<Long> executorIds, Permission permission,
-            SecuredObjectType[] securedObjectTypes) {
-        parameters = new HibernateCompilerParameters(null, null, enablePaging, false, executorIds, permission, securedObjectTypes, null, null);
+    public <T extends Object> List<T> getBatch(boolean enablePaging, User user, Permission permission, SecuredObjectType[] securedObjectTypes) {
+        parameters = new HibernateCompilerParameters(null, null, enablePaging, false, user, permission, securedObjectTypes, null, null);
         return getBatchQuery(parameters).list();
     }
 
@@ -153,8 +148,8 @@ public class BatchPresentationHibernateCompiler {
      * Creates query to load data count according to {@link BatchPresentation}
      * with owners and permission restriction.
      * 
-     * @param executorIds
-     *            Executors, which must has permission on queried objects.
+     * @param user
+     *            User which must has permission on queried objects.
      * @param permission
      *            Permission, which at least one executors must has on queried
      *            objects.
@@ -162,8 +157,8 @@ public class BatchPresentationHibernateCompiler {
      *            Type of secured object for queried objects.
      * @return {@link Query} to load data.
      */
-    public int getCount(List<Long> executorIds, Permission permission, SecuredObjectType[] securedObjectTypes) {
-        parameters = new HibernateCompilerParameters(null, null, false, true, executorIds, permission, securedObjectTypes, null, null);
+    public int getCount(User user, Permission permission, SecuredObjectType[] securedObjectTypes) {
+        parameters = new HibernateCompilerParameters(null, null, false, true, user, permission, securedObjectTypes, null, null);
         Number number = (Number) getBatchQuery(parameters).uniqueResult();
         return number.intValue();
     }
@@ -188,7 +183,7 @@ public class BatchPresentationHibernateCompiler {
      * Save compiler parameters. It would be used for creating queries with
      * *Saved* methods.
      * 
-     * @param concretteClass
+     * @param concreteClass
      *            Subclass of root persistent class to be loaded by query.
      * @param owners
      *            Collection of owners id (Long for example).
@@ -198,8 +193,8 @@ public class BatchPresentationHibernateCompiler {
      * @param enablePaging
      *            Flag, equals true, if paging must be used in query; false
      *            otherwise.
-     * @param executorIds
-     *            Executors, which must has permission on queried objects.
+     * @param user
+     *            User which must has permission on queried objects.
      * @param permission
      *            Permission, which at least one executors must has on queried
      *            objects.
@@ -209,10 +204,10 @@ public class BatchPresentationHibernateCompiler {
      *            Restrictions, applied to object identity. Must be HQL query
      *            string or null.
      */
-    public void setParameters(Class<?> concretteClass, Collection<?> owners, String ownersDBPath, boolean enablePaging, List<Long> executorIds,
-            Permission permission, SecuredObjectType[] securedObjectTypes, String[] idRestrictions) {
-        parameters = new HibernateCompilerParameters(owners, ownersDBPath, enablePaging, false, executorIds, permission, securedObjectTypes,
-                concretteClass, idRestrictions);
+    public void setParameters(Class<?> concreteClass, boolean enablePaging, User user, Permission permission, SecuredObjectType[] securedObjectTypes,
+            String[] idRestrictions) {
+        parameters = new HibernateCompilerParameters(null, null, enablePaging, false, user, permission, securedObjectTypes, concreteClass,
+                idRestrictions);
     }
 
     public void setParameters(boolean enablePaging) {
@@ -230,8 +225,8 @@ public class BatchPresentationHibernateCompiler {
         HibernateCompilerQueryBuilder builder = new HibernateCompilerQueryBuilder(batchPresentation, compilerParams);
         Query query = builder.build();
         Map<String, QueryParameter> placeholders = builder.getPlaceholders();
-        if (compilerParams.isSequredQuery()) {
-            query.setParameterList("securedOwnersIds", compilerParams.getExecutorIds());
+        if (compilerParams.getExecutorIdsToCheckPermission() != null) {
+            query.setParameterList("securedOwnersIds", compilerParams.getExecutorIdsToCheckPermission());
             query.setParameter("securedPermission", compilerParams.getPermission().getMask());
             List<String> typeNames = Lists.newArrayList();
             for (SecuredObjectType type : compilerParams.getSecuredObjectTypes()) {
@@ -243,18 +238,8 @@ public class BatchPresentationHibernateCompiler {
             placeholders.remove("securedTypes");
         }
         if (compilerParams.hasOwners()) {
-            Collection<?> owners = compilerParams.getOwners();
-            if (owners.isEmpty() || owners.size() > 50 || owners.iterator().next().getClass() != String.class) {
-                query.setParameterList("ownersIds", owners);
-                placeholders.remove("ownersIds");
-            } else {
-                int i = 1;
-                for (Object o : owners) {
-                    query.setParameter("ownersIds" + i, o);
-                    placeholders.remove("ownersIds" + i);
-                    ++i;
-                }
-            }
+            query.setParameterList("ownersIds", compilerParams.getOwners());
+            placeholders.remove("ownersIds");
         }
         if (compilerParams.isPagingEnabled()) {
             query.setFirstResult((batchPresentation.getPageNumber() - 1) * batchPresentation.getRangeSize());

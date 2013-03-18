@@ -117,8 +117,7 @@ public class CommonLogic {
     @SuppressWarnings("unchecked")
     public <T extends Object> List<T> getPersistentObjects(User user, BatchPresentation batchPresentation, Permission permission,
             SecuredObjectType[] securedObjectTypes, boolean enablePaging) {
-        List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user.getActor());
-        return (List<T>) permissionDAO.getPersistentObjects(actorAndGroupsIds, batchPresentation, permission, securedObjectTypes, enablePaging);
+        return (List<T>) permissionDAO.getPersistentObjects(user, batchPresentation, permission, securedObjectTypes, enablePaging);
     }
 
     /**
@@ -141,8 +140,7 @@ public class CommonLogic {
      *         {@linkplain BatchPresentation}.
      */
     public int getPersistentObjectCount(User user, BatchPresentation batchPresentation, Permission permission, SecuredObjectType[] securedObjectTypes) {
-        List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user.getActor());
-        return permissionDAO.getPersistentObjectCount(actorAndGroupsIds, batchPresentation, permission, securedObjectTypes);
+        return permissionDAO.getPersistentObjectCount(user, batchPresentation, permission, securedObjectTypes);
     }
 
     public List<Localization> getLocalizations(User user) {

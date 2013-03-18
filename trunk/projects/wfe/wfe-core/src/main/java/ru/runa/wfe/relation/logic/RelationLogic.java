@@ -96,8 +96,7 @@ public class RelationLogic extends CommonLogic {
     @SuppressWarnings("unchecked")
     public List<Relation> getRelations(User user, BatchPresentation batchPresentation) {
         checkPermissionAllowed(user, RelationsGroupSecure.INSTANCE, Permission.READ);
-        List<Long> actorAndGroupsIds = executorDAO.getActorAndGroupsIds(user.getActor());
-        return (List<Relation>) permissionDAO.getPersistentObjects(actorAndGroupsIds, batchPresentation, Permission.READ,
+        return (List<Relation>) permissionDAO.getPersistentObjects(user, batchPresentation, Permission.READ,
                 new SecuredObjectType[] { SecuredObjectType.RELATION }, false);
     }
 

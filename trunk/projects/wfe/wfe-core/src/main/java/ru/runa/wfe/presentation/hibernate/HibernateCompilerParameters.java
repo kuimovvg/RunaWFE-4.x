@@ -21,9 +21,11 @@ import java.util.Collection;
 import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.user.User;
 
 /**
  * Parameter object. Parameters, used to build HQL/SQL query.
@@ -54,11 +56,12 @@ public class HibernateCompilerParameters {
     private final boolean isCountQuery;
 
     /**
-     * Executors, which must has permission on queried objects. Queries only
-     * objects with condition: at least one executor from executorIds must have
-     * 'permission' with 'securedObjectTypes'
+     * User (with groups) which must has permission on queried objects. Queries
+     * only objects with condition: at least one executor from executorIds (user
+     * + its groups) must have 'permission' with 'securedObjectTypes'. Can be
+     * null.
      */
-    private final List<Long> executorIds;
+    private final List<Long> executorIdsToCheckPermission;
 
     /**
      * Permission, which at least one executors must has on queried objects.
@@ -110,7 +113,7 @@ public class HibernateCompilerParameters {
         this.ownersDBPath = src.ownersDBPath;
         this.enablePaging = isCountQuery ? false : src.enablePaging;
         this.isCountQuery = isCountQuery;
-        this.executorIds = src.executorIds;
+        this.executorIdsToCheckPermission = src.executorIdsToCheckPermission;
         this.permission = src.permission;
         this.securedObjectTypes = src.securedObjectTypes;
         this.requestedClass = src.requestedClass;
@@ -131,8 +134,8 @@ public class HibernateCompilerParameters {
      *            otherwise.
      * @param isCountQuery
      *            Flag, equals true, if only objects count must be queried.
-     * @param executorIds
-     *            Executors, which must has permission on queried objects.
+     * @param user
+     *            User which must has permission on queried objects.
      * @param permission
      *            Permission, which at least one executors must has on queried
      *            objects.
@@ -144,7 +147,7 @@ public class HibernateCompilerParameters {
      *            Restrictions, applied to object identity. Must be HQL query
      *            string or null.
      */
-    public HibernateCompilerParameters(Collection<?> owners, String ownersDBPath, boolean enablePaging, boolean isCountQuery, List<Long> executorIds,
+    public HibernateCompilerParameters(Collection<?> owners, String ownersDBPath, boolean enablePaging, boolean isCountQuery, User user,
             Permission permission, SecuredObjectType[] securedObjectTypes, Class<?> requestedClass, String[] idRestriction) {
         this.owners = owners;
         this.ownersDBPath = ownersDBPath;
@@ -153,11 +156,16 @@ public class HibernateCompilerParameters {
         }
         this.enablePaging = enablePaging;
         this.isCountQuery = isCountQuery;
-        this.executorIds = executorIds;
         this.permission = permission;
         this.securedObjectTypes = securedObjectTypes;
-        if (executorIds == null || permission == null || securedObjectTypes == null) {
+        if (user == null || permission == null || securedObjectTypes == null) {
             throw new InternalApplicationException("Can't build query with permission check. No secured parametes specified.");
+        }
+        List<Long> executorIds = ApplicationContextFactory.getExecutorDAO().getActorAndGroupsIds(user.getActor());
+        if (!ApplicationContextFactory.getPermissionDAO().hasPrivilegedExecutor(executorIds)) {
+            this.executorIdsToCheckPermission = executorIds;
+        } else {
+            this.executorIdsToCheckPermission = null;
         }
         this.requestedClass = requestedClass;
         this.idRestriction = idRestriction;
@@ -188,7 +196,7 @@ public class HibernateCompilerParameters {
         }
         this.enablePaging = enablePaging;
         this.isCountQuery = isCountQuery;
-        executorIds = null;
+        executorIdsToCheckPermission = null;
         permission = null;
         securedObjectTypes = null;
         this.requestedClass = requestedClass;
@@ -218,21 +226,12 @@ public class HibernateCompilerParameters {
         }
         this.enablePaging = enablePaging;
         this.isCountQuery = isCountQuery;
-        executorIds = null;
+        executorIdsToCheckPermission = null;
         permission = null;
         securedObjectTypes = null;
         requestedClass = null;
         idRestriction = null;
         this.onlyIdentityLoad = onlyIdentityLoad;
-    }
-
-    /**
-     * Check, if HQL/SQL query must has permission check.
-     * 
-     * @return true, is query must check executors permission.
-     */
-    public boolean isSequredQuery() {
-        return executorIds != null;
     }
 
     /**
@@ -293,12 +292,12 @@ public class HibernateCompilerParameters {
     }
 
     /**
-     * Executors, which must has permission on queried objects.
+     * User which must has permission on queried objects.
      * 
-     * @return Executors id's, to check permission.
+     * @return ids or <code>null</code>
      */
-    public List<Long> getExecutorIds() {
-        return executorIds;
+    public List<Long> getExecutorIdsToCheckPermission() {
+        return executorIdsToCheckPermission;
     }
 
     /**

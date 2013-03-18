@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.presentation.hibernate;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -60,18 +59,21 @@ public class HibernateCompilerHQLBuider {
     private final StringBuilder query = new StringBuilder(128);
 
     /**
-     * Flag, equals true, if HQL query must be tuned for correct inheritance filtering.
+     * Flag, equals true, if HQL query must be tuned for correct inheritance
+     * filtering.
      */
     private boolean isFilterByInheritance;
 
     /**
-     * Flag, equals true, if HQL query must be tuned for correct inheritance ordering.
+     * Flag, equals true, if HQL query must be tuned for correct inheritance
+     * ordering.
      */
     private boolean isOrderByInheritance;
 
     /**
-     * Map from HQL positional parameter name to parameter value. All place holders must be put into this map (maybe with null values). It will be used later to replace positional
-     * parameters in SQL query.
+     * Map from HQL positional parameter name to parameter value. All place
+     * holders must be put into this map (maybe with null values). It will be
+     * used later to replace positional parameters in SQL query.
      */
     private final Map<String, QueryParameter> placeholders = new HashMap<String, QueryParameter>();
 
@@ -90,7 +92,8 @@ public class HibernateCompilerHQLBuider {
     }
 
     /**
-     * Returns Map from HQL positional parameter name to parameter value, generated after build method call.
+     * Returns Map from HQL positional parameter name to parameter value,
+     * generated after build method call.
      * 
      * @return Map from HQL positional parameter name to parameter value.
      */
@@ -108,27 +111,33 @@ public class HibernateCompilerHQLBuider {
     }
 
     /**
-     * Check, if query has some filters on fields with inheritance. This method must be called after build method call.
+     * Check, if query has some filters on fields with inheritance. This method
+     * must be called after build method call.
      * 
-     * @return Flag, equals true, if HQL query must be tuned for correct inheritance filtering.
+     * @return Flag, equals true, if HQL query must be tuned for correct
+     *         inheritance filtering.
      */
     public boolean isFilterByInheritance() {
         return isFilterByInheritance;
     }
 
     /**
-     * Check, if query has some sorting on fields with inheritance. This method must be called after build method call.
+     * Check, if query has some sorting on fields with inheritance. This method
+     * must be called after build method call.
      * 
-     * @return Flag, equals true, if HQL query must be tuned for correct inheritance ordering.
+     * @return Flag, equals true, if HQL query must be tuned for correct
+     *         inheritance ordering.
      */
     public boolean isOrderByInheritance() {
         return isOrderByInheritance;
     }
 
     /**
-     * Returns mapping from {@link FieldDescriptor} to HQL query parameters aliases, initialized after build method call.
+     * Returns mapping from {@link FieldDescriptor} to HQL query parameters
+     * aliases, initialized after build method call.
      * 
-     * @return Mapping from {@link FieldDescriptor} to HQL query parameters aliases.
+     * @return Mapping from {@link FieldDescriptor} to HQL query parameters
+     *         aliases.
      */
     public HibernateCompilerAliasMapping getAliasMapping() {
         return aliasMapping;
@@ -166,7 +175,8 @@ public class HibernateCompilerHQLBuider {
     }
 
     /**
-     * Append to HQL query 'from' clause aliases for fields, with persistent object differs from root.
+     * Append to HQL query 'from' clause aliases for fields, with persistent
+     * object differs from root.
      */
     private void buildFromClauseForAliases() {
         Set<String> multiSource = new HashSet<String>();
@@ -222,7 +232,8 @@ public class HibernateCompilerHQLBuider {
     }
 
     /**
-     * Generates expressions to satisfy fields join restrictions (How to join root persistent object with field database source).
+     * Generates expressions to satisfy fields join restrictions (How to join
+     * root persistent object with field database source).
      * 
      * @return List of string, represents expressions.
      */
@@ -265,28 +276,16 @@ public class HibernateCompilerHQLBuider {
         if (!parameters.hasOwners()) {
             return result;
         }
-        StringBuilder owners = new StringBuilder();
-        Collection<?> ownersIds = parameters.getOwners();
-        if (ownersIds.isEmpty() || ownersIds.size() > 50 || ownersIds.iterator().next().getClass() != String.class) {
-            owners.append("(").append(ClassPresentation.classNameSQL).append(".").append(parameters.getOwnerDBPath()).append(" in (:ownersIds) )");
-            placeholders.put("ownersIds", null);
-        } else {
-            owners.append("(").append(ClassPresentation.classNameSQL).append(".").append(parameters.getOwnerDBPath()).append(" in (");
-            // Dialect dialect = HibernateSessionFactory.getConfiguration().buildSettings().getDialect();
-            String typeName = "VARCHAR";// TODO dialect.getCastTypeName(Hibernate.STRING.sqlType());
-            for (int i = 1; i <= ownersIds.size(); ++i) {
-                owners.append("CAST(").append(":ownersIds").append(i).append(" AS ").append(typeName).append(")").append(", ");
-                placeholders.put("ownersIds" + i, null);
-            }
-            owners.replace(owners.length() - 2, owners.length(), "").append("))");
-        }
-        result.add(owners.toString());
+        String owners = "(" + ClassPresentation.classNameSQL + "." + parameters.getOwnerDBPath() + " in (:ownersIds) )";
+        placeholders.put("ownersIds", null);
+        result.add(owners);
         return result;
     }
 
     /**
-     * Generates expressions to satisfy fields filtering restrictions. This function doesn't generates filtering for fields with inheritance. It must be handled in SQL translation
-     * stage.
+     * Generates expressions to satisfy fields filtering restrictions. This
+     * function doesn't generates filtering for fields with inheritance. It must
+     * be handled in SQL translation stage.
      * 
      * @return List of string, represents expressions.
      */
@@ -312,19 +311,19 @@ public class HibernateCompilerHQLBuider {
     }
 
     /**
-     * Generates expressions to satisfy security restrictions (to load only objects with permission).
+     * Generates expressions to satisfy security restrictions (to load only
+     * objects with permission).
      * 
      * @return List of string, represents expressions.
      */
     private List<String> addSecureCheck() {
         List<String> result = new LinkedList<String>();
-        if (!parameters.isSequredQuery()) {
-            return result;
+        if (parameters.getExecutorIdsToCheckPermission() != null) {
+            result.add("(instance.id in (select pm.identifiableId from PermissionMapping pm where pm.executor.id in (:securedOwnersIds) and pm.type in (:securedTypes) and pm.mask=:securedPermission))");
+            placeholders.put("securedOwnersIds", null);
+            placeholders.put("securedPermission", null);
+            placeholders.put("securedTypes", null);
         }
-        result.add("(exists (from PrivelegedMapping pv where pv.executor.id in (:securedOwnersIds) and pv.type in (:securedTypes)) or instance.id in (select pm.identifiableId from PermissionMapping pm where pm.executor.id in (:securedOwnersIds) and pm.type in (:securedTypes) and pm.mask=:securedPermission))");
-        placeholders.put("securedOwnersIds", null);
-        placeholders.put("securedPermission", null);
-        placeholders.put("securedTypes", null);
         return result;
     }
 
@@ -347,7 +346,9 @@ public class HibernateCompilerHQLBuider {
     }
 
     /**
-     * Builds 'order by' clause of HQL query. This function doesn't build sorting for fields with inheritance. It must be handled in SQL translation stage.
+     * Builds 'order by' clause of HQL query. This function doesn't build
+     * sorting for fields with inheritance. It must be handled in SQL
+     * translation stage.
      */
     private void buildOrderClause() {
         if (parameters.isCountQuery()) {
