@@ -67,7 +67,7 @@ import com.google.common.base.Objects;
 @DiscriminatorValue(value = "V")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public abstract class Variable<T extends Object> {
-    public static final int MAX_STRING_SIZE = 1024;
+    public static final int MAX_STRING_SIZE = 900;
     protected Long id;
     private Long version;
     private String name;
