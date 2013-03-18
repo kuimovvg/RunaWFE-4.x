@@ -1,5 +1,6 @@
 package ru.runa.bp;
 
+import java.util.Collections;
 import java.util.List;
 
 import ru.runa.wfe.execution.ExecutionContext;
@@ -11,6 +12,8 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
+
+import com.google.common.collect.Lists;
 
 /**
  * Parameters holder for Alfresco handler.
@@ -42,7 +45,9 @@ public class AlfHandlerData extends HandlerData {
      * @return subprocess ids hierarchy from current process to root process
      */
     public List<Long> getProcessIdsHierarchyInversed() {
-        return processIdsHierarchy;
+        List<Long> reversed = Lists.newArrayList(processIdsHierarchy);
+        Collections.reverse(reversed);
+        return reversed;
     }
 
 }

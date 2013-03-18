@@ -9,6 +9,8 @@ import javax.interceptor.InvocationContext;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.exception.LockAcquisitionException;
 
 import ru.runa.wfe.InternalApplicationException;
@@ -33,6 +35,7 @@ import com.google.common.collect.Lists;
  * delivered successfully.
  */
 public class EjbTransactionSupport {
+    private static final Log log = LogFactory.getLog(EjbTransactionSupport.class);
     @Resource
     private EJBContext ejbContext;
 
@@ -41,7 +44,7 @@ public class EjbTransactionSupport {
         UserTransaction transaction = ejbContext.getUserTransaction();
         try {
             transaction.begin();
-            System.out.println("=== " + ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName() + "("
+            log.debug("=== " + ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName() + "("
                     + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")");
             if (ic.getParameters() != null && ic.getParameters().length > 0 && ic.getParameters()[0] instanceof User) {
                 UserHolder.set((User) ic.getParameters()[0]);
@@ -99,6 +102,7 @@ public class EjbTransactionSupport {
         try {
             return ic.proceed();
         } catch (LockAcquisitionException e) {
+            log.error("Got LockAcquisitionException: " + e);
             Thread.sleep(1000);
             return ic.proceed();
         }
