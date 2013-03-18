@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.exception.LockAcquisitionException;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.TimeMeasurer;
 import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.user.User;
@@ -44,13 +45,18 @@ public class EjbTransactionSupport {
         UserTransaction transaction = ejbContext.getUserTransaction();
         try {
             transaction.begin();
-            log.debug("=== " + ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName() + "("
-                    + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")");
             if (ic.getParameters() != null && ic.getParameters().length > 0 && ic.getParameters()[0] instanceof User) {
                 UserHolder.set((User) ic.getParameters()[0]);
             }
+            TimeMeasurer timeMeasurer = new TimeMeasurer(log, 1000);
+            String jobName = ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName() + "("
+                    + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")";
+            timeMeasurer.jobStarted();
             Object result = invokeWithRetry(ic);
+            timeMeasurer.jobEnded("Execution of " + jobName);
+            timeMeasurer.jobStarted();
             transaction.commit();
+            timeMeasurer.jobEnded("Commit of " + jobName);
             UserHolder.reset();
             return result;
         } catch (Throwable th) {

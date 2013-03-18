@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import ru.runa.wfe.commons.PagingCommons;
+import ru.runa.wfe.commons.TimeMeasurer;
 import ru.runa.wfe.commons.dao.CommonDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
@@ -378,11 +379,13 @@ public class PermissionDAO extends CommonDAO {
      */
     public List<? extends Identifiable> getPersistentObjects(User user, BatchPresentation batchPresentation, Permission permission,
             SecuredObjectType[] securedObjectTypes, boolean enablePaging) {
+        TimeMeasurer timeMeasurer = new TimeMeasurer(logger, 1000);
+        timeMeasurer.jobStarted();
         List<? extends Identifiable> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(enablePaging, user, permission,
                 securedObjectTypes);
+        timeMeasurer.jobEnded("getObjects: " + result.size());
         if (result.size() == 0 && enablePaging && batchPresentation.getPageNumber() > 1) {
-            // several objects were removed since we last time created batch
-            // presentation
+            logger.debug("several objects were removed since we last time created batch presentation");
             setLastPageNumber(user, batchPresentation, permission, securedObjectTypes);
             result = getPersistentObjects(user, batchPresentation, permission, securedObjectTypes, enablePaging);
         }
@@ -411,7 +414,11 @@ public class PermissionDAO extends CommonDAO {
      *         permission on.
      */
     public int getPersistentObjectCount(User user, BatchPresentation batchPresentation, Permission permission, SecuredObjectType[] securedObjectTypes) {
-        return new BatchPresentationHibernateCompiler(batchPresentation).getCount(user, permission, securedObjectTypes);
+        TimeMeasurer timeMeasurer = new TimeMeasurer(logger, 1000);
+        timeMeasurer.jobStarted();
+        int count = new BatchPresentationHibernateCompiler(batchPresentation).getCount(user, permission, securedObjectTypes);
+        timeMeasurer.jobEnded("getCount: " + count);
+        return count;
     }
 
     private void setLastPageNumber(User user, BatchPresentation batchPresentation, Permission permission, SecuredObjectType[] securedObjectTypes) {
