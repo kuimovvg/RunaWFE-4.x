@@ -25,6 +25,10 @@ public abstract class DBPatch {
     protected final Dialect dialect = ApplicationContextFactory.getDialect();
     protected final DBType dbType = ApplicationContextFactory.getDBType();
 
+    protected boolean skipDatabaseSpecificDDL() {
+        return "true".equals(System.getProperty("patch.skip.advanced.ddl"));
+    }
+
     /**
      * Execute patch DDL statements before DML (non-transacted mode in most
      * databases).
