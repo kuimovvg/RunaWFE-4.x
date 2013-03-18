@@ -154,7 +154,7 @@ public final class PresentationCompilerHelper {
         BatchPresentationHibernateCompiler compiler = new BatchPresentationHibernateCompiler(batchPresentation);
         String inClause = hasPermission ? "IN" : "NOT IN";
         String idRestriction = inClause + " (SELECT pm.executor.id from " + PermissionMapping.class.getName() + " as pm where pm.identifiableId="
-                + identifiable.getIdentifiableId() + " and pm.type='" + identifiable.getSecuredObjectType() + "')";
+                + identifiable.getIdentifiableId() + " and pm.type=" + identifiable.getSecuredObjectType().ordinal() + ")";
         compiler.setParameters(null, true, user, Permission.READ, ALL_EXECUTORS_CLASSES, new String[] { idRestriction });
         return compiler;
     }

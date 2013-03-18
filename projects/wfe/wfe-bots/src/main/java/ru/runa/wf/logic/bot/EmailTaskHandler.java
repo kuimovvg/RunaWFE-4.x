@@ -29,7 +29,6 @@ import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.definition.par.FileDataProvider;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
@@ -42,7 +41,7 @@ import ru.runa.wfe.var.IVariableProvider;
 public class EmailTaskHandler extends TaskHandlerBase {
     private static final Log log = LogFactory.getLog(EmailTaskHandler.class);
 
-    private EmailConfig config;
+    protected EmailConfig config;
 
     @Override
     public void setConfiguration(String configuration) {
@@ -54,18 +53,17 @@ public class EmailTaskHandler extends TaskHandlerBase {
 
     @Override
     public Map<String, Object> handle(final User user, IVariableProvider variableProvider, final WfTask task) throws Exception {
-        final DefinitionService definitionService = Delegates.getDefinitionService();
         try {
             Interaction interaction = null;
             if (config.isUseMessageFromTaskForm()) {
-                interaction = definitionService.getTaskInteraction(user, task.getId());
+                interaction = Delegates.getDefinitionService().getTaskInteraction(user, task.getId());
             }
             FileDataProvider fileDataProvider = new FileDataProvider() {
 
                 @Override
                 public byte[] getFileData(String fileName) {
                     try {
-                        return definitionService.getFile(user, task.getDefinitionId(), fileName);
+                        return Delegates.getDefinitionService().getFile(user, task.getDefinitionId(), fileName);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
