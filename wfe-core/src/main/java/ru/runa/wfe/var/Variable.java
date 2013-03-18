@@ -135,6 +135,7 @@ public abstract class Variable<T extends Object> {
 
     // TODO may be add index on this field
     @Column(name = "STRINGVALUE", length = MAX_STRING_SIZE)
+    // @Index(name = "IX_VARIABLE_VALUE")
     public String getStringValue() {
         return stringValue;
     }

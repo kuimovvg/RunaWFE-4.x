@@ -228,11 +228,11 @@ public class BatchPresentationHibernateCompiler {
         if (compilerParams.getExecutorIdsToCheckPermission() != null) {
             query.setParameterList("securedOwnersIds", compilerParams.getExecutorIdsToCheckPermission());
             query.setParameter("securedPermission", compilerParams.getPermission().getMask());
-            List<String> typeNames = Lists.newArrayList();
+            List<Integer> typeOrdinals = Lists.newArrayList();
             for (SecuredObjectType type : compilerParams.getSecuredObjectTypes()) {
-                typeNames.add(type.name());
+                typeOrdinals.add(type.ordinal());
             }
-            query.setParameterList("securedTypes", typeNames);
+            query.setParameterList("securedTypes", typeOrdinals);
             placeholders.remove("securedOwnersIds");
             placeholders.remove("securedPermission");
             placeholders.remove("securedTypes");

@@ -30,7 +30,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -44,11 +43,10 @@ import ru.runa.wfe.user.Executor;
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "PERMISSION_MAPPING", uniqueConstraints = @UniqueConstraint(columnNames = { "IDENTIFIABLE_ID", "TYPE", "EXECUTOR_ID", "MASK" }))
+@Table(name = "PERMISSION_MAPPING", uniqueConstraints = @UniqueConstraint(columnNames = { "IDENTIFIABLE_ID", "TYPE_ID", "EXECUTOR_ID", "MASK" }))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PermissionMapping {
     private Long id;
-    private Long version;
     private Executor executor;
     private Long mask;
     private Long identifiableId;
@@ -76,16 +74,6 @@ public class PermissionMapping {
         this.id = id;
     }
 
-    @Version
-    @Column(name = "VERSION")
-    protected Long getVersion() {
-        return version;
-    }
-
-    protected void setVersion(Long version) {
-        this.version = version;
-    }
-
     @Column(name = "IDENTIFIABLE_ID", nullable = false)
     @Index(name = "IX_PERMISSION_IDENTIFIABLE_ID")
     public Long getIdentifiableId() {
@@ -96,9 +84,9 @@ public class PermissionMapping {
         this.identifiableId = identifiableId;
     }
 
-    @Column(name = "TYPE", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    @Index(name = "IX_PERMISSION_TYPE")
+    @Column(name = "TYPE_ID", nullable = false)
+    @Enumerated(value = EnumType.ORDINAL)
+    @Index(name = "IX_PERMISSION_TYPE_ID")
     public SecuredObjectType getType() {
         return type;
     }
