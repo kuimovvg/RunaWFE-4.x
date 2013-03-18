@@ -60,7 +60,7 @@ public class Delegates {
 
     private static EJB3Delegate createDelegate(Class<? extends EJB3Delegate> delegateClass) {
         EJB3Delegate delegate = ClassLoaderUtil.instantiate(delegateClass);
-        delegate.setEjbType(PROPERTIES.getProperty("ejb.type"));
+        delegate.setEjbType(PROPERTIES.getProperty("ejb.type"), false);
         delegate.setEjbJndiNameFormat(PROPERTIES.getProperty("ejb.jndiName.format"));
         return delegate;
     }
