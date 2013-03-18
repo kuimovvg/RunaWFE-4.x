@@ -124,9 +124,4 @@ public class DatabaseTaskXmlParser {
         return sql;
     }
 
-    public static void main(String[] args) {
-        String s = DatabaseTaskXmlParser.parseSQLQueryElement("${command}", null);
-        System.out.println(s);
-    }
-
 }

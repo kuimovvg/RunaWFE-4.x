@@ -149,19 +149,34 @@ public class DefinitionLogic extends WFCommonLogic {
     }
 
     public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) {
-        List<Deployment> deployments = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(false);
-        List<WfDefinition> result = Lists.newArrayListWithExpectedSize(deployments.size());
-        for (Deployment deployment : deployments) {
-            if (isPermissionAllowed(user, deployment, Permission.READ)) {
-                try {
-                    ProcessDefinition processDefinition = getDefinition(deployment.getId());
-                    result.add(new WfDefinition(processDefinition));
-                } catch (Exception e) {
-                    result.add(new WfDefinition(deployment));
-                }
+        // List<Deployment> deployments = new
+        // BatchPresentationHibernateCompiler(batchPresentation).getBatch(false);
+        // List<WfDefinition> result =
+        // Lists.newArrayListWithExpectedSize(deployments.size());
+        // for (Deployment deployment : deployments) {
+        // if (isPermissionAllowed(user, deployment, Permission.READ)) {
+        // try {
+        // ProcessDefinition processDefinition =
+        // getDefinition(deployment.getId());
+        // result.add(new WfDefinition(processDefinition));
+        // } catch (Exception e) {
+        // result.add(new WfDefinition(deployment));
+        // }
+        // }
+        // }
+        // return result;
+        List<Number> deploymentIds = new BatchPresentationHibernateCompiler(batchPresentation).getIdentities(null, null, false);
+        List<WfDefinition> result = Lists.newArrayListWithExpectedSize(deploymentIds.size());
+        for (Number definitionId : deploymentIds) {
+            try {
+                ProcessDefinition processDefinition = getDefinition(definitionId.longValue());
+                result.add(new WfDefinition(processDefinition));
+            } catch (Exception e) {
+                Deployment deployment = deploymentDAO.get(definitionId.longValue());
+                result.add(new WfDefinition(deployment));
             }
         }
-        return result;
+        return filterIdentifiable(user, result, Permission.READ);
     }
 
     public List<WfDefinition> getProcessDefinitionHistory(User user, String name) {
