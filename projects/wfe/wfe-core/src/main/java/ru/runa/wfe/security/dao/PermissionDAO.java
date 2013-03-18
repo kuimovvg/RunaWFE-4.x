@@ -56,6 +56,7 @@ public class PermissionDAO extends CommonDAO {
     private ExecutorDAO executorDAO;
 
     private Map<SecuredObjectType, List<Executor>> privelegedExecutors = Maps.newHashMap();
+    private Set<Long> privelegedExecutorIds = Sets.newHashSet();
 
     @Override
     protected void initDao() throws Exception {
@@ -66,6 +67,7 @@ public class PermissionDAO extends CommonDAO {
             List<PrivelegedMapping> list = getHibernateTemplate().find("from PrivelegedMapping m");
             for (PrivelegedMapping mapping : list) {
                 privelegedExecutors.get(mapping.getType()).add(mapping.getExecutor());
+                privelegedExecutorIds.add(mapping.getExecutor().getId());
             }
         } catch (Exception e) {
             log.error("priveleged executors was not loaded (if this exception occurs in empty DB just ignore it)");
@@ -306,6 +308,18 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
+     * Check if executor is privileged executor for any secured object type.
+     */
+    public boolean hasPrivilegedExecutor(List<Long> executorIds) {
+        for (Long executorId : executorIds) {
+            if (privelegedExecutorIds.contains(executorId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Check if executor is privileged executor for given identifiable. Throw
      * exception, if no {@linkplain SecuredObject} for {@linkplain Identifiable}
      * found.
@@ -345,8 +359,8 @@ public class PermissionDAO extends CommonDAO {
      * Load list of {@linkplain Identifiable} for which executors have
      * permission on.
      * 
-     * @param executorIds
-     *            Executors identities, which must have permission on loaded
+     * @param user
+     *            User which must have permission on loaded
      *            {@linkplain Identifiable} (at least one).
      * @param batchPresentation
      *            {@linkplain BatchPresentation} with parameters for loading
@@ -362,15 +376,15 @@ public class PermissionDAO extends CommonDAO {
      * @return List of {@link Identifiable}'s for which executors have
      *         permission on.
      */
-    public List<? extends Identifiable> getPersistentObjects(List<Long> executorIds, BatchPresentation batchPresentation, Permission permission,
+    public List<? extends Identifiable> getPersistentObjects(User user, BatchPresentation batchPresentation, Permission permission,
             SecuredObjectType[] securedObjectTypes, boolean enablePaging) {
-        List<? extends Identifiable> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(enablePaging, executorIds,
-                permission, securedObjectTypes);
+        List<? extends Identifiable> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(enablePaging, user, permission,
+                securedObjectTypes);
         if (result.size() == 0 && enablePaging && batchPresentation.getPageNumber() > 1) {
             // several objects were removed since we last time created batch
             // presentation
-            setLastPageNumber(executorIds, batchPresentation, permission, securedObjectTypes);
-            result = getPersistentObjects(executorIds, batchPresentation, permission, securedObjectTypes, enablePaging);
+            setLastPageNumber(user, batchPresentation, permission, securedObjectTypes);
+            result = getPersistentObjects(user, batchPresentation, permission, securedObjectTypes, enablePaging);
         }
         return result;
     }
@@ -379,8 +393,8 @@ public class PermissionDAO extends CommonDAO {
      * Load count of {@linkplain Identifiable} for which executors have
      * permission on.
      * 
-     * @param executorIds
-     *            Executors identities, which must have permission on loaded
+     * @param user
+     *            User which must have permission on loaded
      *            {@linkplain Identifiable} (at least one).
      * @param batchPresentation
      *            {@linkplain BatchPresentation} with parameters for loading
@@ -396,14 +410,12 @@ public class PermissionDAO extends CommonDAO {
      * @return Count of {@link Identifiable}'s for which executors have
      *         permission on.
      */
-    public int getPersistentObjectCount(List<Long> executorIds, BatchPresentation batchPresentation, Permission permission,
-            SecuredObjectType[] securedObjectTypes) {
-        return new BatchPresentationHibernateCompiler(batchPresentation).getCount(executorIds, permission, securedObjectTypes);
+    public int getPersistentObjectCount(User user, BatchPresentation batchPresentation, Permission permission, SecuredObjectType[] securedObjectTypes) {
+        return new BatchPresentationHibernateCompiler(batchPresentation).getCount(user, permission, securedObjectTypes);
     }
 
-    private void setLastPageNumber(List<Long> executorIds, BatchPresentation batchPresentation, Permission permission,
-            SecuredObjectType[] securedObjectTypes) {
-        int objectCount = getPersistentObjectCount(executorIds, batchPresentation, permission, securedObjectTypes);
+    private void setLastPageNumber(User user, BatchPresentation batchPresentation, Permission permission, SecuredObjectType[] securedObjectTypes) {
+        int objectCount = getPersistentObjectCount(user, batchPresentation, permission, securedObjectTypes);
         int maxPageNumber = PagingCommons.pageCount(objectCount, batchPresentation.getRangeSize());
         batchPresentation.setPageNumber(maxPageNumber);
     }
