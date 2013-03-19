@@ -17,22 +17,28 @@
  */
 package ru.runa.wfe.presentation.filter;
 
-import java.util.Map;
-
-import ru.runa.wfe.presentation.hibernate.QueryParameter;
 
 public class AnywhereStringFilterCriteria extends StringFilterCriteria {
     private static final long serialVersionUID = -1849845246809052465L;
 
     @Override
-    public String buildWhereCondition(String fieldName, String persistetObjectQueryAlias, Map<String, QueryParameter> placeholders) {
-        StringBuilder whereStringBuilder = new StringBuilder("CAST(" + persistetObjectQueryAlias);
-        String alias = persistetObjectQueryAlias + fieldName.replaceAll("\\.", "");
-        whereStringBuilder.append(".").append(fieldName).append(" as char(50))");
-        whereStringBuilder.append(" like :").append(alias);
-        whereStringBuilder.append(" ");
-        placeholders.put(alias, new QueryParameter(alias, "%" + getFilterTemplates()[0] + "%"));
-        return whereStringBuilder.toString();
+    public String getFilterTemplate(int position) {
+        return "*" + super.getFilterTemplate(position) + "*";
     }
+
+    // @Override
+    // public String buildWhereCondition(String fieldName, String
+    // persistetObjectQueryAlias, Map<String, QueryParameter> placeholders) {
+    // StringBuilder whereStringBuilder = new StringBuilder("CAST(" +
+    // persistetObjectQueryAlias);
+    // String alias = persistetObjectQueryAlias + fieldName.replaceAll("\\.",
+    // "");
+    // whereStringBuilder.append(".").append(fieldName).append(" as char(50))");
+    // whereStringBuilder.append(" like :").append(alias);
+    // whereStringBuilder.append(" ");
+    // placeholders.put(alias, new QueryParameter(alias, "%" +
+    // getFilterTemplate(0) + "%"));
+    // return whereStringBuilder.toString();
+    // }
 
 }

@@ -18,11 +18,19 @@
 package ru.runa.wfe.presentation.filter;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ru.runa.wfe.presentation.hibernate.QueryParameter;
 
 public class StringFilterCriteria extends FilterCriteria {
     private static final long serialVersionUID = -1849845246809052465L;
+    public static final String ANY_SYMBOLS = "*";
+    public static final String ANY_SYMBOL = "?";
+    private static final String QUOTED_ANY_SYMBOLS = Pattern.quote(ANY_SYMBOLS);
+    private static final String QUOTED_ANY_SYMBOL = Pattern.quote(ANY_SYMBOL);
+    private static final String DB_ANY_SYMBOLS = Matcher.quoteReplacement("%");
+    private static final String DB_ANY_SYMBOL = Matcher.quoteReplacement("_");
 
     public StringFilterCriteria() {
         super(1);
@@ -33,14 +41,22 @@ public class StringFilterCriteria extends FilterCriteria {
     }
 
     @Override
-    public String buildWhereCondition(String fieldName, String persistetObjectQueryAlias, Map<String, QueryParameter> placeholders) {
-        StringBuilder whereStringBuilder = new StringBuilder(persistetObjectQueryAlias);
-        String alias = persistetObjectQueryAlias + fieldName.replaceAll("\\.", "");
-        whereStringBuilder.append(".").append(fieldName);
-        whereStringBuilder.append(" like :").append(alias);
-        whereStringBuilder.append(" ");
-        placeholders.put(alias, new QueryParameter(alias, getFilterTemplates()[0]));
-        return whereStringBuilder.toString();
+    public String buildWhereCondition(String fieldName, String persistentObjectQueryAlias, Map<String, QueryParameter> placeholders) {
+        String searchFilter = getFilterTemplate(0);
+        boolean useLike = false;
+        if (searchFilter.contains(ANY_SYMBOLS)) {
+            searchFilter = searchFilter.replaceAll(QUOTED_ANY_SYMBOLS, DB_ANY_SYMBOLS);
+            useLike = true;
+        }
+        if (searchFilter.contains(ANY_SYMBOL)) {
+            searchFilter = searchFilter.replaceAll(QUOTED_ANY_SYMBOL, DB_ANY_SYMBOL);
+            useLike = true;
+        }
+        String alias = persistentObjectQueryAlias + fieldName.replaceAll("\\.", "");
+        String where = persistentObjectQueryAlias + "." + fieldName + " ";
+        where += useLike ? "like" : "=";
+        where += " :" + alias + " ";
+        placeholders.put(alias, new QueryParameter(alias, searchFilter));
+        return where;
     }
-
 }

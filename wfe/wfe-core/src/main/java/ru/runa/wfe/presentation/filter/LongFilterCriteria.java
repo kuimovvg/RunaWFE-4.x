@@ -47,7 +47,7 @@ public class LongFilterCriteria extends FilterCriteria {
         whereStringBuilder.append(".").append(fieldName);
         whereStringBuilder.append(" = :").append(fieldName.replaceAll("\\.", ""));
         whereStringBuilder.append(" ");
-        placeholders.put(fieldName.replaceAll("\\.", ""), new QueryParameter(fieldName.replaceAll("\\.", ""), Long.valueOf(getFilterTemplates()[0])));
+        placeholders.put(fieldName.replaceAll("\\.", ""), new QueryParameter(fieldName.replaceAll("\\.", ""), Long.valueOf(getFilterTemplate(0))));
         return whereStringBuilder.toString();
     }
 
