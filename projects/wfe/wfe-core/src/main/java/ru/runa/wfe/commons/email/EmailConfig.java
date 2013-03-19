@@ -101,13 +101,13 @@ public class EmailConfig {
             }
             connectionProperties.put(propName, substitutedValue);
         }
-        for (String propName : tmpHeaderProperties.keySet()) {
-            String propValue = tmpHeaderProperties.get(propName);
+        for (Map.Entry<String, String> propEntry : tmpHeaderProperties.entrySet()) {
+            String propValue = propEntry.getValue();
             String substitutedValue = ExpressionEvaluator.evaluateVariableNotNull(variableProvider, propValue).toString();
             if (!substitutedValue.equals(propValue)) {
-                log.debug("Substituted " + propName + ": " + propValue + " -> " + substitutedValue);
+                log.debug("Substituted " + propEntry.getKey() + ": " + propValue + " -> " + substitutedValue);
             }
-            headerProperties.put(propName, substitutedValue);
+            headerProperties.put(propEntry.getKey(), substitutedValue);
         }
     }
 

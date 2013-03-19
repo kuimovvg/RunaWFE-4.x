@@ -39,7 +39,6 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -77,8 +76,6 @@ public final class BatchPresentation implements Cloneable, Serializable {
     private int pageNumber = 1;
     private byte[] fieldsData;
     private Fields fields;
-    @XmlTransient
-    private final List<String> expandedBlockList = Lists.newArrayList();
     /**
      * Helper to hold fields set (such us fields to display, sort and so on).
      */
@@ -312,9 +309,9 @@ public final class BatchPresentation implements Cloneable, Serializable {
      */
     public void setGroupBlockStatus(String key, boolean isExpanded) {
         if (isExpanded) {
-            expandedBlockList.add(key);
+            getFields().expandedBlocks.add(key);
         } else {
-            expandedBlockList.remove(key);
+            getFields().expandedBlocks.remove(key);
         }
     }
 
@@ -322,7 +319,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
      * Holds identifiers for expanded groups.
      */
     public boolean isGroupBlockExpanded(String key) {
-        return expandedBlockList.contains(key);
+        return getFields().expandedBlocks.contains(key);
     }
 
     @Transient
@@ -516,6 +513,8 @@ public final class BatchPresentation implements Cloneable, Serializable {
          * by user).
          */
         final List<DynamicField> dynamics = Lists.newArrayList();
+
+        final List<String> expandedBlocks = Lists.newArrayList();
 
         public boolean setFilteredFields(Map<Integer, FilterCriteria> newFilteredFieldsMap) {
             boolean resetPageNumber = false;

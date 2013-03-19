@@ -51,7 +51,7 @@ public abstract class EnumerationFilterCriteria extends FilterCriteria {
     public String buildWhereCondition(String fieldName, String persistetObjectQueryAlias, Map<String, QueryParameter> placeholders) {
         StringBuilder whereStringBuilder = new StringBuilder(persistetObjectQueryAlias);
         whereStringBuilder.append(".").append(fieldName);
-        whereStringBuilder.append(" = '").append(getFilterTemplates()[0]).append("' ");
+        whereStringBuilder.append(" = '").append(getFilterTemplate(0)).append("' ");
         return whereStringBuilder.toString();
     }
 

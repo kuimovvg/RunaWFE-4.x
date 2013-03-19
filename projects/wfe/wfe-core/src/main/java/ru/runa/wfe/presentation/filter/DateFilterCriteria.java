@@ -54,11 +54,11 @@ public class DateFilterCriteria extends FilterCriteria {
 
     private void initDates() {
         try {
-            if (getFilterTemplates()[0].length() > 0) {
-                dateStart = CalendarUtil.convertToDate(getFilterTemplates()[0], CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
+            if (getFilterTemplate(0).length() > 0) {
+                dateStart = CalendarUtil.convertToDate(getFilterTemplate(0), CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
             }
-            if (getFilterTemplates()[1].length() > 0) {
-                dateEnd = CalendarUtil.convertToDate(getFilterTemplates()[1], CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
+            if (getFilterTemplate(1).length() > 0) {
+                dateEnd = CalendarUtil.convertToDate(getFilterTemplate(1), CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
             }
         } catch (Exception e) {
             log.error("date parsing error: " + e);

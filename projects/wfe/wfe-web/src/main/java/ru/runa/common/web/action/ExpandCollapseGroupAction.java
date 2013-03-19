@@ -27,6 +27,7 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.form.GroupForm;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 
 /**
@@ -47,6 +48,8 @@ public class ExpandCollapseGroupAction extends ActionBase {
             BatchPresentation batchPresentation = profile.getActiveBatchPresentation(groupForm.getBatchPresentationId());
             String groupId = groupForm.getGroupId();
             batchPresentation.setGroupBlockStatus(groupId, !batchPresentation.isGroupBlockExpanded(groupId));
+            profile = Delegates.getProfileService().saveBatchPresentation(getLoggedUser(request), batchPresentation);
+            ProfileHttpSessionHelper.setProfile(profile, request.getSession());
         } catch (Exception e) {
             addError(request, e);
         }
