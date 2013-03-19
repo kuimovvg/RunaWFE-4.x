@@ -98,7 +98,7 @@ public class EmailConfigParser {
         }
     }
 
-    private static EmailConfig parseFromFile(String fileName) throws IOException {
+    public static EmailConfig parseFromFile(String fileName) throws IOException {
         InputStream is = ClassLoaderUtil.getAsStreamNotNull(fileName, EmailConfigParser.class);
         String c = new String(ByteStreams.toByteArray(is), Charsets.UTF_8);
         return parse(c);

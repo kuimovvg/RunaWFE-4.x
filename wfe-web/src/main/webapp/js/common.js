@@ -76,7 +76,7 @@ function openConfirmPopup(element, cookieName, message, confirmMessage, cancelBu
 }
 
 function openSubstitutionCriteriasConfirmPopup(formId, message, allMethod, allButton, onlyMethod, onlyButton, cancelButton) {
-	$.confirmDialog.html("<p>" + message + "</p>"); 
+	$.confirmDialog.html("<p>" + message + "</p>");
 	var form = $("#formId");
 	var buttons = {};
 	buttons[onlyButton] = function() {
@@ -105,4 +105,16 @@ function viewBlock(blockId) {
 		$("#"+blockId+"Img").attr("src", "/wfe/images/view_setup_visible.gif");
 		visibleBlock = true;
 	}
+}
+
+function showFiltersHelp() {
+	$("#filtersHelpDialog").dialog({
+		dialogClass: "no-close",
+		buttons: [{
+			text: buttonCloseMessage,
+			click: function() {
+				$(this).dialog("close");
+			}
+		}]
+	});
 }

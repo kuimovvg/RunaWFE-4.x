@@ -28,7 +28,6 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.Entities;
-import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.IMG;
 import org.apache.ecs.html.TD;
@@ -260,44 +259,34 @@ public class ReflectionRowBuilder implements RowBuilder {
 
         for (int i = 0; i < builders.length; i++) {
             TD td = builders[i].build(item, env);
-
             if (listGroupTDBuilders.contains(builders[i])) {
-                FieldDescriptor fieldDescriptorForBuilder = null;
-                for (FieldDescriptor fieldDescriptor : Arrays.asList(batchPresentation.getGrouppedFields())) {
-                    if (builders[i].equals(fieldDescriptor.getTDBuilder())) {
-                        fieldDescriptorForBuilder = fieldDescriptor;
-                    }
-                }
-
-                ConcreteElement tdElement = null;
-                String message = null;
-                String displayName = fieldDescriptorForBuilder.displayName;
-
-                if (displayName.startsWith(ClassPresentation.removable_prefix)) {
-                    message = displayName.substring(displayName.lastIndexOf(':') + 1);
-                } else {
-                    message = Messages.getMessage(displayName, pageContext);
-                }
-
                 if (td.elements().hasMoreElements()) {
                     ConcreteElement concreteElement = (ConcreteElement) td.elements().nextElement();
-                    if (concreteElement instanceof StringElement) {
-                        tdElement = new StringElement(message);
-                    } else if (concreteElement instanceof A) {
+                    if (concreteElement instanceof A) {
                         A a = (A) concreteElement;
-                        String href = a.getAttribute("href");
-                        tdElement = new A(href, message);
+                        if (a.elements().hasMoreElements() && a.elements().nextElement().toString().trim().length() == 0) {
+                            String href = a.getAttribute("href");
+                            FieldDescriptor fieldDescriptorForBuilder = null;
+                            for (FieldDescriptor fieldDescriptor : Arrays.asList(batchPresentation.getGrouppedFields())) {
+                                if (builders[i].equals(fieldDescriptor.getTDBuilder())) {
+                                    fieldDescriptorForBuilder = fieldDescriptor;
+                                }
+                            }
+                            String message;
+                            String displayName = fieldDescriptorForBuilder.displayName;
+                            if (displayName.startsWith(ClassPresentation.removable_prefix)) {
+                                message = displayName.substring(displayName.lastIndexOf(':') + 1);
+                            } else {
+                                message = Messages.getMessage(displayName, pageContext);
+                            }
+                            message += " " + Messages.getMessage("label.is.missed", pageContext);
+                            td = new TD();
+                            td.addElement(new A(href, message));
+                            td.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
+                        }
                     }
                 }
-
-                td = new TD();
-                if (tdElement != null) {
-                    td.addElement(tdElement);
-                }
-
-                td.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
             }
-
             tr.addElement(td);
         }
 

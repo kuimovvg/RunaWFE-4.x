@@ -90,7 +90,7 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
             batchPresentation.setFieldsToSort(new int[] { 1 }, new boolean[] { true });
             if (hint.length() > 0) {
                 int filterIndex = byLogin ? 0 : 1;
-                batchPresentation.getFilteredFields().put(filterIndex, new StringFilterCriteria(hint + "%"));
+                batchPresentation.getFilteredFields().put(filterIndex, new StringFilterCriteria(hint + StringFilterCriteria.ANY_SYMBOLS));
             }
             // thid method used instead of getActors due to lack paging in
             // that

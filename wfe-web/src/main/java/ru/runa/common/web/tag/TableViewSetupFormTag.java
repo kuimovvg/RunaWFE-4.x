@@ -249,7 +249,8 @@ public class TableViewSetupFormTag extends AbstractReturningTag implements Batch
             td.addElement(new Input(Input.HIDDEN, TableViewSetupForm.IDS_INPUT_NAME, String.valueOf(fieldIdx)));
             tr.addElement(td);
         }
-        if (isEditable || isFilterable) { // Editable fields havn't fields for sorting/filtering e t.c.
+        if (isEditable || isFilterable) { // Editable fields havn't fields for
+                                          // sorting/filtering e t.c.
             for (int idx = 0; idx < 5; ++idx) {
                 tr.addElement(new TD().setClass(Resources.CLASS_VIEW_SETUP_TD));
             }
@@ -346,10 +347,14 @@ public class TableViewSetupFormTag extends AbstractReturningTag implements Batch
 
     protected TR getHeaderRow() {
         TR tr = new TR();
-        String[] headerNames = { Messages.getMessage(Messages.LABEL_FIELD_NAMES, pageContext),
-                Messages.getMessage(Messages.LABEL_DISPLAY_POSITION, pageContext), Messages.getMessage(Messages.LABEL_SORTING_TYPE, pageContext),
-                Messages.getMessage(Messages.LABEL_SORTING_POSITION, pageContext), Messages.getMessage(Messages.LABEL_GROUPING, pageContext),
-                Messages.getMessage(Messages.LABEL_FILTER_CRITERIA, pageContext) };
+        String[] headerNames = {
+                Messages.getMessage(Messages.LABEL_FIELD_NAMES, pageContext),
+                Messages.getMessage(Messages.LABEL_DISPLAY_POSITION, pageContext),
+                Messages.getMessage(Messages.LABEL_SORTING_TYPE, pageContext),
+                Messages.getMessage(Messages.LABEL_SORTING_POSITION, pageContext),
+                Messages.getMessage(Messages.LABEL_GROUPING, pageContext),
+                Messages.getMessage(Messages.LABEL_FILTER_CRITERIA, pageContext)
+                        + " <a href='javascript:showFiltersHelp();' style='color: red; text-decoration: none;'>*</a>" };
         for (int i = 0; i < headerNames.length; i++) {
             tr.addElement(new TH(headerNames[i]).setClass(Resources.CLASS_VIEW_SETUP_TH));
         }
