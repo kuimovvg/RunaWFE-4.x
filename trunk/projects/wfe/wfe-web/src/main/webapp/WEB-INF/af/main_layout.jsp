@@ -96,6 +96,9 @@
 						<bean:message key="title.version"/> <b><%= Version.get() %></b>
 					</div>
 				<% } %>
+				<div id="filtersHelpDialog" style="display: none;">
+					<bean:message key="content.filters.help"/>
+				</div>
 			</td>
 			<td valign="top"   height="100%" width="85%">
 				<hr>

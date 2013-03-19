@@ -59,6 +59,10 @@ public abstract class FilterCriteria implements Serializable {
         return filterTemplates;
     }
 
+    public String getFilterTemplate(int position) {
+        return filterTemplates[position];
+    }
+
     protected void validate(String[] newTemplates) throws FilterFormatException {
         if (newTemplates.length != templatesCount) {
             throw new IllegalArgumentException("Incorrect parameters count");

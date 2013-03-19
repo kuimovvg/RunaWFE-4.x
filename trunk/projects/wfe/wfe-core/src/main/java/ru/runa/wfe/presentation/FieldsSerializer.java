@@ -25,6 +25,7 @@ public class FieldsSerializer {
     private static final String FILTER_CLASS_ATTR = "filterClass";
     private static final String FILTER_TEMPLATE = "tpl";
     private static final String DYNAMICS = "dynamics";
+    private static final String EXPANDED_BLOCKS = "blocks";
     private static final String INDEX_ATTR = "index";
     private static final String VALUE_ATTR = "value";
 
@@ -67,6 +68,13 @@ public class FieldsSerializer {
         for (Element element : elements) {
             fields.dynamics.add(new DynamicField(Long.valueOf(element.attributeValue(INDEX_ATTR)), element.attributeValue(VALUE_ATTR)));
         }
+        Element expandedBlocksElement = root.element(EXPANDED_BLOCKS);
+        if (expandedBlocksElement != null) {
+            elements = expandedBlocksElement.elements(I);
+            for (Element element : elements) {
+                fields.expandedBlocks.add(element.getTextTrim());
+            }
+        }
         return fields;
     }
 
@@ -103,6 +111,10 @@ public class FieldsSerializer {
             Element dynamicElement = dynamicsElement.addElement(I);
             dynamicElement.addAttribute(INDEX_ATTR, dynamicField.getFieldIdx().toString());
             dynamicElement.addAttribute(VALUE_ATTR, dynamicField.getDynamicValue());
+        }
+        Element expandedBlocksElement = root.addElement(EXPANDED_BLOCKS);
+        for (String expandedBlock : fields.expandedBlocks) {
+            expandedBlocksElement.addElement(I).setText(expandedBlock);
         }
         return XmlUtils.save(document);
     }

@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.exception.LockAcquisitionException;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.TimeMeasurer;
 import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.user.User;
@@ -48,15 +47,18 @@ public class EjbTransactionSupport {
             if (ic.getParameters() != null && ic.getParameters().length > 0 && ic.getParameters()[0] instanceof User) {
                 UserHolder.set((User) ic.getParameters()[0]);
             }
-            TimeMeasurer timeMeasurer = new TimeMeasurer(log, 1000);
-            String jobName = ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName() + "("
-                    + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")";
-            timeMeasurer.jobStarted();
+            long startTime = System.currentTimeMillis();
             Object result = invokeWithRetry(ic);
-            timeMeasurer.jobEnded("Execution of " + jobName);
-            timeMeasurer.jobStarted();
+            long jobTime = System.currentTimeMillis() - startTime;
+            if (jobTime > 2000) {
+                log.info("Execution of " + getDebugString(ic) + " took " + (jobTime / 1000) + " sec.");
+            }
+            startTime = System.currentTimeMillis();
             transaction.commit();
-            timeMeasurer.jobEnded("Commit of " + jobName);
+            jobTime = System.currentTimeMillis() - startTime;
+            if (jobTime > 2000) {
+                log.info("Commit of " + getDebugString(ic) + " took " + (jobTime / 1000) + " sec.");
+            }
             UserHolder.reset();
             return result;
         } catch (Throwable th) {
@@ -65,6 +67,11 @@ public class EjbTransactionSupport {
         } finally {
             CachingLogic.onTransactionComplete();
         }
+    }
+
+    private String getDebugString(InvocationContext ic) {
+        return ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName() + "("
+                + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")";
     }
 
     private void rollbackTransaction(UserTransaction transaction) {

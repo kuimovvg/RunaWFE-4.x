@@ -159,4 +159,5 @@ public class ViewControlsHideableBlockAjaxTag extends AbstractReturningTag {
         td.addElement(select);
         td.addElement(Entities.NBSP);
     }
+
 }
