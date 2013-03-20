@@ -209,6 +209,9 @@ public class FormulaActionHandlerOperations {
             }
             return CalendarUtil.format(date, CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
         }
+        if (Date.class.isAssignableFrom(c) && Date.class.isInstance(o)) {
+            return o;
+        }
         return TypeConversionUtil.convertTo(c, o);
     }
 

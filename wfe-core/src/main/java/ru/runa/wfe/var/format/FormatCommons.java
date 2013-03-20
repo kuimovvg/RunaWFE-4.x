@@ -20,8 +20,8 @@ package ru.runa.wfe.var.format;
 
 import java.util.Date;
 
-import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.ISelectable;
@@ -30,7 +30,7 @@ import ru.runa.wfe.var.VariableDefinition;
 public class FormatCommons {
 
     public static VariableFormat create(String className) {
-        return ApplicationContextFactory.createAutowiredBean(className);
+        return ClassLoaderUtil.instantiate(className);
     }
 
     public static VariableFormat create(VariableDefinition variableDefinition) {

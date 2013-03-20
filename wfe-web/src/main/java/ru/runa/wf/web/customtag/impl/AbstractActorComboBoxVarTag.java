@@ -28,7 +28,8 @@ import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 
 import ru.runa.wf.web.customtag.VarTag;
-import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.service.client.DelegateExecutorLoader;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
@@ -59,16 +60,11 @@ public abstract class AbstractActorComboBoxVarTag implements VarTag {
     public String getHtml(User user, String varName, Object varValue, PageContext pageContext, IVariableProvider variableProvider) throws Exception {
         StringBuilder htmlContent = new StringBuilder();
 
-        List<Actor> actors = getActors(user, varName, varValue);
-        Actor defaultActor = null;
+        List<Actor> actors = getActors(user, varName);
+        Actor defaultActor;
         if (varValue != null) {
-            try {
-                defaultActor = Delegates.getExecutorService().getActorByCode(user, Long.valueOf((String) varValue));
-            } catch (Throwable e) {
-                log.warn("Unable to fetch actor value", e);
-            }
-        }
-        if (defaultActor == null) {
+            defaultActor = TypeConversionUtil.convertToExecutor(varValue, new DelegateExecutorLoader(user));
+        } else {
             defaultActor = user.getActor();
         }
 
@@ -77,7 +73,7 @@ public abstract class AbstractActorComboBoxVarTag implements VarTag {
         return htmlContent.toString();
     }
 
-    public abstract List<Actor> getActors(User user, String varName, Object varValue);
+    public abstract List<Actor> getActors(User user, String varName);
 
     public String getActorPropertyToUse() {
         return "code";

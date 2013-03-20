@@ -32,15 +32,21 @@ import com.google.common.collect.Lists;
  * 
  */
 public class MSWordReportTaskSettings {
+    private final boolean strictMode;
     private final String templateFileLocation;
     private final String reportFileName;
     private final String reportVariableName;
     private final List<BookmarkVariableMapping> mappings = Lists.newArrayList();
 
-    public MSWordReportTaskSettings(String templateFileLocation, String reportFileName, String reportVariableName) {
+    public MSWordReportTaskSettings(boolean strictMode, String templateFileLocation, String reportFileName, String reportVariableName) {
+        this.strictMode = strictMode;
         this.templateFileLocation = templateFileLocation;
         this.reportFileName = reportFileName;
         this.reportVariableName = reportVariableName;
+    }
+
+    public boolean isStrictMode() {
+        return strictMode;
     }
 
     public String getReportFileName() {

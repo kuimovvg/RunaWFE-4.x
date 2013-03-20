@@ -22,9 +22,10 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
-import ru.runa.wfe.service.ExecutorService;
+import ru.runa.wfe.service.client.DelegateExecutorLoader;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
@@ -51,11 +52,10 @@ public class SetActorStatusTaskHandler extends TaskHandlerBase {
 
     @Override
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) {
-        ExecutorService executorDelegate = Delegates.getExecutorService();
-        Long actorCode = variableProvider.getValueNotNull(Long.class, config.actorVariableName);
-        Actor actor = executorDelegate.getActorByCode(user, actorCode);
+        Object value = variableProvider.getValueNotNull(config.actorVariableName);
+        Actor actor = TypeConversionUtil.convertToExecutor(value, new DelegateExecutorLoader(user));
         boolean isActive = variableProvider.getValueNotNull(Boolean.class, config.statusVariableName);
-        executorDelegate.setStatus(user, actor, isActive);
+        Delegates.getExecutorService().setStatus(user, actor, isActive);
         return null;
     }
 

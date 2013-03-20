@@ -32,7 +32,7 @@ import ru.runa.wfe.user.User;
 public class ActorComboboxVarTag extends AbstractActorComboBoxVarTag {
 
     @Override
-    public List<Actor> getActors(User user, String varName, Object varValue) {
+    public List<Actor> getActors(User user, String varName) {
         BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };
