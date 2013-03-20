@@ -80,7 +80,7 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
                 User user = Commons.getUser(pageContext.getSession());
                 formattedValue = ViewUtil.getVariableValueHtml(user, new StrutsWebHelper(pageContext), processId, variable);
             } catch (Exception e) {
-                log.debug("Unable to format value " + variable + " in " + processId, e);
+                log.debug("Unable to format value " + variable + " in " + processId + ": " + e.getMessage());
                 if (value.getClass().isArray()) {
                     formattedValue = Arrays.toString((Object[]) value);
                 } else {

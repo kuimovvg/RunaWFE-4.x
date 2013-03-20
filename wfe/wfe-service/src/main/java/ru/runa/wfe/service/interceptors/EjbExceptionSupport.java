@@ -42,7 +42,7 @@ public class EjbExceptionSupport {
                 throw (MessagePostponedException) th;
             }
             if (warnExceptionClasses.contains(th.getClass())) {
-                log.warn("ejb call: ", th);
+                log.warn("ejb call " + th);
             } else {
                 log.error("ejb call", th);
             }

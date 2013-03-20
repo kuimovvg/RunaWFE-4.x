@@ -40,6 +40,7 @@ import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorGroupMembership;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.TemporaryGroup;
 import ru.runa.wfe.user.cache.ExecutorCacheCtrl;
 import ru.runa.wfe.user.cache.ExecutorCacheImpl;
 
@@ -173,6 +174,10 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
         }
         Set<Actor> actors;
         if (executor instanceof Group) {
+            if (executor instanceof TemporaryGroup) {
+                log.debug("Ignored cache recalc on " + change + " of " + executor);
+                return;
+            }
             // TODO make caches retrieval not blocking and remove
             // uninitialize(...)
             // call for this cache

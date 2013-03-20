@@ -75,7 +75,6 @@ public class AuthenticationLogic extends CommonLogic {
             log.debug(actorName + " successfully authenticated");
             return SubjectPrincipalsHelper.getUser(subject);
         } catch (Exception e) {
-            log.warn("Failed to authenticate because of: " + e.getMessage());
             throw new AuthenticationException(e);
         }
     }
