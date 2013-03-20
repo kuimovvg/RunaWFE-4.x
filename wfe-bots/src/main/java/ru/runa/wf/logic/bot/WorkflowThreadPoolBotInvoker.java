@@ -61,7 +61,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
 
     @Override
     public synchronized void invokeBots(BotStation botStation) {
-        if (lastInvocationDate != null && new CalendarInterval(lastInvocationDate, new Date()).getLengthInMinutes() < 5) {
+        if (lastInvocationDate != null && new CalendarInterval(lastInvocationDate, new Date()).getLengthInMinutes() < 1) {
             log.info("bot invocation rejected due to last invocation date = " + CalendarUtil.formatDateTime(lastInvocationDate));
             return;
         }

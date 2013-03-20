@@ -24,7 +24,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
 /**
  * LoginModule for based on actor name and password information provided by
@@ -48,15 +47,9 @@ public class InternalDBPasswordLoginModule extends LoginModuleBase {
             throw new LoginException("No password was provided.");
         }
         String password = new String(tmpPasswordChars);
-        try {
-            Actor actor = executorDAO.getActor(actorName);
-            if (executorDAO.isPasswordValid(actor, password)) {
-                return actor;
-            }
-        } catch (ExecutorDoesNotExistException e) {
-            // do nothing here, we must not let external system know whether
-            // actor exist or not
-            log.warn(e.getMessage());
+        Actor actor = executorDAO.getActor(actorName);
+        if (executorDAO.isPasswordValid(actor, password)) {
+            return actor;
         }
         return null;
     }
