@@ -235,3 +235,8 @@ div.multiInstanceBox {
 .required {
 	border: 1px solid red;
 }
+
+.wide {
+	width: 100%;
+}
+
