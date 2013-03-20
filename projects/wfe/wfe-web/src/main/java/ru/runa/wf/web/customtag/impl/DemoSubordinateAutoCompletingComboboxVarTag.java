@@ -44,7 +44,7 @@ public class DemoSubordinateAutoCompletingComboboxVarTag extends AbstractAutoCom
     ExecutorDAO executorDAO;
 
     @Override
-    public List<Actor> getActors(User user, String varName, Object varValue) {
+    public List<Actor> getActors(User user, String varName) {
         List<Actor> subordinates = getSubordinates(user);
         BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
         int[] sortIds = { 1 };

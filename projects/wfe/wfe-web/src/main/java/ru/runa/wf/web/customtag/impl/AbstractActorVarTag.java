@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wf.web.customtag.VarTag;
 import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.service.client.DelegateExecutorLoader;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
@@ -42,8 +42,7 @@ public abstract class AbstractActorVarTag implements VarTag {
             log.warn("Vartag variable is not set: " + varName);
             return "<p class='error'>null</p>";
         }
-        Long code = TypeConversionUtil.convertTo(Long.class, var);
-        Actor actor = Delegates.getExecutorService().getActorByCode(user, code);
+        Actor actor = TypeConversionUtil.convertToExecutor(var, new DelegateExecutorLoader(user));
         return actorToString(actor);
     }
 
