@@ -32,7 +32,7 @@ import com.google.common.collect.Lists;
 public class GroupMembersAutoCompletionVarTag extends AbstractAutoCompletionComboBoxVarTag {
 
     @Override
-    public List<Actor> getActors(User user, String varName, Object varValue) {
+    public List<Actor> getActors(User user, String varName) {
         BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };

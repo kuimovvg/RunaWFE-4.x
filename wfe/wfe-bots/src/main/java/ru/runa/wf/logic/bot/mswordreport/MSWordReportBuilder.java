@@ -40,12 +40,17 @@ public abstract class MSWordReportBuilder {
 
     public abstract void build(String reportTemporaryFileName);
 
-    protected String getVariableValue(BookmarkVariableMapping mapping) {
+    protected String getVariableValue(BookmarkVariableMapping mapping) throws MSWordReportException {
         WfVariable variable = variableProvider.getVariable(mapping.getVariableName());
         if (variable == null || variable.getValue() == null) {
             throw new MSWordReportException(MSWordReportException.VARIABLE_NOT_FOUND_IN_PROCESS, mapping.getVariableName());
         }
-        return variable.getFormatNotNull().format(variable.getValue());
+        try {
+            return variable.getFormatNotNull().format(variable.getValue());
+        } catch (Exception e) {
+            log.warn("Unable to format " + variable, e);
+            return variable.getValue().toString();
+        }
     }
 
 }

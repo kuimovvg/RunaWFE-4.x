@@ -112,9 +112,12 @@ public class FieldsSerializer {
             dynamicElement.addAttribute(INDEX_ATTR, dynamicField.getFieldIdx().toString());
             dynamicElement.addAttribute(VALUE_ATTR, dynamicField.getDynamicValue());
         }
-        Element expandedBlocksElement = root.addElement(EXPANDED_BLOCKS);
-        for (String expandedBlock : fields.expandedBlocks) {
-            expandedBlocksElement.addElement(I).setText(expandedBlock);
+        if (fields.expandedBlocks != null) {
+            // this can be for serialized batch presentation of previous version
+            Element expandedBlocksElement = root.addElement(EXPANDED_BLOCKS);
+            for (String expandedBlock : fields.expandedBlocks) {
+                expandedBlocksElement.addElement(I).setText(expandedBlock);
+            }
         }
         return XmlUtils.save(document);
     }

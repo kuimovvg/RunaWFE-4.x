@@ -208,9 +208,9 @@ public class TypeConversionUtil {
         }
     }
 
-    public static Executor convertToExecutor(Object object, IExecutorLoader executorLoader) {
+    public static <T extends Executor> T convertToExecutor(Object object, IExecutorLoader executorLoader) {
         if (object == null || object instanceof Executor) {
-            return (Executor) object;
+            return (T) object;
         }
         try {
             String s = object.toString();
@@ -219,17 +219,17 @@ public class TypeConversionUtil {
             }
             if (s.startsWith("ID")) {
                 Long executorId = convertTo(Long.class, s.substring(2));
-                return executorLoader.getExecutor(executorId);
+                return (T) executorLoader.getExecutor(executorId);
             } else if (s.startsWith("G")) {
                 Long executorId = convertTo(Long.class, s.substring(1));
-                return executorLoader.getExecutor(executorId);
+                return (T) executorLoader.getExecutor(executorId);
             } else {
                 Long actorCode = Long.parseLong(s);
-                return executorLoader.getActorByCode(actorCode);
+                return (T) executorLoader.getActorByCode(actorCode);
             }
         } catch (NumberFormatException nfe) {
             String executorIdentity = object.toString();
-            return executorLoader.getExecutor(executorIdentity);
+            return (T) executorLoader.getExecutor(executorIdentity);
         }
     }
 }

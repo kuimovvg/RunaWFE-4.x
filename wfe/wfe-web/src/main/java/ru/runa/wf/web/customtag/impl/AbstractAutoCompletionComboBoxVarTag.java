@@ -124,7 +124,7 @@ public abstract class AbstractAutoCompletionComboBoxVarTag extends AbstractActor
     @Override
     public String getHtml(User user, String varName, Object varValue, PageContext pageContext, IVariableProvider variableProvider) throws Exception {
         StringBuffer htmlContent = new StringBuffer();
-        List<Actor> actors = getActors(user, varName, varValue);
+        List<Actor> actors = getActors(user, varName);
         Actor defaultActor = user.getActor();
         htmlContent.append(createAutoCompletionScript(varName, actors, pageContext));
         htmlContent.append(createInputAndSelectHtml(varName, actors, defaultActor));

@@ -10,10 +10,6 @@ import ru.runa.wfe.extension.ActionHandler;
 public class GroovyActionHandler implements ActionHandler {
     private String configuration;
 
-    public String getConfiguration() {
-        return configuration;
-    }
-
     @Override
     public void setConfiguration(String configuration) {
         this.configuration = configuration;

@@ -15,6 +15,7 @@
     	<xs:attribute name="template-path" type="xs:string" use="required"></xs:attribute>
     	<xs:attribute name="output-variable" type="xs:string" use="required"></xs:attribute>
     	<xs:attribute name="output-variable-file-name" type="xs:string" use="required"></xs:attribute>
+    	<xs:attribute name="strict-mode" type="xs:boolean" use="optional"></xs:attribute>
     </xs:complexType>
 
     <xs:element name="msword-report-task">
