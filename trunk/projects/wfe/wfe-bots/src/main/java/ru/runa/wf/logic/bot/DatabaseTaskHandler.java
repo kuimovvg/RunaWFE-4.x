@@ -30,6 +30,7 @@ import javax.sql.DataSource;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import ru.runa.wfe.commons.SQLCommons;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.sqltask.AbstractQuery;
 import ru.runa.wfe.commons.sqltask.DatabaseTask;
 import ru.runa.wfe.commons.sqltask.DatabaseTaskXmlParser;
@@ -40,6 +41,7 @@ import ru.runa.wfe.commons.sqltask.StoredProcedureQuery;
 import ru.runa.wfe.commons.sqltask.SwimlaneParameter;
 import ru.runa.wfe.commons.sqltask.SwimlaneResult;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
+import ru.runa.wfe.service.client.DelegateExecutorLoader;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Actor;
@@ -116,7 +118,7 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
                 String fieldName = result.getFieldName();
                 Actor actor = null;
                 if ("code".equals(fieldName)) {
-                    actor = Delegates.getExecutorService().getActorByCode(user, ((Long) newValue).longValue());
+                    actor = TypeConversionUtil.convertToExecutor(newValue, new DelegateExecutorLoader(user));
                 } else if ("id".equals(fieldName)) {
                     actor = Delegates.getExecutorService().getExecutor(user, ((Long) newValue).longValue());
                 } else {
@@ -140,7 +142,7 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
             Parameter parameter = query.getParameter(i);
             Object value = variableProvider.getValue(parameter.getVariableName());
             if (parameter instanceof SwimlaneParameter) {
-                Actor actor = Delegates.getExecutorService().getActorByCode(user, Long.parseLong((String) value));
+                Actor actor = TypeConversionUtil.convertToExecutor(value, new DelegateExecutorLoader(user));
                 value = PropertyUtils.getProperty(actor, ((SwimlaneParameter) parameter).getFieldName());
             } else if (parameter.isFieldSetup()) {
                 value = PropertyUtils.getProperty(value, parameter.getFieldName());
