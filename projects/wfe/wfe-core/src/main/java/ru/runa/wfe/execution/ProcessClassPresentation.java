@@ -23,6 +23,7 @@ import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.DefaultDBSource;
 import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.presentation.FieldFilterMode;
+import ru.runa.wfe.presentation.filter.AnywhereStringFilterCriteria;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.var.Variable;
 
@@ -69,8 +70,9 @@ public class ProcessClassPresentation extends ClassPresentation {
                         new Permission(), "version" }),
                 new FieldDescriptor(TASK_VARIABLE, String.class.getName(), new VariableDBSource(Variable.class), true, FieldFilterMode.DATABASE,
                         "ru.runa.wf.web.html.ProcessVariableTDBuilder", new Object[] {}, true),
-                new FieldDescriptor(filterable_prefix + "batch_presentation.process.id", String.class.getName(), new DefaultDBSource(Process.class,
-                        "hierarchySubProcess"), true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.RootProcessTDBuilder", new Object[] {}, true) });
+                new FieldDescriptor(filterable_prefix + "batch_presentation.process.id", AnywhereStringFilterCriteria.class.getName(),
+                        new DefaultDBSource(Process.class, "hierarchySubProcess"), true, FieldFilterMode.DATABASE,
+                        "ru.runa.wf.web.html.RootProcessTDBuilder", new Object[] {}, true) });
     }
 
     public static final ClassPresentation getInstance() {

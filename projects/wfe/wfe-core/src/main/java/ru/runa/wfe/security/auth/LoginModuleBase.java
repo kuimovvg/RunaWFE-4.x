@@ -14,11 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 public abstract class LoginModuleBase implements LoginModule {
-    protected static final Log log = LogFactory.getLog(InternalDBPasswordLoginModule.class);
+    protected final Log log = LogFactory.getLog(getClass());
     private Subject subject;
     private CallbackHandler callbackHandler;
     private boolean commitSucceeded;
@@ -50,6 +51,8 @@ public abstract class LoginModuleBase implements LoginModule {
             }
         } catch (UnsupportedCallbackException e) {
             return false;
+        } catch (ExecutorDoesNotExistException e) {
+            throw new LoginException(e.getMessage());
         } catch (Exception e) {
             log.error("", e);
             throw new LoginException(e.getMessage());

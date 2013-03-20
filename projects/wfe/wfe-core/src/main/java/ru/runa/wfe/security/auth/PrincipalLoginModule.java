@@ -7,7 +7,6 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
 public class PrincipalLoginModule extends LoginModuleBase {
 
@@ -20,14 +19,7 @@ public class PrincipalLoginModule extends LoginModuleBase {
         if (principal == null) {
             throw new LoginException("No actor logged in.");
         }
-        try {
-            return executorDAO.getActor(principal.getName());
-        } catch (ExecutorDoesNotExistException e) {
-            // do nothing here, we must not let external system know whether
-            // actor exist or not
-            log.warn(e);
-            return null;
-        }
+        return executorDAO.getActor(principal.getName());
     }
 
 }

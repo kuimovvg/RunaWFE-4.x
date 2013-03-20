@@ -48,7 +48,7 @@ public abstract class MSWordReportBuilder {
         try {
             return variable.getFormatNotNull().format(variable.getValue());
         } catch (Exception e) {
-            log.warn("Unable to format " + variable, e);
+            log.warn("Unable to format " + variable + ": " + e.getMessage());
             return variable.getValue().toString();
         }
     }
