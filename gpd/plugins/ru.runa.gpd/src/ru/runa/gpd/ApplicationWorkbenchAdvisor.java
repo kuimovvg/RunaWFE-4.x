@@ -2,6 +2,7 @@ package ru.runa.gpd;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -53,6 +54,9 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     }
 
     private static void setUtfCharsetRecursively(IResource resource) throws CoreException {
+        if (resource instanceof IProject && !((IProject) resource).isOpen()) {
+            return;
+        }
         if (resource instanceof IFile) {
             IFile file = (IFile) resource;
             if (!Charsets.UTF_8.name().equalsIgnoreCase(file.getCharset())) {
