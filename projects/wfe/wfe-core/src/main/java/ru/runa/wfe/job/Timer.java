@@ -16,7 +16,6 @@ import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.execution.logic.ProcessExecutionException;
-import ru.runa.wfe.extension.assign.AssignmentHelper;
 import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.task.Task;
@@ -79,8 +78,12 @@ public class Timer extends Job {
                 if (task != null) {
                     Swimlane swimlane = task.getSwimlane();
                     if (swimlane != null) {
-                        AssignmentHelper assignmentHelper = ApplicationContextFactory.getAssignmentHelper();
-                        assignmentHelper.reassignTask(executionContext, task, swimlane.getExecutor(), false);
+                        // mark task completed by timer
+                        swimlane.setExecutor(null);
+                        // AssignmentHelper assignmentHelper =
+                        // ApplicationContextFactory.getAssignmentHelper();
+                        // assignmentHelper.reassignTask(executionContext, task,
+                        // swimlane.getExecutor(), false);
                     }
                 } else {
                     log.warn("Task is null in timer node '" + getToken().getNodeId() + "' when leaving by transition: " + outTransitionName);
