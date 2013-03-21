@@ -61,7 +61,6 @@ public class TransitionLogPatch extends DBPatch {
                     Transition transition = node.getLeavingTransitionNotNull((String) scrollableResults.get(2));
                     TransitionLog transitionLog = new TransitionLog(transition);
                     transitionLog.setProcessId(process.getId());
-                    // TODO where to get it?
                     transitionLog.setTokenId(process.getRootToken().getId());
                     transitionLog.setDate(new Date());
                     processLogDAO.create(transitionLog);

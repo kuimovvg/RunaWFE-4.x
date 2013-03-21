@@ -143,7 +143,6 @@ public class JbpmRefactoringPatch extends DBPatch {
         sql.add(getDDLCreateTable("PRIVELEGED_MAPPING", privColumns, null));
         sql.add(getDDLCreateForeignKey("PRIVELEGED_MAPPING", "FK_PM_EXECUTOR", "EXECUTOR_ID", "EXECUTOR", "ID"));
         sql.add(getDDLCreateIndex("PRIVELEGED_MAPPING", "IX_PRIVELEGE_TYPE", "TYPE"));
-        // TODO naming: privilege vs ru.runa.wfe.security.dao.PermissionMapping
         List<ColumnDef> permColumns = Lists.newArrayList();
         permColumns.add(new ColumnDef("ID", Types.BIGINT, false).setPrimaryKey());
         permColumns.add(new ColumnDef("TYPE", dialect.getTypeName(Types.VARCHAR, 255, 255, 255), false));
@@ -152,7 +151,6 @@ public class JbpmRefactoringPatch extends DBPatch {
         permColumns.add(new ColumnDef("IDENTIFIABLE_ID", Types.BIGINT, false));
         permColumns.add(new ColumnDef("EXECUTOR_ID", Types.BIGINT, false));
         sql.add(getDDLCreateTable("PERMISSION_MAPPING", permColumns, null));
-        // TODO naming: PERMISSION
         sql.add(getDDLCreateForeignKey("PERMISSION_MAPPING", "FK_PERMISSION_EXECUTOR", "EXECUTOR_ID", "EXECUTOR", "ID"));
         sql.add(getDDLCreateIndex("PERMISSION_MAPPING", "IX_PERMISSION_EXECUTOR", "EXECUTOR_ID"));
         sql.add(getDDLCreateIndex("PERMISSION_MAPPING", "IX_PERMISSION_TYPE", "TYPE"));
