@@ -123,14 +123,14 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
             if (deadlineDate == null) {
                 return null;
             }
+            if (task.isEscalated()) {
+                return "escalatedTask";
+            }
             if (deadlineDate.before(currentDate)) {
                 return "deadlineExpired";
             }
             if (task.getDeadlineWarningDate() != null && task.getDeadlineWarningDate().before(currentDate)) {
                 return "deadlineAlmostExpired";
-            }
-            if (task.isEscalated()) {
-                return "escalatedTask";
             }
             return "deadlineExists";
         }
