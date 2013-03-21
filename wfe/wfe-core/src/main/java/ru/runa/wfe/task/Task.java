@@ -261,15 +261,17 @@ public class Task implements Assignable {
         // fire the task end event
         TaskDefinition taskDefinition = executionContext.getProcessDefinition().getTaskNotNull(nodeId);
         taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_END);
-        executionContext.addLog(new TaskEndLog(this));
+        if (getExecutor() != null) {
+            executionContext.addLog(new TaskEndLog(this));
+        }
         // verify if the end of this task triggers continuation of execution
         // ending start tasks always leads to a signal
         if (!leaveNode) {
             log.debug("completion of task '" + name + "' rejected due to leaveNode=false");
             return;
         }
-        if (!Objects.equal(nodeId, token.getNodeId())) { // TODO why this can
-                                                         // be?
+        if (!Objects.equal(nodeId, token.getNodeId())) {
+            // TODO why this can be?
             throw new InternalApplicationException("completion of task '" + name + "' rejected due to different token node id: '" + nodeId + "' != '"
                     + token.getNodeId() + "'");
         }

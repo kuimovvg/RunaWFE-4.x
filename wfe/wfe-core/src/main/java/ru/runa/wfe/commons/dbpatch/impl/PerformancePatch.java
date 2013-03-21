@@ -14,7 +14,7 @@ import ru.runa.wfe.var.Variable;
 
 import com.google.common.collect.Lists;
 
-public class ProcessListPerformancePatch extends DBPatch {
+public class PerformancePatch extends DBPatch {
 
     @Override
     protected List<String> getDDLQueriesBefore() {
@@ -32,9 +32,14 @@ public class ProcessListPerformancePatch extends DBPatch {
         sql.add(getDDLRemoveColumn("PERMISSION_MAPPING", "TYPE"));
         //
         sql.add(getDDLModifyColumn("BPM_VARIABLE", "STRINGVALUE", dialect.getTypeName(Types.VARCHAR, Variable.MAX_STRING_SIZE, 0, 0)));
+        // TODO with CREATE NONCLUSTERED INDEX [<Name of Missing Index,
+        // sysname,>] ON [dbo].[BPM_VARIABLE] ([NAME]) INCLUDE
+        // ([PROCESS_ID],[STRINGVALUE])
         sql.add(getDDLCreateIndex("BPM_VARIABLE", "IX_VARIABLE_NAME", "NAME"));
         sql.add(getDDLCreateIndex("BPM_VARIABLE", "IX_VARIABLE_VALUE", "STRINGVALUE"));
-        //
+        // TODO eliminate Task.endDate
+        // TODO permission mappings: complex clustered index (instead of
+        // surrogate key)?
         String createIndex = "CREATE NONCLUSTERED INDEX IX_PERMISSION_INDEX ON PERMISSION_MAPPING (MASK,TYPE_ID,EXECUTOR_ID) INCLUDE (IDENTIFIABLE_ID)";
         if (dbType == DBType.MSSQL) {
             sql.add(createIndex);
