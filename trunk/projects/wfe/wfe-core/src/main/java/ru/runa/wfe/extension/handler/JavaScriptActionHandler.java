@@ -24,7 +24,6 @@ public class JavaScriptActionHandler implements ActionHandler {
     public void execute(ExecutionContext executionContext) throws ScriptException {
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine engine = mgr.getEngineByName("JavaScript");
-        // Bindings bindings = engine.createBindings();
         for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
             Object value = executionContext.getVariable(definition.getName());
             if (value != null) {

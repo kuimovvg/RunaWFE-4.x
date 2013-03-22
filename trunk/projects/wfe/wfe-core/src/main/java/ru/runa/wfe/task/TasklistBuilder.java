@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.definition.dao.ProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
@@ -67,26 +66,24 @@ public class TasklistBuilder {
             try {
                 Executor taskExecutor = task.getExecutor();
                 ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task);
-                Interaction interaction = processDefinition.getInteractionNotNull(task.getNodeId());
-                String formType = (interaction == null ? null : interaction.getType());
                 if (executorsToGetTasksByMembership.contains(taskExecutor)) {
-                    // task acquired by membership rules
-                    result.add(taskObjectFactory.create(task, actor, formType));
+                    // task is acquired by membership rules
+                    result.add(taskObjectFactory.create(task, actor, false));
                     continue;
                 }
                 if (processDefinition.ignoreSubsitutionRulesForTask(task)) {
                     continue;
                 }
                 ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
-                // Task (may be) acquired by substitution rules
+                // Task may be acquired by substitution rules
                 if (taskExecutor instanceof Actor) {
                     if (isTaskAcceptableBySubstitutionRules(executionContext, task, (Actor) taskExecutor, actor)) {
-                        result.add(taskObjectFactory.create(task, (Actor) taskExecutor, formType));
+                        result.add(taskObjectFactory.create(task, (Actor) taskExecutor, true));
                     }
                 } else {
                     for (Actor groupActor : executorDAO.getGroupActors((Group) taskExecutor)) {
                         if (isTaskAcceptableBySubstitutionRules(executionContext, task, groupActor, actor)) {
-                            result.add(taskObjectFactory.create(task, groupActor, formType));
+                            result.add(taskObjectFactory.create(task, groupActor, true));
                             break;
                         }
                     }

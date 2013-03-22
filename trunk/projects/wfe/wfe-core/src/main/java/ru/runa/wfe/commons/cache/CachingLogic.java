@@ -115,7 +115,7 @@ public class CachingLogic {
         // TODO move qualification of change listeners to
         // ChangeListener.getInterestedEntityClasses ?
         if (entity instanceof Task || entity instanceof Swimlane || entity instanceof Substitution || entity instanceof SubstitutionCriteria
-                || entity instanceof ExecutorGroupMembership) {
+                || entity instanceof ExecutorGroupMembership || entity instanceof Actor) {
             onWriteTransaction(taskListeners, entity, change, currentState, previousState, propertyNames, types);
         }
         if (entity instanceof Substitution || entity instanceof Actor) {

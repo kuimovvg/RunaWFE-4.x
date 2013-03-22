@@ -44,6 +44,7 @@ import ru.runa.wfe.user.TemporaryGroup;
 import ru.runa.wfe.user.cache.ExecutorCacheCtrl;
 import ru.runa.wfe.user.cache.ExecutorCacheImpl;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskChangeListener, TaskCache {
@@ -100,6 +101,22 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
         if (object instanceof ExecutorGroupMembership) {
             ExecutorGroupMembership membership = (ExecutorGroupMembership) object;
             clearCacheForActors(membership.getExecutor(), change);
+            return;
+        }
+        if (object instanceof Actor) {
+            if (change == Change.UPDATE) {
+                int activePropertyIndex = 0;
+                for (int i = 0; i < propertyNames.length; i++) {
+                    if (propertyNames[i].equals("active")) {
+                        activePropertyIndex = i;
+                        break;
+                    }
+                }
+                if (previousState != null && !Objects.equal(previousState[activePropertyIndex], currentState[activePropertyIndex])) {
+                    // TODO clear cache for affected actors only
+                    uninitialize(object, change);
+                }
+            }
             return;
         }
         if (object instanceof Substitution) {
