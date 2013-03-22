@@ -126,6 +126,9 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
             if (task.isEscalated()) {
                 return "escalatedTask";
             }
+            if (task.isAcquiredBySubstitution()) {
+                return "substitutionTask";
+            }
             if (deadlineDate.before(currentDate)) {
                 return "deadlineExpired";
             }

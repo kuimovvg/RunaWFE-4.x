@@ -113,6 +113,9 @@ tr.deadlineExists td {
 tr.escalatedTask td {
   background-color: #ef8ff8;
 }
+tr.substitutionTask td {
+  background-color: #ffff9d;
+}
 
 a.hidableblock {
 	font-family: Arial, Helvetica, sans-serif;
