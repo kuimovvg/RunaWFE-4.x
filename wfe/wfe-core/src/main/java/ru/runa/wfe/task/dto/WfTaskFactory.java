@@ -53,7 +53,7 @@ public class WfTaskFactory {
         this.taskAlmostDeadline = taskAlmostDeadline;
     }
 
-    public WfTask create(Task task, Actor targetActor, String formType) {
+    public WfTask create(Task task, Actor targetActor, boolean acquiredBySubstitution) {
         Process process = task.getProcess();
         Deployment deployment = process.getDeployment();
         boolean groupAssigned = task.getExecutor() instanceof Group;
@@ -74,7 +74,7 @@ public class WfTaskFactory {
         } catch (Exception e) {
             log.error("escalation", e);
         }
-        return new WfTask(task, process.getId(), deployment, getDeadlineWarningDate(task), groupAssigned, escalated);
+        return new WfTask(task, process.getId(), deployment, getDeadlineWarningDate(task), groupAssigned, escalated, acquiredBySubstitution);
     }
 
     public Date getDeadlineWarningDate(Task task) {
