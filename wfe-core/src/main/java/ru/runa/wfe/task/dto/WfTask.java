@@ -55,11 +55,13 @@ public final class WfTask implements Serializable {
     private boolean escalated;
     private boolean groupAssigned;
     private boolean firstOpen;
+    private boolean acquiredBySubstitution;
 
     public WfTask() {
     }
 
-    public WfTask(Task task, Long processId, Deployment deployment, Date deadlineWarningDate, boolean groupAssigned, boolean escalated) {
+    public WfTask(Task task, Long processId, Deployment deployment, Date deadlineWarningDate, boolean groupAssigned, boolean escalated,
+            boolean acquiredBySubstitution) {
         id = task.getId();
         name = task.getName();
         description = task.getDescription();
@@ -73,6 +75,7 @@ public final class WfTask implements Serializable {
         this.deadlineWarningDate = deadlineWarningDate;
         this.groupAssigned = groupAssigned;
         this.escalated = escalated;
+        this.acquiredBySubstitution = acquiredBySubstitution;
         firstOpen = task.isFirstOpen();
     }
 
@@ -130,6 +133,10 @@ public final class WfTask implements Serializable {
 
     public boolean isGroupAssigned() {
         return groupAssigned;
+    }
+
+    public boolean isAcquiredBySubstitution() {
+        return acquiredBySubstitution;
     }
 
     @Override
