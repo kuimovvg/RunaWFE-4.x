@@ -34,9 +34,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.job.CreateTimerAction;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -121,12 +123,24 @@ public abstract class GraphElement implements Serializable {
     public Action getAction(String id) {
         for (Entry<String, Event> entry : getEvents().entrySet()) {
             for (Action action : entry.getValue().getActions()) {
-                if (id.equals(action.getName())) {
+                if (id.equals(action.getNodeId())) {
                     return action;
                 }
             }
         }
         return null;
+    }
+
+    public List<CreateTimerAction> getTimerActions() {
+        List<CreateTimerAction> list = Lists.newArrayList();
+        for (Event event : getEvents().values()) {
+            for (Action action : event.getActions()) {
+                if (action instanceof CreateTimerAction) {
+                    list.add((CreateTimerAction) action);
+                }
+            }
+        }
+        return list;
     }
 
     public void fireEvent(ExecutionContext executionContext, String eventType) {

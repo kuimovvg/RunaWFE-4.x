@@ -261,7 +261,7 @@ public class Process extends IdentifiableBase {
             log.debug(this + " already ended");
             return;
         }
-        log.info("Cancelling " + this + " by " + canceller);
+        log.info("Ending " + this + " by " + canceller);
         ProcessExecutionErrors.removeProcessErrors(id);
         // end the main path of execution
         rootToken.end(executionContext, canceller);
