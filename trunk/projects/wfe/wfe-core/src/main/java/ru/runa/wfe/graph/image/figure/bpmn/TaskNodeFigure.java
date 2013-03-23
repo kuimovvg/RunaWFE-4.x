@@ -64,23 +64,27 @@ public class TaskNodeFigure extends AbstractFigure {
         } else {
             graphics.drawRoundRect(rect.x, rect.y, rect.width, rect.height, 20, 20);
         }
-        if (withTimer && !minimized && !graphiti) {
-            // Clean area for timer
-            Color orig = graphics.getColor();
-            graphics.setColor(DrawProperties.getBackgroundColor());
-            graphics.fillArc(coords[0], coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE, DrawProperties.GRID_SIZE * 3,
-                    DrawProperties.GRID_SIZE * 3, 95, 260);
-            graphics.fillOval(coords[0] + DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 5 * DrawProperties.GRID_SIZE / 2,
-                    DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2);
-            graphics.setColor(orig);
+        if (withTimer && !minimized) {
+            if (graphiti) {
+                drawImage(graphics, "boundary_timer.png", coords[0] + 1, coords[1] + coords[3] - 2 * DrawProperties.GRID_SIZE, true);
+            } else {
+                // Clean area for timer
+                Color orig = graphics.getColor();
+                graphics.setColor(DrawProperties.getBackgroundColor());
+                graphics.fillArc(coords[0], coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE, DrawProperties.GRID_SIZE * 3,
+                        DrawProperties.GRID_SIZE * 3, 95, 260);
+                graphics.fillOval(coords[0] + DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 5 * DrawProperties.GRID_SIZE / 2,
+                        DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2);
+                graphics.setColor(orig);
 
-            // Draw timer
-            graphics.drawOval(coords[0] + DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 5 * DrawProperties.GRID_SIZE / 2,
-                    DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2);
-            graphics.drawLine(coords[0] + 3 * DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE / 2, coords[0] + 3
-                    * DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE / 2 + 5);
-            graphics.drawLine(coords[0] + 3 * DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE / 2, coords[0] + 3
-                    * DrawProperties.GRID_SIZE / 2 + 5, coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE / 2 - 5);
+                // Draw timer
+                graphics.drawOval(coords[0] + DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 5 * DrawProperties.GRID_SIZE / 2,
+                        DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2);
+                graphics.drawLine(coords[0] + 3 * DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE / 2, coords[0]
+                        + 3 * DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE / 2 + 5);
+                graphics.drawLine(coords[0] + 3 * DrawProperties.GRID_SIZE / 2, coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE / 2, coords[0]
+                        + 3 * DrawProperties.GRID_SIZE / 2 + 5, coords[1] + coords[3] - 3 * DrawProperties.GRID_SIZE / 2 - 5);
+            }
         }
         if (!minimized && !graphiti) {
             drawActions(graphics);

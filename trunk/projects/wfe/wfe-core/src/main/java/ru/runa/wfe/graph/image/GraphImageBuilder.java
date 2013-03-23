@@ -239,8 +239,13 @@ public class GraphImageBuilder {
         nodeModel.setType(node.getNodeType());
         // nodeModel contains only id
         nodeModel.setName(node.getName());
-        CreateTimerAction createTimerAction = getTimerActionIfExists(node);
-        boolean hasTimer = (createTimerAction != null && !Timer.ESCALATION_NAME.equals(createTimerAction.getName()));
+        boolean hasTimer = false;
+        for (CreateTimerAction createTimerAction : node.getTimerActions()) {
+            if (!Timer.ESCALATION_NAME.equals(createTimerAction.getName())) {
+                hasTimer = true;
+                break;
+            }
+        }
         nodeModel.setWithTimer(hasTimer);
         if (node instanceof Synchronizable) {
             nodeModel.setAsync(((Synchronizable) node).isAsync());
@@ -254,24 +259,13 @@ public class GraphImageBuilder {
         }
     }
 
-    private static CreateTimerAction getTimerActionIfExists(Node node) {
-        for (Event event : node.getEvents().values()) {
-            for (Action action : event.getActions()) {
-                if (action instanceof CreateTimerAction) {
-                    return (CreateTimerAction) action;
-                }
-            }
-        }
-        return null;
-    }
-
     private static String getTimerInfo(Node node) {
         try {
-            CreateTimerAction action = getTimerActionIfExists(node);
-            if (action == null) {
+            List<CreateTimerAction> actions = node.getTimerActions();
+            if (actions.size() == 0) {
                 return "No timer";
             }
-            return action.getDueDate();
+            return actions.get(0).getDueDate();
         } catch (Exception e) {
             return e.getClass().getName();
         }

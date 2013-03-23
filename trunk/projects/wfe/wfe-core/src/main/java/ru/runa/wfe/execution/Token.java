@@ -52,7 +52,6 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
-import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Node;
@@ -75,7 +74,7 @@ import com.google.common.collect.Lists;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Token implements Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(ProcessLogs.class);
+    private static final Log log = LogFactory.getLog(Token.class);
 
     private Long id;
     private Long version;
@@ -284,7 +283,7 @@ public class Token implements Serializable {
             log.debug(this + " already ended");
             return;
         }
-        log.info("Cancelling " + this + " by " + canceller);
+        log.info("Ending " + this + " by " + canceller);
         // ended tokens cannot reactivate parents
         // ableToReactivateParent = false;
         // set the end date
