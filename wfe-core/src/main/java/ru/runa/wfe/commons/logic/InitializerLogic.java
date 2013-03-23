@@ -41,7 +41,6 @@ import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
 import ru.runa.wfe.commons.dbpatch.impl.JbpmRefactoringPatch;
-import ru.runa.wfe.commons.dbpatch.impl.PerformancePatch;
 import ru.runa.wfe.commons.dbpatch.impl.TransitionLogPatch;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.dao.PermissionDAO;
@@ -92,7 +91,7 @@ public class InitializerLogic {
         dbPatches.add(AddHierarchyProcess.class);
         dbPatches.add(JbpmRefactoringPatch.class); // 22
         dbPatches.add(TransitionLogPatch.class);
-        dbPatches.add(PerformancePatch.class);
+        // dbPatches.add(PerformancePatch.class); not yet finished
     };
 
     @Autowired
