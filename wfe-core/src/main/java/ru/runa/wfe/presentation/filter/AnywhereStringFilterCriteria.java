@@ -17,13 +17,12 @@
  */
 package ru.runa.wfe.presentation.filter;
 
-
 public class AnywhereStringFilterCriteria extends StringFilterCriteria {
     private static final long serialVersionUID = -1849845246809052465L;
 
     @Override
     public String getFilterTemplate(int position) {
-        return "*" + super.getFilterTemplate(position) + "*";
+        return ANY_SYMBOLS + super.getFilterTemplate(position) + ANY_SYMBOLS;
     }
 
     // @Override
