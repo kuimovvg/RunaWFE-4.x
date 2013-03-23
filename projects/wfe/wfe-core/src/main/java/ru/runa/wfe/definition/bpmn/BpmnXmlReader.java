@@ -238,7 +238,10 @@ public class BpmnXmlReader {
             readTask(processDefinition, element, taskNode);
             List<Element> boundaryEventElements = element.getParent().elements(BOUNDARY_EVENT);
             for (Element boundaryEventElement : boundaryEventElements) {
-                readTimer(processDefinition, boundaryEventElement, taskNode);
+                String parentNodeId = boundaryEventElement.attributeValue(ATTACHED_TO_REF);
+                if (Objects.equal(parentNodeId, taskNode.getNodeId())) {
+                    readTimer(processDefinition, boundaryEventElement, taskNode);
+                }
             }
         }
         if (node instanceof VariableContainerNode) {
@@ -255,10 +258,7 @@ public class BpmnXmlReader {
         }
         if (node instanceof WaitState) {
             WaitState waitState = (WaitState) node;
-            List<Element> intermediateEventElements = element.getParent().elements(INTERMEDIATE_EVENT);
-            for (Element intermediateEventElement : intermediateEventElements) {
-                readTimer(processDefinition, intermediateEventElement, waitState);
-            }
+            readTimer(processDefinition, element, waitState);
         }
         if (node instanceof ServiceTask) {
             ServiceTask serviceTask = (ServiceTask) node;

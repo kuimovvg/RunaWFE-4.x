@@ -165,8 +165,12 @@ public abstract class AbstractFigure {
     }
 
     protected void drawImage(Graphics2D graphics, String name, double x, double y) {
+        drawImage(graphics, name, x, y, !DrawProperties.useEdgingOnly());
+    }
+
+    protected void drawImage(Graphics2D graphics, String name, double x, double y, boolean condition) {
         try {
-            if (!DrawProperties.useEdgingOnly()) {
+            if (condition) {
                 BufferedImage image = ImageIO.read(ClassLoaderUtil.getAsStreamNotNull(name, getClass()));
                 graphics.drawRenderedImage(image, AffineTransform.getTranslateInstance(x, y));
             }
