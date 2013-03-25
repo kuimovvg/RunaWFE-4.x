@@ -42,4 +42,13 @@ public class DoubleVariable extends Variable<Double> {
     public void setStorableValue(Double object) {
         this.object = object;
     }
+
+    @Override
+    public boolean supports(Object value) {
+        if (super.supports(value)) {
+            return true;
+        }
+        return value instanceof Double;
+    }
+
 }

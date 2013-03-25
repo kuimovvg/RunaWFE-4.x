@@ -47,6 +47,14 @@ public class DateVariable extends Variable<Date> {
     }
 
     @Override
+    public boolean supports(Object value) {
+        if (super.supports(value)) {
+            return true;
+        }
+        return value instanceof Date;
+    }
+
+    @Override
     public String toString(Object value) {
         return CalendarUtil.formatDateTime((Date) value);
     }

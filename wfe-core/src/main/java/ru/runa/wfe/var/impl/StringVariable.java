@@ -41,4 +41,12 @@ public class StringVariable extends Variable<String> {
     protected void setStorableValue(String object) {
     }
 
+    @Override
+    public boolean supports(Object value) {
+        if (super.supports(value)) {
+            return true;
+        }
+        return value instanceof String && ((String) value).length() <= MAX_STRING_SIZE;
+    }
+
 }
