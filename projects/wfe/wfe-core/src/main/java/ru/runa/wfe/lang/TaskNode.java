@@ -74,7 +74,7 @@ public class TaskNode extends InteractionNode implements Synchronizable {
     public void leave(ExecutionContext executionContext, Transition transition) {
         if (!async) {
             for (Task task : executionContext.getProcess().getTasks()) {
-                if (task.isActive() && Objects.equal(task.getNodeId(), getNodeId())) {
+                if (task.isActive() && Objects.equal(task.getNodeId(), getNodeId()) && Objects.equal(task.getToken(), executionContext.getToken())) {
                     // if this is a non-finished task and all those tasks should
                     // be finished
                     task.end(executionContext, transition, false);
