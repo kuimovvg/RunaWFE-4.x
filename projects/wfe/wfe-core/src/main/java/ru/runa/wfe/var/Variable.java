@@ -167,7 +167,7 @@ public abstract class Variable<T extends Object> {
         if (value == null) {
             return true;
         }
-        return converter == null || converter.supports(value);
+        return converter != null && converter.supports(value);
     }
 
     public void setValue(ExecutionContext executionContext, Object newValue) {
