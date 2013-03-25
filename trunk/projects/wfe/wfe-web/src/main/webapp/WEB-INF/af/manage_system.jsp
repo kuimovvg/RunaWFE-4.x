@@ -8,8 +8,8 @@
 <tiles:put name="head" type="string">
 	<script>
 	var storageVisible = false;
-	var bottaskErrorsVisible = false;
-	var processErrorsVisible = false;
+	var bottaskErrorsVisible = true;
+	var processErrorsVisible = true;
 	$(document).ready(function() {
 		$("#storageButton").click(function() {
 			if (storageVisible) {
@@ -114,7 +114,7 @@
 				</tr>
 			</table>
 		</div>
-		<div id="storageContentDiv" style="display: none;">
+		<div id="storageContentDiv">
 			<wf:viewAdminkitScripts />
 		</div>
 	</div>
@@ -124,21 +124,21 @@
 <tr><td class='box'>
 	<div>
 		<a id="bottaskErrorsButton" href="javascript:void(0)" class="link">
-			<img id="bottaskErrorsImg" class="hidableblock" src="/wfe/images/view_setup_hidden.gif">
+			<img id="bottaskErrorsImg" class="hidableblock" src="/wfe/images/view_setup_visible.gif">
 			&nbsp;<bean:message key="errors.bottask" />
 		</a>
 	</div>
-	<div id="bottaskErrorsContentDiv" style="display: none;">
+	<div id="bottaskErrorsContentDiv">
 		<wf:viewBotTaskErrors />
 	</div>
 	<br />
 	<div>
 		<a id="processErrorsButton" href="javascript:void(0)" class="link">
-			<img id="processErrorsImg" class="hidableblock" src="/wfe/images/view_setup_hidden.gif">
+			<img id="processErrorsImg" class="hidableblock" src="/wfe/images/view_setup_visible.gif">
 			&nbsp;<bean:message key="errors.processes" />
 		</a>
 	</div>
-	<div id="processErrorsContentDiv" style="display: none;">
+	<div id="processErrorsContentDiv">
 		<wf:viewProcessErrors />
 	</div>
 </td></tr></table>

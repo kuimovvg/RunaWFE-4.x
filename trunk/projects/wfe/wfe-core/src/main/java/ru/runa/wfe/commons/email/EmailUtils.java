@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.MimetypesFileTypeMap;
+import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Message.RecipientType;
 import javax.mail.Multipart;
@@ -122,7 +123,16 @@ public class EmailUtils {
             transport.connect();
             msg.saveChanges();
             transport.sendMessage(msg, msg.getAllRecipients());
-            log.info("Message sent to " + Arrays.asList(msg.getRecipients(RecipientType.TO)));
+            String debugMessage = "Message sent";
+            Address[] toAddresses = msg.getRecipients(RecipientType.TO);
+            if (toAddresses != null) {
+                debugMessage += " To:" + Arrays.asList(toAddresses);
+            }
+            Address[] ccAddresses = msg.getRecipients(RecipientType.CC);
+            if (ccAddresses != null) {
+                debugMessage += " Cc:" + Arrays.asList(ccAddresses);
+            }
+            log.info(debugMessage);
         } finally {
             transport.close();
         }
