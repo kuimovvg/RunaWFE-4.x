@@ -187,7 +187,8 @@ public class WorkflowBot implements Runnable {
             taskHandler = taskHandlers.get(botTaskName);
             if (taskHandler == null) {
                 log.warn("No handler for bot task " + botTaskName + ", " + bot);
-                ProcessExecutionErrors.addBotTaskNotFoundProcessError(task, bot, botTaskName);
+                // ProcessExecutionErrors.addBotTaskNotFoundProcessError(task,
+                // bot, botTaskName);
                 return;
             }
 
