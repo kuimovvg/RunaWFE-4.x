@@ -101,7 +101,7 @@ public abstract class Variable<T extends Object> {
     }
 
     @Column(name = "NAME")
-    @Index(name = "IX_VARIABLE_NAME")
+    // @Index(name = "IX_VARIABLE_NAME")
     public String getName() {
         return name;
     }
@@ -133,7 +133,7 @@ public abstract class Variable<T extends Object> {
     }
 
     @Column(name = "STRINGVALUE", length = MAX_STRING_SIZE)
-    @Index(name = "IX_VARIABLE_VALUE")
+    // @Index(name = "IX_VARIABLE_VALUE")
     public String getStringValue() {
         return stringValue;
     }
