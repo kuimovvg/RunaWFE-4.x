@@ -106,7 +106,7 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
         this.processId = processId;
     }
 
-    @Column(name = "TOKEN_ID", nullable = false)
+    @Column(name = "TOKEN_ID")
     public Long getTokenId() {
         return tokenId;
     }
