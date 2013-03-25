@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import ru.runa.wfe.bot.Bot;
-import ru.runa.wfe.task.dto.WfTask;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -33,18 +32,6 @@ public class ProcessExecutionErrors {
 
     public static synchronized void removeBotTaskConfigurationError(Bot bot, String botTaskName) {
         botTaskConfigurationErrors.remove(new BotTaskIdentifier(bot, botTaskName));
-    }
-
-    // TODO unused in AsyncWorkflowBot
-    public static synchronized void addBotTaskNotFoundProcessError(WfTask task, Bot bot, String botTaskName) {
-        Throwable ce = botTaskConfigurationErrors.get(new BotTaskIdentifier(bot, botTaskName));
-        Exception throwable;
-        if (ce != null) {
-            throwable = new ProcessExecutionException(ProcessExecutionException.BOT_TASK_CONFIGURATION_ERROR, botTaskName, ce.getMessage());
-        } else {
-            throwable = new ProcessExecutionException(ProcessExecutionException.BOT_TASK_MISSED, botTaskName, bot.getUsername());
-        }
-        addProcessError(task.getProcessId(), task.getName(), throwable);
     }
 
     public static synchronized void addProcessError(Long processId, String taskName, Throwable throwable) {
