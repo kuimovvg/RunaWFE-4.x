@@ -16,14 +16,16 @@ import ru.runa.bp.AlfHandler;
 import ru.runa.bp.AlfHandlerData;
 import ru.runa.wfe.extension.handler.ParamDef;
 
+import com.google.common.base.Strings;
+
 public class AlfGetObjectPropertiesByUuid extends AlfHandler {
     private static final String DEFAULT_FORMAT_CLASS = String.class.getName();
 
     @Override
     protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
         Map<String, ParamDef> outputParams = alfHandlerData.getOutputParams();
-        String uuid = alfHandlerData.getInputParam(String.class, "uuid", null);
-        if (uuid != null) {
+        String uuid = alfHandlerData.getInputParam(String.class, "uuid", "").trim();
+        if (!Strings.isNullOrEmpty(uuid)) {
             Reference ref = session.getReference(uuid, null);
             NamedValue[] props = session.loadObjectProperties(new Predicate(new Reference[] { ref }, ref.getStore(), null));
             for (NamedValue namedValue : props) {
@@ -36,6 +38,8 @@ public class AlfGetObjectPropertiesByUuid extends AlfHandler {
                     alfHandlerData.setOutputVariable(outputVarName, value);
                 }
             }
+        } else {
+            log.warn("Ignored to load properties by empty uuid '" + uuid + "'");
         }
     }
 
