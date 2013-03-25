@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class ExecutorNameValue implements Serializable {
     private static final long serialVersionUID = 1L;
+    public static final String TIMER = "__TIMER__";
 
     private String name;
 

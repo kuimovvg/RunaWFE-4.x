@@ -261,6 +261,7 @@ public class Task implements Assignable {
         // fire the task end event
         TaskDefinition taskDefinition = executionContext.getProcessDefinition().getTaskNotNull(nodeId);
         taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_END);
+        // TODO audit: completion by timer
         if (getExecutor() != null) {
             executionContext.addLog(new TaskEndLog(this));
         }
