@@ -62,8 +62,16 @@ public class DiagramModel {
     public int getWidth() {
         return width;
     }
+    
+    public void setHeight(int height) {
+		this.height = height;
+	}
 
-    public boolean isShowActions() {
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public boolean isShowActions() {
         return showActions;
     }
 

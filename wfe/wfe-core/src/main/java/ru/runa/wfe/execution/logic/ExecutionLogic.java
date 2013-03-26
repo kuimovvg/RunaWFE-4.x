@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.definition.DefinitionPermission;
@@ -36,12 +37,14 @@ import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.dto.WfProcess;
+import ru.runa.wfe.graph.image.GraphHistoryBuilder;
 import ru.runa.wfe.graph.image.GraphImageBuilder;
 import ru.runa.wfe.graph.image.StartedSubprocessesVisitor;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.dto.WfTaskFactory;
@@ -171,18 +174,13 @@ public class ExecutionLogic extends WFCommonLogic {
 
     public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId) throws ProcessDoesNotExistException {
         try {
-            // Process process = processDAO.getInstanceNotNull(processId);
-            // checkPermissionAllowed(user, process, ProcessPermission.READ);
-            // ProcessDefinition processDefinition = getDefinition(process);
-            // Task task = taskDAO.getTaskNotNull(taskId);
-            // Token token = task == null ? null : task.getToken();
-            // while (token != null && token.getProcess().getId() !=
-            // process.getId()) {
-            // token = token.getProcess().getSuperProcessToken();
-            // }
-            // List<ProcessLog> logs = getProcessLogs(user, processId);
-            // GraphConverter converter = new GraphConverter(processDefinition);
-            return null;
+            Process process = processDAO.getNotNull(processId);
+            checkPermissionAllowed(user, process, ProcessPermission.READ);
+            ProcessDefinition processDefinition = getDefinition(process);
+            List<ProcessLog> logs = processLogDAO.getAll(processId);
+            List<Executor> executors = executorDAO.getAllExecutors(BatchPresentationFactory.EXECUTORS.createNonPaged());
+            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, taskObjectFactory, processDefinition, logs);
+            return converter.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -190,22 +188,14 @@ public class ExecutionLogic extends WFCommonLogic {
 
     public List<GraphElementPresentation> getProcessUIHistoryData(User user, Long processId, Long taskId) throws ProcessDoesNotExistException {
         try {
-            // Process process = processDAO.getInstanceNotNull(processId);
-            // checkPermissionAllowed(user, process, ProcessPermission.READ);
-            // ProcessDefinition processDefinition = getDefinition(process);
-            // Task task = taskDAO.getTaskNotNull(taskId);
-            // Token token = task == null ? null : task.getToken();
-            // while (token != null && token.getProcess().getId() !=
-            // process.getId()) {
-            // token = token.getProcess().getSuperProcessToken();
-            // }
-            // List<ProcessLog> logs = getProcessLogs(user, processId);
-            // GraphConverter converter = new GraphConverter(processDefinition);
-            // List<Token> tokens = tmpDAO.getProcessTokens(process.getId());
-            // List<GraphElementPresentation> logElements =
-            // converter.getProcessUIHistoryData(user, process, tokens,
-            // logs);
-            return null;
+        	Process process = processDAO.getNotNull(processId);
+            checkPermissionAllowed(user, process, ProcessPermission.READ);
+            ProcessDefinition processDefinition = getDefinition(process);
+            List<ProcessLog> logs = processLogDAO.getAll(processId);
+            List<Executor> executors = executorDAO.getAllExecutors(BatchPresentationFactory.EXECUTORS.createNonPaged());
+            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, taskObjectFactory, processDefinition, logs);
+            converter.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));            
+            return converter.getLogElements();
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
