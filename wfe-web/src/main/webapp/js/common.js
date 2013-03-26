@@ -1,7 +1,14 @@
 
 $(document).ready(function() {
-	// http://jqueryui.com/tooltip/
-	$(document).tooltip();
+	// http://jqueryui.com/tooltip/	
+	$(document).mousemove(function(event) {
+		$(document).tooltip({ position: {
+			my: "left+3 bottom-3",
+			of: event,
+			collision: "fit"
+		}});
+	});
+	
 	// http://trentrichardson.com/examples/timepicker/
 	$(".inputTime").timepicker({ ampm: false, seconds: false });
 	// http://docs.jquery.com/UI/Datepicker
