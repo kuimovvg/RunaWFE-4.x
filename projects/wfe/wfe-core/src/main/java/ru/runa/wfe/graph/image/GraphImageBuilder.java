@@ -34,20 +34,10 @@ import ru.runa.wfe.graph.image.model.DiagramModel;
 import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.graph.image.model.TransitionModel;
 import ru.runa.wfe.graph.image.util.DrawProperties;
-import ru.runa.wfe.job.CancelTimerAction;
-import ru.runa.wfe.job.CreateTimerAction;
-import ru.runa.wfe.job.Timer;
-import ru.runa.wfe.lang.Action;
-import ru.runa.wfe.lang.Event;
-import ru.runa.wfe.lang.GraphElement;
-import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubProcessState;
-import ru.runa.wfe.lang.Synchronizable;
-import ru.runa.wfe.lang.TaskDefinition;
-import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.dto.WfTaskFactory;
@@ -89,9 +79,9 @@ public class GraphImageBuilder {
         for (Node node : processDefinition.getNodes()) {
             NodeModel nodeModel = diagramModel.getNodeNotNull(node.getNodeId());
             if (diagramModel.isShowActions()) {
-                nodeModel.setActionsCount(getNodeActionsCount(node));
+                nodeModel.setActionsCount(GraphImageHelper.getNodeActionsCount(node));
             }
-            initNodeModel(node, nodeModel);
+            GraphImageHelper.initNodeModel(node, nodeModel);
             allNodes.put(nodeModel.getNodeId(), nodeModel);
             AbstractFigure nodeFigure = factory.createFigure(nodeModel);
             allNodeFigures.put(nodeModel.getNodeId(), nodeFigure);
@@ -111,7 +101,7 @@ public class GraphImageBuilder {
             for (Transition transition : node.getLeavingTransitions()) {
                 TransitionModel transitionModel = nodeModel.getTransition(transition.getName());
                 if (diagramModel.isShowActions()) {
-                    transitionModel.setActionsCount(getTransitionActionsCount(transition));
+                    transitionModel.setActionsCount(GraphImageHelper.getTransitionActionsCount(transition));
                 }
                 AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getNodeId());
                 TransitionFigureBase transitionFigureBase = factory.createTransitionFigure(transitionModel, nodeFigure, figureTo);
@@ -121,7 +111,7 @@ public class GraphImageBuilder {
                     transitionFigureBase.setExclusive(exclusiveNode && leavingTransitionsCount > 1);
                 }
                 if (Transition.TIMEOUT_TRANSITION_NAME.equals(transitionModel.getName())) {
-                    transitionFigureBase.setTimerInfo(getTimerInfo(node));
+                    transitionFigureBase.setTimerInfo(GraphImageHelper.getTimerInfo(node));
                 }
                 nodeFigure.addTransition(transition.getName(), transitionFigureBase);
                 if (!DrawProperties.useEdgingOnly()) {
@@ -202,73 +192,4 @@ public class GraphImageBuilder {
             }
         }
     }
-
-    private static int processActionsInEvent(Event event) {
-        int result = 0;
-        for (Action action : event.getActions()) {
-            if (action instanceof CreateTimerAction || action instanceof CancelTimerAction || Timer.ESCALATION_NAME.equals(action.getName())) {
-                continue;
-            }
-            result++;
-        }
-        return result;
-    }
-
-    private static int getNodeActionsCount(GraphElement node) {
-        int result = 0;
-        for (Event event : node.getEvents().values()) {
-            result += processActionsInEvent(event);
-        }
-        if (node instanceof TaskNode) {
-            for (TaskDefinition taskDefinition : ((TaskNode) node).getTasks()) {
-                result += getNodeActionsCount(taskDefinition);
-            }
-        }
-        return result;
-    }
-
-    private static int getTransitionActionsCount(Transition tr) {
-        Event event = tr.getEvent(Event.EVENTTYPE_TRANSITION);
-        if (event != null) {
-            return event.getActions().size();
-        }
-        return 0;
-    }
-
-    private static void initNodeModel(Node node, NodeModel nodeModel) {
-        nodeModel.setType(node.getNodeType());
-        // nodeModel contains only id
-        nodeModel.setName(node.getName());
-        boolean hasTimer = false;
-        for (CreateTimerAction createTimerAction : node.getTimerActions()) {
-            if (!Timer.ESCALATION_NAME.equals(createTimerAction.getName())) {
-                hasTimer = true;
-                break;
-            }
-        }
-        nodeModel.setWithTimer(hasTimer);
-        if (node instanceof Synchronizable) {
-            nodeModel.setAsync(((Synchronizable) node).isAsync());
-        }
-        TaskDefinition taskDefinition = null;
-        if (node instanceof InteractionNode) {
-            taskDefinition = ((InteractionNode) node).getFirstTaskNotNull();
-        }
-        if (taskDefinition != null && taskDefinition.getSwimlane() != null) {
-            nodeModel.setSwimlane(taskDefinition.getSwimlane().getName());
-        }
-    }
-
-    private static String getTimerInfo(Node node) {
-        try {
-            List<CreateTimerAction> actions = node.getTimerActions();
-            if (actions.size() == 0) {
-                return "No timer";
-            }
-            return actions.get(0).getDueDate();
-        } catch (Exception e) {
-            return e.getClass().getName();
-        }
-    }
-
 }
