@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.service.impl.MessagePostponedException;
+import ru.runa.wfe.validation.ValidationException;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -30,6 +31,7 @@ public class EjbExceptionSupport {
     static {
         warnExceptionClasses.add(AuthenticationException.class);
         warnExceptionClasses.add(AuthorizationException.class);
+        warnExceptionClasses.add(ValidationException.class);
     }
 
     @AroundInvoke
