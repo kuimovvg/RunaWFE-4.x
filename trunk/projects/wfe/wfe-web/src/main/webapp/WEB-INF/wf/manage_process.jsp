@@ -64,6 +64,11 @@ function Reload() {
 	</tr>
 	<tr>
 		<td align="right">
+			<wf:showGraphHistoryLink identifiableId='<%=id %>' href='<%= "/show_graph_history.do?" + parameterName+ "=" + id %>'  />
+		</td>
+	</tr>
+	<tr>
+		<td align="right">
 			<wf:showTasksHistoryLink identifiableId='<%=id %>' href='<%= "/show_tasks_history.do?" + parameterName+ "=" + id %>'  />
 		</td>
 	</tr>

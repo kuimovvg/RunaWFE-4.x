@@ -198,8 +198,16 @@ public class TransitionFigureBase {
             String drawString = Transition.TIMEOUT_TRANSITION_NAME.equals(name) ? timerInfo : name;
             Rectangle2D textBounds = graphics.getFontMetrics().getStringBounds(drawString, graphics);
             int padding = 1;
-            int xStart = (int) (xPoints[0] + xPoints[1] - textBounds.getWidth()) / 2;
-            int yStart = (int) (yPoints[0] + yPoints[1] - textBounds.getHeight()) / 2;
+            int xStart = 0;
+            int yStart = 0;
+            if (figureFrom.getType() == NodeType.Fork) {
+            	xStart = (int) (xPoints[xPoints.length - 2] + xPoints[xPoints.length - 1] - textBounds.getWidth()) / 2;
+                yStart = (int) (yPoints[yPoints.length - 2] + yPoints[yPoints.length - 1] - textBounds.getHeight()) / 2;
+            } else {
+            	xStart = (int) (xPoints[0] + xPoints[1] - textBounds.getWidth()) / 2;
+                yStart = (int) (yPoints[0] + yPoints[1] - textBounds.getHeight()) / 2;
+            }
+            
             Color orig = graphics.getColor();
             graphics.setColor(DrawProperties.getBackgroundColor());
             graphics.fillRect(xStart - 2 * padding, yStart - padding, (int) (textBounds.getWidth() + 1 + 2 * padding),

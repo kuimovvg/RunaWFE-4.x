@@ -52,6 +52,11 @@ public class TaskAssignLog extends TaskLog {
         }
         setSeverity(Severity.INFO);
     }
+    
+    @Transient
+    public String getOldExecutorName() {
+        return getAttribute(ATTR_OLD_VALUE);
+    }
 
     @Override
     @Transient

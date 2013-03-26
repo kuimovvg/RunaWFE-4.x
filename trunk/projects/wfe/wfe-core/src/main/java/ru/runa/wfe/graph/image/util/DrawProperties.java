@@ -98,7 +98,11 @@ public final class DrawProperties {
         return useEdgingMode;
     }
 
-    public static boolean showSwimlaneInBPMN() {
+    public static void setUseEdgingMode(boolean edgingMode) {
+        useEdgingMode = edgingMode;
+    }
+
+	public static boolean showSwimlaneInBPMN() {
         return Boolean.valueOf(getProperty("bpmn.showSwimlane", "true"));
     }
 
