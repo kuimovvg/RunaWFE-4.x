@@ -29,11 +29,11 @@ public class ProcessHierarchyUtils {
         return processIdsHierarchy;
     }
 
-    public static String getRootProcessIdString(String hierarchy) {
+    public static String getParentProcessIdString(String hierarchy) {
         if (hierarchy == null) {
             return null;
         }
         String[] stringIds = hierarchy.split("/");
-        return stringIds[0];
+        return stringIds[stringIds.length - 1];
     }
 }
