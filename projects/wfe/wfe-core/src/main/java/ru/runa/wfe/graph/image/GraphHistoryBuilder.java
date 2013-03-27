@@ -44,7 +44,6 @@ import ru.runa.wfe.graph.image.GraphImage.RenderHits;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.figure.AbstractFigureFactory;
 import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
-import ru.runa.wfe.graph.image.figure.bpmn.BPMNFigureFactory;
 import ru.runa.wfe.graph.image.figure.uml.UMLFigureFactory;
 import ru.runa.wfe.graph.image.model.BendpointModel;
 import ru.runa.wfe.graph.image.model.DiagramModel;
@@ -74,6 +73,7 @@ public class GraphHistoryBuilder {
 	private static final DateFormat transitionDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 	private static final DateFormat nodeDateFormat = new SimpleDateFormat("H:mm:ss");
 	private static final int heightBetweenNode = 40;
+	private static final int heightForkJoinNode = 4;
     private final List<Executor> executors;
 	private final ProcessDefinition processDefinition;
     private final Map<String, NodeModel> allNodes = Maps.newHashMap();
@@ -104,14 +104,9 @@ public class GraphHistoryBuilder {
         	}
         }
         
-        this.processLogs.addAll(processLogs);
-        
-        this.diagramModel = DiagramModel.load(processDefinition);        
-        if (diagramModel.isUmlNotation()) {
-            this.factory = new UMLFigureFactory();
-        } else {
-            this.factory = new BPMNFigureFactory(diagramModel.isGraphiti());
-        }
+        this.processLogs.addAll(processLogs);        
+        this.diagramModel = DiagramModel.load(processDefinition);
+        this.factory = new UMLFigureFactory();
     }
 
     public byte[] createDiagram(Process process, List<Transition> passedTransitions) throws Exception {
@@ -158,12 +153,7 @@ public class GraphHistoryBuilder {
             	            Preconditions.checkNotNull(nodeModel, "Node model not found by id " + nodeId);
             	            
         					AbstractFigure nodeFigure = allNodeFigures.get(correctNodeId);
-        					int leavingTransitionsCount = node.getLeavingTransitions().size();
-            	            if (node.hasLeavingTransition(Transition.TIMEOUT_TRANSITION_NAME)) {
-            	                leavingTransitionsCount--;
-            	            }
-            	            for (Transition transition : node.getLeavingTransitions()) {
-            	            	
+            	            for (Transition transition : node.getLeavingTransitions()) {            	            	
             	            	if(nodeModel.getType() == NodeType.Decision) {
             	            		Transition desicionTransition = findTransitionDesicionByLog(log, nodeId);
             	            		if(desicionTransition != null && !desicionTransition.equals(transition)) {
@@ -196,15 +186,11 @@ public class GraphHistoryBuilder {
             	                	if(figureTo.getType() == NodeType.Join) {
             	                		BendpointModel bendpointModel = new BendpointModel();
             	                		bendpointModel.setX(nodeModel.getX() + nodeModel.getWidth()/2);
-            	                        bendpointModel.setY(figureTo.getCoords()[1] + figureTo.getCoords()[3]/2 - 1);
+            	                        bendpointModel.setY(figureTo.getCoords()[1]);
             	                        transitionModel.addBendpoint(bendpointModel);
             	                	}
             	                	TransitionFigureBase transitionFigureBase = factory.createTransitionFigure(transitionModel, nodeFigure, figureTo);
                 	                transitionFigureBase.init(transitionModel, nodeFigure, figureTo);
-                	                if (!diagramModel.isUmlNotation()) {
-                	                    boolean exclusiveNode = (nodeModel.getType() != NodeType.Fork && nodeModel.getType() != NodeType.Join);
-                	                    transitionFigureBase.setExclusive(exclusiveNode && leavingTransitionsCount > 1);
-                	                }
                 	                if (Transition.TIMEOUT_TRANSITION_NAME.equals(transitionModel.getName())) {
                 	                    transitionFigureBase.setTimerInfo(GraphImageHelper.getTimerInfo(node));
                 	                }
@@ -404,9 +390,8 @@ public class GraphHistoryBuilder {
                 			List<String> nodes = getNextNodesInGraph(log.getId(), nodeId);
                 			forkNodes.put(rootNodeId, nodes);
                 			
-                			if(diagramModel.isUmlNotation()) {
-                				nodeModel.setWidth(width);
-                			}
+                			nodeModel.setWidth(width);
+                			nodeModel.setHeight(heightForkJoinNode);
                 		}
                 		
                 		if(NodeType.Join.toString().equals(log.getNodeType())) {
@@ -414,9 +399,9 @@ public class GraphHistoryBuilder {
                 				List<String> nodes = forkNodes.get(forkRootNodeId);
                 				if(nodes != null && nodes.contains(rootNodeId)) {
                 					x = widthTokens.get(forkRootNodeId)/2;
-                					if(diagramModel.isUmlNotation()) {
-                        				nodeModel.setWidth(widthTokens.get(forkRootNodeId));
-                        			}
+
+                					nodeModel.setWidth(widthTokens.get(forkRootNodeId));
+                					nodeModel.setHeight(heightForkJoinNode);
                 				}
                 			}
                 			
