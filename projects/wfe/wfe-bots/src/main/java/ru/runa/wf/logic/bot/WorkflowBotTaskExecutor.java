@@ -17,24 +17,20 @@
  */
 package ru.runa.wf.logic.bot;
 
+import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
+import ru.runa.wfe.commons.CalendarInterval;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.extension.TaskHandler;
-import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.client.DelegateProcessVariableProvider;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.TaskAlreadyCompletedException;
@@ -44,7 +40,6 @@ import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
 
 /**
  * Execute task handlers for particular bot.
@@ -55,123 +50,78 @@ import com.google.common.collect.Maps;
  * @since 4.0
  */
 public class WorkflowBotTaskExecutor implements Runnable {
-    private final Log log = LogFactory.getLog(WorkflowBotTaskExecutor.class);
-
-    /**
-     * This time completed tasks stay in existingBots (prevent tasks double
-     * execution)
-     */
-    private final long completedTasksHoldPeriod = 10000;
+    private static final Log log = LogFactory.getLog(WorkflowBotTaskExecutor.class);
     /**
      * first wait is 30 sec. Next wait is 2*wait, but no more
      * failedTasksMaxDelayPeriod
      */
-    private final long failedTasksDelayPeriod = 30000;
+    private final static int FAILED_EXECUTION_INITIAL_DELAY_SECONDS = 30;
     /**
-     * 4*32 min
+     * 2 hours
      */
-    private final long failedTasksMaxDelayPeriod = 4 * 1920000;
+    private final static int FAILED_EXECUTION_MAX_DELAY_SECONDS = 7200;
 
-    private enum BotExecutionStatus {
-        scheduled, completed, failed
-    };
-
-    private BotExecutionStatus botStatus = BotExecutionStatus.scheduled;
-
-    private final Map<String, BotTask> botTasks = Maps.newHashMap();
-    private final User user;
-    private final Bot bot;
+    private final WorkflowBotExecutor botExecutor;
     private final WfTask task;
-    private final WorkflowBotTaskExecutor parent;
-
-    private final Set<WorkflowBotTaskExecutor> existingBots;
-    // This need for thread execution stuck detection and stuck thread
-    // termination
-    private long startTime = -1;
-    private long resetTime = -1;
+    private WorkflowBotTaskExecutionStatus executionStatus = WorkflowBotTaskExecutionStatus.SCHEDULED;
+    private Calendar started = Calendar.getInstance();
+    /**
+     * Next wait is 2*wait, but no more FAILED_EXECUTION_MAX_DELAY_SECONDS
+     */
+    private int failedDelaySeconds = FAILED_EXECUTION_INITIAL_DELAY_SECONDS;
     private Thread executionThread = null;
-    private boolean taskInterrupting = false;
+    private boolean threadInterrupting = false;
 
-    public WorkflowBotTaskExecutor(User user, Bot bot, List<BotTask> tasks) {
-        this.user = user;
-        task = null;
-        parent = null;
-        this.bot = bot;
-        existingBots = new HashSet<WorkflowBotTaskExecutor>();
-        for (BotTask botTask : tasks) {
-            botTasks.put(botTask.getName(), botTask);
-        }
-    }
-
-    private WorkflowBotTaskExecutor(WorkflowBotTaskExecutor parent, WfTask task) {
-        user = parent.user;
-        botTasks.putAll(parent.botTasks);
-        bot = parent.bot;
+    public WorkflowBotTaskExecutor(WorkflowBotExecutor botExecutor, WfTask task) {
+        this.botExecutor = botExecutor;
         this.task = task;
-        this.parent = parent;
-        existingBots = null;
     }
 
-    public WorkflowBotTaskExecutor createTask(WfTask task) {
-        if (parent != null || this.task != null) {
-            throw new InternalApplicationException("AsyncWorkflowBot task can be created only by template");
+    public WorkflowBotTaskExecutionStatus getExecutionStatus() {
+        return executionStatus;
+    }
+
+    public void setExecutionStatus(WorkflowBotTaskExecutionStatus executionStatus) {
+        this.executionStatus = executionStatus;
+    }
+
+    public WfTask getTask() {
+        return task;
+    }
+
+    public boolean interruptExecution() {
+        if (executionThread == null) {
+            return false;
         }
-        WorkflowBotTaskExecutor result = new WorkflowBotTaskExecutor(this, task);
-        if (existingBots.contains(result)) {
-            for (WorkflowBotTaskExecutor bot : existingBots) {
-                if (bot.equals(result)) {
-                    if (bot.botStatus != BotExecutionStatus.failed) {
-                        throw new InternalApplicationException("Incorrect AsyncWorkflowBot usage - only failed tasks may be recreated.");
-                    }
-                    result = bot;
-                    break;
-                }
-            }
-            result.botStatus = BotExecutionStatus.scheduled;
+        executionStatus = WorkflowBotTaskExecutionStatus.FAILED;
+        if (!threadInterrupting) {
+            // Try to stop thread soft
+            log.warn(this + " seems to be stuck (not completted at " + getExecutionInSeconds() + " sec). Interrupt signal will be send.");
+            executionThread.interrupt();
+            return false;
         } else {
-            existingBots.add(result);
+            log.error(this + " seems to be stuck (not completted at " + getExecutionInSeconds() + " sec). Will be terminated.");
+            executionThread.stop();
+            return true;
         }
-        return result;
     }
 
-    public Set<WfTask> getNewTasks() {
-        List<WfTask> currentTasks = Delegates.getExecutionService().getTasks(user, BatchPresentationFactory.TASKS.createNonPaged());
-        Set<WfTask> result = new HashSet<WfTask>();
-        Set<WorkflowBotTaskExecutor> failedBotsToRestart = new HashSet<WorkflowBotTaskExecutor>();
-        for (Iterator<WorkflowBotTaskExecutor> botIterator = existingBots.iterator(); botIterator.hasNext();) {
-            WorkflowBotTaskExecutor bot = botIterator.next();
-            if (bot.botStatus == BotExecutionStatus.completed && bot.resetTime < System.currentTimeMillis()) {
-                // Completed bot task hold time is elapsed
-                botIterator.remove();
-            }
-            if (bot.botStatus == BotExecutionStatus.failed && bot.resetTime < System.currentTimeMillis()) {
-                // Search in currentTasks
-                for (WfTask task : currentTasks) {
-                    if (Objects.equal(task.getId(), bot.task.getId())) {
-                        failedBotsToRestart.add(bot);
-                        break;
-                    }
-                }
-            }
-        }
-        for (WfTask task : currentTasks) {
-            if (!existingBots.contains(new WorkflowBotTaskExecutor(this, task)) || failedBotsToRestart.contains(new WorkflowBotTaskExecutor(this, task))) {
-                result.add(task);
-            }
-        }
-        return result;
+    public int getExecutionInSeconds() {
+        return new CalendarInterval(started, Calendar.getInstance()).getLengthInSeconds();
     }
 
-    public Bot getBot() {
-        return bot;
+    public boolean isReadyToAttemptExecuteFailedTask() {
+        return getExecutionStatus() == WorkflowBotTaskExecutionStatus.FAILED && started.before(Calendar.getInstance());
     }
 
     private void doHandle() throws Exception {
         TaskHandler taskHandler = null;
+        User user = botExecutor.getUser();
+        Bot bot = botExecutor.getBot();
         IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
         try {
             String botTaskName = BotTaskConfigurationUtils.getBotTaskName(user, task);
-            BotTask botTask = botTasks.get(botTaskName);
+            BotTask botTask = botExecutor.getBotTasks().get(botTaskName);
             if (botTask == null) {
                 log.error("No handler for bot task " + botTaskName + ", " + bot);
                 throw new ProcessExecutionException(ProcessExecutionException.BOT_TASK_MISSED, botTaskName, bot.getUsername());
@@ -217,7 +167,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
                 try {
                     taskHandler.onRollback(user, variableProvider, task);
                 } catch (Exception e) {
-                    log.error("onRollbacl failed in task handler " + taskHandler, e);
+                    log.error("onRollback failed in task handler " + taskHandler, e);
                 }
             }
             throw Throwables.propagate(th);
@@ -227,62 +177,45 @@ public class WorkflowBotTaskExecutor implements Runnable {
     @Override
     public void run() {
         try {
-            if (task == null) {
-                log.error("AsyncWorkflowBot called without task - something goes wrong.");
-                return;
-            }
-            if (resetTime != -1) { // Save delay period for failed bot
-                long delay = resetTime - startTime;
-                startTime = System.currentTimeMillis();
-                resetTime = startTime + delay;
-            } else {
-                startTime = System.currentTimeMillis();
-            }
+            started = Calendar.getInstance();
             executionThread = Thread.currentThread();
+            executionStatus = WorkflowBotTaskExecutionStatus.STARTED;
             doHandle();
-            botStatus = BotExecutionStatus.completed;
-            resetTime = System.currentTimeMillis() + completedTasksHoldPeriod;
+            executionStatus = WorkflowBotTaskExecutionStatus.COMPLETED;
             return;
         } catch (Throwable e) {
-            log.error("Error execution " + bot + " for task " + task, e);
+            log.error("Error execution " + this, e);
             logBotError(task, e);
-            botStatus = BotExecutionStatus.failed;
+            executionStatus = WorkflowBotTaskExecutionStatus.FAILED;
             // Double delay if exists
-            long newDelay = resetTime == -1 ? failedTasksDelayPeriod : (resetTime - startTime) * 2;
-            if (newDelay > failedTasksMaxDelayPeriod) {
-                newDelay = failedTasksMaxDelayPeriod;
+            failedDelaySeconds *= 2;
+            if (failedDelaySeconds > FAILED_EXECUTION_MAX_DELAY_SECONDS) {
+                failedDelaySeconds = FAILED_EXECUTION_MAX_DELAY_SECONDS;
             }
-            startTime = System.currentTimeMillis();
-            resetTime = startTime + newDelay;
+            log.info("failedDelaySeconds = " + failedDelaySeconds);
+            started.add(Calendar.SECOND, failedDelaySeconds);
         }
         executionThread = null;
         return;
     }
 
-    public long getStartTime() {
-        return startTime;
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(task);
     }
 
-    public Thread getExecutionThread() {
-        return executionThread;
-    }
-
-    public boolean setTaskInerruptStatus(boolean status) {
-        boolean tmp = taskInterrupting;
-        taskInterrupting = status;
-        if (status) {
-            botStatus = BotExecutionStatus.failed;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof WorkflowBotTaskExecutor) {
+            WorkflowBotTaskExecutor wbte = (WorkflowBotTaskExecutor) obj;
+            return Objects.equal(task, wbte.task);
         }
-        return tmp;
+        return false;
     }
 
     @Override
     public String toString() {
-        if (parent == null) {
-            return "Template " + bot;
-        } else {
-            return bot + " with task " + task;
-        }
+        return botExecutor.getBot() + " with task " + task + "; status: " + executionStatus;
     }
 
     private void logBotError(WfTask task, Throwable th) {

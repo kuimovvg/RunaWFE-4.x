@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,8 +36,6 @@ import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.invoker.BotInvoker;
-import ru.runa.wfe.commons.CalendarInterval;
-import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -51,21 +48,15 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
     private final Log log = LogFactory.getLog(WorkflowThreadPoolBotInvoker.class);
     private ScheduledExecutorService executor = null;
     private long configurationVersion = -1;
-    private List<WorkflowBotTaskExecutor> templatedBotTaskExecutors;
+    private List<WorkflowBotExecutor> botExecutors;
     private Future<?> botInvokerInvocation = null;
     private final Map<WorkflowBotTaskExecutor, ScheduledFuture<?>> scheduledTasks = new HashMap<WorkflowBotTaskExecutor, ScheduledFuture<?>>();
 
     private final long STUCK_TIMEOUT_SECONDS = 300;
     private BotStation botStation;
-    private Date lastInvocationDate = null;
 
     @Override
     public synchronized void invokeBots(BotStation botStation) {
-        if (lastInvocationDate != null && new CalendarInterval(lastInvocationDate, new Date()).getLengthInMinutes() < 1) {
-            log.info("bot invocation rejected due to last invocation date = " + CalendarUtil.formatDateTime(lastInvocationDate));
-            return;
-        }
-        lastInvocationDate = new Date();
         this.botStation = botStation;
         checkStuckBots();
         if (botInvokerInvocation != null && !botInvokerInvocation.isDone()) {
@@ -80,54 +71,18 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
         logBotsActivites();
     }
 
-    @Override
-    public void run() {
-        configure();
-        if (executor == null) {
-            log.warn("executor(ScheduledExecutorService) == null");
-            return;
-        }
-        for (WorkflowBotTaskExecutor templatedBotTaskExecutor : templatedBotTaskExecutors) {
-            try {
-                Set<WfTask> tasks = templatedBotTaskExecutor.getNewTasks();
-                for (WfTask task : tasks) {
-                    WorkflowBotTaskExecutor botTaskExecutor = templatedBotTaskExecutor.createTask(task);
-                    if (botTaskExecutor == null) {
-                        log.warn("botTaskExecutor == null");
-                        continue;
-                    }
-                    scheduledTasks.put(botTaskExecutor,
-                            executor.schedule(botTaskExecutor, botTaskExecutor.getBot().getStartTimeout(), TimeUnit.MILLISECONDS));
-                }
-            } catch (AuthenticationException e) {
-                configurationVersion = -1;
-                log.error("BotRunner execution failed. Will recreate botstation settings and bots.", e);
-            } catch (Exception e) {
-                log.error("BotRunner execution failed.", e);
-            }
-        }
-    }
-
     private void checkStuckBots() {
         try {
-            long criticalStartThreadTime = System.currentTimeMillis() - STUCK_TIMEOUT_SECONDS * 1000;
             for (Iterator<Entry<WorkflowBotTaskExecutor, ScheduledFuture<?>>> iter = scheduledTasks.entrySet().iterator(); iter.hasNext();) {
                 Entry<WorkflowBotTaskExecutor, ScheduledFuture<?>> entry = iter.next();
                 if (entry.getValue().isDone()) {
                     iter.remove();
                     continue;
                 }
-                if (entry.getKey().getExecutionThread() != null && entry.getKey().getStartTime() != -1
-                        && entry.getKey().getStartTime() < criticalStartThreadTime) {
-                    if (!entry.getKey().setTaskInerruptStatus(true)) {
-                        // Try to stop thread soft
-                        log.warn(entry.getKey() + " seems to be stuck (not completted at "
-                                + (System.currentTimeMillis() - entry.getKey().getStartTime()) / 1000 + " sec). Interrupt signal will be send.");
-                        entry.getKey().getExecutionThread().interrupt();
-                    } else {
-                        log.error(entry.getKey() + " seems to be stuck (not completted at "
-                                + (System.currentTimeMillis() - entry.getKey().getStartTime()) / 1000 + " sec). Will be terminated.");
-                        entry.getKey().getExecutionThread().stop(); // DIE
+                WorkflowBotTaskExecutor executor = entry.getKey();
+                if (executor.getExecutionStatus() == WorkflowBotTaskExecutionStatus.STARTED
+                        && executor.getExecutionInSeconds() > STUCK_TIMEOUT_SECONDS) {
+                    if (executor.interruptExecution()) {
                         iter.remove();
                     }
                 }
@@ -140,7 +95,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
     private void configure() {
         try {
             if (botStation.getVersion() != configurationVersion) {
-                templatedBotTaskExecutors = Lists.newArrayList();
+                botExecutors = Lists.newArrayList();
                 log.info("Will update bots configuration.");
                 String username = BotStationResources.getSystemUsername();
                 String password = BotStationResources.getSystemPassword();
@@ -151,7 +106,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                         log.info("Configuring " + bot.getUsername());
                         User user = Delegates.getAuthenticationService().authenticateByLoginPassword(bot.getUsername(), bot.getPassword());
                         List<BotTask> tasks = Delegates.getBotService().getBotTasks(user, bot.getId());
-                        templatedBotTaskExecutors.add(new WorkflowBotTaskExecutor(user, bot, tasks));
+                        botExecutors.add(new WorkflowBotExecutor(user, bot, tasks));
                         ProcessExecutionErrors.removeBotTaskConfigurationError(bot, "*");
                     } catch (Exception e) {
                         log.error("Unable to configure bot " + bot);
@@ -164,6 +119,30 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
             }
         } catch (Throwable th) {
             log.error("Botstation configuration error. ", th);
+        }
+    }
+
+    @Override
+    public void run() {
+        configure();
+        if (executor == null) {
+            log.warn("executor(ScheduledExecutorService) == null");
+            return;
+        }
+        for (WorkflowBotExecutor botExecutor : botExecutors) {
+            try {
+                Set<WfTask> tasks = botExecutor.getNewTasks();
+                for (WfTask task : tasks) {
+                    WorkflowBotTaskExecutor botTaskExecutor = botExecutor.createBotTaskExecutor(task);
+                    ScheduledFuture<?> future = executor.schedule(botTaskExecutor, botExecutor.getBot().getStartTimeout(), TimeUnit.MILLISECONDS);
+                    scheduledTasks.put(botTaskExecutor, future);
+                }
+            } catch (AuthenticationException e) {
+                configurationVersion = -1;
+                log.error("BotRunner execution failed. Will recreate botstation settings and bots.", e);
+            } catch (Exception e) {
+                log.error("BotRunner execution failed.", e);
+            }
         }
     }
 
