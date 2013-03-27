@@ -34,7 +34,7 @@ public class RootProcessTDBuilder implements TDBuilder {
     @Override
     public String getValue(Object object, Env env) {
         WfProcess process = (WfProcess) object;
-        return ProcessHierarchyUtils.getRootProcessIdString(process.getHierarchySubProcess());
+        return ProcessHierarchyUtils.getParentProcessIdString(process.getHierarchySubProcess());
     }
 
 }
