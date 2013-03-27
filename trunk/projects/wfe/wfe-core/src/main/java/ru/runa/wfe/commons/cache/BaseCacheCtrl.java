@@ -163,7 +163,8 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
      * @param object
      *            Changed object, which leads to cache drop.
      */
-    protected void uninitialize(Object object, Change change) {
+    @Override
+    public void uninitialize(Object object, Change change) {
         if (impl.get() != null) {
             log.info("Cache is uninitialized. Due to " + change + " of " + object);
         }

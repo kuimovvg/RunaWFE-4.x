@@ -285,6 +285,14 @@ public class CalendarUtil {
         return result;
     }
 
+    public static int countSecondsFromMillis(long millis) {
+        int result = (int) (millis / 1000);
+        if (millis % 1000 > 500) {
+            result++;
+        }
+        return result;
+    }
+
     public static int countCalendarIntervalsLength(List<CalendarInterval> calendarIntervals) {
         long resultInMillis = 0;
         for (CalendarInterval calendarInterval : calendarIntervals) {

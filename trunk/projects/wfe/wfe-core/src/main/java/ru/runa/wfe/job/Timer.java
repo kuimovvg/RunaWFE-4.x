@@ -19,6 +19,7 @@ import ru.runa.wfe.extension.assign.AssignmentHelper;
 import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
@@ -75,9 +76,11 @@ public class Timer extends Job {
                 // CancelTimerAction should cancel this timer
                 Task task = executionContext.getTask();
                 if (task != null) {
-                    // mark task completed by timer
+                    // mark task completed by timer [without history]
                     AssignmentHelper assignmentHelper = ApplicationContextFactory.getAssignmentHelper();
-                    assignmentHelper.reassignTask(executionContext, task, null, false);
+                    Executor oldExecutor = task.getExecutor();
+                    task.setExecutor(null);
+                    assignmentHelper.removeIfTemporaryGroup(oldExecutor);
                 } else {
                     log.warn("Task is null in timer node '" + getToken().getNodeId() + "' when leaving by transition: " + outTransitionName);
                 }

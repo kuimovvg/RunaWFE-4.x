@@ -68,4 +68,13 @@ public class ChangeListenerGuard implements ChangeListener {
         }
     }
 
+    @Override
+    public void uninitialize(Object object, Change change) {
+        try {
+            delegated.uninitialize(object, change);
+        } catch (Exception e) {
+            log.error("uninitialize() call failed on " + delegated.getClass().getName(), e);
+        }
+    }
+
 }

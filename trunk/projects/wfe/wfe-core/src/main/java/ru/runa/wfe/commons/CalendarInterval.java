@@ -174,6 +174,11 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
         return CalendarUtil.countMinutesFromMillis(millis);
     }
 
+    public int getLengthInSeconds() {
+        long millis = getLengthInMillis();
+        return CalendarUtil.countSecondsFromMillis(millis);
+    }
+
     @Override
     public String toString() {
         return CalendarUtil.format(from, CalendarUtil.DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT) + "-"

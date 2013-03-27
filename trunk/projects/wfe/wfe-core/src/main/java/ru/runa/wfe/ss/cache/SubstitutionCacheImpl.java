@@ -123,9 +123,6 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                 if (!substitution.isEnabled()) {
                     continue;
                 }
-                /*
-                 * if (actor.isActive()) { continue; }
-                 */
                 TreeMap<Substitution, HashSet<Actor>> subDescr = result.get(actor.getId());
                 if (subDescr == null) {
                     subDescr = new TreeMap<Substitution, HashSet<Actor>>();
@@ -167,7 +164,7 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                         continue;
                     }
                     for (Actor substitutor : substitutors) {
-                        HashSet<Actor> set = result.get(substitutor);
+                        HashSet<Actor> set = result.get(substitutor.getId());
                         if (set == null) {
                             set = new HashSet<Actor>();
                             result.put(substitutor.getId(), set);
@@ -195,7 +192,7 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                         continue;
                     }
                     for (Actor substitutor : substitutors) {
-                        HashSet<Actor> set = result.get(substitutor);
+                        HashSet<Actor> set = result.get(substitutor.getId());
                         if (set == null) {
                             set = new HashSet<Actor>();
                             result.put(substitutor.getId(), set);
