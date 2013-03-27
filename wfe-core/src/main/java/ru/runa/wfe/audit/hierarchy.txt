@@ -29,4 +29,5 @@
     <!-- 6 : ru.runa.bpm.log.NodeLog -->
     <!-- 7 : ru.runa.bpm.log.SendMessageLog -->
     <!-- 8 : ru.runa.bpm.log.ReceiveMessageLog -->
+    <!-- 9 : ru.runa.bpm.log.TaskExpiredLog -->
     

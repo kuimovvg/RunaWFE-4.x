@@ -37,12 +37,16 @@ public class BotInvokerFactory {
         return RESOURCES.getStringPropertyNotNull("BotInvoker.class");
     }
 
-    public static BotInvoker getBotInvoker() {
+    public static synchronized BotInvoker getBotInvoker() {
         if (INSTANCE == null) {
             INSTANCE = ClassLoaderUtil.instantiate(getBotInvokerClassName());
             log.info("Using " + INSTANCE.getClass().getName());
         }
         return INSTANCE;
+    }
+
+    public static synchronized void unsetBotInvoker() {
+        INSTANCE = null;
     }
 
     public static long getBotInvocationPeriod() {

@@ -171,7 +171,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     @Override
     public void setStatus(User user, Actor actor, boolean isActive) {
         Preconditions.checkNotNull(user);
-        executorLogic.setStatus(user, actor, isActive);
+        executorLogic.setStatus(user, actor, isActive, true);
     }
 
     @Override

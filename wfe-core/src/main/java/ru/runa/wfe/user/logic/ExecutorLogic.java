@@ -267,10 +267,18 @@ public class ExecutorLogic extends CommonLogic {
         executorDAO.setPassword(actor, password);
     }
 
-    public Actor setStatus(User user, Actor actor, boolean isActive) {
+    public Actor setStatus(User user, Actor actor, boolean isActive, boolean callHandlers) {
         checkPermissionsOnExecutor(user, actor, ActorPermission.UPDATE_STATUS);
         Actor updated = executorDAO.setStatus(actor, isActive);
-        callSetStatusHandlers(actor, isActive);
+        if (callHandlers) {
+            for (SetStatusHandler handler : setStatusHandlers) {
+                try {
+                    handler.onStatusChange(actor, isActive);
+                } catch (Throwable e) {
+                    log.warn("Exception while calling loginHandler " + handler, e);
+                }
+            }
+        }
         return updated;
     }
 
@@ -326,13 +334,4 @@ public class ExecutorLogic extends CommonLogic {
         return temporaryGroup;
     }
 
-    private void callSetStatusHandlers(Actor actor, boolean isActive) {
-        for (SetStatusHandler handler : setStatusHandlers) {
-            try {
-                handler.onStatusChange(actor, isActive);
-            } catch (Throwable e) {
-                log.warn("Exception while calling loginHandler " + handler, e);
-            }
-        }
-    }
 }

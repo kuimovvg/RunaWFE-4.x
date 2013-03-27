@@ -130,6 +130,10 @@ public class BackCompatibilityClassNames {
         // serializable variables
         bcc.put("ru.runa.wf.web.Option", "ru.runa.wfe.commons.web.Option");
         bcc.put("ru.runa.wf.FileVariable", "ru.runa.wfe.var.FileVariable");
+        // wfe-office classes
+        bcc.put("ru.runa.wf.office.excel.CellConstraints", "ru.runa.wfe.office.excel.CellConstraints");
+        bcc.put("ru.runa.wf.office.excel.RowConstraints", "ru.runa.wfe.office.excel.RowConstraints");
+        bcc.put("ru.runa.wf.office.excel.ColumnConstraints", "ru.runa.wfe.office.excel.ColumnConstraints");
     }
 
     /**

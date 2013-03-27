@@ -69,6 +69,7 @@
 	    <mapping class="ru.runa.wfe.audit.TaskAssignLog" />
 	    <mapping class="ru.runa.wfe.audit.TaskEscalationLog" />
 	    <mapping class="ru.runa.wfe.audit.TaskEndLog" />
+	    <mapping class="ru.runa.wfe.audit.TaskExpiredLog" />
 	    <mapping class="ru.runa.wfe.audit.SwimlaneAssignLog" />
 		<mapping class="ru.runa.wfe.bot.Bot" />
 		<mapping class="ru.runa.wfe.bot.BotStation" />
