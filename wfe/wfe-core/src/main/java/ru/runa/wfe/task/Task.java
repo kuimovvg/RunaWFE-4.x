@@ -46,6 +46,7 @@ import org.hibernate.annotations.Index;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.TaskAssignLog;
 import ru.runa.wfe.audit.TaskEndLog;
+import ru.runa.wfe.audit.TaskExpiredLog;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Swimlane;
@@ -261,9 +262,10 @@ public class Task implements Assignable {
         // fire the task end event
         TaskDefinition taskDefinition = executionContext.getProcessDefinition().getTaskNotNull(nodeId);
         taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_END);
-        // TODO audit: completion by timer
         if (getExecutor() != null) {
             executionContext.addLog(new TaskEndLog(this));
+        } else {
+            executionContext.addLog(new TaskExpiredLog(this));
         }
         // verify if the end of this task triggers continuation of execution
         // ending start tasks always leads to a signal

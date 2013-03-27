@@ -22,6 +22,10 @@ public class AssignmentHelper {
     public void reassignTask(ExecutionContext executionContext, Task task, Executor newExecutor, boolean reassignSwimlane) {
         Executor oldExecutor = task.getExecutor();
         task.assignExecutor(executionContext, newExecutor, reassignSwimlane);
+        removeIfTemporaryGroup(oldExecutor);
+    }
+
+    public void removeIfTemporaryGroup(Executor oldExecutor) {
         if (oldExecutor instanceof TemporaryGroup) {
             executorLogic.remove(oldExecutor);
         }

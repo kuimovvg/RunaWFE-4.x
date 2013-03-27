@@ -215,7 +215,7 @@ public class AdminScriptRunner {
     public void setActorInactive(Element element) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         Actor actor = executorLogic.getActor(user, name);
-        executorLogic.setStatus(user, actor, false);
+        executorLogic.setStatus(user, actor, false, true);
     }
 
     public void createActor(Element element) {

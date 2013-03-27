@@ -43,7 +43,9 @@ public class TaskEndLog extends TaskLog {
 
     public TaskEndLog(Task task) {
         super(task);
-        addAttribute(ATTR_ACTOR_NAME, task.getExecutor().getName());
+        if (task.getExecutor() != null) {
+            addAttribute(ATTR_ACTOR_NAME, task.getExecutor().getName());
+        }
         setSeverity(Severity.INFO);
     }
 
