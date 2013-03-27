@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.invoker.BotInvokerFactory;
 import ru.runa.wfe.service.BotInvokerService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 
 @Stateless
@@ -66,6 +67,7 @@ public class BotInvokerServiceBean implements BotInvokerService {
             log.info("Canceling periodic bot execution...");
             timer.cancel();
             timer = null;
+            BotInvokerFactory.unsetBotInvoker();
         } else {
             log.info("BotRunner is not running. skipping cancel...");
         }
@@ -77,6 +79,8 @@ public class BotInvokerServiceBean implements BotInvokerService {
     }
 
     private static void invokeBotsImpl(BotStation botStation) {
+        // refresh version
+        botStation = Delegates.getBotService().getBotStation(botStation.getId());
         BotInvokerFactory.getBotInvoker().invokeBots(botStation);
     }
 

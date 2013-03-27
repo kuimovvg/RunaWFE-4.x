@@ -60,4 +60,12 @@ public interface ChangeListener {
      */
     public void markTransactionComplete();
 
+    /**
+     * Drops current cache implementation.
+     * 
+     * @param object
+     *            Changed object, which leads to cache drop.
+     */
+    public void uninitialize(Object object, Change change);
+
 }

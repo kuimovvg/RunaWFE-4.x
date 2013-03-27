@@ -36,12 +36,15 @@ import ru.runa.wfe.user.ExecutorGroupMembership;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Sets;
 
 /**
  * Main class for RunaWFE caching. Register {@link ChangeListener} there to
  * receive events on objects change and transaction complete.
  */
 public class CachingLogic {
+
+    private static boolean enabled = true;
 
     /**
      * Map from {@link Thread} to change listeners, which must be notified on
@@ -94,6 +97,10 @@ public class CachingLogic {
         }
     }
 
+    public static void setEnabled(boolean enabled) {
+        CachingLogic.enabled = enabled;
+    }
+
     /**
      * Notify registered listeners on entity change.
      * 
@@ -112,6 +119,9 @@ public class CachingLogic {
      */
     public static synchronized void onChange(Object entity, Change change, Object[] currentState, Object[] previousState, String[] propertyNames,
             Type[] types) {
+        if (!enabled) {
+            return;
+        }
         // TODO move qualification of change listeners to
         // ChangeListener.getInterestedEntityClasses ?
         if (entity instanceof Task || entity instanceof Swimlane || entity instanceof Substitution || entity instanceof SubstitutionCriteria
@@ -280,6 +290,17 @@ public class CachingLogic {
                     throw Throwables.propagate(e);
                 }
             }
+        }
+    }
+
+    public static void resetAllCaches() {
+        Set<ChangeListener> allListeners = Sets.newHashSet();
+        allListeners.addAll(executorListeners);
+        allListeners.addAll(taskListeners);
+        allListeners.addAll(processDefListeners);
+        allListeners.addAll(substitutionListeners);
+        for (ChangeListener listener : allListeners) {
+            listener.uninitialize(CachingLogic.class, Change.REFRESH);
         }
     }
 
