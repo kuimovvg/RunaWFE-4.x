@@ -55,6 +55,7 @@ public class TasklistBuilder {
         if (result != null) {
             return result;
         }
+        log.debug("Building tasklist for " + actor);
         result = Lists.newArrayList();
         Set<Executor> executorsToGetTasksByMembership = getExecutorsToGetTasks(actor, false);
         Set<Executor> executorsToGetTasks = Sets.newHashSet(executorsToGetTasksByMembership);
@@ -67,22 +68,25 @@ public class TasklistBuilder {
                 Executor taskExecutor = task.getExecutor();
                 ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task);
                 if (executorsToGetTasksByMembership.contains(taskExecutor)) {
-                    // task is acquired by membership rules
+                    log.debug(task + " is acquired by membership rules");
                     result.add(taskObjectFactory.create(task, actor, false));
                     continue;
                 }
                 if (processDefinition.ignoreSubsitutionRulesForTask(task)) {
+                    log.debug(task + " is ignored due to ignore subsitution rule");
                     continue;
                 }
                 ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
-                // Task may be acquired by substitution rules
+                log.debug("Whether " + task + " should be acquired by substitution rules?");
                 if (taskExecutor instanceof Actor) {
                     if (isTaskAcceptableBySubstitutionRules(executionContext, task, (Actor) taskExecutor, actor)) {
+                        log.debug(task + " is acquired by substitution rules [by actor]");
                         result.add(taskObjectFactory.create(task, (Actor) taskExecutor, true));
                     }
                 } else {
                     for (Actor groupActor : executorDAO.getGroupActors((Group) taskExecutor)) {
                         if (isTaskAcceptableBySubstitutionRules(executionContext, task, groupActor, actor)) {
+                            log.debug(task + " is acquired by substitution rules [by group]");
                             result.add(taskObjectFactory.create(task, groupActor, true));
                             break;
                         }
@@ -119,6 +123,7 @@ public class TasklistBuilder {
             SubstitutionCriteria criteria = substitution.getCriteria();
             if (substitution instanceof TerminatorSubstitution) {
                 if (criteria == null || criteria.isSatisfied(executionContext, task, assignedActor, substitutorActor)) {
+                    log.debug(task + " is ignored due to acceptable terminator rule");
                     return false;
                 }
                 continue;
@@ -127,6 +132,7 @@ public class TasklistBuilder {
             boolean substitutionApplies = false;
             for (Actor actor : substitutionRule.getValue()) {
                 if (actor.isActive() && (criteria == null || criteria.isSatisfied(executionContext, task, assignedActor, actor))) {
+                    log.debug("To " + task + " is applied " + substitutionRule.getKey());
                     substitutionApplies = true;
                 }
                 if (Objects.equal(actor, substitutorActor)) {
@@ -138,6 +144,7 @@ public class TasklistBuilder {
             }
             return canISubstitute;
         }
+        log.debug(task + " is ignored due to no subsitution rule applies: " + mapOfSubstitionRule);
         return false;
     }
 
