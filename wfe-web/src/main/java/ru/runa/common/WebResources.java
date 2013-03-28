@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.PropertyResources;
+import ru.runa.wfe.commons.SystemProperties;
 
 import com.google.common.base.Strings;
 
@@ -85,7 +86,7 @@ public class WebResources {
      * Used from JSP page
      */
     public static String getTaskExpiredWarningThreshold() {
-        return RESOURCES.getStringProperty("task.form.almostDeadline.percents", "90%");
+        return SystemProperties.getTaskAlmostDeadlineInPercents() + "%";
     }
 
     public static boolean isGroupBySubprocessEnabled() {

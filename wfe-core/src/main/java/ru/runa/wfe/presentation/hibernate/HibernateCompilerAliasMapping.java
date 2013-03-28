@@ -27,7 +27,8 @@ import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.FieldDescriptor;
 
 /**
- * Holds mapping from {@link FieldDescriptor} to alias, assigned to field in HQL query and vice verse.
+ * Holds mapping from {@link FieldDescriptor} to alias, assigned to field in HQL
+ * query and vice verse.
  */
 public class HibernateCompilerAliasMapping {
 
@@ -42,7 +43,8 @@ public class HibernateCompilerAliasMapping {
     private final Map<String, FieldDescriptor> aliasToField = new HashMap<String, FieldDescriptor>();
 
     /**
-     * Creates mapping from {@link FieldDescriptor} to alias for specified {@link BatchPresentation}.
+     * Creates mapping from {@link FieldDescriptor} to alias for specified
+     * {@link BatchPresentation}.
      * 
      * @param batchPresentation
      *            {@link BatchPresentation} to initialize alias mappings.
@@ -52,8 +54,7 @@ public class HibernateCompilerAliasMapping {
         for (int idx = 0; idx < fields.length; ++idx) {
             FieldDescriptor field = fields[idx];
             if (field.dbSources == null) {
-                throw new InternalApplicationException("Field dbSource is null. Something wrong with batchPresentation '"
-                        + batchPresentation.getCategory() + "'");
+                throw new InternalApplicationException("Field dbSource is null. Something wrong with " + batchPresentation);
             }
             if (field.dbSources[0].getSourceObject().equals(batchPresentation.getClassPresentation().getPresentationClass())) {
                 addAliasMapping(field, ClassPresentation.classNameSQL);

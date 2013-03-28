@@ -48,4 +48,15 @@ public class SystemProperties {
         return RESOURCES.getIntegerProperty("file.variable.local.storage.enableforfilesgreaterthan", 100000);
     }
 
+    /**
+     * @return value between 0..100 [%]
+     */
+    public static int getTaskAlmostDeadlineInPercents() {
+        int percents = RESOURCES.getIntegerProperty("task.almostDeadlinePercents", 90);
+        if (percents < 0 || percents > 100) {
+            percents = 90;
+        }
+        return percents;
+    }
+
 }
