@@ -67,7 +67,7 @@ import com.google.common.base.Objects;
 @DiscriminatorValue(value = "V")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public abstract class Variable<T extends Object> {
-    public static final int MAX_STRING_SIZE = 900;
+    public static final int MAX_STRING_SIZE = SystemProperties.getStringVariableValueLength();
     protected Long id;
     private Long version;
     private String name;
@@ -101,7 +101,7 @@ public abstract class Variable<T extends Object> {
     }
 
     @Column(name = "NAME")
-    // @Index(name = "IX_VARIABLE_NAME")
+    @Index(name = "IX_VARIABLE_NAME")
     public String getName() {
         return name;
     }
@@ -132,8 +132,7 @@ public abstract class Variable<T extends Object> {
         this.process = process;
     }
 
-    @Column(name = "STRINGVALUE", length = MAX_STRING_SIZE)
-    // @Index(name = "IX_VARIABLE_VALUE")
+    @Column(name = "STRINGVALUE", length = 1024)
     public String getStringValue() {
         return stringValue;
     }
