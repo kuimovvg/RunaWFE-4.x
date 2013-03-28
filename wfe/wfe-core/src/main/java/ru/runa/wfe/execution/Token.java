@@ -293,7 +293,7 @@ public class Token implements Serializable {
         // end all this token's children
         for (Token child : getChildren()) {
             if (!child.hasEnded()) {
-                child.end(executionContext, canceller);
+                child.end(new ExecutionContext(executionContext.getProcessDefinition(), child), canceller);
             }
         }
         for (Process subProcess : executionContext.getChildProcesses()) {
