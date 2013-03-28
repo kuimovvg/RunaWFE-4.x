@@ -49,7 +49,6 @@ import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -98,15 +97,14 @@ public class ReflectionRowBuilder implements RowBuilder {
         public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) {
             boolean[] retVal = allowedCache.get(permission);
             if (retVal == null) {
-                AuthorizationService authorizationService = Delegates.getAuthorizationService();
                 if (extractor == null) {
-                    retVal = authorizationService.isAllowed(getUser(), permission, (List<Identifiable>) items);
+                    retVal = Delegates.getAuthorizationService().isAllowed(getUser(), permission, (List<Identifiable>) items);
                 } else {
                     List<Identifiable> identifiables = Lists.newArrayListWithExpectedSize(items.size());
                     for (Object object : items) {
                         identifiables.add(extractor.getIdentifiable(object, this));
                     }
-                    retVal = authorizationService.isAllowed(getUser(), permission, identifiables);
+                    retVal = Delegates.getAuthorizationService().isAllowed(getUser(), permission, identifiables);
                 }
                 allowedCache.put(permission, retVal);
             }
