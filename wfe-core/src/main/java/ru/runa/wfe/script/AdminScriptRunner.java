@@ -49,7 +49,7 @@ import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.relation.Relation;
+import ru.runa.wfe.relation.RelationDoesNotExistException;
 import ru.runa.wfe.relation.logic.RelationLogic;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Identifiable;
@@ -1108,11 +1108,9 @@ public class AdminScriptRunner {
     public void relation(Element element) {
         String relationName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String relationDescription = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
-        boolean isExists = false;
-        for (Relation group : relationLogic.getRelations(user, BatchPresentationFactory.RELATIONS.createNonPaged())) {
-            isExists = isExists || (group.getName().compareToIgnoreCase(relationName) == 0);
-        }
-        if (!isExists) {
+        try {
+            relationLogic.getRelation(user, relationName);
+        } catch (RelationDoesNotExistException e) {
             relationLogic.createRelation(user, relationName, relationDescription);
         }
         Collection<Executor> leftExecutors = getExecutors(element.element("left"));
