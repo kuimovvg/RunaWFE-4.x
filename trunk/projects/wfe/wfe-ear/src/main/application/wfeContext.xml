@@ -251,7 +251,6 @@
 	</bean>
 
 	<bean class="ru.runa.wfe.task.dto.WfTaskFactory">
-		<property name="taskAlmostDeadline" value="${task.almostDeadline}" />
 	</bean>
 
 	<bean class="ru.runa.wfe.execution.ProcessFactory">
