@@ -74,7 +74,7 @@ public class ExecutionLogic extends WFCommonLogic {
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         checkPermissionAllowed(user, process, ProcessPermission.CANCEL_PROCESS);
         process.end(executionContext, user.getActor());
-        log.info("Process " + process + " was cancelled by " + user);
+        log.info(process + " was cancelled by " + user);
     }
 
     public int getAllProcessesCount(User user, BatchPresentation batchPresentation) {
@@ -188,13 +188,13 @@ public class ExecutionLogic extends WFCommonLogic {
 
     public List<GraphElementPresentation> getProcessUIHistoryData(User user, Long processId, Long taskId) throws ProcessDoesNotExistException {
         try {
-        	Process process = processDAO.getNotNull(processId);
+            Process process = processDAO.getNotNull(processId);
             checkPermissionAllowed(user, process, ProcessPermission.READ);
             ProcessDefinition processDefinition = getDefinition(process);
             List<ProcessLog> logs = processLogDAO.getAll(processId);
             List<Executor> executors = executorDAO.getAllExecutors(BatchPresentationFactory.EXECUTORS.createNonPaged());
             GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, taskObjectFactory, processDefinition, logs);
-            converter.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));            
+            converter.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));
             return converter.getLogElements();
         } catch (Exception e) {
             throw Throwables.propagate(e);

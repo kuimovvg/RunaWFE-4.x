@@ -353,6 +353,7 @@ public class PermissionDAO extends CommonDAO {
         for (Executor executor : privelegedExecutors) {
             getHibernateTemplate().save(new PrivelegedMapping(type, executor));
             this.privelegedExecutors.get(type).add(executor);
+            privelegedExecutorIds.add(executor.getId());
         }
     }
 
