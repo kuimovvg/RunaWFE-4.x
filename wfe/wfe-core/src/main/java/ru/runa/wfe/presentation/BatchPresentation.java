@@ -426,7 +426,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getName(), getCategory());
+        return Objects.hashCode(type, getName());
     }
 
     @Override
@@ -441,12 +441,12 @@ public final class BatchPresentation implements Cloneable, Serializable {
             return false;
         }
         BatchPresentation presentation = (BatchPresentation) obj;
-        return Objects.equal(getName(), presentation.getName()) && Objects.equal(getCategory(), presentation.getCategory());
+        return Objects.equal(getType(), presentation.getType()) && Objects.equal(getName(), presentation.getName());
     }
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("category", category).add("name", name).toString();
+        return Objects.toStringHelper(this).add("type", type).add("name", name).toString();
     }
 
     public boolean fieldEquals(BatchPresentation other) {
