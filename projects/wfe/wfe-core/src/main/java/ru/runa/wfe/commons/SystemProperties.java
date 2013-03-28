@@ -59,4 +59,13 @@ public class SystemProperties {
         return percents;
     }
 
+    /**
+     * Change this value sync with DB.
+     * 
+     * @return max string value
+     */
+    public static int getStringVariableValueLength() {
+        return RESOURCES.getIntegerProperty("string.variable.length", 1024);
+    }
+
 }

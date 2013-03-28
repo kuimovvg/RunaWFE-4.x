@@ -44,6 +44,9 @@ import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "PERMISSION_MAPPING", uniqueConstraints = @UniqueConstraint(columnNames = { "IDENTIFIABLE_ID", "TYPE_ID", "EXECUTOR_ID", "MASK" }))
+@org.hibernate.annotations.Table(appliesTo = "PERMISSION_MAPPING", indexes = {
+        @Index(name = "IX_PERMISSION_BY_IDENTIFIABLE", columnNames = { "IDENTIFIABLE_ID", "TYPE_ID", "MASK", "EXECUTOR_ID" }),
+        @Index(name = "IX_PERMISSION_BY_EXECUTOR", columnNames = { "EXECUTOR_ID", "TYPE_ID", "MASK", "IDENTIFIABLE_ID" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PermissionMapping {
     private Long id;
@@ -75,7 +78,6 @@ public class PermissionMapping {
     }
 
     @Column(name = "IDENTIFIABLE_ID", nullable = false)
-    @Index(name = "IX_PERMISSION_IDENTIFIABLE_ID")
     public Long getIdentifiableId() {
         return identifiableId;
     }
@@ -86,7 +88,6 @@ public class PermissionMapping {
 
     @Column(name = "TYPE_ID", nullable = false)
     @Enumerated(value = EnumType.ORDINAL)
-    @Index(name = "IX_PERMISSION_TYPE_ID")
     public SecuredObjectType getType() {
         return type;
     }
@@ -98,7 +99,6 @@ public class PermissionMapping {
     @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "EXECUTOR_ID", nullable = false)
     @ForeignKey(name = "FK_PERMISSION_EXECUTOR")
-    @Index(name = "IX_PERMISSION_EXECUTOR")
     public Executor getExecutor() {
         return executor;
     }
