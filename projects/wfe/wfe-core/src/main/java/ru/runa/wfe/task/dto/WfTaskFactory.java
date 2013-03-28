@@ -23,8 +23,8 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.task.Task;
@@ -46,12 +46,6 @@ public class WfTaskFactory {
     private static final Log log = LogFactory.getLog(WfTaskFactory.class);
     @Autowired
     private ExecutorDAO executorDAO;
-    private double taskAlmostDeadline;
-
-    @Required
-    public void setTaskAlmostDeadline(double taskAlmostDeadline) {
-        this.taskAlmostDeadline = taskAlmostDeadline;
-    }
 
     public WfTask create(Task task, Actor targetActor, boolean acquiredBySubstitution) {
         Process process = task.getProcess();
@@ -81,8 +75,9 @@ public class WfTaskFactory {
         if (task.getCreateDate() == null || task.getDeadlineDate() == null) {
             return null;
         }
+        int percents = SystemProperties.getTaskAlmostDeadlineInPercents();
         long duration = task.getDeadlineDate().getTime() - task.getCreateDate().getTime();
-        return new Date(task.getDeadlineDate().getTime() - (long) (duration * taskAlmostDeadline));
+        return new Date(task.getCreateDate().getTime() + duration * percents / 100);
     }
 
 }

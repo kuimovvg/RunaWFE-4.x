@@ -247,12 +247,13 @@ div.multiInstanceBox {
 	border: 1px solid red; 
 	background-color: #aaaaaa;
 }
-
 .ui-datepicker-current-day a.ui-state-active {
 	border: 1px solid #aaaaaa;
 	background: #aaaaaa;
 }
-
 .ui-datepicker-title {
 	color: #ffffff;
+}
+.ui-datepicker-prev, .ui-datepicker-next {
+	background-color: white;
 }
