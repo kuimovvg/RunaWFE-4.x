@@ -72,12 +72,16 @@ public class WfTaskFactory {
     }
 
     public Date getDeadlineWarningDate(Task task) {
-        if (task.getCreateDate() == null || task.getDeadlineDate() == null) {
+        return getDeadlineWarningDate(task.getCreateDate(), task.getDeadlineDate());
+    }
+
+    public Date getDeadlineWarningDate(Date createDate, Date deadlineDate) {
+        if (createDate == null || deadlineDate == null) {
             return null;
         }
         int percents = SystemProperties.getTaskAlmostDeadlineInPercents();
-        long duration = task.getDeadlineDate().getTime() - task.getCreateDate().getTime();
-        return new Date(task.getCreateDate().getTime() + duration * percents / 100);
+        long duration = deadlineDate.getTime() - createDate.getTime();
+        return new Date(createDate.getTime() + duration * percents / 100);
     }
 
 }

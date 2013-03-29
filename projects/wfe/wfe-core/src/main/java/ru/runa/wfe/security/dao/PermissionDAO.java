@@ -259,8 +259,7 @@ public class PermissionDAO extends CommonDAO {
      * @param executor
      */
     public void deleteAllPermissions(Executor executor) {
-        List<PermissionMapping> mappings = getHibernateTemplate().find("from PermissionMapping where executor=?", executor);
-        getHibernateTemplate().deleteAll(mappings);
+        getHibernateTemplate().bulkUpdate("delete from PermissionMapping where executor=?", executor);
     }
 
     /**

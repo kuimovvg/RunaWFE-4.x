@@ -142,7 +142,7 @@ public class Swimlane implements Serializable, Assignable {
         setExecutor(executor);
         if (cascadeUpdate) {
             // change actor for already assigned tasks
-            for (Task task : process.getActiveTasks(null)) {
+            for (Task task : process.getTasks()) {
                 if (task.getSwimlane() != null && name.equals(task.getSwimlane().getName())) {
                     task.assignExecutor(executionContext, executor, false);
                 }

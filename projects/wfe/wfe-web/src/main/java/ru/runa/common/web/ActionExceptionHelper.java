@@ -45,7 +45,6 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.WeakPasswordException;
 import ru.runa.wfe.ss.SubstitutionDoesNotExistException;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
-import ru.runa.wfe.task.TaskAlreadyCompletedException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
@@ -134,8 +133,6 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.EXCEPTION_DEFINITION_TYPE_NOT_PRESENT);
         } else if (e instanceof TaskAlreadyAcceptedException) {
             actionMessage = new ActionMessage(Messages.TASK_WAS_ALREADY_ACCEPTED, e.getMessage());
-        } else if (e instanceof TaskAlreadyCompletedException) {
-            actionMessage = new ActionMessage(Messages.TASK_WAS_ALREADY_COMPLETED, e.getMessage());
         } else if (e instanceof ParentProcessExistsException) {
             ParentProcessExistsException exc = (ParentProcessExistsException) e;
             actionMessage = new ActionMessage(Messages.PROCESS_HAS_SUPER_PROCESS, exc.getDefinitionName(), exc.getParentDefinitionName());
