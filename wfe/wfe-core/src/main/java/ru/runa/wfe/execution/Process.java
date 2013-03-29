@@ -241,7 +241,7 @@ public class Process extends IdentifiableBase {
     public List<Task> getTokenTasks(Token token) {
         List<Task> result = Lists.newArrayList();
         for (Task task : tasks) {
-            if (Objects.equal(token, task.getToken())) {
+            if (Objects.equal(token.getId(), task.getToken().getId())) {
                 result.add(task);
             }
         }
