@@ -53,7 +53,7 @@ public class TaskCreateLog extends TaskLog {
 
     @Transient
     public String getNodeId() {
-        return getAttributeNotNull(ATTR_NODE_ID);
+        return getAttribute(ATTR_NODE_ID);
     }
 
     @Transient
