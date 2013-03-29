@@ -167,7 +167,7 @@
 		<permission name="permission.read"/>
 	</addPermissionsOnBotStations>
 	
-	<createBotStation name="localbotstation" address="localhost" />
+	<createBotStation name="localbotstation" address="localhost:10099" />
 	<createBot botStation="localbotstation" name="UniversalBot" password="321" startTimeout="200"/>
 	<createBot botStation="localbotstation" name="StopBot" password="321" startTimeout="200"/>
 	<createBot botStation="localbotstation" name="WebServiceBot" password="321" startTimeout="200"/>
