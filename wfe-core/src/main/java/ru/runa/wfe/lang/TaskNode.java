@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskFactory;
-import ru.runa.wfe.task.dao.TaskDAO;
 
 import com.google.common.base.Objects;
 
@@ -39,8 +38,6 @@ public class TaskNode extends InteractionNode implements Synchronizable {
 
     @Autowired
     private TaskFactory taskFactory;
-    @Autowired
-    private TaskDAO taskDAO;
 
     private boolean async;
 
