@@ -13,6 +13,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
@@ -31,6 +32,10 @@ public class FreemarkerConfiguration {
             instance = new FreemarkerConfiguration();
         }
         return instance;
+    }
+
+    public String getRegistrationInfo() {
+        return Joiner.on(", ").join(tags.values());
     }
 
     private FreemarkerConfiguration() {

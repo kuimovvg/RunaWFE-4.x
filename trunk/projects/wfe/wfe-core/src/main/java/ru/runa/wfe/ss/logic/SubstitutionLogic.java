@@ -86,6 +86,7 @@ public class SubstitutionLogic extends CommonLogic {
         }
         log.info("Creating " + substitution);
         substitutionDAO.create(substitution);
+        substitutionDAO.flushPendingChanges();
     }
 
     public List<Substitution> getSubstitutions(User user, Long actorId) {
@@ -133,7 +134,35 @@ public class SubstitutionLogic extends CommonLogic {
             substitutionDAO.create(substitutionWithNewPosition);
             log.info("Creating " + substitution);
             substitutionDAO.create(substitution);
+            substitutionDAO.flushPendingChanges();
         }
+    }
+
+    // TODO clear code in update
+    public void changePosition(User user, Substitution substitution, int newPosition) {
+        Actor actor = executorDAO.getActor(substitution.getActorId());
+        checkPermissionsOnExecutor(user, actor, ExecutorPermission.UPDATE);
+        List<Substitution> substitutions = substitutionDAO.getByActorId(substitution.getActorId(), false);
+        Integer oldPosition = substitution.getPosition();
+        Substitution substitutionWithNewPosition = null;
+        for (Substitution existing : substitutions) {
+            if (Objects.equal(existing.getPosition(), newPosition)) {
+                substitutionWithNewPosition = existing;
+            }
+        }
+        log.info("Switching substitutions " + substitution + " <-> " + substitutionWithNewPosition);
+        substitutionDAO.delete(substitution.getId());
+        substitutionDAO.delete(substitutionWithNewPosition.getId());
+        substitutionDAO.flushPendingChanges();
+        substitutionWithNewPosition.setId(null);
+        substitution.setId(null);
+        substitution.setPosition(newPosition);
+        substitutionWithNewPosition.setPosition(oldPosition);
+        log.info("Creating " + substitutionWithNewPosition);
+        substitutionDAO.create(substitutionWithNewPosition);
+        log.info("Creating " + substitution);
+        substitutionDAO.create(substitution);
+        substitutionDAO.flushPendingChanges();
     }
 
     private List<Actor> getSubstitutionActors(List<Substitution> substitutions) {
