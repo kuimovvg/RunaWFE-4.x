@@ -157,9 +157,9 @@ public class GraphImageBuilder {
 
     private void fillTasks(ProcessLogs logs) {
         for (Map.Entry<TaskCreateLog, TaskEndLog> entry : logs.getTaskLogs().entrySet()) {
-            boolean activeTask = entry.getValue() != null;
+            boolean activeTask = entry.getValue() == null;
             Date deadlineDate = entry.getKey().getDeadlineDate();
-            Date endDate = activeTask ? entry.getValue().getDate() : new Date();
+            Date endDate = activeTask ? new Date() : entry.getValue().getDate();
             AbstractFigure figure = allNodeFigures.get(entry.getKey().getNodeId());
             if (figure == null) {
                 // ru.runa.wfe.audit.TaskCreateLog.getNodeId() = null for old
