@@ -236,14 +236,12 @@ public class Process extends IdentifiableBase {
     }
 
     /**
-     * @return collection of active {@link Task}s for the given token.
-     * @param token
-     *            can be <code>null</code>
+     * @return collection of {@link Task}'s for the given token.
      */
-    public List<Task> getActiveTasks(Token token) {
+    public List<Task> getTokenTasks(Token token) {
         List<Task> result = Lists.newArrayList();
         for (Task task : tasks) {
-            if (task.isActive() && (token == null || token.equals(task.getToken()))) {
+            if (Objects.equal(token, task.getToken())) {
                 result.add(task);
             }
         }
@@ -290,7 +288,7 @@ public class Process extends IdentifiableBase {
         if (canceller != null) {
             // end all active tasks
             for (Task task : tasks) {
-                task.setEndDate(new Date());
+                task.delete();
             }
             executionContext.addLog(new ProcessCancelLog(canceller));
         } else {

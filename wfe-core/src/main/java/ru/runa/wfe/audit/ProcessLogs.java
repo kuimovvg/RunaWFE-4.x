@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.SafeIndefiniteLoop;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.lang.NodeType;
 
 import com.google.common.collect.Lists;
@@ -106,6 +107,16 @@ public class ProcessLogs implements Serializable {
         return null;
     }
 
+    public <T extends ProcessLog> List<T> getLogs(Class<T> logClass) {
+        List<T> list = Lists.newArrayList();
+        for (ProcessLog log : logs) {
+            if (log.getClass() == logClass) {
+                list.add((T) log);
+            }
+        }
+        return list;
+    }
+
     public Map<TaskCreateLog, TaskEndLog> getTaskLogs() {
         Map<String, TaskCreateLog> tmp = Maps.newHashMap();
         Map<TaskCreateLog, TaskEndLog> result = Maps.newHashMap();
@@ -118,6 +129,9 @@ public class ProcessLogs implements Serializable {
                 String key = log.getProcessId() + ((TaskLog) log).getTaskName();
                 TaskCreateLog taskCreateLog = tmp.remove(key);
                 if (taskCreateLog == null) {
+                    if (SystemProperties.isV3CompatibilityMode()) {
+                        continue;
+                    }
                     throw new InternalApplicationException("No TaskCreateLog for " + log);
                 }
                 result.put(taskCreateLog, (TaskEndLog) log);

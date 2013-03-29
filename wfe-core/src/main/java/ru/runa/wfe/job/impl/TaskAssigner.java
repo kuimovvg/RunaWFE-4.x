@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.job.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -50,16 +49,16 @@ public class TaskAssigner {
     private TaskDAO taskDAO;
 
     public boolean areUnassignedTasksExist() {
-        return taskDAO.findUnassignedActiveTasks().size() > 0;
+        return taskDAO.findUnassignedTasks().size() > 0;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void execute() {
-        List<Task> unassignedTasks = taskDAO.findUnassignedActiveTasks();
+        List<Task> unassignedTasks = taskDAO.findUnassignedTasks();
         for (Task task : unassignedTasks) {
             if (task.getProcess().hasEnded()) {
-                log.warn("Ending task for finished process " + task);
-                task.setEndDate(new Date());
+                log.error("Deleting task for finished process: " + task);
+                task.delete();
                 continue;
             }
             try {

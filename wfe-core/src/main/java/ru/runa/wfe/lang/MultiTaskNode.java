@@ -32,6 +32,7 @@ import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskFactory;
 import ru.runa.wfe.user.Executor;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -101,14 +102,9 @@ public class MultiTaskNode extends InteractionNode implements Synchronizable {
 
     @Override
     public void leave(ExecutionContext executionContext, Transition transition) {
-        for (Task task : executionContext.getProcess().getTasks()) {
-            if (executionContext.getToken().equals(task.getToken())) {
-                // if this is a non-finished task and all those tasks should be
-                // finished
-                if (task.isActive()) {
-                    // end this task
-                    task.end(executionContext, transition, false);
-                }
+        for (Task task : executionContext.getToken().getTasks()) {
+            if (Objects.equal(task.getNodeId(), getNodeId())) {
+                task.end(executionContext);
             }
         }
         super.leave(executionContext, transition);
@@ -128,8 +124,8 @@ public class MultiTaskNode extends InteractionNode implements Synchronizable {
     private boolean isLastTaskToComplete(Task task) {
         Token token = task.getToken();
         boolean lastToComplete = true;
-        for (Task other : task.getProcess().getTasks()) {
-            if (token.equals(other.getToken()) && !other.equals(task) && other.isActive()) {
+        for (Task other : token.getTasks()) {
+            if (!other.equals(task)) {
                 lastToComplete = false;
                 break;
             }

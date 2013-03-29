@@ -19,9 +19,12 @@ package ru.runa.wfe.graph.image;
 
 import java.awt.Color;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
+import ru.runa.wfe.audit.ProcessLogs;
+import ru.runa.wfe.audit.TaskCreateLog;
+import ru.runa.wfe.audit.TaskEndLog;
+import ru.runa.wfe.audit.TransitionLog;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
@@ -39,7 +42,6 @@ import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.Transition;
-import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 
 import com.google.common.base.Objects;
@@ -67,7 +69,7 @@ public class GraphImageBuilder {
         this.highlightedToken = highlightedToken;
     }
 
-    public byte[] createDiagram(Process process, List<Transition> passedTransitions) throws Exception {
+    public byte[] createDiagram(Process process, ProcessLogs logs) throws Exception {
         DiagramModel diagramModel = DiagramModel.load(processDefinition);
         AbstractFigureFactory factory;
         if (diagramModel.isUmlNotation()) {
@@ -119,7 +121,8 @@ public class GraphImageBuilder {
                 }
             }
         }
-        for (Transition transition : passedTransitions) {
+        for (TransitionLog transitionLog : logs.getLogs(TransitionLog.class)) {
+            Transition transition = transitionLog.getTransition(processDefinition);
             // Mark 'from' block as PASSED
             AbstractFigure nodeModelFrom = allNodeFigures.get(transition.getFrom().getNodeId());
             nodeFigures.put(nodeModelFrom, new RenderHits(DrawProperties.getHighlightColor(), true));
@@ -131,8 +134,7 @@ public class GraphImageBuilder {
             transitionFigureBases.put(transitionFigureBase, new RenderHits(DrawProperties.getHighlightColor(), true));
         }
         fillActiveSubprocesses(process.getRootToken());
-        fillActiveTasks(process);
-        fillExpiredTasks(process);
+        fillTasks(logs);
         GraphImage graphImage = new GraphImage(processDefinition.getGraphImageBytes(), diagramModel, transitionFigureBases, nodeFigures);
         return graphImage.getImageBytes();
     }
@@ -153,42 +155,32 @@ public class GraphImageBuilder {
         }
     }
 
-    private void fillActiveTasks(Process process) {
-        for (Task task : process.getActiveTasks(null)) {
-            AbstractFigure node = allNodeFigures.get(task.getNodeId());
-            Color color = DrawProperties.getBaseColor();
-            if (highlightedToken != null && Objects.equal(task.getToken().getId(), highlightedToken.getId())) {
-                color = DrawProperties.getHighlightColor();
+    private void fillTasks(ProcessLogs logs) {
+        for (Map.Entry<TaskCreateLog, TaskEndLog> entry : logs.getTaskLogs().entrySet()) {
+            boolean activeTask = entry.getValue() != null;
+            Date deadlineDate = entry.getKey().getDeadlineDate();
+            Date endDate = activeTask ? entry.getValue().getDate() : new Date();
+            AbstractFigure figure = allNodeFigures.get(entry.getKey().getNodeId());
+            if (figure == null) {
+                // ru.runa.wfe.audit.TaskCreateLog.getNodeId() = null for old
+                // tasks
+                continue;
             }
-            Date deadlineWarningDate = taskObjectFactory.getDeadlineWarningDate(task);
-            if (task.getDeadlineDate() != null && task.getDeadlineDate().getTime() < System.currentTimeMillis()) {
+            Date deadlineWarningDate = taskObjectFactory.getDeadlineWarningDate(entry.getKey().getDate(), deadlineDate);
+            Color color = null;
+            if (activeTask) {
+                color = DrawProperties.getBaseColor();
+                if (highlightedToken != null && Objects.equal(entry.getKey().getTokenId(), highlightedToken.getId())) {
+                    color = DrawProperties.getHighlightColor();
+                }
+            }
+            if (deadlineDate != null && deadlineDate.getTime() < endDate.getTime()) {
                 color = DrawProperties.getAlarmColor();
-            } else if (deadlineWarningDate != null && deadlineWarningDate.getTime() < System.currentTimeMillis()) {
+            } else if (deadlineWarningDate != null && deadlineWarningDate.getTime() < endDate.getTime()) {
                 color = DrawProperties.getLightAlarmColor();
             }
-            nodeFigures.put(node, new RenderHits(color, true, true));
-        }
-    }
-
-    private void fillExpiredTasks(Process process) {
-        for (Task task : process.getTasks()) {
-            AbstractFigure figure = allNodeFigures.get(task.getNodeId());
-            for (Node node : processDefinition.getNodes()) {
-                if (Objects.equal(node.getNodeId(), task.getNodeId())) {
-                    if (task.isActive() || task.getDeadlineDate() == null) {
-                        continue;
-                    }
-                    Date deadlineWarningDate = taskObjectFactory.getDeadlineWarningDate(task);
-                    Color color;
-                    if (task.getDeadlineDate() != null && task.getDeadlineDate().getTime() < task.getEndDate().getTime()) {
-                        color = DrawProperties.getAlarmColor();
-                    } else if (deadlineWarningDate != null && deadlineWarningDate.getTime() < task.getEndDate().getTime()) {
-                        color = DrawProperties.getLightAlarmColor();
-                    } else {
-                        continue;
-                    }
-                    nodeFigures.put(figure, new RenderHits(color, true, true));
-                }
+            if (color != null) {
+                nodeFigures.put(figure, new RenderHits(color, true, true));
             }
         }
     }

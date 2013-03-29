@@ -33,7 +33,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.logging.Log;
@@ -43,7 +42,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.TaskAssignLog;
 import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.audit.TaskExpiredLog;
@@ -53,14 +51,10 @@ import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.lang.Event;
-import ru.runa.wfe.lang.InteractionNode;
-import ru.runa.wfe.lang.MultiTaskNode;
 import ru.runa.wfe.lang.TaskDefinition;
-import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 
 /**
  * is one task that can be assigned to an actor (read: put in someones task
@@ -81,7 +75,6 @@ public class Task implements Assignable {
     private String description;
     private Executor executor;
     private Date createDate;
-    private Date endDate;
     private Date deadlineDate;
     private boolean firstOpen;
     private Token token;
@@ -155,15 +148,6 @@ public class Task implements Assignable {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
-    }
-
-    @Column(name = "END_DATE")
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     @Column(name = "DEADLINE_DATE")
@@ -255,10 +239,7 @@ public class Task implements Assignable {
      * name will be used in the signal. If this task completion does not trigger
      * execution to move on, the transition is ignored.
      */
-    public void end(ExecutionContext executionContext, Transition transition, boolean leaveNode) {
-        Preconditions.checkState(isActive(), "task '" + id + "' is already ended");
-        // mark the end of this task
-        setEndDate(new Date());
+    public void end(ExecutionContext executionContext) {
         // fire the task end event
         TaskDefinition taskDefinition = executionContext.getProcessDefinition().getTaskNotNull(nodeId);
         taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_END);
@@ -267,38 +248,12 @@ public class Task implements Assignable {
         } else {
             executionContext.addLog(new TaskExpiredLog(this));
         }
-        // verify if the end of this task triggers continuation of execution
-        // ending start tasks always leads to a signal
-        if (!leaveNode) {
-            log.debug("completion of task '" + name + "' rejected due to leaveNode=false");
-            return;
-        }
-        if (!Objects.equal(nodeId, token.getNodeId())) {
-            // TODO why this can be?
-            throw new InternalApplicationException("completion of task '" + name + "' rejected due to different token node id: '" + nodeId + "' != '"
-                    + token.getNodeId() + "'");
-        }
-        InteractionNode node = taskDefinition.getNode();
-        if (node instanceof MultiTaskNode && !((MultiTaskNode) node).isCompletionTriggersSignal(this)) {
-            log.debug("completion of task '" + name + "' results in taking transition '" + transition + "'");
-            return;
-        }
-        if (transition == null) {
-            transition = taskDefinition.getNode().getDefaultLeavingTransitionNotNull();
-        }
-        log.debug("completion of task '" + name + "' results in taking transition '" + transition + "'");
-        token.signal(executionContext, transition);
+        delete();
     }
 
-    @Transient
-    public boolean isActive() {
-        return endDate == null;
-    }
-
-    public void checkNotCompleted() {
-        if (!isActive()) {
-            throw new TaskAlreadyCompletedException(name);
-        }
+    public void delete() {
+        getProcess().getTasks().remove(this);
+        // ApplicationContextFactory.getTaskDAO().delete(this);
     }
 
     @Override

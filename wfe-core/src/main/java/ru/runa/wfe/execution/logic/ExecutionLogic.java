@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.audit.ProcessLog;
+import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.definition.DefinitionPermission;
@@ -166,7 +167,9 @@ public class ExecutionLogic extends WFCommonLogic {
             }
             GraphImageBuilder builder = new GraphImageBuilder(taskObjectFactory, processDefinition);
             builder.setHighlightedToken(highlightedToken);
-            return builder.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));
+            ProcessLogs logs = new ProcessLogs(processId);
+            logs.addLogs(processLogDAO.getAll(processId), false);
+            return builder.createDiagram(process, logs);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }

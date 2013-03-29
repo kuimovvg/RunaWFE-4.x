@@ -71,7 +71,7 @@ public class TaskClassPresentation extends ClassPresentation {
     private static final ClassPresentation INSTANCE = new TaskClassPresentation();
 
     private TaskClassPresentation() {
-        super(Task.class, classNameSQL + ".endDate is null", false,
+        super(Task.class, "", false,
                 new FieldDescriptor[] {
                         // display name field type DB source isSort filter mode
                         // get value/show in web getter parameters

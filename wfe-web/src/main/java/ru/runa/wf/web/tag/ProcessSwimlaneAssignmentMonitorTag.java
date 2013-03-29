@@ -74,7 +74,7 @@ public class ProcessSwimlaneAssignmentMonitorTag extends ProcessBaseFormTag {
     protected void fillFormData(TD tdFormElement) {
         try {
             ExecutionService executionService = Delegates.getExecutionService();
-            List<WfTask> activeTasks = executionService.getActiveTasks(getUser(), getIdentifiableId());
+            List<WfTask> activeTasks = executionService.getProcessTasks(getUser(), getIdentifiableId());
             List<WfTask> filteredTasks = Lists.newArrayList();
             for (WfTask task : activeTasks) {
                 if (Objects.equal(swimlaneName, task.getSwimlaneName())) {
