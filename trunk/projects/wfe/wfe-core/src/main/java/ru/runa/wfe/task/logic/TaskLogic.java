@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -14,11 +15,14 @@ import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.Swimlane;
+import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.extension.assign.AssignmentHelper;
+import ru.runa.wfe.lang.InteractionNode;
+import ru.runa.wfe.lang.MultiTaskNode;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.TaskDefinition;
@@ -60,7 +64,6 @@ public class TaskLogic extends WFCommonLogic {
 
     public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException {
         Task task = taskDAO.getNotNull(taskId);
-        task.checkNotCompleted();
         try {
             if (variables == null) {
                 variables = Maps.newHashMap();
@@ -88,13 +91,29 @@ public class TaskLogic extends WFCommonLogic {
                 transition = taskDefinition.getNode().getDefaultLeavingTransitionNotNull();
             }
             executionContext.setTransientVariable(WfProcess.SELECTED_TRANSITION_KEY, transition.getName());
-            task.end(executionContext, transition, true);
+            task.end(executionContext);
+            signalToken(executionContext, task, transition);
             log.info("Task '" + task.getName() + "' was done by " + user + " in process " + task.getProcess());
             ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getName());
         } catch (Throwable th) {
             ProcessExecutionErrors.addProcessError(task.getProcess().getId(), task.getName(), th);
             throw Throwables.propagate(th);
         }
+    }
+
+    private void signalToken(ExecutionContext executionContext, Task task, Transition transition) {
+        Token token = executionContext.getToken();
+        if (!Objects.equal(task.getNodeId(), token.getNodeId())) {
+            // TODO why this can be?
+            throw new InternalApplicationException("completion of " + task + " failed. Different node id in task and token: " + token.getNodeId());
+        }
+        InteractionNode node = (InteractionNode) executionContext.getNode();
+        if (node instanceof MultiTaskNode && !((MultiTaskNode) node).isCompletionTriggersSignal(task)) {
+            log.debug("!MultiTaskNode.isCompletionTriggersSignal in " + task);
+            return;
+        }
+        log.debug("completion of " + task + " by " + transition);
+        token.signal(executionContext, transition);
     }
 
     public void markTaskOpened(User user, Long taskId) {
@@ -111,11 +130,11 @@ public class TaskLogic extends WFCommonLogic {
         return tasklistBuilder.getTasks(user.getActor(), batchPresentation);
     }
 
-    public List<WfTask> getActiveTasks(User user, Long processId) throws ProcessDoesNotExistException {
+    public List<WfTask> getTasks(User user, Long processId) throws ProcessDoesNotExistException {
         List<WfTask> result = Lists.newArrayList();
         Process process = processDAO.getNotNull(processId);
         checkPermissionAllowed(user, process, ProcessPermission.READ);
-        for (Task task : process.getActiveTasks(null)) {
+        for (Task task : process.getTasks()) {
             result.add(taskObjectFactory.create(task, user.getActor(), false));
         }
         return result;
@@ -153,11 +172,9 @@ public class TaskLogic extends WFCommonLogic {
     public void assignTask(User user, Long taskId, Executor previousOwner, Executor newExecutor) throws TaskAlreadyAcceptedException {
         // check assigned executor for the task
         Task task = taskDAO.getNotNull(taskId);
-        task.checkNotCompleted();
         if (!Objects.equal(previousOwner, task.getExecutor())) {
             throw new TaskAlreadyAcceptedException(task.getName());
         }
-        ;
         ProcessDefinition processDefinition = getDefinition(task);
         assignmentHelper.reassignTask(new ExecutionContext(processDefinition, task), task, newExecutor, false);
     }

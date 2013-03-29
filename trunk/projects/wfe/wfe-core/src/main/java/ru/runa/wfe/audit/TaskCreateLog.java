@@ -21,10 +21,13 @@
  */
 package ru.runa.wfe.audit;
 
+import java.util.Date;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.task.Task;
 
 /**
@@ -42,6 +45,24 @@ public class TaskCreateLog extends TaskLog {
 
     public TaskCreateLog(Task task) {
         super(task);
+        addAttribute(ATTR_NODE_ID, task.getNodeId());
+        if (task.getDeadlineDate() != null) {
+            addAttribute(ATTR_DUE_DATE, CalendarUtil.formatDateTime(task.getDeadlineDate()));
+        }
+    }
+
+    @Transient
+    public String getNodeId() {
+        return getAttributeNotNull(ATTR_NODE_ID);
+    }
+
+    @Transient
+    public Date getDeadlineDate() {
+        String dateAsString = getAttribute(ATTR_DUE_DATE);
+        if (dateAsString == null) {
+            return null;
+        }
+        return CalendarUtil.convertToDate(dateAsString, CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
     }
 
     @Override

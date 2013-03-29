@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskFactory;
+import ru.runa.wfe.task.dao.TaskDAO;
 
 import com.google.common.base.Objects;
 
@@ -38,6 +39,8 @@ public class TaskNode extends InteractionNode implements Synchronizable {
 
     @Autowired
     private TaskFactory taskFactory;
+    @Autowired
+    private TaskDAO taskDAO;
 
     private boolean async;
 
@@ -73,11 +76,9 @@ public class TaskNode extends InteractionNode implements Synchronizable {
     @Override
     public void leave(ExecutionContext executionContext, Transition transition) {
         if (!async) {
-            for (Task task : executionContext.getProcess().getTasks()) {
-                if (task.isActive() && Objects.equal(task.getNodeId(), getNodeId()) && Objects.equal(task.getToken(), executionContext.getToken())) {
-                    // if this is a non-finished task and all those tasks should
-                    // be finished
-                    task.end(executionContext, transition, false);
+            for (Task task : executionContext.getToken().getTasks()) {
+                if (Objects.equal(task.getNodeId(), getNodeId())) {
+                    task.end(executionContext);
                 }
             }
         }

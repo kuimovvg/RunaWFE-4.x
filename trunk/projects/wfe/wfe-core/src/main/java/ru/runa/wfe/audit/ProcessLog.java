@@ -194,22 +194,6 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
         return MessageFormat.format(pattern, arguments);
     }
 
-    protected String wrapNodeId(String id) {
-        // if (SystemProperties.isV3CompatibilityMode() && (id.startsWith(" ")
-        // || id.endsWith(" "))) {
-        // return "!" + id + "!";
-        // }
-        return id;
-    }
-
-    protected String unwrapNodeId(String id) {
-        // if (SystemProperties.isV3CompatibilityMode() && id != null &&
-        // id.startsWith("!") && id.endsWith("!")) {
-        // return id.substring(1, id.length() - 1);
-        // }
-        return id;
-    }
-
     @Override
     public int compareTo(ProcessLog o) {
         return date.compareTo(o.date);

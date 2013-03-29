@@ -22,6 +22,7 @@ import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.relation.dao.RelationDAO;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.ss.dao.SubstitutionDAO;
+import ru.runa.wfe.task.dao.TaskDAO;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.base.Throwables;
@@ -47,6 +48,10 @@ public class ApplicationContextFactory {
 
     public static JobDAO getJobDAO() {
         return getContext().getBean(JobDAO.class);
+    }
+
+    public static TaskDAO getTaskDAO() {
+        return getContext().getBean(TaskDAO.class);
     }
 
     public static Converters getConverters() {

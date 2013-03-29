@@ -182,9 +182,9 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
-    public List<WfTask> getActiveTasks(User user, Long processId) {
+    public List<WfTask> getProcessTasks(User user, Long processId) {
         Preconditions.checkNotNull(user);
-        return taskLogic.getActiveTasks(user, processId);
+        return taskLogic.getTasks(user, processId);
     }
 
     @Override
