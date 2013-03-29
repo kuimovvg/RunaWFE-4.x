@@ -17,6 +17,8 @@
  */
 package ru.runa.wf.web.ftl.method;
 
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.service.client.DelegateExecutorLoader;
@@ -38,7 +40,11 @@ public class DisplayActorTag extends FreemarkerTag {
     @Override
     protected Object executeTag() throws TemplateModelException {
         String actorVarName = getParameterAs(String.class, 0);
-        Object actorIdentity = variableProvider.getValueNotNull(actorVarName);
+        Object actorIdentity = variableProvider.getValue(actorVarName);
+        if (actorIdentity == null) {
+            LogFactory.getLog(getClass()).error("No variable " + actorVarName + " in " + variableProvider.getProcessId());
+            return "<p style='color: red;'> --- </p>";
+        }
         Executor executor = TypeConversionUtil.convertToExecutor(actorIdentity, new DelegateExecutorLoader(user));
         if (executor instanceof Group) {
             return "<p style='color: blue;'>" + executor.getName() + "</p>";
