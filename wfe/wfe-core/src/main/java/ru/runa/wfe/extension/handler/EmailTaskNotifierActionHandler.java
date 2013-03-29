@@ -65,7 +65,7 @@ public class EmailTaskNotifierActionHandler implements ActionHandler {
         for (Actor actor : actors) {
             String email = actor.getEmail();
             if (email != null && email.length() > 0) {
-                List<Task> taskList = taskDAO.findActiveTasks(actor);
+                List<Task> taskList = taskDAO.findTasks(actor);
                 for (Task task : taskList) {
                     if (!Objects.equal(task.getId(), executionContext.getTask().getId())) {
                         EmailConfig config = EmailConfigParser.parse(configBytes);

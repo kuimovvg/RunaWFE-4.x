@@ -249,8 +249,8 @@ public class Token implements Serializable {
     }
 
     @Transient
-    public List<Task> getActiveTasks() {
-        return getProcess().getActiveTasks(this);
+    public List<Task> getTasks() {
+        return getProcess().getTokenTasks(this);
     }
 
     private void addChild(Token token) {
@@ -316,38 +316,6 @@ public class Token implements Serializable {
         }
         return activeChildren;
     }
-
-    // public void reactivateIfAllChildrenArePassive(ExecutionContext
-    // executionContext, Node node) {
-    // boolean reactivateParent = true;
-    // for (Token token : children) {
-    // if (!token.hasEnded() && token.isAbleToReactivateParent()) {
-    // reactivateParent = false;
-    // break;
-    // }
-    // }
-    // if (reactivateParent) {
-    // // write to all child tokens that the parent is already
-    // // reactivated
-    // for (Token concurrentToken : children) {
-    // concurrentToken.setAbleToReactivateParent(false);
-    // }
-    // // write to all child tokens that the parent is already
-    // // reactivated
-    // node.leave(new ExecutionContext(executionContext.getProcessDefinition(),
-    // this));
-    // }
-    // }
-
-    // TODO: token death example
-    // public void checkImplicitTermination() {
-    // if (terminationImplicit && node.hasNoLeavingTransitions()) {
-    // end();
-    // if (process.isTerminatedImplicitly()) {
-    // process.end();
-    // }
-    // }
-    // }
 
     @Override
     public String toString() {

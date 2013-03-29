@@ -134,8 +134,8 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public List<WfTask> getActiveTasks(User user, Long processId) {
-        return getExecutionService().getActiveTasks(user, processId);
+    public List<WfTask> getProcessTasks(User user, Long processId) {
+        return getExecutionService().getProcessTasks(user, processId);
     }
 
     @Override

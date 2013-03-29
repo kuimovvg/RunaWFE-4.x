@@ -32,7 +32,6 @@ import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
-import ru.runa.wfe.task.TaskAlreadyCompletedException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
@@ -67,7 +66,7 @@ public interface ExecutionService {
 
     public WfTask getTask(User user, Long taskId) throws TaskDoesNotExistException;
 
-    public List<WfTask> getActiveTasks(User user, Long processId) throws ProcessDoesNotExistException;
+    public List<WfTask> getProcessTasks(User user, Long processId) throws ProcessDoesNotExistException;
 
     /**
      * Reassigns task to another executor.
@@ -79,13 +78,11 @@ public interface ExecutionService {
      * @throws TaskAlreadyAcceptedException
      *             if previous owner differs from provided
      */
-    public void assignTask(User user, Long taskId, Executor previousOwner, Executor newOwner) throws TaskAlreadyAcceptedException,
-            TaskAlreadyCompletedException;
+    public void assignTask(User user, Long taskId, Executor previousOwner, Executor newOwner) throws TaskAlreadyAcceptedException;
 
-    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException,
-            TaskAlreadyCompletedException;
+    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException;
 
-    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables) throws TaskDoesNotExistException, TaskAlreadyCompletedException;
+    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables) throws TaskDoesNotExistException;
 
     public List<WfSwimlane> getSwimlanes(User user, Long processId) throws ProcessDoesNotExistException;
 
