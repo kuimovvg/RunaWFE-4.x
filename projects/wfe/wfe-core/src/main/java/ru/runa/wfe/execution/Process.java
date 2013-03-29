@@ -287,9 +287,7 @@ public class Process extends IdentifiableBase {
         jobDAO.deleteAll(this);
         if (canceller != null) {
             // end all active tasks
-            for (Task task : tasks) {
-                task.delete();
-            }
+            tasks.clear();
             executionContext.addLog(new ProcessCancelLog(canceller));
         } else {
             executionContext.addLog(new ProcessEndLog());
