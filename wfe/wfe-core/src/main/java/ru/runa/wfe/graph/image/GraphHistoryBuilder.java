@@ -32,6 +32,8 @@ import ru.runa.wfe.audit.NodeEnterLog;
 import ru.runa.wfe.audit.NodeLeaveLog;
 import ru.runa.wfe.audit.NodeLog;
 import ru.runa.wfe.audit.ProcessLog;
+import ru.runa.wfe.audit.ReceiveMessageLog;
+import ru.runa.wfe.audit.SendMessageLog;
 import ru.runa.wfe.audit.SubprocessEndLog;
 import ru.runa.wfe.audit.SubprocessStartLog;
 import ru.runa.wfe.audit.TaskAssignLog;
@@ -164,6 +166,7 @@ public class GraphHistoryBuilder {
                                     }
 
                                     TransitionModel transitionModel = nodeModel.getTransition(transition.getName());
+                                    transitionModel.getBendpoints().clear();
                                     transitionModel.setName(transitionDateFormat.format(findNextTransitionLog(log, nodeId).getDate()));
                                     if (diagramModel.isShowActions()) {
                                         transitionModel.setActionsCount(GraphImageHelper.getTransitionActionsCount(transition));
@@ -182,8 +185,6 @@ public class GraphHistoryBuilder {
                                             bendpointModel.setX(figureTo.getCoords()[0] + figureTo.getCoords()[2] / 2);
                                             bendpointModel.setY(nodeModel.getY() + nodeModel.getHeight() / 2);
                                             transitionModel.addBendpoint(bendpointModel);
-                                        } else {
-                                            transitionModel.getBendpoints().clear();
                                         }
                                         if (figureTo.getType() == NodeType.Join) {
                                             BendpointModel bendpointModel = new BendpointModel();
@@ -339,8 +340,8 @@ public class GraphHistoryBuilder {
     }
 
     private boolean isNodePresentInGraph(NodeLog log) {
-        return !((log instanceof SubprocessStartLog || log instanceof SubprocessEndLog) && NodeType.MultiSubprocess.toString().equals(
-                log.getNodeType()))
+        return !(log instanceof ReceiveMessageLog || log instanceof SendMessageLog) &&
+        		!((log instanceof SubprocessStartLog || log instanceof SubprocessEndLog) && NodeType.MultiSubprocess.toString().equals(log.getNodeType()))
                 && ((log instanceof NodeEnterLog && !NodeType.Join.toString().equals(log.getNodeType())) || (log instanceof NodeLeaveLog && (NodeType.StartState
                         .toString().equals(log.getNodeType()) || NodeType.Join.toString().equals(log.getNodeType()))));
     }
@@ -480,7 +481,7 @@ public class GraphHistoryBuilder {
             List<String> nodes = forkNodes.get(tempForkRootNodeId);
             if (nodes != null && nodes.contains(rootNodeId)) {
                 for (String forkNode : nodes) {
-                    if (tokenHieght.get(forkNode) > tokenHieght.get(tempForkRootNodeId)) {
+                    if (tokenHieght.get(forkNode) != null && tokenHieght.get(tempForkRootNodeId) != null && tokenHieght.get(forkNode) > tokenHieght.get(tempForkRootNodeId)) {
                         height = tokenHieght.get(forkNode);
                         tokenHieght.put(tempForkRootNodeId, height + nodeModel.getHeight() + heightBetweenNode);
                     }
