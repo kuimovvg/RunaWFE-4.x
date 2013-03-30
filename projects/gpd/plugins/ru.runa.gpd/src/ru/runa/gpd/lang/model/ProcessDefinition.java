@@ -135,7 +135,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     }
 
     public int getNextNodeId() {
-        return nextNodeId++;
+        return ++nextNodeId;
     }
 
     public SwimlaneGUIConfiguration getSwimlaneGUIConfiguration() {
