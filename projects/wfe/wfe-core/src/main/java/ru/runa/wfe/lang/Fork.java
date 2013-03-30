@@ -21,15 +21,23 @@
  */
 package ru.runa.wfe.lang;
 
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
+
+import com.google.common.collect.Maps;
 
 /**
  * Launch child tokens from the fork over the leaving transitions.
  */
 public class Fork extends Node {
     private static final long serialVersionUID = 1L;
+    private static Log log = LogFactory.getLog(Fork.class);
 
     @Override
     public NodeType getNodeType() {
@@ -40,11 +48,16 @@ public class Fork extends Node {
     public void execute(ExecutionContext executionContext) {
         Token token = executionContext.getToken();
         checkCyclicExecution(token);
+        Map<Token, Transition> childTokens = Maps.newHashMap();
         for (Transition leavingTransition : getLeavingTransitions()) {
             Token childToken = new Token(token, leavingTransition.getName());
-            ApplicationContextFactory.getCurrentSession().flush();
-            ExecutionContext childExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), childToken);
-            leave(childExecutionContext, leavingTransition);
+            childTokens.put(childToken, leavingTransition);
+        }
+        ApplicationContextFactory.getCurrentSession().flush();
+        log.debug("Child tokens created: " + childTokens.keySet());
+        for (Map.Entry<Token, Transition> entry : childTokens.entrySet()) {
+            ExecutionContext childExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), entry.getKey());
+            leave(childExecutionContext, entry.getValue());
         }
     }
 
