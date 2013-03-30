@@ -9,6 +9,8 @@ import java.util.Map;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
+import com.google.common.base.Strings;
+
 /**
  * Base class for field validators.
  */
@@ -34,6 +36,9 @@ public abstract class FieldValidator extends Validator {
 
     @Override
     protected void addError(String userMessage) {
+        if (Strings.isNullOrEmpty(userMessage)) {
+            userMessage = "no validation message";
+        }
         getValidatorContext().addFieldError(fieldName, userMessage);
     }
 
