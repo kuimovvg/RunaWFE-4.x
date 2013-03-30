@@ -38,8 +38,8 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.decision.BSHTypeSupport;
 import ru.runa.gpd.extension.decision.BSHValidationModel;
-import ru.runa.gpd.extension.decision.Operation;
 import ru.runa.gpd.extension.decision.BSHValidationModel.Expr;
+import ru.runa.gpd.extension.decision.Operation;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
@@ -126,6 +126,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 ValidatorConfig config = ValidatorDefinitionRegistry.getGlobalDefinition().create(ValidatorConfig.GLOBAL_FIELD_ID);
+                config.setMessage(Localization.getString("GlobalValidatorsWizardPage.defaultValidationMessage"));
                 validatorConfigs.add(config);
                 validatorsTableViewer.refresh(true);
                 validatorsTableViewer.setSelection(new StructuredSelection(config));
