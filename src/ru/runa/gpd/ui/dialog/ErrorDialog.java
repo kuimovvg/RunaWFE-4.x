@@ -20,13 +20,12 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.util.SafeLoopRunner;
 
 public class ErrorDialog extends IconAndMessageDialog {
-
     private Button detailsButton;
     private final String details;
     private Text text;
 
     public ErrorDialog(String message, String details) {
-        super(Display.getCurrent().getActiveShell());
+        super(Display.getCurrent() != null ? Display.getCurrent().getActiveShell() : null);
         setShellStyle(getShellStyle() | SWT.RESIZE);
         this.message = message;
         this.details = details;
@@ -118,7 +117,6 @@ public class ErrorDialog extends IconAndMessageDialog {
     }
 
     private static class ThrowableCauseExtractor extends SafeLoopRunner {
-
         Throwable cause;
 
         ThrowableCauseExtractor(Throwable cause) {
@@ -134,7 +132,5 @@ public class ErrorDialog extends IconAndMessageDialog {
         protected void loop() {
             cause = cause.getCause();
         }
-
     }
-
 }
