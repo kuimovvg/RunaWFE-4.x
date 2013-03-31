@@ -20,6 +20,11 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.organization.name>wf.runa.ru</project.organization.name>
+
+		<!-- Zip file with Jboss AS. Used to build wfe application server and so on. -->
+		<jboss.zip.file>path to Jboss AS zip file</jboss.zip.file>
+		<!-- Jboss AS folder name in zip file. -->
+		<jboss.zip.folder>jboss4</jboss.zip.folder>
 	</properties>
 
 	<dependencyManagement>
