@@ -3,6 +3,8 @@ package ru.runa.gpd.office.excel;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.gpd.util.BackCompatibilityClassNames;
+
 public class ConstraintsModel {
     public static final int CELL = 0;
     public static final int ROW = 1;
@@ -66,19 +68,17 @@ public class ConstraintsModel {
     }
 
     public static ConstraintsModel deserialize(Element element) {
-        ConstraintsModel model = null;
+        ConstraintsModel model;
         String className = element.attributeValue("class");
+        className = BackCompatibilityClassNames.getClassName(className);
         if (CELL_CLASS.equals(className)) {
             model = new ConstraintsModel(CELL);
-        }
-        if (ROW_CLASS.equals(className)) {
+        } else if (ROW_CLASS.equals(className)) {
             model = new ConstraintsModel(ROW);
-        }
-        if (COLUMN_CLASS.equals(className)) {
+        } else if (COLUMN_CLASS.equals(className)) {
             model = new ConstraintsModel(COLUMN);
-        }
-        if (model == null) {
-            return null;
+        } else {
+            throw new RuntimeException("Invaid class '" + className + "'");
         }
         model.variable = element.attributeValue("variable");
         Element conf = element.element("config");

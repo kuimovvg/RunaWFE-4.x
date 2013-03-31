@@ -26,6 +26,7 @@ import org.w3c.dom.ls.LSResourceResolver;
 import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 
 /**
  * Util for HTML with custom tags
@@ -169,5 +170,15 @@ public class XmlUtil {
         } catch (Exception e) {
             throw new RuntimeException("Unable to read config at " + path, e);
         }
+    }
+
+    public static String reformatIfXml(String string) {
+        try {
+            if (!Strings.isNullOrEmpty(string)) {
+                return toString(parseWithoutValidation(string));
+            }
+        } catch (Exception e) {
+        }
+        return string;
     }
 }

@@ -433,7 +433,7 @@ public class BpmnSerializer extends ProcessSerializer {
         if (element instanceof Delegable) {
             Map<String, String> properties = parseExtensionProperties(node);
             element.setDelegationClassName(properties.get(CLASS));
-            element.setDelegationConfiguration(properties.get(CONFIG));
+            element.setDelegationConfiguration(XmlUtil.reformatIfXml(properties.get(CONFIG)));
         }
         return (T) element;
     }

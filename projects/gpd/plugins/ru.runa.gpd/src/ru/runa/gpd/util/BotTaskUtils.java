@@ -133,10 +133,7 @@ public class BotTaskUtils {
             Preconditions.checkNotNull(element);
             botTask.setParamDefConfig(ParamDefConfig.parse(element));
             String cdata = botElement.elementTextTrim(BOTCONFIG_ELEMENT);
-            if (!Strings.isNullOrEmpty(cdata)) {
-                // reformat xml code
-                cdata = XmlUtil.toString(XmlUtil.parseWithoutValidation(cdata));
-            }
+            cdata = XmlUtil.reformatIfXml(cdata);
             botTask.setDelegationConfiguration(cdata);
         } else {
             botTask.setType(BotTaskType.SIMPLE);

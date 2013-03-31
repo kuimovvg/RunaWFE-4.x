@@ -376,7 +376,7 @@ public class JpdlSerializer extends ProcessSerializer {
             }
             if (HANDLER_NODE.equals(childNode.getName()) || ASSIGNMENT_NODE.equals(childNode.getName())) {
                 setDelegableClassName((Delegable) element, childNode.attributeValue(CLASS_ATTR));
-                element.setDelegationConfiguration(childNode.getTextTrim());
+                element.setDelegationConfiguration(XmlUtil.reformatIfXml(childNode.getTextTrim()));
             }
             if (ACTION_NODE.equals(childNode.getName())) {
                 // only transition actions loaded here
@@ -406,7 +406,7 @@ public class JpdlSerializer extends ProcessSerializer {
     private void parseAction(Element node, GraphElement parent, String eventType) {
         ActionImpl action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement(parent);
         setDelegableClassName(action, node.attributeValue(CLASS_ATTR));
-        action.setDelegationConfiguration(node.getTextTrim());
+        action.setDelegationConfiguration(XmlUtil.reformatIfXml(node.getTextTrim()));
         parent.addAction(action, -1);
         action.setEventType(eventType);
     }
