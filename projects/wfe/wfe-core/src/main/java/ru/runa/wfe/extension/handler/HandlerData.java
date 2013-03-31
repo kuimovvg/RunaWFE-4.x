@@ -22,7 +22,7 @@ public class HandlerData {
     private static final Log log = LogFactory.getLog(HandlerData.class);
     private final ParamsDef paramsDef;
 
-    private boolean failOnError;
+    private boolean failOnError = true;
     private final Long processId;
     private final String taskName;
     private final IVariableProvider variableProvider;
@@ -40,10 +40,6 @@ public class HandlerData {
         processId = task.getProcessId();
         taskName = task.getName();
         this.variableProvider = variableProvider;
-    }
-
-    public void setFailOnError(boolean failOnError) {
-        this.failOnError = failOnError;
     }
 
     public boolean isFailOnError() {
