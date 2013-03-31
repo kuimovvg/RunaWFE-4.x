@@ -12,6 +12,8 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
+import com.google.common.base.Throwables;
+
 /**
  * Base class for standard XML parameter-based configuration.
  * 
@@ -31,7 +33,6 @@ public abstract class CommonParamBasedHandler extends TaskHandlerBase implements
     @Override
     public void execute(ExecutionContext context) throws Exception {
         final HandlerData handlerData = new HandlerData(paramsDef, context);
-        handlerData.setFailOnError(false);
         TimeMeasurer timeMeasurer = new TimeMeasurer(log);
         try {
             timeMeasurer.jobStarted();
@@ -39,33 +40,26 @@ public abstract class CommonParamBasedHandler extends TaskHandlerBase implements
             context.setVariables(handlerData.getOutputVariables());
             timeMeasurer.jobEnded(handlerData.getTaskName());
         } catch (Throwable th) {
-            log.error("action handler execution error.", th);
             if (handlerData.isFailOnError()) {
-                if (th instanceof Exception) {
-                    throw (Exception) th;
-                }
-                throw new RuntimeException(th);
+                throw Throwables.propagate(th);
             }
+            log.error("action handler execution error.", th);
         }
     }
 
     @Override
     public Map<String, Object> handle(final User user, final IVariableProvider variableProvider, final WfTask task) throws Exception {
         HandlerData handlerData = new HandlerData(paramsDef, variableProvider, task);
-        handlerData.setFailOnError(true);
         TimeMeasurer timeMeasurer = new TimeMeasurer(log);
         try {
             timeMeasurer.jobStarted();
             executeAction(handlerData);
             timeMeasurer.jobEnded("Execution of " + handlerData.getTaskName());
         } catch (Throwable th) {
-            log.error("task handler execution error.", th);
             if (handlerData.isFailOnError()) {
-                if (th instanceof Exception) {
-                    throw (Exception) th;
-                }
-                throw new Exception(th);
+                throw Throwables.propagate(th);
             }
+            log.error("task handler execution error.", th);
         }
         return handlerData.getOutputVariables();
     }

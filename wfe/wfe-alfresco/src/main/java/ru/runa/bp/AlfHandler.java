@@ -16,6 +16,8 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
+import com.google.common.base.Throwables;
+
 /**
  * Base class for RunaWFE action handler and task handler.
  * 
@@ -70,28 +72,24 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
 
     @Override
     public void execute(ExecutionContext context) throws Exception {
-        final AlfHandlerData alfHandlerData = new AlfHandlerData(paramsDef, context);
-        alfHandlerData.setFailOnError(false);
+        final AlfHandlerData handlerData = new AlfHandlerData(paramsDef, context);
         TimeMeasurer timeMeasurer = new TimeMeasurer(log);
         try {
             timeMeasurer.jobStarted();
             new AlfSessionWrapper<Object>() {
                 @Override
                 protected Object code() throws Exception {
-                    executeAction(session, alfHandlerData);
+                    executeAction(session, handlerData);
                     return null;
                 }
             }.runInSession();
-            context.setVariables(alfHandlerData.getOutputVariables());
-            timeMeasurer.jobEnded(alfHandlerData.getTaskName());
+            context.setVariables(handlerData.getOutputVariables());
+            timeMeasurer.jobEnded(handlerData.getTaskName());
         } catch (Throwable th) {
-            log.error("Alfresco action handler execution error.", th);
-            if (alfHandlerData.isFailOnError()) {
-                if (th instanceof Exception) {
-                    throw (Exception) th;
-                }
-                throw new RuntimeException(th);
+            if (handlerData.isFailOnError()) {
+                throw Throwables.propagate(th);
             }
+            log.error("Alfresco action handler execution error.", th);
         }
     }
 
@@ -100,23 +98,19 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
         return new AlfSessionWrapper<Map<String, Object>>() {
             @Override
             protected Map<String, Object> code() throws Exception {
-                AlfHandlerData alfHandlerData = new AlfHandlerData(paramsDef, user, variableProvider, task);
-                alfHandlerData.setFailOnError(true);
+                AlfHandlerData handlerData = new AlfHandlerData(paramsDef, user, variableProvider, task);
                 TimeMeasurer timeMeasurer = new TimeMeasurer(log);
                 try {
                     timeMeasurer.jobStarted();
-                    executeAction(session, alfHandlerData);
-                    timeMeasurer.jobEnded("Execution of " + alfHandlerData.getTaskName());
+                    executeAction(session, handlerData);
+                    timeMeasurer.jobEnded("Execution of " + handlerData.getTaskName());
                 } catch (Throwable th) {
-                    log.error("Alfresco task handler execution error.", th);
-                    if (alfHandlerData.isFailOnError()) {
-                        if (th instanceof Exception) {
-                            throw (Exception) th;
-                        }
-                        throw new Exception(th);
+                    if (handlerData.isFailOnError()) {
+                        throw Throwables.propagate(th);
                     }
+                    log.error("Alfresco task handler execution error.", th);
                 }
-                return alfHandlerData.getOutputVariables();
+                return handlerData.getOutputVariables();
             }
         }.runInSession();
     }
