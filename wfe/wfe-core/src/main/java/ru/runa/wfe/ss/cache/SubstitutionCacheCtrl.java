@@ -28,9 +28,8 @@ import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.commons.cache.Change;
 import ru.runa.wfe.commons.cache.SubstitutionChangeListener;
 import ru.runa.wfe.ss.Substitution;
+import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.cache.ExecutorCacheCtrl;
-import ru.runa.wfe.user.cache.ExecutorCacheImpl;
 
 import com.google.common.base.Objects;
 
@@ -81,15 +80,18 @@ public class SubstitutionCacheCtrl extends BaseCacheCtrl<SubstitutionCacheImpl> 
         if (cache == null) {
             return;
         }
-        if (object instanceof Substitution) {
-            ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
-            if (executorCache == null) {
-                uninitialize(object, change);
-                return;
-            }
-            Substitution substitution = (Substitution) object;
-            Actor actor = (Actor) executorCache.getExecutor(substitution.getActorId());
+        if (object instanceof Substitution || object instanceof SubstitutionCriteria) {
+            // ExecutorCacheImpl executorCache =
+            // ExecutorCacheCtrl.getInstance().getCache();
+            // if (executorCache == null) {
+            // uninitialize(object, change);
+            // return;
+            // }
+            // Substitution substitution = (Substitution) object;
+            // Actor actor = (Actor)
+            // executorCache.getExecutor(substitution.getActorId());
             // cache.onSubstitutionChange(actor, substitution, change);
+            uninitialize(object, change);
             return;
         }
         if (object instanceof Actor) {
