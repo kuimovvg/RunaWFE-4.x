@@ -46,7 +46,7 @@ public class EjbExceptionSupport {
             if (warnExceptionClasses.contains(th.getClass())) {
                 log.warn("ejb call " + th);
             } else {
-                log.error("ejb call", th);
+                log.error("ejb call error: " + DebugUtils.getDebugString(ic), th);
             }
             if (th instanceof EJBException) {
                 Throwable cause = ((EJBException) th).getCause();

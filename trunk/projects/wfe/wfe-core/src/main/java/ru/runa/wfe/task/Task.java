@@ -219,7 +219,7 @@ public class Task implements Assignable {
         if (Objects.equal(getExecutor(), executor)) {
             return;
         }
-        log.debug("assigning task '" + name + "' to '" + executor + "'");
+        log.debug("assigning " + this + " to " + executor);
         // log this assignment
         executionContext.addLog(new TaskAssignLog(this, executor));
         // do the actual assignment
@@ -258,7 +258,7 @@ public class Task implements Assignable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("process", getProcess()).add("id", id).add("name", name).add("assignedTo", executor).toString();
+        return Objects.toStringHelper(this).add("id", id).add("name", name).add("assignedTo", executor).toString();
     }
 
 }
