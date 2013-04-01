@@ -10,7 +10,7 @@ public class ShowDocStatusTag extends AlfAjaxTag {
     @Override
     protected String renderRequest(AlfSession session) throws Exception {
         String uuid = variableProvider.getValueNotNull(String.class, "uuid");
-        MyDoc myDoc = (MyDoc) session.loadObject(uuid);
+        MyDoc myDoc = session.loadObjectNotNull(uuid);
         return "<b>" + myDoc.getStatus() + "</b>";
     }
 

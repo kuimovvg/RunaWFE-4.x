@@ -154,11 +154,16 @@ public class AlfHelper implements AlfConn {
 
     @Override
     public <T extends AlfObject> T loadObject(Object objectId) {
-        try {
-            return (T) loadObject((NodeRef) objectId);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        return (T) loadObject((NodeRef) objectId);
+    }
+
+    @Override
+    public <T extends AlfObject> T loadObjectNotNull(Object objectId) {
+        T object = loadObject(objectId);
+        if (object == null) {
+            throw new InternalApplicationException("Unable to load object by UUID=" + objectId);
         }
+        return object;
     }
 
     @SuppressWarnings("rawtypes")
