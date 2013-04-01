@@ -25,7 +25,7 @@ public class AlfDownloadContentTag extends AlfAjaxTag {
             if (i != 0) {
                 buf.append("<br>");
             }
-            AlfObject alfObject = session.loadObject(uuid);
+            AlfObject alfObject = session.loadObjectNotNull(uuid);
             String href = WSConnectionSettings.getAlfBaseUrl() + "d/a/workspace/SpacesStore/" + alfObject.getReference().getUuid() + "/"
                     + alfObject.getObjectName();
             buf.append("<a href=\"").append(href).append("\">").append(alfObject.getObjectName()).append("</a>");

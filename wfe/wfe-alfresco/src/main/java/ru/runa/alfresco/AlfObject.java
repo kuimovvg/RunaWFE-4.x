@@ -21,6 +21,8 @@ import ru.runa.alfresco.anno.Type;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.CalendarUtil;
 
+import com.google.common.base.Throwables;
+
 /**
  * Base class for all mappable objects.
  * 
@@ -81,7 +83,7 @@ public class AlfObject implements Serializable {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -130,7 +132,7 @@ public class AlfObject implements Serializable {
             }
             return dirtyFieldNames;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -181,39 +183,31 @@ public class AlfObject implements Serializable {
     }
 
     protected <T extends AlfObject> T lazyLoadObject(String fieldName) {
-        try {
-            Object objectId = refFields.get(fieldName);
-            if (objectId == null) {
-                return null;
-            }
-            if (objectId.equals(getUuidRef()) || objectId.equals(nodeRef)) {
-                return (T) this;
-            }
-            return (T) conn.loadObject(objectId);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        Object objectId = refFields.get(fieldName);
+        if (objectId == null) {
+            return null;
         }
+        if (objectId.equals(getUuidRef()) || objectId.equals(nodeRef)) {
+            return (T) this;
+        }
+        return (T) conn.loadObjectNotNull(objectId);
     }
 
     protected void lazyLoadCollection(String fieldName, Collection<? extends AlfObject> collection) {
-        try {
-            if (conn == null) {
-                return;
-            }
-            AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
-            AlfSerializerDesc desc = typeDesc.getPropertyDescByFieldName(fieldName);
-            if (desc == null) {
-                throw new NullPointerException("No association defined for field " + fieldName);
-            }
-            conn.loadAssociation(getRef(), collection, desc);
-            List<Object> assocIds = new ArrayList<Object>();
-            for (AlfObject alfObject : collection) {
-                assocIds.add(alfObject.getRef());
-            }
-            refCollections.put(fieldName, assocIds);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (conn == null) {
+            return;
         }
+        AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
+        AlfSerializerDesc desc = typeDesc.getPropertyDescByFieldName(fieldName);
+        if (desc == null) {
+            throw new NullPointerException("No association defined for field " + fieldName);
+        }
+        conn.loadAssociation(getRef(), collection, desc);
+        List<Object> assocIds = new ArrayList<Object>();
+        for (AlfObject alfObject : collection) {
+            assocIds.add(alfObject.getRef());
+        }
+        refCollections.put(fieldName, assocIds);
     }
 
     protected void clearCollections() {
@@ -229,7 +223,7 @@ public class AlfObject implements Serializable {
                 Collection<AlfObject> objects = (Collection<AlfObject>) PropertyUtils.getProperty(this, fieldName);
                 for (AlfObject alfObject : objects) {
                     if (alfObject.getRef() == null) {
-                        throw new Exception("Save object before adding to association.");
+                        throw new RuntimeException("Save object before adding to association.");
                     }
                     if (!assocIds.contains(alfObject.getRef())) {
                         assocResults.add(alfObject.getRef());
@@ -241,7 +235,7 @@ public class AlfObject implements Serializable {
             }
             return result;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -254,7 +248,7 @@ public class AlfObject implements Serializable {
                 Collection<AlfObject> objects = (Collection<AlfObject>) PropertyUtils.getProperty(this, fieldName);
                 for (AlfObject alfObject : objects) {
                     if (alfObject.getRef() == null) {
-                        throw new Exception("Save object before deleting from association.");
+                        throw new RuntimeException("Save object before deleting from association.");
                     }
                     assocIds.remove(alfObject.getRef());
                 }
@@ -264,7 +258,7 @@ public class AlfObject implements Serializable {
             }
             return result;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
