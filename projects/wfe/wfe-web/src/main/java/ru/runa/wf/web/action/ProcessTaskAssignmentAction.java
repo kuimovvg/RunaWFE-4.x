@@ -17,7 +17,7 @@
  */
 package ru.runa.wf.web.action;
 
-import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +34,7 @@ import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Created on 02.04.2008
@@ -53,31 +53,28 @@ public class ProcessTaskAssignmentAction extends ActionBase {
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+        User user = getLoggedUser(request);
         String forwardName = LOCAL_FORWARD_TASKS_LIST;
         StrIdsForm idsForm = (StrIdsForm) form;
-        List<Long> taskIds = Lists.newArrayList();
-        List<Executor> taskPreviousOwners = Lists.newArrayList();
+        Map<Long, Executor> newTaskOwners = Maps.newHashMap();
         boolean isOneTaskProcessing = false;
         if (request.getParameter(ru.runa.common.WebResources.HIDDEN_ONE_TASK_INDICATOR) != null) {
             isOneTaskProcessing = true;
         }
         if (isOneTaskProcessing) {
             forwardName = LOCAL_FORWARD_SUBMIT_TASK;
-            taskIds.add(Long.parseLong(request.getParameter(IdForm.ID_INPUT_NAME)));
-            taskPreviousOwners.add(getExecutor(getLoggedUser(request),
-                    request.getParameter(ru.runa.common.WebResources.HIDDEN_TASK_PREVIOUS_OWNER_ID)));
+            newTaskOwners.put(Long.parseLong(request.getParameter(IdForm.ID_INPUT_NAME)),
+                    getExecutor(user, request.getParameter(ru.runa.common.WebResources.HIDDEN_TASK_PREVIOUS_OWNER_ID)));
         } else {
             for (String strId : idsForm.getStrIds()) {
                 String[] ids = strId.split(":", -1);
-                taskIds.add(Long.parseLong(ids[0]));
-                taskPreviousOwners.add(getExecutor(getLoggedUser(request), ids[1]));
+                newTaskOwners.put(Long.parseLong(ids[0]), getExecutor(user, ids[1]));
             }
         }
-        for (int i = 0; i < taskIds.size(); i++) {
+        for (Map.Entry<Long, Executor> entry : newTaskOwners.entrySet()) {
             try {
-                Long taskId = taskIds.get(i);
-                Executor previousExecutor = taskPreviousOwners.get(i);
-                Delegates.getExecutionService().assignTask(getLoggedUser(request), taskId, previousExecutor, getLoggedUser(request).getActor());
+                log.debug("Assigning task " + entry.getKey() + " to " + entry.getValue());
+                Delegates.getExecutionService().assignTask(user, entry.getKey(), entry.getValue(), user.getActor());
             } catch (TaskAlreadyAcceptedException e) {
                 // forward user to the tasks list screen cause current task
                 // was already accepted by another user...
