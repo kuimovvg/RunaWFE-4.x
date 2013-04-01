@@ -1,7 +1,5 @@
 package ru.runa.wfe.service.interceptors;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.interceptor.AroundInvoke;
@@ -18,9 +16,7 @@ import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.user.User;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 
 /**
  * It is important to understand that in a BMT, the message consumed by the MDB
@@ -51,13 +47,13 @@ public class EjbTransactionSupport {
             Object result = invokeWithRetry(ic);
             long jobTime = System.currentTimeMillis() - startTime;
             if (jobTime > 2000) {
-                log.info("Execution of " + getDebugString(ic) + " took " + (jobTime / 1000) + " sec.");
+                log.info("Execution of " + DebugUtils.getDebugString(ic) + " took " + (jobTime / 1000) + " sec.");
             }
             startTime = System.currentTimeMillis();
             transaction.commit();
             jobTime = System.currentTimeMillis() - startTime;
             if (jobTime > 2000) {
-                log.info("Commit of " + getDebugString(ic) + " took " + (jobTime / 1000) + " sec.");
+                log.info("Commit of " + DebugUtils.getDebugString(ic) + " took " + (jobTime / 1000) + " sec.");
             }
             UserHolder.reset();
             return result;
@@ -67,11 +63,6 @@ public class EjbTransactionSupport {
         } finally {
             CachingLogic.onTransactionComplete();
         }
-    }
-
-    private String getDebugString(InvocationContext ic) {
-        return ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName() + "("
-                + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")";
     }
 
     private void rollbackTransaction(UserTransaction transaction) {
@@ -86,22 +77,6 @@ public class EjbTransactionSupport {
         } catch (Exception e) {
             throw new InternalApplicationException("Unable to rollback, status: " + status, e);
         }
-    }
-
-    private List<String> getDebugArguments(Object[] values) {
-        List<String> strings = Lists.newArrayList();
-        if (values != null) {
-            for (Object object : values) {
-                String string;
-                if (object == null) {
-                    string = "null";
-                } else {
-                    string = object.toString();
-                }
-                strings.add(string);
-            }
-        }
-        return strings;
     }
 
     /**

@@ -72,6 +72,7 @@ public class TaskLogic extends WFCommonLogic {
             ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
             checkCanParticipate(user, task);
             checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
+            // fuzziness of the SWIMLANE concept
             assignmentHelper.reassignTask(executionContext, task, user.getActor(), true);
             // don't persist selected transition name
             String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);

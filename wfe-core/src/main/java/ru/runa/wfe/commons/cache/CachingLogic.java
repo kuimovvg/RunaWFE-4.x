@@ -128,7 +128,7 @@ public class CachingLogic {
                 || entity instanceof ExecutorGroupMembership || entity instanceof Actor) {
             onWriteTransaction(taskListeners, entity, change, currentState, previousState, propertyNames, types);
         }
-        if (entity instanceof Substitution || entity instanceof Actor) {
+        if (entity instanceof Substitution || entity instanceof SubstitutionCriteria || entity instanceof Actor) {
             onWriteTransaction(substitutionListeners, entity, change, currentState, previousState, propertyNames, types);
         }
         if (entity instanceof Executor || entity instanceof ExecutorGroupMembership) {
