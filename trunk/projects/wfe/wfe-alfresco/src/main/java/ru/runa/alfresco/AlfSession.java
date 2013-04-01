@@ -233,7 +233,16 @@ public class AlfSession implements AlfConn {
 
         }
         String uuidRef = (String) objectId;
-        return (T) loadObject(uuidRef, null);
+        return (T) loadObject(uuidRef, null, false);
+    }
+
+    @Override
+    public <T extends AlfObject> T loadObjectNotNull(Object objectId) throws InternalApplicationException {
+        T object = loadObject(objectId);
+        if (object == null) {
+            throw new InternalApplicationException("Unable to load object by UUID=" + objectId);
+        }
+        return object;
     }
 
     @SuppressWarnings("rawtypes")
@@ -268,7 +277,12 @@ public class AlfSession implements AlfConn {
                     }
                     if (filterAccepted || !filter) {
                         log.debug("[tmp] row.getColumns() [size] = " + (row.getColumns() != null ? row.getColumns().length : "null"));
-                        collection.add(loadObject(row.getNode().getId(), reference.getStore()));
+                        try {
+                            AlfObject object = loadObject(row.getNode().getId(), reference.getStore(), true);
+                            collection.add(object);
+                        } catch (Exception e) {
+                            throw new RuntimeException(desc.getAssoc() + " in " + ref, e);
+                        }
                     }
                 }
             }
@@ -313,7 +327,7 @@ public class AlfSession implements AlfConn {
                 List<Object> refs = assocToCreate.get(desc);
                 for (Object ref : refs) {
                     Reference reference = (Reference) ref;
-                    AlfObject target = loadObject(reference);
+                    AlfObject target = loadObjectNotNull(reference);
                     Predicate predicate = target.getPredicate();
                     log.debug("Adding assoc " + reference.getUuid() + " to " + object);
                     if (desc.getAssoc().child()) {
@@ -353,13 +367,13 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    private <T extends AlfObject> T loadObject(String uuid, Store store) throws InternalApplicationException {
+    private <T extends AlfObject> T loadObject(String uuid, Store store, boolean throwError) throws InternalApplicationException {
         Reference ref = getReference(uuid, store);
         T result = (T) findInCache(ref.getUuid());
         if (result != null) {
             return result;
         }
-        return (T) loadObject(ref);
+        return (T) loadObject(ref, throwError);
     }
 
     public Reference getReference(String uuid, Store store) throws InternalApplicationException {
@@ -380,19 +394,21 @@ public class AlfSession implements AlfConn {
         return new Reference(store, id, null);
     }
 
-    private <T extends AlfObject> T loadObject(Reference reference) throws InternalApplicationException {
+    private <T extends AlfObject> T loadObject(Reference reference, boolean throwError) throws InternalApplicationException {
         Predicate predicate = new Predicate(new Reference[] { reference }, reference.getStore(), null);
-        return (T) loadObject(predicate);
+        return (T) loadObject(predicate, throwError);
     }
 
-    private <T extends AlfObject> T loadObject(Predicate where) throws InternalApplicationException {
+    private <T extends AlfObject> T loadObject(Predicate where, boolean throwError) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
             Node node = WebServiceFactory.getRepositoryService().get(where)[0];
             return (T) buildObject(node.getType(), node.getReference(), node.getProperties(), node.getAspects());
         } catch (Exception e) {
-            Thread.dumpStack();
-            log.warn("Unable to load object " + where.getNodes(0).getUuid(), e);
+            log.warn("Unable to load object " + where.getNodes(0).getUuid());
+            if (throwError) {
+                throw propagate(e);
+            }
             return null;
         } finally {
             AlfSessionWrapper.sessionEnd();
@@ -413,12 +429,12 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    private <T extends AlfObject> T loadObject(Store store, ResultSetRow row) throws InternalApplicationException {
+    private <T extends AlfObject> T loadObject(Store store, ResultSetRow row, boolean throwError) throws InternalApplicationException {
         if (row.getColumns() != null) {
             Reference reference = new Reference(store, row.getNode().getId(), null);
             return (T) buildObject(row.getNode().getType(), reference, row.getColumns(), row.getNode().getAspects());
         } else {
-            return (T) loadObject(row.getNode().getId(), store);
+            return (T) loadObject(row.getNode().getId(), store, throwError);
         }
     }
 
@@ -632,7 +648,7 @@ public class AlfSession implements AlfConn {
             ResultSetRow[] rows = findObjectRows(store, search);
             List<T> result = new ArrayList<T>(rows.length);
             for (ResultSetRow row : rows) {
-                result.add((T) loadObject(store, row));
+                result.add((T) loadObject(store, row, true));
             }
             return result;
         } catch (Exception e) {
