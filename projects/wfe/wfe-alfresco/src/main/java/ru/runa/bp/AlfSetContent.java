@@ -29,7 +29,7 @@ public class AlfSetContent extends AlfHandler {
             mimetype = alfHandlerData.getInputParam("mimetype");
             content = data.toString().getBytes(Charsets.UTF_8);
         }
-        AlfObject object = session.loadObject(alfHandlerData.getInputParam("uuid"));
+        AlfObject object = session.loadObjectNotNull(alfHandlerData.getInputParam("uuid"));
         session.setContent(object, content, mimetype);
     }
 

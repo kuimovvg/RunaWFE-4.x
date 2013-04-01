@@ -26,6 +26,16 @@ public interface AlfConn {
     public <T extends AlfObject> T loadObject(Object objectId);
 
     /**
+     * Load object from Alfresco repository or throws exception.
+     * 
+     * @param objectId
+     *            Type depends on implementation and can be {@link NodeRef} or
+     *            {@link String}.
+     * @return loaded object
+     */
+    public <T extends AlfObject> T loadObjectNotNull(Object objectId);
+
+    /**
      * Loads association from Alfresco repository.
      * 
      * @param ref
