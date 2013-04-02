@@ -18,7 +18,6 @@
 package ru.runa.wf.web.action;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,16 +34,9 @@ import ru.runa.common.web.Resources;
 import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
-import ru.runa.wfe.service.DefinitionService;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
-
-import com.google.common.base.Objects;
 
 /**
  * Created on 18.08.2004
@@ -66,26 +58,17 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
     protected ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Profile profile)
             throws Exception {
         User user = getLoggedUser(request);
-        ExecutionService executionService = Delegates.getExecutionService();
-        DefinitionService definitionService = Delegates.getDefinitionService();
         ProcessForm form = (ProcessForm) actionForm;
         Long taskId = form.getId();
-        Interaction wfForm = definitionService.getTaskInteraction(user, taskId);
-        Map<String, Object> variables = getFormVariables(request, actionForm, wfForm);
-
-        BatchPresentation batchPresentation = profile.getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS);
-        List<WfTask> tasks = executionService.getTasks(user, batchPresentation);
+        Interaction interaction = Delegates.getDefinitionService().getTaskInteraction(user, taskId);
+        Map<String, Object> variables = getFormVariables(request, actionForm, interaction);
         Long processId = null;
-        for (WfTask task : tasks) {
-            if (Objects.equal(task.getId(), taskId)) {
-                processId = task.getProcessId();
-            }
+        if (WebResources.isAutoShowForm()) {
+            processId = Delegates.getExecutionService().getTask(user, taskId).getProcessId();
         }
-
         String transitionName = form.getSubmitButton();
         variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
-        executionService.completeTask(user, taskId, variables);
-
+        Delegates.getExecutionService().completeTask(user, taskId, variables, form.getActorId());
         if (WebResources.isAutoShowForm()) {
             ActionForward forward = AutoShowFormHelper.getNextActionForward(user, mapping, profile, processId);
             if (forward != null) {

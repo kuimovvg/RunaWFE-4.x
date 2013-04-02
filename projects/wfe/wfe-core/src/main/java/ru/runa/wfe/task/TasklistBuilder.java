@@ -94,7 +94,7 @@ public class TasklistBuilder {
                     }
                 }
             } catch (Exception e) {
-                log.error("Unable build " + task, e);
+                log.error("Unable to build " + task, e);
             }
         }
         taskCache.setTasks(taskCache.getCacheVersion(), actor.getId(), batchPresentation, result);

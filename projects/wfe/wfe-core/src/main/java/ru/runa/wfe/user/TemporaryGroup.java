@@ -20,10 +20,17 @@ public class TemporaryGroup extends Group {
     public TemporaryGroup() {
     }
 
-    public static TemporaryGroup create(String nameSuffix) {
+    public static TemporaryGroup create(String nameSuffix, String description) {
         TemporaryGroup temporaryGroup = new TemporaryGroup();
         temporaryGroup.setName(GROUP_PREFIX + nameSuffix);
+        temporaryGroup.setDescription(description);
         return temporaryGroup;
+    }
+
+    public static TemporaryGroup create(Long processId, String swimlaneName) {
+        String nameSuffix = processId + "_" + swimlaneName;
+        String description = processId.toString();
+        return create(nameSuffix, description);
     }
 
 }

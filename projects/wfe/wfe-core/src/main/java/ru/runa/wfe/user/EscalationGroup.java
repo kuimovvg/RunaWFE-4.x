@@ -23,6 +23,10 @@ import com.google.common.base.Objects;
 @DiscriminatorValue(value = "E")
 public class EscalationGroup extends TemporaryGroup {
     private static final long serialVersionUID = 1L;
+    /**
+     * Prefix for escalation group name.
+     */
+    public static final String GROUP_PREFIX = "EscalationGroup_";
 
     private Executor originalExecutor;
     private int level;
@@ -51,7 +55,7 @@ public class EscalationGroup extends TemporaryGroup {
         String identifier = GROUP_PREFIX + "_" + process.getId() + "_" + task.getId();
         EscalationGroup escalationGroup = new EscalationGroup();
         escalationGroup.setName(identifier);
-        escalationGroup.setDescription(identifier);
+        escalationGroup.setDescription(process.getId().toString());
         escalationGroup.setOriginalExecutor(originalExecutor);
         escalationGroup.setLevel(escalationLevel);
         return escalationGroup;

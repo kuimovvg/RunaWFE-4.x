@@ -43,7 +43,7 @@ public class AssignmentHelper {
             }
             Long processId = executionContext.getProcess().getId();
             String swimlaneName = executionContext.getTask().getSwimlane().getName();
-            Group tmpGroup = TemporaryGroup.create(processId + "_" + swimlaneName);
+            Group tmpGroup = TemporaryGroup.create(processId, swimlaneName);
             executorLogic.saveTemporaryGroup(tmpGroup, executors);
             assignable.assignExecutor(executionContext, tmpGroup, true);
         } catch (Exception e) {

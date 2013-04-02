@@ -18,7 +18,6 @@
 package ru.runa.wf.web.action;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,19 +29,12 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
-import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wf.web.form.ProcessForm;
-import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.task.dto.WfTask;
-import ru.runa.wfe.user.Profile;
-
-import com.google.common.base.Objects;
 
 /**
  * Created on 20.04.2008
@@ -78,23 +70,9 @@ public class SubmitTaskDispatcherAction extends ActionBase {
 
         IdForm idForm = (IdForm) form;
         try {
-            ExecutionService executionService = Delegates.getExecutionService();
-            Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
-            BatchPresentation batchPresentation = profile.getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS);
-            List<WfTask> tasks = executionService.getTasks(getLoggedUser(request), batchPresentation);
-            WfTask currentTask = null;
-            Long currentTaskId = idForm.getId();
-            for (WfTask task : tasks) {
-                if (Objects.equal(task.getId(), currentTaskId)) {
-                    currentTask = task;
-                    break;
-                }
-            }
-            if (currentTask == null) {
-                throw new TaskAlreadyAcceptedException(request.getParameter(ProcessForm.ID_INPUT_NAME));
-            }
+            WfTask currentTask = Delegates.getExecutionService().getTask(getLoggedUser(request), idForm.getId());
             if (currentTask.isFirstOpen()) {
-                executionService.markTaskOpened(getLoggedUser(request), currentTask.getId());
+                Delegates.getExecutionService().markTaskOpened(getLoggedUser(request), currentTask.getId());
             }
         } catch (TaskAlreadyAcceptedException e) {
             // forward user to the tasks list screen cause current task was

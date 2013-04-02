@@ -62,7 +62,7 @@ public class TaskLogic extends WFCommonLogic {
     @Autowired
     private AssignmentHelper assignmentHelper;
 
-    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException {
+    public void completeTask(User user, Long taskId, Map<String, Object> variables, Long swimlaneActorId) throws TaskDoesNotExistException {
         Task task = taskDAO.getNotNull(taskId);
         try {
             if (variables == null) {
@@ -70,10 +70,13 @@ public class TaskLogic extends WFCommonLogic {
             }
             ProcessDefinition processDefinition = getDefinition(task);
             ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
-            checkCanParticipate(user, task);
+            checkCanParticipate(user.getActor(), task);
             checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
-            // fuzziness of the SWIMLANE concept
-            assignmentHelper.reassignTask(executionContext, task, user.getActor(), true);
+            if (swimlaneActorId != null) {
+                Actor swimlaneActor = executorDAO.getActor(swimlaneActorId);
+                checkCanParticipate(swimlaneActor, task);
+                assignmentHelper.reassignTask(executionContext, task, swimlaneActor, true);
+            }
             // don't persist selected transition name
             String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
             Map<String, Object> transitionMap = Maps.newHashMap();
