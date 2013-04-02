@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.web.action;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,35 +26,22 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.Commons;
 import ru.runa.wf.web.form.ProcessForm;
-import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
-
-import com.google.common.base.Objects;
 
 public class AutoShowFormHelper {
     private static final String LOCAL_FORWARD_TASKS_LIST = "tasksList";
     private static final String LOCAL_FORWARD_SUBMIT_TASK = "submitTask";
 
     public static ActionForward getNextActionForward(User user, ActionMapping mapping, Profile profile, Long processId) {
-        ExecutionService executionService = Delegates.getExecutionService();
-        BatchPresentation batchPresentation = profile.getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS);
-        List<WfTask> tasks = executionService.getTasks(user, batchPresentation);
-        List<WfTask> currentTasks = new ArrayList<WfTask>();
-        for (WfTask task : tasks) {
-            if (Objects.equal(task.getProcessId(), processId)) {
-                currentTasks.add(task);
-            }
-        }
-        if (currentTasks.size() == 1) {
+        List<WfTask> tasks = Delegates.getExecutionService().getProcessTasks(user, processId);
+        if (tasks.size() == 1) {
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put(ProcessForm.ID_INPUT_NAME, currentTasks.get(0).getId());
+            params.put(ProcessForm.ID_INPUT_NAME, tasks.get(0).getId());
             return Commons.forward(mapping.findForward(LOCAL_FORWARD_SUBMIT_TASK), params);
-        } else if (currentTasks.size() > 1) {
+        } else if (tasks.size() > 1) {
             // list tasks
             return mapping.findForward(LOCAL_FORWARD_TASKS_LIST);
         }

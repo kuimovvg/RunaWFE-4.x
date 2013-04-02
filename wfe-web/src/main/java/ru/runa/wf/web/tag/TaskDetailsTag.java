@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.tag;
 
-import java.util.List;
-
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
@@ -27,14 +25,12 @@ import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
+import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -47,6 +43,7 @@ public class TaskDetailsTag extends BatchReturningTitledFormTag {
     private static final long serialVersionUID = -8864271538433581304L;
 
     private Long taskId;
+    private Long actorId;
     private boolean buttonEnabled = false;
 
     /**
@@ -60,38 +57,35 @@ public class TaskDetailsTag extends BatchReturningTitledFormTag {
         this.taskId = taskId;
     }
 
+    /**
+     * @jsp.attribute required = "true" rtexprvalue = "true"
+     */
+    public Long getActorId() {
+        return actorId;
+    }
+
+    public void setActorId(Long actorId) {
+        this.actorId = actorId;
+    }
+
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        ExecutionService executionService = Delegates.getExecutionService();
         BatchPresentation batchPresentation = getProfile().getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS).clone();
         batchPresentation.setFieldsToGroup(new int[0]);
-        WfTask current = getTask(executionService);
-        if (current == null) {
-            throw new TaskDoesNotExistException(getTaskId());
-        }
-        if (current.isGroupAssigned()) {
+        WfTask task = Delegates.getExecutionService().getTask(getUser(), getTaskId());
+        if (task.isGroupAssigned()) {
             setButtonEnabled(true);
         } else {
             setButtonEnabled(false);
         }
-        tdFormElement.addElement(ListTasksFormTag.buildTasksTable(pageContext, batchPresentation, Lists.newArrayList(current), getReturnAction()
-                + "?" + IdForm.ID_INPUT_NAME + "=" + taskId, true));
+        String url = getReturnAction() + "?" + IdForm.ID_INPUT_NAME + "=" + taskId + "&" + ProcessForm.ACTOR_ID_INPUT_NAME + "=" + actorId;
+        tdFormElement.addElement(ListTasksFormTag.buildTasksTable(pageContext, batchPresentation, Lists.newArrayList(task), url, true));
 
         tdFormElement.addElement(new Input(Input.HIDDEN, IdForm.ID_INPUT_NAME, String.valueOf(taskId)));
         tdFormElement.addElement(new Input(Input.HIDDEN, WebResources.HIDDEN_ONE_TASK_INDICATOR, WebResources.HIDDEN_ONE_TASK_INDICATOR));
-        if (current.getOwner() != null) {
-            tdFormElement.addElement(new Input(Input.HIDDEN, WebResources.HIDDEN_TASK_PREVIOUS_OWNER_ID, current.getOwner().getId().toString()));
+        if (task.getOwner() != null) {
+            tdFormElement.addElement(new Input(Input.HIDDEN, WebResources.HIDDEN_TASK_PREVIOUS_OWNER_ID, task.getOwner().getId().toString()));
         }
-    }
-
-    private WfTask getTask(ExecutionService executionService) {
-        List<WfTask> tasks = executionService.getTasks(getUser(), getProfile().getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS));
-        for (WfTask task : tasks) {
-            if (Objects.equal(task.getId(), getTaskId())) {
-                return task;
-            }
-        }
-        return null;
     }
 
     @Override

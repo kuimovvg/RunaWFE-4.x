@@ -154,7 +154,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
             if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
                 log.info("Bot task " + task + " postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
             } else {
-                Delegates.getExecutionService().completeTask(user, task.getId(), variables);
+                Delegates.getExecutionService().completeTask(user, task.getId(), variables, null);
                 log.debug("Handled bot task " + task + ", " + bot + " by " + taskHandler.getClass());
             }
             ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getName());

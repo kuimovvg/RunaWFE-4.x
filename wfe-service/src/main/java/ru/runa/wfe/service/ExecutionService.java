@@ -80,9 +80,22 @@ public interface ExecutionService {
      */
     public void assignTask(User user, Long taskId, Executor previousOwner, Executor newOwner) throws TaskAlreadyAcceptedException;
 
-    public void completeTask(User user, Long taskId, Map<String, Object> variables) throws TaskDoesNotExistException, ValidationException;
+    /**
+     * Completes task.
+     * 
+     * @param user
+     * @param taskId
+     * @param variables
+     * @param swimlaneActorId
+     *            actor id who will be assigned to task swimlane, can be
+     *            <code>null</code>
+     * @throws TaskDoesNotExistException
+     * @throws ValidationException
+     */
+    public void completeTask(User user, Long taskId, Map<String, Object> variables, Long swimlaneActorId) throws TaskDoesNotExistException,
+            ValidationException;
 
-    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables) throws TaskDoesNotExistException;
+    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables, Long swimlaneActorId) throws TaskDoesNotExistException;
 
     public List<WfSwimlane> getSwimlanes(User user, Long processId) throws ProcessDoesNotExistException;
 
