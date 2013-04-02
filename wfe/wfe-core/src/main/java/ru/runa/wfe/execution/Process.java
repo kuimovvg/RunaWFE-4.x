@@ -277,8 +277,6 @@ public class Process extends IdentifiableBase {
             ExecutionContext superExecutionContext = new ExecutionContext(superDefinition, parentNodeProcess.getParentToken());
             log.info("Signalling to parent " + parentNodeProcess.getProcess());
             parentNodeProcess.getParentToken().signal(superExecutionContext);
-            // parentNodeProcess.getProcess().end(superExecutionContext,
-            // canceller);
         }
 
         // make sure all the timers for this process are canceled
@@ -286,12 +284,22 @@ public class Process extends IdentifiableBase {
         JobDAO jobDAO = ApplicationContextFactory.getJobDAO();
         jobDAO.deleteAll(this);
         if (canceller != null) {
-            // end all active tasks
-            tasks.clear();
             executionContext.addLog(new ProcessCancelLog(canceller));
         } else {
             executionContext.addLog(new ProcessEndLog());
         }
+        // Set<Task> tasksToDelete = Sets.newHashSet();
+        // for (Task task : getTasks()) {
+        // Node node =
+        // executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
+        // if (node instanceof Synchronizable && !((Synchronizable)
+        // node).isAsync()) {
+        // tasksToDelete.add(task);
+        // }
+        // }
+        // tasks.removeAll(tasksToDelete);
+        log.debug("ending all active tasks: " + tasks);
+        tasks.clear();
     }
 
     /**

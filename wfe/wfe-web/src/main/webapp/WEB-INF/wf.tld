@@ -2341,30 +2341,27 @@
       <attribute>
          <name>taskId</name>
          <required>true</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>actorId</name>
+         <required>true</required>
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
          <name>batchPresentationId</name>
          <required>true</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
          <name>returnAction</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
          <name>align</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
          <name>height</name>
@@ -2634,16 +2631,17 @@
       <attribute>
          <name>taskId</name>
          <required>true</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>actorId</name>
+         <required>true</required>
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
          <name>align</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
          <name>height</name>

@@ -164,9 +164,9 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @WebMethod(exclude = true)
     @Override
-    public void completeTask(User user, Long taskId, Map<String, Object> variables) {
+    public void completeTask(User user, Long taskId, Map<String, Object> variables, Long swimlaneActorId) {
         Preconditions.checkNotNull(user);
-        taskLogic.completeTask(user, taskId, variables);
+        taskLogic.completeTask(user, taskId, variables, swimlaneActorId);
     }
 
     @Override
@@ -307,8 +307,8 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
-    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables) {
-        completeTask(user, taskId, toVariablesMap(variables));
+    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables, Long swimlaneActorId) {
+        completeTask(user, taskId, toVariablesMap(variables), swimlaneActorId);
     }
 
     @Override

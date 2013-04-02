@@ -20,8 +20,6 @@ package ru.runa.wfe.task.dto;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.SystemProperties;
@@ -43,32 +41,26 @@ import com.google.common.base.Objects;
  * @since 4.0
  */
 public class WfTaskFactory {
-    private static final Log log = LogFactory.getLog(WfTaskFactory.class);
     @Autowired
     private ExecutorDAO executorDAO;
 
     public WfTask create(Task task, Actor targetActor, boolean acquiredBySubstitution) {
         Process process = task.getProcess();
         Deployment deployment = process.getDeployment();
-        boolean groupAssigned = task.getExecutor() instanceof Group;
         boolean escalated = false;
-        try {
-            if (groupAssigned) {
-                Group group = (Group) task.getExecutor();
-                if (group instanceof EscalationGroup) {
-                    EscalationGroup escalationGroup = (EscalationGroup) group;
-                    Executor originalExecutor = escalationGroup.getOriginalExecutor();
-                    if (originalExecutor instanceof Group) {
-                        escalated = !executorDAO.isExecutorInGroup(targetActor, (Group) originalExecutor);
-                    } else {
-                        escalated = !Objects.equal(originalExecutor, targetActor);
-                    }
+        if (task.getExecutor() instanceof Group) {
+            Group group = (Group) task.getExecutor();
+            if (group instanceof EscalationGroup) {
+                EscalationGroup escalationGroup = (EscalationGroup) group;
+                Executor originalExecutor = escalationGroup.getOriginalExecutor();
+                if (originalExecutor instanceof Group) {
+                    escalated = !executorDAO.isExecutorInGroup(targetActor, (Group) originalExecutor);
+                } else {
+                    escalated = !Objects.equal(originalExecutor, targetActor);
                 }
             }
-        } catch (Exception e) {
-            log.error("escalation", e);
         }
-        return new WfTask(task, process.getId(), deployment, getDeadlineWarningDate(task), groupAssigned, escalated, acquiredBySubstitution);
+        return new WfTask(task, deployment, process.getId(), targetActor, getDeadlineWarningDate(task), escalated, acquiredBySubstitution);
     }
 
     public Date getDeadlineWarningDate(Task task) {

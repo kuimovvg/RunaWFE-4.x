@@ -100,6 +100,7 @@ public class Messages {
     public static final String LABEL_GROUP_AD = "label.group_ad";
 
     public static final String DYNAMIC_GROUP_NAME = "dynamic_group.name";
+    public static final String ESCALATION_GROUP_NAME = "escalation_group.name";
     public static final String PROCESS_STARTER_NAME = "process_starter.name";
 
     public static final String LABEL_START_PROCESS = "label.start_process";

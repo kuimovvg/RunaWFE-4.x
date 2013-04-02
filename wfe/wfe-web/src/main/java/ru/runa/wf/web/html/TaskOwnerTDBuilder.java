@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.html;
 
-import org.apache.ecs.ConcreteElement;
-import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 
@@ -29,6 +27,7 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.Executor;
 
 /**
  * Created on 24.07.2007
@@ -40,14 +39,22 @@ public class TaskOwnerTDBuilder implements TDBuilder {
     public TaskOwnerTDBuilder() {
     }
 
+    private Executor getOwner(Object object) {
+        WfTask task = (WfTask) object;
+        if (task.isAcquiredBySubstitution()) {
+            return task.getTargetActor();
+        } else {
+            return task.getOwner();
+        }
+    }
+
     @Override
     public TD build(Object object, Env env) {
-        WfTask task = (WfTask) object;
-        String actorName = ExecutorNameConverter.getName(task.getOwner(), env.getPageContext());
-        ConcreteElement link = new StringElement(actorName);
-        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, task.getOwner().getId(),
-                env.getPageContext(), PortletUrlType.Render);
-        link = new A(url, link);
+        Executor owner = getOwner(object);
+        String actorName = ExecutorNameConverter.getName(owner, env.getPageContext());
+        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, owner.getId(), env.getPageContext(),
+                PortletUrlType.Render);
+        A link = new A(url, actorName);
         TD td = new TD(link);
         td.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
         return td;
@@ -55,12 +62,8 @@ public class TaskOwnerTDBuilder implements TDBuilder {
 
     @Override
     public String getValue(Object object, Env env) {
-        WfTask task = (WfTask) object;
-        String result = ExecutorNameConverter.getName(task.getOwner(), env.getPageContext());
-        if (result == null) {
-            result = "";
-        }
-        return result;
+        Executor owner = getOwner(object);
+        return ExecutorNameConverter.getName(owner, env.getPageContext());
     }
 
     @Override

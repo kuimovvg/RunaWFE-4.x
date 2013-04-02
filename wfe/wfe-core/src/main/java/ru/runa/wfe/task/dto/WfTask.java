@@ -26,7 +26,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.Group;
 
 import com.google.common.base.Objects;
 
@@ -45,6 +47,7 @@ public final class WfTask implements Serializable {
     private String description;
     private String swimlaneName;
     private Executor owner;
+    private Actor targetActor;
     private Long definitionId;
     private String definitionName;
     private Long processId;
@@ -53,14 +56,13 @@ public final class WfTask implements Serializable {
     private Date deadlineDate;
     private Date deadlineWarningDate;
     private boolean escalated;
-    private boolean groupAssigned;
     private boolean firstOpen;
     private boolean acquiredBySubstitution;
 
     public WfTask() {
     }
 
-    public WfTask(Task task, Long processId, Deployment deployment, Date deadlineWarningDate, boolean groupAssigned, boolean escalated,
+    public WfTask(Task task, Deployment deployment, Long processId, Actor targetActor, Date deadlineWarningDate, boolean escalated,
             boolean acquiredBySubstitution) {
         id = task.getId();
         name = task.getName();
@@ -73,7 +75,7 @@ public final class WfTask implements Serializable {
         creationDate = task.getCreateDate();
         deadlineDate = task.getDeadlineDate();
         this.deadlineWarningDate = deadlineWarningDate;
-        this.groupAssigned = groupAssigned;
+        this.targetActor = targetActor;
         this.escalated = escalated;
         this.acquiredBySubstitution = acquiredBySubstitution;
         firstOpen = task.isFirstOpen();
@@ -101,6 +103,10 @@ public final class WfTask implements Serializable {
 
     public Executor getOwner() {
         return owner;
+    }
+
+    public Actor getTargetActor() {
+        return targetActor;
     }
 
     public Long getDefinitionId() {
@@ -132,7 +138,7 @@ public final class WfTask implements Serializable {
     }
 
     public boolean isGroupAssigned() {
-        return groupAssigned;
+        return owner instanceof Group;
     }
 
     public boolean isAcquiredBySubstitution() {

@@ -24,6 +24,7 @@ import javax.servlet.jsp.PageContext;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.html.ItemUrlStrategy;
+import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.task.dto.WfTask;
 
@@ -41,6 +42,7 @@ public class TaskUrlStrategy implements ItemUrlStrategy {
         WfTask task = (WfTask) item;
         Map<String, Object> map = Maps.newHashMap();
         map.put(IdForm.ID_INPUT_NAME, task.getId());
+        map.put(ProcessForm.ACTOR_ID_INPUT_NAME, task.getTargetActor().getId());
         return Commons.getActionUrl(baseUrl, map, pageContext, PortletUrlType.Action);
     }
 }
