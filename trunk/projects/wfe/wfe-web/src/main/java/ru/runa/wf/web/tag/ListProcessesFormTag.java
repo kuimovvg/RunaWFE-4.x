@@ -29,6 +29,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.PagingNavigationHelper;
 import ru.runa.common.web.html.EnvBaseImpl;
 import ru.runa.common.web.html.HeaderBuilder;
+import ru.runa.common.web.html.ProcessRowBuilder;
 import ru.runa.common.web.html.ReflectionRowBuilder;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.SortingHeaderBuilder;
@@ -38,6 +39,8 @@ import ru.runa.common.web.tag.BatchReturningTitledFormTag;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.ClassPresentation;
+import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -68,19 +71,35 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
         PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, instanceCount, getReturnAction());
         navigation.addPagingNavigationTable(tdFormElement);
 
+        boolean isFilterable = false;
+        int idx = 0;
+        FieldDescriptor[] fields = batchPresentation.getAllFields();
+        for (FieldDescriptor field : fields) {
+            if (field.displayName.startsWith(ClassPresentation.filterable_prefix) && batchPresentation.isFieldGroupped(idx)) {
+                isFilterable = true;
+                break;
+            }
+            idx++;
+        }
+
         TDBuilder[] builders = getBuilders(new TDBuilder[] {}, batchPresentation, new TDBuilder[] {});
-        String[] prefixCellsHeaders = getGrouppingCells(batchPresentation, processes);
+        String[] prefixCellsHeaders = getGrouppingCells(batchPresentation, processes, isFilterable);
+
         HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, prefixCellsHeaders, new String[0], getReturnAction(), pageContext);
-        RowBuilder rowBuilder = new ReflectionRowBuilder(processes, batchPresentation, pageContext, ShowGraphModeHelper.getManageProcessAction(),
-                getReturnAction(), "id", builders);
+        RowBuilder rowBuilder = isFilterable ? new ProcessRowBuilder(processes, batchPresentation, pageContext,
+                ShowGraphModeHelper.getManageProcessAction(), getReturnAction(), "id", builders) : new ReflectionRowBuilder(processes,
+                batchPresentation, pageContext, ShowGraphModeHelper.getManageProcessAction(), getReturnAction(), "id", builders);
+
         tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
 
         navigation.addPagingNavigationTable(tdFormElement);
     }
 
-    private String[] getGrouppingCells(BatchPresentation batchPresentation, List<WfProcess> list) {
+    private String[] getGrouppingCells(BatchPresentation batchPresentation, List<WfProcess> list, boolean isFilterable) {
         List<String> prefixCellsHeaders = new ArrayList<String>();
-        int grouppingCells = GroupState.getMaxAdditionalCellsNum(batchPresentation, list, new EnvImpl(batchPresentation));
+        int grouppingCells = isFilterable ? GroupState.getMaxAdditionalCellsNum(batchPresentation, list, new EnvImpl(batchPresentation)) - 1
+                : GroupState.getMaxAdditionalCellsNum(batchPresentation, list, new EnvImpl(batchPresentation));
+
         for (int i = 0; i < grouppingCells; ++i) {
             prefixCellsHeaders.add("");
         }
