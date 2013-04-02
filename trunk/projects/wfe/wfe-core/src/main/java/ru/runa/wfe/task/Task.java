@@ -253,7 +253,6 @@ public class Task implements Assignable {
 
     public void delete() {
         getProcess().getTasks().remove(this);
-        // ApplicationContextFactory.getTaskDAO().delete(this);
     }
 
     @Override

@@ -119,12 +119,12 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public void completeTask(User user, Long taskId, Map<String, Object> variables) {
-        getExecutionService().completeTask(user, taskId, variables);
+    public void completeTask(User user, Long taskId, Map<String, Object> variables, Long swimlaneActorId) {
+        getExecutionService().completeTask(user, taskId, variables, swimlaneActorId);
     }
 
     @Override
-    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables) {
+    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables, Long swimlaneActorId) {
         throw new UnsupportedOperationException("This method designed for WebServices API only. Use completeTask(User, Long, Map<String, Object>)");
     }
 

@@ -111,15 +111,15 @@ public class WFCommonLogic extends CommonLogic {
         }
     }
 
-    private boolean canParticipateAsSubstitutor(User user, Task task) {
+    private boolean canParticipateAsSubstitutor(Actor actor, Task task) {
         try {
-            Set<Actor> substitutedActors = substitutionLogic.getSubstituted(user.getActor());
+            Set<Actor> substitutedActors = substitutionLogic.getSubstituted(actor);
             Executor taskExecutor = task.getExecutor();
             if (taskExecutor instanceof Actor) {
                 return substitutedActors.contains(taskExecutor);
             } else {
-                for (Actor actor : getAssignedActors(task)) {
-                    if (substitutedActors.contains(actor)) {
+                for (Actor assignedActor : getAssignedActors(task)) {
+                    if (substitutedActors.contains(assignedActor)) {
                         return true;
                     }
                 }
@@ -130,25 +130,25 @@ public class WFCommonLogic extends CommonLogic {
         return false;
     }
 
-    protected void checkCanParticipate(User user, Task task) {
+    protected void checkCanParticipate(Actor actor, Task task) {
         Executor taskExecutor = task.getExecutor();
         if (taskExecutor == null) {
             throw new AuthorizationException("Unable to participate in unassigned task");
         }
         if (taskExecutor instanceof Actor) {
-            if (Objects.equal(user.getActor(), taskExecutor)) {
+            if (Objects.equal(actor, taskExecutor)) {
                 return;
             }
         } else {
             Set<Actor> groupActors = executorDAO.getGroupActors((Group) taskExecutor);
-            if (groupActors.contains(user.getActor())) {
+            if (groupActors.contains(actor)) {
                 return;
             }
         }
-        if (canParticipateAsSubstitutor(user, task)) {
+        if (canParticipateAsSubstitutor(actor, task)) {
             return;
         }
-        throw new AuthorizationException("Executor " + user + " has no pemission to participate as " + taskExecutor + " in task " + task);
+        throw new AuthorizationException(actor + " has no pemission to participate as " + taskExecutor + " in task " + task);
     }
 
     // TODO unused: variable permissions check
@@ -156,7 +156,7 @@ public class WFCommonLogic extends CommonLogic {
         if (isPermissionAllowed(user, task.getProcess(), ProcessPermission.READ)) {
             return;
         }
-        checkCanParticipate(user, task);
+        checkCanParticipate(user.getActor(), task);
     }
 
     private Set<Actor> getAssignedActors(Task task) {

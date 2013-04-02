@@ -8,10 +8,11 @@
 <tiles:put name="body" type="string" >
 <%
 	long taskId = Long.parseLong(request.getParameter(IdForm.ID_INPUT_NAME));
+	long actorId =  Long.parseLong(request.getParameter(ProcessForm.ACTOR_ID_INPUT_NAME));
 	String title = ru.runa.common.web.Commons.getMessage("title.task_form", pageContext);
 %>
-<wf:taskDetails batchPresentationId="listTasksForm" title="<%= title %>" taskId="<%= taskId %>" buttonAlignment="right" action="/processTaskAssignment" returnAction="/submitTaskDispatcher.do"/>
-<wf:taskForm title="<%= title %>" taskId="<%= taskId %>" action="/submitTaskForm" />
+<wf:taskDetails batchPresentationId="listTasksForm" title="<%= title %>" taskId="<%= taskId %>" actorId="<%= actorId %>" buttonAlignment="right" action="/processTaskAssignment" returnAction="/submitTaskDispatcher.do"/>
+<wf:taskForm title="<%= title %>" taskId="<%= taskId %>" actorId="<%= actorId %>" action="/submitTaskForm" />
 
 </tiles:put>
 <tiles:put name="messages" value="../common/messages.jsp" />

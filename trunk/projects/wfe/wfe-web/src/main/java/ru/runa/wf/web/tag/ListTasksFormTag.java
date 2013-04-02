@@ -64,7 +64,6 @@ public class ListTasksFormTag extends BatchReturningTitledFormTag {
         BatchPresentation batchPresentation = getBatchPresentation();
         List<WfTask> tasks = Delegates.getExecutionService().getTasks(getUser(), batchPresentation);
         Table table = buildTasksTable(pageContext, batchPresentation, tasks, getReturnAction(), false);
-
         PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, tasks.size());
         navigation.addPagingNavigationTable(tdFormElement);
         tdFormElement.addElement(table);
