@@ -17,6 +17,7 @@
  */
 package ru.runa.common.web.html;
 
+import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
 import ru.runa.common.web.Resources;
@@ -35,7 +36,10 @@ public class TableBuilder {
         table.addElement(headerBuilder.build());
         int rowsCount = 0;
         while (rowBuilder.hasNext() && ++rowsCount < max_rows) {
-            table.addElement(rowBuilder.buildNext());
+            TR tr = rowBuilder.buildNext();
+            if (tr != null) {
+                table.addElement(tr);
+            }
         }
         return table;
     }
