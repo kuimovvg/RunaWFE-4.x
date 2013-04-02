@@ -114,6 +114,12 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    public int getSubprocessCount(User user, Long id) {
+        Preconditions.checkNotNull(user);
+        return executionLogic.getSubprocessCount(user, id);
+    }
+
+    @Override
     public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         if (batchPresentation == null) {
