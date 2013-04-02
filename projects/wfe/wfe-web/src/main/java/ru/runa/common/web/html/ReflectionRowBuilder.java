@@ -131,26 +131,26 @@ public class ReflectionRowBuilder implements RowBuilder {
 
     }
 
-    private final List<? extends Object> items;
+    protected final List<? extends Object> items;
 
     private final String basePartOfUrlToObject;
 
-    private final BatchPresentation batchPresentation;
+    protected final BatchPresentation batchPresentation;
 
-    private GroupState currentState;
+    protected GroupState currentState;
 
-    private final String returnAction;
+    protected final String returnAction;
 
-    private final PageContext pageContext;
+    protected final PageContext pageContext;
 
-    private ItemUrlStrategy itemUrlStrategy;
+    protected ItemUrlStrategy itemUrlStrategy;
 
     private CssClassStrategy cssClassStrategy;
 
-    private final int additionalEmptyCells;
+    protected final int additionalEmptyCells;
 
-    private final TDBuilder[] builders;
-    private final EnvImpl env;
+    protected final TDBuilder[] builders;
+    protected final EnvImpl env;
 
     public ReflectionRowBuilder(List<? extends Object> items, BatchPresentation batchPresentation, PageContext pageContext, String actionUrl,
             String returnAction, String idPropertyName, TDBuilder[] builders) {
@@ -164,7 +164,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         this.itemUrlStrategy = itemUrlStrategy;
     }
 
-    private ReflectionRowBuilder(List<? extends Object> items, BatchPresentation batchPresentation, PageContext pageContext, String actionUrl,
+    protected ReflectionRowBuilder(List<? extends Object> items, BatchPresentation batchPresentation, PageContext pageContext, String actionUrl,
             String returnAction, TDBuilder[] builders) {
         this.items = items;
         this.batchPresentation = batchPresentation;
@@ -177,7 +177,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         this.builders = builders;
     }
 
-    private TR buildGroupHeader() {
+    protected TR buildGroupHeader() {
         TR tr = new TR();
         createEmptyCells(tr, currentState.getGroupIndex() + currentState.getAdditionalColumn());
 
@@ -232,7 +232,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         return tr;
     }
 
-    private TR buildItemRow() {
+    protected TR buildItemRow() {
         Object item = items.get(currentState.getItemIndex());
         TR tr = new TR();
         if (cssClassStrategy != null) {
@@ -316,7 +316,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         return tr;
     }
 
-    private void createEmptyCells(TR tr, int numberOfCells) {
+    protected void createEmptyCells(TR tr, int numberOfCells) {
         for (int i = 0; i < numberOfCells; i++) {
             TD cell = new TD();
             cell.addElement(Entities.NBSP);
@@ -330,7 +330,7 @@ public class ReflectionRowBuilder implements RowBuilder {
         return (!currentState.equals(GroupState.STATE_NO_MORE_ELEMENTS));
     }
 
-    private class DefaultItemUrlStrategy implements ItemUrlStrategy {
+    protected class DefaultItemUrlStrategy implements ItemUrlStrategy {
         private final PageContext context;
 
         private final String idPropertyName;
