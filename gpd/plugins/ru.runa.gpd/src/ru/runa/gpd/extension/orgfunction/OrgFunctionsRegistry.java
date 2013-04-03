@@ -96,10 +96,9 @@ public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition
         return definition;
     }
 
-    // TODO move to VariableFormatRegistry
     public static Set<String> getVariableNames(ProcessDefinition processDefinition, String typeName) {
         Set<String> variableNames = new TreeSet<String>();
-        for (Variable variable : processDefinition.getVariables()) { // TODO include swiml
+        for (Variable variable : processDefinition.getVariablesWithSwimlanes()) {
             if (VariableFormatRegistry.isApplicable(variable, typeName)) {
                 variableNames.add(variable.getName());
             }
