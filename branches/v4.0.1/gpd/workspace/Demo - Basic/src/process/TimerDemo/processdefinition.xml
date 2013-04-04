@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="TimerDemo">
+  <description><![CDATA[Demo for element timer (no start form provided)]]></description>
+  <swimlane id="requester" name="requester">
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state id="start" name="start">
+    <task name="start" swimlane="requester"/>
+    <transition id="tr1" name="tr1" to="Before timer triggered"/>
+  </start-state>
+  <task-node id="Before timer triggered" name="Before timer triggered" async="false">
+    <description><![CDATA[Before timer triggered]]></description>
+    <task name="Before timer triggered" swimlane="requester"/>
+    <timer duedate="3 minutes" transition="time-out-transition"/>
+    <transition id="tr1" name="tr1" to="end"/>
+    <transition id="time-out-transition" name="time-out-transition" to="After timer triggered"/>
+  </task-node>
+  <task-node id="After timer triggered" name="After timer triggered" async="false">
+    <description><![CDATA[After timer triggered]]></description>
+    <task name="After timer triggered" swimlane="requester"/>
+    <transition id="tr1" name="tr1" to="end"/>
+  </task-node>
+  <end-state id="end" name="end"/>
+</process-definition>

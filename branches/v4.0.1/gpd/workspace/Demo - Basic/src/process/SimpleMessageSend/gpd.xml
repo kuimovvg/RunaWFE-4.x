@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-diagram name="SimpleMessageSend" notation="uml" width="1069" height="479" showActions="true" showGrid="false">
+  <node name="Start" x="84" y="24" width="120" height="48">
+    <transition name="tr1"/>
+  </node>
+  <node name="Input data" x="72" y="108" width="132" height="84" minimizedView="false">
+    <transition name="tr1"/>
+  </node>
+  <node name="Send data" x="84" y="228" width="120" height="72">
+    <transition name="tr1"/>
+  </node>
+  <node name="End" x="84" y="360" width="120" height="48"/>
+</process-diagram>

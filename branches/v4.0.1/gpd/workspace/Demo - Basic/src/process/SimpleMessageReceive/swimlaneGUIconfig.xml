@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<swimlanes>
+  <swimlane name="staff" guiElementPath="SwimlaneElement.ManualLabel"/>
+  <swimlane name="manager" guiElementPath="SwimlaneElement.WFFunctionsGroupLabel/SwimlaneElement.WFGroupsLabel"/>
+</swimlanes>

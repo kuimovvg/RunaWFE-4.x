@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="ExecuteFormulaDemo">
+  <description><![CDATA[Example of ExecuteFormulaActionHandler using (no start form provided)]]></description>
+  <swimlane id="user" name="user">
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state id="start" name="start">
+    <task name="start" swimlane="user"/>
+    <transition id="tr1" name="tr1" to="state1">
+      <action class="ru.runa.wfe.extension.handler.var.FormulaActionHandler"><![CDATA[a = (10 + 2) / 4]]></action>
+    </transition>
+  </start-state>
+  <task-node id="state2" name="state2" async="false">
+    <description><![CDATA[c = true & ( false ^ true ) | ("aab"<="aaa")]]></description>
+    <task name="state2" swimlane="user"/>
+    <transition id="tr1" name="tr1" to="state3">
+      <action class="ru.runa.wfe.extension.handler.var.FormulaActionHandler"><![CDATA[variable = a<5 & a>0.27]]></action>
+    </transition>
+  </task-node>
+  <task-node id="state3" name="state3" async="false">
+    <description><![CDATA[variable = a<5 & a>0.27]]></description>
+    <task name="state3" swimlane="user"/>
+    <transition id="tr1" name="tr1" to="state4">
+      <action class="ru.runa.wfe.extension.handler.var.FormulaActionHandler"><![CDATA[date = 30.08.2008]]></action>
+    </transition>
+  </task-node>
+  <task-node id="state4" name="state4" async="false">
+    <description><![CDATA[date = 30.08.08]]></description>
+    <task name="state4" swimlane="user"/>
+    <transition id="tr1" name="tr1" to="state5">
+      <action class="ru.runa.wfe.extension.handler.var.FormulaActionHandler"><![CDATA[str = "date = " + date]]></action>
+    </transition>
+  </task-node>
+  <task-node id="state5" name="state5" async="false">
+    <description><![CDATA[str = "date = " + date]]></description>
+    <task name="state5" swimlane="user"/>
+    <transition id="tr1" name="tr1" to="state6">
+      <action class="ru.runa.wfe.extension.handler.var.FormulaActionHandler"><![CDATA[minutes = '30.08.2008 00:15' - date]]></action>
+    </transition>
+  </task-node>
+  <task-node id="state6" name="state6" async="false">
+    <description><![CDATA[minuts = '30.08.2008 00:15' - date]]></description>
+    <task name="state6" swimlane="user"/>
+    <transition id="tr1" name="tr1" to="state7">
+      <action class="ru.runa.wfe.extension.handler.var.FormulaActionHandler"><![CDATA[str = str + " ; " + "variable" + " = " + variable + " ; \"" + (a-0.1) + "\""]]></action>
+    </transition>
+  </task-node>
+  <task-node id="state1" name="state1" async="false">
+    <description><![CDATA[a = (10 + 2) / 4]]></description>
+    <task name="state1" swimlane="user"/>
+    <transition id="tr1" name="tr1" to="state2">
+      <action class="ru.runa.wfe.extension.handler.var.FormulaActionHandler"><![CDATA[c = true & ( false ^ true ) | ("aab"<="aaa")]]></action>
+    </transition>
+  </task-node>
+  <task-node id="state7" name="state7" async="false">
+    <description><![CDATA[str = str + " ; " + "variable" + " = " + variable + " ; \"" + (a-0.1) + "\""]]></description>
+    <task name="state7" swimlane="user"/>
+    <transition id="tr1" name="tr1" to="state8"/>
+  </task-node>
+  <task-node id="state8" name="state8" async="false">
+    <description><![CDATA[upload file]]></description>
+    <task name="state8" swimlane="user"/>
+    <transition id="tr1" name="tr1" to="state9">
+      <action class="ru.runa.wfe.extension.handler.var.FormulaActionHandler"><![CDATA[file2 = file1]]></action>
+    </transition>
+  </task-node>
+  <task-node id="state9" name="state9" async="false">
+    <description><![CDATA[file2 = file1]]></description>
+    <task name="state9" swimlane="user"/>
+    <transition id="tr1" name="tr1" to="end"/>
+  </task-node>
+  <end-state id="end" name="end"/>
+</process-definition>

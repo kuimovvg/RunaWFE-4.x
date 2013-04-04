@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-diagram name="EndTokenDemo" notation="uml" width="493" height="457" showActions="true" showGrid="false">
+  <node name="ID0" x="180" y="12" width="120" height="72">
+    <transition name="tr1"/>
+  </node>
+  <node name="ID2" x="36" y="144" width="132" height="84" minimizedView="false">
+    <transition name="tr1"/>
+  </node>
+  <node name="ID3" x="336" y="144" width="132" height="84" minimizedView="false">
+    <transition name="tr1"/>
+  </node>
+  <node name="ID1" x="24" y="108" width="468" height="5">
+    <transition name="tr1"/>
+    <transition name="tr2"/>
+  </node>
+  <node name="ID5" x="24" y="348" width="468" height="5">
+    <transition name="tr1"/>
+  </node>
+  <node name="ID4" x="348" y="252" width="120" height="72"/>
+  <node name="ID6" x="204" y="384" width="120" height="72"/>
+</process-diagram>

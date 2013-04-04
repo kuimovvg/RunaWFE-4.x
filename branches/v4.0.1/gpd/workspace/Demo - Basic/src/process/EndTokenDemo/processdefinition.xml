@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="EndTokenDemo">
+  <swimlane id="ID13" name="Swimlane1">
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state id="ID0" name="Start">
+    <task name="Start" swimlane="Swimlane1"/>
+    <transition id="ID7" name="tr1" to="ID1"/>
+  </start-state>
+  <task-node id="ID2" name="Task (join)" async="false">
+    <task name="Task (join)" swimlane="Swimlane1"/>
+    <transition id="ID11" name="tr1" to="ID5"/>
+  </task-node>
+  <task-node id="ID3" name="Task (end token)" async="false">
+    <task name="Task (end token)" swimlane="Swimlane1"/>
+    <transition id="ID10" name="tr1" to="ID4"/>
+  </task-node>
+  <fork id="ID1" name="Fork">
+    <transition id="ID8" name="tr1" to="ID2"/>
+    <transition id="ID9" name="tr2" to="ID3"/>
+  </fork>
+  <join id="ID5" name="Join">
+    <transition id="ID12" name="tr1" to="ID6"/>
+  </join>
+  <end-token-state id="ID4" name="End token"/>
+  <end-state id="ID6" name="End"/>
+</process-definition>
