@@ -51,6 +51,10 @@ public abstract class Validator {
         return user;
     }
 
+    public ValidatorConfig getConfig() {
+        return config;
+    }
+
     protected ValidatorContext getValidatorContext() {
         return validatorContext;
     }
