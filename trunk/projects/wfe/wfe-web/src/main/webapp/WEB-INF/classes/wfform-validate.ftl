@@ -7,8 +7,7 @@ Only the following validators are supported:
 * regex validator
 * email validator
 * url validator
-* int validator
-* double validator
+* number validator
 END SNIPPET: supported-validators
 -->
 <#if ((parameters.validate?default(false) == true) && (parameters.performValidation?default(false) == true))>
@@ -21,21 +20,21 @@ END SNIPPET: supported-validators
     <#list parameters.tagNames as tagName>
         <#list tag.getValidators("${tagName}") as validator>
         // field name: ${validator.fieldName}
-        // validator name: ${validator.validatorType}
+        // validator name: ${validator.config.type}
         if (form.elements['${validator.fieldName}']) {
             field = form.elements['${validator.fieldName}'];
             var error = "${validator.getMessage()}";
-            <#if validator.validatorType = "required">
+            <#if validator.config.type = "required">
             if (field.value == "") {
                 addError(field, error);
                 errors = true;
             }
-            <#elseif validator.validatorType = "requiredstring">
+            <#elseif validator.config.type = "requiredstring">
             if (field.value != null && (field.value == "" || field.value.replace(/^\s+|\s+$/g,"").length == 0)) {
                 addError(field, error);
                 errors = true;
             }
-            <#elseif validator.validatorType = "stringlength">
+            <#elseif validator.config.type = "stringlength">
             if (field.value != null) {
                 var value = field.value;
                 <#if validator.trim>
@@ -53,37 +52,21 @@ END SNIPPET: supported-validators
                     errors = true;
                 }
             } 
-            <#elseif validator.validatorType = "regex">
+            <#elseif validator.config.type = "regex">
             if (field.value != null && !field.value.match("${validator.expression?js_string}")) {
                 addError(field, error);
                 errors = true;
             }
-            <#elseif validator.validatorType = "number">
+            <#elseif validator.config.type = "number">
             if ((field.value != null) && (field.value != "")) {
             	if (isNaN(parseInt(field.value))) {
             		addError(field, error);
 	                errors = true;
             	}
-                if (<#if validator.min?exists>parseInt(field.value) <
-                     ${validator.min}<#else>false</#if> ||
-                        <#if validator.max?exists>parseInt(field.value) >
-                           ${validator.max}<#else>false</#if>) {
-                    addError(field, error);
-                    errors = true;
-                }
-            }
-            <#elseif validator.validatorType = "double">
-            if (field.value != null) {
-            	var dValue = field.value.replace(",", ".");
-            	if (isNaN(parseFloat(dValue))) {
-            		addError(field, error);
-	                errors = true;
-            	}
-                var value = parseFloat(dValue);
-                if (<#if validator.minInclusive?exists>value < ${validator.minInclusive}<#else>false</#if> ||
-                        <#if validator.maxInclusive?exists>value > ${validator.maxInclusive}<#else>false</#if> ||
-                        <#if validator.minExclusive?exists>value <= ${validator.minExclusive}<#else>false</#if> ||
-                        <#if validator.maxExclusive?exists>value >= ${validator.maxExclusive}<#else>false</#if>) {
+                if (<#if validator.minComparatorValue?exists>parseInt(field.value) <
+                     ${validator.minComparatorValue}<#else>false</#if> ||
+                        <#if validator.maxComparatorValue?exists>parseInt(field.value) >
+                           ${validator.maxComparatorValue}<#else>false</#if>) {
                     addError(field, error);
                     errors = true;
                 }
