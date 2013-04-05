@@ -17,13 +17,10 @@
  */
 package ru.runa.wf.web.html;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 
@@ -38,7 +35,6 @@ import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
 
 public class ProcessVariablesRowBuilder implements RowBuilder {
-    private static final Log log = LogFactory.getLog(ProcessVariablesRowBuilder.class);
 
     private int idx = 0;
     private final List<WfVariable> variables;
@@ -76,20 +72,8 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
         if (value == null) {
             formattedValue = Messages.getMessage("label.unset_empty.value", pageContext);
         } else {
-            try {
-                User user = Commons.getUser(pageContext.getSession());
-                formattedValue = ViewUtil.getVariableValueHtml(user, new StrutsWebHelper(pageContext), processId, variable);
-            } catch (Exception e) {
-                log.debug("Unable to format value " + variable + " in " + processId + ": " + e.getMessage());
-                if (value.getClass().isArray()) {
-                    formattedValue = Arrays.toString((Object[]) value);
-                } else {
-                    formattedValue = value.toString();
-                    if (!variable.getDefinition().isSyntetic()) {
-                        formattedValue += " <span style=\"color: #cccccc;\">(" + e.getMessage() + ")</span>";
-                    }
-                }
-            }
+            User user = Commons.getUser(pageContext.getSession());
+            formattedValue = ViewUtil.getVariableValueHtml(user, new StrutsWebHelper(pageContext), processId, variable);
         }
         tr.addElement(new TD(formattedValue).setClass(Resources.CLASS_LIST_TABLE_TD));
 

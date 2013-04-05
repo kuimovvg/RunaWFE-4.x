@@ -1,6 +1,10 @@
 package ru.runa.wf.web.ftl.method;
 
+import java.util.Arrays;
 import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.WebHelper;
@@ -21,6 +25,7 @@ import ru.runa.wfe.var.format.VariableFormat;
 import com.google.common.base.Objects;
 
 public class ViewUtil {
+    private static final Log log = LogFactory.getLog(ViewUtil.class);
 
     public static String createExecutorSelect(User user, WfVariable variable) {
         ExecutorService executorService = Delegates.getExecutorService();
@@ -53,15 +58,28 @@ public class ViewUtil {
     }
 
     public static String getVariableValueHtml(User user, WebHelper webHelper, Long processId, WfVariable variable) {
-        VariableFormat<Object> format = variable.getFormatNotNull();
-        if (format instanceof VariableDisplaySupport) {
-            if (webHelper == null || processId == null) {
-                return "";
+        try {
+            VariableFormat<Object> format = variable.getFormatNotNull();
+            if (format instanceof VariableDisplaySupport) {
+                if (webHelper == null || processId == null) {
+                    return "";
+                }
+                VariableDisplaySupport<Object> displaySupport = (VariableDisplaySupport<Object>) format;
+                return displaySupport.getHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue());
+            } else {
+                return format.format(variable.getValue());
             }
-            VariableDisplaySupport<Object> displaySupport = (VariableDisplaySupport<Object>) format;
-            return displaySupport.getHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue());
-        } else {
-            return format.format(variable.getValue());
+        } catch (Exception e) {
+            log.debug("Unable to format value " + variable + " in " + processId + ": " + e.getMessage());
+            if (variable.getValue() != null && variable.getValue().getClass().isArray()) {
+                return Arrays.toString((Object[]) variable.getValue());
+            } else {
+                if (variable.getDefinition().isSyntetic()) {
+                    return String.valueOf(variable.getValue());
+                } else {
+                    return " <span style=\"color: #cccccc;\">(" + variable.getValue() + ")</span>";
+                }
+            }
         }
     }
 }
