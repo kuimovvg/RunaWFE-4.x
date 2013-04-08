@@ -228,8 +228,7 @@ public class GraphHistoryBuilder {
     }
 
     /**
-     * Method calculates the width of tokens. Token is line that contains nodes
-     * and transitions. Fork node creates subtokens. Join node finishes all
+     * Method calculates the width of tokens. Token is line that contains nodes and transitions. Fork node creates subtokens. Join node finishes all
      * subtokens node and continue the main token.
      * 
      * @param startTokenNodeId
@@ -300,6 +299,15 @@ public class GraphHistoryBuilder {
         for (Node node : processDefinition.getNodes()) {
             if (node.getNodeId().equals(nodeId)) {
                 GraphImageHelper.initNodeModel(node, nodeModel);
+
+                if (nodeModel.getType() == NodeType.StartState) {
+                    if (nodeModel.getWidth() < 100) {
+                        nodeModel.setWidth(100);
+                    }
+
+                    nodeModel.setHeight(nodeModel.getHeight() + 10);
+                }
+
                 break;
             }
         }
@@ -340,8 +348,9 @@ public class GraphHistoryBuilder {
     }
 
     private boolean isNodePresentInGraph(NodeLog log) {
-        return !(log instanceof ReceiveMessageLog || log instanceof SendMessageLog) &&
-        		!((log instanceof SubprocessStartLog || log instanceof SubprocessEndLog) && NodeType.MultiSubprocess.toString().equals(log.getNodeType()))
+        return !(log instanceof ReceiveMessageLog || log instanceof SendMessageLog)
+                && !((log instanceof SubprocessStartLog || log instanceof SubprocessEndLog) && NodeType.MultiSubprocess.toString().equals(
+                        log.getNodeType()))
                 && ((log instanceof NodeEnterLog && !NodeType.Join.toString().equals(log.getNodeType())) || (log instanceof NodeLeaveLog && (NodeType.StartState
                         .toString().equals(log.getNodeType()) || NodeType.Join.toString().equals(log.getNodeType()))));
     }
@@ -358,8 +367,7 @@ public class GraphHistoryBuilder {
     }
 
     /**
-     * Method calculates X and Y coordinates for figures which present nodes in
-     * the graph.
+     * Method calculates X and Y coordinates for figures which present nodes in the graph.
      * 
      * @param widthTokens
      *            - object contains start node in token and the width of token.
@@ -481,7 +489,8 @@ public class GraphHistoryBuilder {
             List<String> nodes = forkNodes.get(tempForkRootNodeId);
             if (nodes != null && nodes.contains(rootNodeId)) {
                 for (String forkNode : nodes) {
-                    if (tokenHieght.get(forkNode) != null && tokenHieght.get(tempForkRootNodeId) != null && tokenHieght.get(forkNode) > tokenHieght.get(tempForkRootNodeId)) {
+                    if (tokenHieght.get(forkNode) != null && tokenHieght.get(tempForkRootNodeId) != null
+                            && tokenHieght.get(forkNode) > tokenHieght.get(tempForkRootNodeId)) {
                         height = tokenHieght.get(forkNode);
                         tokenHieght.put(tempForkRootNodeId, height + nodeModel.getHeight() + heightBetweenNode);
                     }
