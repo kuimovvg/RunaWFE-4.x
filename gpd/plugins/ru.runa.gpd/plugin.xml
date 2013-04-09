@@ -1169,6 +1169,12 @@
             label="Invoke external web service"
             type="botHandler">
       </handler>
+      <handler
+            className="ru.runa.wfe.extension.handler.var.CreateCalendarHandler"
+            enabled="true"
+            label="%ru.runa.wfe.extension.handler.var.CreateCalendarHandler"
+            type="actionHandler">
+      </handler>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
