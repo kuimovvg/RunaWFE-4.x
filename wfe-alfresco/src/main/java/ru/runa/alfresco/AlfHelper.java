@@ -159,7 +159,7 @@ public class AlfHelper implements AlfConn {
 
     @Override
     public <T extends AlfObject> T loadObjectNotNull(Object objectId) {
-        T object = loadObject(objectId);
+        T object = (T) loadObject(objectId);
         if (object == null) {
             throw new InternalApplicationException("Unable to load object by UUID=" + objectId);
         }
