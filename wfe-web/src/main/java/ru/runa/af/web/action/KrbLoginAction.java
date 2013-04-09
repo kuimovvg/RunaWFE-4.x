@@ -21,7 +21,6 @@ package ru.runa.af.web.action;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -35,11 +34,8 @@ import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
-import ru.runa.wfe.service.ProfileService;
-import ru.runa.wfe.service.SystemService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 
 /**
@@ -72,15 +68,10 @@ public class KrbLoginAction extends ActionBase {
             String actorName = domainActorName.substring(0, atIndex);
             Actor actor = Delegates.getExecutorService().getActorCaseInsensitive(actorName);
             User user = SubjectPrincipalsHelper.createUser(actor);
-
-            SystemService systemService = Delegates.getSystemService();
-            systemService.login(user);
-            HttpSession session = request.getSession();
-            ProfileService profileService = Delegates.getProfileService();
-            Profile profile = profileService.getProfile(user);
-            ProfileHttpSessionHelper.setProfile(profile, session);
-            Commons.setUser(user, session);
-            TabHttpSessionHelper.setTabForwardName(DEFAULT_TAB_FORWARD_NAME, session);
+            Delegates.getSystemService().login(user);
+            Commons.setUser(user, request.getSession());
+            ProfileHttpSessionHelper.reloadProfile(request.getSession());
+            TabHttpSessionHelper.setTabForwardName(DEFAULT_TAB_FORWARD_NAME, request.getSession());
             saveToken(request);
         } catch (Exception e) {
             addError(request, e);

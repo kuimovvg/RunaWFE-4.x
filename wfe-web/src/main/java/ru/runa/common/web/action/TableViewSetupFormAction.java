@@ -169,6 +169,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);
             saveErrors(request.getSession(), errors);
+            ProfileHttpSessionHelper.reloadProfile(request.getSession());
         }
         return new ActionForward(tableViewSetupForm.getReturnAction(), true);
     }
@@ -191,6 +192,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);
             saveErrors(request.getSession(), errors);
+            ProfileHttpSessionHelper.reloadProfile(request.getSession());
         }
         return new ActionForward(tableViewSetupForm.getReturnAction(), true);
     }
@@ -206,6 +208,7 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
             ActionMessages errors = getErrors(request);
             ActionExceptionHelper.addException(errors, e);
             saveErrors(request.getSession(), errors);
+            ProfileHttpSessionHelper.reloadProfile(request.getSession());
         }
         return new ActionForward(tableViewSetupForm.getReturnAction(), true);
     }
