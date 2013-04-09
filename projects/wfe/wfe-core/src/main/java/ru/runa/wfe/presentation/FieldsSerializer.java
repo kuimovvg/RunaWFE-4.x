@@ -59,7 +59,7 @@ public class FieldsSerializer {
             FilterCriteria criteria = ClassLoaderUtil.instantiate(element.attributeValue(FILTER_CLASS_ATTR));
             List<String> templates = Lists.newArrayList();
             for (Element tplElement : (List<Element>) element.elements(FILTER_TEMPLATE)) {
-                templates.add(tplElement.getTextTrim());
+                templates.add(tplElement.getText());
             }
             criteria.applyFilterTemplates(templates.toArray(new String[templates.size()]));
             fields.filters.put(key, criteria);
@@ -72,7 +72,7 @@ public class FieldsSerializer {
         if (expandedBlocksElement != null) {
             elements = expandedBlocksElement.elements(I);
             for (Element element : elements) {
-                fields.expandedBlocks.add(element.getTextTrim());
+                fields.expandedBlocks.add(element.getText());
             }
         }
         return fields;
