@@ -238,7 +238,7 @@ public class AlfSession implements AlfConn {
 
     @Override
     public <T extends AlfObject> T loadObjectNotNull(Object objectId) throws InternalApplicationException {
-        T object = loadObject(objectId);
+        T object = (T) loadObject(objectId);
         if (object == null) {
             throw new InternalApplicationException("Unable to load object by UUID=" + objectId);
         }
