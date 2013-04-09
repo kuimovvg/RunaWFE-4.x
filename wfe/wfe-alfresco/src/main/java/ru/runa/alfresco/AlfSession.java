@@ -327,7 +327,7 @@ public class AlfSession implements AlfConn {
                 List<Object> refs = assocToCreate.get(desc);
                 for (Object ref : refs) {
                     Reference reference = (Reference) ref;
-                    AlfObject target = loadObjectNotNull(reference);
+                    AlfObject target = loadObject(reference, true);
                     Predicate predicate = target.getPredicate();
                     log.debug("Adding assoc " + reference.getUuid() + " to " + object);
                     if (desc.getAssoc().child()) {
