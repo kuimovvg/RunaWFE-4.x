@@ -77,7 +77,7 @@ public class FormUtils {
             Hashtable<String, Object> hashtable = actionForm.getMultipartRequestHandler().getAllElements();
             List<String> formatErrorsForFields = new ArrayList<String>();
 
-            HashMap<String, Object> variablesMap = Maps.newHashMap();
+            HashMap<String, Object> variables = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
                 Object value = hashtable.get(variableDefinition.getName());
                 VariableFormat<?> format = FormatCommons.create(variableDefinition);
@@ -121,14 +121,14 @@ public class FormUtils {
                     if (handler != null) {
                         variableValue = handler.handle(variableValue);
                     }
-                    variablesMap.put(variableDefinition.getName(), variableValue);
+                    variables.put(variableDefinition.getName(), variableValue);
                 }
             }
-
             if (formatErrorsForFields.size() > 0) {
                 throw new VariablesFormatException(formatErrorsForFields);
             }
-            return variablesMap;
+            log.debug("Submitted: " + variables);
+            return variables;
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
