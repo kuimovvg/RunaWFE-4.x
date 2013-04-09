@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <nameCaseConf>
-<!-- <name value="Вася">
-	</name> -->	
+    <name value="Ольга"> 
+        <rule case="2">Ольги</rule> 
+        <rule case="3">Ольге</rule> 
+        <rule case="4">Ольгу</rule> 
+        <rule case="5">Ольгой</rule> 
+        <rule case="6">Ольге</rule> 
+    </name> 
 	<family value="Гынга">
 		<rule case="2">Гынги</rule>
 		<rule case="3">Гынге</rule>
@@ -10,6 +15,6 @@
 		<rule case="5">Гынгой</rule>
 		<rule case="6">Гынге</rule>
 	</family>
-<!-- <parent value="Вася">
+<!-- <parent value="Григорьевич">
 	</parent> -->	
 </nameCaseConf>
