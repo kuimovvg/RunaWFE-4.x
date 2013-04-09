@@ -49,6 +49,7 @@ public class ChangeActiveBatchPresentationAction extends ActionBase {
             ProfileHttpSessionHelper.setProfile(profile, request.getSession());
         } catch (Exception e) {
             addError(request, e);
+            ProfileHttpSessionHelper.reloadProfile(request.getSession());
         }
         return new ActionForward(batchPresentationForm.getReturnAction(), true);
     }

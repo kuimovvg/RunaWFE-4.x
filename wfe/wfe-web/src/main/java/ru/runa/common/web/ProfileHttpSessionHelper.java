@@ -20,6 +20,7 @@ package ru.runa.common.web;
 import javax.portlet.PortletSession;
 import javax.servlet.http.HttpSession;
 
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Profile;
 
 /**
@@ -53,4 +54,10 @@ public class ProfileHttpSessionHelper {
             throw new InvalidSessionException("Session does not contain profile.");
         }
     }
+
+    public static void reloadProfile(HttpSession session) {
+        Profile profile = Delegates.getProfileService().getProfile(Commons.getUser(session));
+        setProfile(profile, session);
+    }
+
 }

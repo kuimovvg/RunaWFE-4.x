@@ -19,7 +19,6 @@ package ru.runa.af.web.action;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -31,9 +30,7 @@ import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.wfe.service.ProfileService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 
 /**
@@ -56,12 +53,9 @@ public class LoginAction extends ActionBase {
             LoginForm form = (LoginForm) actionForm;
             User user = Delegates.getAuthenticationService().authenticateByLoginPassword(form.getLogin(), form.getPassword());
             Delegates.getSystemService().login(user);
-            HttpSession session = request.getSession();
-            ProfileService profileService = Delegates.getProfileService();
-            Profile profile = profileService.getProfile(user);
-            ProfileHttpSessionHelper.setProfile(profile, session);
-            Commons.setUser(user, session);
-            TabHttpSessionHelper.setTabForwardName(DEFAULT_TAB_FORWARD_NAME, session);
+            Commons.setUser(user, request.getSession());
+            ProfileHttpSessionHelper.reloadProfile(request.getSession());
+            TabHttpSessionHelper.setTabForwardName(DEFAULT_TAB_FORWARD_NAME, request.getSession());
             saveToken(request);
             if (request.getParameter("forwardUrl") != null) {
                 return new ActionForward(request.getParameter("forwardUrl"));
