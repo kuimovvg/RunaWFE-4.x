@@ -61,7 +61,7 @@ public class ViewUtil {
         try {
             VariableFormat<Object> format = variable.getFormatNotNull();
             if (format instanceof VariableDisplaySupport) {
-                if (webHelper == null || processId == null) {
+                if (webHelper == null || processId == null || variable.getValue() == null) {
                     return "";
                 }
                 VariableDisplaySupport<Object> displaySupport = (VariableDisplaySupport<Object>) format;
