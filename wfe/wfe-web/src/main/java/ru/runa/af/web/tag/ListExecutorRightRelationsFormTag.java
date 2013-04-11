@@ -45,8 +45,6 @@ import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ExecutorService;
-import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 
@@ -64,33 +62,21 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
      */
     private static final long serialVersionUID = 1L;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ru.runa.common.web.tag.IdentifiableFormTag#fillFormData(org.apache.ecs
-     * .html.TD)
-     */
     @Override
     protected void fillFormData(TD tdFormElement) {
-        ExecutorService executorService = Delegates.getExecutorService();
-        RelationService relationService = Delegates.getRelationService();
         List<Executor> executors = new ArrayList<Executor>();
         executors.add(getIdentifiable());
         BatchPresentation executorBatchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-        executors.addAll(executorService.getExecutorGroups(getUser(), getIdentifiable(), executorBatchPresentation, false));
+        executors.addAll(Delegates.getExecutorService().getExecutorGroups(getUser(), getIdentifiable(), executorBatchPresentation, false));
         Set<Relation> relations = new HashSet<Relation>();
-        for (RelationPair pair : relationService.getExecutorsRelationPairsRight(getUser(), null, executors)) {
+        for (RelationPair pair : Delegates.getRelationService().getExecutorsRelationPairsRight(getUser(), null, executors)) {
             relations.add(pair.getRelation());
         }
         TableBuilder tableBuilder = new TableBuilder();
-
         TDBuilder[] builders = getBuilders(new TDBuilder[] {}, BatchPresentationFactory.RELATIONS.createDefault(), new TDBuilder[] {});
-
         RowBuilder rowBuilder = new ReflectionRowBuilder(Lists.newArrayList(relations), executorBatchPresentation, pageContext,
                 WebResources.ACTION_MAPPING_MANAGE_EXECUTOR_RIGHT_RELATION, "", new RelationURLStrategy(), builders);
         HeaderBuilder headerBuilder = new StringsHeaderBuilder(getNames());
-
         tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
     }
 

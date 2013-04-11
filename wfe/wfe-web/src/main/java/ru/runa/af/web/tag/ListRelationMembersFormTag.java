@@ -40,8 +40,6 @@ import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
-import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -57,15 +55,11 @@ public class ListRelationMembersFormTag extends BatchReturningTitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        RelationService relationService = Delegates.getRelationService();
-        AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        Relation currentRelation = relationService.getRelationByName(getUser(), getRelationName());
-        isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, currentRelation);
+        Relation relation = Delegates.getRelationService().getRelationByName(getUser(), getRelationName());
+        isFormButtonVisible = Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE_RELATION, relation);
         BatchPresentation batchPresentation = getBatch();
-        List<RelationPair> relations = relationService.getRelationPairs(getUser(), relationName, batchPresentation);
-
+        List<RelationPair> relationPairs = Delegates.getRelationService().getRelationPairs(getUser(), relationName, batchPresentation);
         TableBuilder tableBuilder = new TableBuilder();
-
         TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
 
             @Override
@@ -73,13 +67,10 @@ public class ListRelationMembersFormTag extends BatchReturningTitledFormTag {
                 return isFormButtonVisible;
             }
         };
-
         TDBuilder[] builders = getBuilders(new TDBuilder[] { checkboxBuilder }, batchPresentation, new TDBuilder[] {});
-
-        RowBuilder rowBuilder = new ReflectionRowBuilder(relations, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
+        RowBuilder rowBuilder = new ReflectionRowBuilder(relationPairs, batchPresentation, pageContext, WebResources.ACTION_MAPPING_UPDATE_EXECUTOR,
                 getReturnAction(), IdForm.ID_INPUT_NAME, builders);
         HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 1, 0, getReturnAction(), pageContext);
-
         tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
         tdFormElement.addElement(new Input(Input.HIDDEN, "relationName", getRelationName()));
     }

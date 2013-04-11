@@ -77,13 +77,10 @@ public class ListExecutorLeftRelationsFormTag extends IdentifiableFormTag {
             relations.add(pair.getRelation());
         }
         TableBuilder tableBuilder = new TableBuilder();
-
         TDBuilder[] builders = getBuilders(new TDBuilder[] {}, BatchPresentationFactory.RELATIONS.createDefault(), new TDBuilder[] {});
-
         RowBuilder rowBuilder = new ReflectionRowBuilder(Lists.newArrayList(relations), batchPresentation, pageContext,
                 WebResources.ACTION_MAPPING_MANAGE_EXECUTOR_LEFT_RELATION, "", new RelationURLStrategy(), builders);
         HeaderBuilder headerBuilder = new StringsHeaderBuilder(getNames());
-
         tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
     }
 

@@ -31,7 +31,6 @@ import ru.runa.af.web.form.RelationIdsForm;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -49,9 +48,8 @@ public class RemoveRelationAction extends ActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
         RelationIdsForm relationForm = (RelationIdsForm) form;
         try {
-            RelationService relationService = Delegates.getRelationService();
             for (Long relationId : relationForm.getIds()) {
-                relationService.removeRelationPair(getLoggedUser(request), relationId);
+                Delegates.getRelationService().removeRelationPair(getLoggedUser(request), relationId);
             }
         } catch (Exception e) {
             addError(request, e);

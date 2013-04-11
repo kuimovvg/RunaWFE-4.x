@@ -31,8 +31,6 @@ import ru.runa.af.web.form.CreateRelationForm;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.wfe.service.ExecutorService;
-import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 
@@ -52,11 +50,9 @@ public class CreateRelationAction extends ActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         CreateRelationForm relationForm = (CreateRelationForm) form;
         try {
-            ExecutorService executorService = Delegates.getExecutorService();
-            RelationService relationService = Delegates.getRelationService();
-            Executor executorFrom = executorService.getExecutorByName(getLoggedUser(request), relationForm.getRelationFrom());
-            Executor executorTo = executorService.getExecutorByName(getLoggedUser(request), relationForm.getRelationTo());
-            relationService.addRelationPair(getLoggedUser(request), relationForm.getRelationName(), executorFrom, executorTo);
+            Executor executorFrom = Delegates.getExecutorService().getExecutorByName(getLoggedUser(request), relationForm.getRelationFrom());
+            Executor executorTo = Delegates.getExecutorService().getExecutorByName(getLoggedUser(request), relationForm.getRelationTo());
+            Delegates.getRelationService().addRelationPair(getLoggedUser(request), relationForm.getRelationName(), executorFrom, executorTo);
         } catch (Exception e) {
             addError(request, e);
             return getFailureForward(mapping, relationForm);

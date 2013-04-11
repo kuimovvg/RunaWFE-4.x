@@ -26,7 +26,6 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -42,10 +41,9 @@ public class RemoveRelationGroupAction extends ActionBase {
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
         try {
-            RelationService relationService = Delegates.getRelationService();
             IdsForm listAllForm = (IdsForm) form;
             for (Long groupId : listAllForm.getIds()) {
-                relationService.removeRelation(getLoggedUser(request), groupId);
+                Delegates.getRelationService().removeRelation(getLoggedUser(request), groupId);
             }
         } catch (Exception e) {
             addError(request, e);
