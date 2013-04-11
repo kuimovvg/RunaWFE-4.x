@@ -26,14 +26,14 @@ import ru.runa.wfe.presentation.FieldState;
 public class RelationPairClassPresentation extends ClassPresentation {
     private static final ClassPresentation INSTANCE = new RelationPairClassPresentation();
 
+    private static final String RELATION_NAME = "batch_presentation.relation.name";
     private static final String RELATION_EXECUTOR_FROM = "batch_presentation.relation.executor_from";
     private static final String RELATION_EXECUTOR_TO = "batch_presentation.relation.executor_to";
-    private static final String RELATION_GROUP_NAME = "batch_presentation.relation.name";
 
     private RelationPairClassPresentation() {
         super(RelationPair.class, "", false, new FieldDescriptor[] {
-                new FieldDescriptor(RELATION_GROUP_NAME, String.class.getName(), new DefaultDBSource(RelationPair.class, "relation.name"), true,
-                        FieldFilterMode.DATABASE, /* This field is hidden */FieldState.HIDDEN),
+                new FieldDescriptor(RELATION_NAME, String.class.getName(), new DefaultDBSource(RelationPair.class, "relation.name"), true,
+                        FieldFilterMode.DATABASE, FieldState.HIDDEN),
                 new FieldDescriptor(RELATION_EXECUTOR_FROM, String.class.getName(), new DefaultDBSource(RelationPair.class, "left.name"), true,
                         FieldFilterMode.DATABASE, "ru.runa.af.web.html.RelationFromTDBuilder", null),
                 new FieldDescriptor(RELATION_EXECUTOR_TO, String.class.getName(), new DefaultDBSource(RelationPair.class, "right.name"), true,

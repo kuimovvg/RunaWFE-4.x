@@ -140,4 +140,8 @@ public class Relation extends IdentifiableBase {
         return Objects.equal(name, other.name);
     }
 
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("id", getIdentifiableId()).add("name", getName()).toString();
+    }
 }
