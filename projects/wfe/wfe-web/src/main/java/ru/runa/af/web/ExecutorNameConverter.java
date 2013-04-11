@@ -17,9 +17,9 @@ public class ExecutorNameConverter {
             result = "";
         } else if (Actor.UNAUTHORIZED_ACTOR.getName().equals(executor.getName())) {
             result = Messages.getMessage(ru.runa.common.WebResources.UNAUTHORIZED_EXECUTOR_NAME, pageContext);
-        } else if (executor.getName().startsWith(EscalationGroup.GROUP_PREFIX)) {
+        } else if (executor instanceof EscalationGroup) {
             result = Messages.getMessage(Messages.ESCALATION_GROUP_NAME, pageContext);
-        } else if (executor.getName().startsWith(TemporaryGroup.GROUP_PREFIX)) {
+        } else if (executor instanceof TemporaryGroup) {
             result = Messages.getMessage(Messages.DYNAMIC_GROUP_NAME, pageContext);
         } else if (executor.getName().equals(SystemExecutors.PROCESS_STARTER_NAME)) {
             result = Messages.getMessage(Messages.PROCESS_STARTER_NAME, pageContext);

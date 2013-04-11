@@ -27,7 +27,6 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.af.web.form.CreateRelationGroupForm;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -47,8 +46,8 @@ public class CreateRelationGroupAction extends ActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         CreateRelationGroupForm relationForm = (CreateRelationGroupForm) form;
         try {
-            RelationService relationService = Delegates.getRelationService();
-            relationService.createRelation(getLoggedUser(request), relationForm.getRelationName(), relationForm.getRelationDescription());
+            Delegates.getRelationService().createRelation(getLoggedUser(request), relationForm.getRelationName(),
+                    relationForm.getRelationDescription());
         } catch (Exception e) {
             addError(request, e);
             return mapping.findForward(Resources.FORWARD_FAILURE);
