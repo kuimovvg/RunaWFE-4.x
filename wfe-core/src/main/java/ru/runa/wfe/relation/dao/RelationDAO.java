@@ -232,9 +232,7 @@ public class RelationDAO extends CommonDAO {
             // for check
             getRelationNotNull(relationName);
             filters.put(0, new StringFilterCriteria(relationName));
-            batchPresentation.setFilteredFields(filters);
             List<RelationPair> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(false);
-            batchPresentation.setFilteredFields(filters);
             return result;
         } finally {
             filters.remove(0);

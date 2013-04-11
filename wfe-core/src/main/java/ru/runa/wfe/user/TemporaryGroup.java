@@ -15,7 +15,7 @@ public class TemporaryGroup extends Group {
     /**
      * Prefix for temporary group name.
      */
-    public static final String GROUP_PREFIX = "__TmpGroup_";
+    private static final String GROUP_PREFIX = "TmpGroup_";
 
     public TemporaryGroup() {
     }

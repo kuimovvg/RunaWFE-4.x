@@ -40,8 +40,6 @@ import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
-import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -51,31 +49,25 @@ public class ListRelationsFormTag extends BatchReturningTitledFormTag {
 
     private static final long serialVersionUID = 1L;
 
-    boolean isFormButtonVisible;
+    boolean formButtonVisible;
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        RelationService relationService = Delegates.getRelationService();
-        AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        isFormButtonVisible = authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_RELATION, RelationsGroupSecure.INSTANCE);
-        List<Relation> relationGroups = relationService.getRelations(getUser(), getBatchPresentation());
-
+        formButtonVisible = Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE_RELATION,
+                RelationsGroupSecure.INSTANCE);
+        List<Relation> relations = Delegates.getRelationService().getRelations(getUser(), getBatchPresentation());
         TableBuilder tableBuilder = new TableBuilder();
-
         TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
 
             @Override
             protected boolean isEnabled(Object object, Env env) {
-                return isFormButtonVisible;
+                return formButtonVisible;
             }
         };
-
         TDBuilder[] builders = getBuilders(new TDBuilder[] { checkboxBuilder }, getBatchPresentation(), new TDBuilder[] {});
-
-        RowBuilder rowBuilder = new ReflectionRowBuilder(relationGroups, getBatchPresentation(), pageContext,
-                WebResources.ACTION_MAPPING_MANAGE_RELATION, getReturnAction(), new RelationURLStrategy(), builders);
+        RowBuilder rowBuilder = new ReflectionRowBuilder(relations, getBatchPresentation(), pageContext, WebResources.ACTION_MAPPING_MANAGE_RELATION,
+                getReturnAction(), new RelationURLStrategy(), builders);
         HeaderBuilder headerBuilder = new SortingHeaderBuilder(getBatchPresentation(), 1, 0, getReturnAction(), pageContext);
-
         tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
     }
 
@@ -86,17 +78,17 @@ public class ListRelationsFormTag extends BatchReturningTitledFormTag {
 
     @Override
     protected boolean isFormButtonEnabled() {
-        return isFormButtonVisible;
+        return formButtonVisible;
     }
 
     @Override
     protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
-        return isFormButtonVisible;
+        return formButtonVisible;
     }
 
     @Override
     protected boolean isFormButtonVisible() {
-        return isFormButtonVisible;
+        return formButtonVisible;
     }
 
     @Override
