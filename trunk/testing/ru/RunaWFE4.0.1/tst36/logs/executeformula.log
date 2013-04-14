@@ -1,0 +1,942 @@
+2013-04-07 19:16:22,829 DEBUG [ru.runa.wfe.service.impl.AuthenticationServiceBean] Authenticating (login) Administrator
+2013-04-07 19:16:22,858 INFO [ru.runa.wfe.user.cache.ExecutorCacheCtrl] Cache initializing
+2013-04-07 19:16:22,960 INFO [ru.runa.wfe.commons.cache.EhcacheHelper] EHCache manager loaded and will be used in WFE caches.
+2013-04-07 19:16:22,961 INFO [ru.runa.wfe.user.cache.ExecutorCacheCtrl] Cache is initialized
+2013-04-07 19:16:23,450 DEBUG [ru.runa.wfe.security.logic.AuthenticationLogic] Administrator successfully authenticated
+2013-04-07 19:16:23,456 DEBUG [ru.runa.wfe.service.impl.AuthenticationServiceBean] Authenticated (login): Actor{id=1, name=Administrator, code=-1}
+2013-04-07 19:16:24,320 INFO [ru.runa.wfe.task.cache.TaskCacheCtrl] Cache initializing
+2013-04-07 19:16:24,323 INFO [ru.runa.wfe.task.cache.TaskCacheCtrl] Cache is initialized
+2013-04-07 19:16:24,324 INFO [ru.runa.wfe.ss.cache.SubstitutionCacheCtrl] Cache initializing
+2013-04-07 19:16:24,543 INFO [ru.runa.wfe.ss.cache.SubstitutionCacheCtrl] Cache is initialized
+2013-04-07 19:16:24,544 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-04-07 19:16:26,284 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-04-07 19:16:26,863 INFO [ru.runa.wfe.definition.cache.ProcessDefCacheCtrl] Cache initializing
+2013-04-07 19:16:26,864 INFO [ru.runa.wfe.definition.cache.ProcessDefCacheCtrl] Cache is initialized
+2013-04-07 19:16:28,616 WARN [org.apache.struts.util.PropertyMessageResources] Resource struts_en_US.properties Not Found.
+2013-04-07 19:16:30,807 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:16:30,811 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:16:30,819 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:16:32,004 DEBUG [ru.runa.wfe.execution.Swimlane] assigning swimlane 'user' to 'Actor{id=1, name=Administrator, code=-1}'
+2013-04-07 19:16:32,008 DEBUG [ru.runa.wfe.lang.GraphElement] event 'process-start' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,014 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'StartState{id=start, name=start}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,014 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,020 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Transition{id=start/tr1, name=tr1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,023 INFO [ru.runa.wfe.lang.Action] Executing Action{event=transition, delegation=Delegation{class=ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler, configuration=a = (10 + 2) / 4}}
+2013-04-07 19:16:32,035 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Swimlane{name=user, value=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:32,067 DEBUG [ru.runa.wfe.var.VariableCreator] create variable 'a' in 'ExecutionContext{token=Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}}' with value '3'
+2013-04-07 19:16:32,078 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'StartState{id=start, name=start}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,078 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,078 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'TaskNode{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,079 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,087 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskDefinition{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,088 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskNode{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,088 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,088 DEBUG [ru.runa.wfe.task.Task] assigning Task{id=null, name=state1, assignedTo=null} to Actor{id=1, name=Administrator, code=-1}
+2013-04-07 19:16:32,093 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskDefinition{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,093 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskNode{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,093 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:32,112 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Task{id=null, name=state1, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:32,136 DEBUG [ru.runa.wfe.commons.dao.CommonDAO] permissions not granted for priveleged executor
+2013-04-07 19:16:32,152 DEBUG [ru.runa.wfe.commons.dao.CommonDAO] permissions not granted for priveleged executor
+2013-04-07 19:16:32,153 INFO [ru.runa.wfe.execution.logic.ExecutionLogic] Process Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7} was successfully started
+2013-04-07 19:16:33,914 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-04-07 19:16:33,951 DEBUG [ru.runa.wfe.task.TasklistBuilder] Task{id=11, name=state1, assignedTo=Actor{id=1, name=Administrator, code=-1}} is acquired by membership rules
+2013-04-07 19:16:35,204 DEBUG [ru.runa.wf.web.action.SubmitTaskDispatcherAction] User should be redirected to /submit_task.do action.
+2013-04-07 19:16:35,215 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On UPDATE: Task{id=11, name=state1, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:37,582 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskDefinition{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,582 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskNode{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,583 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,591 DEBUG [ru.runa.wfe.execution.logic.ExecutionLogic] completion of Task{id=11, name=state1, assignedTo=Actor{id=1, name=Administrator, code=-1}} by Transition{id=state1/tr1, name=tr1}
+2013-04-07 19:16:37,592 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'TaskNode{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,592 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,593 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'TaskNode{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,593 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,601 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Transition{id=state1/tr1, name=tr1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,602 INFO [ru.runa.wfe.lang.Action] Executing Action{event=transition, delegation=Delegation{class=ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler, configuration=c = true & ( false ^ true ) | ("aab"<="aaa")}}
+2013-04-07 19:16:37,608 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On DELETE: Task{id=11, name=state1, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:37,644 DEBUG [ru.runa.wfe.var.VariableCreator] create variable 'c' in 'ExecutionContext{token=Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}}' with value 'true'
+2013-04-07 19:16:37,653 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'TaskNode{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,654 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,654 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'TaskNode{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,654 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,660 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskDefinition{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,661 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskNode{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,662 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,663 DEBUG [ru.runa.wfe.task.Task] assigning Task{id=null, name=state2, assignedTo=null} to Actor{id=1, name=Administrator, code=-1}
+2013-04-07 19:16:37,667 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskDefinition{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,667 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskNode{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,667 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,668 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'TaskNode{id=state1, name=state1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,668 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:37,668 INFO [ru.runa.wfe.execution.logic.ExecutionLogic] Task 'state1' was done by Actor{id=1, name=Administrator, code=-1} in process Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}
+2013-04-07 19:16:37,673 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Task{id=null, name=state2, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:37,728 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-04-07 19:16:37,752 DEBUG [ru.runa.wfe.task.TasklistBuilder] Task{id=12, name=state2, assignedTo=Actor{id=1, name=Administrator, code=-1}} is acquired by membership rules
+2013-04-07 19:16:39,250 DEBUG [ru.runa.wf.web.action.SubmitTaskDispatcherAction] User should be redirected to /submit_task.do action.
+2013-04-07 19:16:39,262 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On UPDATE: Task{id=12, name=state2, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:40,532 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskDefinition{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,532 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskNode{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,533 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,537 DEBUG [ru.runa.wfe.execution.logic.ExecutionLogic] completion of Task{id=12, name=state2, assignedTo=Actor{id=1, name=Administrator, code=-1}} by Transition{id=state2/tr1, name=tr1}
+2013-04-07 19:16:40,538 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'TaskNode{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,538 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,538 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'TaskNode{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,539 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,544 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Transition{id=state2/tr1, name=tr1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,545 INFO [ru.runa.wfe.lang.Action] Executing Action{event=transition, delegation=Delegation{class=ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler, configuration=variable = a<5 & a>0.27}}
+2013-04-07 19:16:40,547 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On DELETE: Task{id=12, name=state2, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:40,568 DEBUG [ru.runa.wfe.var.VariableCreator] create variable 'variable' in 'ExecutionContext{token=Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}}' with value 'true'
+2013-04-07 19:16:40,577 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'TaskNode{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,577 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,578 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'TaskNode{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,578 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,583 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskDefinition{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,583 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskNode{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,583 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,584 DEBUG [ru.runa.wfe.task.Task] assigning Task{id=null, name=state3, assignedTo=null} to Actor{id=1, name=Administrator, code=-1}
+2013-04-07 19:16:40,586 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskDefinition{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,587 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskNode{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,587 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,587 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'TaskNode{id=state2, name=state2}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,588 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:40,588 INFO [ru.runa.wfe.execution.logic.ExecutionLogic] Task 'state2' was done by Actor{id=1, name=Administrator, code=-1} in process Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}
+2013-04-07 19:16:40,589 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Task{id=null, name=state3, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:40,634 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-04-07 19:16:40,662 DEBUG [ru.runa.wfe.task.TasklistBuilder] Task{id=13, name=state3, assignedTo=Actor{id=1, name=Administrator, code=-1}} is acquired by membership rules
+2013-04-07 19:16:40,826 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:16:40,831 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:16:40,838 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:16:41,800 DEBUG [ru.runa.wf.web.action.SubmitTaskDispatcherAction] User should be redirected to /submit_task.do action.
+2013-04-07 19:16:41,828 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On UPDATE: Task{id=13, name=state3, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:43,593 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskDefinition{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,593 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskNode{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,593 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,597 DEBUG [ru.runa.wfe.execution.logic.ExecutionLogic] completion of Task{id=13, name=state3, assignedTo=Actor{id=1, name=Administrator, code=-1}} by Transition{id=state3/tr1, name=tr1}
+2013-04-07 19:16:43,598 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'TaskNode{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,598 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,598 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'TaskNode{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,599 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,605 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Transition{id=state3/tr1, name=tr1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,606 INFO [ru.runa.wfe.lang.Action] Executing Action{event=transition, delegation=Delegation{class=ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler, configuration=date = 30.08.08}}
+2013-04-07 19:16:43,608 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On DELETE: Task{id=13, name=state3, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:43,647 DEBUG [ru.runa.wfe.var.VariableCreator] create variable 'date' in 'ExecutionContext{token=Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}}' with value 'Thu Aug 30 00:00:00 EET 8'
+2013-04-07 19:16:43,654 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'TaskNode{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,655 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,655 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'TaskNode{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,655 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,660 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskDefinition{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,660 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskNode{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,660 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,661 DEBUG [ru.runa.wfe.task.Task] assigning Task{id=null, name=state4, assignedTo=null} to Actor{id=1, name=Administrator, code=-1}
+2013-04-07 19:16:43,664 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskDefinition{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,664 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskNode{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,664 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,665 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'TaskNode{id=state3, name=state3}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,665 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:43,665 INFO [ru.runa.wfe.execution.logic.ExecutionLogic] Task 'state3' was done by Actor{id=1, name=Administrator, code=-1} in process Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}
+2013-04-07 19:16:43,667 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Task{id=null, name=state4, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:43,709 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-04-07 19:16:43,733 DEBUG [ru.runa.wfe.task.TasklistBuilder] Task{id=14, name=state4, assignedTo=Actor{id=1, name=Administrator, code=-1}} is acquired by membership rules
+2013-04-07 19:16:44,777 DEBUG [ru.runa.wf.web.action.SubmitTaskDispatcherAction] User should be redirected to /submit_task.do action.
+2013-04-07 19:16:44,788 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On UPDATE: Task{id=14, name=state4, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:44,877 INFO [STDOUT] Server mode executing
+2013-04-07 19:16:50,848 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:16:50,853 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:16:50,857 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:16:52,980 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskDefinition{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:52,998 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskNode{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:52,998 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,002 DEBUG [ru.runa.wfe.execution.logic.ExecutionLogic] completion of Task{id=14, name=state4, assignedTo=Actor{id=1, name=Administrator, code=-1}} by Transition{id=state4/tr1, name=tr1}
+2013-04-07 19:16:53,002 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'TaskNode{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,003 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,003 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'TaskNode{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,003 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,009 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Transition{id=state4/tr1, name=tr1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,010 INFO [ru.runa.wfe.lang.Action] Executing Action{event=transition, delegation=Delegation{class=ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler, configuration=str = "date = " + date}}
+2013-04-07 19:16:53,012 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On DELETE: Task{id=14, name=state4, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:53,026 DEBUG [ru.runa.wfe.var.VariableCreator] create variable 'str' in 'ExecutionContext{token=Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}}' with value 'date = 30.08.0008'
+2013-04-07 19:16:53,033 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'TaskNode{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,034 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,034 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'TaskNode{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,035 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,039 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskDefinition{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,040 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskNode{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,040 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,040 DEBUG [ru.runa.wfe.task.Task] assigning Task{id=null, name=state5, assignedTo=null} to Actor{id=1, name=Administrator, code=-1}
+2013-04-07 19:16:53,043 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskDefinition{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,043 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskNode{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,044 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,044 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'TaskNode{id=state4, name=state4}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,044 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:53,044 INFO [ru.runa.wfe.execution.logic.ExecutionLogic] Task 'state4' was done by Actor{id=1, name=Administrator, code=-1} in process Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}
+2013-04-07 19:16:53,046 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Task{id=null, name=state5, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:53,092 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-04-07 19:16:53,115 DEBUG [ru.runa.wfe.task.TasklistBuilder] Task{id=15, name=state5, assignedTo=Actor{id=1, name=Administrator, code=-1}} is acquired by membership rules
+2013-04-07 19:16:54,722 DEBUG [ru.runa.wf.web.action.SubmitTaskDispatcherAction] User should be redirected to /submit_task.do action.
+2013-04-07 19:16:54,732 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On UPDATE: Task{id=15, name=state5, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:56,458 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskDefinition{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,459 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskNode{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,459 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,463 DEBUG [ru.runa.wfe.execution.logic.ExecutionLogic] completion of Task{id=15, name=state5, assignedTo=Actor{id=1, name=Administrator, code=-1}} by Transition{id=state5/tr1, name=tr1}
+2013-04-07 19:16:56,463 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'TaskNode{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,463 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,464 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'TaskNode{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,464 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,470 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Transition{id=state5/tr1, name=tr1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,472 INFO [ru.runa.wfe.lang.Action] Executing Action{event=transition, delegation=Delegation{class=ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler, configuration=minuts = '30.08.2008 00:15' - date}}
+2013-04-07 19:16:56,474 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On DELETE: Task{id=15, name=state5, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:56,489 DEBUG [ru.runa.wfe.var.VariableCreator] create variable 'minuts' in 'ExecutionContext{token=Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}}' with value '1051901235'
+2013-04-07 19:16:56,497 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'TaskNode{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,497 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,497 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'TaskNode{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,498 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,502 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskDefinition{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,502 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskNode{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,503 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,503 DEBUG [ru.runa.wfe.task.Task] assigning Task{id=null, name=state6, assignedTo=null} to Actor{id=1, name=Administrator, code=-1}
+2013-04-07 19:16:56,506 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskDefinition{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,506 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskNode{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,506 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,507 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'TaskNode{id=state5, name=state5}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,507 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:16:56,507 INFO [ru.runa.wfe.execution.logic.ExecutionLogic] Task 'state5' was done by Actor{id=1, name=Administrator, code=-1} in process Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}
+2013-04-07 19:16:56,508 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Task{id=null, name=state6, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:16:56,597 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-04-07 19:16:56,655 DEBUG [ru.runa.wfe.task.TasklistBuilder] Task{id=16, name=state6, assignedTo=Actor{id=1, name=Administrator, code=-1}} is acquired by membership rules
+2013-04-07 19:17:00,632 DEBUG [ru.runa.wf.web.action.SubmitTaskDispatcherAction] User should be redirected to /submit_task.do action.
+2013-04-07 19:17:00,643 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On UPDATE: Task{id=16, name=state6, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:17:00,863 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:17:00,868 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:17:00,873 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:17:08,284 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskDefinition{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,285 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskNode{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,286 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,289 DEBUG [ru.runa.wfe.execution.logic.ExecutionLogic] completion of Task{id=16, name=state6, assignedTo=Actor{id=1, name=Administrator, code=-1}} by Transition{id=state6/tr1, name=tr1}
+2013-04-07 19:17:08,289 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'TaskNode{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,290 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,290 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'TaskNode{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,290 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,295 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Transition{id=state6/tr1, name=tr1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,297 INFO [ru.runa.wfe.lang.Action] Executing Action{event=transition, delegation=Delegation{class=ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler, configuration=str = str + " ; " + "variable" + " = " + variable + " ; \"" + (a-0.1) + "\""}}
+2013-04-07 19:17:08,300 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On DELETE: Task{id=16, name=state6, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:17:08,346 DEBUG [ru.runa.wfe.execution.ExecutionContext] update variable 'str' in 'ExecutionContext{token=Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}}' to value 'date = 30.08.0008 ; variable = true ; "2"'
+2013-04-07 19:17:08,352 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'TaskNode{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,352 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,352 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'TaskNode{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,353 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,357 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskDefinition{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,357 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskNode{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,358 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,358 DEBUG [ru.runa.wfe.task.Task] assigning Task{id=null, name=state7, assignedTo=null} to Actor{id=1, name=Administrator, code=-1}
+2013-04-07 19:17:08,360 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskDefinition{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,361 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskNode{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,361 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,361 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'TaskNode{id=state6, name=state6}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,361 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:08,362 INFO [ru.runa.wfe.execution.logic.ExecutionLogic] Task 'state6' was done by Actor{id=1, name=Administrator, code=-1} in process Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}
+2013-04-07 19:17:08,363 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Task{id=null, name=state7, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:17:08,415 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-04-07 19:17:08,440 DEBUG [ru.runa.wfe.task.TasklistBuilder] Task{id=17, name=state7, assignedTo=Actor{id=1, name=Administrator, code=-1}} is acquired by membership rules
+2013-04-07 19:17:09,576 DEBUG [ru.runa.wf.web.action.SubmitTaskDispatcherAction] User should be redirected to /submit_task.do action.
+2013-04-07 19:17:09,589 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On UPDATE: Task{id=17, name=state7, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:17:10,880 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:17:10,885 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:17:10,890 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:17:11,645 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskDefinition{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,646 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskNode{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,648 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,653 DEBUG [ru.runa.wfe.execution.logic.ExecutionLogic] completion of Task{id=17, name=state7, assignedTo=Actor{id=1, name=Administrator, code=-1}} by Transition{id=state7/tr1, name=tr1}
+2013-04-07 19:17:11,653 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'TaskNode{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,654 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,654 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'TaskNode{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,655 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,659 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Transition{id=state7/tr1, name=tr1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,660 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'TaskNode{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,660 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,660 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'TaskNode{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,660 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,664 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskDefinition{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,665 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskNode{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,665 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,668 DEBUG [ru.runa.wfe.task.Task] assigning Task{id=null, name=state8, assignedTo=null} to Actor{id=1, name=Administrator, code=-1}
+2013-04-07 19:17:11,672 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskDefinition{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,672 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskNode{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,673 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,673 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'TaskNode{id=state7, name=state7}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,673 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:11,673 INFO [ru.runa.wfe.execution.logic.ExecutionLogic] Task 'state7' was done by Actor{id=1, name=Administrator, code=-1} in process Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}
+2013-04-07 19:17:11,675 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Task{id=null, name=state8, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:17:11,677 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On DELETE: Task{id=17, name=state7, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:17:11,719 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-04-07 19:17:11,743 DEBUG [ru.runa.wfe.task.TasklistBuilder] Task{id=18, name=state8, assignedTo=Actor{id=1, name=Administrator, code=-1}} is acquired by membership rules
+2013-04-07 19:17:13,047 DEBUG [ru.runa.wf.web.action.SubmitTaskDispatcherAction] User should be redirected to /submit_task.do action.
+2013-04-07 19:17:13,057 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On UPDATE: Task{id=18, name=state8, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:17:20,896 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:17:20,901 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:17:20,927 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:17:25,628 DEBUG [ru.runa.wfe.validation.ValidatorManager] Running validator: RequiredFieldValidator{config=ValidatorConfig{type=required, params={fieldName=file1}}}
+2013-04-07 19:17:25,632 DEBUG [ru.runa.wfe.var.VariableCreator] create variable 'file1' in 'ExecutionContext{token=Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}}' with value 'vacation.log'
+2013-04-07 19:17:25,699 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskDefinition{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,699 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'TaskNode{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,699 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-end' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,702 DEBUG [ru.runa.wfe.execution.logic.ExecutionLogic] completion of Task{id=18, name=state8, assignedTo=Actor{id=1, name=Administrator, code=-1}} by Transition{id=state8/tr1, name=tr1}
+2013-04-07 19:17:25,703 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'TaskNode{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,703 DEBUG [ru.runa.wfe.lang.GraphElement] event 'before-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,703 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'TaskNode{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,703 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-leave' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,708 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Transition{id=state8/tr1, name=tr1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,709 INFO [ru.runa.wfe.lang.Action] Executing Action{event=transition, delegation=Delegation{class=ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler, configuration=file2 = file1}}
+2013-04-07 19:17:25,711 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On DELETE: Task{id=18, name=state8, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:17:25,728 DEBUG [ru.runa.wfe.var.VariableCreator] create variable 'file2' in 'ExecutionContext{token=Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}}' with value 'vacation.log'
+2013-04-07 19:17:25,739 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'TaskNode{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,740 DEBUG [ru.runa.wfe.lang.GraphElement] event 'transition' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,741 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'TaskNode{id=state9, name=state9}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,741 DEBUG [ru.runa.wfe.lang.GraphElement] event 'node-enter' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,745 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskDefinition{id=state9, name=state9}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,746 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'TaskNode{id=state9, name=state9}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,746 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-create' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,746 DEBUG [ru.runa.wfe.task.Task] assigning Task{id=null, name=state9, assignedTo=null} to Actor{id=1, name=Administrator, code=-1}
+2013-04-07 19:17:25,752 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskDefinition{id=state9, name=state9}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,752 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'TaskNode{id=state9, name=state9}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,752 DEBUG [ru.runa.wfe.lang.GraphElement] event 'task-assign' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,753 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'TaskNode{id=state8, name=state8}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,753 DEBUG [ru.runa.wfe.lang.GraphElement] event 'after-signal' on 'Deployment{id=3, name=ExecuteFormulaDemo, version=1}' for 'Token{process=Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}, name=}'
+2013-04-07 19:17:25,753 INFO [ru.runa.wfe.execution.logic.ExecutionLogic] Task 'state8' was done by Actor{id=1, name=Administrator, code=-1} in process Process{definition=Deployment{id=3, name=ExecuteFormulaDemo, version=1}, id=7}
+2013-04-07 19:17:25,756 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Task{id=null, name=state9, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:17:25,807 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-04-07 19:17:25,838 DEBUG [ru.runa.wfe.task.TasklistBuilder] Task{id=19, name=state9, assignedTo=Actor{id=1, name=Administrator, code=-1}} is acquired by membership rules
+2013-04-07 19:17:26,283 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-04-07 19:17:27,002 DEBUG [ru.runa.wf.web.action.SubmitTaskDispatcherAction] User should be redirected to /submit_task.do action.
+2013-04-07 19:17:27,013 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On UPDATE: Task{id=19, name=state9, assignedTo=Actor{id=1, name=Administrator, code=-1}}
+2013-04-07 19:17:27,154 DEBUG [ru.runa.common.web.tag.VisibleTag] 
+java.lang.ClassCastException: ru.runa.wfe.var.FileVariableDescriptor cannot be cast to java.lang.String
+    at ru.runa.wfe.var.format.StringFormat.format(StringFormat.java:26)
+    at ru.runa.wf.web.ftl.method.ViewUtil.getVariableValueHtml(ViewUtil.java:64)
+    at ru.runa.wf.web.ftl.method.DisplayVariableTag.executeTag(DisplayVariableTag.java:15)
+    at ru.runa.wfe.commons.ftl.FreemarkerTag.exec(FreemarkerTag.java:33)
+    at freemarker.core.MethodCall._getAsTemplateModel(MethodCall.java:93)
+    at freemarker.core.Expression.getAsTemplateModel(Expression.java:89)
+    at freemarker.core.Expression.getStringValue(Expression.java:93)
+    at freemarker.core.DollarVariable.accept(DollarVariable.java:76)
+    at freemarker.core.Environment.visit(Environment.java:208)
+    at freemarker.core.MixedContent.accept(MixedContent.java:92)
+    at freemarker.core.Environment.visit(Environment.java:208)
+    at freemarker.core.Environment.process(Environment.java:188)
+    at freemarker.template.Template.process(Template.java:232)
+    at ru.runa.wfe.commons.ftl.FreemarkerProcessor.process(FreemarkerProcessor.java:33)
+    at ru.runa.wf.web.ftl.BaseTaskFormBuilder.build(BaseTaskFormBuilder.java:21)
+    at ru.runa.wf.web.ftl.FreemarkerTaskFormBuilder.build(FreemarkerTaskFormBuilder.java:28)
+    at ru.runa.wf.web.tag.TaskFormTag.buildForm(TaskFormTag.java:100)
+    at ru.runa.wf.web.tag.WFFormTag.fillFormElement(WFFormTag.java:51)
+    at ru.runa.wf.web.tag.TaskFormTag.fillFormElement(TaskFormTag.java:105)
+    at ru.runa.common.web.tag.FormTag.getEndElement(FormTag.java:148)
+    at ru.runa.common.web.tag.TitledFormTag.getEndElement(TitledFormTag.java:88)
+    at ru.runa.common.web.tag.VisibleTag.doEndTag(VisibleTag.java:101)
+    at org.apache.jsp.WEB_002dINF.wf.submit_005ftask_jsp._jspService(submit_005ftask_jsp.java:159)
+    at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:70)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+    at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:373)
+    at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:336)
+    at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:265)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+    at org.apache.catalina.core.ApplicationDispatcher.invoke(ApplicationDispatcher.java:654)
+    at org.apache.catalina.core.ApplicationDispatcher.processRequest(ApplicationDispatcher.java:445)
+    at org.apache.catalina.core.ApplicationDispatcher.doForward(ApplicationDispatcher.java:379)
+    at org.apache.catalina.core.ApplicationDispatcher.forward(ApplicationDispatcher.java:292)
+    at org.apache.struts.action.RequestProcessor.doForward(RequestProcessor.java:1078)
+    at org.apache.struts.action.RequestProcessor.processForwardConfig(RequestProcessor.java:396)
+    at org.apache.struts.action.RequestProcessor.process(RequestProcessor.java:232)
+    at ru.runa.common.web.UTF8RequestProcessor.process(UTF8RequestProcessor.java:41)
+    at org.apache.struts.action.ActionServlet.process(ActionServlet.java:1913)
+    at org.apache.struts.action.ActionServlet.doGet(ActionServlet.java:449)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:690)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+    at org.apache.catalina.core.ApplicationDispatcher.invoke(ApplicationDispatcher.java:654)
+    at org.apache.catalina.core.ApplicationDispatcher.processRequest(ApplicationDispatcher.java:445)
+    at org.apache.catalina.core.ApplicationDispatcher.doForward(ApplicationDispatcher.java:379)
+    at org.apache.catalina.core.ApplicationDispatcher.forward(ApplicationDispatcher.java:292)
+    at org.apache.struts.action.RequestProcessor.doForward(RequestProcessor.java:1078)
+    at org.apache.struts.action.RequestProcessor.processForwardConfig(RequestProcessor.java:396)
+    at org.apache.struts.action.RequestProcessor.process(RequestProcessor.java:232)
+    at ru.runa.common.web.UTF8RequestProcessor.process(UTF8RequestProcessor.java:41)
+    at org.apache.struts.action.ActionServlet.process(ActionServlet.java:1913)
+    at org.apache.struts.action.ActionServlet.doGet(ActionServlet.java:449)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:690)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+    at ru.runa.common.web.filter.HTTPSessionFilter.doFilter(HTTPSessionFilter.java:50)
+    at ru.runa.common.web.filter.HTTPFilterBase.doFilter(HTTPFilterBase.java:50)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+    at ru.runa.af.web.filter.NTLMFilter.doFilter(NTLMFilter.java:54)
+    at ru.runa.common.web.filter.HTTPFilterBase.doFilter(HTTPFilterBase.java:50)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+    at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:206)
+    at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:179)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+    at org.jboss.web.tomcat.filters.ReplyHeaderFilter.doFilter(ReplyHeaderFilter.java:96)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+    at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:230)
+    at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:175)
+    at org.jboss.web.tomcat.security.SecurityAssociationValve.invoke(SecurityAssociationValve.java:182)
+    at org.jboss.web.tomcat.security.JaccContextValve.invoke(JaccContextValve.java:84)
+    at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+    at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+    at org.jboss.web.tomcat.service.jca.CachedConnectionValve.invoke(CachedConnectionValve.java:157)
+    at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+    at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:262)
+    at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:844)
+    at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+    at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:446)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:17:30,936 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:17:30,940 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:17:30,946 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:17:40,952 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:17:40,956 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:17:40,960 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:17:50,967 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:17:50,971 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:17:50,975 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:18:00,985 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:18:00,988 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:18:00,994 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:18:10,999 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:18:11,003 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:18:11,016 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:18:21,027 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:18:21,030 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:18:21,036 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:18:26,283 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-04-07 19:18:31,044 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:18:31,049 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:18:31,053 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
+2013-04-07 19:18:41,058 INFO [org.jboss.resource.adapter.jms.inflow.JmsActivation] Attempting to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+2013-04-07 19:18:41,062 ERROR [org.jboss.jms.client.JBossConnectionFactory] Failed to download and/or install client side AOP stack
+java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+2013-04-07 19:18:41,066 ERROR [org.jboss.resource.adapter.jms.inflow.JmsActivation] Unable to reconnect org.jboss.resource.adapter.jms.inflow.JmsActivationSpec@17c334a(ra=org.jboss.resource.adapter.jms.JmsResourceAdapter@1e92309 destination=queue/jbpmQueue isTopic=false tx=true durable=false reconnect=10 provider=java:/DefaultJMSProvider user=null maxMessages=1 minSession=1 maxSession=15 keepAlive=60000 useDLQ=true DLQHandler=org.jboss.resource.adapter.jms.inflow.dlq.GenericDLQHandler DLQJndiName=queue/DLQ DLQUser=null DLQMaxResent=5)
+java.lang.RuntimeException: Failed to download and/or install client side AOP stack
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:199)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:101)
+    at org.jboss.jms.client.JBossConnectionFactory.createQueueConnection(JBossConnectionFactory.java:95)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setupDLQConnection(AbstractDLQHandler.java:137)
+    at org.jboss.resource.adapter.jms.inflow.dlq.AbstractDLQHandler.setup(AbstractDLQHandler.java:83)
+    at org.jboss.resource.adapter.jms.inflow.dlq.JBossMQDLQHandler.setup(JBossMQDLQHandler.java:48)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setupDLQ(JmsActivation.java:369)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.setup(JmsActivation.java:315)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation.handleFailure(JmsActivation.java:259)
+    at org.jboss.resource.adapter.jms.inflow.JmsActivation$SetupActivation.run(JmsActivation.java:639)
+    at org.jboss.resource.work.WorkWrapper.execute(WorkWrapper.java:204)
+    at org.jboss.util.threadpool.BasicTaskWrapper.run(BasicTaskWrapper.java:275)
+    at EDU.oswego.cs.dl.util.concurrent.PooledExecutor$Worker.run(PooledExecutor.java:756)
+    at java.lang.Thread.run(Thread.java:722)
+Caused by: java.lang.NullPointerException
+    at org.jboss.jms.client.delegate.ClientConnectionFactoryDelegate.getClientAOPStack(ClientConnectionFactoryDelegate.java)
+    at org.jboss.jms.client.ClientAOPStackLoader.load(ClientAOPStackLoader.java:75)
+    at org.jboss.jms.client.JBossConnectionFactory.createConnectionInternal(JBossConnectionFactory.java:192)
+    ... 13 more
