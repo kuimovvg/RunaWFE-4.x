@@ -78,8 +78,8 @@ public class WebScriptExecutor {
     public ByteArrayOutputStream doRequest() throws Exception {
         final DefaultHttpClient httpClient = new DefaultHttpClient();
         httpClient.getCredentialsProvider().setCredentials(new AuthScope(null, -1, null),
-                new UsernamePasswordCredentials(WSConnectionSettings.getSystemLogin(), WSConnectionSettings.getSystemPassword()));
-        String alfBaseUrl = WSConnectionSettings.getAlfBaseUrl();
+                new UsernamePasswordCredentials(WSConnectionSettings.getInstance().getLogin(), WSConnectionSettings.getInstance().getPassword()));
+        String alfBaseUrl = WSConnectionSettings.getInstance().getAlfBaseUrl();
         final HttpUriRequest request;
         if (useHttpPost) {
             request = formHttpPostRequest(alfBaseUrl);
