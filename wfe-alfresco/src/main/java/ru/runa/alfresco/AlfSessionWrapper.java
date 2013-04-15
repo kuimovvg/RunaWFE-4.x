@@ -18,7 +18,7 @@ public abstract class AlfSessionWrapper<T> {
     private static ThreadLocal<SessionData> sessions = new ThreadLocal<SessionData>();
 
     static {
-        WebServiceFactory.setEndpointAddress(WSConnectionSettings.getEndpointAddress());
+        WebServiceFactory.setEndpointAddress(WSConnectionSettings.getInstance().getEndpointAddress());
         WebServiceFactory.setTimeoutMilliseconds(7 * 60000);
     }
 
@@ -28,7 +28,7 @@ public abstract class AlfSessionWrapper<T> {
 
     public static void sessionStart() throws AuthenticationFault {
         if (sessions.get() == null) {
-            AuthenticationUtils.startSession(WSConnectionSettings.getSystemLogin(), WSConnectionSettings.getSystemPassword());
+            AuthenticationUtils.startSession(WSConnectionSettings.getInstance().getLogin(), WSConnectionSettings.getInstance().getPassword());
             sessions.set(new SessionData());
             log("Started new session");
         }

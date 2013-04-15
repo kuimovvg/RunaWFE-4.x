@@ -41,8 +41,8 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
     protected byte[] getResponse(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         httpClient.getCredentialsProvider().setCredentials(new AuthScope(null, -1, null),
-                new UsernamePasswordCredentials(WSConnectionSettings.getSystemLogin(), WSConnectionSettings.getSystemPassword()));
-        String alfBaseUrl = WSConnectionSettings.getAlfBaseUrl();
+                new UsernamePasswordCredentials(WSConnectionSettings.getInstance().getLogin(), WSConnectionSettings.getInstance().getPassword()));
+        String alfBaseUrl = WSConnectionSettings.getInstance().getAlfBaseUrl();
         HttpUriRequest request = null;
         if (useHttpPost()) {
             request = formHttpPostRequest(alfBaseUrl, alfHandlerData);
