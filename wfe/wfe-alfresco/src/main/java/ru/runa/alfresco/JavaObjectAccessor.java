@@ -81,8 +81,11 @@ public class JavaObjectAccessor {
                 return (NodeRef) alfObject.refFields.get(fieldName);
             }
             Object javaValue = PropertyUtils.getProperty(alfObject, fieldName);
-            Class<? extends Serializable> alfrescoType = (Class<? extends Serializable>) ClassLoaderUtil.loadClass(desc.getDataType());
-            return TypeConversionUtil.convertTo(alfrescoType, javaValue);
+            if (desc.getDataType() != null) {
+                Class<? extends Serializable> alfrescoType = (Class<? extends Serializable>) ClassLoaderUtil.loadClass(desc.getDataType());
+                return TypeConversionUtil.convertTo(alfrescoType, javaValue);
+            }
+            return (Serializable) javaValue;
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }

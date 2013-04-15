@@ -9,47 +9,63 @@ import org.dom4j.Element;
  * @author dofs
  */
 public class WSConnectionSettings extends Settings {
-    private static String endpointAddress;
-    private static String systemLogin;
-    private static String systemPassword;
+    private final String endpointAddress;
+    private final String login;
+    private final String password;
 
-    static {
-        loadConnectionInfo();
+    private WSConnectionSettings(String endpointAddress, String login, String password) {
+        this.endpointAddress = endpointAddress;
+        this.login = login;
+        this.password = password;
     }
 
-    private static void loadConnectionInfo() {
-        try {
-            Document document = getConfigDocument();
-            Element root = document.getRootElement();
+    private static WSConnectionSettings instance;
 
-            Element connectionElement = root.element("connection");
-            systemLogin = connectionElement.attributeValue("login");
-            systemPassword = connectionElement.attributeValue("password");
-            endpointAddress = connectionElement.attributeValue("endpoint");
-        } catch (Throwable e) {
-            log.error("Unable to load ws connection info", e);
+    public static WSConnectionSettings getInstance() {
+        if (instance == null) {
+            synchronized (WSConnectionSettings.class) {
+                if (instance == null) {
+                    try {
+                        Document document = getConfigDocument();
+                        Element root = document.getRootElement();
+                        Element connectionElement = root.element("connection");
+                        String systemLogin = connectionElement.attributeValue("login");
+                        String systemPassword = connectionElement.attributeValue("password");
+                        String endpointAddress = connectionElement.attributeValue("endpoint");
+                        instance = new WSConnectionSettings(endpointAddress, systemLogin, systemPassword);
+                    } catch (Throwable e) {
+                        log.error("Unable to load ws connection info", e);
+                    }
+                }
+            }
         }
+        return instance;
     }
 
-    public static void setConnectionInfo(String hostname, int port, String login, String password) {
-        systemLogin = login;
-        systemPassword = password;
-        endpointAddress = "http://" + hostname + ":" + port + "/alfresco/api";
+    public static WSConnectionSettings getInstance(String hostname, int port, String login, String password) {
+        if (instance == null) {
+            synchronized (WSConnectionSettings.class) {
+                if (instance == null) {
+                    instance = new WSConnectionSettings("http://" + hostname + ":" + port + "/alfresco/api", login, password);
+                }
+            }
+        }
+        return instance;
     }
 
-    public static String getEndpointAddress() {
+    public String getEndpointAddress() {
         return endpointAddress;
     }
 
-    public static String getSystemLogin() {
-        return systemLogin;
+    public String getLogin() {
+        return login;
     }
 
-    public static String getSystemPassword() {
-        return systemPassword;
+    public String getPassword() {
+        return password;
     }
 
-    public static String getAlfBaseUrl() {
+    public String getAlfBaseUrl() {
         // 'api' removal at the end
         return endpointAddress.substring(0, endpointAddress.length() - 3);
     }
