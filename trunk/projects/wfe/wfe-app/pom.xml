@@ -15,12 +15,14 @@
 		<module>../wfe-office</module>
 		<module>../wfe-web</module>
 		<module>../wfe-ear</module>
+        <module>../wfe-cactus-it</module>
 	</modules>
 
 	<properties>
+        <downloadSources>true</downloadSources>
+        <downloadJavadocs>true</downloadJavadocs>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.organization.name>wf.runa.ru</project.organization.name>
-
 		<!-- Zip file with Jboss AS. Used to build wfe application server and so on. -->
 		<jboss.zip.file>path to Jboss AS zip file</jboss.zip.file>
 		<!-- Jboss AS folder name in zip file. -->
@@ -54,7 +56,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>13.0.1</version>
+				<version>14.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -217,7 +219,6 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 
