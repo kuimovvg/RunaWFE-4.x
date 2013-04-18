@@ -20,6 +20,7 @@ package ru.runa.wf.web.html;
 import java.util.Date;
 
 import ru.runa.common.web.html.BaseDateTDBuilder;
+import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wfe.execution.dto.WfProcess;
 
 /**
@@ -34,4 +35,15 @@ public class ProcessStartDateTDBuilder extends BaseDateTDBuilder<WfProcess> {
     protected Date getDate(WfProcess process) {
         return process.getStartDate();
     }
+
+    @Override
+    protected Long getId(WfProcess process) {
+        return process.getId();
+    }
+
+    @Override
+    protected String getActionMapping() {
+        return ShowGraphModeHelper.getManageProcessAction();
+    }
+
 }
