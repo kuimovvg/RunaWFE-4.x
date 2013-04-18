@@ -88,10 +88,10 @@
                 <version>3.0</version>
                     <configuration>
                         <includes>
-                            <include>**/DecisionTest.java</include>
+                            <include>ru/runa/wf/jpdl/*Test.java</include>
                         </includes>
                         <testIncludes>
-                            <testInclude>**/DecisionTest.java</testInclude>
+                            <testInclude>ru/runa/wf/jpdl/*Test.java</testInclude>
                         </testIncludes>
                     </configuration>
             </plugin>
