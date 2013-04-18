@@ -18,6 +18,7 @@
 package ru.runa.wfe.presentation.hibernate;
 
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.presentation.FieldFilterMode;
 import ru.runa.wfe.presentation.FieldState;
@@ -48,6 +49,8 @@ public final class HibernateCompilerHelper {
             }
         }
         return (batchPresentation.isFieldFiltered(idx) && field.filterMode == FieldFilterMode.DATABASE)
-                || ((batchPresentation.isSortingField(idx) || batchPresentation.isFieldGroupped(idx)) && field.isSortable);
+                || ((batchPresentation.isSortingField(idx) || batchPresentation.isFieldGroupped(idx)) && field.isSortable && (!field.displayName
+                        .startsWith(ClassPresentation.filterable_prefix) || field.displayName.startsWith(ClassPresentation.filterable_prefix)
+                        && batchPresentation.isFieldGroupped(idx)));
     }
 }

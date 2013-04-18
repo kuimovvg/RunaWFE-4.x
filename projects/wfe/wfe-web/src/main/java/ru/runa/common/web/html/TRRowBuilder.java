@@ -22,4 +22,10 @@ public class TRRowBuilder implements RowBuilder {
         return rows.hasNext();
     }
 
+    @Override
+    public List<TR> buildNextArray() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
