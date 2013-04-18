@@ -217,6 +217,12 @@ public class BotTaskListTag extends TitledFormTag {
             checkboxTD.addElement(checkBoxInput);
             return checkboxTD;
         }
+
+        @Override
+        public List<TR> buildNextArray() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     private TD buildConfigurationUploadTD(BotTask task) {

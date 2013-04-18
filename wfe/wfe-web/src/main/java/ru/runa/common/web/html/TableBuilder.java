@@ -31,14 +31,24 @@ public class TableBuilder {
     static final int max_rows = 1500;
 
     public Table build(HeaderBuilder headerBuilder, RowBuilder rowBuilder) {
+        return build(headerBuilder, rowBuilder, false);
+    }
+
+    public Table build(HeaderBuilder headerBuilder, RowBuilder rowBuilder, boolean buildArray) {
         Table table = new Table();
         table.setClass(Resources.CLASS_LIST_TABLE);
         table.addElement(headerBuilder.build());
         int rowsCount = 0;
-        while (rowBuilder.hasNext() && ++rowsCount < max_rows) {
-            TR tr = rowBuilder.buildNext();
-            if (tr != null) {
-                table.addElement(tr);
+        if (buildArray) {
+            while (rowBuilder.hasNext() && ++rowsCount < max_rows) {
+                for (TR tr : rowBuilder.buildNextArray()) {
+                    table.addElement(tr);
+                    rowsCount++;
+                }
+            }
+        } else {
+            while (rowBuilder.hasNext() && ++rowsCount < max_rows) {
+                table.addElement(rowBuilder.buildNext());
             }
         }
         return table;

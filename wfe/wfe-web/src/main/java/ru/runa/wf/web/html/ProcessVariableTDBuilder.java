@@ -62,7 +62,7 @@ public class ProcessVariableTDBuilder implements TDBuilder {
     @Override
     public String getValue(Object object, Env env) {
         WfVariable variable = env.getProcessVariable(object, new ProcessIdExtractor(), variableName);
-        if (variable.getValue() != null) {
+        if (variable != null && variable.getValue() != null) {
             WfProcess process = (WfProcess) object;
             return ViewUtil.getVariableValueHtml(env.getUser(), new StrutsWebHelper(env.getPageContext()), process.getId(), variable);
         }

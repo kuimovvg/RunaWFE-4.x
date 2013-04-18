@@ -44,6 +44,8 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.ReturnActionForm;
 import ru.runa.common.web.form.SetSortingForm;
 import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wfe.execution.ProcessHierarchyUtils;
+import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.FieldDescriptor;
@@ -121,9 +123,27 @@ public class ReflectionRowBuilder implements RowBuilder {
                 }
                 ExecutionService executionService = Delegates.getExecutionService();
                 cache = executionService.getVariablesFromProcesses(getUser(), ids, variableName);
+                if (cache == null) {
+                    cache = new HashMap<Long, WfVariable>();
+                }
                 taskVariableCache.put(variableName, cache);
             }
             return cache.get(processIdExtractor.getIdentifiable(object, this).getIdentifiableId());
+        }
+
+        public boolean isFilterable() {
+            boolean isFilterable = false;
+            int idx = 0;
+            FieldDescriptor[] fields = batchPresentation.getAllFields();
+            for (FieldDescriptor field : fields) {
+                if (field.displayName.startsWith(ClassPresentation.filterable_prefix) && batchPresentation.isFieldGroupped(idx)) {
+                    isFilterable = true;
+                    break;
+                }
+                idx++;
+            }
+
+            return isFilterable;
         }
 
         private final Map<Permission, boolean[]> allowedCache = Maps.newHashMap();
@@ -234,6 +254,11 @@ public class ReflectionRowBuilder implements RowBuilder {
 
     protected TR buildItemRow() {
         Object item = items.get(currentState.getItemIndex());
+        return buildItemRow(item);
+    }
+
+    protected TR buildItemRow(Object item) {
+
         TR tr = new TR();
         if (cssClassStrategy != null) {
             String cssClassName = cssClassStrategy.getClassName(item, env.getUser());
@@ -257,6 +282,31 @@ public class ReflectionRowBuilder implements RowBuilder {
 
         for (int i = 0; i < builders.length; i++) {
             TD td = builders[i].build(item, env);
+
+            if (env.isFilterable()) {
+                StringBuilder str = new StringBuilder();
+                for (int j = 1; j < ProcessHierarchyUtils.getProcessIdsArray(((WfProcess) item).getHierarchySubProcess()).length; j++) {
+                    str.append(Entities.NBSP);
+                }
+
+                String href = null;
+                if (td.elements().hasMoreElements()) {
+                    ConcreteElement concreteElement = (ConcreteElement) td.elements().nextElement();
+                    if (concreteElement instanceof A) {
+                        A a = (A) concreteElement;
+                        href = a.getAttribute("href");
+                        str.append(a.elements().nextElement().toString());
+                    }
+                }
+
+                if (href != null) {
+                    String classAttr = td.getAttribute("class");
+                    td = new TD();
+                    td.addElement(new A(href, str.toString()));
+                    td.setClass(classAttr);
+                }
+            }
+
             if (listGroupTDBuilders.contains(builders[i])) {
                 if (td.elements().hasMoreElements()) {
                     ConcreteElement concreteElement = (ConcreteElement) td.elements().nextElement();
@@ -349,5 +399,11 @@ public class ReflectionRowBuilder implements RowBuilder {
                 throw Throwables.propagate(e);
             }
         }
+    }
+
+    @Override
+    public List<TR> buildNextArray() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

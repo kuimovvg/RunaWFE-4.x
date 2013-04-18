@@ -67,4 +67,10 @@ public class ProcessSwimlaneAssignmentRowBuilder implements RowBuilder {
         }
         return tr;
     }
+
+    @Override
+    public List<TR> buildNextArray() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

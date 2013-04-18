@@ -34,6 +34,6 @@ public class ProcessHierarchyUtils {
             return null;
         }
         String[] stringIds = hierarchy.split("/");
-        return stringIds[stringIds.length - 1];
+        return stringIds[0];
     }
 }

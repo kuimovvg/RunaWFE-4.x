@@ -209,5 +209,11 @@ public class ListSubstitutionsFormTag extends UpdateExecutorBaseFormTag {
             checkboxTD.addElement(checkBoxInput);
             return checkboxTD;
         }
+
+        @Override
+        public List<TR> buildNextArray() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 }
