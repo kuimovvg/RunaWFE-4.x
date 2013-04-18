@@ -17,17 +17,12 @@
  */
 package ru.runa.wf.web.tag;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.html.TD;
 
-import ru.runa.common.web.GroupState;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.PagingNavigationHelper;
-import ru.runa.common.web.html.EnvBaseImpl;
 import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.ProcessRowBuilder;
 import ru.runa.common.web.html.ReflectionRowBuilder;
@@ -41,7 +36,6 @@ import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.FieldDescriptor;
-import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
@@ -71,6 +65,9 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
         PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, instanceCount, getReturnAction());
         navigation.addPagingNavigationTable(tdFormElement);
 
+        TDBuilder[] builders = getBuilders(new TDBuilder[] {}, batchPresentation, new TDBuilder[] {});
+        HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, new String[0], new String[0], getReturnAction(), pageContext);
+
         boolean isFilterable = false;
         int idx = 0;
         FieldDescriptor[] fields = batchPresentation.getAllFields();
@@ -82,62 +79,13 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
             idx++;
         }
 
-        TDBuilder[] builders = getBuilders(new TDBuilder[] {}, batchPresentation, new TDBuilder[] {});
-        String[] prefixCellsHeaders = getGrouppingCells(batchPresentation, processes, isFilterable);
-
-        HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, prefixCellsHeaders, new String[0], getReturnAction(), pageContext);
         RowBuilder rowBuilder = isFilterable ? new ProcessRowBuilder(processes, batchPresentation, pageContext,
                 ShowGraphModeHelper.getManageProcessAction(), getReturnAction(), "id", builders) : new ReflectionRowBuilder(processes,
                 batchPresentation, pageContext, ShowGraphModeHelper.getManageProcessAction(), getReturnAction(), "id", builders);
 
-        tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
+        tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder, isFilterable ? true : false));
 
         navigation.addPagingNavigationTable(tdFormElement);
-    }
-
-    private String[] getGrouppingCells(BatchPresentation batchPresentation, List<WfProcess> list, boolean isFilterable) {
-        List<String> prefixCellsHeaders = new ArrayList<String>();
-        int grouppingCells = isFilterable ? GroupState.getMaxAdditionalCellsNum(batchPresentation, list, new EnvImpl(batchPresentation)) - 1
-                : GroupState.getMaxAdditionalCellsNum(batchPresentation, list, new EnvImpl(batchPresentation));
-
-        for (int i = 0; i < grouppingCells; ++i) {
-            prefixCellsHeaders.add("");
-        }
-        return prefixCellsHeaders.toArray(new String[prefixCellsHeaders.size()]);
-    }
-
-    class EnvImpl extends EnvBaseImpl {
-
-        public EnvImpl(BatchPresentation batch) {
-            batchPresentation = batch;
-        }
-
-        @Override
-        public PageContext getPageContext() {
-            return pageContext;
-        }
-
-        @Override
-        public BatchPresentation getBatchPresentation() {
-            return batchPresentation;
-        }
-
-        @Override
-        public String getURL(Object object) {
-            return getReturnAction();
-        }
-
-        @Override
-        public String getConfirmationMessage(Long pid) {
-            return null;
-        }
-
-        @Override
-        public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) {
-            return false;
-        }
-
-        BatchPresentation batchPresentation = null;
     }
 
     @Override

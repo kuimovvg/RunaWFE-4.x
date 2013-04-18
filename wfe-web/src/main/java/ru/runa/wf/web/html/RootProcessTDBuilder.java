@@ -21,14 +21,12 @@ public class RootProcessTDBuilder implements TDBuilder {
 
     @Override
     public String[] getSeparatedValues(Object object, Env env) {
-        WfProcess process = (WfProcess) object;
-        return ProcessHierarchyUtils.getProcessIdsArray(process.getHierarchySubProcess());
+        return new String[] { getValue(object, env) };
     }
 
     @Override
     public int getSeparatedValuesCount(Object object, Env env) {
-        WfProcess process = (WfProcess) object;
-        return ProcessHierarchyUtils.getProcessIdsArray(process.getHierarchySubProcess()).length;
+        return 1;
     }
 
     @Override

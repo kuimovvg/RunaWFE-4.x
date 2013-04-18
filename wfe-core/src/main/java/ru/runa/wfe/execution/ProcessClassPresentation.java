@@ -23,7 +23,6 @@ import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.DefaultDBSource;
 import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.presentation.FieldFilterMode;
-import ru.runa.wfe.presentation.filter.AnywhereStringFilterCriteria;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.var.Variable;
 
@@ -52,6 +51,17 @@ public class ProcessClassPresentation extends ClassPresentation {
         }
     }
 
+    private static class SubProcessDBSource extends DefaultDBSource {
+        public SubProcessDBSource(Class<?> sourceObject, String valueDBPath) {
+            super(sourceObject, valueDBPath);
+        }
+
+        @Override
+        public String getJoinExpression(String alias) {
+            return "CAST(" + ClassPresentation.classNameSQL + ".id AS VARCHAR(128))" + " = " + alias + ".hierarchySubProcess";
+        }
+    }
+
     private ProcessClassPresentation() {
         super(Process.class, "", true, new FieldDescriptor[] {
                 // display name field type DB source isSort filter mode get
@@ -68,11 +78,11 @@ public class ProcessClassPresentation extends ClassPresentation {
                 new FieldDescriptor(BATCH_PRESENTATION_DEFINITION_VERSION, Integer.class.getName(), new DefaultDBSource(Process.class,
                         "deployment.version"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
                         new Permission(), "version" }),
+                new FieldDescriptor(filterable_prefix + "batch_presentation.process.id", String.class.getName(),
+                        new SubProcessDBSource[] { new SubProcessDBSource(Process.class, "hierarchySubProcess") }, true, FieldFilterMode.DATABASE,
+                        "ru.runa.wf.web.html.RootProcessTDBuilder", new Object[] {}, true),
                 new FieldDescriptor(TASK_VARIABLE, String.class.getName(), new VariableDBSource(Variable.class), true, FieldFilterMode.DATABASE,
-                        "ru.runa.wf.web.html.ProcessVariableTDBuilder", new Object[] {}, true),
-                new FieldDescriptor(filterable_prefix + "batch_presentation.process.id", AnywhereStringFilterCriteria.class.getName(),
-                        new DefaultDBSource(Process.class, "hierarchySubProcess"), true, FieldFilterMode.DATABASE,
-                        "ru.runa.wf.web.html.RootProcessTDBuilder", new Object[] {}, true) });
+                        "ru.runa.wf.web.html.ProcessVariableTDBuilder", new Object[] {}, true) });
     }
 
     public static final ClassPresentation getInstance() {

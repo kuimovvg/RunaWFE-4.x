@@ -19,9 +19,15 @@ package ru.runa.common.web.html;
 
 import java.util.Date;
 
+import org.apache.ecs.ConcreteElement;
+import org.apache.ecs.StringElement;
+import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 
+import ru.runa.common.web.Commons;
+import ru.runa.common.web.form.IdForm;
 import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.web.PortletUrlType;
 
 /**
  * Created on 14.11.2005
@@ -33,14 +39,15 @@ public abstract class BaseDateTDBuilder<T extends Object> implements TDBuilder {
 
     @Override
     public TD build(Object object, Env env) {
-        String dateString;
+        ConcreteElement dateElement = new StringElement("");
         Date date = getDate((T) object);
         if (date != null) {
-            dateString = CalendarUtil.formatDateTime(date);
-        } else {
-            dateString = "";
+            String url = Commons.getActionUrl(getActionMapping(), IdForm.ID_INPUT_NAME, String.valueOf(getId((T) object)), env.getPageContext(),
+                    PortletUrlType.Resource);
+            String dateText = getValue(object, env);
+            dateElement = new A(url, dateText);
         }
-        TD td = new TD(dateString);
+        TD td = new TD(dateElement);
         td.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
         return td;
     }
@@ -55,6 +62,10 @@ public abstract class BaseDateTDBuilder<T extends Object> implements TDBuilder {
     }
 
     protected abstract Date getDate(T object);
+
+    protected abstract Long getId(T object);
+
+    protected abstract String getActionMapping();
 
     @Override
     public String[] getSeparatedValues(Object object, Env env) {

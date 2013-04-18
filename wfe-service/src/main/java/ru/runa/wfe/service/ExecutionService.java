@@ -60,7 +60,7 @@ public interface ExecutionService {
 
     public WfProcess getParentProcess(User user, Long processId) throws ProcessDoesNotExistException;
 
-    public int getSubprocessCount(User user, Long processId) throws ProcessDoesNotExistException;
+    List<WfProcess> getSubprocess(User user, Long id) throws ProcessDoesNotExistException;
 
     public void cancelProcess(User user, Long processId) throws ProcessDoesNotExistException;
 
