@@ -319,7 +319,7 @@ public class FieldDescriptor {
      */
     public FieldDescriptor createConcreteEditableField(String value, int fieldIdx) {
         if (!displayName.startsWith(ClassPresentation.editable_prefix)) {
-            throw new InternalApplicationException("Field '" + displayName + " is not editable");
+            throw new InternalApplicationException("Field '" + displayName + "' is not editable");
         }
         return new FieldDescriptor(displayName.replace(ClassPresentation.editable_prefix, ClassPresentation.removable_prefix) + ":" + value,
                 fieldType, dbSources, isSortable, filterMode, tdBuilder, tdBuilderParams, isWeakJoin, fieldIdx, fieldState);

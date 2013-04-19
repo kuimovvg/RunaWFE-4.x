@@ -84,8 +84,8 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public List<WfProcess> getSubprocess(User user, Long id) {
-        return getExecutionService().getSubprocess(user, id);
+    public List<WfProcess> getSubprocesses(User user, Long id) {
+        return getExecutionService().getSubprocesses(user, id);
     }
 
     @Override

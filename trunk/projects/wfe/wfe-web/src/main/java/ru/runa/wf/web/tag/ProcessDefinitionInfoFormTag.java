@@ -62,13 +62,13 @@ public class ProcessDefinitionInfoFormTag extends ProcessDefinitionBaseFormTag {
 
         TR nameTR = new TR();
         table.addElement(nameTR);
-        String definitionName = Messages.getMessage(TaskClassPresentation.TASK_BATCH_PRESENTATION_DEFINITION_NAME, pageContext);
+        String definitionName = Messages.getMessage(TaskClassPresentation.DEFINITION_NAME, pageContext);
         nameTR.addElement(new TD(definitionName).setClass(Resources.CLASS_LIST_TABLE_TD));
         nameTR.addElement(new TD(definition.getName()).setClass(Resources.CLASS_LIST_TABLE_TD));
 
         TR versionTR = new TR();
         table.addElement(versionTR);
-        String versionName = Messages.getMessage(DefinitionClassPresentation.BATCH_PRESENTATION_VERSION, pageContext);
+        String versionName = Messages.getMessage(DefinitionClassPresentation.VERSION, pageContext);
         versionTR.addElement(new TD(versionName).setClass(Resources.CLASS_LIST_TABLE_TD));
         TD versionTD = new TD();
         versionTD.addElement(definition.getVersion() + " (");
@@ -81,14 +81,14 @@ public class ProcessDefinitionInfoFormTag extends ProcessDefinitionBaseFormTag {
         if (definition.getDeployedDate() != null) {
             TR deployedTR = new TR();
             table.addElement(deployedTR);
-            String deploymentDate = Messages.getMessage(DefinitionClassPresentation.BATCH_PRESENTATION_DEPLOYMENT_DATE, pageContext);
+            String deploymentDate = Messages.getMessage(DefinitionClassPresentation.DEPLOYMENT_DATE, pageContext);
             deployedTR.addElement(new TD(deploymentDate).setClass(Resources.CLASS_LIST_TABLE_TD));
             deployedTR.addElement(new TD(CalendarUtil.formatDateTime(definition.getDeployedDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
         }
 
         TR descriptionTR = new TR();
         table.addElement(descriptionTR);
-        String description = Messages.getMessage(DefinitionClassPresentation.BATCH_PRESENTATION_DESCRIPTION, pageContext);
+        String description = Messages.getMessage(DefinitionClassPresentation.DESCRIPTION, pageContext);
         descriptionTR.addElement(new TD(description).setClass(Resources.CLASS_LIST_TABLE_TD));
         descriptionTR.addElement(new TD(definition.getDescription()).setClass(Resources.CLASS_LIST_TABLE_TD));
     }

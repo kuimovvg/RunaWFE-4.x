@@ -27,12 +27,9 @@ import ru.runa.wfe.security.Permission;
  * Created on 22.10.2005
  */
 public class ExecutorClassPresentation extends ClassPresentation {
-
-    public static final String EXECUTOR_BATCH_PRESENTATION_NAME = "batch_presentation.executor.name";
-
-    public static final String EXECUTOR_BATCH_PRESENTATION_FULL_NAME = "batch_presentation.executor.full_name";
-
-    public static final String EXECUTOR_BATCH_PRESENTATION_DESCRIPTION = "batch_presentation.executor.description";
+    public static final String NAME = "batch_presentation.executor.name";
+    public static final String FULL_NAME = "batch_presentation.executor.full_name";
+    public static final String DESCRIPTION = "batch_presentation.executor.description";
 
     private static final ClassPresentation INSTANCE = new ExecutorClassPresentation();
 
@@ -40,13 +37,12 @@ public class ExecutorClassPresentation extends ClassPresentation {
         super(Executor.class, "", true, new FieldDescriptor[] {
                 // display name field type DB source isSort filter mode get
                 // value/show in web getter param
-                new FieldDescriptor(EXECUTOR_BATCH_PRESENTATION_NAME, String.class.getName(), new DefaultDBSource(Executor.class, "name"), true,
-                        FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "name" }),
-                new FieldDescriptor(EXECUTOR_BATCH_PRESENTATION_FULL_NAME, String.class.getName(), new DefaultDBSource(Executor.class, "fullName"),
-                        true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "fullName" }),
-                new FieldDescriptor(EXECUTOR_BATCH_PRESENTATION_DESCRIPTION, String.class.getName(), new DefaultDBSource(Executor.class,
-                        "description"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(),
-                        "description" }) });
+                new FieldDescriptor(NAME, String.class.getName(), new DefaultDBSource(Executor.class, "name"), true, FieldFilterMode.DATABASE,
+                        "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "name" }),
+                new FieldDescriptor(FULL_NAME, String.class.getName(), new DefaultDBSource(Executor.class, "fullName"), true,
+                        FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "fullName" }),
+                new FieldDescriptor(DESCRIPTION, String.class.getName(), new DefaultDBSource(Executor.class, "description"), true,
+                        FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "description" }) });
     }
 
     public static final ClassPresentation getInstance() {
