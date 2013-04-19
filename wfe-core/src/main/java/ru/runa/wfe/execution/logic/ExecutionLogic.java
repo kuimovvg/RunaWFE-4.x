@@ -89,7 +89,9 @@ public class ExecutionLogic extends WFCommonLogic {
         // Uncomment for WFDEMO (default ordering in processes is decrease time
         // start)
         /*
-         * if(batchPresentation.isDefault()){ batchPresentation.setFieldsToSort(new int[]{2}, new boolean[]{false}); }
+         * if(batchPresentation.isDefault()){
+         * batchPresentation.setFieldsToSort(new int[]{2}, new
+         * boolean[]{false}); }
          */
         List<Process> list = getPersistentObjects(user, batchPresentation, ProcessPermission.READ, PROCESS_EXECUTION_CLASSES, true);
         return getProcesses(list);
@@ -118,7 +120,7 @@ public class ExecutionLogic extends WFCommonLogic {
         return new WfProcess(nodeProcess.getProcess());
     }
 
-    public List<WfProcess> getSubprocess(User user, Long id) throws ProcessDoesNotExistException {
+    public List<WfProcess> getSubprocesses(User user, Long id) throws ProcessDoesNotExistException {
         Process process = processDAO.getNotNull(id);
         List<Process> subprocessList = new ArrayList<Process>();
         for (Process subprocess : nodeProcessDAO.getSubprocessesRecursive(process)) {
@@ -215,12 +217,14 @@ public class ExecutionLogic extends WFCommonLogic {
     }
 
     /**
-     * Loads graph presentation elements for process definition and set identity of started subprocesses.
+     * Loads graph presentation elements for process definition and set identity
+     * of started subprocesses.
      * 
      * @param user
      *            Current user.
      * @param definitionId
-     *            Identity of process definition, which presentation elements must be loaded.
+     *            Identity of process definition, which presentation elements
+     *            must be loaded.
      * @return List of graph presentation elements.
      */
     public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId) {

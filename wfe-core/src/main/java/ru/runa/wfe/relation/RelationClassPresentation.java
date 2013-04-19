@@ -24,16 +24,18 @@ import ru.runa.wfe.presentation.FieldFilterMode;
 import ru.runa.wfe.security.Permission;
 
 public class RelationClassPresentation extends ClassPresentation {
+    public static final String NAME = "batch_presentation.relation.name";
+    public static final String DESCRIPTION = "batch_presentation.relation.description";
+
     private static final ClassPresentation INSTANCE = new RelationClassPresentation();
-    private static final String RELATION_GROUP_NAME = "batch_presentation.relation.name";
-    private static final String RELATION_GROUP_DESCRIPTION = "batch_presentation.relation.description";
 
     public RelationClassPresentation() {
         super(Relation.class, "", false, new FieldDescriptor[] {
-                // display name field type DB source isSort filter mode get value/show in web getter parameters
-                new FieldDescriptor(RELATION_GROUP_NAME, String.class.getName(), new DefaultDBSource(Relation.class, "name"), true,
-                        FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "name" }),
-                new FieldDescriptor(RELATION_GROUP_DESCRIPTION, String.class.getName(), new DefaultDBSource(Relation.class, "description"), true,
+                // display name field type DB source isSort filter mode get
+                // value/show in web getter parameters
+                new FieldDescriptor(NAME, String.class.getName(), new DefaultDBSource(Relation.class, "name"), true, FieldFilterMode.DATABASE,
+                        "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "name" }),
+                new FieldDescriptor(DESCRIPTION, String.class.getName(), new DefaultDBSource(Relation.class, "description"), true,
                         FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "description" }) });
     }
 

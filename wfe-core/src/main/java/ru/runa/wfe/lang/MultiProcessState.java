@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.audit.SubprocessEndLog;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -96,11 +97,11 @@ public class MultiProcessState extends SubProcessState {
             } else if ("group".equals(miDiscriminatorType) && miVarName != null) {
                 Object miVar = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
                 Group group = TypeConversionUtil.convertTo(Group.class, miVar);
-                ;
                 discriminatorValue = getActorCodes(executorDAO.getGroupActors(group));
             } else if ("relation".equals(miDiscriminatorType) && miVarName != null && miRelationDiscriminatorTypeParam != null) {
                 String relationName = (String) ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
-                Object relationParam = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miRelationDiscriminatorTypeParam);
+                Object relationParam = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(),
+                        miRelationDiscriminatorTypeParam);
                 Executor rightExecutor = TypeConversionUtil.convertTo(Executor.class, relationParam);
                 discriminatorValue = getActorCodes(getActorsByRelation(relationName, rightExecutor));
             }
@@ -117,7 +118,11 @@ public class MultiProcessState extends SubProcessState {
             }
         }
         if (discriminatorValue == null) {
-            throw new RuntimeException("discriminatorValue == null");
+            if (SystemProperties.isV3CompatibilityMode()) {
+                discriminatorValue = new ArrayList<Object>();
+            } else {
+                throw new RuntimeException("discriminatorValue == null");
+            }
         }
         int forkProcessesCount = TypeConversionUtil.getArraySize(discriminatorValue);
         if (forkProcessesCount == 0) {

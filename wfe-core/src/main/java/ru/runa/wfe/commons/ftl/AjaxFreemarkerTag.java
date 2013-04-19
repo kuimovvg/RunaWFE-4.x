@@ -38,6 +38,20 @@ import freemarker.template.TemplateModelException;
 
 public abstract class AjaxFreemarkerTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
+    public static final String TAG_SESSION_PREFIX = "ftltag_";
+
+    /**
+     * Used only if multiple tags of the same type used in same form.
+     * 
+     * @return qualifier, usually variable name
+     */
+    public String getQualifier() {
+        try {
+            return getParameterAs(String.class, 0);
+        } catch (TemplateModelException e) {
+            return null;
+        }
+    }
 
     @Override
     protected final Object executeTag() throws TemplateModelException {

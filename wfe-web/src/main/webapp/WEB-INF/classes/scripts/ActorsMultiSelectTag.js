@@ -21,7 +21,7 @@ function updateDialogContent_VARIABLE() {
     $("#dialogContent_VARIABLE").html("");
     $.getJSON(
         "jsonUrl",
-        {tag: "ActorsMultiSelect", hint: $("#dialogFilter_VARIABLE").val()},
+        {tag: "ActorsMultiSelect", qualifier: "VARIABLE", hint: $("#dialogFilter_VARIABLE").val()},
         function(data) {
             $.each(data, function(i, item) {
                 $("#dialogContent_VARIABLE").append("<div><a href='javascript:addActor_VARIABLE(\""+item.id+"\", \""+escapeQuotesForHtmlContext(item.name)+"\");'>"+item.name+"</a></div>");
