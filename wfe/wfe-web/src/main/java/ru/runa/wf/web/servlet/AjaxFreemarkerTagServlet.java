@@ -18,6 +18,7 @@
 package ru.runa.wf.web.servlet;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,6 +29,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
+
+import com.google.common.base.Objects;
 
 public class AjaxFreemarkerTagServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -40,9 +43,25 @@ public class AjaxFreemarkerTagServlet extends HttpServlet {
             long startTime = System.currentTimeMillis();
             try {
                 String tagId = req.getParameter("tag");
-                AjaxFreemarkerTag ajaxTag = (AjaxFreemarkerTag) req.getSession().getAttribute(tagId);
-                if (ajaxTag == null) {
-                    throw new NullPointerException("No tag found in session: " + tagId);
+                String sessionKey = AjaxFreemarkerTag.TAG_SESSION_PREFIX + tagId;
+                String qualifier = req.getParameter("qualifier");
+                List<AjaxFreemarkerTag> tags = (List<AjaxFreemarkerTag>) req.getSession().getAttribute(sessionKey);
+                if (tags == null || tags.size() < 1) {
+                    throw new NullPointerException("No tags found in session by " + sessionKey);
+                }
+                AjaxFreemarkerTag ajaxTag = null;
+                if (qualifier != null) {
+                    for (AjaxFreemarkerTag tag : tags) {
+                        if (Objects.equal(tag.getQualifier(), qualifier)) {
+                            ajaxTag = tag;
+                            break;
+                        }
+                    }
+                    if (ajaxTag == null) {
+                        throw new NullPointerException("No tag found by qualifier " + qualifier + "; tags: " + tags);
+                    }
+                } else {
+                    ajaxTag = tags.get(0);
                 }
                 ajaxTag.processAjaxRequest(req, resp);
             } catch (Exception e) {

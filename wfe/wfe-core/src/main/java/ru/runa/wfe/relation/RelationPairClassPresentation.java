@@ -24,19 +24,19 @@ import ru.runa.wfe.presentation.FieldFilterMode;
 import ru.runa.wfe.presentation.FieldState;
 
 public class RelationPairClassPresentation extends ClassPresentation {
-    private static final ClassPresentation INSTANCE = new RelationPairClassPresentation();
+    public static final String NAME = "batch_presentation.relation.name";
+    public static final String EXECUTOR_FROM = "batch_presentation.relation.executor_from";
+    public static final String EXECUTOR_TO = "batch_presentation.relation.executor_to";
 
-    private static final String RELATION_NAME = "batch_presentation.relation.name";
-    private static final String RELATION_EXECUTOR_FROM = "batch_presentation.relation.executor_from";
-    private static final String RELATION_EXECUTOR_TO = "batch_presentation.relation.executor_to";
+    private static final ClassPresentation INSTANCE = new RelationPairClassPresentation();
 
     private RelationPairClassPresentation() {
         super(RelationPair.class, "", false, new FieldDescriptor[] {
-                new FieldDescriptor(RELATION_NAME, String.class.getName(), new DefaultDBSource(RelationPair.class, "relation.name"), true,
+                new FieldDescriptor(NAME, String.class.getName(), new DefaultDBSource(RelationPair.class, "relation.name"), true,
                         FieldFilterMode.DATABASE, FieldState.HIDDEN),
-                new FieldDescriptor(RELATION_EXECUTOR_FROM, String.class.getName(), new DefaultDBSource(RelationPair.class, "left.name"), true,
+                new FieldDescriptor(EXECUTOR_FROM, String.class.getName(), new DefaultDBSource(RelationPair.class, "left.name"), true,
                         FieldFilterMode.DATABASE, "ru.runa.af.web.html.RelationFromTDBuilder", null),
-                new FieldDescriptor(RELATION_EXECUTOR_TO, String.class.getName(), new DefaultDBSource(RelationPair.class, "right.name"), true,
+                new FieldDescriptor(EXECUTOR_TO, String.class.getName(), new DefaultDBSource(RelationPair.class, "right.name"), true,
                         FieldFilterMode.DATABASE, "ru.runa.af.web.html.RelationToTDBuilder", null) });
     }
 

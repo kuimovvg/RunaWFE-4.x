@@ -50,43 +50,50 @@ function Reload() {
 	
 	boolean graphMode = ShowGraphModeHelper.isShowGraphMode();
 %>
-<wf:processInfoForm buttonAlignment="right" identifiableId='<%= id %>' taskId='<%= taskId %>'>
 <table width="100%">
 	<tr>
+		<td width="100%" align="right">
+			<wf:processInfoForm buttonAlignment="right" identifiableId='<%= id %>' taskId='<%= taskId %>'>
+			</wf:processInfoForm>
+		</td>
 		<td align="right">
-			<wf:updatePermissionsOnIdentifiableLink identifiableId='<%=id %>' href='<%= "/manage_process_permissions.do?" + parameterName+ "=" + id %>'  />
+			<table>
+				<tr>
+					<td align="right">
+						<wf:updatePermissionsOnIdentifiableLink identifiableId='<%=id %>' href='<%= "/manage_process_permissions.do?" + parameterName+ "=" + id %>'  />
+					</td>
+				<tr>
+				<tr>
+					<td align="right">
+						<wf:showHistoryLink identifiableId='<%=id %>' href='<%= "/show_history.do?" + parameterName+ "=" + id %>'  />
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<wf:showGraphHistoryLink identifiableId='<%=id %>' href='<%= "/show_graph_history.do?" + parameterName+ "=" + id %>'  />
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<wf:showTasksHistoryLink identifiableId='<%=id %>' href='<%= "/show_tasks_history.do?" + parameterName+ "=" + id %>'  />
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<wf:showGanttDiagramLink identifiableId='<%=id %>' href='<%= "/show_gantt_diagram.do?" + parameterName+ "=" + id %>'  />
+					</td>
+				</tr>
+				<% if(graphMode) { %>
+				<tr>
+					<td align="right">
+						<wf:showProcessGraphLink identifiableId='<%=id %>' href='<%= "/show_process_graph.do?" + parameterName+ "=" + id + "&taskId=" + taskId + "&childProcessId=" + childProcessId %>'  />
+					</td>
+				</tr>
+				<% } %>
+			</table>
 		</td>
 	<tr>
-	<tr>
-		<td align="right">
-			<wf:showHistoryLink identifiableId='<%=id %>' href='<%= "/show_history.do?" + parameterName+ "=" + id %>'  />
-		</td>
-	</tr>
-	<tr>
-		<td align="right">
-			<wf:showGraphHistoryLink identifiableId='<%=id %>' href='<%= "/show_graph_history.do?" + parameterName+ "=" + id %>'  />
-		</td>
-	</tr>
-	<tr>
-		<td align="right">
-			<wf:showTasksHistoryLink identifiableId='<%=id %>' href='<%= "/show_tasks_history.do?" + parameterName+ "=" + id %>'  />
-		</td>
-	</tr>
-	<tr>
-		<td align="right">
-			<wf:showGanttDiagramLink identifiableId='<%=id %>' href='<%= "/show_gantt_diagram.do?" + parameterName+ "=" + id %>'  />
-		</td>
-	</tr>
-	
-	<% if(graphMode) { %>
-	<tr>
-		<td align="right">
-			<wf:showProcessGraphLink identifiableId='<%=id %>' href='<%= "/show_process_graph.do?" + parameterName+ "=" + id + "&taskId=" + taskId + "&childProcessId=" + childProcessId %>'  />
-		</td>
-	</tr>
-	<% } %>
 </table>
-</wf:processInfoForm>
 
 <wf:processActiveTaskMonitor identifiableId='<%= id %>'  />
 <wf:processSwimlaneMonitor identifiableId='<%= id %>'  />

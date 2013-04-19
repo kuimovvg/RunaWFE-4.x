@@ -31,12 +31,12 @@ import ru.runa.wfe.var.Variable;
  * 
  */
 public class ProcessClassPresentation extends ClassPresentation {
-    public static final String BATCH_PRESENTATION_ID = "batch_presentation.process.id";
-    public static final String BATCH_PRESENTATION_DEFINITION_NAME = "batch_presentation.process.definition_name";
-    public static final String BATCH_PRESENTATION_STARTED = "batch_presentation.process.started";
-    public static final String BATCH_PRESENTATION_ENDED = "batch_presentation.process.ended";
-    public static final String BATCH_PRESENTATION_DEFINITION_VERSION = "batch_presentation.process.definition_version";
-    public static final String TASK_VARIABLE = editable_prefix + "name:batch_presentation.process.variable";
+    public static final String PROCESS_ID = "batch_presentation.process.id";
+    public static final String DEFINITION_NAME = "batch_presentation.process.definition_name";
+    public static final String PROCESS_START_DATE = "batch_presentation.process.started";
+    public static final String PROCESS_END_DATE = "batch_presentation.process.ended";
+    public static final String DEFINITION_VERSION = "batch_presentation.process.definition_version";
+    public static final String PROCESS_VARIABLE = editable_prefix + "name:batch_presentation.process.variable";
 
     private static final ClassPresentation INSTANCE = new ProcessClassPresentation();
 
@@ -66,22 +66,22 @@ public class ProcessClassPresentation extends ClassPresentation {
         super(Process.class, "", true, new FieldDescriptor[] {
                 // display name field type DB source isSort filter mode get
                 // value/show in web getter param
-                new FieldDescriptor(BATCH_PRESENTATION_ID, Integer.class.getName(), new DefaultDBSource(Process.class, "id"), true,
+                new FieldDescriptor(PROCESS_ID, Integer.class.getName(), new DefaultDBSource(Process.class, "id"), true,
                         FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "id" }),
-                new FieldDescriptor(BATCH_PRESENTATION_DEFINITION_NAME, String.class.getName(),
+                new FieldDescriptor(DEFINITION_NAME, String.class.getName(),
                         new DefaultDBSource(Process.class, "deployment.name"), true, FieldFilterMode.DATABASE,
                         "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "name" }),
-                new FieldDescriptor(BATCH_PRESENTATION_STARTED, Date.class.getName(), new DefaultDBSource(Process.class, "startDate"), true,
+                new FieldDescriptor(PROCESS_START_DATE, Date.class.getName(), new DefaultDBSource(Process.class, "startDate"), true,
                         FieldFilterMode.DATABASE, "ru.runa.wf.web.html.ProcessStartDateTDBuilder", new Object[] {}),
-                new FieldDescriptor(BATCH_PRESENTATION_ENDED, Date.class.getName(), new DefaultDBSource(Process.class, "endDate"), true,
+                new FieldDescriptor(PROCESS_END_DATE, Date.class.getName(), new DefaultDBSource(Process.class, "endDate"), true,
                         FieldFilterMode.DATABASE, "ru.runa.wf.web.html.ProcessEndDateTDBuilder", new Object[] {}),
-                new FieldDescriptor(BATCH_PRESENTATION_DEFINITION_VERSION, Integer.class.getName(), new DefaultDBSource(Process.class,
+                new FieldDescriptor(DEFINITION_VERSION, Integer.class.getName(), new DefaultDBSource(Process.class,
                         "deployment.version"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
                         new Permission(), "version" }),
                 new FieldDescriptor(filterable_prefix + "batch_presentation.process.id", String.class.getName(),
                         new SubProcessDBSource[] { new SubProcessDBSource(Process.class, "hierarchySubProcess") }, true, FieldFilterMode.DATABASE,
                         "ru.runa.wf.web.html.RootProcessTDBuilder", new Object[] {}, true),
-                new FieldDescriptor(TASK_VARIABLE, String.class.getName(), new VariableDBSource(Variable.class), true, FieldFilterMode.DATABASE,
+                new FieldDescriptor(PROCESS_VARIABLE, String.class.getName(), new VariableDBSource(Variable.class), true, FieldFilterMode.DATABASE,
                         "ru.runa.wf.web.html.ProcessVariableTDBuilder", new Object[] {}, true) });
     }
 

@@ -114,9 +114,9 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
-    public List<WfProcess> getSubprocess(User user, Long id) {
+    public List<WfProcess> getSubprocesses(User user, Long id) {
         Preconditions.checkNotNull(user);
-        return executionLogic.getSubprocess(user, id);
+        return executionLogic.getSubprocesses(user, id);
     }
 
     @Override

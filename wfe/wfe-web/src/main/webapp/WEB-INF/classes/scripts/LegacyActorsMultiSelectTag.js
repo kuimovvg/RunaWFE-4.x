@@ -21,7 +21,7 @@ function updateDialogContent() {
     $("#dialogContent").html("");
     $.getJSON(
         "jsonUrl",
-        {tag: "LegacyActorsMultiSelect", hint: $("#dialogFilter").val()},
+        {tag: "ActorsMultiSelect", qualifier: "VARIABLE", hint: $("#dialogFilter").val()},
         function(data) {
             $.each(data, function(i, item) {
                 $("#dialogContent").append("<div><a href='javascript:addActor(\""+item.code+"\", \""+item.name+"\");'>"+item.name+"</a></div>");
