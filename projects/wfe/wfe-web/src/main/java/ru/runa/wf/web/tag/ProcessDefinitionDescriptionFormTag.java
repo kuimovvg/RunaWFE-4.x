@@ -66,7 +66,7 @@ public class ProcessDefinitionDescriptionFormTag extends ProcessDefinitionBaseFo
 
     @Override
     protected String getTitle() {
-        return Messages.getMessage(DefinitionClassPresentation.BATCH_PRESENTATION_DESCRIPTION, pageContext);
+        return Messages.getMessage(DefinitionClassPresentation.DESCRIPTION, pageContext);
     }
 
 }

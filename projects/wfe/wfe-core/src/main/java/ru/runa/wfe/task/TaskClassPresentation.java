@@ -36,6 +36,16 @@ import ru.runa.wfe.var.Variable;
  * Created on 22.10.2005
  */
 public class TaskClassPresentation extends ClassPresentation {
+    public static final String NAME = "batch_presentation.task.name";
+    public static final String DESCRIPTION = "batch_presentation.task.description";
+    public static final String DEFINITION_NAME = "batch_presentation.task.definition_name";
+    public static final String PROCESS_ID = "batch_presentation.task.process_id";
+    public static final String OWNER = "batch_presentation.task.owner";
+    public static final String TASK_SWIMLINE = "batch_presentation.task.swimlane";
+    public static final String TASK_VARIABLE = editable_prefix + "name:batch_presentation.task.variable";
+    public static final String TASK_DEADLINE = "batch_presentation.task.deadline";
+
+    private static final ClassPresentation INSTANCE = new TaskClassPresentation();
 
     private static class VariableDBSource extends DefaultDBSource {
         public VariableDBSource(Class<?> sourceObject) {
@@ -59,34 +69,23 @@ public class TaskClassPresentation extends ClassPresentation {
         }
     }
 
-    public static final String TASK_BATCH_PRESENTATION_NAME = "batch_presentation.task.name";
-    public static final String TASK_BATCH_PRESENTATION_DESCRIPTION = "batch_presentation.task.description";
-    public static final String TASK_BATCH_PRESENTATION_DEFINITION_NAME = "batch_presentation.task.definition_name";
-    public static final String TASK_BATCH_PRESENTATION_PROCESS_ID = "batch_presentation.task.process_id";
-    public static final String TASK_OWNER = "batch_presentation.task.owner";
-    public static final String TASK_SWIMLINE = "batch_presentation.task.swimlane";
-    public static final String TASK_VARIABLE = editable_prefix + "name:batch_presentation.task.variable";
-    public static final String TASK_DEADLINE = "batch_presentation.task.deadline";
-
-    private static final ClassPresentation INSTANCE = new TaskClassPresentation();
-
     private TaskClassPresentation() {
         super(Task.class, "", false,
                 new FieldDescriptor[] {
                         // display name field type DB source isSort filter mode
                         // get value/show in web getter parameters
-                        new FieldDescriptor(TASK_BATCH_PRESENTATION_NAME, String.class.getName(), new DefaultDBSource(Task.class, "name"), true,
+                        new FieldDescriptor(NAME, String.class.getName(), new DefaultDBSource(Task.class, "name"), true,
                                 FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { new Permission(), "name" }),
-                        new FieldDescriptor(TASK_BATCH_PRESENTATION_DESCRIPTION, String.class.getName(), new SubstringDBSource(Task.class,
+                        new FieldDescriptor(DESCRIPTION, String.class.getName(), new SubstringDBSource(Task.class,
                                 "description"), true, FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] {
                                 new Permission(), "description" }),
-                        new FieldDescriptor(TASK_BATCH_PRESENTATION_DEFINITION_NAME, String.class.getName(), new DefaultDBSource(Task.class,
+                        new FieldDescriptor(DEFINITION_NAME, String.class.getName(), new DefaultDBSource(Task.class,
                                 "process.deployment.name"), true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskProcessDefinitionTDBuilder",
                                 new Object[] {}),
-                        new FieldDescriptor(TASK_BATCH_PRESENTATION_PROCESS_ID, Integer.class.getName(),
+                        new FieldDescriptor(PROCESS_ID, Integer.class.getName(),
                                 new DefaultDBSource(Task.class, "process.id"), true, FieldFilterMode.DATABASE,
                                 "ru.runa.wf.web.html.TaskProcessIdTDBuilder", new Object[] {}),
-                        new FieldDescriptor(TASK_OWNER, Executor.class.getName(), new DefaultDBSource(Task.class, "executor"), true,
+                        new FieldDescriptor(OWNER, Executor.class.getName(), new DefaultDBSource(Task.class, "executor"), true,
                                 FieldFilterMode.NONE, "ru.runa.wf.web.html.TaskOwnerTDBuilder", new Object[] {}),
                         new FieldDescriptor(TASK_SWIMLINE, String.class.getName(), new DefaultDBSource(Task.class, "swimlane.name"), true,
                                 FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskRoleTDBuilder", new Object[] {}),

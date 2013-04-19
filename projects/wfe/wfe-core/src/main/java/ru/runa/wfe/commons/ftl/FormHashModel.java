@@ -21,6 +21,9 @@ public class FormHashModel extends SimpleHash {
         this.user = user;
         this.variableProvider = variableProvider;
         this.webHelper = webHelper;
+        if (this.webHelper != null) {
+            this.webHelper.removeAllTags();
+        }
     }
 
     public WebHelper getWebHelper() {
@@ -46,8 +49,8 @@ public class FormHashModel extends SimpleHash {
             FreemarkerTag tag = conf.getTag(key);
             if (tag != null) {
                 tag.init(user, webHelper, variableProvider);
-                if (webHelper != null) {
-                    webHelper.getSession().setAttribute(key, tag);
+                if (webHelper != null && tag instanceof AjaxFreemarkerTag) {
+                    webHelper.setTag(key, (AjaxFreemarkerTag) tag);
                 }
                 return tag;
             }

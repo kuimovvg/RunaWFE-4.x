@@ -64,7 +64,7 @@ public class ProcessRowBuilder extends ReflectionRowBuilder {
         Object item = items.get(currentState.getItemIndex());
         ExecutionService executionService = Delegates.getExecutionService();
         List<WfProcess> listSubProcessInstance = executionService
-                .getSubprocess(Commons.getUser(pageContext.getSession()), ((WfProcess) item).getId());
+                .getSubprocesses(Commons.getUser(pageContext.getSession()), ((WfProcess) item).getId());
 
         if (currentState.isGroupHeader()
                 && fieldsToDisplayNames[currentState.getCurrentGrouppedColumnIdx()].displayName.startsWith(ClassPresentation.filterable_prefix)) {

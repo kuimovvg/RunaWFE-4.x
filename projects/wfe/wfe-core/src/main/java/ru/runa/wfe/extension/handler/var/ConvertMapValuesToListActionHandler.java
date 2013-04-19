@@ -1,7 +1,6 @@
 package ru.runa.wfe.extension.handler.var;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +18,9 @@ public class ConvertMapValuesToListActionHandler extends CommonParamBasedHandler
             map = Maps.newHashMap();
         }
         List list = new ArrayList(map.values());
-        if (list.size() > 0 && list.get(0) instanceof Comparable) {
-            Collections.sort(list);
-        }
+        // if (list.size() > 0 && list.get(0) instanceof Comparable) {
+        // Collections.sort(list);
+        // }
         handlerData.setOutputParam("list", list);
     }
 }

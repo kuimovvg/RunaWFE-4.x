@@ -34,6 +34,8 @@ import ru.runa.wf.web.form.VariableForm;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.FileVariable;
 
+import com.google.common.base.Objects;
+
 /**
  * Created on 27.09.2005
  * 
@@ -79,8 +81,13 @@ public class VariableDownloaderAction extends ActionBase {
             return list.get(form.getListIndex());
         }
         if (object instanceof Map<?, ?>) {
-            Map<?, FileVariable> map = (Map) object;
-            return map.get(form.getMapKey());
+            Map<Object, FileVariable> map = (Map<Object, FileVariable>) object;
+            for (Map.Entry<Object, FileVariable> entry : map.entrySet()) {
+                if (Objects.equal(String.valueOf(entry.getKey()), form.getMapKey())) {
+                    return entry.getValue();
+                }
+            }
+            throw new IllegalArgumentException("No file found by key = " + form.getMapKey() + "; all values: " + map);
         }
         throw new IllegalArgumentException("Unexpected variable type: " + object + " by name " + form.getVariableName());
     }

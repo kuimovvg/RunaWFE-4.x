@@ -60,7 +60,7 @@ public interface ExecutionService {
 
     public WfProcess getParentProcess(User user, Long processId) throws ProcessDoesNotExistException;
 
-    List<WfProcess> getSubprocess(User user, Long id) throws ProcessDoesNotExistException;
+    public List<WfProcess> getSubprocesses(User user, Long processId) throws ProcessDoesNotExistException;
 
     public void cancelProcess(User user, Long processId) throws ProcessDoesNotExistException;
 
@@ -89,7 +89,8 @@ public interface ExecutionService {
      * @param taskId
      * @param variables
      * @param swimlaneActorId
-     *            actor id who will be assigned to task swimlane, can be <code>null</code>
+     *            actor id who will be assigned to task swimlane, can be
+     *            <code>null</code>
      * @throws TaskDoesNotExistException
      * @throws ValidationException
      */
