@@ -511,7 +511,7 @@ public class ServiceTestHelper {
     }
 
     private void createFakeUser() {
-        fakeUser = new User(null,null);
+        fakeUser = new User(fakeActor,null);
     }
 
     public AuthorizationService getAuthorizationService() {
@@ -675,5 +675,14 @@ public class ServiceTestHelper {
             ExecutorDoesNotExistException, SubstitutionDoesNotExistException {
         substitution.setCriteria(null);
         substitutionService.updateSubstitution(getAdminUser(), substitution);
+    }
+
+    @Deprecated //TODO: ExecutionService.getExecutorsByIds
+    public <T extends Executor> List <T> getExecutors(User performer, List<Long> ids) {
+        List<T> res = Lists.newArrayList();
+        for (Long id : ids) {
+            res.add(executorService.<T>getExecutor(performer, id));
+        }
+        return res;
     }
 }
