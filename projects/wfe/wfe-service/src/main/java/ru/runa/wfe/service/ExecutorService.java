@@ -80,8 +80,8 @@ public interface ExecutorService {
      * Loads first level group children's (not recursive). <b>Paging is enabled
      * on executors loading.</b>
      * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     * @param user
+     *            Current user {@linkplain User}.
      * @param group
      *            {@linkplain Group} to load children's from.
      * @param batchPresentation
@@ -95,9 +95,9 @@ public interface ExecutorService {
 
     /**
      * Loads first level group children's count.
-     * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     *
+     * @param user
+     *            Current user {@linkplain User}.
      * @param group
      *            {@linkplain Group} to load children's from.
      * @param batchPresentation
@@ -116,9 +116,9 @@ public interface ExecutorService {
      * </p>
      * <code> getGroupActors(G2) returns {A1, A2}</code>;
      * <code> getGroupActors(G1) returns {A1, A2, A3} </code>
-     * 
-     * @param subject
-     *            Actor subject, performing action.
+     *
+     * @param user
+     *            Current user {@linkplain User}.
      * @param group
      *            Group, to load actors from.
      * @return All actors from group.
@@ -128,9 +128,9 @@ public interface ExecutorService {
     /**
      * Load first level executor groups (not recursive). <b>Paging is enabled on
      * executors loading.</b>
-     * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     *
+     * @param user
+     *            Current user {@linkplain User}.
      * @param executor
      *            {@linkplain Executor} to load groups.
      * @param batchPresentation
@@ -145,9 +145,9 @@ public interface ExecutorService {
 
     /**
      * Load first level executor groups (not recursive) count.
-     * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     *
+     * @param user
+     *            Current user {@linkplain User}.
      * @param executor
      *            {@linkplain Executor} to load groups.
      * @param batchPresentation

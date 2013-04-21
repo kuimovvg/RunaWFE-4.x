@@ -57,7 +57,7 @@ public interface AuthorizationService {
 
     /**
      * Returns permissions that executor himself has on {@link Identifiable}.
-     * Permissions by privelege will not return.
+     * Permissions by privilege will not return.
      * 
      * @return Map of {Permission, Is permission can be modifiable}, not
      *         <code>null</code>
@@ -68,8 +68,8 @@ public interface AuthorizationService {
      * Load executor's which already has (or not has) some permission on
      * specified identifiable. This query using paging.
      * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     * @param user
+     *            Current user {@linkplain User}.
      * @param identifiable
      *            {@linkplain Identifiable} to load executors, which has (or
      *            not) permission on this identifiable.
@@ -87,8 +87,8 @@ public interface AuthorizationService {
      * Load executor's count which already has (or not has) some permission on
      * specified identifiable.
      * 
-     * @param subject
-     *            Current actor {@linkplain Subject}.
+     * @param user
+     *            Current user {@linkplain User}.
      * @param identifiable
      *            {@linkplain Identifiable} to load executors, which has (or
      *            not) permission on this identifiable.

@@ -69,13 +69,14 @@
             <artifactId>junit</artifactId>
             <!-- We really need this older version for cactus to run -->
             <version>3.8.1</version>
+            <!-- ...also note a 'compile' scope: -->
             <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
         <finalName>cactus</finalName>
         <sourceDirectory>src/test/java</sourceDirectory>
-        <!--testSourceDirectory>../wfe-cactus-it/src/test/java</testSourceDirectory-->
+        <!--testSourceDirectory>src/test/java</testSourceDirectory-->
         <resources>
             <resource>
                 <directory>src/test/resources</directory>
@@ -88,9 +89,13 @@
                 <version>3.0</version>
                     <configuration>
                         <includes>
+                            <include>ru/runa/af/delegate/*.java</include>
+                            <include>ru/runa/af/organizationfunction/impl/*.java</include>
                             <include>ru/runa/wf/jpdl/*Test.java</include>
                         </includes>
                         <testIncludes>
+                            <testInclude>ru/runa/af/delegate/*.java</testInclude>
+                            <testInclude>ru/runa/af/organizationfunction/impl/*.java</testInclude>
                             <testInclude>ru/runa/wf/jpdl/*Test.java</testInclude>
                         </testIncludes>
                     </configuration>
