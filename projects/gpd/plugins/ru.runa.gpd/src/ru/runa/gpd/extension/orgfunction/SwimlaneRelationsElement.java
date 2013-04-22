@@ -22,6 +22,7 @@ import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.wfe.extension.orgfunction.GetActorsByCodesFunction;
+import ru.runa.wfe.user.Executor;
 
 public class SwimlaneRelationsElement extends SwimlaneElement {
     private Hyperlink chooseLink;
@@ -65,7 +66,11 @@ public class SwimlaneRelationsElement extends SwimlaneElement {
         Label label = new Label(content2, SWT.NONE);
         label.setText(Localization.getString("OrgFunction.ActorCode"));
         combo = new Combo(content2, SWT.READ_ONLY);
+        // for compatibility with v3x
         for (String variableName : OrgFunctionsRegistry.getVariableNames(processDefinition, String.class.getName())) {
+            combo.add(variableName);
+        }
+        for (String variableName : OrgFunctionsRegistry.getVariableNames(processDefinition, Executor.class.getName())) {
             combo.add(variableName);
         }
         combo.addSelectionListener(new SelectionAdapter() {
