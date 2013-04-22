@@ -3,6 +3,7 @@ package ru.runa.af.web;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.common.web.Messages;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.EscalationGroup;
 import ru.runa.wfe.user.Executor;
@@ -23,6 +24,8 @@ public class ExecutorNameConverter {
             result = Messages.getMessage(Messages.DYNAMIC_GROUP_NAME, pageContext);
         } else if (executor.getName().equals(SystemExecutors.PROCESS_STARTER_NAME)) {
             result = Messages.getMessage(Messages.PROCESS_STARTER_NAME, pageContext);
+        } else if (SystemProperties.isV3CompatibilityMode() && executor.getName().startsWith("__TmpGroup")) {
+            result = Messages.getMessage(Messages.ESCALATION_GROUP_NAME, pageContext);
         } else {
             result = executor.getName();
         }
