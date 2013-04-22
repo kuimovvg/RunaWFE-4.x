@@ -83,10 +83,10 @@ public class PermissionTableBuilder {
         table.addElement(createTableHeaderTR());
         List<Permission> noPermissions = Lists.newArrayList();
         for (Executor executor : executors) {
-            table.addElement(createTR(executor, noPermissions));
+            table.addElement(createTR(executor, noPermissions, false));
         }
         for (Map.Entry<Executor, List<Permission>> entry : additionalExecutors.entrySet()) {
-            table.addElement(createTR(entry.getKey(), entry.getValue()));
+            table.addElement(createTR(entry.getKey(), entry.getValue(), true));
         }
         return table;
     }
@@ -102,7 +102,7 @@ public class PermissionTableBuilder {
         return tr;
     }
 
-    private TR createTR(Executor executor, List<Permission> unmodifiablePermissions) {
+    private TR createTR(Executor executor, List<Permission> unmodifiablePermissions, boolean additionalExecutor) {
         TR tr = new TR();
         Input input = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, String.valueOf(executor.getId()));
         input.setChecked(true);
@@ -117,7 +117,7 @@ public class PermissionTableBuilder {
             String name = UpdatePermissionsOnIdentifiableForm.EXECUTOR_INPUT_NAME_PREFIX + "(" + executor.getId() + ")."
                     + UpdatePermissionsOnIdentifiableForm.PERMISSION_INPUT_NAME_PREFIX + "(" + permission.getMask() + ")";
             // empty ownPermissions means that executor is privileged
-            boolean checked = ownPermissions.isEmpty() || ownPermissions.contains(permission);
+            boolean checked = (!additionalExecutor && ownPermissions.isEmpty()) || ownPermissions.contains(permission);
             boolean enabled = allowedUpdatePermissions && !unmodifiablePermissions.contains(permission);
             executorCheckboxDisabled &= !enabled;
             Input checkbox = new Input(Input.CHECKBOX, name);
