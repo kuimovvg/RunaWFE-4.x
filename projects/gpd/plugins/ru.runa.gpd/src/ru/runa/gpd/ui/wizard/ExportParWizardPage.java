@@ -53,6 +53,7 @@ import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
@@ -192,7 +193,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                 }
             }
             definition.getLanguage().getSerializer().validateProcessDefinitionXML(definitionFile);
-            if (exportToFile && !ensureTargetIsValid()) {
+            if (exportToFile && (Strings.isNullOrEmpty(getDestinationValue()) || !ensureTargetIsValid())) {
                 setErrorMessage(Localization.getString("ExportParWizardPage.error.selectDestinationPath"));
                 return false;
             }
