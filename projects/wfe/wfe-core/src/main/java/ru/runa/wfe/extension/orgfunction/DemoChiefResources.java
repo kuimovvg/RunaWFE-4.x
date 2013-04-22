@@ -28,7 +28,7 @@ import ru.runa.wfe.commons.PropertyResources;
  * @author Vitaliy S aka Yilativs
  */
 class DemoChiefResources {
-    private static final PropertyResources RESOURCES = new PropertyResources("orgfunction.demo_chief.properties");
+    private static final PropertyResources RESOURCES = new PropertyResources("demo_chief.properties");
 
     public static Set<String> getPatterns() {
         return RESOURCES.getAllPropertyNames();
