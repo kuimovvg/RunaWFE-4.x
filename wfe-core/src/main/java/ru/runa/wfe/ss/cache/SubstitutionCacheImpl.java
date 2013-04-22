@@ -96,6 +96,7 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
     }
 
     public void onActorStatusChange(Actor actor, Change change) {
+        log.debug("onActorStatusChange: " + actor);
         TreeMap<Substitution, HashSet<Actor>> substitutions = actorToSubstitutorsCache.get(actor.getId());
         if (substitutions == null) {
             return;
