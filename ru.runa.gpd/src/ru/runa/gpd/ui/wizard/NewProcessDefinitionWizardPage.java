@@ -105,7 +105,7 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         for (Language language : Language.values()) {
             languageCombo.add(language.name());
         }
-        languageCombo.select(0);
+        languageCombo.select(1);
         languageCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         languageCombo.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -123,7 +123,7 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("label.bpmn.display.swimlane"));
         bpmnDisplaySwimlaneCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-        bpmnDisplaySwimlaneCombo.setEnabled(false);
+        //bpmnDisplaySwimlaneCombo.setEnabled(false);
         for (SwimlaneDisplayMode mode : SwimlaneDisplayMode.values()) {
             bpmnDisplaySwimlaneCombo.add(mode.getLabel());
         }
