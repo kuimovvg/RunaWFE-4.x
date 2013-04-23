@@ -132,9 +132,7 @@ public class BotTaskUtils {
             Element element = botElement.element(PARAMETERS_ELEMENT).element(ParamDefConfig.NAME_CONFIG);
             Preconditions.checkNotNull(element);
             botTask.setParamDefConfig(ParamDefConfig.parse(element));
-            String cdata = botElement.elementTextTrim(BOTCONFIG_ELEMENT);
-            cdata = XmlUtil.reformatIfXml(cdata);
-            botTask.setDelegationConfiguration(cdata);
+            botTask.setDelegationConfiguration(botElement.elementText(BOTCONFIG_ELEMENT));
         } else {
             botTask.setType(BotTaskType.SIMPLE);
             botTask.setDelegationConfiguration(configuration);
