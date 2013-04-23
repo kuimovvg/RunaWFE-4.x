@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.service.delegate.BotInvokerServiceDelegate;
 import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.base.Strings;
@@ -68,7 +69,7 @@ public class BotInvokerActionHandler implements ActionHandler {
                 log.warn("No botstation can be found for invocation " + configuration);
                 return;
             }
-            Delegates.getBotInvokerService(botStation).invokeBots(botStation);
+            BotInvokerServiceDelegate.getService(botStation).invokeBots(botStation);
         } catch (Exception e) {
             log.error("Unable to invoke bot station due to " + e);
         }

@@ -1,6 +1,7 @@
 package ru.runa.wfe.service.client;
 
 import ru.runa.wfe.bot.BotStation;
+import ru.runa.wfe.service.delegate.BotInvokerServiceDelegate;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -22,11 +23,11 @@ public class BotInvokerClient {
                     System.err.println("No botstation could not be found '" + botStationName + "'");
                 }
                 if (START_ARGUMENT.equals(args[0])) {
-                    Delegates.getBotInvokerService(botStation).startPeriodicBotsInvocation(botStation);
+                    BotInvokerServiceDelegate.getService(botStation).startPeriodicBotsInvocation(botStation);
                     System.out.println("bots pereodic invocation started");
                     System.exit(0);
                 } else if (STOP_ARGUMENT.equals(args[0])) {
-                    Delegates.getBotInvokerService(botStation).cancelPeriodicBotsInvocation();
+                    BotInvokerServiceDelegate.getService(botStation).cancelPeriodicBotsInvocation();
                     System.out.println("bots pereodic invocation stopped");
                     System.exit(1);
                 } else if (STATUS_ARGUMENT.equals(args[0])) {
@@ -60,7 +61,7 @@ public class BotInvokerClient {
     }
 
     private static boolean printStatus(BotStation botStation) {
-        boolean isRunning = Delegates.getBotInvokerService(botStation).isRunning();
+        boolean isRunning = BotInvokerServiceDelegate.getService(botStation).isRunning();
         String status = isRunning ? "started" : "stopped";
         System.out.println("bots pereodic invocation status:" + status);
         return isRunning;
