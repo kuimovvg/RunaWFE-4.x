@@ -47,6 +47,7 @@ import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
@@ -191,32 +192,31 @@ public class HTMLFormConverter {
 
                 String[] valueArray = variables.get(inputName);
                 String stringValue = getStringForFillingUserInputValues(valueArray);
-                if (stringValue == null) {
-                    continue;
-                }
-                // handle input (type='text, password')
-                if (hasValue(STD_INPUT_NAMES, typeName, true)) {
-                    node.setAttribute(VALUE_ATTR, stringValue);
-                } else if ("checkbox".equalsIgnoreCase(typeName)) {
-                    String checkBoxValue = node.getAttribute(VALUE_ATTR);
-                    if (hasValue(valueArray, checkBoxValue, false)) {
-                        node.setAttribute(CHECKED_ATTR, CHECKED_ATTR);
+                if (stringValue != null) {
+                    // handle input (type='text, password')
+                    if (hasValue(STD_INPUT_NAMES, typeName, true)) {
+                        node.setAttribute(VALUE_ATTR, stringValue);
+                    } else if ("checkbox".equalsIgnoreCase(typeName)) {
+                        String checkBoxValue = node.getAttribute(VALUE_ATTR);
+                        if (hasValue(valueArray, checkBoxValue, false)) {
+                            node.setAttribute(CHECKED_ATTR, CHECKED_ATTR);
+                        } else {
+                            // reset values for default ones
+                            node.removeAttribute(CHECKED_ATTR);
+                        }
+                    } else if ("radio".equalsIgnoreCase(typeName)) {
+                        String radioValue = node.getAttribute(VALUE_ATTR);
+                        if (stringValue.equals(radioValue)) {
+                            node.setAttribute(CHECKED_ATTR, CHECKED_ATTR);
+                        } else {
+                            // reset values for default ones
+                            node.removeAttribute(CHECKED_ATTR);
+                        }
+                    } else if ("file".equalsIgnoreCase(typeName)) {
+                        log.debug("file is not supported, ");
                     } else {
-                        // reset values for default ones
-                        node.removeAttribute(CHECKED_ATTR);
+                        log.error("- Strange input type: " + typeName);
                     }
-                } else if ("radio".equalsIgnoreCase(typeName)) {
-                    String radioValue = node.getAttribute(VALUE_ATTR);
-                    if (stringValue.equals(radioValue)) {
-                        node.setAttribute(CHECKED_ATTR, CHECKED_ATTR);
-                    } else {
-                        // reset values for default ones
-                        node.removeAttribute(CHECKED_ATTR);
-                    }
-                } else if ("file".equalsIgnoreCase(typeName)) {
-                    log.debug("file is not supported, ");
-                } else {
-                    log.error("- Strange input type: " + typeName);
                 }
                 handleErrors(errors, inputName, pageContext, document, node);
             }
@@ -224,7 +224,7 @@ public class HTMLFormConverter {
             for (int i = 0; i < textareaElements.getLength(); i++) {
                 Element node = (Element) textareaElements.item(i);
                 String inputName = node.getAttribute(NAME_ATTR);
-                if (inputName != null && inputName.length() > 0) {
+                if (!Strings.isNullOrEmpty(inputName)) {
                     String[] valueArray = variables.get(inputName);
                     String stringValue = getStringForFillingUserInputValues(valueArray);
                     if (stringValue == null) {
@@ -260,7 +260,7 @@ public class HTMLFormConverter {
                 handleErrors(errors, inputName, pageContext, document, node);
             }
 
-            if ((errors != null) && (errors.size() != 0)) {
+            if (errors != null && !errors.isEmpty()) {
                 // Not for all errors inputs found, put just in the end of page.
                 log.debug("Appending errors to the end of the form.");
                 document.getLastChild().appendChild(document.createElement("hr"));
