@@ -34,6 +34,7 @@ import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.dao.NodeProcessDAO;
 import ru.runa.wfe.execution.dao.ProcessDAO;
+import ru.runa.wfe.execution.dao.TokenDAO;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.image.GraphElementPresentationBuilder;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
@@ -83,6 +84,8 @@ public class WFCommonLogic extends CommonLogic {
     protected ProcessLogDAO processLogDAO;
     @Autowired
     protected JobDAO jobDAO;
+    @Autowired
+    protected TokenDAO tokenDAO;
 
     public ProcessDefinition getDefinition(Long processDefinitionId) {
         return processDefinitionLoader.getDefinition(processDefinitionId);
