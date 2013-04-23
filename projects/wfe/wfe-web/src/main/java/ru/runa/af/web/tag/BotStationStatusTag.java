@@ -13,6 +13,7 @@ import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.delegate.BotInvokerServiceDelegate;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -41,7 +42,7 @@ public class BotStationStatusTag extends TitledFormTag {
     private void renewValues() {
         try {
             BotStation botStation = Delegates.getBotService().getBotStation(botStationId);
-            periodicInvocationOn = Delegates.getBotInvokerService(botStation).isRunning();
+            periodicInvocationOn = BotInvokerServiceDelegate.getService(botStation).isRunning();
             stationOn = true;
         } catch (Exception e) {
             log.warn("Unable to obtain status of botstation " + botStationId, e);

@@ -36,7 +36,7 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>wfe-bots</artifactId>
 			<version>${project.version}</version>
-			<type>jar</type>
+			<type>ejb</type>
 		</dependency>
 		<dependency>
 			<groupId>dom4j</groupId>
@@ -75,10 +75,6 @@
 						</jarModule>
 						<jarModule>
 							<groupId>${project.groupId}</groupId>
-							<artifactId>wfe-bots</artifactId>
-						</jarModule>
-						<jarModule>
-							<groupId>${project.groupId}</groupId>
 							<artifactId>wfe-office</artifactId>
 						</jarModule>
 						<webModule>
@@ -89,6 +85,10 @@
 						<ejbModule>
 							<groupId>${project.groupId}</groupId>
 							<artifactId>wfe-service</artifactId>
+						</ejbModule>
+						<ejbModule>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>wfe-bots</artifactId>
 						</ejbModule>
 					</modules>
 					<jboss>

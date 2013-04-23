@@ -23,24 +23,18 @@ import java.util.TimerTask;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wf.logic.bot.BotStationResources;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.invoker.BotInvokerFactory;
 import ru.runa.wfe.service.BotInvokerService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@Interceptors({ EjbExceptionSupport.class })
-@WebService(name = "BotInvokerAPI", serviceName = "BotInvokerWebService")
-@SOAPBinding
 public class BotInvokerServiceBean implements BotInvokerService {
     private static final Log log = LogFactory.getLog(BotInvokerServiceBean.class);
     private transient static Timer timer;
@@ -50,7 +44,7 @@ public class BotInvokerServiceBean implements BotInvokerService {
         if (timer == null) {
             log.info("Starting periodic bot execution...");
             timer = new Timer();
-            timer.schedule(new InvokerTimerTask(botStation), 0, BotInvokerFactory.getBotInvocationPeriod());
+            timer.schedule(new InvokerTimerTask(botStation), 0, BotStationResources.getBotInvocationPeriod());
         } else {
             log.info("BotRunner is running. skipping start...");
         }

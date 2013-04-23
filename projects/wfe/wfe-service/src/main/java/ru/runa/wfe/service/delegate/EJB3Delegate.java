@@ -20,10 +20,12 @@ import com.google.common.collect.Maps;
 public abstract class EJB3Delegate {
     public static final String EJB_REMOTE = "remote";
     private static final String EJB_LOCAL = "";
+    private static final String WFE_SERVICE_JAR_NAME = "wfe-service";
     private static Map<String, InitialContext> initialContexts = Maps.newHashMap();
     private static Map<String, Map<String, Object>> services = Maps.newHashMap();
     private String ejbType;
     private String ejbJndiNameFormat;
+    private final String jarName;
     private final String beanName;
     private final String localInterfaceClassName;
     private final String remoteInterfaceClassName;
@@ -36,11 +38,24 @@ public abstract class EJB3Delegate {
      * @param remoteInterfaceClass
      *            EJB @Remote class
      */
-    public EJB3Delegate(String beanName, Class<?> remoteInterfaceClass) {
+    public EJB3Delegate(String beanName, Class<?> remoteInterfaceClass, String jarName) {
         this.beanName = beanName;
         localInterfaceClassName = null;
         remoteInterfaceClassName = remoteInterfaceClass.getName();
         setEjbType(EJB_REMOTE, true);
+        this.jarName = jarName;
+    }
+
+    /**
+     * Creates delegate only for remote usage.
+     * 
+     * @param beanName
+     *            EJB bean name
+     * @param remoteInterfaceClass
+     *            EJB @Remote class
+     */
+    public EJB3Delegate(String beanName, Class<?> remoteInterfaceClass) {
+        this(beanName, remoteInterfaceClass, WFE_SERVICE_JAR_NAME);
     }
 
     /**
@@ -53,6 +68,7 @@ public abstract class EJB3Delegate {
         beanName = baseInterfaceClass.getSimpleName() + "Bean";
         localInterfaceClassName = "ru.runa.wfe.service.decl." + baseInterfaceClass.getSimpleName() + "Local";
         remoteInterfaceClassName = "ru.runa.wfe.service.decl." + baseInterfaceClass.getSimpleName() + "Remote";
+        this.jarName = WFE_SERVICE_JAR_NAME;
     }
 
     public void setEjbType(String ejbType, boolean override) {
@@ -80,6 +96,7 @@ public abstract class EJB3Delegate {
         }
         if (!providerServices.containsKey(beanName)) {
             Map<String, String> variables = Maps.newHashMap();
+            variables.put("jar.name", jarName);
             variables.put("bean.name", beanName);
             variables.put("ejb.type", ejbType);
             String interfaceClassName = EJB_REMOTE.equals(ejbType) ? remoteInterfaceClassName : localInterfaceClassName;
