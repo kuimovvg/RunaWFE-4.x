@@ -17,6 +17,10 @@
  */
 package ru.runa.wf.logic.bot;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import ru.runa.wfe.bot.invoker.BotInvokerFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.PropertyResources;
 
@@ -27,6 +31,7 @@ import ru.runa.wfe.commons.PropertyResources;
  * @since 4.0
  */
 public class BotStationResources {
+    private static final Log log = LogFactory.getLog(BotInvokerFactory.class);
     private static final PropertyResources RESOURCES = new PropertyResources("botstation.properties");
 
     public static BotLogger createBotLogger() {
@@ -51,6 +56,17 @@ public class BotStationResources {
 
     public static String getSystemPassword() {
         return RESOURCES.getStringPropertyNotNull("botstation.system.password");
+    }
+
+    public static long getBotInvocationPeriod() {
+        long periodInSeconds = RESOURCES.getLongProperty("botstation.invocation.period.seconds", 30);
+        if (periodInSeconds < 1) {
+            log.warn("bot_ivoker.properies invocation.period is less than 1 sec. Invocation period was set to 30 sec.");
+            periodInSeconds = 30;
+        } else {
+            log.info("Invocation period was set to " + periodInSeconds + " sec.");
+        }
+        return periodInSeconds * 1000;
     }
 
     public static PropertyResources getResources() {

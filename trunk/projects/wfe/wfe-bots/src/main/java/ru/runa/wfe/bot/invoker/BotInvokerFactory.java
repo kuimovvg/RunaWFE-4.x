@@ -17,47 +17,24 @@
  */
 package ru.runa.wfe.bot.invoker;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.commons.PropertyResources;
+import ru.runa.wf.logic.bot.WorkflowThreadPoolBotInvoker;
 
 /**
  * Created on 23.03.2005
  * 
  */
 public class BotInvokerFactory {
-    private static final Log log = LogFactory.getLog(BotInvokerFactory.class);
-    private static final PropertyResources RESOURCES = new PropertyResources("bot_invoker.properties");
-
     private static BotInvoker INSTANCE = null;
-
-    private static String getBotInvokerClassName() {
-        return RESOURCES.getStringPropertyNotNull("BotInvoker.class");
-    }
 
     public static synchronized BotInvoker getBotInvoker() {
         if (INSTANCE == null) {
-            INSTANCE = ClassLoaderUtil.instantiate(getBotInvokerClassName());
-            log.info("Using " + INSTANCE.getClass().getName());
+            INSTANCE = new WorkflowThreadPoolBotInvoker();
         }
         return INSTANCE;
     }
 
     public static synchronized void unsetBotInvoker() {
         INSTANCE = null;
-    }
-
-    public static long getBotInvocationPeriod() {
-        long periodInSeconds = RESOURCES.getLongProperty("invocation.period", 30);
-        if (periodInSeconds < 1) {
-            log.warn("bot_ivoker.properies invocation.period is less than 1 sec. Invocation period was set to 30 sec.");
-            periodInSeconds = 30;
-        } else {
-            log.info("Invocation period was set to " + periodInSeconds + " sec.");
-        }
-        return periodInSeconds * 1000;
     }
 
 }

@@ -22,6 +22,13 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>wfe-bots</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<scope>provided</scope>

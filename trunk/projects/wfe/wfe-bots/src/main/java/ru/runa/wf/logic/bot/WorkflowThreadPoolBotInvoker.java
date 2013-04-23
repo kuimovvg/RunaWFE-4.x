@@ -109,7 +109,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                         botExecutors.add(new WorkflowBotExecutor(user, bot, tasks));
                         ProcessExecutionErrors.removeBotTaskConfigurationError(bot, "*");
                     } catch (Exception e) {
-                        log.error("Unable to configure bot " + bot);
+                        log.error("Unable to configure " + bot);
                         ProcessExecutionErrors.addBotTaskConfigurationError(bot, "*", e);
                     }
                 }
