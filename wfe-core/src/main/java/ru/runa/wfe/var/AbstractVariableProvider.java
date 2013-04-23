@@ -1,6 +1,9 @@
 package ru.runa.wfe.var;
 
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.IExecutorLoader;
 import ru.runa.wfe.var.dto.WfVariable;
 
 /**
@@ -10,6 +13,10 @@ import ru.runa.wfe.var.dto.WfVariable;
  * @since 4.0
  */
 public abstract class AbstractVariableProvider implements IVariableProvider {
+
+    protected IExecutorLoader getExecutorLoader() {
+        return ApplicationContextFactory.getExecutorDAO();
+    }
 
     @Override
     public Object getValueNotNull(String variableName) throws VariableDoesNotExistException {
@@ -23,6 +30,9 @@ public abstract class AbstractVariableProvider implements IVariableProvider {
     @Override
     public <T> T getValue(Class<T> clazz, String variableName) {
         Object object = getValue(variableName);
+        if (Executor.class.isAssignableFrom(clazz)) {
+            return (T) TypeConversionUtil.convertToExecutor(object, getExecutorLoader());
+        }
         return TypeConversionUtil.convertTo(clazz, object);
     }
 
