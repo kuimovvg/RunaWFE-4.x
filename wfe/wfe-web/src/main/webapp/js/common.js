@@ -1,12 +1,8 @@
 
 $(document).ready(function() {
 	// http://jqueryui.com/tooltip/	
-	$(document).mousemove(function(event) {
-		$(document).tooltip({ position: {
-			my: "left+3 bottom-3",
-			of: event,
-			collision: "fit"
-		}});
+	$(document).tooltip({ 
+		track: true
 	});
 	
 	// http://trentrichardson.com/examples/timepicker/
@@ -35,14 +31,17 @@ function escapeQuotesForHtmlContext(s) {
 }
 
 function clearErrorMessages(form) {
-	$(".errorFor").each(function(){
+	$("img[errorFor]").each(function() {
 		$(this).remove();
 	});
 }
 
 function addError(field, errorText) {
-   	var errorImg = $("<img src='/wfe/images/error.gif' errorFor='yes' title='"+errorText+"'>");
-	$(field).append(errorImg);
+    var errorImg = document.createElement("img");
+    errorImg.setAttribute("title", errorText);
+    errorImg.setAttribute("src", "/wfe/images/error.gif");
+    errorImg.setAttribute("errorFor", "yes");
+    field.parentNode.insertBefore(errorImg, field.nextSibling);
 }
 
 function openConfirmPopup(element, cookieName, message, confirmMessage, cancelButton, okButton) {
