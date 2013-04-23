@@ -1,6 +1,7 @@
 package ru.runa.wfe.service.client;
 
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.IExecutorLoader;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -17,8 +18,14 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
     private final Long processId;
 
     public DelegateProcessVariableProvider(User user, Long processId) {
+        super();
         this.user = user;
         this.processId = processId;
+    }
+
+    @Override
+    protected IExecutorLoader getExecutorLoader() {
+        return new DelegateExecutorLoader(user);
     }
 
     @Override
