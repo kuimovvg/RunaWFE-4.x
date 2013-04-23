@@ -12,6 +12,7 @@ import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
+import ru.runa.wfe.execution.Token;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -95,4 +96,14 @@ public class ProcessDAO extends GenericDAO<Process> {
         });
     }
 
+    @Override
+    public void delete(Process process) {
+        log.debug("deleting tokens for " + process);
+        List<Token> tokens = getHibernateTemplate().find("from Token where process=? and parent is not null order by id desc", process);
+        for (Token token : tokens) {
+            log.debug("deleting " + token);
+            getHibernateTemplate().delete(token);
+        }
+        super.delete(process);
+    }
 }
