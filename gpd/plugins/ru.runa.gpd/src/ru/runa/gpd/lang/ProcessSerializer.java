@@ -30,4 +30,5 @@ public abstract class ProcessSerializer {
             node.addCDATA(nodeValue);
         }
     }
+    
 }
