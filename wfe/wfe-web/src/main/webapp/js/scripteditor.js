@@ -34,7 +34,7 @@ function editScript(fileName, saveButtonText, executeButtonText, cancelButtonTex
 		executeScript(); 
 	};
 	buttons[cancelButtonText] = function() {
-		closeEditor();
+		destroyEditor();
 	};
 	$.editor.dialog("option", "buttons", buttons);
 	$.editor.dialog("open");
@@ -71,11 +71,6 @@ function initEditor(msg) {
 	});
 }
 
-function closeEditor() {
-	$.editor.dialog("close");
-	destroyEditor();
-}
-
 function destroyEditor() {
 	$.editor.dialog("destroy").remove();
 	xmleditor = null;
@@ -94,7 +89,7 @@ function saveScript() {
 		dataType: "html",
 		success: function(msg) {
 			setStatusMessage(saveSuccessMessage);
-			closeEditor();
+			destroyEditor();
 		}
 	});
 }
@@ -123,7 +118,7 @@ function executeScript() {
 			}
 		}
 	});
-	closeEditor();
+	destroyEditor();
 }
 
 function uploadScript(saveButtonText, executeButtonText, cancelButtonText) {
