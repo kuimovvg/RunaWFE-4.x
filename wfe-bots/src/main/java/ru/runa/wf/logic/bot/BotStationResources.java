@@ -53,4 +53,7 @@ public class BotStationResources {
         return RESOURCES.getStringPropertyNotNull("botstation.system.password");
     }
 
+    public static PropertyResources getResources() {
+        return RESOURCES;
+    }
 }
