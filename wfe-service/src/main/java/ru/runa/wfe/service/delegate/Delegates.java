@@ -20,12 +20,10 @@ package ru.runa.wfe.service.delegate;
 import java.util.Map;
 import java.util.Properties;
 
-import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.service.AdminScriptService;
 import ru.runa.wfe.service.AuthenticationService;
 import ru.runa.wfe.service.AuthorizationService;
-import ru.runa.wfe.service.BotInvokerService;
 import ru.runa.wfe.service.BotService;
 import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.ExecutionService;
@@ -37,11 +35,10 @@ import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.SubstitutionService;
 import ru.runa.wfe.service.SystemService;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
- * Provides delegates. Delegate's type can not be switched at run-time. Created
+ * Provides delegates. Delegate's type can not be switched at run-time.
  * 
  * @since 4.0
  */
@@ -58,8 +55,8 @@ public class Delegates {
         return (T) delegates.get(delegateClass);
     }
 
-    private static EJB3Delegate createDelegate(Class<? extends EJB3Delegate> delegateClass) {
-        EJB3Delegate delegate = ClassLoaderUtil.instantiate(delegateClass);
+    public static <T extends EJB3Delegate> T createDelegate(Class<T> delegateClass) {
+        T delegate = ClassLoaderUtil.instantiate(delegateClass);
         delegate.setEjbType(PROPERTIES.getProperty("ejb.type"), false);
         delegate.setEjbJndiNameFormat(PROPERTIES.getProperty("ejb.jndiName.format"));
         return delegate;
@@ -111,14 +108,6 @@ public class Delegates {
 
     public static AdminScriptService getAdminScriptService() {
         return getDelegate(AdminScriptServiceDelegate.class);
-    }
-
-    public static BotInvokerService getBotInvokerService(BotStation botStation) {
-        BotInvokerServiceDelegate botInvokerService = getDelegate(BotInvokerServiceDelegate.class);
-        if (botStation != null && !Strings.isNullOrEmpty(botStation.getAddress())) {
-            botInvokerService.setCustomProviderUrl(botStation.getAddress());
-        }
-        return botInvokerService;
     }
 
     public static LDAPSynchronizerService getLDAPSynchronizerService() {

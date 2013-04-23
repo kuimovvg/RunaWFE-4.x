@@ -27,6 +27,7 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.wfe.bot.BotStation;
+import ru.runa.wfe.service.delegate.BotInvokerServiceDelegate;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -43,7 +44,7 @@ public class StopPeriodicBotsInvocationAction extends ActionBase {
         Long id = ((BotStationForm) form).getBotStationId();
         try {
             BotStation botStation = Delegates.getBotService().getBotStation(id);
-            Delegates.getBotInvokerService(botStation).cancelPeriodicBotsInvocation();
+            BotInvokerServiceDelegate.getService(botStation).cancelPeriodicBotsInvocation();
         } catch (Exception e) {
             addError(request, e);
         }
