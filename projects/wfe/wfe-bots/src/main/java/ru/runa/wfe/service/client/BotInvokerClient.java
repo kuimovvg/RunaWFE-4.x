@@ -21,14 +21,15 @@ public class BotInvokerClient {
                 BotStation botStation = Delegates.getBotService().getBotStationByName(botStationName);
                 if (botStation == null) {
                     System.err.println("No botstation could not be found '" + botStationName + "'");
+                    System.exit(-2);
                 }
                 if (START_ARGUMENT.equals(args[0])) {
                     BotInvokerServiceDelegate.getService(botStation).startPeriodicBotsInvocation(botStation);
-                    System.out.println("bots pereodic invocation started");
+                    System.out.println("bots periodic invocation started");
                     System.exit(0);
                 } else if (STOP_ARGUMENT.equals(args[0])) {
                     BotInvokerServiceDelegate.getService(botStation).cancelPeriodicBotsInvocation();
-                    System.out.println("bots pereodic invocation stopped");
+                    System.out.println("bots periodic invocation stopped");
                     System.exit(1);
                 } else if (STATUS_ARGUMENT.equals(args[0])) {
                     if (printStatus(botStation)) {
@@ -44,27 +45,31 @@ public class BotInvokerClient {
             System.out.println("Failed to execute command because of: " + e.getMessage());
             System.out.println("Stack trace:");
             e.printStackTrace();
-            System.exit(-1);
+            System.exit(-3);
         }
     }
 
     private static void printUsage() {
-        System.out.println("Allowed commands:");
-        System.out.println("start - starts pereodic bots invocation, botStationName");
-        System.out.println("stop - stops pereodic bots invocation.");
-        System.out.println("status - checks pereodic bots invocation status.");
+        System.out.println("1 argument: command");
+        System.out.println("start - starts periodic bots invocation, botStationName");
+        System.out.println("stop - stops periodic bots invocation.");
+        System.out.println("status - checks periodic bots invocation status.");
+        System.out.println("2 argument: bot station name");
+        System.out.println("Example: ru.runa.wfe.service.client.BotInvokerClient start localbotstation");
         System.out.println();
-        System.out.println("Error codes:");
-        System.out.println("-1 - invocation error.");
-        System.out.println("0 - bots pereodic invocation started.");
-        System.out.println("1 - bots pereodic invocation stopped.");
+        System.out.println("Return codes:");
+        System.out.println("0 - bots periodic invocation started.");
+        System.out.println("1 - bots periodic invocation stopped.");
+        System.out.println("-1 - invalid usage.");
+        System.out.println("-2 - unable to find bot station by name.");
+        System.out.println("-3 - invocation error.");
     }
 
     private static boolean printStatus(BotStation botStation) {
-        boolean isRunning = BotInvokerServiceDelegate.getService(botStation).isRunning();
-        String status = isRunning ? "started" : "stopped";
-        System.out.println("bots pereodic invocation status:" + status);
-        return isRunning;
+        boolean running = BotInvokerServiceDelegate.getService(botStation).isRunning();
+        String status = running ? "started" : "stopped";
+        System.out.println("bots periodic invocation status:" + status);
+        return running;
     }
 
 }
