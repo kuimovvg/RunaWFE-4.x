@@ -45,7 +45,7 @@ public class FormHashModel extends SimpleHash {
             return wrap(variableValue);
         }
         try {
-            FreemarkerConfiguration conf = FreemarkerConfiguration.getInstance(getClass());
+            FreemarkerConfiguration conf = FreemarkerConfiguration.getInstance();
             FreemarkerTag tag = conf.getTag(key);
             if (tag != null) {
                 tag.init(user, webHelper, variableProvider);
