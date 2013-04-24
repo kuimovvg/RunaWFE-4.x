@@ -104,6 +104,7 @@ public class CopyProcessDefinitionWizardPage extends WizardPage {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("label.language"));
         languageCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+        languageCombo.setEnabled(false);
         for (Language language : Language.values()) {
             languageCombo.add(language.name());
         }
