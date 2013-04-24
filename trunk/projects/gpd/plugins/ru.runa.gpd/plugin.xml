@@ -932,7 +932,7 @@
          point="ru.runa.gpd.handlers">
       <handler
             cellEditorProvider="ru.runa.gpd.extension.decision.BSHDecisionProvider"
-            className="ru.runa.wfe.extension.decision.BSHDecisionHandler"
+            className="ru.runa.wfe.extension.decision.BSFDecisionHandler"
             label="%ru.runa.wfe.extension.decision.BSHDecisionHandler"
             enabled="true"
             type="decisionHandler"/>
