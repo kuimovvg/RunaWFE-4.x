@@ -17,7 +17,7 @@ public class InitializeDBListener implements ServletContextListener {
         log.info("initializing database");
         Delegates.getInitializerService().init(false);
         log.info("initialization done in class loader " + Thread.currentThread().getContextClassLoader());
-        log.info("Initialized FTL tags: " + FreemarkerConfiguration.getInstance(InitializeDBListener.class).getRegistrationInfo());
+        log.info("Initialized FTL tags: " + FreemarkerConfiguration.getInstance().getRegistrationInfo());
     }
 
     @Override
