@@ -27,9 +27,9 @@ public class FreemarkerConfiguration {
 
     private static FreemarkerConfiguration instance;
 
-    public static FreemarkerConfiguration getInstance() {
+    public static FreemarkerConfiguration getInstance(Class<?> clazz) {
         if (instance == null) {
-            instance = new FreemarkerConfiguration();
+            instance = new FreemarkerConfiguration(clazz);
         }
         return instance;
     }
@@ -38,8 +38,9 @@ public class FreemarkerConfiguration {
         return Joiner.on(", ").join(tags.values());
     }
 
-    private FreemarkerConfiguration() {
-        InputStream is = ClassLoaderUtil.getAsStreamNotNull(CONFIG, getClass());
+    private FreemarkerConfiguration(Class<?> clazz) {
+        InputStream is = ClassLoaderUtil.getAsStreamNotNull(CONFIG, clazz);
+        log.info("Using " + is);
         Document document = XmlUtils.parseWithoutValidation(is);
         Element root = document.getRootElement();
         List<Element> tagElements = root.elements(TAG_ELEMENT);
