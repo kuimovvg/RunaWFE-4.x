@@ -100,10 +100,10 @@ public class ReflectionRowBuilder implements RowBuilder {
             boolean[] retVal = allowedCache.get(permission);
             if (retVal == null) {
                 if (extractor == null) {
-                    retVal = Delegates.getAuthorizationService().isAllowed(getUser(), permission, (List<Identifiable>) items);
+                    retVal = Delegates.getAuthorizationService().isAllowed(getUser(), permission, (List<Identifiable>) getItems());
                 } else {
-                    List<Identifiable> identifiables = Lists.newArrayListWithExpectedSize(items.size());
-                    for (Object object : items) {
+                    List<Identifiable> identifiables = Lists.newArrayListWithExpectedSize(getItems().size());
+                    for (Object object : getItems()) {
                         identifiables.add(extractor.getIdentifiable(object, this));
                     }
                     retVal = Delegates.getAuthorizationService().isAllowed(getUser(), permission, identifiables);
@@ -117,9 +117,9 @@ public class ReflectionRowBuilder implements RowBuilder {
         public WfVariable getProcessVariable(Object object, IdentifiableExtractor processIdExtractor, String variableName) {
             Map<Long, WfVariable> cache = taskVariableCache.get(variableName);
             if (cache == null) {
-                List<Long> ids = Lists.newArrayListWithExpectedSize(items.size());
-                for (int i = 0; i < items.size(); ++i) {
-                    ids.add(processIdExtractor.getIdentifiable(items.get(i), this).getIdentifiableId());
+                List<Long> ids = Lists.newArrayListWithExpectedSize(getItems().size());
+                for (int i = 0; i < getItems().size(); ++i) {
+                    ids.add(processIdExtractor.getIdentifiable(getItems().get(i), this).getIdentifiableId());
                 }
                 ExecutionService executionService = Delegates.getExecutionService();
                 cache = executionService.getVariablesFromProcesses(getUser(), ids, variableName);
@@ -255,6 +255,10 @@ public class ReflectionRowBuilder implements RowBuilder {
     protected TR buildItemRow() {
         Object item = items.get(currentState.getItemIndex());
         return buildItemRow(item);
+    }
+
+    protected List<? extends Object> getItems() {
+        return items;
     }
 
     protected TR buildItemRow(Object item) {
