@@ -128,6 +128,7 @@ public class ExecutionLogic extends WFCommonLogic {
                 subprocessList.add(subprocess);
             }
         }
+        subprocessList = filterIdentifiable(user, subprocessList, ProcessPermission.READ);
         return getProcesses(subprocessList);
     }
 
