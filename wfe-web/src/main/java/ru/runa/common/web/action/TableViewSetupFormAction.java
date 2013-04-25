@@ -158,7 +158,6 @@ public class TableViewSetupFormAction extends LookupDispatchAction {
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         TableViewSetupForm tableViewSetupForm = (TableViewSetupForm) form;
         try {
-            apply(mapping, form, request, response);
             Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
             tableViewSetupForm = (TableViewSetupForm) form;
             BatchPresentation batchPresentation = profile.getActiveBatchPresentation(tableViewSetupForm.getBatchPresentationId());
