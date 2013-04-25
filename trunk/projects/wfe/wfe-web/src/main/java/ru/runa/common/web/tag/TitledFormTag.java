@@ -162,7 +162,8 @@ public abstract class TitledFormTag extends FormTag {
     protected static TDBuilder[] getBuilders(TDBuilder[] prefix, BatchPresentation batchPresentation, TDBuilder[] suffix) {
         int displayed = batchPresentation.getDisplayFields().length;
         for (FieldDescriptor field : batchPresentation.getDisplayFields()) {
-            if (field.displayName.startsWith(ClassPresentation.editable_prefix) || field.fieldState != FieldState.ENABLED) {
+            if (field.displayName.startsWith(ClassPresentation.editable_prefix) || field.displayName.startsWith(ClassPresentation.filterable_prefix)
+                    || field.fieldState != FieldState.ENABLED) {
                 --displayed;
             }
         }
@@ -172,7 +173,8 @@ public abstract class TitledFormTag extends FormTag {
         }
         int idx = 0;
         for (int i = 0; i < batchPresentation.getDisplayFields().length; ++i) {
-            if (!batchPresentation.getDisplayFields()[i].displayName.startsWith(ClassPresentation.editable_prefix)
+            if ((!batchPresentation.getDisplayFields()[i].displayName.startsWith(ClassPresentation.editable_prefix) && !batchPresentation
+                    .getDisplayFields()[i].displayName.startsWith(ClassPresentation.filterable_prefix))
                     && batchPresentation.getDisplayFields()[i].fieldState == FieldState.ENABLED) {
                 builders[(idx++) + prefix.length] = (TDBuilder) batchPresentation.getDisplayFields()[i].getTDBuilder();
             }
