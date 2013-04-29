@@ -32,7 +32,8 @@ import ru.runa.wfe.graph.image.model.TransitionModel;
 import ru.runa.wfe.graph.image.util.ActionUtils;
 import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.lang.NodeType;
-import ru.runa.wfe.lang.Transition;
+
+import com.google.common.base.Objects;
 
 public class TransitionFigureBase {
     protected String name;
@@ -117,7 +118,8 @@ public class TransitionFigureBase {
             yPoints[i + 1] = bendPoint.y;
         }
         if (bendPoint == null) {
-            if (figureFrom.getType() == NodeType.Fork || figureFrom.getType() == NodeType.Join || Transition.TIMEOUT_TRANSITION_NAME.equals(name)) {
+            if (figureFrom.getType() == NodeType.Fork || figureFrom.getType() == NodeType.Join
+                    || Objects.equal(figureFrom.getTimerTransitionName(), name)) {
                 bendPoint = start;
             } else {
                 bendPoint = new Point((int) rectFrom.getCenterX(), (int) rectFrom.getCenterY());// start;
@@ -140,7 +142,7 @@ public class TransitionFigureBase {
 
         if (actionsCount > 0) {
             Point p = new Point(xPoints[1], yPoints[1]);
-            boolean fromTimer = Transition.TIMEOUT_TRANSITION_NAME.equals(name);
+            boolean fromTimer = Objects.equal(figureFrom.getTimerTransitionName(), name);
             if (ActionUtils.areActionsFitInLine(actionsCount, start, p, fromTimer, exclusive)) {
                 for (int i = 0; i < actionsCount; i++) {
                     Point loc = ActionUtils.getActionLocationOnTransition(i, start, p, fromTimer, exclusive);
@@ -159,7 +161,7 @@ public class TransitionFigureBase {
         if (exclusive) {
             Point from = new Point(start);
             double angle = getAngle(xPoints[0], yPoints[0], xPoints[1], yPoints[1]);
-            if (Transition.TIMEOUT_TRANSITION_NAME.equals(name)) {
+            if (Objects.equal(figureFrom.getTimerTransitionName(), name)) {
                 from.x += DrawProperties.GRID_SIZE * Math.cos(angle);
                 from.y += DrawProperties.GRID_SIZE * Math.sin(angle);
             }
@@ -195,19 +197,19 @@ public class TransitionFigureBase {
         graphics.fillPolygon(xSmPoints, ySmPoints, xSmPoints.length);
 
         if (!DrawProperties.useEdgingOnly() && name != null && !name.startsWith("tr")) {
-            String drawString = Transition.TIMEOUT_TRANSITION_NAME.equals(name) ? timerInfo : name;
+            String drawString = Objects.equal(figureFrom.getTimerTransitionName(), name) ? timerInfo : name;
             Rectangle2D textBounds = graphics.getFontMetrics().getStringBounds(drawString, graphics);
             int padding = 1;
             int xStart = 0;
             int yStart = 0;
             if (figureFrom.getType() == NodeType.Fork) {
-            	xStart = (int) (xPoints[xPoints.length - 2] + xPoints[xPoints.length - 1] - textBounds.getWidth()) / 2;
+                xStart = (int) (xPoints[xPoints.length - 2] + xPoints[xPoints.length - 1] - textBounds.getWidth()) / 2;
                 yStart = (int) (yPoints[yPoints.length - 2] + yPoints[yPoints.length - 1] - textBounds.getHeight()) / 2;
             } else {
-            	xStart = (int) (xPoints[0] + xPoints[1] - textBounds.getWidth()) / 2;
+                xStart = (int) (xPoints[0] + xPoints[1] - textBounds.getWidth()) / 2;
                 yStart = (int) (yPoints[0] + yPoints[1] - textBounds.getHeight()) / 2;
             }
-            
+
             Color orig = graphics.getColor();
             graphics.setColor(DrawProperties.getBackgroundColor());
             graphics.fillRect(xStart - 2 * padding, yStart - padding, (int) (textBounds.getWidth() + 1 + 2 * padding),

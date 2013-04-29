@@ -64,7 +64,7 @@ public class StartFormTag extends WFFormTag {
     }
 
     public List<String> getTransitionNames() {
-        return Delegates.getDefinitionService().getOutputTransitionNames(getUser(), definitionId, null);
+        return Delegates.getDefinitionService().getOutputTransitionNames(getUser(), definitionId, null, false);
     }
 
     @Override

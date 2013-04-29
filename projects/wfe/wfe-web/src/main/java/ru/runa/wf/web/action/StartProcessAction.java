@@ -63,7 +63,7 @@ public class StartProcessAction extends ActionBase {
         try {
             saveToken(request);
             if (Delegates.getDefinitionService().getStartInteraction(getLoggedUser(request), definitionId).hasForm()
-                    || Delegates.getDefinitionService().getOutputTransitionNames(getLoggedUser(request), definitionId, null).size() > 1) {
+                    || Delegates.getDefinitionService().getOutputTransitionNames(getLoggedUser(request), definitionId, null, false).size() > 1) {
                 successForward = Commons.forward(mapping.findForward(ru.runa.common.WebResources.FORWARD_SUCCESS_DISPLAY_START_FORM),
                         IdForm.ID_INPUT_NAME, definitionId);
             } else {

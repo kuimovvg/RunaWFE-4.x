@@ -43,6 +43,7 @@ import ru.runa.wfe.lang.jpdl.Join;
 import ru.runa.wfe.lang.jpdl.JpdlEndTokenNode;
 import ru.runa.wfe.var.VariableMapping;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -438,9 +439,13 @@ public class JpdlXmlReader {
     private void resolveTransitionDestination(ProcessDefinition processDefinition, Element element, Node node) {
         Transition transition = new Transition();
         transition.setProcessDefinition(processDefinition);
-        // add the transition to the node
         node.addLeavingTransition(transition);
         transition.setName(element.attributeValue(NAME_ATTR));
+        for (CreateTimerAction createTimerAction : node.getTimerActions()) {
+            if (Objects.equal(createTimerAction.getTransitionName(), transition.getName())) {
+                transition.setTimerTransition(true);
+            }
+        }
         transition.setDescription(element.elementTextTrim(DESCRIPTION_NODE));
         // set destinationNode of the transition
         String toId = element.attributeValue(TO_ATTR);

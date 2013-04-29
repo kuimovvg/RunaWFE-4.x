@@ -11,13 +11,14 @@ import ru.runa.wfe.graph.image.util.AngleInfo;
 import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.graph.image.util.Line;
 import ru.runa.wfe.graph.image.util.LineUtils;
-import ru.runa.wfe.lang.Transition;
+
+import com.google.common.base.Objects;
 
 public class ReceiveMessageNodeFigure extends AbstractFigure {
 
     @Override
     public Point getTransitionPoint(double x, double y, String transitionName) {
-        if (withTimer && Transition.TIMEOUT_TRANSITION_NAME.equals(transitionName)) {
+        if (Objects.equal(timerTransitionName, transitionName)) {
             return new Point(coords[0] + DrawProperties.GRID_SIZE, coords[1] + coords[3] - DrawProperties.GRID_SIZE);
         }
         return super.getTransitionPoint(x, y, transitionName);
@@ -35,7 +36,7 @@ public class ReceiveMessageNodeFigure extends AbstractFigure {
     @Override
     public void fill(Graphics2D graphics) {
         graphics.fillPolygon(createPolygon());
-        if (!minimized && withTimer) {
+        if (!minimized && timerTransitionName != null) {
             graphics.fillOval(coords[0], coords[1] + coords[3] - DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2,
                     DrawProperties.GRID_SIZE * 2);
         }
@@ -48,7 +49,7 @@ public class ReceiveMessageNodeFigure extends AbstractFigure {
             Rectangle r = getRectangle();
             drawTextInfo(graphics, (int) r.getHeight() / 2 - DrawProperties.getFontSize());
         }
-        if (!minimized && withTimer) {
+        if (!minimized && timerTransitionName != null) {
             // Clean area for timer
             Color orig = graphics.getColor();
             graphics.setColor(DrawProperties.getBackgroundColor());

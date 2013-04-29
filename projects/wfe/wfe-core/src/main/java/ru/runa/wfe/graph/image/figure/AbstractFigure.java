@@ -60,7 +60,7 @@ public abstract class AbstractFigure {
     protected int actionsCount;
     protected boolean async;
     protected boolean minimized;
-    protected boolean withTimer;
+    protected String timerTransitionName;
 
     protected Map<String, TransitionFigureBase> transitions = new HashMap<String, TransitionFigureBase>();
     protected RenderHits renderHits;
@@ -73,7 +73,11 @@ public abstract class AbstractFigure {
         actionsCount = model.getActionsCount();
         async = model.isAsync();
         minimized = model.isMinimizedView();
-        withTimer = model.isWithTimer();
+        timerTransitionName = model.getTimerTransitionName();
+    }
+
+    public String getTimerTransitionName() {
+        return timerTransitionName;
     }
 
     public int[] getCoords() {

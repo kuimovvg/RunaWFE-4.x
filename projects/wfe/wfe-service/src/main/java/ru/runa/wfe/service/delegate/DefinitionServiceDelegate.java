@@ -77,8 +77,8 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
-    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) {
-        return getDefinitionService().getOutputTransitionNames(user, definitionId, taskId);
+    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId, boolean withTimerTransitions) {
+        return getDefinitionService().getOutputTransitionNames(user, definitionId, taskId, withTimerTransitions);
     }
 
     @Override

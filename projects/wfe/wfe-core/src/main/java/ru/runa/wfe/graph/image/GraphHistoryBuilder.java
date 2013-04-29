@@ -64,6 +64,7 @@ import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -195,7 +196,7 @@ public class GraphHistoryBuilder {
                                         TransitionFigureBase transitionFigureBase = factory.createTransitionFigure(transitionModel, nodeFigure,
                                                 figureTo);
                                         transitionFigureBase.init(transitionModel, nodeFigure, figureTo);
-                                        if (Transition.TIMEOUT_TRANSITION_NAME.equals(transitionModel.getName())) {
+                                        if (Objects.equal(nodeModel.getTimerTransitionName(), transitionModel.getName())) {
                                             transitionFigureBase.setTimerInfo(GraphImageHelper.getTimerInfo(node));
                                         }
                                         nodeFigure.addTransition(transition.getName(), transitionFigureBase);
@@ -228,7 +229,8 @@ public class GraphHistoryBuilder {
     }
 
     /**
-     * Method calculates the width of tokens. Token is line that contains nodes and transitions. Fork node creates subtokens. Join node finishes all
+     * Method calculates the width of tokens. Token is line that contains nodes
+     * and transitions. Fork node creates subtokens. Join node finishes all
      * subtokens node and continue the main token.
      * 
      * @param startTokenNodeId
@@ -367,7 +369,8 @@ public class GraphHistoryBuilder {
     }
 
     /**
-     * Method calculates X and Y coordinates for figures which present nodes in the graph.
+     * Method calculates X and Y coordinates for figures which present nodes in
+     * the graph.
      * 
      * @param widthTokens
      *            - object contains start node in token and the width of token.

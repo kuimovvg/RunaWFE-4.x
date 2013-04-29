@@ -29,7 +29,6 @@ import ru.runa.wf.web.TaskFormBuilder;
 import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wf.web.html.FormBuilderFactory;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 
@@ -68,9 +67,7 @@ public class TaskFormTag extends WFFormTag {
     }
 
     public List<String> getTransitionNames() {
-        List<String> result = Delegates.getDefinitionService().getOutputTransitionNames(getUser(), null, taskId);
-        result.remove(Transition.TIMEOUT_TRANSITION_NAME);
-        return result;
+        return Delegates.getDefinitionService().getOutputTransitionNames(getUser(), null, taskId, false);
     }
 
     @Override
