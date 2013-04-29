@@ -67,7 +67,7 @@ public class TaskNodeFigure extends AbstractFigure {
         }
         if (timerTransitionName != null && !minimized) {
             if (graphiti) {
-                drawImage(graphics, "boundary_timer.png", coords[0] + 1, coords[1] + coords[3] - 2 * DrawProperties.GRID_SIZE, true);
+                drawImage(graphics, "image/bpmn/boundary_timer.png", coords[0] + 1, coords[1] + coords[3] - 2 * DrawProperties.GRID_SIZE, true);
             } else {
                 // Clean area for timer
                 Color orig = graphics.getColor();
