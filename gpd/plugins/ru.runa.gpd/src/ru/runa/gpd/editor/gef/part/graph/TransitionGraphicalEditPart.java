@@ -105,6 +105,9 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
             if (getModel().getSource() instanceof ITimed) {
                 getModel().getSource().addPropertyChangeListener(this);
             }
+            if (getModel().getSource() instanceof Timer) {
+                getModel().getSource().addPropertyChangeListener(this);
+            }
             super.activate();
         }
     }
@@ -123,6 +126,9 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
         if (isActive()) {
             getModel().removePropertyChangeListener(this);
             if (getModel().getSource() instanceof ITimed) {
+                getModel().getSource().removePropertyChangeListener(this);
+            }
+            if (getModel().getSource() instanceof Timer) {
                 getModel().getSource().removePropertyChangeListener(this);
             }
             super.deactivate();
@@ -152,7 +158,13 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
         } else if (PROPERTY_TIMER_DELAY.equals(messageId)) {
             Transition transition = getModel();
             if (transition.getName().equals(PluginConstants.TIMER_TRANSITION_NAME)) {
-                Timer timer = ((ITimed) transition.getSource()).getTimer();
+                Timer timer = null;
+                if (transition.getSource() instanceof Timer) {
+                    timer = (Timer) transition.getSource();
+                }
+                if (transition.getSource() instanceof ITimed) {
+                    timer = ((ITimed) transition.getSource()).getTimer();
+                }
                 getFigure().setLabelText(timer != null ? timer.getDelay().toString() : "");
                 refreshVisuals();
             }
