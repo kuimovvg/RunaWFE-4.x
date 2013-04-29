@@ -1176,6 +1176,13 @@
             label="%ru.runa.wfe.extension.handler.var.CreateCalendarHandler"
             type="actionHandler">
       </handler>
+      <handler
+            cellEditorProvider="ru.runa.gpd.extension.handler.var.ConvertMapsToListsHandlerProvider"
+            className="ru.runa.wfe.extension.handler.var.ConvertMapsToListsHandler"
+            enabled="true"
+            label="%ru.runa.wfe.extension.handler.var.ConvertMapsToListsHandler"
+            type="actionHandler">
+      </handler>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
