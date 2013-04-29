@@ -54,7 +54,9 @@ function Reload() {
 <table width="100%">
 	<tr>
 		<td align="right">
-			<wf:updatePermissionsOnIdentifiableLink identifiableId='<%=id %>' href='<%= "/manage_process_permissions.do?" + parameterName+ "=" + id %>'  />
+		<% if(graphMode) { %>
+			<wf:showProcessGraphLink identifiableId='<%=id %>' href='<%= "/show_process_graph.do?" + parameterName+ "=" + id + "&taskId=" + taskId + "&childProcessId=" + childProcessId %>'  />
+		<% } %>
 		</td>
 		<td width="150" align="right">
 			<wf:showTasksHistoryLink identifiableId='<%=id %>' href='<%= "/show_tasks_history.do?" + parameterName+ "=" + id %>'  />
@@ -73,14 +75,9 @@ function Reload() {
 		<td align="right">
 			<wf:showGraphHistoryLink identifiableId='<%=id %>' href='<%= "/show_graph_history.do?" + parameterName+ "=" + id %>'  />
 		</td>
-	<% if(graphMode) { %>
 		<td align="right">
-			<wf:showProcessGraphLink identifiableId='<%=id %>' href='<%= "/show_process_graph.do?" + parameterName+ "=" + id + "&taskId=" + taskId + "&childProcessId=" + childProcessId %>'  />
+			<wf:updatePermissionsOnIdentifiableLink identifiableId='<%=id %>' href='<%= "/manage_process_permissions.do?" + parameterName+ "=" + id %>'  />
 		</td>
-	<% } else { %>
-		<td align="right">
-		</td>
-	<% } %>
 	</tr>
 
 </table>
