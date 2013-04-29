@@ -125,13 +125,19 @@ public class Transition extends NamedGraphElement implements Active {
         }
         return getParent().toString() + " -> (" + getName() + ") -> " + target.toString();
     }
-    
+
     public String getLabel() {
         if (getSource() instanceof Decision || getSource() instanceof ExclusiveGateway) {
             return getName();
         }
-        if (PluginConstants.TIMER_TRANSITION_NAME.equals(getName()) && getSource() instanceof ITimed) {
-            Timer timer = ((ITimed) getSource()).getTimer();
+        if (PluginConstants.TIMER_TRANSITION_NAME.equals(getName())) {
+            Timer timer = null;
+            if (getSource() instanceof Timer) {
+                timer = (Timer) getSource();
+            }
+            if (getSource() instanceof ITimed) {
+                timer = ((ITimed) getSource()).getTimer();
+            }
             return timer != null ? timer.getDelay().toString() : "";
         }
         if (getSource() instanceof TaskState) {

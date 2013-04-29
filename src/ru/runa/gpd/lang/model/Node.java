@@ -2,9 +2,12 @@ package ru.runa.gpd.lang.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.util.Duration;
+
+import com.google.common.collect.Sets;
 
 public abstract class Node extends NamedGraphElement implements Describable {
     @Override
@@ -59,6 +62,13 @@ public abstract class Node extends NamedGraphElement implements Describable {
                 }
                 addError("noOutputTransitions");
             }
+        }
+        Set<String> transitionNames = Sets.newHashSet();
+        for (Transition transition : getLeavingTransitions()) {
+            transitionNames.add(transition.getName());
+        }
+        if (transitionNames.size() != getLeavingTransitions().size()) {
+            addError("duplicatedTransitionNames");
         }
     }
 
