@@ -29,10 +29,10 @@ import com.google.common.base.Preconditions;
 public class Transition extends GraphElement {
     private static final long serialVersionUID = 1L;
     private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_TRANSITION };
-    public static final String TIMEOUT_TRANSITION_NAME = "time-out-transition";
 
     private Node from;
     private Node to;
+    private boolean timerTransition;
 
     @Override
     public void setName(String name) {
@@ -70,6 +70,14 @@ public class Transition extends GraphElement {
 
     public Node getTo() {
         return to;
+    }
+
+    public boolean isTimerTransition() {
+        return timerTransition;
+    }
+
+    public void setTimerTransition(boolean timerTransition) {
+        this.timerTransition = timerTransition;
     }
 
     /**

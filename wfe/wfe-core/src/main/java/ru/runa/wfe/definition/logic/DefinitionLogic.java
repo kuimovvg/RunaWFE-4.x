@@ -216,7 +216,7 @@ public class DefinitionLogic extends WFCommonLogic {
         return definition.getInteractionNotNull(task.getNodeId());
     }
 
-    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) {
+    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId, boolean withTimerTransitions) {
         List<Transition> transitions;
         if (definitionId != null) {
             ProcessDefinition processDefinition = getDefinition(definitionId);
@@ -228,7 +228,9 @@ public class DefinitionLogic extends WFCommonLogic {
         }
         List<String> result = new ArrayList<String>();
         for (Transition transition : transitions) {
-            result.add(transition.getName());
+            if (withTimerTransitions || !transition.isTimerTransition()) {
+                result.add(transition.getName());
+            }
         }
         return result;
     }

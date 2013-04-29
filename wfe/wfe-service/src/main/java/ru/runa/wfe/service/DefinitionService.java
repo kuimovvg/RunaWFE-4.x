@@ -75,7 +75,8 @@ public interface DefinitionService {
      *            task id, can be <code>null</code>
      * @return names
      */
-    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId) throws TaskDoesNotExistException;
+    public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId, boolean withTimerTransitions)
+            throws TaskDoesNotExistException;
 
     public Interaction getTaskInteraction(User user, Long taskId) throws TaskDoesNotExistException;
 

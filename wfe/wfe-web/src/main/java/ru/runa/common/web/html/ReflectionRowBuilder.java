@@ -87,7 +87,7 @@ public class ReflectionRowBuilder implements RowBuilder {
                     && ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_PARAMETER)
                     || ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER)) {
                 if (!(Delegates.getDefinitionService().getStartInteraction(getUser(), pid).hasForm() || Delegates.getDefinitionService()
-                        .getOutputTransitionNames(getUser(), pid, null).size() > 1)) {
+                        .getOutputTransitionNames(getUser(), pid, null, false).size() > 1)) {
                     String actionParameter = ConfirmationPopupHelper.START_PROCESS_FORM_PARAMETER;
                     return ConfirmationPopupHelper.getInstance().getConfirmationPopupCodeHTML(actionParameter, getPageContext());
                 }
