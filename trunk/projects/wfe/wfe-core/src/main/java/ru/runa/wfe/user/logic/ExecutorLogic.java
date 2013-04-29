@@ -135,6 +135,7 @@ public class ExecutorLogic extends CommonLogic {
         if (executor instanceof Actor) {
             profileDAO.delete((Actor) executor);
         }
+        permissionDAO.deleteOwnPermissions(executor);
         permissionDAO.deleteAllPermissions(executor);
         relationDAO.removeAllRelationPairs(executor);
         executorDAO.remove(executor);

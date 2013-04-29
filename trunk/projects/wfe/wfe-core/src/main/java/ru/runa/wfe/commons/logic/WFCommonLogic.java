@@ -175,6 +175,7 @@ public class WFCommonLogic extends CommonLogic {
 
     protected void deleteProcess(Process process) {
         log.debug("deleting process " + process);
+        permissionDAO.deleteAllPermissions(process);
         List<Process> subProcesses = nodeProcessDAO.getSubprocesses(process);
         nodeProcessDAO.deleteByProcess(process);
         for (Process subProcess : subProcesses) {

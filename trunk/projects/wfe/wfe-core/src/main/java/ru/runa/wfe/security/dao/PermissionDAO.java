@@ -258,8 +258,18 @@ public class PermissionDAO extends CommonDAO {
      * 
      * @param executor
      */
-    public void deleteAllPermissions(Executor executor) {
+    public void deleteOwnPermissions(Executor executor) {
         getHibernateTemplate().bulkUpdate("delete from PermissionMapping where executor=?", executor);
+    }
+
+    /**
+     * Deletes all permissions for identifiable.
+     * 
+     * @param identifiable
+     */
+    public void deleteAllPermissions(Identifiable identifiable) {
+        getHibernateTemplate().bulkUpdate("delete from PermissionMapping where type=? and identifiableId=?", identifiable.getSecuredObjectType(),
+                identifiable.getIdentifiableId());
     }
 
     /**
