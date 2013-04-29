@@ -58,16 +58,21 @@ public abstract class Node extends NamedGraphElement implements Describable {
         if (!(this instanceof EndState) && !(this instanceof EndTokenState)) {
             if (getLeavingTransitions().size() == 0) {
                 if (this instanceof Timer) {
-                    return; // TODO current in jpdl
+                    // for jpdl
+                    return;
                 }
                 addError("noOutputTransitions");
             }
         }
+        List<Transition> transitions = getLeavingTransitions();
+        for (Timer timer : getChildren(Timer.class)) {
+            transitions.addAll(timer.getLeavingTransitions());
+        }
         Set<String> transitionNames = Sets.newHashSet();
-        for (Transition transition : getLeavingTransitions()) {
+        for (Transition transition : transitions) {
             transitionNames.add(transition.getName());
         }
-        if (transitionNames.size() != getLeavingTransitions().size()) {
+        if (transitionNames.size() != transitions.size()) {
             addError("duplicatedTransitionNames");
         }
     }
