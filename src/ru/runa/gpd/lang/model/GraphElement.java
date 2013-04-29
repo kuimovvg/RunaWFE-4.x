@@ -21,12 +21,13 @@ import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
-import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.DelegableClassPropertyDescriptor;
 import ru.runa.gpd.property.DelegableConfPropertyDescriptor;
+import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 
 @SuppressWarnings("unchecked")
 public abstract class GraphElement implements IPropertySource, PropertyNames, IActionFilter {
@@ -166,11 +167,18 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         try {
             String nodeId = child.getId();
             if (nodeId == null) {
-                child.setId("ID" + getProcessDefinition().getNextNodeId());
+                nodeId = String.valueOf(getProcessDefinition().getNextNodeId());
+                child.setId("ID" + nodeId);
             } else {
                 nodeId = nodeId.substring(2);
                 int nodeIdInt = Integer.parseInt(nodeId);
                 getProcessDefinition().setNextNodeIdIfApplicable(nodeIdInt);
+            }
+            if (child instanceof NamedGraphElement) {
+                NamedGraphElement namedGraphElement = (NamedGraphElement) child;
+                if (Strings.isNullOrEmpty(namedGraphElement.getName())) {
+                    namedGraphElement.setName(child.getTypeDefinition().getLabel() + " " + nodeId);
+                }
             }
         } catch (StringIndexOutOfBoundsException e) {
         } catch (NumberFormatException e) {
