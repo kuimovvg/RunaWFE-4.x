@@ -46,11 +46,4 @@ public class LabeledNodeGraphicalEditPart extends NodeGraphicalEditPart {
         super.fillFigureUpdatePropertyNames(list);
         list.add(PROPERTY_NAME);
     }
-    //    @Override
-    //    public void propertyChange(PropertyChangeEvent evt) {
-    //        super.propertyChange(evt);
-    //        if (PROPERTY_NAME.equals(evt.getPropertyName())) {
-    //            getFigure().setName(getModel().getName());
-    //        }
-    //    }
 }
