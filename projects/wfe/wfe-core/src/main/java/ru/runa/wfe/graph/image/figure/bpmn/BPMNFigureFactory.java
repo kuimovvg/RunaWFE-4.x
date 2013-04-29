@@ -42,42 +42,42 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
         // TODO MultiTaskNode
         case Decision:
         case Merge:
-            figure = new Rhomb("decision.png");
+            figure = new Rhomb("image/bpmn/decision.png");
             break;
         case Fork:
         case Join:
-            figure = new Rhomb("fork_join.png");
+            figure = new Rhomb("image/bpmn/fork_join.png");
             break;
         case StartState:
-            figure = new Circle("start.png");
+            figure = new Circle("image/bpmn/start.png");
             break;
         case End:
-            figure = new Circle("end.png");
+            figure = new Circle("image/bpmn/end.png");
             break;
         case EndToken:
-            figure = new Circle("endtoken.png");
+            figure = new Circle("image/bpmn/endtoken.png");
             break;
         case Subprocess:
             figure = new SubprocessRect();
             break;
         case ActionNode:
             if (graphiti) {
-                figure = new Circle("servicetask.png");
+                figure = new Circle("image/bpmn/servicetask.png");
             } else {
                 figure = new RoundedRect(null);
             }
             break;
         case WaitState:
-            figure = new Circle("waitstate.png");
+            figure = new Circle("image/bpmn/waitstate.png");
             break;
         case MultiSubprocess:
             figure = new SubprocessRect();
             break;
         case SendMessage:
-            figure = new Circle("sendmessage.png");
+            figure = new Circle("image/bpmn/sendmessage.png");
             break;
         case ReceiveMessage:
-            figure = new Circle("receivemessage.png");
+            figure = new Circle("image/bpmn/receivemessage.png");
             break;
         default:
             throw new InternalApplicationException("Unexpected figure type found: " + nodeModel.getType());
