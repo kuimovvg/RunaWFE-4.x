@@ -92,6 +92,7 @@ public class BotLogic extends CommonLogic {
         for (Bot bot : bots) {
             removeBot(user, bot.getId());
         }
+        permissionDAO.deleteAllPermissions(getBotStationNotNull(id));
         botStationDAO.delete(id);
     }
 

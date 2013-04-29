@@ -229,6 +229,7 @@ public class RelationLogic extends CommonLogic {
     public void removeRelationPair(User user, Long relationPairId) {
         RelationPair relationPair = relationDAO.getRelationPairNotNull(relationPairId);
         checkPermissionAllowed(user, relationPair.getRelation(), RelationPermission.UPDATE_RELATION);
+        permissionDAO.deleteAllPermissions(relationPair);
         relationDAO.removeRelationPair(relationPairId);
     }
 
@@ -242,6 +243,7 @@ public class RelationLogic extends CommonLogic {
      */
     public void removeRelation(User user, Long relationId) {
         checkPermissionAllowed(user, RelationsGroupSecure.INSTANCE, RelationPermission.UPDATE_RELATION);
+        permissionDAO.deleteAllPermissions(getRelation(user, relationId));
         relationDAO.removeRelation(relationId);
     }
 

@@ -178,6 +178,7 @@ public class DefinitionLogic extends WFCommonLogic {
         Preconditions.checkNotNull(definitionName, "definitionName must be specified.");
         Deployment deployment = deploymentDAO.findLatestDeployment(definitionName);
         checkPermissionAllowed(user, deployment, DefinitionPermission.UNDEPLOY_DEFINITION);
+        permissionDAO.deleteAllPermissions(deployment);
         ProcessFilter filter = new ProcessFilter();
         filter.setDefinitionName(definitionName);
         List<Process> processes = processDAO.getProcesses(filter);
