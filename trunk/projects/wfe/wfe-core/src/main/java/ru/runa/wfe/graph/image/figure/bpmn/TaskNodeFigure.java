@@ -25,7 +25,8 @@ import java.awt.Rectangle;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.util.ActionUtils;
 import ru.runa.wfe.graph.image.util.DrawProperties;
-import ru.runa.wfe.lang.Transition;
+
+import com.google.common.base.Objects;
 
 public class TaskNodeFigure extends AbstractFigure {
     private static final Color BORDER_COLOR = Color.BLUE;
@@ -37,7 +38,7 @@ public class TaskNodeFigure extends AbstractFigure {
 
     @Override
     public Point getTransitionPoint(double x, double y, String transitionName) {
-        if (withTimer && Transition.TIMEOUT_TRANSITION_NAME.equals(transitionName)) {
+        if (Objects.equal(timerTransitionName, transitionName)) {
             return new Point(coords[0] + DrawProperties.GRID_SIZE, coords[1] + coords[3] - DrawProperties.GRID_SIZE);
         }
         return super.getTransitionPoint(x, y, transitionName);
@@ -64,7 +65,7 @@ public class TaskNodeFigure extends AbstractFigure {
         } else {
             graphics.drawRoundRect(rect.x, rect.y, rect.width, rect.height, 20, 20);
         }
-        if (withTimer && !minimized) {
+        if (timerTransitionName != null && !minimized) {
             if (graphiti) {
                 drawImage(graphics, "boundary_timer.png", coords[0] + 1, coords[1] + coords[3] - 2 * DrawProperties.GRID_SIZE, true);
             } else {

@@ -35,17 +35,17 @@ public class NodeModel {
     private int height;
     private int actionsCount = 0;
     private boolean minimizedView;
-    private boolean withTimer;
+    private String timerTransitionName;
     private boolean async;
 
     private final HashMap<String, TransitionModel> transitions = Maps.newHashMap();
 
-    public boolean isWithTimer() {
-        return withTimer;
+    public String getTimerTransitionName() {
+        return timerTransitionName;
     }
 
-    public void setWithTimer(boolean withTimer) {
-        this.withTimer = withTimer;
+    public void setTimerTransitionName(String timerTransitionName) {
+        this.timerTransitionName = timerTransitionName;
     }
 
     public boolean isAsync() {

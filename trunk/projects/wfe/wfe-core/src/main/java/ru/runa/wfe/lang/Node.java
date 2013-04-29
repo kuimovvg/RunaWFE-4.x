@@ -30,6 +30,7 @@ import ru.runa.wfe.audit.NodeLeaveLog;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -75,6 +76,11 @@ public abstract class Node extends GraphElement {
      *             if leavingTransition is null.
      */
     public Transition addLeavingTransition(Transition leavingTransition) {
+        for (Transition transition : leavingTransitions) {
+            if (Objects.equal(transition.getName(), leavingTransition.getName())) {
+                throw new InternalApplicationException("Duplicated transition: '" + leavingTransition.getName() + "'");
+            }
+        }
         leavingTransitions.add(leavingTransition);
         leavingTransition.setFrom(this);
         return leavingTransition;
@@ -116,7 +122,7 @@ public abstract class Node extends GraphElement {
      */
     public Transition getDefaultLeavingTransitionNotNull() {
         for (Transition transition : leavingTransitions) {
-            if (!Transition.TIMEOUT_TRANSITION_NAME.equals(transition.getName())) {
+            if (!transition.isTimerTransition()) {
                 return transition;
             }
         }

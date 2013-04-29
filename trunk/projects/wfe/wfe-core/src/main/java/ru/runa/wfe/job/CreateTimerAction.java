@@ -66,6 +66,10 @@ public class CreateTimerAction extends Action {
         this.repeatDurationString = repeatDurationString;
     }
 
+    public String getTransitionName() {
+        return transitionName;
+    }
+
     public void setTransitionName(String transitionName) {
         this.transitionName = transitionName;
     }

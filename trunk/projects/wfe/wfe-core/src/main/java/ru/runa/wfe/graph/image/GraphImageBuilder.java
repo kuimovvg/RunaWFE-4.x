@@ -97,7 +97,7 @@ public class GraphImageBuilder {
                 nodeFigures.put(nodeFigure, new RenderHits(DrawProperties.getBaseColor()));
             }
             int leavingTransitionsCount = node.getLeavingTransitions().size();
-            if (node.hasLeavingTransition(Transition.TIMEOUT_TRANSITION_NAME)) {
+            if (nodeModel.getTimerTransitionName() != null) {
                 leavingTransitionsCount--;
             }
             for (Transition transition : node.getLeavingTransitions()) {
@@ -112,7 +112,7 @@ public class GraphImageBuilder {
                     boolean exclusiveNode = (nodeModel.getType() != NodeType.Fork && nodeModel.getType() != NodeType.Join);
                     transitionFigureBase.setExclusive(exclusiveNode && leavingTransitionsCount > 1);
                 }
-                if (Transition.TIMEOUT_TRANSITION_NAME.equals(transitionModel.getName())) {
+                if (Objects.equal(nodeModel.getTimerTransitionName(), transitionModel.getName())) {
                     transitionFigureBase.setTimerInfo(GraphImageHelper.getTimerInfo(node));
                 }
                 nodeFigure.addTransition(transition.getName(), transitionFigureBase);

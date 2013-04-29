@@ -284,7 +284,6 @@ public class BpmnXmlReader {
             }
         }
         createTimerAction.setDueDate(durationString);
-        createTimerAction.setTransitionName(Transition.TIMEOUT_TRANSITION_NAME); // TODO
         // createTimerAction.setRepeatDurationString(element.attributeValue(REPEAT_ATTR));
         String createEventType = node instanceof TaskNode ? Event.EVENTTYPE_TASK_CREATE : Event.EVENTTYPE_NODE_ENTER;
         addAction(node, createEventType, createTimerAction);
@@ -366,8 +365,11 @@ public class BpmnXmlReader {
             Node source;
             if (sourceElement instanceof Node) {
                 source = (Node) sourceElement;
-            } else if (sourceElement instanceof Action) {
-                source = (Node) ((Action) sourceElement).getParent();
+            } else if (sourceElement instanceof CreateTimerAction) {
+                CreateTimerAction createTimerAction = (CreateTimerAction) sourceElement;
+                createTimerAction.setTransitionName(name);
+                source = (Node) createTimerAction.getParent();
+                transition.setTimerTransition(true);
             } else {
                 throw new InternalApplicationException("Unexpected source element " + sourceElement);
             }

@@ -24,13 +24,14 @@ import java.awt.Rectangle;
 
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.util.DrawProperties;
-import ru.runa.wfe.lang.Transition;
+
+import com.google.common.base.Objects;
 
 public class TaskNodeFigure extends AbstractFigure {
 
     @Override
     public Point getTransitionPoint(double x, double y, String transitionName) {
-        if (withTimer && Transition.TIMEOUT_TRANSITION_NAME.equals(transitionName)) {
+        if (Objects.equal(timerTransitionName, transitionName)) {
             return new Point(coords[0] + DrawProperties.GRID_SIZE, coords[1] + coords[3] - DrawProperties.GRID_SIZE);
         }
         return super.getTransitionPoint(x, y, transitionName);
@@ -44,7 +45,7 @@ public class TaskNodeFigure extends AbstractFigure {
         } else {
             graphics.fillRoundRect(rect.x, rect.y, rect.width, rect.height, 20, 10);
         }
-        if (!minimized && withTimer) {
+        if (!minimized && timerTransitionName != null) {
             graphics.fillOval(coords[0], coords[1] + coords[3] - DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2,
                     DrawProperties.GRID_SIZE * 2);
         }
@@ -62,7 +63,7 @@ public class TaskNodeFigure extends AbstractFigure {
             drawActions(graphics);
             drawTextInfo(graphics, 1);
         }
-        if (!minimized && withTimer) {
+        if (!minimized && timerTransitionName != null) {
             // Clean area for timer
             Color orig = graphics.getColor();
             graphics.setColor(DrawProperties.getBackgroundColor());

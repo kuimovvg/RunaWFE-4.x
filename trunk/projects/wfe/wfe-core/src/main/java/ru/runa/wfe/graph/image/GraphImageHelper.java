@@ -17,7 +17,7 @@ import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 
 public class GraphImageHelper {
-	public static int processActionsInEvent(Event event) {
+    public static int processActionsInEvent(Event event) {
         int result = 0;
         for (Action action : event.getActions()) {
             if (action instanceof CreateTimerAction || action instanceof CancelTimerAction || Timer.ESCALATION_NAME.equals(action.getName())) {
@@ -28,7 +28,7 @@ public class GraphImageHelper {
         return result;
     }
 
-	public static int getNodeActionsCount(GraphElement node) {
+    public static int getNodeActionsCount(GraphElement node) {
         int result = 0;
         for (Event event : node.getEvents().values()) {
             result += processActionsInEvent(event);
@@ -53,14 +53,12 @@ public class GraphImageHelper {
         nodeModel.setType(node.getNodeType());
         // nodeModel contains only id
         nodeModel.setName(node.getName());
-        boolean hasTimer = false;
         for (CreateTimerAction createTimerAction : node.getTimerActions()) {
             if (!Timer.ESCALATION_NAME.equals(createTimerAction.getName())) {
-                hasTimer = true;
+                nodeModel.setTimerTransitionName(createTimerAction.getTransitionName());
                 break;
             }
         }
-        nodeModel.setWithTimer(hasTimer);
         if (node instanceof Synchronizable) {
             nodeModel.setAsync(((Synchronizable) node).isAsync());
         }
