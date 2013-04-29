@@ -22,6 +22,9 @@ public class Timer extends Node {
         Duration old = this.duration;
         this.duration = duration;
         firePropertyChange(PROPERTY_TIMER_DELAY, old, duration);
+        if (getParent() != null) {
+            getParent().firePropertyChange(PROPERTY_TIMER_DELAY, old, duration);
+        }
     }
 
     public TimerAction getAction() {
