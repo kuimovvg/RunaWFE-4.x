@@ -48,8 +48,11 @@ public class ExpandCollapseGroupAction extends ActionBase {
             BatchPresentation batchPresentation = profile.getActiveBatchPresentation(groupForm.getBatchPresentationId());
             String groupId = groupForm.getGroupId();
             batchPresentation.setGroupBlockStatus(groupId, !batchPresentation.isGroupBlockExpanded(groupId));
+            int pageNumber = batchPresentation.getPageNumber();
             profile = Delegates.getProfileService().saveBatchPresentation(getLoggedUser(request), batchPresentation);
             ProfileHttpSessionHelper.setProfile(profile, request.getSession());
+            batchPresentation = profile.getActiveBatchPresentation(groupForm.getBatchPresentationId());
+            batchPresentation.setPageNumber(pageNumber);
         } catch (Exception e) {
             addError(request, e);
             ProfileHttpSessionHelper.reloadProfile(request.getSession());
