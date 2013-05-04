@@ -42,10 +42,6 @@ public class ExecutorServiceDelegateGetActorByIdTest extends ServletTestCase {
     private Actor actor;
     private Map<String, Executor> executorsMap;
 
-    public static TestSuite suite() {
-        return new TestSuite(ExecutorServiceDelegateGetActorByIdTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -63,22 +59,22 @@ public class ExecutorServiceDelegateGetActorByIdTest extends ServletTestCase {
 
     public void testGetActorByAuthorizedPerformer() throws Exception {
         Actor returnedBaseGroupActor = executorService.getExecutor(th.getAuthorizedPerformerUser(), actor.getId());
-        assertEquals("actor retuned by buisnessDelegete differes with expected", actor, returnedBaseGroupActor);
+        assertEquals("actor retuned by businessDelegate differes with expected", actor, returnedBaseGroupActor);
         Actor subGroupActor = (Actor) executorsMap.get(ServiceTestHelper.SUB_GROUP_ACTOR_NAME);
         Actor returnedSubGroupActor = executorService.getExecutor(th.getAuthorizedPerformerUser(), subGroupActor.getId());
-        assertEquals("actor retuned by buisnessDelegete differes with expected", subGroupActor, returnedSubGroupActor);
+        assertEquals("actor retuned by businessDelegate differes with expected", subGroupActor, returnedSubGroupActor);
     }
 
     public void testGetActorByUnauthorizedPerformer() throws Exception {
         try {
             executorService.getExecutor(th.getUnauthorizedPerformerUser(), actor.getId());
-            fail("buisnessDelegete allow to getActor() to performer with UnauthorizedPerformerSubject");
+            fail("businessDelegate allow to getActor() to performer with UnauthorizedPerformerSubject");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
         try {
             executorService.getExecutor(th.getUnauthorizedPerformerUser(), th.getSubGroupActor().getId());
-            fail("buisnessDelegete allow to getActor() to performer with UnauthorizedPerformerSubject");
+            fail("businessDelegate allow to getActor() to performer with UnauthorizedPerformerSubject");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
@@ -87,7 +83,7 @@ public class ExecutorServiceDelegateGetActorByIdTest extends ServletTestCase {
     public void testGetUnexistedActorByAuthorizedPerformer() throws Exception {
         try {
             executorService.getExecutor(th.getAuthorizedPerformerUser(), -1l);
-            fail("buisnessDelegete does not throw Exception to getActor()");
+            fail("businessDelegate does not throw Exception to getActor()");
         } catch (ExecutorDoesNotExistException e) {
             //That's what we expect
         }
@@ -96,8 +92,8 @@ public class ExecutorServiceDelegateGetActorByIdTest extends ServletTestCase {
     public void testGetNullActorByAuthorizedPerformer() throws Exception {
         try {
             executorService.getExecutorByName(th.getAuthorizedPerformerUser(), null);
-            fail("buisnessDelegete allow to getActor()with null actor.");
-        } catch (NullPointerException e) {
+            fail("businessDelegate allow to getActor()with null actor.");
+        } catch (IllegalArgumentException e) {
             //That's what we expect 
         }
     }
@@ -105,17 +101,17 @@ public class ExecutorServiceDelegateGetActorByIdTest extends ServletTestCase {
     public void testGetActorByNullPerformer() throws Exception {
         try {
             executorService.getExecutor(null, actor.getId());
-            fail("buisnessDelegete allow to getActor() to performer with null subject.");
-        } catch (NullPointerException e) {
+            fail("businessDelegate allow to getActor() to performer with null subject.");
+        } catch (IllegalArgumentException e) {
             //That's what we expect 
         }
     }
 
     public void testGetActorInsteadOfGroup() throws Exception {
         try {
-            executorService.getExecutor(th.getAuthorizedPerformerUser(), group.getId());
-            fail("buisnessDelegete allow to getActor() where the group really is returned.");
-        } catch (ExecutorDoesNotExistException e) {
+            Actor actor = executorService.<Actor>getExecutor(th.getAuthorizedPerformerUser(), group.getId());
+            fail("businessDelegete allow to getActor() where the group really is returned.");
+        } catch (ClassCastException e) {
             //That's what we expect 
         }
     }

@@ -40,10 +40,6 @@ public class AuthorizationServiceDelegateGetOwnPermissionsTest extends ServletTe
     private ServiceTestHelper helper;
     private AuthorizationService authorizationService;
 
-    public static Test suite() {
-        return new TestSuite(AuthorizationServiceDelegateGetOwnPermissionsTest.class);
-    }
-
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateGetOwnPermissionsTest.class.getName());
         helper.createDefaultExecutorsMap();
@@ -69,7 +65,7 @@ public class AuthorizationServiceDelegateGetOwnPermissionsTest extends ServletTe
         try {
             authorizationService.getIssuedPermissions(null, helper.getBaseGroupActor(), helper.getBaseGroupActor());
             fail("AuthorizationDelegate.getIssuedPermissions() allows null subject");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -85,7 +81,7 @@ public class AuthorizationServiceDelegateGetOwnPermissionsTest extends ServletTe
         try {
             authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), null, helper.getBaseGroupActor());
             fail("AuthorizationDelegate.getIssuedPermissions() allows null executor");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -93,7 +89,7 @@ public class AuthorizationServiceDelegateGetOwnPermissionsTest extends ServletTe
         try {
             authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), helper.getFakeActor(), helper.getBaseGroupActor());
             fail("AuthorizationDelegate.getIssuedPermissions() allows fake executor");
-        } catch (ExecutorDoesNotExistException e) {
+        } catch (AuthorizationException e) {
         }
     }
 
@@ -101,7 +97,7 @@ public class AuthorizationServiceDelegateGetOwnPermissionsTest extends ServletTe
         try {
             authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), helper.getBaseGroupActor(), null);
             fail("AuthorizationDelegate.getIssuedPermissions() allows null identifiable");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 

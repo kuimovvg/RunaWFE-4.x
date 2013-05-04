@@ -67,8 +67,8 @@ public interface DefinitionService {
      * Gets available output transition names. Process definition id or task id
      * is required.
      * 
-     * @param subject
-     *            valid subject
+     * @param user
+     *            valid user
      * @param definitionId
      *            process definition id, can be <code>null</code>
      * @param taskId

@@ -26,6 +26,7 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
@@ -44,10 +45,6 @@ public class ExecutorServiceDelegateGetGroupByIdTest extends ServletTestCase {
 
     private Map<String, Executor> executorsMap;
 
-    public static TestSuite suite() {
-        return new TestSuite(ExecutorServiceDelegateGetGroupByIdTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -58,27 +55,29 @@ public class ExecutorServiceDelegateGetGroupByIdTest extends ServletTestCase {
         group = (Group) executorsMap.get(ServiceTestHelper.BASE_GROUP_NAME);
         th.setPermissionsToAuthorizedPerformer(readPermissions, group);
         th.setPermissionsToAuthorizedPerformer(readPermissions, th.getSubGroup());
+
+        th.setPermissionsToAuthorizedPerformer(readPermissions, th.getBaseGroupActor());
         super.setUp();
     }
 
-    public void testgetExecutorByAuthorizedPerformer() throws Exception {
+    public void testGetExecutorByAuthorizedPerformer() throws Exception {
         Group returnedBaseGroup = executorService.getExecutor(th.getAuthorizedPerformerUser(), group.getId());
-        assertEquals("actor retuned by buisnessDelegete differes with expected", group, returnedBaseGroup);
+        assertEquals("actor retuned by businessDelegate differes with expected", group, returnedBaseGroup);
         Group subGroup = (Group) executorsMap.get(ServiceTestHelper.SUB_GROUP_NAME);
         Group returnedSubGroup = executorService.getExecutor(th.getAuthorizedPerformerUser(), subGroup.getId());
-        assertEquals("actor retuned by buisnessDelegete differes with expected", subGroup, returnedSubGroup);
+        assertEquals("actor retuned by businessDelegate differes with expected", subGroup, returnedSubGroup);
     }
 
-    public void testgetExecutorByUnauthorizedPerformer() throws Exception {
+    public void testGetExecutorByUnauthorizedPerformer() throws Exception {
         try {
             executorService.getExecutor(th.getUnauthorizedPerformerUser(), group.getId());
-            assertTrue("buisnessDelegete allow to getExecutor()", false);
+            fail("businessDelegate allow to getExecutor()");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
         try {
             executorService.getExecutor(th.getUnauthorizedPerformerUser(), th.getSubGroup().getId());
-            assertTrue("buisnessDelegete allow to getSubGroup()", false);
+            fail("businessDelegate allow to getSubGroup()");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
@@ -87,7 +86,7 @@ public class ExecutorServiceDelegateGetGroupByIdTest extends ServletTestCase {
     public void testGetUnexistedGroupByAuthorizedPerformer() throws Exception {
         try {
             executorService.getExecutor(th.getAuthorizedPerformerUser(), -1l);
-            assertTrue("buisnessDelegete does not throw Exception to getExecutor() in testGetUnexistedGroupByAuthorizedPerformer", false);
+            fail("businessDelegate does not throw Exception to getExecutor() in testGetUnexistedGroupByAuthorizedPerformer");
         } catch (ExecutorDoesNotExistException e) {
             //That's what we expect
         }
@@ -96,26 +95,26 @@ public class ExecutorServiceDelegateGetGroupByIdTest extends ServletTestCase {
     public void testGetNullGroupByAuthorizedPerformer() throws Exception {
         try {
             executorService.getExecutor(th.getAuthorizedPerformerUser(), null);
-            assertTrue("buisnessDelegete allow to getExecutor()with null group.", false);
-        } catch (NullPointerException e) {
+            fail("businessDelegate allow to getExecutor()with null group.");
+        } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }
 
-    public void testgetExecutorByNullPerformer() throws Exception {
+    public void testGetExecutorByNullPerformer() throws Exception {
         try {
             executorService.getExecutor(null, group.getId());
-            assertTrue("buisnessDelegete allow to getExecutor() to performer with null subject.", false);
-        } catch (NullPointerException e) {
+            fail("businessDelegate allow to getExecutor() to performer with null subject.");
+        } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }
 
     public void testGetActorInsteadOfGroup() throws Exception {
         try {
-            executorService.getExecutor(th.getAuthorizedPerformerUser(), th.getBaseGroupActor().getId());
-            assertTrue("buisnessDelegete allow to getExecutor() where the actor really is returned.", false);
-        } catch (ExecutorDoesNotExistException e) {
+            Group actor = executorService.<Group>getExecutor(th.getAuthorizedPerformerUser(), th.getBaseGroupActor().getId());
+            fail("businessDelegate allow to getExecutor() where the actor really is returned.");
+        } catch (ClassCastException e) {
             //That's what we expect
         }
     }

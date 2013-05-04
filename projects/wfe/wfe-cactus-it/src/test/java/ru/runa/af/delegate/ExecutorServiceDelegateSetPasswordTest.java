@@ -49,10 +49,6 @@ public class ExecutorServiceDelegateSetPasswordTest extends ServletTestCase {
 
     private Group group;
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateSetPasswordTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -95,7 +91,7 @@ public class ExecutorServiceDelegateSetPasswordTest extends ServletTestCase {
         try {
             executorService.setPassword(th.getAuthorizedPerformerUser(), null, NEW_PASSWD);
             assertTrue("IllegalArgumentException was not thrown on setting password to null executor", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             //that's what we expect to see
         }
     }
@@ -104,7 +100,7 @@ public class ExecutorServiceDelegateSetPasswordTest extends ServletTestCase {
         try {
             executorService.setPassword(th.getAuthorizedPerformerUser(), th.getFakeActor(), NEW_PASSWD);
             assertTrue("ExecutorOutOfDateException was not thrown on setPassword fakeActor argument.", false);
-        } catch (ExecutorDoesNotExistException e) {
+        } catch (AuthorizationException e) {
             //that's what we expect to see
         }
     }

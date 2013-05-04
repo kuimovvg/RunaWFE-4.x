@@ -46,10 +46,6 @@ public class AuthenticationServiceDelegatePasswordLoginModuleTest extends Servle
 
     private Actor validActor;
 
-    public static Test suite() {
-        return new TestSuite(AuthenticationServiceDelegatePasswordLoginModuleTest.class);
-    }
-
     protected void setUp() throws Exception {
         th = new ServiceTestHelper(PREFIX);
         authenticationService = th.getAuthenticationService();

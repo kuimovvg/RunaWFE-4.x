@@ -26,9 +26,7 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
-import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.*;
 
 import java.util.List;
 
@@ -47,10 +45,6 @@ public class ExecutorServiceDelegateGetGroupsByIDsTest extends ServletTestCase {
 
     private final List<Permission> readPermissions = Lists.newArrayList(Permission.READ);
 
-    public static TestSuite suite() {
-        return new TestSuite(ExecutorServiceDelegateGetGroupsByIDsTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -66,13 +60,13 @@ public class ExecutorServiceDelegateGetGroupsByIDsTest extends ServletTestCase {
 
     public void testGetGroupsByAuthorizedPerformer() throws Exception {
         List<Group> returnedGroups = th.getExecutors(th.getAuthorizedPerformerUser(), additionalGroupsIDs);
-        ArrayAssert.assertWeakEqualArrays("Groups retuned by buisnessDelegete differes with expected", returnedGroups, additionalGroups);
+        ArrayAssert.assertWeakEqualArrays("Groups retuned by businessDelegate differes with expected", returnedGroups, additionalGroups);
     }
 
     public void testGetGroupsByUnauthorizedPerformer() throws Exception {
         try {
             th.getExecutors(th.getUnauthorizedPerformerUser(), additionalGroupsIDs);
-            assertTrue("buisnessDelegete allow to getGroups() with UnauthorizedPerformerSubject", false);
+            assertTrue("businessDelegate allow to getGroups() with UnauthorizedPerformerSubject", false);
         } catch (AuthorizationException e) {
             //That's what we expect
         }
@@ -82,7 +76,7 @@ public class ExecutorServiceDelegateGetGroupsByIDsTest extends ServletTestCase {
         additionalGroupsIDs = Lists.newArrayList(-1L, -2L, -3L);
         try {
             th.getExecutors(th.getAuthorizedPerformerUser(), additionalGroupsIDs);
-            assertTrue("buisnessDelegete does not throw Exception to getGroups() for unexisting groups", false);
+            assertTrue("businessDelegate does not throw Exception to getGroups() for unexisting groups", false);
         } catch (ExecutorDoesNotExistException e) {
             //That's what we expect
         }
@@ -91,8 +85,8 @@ public class ExecutorServiceDelegateGetGroupsByIDsTest extends ServletTestCase {
     public void testGetGroupByNullPerformer() throws Exception {
         try {
             th.getExecutors(null, additionalGroupsIDs);
-            assertTrue("buisnessDelegete allow to getGroups() to performer with null subject.", false);
-        } catch (NullPointerException e) {
+            assertTrue("businessDelegate allow to getGroups() to performer with null subject.", false);
+        } catch (IllegalArgumentException e) {
             //That's what we expect 
         }
     }
@@ -106,8 +100,8 @@ public class ExecutorServiceDelegateGetGroupsByIDsTest extends ServletTestCase {
             additionalGroupsIDs.add(executor.getId());
         }
         try {
-            th.getExecutors(th.getAuthorizedPerformerUser(), additionalGroupsIDs);
-            assertTrue("buisnessDelegete allow to getGroup() where the actor really is returned.", false);
+            List<Actor> actors = th.<Actor>getExecutors(th.getAuthorizedPerformerUser(), additionalGroupsIDs);
+            assertTrue("businessDelegate allow to getGroup() where the actor really is returned.", false);
         } catch (ExecutorDoesNotExistException e) {
             //That's what we expect 
         }

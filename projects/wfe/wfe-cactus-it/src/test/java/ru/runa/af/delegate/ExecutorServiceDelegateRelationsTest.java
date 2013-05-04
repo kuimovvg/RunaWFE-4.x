@@ -36,10 +36,6 @@ public class ExecutorServiceDelegateRelationsTest extends ServletTestCase {
 
     private RelationService relationService;
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateRelationsTest.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
         relationService = Delegates.getRelationService();
@@ -100,13 +96,13 @@ public class ExecutorServiceDelegateRelationsTest extends ServletTestCase {
         relationService.addRelationPair(th.getAdminUser(), relationGroup.getName(), a1, a3);
         relationService.addRelationPair(th.getAdminUser(), relationGroup2.getName(), a1, a3);
         List<RelationPair> relations = relationService.getRelationPairs(th.getAdminUser(), groupName,
-                BatchPresentationFactory.RELATIONS.createDefault());
+                BatchPresentationFactory.RELATION_PAIRS.createDefault());
         assertEquals(1, relations.size());
         assertEquals(a1, relations.get(0).getLeft());
         assertEquals(a3, relations.get(0).getRight());
         RelationPair toRemove = relations.get(0);
         relations = relationService.getRelationPairs(th.getAdminUser(), groupName2,
-                BatchPresentationFactory.RELATIONS.createDefault());
+                BatchPresentationFactory.RELATION_PAIRS.createDefault());
         assertEquals(2, relations.size());
         assertTrue(((relations.get(0).getLeft().equals(a2) && relations.get(0).getRight().equals(a3)) && (relations.get(1).getLeft().equals(a1) && relations
                 .get(1).getRight().equals(a3)))
@@ -114,7 +110,7 @@ public class ExecutorServiceDelegateRelationsTest extends ServletTestCase {
                         .get(0).getRight().equals(a3))));
         relationService.removeRelationPair(th.getAdminUser(), toRemove.getId());
         assertEquals(0, relationService.getRelationPairs(th.getAdminUser(), groupName,
-                BatchPresentationFactory.RELATIONS.createDefault()).size());
+                BatchPresentationFactory.RELATION_PAIRS.createDefault()).size());
         relationService.removeRelation(th.getAdminUser(), relationGroup.getId());
         relationService.removeRelation(th.getAdminUser(), relationGroup2.getId());
     }

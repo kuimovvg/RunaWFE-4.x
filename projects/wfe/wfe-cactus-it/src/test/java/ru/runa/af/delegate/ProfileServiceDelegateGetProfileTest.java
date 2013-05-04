@@ -17,8 +17,6 @@
  */
 package ru.runa.af.delegate;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.cactus.ServletTestCase;
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.wfe.security.AuthenticationException;
@@ -31,10 +29,6 @@ public class ProfileServiceDelegateGetProfileTest extends ServletTestCase {
     private ServiceTestHelper th;
 
     private ProfileService profileService;
-
-    public static Test suite() {
-        return new TestSuite(ProfileServiceDelegateGetProfileTest.class);
-    }
 
     @Override
     protected void setUp() throws Exception {
@@ -55,7 +49,7 @@ public class ProfileServiceDelegateGetProfileTest extends ServletTestCase {
         try {
             profileService.getProfile(null);
             fail("ProfileServiceDelegate.saveProfile() allows null subject");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 

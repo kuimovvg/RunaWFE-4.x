@@ -57,12 +57,7 @@ public class ExecutorServiceDelegateAddManyExecutorsToGroupsTest extends Servlet
 
     private final Collection<Permission> readlistPermissions = Lists.newArrayList(Permission.READ, GroupPermission.LIST_GROUP);
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateAddManyExecutorsToGroupsTest.class);
-    }
-
-    private List<Actor> getAdditionalActors() throws InternalApplicationException, AuthorizationException, AuthenticationException,
-            ExecutorDoesNotExistException {
+    private List<Actor> getAdditionalActors() throws InternalApplicationException {
         List<Long> ids = Lists.newArrayList();
         for (Actor actor : additionalActors) {
             ids.add(actor.getId());
@@ -253,7 +248,7 @@ public class ExecutorServiceDelegateAddManyExecutorsToGroupsTest extends Servlet
         try {
             executorService.addExecutorToGroups(th.getAuthorizedPerformerUser(), null, th.toIds(additionalGroups));
             fail("Null Executor added to groups ");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }
@@ -263,7 +258,7 @@ public class ExecutorServiceDelegateAddManyExecutorsToGroupsTest extends Servlet
         try {
             executorService.addExecutorsToGroup(null, th.toIds(additionalActorGroupsMixed), additionalGroup.getId());
             fail("Executors added to group ");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }
@@ -274,7 +269,7 @@ public class ExecutorServiceDelegateAddManyExecutorsToGroupsTest extends Servlet
         try {
             executorService.addExecutorToGroups(null, executor.getId(), th.toIds(additionalGroups));
             fail("Executor added to group ");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }

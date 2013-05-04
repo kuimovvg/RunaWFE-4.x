@@ -35,10 +35,6 @@ public class AASystemServiceDelegateLoginTest extends ServletTestCase {
     private SystemService systemService;
     private static String testPrefix = AASystemServiceDelegateLoginTest.class.getName();
 
-    public static TestSuite suite() {
-        return new TestSuite(AASystemServiceDelegateLoginTest.class);
-    }
-
     protected void tearDown() throws Exception {
         th.releaseResources();
         systemService = null;
@@ -57,8 +53,7 @@ public class AASystemServiceDelegateLoginTest extends ServletTestCase {
         try {
             systemService.login(null);
             fail("SystemServiceDelegate does not throw IllegalArgumentException on login(null) call.");
-        } catch (NullPointerException e) {
-            //that's what we expected
+        } catch (IllegalArgumentException e) {
         }
     }
 
