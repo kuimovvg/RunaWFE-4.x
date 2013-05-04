@@ -46,10 +46,6 @@ public class ExecutorServiceDelegateGetExecutorGroupsTest extends ServletTestCas
 
     private Actor actor;
 
-    public static TestSuite suite() {
-        return new TestSuite(ExecutorServiceDelegateGetExecutorGroupsTest.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
@@ -70,14 +66,14 @@ public class ExecutorServiceDelegateGetExecutorGroupsTest extends ServletTestCas
         List<Group> calculatedGroups = executorService.getExecutorGroups(th.getAuthorizedPerformerUser(), actor, th.getExecutorBatchPresentation(),
                 false);
         List<Group> realGroups = Lists.newArrayList(subGroup);
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutorGroups( actor ) returns wrong group set", realGroups, calculatedGroups);
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutorGroups( actor ) returns wrong group set", realGroups, calculatedGroups);
     }
 
     final public void testGetExecutorGroupsByAuthorizedPerformer2() throws Exception {
         List<Group> calculatedGroups = executorService.getExecutorGroups(th.getAuthorizedPerformerUser(), subGroup,
                 th.getExecutorBatchPresentation(), false);
         List<Group> realGroups = Lists.newArrayList(group);
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutorGroups( group ) returns wrong group set", realGroups, calculatedGroups);
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutorGroups( group ) returns wrong group set", realGroups, calculatedGroups);
     }
 
     final public void testGetExecutorGroupsByAuthorizedPerformer3() throws Exception {
@@ -87,7 +83,7 @@ public class ExecutorServiceDelegateGetExecutorGroupsTest extends ServletTestCas
         List<Group> calculatedGroups = executorService.getExecutorGroups(th.getAuthorizedPerformerUser(), getActor(), th
                 .getExecutorBatchPresentation(), false);
         List<Group> realGroups = Lists.newArrayList(subGroup, getGroup());
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutorGroups() returns wrong group set", realGroups, calculatedGroups);
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutorGroups() returns wrong group set", realGroups, calculatedGroups);
     }
 
     private Group getGroup() throws InternalApplicationException, AuthorizationException, AuthenticationException, ExecutorDoesNotExistException {
@@ -107,13 +103,13 @@ public class ExecutorServiceDelegateGetExecutorGroupsTest extends ServletTestCas
         List<Group> calculatedGroups = executorService.getExecutorGroups(th.getAuthorizedPerformerUser(), getActor(), th
                 .getExecutorBatchPresentation(), false);
         List<Group> realGroups = Lists.newArrayList(getGroup());
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutorGroups() returns wrong group set", realGroups, calculatedGroups);
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutorGroups() returns wrong group set", realGroups, calculatedGroups);
     }
 
     public void testGetExecutorGroupsByUnauthorizedPerformer1() throws Exception {
         try {
             executorService.getExecutorGroups(th.getUnauthorizedPerformerUser(), actor, th.getExecutorBatchPresentation(), false);
-            fail("buisnessDelegete.getExecutorGroupsByUnauthorizedPerformer(actor) no AuthorizationFailedException");
+            fail("businessDelegate.getExecutorGroupsByUnauthorizedPerformer(actor) no AuthorizationFailedException");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
@@ -122,7 +118,7 @@ public class ExecutorServiceDelegateGetExecutorGroupsTest extends ServletTestCas
     public void testGetExecutorGroupsByUnauthorizedPerformer2() throws Exception {
         try {
             executorService.getExecutorGroups(th.getUnauthorizedPerformerUser(), subGroup, th.getExecutorBatchPresentation(), false);
-            fail("buisnessDelegete.getExecutorGroupsByUnauthorizedPerformer(subGroup) no AuthorizationFailedException");
+            fail("businessDelegate.getExecutorGroupsByUnauthorizedPerformer(subGroup) no AuthorizationFailedException");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
@@ -132,7 +128,7 @@ public class ExecutorServiceDelegateGetExecutorGroupsTest extends ServletTestCas
         try {
             executorService.getExecutorGroups(null, actor, th.getExecutorBatchPresentation(), false);
             fail("GetExecutorGroupswithNullSubject no Exception");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }

@@ -46,10 +46,6 @@ public class ExecutorServiceDelegateCreateGroupTest extends ServletTestCase {
 
     private Group group;
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateCreateGroupTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -107,7 +103,7 @@ public class ExecutorServiceDelegateCreateGroupTest extends ServletTestCase {
         try {
             group = executorService.create(th.getAuthorizedPerformerUser(), group2);
             fail("null executor created");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // This is supposed result of operation
         }
     }
@@ -117,7 +113,7 @@ public class ExecutorServiceDelegateCreateGroupTest extends ServletTestCase {
         try {
             group = executorService.create(null, group);
             fail("executor with null subject created");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // This is supposed result of operation
         }
         assertFalse("Executor does not exists ", th.isExecutorExist(group));

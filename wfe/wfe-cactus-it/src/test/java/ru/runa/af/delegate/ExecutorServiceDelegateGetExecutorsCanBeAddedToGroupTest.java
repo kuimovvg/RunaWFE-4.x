@@ -50,10 +50,6 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
 
     private Map<String, Executor> executorsMap;
 
-    public static TestSuite suite() {
-        return new TestSuite(ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
@@ -80,7 +76,7 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
         List<Executor> calculatedExecutors = executorService.getGroupChildren(th.getAuthorizedPerformerUser(), getSubGroup(), th
                 .getExecutorBatchPresentation(), true);
         List<Executor> realExecutors = Lists.newArrayList(group, th.getAuthorizedPerformerActor());
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutorGroups() returns wrong group set", realExecutors, calculatedExecutors);
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutorGroups() returns wrong group set", realExecutors, calculatedExecutors);
     }
 
     final public void testGetExecutorsByAuthorizedPerformer2() throws Exception {
@@ -89,13 +85,13 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
         List<Executor> calculatedExecutors = executorService.getGroupChildren(th.getAuthorizedPerformerUser(), getSubGroup(), th
                 .getExecutorBatchPresentation(), true);
         List<Executor> realExecutors = Lists.newArrayList(group, th.getAuthorizedPerformerActor(), th.getBaseGroupActor());
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutors ...() returns wrong group set", realExecutors, calculatedExecutors);
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutors ...() returns wrong group set", realExecutors, calculatedExecutors);
     }
 
     public void testGetExecutorGroupsByUnauthorizedPerformer() throws Exception {
         try {
             executorService.getGroupChildren(th.getUnauthorizedPerformerUser(), getSubGroup(), th.getExecutorBatchPresentation(), true);
-            fail("buisnessDelegete.getExecutorsByUnauthorizedPerformer() no AuthorizationFailedException");
+            fail("businessDelegate.getExecutorsByUnauthorizedPerformer() no AuthorizationFailedException");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
@@ -105,7 +101,7 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
         try {
             executorService.getGroupChildren(null, getSubGroup(), th.getExecutorBatchPresentation(), true);
             fail("GetExecutorswithNullSubject no Exception");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }

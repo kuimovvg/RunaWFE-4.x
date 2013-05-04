@@ -51,10 +51,6 @@ public class ExecutorServiceDelegateCreateActorTest extends ServletTestCase {
 
     private Actor actor;
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateCreateActorTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -107,7 +103,7 @@ public class ExecutorServiceDelegateCreateActorTest extends ServletTestCase {
         try {
             executorService.create(th.getAuthorizedPerformerUser(), (Actor) null);
             fail("null executor created");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // This is supposed result of operation
         }
     }
@@ -116,7 +112,7 @@ public class ExecutorServiceDelegateCreateActorTest extends ServletTestCase {
         try {
             executorService.create(null, actor);
             fail("executor with null subject created");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // This is supposed result of operation
         }
     }

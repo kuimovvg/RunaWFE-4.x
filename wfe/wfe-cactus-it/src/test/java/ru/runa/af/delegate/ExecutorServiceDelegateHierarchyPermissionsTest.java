@@ -50,10 +50,6 @@ public class ExecutorServiceDelegateHierarchyPermissionsTest extends ServletTest
 
     private Group group;
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateHierarchyPermissionsTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         authorizationService = Delegates.getAuthorizationService();

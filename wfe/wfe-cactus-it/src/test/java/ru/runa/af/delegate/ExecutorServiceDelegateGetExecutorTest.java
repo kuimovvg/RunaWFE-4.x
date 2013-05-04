@@ -45,10 +45,6 @@ public class ExecutorServiceDelegateGetExecutorTest extends ServletTestCase {
 
     private Map<String, Executor> executorsMap;
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateGetExecutorTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -66,23 +62,23 @@ public class ExecutorServiceDelegateGetExecutorTest extends ServletTestCase {
     public void testGetActorByAuthorizedPerformer() throws Exception {
         Actor returnedBaseGroupActor = executorService.getExecutorByName(th.getAuthorizedPerformerUser(), testPrefix
                 + ServiceTestHelper.BASE_GROUP_ACTOR_NAME);
-        assertEquals("actor retuned by buisnessDelegete differes with expected", actor, returnedBaseGroupActor);
+        assertEquals("actor retuned by businessDelegate differes with expected", actor, returnedBaseGroupActor);
         Group returnedBaseGroup = executorService.getExecutorByName(th.getAuthorizedPerformerUser(), testPrefix
                 + ServiceTestHelper.BASE_GROUP_NAME);
-        assertEquals("actor retuned by buisnessDelegete differes with expected", group, returnedBaseGroup);
+        assertEquals("actor retuned by businessDelegate differes with expected", group, returnedBaseGroup);
     }
 
     public void testGetExecutorByUnauthorizedPerformer() throws Exception {
         User unauthorizedPerformerUser = th.getUnauthorizedPerformerUser();
         try {
             executorService.getExecutorByName(unauthorizedPerformerUser, testPrefix + ServiceTestHelper.BASE_GROUP_ACTOR_NAME);
-            fail("buisnessDelegete allow to getExecutor() to performer without Permission.READ.");
+            fail("businessDelegate allow to getExecutor() to performer without Permission.READ.");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
         try {
             executorService.getExecutorByName(unauthorizedPerformerUser, testPrefix + ServiceTestHelper.BASE_GROUP_NAME);
-            fail("buisnessDelegete allow to getExecutor() to performer without Permission.READ.");
+            fail("businessDelegate allow to getExecutor() to performer without Permission.READ.");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
@@ -92,7 +88,7 @@ public class ExecutorServiceDelegateGetExecutorTest extends ServletTestCase {
         User authorizedPerformerUser = th.getAuthorizedPerformerUser();
         try {
             executorService.getExecutorByName(authorizedPerformerUser, testPrefix + "unexistent actor name");
-            fail("buisnessDelegete does not throw Exception to getExecutor() to performer without Permission.READ");
+            fail("businessDelegate does not throw Exception to getExecutor() to performer without Permission.READ");
         } catch (ExecutorDoesNotExistException e) {
             //That's what we expect
         }
@@ -102,8 +98,8 @@ public class ExecutorServiceDelegateGetExecutorTest extends ServletTestCase {
         User authorizedPerformerUser = th.getAuthorizedPerformerUser();
         try {
             executorService.getExecutorByName(authorizedPerformerUser, null);
-            fail("buisnessDelegete allow to getExecutor()with null actor.");
-        } catch (NullPointerException e) {
+            fail("businessDelegate allow to getExecutor()with null actor.");
+        } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }
@@ -111,8 +107,8 @@ public class ExecutorServiceDelegateGetExecutorTest extends ServletTestCase {
     public void testGetExecutorActorByNullPerformer() throws Exception {
         try {
             executorService.getExecutorByName(null, actor.getName());
-            fail("buisnessDelegete allow to getExecutor() (Actor really) to performer with null subject");
-        } catch (NullPointerException e) {
+            fail("businessDelegate allow to getExecutor() (Actor really) to performer with null subject");
+        } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }
@@ -120,8 +116,8 @@ public class ExecutorServiceDelegateGetExecutorTest extends ServletTestCase {
     public void testGetExecutorGroupByNullPerformer() throws Exception {
         try {
             executorService.getExecutorByName(null, group.getName());
-            fail("buisnessDelegete allow to getExecutor() (Group really) to performer with null subject.");
-        } catch (NullPointerException e) {
+            fail("businessDelegate allow to getExecutor() (Group really) to performer with null subject.");
+        } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }

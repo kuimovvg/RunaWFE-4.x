@@ -47,10 +47,6 @@ public class ExecutorServiceDelegateGetAllTest extends ServletTestCase {
 
     private Map<String, Executor> executorsMap;
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateGetAllTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -72,20 +68,20 @@ public class ExecutorServiceDelegateGetAllTest extends ServletTestCase {
         LinkedList<Executor> realExecutors = new LinkedList<Executor>(executorsMap.values());
         Actor authorizedPerformerActor = th.getAuthorizedPerformerActor();
         realExecutors.add(authorizedPerformerActor);
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutors() returns wrong executor set", realExecutors, executors);
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutors() returns wrong executor set", realExecutors, executors);
     }
 
     public void testgetExecutorsByUnauthorizedPerformer() throws Exception {
         List<? extends Executor> executors = executorService.getExecutors(th.getUnauthorizedPerformerUser(), th.getExecutorBatchPresentation());
         List<Actor> unauthorizedPerformerArray = Lists.newArrayList(th.getUnauthorizedPerformerActor());
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutors() returns wrong executor set", unauthorizedPerformerArray, executors);
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutors() returns wrong executor set", unauthorizedPerformerArray, executors);
     }
 
     public void testgetExecutorswithNullSubject() throws Exception {
         try {
             executorService.getExecutors(null, th.getExecutorBatchPresentation());
-            fail("buisnessDelegete.getExecutors() with null subject throws no IllegalArgumentException");
-        } catch (NullPointerException e) {
+            fail("businessDelegate.getExecutors() with null subject throws no IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }
@@ -94,7 +90,7 @@ public class ExecutorServiceDelegateGetAllTest extends ServletTestCase {
         try {
             User fakeUser = th.getFakeUser();
             executorService.getExecutors(fakeUser, th.getExecutorBatchPresentation());
-            fail("buisnessDelegete.getExecutors() with fake subject throws no AuthenticationException");
+            fail("businessDelegate.getExecutors() with fake subject throws no AuthenticationException");
         } catch (AuthenticationException e) {
             //That's what we expect
         }

@@ -45,10 +45,6 @@ public class AuthorizationServiceDelegateGetExecutorsWithoutPermissionTest exten
 
     private AuthorizationService authorizationService;
 
-    public static Test suite() {
-        return new TestSuite(AuthorizationServiceDelegateGetExecutorsWithoutPermissionTest.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateGetExecutorsWithoutPermissionTest.class.getName());
@@ -76,7 +72,7 @@ public class AuthorizationServiceDelegateGetExecutorsWithoutPermissionTest exten
         try {
             authorizationService.getExecutorsWithPermission(null, helper.getAASystem(), helper.getExecutorBatchPresentation(), false);
             fail("AuthorizationDelegate.getExecutorsWithoutPermission() allows null subject");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -92,7 +88,7 @@ public class AuthorizationServiceDelegateGetExecutorsWithoutPermissionTest exten
         try {
             authorizationService.getExecutorsWithPermission(helper.getAuthorizedPerformerUser(), null, helper.getExecutorBatchPresentation(), false);
             fail("AuthorizationDelegate.getExecutorsWithoutPermission() allows null identifiable");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 

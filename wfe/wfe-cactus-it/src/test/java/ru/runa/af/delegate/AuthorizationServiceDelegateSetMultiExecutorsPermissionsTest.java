@@ -52,10 +52,6 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
     private List<Executor> additionalActorGroupsMixed;
     private List<Long> executorIDs;
 
-    public static Test suite() {
-        return new TestSuite(AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest.class);
-    }
-
     protected void setUp() throws Exception {
         th = new ServiceTestHelper(testPrefix);
 
@@ -90,8 +86,8 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
         }
 
         for (int i = 0; i < executorIDs.size(); i++) {
-            Collection<Permission> expected = authorizationService.getIssuedPermissions(th.getAuthorizedPerformerUser(), additionalActorGroupsMixed.get(i),
-                    additionalActor);
+            Collection<Permission> expected = authorizationService.getIssuedPermissions(
+                    th.getAuthorizedPerformerUser(), additionalActorGroupsMixed.get(i), additionalActor);
             ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.setPermissions() does not set right permissions", testPermission, expected);
         }
 
@@ -103,8 +99,8 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
         }
 
         for (int i = 0; i < executorIDs.size(); i++) {
-            Collection<Permission> expected = authorizationService.getIssuedPermissions(th.getAuthorizedPerformerUser(), additionalActorGroupsMixed.get(i),
-                    additionalGroup);
+            Collection<Permission> expected = authorizationService.getIssuedPermissions(
+                    th.getAuthorizedPerformerUser(), additionalActorGroupsMixed.get(i), additionalGroup);
             ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.setPermissions() does not set right permissions", testPermission, expected);
         }
     }
@@ -113,7 +109,7 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
         try {
             authorizationService.setPermissions(null, executorIDs, testPermission, additionalActor);
             fail("AuthorizationDelegate.setPermissions() allows null subject");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             //This is what we expect
         }
     }
@@ -140,7 +136,7 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
         try {
             authorizationService.setPermissions(th.getAuthorizedPerformerUser(), executorIDs, (Collection<Permission>) null, additionalActor);
             fail("AuthorizationDelegate.setPermissions() allows null permissions");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             //This is what we expect
         }
     }
@@ -149,7 +145,7 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
         try {
             authorizationService.setPermissions(th.getAuthorizedPerformerUser(), executorIDs, testPermission, null);
             fail("AuthorizationDelegate.setPermissions() allows null identifiable");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             //This is what we expect
         }
     }

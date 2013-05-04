@@ -30,13 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.runa.wfe.audit.ProcessDefinitionDeleteLog;
 import ru.runa.wfe.audit.dao.SystemLogDAO;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
-import ru.runa.wfe.definition.DefinitionAlreadyExistException;
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
-import ru.runa.wfe.definition.DefinitionNameMismatchException;
-import ru.runa.wfe.definition.DefinitionPermission;
-import ru.runa.wfe.definition.Deployment;
-import ru.runa.wfe.definition.Language;
-import ru.runa.wfe.definition.WorkflowSystemPermission;
+import ru.runa.wfe.definition.*;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.par.ProcessArchive;
 import ru.runa.wfe.execution.ParentProcessExistsException;
@@ -69,7 +63,12 @@ public class DefinitionLogic extends WFCommonLogic {
 
     public WfDefinition deployProcessDefinition(User user, byte[] processArchiveBytes, List<String> processType) {
         checkPermissionAllowed(user, ASystem.INSTANCE, WorkflowSystemPermission.DEPLOY_DEFINITION);
-        ProcessDefinition definition = parseProcessDefinition(processArchiveBytes);
+        ProcessDefinition definition = null;
+        try {
+            definition = parseProcessDefinition(processArchiveBytes);
+        } catch (Exception e) {
+            throw new DefinitionArchiveFormatException(e);
+        }
         try {
             getLatestDefinition(definition.getName());
             throw new DefinitionAlreadyExistException(definition.getName());
@@ -92,7 +91,12 @@ public class DefinitionLogic extends WFCommonLogic {
             oldDeployment.setCategories(processType);
             return getProcessDefinition(user, definitionId);
         }
-        ProcessDefinition definition = parseProcessDefinition(processArchiveBytes);
+        ProcessDefinition definition;
+        try {
+            definition = parseProcessDefinition(processArchiveBytes);
+        } catch (Exception e) {
+            throw new DefinitionArchiveFormatException(e);
+        }
         if (!oldDeployment.getName().equals(definition.getName())) {
             throw new DefinitionNameMismatchException("Expected definition name " + oldDeployment.getName(), definition.getName(),
                     oldDeployment.getName());

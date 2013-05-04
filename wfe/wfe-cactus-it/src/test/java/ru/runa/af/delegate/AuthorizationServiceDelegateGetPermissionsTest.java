@@ -43,10 +43,6 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
 
     private AuthorizationService authorizationService;
 
-    public static Test suite() {
-        return new TestSuite(AuthorizationServiceDelegateGetPermissionsTest.class);
-    }
-
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateGetPermissionsTest.class.getName());
         helper.createDefaultExecutorsMap();
@@ -73,7 +69,7 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
         try {
             authorizationService.getIssuedPermissions(null, helper.getBaseGroupActor(), helper.getBaseGroupActor());
             fail("AuthorizationDelegate.getIssuedPermissions() allows null subject");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -89,7 +85,7 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
         try {
             authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), null, helper.getBaseGroupActor());
             fail("AuthorizationDelegate.getIssuedPermissions() allows null executor");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -97,7 +93,7 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
         try {
             authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), helper.getFakeActor(), helper.getBaseGroupActor());
             fail("AuthorizationDelegate.getIssuedPermissions() allows fake executor");
-        } catch (ExecutorDoesNotExistException e) {
+        } catch (AuthorizationException e) {
         }
     }
 
@@ -105,7 +101,7 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
         try {
             authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), helper.getBaseGroupActor(), null);
             fail("AuthorizationDelegate.getIssuedPermissions() allows null identifiable");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -141,8 +137,9 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
 
         authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), helper.getBaseGroup().getId(), expected, helper.getBaseGroupActor());
 
-        Collection<Permission> actual = authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), helper.getSubGroupActor(), helper.getBaseGroupActor());
-        ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.getPermission returns wrong recursive permission", expected, actual);
+        fail("getPermissions not impl");
+        //Collection<Permission> actual = authorizationService.getPermissions(helper.getAuthorizedPerformerUser(), helper.getSubGroupActor(), helper.getBaseGroupActor());
+        //ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.getPermission returns wrong recursive permission", expected, actual);
     }
 
     public void testGetPermissionsUnauthorized() throws Exception {

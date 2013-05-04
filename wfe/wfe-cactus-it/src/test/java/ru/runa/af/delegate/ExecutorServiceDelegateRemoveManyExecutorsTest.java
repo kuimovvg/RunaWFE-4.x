@@ -44,10 +44,6 @@ public class ExecutorServiceDelegateRemoveManyExecutorsTest extends ServletTestC
 
     private final List<Permission> readUpdatePermissions = Lists.newArrayList(Permission.READ, ExecutorPermission.UPDATE);
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateRemoveManyExecutorsTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -80,7 +76,7 @@ public class ExecutorServiceDelegateRemoveManyExecutorsTest extends ServletTestC
         try {
             executorService.remove(th.getAuthorizedPerformerUser(), ids);
             fail("IllegalArgumentException was not thrown on RemoveNullExecutors.");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             //that's what we expect to see
         }
     }
