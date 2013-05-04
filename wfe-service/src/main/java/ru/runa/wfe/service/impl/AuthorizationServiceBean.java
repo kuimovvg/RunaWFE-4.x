@@ -60,62 +60,62 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
 
     @Override
     public boolean isAllowed(User user, Permission permission, Identifiable identifiable) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(permission);
-        Preconditions.checkNotNull(identifiable);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(permission != null);
+        Preconditions.checkArgument(identifiable != null);
         return authorizationLogic.isAllowed(user, permission, identifiable);
     }
 
     @WebMethod(exclude = true)
     @Override
     public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(permission);
-        Preconditions.checkNotNull(identifiables);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(permission != null);
+        Preconditions.checkArgument(identifiables != null);
         return authorizationLogic.isAllowed(user, permission, identifiables);
     }
 
     @Override
     public List<Permission> getIssuedPermissions(User user, Executor performer, Identifiable identifiable) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(performer);
-        Preconditions.checkNotNull(identifiable);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(performer != null);
+        Preconditions.checkArgument(identifiable != null);
         return authorizationLogic.getIssuedPermissions(user, performer, identifiable);
     }
 
     @WebMethod(exclude = true)
     @Override
     public void setPermissions(User user, List<Long> executorIds, List<Collection<Permission>> permissions, Identifiable identifiable) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executorIds);
-        Preconditions.checkNotNull(permissions);
-        Preconditions.checkNotNull(identifiable);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executorIds != null);
+        Preconditions.checkArgument(permissions != null);
+        Preconditions.checkArgument(identifiable != null);
         authorizationLogic.setPermissions(user, executorIds, permissions, identifiable);
     }
 
     @Override
     public void setPermissions(User user, Long executorId, Collection<Permission> permissions, Identifiable identifiable) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executorId);
-        Preconditions.checkNotNull(permissions);
-        Preconditions.checkNotNull(identifiable);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executorId != null);
+        Preconditions.checkArgument(permissions != null);
+        Preconditions.checkArgument(identifiable != null);
         authorizationLogic.setPermissions(user, executorId, permissions, identifiable);
     }
 
     @WebMethod(exclude = true)
     @Override
     public void setPermissions(User user, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executorsId);
-        Preconditions.checkNotNull(permissions);
-        Preconditions.checkNotNull(identifiable);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executorsId != null);
+        Preconditions.checkArgument(permissions != null);
+        Preconditions.checkArgument(identifiable != null);
         authorizationLogic.setPermissions(user, executorsId, permissions, identifiable);
     }
 
     @Override
     public List<Executor> getExecutorsWithPermission(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean withPermission) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(identifiable);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(identifiable != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
         }
@@ -124,8 +124,8 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
 
     @Override
     public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean withPermission) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(identifiable);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(identifiable != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
         }
@@ -136,11 +136,11 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
     @SuppressWarnings("unchecked")
     public <T extends Object> List<T> getPersistentObjects(User user, BatchPresentation batchPresentation, Class<T> persistentClass,
             Permission permission, SecuredObjectType[] securedObjectTypes, boolean enablePaging) {
-        Preconditions.checkNotNull(user, "User");
-        Preconditions.checkNotNull(batchPresentation, "Batch presentation");
-        Preconditions.checkNotNull(persistentClass, "Persistence class");
-        Preconditions.checkNotNull(permission, "Permission");
-        Preconditions.checkNotNull(securedObjectTypes, "Secured object class");
+        Preconditions.checkArgument(user != null, "User");
+        Preconditions.checkArgument(batchPresentation != null, "Batch presentation");
+        Preconditions.checkArgument(persistentClass != null, "Persistence class");
+        Preconditions.checkArgument(permission != null, "Permission");
+        Preconditions.checkArgument(securedObjectTypes != null, "Secured object class");
         return (List<T>) authorizationLogic.getPersistentObjects(user, batchPresentation, permission, securedObjectTypes, enablePaging);
     }
 

@@ -78,7 +78,7 @@ public abstract class Node extends GraphElement {
     public Transition addLeavingTransition(Transition leavingTransition) {
         for (Transition transition : leavingTransitions) {
             if (Objects.equal(transition.getName(), leavingTransition.getName())) {
-                throw new InternalApplicationException("Duplicated transition: '" + leavingTransition.getName() + "'");
+                throw new InternalApplicationException("Duplicated transition: '" + this.getName() + "/" + leavingTransition.getName() + "'");
             }
         }
         leavingTransitions.add(leavingTransition);

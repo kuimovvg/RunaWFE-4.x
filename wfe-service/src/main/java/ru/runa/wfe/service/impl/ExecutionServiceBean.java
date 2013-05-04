@@ -79,13 +79,14 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @WebMethod(exclude = true)
     @Override
     public Long startProcess(User user, String definitionName, Map<String, Object> variables) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionName != null && !definitionName.isEmpty());
         return executionLogic.startProcess(user, definitionName, variables);
     }
 
     @Override
     public int getAllProcessesCount(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.PROCESSES.createDefault();
         }
@@ -94,7 +95,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.PROCESSES.createDefault();
         }
@@ -103,25 +104,25 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     public WfProcess getProcess(User user, Long id) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return executionLogic.getProcess(user, id);
     }
 
     @Override
     public WfProcess getParentProcess(User user, Long id) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return executionLogic.getParentProcess(user, id);
     }
 
     @Override
     public List<WfProcess> getSubprocesses(User user, Long id) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return executionLogic.getSubprocesses(user, id);
     }
 
     @Override
     public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.TASKS.createDefault();
         }
@@ -130,13 +131,13 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     public WfTask getTask(User user, Long taskId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return taskLogic.getTask(user, taskId);
     }
 
     @Override
     public List<WfVariable> getVariables(User user, Long processId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         List<WfVariable> list = variableLogic.getVariables(user, processId);
         for (WfVariable variable : list) {
             convertValueToProxy(user, processId, variable);
@@ -147,7 +148,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @WebMethod(exclude = true)
     @Override
     public Map<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         Map<Long, WfVariable> map = variableLogic.getVariableValueFromProcesses(user, processIds, variableName);
         for (Map.Entry<Long, WfVariable> entry : map.entrySet()) {
             convertValueToProxy(user, entry.getKey(), entry.getValue());
@@ -157,81 +158,81 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     public WfVariable getVariable(User user, Long processId, String variableName) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return variableLogic.getVariable(user, processId, variableName);
     }
 
     @WebMethod(exclude = true)
     @Override
     public void updateVariables(User user, Long processId, Map<String, Object> variables) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         variableLogic.updateVariables(user, processId, variables);
     }
 
     @WebMethod(exclude = true)
     @Override
     public void completeTask(User user, Long taskId, Map<String, Object> variables, Long swimlaneActorId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         taskLogic.completeTask(user, taskId, variables, swimlaneActorId);
     }
 
     @Override
     public void cancelProcess(User user, Long processId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         executionLogic.cancelProcess(user, processId);
     }
 
     @Override
     public List<WfSwimlane> getSwimlanes(User user, Long processId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return taskLogic.getSwimlanes(user, processId);
     }
 
     @Override
     public List<WfTask> getProcessTasks(User user, Long processId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return taskLogic.getTasks(user, processId);
     }
 
     @Override
     public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return executionLogic.getProcessDiagram(user, processId, taskId, childProcessId);
     }
 
     @Override
     public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return executionLogic.getProcessHistoryDiagram(user, processId, taskId);
     }
 
     @Override
     public List<GraphElementPresentation> getProcessUIHistoryData(User user, Long processId, Long taskId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return executionLogic.getProcessUIHistoryData(user, processId, taskId);
     }
 
     @Override
     public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return executionLogic.getProcessGraphElements(user, processId);
     }
 
     @Override
     public void assignSwimlane(User user, Long processId, String swimlaneName, Executor executor) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         taskLogic.assignSwimlane(user, processId, swimlaneName, executor);
     }
 
     @Override
     public void assignTask(User user, Long taskId, Executor previousOwner, Executor newExecutor) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         taskLogic.assignTask(user, taskId, previousOwner, newExecutor);
     }
 
     @Override
     public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return auditLogic.getProcessLogs(user, filter);
     }
 
@@ -242,20 +243,20 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     public void markTaskOpened(User user, Long taskId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         taskLogic.markTaskOpened(user, taskId);
     }
 
     @Override
     public void removeProcesses(User user, Date startDate, Date finishDate, String name, int version, Long id, Long idTill, boolean onlyFinished,
             boolean dateInterval) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         // TODO removeProcesses
     }
 
     @Override
     public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createDefault();
         }
@@ -264,7 +265,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     public int getSystemLogsCount(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createDefault();
         }

@@ -42,10 +42,6 @@ public class AuthorizationServiceDelegateIsAllowedTest extends ServletTestCase {
 
     private AuthorizationService authorizationService;
 
-    public static Test suite() {
-        return new TestSuite(AuthorizationServiceDelegateIsAllowedTest.class);
-    }
-
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateIsAllowedTest.class.getName());
         helper.createDefaultExecutorsMap();
@@ -71,7 +67,7 @@ public class AuthorizationServiceDelegateIsAllowedTest extends ServletTestCase {
         try {
             authorizationService.isAllowed(null, Permission.READ, helper.getAASystem());
             fail("AuthorizationDelegate.isAllowed() allows null subject");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -87,7 +83,7 @@ public class AuthorizationServiceDelegateIsAllowedTest extends ServletTestCase {
         try {
             authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), null, helper.getAASystem());
             fail("AuthorizationDelegate.isAllowed() allows null permission");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -95,7 +91,7 @@ public class AuthorizationServiceDelegateIsAllowedTest extends ServletTestCase {
         try {
             authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, (Identifiable) null);
             fail("AuthorizationDelegate.isAllowed() allows null identifiable");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 

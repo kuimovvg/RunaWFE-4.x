@@ -50,10 +50,6 @@ public class ExecutorServiceDelegateGetGroupChildrenTest extends ServletTestCase
 
     private Map<String, Executor> executorsMap;
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateGetGroupChildrenTest.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
@@ -81,13 +77,13 @@ public class ExecutorServiceDelegateGetGroupChildrenTest extends ServletTestCase
         List<Executor> calculatedGroupChildren = executorService.getGroupChildren(th.getAuthorizedPerformerUser(), group, th
                 .getExecutorBatchPresentation(), false);
         List<Executor> realGroupChildren = Lists.newArrayList(th.getBaseGroupActor(), th.getSubGroup());
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutorGroups() returns wrong group set", realGroupChildren, calculatedGroupChildren);
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutorGroups() returns wrong group set", realGroupChildren, calculatedGroupChildren);
     }
 
     public void testGetExecutorGroupsByUnauthorizedPerformer() throws Exception {
         try {
             executorService.getGroupChildren(th.getUnauthorizedPerformerUser(), group, th.getExecutorBatchPresentation(), false);
-            assertTrue("buisnessDelegete.getGroupChildrenByUnauthorizedPerformer() no AuthorizationFailedException", false);
+            assertTrue("businessDelegate.getGroupChildrenByUnauthorizedPerformer() no AuthorizationFailedException", false);
         } catch (AuthorizationException e) {
             //That's what we expect
         }
@@ -97,7 +93,7 @@ public class ExecutorServiceDelegateGetGroupChildrenTest extends ServletTestCase
         try {
             executorService.getGroupChildren(null, group, th.getExecutorBatchPresentation(), false);
             assertTrue("GetGroupChildrenwithNullSubject no Exception", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }

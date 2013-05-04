@@ -49,10 +49,6 @@ public class AuthorizationServiceDelegateSetPermissions2Test extends ServletTest
 
     private List<Long> legalActorIds = null;
 
-    public static Test suite() {
-        return new TestSuite(AuthorizationServiceDelegateSetPermissions2Test.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateSetPermissionsTest.class.getName());
@@ -87,7 +83,7 @@ public class AuthorizationServiceDelegateSetPermissions2Test extends ServletTest
         try {
             authorizationService.setPermissions(null, legalActorIds, legalPermissions, helper.getAASystem());
             fail("AuthorizationDelegate.setPermission allows Null subject");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -116,7 +112,7 @@ public class AuthorizationServiceDelegateSetPermissions2Test extends ServletTest
         try {
             authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), null, legalPermissions, helper.getAASystem());
             fail("AuthorizationDelegate.setPermission allows Fake executor");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -124,7 +120,7 @@ public class AuthorizationServiceDelegateSetPermissions2Test extends ServletTest
         try {
             authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), legalActorIds, (List<Collection<Permission>>) null, helper.getAASystem());
             fail("AuthorizationDelegate.setPermission allows Null permissions");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -132,7 +128,7 @@ public class AuthorizationServiceDelegateSetPermissions2Test extends ServletTest
         try {
             authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), legalActorIds, legalPermissions, null);
             fail("AuthorizationDelegate.setPermission allows Null identifiable");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 

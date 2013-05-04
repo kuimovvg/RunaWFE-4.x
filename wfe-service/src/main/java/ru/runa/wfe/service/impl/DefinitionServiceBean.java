@@ -56,34 +56,38 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
 
     @Override
     public WfDefinition deployProcessDefinition(User user, byte[] processArchive, List<String> processType) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(processArchive);
-        Preconditions.checkNotNull(processType);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(processArchive != null);
+        Preconditions.checkArgument(processType != null);
         return definitionLogic.deployProcessDefinition(user, processArchive, processType);
     }
 
     @Override
     public WfDefinition redeployProcessDefinition(User user, Long processId, byte[] processArchive, List<String> processType) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(processType);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(processType != null);
+        Preconditions.checkArgument(processArchive != null);
+        Preconditions.checkArgument(processType != null);
         return definitionLogic.redeployProcessDefinition(user, processId, processArchive, processType);
     }
 
     @Override
     public WfDefinition getLatestProcessDefinition(User user, String definitionName) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionName != null);
         return definitionLogic.getLatestProcessDefinition(user, definitionName);
     }
 
     @Override
     public WfDefinition getProcessDefinition(User user, Long definitionId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionId != null);
         return definitionLogic.getProcessDefinition(user, definitionId);
     }
 
     @Override
     public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.DEFINITIONS.createDefault();
         }
@@ -92,44 +96,52 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
 
     @Override
     public void undeployProcessDefinition(User user, String processName) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(processName != null);
         definitionLogic.undeployProcessDefinition(user, processName);
     }
 
     @Override
     public void removeProcessDefinition(User user, String definitionName, int version) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        throw new RuntimeException("not impl");
         // archivingLogic.removeProcessDefinition(user, definitionName,
         // version, 0);
     }
 
     @Override
     public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId, boolean withTimerTransitions) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(taskId != null);
         return definitionLogic.getOutputTransitionNames(user, definitionId, taskId, withTimerTransitions);
     }
 
     @Override
     public Interaction getTaskInteraction(User user, Long taskId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(taskId != null);
         return definitionLogic.getInteraction(user, taskId);
     }
 
     @Override
     public Interaction getStartInteraction(User user, Long definitionId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionId != null);
         return definitionLogic.getStartInteraction(user, definitionId);
     }
 
     @Override
     public byte[] getFile(User user, Long definitionId, String fileName) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionId != null);
+        Preconditions.checkArgument(fileName != null);
         return definitionLogic.getFile(user, definitionId, fileName);
     }
 
     @Override
     public List<SwimlaneDefinition> getSwimlanes(User user, Long definitionId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionId != null);
         return definitionLogic.getSwimlanes(user, definitionId);
     }
 
@@ -140,13 +152,15 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
 
     @Override
     public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionId != null);
         return definitionLogic.getProcessDefinitionGraphElements(user, definitionId);
     }
 
     @Override
     public List<WfDefinition> getProcessDefinitionHistory(User user, String name) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(name != null);
         return definitionLogic.getProcessDefinitionHistory(user, name);
     }
 }

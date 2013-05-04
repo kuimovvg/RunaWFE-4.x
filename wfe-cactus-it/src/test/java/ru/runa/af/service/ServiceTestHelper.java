@@ -503,6 +503,7 @@ public class ServiceTestHelper {
 
     private void createFakeExecutors() {
         fakeActor = new Actor(testClassName + FAKE_ACTOR_NAME, testClassName + FAKE_ACTOR_DESC);
+        fakeActor.setId(-1L);
         fakeGroup = new Group(testClassName + FAKE_GROUP_NAME, testClassName + FAKE_GROUP_DESC);
         fakeExecutors = Lists.newArrayList();
         for (int i = 0; i < 5; i++) {
@@ -600,15 +601,15 @@ public class ServiceTestHelper {
         };
     }*/
 
-    public Substitution createTerminator(Subject substitutedActor, SubstitutionCriteria substitutionCriteria, boolean isEnabled)
+    public Substitution createTerminator(User user, SubstitutionCriteria substitutionCriteria, boolean isEnabled)
             throws AuthorizationException, ExecutorDoesNotExistException, AuthenticationException {
         TerminatorSubstitution terminatorSubstitution = new TerminatorSubstitution();
-        terminatorSubstitution.setActorId(SubjectPrincipalsHelper.getUser(substitutedActor).getActor().getId());
+        terminatorSubstitution.setActorId(user.getActor().getId());
         terminatorSubstitution.setCriteria(substitutionCriteria);
         terminatorSubstitution.setEnabled(isEnabled);
         return substitutionService.createSubstitution(getAdminUser(), terminatorSubstitution);
 
-        // List<Substitution> alreadySubstitutedBy = substitutionServiceDelegate.get(getAdminUser(), SubjectPrincipalsHelper.getActor(substitutedActor)
+        // List<Substitution> alreadySubstitutedBy = substitutionServiceDelegate.get(getAdminUser(), SubjectPrincipalsHelper.getActor(user)
         // .getId());
         // alreadySubstitutedBy.get(alreadySubstitutedBy.size() - 1).setCriteria(substitutionCriteria);
         // alreadySubstitutedBy.get(alreadySubstitutedBy.size() - 1).setEnabled(isEnabled);
@@ -616,15 +617,15 @@ public class ServiceTestHelper {
         // return alreadySubstitutedBy[alreadySubstitutedBy.length - 1];
     }
 
-    public Substitution createActorSubstitutor(Subject substitutedActor, String orgFunction, SubstitutionCriteria substitutionCriteria,
+    public Substitution createActorSubstitutor(User user, String orgFunction, SubstitutionCriteria substitutionCriteria,
             boolean isEnabled) throws AuthorizationException, ExecutorDoesNotExistException, AuthenticationException {
         Substitution substitution = new Substitution();
-        substitution.setActorId(SubjectPrincipalsHelper.getUser(substitutedActor).getActor().getId());
+        substitution.setActorId(user.getActor().getId());
         substitution.setOrgFunction(orgFunction);
         substitution.setCriteria(substitutionCriteria);
         substitution.setEnabled(isEnabled);
 
-        // Substitution[] alreadySubstitutedBy = substitutionServiceDelegate.get(getAdminUser(), SubjectPrincipalsHelper.getActor(substitutedActor)
+        // Substitution[] alreadySubstitutedBy = substitutionServiceDelegate.get(getAdminUser(), SubjectPrincipalsHelper.getActor(user)
         // .getId());
         // if (alreadySubstitutedBy == null) {
         // substitution.setPosition(0);

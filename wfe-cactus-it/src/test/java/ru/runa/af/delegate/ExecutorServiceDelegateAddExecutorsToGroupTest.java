@@ -54,10 +54,6 @@ public class ExecutorServiceDelegateAddExecutorsToGroupTest extends ServletTestC
 
     private final Collection<Permission> readlistPermissions = Lists.newArrayList(Permission.READ, GroupPermission.LIST_GROUP);
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateAddExecutorsToGroupTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -121,14 +117,14 @@ public class ExecutorServiceDelegateAddExecutorsToGroupTest extends ServletTestC
         try {
             executorService.addExecutorsToGroup(th.getAuthorizedPerformerUser(), Lists.newArrayList((Long)null), additionalGroup.getId());
             fail("Executor added to group ");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
 
         try {
             executorService.addExecutorsToGroup(th.getAuthorizedPerformerUser(), null, additionalGroup.getId());
             fail("Executor added to group ");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }
@@ -138,7 +134,7 @@ public class ExecutorServiceDelegateAddExecutorsToGroupTest extends ServletTestC
         try {
             executorService.addExecutorsToGroup(null, Lists.newArrayList(actor.getId()), additionalGroup.getId());
             fail("Executor added to group ");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }

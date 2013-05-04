@@ -45,10 +45,6 @@ public class ExecutorServiceDelegateGetExecutorsTest extends ServletTestCase {
     private final List<Permission> readPermissions = Lists.newArrayList(Permission.READ);
     private List<Long> executorsIDs;
 
-    public static TestSuite suite() {
-        return new TestSuite(ExecutorServiceDelegateGetExecutorsTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -68,14 +64,14 @@ public class ExecutorServiceDelegateGetExecutorsTest extends ServletTestCase {
     public void testGetExecutorsByAuthorizedPerformer() throws Exception {
         List<Executor> returnedExecutors = th.getExecutors(th.getAuthorizedPerformerUser(), executorsIDs);
         ArrayAssert
-                .assertWeakEqualArrays("buisnessDelegete.getExecutors() returns wrong executor set", additionalActorGroupsMixed, returnedExecutors);
+                .assertWeakEqualArrays("businessDelegate.getExecutors() returns wrong executor set", additionalActorGroupsMixed, returnedExecutors);
     }
 
     public void testGetExecutorsByUnauthorizedPerformer() throws Exception {
         User unauthorizedPerformerUser = th.getUnauthorizedPerformerUser();
         try {
             th.getExecutors(unauthorizedPerformerUser, executorsIDs);
-            fail("buisnessDelegete allow to getExecutor() to performer without Permission.READ.");
+            fail("businessDelegate allow to getExecutor() to performer without Permission.READ.");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
@@ -85,7 +81,7 @@ public class ExecutorServiceDelegateGetExecutorsTest extends ServletTestCase {
         executorsIDs = Lists.newArrayList(-1L, -2L, -3L);
         try {
             th.getExecutors(th.getAuthorizedPerformerUser(), executorsIDs);
-            fail("buisnessDelegete does not throw Exception to getExecutor() for UnexistedExecutor");
+            fail("businessDelegate does not throw Exception to getExecutor() for UnexistedExecutor");
         } catch (ExecutorDoesNotExistException e) {
             //That's what we expect
         }
@@ -94,8 +90,8 @@ public class ExecutorServiceDelegateGetExecutorsTest extends ServletTestCase {
     public void testGetExecutorsByNullPerformer() throws Exception {
         try {
             th.getExecutors(null, executorsIDs);
-            fail("buisnessDelegete allow to getExecutors() to performer with null subject.");
-        } catch (NullPointerException e) {
+            fail("businessDelegate allow to getExecutors() to performer with null subject.");
+        } catch (IllegalArgumentException e) {
             //That's what we expect 
         }
     }
