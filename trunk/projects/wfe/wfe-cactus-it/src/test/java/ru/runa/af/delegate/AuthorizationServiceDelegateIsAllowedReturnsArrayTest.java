@@ -41,10 +41,6 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
 
     private AuthorizationService authorizationService;
 
-    public static Test suite() {
-        return new TestSuite(AuthorizationServiceDelegateIsAllowedTest.class);
-    }
-
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateIsAllowedTest.class.getName());
         helper.createDefaultExecutorsMap();
@@ -71,7 +67,7 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
         try {
             authorizationService.isAllowed(null, Permission.READ, Lists.newArrayList(helper.getAASystem()));
             fail("AuthorizationDelegate.isAllowed() allows null subject");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -87,7 +83,7 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
         try {
             authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), null, Lists.newArrayList(helper.getAASystem()));
             fail("AuthorizationDelegate.isAllowed() allows null permission");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -95,7 +91,7 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
         try {
             authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, (List<Identifiable>) null);
             fail("AuthorizationDelegate.isAllowed() allows null identifiable");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -103,7 +99,7 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
         try {
             authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, Lists.newArrayList((Identifiable) null, null));
             fail("AuthorizationDelegate.isAllowed() allows null identifiables");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 

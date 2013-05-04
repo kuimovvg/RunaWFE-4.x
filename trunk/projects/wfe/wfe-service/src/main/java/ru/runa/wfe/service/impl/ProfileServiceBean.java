@@ -49,36 +49,36 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
 
     @Override
     public Profile getProfile(User user) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return profileLogic.getProfile(user, user.getActor().getId());
     }
 
     @Override
     public Profile setActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentationId);
-        Preconditions.checkNotNull(newActiveBatchName);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(batchPresentationId != null);
+        Preconditions.checkArgument(newActiveBatchName != null);
         return profileLogic.changeActiveBatchPresentation(user, batchPresentationId, newActiveBatchName);
     }
 
     @Override
     public Profile deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(batchPresentation != null);
         return profileLogic.deleteBatchPresentation(user, batchPresentation);
     }
 
     @Override
     public Profile createBatchPresentation(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(batchPresentation != null);
         return profileLogic.createBatchPresentation(user, batchPresentation);
     }
 
     @Override
     public Profile saveBatchPresentation(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(batchPresentation);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(batchPresentation != null);
         return profileLogic.saveBatchPresentation(user, batchPresentation);
     }
 

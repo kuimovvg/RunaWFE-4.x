@@ -65,7 +65,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
 
     @Override
     public User authenticateByKerberos(byte[] token) {
-        Preconditions.checkNotNull(token, "Kerberos authentication information");
+        Preconditions.checkArgument(token != null, "Kerberos authentication information is null");
         log.debug("Authenticating (kerberos)");
         User user = authenticationLogic.authenticate(token);
         log.debug("Authenticated (kerberos): " + user);
@@ -74,6 +74,8 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
 
     @Override
     public User authenticateByLoginPassword(String name, String password) {
+        Preconditions.checkArgument(name != null && !name.isEmpty());
+        Preconditions.checkArgument(password != null);
         log.debug("Authenticating (login) " + name);
         User user = authenticationLogic.authenticate(name, password);
         log.debug("Authenticated (login): " + user);

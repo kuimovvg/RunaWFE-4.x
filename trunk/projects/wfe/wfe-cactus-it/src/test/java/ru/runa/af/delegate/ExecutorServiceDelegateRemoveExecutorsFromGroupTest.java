@@ -53,10 +53,6 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
 
     private final Collection<Permission> readPermissions = Lists.newArrayList(Permission.READ);
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateRemoveExecutorsFromGroupTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -163,14 +159,14 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
         try {
             executorService.removeExecutorsFromGroup(th.getAuthorizedPerformerUser(), Lists.newArrayList((Executor) null), group.getId());
             assertTrue("NullExecutor removed from group ", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
 
         try {
             executorService.removeExecutorsFromGroup(th.getAuthorizedPerformerUser(), null, group);
             assertTrue("NullExecutor removed from group ", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }
@@ -180,7 +176,7 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
         try {
             executorService.removeExecutorsFromGroup(null, Lists.newArrayList(actor.getId()), group.getId());
             assertTrue("Actor removed from group with null subject", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }
@@ -189,7 +185,7 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
         try {
             executorService.removeExecutorsFromGroup(null, Lists.newArrayList(subGroup.getId()), group.getId());
             assertTrue("SubGroup removed from group with null subject", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }

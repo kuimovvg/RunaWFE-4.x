@@ -53,10 +53,6 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
 
     private final Collection<Permission> removeFromGroupReadPermissions = Lists.newArrayList(Permission.READ, GroupPermission.REMOVE_FROM_GROUP);
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest.class);
-    }
-
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -175,11 +171,10 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
     }
 
     public void testRemoveNullExecutorFromGroups() throws Exception {
-        Executor executor = null;
         try {
-            executorService.removeExecutorFromGroups(th.getAuthorizedPerformerUser(), executor.getId(), th.toIds(getAdditionalGroups()));
+            executorService.removeExecutorFromGroups(th.getAuthorizedPerformerUser(), null, th.toIds(getAdditionalGroups()));
             assertTrue("NullExecutor removed from groups ", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }
@@ -189,7 +184,7 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         try {
             executorService.removeExecutorFromGroups(th.getAuthorizedPerformerUser(), executor.getId(), null);
             assertTrue("Executor removed from Null groups ", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }
@@ -199,7 +194,7 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         try {
             executorService.removeExecutorFromGroups(null, executor.getId(), th.toIds(getAdditionalGroups()));
             assertTrue("Executor removed from groups with null subject", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }
@@ -209,7 +204,7 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         try {
             executorService.removeExecutorFromGroups(null, executor.getId(), th.toIds(getAdditionalGroups()));
             assertTrue("Executor removed from groups with null subject", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }

@@ -54,10 +54,6 @@ public class ExecutorServiceDelegateRemoveManyExecutorsFromGroupTest extends Ser
 
     private final Collection<Permission> removeFromGroupReadPermissions = Lists.newArrayList(Permission.READ, GroupPermission.REMOVE_FROM_GROUP);
 
-    public static Test suite() {
-        return new TestSuite(ExecutorServiceDelegateRemoveManyExecutorsFromGroupTest.class);
-    }
-
     private List<Executor> getAdditionalExecutorsMixed() throws InternalApplicationException, AuthorizationException, AuthenticationException,
             ExecutorDoesNotExistException {
         List<Long> ids = Lists.newArrayList();
@@ -129,11 +125,11 @@ public class ExecutorServiceDelegateRemoveManyExecutorsFromGroupTest extends Ser
 
     public void testRemoveNullExecutor() throws Exception {
         th.setPermissionsToAuthorizedPerformer(removeFromGroupReadPermissions, getAdditionalGroup());
-        List<Executor> executors = Lists.newArrayList((Executor) null, null, null);
+        List<Long> executors = Lists.newArrayList(null, null, null);
         try {
-            executorService.removeExecutorsFromGroup(th.getAuthorizedPerformerUser(), th.toIds(executors), getAdditionalGroup().getId());
+            executorService.removeExecutorsFromGroup(th.getAuthorizedPerformerUser(), executors, getAdditionalGroup().getId());
             assertTrue("NullExecutors removed from group ", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }
@@ -142,7 +138,7 @@ public class ExecutorServiceDelegateRemoveManyExecutorsFromGroupTest extends Ser
         try {
             executorService.removeExecutorsFromGroup(null, th.toIds(getAdditionalExecutorsMixed()), getAdditionalGroup().getId());
             assertTrue("Executors removed from group with null subject", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             // this is supposed result
         }
     }

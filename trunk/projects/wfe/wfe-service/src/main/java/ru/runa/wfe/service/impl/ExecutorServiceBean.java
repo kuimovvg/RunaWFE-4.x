@@ -57,14 +57,14 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
 
     @Override
     public void update(User user, Executor executor) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executor);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executor != null);
         executorLogic.update(user, executor);
     }
 
     @Override
     public List<? extends Executor> getExecutors(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
         }
@@ -73,7 +73,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
 
     @Override
     public int getExecutorsCount(User user, BatchPresentation batchPresentation) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
         }
@@ -82,48 +82,50 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
 
     @Override
     public Actor getActorCaseInsensitive(String login) {
-        Preconditions.checkNotNull(login);
+        Preconditions.checkArgument(login != null);
         return executorLogic.getActorCaseInsensitive(login);
     }
 
     @Override
     public Executor getExecutorByName(User user, String name) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(name != null);
         return executorLogic.getExecutor(user, name);
     }
 
     @Override
     public void remove(User user, List<Long> ids) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(ids);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(ids != null);
         executorLogic.remove(user, ids);
     }
 
     @Override
     public <T extends Executor> T create(User user, T executor) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executor);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executor != null);
         return executorLogic.create(user, executor);
     }
 
     @Override
     public void addExecutorsToGroup(User user, List<Long> executorIds, Long groupId) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executorIds);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executorIds != null);
         executorLogic.addExecutorsToGroup(user, executorIds, groupId);
     }
 
     @Override
     public void addExecutorToGroups(User user, Long executorId, List<Long> groupIds) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(groupIds);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executorId != null);
+        Preconditions.checkArgument(groupIds != null);
         executorLogic.addExecutorToGroups(user, executorId, groupIds);
     }
 
     @Override
     public List<Executor> getGroupChildren(User user, Group group, BatchPresentation batchPresentation, boolean isExclude) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(group);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(group != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
         }
@@ -132,8 +134,8 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
 
     @Override
     public int getGroupChildrenCount(User user, Group group, BatchPresentation batchPresentation, boolean isExclude) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(group);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(group != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
         }
@@ -142,42 +144,44 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
 
     @Override
     public List<Actor> getGroupActors(User user, Group group) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(group);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(group != null);
         return executorLogic.getGroupActors(user, group);
     }
 
     @Override
     public void removeExecutorsFromGroup(User user, List<Long> executorIds, Long groupId) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executorIds);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executorIds != null);
         executorLogic.removeExecutorsFromGroup(user, executorIds, groupId);
     }
 
     @Override
     public void removeExecutorFromGroups(User user, Long executorId, List<Long> groupIds) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(groupIds);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executorId != null);
+        Preconditions.checkArgument(groupIds != null);
         executorLogic.removeExecutorFromGroups(user, executorId, groupIds);
     }
 
     @Override
     public void setPassword(User user, Actor actor, String password) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(actor);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(actor != null);
+        Preconditions.checkArgument(password != null);
         executorLogic.setPassword(user, actor, password);
     }
 
     @Override
     public void setStatus(User user, Actor actor, boolean isActive) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         executorLogic.setStatus(user, actor, isActive, true);
     }
 
     @Override
     public List<Group> getExecutorGroups(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executor);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executor != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.GROUPS.createDefault();
         }
@@ -186,8 +190,8 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
 
     @Override
     public int getExecutorGroupsCount(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executor);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executor != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.GROUPS.createDefault();
         }
@@ -196,34 +200,35 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
 
     @Override
     public List<Executor> getAllExecutorsFromGroup(User user, Group group) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(group);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(group != null);
         return executorLogic.getAllExecutorsFromGroup(user, group);
     }
 
     @Override
     public boolean isExecutorInGroup(User user, Executor executor, Group group) {
-        Preconditions.checkNotNull(user);
-        Preconditions.checkNotNull(executor);
-        Preconditions.checkNotNull(group);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executor != null);
+        Preconditions.checkArgument(group != null);
         return executorLogic.isExecutorInGroup(user, executor, group);
     }
 
     @Override
     public boolean isExecutorExist(User user, String executorName) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return executorLogic.isExecutorExist(user, executorName);
     }
 
     @Override
     public Executor getExecutor(User user, Long id) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(id != null);
         return executorLogic.getExecutor(user, id);
     }
 
     @Override
     public Actor getActorByCode(User user, Long code) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return executorLogic.getActorByCode(user, code);
     }
 

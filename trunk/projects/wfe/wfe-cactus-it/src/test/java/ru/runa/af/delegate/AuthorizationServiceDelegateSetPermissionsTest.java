@@ -44,10 +44,6 @@ public class AuthorizationServiceDelegateSetPermissionsTest extends ServletTestC
 
     private Collection<Permission> p = Lists.newArrayList(Permission.READ, Permission.UPDATE_PERMISSIONS);
 
-    public static Test suite() {
-        return new TestSuite(AuthorizationServiceDelegateSetPermissionsTest.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateSetPermissionsTest.class.getName());
@@ -75,7 +71,7 @@ public class AuthorizationServiceDelegateSetPermissionsTest extends ServletTestC
         try {
             authorizationService.setPermissions(null, helper.getBaseGroupActor().getId(), p, helper.getAASystem());
             fail("AuthorizationDelegate.setPermissions() allows null subject");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -99,7 +95,7 @@ public class AuthorizationServiceDelegateSetPermissionsTest extends ServletTestC
         try {
             authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), helper.getBaseGroupActor().getId(), null, helper.getAASystem());
             fail("AuthorizationDelegate.setPermissions() allows null permissions");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -107,7 +103,7 @@ public class AuthorizationServiceDelegateSetPermissionsTest extends ServletTestC
         try {
             authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), helper.getBaseGroupActor().getId(), p, null);
             fail("AuthorizationDelegate.setPermissions() allows null identifiable");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 

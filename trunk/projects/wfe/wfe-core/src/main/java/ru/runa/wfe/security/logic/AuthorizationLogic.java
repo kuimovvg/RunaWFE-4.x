@@ -89,7 +89,7 @@ public class AuthorizationLogic extends CommonLogic {
      * specified identifiable. This query using paging.
      * 
      * @param user
-     *            Current actor {@linkplain user}.
+     *            Current actor {@linkplain User}.
      * @param identifiable
      *            {@linkplain Identifiable} to load executors, which has (or
      *            not) permission on this identifiable.
@@ -126,7 +126,7 @@ public class AuthorizationLogic extends CommonLogic {
      * specified identifiable.
      * 
      * @param user
-     *            Current actor {@linkplain user}.
+     *            Current actor {@linkplain User}.
      * @param identifiable
      *            {@linkplain Identifiable} to load executors, which has (or
      *            not) permission on this identifiable.

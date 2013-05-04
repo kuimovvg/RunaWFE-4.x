@@ -49,10 +49,6 @@ public class OrganizationFunctionParserTest extends ServletTestCase {
 
     private Map<String, Object> legalVariables;
 
-    public static Test suite() {
-        return new TestSuite(OrganizationFunctionParserTest.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
 

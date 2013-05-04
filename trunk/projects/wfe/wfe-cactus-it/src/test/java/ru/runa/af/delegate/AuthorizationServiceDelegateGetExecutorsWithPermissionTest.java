@@ -48,10 +48,6 @@ public class AuthorizationServiceDelegateGetExecutorsWithPermissionTest extends 
 
     private BatchPresentation batchPresentation;
 
-    public static Test suite() {
-        return new TestSuite(AuthorizationServiceDelegateGetExecutorsWithPermissionTest.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateGetExecutorsWithPermissionTest.class.getName());
@@ -81,7 +77,7 @@ public class AuthorizationServiceDelegateGetExecutorsWithPermissionTest extends 
         try {
             authorizationService.getExecutorsWithPermission(null, helper.getAASystem(), batchPresentation, true);
             fail("AuthorizationDelegate.getExecutorsWithPermission() allows null subject");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -97,7 +93,7 @@ public class AuthorizationServiceDelegateGetExecutorsWithPermissionTest extends 
         try {
             authorizationService.getExecutorsWithPermission(helper.getAuthorizedPerformerUser(), null, batchPresentation, true);
             fail("AuthorizationDelegate.getExecutorsWithPermission() allows null identifiable");
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
         }
     }
 

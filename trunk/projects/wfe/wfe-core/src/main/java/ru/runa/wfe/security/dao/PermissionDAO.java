@@ -119,7 +119,7 @@ public class PermissionDAO extends CommonDAO {
     /**
      * Checks whether executor has permission on identifiable.
      * 
-     * @param executor
+     * @param user
      *            Executor, which permission must be check.
      * @param permission
      *            Checking permission.
@@ -153,11 +153,11 @@ public class PermissionDAO extends CommonDAO {
      * Checks whether executor has permission on identifiable's. Create result
      * array in same order, as identifiable's.
      * 
-     * @param executor
+     * @param user
      *            Executor, which permission must be check.
      * @param permission
      *            Checking permission.
-     * @param identifiable
+     * @param identifiables
      *            Secured objects to check permission on.
      * @return Array of: true if executor has requested permission on
      *         secuedObject; false otherwise.
@@ -192,9 +192,8 @@ public class PermissionDAO extends CommonDAO {
                 @Override
                 public List<PermissionMapping> doInHibernate(Session session) {
                     Query query = session
-                            .createQuery("from PermissionMapping where identifiableId in (:identifiableIds) and type=:type and mask=:mask and executor in (:executors)");
+                            .createQuery("from PermissionMapping where identifiableId in (:identifiableIds) and mask=:mask and executor in (:executors)");
                     query.setParameterList("identifiableIds", identifiableIds);
-                    query.setParameter("type", identifiables.get(0).getSecuredObjectType());
                     query.setParameter("mask", permission.getMask());
                     query.setParameterList("executors", executorWithGroups);
                     return query.list();

@@ -55,24 +55,26 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
 
     @Override
     public void login(User user) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         auditLogic.login(user, ASystem.INSTANCE);
     }
 
     @Override
     public void logout(User user) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         auditLogic.logout(user, ASystem.INSTANCE);
     }
 
     @Override
     public List<Localization> getLocalizations(User user) {
-        Preconditions.checkNotNull(user);
+        Preconditions.checkArgument(user != null);
         return auditLogic.getLocalizations(user);
     }
 
     @Override
     public String getLocalized(User user, String name) {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(name != null);
         return auditLogic.getLocalized(user, name);
     }
 

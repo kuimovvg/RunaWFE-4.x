@@ -51,10 +51,6 @@ public class ExecutorServiceDelegateGetGroupsInThatExecutorNotPresentTest extend
 
     private Map<String, Executor> executorsMap;
 
-    public static TestSuite suite() {
-        return new TestSuite(ExecutorServiceDelegateGetGroupsInThatExecutorNotPresentTest.class);
-    }
-
     @Override
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
@@ -81,7 +77,7 @@ public class ExecutorServiceDelegateGetGroupsInThatExecutorNotPresentTest extend
         List<Group> calculatedGroups = executorService.getExecutorGroups(th.getAuthorizedPerformerUser(), actor, th.getExecutorBatchPresentation(),
                 true);
         List<Group> realGroups = Lists.newArrayList(group);
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutorsInThatExecutorNotPresent() returns wrong group set", realGroups,
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutorsInThatExecutorNotPresent() returns wrong group set", realGroups,
                 calculatedGroups);
     }
 
@@ -89,14 +85,14 @@ public class ExecutorServiceDelegateGetGroupsInThatExecutorNotPresentTest extend
         List<Group> calculatedGroups = executorService.getExecutorGroups(th.getAuthorizedPerformerUser(), group, th.getExecutorBatchPresentation(),
                 true);
         List<Group> realGroups = Lists.newArrayList(subGroup);
-        ArrayAssert.assertWeakEqualArrays("buisnessDelegete.getExecutorsInThatExecutorNotPresent() returns wrong group set", realGroups,
+        ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutorsInThatExecutorNotPresent() returns wrong group set", realGroups,
                 calculatedGroups);
     }
 
     public void testGetExecutorGroupsByUnauthorizedPerformer() throws Exception {
         try {
             executorService.getExecutorGroups(th.getUnauthorizedPerformerUser(), actor, th.getExecutorBatchPresentation(), true);
-            assertTrue("buisnessDelegete.getExecutorsInThatExecutorNotPresent() no AuthorizationFailedException", false);
+            assertTrue("businessDelegate.getExecutorsInThatExecutorNotPresent() no AuthorizationFailedException", false);
         } catch (AuthorizationException e) {
             //That's what we expect
         }
@@ -106,7 +102,7 @@ public class ExecutorServiceDelegateGetGroupsInThatExecutorNotPresentTest extend
         try {
             executorService.getExecutorGroups(null, actor, th.getExecutorBatchPresentation(), true);
             assertTrue("getExecutorsInThatExecutorNotPresentwithNullSubject no Exception", false);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }
