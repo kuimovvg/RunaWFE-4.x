@@ -178,8 +178,8 @@ public class PermissionDAO extends CommonDAO {
         }
         List<PermissionMapping> permissions = new ArrayList<PermissionMapping>();
         for (int i = 0; i <= identifiables.size() / 1000; ++i) {
-            int start = i * 1000; // TODO fails on 2000
-            int end = (i + 1) * 1000 > identifiables.size() ? identifiables.size() : (i + 1) * 1000;
+            final int start = i * 1000; // TODO fails on 2000
+            final int end = (i + 1) * 1000 > identifiables.size() ? identifiables.size() : (i + 1) * 1000;
             final List<Long> identifiableIds = new ArrayList<Long>(end - start);
             for (int j = start; j < end; j++) {
                 identifiableIds.add(identifiables.get(j).getIdentifiableId());
@@ -191,9 +191,16 @@ public class PermissionDAO extends CommonDAO {
 
                 @Override
                 public List<PermissionMapping> doInHibernate(Session session) {
-                    Query query = session
-                            .createQuery("from PermissionMapping where identifiableId in (:identifiableIds) and mask=:mask and executor in (:executors)");
-                    query.setParameterList("identifiableIds", identifiableIds);
+                    String queryString = "from PermissionMapping where mask=:mask and executor in (:executors) AND (1=0"; // can't use FALSE here, because of hibernate bug: unexpected AST node
+                    for (int k=0; k<identifiableIds.size(); k++) {
+                        queryString += " OR (identifiableId = :id" + k + " AND type = :type" + k + ")";
+                    }
+                    queryString += ")";
+                    Query query = session.createQuery(queryString);
+                    for (int k=0; k<identifiableIds.size(); k++) {
+                        query.setParameter("id"+k, identifiableIds.get(k));
+                        query.setParameter("type"+k, identifiables.get(start+k).getSecuredObjectType());
+                    }
                     query.setParameter("mask", permission.getMask());
                     query.setParameterList("executors", executorWithGroups);
                     return query.list();
