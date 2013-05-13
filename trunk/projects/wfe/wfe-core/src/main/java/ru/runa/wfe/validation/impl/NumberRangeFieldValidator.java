@@ -31,12 +31,12 @@ public class NumberRangeFieldValidator extends AbstractRangeValidator<Number> {
 
     @Override
     protected Number getMinComparatorValue() {
-        return getParameterNotNull(Double.class, "min");
+        return getParameter(Double.class, "min", null);
     }
 
     @Override
     protected Number getMaxComparatorValue() {
-        return getParameterNotNull(Double.class, "max");
+        return getParameter(Double.class, "max", null);
     }
 
 }
