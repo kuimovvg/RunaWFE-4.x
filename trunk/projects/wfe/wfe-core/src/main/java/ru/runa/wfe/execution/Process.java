@@ -195,7 +195,7 @@ public class Process extends IdentifiableBase {
 
     public Swimlane getSwimlane(String swimlaneName) {
         for (Swimlane existing : swimlanes) {
-            if (swimlaneName.equals(existing.getName())) {
+            if (Objects.equal(swimlaneName, existing.getName())) {
                 return existing;
             }
         }
