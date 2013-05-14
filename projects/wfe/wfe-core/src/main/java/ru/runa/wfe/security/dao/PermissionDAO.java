@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,7 +161,7 @@ public class PermissionDAO extends CommonDAO {
      * @param identifiables
      *            Secured objects to check permission on.
      * @return Array of: true if executor has requested permission on
-     *         secuedObject; false otherwise.
+     *         securedObject; false otherwise.
      */
     public boolean[] isAllowed(final User user, final Permission permission, final List<? extends Identifiable> identifiables) {
         if (identifiables.size() == 0) {
@@ -177,9 +178,11 @@ public class PermissionDAO extends CommonDAO {
             }
         }
         List<PermissionMapping> permissions = new ArrayList<PermissionMapping>();
-        for (int i = 0; i <= identifiables.size() / 1000; ++i) {
-            final int start = i * 1000; // TODO fails on 2000
-            final int end = (i + 1) * 1000 > identifiables.size() ? identifiables.size() : (i + 1) * 1000;
+        int window = 2000 - executorWithGroups.size() - 1; // 2000 parameter markers are supported on MSSQL
+        Preconditions.checkArgument(window > 100);
+        for (int i = 0; i <= (identifiables.size()-1) / window; ++i) {
+            final int start = i * window;
+            final int end = (i + 1) * window > identifiables.size() ? identifiables.size() : (i + 1) * window;
             final List<Long> identifiableIds = new ArrayList<Long>(end - start);
             for (int j = start; j < end; j++) {
                 identifiableIds.add(identifiables.get(j).getIdentifiableId());
