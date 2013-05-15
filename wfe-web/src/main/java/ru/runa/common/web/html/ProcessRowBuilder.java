@@ -32,6 +32,7 @@ import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 public class ProcessRowBuilder extends ReflectionRowBuilder {
+    private List<WfProcess> allWfProcessItems;
 
     public ProcessRowBuilder(List<? extends Object> items, BatchPresentation batchPresentation, PageContext pageContext, String actionUrl,
             String returnAction, ItemUrlStrategy itemUrlStrategy, TDBuilder[] builders) {
@@ -177,14 +178,17 @@ public class ProcessRowBuilder extends ReflectionRowBuilder {
 
     @Override
     protected List<? extends Object> getItems() {
-        Object item = items.get(currentState.getItemIndex());
-        ExecutionService executionService = Delegates.getExecutionService();
-        List<WfProcess> listSubProcessInstance = executionService.getSubprocesses(Commons.getUser(pageContext.getSession()),
-                ((WfProcess) item).getId());
+        if (allWfProcessItems == null) {
+            allWfProcessItems = new ArrayList<WfProcess>();
+            ExecutionService executionService = Delegates.getExecutionService();
+            for (Object item : items) {
+                List<WfProcess> listSubProcessInstance = executionService.getSubprocesses(Commons.getUser(pageContext.getSession()),
+                        ((WfProcess) item).getId());
+                allWfProcessItems.add((WfProcess) item);
+                allWfProcessItems.addAll(listSubProcessInstance);
+            }
+        }
 
-        List<WfProcess> result = new ArrayList<WfProcess>();
-        result.add((WfProcess) item);
-        result.addAll(listSubProcessInstance);
-        return result;
+        return allWfProcessItems;
     }
 }
