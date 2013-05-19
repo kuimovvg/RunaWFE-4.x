@@ -84,6 +84,10 @@ public class NodeModel {
         return transitions.get(transitionName);
     }
 
+    public HashMap<String, TransitionModel> getTransitions() {
+        return transitions;
+    }
+
     public int getHeight() {
         return height;
     }

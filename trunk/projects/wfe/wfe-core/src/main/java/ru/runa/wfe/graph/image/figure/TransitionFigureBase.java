@@ -50,7 +50,7 @@ public class TransitionFigureBase {
 
     public void init(TransitionModel transitionModel, AbstractFigure figureFrom, AbstractFigure figureTo) {
         name = transitionModel.getName();
-        bendpoints = transitionModel.getBendpoints();
+        bendpoints = new ArrayList<BendpointModel>(transitionModel.getBendpoints());
         actionsCount = transitionModel.getActionsCount();
         this.figureFrom = figureFrom;
         this.figureTo = figureTo;
