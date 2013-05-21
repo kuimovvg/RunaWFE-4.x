@@ -20,8 +20,9 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.StatusTextEvent;
-import org.eclipse.swt.browser.StatusTextListener;
+import org.eclipse.swt.browser.BrowserFunction;
+import org.eclipse.swt.browser.ProgressAdapter;
+import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -50,10 +51,7 @@ import tk.eclipse.plugin.htmleditor.editors.HTMLSourceEditor;
  * org.eclipse.ui.texteditor.BasicTextEditorActionContributor
  * </p>
  */
-public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusTextListener, IResourceChangeListener {
-    private static final String PREFIX_SYNCHTML = "SYNCHTML:";
-    private static final String PREFIX_HTML = "HTML:";
-    private static final String PREFIX_STARTSYNC = "STARTSYNC";
+public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceChangeListener {
     public static final int CLOSED = 197;
     private HTMLSourceEditor sourceEditor;
     private Browser browser;
@@ -131,6 +129,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusText
         return variableWithSwimlanes;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public Object getAdapter(Class adapter) {
         if (adapter == ITextEditor.class) {
@@ -161,8 +160,25 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusText
         int pageNumber = 0;
         try {
             browser = new Browser(getContainer(), SWT.NULL);
-            browser.addStatusTextListener(this);
             browser.addOpenWindowListener(new BrowserWindowHelper(getContainer().getDisplay()));
+            new GetHTMLCallbackFunction(browser);
+            browser.addProgressListener(new ProgressAdapter() {
+                @Override
+                public void completed(ProgressEvent event) {
+                    if (DEBUG) {
+                        PluginLogger.logInfo("completed " + event);
+                    }
+                    if (updateSaveButtonTimer == null) {
+                        updateSaveButtonTimer = new Timer("updateSaveButtonTimer");
+                        updateSaveButtonTimer.schedule(new UpdateSaveButtonTimerTask(), 1000, 1000);
+                        if (DEBUG) {
+                            PluginLogger.logInfo("Started updateSaveButtonTimer");
+                        }
+                    } else if (DEBUG) {
+                        PluginLogger.logInfo("tried to start timer more than once!");
+                    }
+                }
+            });
             addPage(browser);
             setPageText(pageNumber++, WYSIWYGPlugin.getResourceString("wysiwyg.design.tab_name"));
         } catch (Throwable th) {
@@ -226,7 +242,6 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusText
                 }
             });
             savedHTML = getSourceDocumentHTML();
-            savedHTML = removeRN(savedHTML);
         } catch (Exception e) {
             MessageDialog.openError(getContainer().getShell(), WYSIWYGPlugin.getResourceString("wysiwyg.design.create_error"), e.getCause().getMessage());
             WYSIWYGPlugin.logError("Web editor page", e);
@@ -265,7 +280,6 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusText
         }
         sourceEditor.doSave(monitor);
         savedHTML = getSourceDocumentHTML();
-        savedHTML = removeRN(savedHTML);
         if (formNode != null) {
             formNode.setDirty();
         }
@@ -345,50 +359,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusText
         }
     }
 
-    @Override
-    public void changed(StatusTextEvent event) {
-        String text = event.text;
-        if (DEBUG) {
-            PluginLogger.logInfo("changed: " + text);
-        }
-        if (text.startsWith(PREFIX_STARTSYNC)) {
-            if (updateSaveButtonTimer == null) {
-                updateSaveButtonTimer = new Timer("updateSaveButtonTimer");
-                updateSaveButtonTimer.schedule(new UpdateSaveButtonTimerTask(), 5000, 5000);
-                if (DEBUG) {
-                    PluginLogger.logInfo("Started updateSaveButtonTimer");
-                }
-            }
-        } else if (text.startsWith(PREFIX_HTML) && text.length() > PREFIX_HTML.length()) {
-            String html = getDesignDocumentHTML(PREFIX_HTML, text);
-            String oldContent = getSourceDocumentHTML();
-            if (!oldContent.equals(html)) {
-                sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
-                setDirty(true);
-            } else if (DEBUG) {
-                PluginLogger.logInfo("Nothing to change: " + html);
-            }
-        } else if (text.startsWith(PREFIX_SYNCHTML) && text.length() > PREFIX_SYNCHTML.length()) {
-            String html = getDesignDocumentHTML(PREFIX_SYNCHTML, text);
-            html = removeRN(html);
-            String diff = StringUtils.difference(savedHTML, html);
-            boolean setDirty = (diff.length() != 0);
-            if (setDirty != isDirty()) {
-                setDirty(setDirty);
-            } else if (DEBUG) {
-                PluginLogger.logInfo("Dirty state did not changed: " + setDirty);
-            }
-        }
-    }
-
-    private String removeRN(String string) {
-        string = string.replaceAll("\\n", "");
-        string = string.replaceAll("\\r", "");
-        return string;
-    }
-
-    private String getDesignDocumentHTML(String prefix, String statusText) {
-        String html = statusText.substring(prefix.length());
+    private String getDesignDocumentHTML(String html) {
         if (isFtlFormat()) {
             try {
                 html = FreemarkerUtil.transformFromHtml(html, getLazyVariableNameList());
@@ -436,6 +407,47 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements StatusText
                     PluginLogger.logInfo(e.getMessage());
                 }
             }
+        }
+    }
+
+    private class GetHTMLCallbackFunction extends BrowserFunction {
+        public GetHTMLCallbackFunction(Browser browser) {
+            super(browser, "getHTMLCallback");
+        }
+
+        @Override
+        public Object function(Object[] arguments) {
+            boolean sync = (Boolean) arguments[0];
+            String text = (String) arguments[1];
+            if (text.length() == 0) {
+                if (DEBUG) {
+                    PluginLogger.logInfo("empty text received in callback for sync=" + sync);
+                }
+                return null;
+            }
+            if (sync) {
+                String html = getDesignDocumentHTML(text);
+                String oldContent = getSourceDocumentHTML();
+                if (!oldContent.equals(html)) {
+                    sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
+                    setDirty(true);
+                } else if (DEBUG) {
+                    PluginLogger.logInfo("Nothing to change: " + html);
+                }
+            } else {
+                String html = getDesignDocumentHTML(text);
+                String diff = StringUtils.difference(savedHTML, html);
+                boolean setDirty = (diff.length() != 0);
+                if (setDirty != isDirty()) {
+                    setDirty(setDirty);
+                } else if (DEBUG) {
+                    PluginLogger.logInfo("Dirty state did not changed: " + setDirty);
+                }
+                if (setDirty) {
+                    sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
+                }
+            }
+            return null;
         }
     }
 }
