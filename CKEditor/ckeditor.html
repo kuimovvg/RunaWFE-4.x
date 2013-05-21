@@ -19,13 +19,7 @@
       
       function getHTML(sync) {
         var oEditor = CKEDITOR.instances.editor;
-        var prefix;
-        if (sync) {
-        	prefix = 'SYNCHTML:';
-        } else {
-        	prefix = 'HTML:';
-        }
-	    window.status = prefix + CKEDITOR.instances.editor.getData();
+        getHTMLCallback(sync, oEditor.getData());
       }
 
       function setHTML(html){
@@ -34,7 +28,7 @@
       }
     </script>
   </head>
-  <body style="margin: 0px; padding: 0px;" onload="javascript:window.status='STARTSYNC';">
+  <body style="margin: 0px; padding: 0px;">
     <textarea name="editor"></textarea>
     <!--div id="editor"/-->
     <form method="POST" name="form">

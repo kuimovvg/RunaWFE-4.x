@@ -10,13 +10,7 @@
       
       function getHTML(sync) { 
         var oEditor = FCKeditorAPI.GetInstance('editor');
-        var prefix;
-        if (sync) {
-          prefix = 'SYNCHTML:';
-        } else {
-          prefix = 'HTML:';
-        }
-        window.status = prefix + oEditor.GetXHTML(true);
+        getHTMLCallback(sync, oEditor.GetXHTML(true));
       }
 
       function setHTML(html) {
@@ -37,7 +31,7 @@
       }      
     </script>
   </head>
-  <body style="margin: 0px; padding: 0px;" onload="javascript:window.status='STARTSYNC';">
+  <body style="margin: 0px; padding: 0px;">
     <form method="POST" name="form">
       <script type="text/javascript">
         var oEditor = new FCKeditor('editor');
