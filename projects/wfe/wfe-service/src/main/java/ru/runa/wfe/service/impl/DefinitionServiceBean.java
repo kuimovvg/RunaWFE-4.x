@@ -112,7 +112,6 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     @Override
     public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId, boolean withTimerTransitions) {
         Preconditions.checkArgument(user != null);
-        Preconditions.checkArgument(taskId != null);
         return definitionLogic.getOutputTransitionNames(user, definitionId, taskId, withTimerTransitions);
     }
 
