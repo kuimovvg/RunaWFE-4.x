@@ -52,8 +52,8 @@ public class Transition extends GraphElement {
 
     @Override
     public void validate() {
-        Preconditions.checkNotNull(from, "from");
-        Preconditions.checkNotNull(to, "to");
+        Preconditions.checkNotNull(from, "from in " + this);
+        Preconditions.checkNotNull(to, "to in " + this);
     }
 
     public Node getFrom() {
