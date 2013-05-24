@@ -1559,6 +1559,11 @@
     <extension
           point="org.eclipse.ui.preferencePages">
        <page
+             class="ru.runa.gpd.settings.CommonPreferencePage"
+             id="gpd.pref.common"
+             name="%pref.common">
+       </page>
+       <page
              class="ru.runa.gpd.settings.FormPreferencePage"
              id="gpd.pref.form"
              name="%pref.form">
