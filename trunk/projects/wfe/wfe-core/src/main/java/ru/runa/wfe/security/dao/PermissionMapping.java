@@ -43,10 +43,14 @@ import ru.runa.wfe.user.Executor;
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "PERMISSION_MAPPING", uniqueConstraints = @UniqueConstraint(columnNames = { "IDENTIFIABLE_ID", "TYPE_ID", "EXECUTOR_ID", "MASK" }))
+@Table(name = "PERMISSION_MAPPING", uniqueConstraints = @UniqueConstraint(name = "UQ_MAPPINGS", columnNames = { "IDENTIFIABLE_ID", "TYPE_ID", "MASK",
+        "EXECUTOR_ID" }))
 @org.hibernate.annotations.Table(appliesTo = "PERMISSION_MAPPING", indexes = {
-        @Index(name = "IX_PERMISSION_BY_IDENTIFIABLE", columnNames = { "IDENTIFIABLE_ID", "TYPE_ID", "MASK", "EXECUTOR_ID" }),
-        @Index(name = "IX_PERMISSION_BY_EXECUTOR", columnNames = { "EXECUTOR_ID", "TYPE_ID", "MASK", "IDENTIFIABLE_ID" }) })
+/*
+ * @Index(name = "IX_PERMISSION_BY_IDENTIFIABLE", columnNames = {
+ * "IDENTIFIABLE_ID", "TYPE_ID", "MASK", "EXECUTOR_ID" }),
+ */
+@Index(name = "IX_PERMISSION_BY_EXECUTOR", columnNames = { "EXECUTOR_ID", "TYPE_ID", "MASK", "IDENTIFIABLE_ID" }) })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PermissionMapping {
     private Long id;

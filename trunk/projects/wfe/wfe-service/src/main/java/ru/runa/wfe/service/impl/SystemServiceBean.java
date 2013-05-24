@@ -73,7 +73,7 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
 
     @Override
     public String getLocalized(User user, String name) {
-        Preconditions.checkArgument(user != null);
+        // Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(name != null);
         return auditLogic.getLocalized(user, name);
     }

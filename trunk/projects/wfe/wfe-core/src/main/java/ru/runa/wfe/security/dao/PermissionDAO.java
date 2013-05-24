@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Preconditions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +42,7 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -163,7 +163,7 @@ public class PermissionDAO extends CommonDAO {
      * @return Array of: true if executor has requested permission on
      *         securedObject; false otherwise.
      */
-    public boolean[] isAllowed(final User user, final Permission permission, final List<? extends Identifiable> identifiables) {
+    public <T extends Identifiable> boolean[] isAllowed(final User user, final Permission permission, final List<T> identifiables) {
         if (identifiables.size() == 0) {
             return new boolean[0];
         }
@@ -178,9 +178,10 @@ public class PermissionDAO extends CommonDAO {
             }
         }
         List<PermissionMapping> permissions = new ArrayList<PermissionMapping>();
-        int window = 2000 - executorWithGroups.size() - 1; // 2000 parameter markers are supported on MSSQL
+        // 2000 parameters is the maximum for MSSQL
+        int window = 2000 - executorWithGroups.size() - 1;
         Preconditions.checkArgument(window > 100);
-        for (int i = 0; i <= (identifiables.size()-1) / window; ++i) {
+        for (int i = 0; i <= (identifiables.size() - 1) / window; ++i) {
             final int start = i * window;
             final int end = (i + 1) * window > identifiables.size() ? identifiables.size() : (i + 1) * window;
             final List<Long> identifiableIds = new ArrayList<Long>(end - start);
@@ -194,16 +195,10 @@ public class PermissionDAO extends CommonDAO {
 
                 @Override
                 public List<PermissionMapping> doInHibernate(Session session) {
-                    String queryString = "from PermissionMapping where mask=:mask and executor in (:executors) AND (1=0"; // can't use FALSE here, because of hibernate bug: unexpected AST node
-                    for (int k=0; k<identifiableIds.size(); k++) {
-                        queryString += " OR (identifiableId = :id" + k + " AND type = :type" + k + ")";
-                    }
-                    queryString += ")";
-                    Query query = session.createQuery(queryString);
-                    for (int k=0; k<identifiableIds.size(); k++) {
-                        query.setParameter("id"+k, identifiableIds.get(k));
-                        query.setParameter("type"+k, identifiables.get(start+k).getSecuredObjectType());
-                    }
+                    Query query = session
+                            .createQuery("from PermissionMapping where identifiableId in (:identifiableIds) and type=:type and mask=:mask and executor in (:executors)");
+                    query.setParameterList("identifiableIds", identifiableIds);
+                    query.setParameter("type", identifiables.get(0).getSecuredObjectType());
                     query.setParameter("mask", permission.getMask());
                     query.setParameterList("executors", executorWithGroups);
                     return query.list();

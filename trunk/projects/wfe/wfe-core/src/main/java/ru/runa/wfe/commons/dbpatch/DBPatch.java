@@ -147,15 +147,14 @@ public abstract class DBPatch {
         return "DROP TABLE " + tableName; // TODO IF EXISTS
     }
 
-    // protected final String getDDLCreateIndex(String tableName, String
-    // indexName, String columnName) {
-    // return "CREATE INDEX " + indexName + " ON " + tableName + " (" +
-    // columnName + ")";
-    // }
-
     protected final String getDDLCreateIndex(String tableName, String indexName, String... columnNames) {
         String conjunctedColumnNames = Joiner.on(", ").join(columnNames);
         return "CREATE INDEX " + indexName + " ON " + tableName + " (" + conjunctedColumnNames + ")";
+    }
+
+    protected final String getDDLCreateUniqueKey(String tableName, String indexName, String... columnNames) {
+        String conjunctedColumnNames = Joiner.on(", ").join(columnNames);
+        return "ALTER TABLE " + tableName + " ADD CONSTRAINT " + indexName + " UNIQUE (" + conjunctedColumnNames + ")";
     }
 
     protected final String getDDLRenameIndex(String tableName, String indexName, String newIndexName) {

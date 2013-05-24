@@ -48,7 +48,7 @@ public class AuthorizationServiceDelegate extends EJB3Delegate implements Author
     }
 
     @Override
-    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) {
+    public <T extends Identifiable> boolean[] isAllowed(User user, Permission permission, List<T> identifiables) {
         return getAuthorizationService().isAllowed(user, permission, identifiables);
     }
 
