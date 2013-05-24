@@ -68,7 +68,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
 
     @WebMethod(exclude = true)
     @Override
-    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) {
+    public <T extends Identifiable> boolean[] isAllowed(User user, Permission permission, List<T> identifiables) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(permission != null);
         Preconditions.checkArgument(identifiables != null);
