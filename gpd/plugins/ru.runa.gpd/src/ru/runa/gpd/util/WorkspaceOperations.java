@@ -108,11 +108,16 @@ public class WorkspaceOperations {
 
     public static void refreshResources(List<IResource> resources) {
         for (IResource resource : resources) {
-            try {
-                resource.refreshLocal(IResource.DEPTH_INFINITE, null);
-            } catch (CoreException e) {
-                PluginLogger.logError("Unable to refresh resource", e);
-            }
+            refreshResource(resource);
+        }
+    }
+
+    public static void refreshResource(IResource resource) {
+        try {
+            resource.refreshLocal(IResource.DEPTH_INFINITE, null);
+            IOUtils.setUtfCharsetRecursively(resource);
+        } catch (CoreException e) {
+            PluginLogger.logError("Unable to refresh resource " + resource, e);
         }
     }
 
@@ -163,6 +168,7 @@ public class WorkspaceOperations {
                 saveProcessDefinition(newDefinitionFile, definition);
                 ProcessCache.newProcessDefinitionWasCreated(definitionFile);
                 ResourcesPlugin.getWorkspace().getRoot().getFolder(oldPath).delete(true, null);
+                refreshResource(definitionFolder);
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }
@@ -320,10 +326,11 @@ public class WorkspaceOperations {
                             }
                         }
                     }
-                    IPath newPath = ResourcesPlugin.getWorkspace().getRoot().getProject(newName).getFullPath(); // botStationProject.getParent().getFolder(new Path(newName)).getFullPath();
+                    IPath newPath = ResourcesPlugin.getWorkspace().getRoot().getProject(newName).getFullPath(); // botStationProject.getParent().getFolder(new
+                                                                                                                // Path(newName)).getFullPath();
                     botStationProject.copy(newPath, true, null);
                     botStationProject = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
-                    //rename in file
+                    // rename in file
                     IFile file = botStationProject.getFolder("/src/botstation/").getFile("botstation");
                     file.setContents(BotTaskUtils.createBotStationInfo(newName, newRmi), true, true, null);
                     ResourcesPlugin.getWorkspace().getRoot().getProject(oldName).delete(true, null);
