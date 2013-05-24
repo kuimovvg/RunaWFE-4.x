@@ -108,7 +108,7 @@ public class ValidatorDefinition {
                 }
                 Element paramElement = validatorElement.addElement("param");
                 paramElement.addAttribute("name", paramName);
-                paramElement.addText(paramValue);
+                paramElement.addCDATA(paramValue);
             }
         }
     }

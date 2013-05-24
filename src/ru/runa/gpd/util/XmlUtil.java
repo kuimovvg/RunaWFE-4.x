@@ -119,6 +119,7 @@ public class XmlUtil {
     public static void writeXml(Node node, OutputStream outputStream) {
         OutputFormat format = new OutputFormat("  ", true);
         format.setPadText(true);
+        format.setTrimText(false);
         writeXml(node, outputStream, format);
     }
 
