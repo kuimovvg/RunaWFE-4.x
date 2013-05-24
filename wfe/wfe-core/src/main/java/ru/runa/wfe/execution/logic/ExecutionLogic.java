@@ -120,7 +120,7 @@ public class ExecutionLogic extends WFCommonLogic {
         return new WfProcess(nodeProcess.getProcess());
     }
 
-    public List<WfProcess> getSubprocesses(User user, Long id) throws ProcessDoesNotExistException {
+    public List<WfProcess> getSubprocessesRecursive(User user, Long id) throws ProcessDoesNotExistException {
         Process process = processDAO.getNotNull(id);
         List<Process> subprocessList = new ArrayList<Process>();
         for (Process subprocess : nodeProcessDAO.getSubprocessesRecursive(process)) {

@@ -115,9 +115,9 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
-    public List<WfProcess> getSubprocesses(User user, Long id) {
+    public List<WfProcess> getSubprocessesRecursive(User user, Long id) {
         Preconditions.checkArgument(user != null);
-        return executionLogic.getSubprocesses(user, id);
+        return executionLogic.getSubprocessesRecursive(user, id);
     }
 
     @Override
