@@ -73,10 +73,10 @@ public class ValidatorParser {
             List<Element> paramNodes = validatorElement.elements("param");
             for (Element paramElement : paramNodes) {
                 String paramName = paramElement.attributeValue("name");
-                params.put(paramName, paramElement.getTextTrim());
+                params.put(paramName, paramElement.getText());
             }
             Element messageElement = validatorElement.element("message");
-            String message = messageElement != null ? messageElement.getTextTrim() : "";
+            String message = messageElement != null ? messageElement.getText() : "";
             String validatorTypeKey = discriminate ? (validatorType + j) : validatorType;
             validatorCfgs.put(validatorTypeKey, new ValidatorConfig(validatorType, message, params));
             j++;
