@@ -52,7 +52,7 @@ public class MultiTaskNode extends InteractionNode implements Synchronizable {
     @Override
     public void validate() {
         super.validate();
-        Preconditions.checkNotNull(executorsVariableName, "executorsVariableName");
+        Preconditions.checkNotNull(executorsVariableName, "executorsVariableName in " + this);
     }
 
     @Override

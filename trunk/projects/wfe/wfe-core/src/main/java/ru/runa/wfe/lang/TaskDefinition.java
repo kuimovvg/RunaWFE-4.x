@@ -45,9 +45,9 @@ public class TaskDefinition extends GraphElement {
     @Override
     public void validate() {
         super.validate();
-        Preconditions.checkNotNull(node, "node");
+        Preconditions.checkNotNull(node, "node in " + this);
         if (!(node instanceof MultiTaskNode)) {
-            Preconditions.checkNotNull(swimlaneDefinition, "swimlane");
+            Preconditions.checkNotNull(swimlaneDefinition, "swimlane in " + this);
         }
     }
 
