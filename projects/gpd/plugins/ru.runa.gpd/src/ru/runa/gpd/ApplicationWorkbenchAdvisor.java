@@ -38,31 +38,8 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
             }
             pm.remove(preferenceNode.getId());
         }
-//        try {
-//            // refresh workspace and set default encoding to UTF8
-//            ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-//            setUtfCharsetRecursively(ResourcesPlugin.getWorkspace().getRoot());
-//        } catch (CoreException e) {
-//            PluginLogger.logErrorWithoutDialog("Unable to save workspace", e);
-//        }
     }
 
-//    private static void setUtfCharsetRecursively(IResource resource) throws CoreException {
-//        if (resource instanceof IProject && !((IProject) resource).isOpen()) {
-//            return;
-//        }
-//        if (resource instanceof IFile) {
-//            IFile file = (IFile) resource;
-//            if (!Charsets.UTF_8.name().equalsIgnoreCase(file.getCharset())) {
-//                file.setCharset(Charsets.UTF_8.name(), null);
-//            }
-//        }
-//        if (resource instanceof IContainer) {
-//            for (IResource member : ((IContainer) resource).members()) {
-//                setUtfCharsetRecursively(member);
-//            }
-//        }
-//    }
 
     @Override
     public boolean preShutdown() {
