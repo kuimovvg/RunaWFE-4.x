@@ -10,8 +10,6 @@ public interface PrefConstants {
 
     public static final String P_BPMN_SHOW_SWIMLANE = "showSwimlane";
 
-    public static final String P_DEFAULT_NOTATION = "defaultNotation";
-
     public static final String P_FORM_DEFAULT_FCK_EDITOR = "defaultFCKEditor";
     public static final String FORM_FCK_EDITOR = "fck2";
     public static final String FORM_CK_EDITOR = "ck3";
@@ -37,5 +35,7 @@ public interface PrefConstants {
     public final static String P_CONNECTION_LDAP_SERVER_URL = "ldapServerUrl";
     public final static String P_CONNECTION_LDAP_OU = "ldapOu";
     public final static String P_CONNECTION_LDAP_DC = "ldapDc";
+
+    public static final String P_DEFAULT_LANGUAGE = "defaultLanguage";
 
 }

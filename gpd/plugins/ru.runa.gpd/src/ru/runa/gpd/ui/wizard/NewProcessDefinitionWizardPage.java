@@ -25,8 +25,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.Language;
+import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 
@@ -105,7 +107,8 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         for (Language language : Language.values()) {
             languageCombo.add(language.name());
         }
-        languageCombo.select(1);
+        String defaultLanguage = Activator.getPrefString(PrefConstants.P_DEFAULT_LANGUAGE);
+        languageCombo.setText(defaultLanguage);
         languageCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         languageCombo.addSelectionListener(new SelectionAdapter() {
             @Override

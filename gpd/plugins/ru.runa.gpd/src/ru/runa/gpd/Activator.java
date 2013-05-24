@@ -50,4 +50,5 @@ public class Activator extends AbstractUIPlugin implements PluginConstants {
     public static boolean getPrefBoolean(String name) {
         return getDefault().getPreferenceStore().getBoolean(name);
     }
+
 }
