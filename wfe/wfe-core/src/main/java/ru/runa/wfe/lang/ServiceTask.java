@@ -27,7 +27,7 @@ public class ServiceTask extends Node {
     @Override
     public void validate() {
         super.validate();
-        Preconditions.checkNotNull(delegation, "delegation");
+        Preconditions.checkNotNull(delegation, "delegation in " + this);
     }
 
     @Override

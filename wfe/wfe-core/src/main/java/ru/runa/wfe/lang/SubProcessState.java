@@ -43,7 +43,7 @@ public class SubProcessState extends VariableContainerNode {
     @Override
     public void validate() {
         super.validate();
-        Preconditions.checkNotNull(subProcessName, "subProcessName");
+        Preconditions.checkNotNull(subProcessName, "subProcessName in " + this);
     }
 
     public String getSubProcessName() {
