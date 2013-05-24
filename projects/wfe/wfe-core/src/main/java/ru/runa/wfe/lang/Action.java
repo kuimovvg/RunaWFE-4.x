@@ -56,9 +56,9 @@ public class Action extends GraphElement {
     @Override
     public void validate() {
         super.validate();
-        Preconditions.checkNotNull(delegation, "delegation");
-        Preconditions.checkNotNull(event, "event");
-        Preconditions.checkNotNull(parent, "parent");
+        Preconditions.checkNotNull(delegation, "delegation in " + this);
+        Preconditions.checkNotNull(event, "event in " + this);
+        Preconditions.checkNotNull(parent, "parent in " + this);
     }
 
     public void execute(ExecutionContext executionContext) {

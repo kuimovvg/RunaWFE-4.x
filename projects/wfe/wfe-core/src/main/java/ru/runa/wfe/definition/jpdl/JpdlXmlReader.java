@@ -1,6 +1,5 @@
 package ru.runa.wfe.definition.jpdl;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +29,7 @@ import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.ReceiveMessage;
 import ru.runa.wfe.lang.SendMessage;
+import ru.runa.wfe.lang.ServiceTask;
 import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -44,12 +44,13 @@ import ru.runa.wfe.lang.jpdl.JpdlEndTokenNode;
 import ru.runa.wfe.var.VariableMapping;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "unchecked" })
 public class JpdlXmlReader {
     private String defaultDueDate;
     private final List<Object[]> unresolvedTransitionDestinations = Lists.newArrayList();
@@ -88,6 +89,7 @@ public class JpdlXmlReader {
     private static final String ASYNC_ATTR = "async";
     private static final String TASK_EXECUTORS_ATTR = "taskExecutors";
     private static final String TASK_EXECUTION_MODE_ATTR = "taskExecutionMode";
+    private static final String ACTION_NODE = "action";
 
     private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
     static {
@@ -104,6 +106,7 @@ public class JpdlXmlReader {
         nodeTypes.put("multiinstance-state", MultiProcessState.class);
         nodeTypes.put("send-message", SendMessage.class);
         nodeTypes.put("receive-message", ReceiveMessage.class);
+        nodeTypes.put("node", ServiceTask.class);
     }
 
     public JpdlXmlReader(Document document) {
@@ -305,6 +308,12 @@ public class JpdlXmlReader {
             SendMessage sendMessage = (SendMessage) node;
             sendMessage.setTtlDuration(element.attributeValue(DUEDATE_ATTR, "1 days"));
         }
+        if (node instanceof ServiceTask) {
+            ServiceTask serviceTask = (ServiceTask) node;
+            Element actionElement = element.element(ACTION_NODE);
+            Preconditions.checkNotNull(actionElement, "No action defined in " + serviceTask);
+            serviceTask.setDelegation(readDelegation(processDefinition, actionElement));
+        }
         readNodeTimers(processDefinition, element, node);
     }
 
@@ -359,7 +368,7 @@ public class JpdlXmlReader {
 
     private void readActions(ProcessDefinition processDefinition, Element eventElement, GraphElement graphElement, String eventType) {
         // for all the elements in the event element
-        List<Element> elements = eventElement.elements();
+        List<Element> elements = eventElement.elements(ACTION_NODE);
         for (Element actionElement : elements) {
             Action action = createAction(processDefinition, actionElement);
             addAction(graphElement, eventType, action);
@@ -377,15 +386,11 @@ public class JpdlXmlReader {
     }
 
     private Action readSingleAction(ProcessDefinition processDefinition, Element nodeElement) {
-        Action action = null;
-        // search for the first action element in the node
-        Iterator iter = nodeElement.elementIterator();
-        while (iter.hasNext() && (action == null)) {
-            Element candidate = (Element) iter.next();
-            // parse the action and assign it to this node
-            action = createAction(processDefinition, candidate);
+        Element actionElement = nodeElement.element(ACTION_NODE);
+        if (actionElement != null) {
+            return createAction(processDefinition, actionElement);
         }
-        return action;
+        return null;
     }
 
     private Action createAction(ProcessDefinition processDefinition, Element element) {

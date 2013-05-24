@@ -101,8 +101,8 @@ public abstract class GraphElement implements Serializable {
      * Checks all prerequisites needed for execution.
      */
     public void validate() {
-        Preconditions.checkNotNull(nodeId, "id");
-        Preconditions.checkNotNull(name, "name");
+        Preconditions.checkNotNull(nodeId, "id in " + this);
+        Preconditions.checkNotNull(name, "name in " + this);
     }
 
     public Map<String, Event> getEvents() {
