@@ -127,11 +127,6 @@ public class Actor extends Executor {
 
     @Override
     public String toString() {
-        // moved to
-        // ru.runa.wfe.commons.BSHScriptExecutor.BackCompatibilityBinding
-        // if (SystemProperties.isV3CompatibilityMode()) {
-        // return String.valueOf(code);
-        // }
         return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).add("code", getCode()).toString();
     }
 

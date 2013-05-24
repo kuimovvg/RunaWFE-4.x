@@ -46,7 +46,7 @@ public class AuthorizationLogic extends CommonLogic {
         return permissionDAO.isPrivilegedExecutor(executor, identifiable);
     }
 
-    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables) {
+    public <T extends Identifiable> boolean[] isAllowed(User user, Permission permission, List<T> identifiables) {
         return permissionDAO.isAllowed(user, permission, identifiables);
     }
 

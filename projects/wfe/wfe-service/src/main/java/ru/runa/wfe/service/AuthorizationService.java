@@ -20,8 +20,6 @@ package ru.runa.wfe.service;
 import java.util.Collection;
 import java.util.List;
 
-import javax.security.auth.Subject;
-
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -44,7 +42,7 @@ public interface AuthorizationService {
      */
     public boolean isAllowed(User user, Permission permission, Identifiable identifiable);
 
-    public boolean[] isAllowed(User user, Permission permission, List<? extends Identifiable> identifiables);
+    public <T extends Identifiable> boolean[] isAllowed(User user, Permission permission, List<T> identifiables);
 
     /**
      * Sets permissions for performer on {@link Identifiable}.

@@ -86,12 +86,4 @@ public class Group extends Executor {
         this.activeDirectoryGroup = activeDirectoryGroup;
     }
 
-    @Override
-    public String toString() {
-        // ru.runa.wfe.commons.BSHScriptExecutor.BackCompatibilityBinding
-        // if (SystemProperties.isV3CompatibilityMode()) {
-        // return "G" + getId();
-        // }
-        return super.toString();
-    }
 }
