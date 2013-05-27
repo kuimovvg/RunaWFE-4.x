@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
@@ -176,10 +175,13 @@ public class CKEditorDialogCreatorHelper {
                     selectElement.setId("'" + tagInfo.id + "_FtlTagParam_" + paramCounter + "'").setLabel("'" + param.label + "'");
                     for (OptionalValue option : param.optionalValues) {
                         if (option.container) {
-                            for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
-                                if (option.useFilter && !VariableFormatRegistry.isApplicable(variable, option.filterType)) {
-                                    continue;
-                                }
+                            List<Variable> variables;
+                            if (option.useFilter) {
+                                variables = WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType);
+                            } else {
+                                variables = WYSIWYGHTMLEditor.getCurrent().getVariables();
+                            }
+                            for (Variable variable : variables) {
                                 selectElement.addItem("'" + variable.getName() + "'", "'" + variable.getName() + "'");
                             }
                         } else {

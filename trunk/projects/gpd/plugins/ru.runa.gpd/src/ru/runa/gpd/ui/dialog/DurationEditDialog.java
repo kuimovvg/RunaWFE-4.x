@@ -93,7 +93,8 @@ public class DurationEditDialog extends Dialog {
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    NumberInputDialog inputDialog = new NumberInputDialog(editable.getDelay());
+                    LongInputDialog inputDialog = new LongInputDialog();
+                    inputDialog.setInitialValue(editable.getDelay());
                     if (inputDialog.open() == IDialogConstants.OK_ID) {
                         editable.setDelay(inputDialog.getUserInput());
                         updateGUI();

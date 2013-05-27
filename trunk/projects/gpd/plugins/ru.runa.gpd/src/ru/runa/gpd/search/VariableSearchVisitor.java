@@ -251,7 +251,6 @@ public class VariableSearchVisitor {
     private List<Match> findInFile(ElementMatch elementMatch, IFile file, Matcher matcher) throws CoreException, IOException {
         CharSequence searchInput = null;
         try {
-            // FIXME set read to UTF8
             searchInput = fileCharSequenceProvider.newCharSequence(file);
             return findInString(elementMatch, searchInput, matcher);
         } finally {

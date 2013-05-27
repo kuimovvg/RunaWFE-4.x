@@ -5,8 +5,8 @@ package ru.runa.gpd.settings;
  */
 public interface PrefConstants {
 
-    public final static String LOGIN_MODE_LOGIN_PASSWORD = "login.mode.login_password";
-    public final static String LOGIN_MODE_KERBEROS = "login.mode.kerberos";
+    public static final String LOGIN_MODE_LOGIN_PASSWORD = "login.mode.login_password";
+    public static final String LOGIN_MODE_KERBEROS = "login.mode.kerberos";
 
     public static final String P_BPMN_SHOW_SWIMLANE = "showSwimlane";
 
@@ -32,10 +32,12 @@ public interface PrefConstants {
     public static final String P_CONNECTION_WFE_INITIAL_CTX_FACTORY = "wfeInitialCtxFactory";
     public static final String P_CONNECTION_WFE_URL_PKG_PREFIXES = "wfeUrlPkg";
 
-    public final static String P_CONNECTION_LDAP_SERVER_URL = "ldapServerUrl";
-    public final static String P_CONNECTION_LDAP_OU = "ldapOu";
-    public final static String P_CONNECTION_LDAP_DC = "ldapDc";
+    public static final String P_CONNECTION_LDAP_SERVER_URL = "ldapServerUrl";
+    public static final String P_CONNECTION_LDAP_OU = "ldapOu";
+    public static final String P_CONNECTION_LDAP_DC = "ldapDc";
 
     public static final String P_DEFAULT_LANGUAGE = "defaultLanguage";
+    
+    public static final String P_DATE_FORMAT_PATTERN = "dateFormat";
 
 }

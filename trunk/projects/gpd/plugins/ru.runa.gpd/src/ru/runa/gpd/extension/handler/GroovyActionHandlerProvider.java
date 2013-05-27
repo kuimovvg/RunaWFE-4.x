@@ -27,12 +27,10 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
     @Override
     protected DelegableConfigurationDialog createConfigurationDialog(Delegable delegable) {
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
-        return new ConfigurationDialog(
-                delegable.getDelegationConfiguration(), 
-                definition.getVariableNames(true));
+        return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariableNames(true));
     }
 
-    public static class ConfigurationDialog extends DelegableConfigurationDialog {
+    private static class ConfigurationDialog extends DelegableConfigurationDialog {
         private final List<String> variableNames;
         private HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
 
@@ -45,7 +43,7 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
                 }
             }
         }
-        
+
         @Override
         protected void createDialogHeader(Composite parent) {
             Composite composite = new Composite(parent, SWT.NONE);
@@ -69,11 +67,11 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
             });
             hyperlinkGroup.add(hl3);
         }
-        
+
         @Override
         protected void createDialogFooter(Composite composite) {
             styledText.addLineStyleListener(new JavaHighlightTextStyling(variableNames));
         }
     }
-    
+
 }

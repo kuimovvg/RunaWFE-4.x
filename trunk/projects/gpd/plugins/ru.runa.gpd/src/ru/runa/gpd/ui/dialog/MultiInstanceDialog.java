@@ -36,16 +36,20 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.MultiSubprocess;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.util.VariableMapping;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.Group;
 import ru.runa.wfe.var.format.ListFormat;
 
 import com.google.common.collect.Lists;
 
 public class MultiInstanceDialog extends Dialog {
+    private static final String TYPE_VARIABLE = "variable";
+    private static final String TYPE_CONSTANT = "constant";
     private String subprocessName;
     private final ProcessDefinition definition;
     private final List<VariableMapping> subprocessVariables;
-    static final String INPUT_VALUE = Localization.getString("BSH.InputValue");
     private Combo tabVariableSubProcessVariablesField = null;
     private String tabVariableProcessVariable = "";
     private List<String> tabVariableSubProcessVariables;
@@ -80,28 +84,28 @@ public class MultiInstanceDialog extends Dialog {
                 } else if (vm.getProcessVariable().equals("tabGroupName")) {
                     tabGroupName = vm.getSubprocessVariable();
                     if (tabGroupName.startsWith("${") && tabGroupName.endsWith("}")) {
-                        tabGroupNameType = "variable";
+                        tabGroupNameType = TYPE_VARIABLE;
                         tabGroupName = tabGroupName.substring(2, tabGroupName.length() - 1);
                     } else {
-                        tabGroupNameType = "constant";
+                        tabGroupNameType = TYPE_CONSTANT;
                     }
                 } else if (vm.getProcessVariable().equals("tabGroupSubProcessVariable")) {
                     tabGroupSubProcessVariable = vm.getSubprocessVariable();
                 } else if (vm.getProcessVariable().equals("tabRelationName")) {
                     tabRelationName = vm.getSubprocessVariable();
                     if (tabRelationName.startsWith("${") && tabRelationName.endsWith("}")) {
-                        tabRelationNameType = "variable";
+                        tabRelationNameType = TYPE_VARIABLE;
                         tabRelationName = tabRelationName.substring(2, tabRelationName.length() - 1);
                     } else {
-                        tabRelationNameType = "constant";
+                        tabRelationNameType = TYPE_CONSTANT;
                     }
                 } else if (vm.getProcessVariable().equals("tabRelationParam")) {
                     tabRelationParam = vm.getSubprocessVariable();
                     if (tabRelationParam.startsWith("${") && tabRelationParam.endsWith("}")) {
-                        tabRelationParamType = "variable";
+                        tabRelationParamType = TYPE_VARIABLE;
                         tabRelationParam = tabRelationParam.substring(2, tabRelationParam.length() - 1);
                     } else {
-                        tabRelationParamType = "constant";
+                        tabRelationParamType = TYPE_CONSTANT;
                     }
                 } else if (vm.getProcessVariable().equals("tabRelationSubProcessVariable")) {
                     tabRelationSubProcessVariable = vm.getSubprocessVariable();
@@ -124,7 +128,7 @@ public class MultiInstanceDialog extends Dialog {
         GridData namesComboData = new GridData(GridData.FILL_HORIZONTAL);
         namesComboData.minimumWidth = 400;
         namesCombo.setLayoutData(namesComboData);
-        namesCombo.setItems(getNameProcessDefinitions());
+        namesCombo.setItems(getProcessDefinitionNames());
         namesCombo.setVisibleItemCount(10);
         if (subprocessName != null) {
             namesCombo.setText(subprocessName);
@@ -240,7 +244,7 @@ public class MultiInstanceDialog extends Dialog {
         setButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                typeMultiInstance = "variable";
+                typeMultiInstance = TYPE_VARIABLE;
             }
         });
     }
@@ -257,46 +261,23 @@ public class MultiInstanceDialog extends Dialog {
             Label labelProcessVariable = new Label(composite, SWT.READ_ONLY);
             labelProcessVariable.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
             labelProcessVariable.setText(Localization.getString("Multiinstance.GroupName") + ":");
-            List<String> tabList = getProcessVariablesNames(definition.getName());
-            final Combo processVariableField = new Combo(composite, SWT.READ_ONLY);
-            GridData processVariableTextData = new GridData(GridData.FILL_HORIZONTAL);
-            processVariableTextData.minimumWidth = 200;
-            processVariableField.setItems(tabList.toArray(new String[tabList.size()]));
-            processVariableField.add(INPUT_VALUE);
-            if (tabGroupNameType.equals("constant") && !tabGroupName.equals("")) {
-                processVariableField.add(tabGroupName, 0);
-                processVariableField.select(0);
-            } else {
-                processVariableField.setText(tabGroupName);
+            final List<String> groupVariableNames = getProcessVariablesNames(definition.getName(), String.class.getName(), Group.class.getName());
+            String lastUserInputValue = TYPE_CONSTANT.equals(tabGroupNameType) ? tabGroupName : null;
+            final TypedUserInputCombo groupCombo = new TypedUserInputCombo(composite, lastUserInputValue);
+            groupCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            groupCombo.setShowEmptyValue(false);
+            for (String variableName : groupVariableNames) {
+                groupCombo.add(variableName);
             }
-            processVariableField.setLayoutData(processVariableTextData);
-            processVariableField.addSelectionListener(new SelectionAdapter() {
+            groupCombo.setTypeClassName(String.class.getName());
+            groupCombo.setText(tabGroupName);
+            groupCombo.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    if (INPUT_VALUE.equals(processVariableField.getText())) {
-                        String old = tabGroupName;
-                        UserInputDialog inputDialog = new UserInputDialog(INPUT_VALUE, "");
-                        if (OK == inputDialog.open()) {
-                            String userInput = inputDialog.getUserInput();
-                            if (tabGroupNameType.equals("constant") && tabGroupName.length() != 0) {
-                                processVariableField.remove(0);
-                            }
-                            processVariableField.add(userInput, 0);
-                            processVariableField.select(0);
-                            tabGroupNameType = "constant";
-                            tabGroupName = processVariableField.getText();
-                        } else {
-                            processVariableField.setText(old);
-                        }
-                    } else {
-                        if (tabGroupNameType.equals("constant") && tabGroupName.length() != 0) {
-                            if (processVariableField.getSelectionIndex() == 0) {
-                                return;
-                            }
-                            processVariableField.remove(0);
-                        }
-                        tabGroupNameType = "variable";
-                        tabGroupName = processVariableField.getText();
+                    String selected = groupCombo.getText();
+                    if (!TypedUserInputCombo.INPUT_VALUE.equals(selected)) {
+                        tabGroupNameType = groupVariableNames.contains(selected) ? TYPE_VARIABLE : TYPE_CONSTANT;
+                        tabGroupName = selected;
                     }
                 }
             });
@@ -340,46 +321,23 @@ public class MultiInstanceDialog extends Dialog {
             Label labelProcessVariable = new Label(composite, SWT.READ_ONLY);
             labelProcessVariable.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
             labelProcessVariable.setText(Localization.getString("Multiinstance.RelationName") + ":");
-            List<String> tabList = getProcessVariablesNames(definition.getName());
-            final Combo processVariableField = new Combo(composite, SWT.READ_ONLY);
-            GridData processVariableTextData = new GridData(GridData.FILL_HORIZONTAL);
-            processVariableTextData.minimumWidth = 200;
-            processVariableField.setItems(tabList.toArray(new String[tabList.size()]));
-            processVariableField.add(INPUT_VALUE);
-            if (tabRelationNameType.equals("constant") && !tabRelationName.equals("")) {
-                processVariableField.add(tabRelationName, 0);
-                processVariableField.select(0);
-            } else {
-                processVariableField.setText(tabRelationName);
+            final List<String> relationVariableNames = getProcessVariablesNames(definition.getName(), String.class.getName());
+            String lastUserInputValue = TYPE_CONSTANT.equals(tabRelationNameType) ? tabRelationName : null;
+            final TypedUserInputCombo relationNameCombo = new TypedUserInputCombo(composite, lastUserInputValue);
+            relationNameCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            for (String variableName : relationVariableNames) {
+                relationNameCombo.add(variableName);
             }
-            processVariableField.setLayoutData(processVariableTextData);
-            processVariableField.addSelectionListener(new SelectionAdapter() {
+            relationNameCombo.setShowEmptyValue(false);
+            relationNameCombo.setTypeClassName(String.class.getName());
+            relationNameCombo.setText(tabRelationName);
+            relationNameCombo.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    if (INPUT_VALUE.equals(processVariableField.getText())) {
-                        String old = tabRelationName;
-                        UserInputDialog inputDialog = new UserInputDialog(INPUT_VALUE, "");
-                        if (OK == inputDialog.open()) {
-                            String userInput = inputDialog.getUserInput();
-                            if (tabRelationNameType.equals("constant") && tabRelationName.length() != 0) {
-                                processVariableField.remove(0);
-                            }
-                            processVariableField.add(userInput, 0);
-                            processVariableField.select(0);
-                            tabRelationNameType = "constant";
-                            tabRelationName = processVariableField.getText();
-                        } else {
-                            processVariableField.setText(old);
-                        }
-                    } else {
-                        if (tabRelationNameType.equals("constant") && tabRelationName.length() != 0) {
-                            if (processVariableField.getSelectionIndex() == 0) {
-                                return;
-                            }
-                            processVariableField.remove(0);
-                        }
-                        tabRelationNameType = "variable";
-                        tabRelationName = processVariableField.getText();
+                    String selected = relationNameCombo.getText();
+                    if (!TypedUserInputCombo.INPUT_VALUE.equals(selected)) {
+                        tabRelationNameType = relationVariableNames.contains(selected) ? TYPE_VARIABLE : TYPE_CONSTANT;
+                        tabRelationName = selected;
                     }
                 }
             });
@@ -388,46 +346,23 @@ public class MultiInstanceDialog extends Dialog {
             Label labelProcessVariable = new Label(composite, SWT.READ_ONLY);
             labelProcessVariable.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
             labelProcessVariable.setText(Localization.getString("Multiinstance.RelationParam") + ":");
-            List<String> tabList = getProcessVariablesNames(definition.getName());
-            final Combo processVariableField = new Combo(composite, SWT.READ_ONLY);
-            GridData processVariableTextData = new GridData(GridData.FILL_HORIZONTAL);
-            processVariableTextData.minimumWidth = 200;
-            processVariableField.setItems(tabList.toArray(new String[tabList.size()]));
-            processVariableField.add(INPUT_VALUE);
-            if (tabRelationParamType.equals("constant") && !tabRelationParam.equals("")) {
-                processVariableField.add(tabRelationParam, 0);
-                processVariableField.select(0);
-            } else {
-                processVariableField.setText(tabRelationParam);
+            final List<String> relationParamVariableNames = getProcessVariablesNames(definition.getName(), String.class.getName(), Executor.class.getName());
+            String lastUserInputValue = TYPE_CONSTANT.equals(tabRelationParamType) ? tabRelationParam : null;
+            final TypedUserInputCombo relationParamCombo = new TypedUserInputCombo(composite, lastUserInputValue);
+            relationParamCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            for (String variableName : relationParamVariableNames) {
+                relationParamCombo.add(variableName);
             }
-            processVariableField.setLayoutData(processVariableTextData);
-            processVariableField.addSelectionListener(new SelectionAdapter() {
+            relationParamCombo.setShowEmptyValue(false);
+            relationParamCombo.setTypeClassName(String.class.getName());
+            relationParamCombo.setText(tabRelationParam);
+            relationParamCombo.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    if (INPUT_VALUE.equals(processVariableField.getText())) {
-                        String old = tabRelationParam;
-                        UserInputDialog inputDialog = new UserInputDialog(INPUT_VALUE, "");
-                        if (OK == inputDialog.open()) {
-                            String userInput = inputDialog.getUserInput();
-                            if (tabRelationParamType.equals("constant") && tabRelationParam.length() != 0) {
-                                processVariableField.remove(0);
-                            }
-                            processVariableField.add(userInput, 0);
-                            processVariableField.select(0);
-                            tabRelationParamType = "constant";
-                            tabRelationParam = processVariableField.getText();
-                        } else {
-                            processVariableField.setText(old);
-                        }
-                    } else {
-                        if (tabRelationParamType.equals("constant") && tabRelationParam.length() != 0) {
-                            if (processVariableField.getSelectionIndex() == 0) {
-                                return;
-                            }
-                            processVariableField.remove(0);
-                        }
-                        tabRelationParamType = "variable";
-                        tabRelationParam = processVariableField.getText();
+                    String selected = relationParamCombo.getText();
+                    if (!TypedUserInputCombo.INPUT_VALUE.equals(selected)) {
+                        tabRelationParamType = relationParamVariableNames.contains(selected) ? TYPE_VARIABLE : TYPE_CONSTANT;
+                        tabRelationParam = selected;
                     }
                 }
             });
@@ -437,10 +372,8 @@ public class MultiInstanceDialog extends Dialog {
             labelProcessVariable.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
             labelProcessVariable.setText(Localization.getString("Subprocess.SubprocessVariableName") + ":");
             tabRelationSubProcessVariablesField = new Combo(composite, SWT.READ_ONLY);
-            GridData processVariableTextData = new GridData(GridData.FILL_HORIZONTAL);
-            processVariableTextData.minimumWidth = 200;
             tabRelationSubProcessVariablesField.setItems(tabVariableSubProcessVariables.toArray(new String[tabVariableSubProcessVariables.size()]));
-            tabRelationSubProcessVariablesField.setLayoutData(processVariableTextData);
+            tabRelationSubProcessVariablesField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             tabRelationSubProcessVariablesField.setText(tabRelationSubProcessVariable);
             tabRelationSubProcessVariablesField.addModifyListener(new ModifyListener() {
                 @Override
@@ -546,8 +479,7 @@ public class MultiInstanceDialog extends Dialog {
     }
 
     private void editVariableMapping(VariableMapping oldMapping) {
-        SubprocessVariableDialog dialog = new SubprocessVariableDialog(getProcessVariablesNamesAll(definition.getName()), getProcessVariablesNamesAll(getSubprocessName()),
-                oldMapping);
+        SubprocessVariableDialog dialog = new SubprocessVariableDialog(getProcessVariablesNames(definition.getName()), getProcessVariablesNames(getSubprocessName()), oldMapping);
         if (dialog.open() != IDialogConstants.CANCEL_ID) {
             VariableMapping mapping = new VariableMapping();
             mapping.setProcessVariable(dialog.getProcessVariable());
@@ -603,7 +535,7 @@ public class MultiInstanceDialog extends Dialog {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
             vm.setProcessVariable("tabGroupName");
-            if (tabGroupNameType.equals("constant")) {
+            if (tabGroupNameType.equals(TYPE_CONSTANT)) {
                 vm.setSubprocessVariable(tabGroupName);
             } else {
                 vm.setSubprocessVariable("${" + tabGroupName + "}");
@@ -621,7 +553,7 @@ public class MultiInstanceDialog extends Dialog {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
             vm.setProcessVariable("tabRelationName");
-            if (tabRelationNameType.equals("constant")) {
+            if (tabRelationNameType.equals(TYPE_CONSTANT)) {
                 vm.setSubprocessVariable(tabRelationName);
             } else {
                 vm.setSubprocessVariable("${" + tabRelationName + "}");
@@ -632,7 +564,7 @@ public class MultiInstanceDialog extends Dialog {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
             vm.setProcessVariable("tabRelationParam");
-            if (tabRelationParamType.equals("constant")) {
+            if (tabRelationParamType.equals(TYPE_CONSTANT)) {
                 vm.setSubprocessVariable(tabRelationParam);
             } else {
                 vm.setSubprocessVariable("${" + tabRelationParam + "}");
@@ -682,50 +614,29 @@ public class MultiInstanceDialog extends Dialog {
         }
     }
 
-    private String[] getNameProcessDefinitions() {
+    private String[] getProcessDefinitionNames() {
         List<String> names = ProcessCache.getAllProcessDefinitionNames();
         return names.toArray(new String[names.size()]);
     }
 
-    private List<String> getProcessVariablesNamesAll(String name) {
+    private List<String> getProcessVariablesNames(String name, String... typeClassNameFilters) {
         ProcessDefinition definition = ProcessCache.getProcessDefinition(name);
         if (definition != null) {
-            return definition.getVariableNames(true);
+            return definition.getVariableNames(true, typeClassNameFilters);
         }
         return new ArrayList<String>();
     }
 
-    private List<String> getProcessVariablesNames(String name) {
-        ProcessDefinition definition = ProcessCache.getProcessDefinition(name);
+    private List<String> getSelectorVariableNames(String processName) {
+        ProcessDefinition definition = ProcessCache.getProcessDefinition(processName);
         if (definition != null) {
-            return definition.getVariableNames(true);
-        }
-        return new ArrayList<String>();
-    }
-
-    private List<String> getSelectorVariableNames(String name) {
-        ProcessDefinition definition = ProcessCache.getProcessDefinition(name);
-        if (definition != null) {
-            List<String> result = Lists.newArrayList();
-            for (Variable variable : definition.getVariables()) {
-                if (ListFormat.class.getName().equals(variable.getFormat())) {
-                    result.add(variable.getName());
-                }
-            }
-            return result;
+            return definition.getVariableNames(false, ListFormat.class.getName());
         }
         return new ArrayList<String>();
     }
 
     private boolean isArrayVariable(String processName, String variableName) {
-        ProcessDefinition definition = ProcessCache.getProcessDefinition(processName);
-        if (definition != null) {
-            Variable variable = definition.getVariable(variableName, false);
-            if (variable != null) {
-                return ListFormat.class.getName().equals(variable.getFormat());
-            }
-        }
-        return false;
+        return getSelectorVariableNames(processName).contains(variableName);
     }
 
     public String getSubprocessName() {

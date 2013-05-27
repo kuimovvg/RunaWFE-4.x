@@ -51,7 +51,7 @@ import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.VariableSearchQuery;
-import ru.runa.gpd.ui.dialog.CreateVariableDialog;
+import ru.runa.gpd.ui.dialog.UpdateVariableDialog;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
 
 public class VariableEditorPage extends EditorPartBase {
@@ -166,7 +166,7 @@ public class VariableEditorPage extends EditorPartBase {
     }
 
     private void fillViewer() {
-        List<Variable> variables = getDefinition().getVariables();
+        List<Variable> variables = getDefinition().getVariables(false);
         tableViewer.setInput(variables);
         for (Variable var : variables) {
             var.addPropertyChangeListener(this);
@@ -176,7 +176,7 @@ public class VariableEditorPage extends EditorPartBase {
 
     @Override
     public void dispose() {
-        for (Variable var : getDefinition().getVariables()) {
+        for (Variable var : getDefinition().getVariables(false)) {
             var.removePropertyChangeListener(this);
         }
         super.dispose();
@@ -193,7 +193,7 @@ public class VariableEditorPage extends EditorPartBase {
         public void widgetSelected(SelectionEvent e) {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
-            List<Variable> children = getDefinition().getVariables();
+            List<Variable> children = getDefinition().getVariables(false);
             int index = children.indexOf(variable);
             getDefinition().swapChilds(variable, up ? children.get(index - 1) : children.get(index + 1));
             tableViewer.setSelection(selection);
@@ -292,9 +292,9 @@ public class VariableEditorPage extends EditorPartBase {
     private class CreateVariableSelectionListener extends SelectionAdapter {
         @Override
         public void widgetSelected(SelectionEvent e) {
-            CreateVariableDialog dialog = new CreateVariableDialog(getDefinition(), null);
+            UpdateVariableDialog dialog = new UpdateVariableDialog(getDefinition(), null);
             if (dialog.open() == IDialogConstants.OK_ID) {
-                Variable variable = new Variable(dialog.getName(), dialog.getType(), dialog.isPublicVisibility(), dialog.getDefaultValue());
+                Variable variable = new Variable(dialog.getName(), dialog.getTypeName(), dialog.isPublicVisibility(), dialog.getDefaultValue());
                 getDefinition().addVariable(variable);
                 IStructuredSelection selection = new StructuredSelection(variable);
                 tableViewer.setSelection(selection);
@@ -307,9 +307,9 @@ public class VariableEditorPage extends EditorPartBase {
         public void widgetSelected(SelectionEvent e) {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
-            CreateVariableDialog dialog = new CreateVariableDialog(getDefinition(), variable);
+            UpdateVariableDialog dialog = new UpdateVariableDialog(getDefinition(), variable);
             if (dialog.open() == IDialogConstants.OK_ID) {
-                variable.setFormat(dialog.getType());
+                variable.setFormat(dialog.getTypeName());
                 variable.setPublicVisibility(dialog.isPublicVisibility());
                 variable.setDefaultValue(dialog.getDefaultValue());
                 tableViewer.setSelection(selection);

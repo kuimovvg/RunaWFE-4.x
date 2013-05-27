@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -147,7 +147,7 @@ public class FreemarkerUtil {
         return attrNode.getNodeValue();
     }
 
-    public static String transformToHtml(Set<String> variableNames, String ftlText) throws IOException, TemplateException {
+    public static String transformToHtml(Collection<String> variableNames, String ftlText) throws IOException, TemplateException {
         Configuration cfg = new Configuration();
         cfg.setObjectWrapper(new DefaultObjectWrapper());
         cfg.setLocalizedLookup(false);
@@ -160,10 +160,10 @@ public class FreemarkerUtil {
 
     @SuppressWarnings("serial")
     public static class EditorHashModel extends SimpleHash {
-        private final Set<String> variableNames;
+        private final Collection<String> variableNames;
         private boolean stageRenderingParams = false;
 
-        public EditorHashModel(Set<String> variableNames) {
+        public EditorHashModel(Collection<String> variableNames) {
             Mode.setDesignerMode();
             this.variableNames = variableNames;
         }

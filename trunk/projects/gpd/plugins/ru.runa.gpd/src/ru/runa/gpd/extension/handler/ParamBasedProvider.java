@@ -118,7 +118,7 @@ public abstract class ParamBasedProvider extends DelegableProvider {
         }
 
         protected ConfigurationWizardPage(ProcessDefinition definition, Delegable delegable, ParamDefConfig config, ImageDescriptor logo) {
-            this(definition.getVariablesWithSwimlanes(), config.parseConfiguration(delegable.getDelegationConfiguration()), config, LocalizationRegistry.getLabel(delegable
+            this(definition.getVariables(true), config.parseConfiguration(delegable.getDelegationConfiguration()), config, LocalizationRegistry.getLabel(delegable
                     .getDelegationClassName()), logo);
         }
 
