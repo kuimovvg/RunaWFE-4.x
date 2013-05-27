@@ -139,8 +139,8 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="state.compactview"
-          objectClass="ru.runa.gpd.lang.model.State">
+          id="node.compactview"
+          objectClass="ru.runa.gpd.lang.model.Node">
        <action
              class="ru.runa.gpd.lang.action.CompactViewFeatureDelegate"
              id="feature.compactView"
@@ -571,6 +571,18 @@
          <gef
             figure="ru.runa.gpd.editor.gef.figure.DecisionFigure"
             graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.DecisionGraphicalEditPart"
+            treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
+         </gef>
+      </element>
+      <element
+            icon="conjunction.png"
+            jpdl="conjunction"
+            label="%label.element.conjunction"
+            model="ru.runa.gpd.lang.model.Conjunction"
+            type="node">
+         <gef
+            figure="ru.runa.gpd.editor.gef.figure.ConjunctionFigure"
+            graphicalEditPart="ru.runa.gpd.editor.gef.part.graph.ConjunctionGraphicalEditPart"
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
       </element>
