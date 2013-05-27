@@ -5,7 +5,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 
 import ru.runa.gpd.PluginLogger;
 
-public abstract class LoggingDoubleClickListener implements IDoubleClickListener {
+public abstract class LoggingDoubleClickAdapter implements IDoubleClickListener {
     @Override
     public final void doubleClick(DoubleClickEvent event) {
         try {
@@ -15,5 +15,5 @@ public abstract class LoggingDoubleClickListener implements IDoubleClickListener
         }
     }
 
-    public abstract void onDoubleClick(DoubleClickEvent event);
+    protected abstract void onDoubleClick(DoubleClickEvent event) throws Exception;
 }

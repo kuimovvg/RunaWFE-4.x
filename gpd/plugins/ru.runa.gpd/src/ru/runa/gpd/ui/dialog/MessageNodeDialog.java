@@ -28,14 +28,13 @@ import org.eclipse.ui.PlatformUI;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 import ru.runa.gpd.util.VariableMapping;
 
 public class MessageNodeDialog extends Dialog {
     private final ProcessDefinition definition;
     private final List<VariableMapping> variableMappings;
     private final boolean sendMode;
-    static final String INPUT_VALUE = Localization.getString("BSH.InputValue");
     private TableViewer selectorTableViewer;
     private TableViewer dataTableViewer;
 
@@ -78,9 +77,9 @@ public class MessageNodeDialog extends Dialog {
             tableColumn.setText(columnNames[i]);
             tableColumn.setWidth(300);
         }
-        selectorTableViewer.addDoubleClickListener(new LoggingDoubleClickListener() {
+        selectorTableViewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
             @Override
-            public void onDoubleClick(DoubleClickEvent event) {
+            protected void onDoubleClick(DoubleClickEvent event) {
                 IStructuredSelection selection = (IStructuredSelection) selectorTableViewer.getSelection();
                 if (!selection.isEmpty()) {
                     VariableMapping mapping = (VariableMapping) selection.getFirstElement();
@@ -185,9 +184,9 @@ public class MessageNodeDialog extends Dialog {
             tableColumn.setText(columnNames[i]);
             tableColumn.setWidth(300);
         }
-        dataTableViewer.addDoubleClickListener(new LoggingDoubleClickListener() {
+        dataTableViewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
             @Override
-            public void onDoubleClick(DoubleClickEvent event) {
+            protected void onDoubleClick(DoubleClickEvent event) {
                 IStructuredSelection selection = (IStructuredSelection) dataTableViewer.getSelection();
                 if (!selection.isEmpty()) {
                     VariableMapping oldMapping = (VariableMapping) selection.getFirstElement();

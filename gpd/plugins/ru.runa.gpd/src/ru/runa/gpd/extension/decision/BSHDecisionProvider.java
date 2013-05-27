@@ -19,6 +19,8 @@ import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Transition;
+import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.util.BackCompatibilityUtils;
 
 public class BSHDecisionProvider extends DelegableProvider implements IDecisionProvider {
     @Override
@@ -29,7 +31,7 @@ public class BSHDecisionProvider extends DelegableProvider implements IDecisionP
         for (Transition transition : transitions) {
             transitionNames.add(transition.getName());
         }
-        BSHEditorDialog dialog = new BSHEditorDialog(delegable.getDelegationConfiguration(), transitionNames, definition.getVariables());
+        BSHEditorDialog dialog = new BSHEditorDialog(definition, transitionNames, delegable.getDelegationConfiguration());
         if (dialog.open() == Window.OK) {
             return dialog.getResult();
         }
@@ -53,7 +55,8 @@ public class BSHDecisionProvider extends DelegableProvider implements IDecisionP
     @Override
     public Set<String> getTransitionNames(Decision decision) {
         try {
-            BSHDecisionModel model = new BSHDecisionModel(decision.getDelegationConfiguration(), decision.getProcessDefinition().getVariables());
+            List<Variable> variables = BackCompatibilityUtils.getValidVariables(decision.getProcessDefinition().getVariables(false));
+            BSHDecisionModel model = new BSHDecisionModel(decision.getDelegationConfiguration(), variables);
             return new HashSet<String>(model.getTransitionNames());
         } catch (Exception e) {
         }
@@ -63,7 +66,8 @@ public class BSHDecisionProvider extends DelegableProvider implements IDecisionP
     @Override
     public String getDefaultTransitionName(Decision decision) {
         try {
-            BSHDecisionModel model = new BSHDecisionModel(decision.getDelegationConfiguration(), decision.getProcessDefinition().getVariables());
+            List<Variable> variables = BackCompatibilityUtils.getValidVariables(decision.getProcessDefinition().getVariables(false));
+            BSHDecisionModel model = new BSHDecisionModel(decision.getDelegationConfiguration(), variables);
             return model.getDefaultTransitionName();
         } catch (Exception e) {
         }

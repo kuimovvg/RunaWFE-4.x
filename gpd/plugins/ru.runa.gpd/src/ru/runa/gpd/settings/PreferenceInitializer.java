@@ -24,5 +24,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
         store.setDefault(P_CONNECTION_LOGIN, "Administrator");
         store.setDefault(P_CONNECTION_PASSWORD, "wf");
         store.setDefault(P_CONNECTION_LDAP_SERVER_URL, "192.168.0.1");
+        store.setDefault(P_DATE_FORMAT_PATTERN, "dd.MM.yyyy");
     }
 }

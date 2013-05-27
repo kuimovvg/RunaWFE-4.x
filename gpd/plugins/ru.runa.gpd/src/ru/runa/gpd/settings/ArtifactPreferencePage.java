@@ -43,7 +43,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.Artifact;
 import ru.runa.gpd.extension.ArtifactRegistry;
-import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 
 import com.google.common.collect.Lists;
 
@@ -138,9 +138,9 @@ public class ArtifactPreferencePage<T extends Artifact> extends PreferencePage i
         //                return true;
         //            }
         //        });
-        tableViewer.addDoubleClickListener(new LoggingDoubleClickListener() {
+        tableViewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
             @Override
-            public void onDoubleClick(DoubleClickEvent e) {
+            protected void onDoubleClick(DoubleClickEvent e) {
                 edit();
             }
         });

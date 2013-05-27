@@ -2,9 +2,7 @@ package ru.runa.gpd.formeditor.wysiwyg;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -39,6 +37,7 @@ import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
 import ru.runa.gpd.formeditor.vartag.VarTagUtil;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.util.BackCompatibilityUtils;
 import ru.runa.gpd.util.EditorUtils;
 import tk.eclipse.plugin.htmleditor.HTMLPlugin;
 import tk.eclipse.plugin.htmleditor.editors.HTMLConfiguration;
@@ -85,48 +84,27 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     public synchronized List<String> getLazyVariableNameList() {
         if (lazyVariableNameList == null) {
             lazyVariableNameList = new ArrayList<String>();
-            for (Variable variable : getVariablesList(false)) {
+            for (Variable variable : getVariables()) {
                 lazyVariableNameList.add(variable.getName());
             }
         }
         return lazyVariableNameList;
     }
 
-    public List<Variable> getVariablesList(boolean onlyVariablesWithSpace) {
+    public List<Variable> getVariables(String... typeClassNameFilters) {
         if (formNode == null) {
             // This is because earlier access from web page (not user request)
             return new ArrayList<Variable>();
         }
-        List<Variable> variableWithSwimlanes = new ArrayList<Variable>();
-        for (Variable variable : formNode.getProcessDefinition().getVariables()) {
-            if (onlyVariablesWithSpace || variable.getName().indexOf(" ") == -1) {
-                variableWithSwimlanes.add(variable);
-            }
-        }
-        for (String swimlaneName : formNode.getProcessDefinition().getSwimlaneNames()) {
-            if (onlyVariablesWithSpace || swimlaneName.indexOf(" ") == -1) {
-                variableWithSwimlanes.add(Variable.createForSwimlane(swimlaneName));
-            }
-        }
-        return variableWithSwimlanes;
+        return BackCompatibilityUtils.getValidVariables(formNode.getProcessDefinition().getVariables(true, typeClassNameFilters));
     }
 
-    public Map<String, Variable> getVariablesMap(boolean includeVariablesWithSpace) {
-        Map<String, Variable> variableWithSwimlanes = new HashMap<String, Variable>();
-        // This is because earlier access from web page (not user request)
-        if (formNode != null) {
-            for (Variable variable : formNode.getProcessDefinition().getVariables()) {
-                if (includeVariablesWithSpace || variable.getName().indexOf(" ") == -1) {
-                    variableWithSwimlanes.put(variable.getName(), variable);
-                }
-            }
-            for (String swimlaneName : formNode.getProcessDefinition().getSwimlaneNames()) {
-                if (includeVariablesWithSpace || swimlaneName.indexOf(" ") == -1) {
-                    variableWithSwimlanes.put(swimlaneName, Variable.createForSwimlane(swimlaneName));
-                }
-            }
+    public List<String> getVariableNames(String... typeClassNameFilters) {
+        if (formNode == null) {
+            // This is because earlier access from web page (not user request)
+            return new ArrayList<String>();
         }
-        return variableWithSwimlanes;
+        return BackCompatibilityUtils.getValidVariableNames(formNode.getProcessDefinition().getVariableNames(true, typeClassNameFilters));
     }
 
     @SuppressWarnings("rawtypes")
@@ -342,7 +320,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         }
         if (isFtlFormat()) {
             try {
-                html = FreemarkerUtil.transformToHtml(getVariablesMap(true).keySet(), html);
+                html = FreemarkerUtil.transformToHtml(getVariableNames(), html);
             } catch (Exception e) {
                 WYSIWYGPlugin.logError("ftl WYSIWYGHTMLEditor.syncEditor2Browser()", e);
             }

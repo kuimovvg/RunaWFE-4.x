@@ -15,11 +15,11 @@ import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.wfe.extension.assign.DefaultAssignmentHandler;
 import ru.runa.wfe.var.format.ExecutorFormat;
 
-public class Swimlane extends NamedGraphElement implements Delegable {
+public class Swimlane extends Variable implements Delegable {
     private static final String DELEGATION_CLASS_NAME = DefaultAssignmentHandler.class.getName();
-    private boolean publicVisibility;
 
     public Swimlane() {
+        super(ExecutorFormat.class.getName(), false, null);
         setDelegationClassName(DELEGATION_CLASS_NAME);
     }
 
@@ -34,36 +34,6 @@ public class Swimlane extends NamedGraphElement implements Delegable {
             return;
         }
         super.setName(name);
-    }
-
-    @Override
-    protected boolean canNameBeSetFromProperties() {
-        return false;
-    }
-
-    public boolean isPublicVisibility() {
-        return publicVisibility;
-    }
-
-    public void setPublicVisibility(boolean publicVisibility) {
-        boolean old = this.publicVisibility;
-        this.publicVisibility = publicVisibility;
-        firePropertyChange(PROPERTY_PUBLIC_VISIBILITY, old, this.publicVisibility);
-    }
-
-    @Override
-    public List<IPropertyDescriptor> getCustomPropertyDescriptors() {
-        List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
-        list.add(new PropertyDescriptor(PROPERTY_PUBLIC_VISIBILITY, Localization.getString("Variable.property.publicVisibility")));
-        return list;
-    }
-
-    @Override
-    public Object getPropertyValue(Object id) {
-        if (PROPERTY_PUBLIC_VISIBILITY.equals(id)) {
-            return publicVisibility ? Localization.getString("message.yes") : Localization.getString("message.no");
-        }
-        return super.getPropertyValue(id);
     }
 
     @Override
@@ -91,7 +61,4 @@ public class Swimlane extends NamedGraphElement implements Delegable {
         return SharedImages.getImage("icons/obj/swimlane.gif");
     }
 
-    public Variable toVariable() {
-        return new Variable(getName(), ExecutorFormat.class.getName(), true, "");
-    }
 }

@@ -13,7 +13,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.MultiTaskState;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.ui.dialog.CreateVariableDialog;
+import ru.runa.gpd.ui.dialog.UpdateVariableDialog;
 import ru.runa.wfe.var.format.ListFormat;
 
 import com.google.common.base.Objects;
@@ -41,16 +41,14 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
      */
     @Override
     protected void fillMenu(Menu menu) {
-        for (Variable variable : currentDefinition.getVariables()) {
-            if (ListFormat.class.getName().equals(variable.getFormat())) {
-                Action action = new SetVariableAction();
-                action.setText(variable.getName());
-                if (Objects.equal(selectedVariable, variable.getName())) {
-                    action.setChecked(true);
-                }
-                ActionContributionItem item = new ActionContributionItem(action);
-                item.fill(menu, -1);
+        for (Variable variable : currentDefinition.getVariables(false, ListFormat.class.getName())) {
+            Action action = new SetVariableAction();
+            action.setText(variable.getName());
+            if (Objects.equal(selectedVariable, variable.getName())) {
+                action.setChecked(true);
             }
+            ActionContributionItem item = new ActionContributionItem(action);
+            item.fill(menu, -1);
         }
         new MenuItem(menu, SWT.SEPARATOR);
         Action action;
@@ -68,10 +66,10 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
     }
 
     private void createVariable() {
-        CreateVariableDialog dialog = new CreateVariableDialog(currentDefinition, null);
+        UpdateVariableDialog dialog = new UpdateVariableDialog(currentDefinition, null);
         dialog.setType(ListFormat.class.getName());
         if (dialog.open() == IDialogConstants.OK_ID) {
-            Variable variable = new Variable(dialog.getName(), dialog.getType(), dialog.isPublicVisibility(), dialog.getDefaultValue());
+            Variable variable = new Variable(dialog.getName(), dialog.getTypeName(), dialog.isPublicVisibility(), dialog.getDefaultValue());
             currentDefinition.addVariable(variable);
             setVariableName(variable.getName());
         }

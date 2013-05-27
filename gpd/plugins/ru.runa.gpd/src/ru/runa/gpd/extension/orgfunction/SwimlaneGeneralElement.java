@@ -1,6 +1,6 @@
 package ru.runa.gpd.extension.orgfunction;
 
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -38,7 +38,7 @@ public class SwimlaneGeneralElement extends SwimlaneElement {
             label.setLayoutData(createLayoutData(false));
             final Combo combo = new Combo(clientArea, SWT.READ_ONLY);
             combo.setVisibleItemCount(10);
-            Set<String> variableNames = OrgFunctionsRegistry.getVariableNames(processDefinition, parameter.getType());
+            List<String> variableNames = processDefinition.getVariableNames(true, parameter.getType());
             for (String varName : variableNames) {
                 if (!varName.equals(swimlaneName)) {
                     combo.add(varName);
