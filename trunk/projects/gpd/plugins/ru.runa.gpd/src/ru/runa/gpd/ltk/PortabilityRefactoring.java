@@ -25,6 +25,7 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
 
@@ -87,6 +88,10 @@ public class PortabilityRefactoring extends Refactoring {
                 List<Subprocess> subprocesses = definition.getChildren(Subprocess.class);
                 for (Subprocess subprocess : subprocesses) {
                     cache.add(new SubprocessPresentation(subprocess));
+                }
+                List<Swimlane> swimlaneNodes = definition.getChildren(Swimlane.class);
+                for (Swimlane swimlaneNode : swimlaneNodes) {
+                    cache.add(new SwimlanePresentation(swimlaneNode));
                 }
                 List<NodeTypeDefinition> typesWithProvider = NodeRegistry.getTypesWithVariableRenameProvider();
                 for (NodeTypeDefinition elementTypeDefinition : typesWithProvider) {
