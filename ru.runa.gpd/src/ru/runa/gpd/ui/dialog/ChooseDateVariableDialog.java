@@ -25,10 +25,8 @@ public class ChooseDateVariableDialog extends ChooseItemDialog {
         try {
             List<String> dateVariableNames = new ArrayList<String>();
             dateVariableNames.add(noneItemValue);
-            for (Variable variable : definition.getVariables()) {
-                if (VariableFormatRegistry.isApplicable(variable, Date.class.getName())) {
-                    dateVariableNames.add(variable.getName());
-                }
+            for (Variable variable : definition.getVariables(false, Date.class.getName())) {
+                dateVariableNames.add(variable.getName());
             }
             setItems(dateVariableNames);
             if (open() != IDialogConstants.CANCEL_ID) {

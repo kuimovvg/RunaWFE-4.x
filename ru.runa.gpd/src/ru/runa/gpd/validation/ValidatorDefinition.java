@@ -115,9 +115,6 @@ public class ValidatorDefinition {
 
     public static class Param {
         public static final String STRING_TYPE = String.class.getName();
-        public static final String NUMBER_TYPE = Number.class.getName();
-        public static final String BOOLEAN_TYPE = Boolean.class.getName();
-        public static final String DATE_TYPE = Date.class.getName();
         private final String name;
         private final String label;
         private final String type;

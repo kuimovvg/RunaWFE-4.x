@@ -17,6 +17,10 @@ public class Variable extends NamedGraphElement {
     private boolean publicVisibility;
     private String defaultValue;
 
+    protected Variable(String format, boolean publicVisibility, String defaultValue) {
+        this(null, format, publicVisibility, defaultValue);
+    }
+    
     public Variable(String name, String format, boolean publicVisibility, String defaultValue) {
         super(name);
         this.format = format;
@@ -26,10 +30,6 @@ public class Variable extends NamedGraphElement {
 
     public Variable(Variable variable) {
         this(variable.getName(), variable.getFormat(), variable.isPublicVisibility(), variable.getDefaultValue());
-    }
-
-    public static Variable createForSwimlane(String swimlaneName) {
-        return new Variable(swimlaneName, ExecutorFormat.class.getName(), false, null);
     }
 
     @Override

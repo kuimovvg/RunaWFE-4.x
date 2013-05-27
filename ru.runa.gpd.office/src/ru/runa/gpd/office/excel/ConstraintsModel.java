@@ -3,7 +3,7 @@ package ru.runa.gpd.office.excel;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.gpd.util.BackCompatibilityClassNames;
+import ru.runa.gpd.util.BackCompatibilityUtils;
 
 public class ConstraintsModel {
     public static final int CELL = 0;
@@ -70,7 +70,7 @@ public class ConstraintsModel {
     public static ConstraintsModel deserialize(Element element) {
         ConstraintsModel model;
         String className = element.attributeValue("class");
-        className = BackCompatibilityClassNames.getClassName(className);
+        className = BackCompatibilityUtils.getClassName(className);
         if (CELL_CLASS.equals(className)) {
             model = new ConstraintsModel(CELL);
         } else if (ROW_CLASS.equals(className)) {

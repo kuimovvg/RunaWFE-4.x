@@ -2,10 +2,10 @@ package ru.runa.gpd.ui.dialog;
 
 import ru.runa.gpd.Localization;
 
-public class NumberInputDialog extends UserInputDialog {
+public class DoubleInputDialog extends UserInputDialog {
 
-    public NumberInputDialog(String initialValue) {
-        super(Localization.getString("BSH.InputNumber"), initialValue);
+    public DoubleInputDialog() {
+        super(Localization.getString("InputNumber"));
     }
 
     @Override

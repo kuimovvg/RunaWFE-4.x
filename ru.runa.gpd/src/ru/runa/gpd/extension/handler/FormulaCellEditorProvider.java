@@ -40,12 +40,10 @@ public class FormulaCellEditorProvider extends DelegableProvider {
     @Override
     protected DelegableConfigurationDialog createConfigurationDialog(Delegable delegable) {
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
-        return new ConfigurationDialog(
-                delegable.getDelegationConfiguration(), 
-                definition.getVariableNames(true));
+        return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariableNames(true));
     }
 
-    public static class ConfigurationDialog extends DelegableConfigurationDialog {
+    private static class ConfigurationDialog extends DelegableConfigurationDialog {
         private final List<String> variableNames;
         private HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
 
@@ -53,7 +51,7 @@ public class FormulaCellEditorProvider extends DelegableProvider {
             super(initialValue);
             this.variableNames = variableNames;
         }
-        
+
         @Override
         protected void createDialogHeader(Composite parent) {
             Composite composite = new Composite(parent, SWT.NONE);
@@ -108,8 +106,9 @@ public class FormulaCellEditorProvider extends DelegableProvider {
                     ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);
                     String variableName = dialog.openDialog();
                     if (variableName != null) {
-                        if (variableName.indexOf(" ") > 0)
+                        if (variableName.indexOf(" ") > 0) {
                             variableName = "'" + variableName + "'";
+                        }
                         styledText.insert(variableName);
                         styledText.setFocus();
                         styledText.setCaretOffset(styledText.getCaretOffset() + variableName.length());
@@ -118,13 +117,13 @@ public class FormulaCellEditorProvider extends DelegableProvider {
             });
             hyperlinkGroup.add(hl3);
         }
-        
+
         @Override
         protected void createDialogFooter(Composite composite) {
             styledText.addLineStyleListener(new FormulaConfigurationStyling(variableNames));
         }
     }
-    
+
     public static class FormulaConfigurationStyling extends HighlightTextStyling {
         private static final Color VARIABLE_COLOR = new Color(null, 155, 155, 255);
 
@@ -137,7 +136,7 @@ public class FormulaCellEditorProvider extends DelegableProvider {
         }
 
     }
-    
+
     private static class ChooseFunctionDialog extends ChooseItemDialog {
         private final static List<String> functions = new ArrayList<String>();
         static {
@@ -173,37 +172,37 @@ public class FormulaCellEditorProvider extends DelegableProvider {
 
         }
     }
-    
+
     private static class HelpDialog extends Dialog {
         private Text text;
         private String initValue;
-        
-        public HelpDialog(String initValue){
+
+        public HelpDialog(String initValue) {
             super(Display.getCurrent().getActiveShell());
             this.initValue = initValue;
-            setShellStyle(getShellStyle()|SWT.RESIZE);
+            setShellStyle(getShellStyle() | SWT.RESIZE);
         }
-        
+
         @Override
         protected Point getInitialSize() {
             return new Point(700, 500);
         }
-        
+
         @Override
         protected Control createDialogArea(Composite parent) {
             getShell().setText("ExecuteFormulaActionHandler help");
-            
+
             Composite composite = new Composite(parent, SWT.NULL);
             composite.setLayout(new GridLayout());
             composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-            
-            text = new Text(composite, SWT.MULTI|SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL);
+
+            text = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
             text.setLayoutData(new GridData(GridData.FILL_BOTH));
             text.setText(this.initValue);
             text.setEditable(false);
-            
+
             return composite;
         }
-        
+
     }
 }

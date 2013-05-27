@@ -2,7 +2,6 @@ package ru.runa.gpd.extension.orgfunction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import ru.runa.gpd.extension.Artifact;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -98,7 +97,7 @@ public class OrgFunctionDefinition extends Artifact {
                 errors.add("orgfunction.emptyParam");
             }
             if (p.isUseVariable()) {
-                Set<String> variableNames = OrgFunctionsRegistry.getVariableNames(processDefinition, p.getType());
+                List<String> variableNames = processDefinition.getVariableNames(true, p.getType());
                 if (!variableNames.contains(p.getVariableName())) {
                     errors.add("orgfunction.varSelectorItemNotExist");
                 }

@@ -17,6 +17,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.extension.orgfunction.SwimlaneGUIConfiguration;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
@@ -262,37 +263,47 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         }
     }
 
-    public List<String> getVariableNames(boolean includeSwimlanes) {
-        List<String> names = new ArrayList<String>();
-        for (Variable variable : getVariablesWithSwimlanes()) {
-            names.add(variable.getName());
+    public List<String> getVariableNames(boolean includeSwimlanes, String... typeClassNameFilters) {
+        List<String> result = Lists.newArrayList();
+        for (Variable variable : getVariables(includeSwimlanes, typeClassNameFilters)) {
+            result.add(variable.getName());
         }
-        return names;
+        return result;
     }
 
-    public List<Variable> getVariables() {
-        return getChildren(Variable.class);
-    }
-
-    public List<Variable> getVariablesWithSwimlanes() {
-        List<Variable> list = getVariables();
-        for (Swimlane swimlane : getSwimlanes()) {
-            list.add(swimlane.toVariable());
+    public List<Variable> getVariables(boolean includeSwimlanes, String... typeClassNameFilters) {
+        List<Variable> variables = getChildren(Variable.class);
+        if (!includeSwimlanes) {
+            for (Swimlane swimlane : getSwimlanes()) {
+                variables.remove(swimlane);
+            }
         }
-        return list;
+        List<Variable> result = Lists.newArrayList();
+        for (Variable variable : variables) {
+            boolean applicable = typeClassNameFilters == null || typeClassNameFilters.length == 0;
+            if (!applicable) {
+                for (String typeClassNameFilter : typeClassNameFilters) {
+                    if (VariableFormatRegistry.isApplicable(variable, typeClassNameFilter)) {
+                        applicable = true;
+                        break;
+                    }
+                }
+            }
+            if (applicable) {
+                result.add(variable);
+            }
+        }
+        return result;
     }
 
     public Variable getVariable(String name, boolean searchInSwimlanes) {
-        for (Variable variable : getVariables()) {
+        for (Variable variable : getVariables(false)) {
             if (Objects.equal(variable.getName(), name)) {
                 return variable;
             }
         }
         if (searchInSwimlanes) {
-            Swimlane swimlane = getSwimlaneByName(name);
-            if (swimlane != null) {
-                return swimlane.toVariable();
-            }
+            return getSwimlaneByName(name);
         }
         return null;
     }

@@ -10,12 +10,10 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -30,9 +28,7 @@ import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.ui.dialog.DateInputDialog;
-import ru.runa.gpd.ui.dialog.NumberInputDialog;
-import ru.runa.gpd.ui.dialog.UserInputDialog;
+import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
@@ -106,7 +102,7 @@ public class ValidatorWizard extends Wizard {
 
     @Override
     public void addPages() {
-        List<Variable> allVariables = formNode.getProcessDefinition().getVariables();
+        List<Variable> allVariables = formNode.getProcessDefinition().getVariables(false);
         List<Swimlane> swimlanes = formNode.getProcessDefinition().getSwimlanes();
         fieldValidatorsPage = new FieldValidatorsWizardPage("Field validators", allVariables, swimlanes);
         globalValidatorsPage = new GlobalValidatorsWizardPage("Global validators", allVariables, swimlanes);
@@ -174,17 +170,8 @@ public class ValidatorWizard extends Wizard {
         }
     }
 
-    public static class DefaultParamsComposite extends ParametersComposite implements SelectionListener {
-        private static final String DATA_KEY = "userInput";
-        private static final String TYPE_KEY = "inputType";
-        private static final String INPUT_VALUE = Localization.getString("BSH.InputValue");
+    public static class DefaultParamsComposite extends ParametersComposite {
         private final Map<String, Combo> inputCombos = new HashMap<String, Combo>();
-        private static Map<String, UserInputDialog> dialogClassesForTypes = new HashMap<String, UserInputDialog>();
-        static {
-            dialogClassesForTypes.put(Param.STRING_TYPE, new UserInputDialog(INPUT_VALUE, ""));
-            dialogClassesForTypes.put(Param.DATE_TYPE, new DateInputDialog(""));
-            dialogClassesForTypes.put(Param.NUMBER_TYPE, new NumberInputDialog(""));
-        }
 
         public DefaultParamsComposite(Composite parent, int style) {
             super(parent, style);
@@ -208,26 +195,9 @@ public class ValidatorWizard extends Wizard {
                 Label label = new Label(this, SWT.NONE);
                 label.setText(param.getLabel());
                 label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                Combo combo = new Combo(this, SWT.READ_ONLY);
+                TypedUserInputCombo combo = new TypedUserInputCombo(this, configParams.get(name));
+                combo.setTypeClassName(param.getType());
                 combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                combo.addSelectionListener(this);
-                String textData = configParams.get(name);
-                if (Param.BOOLEAN_TYPE.equals(param.getType())) {
-                    combo.add(""); // default
-                    combo.add("true");
-                    combo.add("false");
-                } else {
-                    if (textData != null) {
-                        combo.add(textData);
-                        combo.setData(DATA_KEY, textData);
-                    }
-                    combo.add(""); // default
-                    combo.add(INPUT_VALUE);
-                }
-                if (textData != null) {
-                    combo.setText(textData);
-                }
-                combo.setData(TYPE_KEY, param.getType());
                 inputCombos.put(name, combo);
             }
             this.pack(true);
@@ -246,29 +216,5 @@ public class ValidatorWizard extends Wizard {
             }
         }
 
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-        }
-
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-            Combo combo = (Combo) e.widget;
-            if (!INPUT_VALUE.equals(combo.getItem(combo.getSelectionIndex()))) {
-                return;
-            }
-            String oldUserInput = (String) combo.getData(DATA_KEY);
-            String type = (String) combo.getData(TYPE_KEY);
-            UserInputDialog inputDialog = dialogClassesForTypes.get(type);
-            inputDialog.setInitialValue(oldUserInput);
-            if (Window.OK == inputDialog.open()) {
-                String userInput = inputDialog.getUserInput();
-                if (oldUserInput != null) {
-                    combo.remove(0);
-                }
-                combo.setData(DATA_KEY, userInput);
-                combo.add(userInput, 0);
-            }
-            combo.select(0);
-        }
     }
 }

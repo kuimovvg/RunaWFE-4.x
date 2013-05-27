@@ -36,7 +36,7 @@ import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.search.BaseSearchQuery;
 import ru.runa.gpd.search.BotSearchQuery;
 import ru.runa.gpd.search.BotTaskSearchQuery;
-import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 import ru.runa.gpd.ui.wizard.ExportBotStationWizardPage;
 import ru.runa.gpd.ui.wizard.ExportBotTaskWizardPage;
 import ru.runa.gpd.ui.wizard.ExportBotWizardPage;
@@ -83,9 +83,9 @@ public class BotExplorerTreeView extends ViewPart implements ISelectionListener 
                 }
             }
         });
-        viewer.addDoubleClickListener(new LoggingDoubleClickListener() {
+        viewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
             @Override
-            public void onDoubleClick(DoubleClickEvent event) {
+            protected void onDoubleClick(DoubleClickEvent event) {
                 Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
                 if (element instanceof IFile) {
                     WorkspaceOperations.openBotTask((IFile) element);

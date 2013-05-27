@@ -32,7 +32,7 @@ import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.DefaultParamsComposite;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.ValidatorInfoControl;
 import ru.runa.gpd.util.ValidationUtil;
@@ -101,9 +101,9 @@ public class FieldValidatorsWizardPage extends WizardPage {
                 updateSelection();
             }
         });
-        variablesTableViewer.addDoubleClickListener(new LoggingDoubleClickListener() {
+        variablesTableViewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
             @Override
-            public void onDoubleClick(DoubleClickEvent event) {
+            protected void onDoubleClick(DoubleClickEvent event) {
                 String variableName = getCurrentVariableName();
                 if (fieldConfigs.containsKey(variableName)) {
                     removeField(variableName);
@@ -125,9 +125,9 @@ public class FieldValidatorsWizardPage extends WizardPage {
                 updateSelection();
             }
         });
-        swimlanesTableViewer.addDoubleClickListener(new LoggingDoubleClickListener() {
+        swimlanesTableViewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
             @Override
-            public void onDoubleClick(DoubleClickEvent event) {
+            protected void onDoubleClick(DoubleClickEvent event) {
                 String variableName = getCurrentVariableName();
                 if (fieldConfigs.containsKey(variableName)) {
                     removeField(variableName);
@@ -159,9 +159,9 @@ public class FieldValidatorsWizardPage extends WizardPage {
                 updateValidatorSelection();
             }
         });
-        validatorsTableViewer.addDoubleClickListener(new LoggingDoubleClickListener() {
+        validatorsTableViewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
             @Override
-            public void onDoubleClick(DoubleClickEvent event) {
+            protected void onDoubleClick(DoubleClickEvent event) {
                 Map<String, ValidatorConfig> configs = fieldConfigs.get(getCurrentVariableName());
                 if (configs.containsKey(getCurrentDefinition().getName())) {
                     removeFieldValidator(getCurrentDefinition());

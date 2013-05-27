@@ -34,7 +34,7 @@ import org.eclipse.ui.part.ViewPart;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.ProcessEditorBase;
-import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 import ru.runa.gpd.util.WorkspaceOperations;
 
 public class ExplorerTreeView extends ViewPart implements ISelectionListener {
@@ -85,9 +85,9 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
                 }
             }
         });
-        viewer.addDoubleClickListener(new LoggingDoubleClickListener() {
+        viewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
             @Override
-            public void onDoubleClick(DoubleClickEvent event) {
+            protected void onDoubleClick(DoubleClickEvent event) {
                 Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
                 if (element instanceof IFolder) {
                     WorkspaceOperations.openProcessDefinition((IFolder) element);
