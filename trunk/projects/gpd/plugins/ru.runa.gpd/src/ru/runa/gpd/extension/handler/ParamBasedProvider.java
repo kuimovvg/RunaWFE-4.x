@@ -131,7 +131,7 @@ public abstract class ParamBasedProvider extends DelegableProvider {
 
         public String getConfiguration() {
             Map<String, String> properties = paramDefComposite.readUserInput();
-            return config.toConfiguration(properties);
+            return config.toConfiguration(variables, properties);
         }
     }
 }
