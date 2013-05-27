@@ -16,6 +16,7 @@ import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
 import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.Action;
+import ru.runa.wfe.lang.Conjunction;
 import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EndNode;
@@ -102,6 +103,7 @@ public class JpdlXmlReader {
         nodeTypes.put("fork", Fork.class);
         nodeTypes.put("join", Join.class);
         nodeTypes.put("decision", Decision.class);
+        nodeTypes.put("conjunction", Conjunction.class);
         nodeTypes.put("process-state", SubProcessState.class);
         nodeTypes.put("multiinstance-state", MultiProcessState.class);
         nodeTypes.put("send-message", SendMessage.class);

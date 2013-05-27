@@ -39,6 +39,9 @@ public class UMLFigureFactory extends AbstractFigureFactory {
         case Decision:
             figure = new DecisionFigure();
             break;
+        case Merge:
+            figure = new ConjunctionFigure();
+            break;
         case Fork:
         case Join:
             figure = new ForkJoinFigure();
