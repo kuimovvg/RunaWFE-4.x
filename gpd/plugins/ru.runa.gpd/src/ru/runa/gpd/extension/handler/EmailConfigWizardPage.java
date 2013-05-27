@@ -320,7 +320,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         summaryProperties.putAll(messageComposite.readUserInput());
         summaryProperties.put("bodyInlined", String.valueOf(contentComposite.isUseFormFromTaskForm()));
         summaryProperties.put("body", contentComposite.getMessage());
-        Document document = summaryConfig.toConfigurationXml(summaryProperties);
+        Document document = summaryConfig.toConfigurationXml(variables, summaryProperties);
         EmailAttachmentsConfig.addAttachments(document, contentComposite.getAttachments());
         String c = XmlUtil.toString(document);
         styledText.setText(c);
