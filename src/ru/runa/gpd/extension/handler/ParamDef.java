@@ -9,13 +9,14 @@ import ru.runa.gpd.Localization;
 import com.google.common.collect.Lists;
 
 public class ParamDef {
-    public static final int TYPE_AUTO = 0;
-    public static final int TYPE_TEXT = 1;
-    public static final int TYPE_COMBO = 2;
-    public static final int TYPE_CHECKBOX = 3;
+    
+    public static enum Presentation {
+        undefined, combo, text, richcombo, checkbox
+    }
+    
     public static final int XML_TYPE_ATTR = 1;
     public static final int XML_TYPE_NODE = 2;
-    private int type = TYPE_AUTO;
+    private Presentation presentation = Presentation.undefined;
     private int xmlNodeType = XML_TYPE_ATTR;
     private final String name;
     private final String label;
@@ -27,8 +28,8 @@ public class ParamDef {
     private boolean optional = false;
 
     public ParamDef(Element element) {
-        if (element.attributeValue("type") != null) {
-            this.type = Integer.parseInt(element.attributeValue("type"));
+        if (element.attributeValue("presentation") != null) {
+            this.presentation = Presentation.valueOf(element.attributeValue("presentation"));
         }
         if (element.attributeValue("xmlNodeType") != null) {
             this.xmlNodeType = Integer.parseInt(element.attributeValue("xmlNodeType"));
@@ -67,11 +68,11 @@ public class ParamDef {
         this.label = label;
     }
 
-    public int determineType() {
-        if (TYPE_AUTO == type) {
-            return (useVariable || comboItems.length > 0) ? TYPE_COMBO : TYPE_TEXT;
+    public Presentation getPresentation() {
+        if (Presentation.undefined == presentation) {
+            return (useVariable || comboItems.length > 0) ? Presentation.combo : Presentation.text;
         }
-        return type;
+        return presentation;
     }
 
     public int getXmlNodeType() {

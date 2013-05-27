@@ -5,11 +5,11 @@
     <param name="mail.${mail.transport.protocol}.port" variable="false" label.key="mail.smtp.port" help.key="mail.smtp.port.help" />
   </connection>
   <connection label="AuthSettings">
-    <param name="mail.${mail.transport.protocol}.auth" variable="false" type="3" optional="true" label.key="mail.smtp.auth" help.key="mail.smtp.auth.help" />
+    <param name="mail.${mail.transport.protocol}.auth" variable="false" presentation="checkbox" optional="true" label.key="mail.smtp.auth" help.key="mail.smtp.auth.help" />
     <param name="mail.user" variable="false" optional="true" label.key="mail.user" help.key="mail.user.help" />
     <param name="mail.password" variable="false" optional="true" label.key="mail.password" help.key="mail.password.help" />
   </connection>
   <connection label="DebugSettings">
-    <param name="mail.debug" type="3" optional="true" variable="false" label.key="mail.debug" help.key="mail.debug.help" />
+    <param name="mail.debug" presentation="checkbox" optional="true" variable="false" label.key="mail.debug" help.key="mail.debug.help" />
   </connection>
 </email-config>

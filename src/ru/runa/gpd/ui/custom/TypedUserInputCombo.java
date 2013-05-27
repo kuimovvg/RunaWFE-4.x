@@ -18,7 +18,6 @@ import ru.runa.gpd.ui.dialog.UserInputDialog;
 import com.google.common.collect.Maps;
 
 public class TypedUserInputCombo extends Combo {
-    // TODO unify references
     public static final String INPUT_VALUE = Localization.getString("InputValue");
 
     private static Map<String, Class<? extends UserInputDialog>> dialogClassesForTypes = Maps.newHashMap();
