@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import jcifs.http.AuthenticationFilter;
-import ru.runa.common.WebResources;
 import ru.runa.common.web.filter.HTTPFilterBase;
+import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
 import ru.runa.wfe.security.auth.LoginModuleConfiguration;
 
 /**
@@ -47,7 +47,7 @@ public class KrbFilter extends HTTPFilterBase {
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (!WebResources.isKrbSupported()) {
+        if (!KerberosLoginModuleResources.isHttpAuthEnabled()) {
             chain.doFilter(request, response);
             return;
         }
