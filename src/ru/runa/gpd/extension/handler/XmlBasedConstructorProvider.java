@@ -42,6 +42,7 @@ import com.google.common.collect.Maps;
 public abstract class XmlBasedConstructorProvider<T extends Observable> extends DelegableProvider {
     protected T model;
     protected boolean formalVariable = false;
+    // TODO another way?
     protected Map<String, String> variables = Maps.newHashMap();
     protected List<String> swimlaneNames = Lists.newArrayList();
 
@@ -50,7 +51,7 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
         this.variables.clear();
         this.swimlaneNames.clear();
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
-        for (Variable variable : definition.getVariables()) {
+        for (Variable variable : definition.getVariables(false)) {
             VariableFormatArtifact artifact = VariableFormatRegistry.getInstance().getArtifactNotNull(variable.getFormat());
             variables.put(variable.getName(), artifact.getVariableClassName());
         }

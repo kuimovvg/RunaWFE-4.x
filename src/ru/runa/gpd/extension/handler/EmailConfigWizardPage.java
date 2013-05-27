@@ -1,7 +1,6 @@
 package ru.runa.gpd.extension.handler;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +45,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
+import ru.runa.gpd.util.BackCompatibilityUtils;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.var.format.FileFormat;
@@ -65,8 +65,8 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
     private final ParamDefConfig messageConfig;
     private final ParamDefConfig contentConfig;
     private final List<Variable> variables;
-    private final List<String> ftlVariableNames = new ArrayList<String>();
-    private final List<String> fileVariableNames = new ArrayList<String>();
+    private final List<String> ftlVariableNames;
+    private final List<String> fileVariableNames;
     private String result;
 
     private ParamDefConfig getParamConfig(Bundle bundle, String path) {
@@ -84,7 +84,9 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         super("email", Localization.getString("EmailDialog.title"), SharedImages.getImageDescriptor("/icons/send_email.png"));
         this.initValue = delegable.getDelegationConfiguration();
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
-        this.variables = definition.getVariablesWithSwimlanes();
+        this.variables = definition.getVariables(true);
+        this.ftlVariableNames = BackCompatibilityUtils.getValidVariableNames(definition.getVariableNames(true));
+        this.fileVariableNames = BackCompatibilityUtils.getValidVariableNames(definition.getVariableNames(true, FileFormat.class.getName()));
         GraphElement parent = ((GraphElement) delegable).getParent();
         this.bodyInlinedEnabled = (parent instanceof FormNode) && ((FormNode) parent).hasForm();
         this.commonConfig = getParamConfig(bundle, "/conf/email.common.xml");
@@ -95,15 +97,6 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         summaryConfig.getGroups().addAll(connectionConfig.getGroups());
         summaryConfig.getGroups().addAll(messageConfig.getGroups());
         summaryConfig.getGroups().addAll(contentConfig.getGroups());
-        for (Variable variable : variables) {
-            if (variable.getName().indexOf(" ") == -1) {
-                ftlVariableNames.add(variable.getName());
-            }
-            // TODO make comparison by java class name
-            if (FileFormat.class.getName().equals(variable.getFormat())) {
-                fileVariableNames.add(variable.getName());
-            }
-        }
     }
 
     @Override

@@ -85,7 +85,7 @@ public class WFEServerConnector implements IConnector, PrefConstants {
                     Display.getDefault().syncExec(new Runnable() {
                         @Override
                         public void run() {
-                            UserInputDialog userInputDialog = new UserInputDialog(Localization.getString("pref.connection.password"), "");
+                            UserInputDialog userInputDialog = new UserInputDialog(Localization.getString("pref.connection.password"));
                             if (Window.OK == userInputDialog.open()) {
                                 password = userInputDialog.getUserInput();
                             }

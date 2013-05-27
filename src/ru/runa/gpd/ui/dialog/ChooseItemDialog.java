@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 
 public class ChooseItemDialog extends Dialog {
     private List<? extends Object> items;
@@ -89,8 +89,8 @@ public class ChooseItemDialog extends Dialog {
                 getButton(IDialogConstants.OK_ID).setEnabled(true);
             }
         });
-        itemsList.addDoubleClickListener(new LoggingDoubleClickListener() {
-            public void onDoubleClick(DoubleClickEvent event) {
+        itemsList.addDoubleClickListener(new LoggingDoubleClickAdapter() {
+            protected void onDoubleClick(DoubleClickEvent event) {
                 okPressed();
             }
         });

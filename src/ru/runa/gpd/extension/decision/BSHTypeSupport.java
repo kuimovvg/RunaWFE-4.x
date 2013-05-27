@@ -8,7 +8,7 @@ import java.util.Map;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.ui.dialog.NumberInputDialog;
+import ru.runa.gpd.ui.dialog.DoubleInputDialog;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
 import ru.runa.wfe.var.format.BooleanFormat;
 import ru.runa.wfe.var.format.DateFormat;
@@ -60,8 +60,8 @@ public abstract class BSHTypeSupport {
         return v;
     }
 
-    public UserInputDialog createUserInputDialog(String title, String initialValue) {
-        return new UserInputDialog(title, initialValue);
+    public UserInputDialog createUserInputDialog() {
+        return new UserInputDialog();
     }
 
     abstract String wrap(Object value);
@@ -172,8 +172,8 @@ public abstract class BSHTypeSupport {
         }
 
         @Override
-        public UserInputDialog createUserInputDialog(String title, String initialValue) {
-            return new NumberInputDialog(initialValue);
+        public UserInputDialog createUserInputDialog() {
+            return new DoubleInputDialog();
         }
 
         @Override

@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import ru.runa.gpd.ui.custom.LoggingDoubleClickListener;
+import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 
 public class TreeViewSelectionDialog extends Dialog {
     private TreeViewer viewer;
@@ -93,8 +93,8 @@ public class TreeViewSelectionDialog extends Dialog {
                 getButton(IDialogConstants.OK_ID).setEnabled(selectedItem.allowSelection);
             }
         });
-        viewer.addDoubleClickListener(new LoggingDoubleClickListener() {
-            public void onDoubleClick(DoubleClickEvent event) {
+        viewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
+            protected void onDoubleClick(DoubleClickEvent event) {
                 selectedItem = (TreeItem) ((IStructuredSelection) viewer.getSelection()).getFirstElement();
                 if (selectedItem.allowSelection) {
                     okPressed();
