@@ -39,8 +39,8 @@ public class KerberosLoginModule extends LoginModuleBase {
 
     @Override
     protected Actor login(CallbackHandler callbackHandler) throws Exception {
-        if (KerberosLoginModuleResources.isEnabled()) {
-            log.warn("kerberos auth is disbaled in kerberos.properties");
+        if (!KerberosLoginModuleResources.isEnabled()) {
+            log.warn("kerberos auth is disabled in kerberos.properties");
             throw new UnsupportedCallbackException(null);
         }
         KerberosCallback kerberosCallback = new KerberosCallback();
