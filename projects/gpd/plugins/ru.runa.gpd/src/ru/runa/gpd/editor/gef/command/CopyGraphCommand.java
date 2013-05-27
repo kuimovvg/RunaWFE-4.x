@@ -25,6 +25,7 @@ import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.ActionImpl;
 import ru.runa.gpd.lang.model.Active;
 import ru.runa.gpd.lang.model.Bendpoint;
+import ru.runa.gpd.lang.model.Conjunction;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.FormNode;
@@ -110,6 +111,9 @@ public class CopyGraphCommand extends Command {
                     }
                     if (node instanceof State) {
                         ((State) copy).setMinimizedView(((State) node).isMinimizedView());
+                    }
+                    if (node instanceof Conjunction) {
+                        ((Conjunction) copy).setMinimizedView(((Conjunction) node).isMinimizedView());
                     }
                     if (node instanceof Decision) {
                         copy.setDelegationConfiguration(node.getDelegationConfiguration());

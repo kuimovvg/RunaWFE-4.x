@@ -36,7 +36,7 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
 
     public void setMinimizedView(boolean minimazedView) {
         this.minimizedView = minimazedView;
-        firePropertyChange(PROPERTY_MINIMAZED_VIEW, !reassignmentEnabled, reassignmentEnabled);
+        firePropertyChange(PROPERTY_MINIMAZED_VIEW, !minimizedView, minimizedView);
     }
 
     public void setReassignmentEnabled(boolean forceReassign) {
