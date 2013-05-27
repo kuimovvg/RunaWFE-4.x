@@ -59,7 +59,6 @@ public class KrbFilter extends HTTPFilterBase {
         } catch (Exception e) {
             log.error("kerberos auth", e);
             forwardToLoginPage(request, response, e);
-            // chain.doFilter(request, response);
         }
     }
 
