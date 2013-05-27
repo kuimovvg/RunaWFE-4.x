@@ -216,7 +216,7 @@ public class InputOutputComposite extends Composite {
             if (output != null) {
                 model.outputFilename = output.attributeValue("fileName");
                 model.outputDir = output.attributeValue("dir");
-                model.outputVariable = output.attributeValue("varaible");
+                model.outputVariable = output.attributeValue("variable");
             }
             return model;
         }
