@@ -13,8 +13,12 @@ public class PropertyResources {
     private final Properties PROPERTIES;
 
     public PropertyResources(String fileName) {
+        this(fileName, true);
+    }
+
+    public PropertyResources(String fileName, boolean required) {
         this.fileName = fileName;
-        PROPERTIES = ClassLoaderUtil.getPropertiesNotNull(fileName);
+        PROPERTIES = ClassLoaderUtil.getProperties(fileName, required);
     }
 
     public Set<String> getAllPropertyNames() {
