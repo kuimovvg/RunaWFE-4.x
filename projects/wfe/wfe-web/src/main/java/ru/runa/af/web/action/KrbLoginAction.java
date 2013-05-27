@@ -26,13 +26,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.auth.KerberosLoginModuleResources;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
@@ -54,8 +54,8 @@ public class KrbLoginAction extends ActionBase {
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         try {
-            if (!WebResources.isKrbSupported()) {
-                throw new AuthenticationException("Kerberos support disabled");
+            if (!KerberosLoginModuleResources.isHttpAuthEnabled()) {
+                throw new AuthenticationException("HTTP kerberos support disabled");
             }
             if (request.getUserPrincipal() == null) {
                 throw new LoginException("No client name was provided.");
