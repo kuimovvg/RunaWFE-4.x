@@ -13,6 +13,8 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.util.CommonUtils;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Strings;
@@ -194,11 +196,11 @@ public class ParamDefConfig {
         return value != null && value.trim().length() > 0;
     }
 
-    public String toConfiguration(Map<String, String> properties) {
-        return XmlUtil.toString(toConfigurationXml(properties));
+    public String toConfiguration(List<Variable> variables, Map<String, String> properties) {
+        return XmlUtil.toString(toConfigurationXml(variables, properties));
     }
 
-    public Document toConfigurationXml(Map<String, String> properties) {
+    public Document toConfigurationXml(List<Variable> variables, Map<String, String> properties) {
         Document doc = DocumentHelper.createDocument();
         doc.add(DocumentHelper.createElement(name));
         Element root = doc.getRootElement();
@@ -229,7 +231,7 @@ public class ParamDefConfig {
                 if (param.getXmlNodeType() == ParamDef.XML_TYPE_ATTR) {
                     paramElement = DocumentHelper.createElement("param");
                     paramElement.addAttribute("name", paramName);
-                    if (param.isUseVariable()) {
+                    if (param.isUseVariable() && CommonUtils.isVariableExists(variables, value)) {
                         paramElement.addAttribute("variable", value);
                     } else {
                         paramElement.addAttribute("value", value);
