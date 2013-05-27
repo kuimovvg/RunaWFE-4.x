@@ -27,7 +27,19 @@ import ru.runa.wfe.commons.PropertyResources;
  * @author Gritsenko_S
  */
 public class KerberosLoginModuleResources {
-    private static final PropertyResources RESOURCES = new PropertyResources("kerberos_module.properties");
+    private static final PropertyResources RESOURCES = new PropertyResources("kerberos.properties", false);
+
+    public static boolean isEnabled() {
+        return isRmiAuthEnabled() || isHttpAuthEnabled();
+    }
+
+    public static boolean isRmiAuthEnabled() {
+        return RESOURCES.getBooleanProperty("rmi.auth.enabled", false);
+    }
+
+    public static boolean isHttpAuthEnabled() {
+        return RESOURCES.getBooleanProperty("http.auth.enabled", false);
+    }
 
     public static String getApplicationName() {
         return RESOURCES.getStringPropertyNotNull("appName");

@@ -101,10 +101,6 @@ public class WebResources {
         return RESOURCES.getBooleanProperty("ntlm.enabled", false);
     }
 
-    public static boolean isKrbSupported() {
-        return RESOURCES.getBooleanProperty("kerberos.enabled", false);
-    }
-
     public static String getDomainName() {
         return RESOURCES.getStringPropertyNotNull("ntlm.domain");
     }
@@ -114,7 +110,7 @@ public class WebResources {
     }
 
     public static boolean isVersionDisplay() {
-        return RESOURCES.getBooleanProperty("version.display", false);
+        return RESOURCES.getBooleanProperty("version.display", true);
     }
 
     public static boolean isAutoShowForm() {

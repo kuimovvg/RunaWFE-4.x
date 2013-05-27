@@ -75,12 +75,33 @@ public class ClassLoaderUtil {
         }
     }
 
-    public static Properties getPropertiesNotNull(String resource) {
+    public static Properties getPropertiesOrNull(String resource) {
         Properties properties = new Properties();
         try {
-            InputStream is = getAsStreamNotNull(resource, ClassLoaderUtil.class);
-            properties.load(is);
-            is.close();
+            InputStream is = getAsStream(resource, ClassLoaderUtil.class);
+            if (is != null) {
+                properties.load(is);
+                is.close();
+            }
+        } catch (IOException e) {
+            throw new InternalApplicationException("couldn't load properties file '" + resource + "'", e);
+        }
+        return properties;
+    }
+
+    public static Properties getProperties(String resource, boolean required) {
+        Properties properties = getPropertiesOrNull(resource);
+        try {
+            InputStream is;
+            if (required) {
+                is = getAsStreamNotNull(resource, ClassLoaderUtil.class);
+            } else {
+                is = getAsStream(resource, ClassLoaderUtil.class);
+            }
+            if (is != null) {
+                properties.load(is);
+                is.close();
+            }
         } catch (IOException e) {
             throw new InternalApplicationException("couldn't load properties file '" + resource + "'", e);
         }

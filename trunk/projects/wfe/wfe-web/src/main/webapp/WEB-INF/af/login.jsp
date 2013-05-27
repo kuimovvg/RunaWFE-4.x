@@ -1,5 +1,4 @@
 <%@ page language="java" pageEncoding="UTF-8" session="false" %>
-<%@ page import="ru.runa.common.WebResources" %>
 <%@ page import="java.net.URLDecoder" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
@@ -49,7 +48,7 @@
 							</tr>					
 						</table>
 						</html:form>
-						<% if ( WebResources.isNTLMSupported() ){ %>
+						<% if (ru.runa.common.WebResources.isNTLMSupported()) { %>
 						<table>
 							<tr>
 								<td>
@@ -60,7 +59,7 @@
 							</tr>
 						</table>
 						<% } %>
-						<% if ( WebResources.isKrbSupported() ){ %>
+						<% if (ru.runa.wfe.security.auth.KerberosLoginModuleResources.isHttpAuthEnabled()) { %>
 						<table>
 							<tr>
 								<td>

@@ -20,6 +20,7 @@ package ru.runa.wfe.security.auth;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 
 import org.ietf.jgss.GSSContext;
@@ -38,6 +39,10 @@ public class KerberosLoginModule extends LoginModuleBase {
 
     @Override
     protected Actor login(CallbackHandler callbackHandler) throws Exception {
+        if (KerberosLoginModuleResources.isEnabled()) {
+            log.warn("kerberos auth is disbaled in kerberos.properties");
+            throw new UnsupportedCallbackException(null);
+        }
         KerberosCallback kerberosCallback = new KerberosCallback();
         callbackHandler.handle(new Callback[] { kerberosCallback });
 
