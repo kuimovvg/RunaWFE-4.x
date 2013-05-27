@@ -12,4 +12,5 @@ public abstract class VariableRenameProvider<T> {
     }
 
     public abstract List<Change> getChanges(String variableName, String replacement) throws Exception;
+    
 }
