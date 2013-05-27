@@ -10,6 +10,7 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.DocumentChange;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 
@@ -28,8 +29,13 @@ public class DelegablePresentation extends VariableRenameProvider<Delegable> {
             }
 
             @Override
-            public void documentChanged(DocumentEvent de) {
-                delegable.setDelegationConfiguration(de.getDocument().get());
+            public void documentChanged(final DocumentEvent de) {
+                Display.getDefault().asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        delegable.setDelegationConfiguration(de.getDocument().get());
+                    }
+                });
             }
         });
     }
