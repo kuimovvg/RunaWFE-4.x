@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.ui.dialog.CreateVariableDialog;
+import ru.runa.gpd.ui.dialog.UpdateVariableDialog;
 
 public class FormatClassPropertyDescriptor extends PropertyDescriptor {
     private final Variable variable;
@@ -32,9 +32,9 @@ public class FormatClassPropertyDescriptor extends PropertyDescriptor {
 
         @Override
         protected Object openDialogBox(Control cellEditorWindow) {
-            CreateVariableDialog dialog = new CreateVariableDialog(variable.getProcessDefinition(), variable);
+            UpdateVariableDialog dialog = new UpdateVariableDialog(variable.getProcessDefinition(), variable);
             if (dialog.open() == IDialogConstants.OK_ID) {
-                return dialog.getType();
+                return dialog.getTypeName();
             }
             return null;
         }

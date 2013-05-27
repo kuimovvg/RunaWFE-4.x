@@ -15,6 +15,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
+import ru.runa.gpd.ui.custom.TypedUserInputCombo;
+
 public class UserInputDialog extends Dialog implements Listener, FocusListener {
 
     private String value = null;
@@ -25,10 +27,13 @@ public class UserInputDialog extends Dialog implements Listener, FocusListener {
 
     private final String title;
 
-    public UserInputDialog(String title, String initialValue) {
+    public UserInputDialog(String title) {
         super(Display.getCurrent().getActiveShell());
         this.title = title;
-        setInitialValue(initialValue);
+    }
+
+    public UserInputDialog() {
+        this(TypedUserInputCombo.INPUT_VALUE);
     }
 
     public void setInitialValue(String initialValue) {

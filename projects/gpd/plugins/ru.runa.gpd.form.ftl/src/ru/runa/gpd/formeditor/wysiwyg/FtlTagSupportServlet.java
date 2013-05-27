@@ -2,6 +2,7 @@ package ru.runa.gpd.formeditor.wysiwyg;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 
-import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
 import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
@@ -50,14 +50,12 @@ public class FtlTagSupportServlet extends HttpServlet {
                     newContent.append("items:[");
                     boolean needComma = false;
                     String defaultChoise = "";
-                    for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
-                        if (VariableFormatRegistry.isApplicable(variable, filterClassName)) {
-                            newContent.append(needComma ? "," : "").append("['").append(variable.getName()).append("','").append(variable.getName()).append("']");
-                            if (!needComma) {
-                                defaultChoise = variable.getName();
-                            }
-                            needComma = true;
+                    for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariables(filterClassName)) {
+                        newContent.append(needComma ? "," : "").append("['").append(variable.getName()).append("','").append(variable.getName()).append("']");
+                        if (!needComma) {
+                            defaultChoise = variable.getName();
                         }
+                        needComma = true;
                     }
                     newContent.append("],'default':'").append(defaultChoise).append("',style : 'width : 100%;'");
                     newContent.append(fileContent.substring(idx + 12));
@@ -88,7 +86,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                     }
                     tagImageName = "DefaultTag.png";
                 } else {
-                    if (WYSIWYGHTMLEditor.getCurrent().getVariablesMap(false).containsKey(tagName)) {
+                    if (WYSIWYGHTMLEditor.getCurrent().getVariableNames().contains(tagName)) {
                         tagImageName = "VariableValueDisplay.png";
                     } else {
                         tagImageName = "TagNotFound.png";
@@ -114,7 +112,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                 resultHtml.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ftl.method.dialog.end")));
             } else if ("GetAllVariables".equals(commandStr)) {
                 resultHtml.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ftl.format.dialog.start")));
-                for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(false)) {
+                for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariables()) {
                     resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
                 }
                 resultHtml.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ftl.format.dialog.end")));
@@ -129,10 +127,13 @@ public class FtlTagSupportServlet extends HttpServlet {
                         resultHtml.append("<select id=\"pc_").append(paramCounter).append("\">");
                         for (OptionalValue option : param.optionalValues) {
                             if (option.container) {
-                                for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
-                                    if (option.useFilter && !VariableFormatRegistry.isApplicable(variable, option.filterType)) {
-                                        continue;
-                                    }
+                                List<Variable> variables;
+                                if (option.useFilter) {
+                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType);
+                                } else {
+                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables();
+                                }
+                                for (Variable variable : variables) {
                                     resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
                                 }
                             } else {
@@ -145,10 +146,13 @@ public class FtlTagSupportServlet extends HttpServlet {
                         resultHtml.append("<option value=\"\">").append(WYSIWYGPlugin.getResourceString("message.choose")).append("</option>");
                         for (OptionalValue option : param.optionalValues) {
                             if (option.container) {
-                                for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
-                                    if (option.useFilter && !VariableFormatRegistry.isApplicable(variable, option.filterType)) {
-                                        continue;
-                                    }
+                                List<Variable> variables;
+                                if (option.useFilter) {
+                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType);
+                                } else {
+                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables();
+                                }
+                                for (Variable variable : variables) {
                                     resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
                                 }
                             } else {
@@ -182,13 +186,11 @@ public class FtlTagSupportServlet extends HttpServlet {
                 if ("file".equals(request.getParameter("elementType"))) {
                     filterType = "ru.runa.wfe.var.FileVariable";
                 }
-                for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariablesList(true)) {
-                    if (VariableFormatRegistry.isApplicable(variable, filterType)) {
-                        if (resultHtml.length() > 0) {
-                            resultHtml.append("|");
-                        }
-                        resultHtml.append(variable.getName());
+                for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariables(filterType)) {
+                    if (resultHtml.length() > 0) {
+                        resultHtml.append("|");
                     }
+                    resultHtml.append(variable.getName());
                 }
             } else {
                 WYSIWYGPlugin.logInfo("Unknown cmd: " + commandStr);

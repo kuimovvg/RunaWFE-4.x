@@ -43,7 +43,7 @@ public class LDAPConnector implements IConnector, PrefConstants {
             String login = Activator.getPrefString(P_CONNECTION_LOGIN);
             String password = Activator.getPrefString(P_CONNECTION_PASSWORD);
             if (password.length() == 0) {
-                UserInputDialog userInputDialog = new UserInputDialog(Localization.getString("pref.connection.password"), "");
+                UserInputDialog userInputDialog = new UserInputDialog(Localization.getString("pref.connection.password"));
                 if (Window.OK == userInputDialog.open()) {
                     password = userInputDialog.getUserInput();
                 }

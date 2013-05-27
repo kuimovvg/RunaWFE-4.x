@@ -27,9 +27,12 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.decision.BSHDecisionModel.IfExpr;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
+import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
+import ru.runa.gpd.util.BackCompatibilityUtils;
 
 public class BSHEditorDialog extends Dialog {
 
@@ -47,8 +50,8 @@ public class BSHEditorDialog extends Dialog {
 
     private final List<String> transitionNames;
 
-    private final List<Variable> variables = new ArrayList<Variable>();
-    private final List<String> variableNames = new ArrayList<String>();
+    private final List<Variable> variables;
+    private final List<String> variableNames;
 
     private ErrorHeaderComposite constructorHeader;
     private ErrorHeaderComposite sourceHeader;
@@ -61,19 +64,13 @@ public class BSHEditorDialog extends Dialog {
 
     private String result;
 
-    public BSHEditorDialog(String initValue, List<String> transitionNames, List<Variable> variables) {
+    public BSHEditorDialog(ProcessDefinition definition, List<String> transitionNames, String initValue) {
         super(Display.getCurrent().getActiveShell());
         setShellStyle(getShellStyle() | SWT.RESIZE);
         this.initValue = initValue;
         this.transitionNames = transitionNames;
-        for (Variable variable : variables) {
-            if (variable.getName().indexOf(" ") < 0) {
-                this.variables.add(variable);
-            }
-        }
-        for (Variable variable : variables) {
-            variableNames.add(variable.getName());
-        }
+        this.variables = BackCompatibilityUtils.getValidVariables(definition.getVariables(true));
+        this.variableNames = BackCompatibilityUtils.getValidVariableNames(definition.getVariableNames(true));
         if (this.initValue.length() > 0) {
             try {
                 initModel = new BSHDecisionModel(initValue, variables);
@@ -313,8 +310,6 @@ public class BSHEditorDialog extends Dialog {
 
     static final String DATA_OPERATION_KEY = "operation";
 
-    static final String INPUT_VALUE = Localization.getString("BSH.InputValue");
-
     private GridData getGridData() {
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.minimumWidth = 100;
@@ -375,11 +370,12 @@ public class BSHEditorDialog extends Dialog {
             int[] indexes = (int[]) combo.getData(DATA_INDEX_KEY);
 
             if (indexes[1] == 2) {
-                if (INPUT_VALUE.equals(combo.getText())) {
+                if (TypedUserInputCombo.INPUT_VALUE.equals(combo.getText())) {
                     String oldUserInput = (String) combo.getData(DATA_USER_INPUT_KEY);
                     Variable variable1 = (Variable) comboBoxes[indexes[0]][0].getData(DATA_VARIABLE_KEY);
                     BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable1.getFormat());
-                    UserInputDialog inputDialog = typeSupport.createUserInputDialog(INPUT_VALUE, oldUserInput);
+                    UserInputDialog inputDialog = typeSupport.createUserInputDialog();
+                    inputDialog.setInitialValue(oldUserInput);
                     if (OK == inputDialog.open()) {
                         String userInput = inputDialog.getUserInput();
                         if (oldUserInput != null) {
@@ -427,7 +423,7 @@ public class BSHEditorDialog extends Dialog {
                         targetCombo.add(pv);
                     }
                     if (typeSupport.hasUserInputEditor()) {
-                        targetCombo.add(INPUT_VALUE);
+                        targetCombo.add(TypedUserInputCombo.INPUT_VALUE);
                     }
                 }
             }

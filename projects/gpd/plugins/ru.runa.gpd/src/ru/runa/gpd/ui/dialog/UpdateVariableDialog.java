@@ -1,8 +1,5 @@
 package ru.runa.gpd.ui.dialog;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -21,37 +18,39 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.extension.LocalizationRegistry;
 import ru.runa.gpd.extension.VariableFormatArtifact;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.wfe.var.format.StringFormat;
 
-public class CreateVariableDialog extends Dialog {
+public class UpdateVariableDialog extends Dialog {
     private String name;
-    private String type;
+    private VariableFormatArtifact type;
     private boolean publicVisibility;
     private final ProcessDefinition definition;
     private final boolean createMode;
     private String defaultValue;
+    private TypedUserInputCombo defaultValueField;
 
-    public CreateVariableDialog(ProcessDefinition definition, Variable variable) {
+    public UpdateVariableDialog(ProcessDefinition definition, Variable variable) {
         super(Display.getCurrent().getActiveShell());
         this.definition = definition;
         this.createMode = (variable == null);
         if (variable != null) {
-            this.type = variable.getFormat();
+            setType(variable.getFormat());
             this.publicVisibility = variable.isPublicVisibility();
             this.defaultValue = variable.getDefaultValue();
         } else {
-            this.type = StringFormat.class.getName();
+            setType(StringFormat.class.getName());
         }
         this.name = definition.getNextVariableName();
     }
 
     public void setType(String type) {
-        this.type = type;
+        this.type = VariableFormatRegistry.getInstance().getArtifactNotNull(type);
     }
 
     @Override
@@ -73,12 +72,11 @@ public class CreateVariableDialog extends Dialog {
             gridData.minimumWidth = 200;
             nameField.setLayoutData(gridData);
             nameField.setText(name);
-            // nameField.addKeyListener(new VariableNameChecker(nameField));
             nameField.addModifyListener(new ModifyListener() {
                 @Override
                 public void modifyText(ModifyEvent e) {
                     name = nameField.getText().replaceAll(" ", "_");
-                    updateButtons();
+                    updateState();
                 }
             });
             nameField.setFocus();
@@ -87,24 +85,22 @@ public class CreateVariableDialog extends Dialog {
         Label labelType = new Label(composite, SWT.NONE);
         labelType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         labelType.setText(Localization.getString("Variable.property.format") + ":");
-        List<VariableFormatArtifact> artifacts = VariableFormatRegistry.getInstance().getAll();
-        List<String> formats = new ArrayList<String>();
-        for (VariableFormatArtifact artifact : artifacts) {
+        final Combo typeCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+        for (VariableFormatArtifact artifact : VariableFormatRegistry.getInstance().getAll()) {
             if (artifact.isEnabled()) {
-                formats.add(artifact.getLabel());
+                typeCombo.add(artifact.getLabel());
             }
         }
-        final Combo typeCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-        typeCombo.setItems(formats.toArray(new String[formats.size()]));
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.minimumWidth = 200;
         typeCombo.setLayoutData(gridData);
-        typeCombo.setText(LocalizationRegistry.getLabel(type));
+        typeCombo.setText(type.getLabel());
         typeCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                type = VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText()).getName();
-                updateButtons();
+                type = VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText());
+                updateState();
+                defaultValueField.setTypeClassName(type.getVariableClassName());
             }
         });
         final Label labelVisibility = new Label(composite, SWT.NONE);
@@ -125,20 +121,20 @@ public class CreateVariableDialog extends Dialog {
         Label labelDefaultValue = new Label(composite, SWT.NONE);
         labelDefaultValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         labelDefaultValue.setText(Localization.getString("Variable.property.defaultValue") + ":");
-        final Text defaultValueField = new Text(composite, SWT.BORDER);
+        defaultValueField = new TypedUserInputCombo(composite, defaultValue);
         defaultValueField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        defaultValueField.setText(defaultValue != null ? defaultValue : "");
-        defaultValueField.addModifyListener(new ModifyListener() {
+        defaultValueField.setTypeClassName(type.getVariableClassName());
+        defaultValueField.addSelectionListener(new LoggingSelectionAdapter() {
+
             @Override
-            public void modifyText(ModifyEvent e) {
+            protected void onSelection(SelectionEvent event) {
                 defaultValue = defaultValueField.getText();
-                updateButtons();
             }
         });
         return area;
     }
 
-    private void updateButtons() {
+    private void updateState() {
         boolean allowCreation = !definition.getVariableNames(true).contains(name) && name.length() > 0;
         allowCreation = allowCreation || !createMode;
         allowCreation &= VariableNameChecker.isNameValid(name);
@@ -155,8 +151,8 @@ public class CreateVariableDialog extends Dialog {
         return name;
     }
 
-    public String getType() {
-        return type;
+    public String getTypeName() {
+        return type.getName();
     }
 
     public boolean isPublicVisibility() {

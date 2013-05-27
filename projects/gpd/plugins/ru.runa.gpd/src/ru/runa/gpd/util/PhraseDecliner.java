@@ -16,6 +16,9 @@ public abstract class PhraseDecliner {
         String lang = Locale.getDefault().getLanguage();
         try {
             Class<? extends PhraseDecliner> declainerClass = decliners.get(lang);
+            if (declainerClass == null) {
+                return null;
+            }
             return declainerClass.newInstance();
         } catch (Throwable e) {
             PluginLogger.logErrorWithoutDialog("Unable to create decliner " + lang, e);

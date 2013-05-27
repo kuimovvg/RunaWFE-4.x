@@ -2,8 +2,6 @@ package ru.runa.gpd.extension.orgfunction;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -12,9 +10,6 @@ import org.eclipse.core.runtime.Platform;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.ArtifactContentProvider;
 import ru.runa.gpd.extension.ArtifactRegistry;
-import ru.runa.gpd.extension.VariableFormatRegistry;
-import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.Variable;
 
 public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition> {
     private static final OrgFunctionsRegistry instance = new OrgFunctionsRegistry();
@@ -96,13 +91,4 @@ public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition
         return definition;
     }
 
-    public static Set<String> getVariableNames(ProcessDefinition processDefinition, String typeName) {
-        Set<String> variableNames = new TreeSet<String>();
-        for (Variable variable : processDefinition.getVariablesWithSwimlanes()) {
-            if (VariableFormatRegistry.isApplicable(variable, typeName)) {
-                variableNames.add(variable.getName());
-            }
-        }
-        return variableNames;
-    }
 }
