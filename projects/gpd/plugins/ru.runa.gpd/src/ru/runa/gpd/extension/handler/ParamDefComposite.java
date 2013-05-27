@@ -28,8 +28,10 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.VariableFormatRegistry;
+import ru.runa.gpd.extension.handler.ParamDef.Presentation;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.SWTUtils;
+import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 
 public class ParamDefComposite extends Composite {
@@ -58,7 +60,7 @@ public class ParamDefComposite extends Composite {
             //if (config.getGroups().indexOf(group) != 0) {
             GridData strokeData = new GridData(GridData.FILL_HORIZONTAL);
             strokeData.horizontalSpan = 2;
-            SWTUtils.createStrokeComposite(this, strokeData, Localization.getString("ParamDefGroup.group." + group.getName()), 3);
+            SWTUtils.createStrokeComposite(this, strokeData, Localization.getString("ParamDefGroup.group." + group.getLabel()), 3);
             //}
             for (ParamDef param : group.getParameters()) {
                 if (helpInlined) {
@@ -68,10 +70,10 @@ public class ParamDefComposite extends Composite {
                     helpLabel.setLayoutData(gridData);
                     helpLabel.setText(param.getHelp());
                 }
-                int paramType = param.determineType();
-                if (paramType == ParamDef.TYPE_COMBO) {
-                    addComboField(param);
-                } else if (paramType == ParamDef.TYPE_CHECKBOX) {
+                Presentation presentation = param.getPresentation();
+                if (presentation == Presentation.combo || presentation == Presentation.richcombo) {
+                    addComboField(param, presentation == Presentation.richcombo);
+                } else if (presentation == Presentation.checkbox) {
                     addCheckboxField(param);
                 } else {
                     addTextField(param);
@@ -163,7 +165,7 @@ public class ParamDefComposite extends Composite {
         return textInput;
     }
 
-    private Combo addComboField(final ParamDef paramDef) {
+    private Combo addComboField(final ParamDef paramDef, boolean editable) {
         List<String> variableNames = new ArrayList<String>();
         if (paramDef.isUseVariable()) {
             variableNames.addAll(getVariableNames(paramDef.getFormatFilters()));
@@ -181,11 +183,27 @@ public class ParamDefComposite extends Composite {
         gridData.minimumWidth = 200;
         label.setLayoutData(gridData);
         label.setText(getLabelText(paramDef));
-        Combo combo = new Combo(this, SWT.BORDER | SWT.READ_ONLY);
+
+        String selectedValue = properties.get(paramDef.getName());
+        if (selectedValue == null) {
+            selectedValue = paramDef.getDefaultValue();
+        }
+        Combo combo;
+        if (editable) {
+            String lastUserInputValue = variableNames.contains(selectedValue) ? null : selectedValue;
+            TypedUserInputCombo userInputCombo = new TypedUserInputCombo(this, lastUserInputValue);
+            userInputCombo.setShowEmptyValue(false);
+            combo = userInputCombo;
+        } else {
+            combo = new Combo(this, SWT.BORDER | SWT.READ_ONLY);
+        }
         combo.setData(paramDef.getName());
         combo.setVisibleItemCount(10);
         for (String item : variableNames) {
             combo.add(item);
+        }
+        if (editable) {
+            ((TypedUserInputCombo) combo).setTypeClassName(paramDef.getFormatFilters().size() > 0 ? paramDef.getFormatFilters().get(0) : String.class.getName());
         }
         if (!helpInlined) {
             combo.addFocusListener(new FocusAdapter() {
@@ -198,10 +216,6 @@ public class ParamDefComposite extends Composite {
         GridData typeComboData = new GridData(GridData.FILL_HORIZONTAL);
         typeComboData.minimumWidth = 200;
         combo.setLayoutData(typeComboData);
-        String selectedValue = properties.get(paramDef.getName());
-        if (selectedValue == null) {
-            selectedValue = paramDef.getDefaultValue();
-        }
         if (selectedValue != null) {
             combo.setText(selectedValue);
         }
