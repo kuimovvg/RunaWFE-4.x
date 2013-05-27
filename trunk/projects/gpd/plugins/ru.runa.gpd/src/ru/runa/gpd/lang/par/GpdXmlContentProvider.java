@@ -11,6 +11,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.Bendpoint;
+import ru.runa.gpd.lang.model.Conjunction;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -107,9 +108,15 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             addAttribute(element, Y_ATTRIBUTE_NAME, String.valueOf(constraint.y - yOffset));
             addAttribute(element, WIDTH_ATTRIBUTE_NAME, String.valueOf(constraint.width));
             addAttribute(element, HEIGHT_ATTRIBUTE_NAME, String.valueOf(constraint.height));
+            boolean minimizedView = false;
             if (graphElement instanceof State) {
-                boolean minimizedView = ((State) graphElement).isMinimizedView();
-                addAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, String.valueOf(minimizedView));
+                minimizedView = ((State) graphElement).isMinimizedView();
+            }
+            if (graphElement instanceof Conjunction) {
+                minimizedView = ((Conjunction) graphElement).isMinimizedView();
+            }
+            if (minimizedView) {
+                addAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, "true");
             }
             if (graphElement instanceof Node) {
                 Node node = (Node) graphElement;
@@ -151,9 +158,12 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             constraint.y = getIntAttribute(element, Y_ATTRIBUTE_NAME, 0);
             constraint.width = getIntAttribute(element, WIDTH_ATTRIBUTE_NAME, 0);
             constraint.height = getIntAttribute(element, HEIGHT_ATTRIBUTE_NAME, 0);
+            boolean minimizedView = getBooleanAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, false);
             if (graphElement instanceof State) {
-                boolean minimizedView = getBooleanAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, false);
                 ((State) graphElement).setMinimizedView(minimizedView);
+            }
+            if (graphElement instanceof Conjunction) {
+                ((Conjunction) graphElement).setMinimizedView(minimizedView);
             }
             graphElement.setConstraint(constraint);
             if (graphElement instanceof Node) {

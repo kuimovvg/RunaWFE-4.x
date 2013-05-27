@@ -87,7 +87,7 @@ public class TaskStateFigure extends StateFigure<TaskState> {
             rect.width = minimizedSize;
             rect.height = minimizedSize;
         }
-        if (!model.isMinimizedView() && rect.width == minimizedSize) {
+        if (!model.isMinimizedView() && rect.width < getDefaultSize().width) {
             rect.width = getDefaultSize().width;
             rect.height = getDefaultSize().height;
         }
