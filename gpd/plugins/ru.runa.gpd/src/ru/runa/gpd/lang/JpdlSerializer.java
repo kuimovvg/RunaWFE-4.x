@@ -14,6 +14,7 @@ import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.ActionImpl;
 import ru.runa.gpd.lang.model.ActionNode;
+import ru.runa.gpd.lang.model.Conjunction;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Describable;
@@ -62,6 +63,7 @@ public class JpdlSerializer extends ProcessSerializer {
     private static final String PROCESS_STATE_NODE = "process-state";
     private static final String MULTI_INSTANCE_STATE_NODE = "multiinstance-state";
     private static final String DECISION_NODE = "decision";
+    private static final String CONJUNCTION_NODE = "conjunction";
     private static final String JOIN_NODE = "join";
     private static final String FORK_NODE = "fork";
     private static final String DUEDATE_ATTR = "duedate";
@@ -148,6 +150,10 @@ public class JpdlSerializer extends ProcessSerializer {
         List<Decision> decisions = definition.getChildren(Decision.class);
         for (Decision decision : decisions) {
             writeNode(root, decision, HANDLER_NODE);
+        }
+        List<Conjunction> conjunctions = definition.getChildren(Conjunction.class);
+        for (Conjunction conjunction : conjunctions) {
+            writeNode(root, conjunction, null);
         }
         List<TaskState> states = definition.getChildren(TaskState.class);
         for (TaskState state : states) {
@@ -602,6 +608,10 @@ public class JpdlSerializer extends ProcessSerializer {
         }
         List<Element> decisions = root.elements(DECISION_NODE);
         for (Element node : decisions) {
+            create(node, definition);
+        }
+        List<Element> conjunctions = root.elements(CONJUNCTION_NODE);
+        for (Element node : conjunctions) {
             create(node, definition);
         }
         List<Element> processStates = root.elements(PROCESS_STATE_NODE);
