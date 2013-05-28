@@ -1,6 +1,7 @@
 package ru.runa.gpd.lang.model;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -8,6 +9,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
 import ru.runa.gpd.settings.PrefConstants;
@@ -15,7 +17,9 @@ import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.Duration;
 import ru.runa.wfe.extension.handler.EscalationActionHandler;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 
 public class TaskState extends State implements Synchronizable {
     private TimerAction escalationAction;
@@ -68,9 +72,10 @@ public class TaskState extends State implements Synchronizable {
     }
 
     public void setBotTaskLink(BotTaskLink botTaskLink) {
-        this.botTaskLink = botTaskLink;
-        // fire always
-        firePropertyChange(PROPERTY_BOT_TASK_NAME, null, "");
+        if (!Objects.equal(this.botTaskLink, botTaskLink)) {
+            this.botTaskLink = botTaskLink;
+            firePropertyChange(PROPERTY_BOT_TASK_NAME, null, "");
+        }
     }
 
     public TimerAction getEscalationAction() {
@@ -188,8 +193,24 @@ public class TaskState extends State implements Synchronizable {
     @Override
     protected void validate() {
         super.validate();
-        if (getBotTaskLink() != null && Strings.isNullOrEmpty(getBotTaskLink().getDelegationConfiguration())) {
-            addError("taskState.createBotTaskConfig");
+        if (getBotTaskLink() != null) {
+            Set<String> linkConfigParameterNames;
+            if (Strings.isNullOrEmpty(getBotTaskLink().getDelegationConfiguration())) {
+                linkConfigParameterNames = Sets.newHashSet();
+            } else {
+                ParamDefConfig linkConfig = ParamDefConfig.parse(getBotTaskLink().getDelegationConfiguration());
+                linkConfigParameterNames = linkConfig.getAllParameterNames();
+            }
+            BotTask botTask = BotCache.getBotTaskNotNull(getSwimlaneBotName(), getBotTaskLink().getBotTaskName());
+            Set<String> botTaskConfigParameterNames = botTask.getParamDefConfig().getAllParameterNames();
+            if (linkConfigParameterNames.isEmpty() && !botTaskConfigParameterNames.isEmpty()) {
+                addError("taskState.botTaskLinkConfig.empty");
+                return;
+            }
+            botTaskConfigParameterNames.removeAll(linkConfigParameterNames);
+            if (botTaskConfigParameterNames.size() > 0) {
+                addError("taskState.botTaskLinkConfig.insufficient", botTaskConfigParameterNames);
+            }
         }
     }
 }

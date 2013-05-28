@@ -10,27 +10,21 @@ import org.dom4j.Element;
 public class ParamDefGroup {
     public static final String NAME_INPUT = "input";
     public static final String NAME_OUTPUT = "output";
-    public static final String LABEL_EMPTY = "-";
     
     private final String name;
-    private String label = LABEL_EMPTY;
+    private final String label;
     private String help;
     private final List<ParamDef> parameters = new ArrayList<ParamDef>();
     private final Map<String, String> dynaProperties = new HashMap<String, String>();
     
     public ParamDefGroup(String name) {
         this.name = name;
+        this.label = name;
     }
     
     public ParamDefGroup(Element element) {
         this.name = element.getName();
-        setLabel(element.attributeValue("label"));
-    }
-    
-    public void setLabel(String label) {
-        if (label != null) {
-            this.label = label;
-        }
+        this.label = element.attributeValue("label", this.name);
     }
     
     public String getHelp() {
