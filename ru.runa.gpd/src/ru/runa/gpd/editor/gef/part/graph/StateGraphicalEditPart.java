@@ -36,12 +36,6 @@ public class StateGraphicalEditPart extends SwimlaneNodeEditPart implements Acti
     }
 
     @Override
-    protected void fillFigureResizePropertyNames(List<String> list) {
-        super.fillFigureResizePropertyNames(list);
-        list.add(PROPERTY_MINIMAZED_VIEW);
-    }
-    
-    @Override
     protected void fillFigureUpdatePropertyNames(List<String> list) {
         super.fillFigureUpdatePropertyNames(list);
         list.add(PROPERTY_MINIMAZED_VIEW);

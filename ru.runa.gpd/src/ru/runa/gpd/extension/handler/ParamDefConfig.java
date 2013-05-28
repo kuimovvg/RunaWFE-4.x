@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +19,8 @@ import ru.runa.gpd.util.CommonUtils;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @SuppressWarnings("unchecked")
 public class ParamDefConfig {
@@ -275,5 +278,15 @@ public class ParamDefConfig {
                 }
             }
         }
+    }
+    
+    public Set<String> getAllParameterNames() {
+        Set<String> result = Sets.newHashSet();
+        for (ParamDefGroup group : getGroups()) {
+            for (ParamDef param : group.getParameters()) {
+                result.add(param.getName());
+            }
+        }
+        return result;
     }
 }
