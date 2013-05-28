@@ -57,11 +57,9 @@ public class ParamDefComposite extends Composite {
             setMessages(null, Localization.getString("ParamBasedProvider.parseError"));
         }
         for (ParamDefGroup group : config.getGroups()) {
-            //if (config.getGroups().indexOf(group) != 0) {
             GridData strokeData = new GridData(GridData.FILL_HORIZONTAL);
             strokeData.horizontalSpan = 2;
             SWTUtils.createStrokeComposite(this, strokeData, Localization.getString("ParamDefGroup.group." + group.getLabel()), 3);
-            //}
             for (ParamDef param : group.getParameters()) {
                 if (helpInlined) {
                     Label helpLabel = new Label(this, SWT.WRAP);

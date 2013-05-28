@@ -55,10 +55,6 @@ public class ConjunctionFigure extends NodeFigure<Conjunction> {
     @Override
     public void update() {
         super.update();
-        if (model.isMinimizedView()) {
-            label.setVisible(false);
-        } else {
-            label.setVisible(true);
-        }
+        label.setVisible(!model.isMinimizedView());
     }
 }
