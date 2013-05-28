@@ -13,26 +13,19 @@ import ru.runa.gpd.lang.model.PropertyNames;
 
 import com.google.common.collect.Lists;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class ElementGraphicalEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener, PropertyNames {
     private final List<String> propertyNamesToCauseFigureUpdate = Lists.newArrayList();
-    private final List<String> propertyNamesToCauseFigureResize = Lists.newArrayList();
 
     public ElementGraphicalEditPart() {
         fillFigureUpdatePropertyNames(propertyNamesToCauseFigureUpdate);
-        fillFigureResizePropertyNames(propertyNamesToCauseFigureResize);
     }
 
     protected void fillFigureUpdatePropertyNames(List<String> list) {
     }
 
-    protected void fillFigureResizePropertyNames(List<String> list) {
-    }
-
     @Override
     public void propertyChange(PropertyChangeEvent event) {
-        if (propertyNamesToCauseFigureResize.contains(event.getPropertyName())) {
-            figure.setBounds(figure.getBounds());
-        }
         if (propertyNamesToCauseFigureUpdate.contains(event.getPropertyName())) {
             IFigure figure = getFigure();
             if (figure instanceof NodeFigure) {
@@ -73,7 +66,6 @@ public abstract class ElementGraphicalEditPart extends AbstractGraphicalEditPart
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object getAdapter(Class key) {
         if (GraphElement.class.isAssignableFrom(key)) {

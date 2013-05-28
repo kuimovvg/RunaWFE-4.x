@@ -80,6 +80,8 @@ public class NodeGraphicalEditPart extends ElementGraphicalEditPart implements N
             refreshVisuals();
         } else if (NODE_CHILDS_CHANGED.equals(messageId)) {
             refreshChildren();
+        } else if (PROPERTY_MINIMAZED_VIEW.equals(messageId)) {
+            refreshVisuals();
         }
     }
 }
