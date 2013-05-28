@@ -179,8 +179,7 @@ public class PermissionDAO extends CommonDAO {
         }
         List<PermissionMapping> permissions = new ArrayList<PermissionMapping>();
         // 2000 parameters is the maximum for MSSQL
-        // TODO check with identifiables > 2000
-        int window = 2000 - executorWithGroups.size() - 1;
+        int window = 2000 - executorWithGroups.size() - 2;
         Preconditions.checkArgument(window > 100);
         for (int i = 0; i <= (identifiables.size() - 1) / window; ++i) {
             final int start = i * window;
