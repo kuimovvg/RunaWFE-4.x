@@ -22,6 +22,7 @@
     </editor>
     <editor
           class="ru.runa.gpd.editor.gef.GEFProcessEditor"
+          contributorClass="ru.runa.gpd.editor.GraphicalEditorContributor"
           icon="icons/process.gif"
           id="ru.runa.gpd.GEFDesignerEditor"
           name="GEFEditor">
@@ -1288,70 +1289,6 @@
       </element>
    </extension>
    <extension
-         point="org.eclipse.ui.bindings">
-      <key
-            commandId="copy"
-            contextId="gefEditor.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+C">
-      </key>
-      <key
-            commandId="paste"
-            contextId="gefEditor.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+V">
-      </key>
-      <key
-            commandId="selectAll"
-            contextId="gefEditor.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+A">
-      </key>
-      <key
-            commandId="redo"
-            contextId="gefEditor.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+Y">
-      </key>
-      <key
-            commandId="undo"
-            contextId="gefEditor.context"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+Z">
-      </key>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            id="copy"
-            name="copy">
-      </command>
-      <command
-            id="paste"
-            name="paste">
-      </command>
-      <command
-            id="selectAll"
-            name="selectAll">
-      </command>
-      <command
-            id="undo"
-            name="undo">
-      </command>
-      <command
-            id="redo"
-            name="redo">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.contexts">
-      <context
-            id="gefEditor.context"
-            name="gefEditor.context"
-            parentId="org.eclipse.ui.contexts.window">
-      </context>
-   </extension>
-   	<extension
     	id="FileSearchPage"
         point="org.eclipse.search.searchResultViewPages">
 		<viewPage
@@ -1957,25 +1894,25 @@
          point="org.eclipse.ui.bindings">
       <key
             commandId="ru.runa.gpd.commands.new"
-            contextId="ru.runa.gpd.context"
+            contextId="ru.runa.gpd.context.app"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Ctrl+N">
       </key>
       <key
             commandId="ru.runa.gpd.commands.save"
-            contextId="ru.runa.gpd.context"
+            contextId="ru.runa.gpd.context.app"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Ctrl+S">
       </key>
       <key
             commandId="ru.runa.gpd.commands.saveall"
-            contextId="ru.runa.gpd.context"
+            contextId="ru.runa.gpd.context.app"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Ctrl+Shift+S">
       </key>
       <key
             commandId="ru.runa.gpd.commands.delete"
-            contextId="ru.runa.gpd.context"
+            contextId="ru.runa.gpd.context.app"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Delete">
       </key>
@@ -2007,8 +1944,8 @@
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            id="ru.runa.gpd.context"
-            name="runa"
+            id="ru.runa.gpd.context.app"
+            name="main gpd application context"
             parentId="org.eclipse.ui.contexts.window">
       </context>
    </extension>

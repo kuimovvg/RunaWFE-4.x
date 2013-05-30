@@ -2,7 +2,6 @@ package ru.runa.gpd.editor.gef;
 
 import java.util.List;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.Viewport;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -16,50 +15,36 @@ import org.eclipse.gef.EditPartFactory;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.KeyHandler;
-import org.eclipse.gef.KeyStroke;
 import org.eclipse.gef.Request;
-import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editparts.FreeformGraphicalRootEditPart;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.tools.MarqueeDragTracker;
 import org.eclipse.gef.tools.MarqueeSelectionTool;
-import org.eclipse.gef.ui.actions.Clipboard;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
-import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.gef.ui.palette.FlyoutPaletteComposite.FlyoutPreferences;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.commands.ActionHandler;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.ObjectActionContributorManager;
 
-import ru.runa.gpd.Localization;
+import ru.runa.gpd.editor.GraphicalEditorContributor;
 import ru.runa.gpd.editor.ProcessEditorBase;
-import ru.runa.gpd.editor.SelectAllFiguresAction;
 import ru.runa.gpd.editor.StructuredSelectionProvider;
-import ru.runa.gpd.editor.gef.command.CopyGraphCommand;
-import ru.runa.gpd.editor.gef.part.graph.ActionGraphicalEditPart;
-import ru.runa.gpd.editor.gef.part.graph.ProcessDefinitionGraphicalEditPart;
-import ru.runa.gpd.editor.gef.part.graph.TransitionGraphicalEditPart;
 import ru.runa.gpd.lang.model.GraphElement;
 
+@SuppressWarnings({ "unchecked", "restriction" })
 public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalette {
-    private KeyHandler commonKeyHandler;
     private final ProcessEditorBase editor;
-    private IStructuredSelection selection;
     private MoveViewportThread moveViewportThread;
     private final DesignerPaletteRoot paletteRoot;
 
@@ -69,6 +54,10 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
         setEditDomain(new DefaultEditDomain(this));
     }
 
+    public ProcessEditorBase getEditor() {
+        return editor;
+    }
+    
     @Override
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
         super.init(site, input);
@@ -114,19 +103,10 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
             }
         });
         KeyHandler keyHandler = new GraphicalViewerKeyHandler(getGraphicalViewer());
-        keyHandler.setParent(getCommonKeyHandler());
+        keyHandler.setParent(GraphicalEditorContributor.createKeyHandler(getActionRegistry()));
         getGraphicalViewer().setKeyHandler(keyHandler);
         getGraphicalViewer().setContextMenu(createContextMenu());
         getSite().setSelectionProvider(getGraphicalViewer());
-    }
-
-    protected KeyHandler getCommonKeyHandler() {
-        if (commonKeyHandler == null) {
-            commonKeyHandler = new KeyHandler();
-            commonKeyHandler.put(KeyStroke.getPressed(SWT.DEL, 127, 0), getActionRegistry().getAction(ActionFactory.DELETE.getId()));
-            commonKeyHandler.put(KeyStroke.getPressed(SWT.F2, 0), getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT));
-        }
-        return commonKeyHandler;
     }
 
     private MenuManager createContextMenu() {
@@ -135,56 +115,33 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
         return menuManager;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void createActions() {
-        IAction copyAction = new CopyAction(this, Localization.getString("button.copy"));
-        copyAction.setId("copy");
-        new ActionHandler(copyAction);
-        getActionRegistry().registerAction(copyAction);
-        getSelectionActions().add(copyAction.getId());
-        IAction pasteAction = new PasteAction(this, Localization.getString("button.paste"));
-        pasteAction.setId("paste");
-        getActionRegistry().registerAction(pasteAction);
-        getSelectionActions().add(pasteAction.getId());
         super.createActions();
-        getActionRegistry().registerAction(new SelectAllFiguresAction(editor));
-        activateHandler(copyAction.getId());
-        activateHandler(pasteAction.getId());
-        activateHandler(ActionFactory.SELECT_ALL.getId());
-        activateHandler(ActionFactory.UNDO.getId());
-        activateHandler(ActionFactory.REDO.getId());
-        IContextService ctx = (IContextService) getSite().getService(IContextService.class);
-        ctx.activateContext("gefEditor.context");
+        GraphicalEditorContributor.createCopyPasteActions(getActionRegistry(), editor);
     }
 
-    private void activateHandler(String actionId) {
-        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
-        handlerService.activateHandler(actionId, new ActionHandler(getActionRegistry().getAction(actionId)));
+//    @Override
+//    protected void createActions() {
+//        IAction copyAction = new CopyAction(this, editor);
+//        copyAction.setId(ActionFactory.COPY.getId());
+//        new ActionHandler(copyAction);
+//        getActionRegistry().registerAction(copyAction);
+//        getSelectionActions().add(copyAction.getId());
+//        IAction pasteAction = new PasteAction(this, editor);
+//        pasteAction.setId(ActionFactory.PASTE.getId());
+//        getActionRegistry().registerAction(pasteAction);
+//        getSelectionActions().add(pasteAction.getId());
+//        super.createActions();
+//    }
+
+    @Override
+    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+        if (editor.equals(getSite().getPage().getActiveEditor())) {
+            updateActions(getSelectionActions());
+        }
     }
 
-    //    @Override
-    //    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-    //        if (editor.equals(getSite().getPage().getActiveEditor())) {
-    //            updateActions(getSelectionActions());
-    //        }
-    //        if (selection instanceof IStructuredSelection) {
-    //            IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-    //            Object selected = structuredSelection.getFirstElement();
-    //            if (!(selected instanceof EditPart)) {
-    //                return;
-    //            }
-    //            this.selection = structuredSelection;
-    //            if (structuredSelection.size() > 1) {
-    //                return;
-    //            }
-    //            EditPart source = (EditPart) selected;
-    //            GraphicalEditPart target = (GraphicalEditPart) getGraphicalViewer().getEditPartRegistry().get(source.getModel());
-    //            if (target != null && target.getFigure().isVisible()) {
-    //                getGraphicalViewer().select(target);
-    //            }
-    //        }
-    //    }
     public void select(GraphElement element) {
         GraphicalEditPart target = (GraphicalEditPart) getGraphicalViewer().getEditPartRegistry().get(element);
         if (target == null || !target.getFigure().isVisible()) {
@@ -285,9 +242,9 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
             // menu.setRemoveAllWhenShown(true);
             GEFActionConstants.addStandardActionGroups(menu);
             IAction action;
-            action = getActionRegistry().getAction("copy");
+            action = getActionRegistry().getAction(ActionFactory.COPY.getId());
             menu.appendToGroup(GEFActionConstants.GROUP_UNDO, action);
-            action = getActionRegistry().getAction("paste");
+            action = getActionRegistry().getAction(ActionFactory.PASTE.getId());
             menu.appendToGroup(GEFActionConstants.GROUP_UNDO, action);
             action = getActionRegistry().getAction(ActionFactory.SELECT_ALL.getId());
             menu.appendToGroup(GEFActionConstants.GROUP_UNDO, action);
@@ -316,57 +273,4 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
         return new PaletteFlyoutPreferences();
     }
 
-    private class PasteAction extends SelectionAction {
-        private PasteAction(IWorkbenchPart part, String text) {
-            super(part);
-            setText(text);
-        }
-
-        @Override
-        public boolean calculateEnabled() {
-            return createCommand().canExecute();
-        }
-
-        private Command createCommand() {
-            return new CopyGraphCommand(editor.getDefinition(), (IFolder) editor.getDefinitionFile().getParent());
-        }
-
-        @Override
-        public void run() {
-            execute(createCommand());
-        }
-    }
-
-    private class CopyAction extends SelectionAction {
-        private CopyAction(IWorkbenchPart part, String text) {
-            super(part);
-            setText(text);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        protected boolean calculateEnabled() {
-            List<EditPart> editParts = getGraphicalViewer().getSelectedEditParts();
-            for (EditPart editPart : editParts) {
-                if (editPart instanceof ActionGraphicalEditPart) {
-                    continue;
-                }
-                if (editPart instanceof ProcessDefinitionGraphicalEditPart) {
-                    continue;
-                }
-                if (editPart instanceof TransitionGraphicalEditPart) {
-                    continue;
-                }
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public void run() {
-            if (selection != null) {
-                Clipboard.getDefault().setContents(new Object[] { editor.getDefinitionFile().getParent(), editor.getDefinition(), selection });
-            }
-        }
-    }
 }
