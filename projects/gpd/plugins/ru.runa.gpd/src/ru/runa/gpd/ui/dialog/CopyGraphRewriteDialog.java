@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.editor.gef.CopyBuffer.ExtraCopyAction;
+import ru.runa.gpd.editor.CopyBuffer.ExtraCopyAction;
 
 public class CopyGraphRewriteDialog extends Dialog {
     private final List<ExtraCopyAction> actions;

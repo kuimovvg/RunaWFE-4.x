@@ -1,8 +1,7 @@
-package ru.runa.gpd.editor.gef.command;
+package ru.runa.gpd.editor;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +16,7 @@ import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.editor.gef.CopyBuffer;
-import ru.runa.gpd.editor.gef.CopyBuffer.ExtraCopyAction;
+import ru.runa.gpd.editor.CopyBuffer.ExtraCopyAction;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.Action;
@@ -46,13 +44,15 @@ import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.VariableMapping;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class CopyGraphCommand extends Command {
     private final ProcessDefinition targetDefinition;
     private final IFolder targetFolder;
     private final CopyBuffer copyBuffer;
-    private final Map<String, Node> targetNodeList = new HashMap<String, Node>();
-    private final List<ExtraCopyAction> executedActionsList = new ArrayList<ExtraCopyAction>();
+    private final Map<String, Node> targetNodeMap = Maps.newHashMap();
+    private final List<ExtraCopyAction> executedActionsList = Lists.newArrayList();
 
     public CopyGraphCommand(ProcessDefinition targetDefinition, IFolder targetFolder) {
         this.targetDefinition = targetDefinition;
@@ -67,7 +67,7 @@ public class CopyGraphCommand extends Command {
 
     @Override
     public String getLabel() {
-        return Localization.getString("Action.paste");
+        return Localization.getString("button.paste");
     }
 
     @Override
@@ -79,7 +79,7 @@ public class CopyGraphCommand extends Command {
                 return;
             }
             Set<ExtraCopyAction> elements = new HashSet<ExtraCopyAction>();
-            List<Node> sourceNodeList = copyBuffer.extractSourceNodes();
+            List<Node> sourceNodeList = copyBuffer.getSourceNodes();
             // add nodes
             for (Node node : sourceNodeList) {
                 NodeTypeDefinition definition = null;
@@ -133,7 +133,7 @@ public class CopyGraphCommand extends Command {
                         copy.setDelegationClassName(node.getDelegationClassName());
                     }
                     targetDefinition.addChild(copy);
-                    targetNodeList.put(copy.getName(), copy);
+                    targetNodeMap.put(node.getId(), copy);
                     if (node instanceof FormNode) {
                         FormNode formNode = (FormNode) node;
                         if (formNode.hasForm() || formNode.hasFormValidation()) {
@@ -172,8 +172,8 @@ public class CopyGraphCommand extends Command {
             for (Node node : sourceNodeList) {
                 List<Transition> transitions = node.getChildren(Transition.class);
                 for (Transition transition : transitions) {
-                    Node source = targetNodeList.get(transition.getSource().getName());
-                    Node target = targetNodeList.get(transition.getTarget().getName());
+                    Node source = targetNodeMap.get(transition.getSource().getId());
+                    Node target = targetNodeMap.get(transition.getTarget().getId());
                     if (source != null && target != null) {
                         Transition tr = definition.createElement(source);
                         tr.setName(transition.getName());
@@ -209,11 +209,11 @@ public class CopyGraphCommand extends Command {
                 }
             }
             // set swimlanes
-            for (Node node : targetNodeList.values()) {
-                if (node instanceof SwimlanedNode) {
-                    SwimlanedNode sourceNode = copyBuffer.getSourceDefinition().getGraphElementByIdNotNull(node.getId());
+            for (Map.Entry<String, Node> entry : targetNodeMap.entrySet()) {
+                if (entry.getValue() instanceof SwimlanedNode) {
+                    SwimlanedNode sourceNode = copyBuffer.getSourceDefinition().getGraphElementByIdNotNull(entry.getKey());
                     Swimlane swimlane = targetDefinition.getSwimlaneByName(sourceNode.getSwimlaneName());
-                    ((SwimlanedNode) node).setSwimlane(swimlane);
+                    ((SwimlanedNode) entry.getValue()).setSwimlane(swimlane);
                 }
             }
         } catch (Exception e) {
@@ -224,7 +224,7 @@ public class CopyGraphCommand extends Command {
     @Override
     public void undo() {
         // remove nodes
-        for (Node node : targetNodeList.values()) {
+        for (Node node : targetNodeMap.values()) {
             targetDefinition.removeChild(node);
         }
         // undo actions
