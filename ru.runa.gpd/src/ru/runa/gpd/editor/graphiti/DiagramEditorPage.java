@@ -9,6 +9,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.gef.ContextMenuProvider;
+import org.eclipse.gef.KeyHandler;
 import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.editparts.LayerManager;
@@ -30,6 +31,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
+import ru.runa.gpd.editor.GraphicalEditorContributor;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.graphiti.add.AddTransitionFeature;
 import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
@@ -47,7 +49,6 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
     @Override
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
         super.init(site, input);
-        //getSite().setSelectionProvider(editor.getSite().getSelectionProvider());
         editor.getDefinition().setDelegatedListener(this);
     }
 
@@ -89,46 +90,20 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
         }
     }
 
+    public ProcessEditorBase getEditor() {
+        return editor;
+    }
+
     @Override
     protected ContextMenuProvider createContextMenuProvider() {
         return new DiagramContextMenuProvider(getGraphicalViewer(), getActionRegistry(), getDiagramTypeProvider());
     }
 
-    //    @Override
-    //    protected void hookGraphicalViewer() {
-    //        getSelectionSynchronizer().addViewer(getGraphicalViewer());
-    //        getSite().setSelectionProvider(new DelegableSelectionProvider(this, getGraphicalViewer()));
-    //    }
-    // translate selection
-    //    @Override
-    //    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-    //        super.selectionChanged(part, selection);
-    //        if (selection instanceof IStructuredSelection) {
-    //            IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-    //            Object selected = structuredSelection.getFirstElement();
-    //            if (!(selected instanceof EditPart)) {
-    //                return;
-    //            }
-    //            if (structuredSelection.size() > 1) {
-    //                return;
-    //            }
-    //            EditPart source = (EditPart) selected;
-    //            if (source.getModel() instanceof PictogramElement) {
-    //                PictogramElement pe = (PictogramElement) source.getModel();
-    //                Object bo = getDiagramTypeProvider().getFeatureProvider().getBusinessObjectForPictogramElement(pe);
-    //                getSite().getSelectionProvider().setSelection(new StructuredSelection(bo));
-    //            }
-    //        }
-    //    }
-    //    @Override
-    //    public boolean isDirty() {
-    //        TransactionalEditingDomain editingDomain = getEditingDomain();
-    //        // Check that the editor is not yet disposed
-    //        if (editingDomain != null && editingDomain.getCommandStack() != null) {
-    //            return ((BasicCommandStack) editingDomain.getCommandStack()).isSaveNeeded();
-    //        }
-    //        return false;
-    //    }
+    @Override
+    protected KeyHandler getCommonKeyHandler() {
+        return GraphicalEditorContributor.createKeyHandler(getActionRegistry());
+    }
+
     @Override
     public boolean isDirty() {
         return getCommandStack().isDirty();
@@ -158,18 +133,6 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
 
     @Override
     public void doSave(IProgressMonitor monitor) {
-        //        IDiagramTypeProvider diagramTypeProvider = this.getDiagramTypeProvider();
-        //        try {
-        //            String diagramFileString = modelFile.getLocationURI().getPath();
-        //            BPMN20ExportMarshaller marshaller = new BPMN20ExportMarshaller();
-        //            marshaller.setSaveImage(true);
-        //            marshaller.marshallDiagram(ModelHandler.getModel(EcoreUtil.getURI(getDiagramTypeProvider().getDiagram())), diagramFileString, diagramTypeProvider.getFeatureProvider());
-        //            modelFile.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
-        //        } catch (Exception e) {
-        //            e.printStackTrace();
-        //        }
-        //        ((BasicCommandStack) getEditingDomain().getCommandStack()).saveIsDone();
-        //        updateDirtyState();
     }
 
     private void drawElements(ContainerShape parentShape) {

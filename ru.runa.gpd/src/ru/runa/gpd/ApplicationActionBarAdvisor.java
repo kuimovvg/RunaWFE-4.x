@@ -27,6 +27,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
             reg.removeExtension(ext, new Object[] { actionSets[i] });
         }
         IContextService contextService = (IContextService) PlatformUI.getWorkbench().getService(IContextService.class);
-        contextService.activateContext("ru.runa.gpd.context");
+        contextService.activateContext("ru.runa.gpd.context.app");
     }
 }
