@@ -273,7 +273,7 @@ public class BSHEditorDialog extends Dialog {
                     comboBoxes[i][0].select(index);
                     refreshComboItems(comboBoxes[i][0]);
 
-                    BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable.getFormat());
+                    BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
 
                     index = Operation.getAll(typeSupport).indexOf(ifExpr.getOperation());
                     if (index == -1) {
@@ -373,7 +373,7 @@ public class BSHEditorDialog extends Dialog {
                 if (TypedUserInputCombo.INPUT_VALUE.equals(combo.getText())) {
                     String oldUserInput = (String) combo.getData(DATA_USER_INPUT_KEY);
                     Variable variable1 = (Variable) comboBoxes[indexes[0]][0].getData(DATA_VARIABLE_KEY);
-                    BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable1.getFormat());
+                    BSHTypeSupport typeSupport = BSHTypeSupport.get(variable1.getJavaClassName());
                     UserInputDialog inputDialog = typeSupport.createUserInputDialog();
                     inputDialog.setInitialValue(oldUserInput);
                     if (OK == inputDialog.open()) {
@@ -403,7 +403,7 @@ public class BSHEditorDialog extends Dialog {
                 Variable variable = getVariableByName(combo.getText());
                 combo.setData(DATA_VARIABLE_KEY, variable);
                 if (variable != null) {
-                    BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable.getFormat());
+                    BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
                     for (Operation operation : Operation.getAll(typeSupport)) {
                         targetCombo.add(operation.getVisibleName());
                     }
@@ -413,7 +413,7 @@ public class BSHEditorDialog extends Dialog {
                 // row
                 Variable variable1 = (Variable) comboBoxes[indexes[0]][0].getData(DATA_VARIABLE_KEY);
                 if (variable1 != null) {
-                    BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable1.getFormat());
+                    BSHTypeSupport typeSupport = BSHTypeSupport.get(variable1.getJavaClassName());
                     Operation operation = Operation.getByName(combo.getText(), typeSupport);
                     combo.setData(DATA_OPERATION_KEY, operation);
                     for (String variableName : getCombo3VariableNames(variable1)) {
@@ -434,9 +434,9 @@ public class BSHEditorDialog extends Dialog {
 
     private List<String> getCombo3VariableNames(Variable variable1) {
         List<String> vars = new ArrayList<String>();
-        BSHTypeSupport typeSupport1 = BSHTypeSupport.getByFormat(variable1.getFormat());
+        BSHTypeSupport typeSupport1 = BSHTypeSupport.get(variable1.getJavaClassName());
         for (Variable variable : variables) {
-            BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable.getFormat());
+            BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
             // formats are equals, variable not selected in the first combo
             if (typeSupport1.getClass() == typeSupport.getClass() && variable1 != variable) {
                 vars.add(variable.getName());
@@ -518,7 +518,7 @@ public class BSHEditorDialog extends Dialog {
                     } else {
                         lexem2 = lexem2Text;
                     }
-                    BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(var1.getFormat());
+                    BSHTypeSupport typeSupport = BSHTypeSupport.get(var1.getJavaClassName());
 
                     ifExpr = new IfExpr(labels[i].getText(), var1, lexem2, Operation.getByName(operationName, typeSupport));
                 }

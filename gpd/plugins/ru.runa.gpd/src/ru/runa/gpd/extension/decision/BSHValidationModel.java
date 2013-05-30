@@ -56,7 +56,7 @@ public class BSHValidationModel {
             // variable deleted
             return null;
         }
-        BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(var1.getFormat());
+        BSHTypeSupport typeSupport = BSHTypeSupport.get(var1.getJavaClassName());
 
         Operation operation = Operation.getByOperator(operator, typeSupport);
         if (operation == null) {

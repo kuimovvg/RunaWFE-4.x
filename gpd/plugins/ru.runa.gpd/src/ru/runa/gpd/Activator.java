@@ -27,7 +27,8 @@ public class Activator extends AbstractUIPlugin implements PluginConstants {
 
     @Override
     public void stop(BundleContext context) throws Exception {
-        super.stop(context);
+        // hide underlying exceptions
+        //super.stop(context);
     }
 
     public static Activator getDefault() {
