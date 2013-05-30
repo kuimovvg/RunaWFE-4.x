@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
 
 public class MethodTag {
@@ -146,10 +145,10 @@ public class MethodTag {
         try {
             ftlMethods = new HashMap<String, MethodTag>();
             IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("ru.runa.gpd.form.ftl.tags").getExtensions();
-            PluginLogger.logInfo("extensions count: " + extensions.length);
+            //PluginLogger.logInfo("extensions count: " + extensions.length);
             for (IExtension extension : extensions) {
                 Bundle bundle = Platform.getBundle(extension.getNamespaceIdentifier());
-                PluginLogger.logInfo("Loading extensions from " + bundle.getSymbolicName());
+                //PluginLogger.logInfo("Loading extensions from " + bundle.getSymbolicName());
                 IConfigurationElement[] tagElements = extension.getConfigurationElements();
                 for (IConfigurationElement tagElement : tagElements) {
                     String id = tagElement.getAttribute("id");
