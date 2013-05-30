@@ -64,7 +64,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         for (Variable variable : definition.getVariables(true)) {
             Element element = root.addElement(VARIABLE_ELEMENT_NAME);
             element.addAttribute(NAME_ATTRIBUTE_NAME, variable.getName());
-            element.addAttribute(FORMAT_ATTRIBUTE_NAME, variable.getFormat());
+            element.addAttribute(FORMAT_ATTRIBUTE_NAME, variable.getFormatClassName());
             if (variable.isPublicVisibility()) {
                 element.addAttribute(PUBLUC_ATTRIBUTE_NAME, "true");
             }

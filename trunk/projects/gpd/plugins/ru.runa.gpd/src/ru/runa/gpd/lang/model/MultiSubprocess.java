@@ -1,10 +1,8 @@
 package ru.runa.gpd.lang.model;
 
-import ru.runa.gpd.extension.VariableFormatArtifact;
-import ru.runa.gpd.util.VariableMapping;
-import ru.runa.wfe.var.format.ListFormat;
+import java.util.List;
 
-import com.google.common.base.Objects;
+import ru.runa.gpd.util.VariableMapping;
 
 public class MultiSubprocess extends Subprocess implements IMultiInstancesContainer {
     @Override
@@ -28,10 +26,10 @@ public class MultiSubprocess extends Subprocess implements IMultiInstancesContai
     }
 
     @Override
-    protected boolean isCompatibleTypes(VariableFormatArtifact artifact1, VariableFormatArtifact artifact2) {
-        if (Objects.equal(ListFormat.class.getName(), artifact1.getName())) {
+    protected boolean isCompatibleTypes(String javaClassName1, String javaClassName2) {
+        if (List.class.getName().equals(javaClassName1)) {
             return true;
         }
-        return super.isCompatibleTypes(artifact1, artifact2);
+        return super.isCompatibleTypes(javaClassName1, javaClassName2);
     }
 }
