@@ -9,11 +9,11 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.property.FormatClassPropertyDescriptor;
-import ru.runa.wfe.var.format.ExecutorFormat;
 
 public class Variable extends NamedGraphElement {
-    private String format;
+    private String formatClassName;
     private boolean publicVisibility;
     private String defaultValue;
 
@@ -23,13 +23,13 @@ public class Variable extends NamedGraphElement {
     
     public Variable(String name, String format, boolean publicVisibility, String defaultValue) {
         super(name);
-        this.format = format;
+        setFormatClassName(format);
         this.publicVisibility = publicVisibility;
         this.defaultValue = defaultValue;
     }
 
     public Variable(Variable variable) {
-        this(variable.getName(), variable.getFormat(), variable.isPublicVisibility(), variable.getDefaultValue());
+        this(variable.getName(), variable.getFormatClassName(), variable.isPublicVisibility(), variable.getDefaultValue());
     }
 
     @Override
@@ -45,14 +45,18 @@ public class Variable extends NamedGraphElement {
         super.setName(name);
     }
 
-    public String getFormat() {
-        return format;
+    public String getFormatClassName() {
+        return formatClassName;
     }
-
-    public void setFormat(String format) {
-        String old = this.format;
-        this.format = format;
-        firePropertyChange(PROPERTY_FORMAT, old, this.format);
+    
+    public String getJavaClassName() {
+        return VariableFormatRegistry.getInstance().getArtifactNotNull(formatClassName).getVariableClassName();
+    }
+    
+    public void setFormatClassName(String formatClassName) {
+        String old = this.formatClassName;
+        this.formatClassName = formatClassName;
+        firePropertyChange(PROPERTY_FORMAT, old, this.formatClassName);
     }
 
     public boolean isPublicVisibility() {
@@ -87,7 +91,7 @@ public class Variable extends NamedGraphElement {
     @Override
     public Object getPropertyValue(Object id) {
         if (PROPERTY_FORMAT.equals(id)) {
-            return format == null ? "" : format;
+            return formatClassName == null ? "" : formatClassName;
         }
         if (PROPERTY_PUBLIC_VISIBILITY.equals(id)) {
             return publicVisibility ? Localization.getString("message.yes") : Localization.getString("message.no");
@@ -101,7 +105,7 @@ public class Variable extends NamedGraphElement {
     @Override
     public void setPropertyValue(Object id, Object value) {
         if (PROPERTY_FORMAT.equals(id)) {
-            setFormat((String) value);
+            setFormatClassName((String) value);
         } else {
             super.setPropertyValue(id, value);
         }

@@ -40,17 +40,17 @@ public class UpdateVariableDialog extends Dialog {
         this.definition = definition;
         this.createMode = (variable == null);
         if (variable != null) {
-            setType(variable.getFormat());
+            setTypeByFormat(variable.getFormatClassName());
             this.publicVisibility = variable.isPublicVisibility();
             this.defaultValue = variable.getDefaultValue();
         } else {
-            setType(StringFormat.class.getName());
+            setTypeByFormat(StringFormat.class.getName());
         }
         this.name = definition.getNextVariableName();
     }
 
-    public void setType(String type) {
-        this.type = VariableFormatRegistry.getInstance().getArtifactNotNull(type);
+    public void setTypeByFormat(String formatClassName) {
+        this.type = VariableFormatRegistry.getInstance().getArtifactNotNull(formatClassName);
     }
 
     @Override

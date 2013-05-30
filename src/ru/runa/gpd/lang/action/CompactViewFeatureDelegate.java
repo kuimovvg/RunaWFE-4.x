@@ -11,8 +11,9 @@ public class CompactViewFeatureDelegate extends BaseModelActionDelegate {
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
+        GraphElement element = getSelection();
+        action.setEnabled(element instanceof State || element instanceof Conjunction);
         if (action.isEnabled()) {
-            GraphElement element = getSelection();
             if (element instanceof State) {
                 action.setChecked(((State) element).isMinimizedView());
             }

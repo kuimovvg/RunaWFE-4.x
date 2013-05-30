@@ -73,7 +73,7 @@ public class BSHDecisionModel {
                 // variable deleted
                 continue;
             }
-            BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(var1.getFormat());
+            BSHTypeSupport typeSupport = BSHTypeSupport.get(var1.getJavaClassName());
             Operation operation = Operation.getByOperator(operator, typeSupport);
             if (operation == null) {
                 throw new RuntimeException("Operation not found for operator: " + operator);

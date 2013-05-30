@@ -44,17 +44,17 @@ public class Subprocess extends Node implements Active {
                 addError("subprocess.subProcessVariableDoesNotExist", variableMapping.getSubprocessVariable());
                 continue;
             }
-            VariableFormatArtifact artifact1 = VariableFormatRegistry.getInstance().getArtifactNotNull(processVariable.getFormat());
-            VariableFormatArtifact artifact2 = VariableFormatRegistry.getInstance().getArtifactNotNull(subprocessVariable.getFormat());
-            if (!isCompatibleTypes(artifact1, artifact1)) {
+            if (!isCompatibleTypes(processVariable.getJavaClassName(), subprocessVariable.getJavaClassName())) {
+                VariableFormatArtifact artifact1 = VariableFormatRegistry.getInstance().getArtifactNotNull(processVariable.getFormatClassName());
+                VariableFormatArtifact artifact2 = VariableFormatRegistry.getInstance().getArtifactNotNull(subprocessVariable.getFormatClassName());
                 addError("subprocess.variableMappingIncompatibleTypes", processVariable.getName(), artifact1.getLabel(), subprocessVariable.getName(), artifact2.getLabel());
             }
         }
     }
 
-    protected boolean isCompatibleTypes(VariableFormatArtifact artifact1, VariableFormatArtifact artifact2) {
-        return VariableFormatRegistry.isAssignableFrom(artifact1.getVariableClassName(), artifact2.getVariableClassName())
-                || VariableFormatRegistry.isAssignableFrom(artifact2.getVariableClassName(), artifact1.getVariableClassName());
+    protected boolean isCompatibleTypes(String javaClassName1, String javaClassName2) {
+        return VariableFormatRegistry.isAssignableFrom(javaClassName1, javaClassName2)
+                || VariableFormatRegistry.isAssignableFrom(javaClassName2, javaClassName1);
     }
 
     public List<VariableMapping> getVariableMappings() {
