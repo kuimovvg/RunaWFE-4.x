@@ -65,7 +65,7 @@ public class BpmnXmlReader {
     private static final String TEXT_ANNOTATION = "textAnnotation";
     private static final String SERVICE_TASK = "serviceTask";
     private static final String TEXT = "text";
-    private static final String END_TOKEN_STATE = "endPoint";
+    private static final String TOKEN = "token";
     private static final String IO_SPECIFICATION = "ioSpecification";
     private static final String DATA_INPUT = "dataInput";
     private static final String DATA_OUTPUT = "dataOutput";
@@ -119,8 +119,6 @@ public class BpmnXmlReader {
     static {
         nodeTypes.put(START_EVENT, StartState.class);
         nodeTypes.put(USER_TASK, TaskNode.class);
-        nodeTypes.put(END_TOKEN_STATE, EndTokenNode.class);
-        nodeTypes.put(END_STATE, EndNode.class);
         nodeTypes.put(INTERMEDIATE_EVENT, WaitState.class);
         nodeTypes.put(SUBPROCESS, SubProcessState.class);
         nodeTypes.put(MULTI_SUBPROCESS, MultiProcessState.class);
@@ -214,6 +212,13 @@ public class BpmnXmlReader {
                     node = ApplicationContextFactory.createAutowiredBean(ExclusiveDecision.class);
                 } else {
                     node = ApplicationContextFactory.createAutowiredBean(ExclusiveMerge.class);
+                }
+            } else if (END_STATE.equals(nodeName)) {
+                Map<String, String> properties = parseExtensionProperties(element);
+                if (properties.containsKey(TOKEN)) {
+                    node = ApplicationContextFactory.createAutowiredBean(EndTokenNode.class);
+                } else {
+                    node = ApplicationContextFactory.createAutowiredBean(EndNode.class);
                 }
             }
             if (node != null) {
