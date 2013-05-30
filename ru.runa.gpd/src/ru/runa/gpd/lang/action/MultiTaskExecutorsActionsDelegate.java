@@ -67,7 +67,7 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
 
     private void createVariable() {
         UpdateVariableDialog dialog = new UpdateVariableDialog(currentDefinition, null);
-        dialog.setType(ListFormat.class.getName());
+        dialog.setTypeByFormat(ListFormat.class.getName());
         if (dialog.open() == IDialogConstants.OK_ID) {
             Variable variable = new Variable(dialog.getName(), dialog.getTypeName(), dialog.isPublicVisibility(), dialog.getDefaultValue());
             currentDefinition.addVariable(variable);

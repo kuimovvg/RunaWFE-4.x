@@ -65,8 +65,7 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
     }
 
     public static boolean isApplicable(Variable variable, String classNameFilter) {
-        String className = getInstance().getArtifact(variable.getFormat()).getVariableClassName();
-        return isAssignableFrom(classNameFilter, className);
+        return isAssignableFrom(classNameFilter, variable.getJavaClassName());
     }
 
     public VariableFormatArtifact getArtifactByJavaClassName(String javaClassName) {

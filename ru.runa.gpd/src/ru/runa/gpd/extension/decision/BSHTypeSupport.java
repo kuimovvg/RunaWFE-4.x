@@ -1,6 +1,7 @@
 package ru.runa.gpd.extension.decision;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,40 +11,30 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.DoubleInputDialog;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
-import ru.runa.wfe.var.format.BooleanFormat;
-import ru.runa.wfe.var.format.DateFormat;
-import ru.runa.wfe.var.format.DateTimeFormat;
-import ru.runa.wfe.var.format.DoubleFormat;
-import ru.runa.wfe.var.format.FileFormat;
-import ru.runa.wfe.var.format.ListFormat;
-import ru.runa.wfe.var.format.LongFormat;
-import ru.runa.wfe.var.format.StringFormat;
-import ru.runa.wfe.var.format.TimeFormat;
 
 public abstract class BSHTypeSupport {
-    private static final String DEFAULT_FORMAT_NAME = StringFormat.class.getName();
     private static final Map<String, BSHTypeSupport> TYPES_MAP = new HashMap<String, BSHTypeSupport>();
     static {
-        TYPES_MAP.put(DEFAULT_FORMAT_NAME, new StringType());
-        TYPES_MAP.put(StringFormat.class.getName(), new StringType());
-        TYPES_MAP.put(BooleanFormat.class.getName(), new BooleanType());
-        TYPES_MAP.put(DoubleFormat.class.getName(), new NumberType());
-        TYPES_MAP.put(LongFormat.class.getName(), new NumberType());
-        TYPES_MAP.put(DateFormat.class.getName(), new DateType());
-        TYPES_MAP.put(TimeFormat.class.getName(), new DateType());
-        TYPES_MAP.put(DateTimeFormat.class.getName(), new DateType());
-        TYPES_MAP.put(FileFormat.class.getName(), new DefaultType());
-        TYPES_MAP.put(ListFormat.class.getName(), new DefaultType()); // TODO make mapping by java class
+        TYPES_MAP.put(Object.class.getName(), new DefaultType());
+        TYPES_MAP.put(String.class.getName(), new StringType());
+        TYPES_MAP.put(Boolean.class.getName(), new BooleanType());
+        TYPES_MAP.put(Number.class.getName(), new NumberType());
+        TYPES_MAP.put(Date.class.getName(), new DateType());
     }
 
-    public static BSHTypeSupport getByFormat(String format) {
-        if (format == null) {
-            format = DEFAULT_FORMAT_NAME;
+    public static BSHTypeSupport get(String className) {
+        if (className == null) {
+            className = Object.class.getName();
         }
-        BSHTypeSupport typeSupport = TYPES_MAP.get(format);
-        if (typeSupport == null) {
-            PluginLogger.logInfo("Not found type support for format: " + format + ", using default");
-            typeSupport = TYPES_MAP.get(DEFAULT_FORMAT_NAME);
+        BSHTypeSupport typeSupport = TYPES_MAP.get(className);
+        while (typeSupport == null) {
+            try {
+                className = Class.forName(className).getSuperclass().getName();
+                typeSupport = TYPES_MAP.get(className);
+            } catch (Exception e) {
+                PluginLogger.logInfo("Not found type support for type: " + className + ", using default (" + e + ")");
+                typeSupport = TYPES_MAP.get(Object.class.getName());
+            }
         }
         return typeSupport;
     }

@@ -29,7 +29,7 @@ public class Operation {
             if (NULL.equals(lexem2)) {
                 return variable.getName() + " == " + NULL;
             }
-            BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable.getFormat());
+            BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
             if (typeSupport instanceof StringType) {
                 StringBuffer buffer = new StringBuffer();
                 buffer.append(typeSupport.wrap(variable));
@@ -53,7 +53,7 @@ public class Operation {
             if (NULL.equals(lexem2)) {
                 return variable.getName() + " != " + NULL;
             }
-            BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable.getFormat());
+            BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
             if (typeSupport instanceof StringType) {
                 StringBuffer buffer = new StringBuffer("!");
                 buffer.append(typeSupport.wrap(variable));
@@ -96,7 +96,7 @@ public class Operation {
     }
 
     public String generateCode(Variable variable, Object lexem2) {
-        BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable.getFormat());
+        BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
         StringBuffer buffer = new StringBuffer();
         buffer.append(typeSupport.wrap(variable));
         buffer.append(" ");
