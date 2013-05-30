@@ -15,11 +15,9 @@ import ru.runa.wfe.commons.ftl.AjaxJsonFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.filter.StringFilterCriteria;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
-import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
 
@@ -50,7 +48,7 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
         Group group = getParameterAs(Group.class, 2);
         boolean byLogin = "login".equals(displayFormat);
         String hint = request.getParameter("hint");
-        List<Actor> actors = getActors(user, group, byLogin, hint);
+        List<Actor> actors = getActors(group, byLogin, hint);
         if (actors.size() == 0) {
             jsonArray.add(createJsonObject(null, ""));
         }
@@ -67,12 +65,11 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
         return object;
     }
 
-    private List<Actor> getActors(User user, Group group, boolean byLogin, String hint) {
+    private List<Actor> getActors(Group group, boolean byLogin, String hint) {
         int rangeSize = 50;
         List<Actor> actors = Lists.newArrayListWithExpectedSize(rangeSize);
-        ExecutorService executorService = Delegates.getExecutorService();
         if (group != null) {
-            List<Actor> groupActors = executorService.getGroupActors(user, group);
+            List<Actor> groupActors = Delegates.getExecutorService().getGroupActors(user, group);
             for (Actor actor : groupActors) {
                 if (byLogin) {
                     if (actor.getName().startsWith(hint)) {
@@ -92,10 +89,7 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
                 int filterIndex = byLogin ? 0 : 1;
                 batchPresentation.getFilteredFields().put(filterIndex, new StringFilterCriteria(hint + StringFilterCriteria.ANY_SYMBOLS));
             }
-            // thid method used instead of getActors due to lack paging in
-            // that
-            // method
-            actors.addAll((Collection<? extends Actor>) executorService.getExecutors(user, batchPresentation));
+            actors.addAll((Collection<? extends Actor>) Delegates.getExecutorService().getExecutors(user, batchPresentation));
         }
         return actors;
     }
