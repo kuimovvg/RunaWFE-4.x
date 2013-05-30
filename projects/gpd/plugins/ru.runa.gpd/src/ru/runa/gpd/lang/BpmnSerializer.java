@@ -55,9 +55,9 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String EXECUTABLE = "isExecutable";
     private static final String PROPERTY = "property";
     private static final String END_STATE = "endEvent";
+    private static final String TOKEN = "token";
     private static final String TEXT_ANNOTATION = "textAnnotation";
     private static final String TEXT = "text";
-    private static final String END_TOKEN_STATE = "endPoint";
     private static final String SERVICE_TASK = "serviceTask";
     private static final String DATA_INPUT = "dataInput";
     private static final String DATA_OUTPUT = "dataOutput";
@@ -132,14 +132,14 @@ public class BpmnSerializer extends ProcessSerializer {
         Element definitionsElement = document.getRootElement();
         Element process = definitionsElement.element(QName.get(PROCESS, BPMN_NAMESPACE));
         process.addAttribute(NAME, definition.getName());
-        Map<String, String> properties = Maps.newHashMap();
+        Map<String, String> processProperties = Maps.newHashMap();
         if (definition.getDefaultTaskTimeoutDelay().hasDuration()) {
-            properties.put(DEFAULT_TASK_TIMOUT, definition.getDefaultTaskTimeoutDelay().getDuration());
+            processProperties.put(DEFAULT_TASK_TIMOUT, definition.getDefaultTaskTimeoutDelay().getDuration());
         }
         if (definition.getSwimlaneDisplayMode() != null) {
-            properties.put(SWIMLANE_DISPLAY_MODE, definition.getSwimlaneDisplayMode().name());
+            processProperties.put(SWIMLANE_DISPLAY_MODE, definition.getSwimlaneDisplayMode().name());
         }
-        writeExtensionElements(process, properties);
+        writeExtensionElements(process, processProperties);
         if (definition.isInvalid()) {
             process.addAttribute(EXECUTABLE, "false");
         }
@@ -237,7 +237,10 @@ public class BpmnSerializer extends ProcessSerializer {
         }
         List<EndTokenState> endTokenStates = definition.getChildren(EndTokenState.class);
         for (EndTokenState endTokenState : endTokenStates) {
-            writeElement(process, endTokenState);
+            Element element = writeElement(process, endTokenState);
+            Map<String, String> properties = Maps.newHashMap();
+            properties.put(TOKEN, "true");
+            writeExtensionElements(element, properties);
         }
         List<EndState> endStates = definition.getChildren(EndState.class);
         for (EndState endState : endStates) {
@@ -310,7 +313,13 @@ public class BpmnSerializer extends ProcessSerializer {
     }
 
     private Element writeElement(Element parent, GraphElement element) {
-        Element result = parent.addElement(element.getTypeDefinition().getBpmnElementName());
+        String bpmnElementName;
+        if (element instanceof EndTokenState) {
+            bpmnElementName = END_STATE;
+        } else {
+            bpmnElementName = element.getTypeDefinition().getBpmnElementName();
+        }
+        Element result = parent.addElement(bpmnElementName);
         setAttribute(result, ID, element.getId());
         if (element instanceof NamedGraphElement) {
             setAttribute(result, NAME, ((NamedGraphElement) element).getName());
@@ -388,7 +397,14 @@ public class BpmnSerializer extends ProcessSerializer {
     }
 
     private <T extends GraphElement> T create(Element node, GraphElement parent) {
-        GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.BPMN, node.getName()).createElement(parent);
+        Map<String, String> properties = parseExtensionProperties(node);
+        String bpmnElementName;
+        if (properties.containsKey(TOKEN)) {
+            bpmnElementName = "endTokenEvent";
+        } else {
+            bpmnElementName = node.getName();
+        }
+        GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.BPMN, bpmnElementName).createElement(parent);
         String nodeId = node.attributeValue(ID);
         String name = node.attributeValue(NAME);
         if (element instanceof Node && nodeId == null) {
@@ -431,7 +447,6 @@ public class BpmnSerializer extends ProcessSerializer {
             //            }
         }
         if (element instanceof Delegable) {
-            Map<String, String> properties = parseExtensionProperties(node);
             element.setDelegationClassName(properties.get(CLASS));
             element.setDelegationConfiguration(properties.get(CONFIG));
         }
@@ -643,10 +658,6 @@ public class BpmnSerializer extends ProcessSerializer {
                 timer.setName(boundaryEventElement.attributeValue(NAME));
                 timer.setParentContainer(parent);
             }
-        }
-        List<Element> endTokenStates = process.elements(END_TOKEN_STATE);
-        for (Element node : endTokenStates) {
-            create(node, definition);
         }
         List<Element> endStates = process.elements(END_STATE);
         for (Element node : endStates) {

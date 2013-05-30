@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
-import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
@@ -39,7 +38,6 @@ import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
 import ru.runa.gpd.validation.ValidatorDefinitionRegistry;
-import ru.runa.wfe.user.Executor;
 
 public class FieldValidatorsWizardPage extends WizardPage {
     private TabFolder tabFolder;
@@ -217,7 +215,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
         }
     }
 
-    private NamedGraphElement getCurrentSelection() {
+    private Variable getCurrentSelection() {
         if (tabFolder.getSelectionIndex() == 0) {
             return (Variable) ((StructuredSelection) variablesTableViewer.getSelection()).getFirstElement();
         } else {
@@ -234,15 +232,9 @@ public class FieldValidatorsWizardPage extends WizardPage {
         return (ValidatorDefinition) ((StructuredSelection) validatorsTableViewer.getSelection()).getFirstElement();
     }
 
-    private void updateValidatorsInput(NamedGraphElement variableOrSwimlane) {
+    private void updateValidatorsInput(Variable variableOrSwimlane) {
         if (variableOrSwimlane != null) {
-            String varType;
-            if (variableOrSwimlane instanceof Variable) {
-                varType = VariableFormatRegistry.getInstance().getArtifactNotNull(((Variable) variableOrSwimlane).getFormat()).getVariableClassName();
-            } else {
-                // swimlane
-                varType = Executor.class.getName();
-            }
+            String varType = ((Variable) variableOrSwimlane).getJavaClassName();
             validatorsTableViewer.setInput(ValidationUtil.getFieldValidatorDefinitions(varType));
         }
     }

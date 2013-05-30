@@ -765,7 +765,7 @@
          </gef>
       </element>
       <element
-            bpmn="endPoint"
+            bpmn="endTokenEvent"
             icon="endtoken.png"
             jpdl="end-token-state"
             label="%label.element.endtoken"

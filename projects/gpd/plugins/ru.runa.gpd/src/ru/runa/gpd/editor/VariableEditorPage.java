@@ -309,7 +309,7 @@ public class VariableEditorPage extends EditorPartBase {
             Variable variable = (Variable) selection.getFirstElement();
             UpdateVariableDialog dialog = new UpdateVariableDialog(getDefinition(), variable);
             if (dialog.open() == IDialogConstants.OK_ID) {
-                variable.setFormat(dialog.getTypeName());
+                variable.setFormatClassName(dialog.getTypeName());
                 variable.setPublicVisibility(dialog.isPublicVisibility());
                 variable.setDefaultValue(dialog.getDefaultValue());
                 tableViewer.setSelection(selection);
@@ -336,7 +336,7 @@ public class VariableEditorPage extends EditorPartBase {
                     newVariable = new Variable(variable);
                     getDefinition().addVariable(newVariable);
                 } else {
-                    newVariable.setFormat(variable.getFormat());
+                    newVariable.setFormatClassName(variable.getFormatClassName());
                 }
             }
         }
@@ -350,7 +350,7 @@ public class VariableEditorPage extends EditorPartBase {
             case 0:
                 return variable.getName();
             case 1:
-                return LocalizationRegistry.getLabel(variable.getFormat());
+                return LocalizationRegistry.getLabel(variable.getFormatClassName());
             case 2:
                 if (variable.getDefaultValue() == null) {
                     return "";

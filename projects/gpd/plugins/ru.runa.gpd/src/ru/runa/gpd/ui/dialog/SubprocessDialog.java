@@ -34,7 +34,6 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableMapping;
-import ru.runa.wfe.var.format.ListFormat;
 
 public class SubprocessDialog extends Dialog {
     private String subprocessName;
@@ -224,7 +223,7 @@ public class SubprocessDialog extends Dialog {
         if (definition != null) {
             Variable variable = definition.getVariable(variableName, false);
             if (variable != null) {
-                return ListFormat.class.getName().equals(variable.getFormat());
+                return List.class.getName().equals(variable.getJavaClassName());
             }
         }
         return false;

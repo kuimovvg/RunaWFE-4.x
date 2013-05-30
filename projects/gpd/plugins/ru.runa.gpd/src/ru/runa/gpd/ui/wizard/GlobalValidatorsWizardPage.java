@@ -320,7 +320,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
 
         private void refreshCombos() {
             Variable variable = (Variable) comboBoxVar1.getData();
-            List<Operation> operations = Operation.getAll(BSHTypeSupport.getByFormat(variable.getFormat()));
+            List<Operation> operations = Operation.getAll(BSHTypeSupport.get(variable.getJavaClassName()));
             comboBoxOp.setItems(new String[0]);
             for (Operation operation : operations) {
                 comboBoxOp.add(operation.getVisibleName());
@@ -334,9 +334,9 @@ public class GlobalValidatorsWizardPage extends WizardPage {
 
         private List<String> getCombo2VariableNames(Variable variable1) {
             List<String> vars = new ArrayList<String>();
-            BSHTypeSupport typeSupport1 = BSHTypeSupport.getByFormat(variable1.getFormat());
+            BSHTypeSupport typeSupport1 = BSHTypeSupport.get(variable1.getJavaClassName());
             for (Variable variable : allVariables) {
-                BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(variable.getFormat());
+                BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
                 // formats are equals, variable not selected in the first combo
                 if ((typeSupport1 == typeSupport) && (variable1 != variable) && (variableNames.contains(variable1.getName()))) {
                     if (variable.getName().indexOf(" ") < 0) {
@@ -361,7 +361,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
                 Variable var1 = (Variable) comboBoxVar1.getData();
                 String operationName = comboBoxOp.getItem(comboBoxOp.getSelectionIndex());
                 Variable var2 = getVariableByName(comboBoxVar2.getText());
-                BSHTypeSupport typeSupport = BSHTypeSupport.getByFormat(var1.getFormat());
+                BSHTypeSupport typeSupport = BSHTypeSupport.get(var1.getJavaClassName());
                 Operation operation = Operation.getByName(operationName, typeSupport);
                 String bsh = operation.generateCode(var1, var2);
                 bshCodeText.setText(bsh);

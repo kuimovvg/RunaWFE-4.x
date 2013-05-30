@@ -174,7 +174,8 @@ public class WYSIWYGPlugin extends AbstractUIPlugin {
         if (isWebServerStarted()) {
             server.stop();
         }
-        super.stop(context);
+        // hide underlying exceptions
+        //super.stop(context);
         plugin = null;
     }
 
