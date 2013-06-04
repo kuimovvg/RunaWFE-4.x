@@ -21,7 +21,7 @@
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location">
-			<value>classpath:wfe.properties</value>
+			<value>classpath:system.properties</value>
 		</property>
 	</bean>
 

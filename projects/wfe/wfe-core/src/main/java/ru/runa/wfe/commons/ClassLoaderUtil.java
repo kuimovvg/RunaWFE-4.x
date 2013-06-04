@@ -102,6 +102,11 @@ public class ClassLoaderUtil {
                 properties.load(is);
                 is.close();
             }
+            is = getAsStream(SystemProperties.RESOURCE_EXTENSION_PREFIX + resource, ClassLoaderUtil.class);
+            if (is != null) {
+                properties.load(is);
+                is.close();
+            }
         } catch (IOException e) {
             throw new InternalApplicationException("couldn't load properties file '" + resource + "'", e);
         }

@@ -18,15 +18,15 @@
 package ru.runa.wfe.graph.image.util;
 
 import java.awt.Color;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.PropertyResources;
+
 public final class DrawProperties {
     private static final Log log = LogFactory.getLog(DrawProperties.class);
-    private static ResourceBundle bundle;
+    private static PropertyResources resources = new PropertyResources("graph.properties");
 
     public static final int TRANSITION_DRAW_WIDTH = 1;
     public static final double TRANSITION_SM_ANGLE = Math.PI / 12;
@@ -39,16 +39,7 @@ public final class DrawProperties {
     public static final int FIGURE_BORDER_WIDTH = 1;
     public static final int FIGURE_SELECTED_BORDER_WIDTH = 2;
 
-    private static boolean useEdgingMode = true;
-
-    static {
-        try {
-            bundle = ResourceBundle.getBundle("graph");
-            useEdgingMode = Boolean.parseBoolean(getProperty("edgingOnly", "true"));
-        } catch (MissingResourceException e) {
-            log.warn(e.getMessage());
-        }
-    }
+    private static boolean useEdgingMode = resources.getBooleanProperty("edgingOnly", true);
 
     public static Color getBackgroundColor() {
         return getColorProperty("backgroundColor", Color.WHITE);
@@ -83,11 +74,11 @@ public final class DrawProperties {
     }
 
     public static int getFontSize() {
-        return Integer.parseInt(getProperty("fontSize", "9"));
+        return resources.getIntegerProperty("fontSize", 9);
     }
 
     public static String getFontFamily() {
-        return getProperty("fontFamily", "Verdana");
+        return resources.getStringProperty("fontFamily", "Verdana");
     }
 
     public static Color getTextColor() {
@@ -102,12 +93,12 @@ public final class DrawProperties {
         useEdgingMode = edgingMode;
     }
 
-	public static boolean showSwimlaneInBPMN() {
-        return Boolean.valueOf(getProperty("bpmn.showSwimlane", "true"));
+    public static boolean showSwimlaneInBPMN() {
+        return resources.getBooleanProperty("bpmn.showSwimlane", true);
     }
 
     private static Color getColorProperty(String propertyName, Color defaultColor) {
-        String colorValue = getProperty(propertyName, null);
+        String colorValue = resources.getStringProperty(propertyName, null);
         if (colorValue != null) {
             try {
                 return Color.decode(colorValue);
@@ -118,14 +109,4 @@ public final class DrawProperties {
         return defaultColor;
     }
 
-    private static String getProperty(String propertyName, String defaultValue) {
-        if (bundle != null) {
-            try {
-                return bundle.getString(propertyName);
-            } catch (MissingResourceException e) {
-                log.debug("Missed property '" + propertyName + "', using defaut value");
-            }
-        }
-        return defaultValue;
-    }
 }

@@ -27,6 +27,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -35,32 +36,44 @@ import ru.runa.wfe.service.delegate.Delegates;
 public class SubstitutionCriteriaDefinitions {
     private static final Log log = LogFactory.getLog(SubstitutionCriteriaDefinitions.class);
 
-    private static final String LIST_XML = "substitutioncriterias.xml";
+    private static final String CONFIG = "substitution.criterias.xml";
     private static List<FunctionDef> definitions = new ArrayList<FunctionDef>();
 
     static {
+        registerDefinitions(CONFIG, true);
+        registerDefinitions(SystemProperties.RESOURCE_EXTENSION_PREFIX + CONFIG, false);
+    }
+
+    private static void registerDefinitions(String resourceName, boolean required) {
         try {
-            InputStream is = ClassLoaderUtil.getAsStreamNotNull(LIST_XML, SubstitutionDefinitions.class);
-            Document document = XmlUtils.parseWithoutValidation(is);
-            List<Element> oElements = document.getRootElement().elements("type");
-            for (Element oElement : oElements) {
-                String className = oElement.attributeValue("class");
-                String label = Delegates.getSystemService().getLocalized(null, className);
-                FunctionDef fDef = new FunctionDef(className, label);
-                List<Element> pElements = oElement.elements("param");
-                for (Element pElement : pElements) {
-                    String rendererClassName = pElement.attributeValue("renderer");
-                    if (rendererClassName == null) {
-                        rendererClassName = StringRenderer.class.getName();
+            InputStream is;
+            if (required) {
+                is = ClassLoaderUtil.getAsStreamNotNull(resourceName, SubstitutionDefinitions.class);
+            } else {
+                is = ClassLoaderUtil.getAsStream(resourceName, SubstitutionDefinitions.class);
+            }
+            if (is != null) {
+                Document document = XmlUtils.parseWithoutValidation(is);
+                List<Element> oElements = document.getRootElement().elements("type");
+                for (Element oElement : oElements) {
+                    String className = oElement.attributeValue("class");
+                    String label = Delegates.getSystemService().getLocalized(null, className);
+                    FunctionDef fDef = new FunctionDef(className, label);
+                    List<Element> pElements = oElement.elements("param");
+                    for (Element pElement : pElements) {
+                        String rendererClassName = pElement.attributeValue("renderer");
+                        if (rendererClassName == null) {
+                            rendererClassName = StringRenderer.class.getName();
+                        }
+                        ParamRenderer renderer = ClassLoaderUtil.instantiate(rendererClassName);
+                        ParamDef pDef = new ParamDef(pElement.attributeValue("messageKey"), pElement.attributeValue("message"), renderer);
+                        fDef.addParam(pDef);
                     }
-                    ParamRenderer renderer = ClassLoaderUtil.instantiate(rendererClassName);
-                    ParamDef pDef = new ParamDef(pElement.attributeValue("messageKey"), pElement.attributeValue("message"), renderer);
-                    fDef.addParam(pDef);
+                    definitions.add(fDef);
                 }
-                definitions.add(fDef);
             }
         } catch (Exception e) {
-            log.error("Check " + LIST_XML, e);
+            log.error("check " + resourceName, e);
         }
     }
 
