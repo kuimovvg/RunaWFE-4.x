@@ -12,7 +12,7 @@
     <bean id="ejb3.application.context" class="org.springframework.context.support.ClassPathXmlApplicationContext">
         <constructor-arg>
             <list>
-                <value>classpath:wfeContext.xml</value>
+                <value>classpath:system.context.xml</value>
             </list>
 		    </constructor-arg>
 	  </bean>  

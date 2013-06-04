@@ -43,7 +43,7 @@ import com.google.common.collect.Maps;
  * @since 4.0
  */
 public class Delegates {
-    private static final Properties PROPERTIES = ClassLoaderUtil.getProperties("wfe.delegate.properties", true);
+    private static final Properties PROPERTIES = ClassLoaderUtil.getProperties("ejb.properties", true);
     private static Map<Class<?>, Object> delegates = Maps.newHashMap();
 
     @SuppressWarnings("unchecked")

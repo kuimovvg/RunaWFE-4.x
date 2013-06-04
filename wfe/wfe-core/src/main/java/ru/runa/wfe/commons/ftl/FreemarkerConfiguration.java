@@ -11,6 +11,7 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.base.Joiner;
@@ -19,7 +20,7 @@ import com.google.common.collect.Maps;
 @SuppressWarnings("unchecked")
 public class FreemarkerConfiguration {
     private Log log = LogFactory.getLog(FreemarkerConfiguration.class);
-    private static final String CONFIG = "freemarker-tags.xml";
+    private static final String CONFIG = "ftl.form.tags.xml";
     private static final String TAG_ELEMENT = "ftltag";
     private static final String NAME_ATTR = "name";
     private static final String CLASS_ATTR = "class";
@@ -39,19 +40,31 @@ public class FreemarkerConfiguration {
     }
 
     private FreemarkerConfiguration() {
-        InputStream is = ClassLoaderUtil.getAsStreamNotNull(CONFIG, getClass());
-        log.info("Using " + is);
-        Document document = XmlUtils.parseWithoutValidation(is);
-        Element root = document.getRootElement();
-        List<Element> tagElements = root.elements(TAG_ELEMENT);
-        for (Element tagElement : tagElements) {
-            try {
-                String name = tagElement.attributeValue(NAME_ATTR);
-                String className = tagElement.attributeValue(CLASS_ATTR);
-                Class<? extends FreemarkerTag> tagClass = (Class<? extends FreemarkerTag>) ClassLoaderUtil.loadClass(className);
-                addTag(name, tagClass);
-            } catch (Throwable e) {
-                log.warn("Unable to create freemarker tag", e);
+        parseTags(CONFIG, true);
+        parseTags(SystemProperties.RESOURCE_EXTENSION_PREFIX + CONFIG, true);
+    }
+
+    private void parseTags(String fileName, boolean required) {
+        InputStream is;
+        if (required) {
+            is = ClassLoaderUtil.getAsStreamNotNull(fileName, getClass());
+        } else {
+            is = ClassLoaderUtil.getAsStream(fileName, getClass());
+        }
+        if (is != null) {
+            log.info("Using " + is);
+            Document document = XmlUtils.parseWithoutValidation(is);
+            Element root = document.getRootElement();
+            List<Element> tagElements = root.elements(TAG_ELEMENT);
+            for (Element tagElement : tagElements) {
+                try {
+                    String name = tagElement.attributeValue(NAME_ATTR);
+                    String className = tagElement.attributeValue(CLASS_ATTR);
+                    Class<? extends FreemarkerTag> tagClass = (Class<? extends FreemarkerTag>) ClassLoaderUtil.loadClass(className);
+                    addTag(name, tagClass);
+                } catch (Throwable e) {
+                    log.warn("Unable to create freemarker tag", e);
+                }
             }
         }
     }
