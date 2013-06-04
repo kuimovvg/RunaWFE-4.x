@@ -26,7 +26,7 @@ import ru.runa.wfe.commons.PropertyResources;
  * @author Gordienko_m modified by miheev_a 19.05.2006
  */
 public class SQLFunctionResources {
-    private static final PropertyResources RESOURCES = new PropertyResources("orgfunction.organization_hierarchy_dao.properties");
+    private static final PropertyResources RESOURCES = new PropertyResources("sql.orgfunction.properties");
 
     public static String getDataSourceName() {
         return RESOURCES.getStringPropertyNotNull("datasource");

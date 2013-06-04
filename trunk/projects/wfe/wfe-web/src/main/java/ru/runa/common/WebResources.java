@@ -30,7 +30,7 @@ import com.google.common.base.Strings;
  * 
  */
 public class WebResources {
-    private static final PropertyResources RESOURCES = new PropertyResources("wfe.web.properties");
+    private static final PropertyResources RESOURCES = new PropertyResources("web.properties");
 
     public static final String ACTION_MAPPING_UPDATE_EXECUTOR = "/manage_executor";
     public static final String ACTION_MAPPING_MANAGE_RELATION = "/manage_relation";

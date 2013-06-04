@@ -27,7 +27,7 @@ import ru.runa.wfe.var.IVariableProvider;
  * 
  */
 public class MSWordReportBuilderFactory {
-    private static final PropertyResources RESOURCES = new PropertyResources("msword-report.properties");
+    private static final PropertyResources RESOURCES = new PropertyResources("msword.report.properties");
     private static final String BUILDER_PROPERTY = "word.report.builder.class";
 
     public static MSWordReportBuilder createBuilder(MSWordReportTaskSettings settings, IVariableProvider variableProvider) {

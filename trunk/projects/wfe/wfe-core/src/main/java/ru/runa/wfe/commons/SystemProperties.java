@@ -1,10 +1,12 @@
 package ru.runa.wfe.commons;
 
 public class SystemProperties {
-    private static final PropertyResources RESOURCES = new PropertyResources("wfe.properties");
+    private static final PropertyResources RESOURCES = new PropertyResources("system.properties");
     private static final boolean developmentMode = "true".equals(System.getProperty("devmode"));
     private static final boolean v3CompatibilityMode = "true".equals(System.getProperty("v3compatibility"));
     public static final String WEB_SERVICE_NAMESPACE = "http://runa.ru/wfe";
+
+    public static final String RESOURCE_EXTENSION_PREFIX = "wfe.custom.";
 
     /**
      * Production or development mode?
