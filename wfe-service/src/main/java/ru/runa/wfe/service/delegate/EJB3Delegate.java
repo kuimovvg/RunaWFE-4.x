@@ -1,6 +1,5 @@
 package ru.runa.wfe.service.delegate;
 
-import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
@@ -13,7 +12,6 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
@@ -116,16 +114,11 @@ public abstract class EJB3Delegate {
         String providerUrl = Objects.firstNonNull(getCustomProviderUrl(), EJB_LOCAL);
         if (!initialContexts.containsKey(providerUrl)) {
             try {
-                Properties env = new Properties();
-                InputStream is = ClassLoaderUtil.getAsStream("jndi.properties", getClass());
-                if (is != null) {
-                    Preconditions.checkNotNull(is, "jndi.properties is not in classpath");
-                    env.load(is);
-                }
+                Properties properties = ClassLoaderUtil.getProperties("jndi.properties", true);
                 if (!Objects.equal(EJB_LOCAL, providerUrl)) {
-                    env.put(Context.PROVIDER_URL, providerUrl);
+                    properties.put(Context.PROVIDER_URL, providerUrl);
                 }
-                initialContexts.put(providerUrl, new InitialContext(env));
+                initialContexts.put(providerUrl, new InitialContext(properties));
             } catch (Exception e) {
                 throw Throwables.propagate(e);
             }

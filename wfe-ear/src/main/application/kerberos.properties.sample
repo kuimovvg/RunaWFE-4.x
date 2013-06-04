@@ -1,6 +1,6 @@
 
-rmi.auth.enabled=false
-http.auth.enabled=false
+rmi.auth.enabled=true
+http.auth.enabled=true
 
 # kerberos login module name depends on java version
 #appName=com.sun.security.jgss.krb5.accept

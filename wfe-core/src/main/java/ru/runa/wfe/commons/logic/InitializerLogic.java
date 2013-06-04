@@ -129,11 +129,19 @@ public class InitializerLogic {
                 log.info("database is initialized. skipping initialization ...");
                 applyPatches(transaction);
             }
-            InputStream stream = ClassLoaderUtil.getAsStream("localizations_" + Locale.getDefault().getLanguage() + ".xml", getClass());
+            String localizedFileName = "localizations." + Locale.getDefault().getLanguage() + ".xml";
+            InputStream stream = ClassLoaderUtil.getAsStream(localizedFileName, getClass());
             if (stream == null) {
                 stream = ClassLoaderUtil.getAsStreamNotNull("localizations.xml", getClass());
             }
             List<Localization> localizations = LocalizationParser.parseLocalizations(stream);
+            stream = ClassLoaderUtil.getAsStream(SystemProperties.RESOURCE_EXTENSION_PREFIX + localizedFileName, getClass());
+            if (stream == null) {
+                stream = ClassLoaderUtil.getAsStream(SystemProperties.RESOURCE_EXTENSION_PREFIX + "localizations.xml", getClass());
+            }
+            if (stream != null) {
+                localizations.addAll(LocalizationParser.parseLocalizations(stream));
+            }
             localizationDAO.saveLocalizations(localizations, false);
         } catch (Exception e) {
             log.error("initialization failed", e);
