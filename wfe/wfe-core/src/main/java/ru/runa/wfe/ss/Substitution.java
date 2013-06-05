@@ -47,7 +47,7 @@ import com.google.common.base.Objects;
  * Represents substitution rule.
  * 
  * In case of inactive owner tasks will be propagated to executors calculated by
- * specified org function (with criteria check).
+ * specified organization function (with criteria check).
  */
 @Entity
 @org.hibernate.annotations.Entity(polymorphism = PolymorphismType.EXPLICIT)

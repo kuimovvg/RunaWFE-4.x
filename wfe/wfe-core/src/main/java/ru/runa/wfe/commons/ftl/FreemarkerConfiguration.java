@@ -41,7 +41,7 @@ public class FreemarkerConfiguration {
 
     private FreemarkerConfiguration() {
         parseTags(CONFIG, true);
-        parseTags(SystemProperties.RESOURCE_EXTENSION_PREFIX + CONFIG, true);
+        parseTags(SystemProperties.RESOURCE_EXTENSION_PREFIX + CONFIG, false);
     }
 
     private void parseTags(String fileName, boolean required) {

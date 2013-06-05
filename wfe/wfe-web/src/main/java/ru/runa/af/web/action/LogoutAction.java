@@ -30,8 +30,6 @@ import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.wfe.service.SystemService;
-import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 17.08.2004
@@ -47,8 +45,6 @@ public class LogoutAction extends ActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         try {
             HttpSession session = request.getSession();
-            SystemService systemService = Delegates.getSystemService();
-            systemService.logout(getLoggedUser(request));
             Commons.removeUser(session);
             ProfileHttpSessionHelper.removeProfile(session);
             TabHttpSessionHelper.removeTabForwardName(session);

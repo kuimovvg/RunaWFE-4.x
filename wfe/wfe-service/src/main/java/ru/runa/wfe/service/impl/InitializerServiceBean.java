@@ -33,9 +33,6 @@ import ru.runa.wfe.service.InitializerService;
 import ru.runa.wfe.service.interceptors.CacheNotifier;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 
-/**
- * Created on 02.08.2004
- */
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ SpringBeanAutowiringInterceptor.class, CacheNotifier.class, EjbExceptionSupport.class })
@@ -46,9 +43,9 @@ public class InitializerServiceBean implements InitializerService {
     private SessionContext sessionContext;
 
     @Override
-    public void init(boolean force) {
+    public void onSystemStartup() {
         UserTransaction transaction = sessionContext.getUserTransaction();
-        initializerLogic.init(transaction, force);
+        initializerLogic.init(transaction);
     }
 
 }

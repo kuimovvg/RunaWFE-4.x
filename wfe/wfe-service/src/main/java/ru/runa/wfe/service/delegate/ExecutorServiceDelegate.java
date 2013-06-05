@@ -154,4 +154,8 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
         return getExecutorService().getAllExecutorsFromGroup(user, group);
     }
 
+    @Override
+    public void synchronizeExecutorsWithLDAP(String username, String password) {
+        getExecutorService().synchronizeExecutorsWithLDAP(username, password);
+    }
 }

@@ -25,37 +25,118 @@ import ru.runa.wfe.ss.SubstitutionDoesNotExistException;
 import ru.runa.wfe.user.User;
 
 /**
- * Created on 30.01.2006
+ * Service for operations with {@link Substitution},
+ * {@link SubstitutionCriteria}.
+ * 
+ * @since 3.0
  */
 public interface SubstitutionService {
 
+    /**
+     * Creates new substitution rule for user.
+     * 
+     * @param user
+     * @param substitution
+     * @return
+     */
     public Substitution createSubstitution(User user, Substitution substitution);
 
-    public List<Substitution> getSubstitutions(User user, Long actorId);
+    /**
+     * Gets all substitutions for user specified by id.
+     * 
+     * @param user
+     * @param ownerId
+     * @return
+     */
+    public List<Substitution> getSubstitutions(User user, Long ownerId);
 
+    /**
+     * Gets substitution rule by id.
+     * 
+     * @param user
+     * @param substitutionId
+     * @return
+     */
     public Substitution getSubstitution(User user, Long substitutionId);
 
+    /**
+     * Updates substitution rule.
+     * 
+     * @param user
+     * @param substitution
+     */
     public void updateSubstitution(User user, Substitution substitution);
 
+    /**
+     * Deletes substitution rules by ids.
+     * 
+     * @param user
+     * @param substitutionIds
+     * @throws SubstitutionDoesNotExistException
+     */
     public void deleteSubstitutions(User user, List<Long> substitutionIds) throws SubstitutionDoesNotExistException;
 
+    /**
+     * Creates new criteria for substitution rules.
+     * 
+     * @param user
+     * @param substitutionCriteria
+     */
     public <T extends SubstitutionCriteria> void createCriteria(User user, T substitutionCriteria);
 
+    /**
+     * Gets criteria by id.
+     * 
+     * @param user
+     * @param criteriaId
+     * @return
+     */
     public SubstitutionCriteria getCriteria(User user, Long criteriaId);
 
     /**
-     * @return {@link SubstitutionCriteria} or <code>null</code>
+     * Gets criteria by name.
      */
     public SubstitutionCriteria getCriteriaByName(User user, String name);
 
+    /**
+     * Gets all criterias.
+     * 
+     * @param user
+     * @return
+     */
     public List<SubstitutionCriteria> getAllCriterias(User user);
 
+    /**
+     * Updates criteria.
+     * 
+     * @param user
+     * @param criteria
+     */
     public void updateCriteria(User user, SubstitutionCriteria criteria);
 
+    /**
+     * Deletes criterias.
+     * 
+     * @param user
+     * @param criterias
+     */
     public void deleteCriterias(User user, List<SubstitutionCriteria> criterias);
 
+    /**
+     * Deletes criteria.
+     * 
+     * @param user
+     * @param criteria
+     */
     public void deleteCriteria(User user, SubstitutionCriteria criteria);
 
+    /**
+     * Gets all substitution rules which uses criteria.
+     * 
+     * @param user
+     * @param criteria
+     * @return
+     */
     public List<Substitution> getSubstitutionsByCriteria(User user, SubstitutionCriteria criteria);
 
 }

@@ -28,7 +28,7 @@ import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.script.AdminScriptRunner;
-import ru.runa.wfe.service.AdminScriptUtils;
+import ru.runa.wfe.service.utils.AdminScriptUtils;
 import ru.runa.wfe.user.User;
 
 public class WfeScriptForBotStations extends AdminScriptRunner {
