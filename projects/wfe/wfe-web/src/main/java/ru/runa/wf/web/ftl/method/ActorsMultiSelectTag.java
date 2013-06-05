@@ -1,6 +1,8 @@
 package ru.runa.wf.web.ftl.method;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,12 +13,15 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.AjaxJsonFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.filter.StringFilterCriteria;
+import ru.runa.wfe.service.client.DelegateExecutorLoader;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 
 import com.google.common.collect.Lists;
@@ -33,12 +38,38 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
         StringBuffer html = new StringBuffer();
+
+        List<String> previouslySubmittedValues = variableProvider.getValue(List.class, variableName);
+        if (previouslySubmittedValues == null) {
+            previouslySubmittedValues = new ArrayList<String>();
+        }
+        substitutions.put("START_COUNTER", String.valueOf(previouslySubmittedValues.size()));
+
         html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions, false));
 
-        html.append("<div id=\"actorsMultiSelect_").append(variableName).append("\"><div id=\"actorsMultiSelectCnt_").append(variableName)
-                .append("\"></div><div id=\"actorsMultiSelectAddButton_").append(variableName).append("\"><a href=\"javascript:{}\" id=\"btnAdd_")
-                .append(variableName).append("\">[ + ]</a></div></div>");
+        html.append("<div id=\"actorsMultiSelect_").append(variableName).append("\">");
+        html.append("<div id=\"actorsMultiSelectCnt_").append(variableName).append("\">");
+        for (int i = 0; i < previouslySubmittedValues.size(); i++) {
+            String divId = "div_" + variableName + i;
+            String e = "<div id='" + divId + "'>";
+            String code = previouslySubmittedValues.get(i);
+            e += "<input type='hidden' name='" + variableName + "' value='" + code + "' /> " + getDisplayName(code);
+            e += " <a href='javascript:{}' onclick='$(\"#" + divId + "\").remove();'>[ X ]</a>";
+            e += "</div>";
+            html.append(e);
+        }
+        html.append("</div>");
+        html.append("<div id=\"actorsMultiSelectAddButton_").append(variableName).append("\">");
+        html.append("<a href=\"javascript:{}\" id=\"btnAdd_").append(variableName).append("\">[ + ]</a>");
+        html.append("</div>");
+        html.append("</div>");
         return html.toString();
+    }
+
+    private String getDisplayName(String code) throws TemplateModelException {
+        Executor executor = TypeConversionUtil.convertToExecutor(code, new DelegateExecutorLoader(user));
+        String displayFormat = getParameterAs(String.class, 1);
+        return "login".equals(displayFormat) ? executor.getName() : executor.getFullName();
     }
 
     @Override
@@ -81,6 +112,7 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
                     }
                 }
             }
+            Collections.sort(actors);
         } else {
             BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
             batchPresentation.setRangeSize(rangeSize);

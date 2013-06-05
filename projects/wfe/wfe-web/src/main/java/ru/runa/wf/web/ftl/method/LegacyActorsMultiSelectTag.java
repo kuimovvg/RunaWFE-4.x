@@ -1,6 +1,7 @@
 package ru.runa.wf.web.ftl.method;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,6 @@ import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.filter.StringFilterCriteria;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
@@ -85,10 +85,9 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
     private List<Actor> getActors(User user, String groupName, boolean byLogin, String hint) {
         int rangeSize = 50;
         List<Actor> actors = Lists.newArrayListWithExpectedSize(rangeSize);
-        ExecutorService executorService = Delegates.getExecutorService();
         if (groupName != null && groupName.length() > 0) {
-            Group group = executorService.getExecutorByName(user, groupName);
-            List<Actor> groupActors = executorService.getGroupActors(user, group);
+            Group group = Delegates.getExecutorService().getExecutorByName(user, groupName);
+            List<Actor> groupActors = Delegates.getExecutorService().getGroupActors(user, group);
             for (Actor actor : groupActors) {
                 if (byLogin) {
                     if (actor.getName().startsWith(hint)) {
@@ -100,6 +99,7 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
                     }
                 }
             }
+            Collections.sort(actors);
         } else {
             BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
             batchPresentation.setRangeSize(rangeSize);
@@ -111,7 +111,7 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
             // thid method used instead of getActors due to lack paging in
             // that
             // method
-            actors.addAll((Collection<? extends Actor>) executorService.getExecutors(user, batchPresentation));
+            actors.addAll((Collection<? extends Actor>) Delegates.getExecutorService().getExecutors(user, batchPresentation));
         }
         return actors;
     }

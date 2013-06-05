@@ -1,5 +1,5 @@
 
-var numCounter_VARIABLE = 0;
+var numCounter_VARIABLE = START_COUNTER;
 $(document).ready(function() {
     $('#btnAdd_VARIABLE').click(function() {
         updateDialogContent_VARIABLE();
