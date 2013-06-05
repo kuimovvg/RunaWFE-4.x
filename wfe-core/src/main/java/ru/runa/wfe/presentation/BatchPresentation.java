@@ -245,7 +245,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
                 storage = null;
             } catch (Exception e) {
                 String xml = fieldsData != null ? new String(fieldsData, Charsets.UTF_8) : "NULL";
-                log.error("Unable to load batch presentation state from " + xml, e);
+                log.warn("Unable to load batch presentation state from " + xml + ", using default fields", e);
                 fields = createDefaultFields();
             }
         }
