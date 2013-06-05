@@ -32,6 +32,7 @@ import ru.runa.wfe.user.User;
  * Relations service interface.
  * 
  * @author Konstantinov Aleksey 12.02.2012
+ * @since 3.1
  */
 public interface RelationService {
     /**

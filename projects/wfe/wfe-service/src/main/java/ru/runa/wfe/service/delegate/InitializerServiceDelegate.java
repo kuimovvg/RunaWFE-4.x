@@ -33,12 +33,8 @@ public class InitializerServiceDelegate extends EJB3Delegate implements Initiali
     }
 
     @Override
-    public void init(boolean force) {
-        getInitializerService().init(force);
-    }
-
-    public static void main(String[] args) throws Exception {
-        Delegates.getInitializerService().init(true);
+    public void onSystemStartup() {
+        getInitializerService().onSystemStartup();
     }
 
 }

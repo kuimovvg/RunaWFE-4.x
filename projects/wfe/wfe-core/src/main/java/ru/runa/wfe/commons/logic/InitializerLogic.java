@@ -116,15 +116,11 @@ public class InitializerLogic {
     /**
      * Initialize database if needed. Default hibernate session must be already
      * set to archive if required.
-     * 
-     * @param isArchiveDBinit
-     *            Flag, equals true if archiving database is initialized; false
-     *            for main database.
      */
-    public void init(UserTransaction transaction, boolean force) {
+    public void init(UserTransaction transaction) {
         try {
-            if (force || !isAlreadyIntialized()) {
-                initializeDatabase(transaction, force);
+            if (!isAlreadyIntialized()) {
+                initializeDatabase(transaction);
             } else {
                 log.info("database is initialized. skipping initialization ...");
                 applyPatches(transaction);
@@ -153,16 +149,9 @@ public class InitializerLogic {
      * 
      * @param daoHolder
      *            Helper object for getting DAO's.
-     * @param force
-     *            Flag, equals true if database must be initialized even if it
-     *            already exists.
      */
-    private void initializeDatabase(UserTransaction transaction, boolean force) {
-        if (force) {
-            log.info("forcing database initialization...");
-        } else {
-            log.info("database is not initialized. initializing...");
-        }
+    private void initializeDatabase(UserTransaction transaction) {
+        log.info("database is not initialized. initializing...");
         SchemaExport schemaExport = new SchemaExport(ApplicationContextFactory.getConfiguration());
         schemaExport.create(true, true);
         try {

@@ -24,37 +24,48 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
-import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 
 /**
- * Provides methods for authorization mechanism.
- * <p>
- * Created on 20.07.2004
- * </p>
+ * Service for authorization.
+ * 
+ * @since 2.0
  */
 public interface AuthorizationService {
 
     /**
-     * Checks whether {@link Actor}from subject has permission on
-     * {@link Identifiable}.
+     * Checks whether user has permission on identifiable.
      */
     public boolean isAllowed(User user, Permission permission, Identifiable identifiable);
 
+    /**
+     * Checks whether user has permission on identifiables.
+     * 
+     * @param user
+     * @param permission
+     * @param identifiables
+     * @return
+     */
     public <T extends Identifiable> boolean[] isAllowed(User user, Permission permission, List<T> identifiables);
 
     /**
-     * Sets permissions for performer on {@link Identifiable}.
+     * Sets permissions for executor specified by id on identifiable.
      */
     public void setPermissions(User user, Long executorId, Collection<Permission> permissions, Identifiable identifiable);
 
+    /**
+     * Sets permissions for executors specified by ids on identifiable.
+     */
     public void setPermissions(User user, List<Long> executorsId, List<Collection<Permission>> permissions, Identifiable identifiable);
 
+    /**
+     * Sets permissions for executors specified by ids on identifiable.
+     */
     public void setPermissions(User user, List<Long> executorsId, Collection<Permission> permissions, Identifiable identifiable);
 
     /**
-     * Returns permissions that executor himself has on {@link Identifiable}.
+     * Returns permissions that executor himself has on identifiable.
      * Permissions by privilege will not return.
      * 
      * @return Map of {Permission, Is permission can be modifiable}, not
@@ -101,6 +112,17 @@ public interface AuthorizationService {
      */
     public int getExecutorsWithPermissionCount(User user, Identifiable identifiable, BatchPresentation batchPresentation, boolean hasPermission);
 
+    /**
+     * Loads identifiables with permission filtering.
+     * 
+     * @param user
+     * @param batchPresentation
+     * @param persistentClass
+     * @param permission
+     * @param securedObjectTypes
+     * @param enablePaging
+     * @return
+     */
     public <T extends Object> List<T> getPersistentObjects(User user, BatchPresentation batchPresentation, Class<T> persistentClass,
             Permission permission, SecuredObjectType[] securedObjectTypes, boolean enablePaging);
 
