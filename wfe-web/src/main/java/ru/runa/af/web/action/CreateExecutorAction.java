@@ -28,7 +28,6 @@ import ru.runa.af.web.form.CreateExecutorForm;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
@@ -51,18 +50,18 @@ public class CreateExecutorAction extends ActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         CreateExecutorForm createFrom = (CreateExecutorForm) form;
         try {
-            ExecutorService executorService = Delegates.getExecutorService();
             if (CreateExecutorForm.TYPE_ACTOR.equals(createFrom.getExecutorType())) {
                 Long code = null;
                 if (createFrom.getCode() != 0) {
                     code = createFrom.getCode();
                 }
-                executorService.create(getLoggedUser(request),
+                Delegates.getExecutorService().create(
+                        getLoggedUser(request),
                         new Actor(createFrom.getNewName(), createFrom.getDescription(), createFrom.getFullName(), code, createFrom.getEmail(),
                                 createFrom.getPhone()));
             } else if (CreateExecutorForm.TYPE_GROUP.equals(createFrom.getExecutorType())) {
-                executorService
-                        .create(getLoggedUser(request), new Group(createFrom.getNewName(), createFrom.getDescription(), createFrom.getEmail()));
+                Delegates.getExecutorService().create(getLoggedUser(request),
+                        new Group(createFrom.getNewName(), createFrom.getDescription(), createFrom.getEmail()));
             }
         } catch (Exception e) {
             addError(request, e);
