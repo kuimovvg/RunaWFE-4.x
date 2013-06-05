@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getActiveTasksResponse complex type.
+ * <p>Java class for getProcessTasksResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getActiveTasksResponse">
+ * &lt;complexType name="getProcessTasksResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -29,10 +29,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getActiveTasksResponse", propOrder = {
+@XmlType(name = "getProcessTasksResponse", propOrder = {
     "_return"
 })
-public class GetActiveTasksResponse {
+public class GetProcessTasksResponse {
 
     @XmlElement(name = "return")
     protected List<WfTask> _return;
