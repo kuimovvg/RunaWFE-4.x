@@ -24,6 +24,7 @@ import java.util.Map;
 
 import ru.runa.wfe.InternalApplicationException;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -56,19 +57,10 @@ public class ValidationException extends InternalApplicationException {
     }
 
     public HashMap<String, String> getConcatenatedFieldErrors() {
-        HashMap<String, String> concatenated = new HashMap<String, String>();
-        for (String key : fieldErrors.keySet()) {
-            List<String> values = fieldErrors.get(key);
-            String concat = null;
-            if (values != null) {
-                StringBuffer buffer = new StringBuffer();
-                for (String msg : values) {
-                    buffer.append(msg);
-                    buffer.append("\n");
-                }
-                concat = buffer.toString();
-            }
-            concatenated.put(key, concat);
+        HashMap<String, String> concatenated = Maps.newHashMap();
+        for (Map.Entry<String, List<String>> entry : fieldErrors.entrySet()) {
+            String concat = Joiner.on("<br>").join(entry.getValue());
+            concatenated.put(entry.getKey(), concat);
         }
         return concatenated;
     }
