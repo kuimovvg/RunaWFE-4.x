@@ -3,8 +3,6 @@ package ru.runa.common.web.filter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
     public XSSRequestWrapper(HttpServletRequest servletRequest) {
@@ -44,17 +42,16 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
     }
 
     private String cleanXSS(String value) {
-        return StringEscapeUtils.escapeHtml(value);
+        // return StringEscapeUtils.escapeHtml(value);
         // You'll need to remove the spaces from the html entities below
-        // value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
+        value = value.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         // value = value.replaceAll("\\(", "& #40;").replaceAll("\\)",
         // "& #41;");
         // value = value.replaceAll("'", "& #39;");
-        // value = value.replaceAll("eval\\((.*)\\)", "");
-        // value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']",
-        // "\"\"");
+        value = value.replaceAll("eval\\((.*)\\)", "");
+        value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
         // value = value.replaceAll("script", "");
-        // return value;
+        return value;
     }
 
 }
