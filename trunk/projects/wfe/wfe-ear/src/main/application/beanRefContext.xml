@@ -13,6 +13,7 @@
         <constructor-arg>
             <list>
                 <value>classpath:system.context.xml</value>
+                <value>classpath*:*.context.xml</value>
             </list>
 		    </constructor-arg>
 	  </bean>  
