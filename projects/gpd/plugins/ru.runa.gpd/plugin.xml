@@ -140,8 +140,19 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="node.compactview"
-          objectClass="ru.runa.gpd.lang.model.Node">
+          id="taskstate.compactview"
+          objectClass="ru.runa.gpd.lang.model.TaskState">
+       <action
+             class="ru.runa.gpd.lang.action.CompactViewFeatureDelegate"
+             id="feature.compactView"
+             label="%label.action.feature.compactView"
+             menubarPath="features/sp1">
+       </action>
+    </objectContribution>
+    <objectContribution
+          adaptable="false"
+          id="conjunction.compactview"
+          objectClass="ru.runa.gpd.lang.model.Conjunction">
        <action
              class="ru.runa.gpd.lang.action.CompactViewFeatureDelegate"
              id="feature.compactView"
