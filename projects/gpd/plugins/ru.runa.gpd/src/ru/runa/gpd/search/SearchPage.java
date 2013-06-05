@@ -105,7 +105,9 @@ public class SearchPage extends AbstractTextSearchViewPage {
             delegate.openDetails((Subprocess) elementMatch.getGraphElement());
         } else if (elementMatch.getGraphElement() != null) {
             ProcessEditorBase processEditor = WorkspaceOperations.openProcessDefinition(elementMatch.getGraphElement().getProcessDefinition());
-            processEditor.select(elementMatch.getGraphElement());
+            if (processEditor != null) {
+                processEditor.select(elementMatch.getGraphElement());
+            }
         }
         if (editor == null) {
             return;
