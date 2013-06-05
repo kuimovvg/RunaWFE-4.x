@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for importExecutorsFromLDAP complex type.
+ * <p>Java class for getSubprocessesRecursive complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="importExecutorsFromLDAP">
+ * &lt;complexType name="getSubprocessesRecursive">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,24 +27,24 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "importExecutorsFromLDAP", propOrder = {
+@XmlType(name = "getSubprocessesRecursive", propOrder = {
     "arg0",
     "arg1"
 })
-public class ImportExecutorsFromLDAP {
+public class GetSubprocessesRecursive {
 
-    protected String arg0;
-    protected String arg1;
+    protected User arg0;
+    protected Long arg1;
 
     /**
      * Gets the value of the arg0 property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link User }
      *     
      */
-    public String getArg0() {
+    public User getArg0() {
         return arg0;
     }
 
@@ -53,10 +53,10 @@ public class ImportExecutorsFromLDAP {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link User }
      *     
      */
-    public void setArg0(String value) {
+    public void setArg0(User value) {
         this.arg0 = value;
     }
 
@@ -65,10 +65,10 @@ public class ImportExecutorsFromLDAP {
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Long }
      *     
      */
-    public String getArg1() {
+    public Long getArg1() {
         return arg1;
     }
 
@@ -77,10 +77,10 @@ public class ImportExecutorsFromLDAP {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Long }
      *     
      */
-    public void setArg1(String value) {
+    public void setArg1(Long value) {
         this.arg1 = value;
     }
 

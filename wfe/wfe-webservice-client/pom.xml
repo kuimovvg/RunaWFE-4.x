@@ -43,12 +43,10 @@
 								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/AdminScriptServiceBean?wsdl</wsdl>
 								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/AuthenticationServiceBean?wsdl</wsdl>
 								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/AuthorizationServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/BotInvokerServiceBean?wsdl</wsdl>
 								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/BotServiceBean?wsdl</wsdl>
 								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/DefinitionServiceBean?wsdl</wsdl>
 								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/ExecutionServiceBean?wsdl</wsdl>
 								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/ExecutorServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/LDAPSynchronizerServiceBean?wsdl</wsdl>
 								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/ProfileServiceBean?wsdl</wsdl>
 								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/RelationServiceBean?wsdl</wsdl>
 								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.0/SystemServiceBean?wsdl</wsdl>

@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  *           &lt;/complexType>
  *         &lt;/element>
  *         &lt;element name="dynamics" type="{http://impl.service.wfe.runa.ru/}dynamicField" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="expandedBlocks" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -61,7 +62,8 @@ import javax.xml.bind.annotation.XmlType;
     "sortModes",
     "groupIds",
     "filters",
-    "dynamics"
+    "dynamics",
+    "expandedBlocks"
 })
 public class Fields {
 
@@ -77,6 +79,8 @@ public class Fields {
     protected Fields.Filters filters;
     @XmlElement(nillable = true)
     protected List<DynamicField> dynamics;
+    @XmlElement(nillable = true)
+    protected List<String> expandedBlocks;
 
     /**
      * Gets the value of the displayIds property.
@@ -245,6 +249,35 @@ public class Fields {
             dynamics = new ArrayList<DynamicField>();
         }
         return this.dynamics;
+    }
+
+    /**
+     * Gets the value of the expandedBlocks property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the expandedBlocks property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getExpandedBlocks().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
+     */
+    public List<String> getExpandedBlocks() {
+        if (expandedBlocks == null) {
+            expandedBlocks = new ArrayList<String>();
+        }
+        return this.expandedBlocks;
     }
 
 
