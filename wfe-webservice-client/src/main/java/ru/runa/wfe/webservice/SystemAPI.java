@@ -68,17 +68,6 @@ public interface SystemAPI {
 
     /**
      * 
-     * @param arg0
-     */
-    @WebMethod
-    @RequestWrapper(localName = "logout", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.Logout")
-    @ResponseWrapper(localName = "logoutResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.LogoutResponse")
-    public void logout(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0);
-
-    /**
-     * 
      * @param arg1
      * @param arg0
      */

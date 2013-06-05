@@ -23,6 +23,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="swimlaneName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="owner" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
+ *         &lt;element name="targetActor" type="{http://impl.service.wfe.runa.ru/}actor" minOccurs="0"/>
  *         &lt;element name="definitionId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *         &lt;element name="definitionName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="processId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
@@ -30,8 +31,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="deadlineDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
  *         &lt;element name="deadlineWarningDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
  *         &lt;element name="escalated" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="groupAssigned" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="firstOpen" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="acquiredBySubstitution" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -47,6 +48,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "description",
     "swimlaneName",
     "owner",
+    "targetActor",
     "definitionId",
     "definitionName",
     "processId",
@@ -54,8 +56,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "deadlineDate",
     "deadlineWarningDate",
     "escalated",
-    "groupAssigned",
-    "firstOpen"
+    "firstOpen",
+    "acquiredBySubstitution"
 })
 public class WfTask {
 
@@ -64,6 +66,7 @@ public class WfTask {
     protected String description;
     protected String swimlaneName;
     protected WfExecutor owner;
+    protected Actor targetActor;
     protected Long definitionId;
     protected String definitionName;
     protected Long processId;
@@ -74,8 +77,8 @@ public class WfTask {
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar deadlineWarningDate;
     protected boolean escalated;
-    protected boolean groupAssigned;
     protected boolean firstOpen;
+    protected boolean acquiredBySubstitution;
 
     /**
      * Gets the value of the id property.
@@ -195,6 +198,30 @@ public class WfTask {
      */
     public void setOwner(WfExecutor value) {
         this.owner = value;
+    }
+
+    /**
+     * Gets the value of the targetActor property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Actor }
+     *     
+     */
+    public Actor getTargetActor() {
+        return targetActor;
+    }
+
+    /**
+     * Sets the value of the targetActor property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Actor }
+     *     
+     */
+    public void setTargetActor(Actor value) {
+        this.targetActor = value;
     }
 
     /**
@@ -358,22 +385,6 @@ public class WfTask {
     }
 
     /**
-     * Gets the value of the groupAssigned property.
-     * 
-     */
-    public boolean isGroupAssigned() {
-        return groupAssigned;
-    }
-
-    /**
-     * Sets the value of the groupAssigned property.
-     * 
-     */
-    public void setGroupAssigned(boolean value) {
-        this.groupAssigned = value;
-    }
-
-    /**
      * Gets the value of the firstOpen property.
      * 
      */
@@ -387,6 +398,22 @@ public class WfTask {
      */
     public void setFirstOpen(boolean value) {
         this.firstOpen = value;
+    }
+
+    /**
+     * Gets the value of the acquiredBySubstitution property.
+     * 
+     */
+    public boolean isAcquiredBySubstitution() {
+        return acquiredBySubstitution;
+    }
+
+    /**
+     * Sets the value of the acquiredBySubstitution property.
+     * 
+     */
+    public void setAcquiredBySubstitution(boolean value) {
+        this.acquiredBySubstitution = value;
     }
 
 }

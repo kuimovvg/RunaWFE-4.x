@@ -54,7 +54,6 @@ public interface RelationAPI {
      * @param arg0
      * @return
      *     returns ru.runa.wfe.webservice.Relation
-     * @throws RelationAlreadyExistException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -66,9 +65,7 @@ public interface RelationAPI {
         @WebParam(name = "arg1", targetNamespace = "")
         String arg1,
         @WebParam(name = "arg2", targetNamespace = "")
-        String arg2)
-        throws RelationAlreadyExistException_Exception
-    ;
+        String arg2);
 
     /**
      * 

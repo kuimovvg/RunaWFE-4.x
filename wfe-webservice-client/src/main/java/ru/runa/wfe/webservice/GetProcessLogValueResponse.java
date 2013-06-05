@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,16 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 public class GetProcessLogValueResponse {
 
     @XmlElement(name = "return")
-    protected byte[] _return;
+    protected Object _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     byte[]
+     *     {@link Object }
+     *     
      */
-    public byte[] getReturn() {
+    public Object getReturn() {
         return _return;
     }
 
@@ -51,10 +52,11 @@ public class GetProcessLogValueResponse {
      * 
      * @param value
      *     allowed object is
-     *     byte[]
+     *     {@link Object }
+     *     
      */
-    public void setReturn(byte[] value) {
-        this._return = ((byte[]) value);
+    public void setReturn(Object value) {
+        this._return = value;
     }
 
 }

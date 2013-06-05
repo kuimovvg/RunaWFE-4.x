@@ -81,11 +81,10 @@ public interface ExecutionAPI {
 
     /**
      * 
+     * @param arg3
      * @param arg2
      * @param arg1
      * @param arg0
-     * @throws TaskAlreadyCompletedException_Exception
-     * @throws TaskDoesNotExistException_Exception
      */
     @WebMethod
     @RequestWrapper(localName = "completeTaskWS", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CompleteTaskWS")
@@ -96,26 +95,9 @@ public interface ExecutionAPI {
         @WebParam(name = "arg1", targetNamespace = "")
         Long arg1,
         @WebParam(name = "arg2", targetNamespace = "")
-        List<WfVariable> arg2)
-        throws TaskAlreadyCompletedException_Exception, TaskDoesNotExistException_Exception
-    ;
-
-    /**
-     * 
-     * @param arg1
-     * @param arg0
-     * @return
-     *     returns java.util.List<ru.runa.wfe.webservice.WfTask>
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getActiveTasks", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetActiveTasks")
-    @ResponseWrapper(localName = "getActiveTasksResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetActiveTasksResponse")
-    public List<WfTask> getActiveTasks(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        List<WfVariable> arg2,
+        @WebParam(name = "arg3", targetNamespace = "")
+        Long arg3);
 
     /**
      * 
@@ -233,13 +215,13 @@ public interface ExecutionAPI {
      * @param arg1
      * @param arg0
      * @return
-     *     returns byte[]
+     *     returns java.lang.Object
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "getProcessLogValue", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessLogValue")
     @ResponseWrapper(localName = "getProcessLogValueResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessLogValueResponse")
-    public byte[] getProcessLogValue(
+    public Object getProcessLogValue(
         @WebParam(name = "arg0", targetNamespace = "")
         User arg0,
         @WebParam(name = "arg1", targetNamespace = "")
@@ -261,6 +243,23 @@ public interface ExecutionAPI {
         User arg0,
         @WebParam(name = "arg1", targetNamespace = "")
         ProcessLogFilter arg1);
+
+    /**
+     * 
+     * @param arg1
+     * @param arg0
+     * @return
+     *     returns java.util.List<ru.runa.wfe.webservice.WfTask>
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getProcessTasks", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessTasks")
+    @ResponseWrapper(localName = "getProcessTasksResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessTasksResponse")
+    public List<WfTask> getProcessTasks(
+        @WebParam(name = "arg0", targetNamespace = "")
+        User arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        Long arg1);
 
     /**
      * 
@@ -298,6 +297,23 @@ public interface ExecutionAPI {
         User arg0,
         @WebParam(name = "arg1", targetNamespace = "")
         BatchPresentation arg1);
+
+    /**
+     * 
+     * @param arg1
+     * @param arg0
+     * @return
+     *     returns java.util.List<ru.runa.wfe.webservice.WfProcess>
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSubprocessesRecursive", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubprocessesRecursive")
+    @ResponseWrapper(localName = "getSubprocessesRecursiveResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubprocessesRecursiveResponse")
+    public List<WfProcess> getSubprocessesRecursive(
+        @WebParam(name = "arg0", targetNamespace = "")
+        User arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        Long arg1);
 
     /**
      * 
@@ -495,7 +511,6 @@ public interface ExecutionAPI {
      * @param arg2
      * @param arg1
      * @param arg0
-     * @throws ProcessDoesNotExistException_Exception
      */
     @WebMethod
     @RequestWrapper(localName = "updateVariablesWS", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateVariablesWS")
@@ -506,8 +521,6 @@ public interface ExecutionAPI {
         @WebParam(name = "arg1", targetNamespace = "")
         Long arg1,
         @WebParam(name = "arg2", targetNamespace = "")
-        List<WfVariable> arg2)
-        throws ProcessDoesNotExistException_Exception
-    ;
+        List<WfVariable> arg2);
 
 }
