@@ -190,6 +190,9 @@ public class WorkspaceOperations {
         return openProcessDefinition(processDefinition);
     }
 
+    /**
+     * @return process editor or <code>null</code>
+     */
     public static ProcessEditorBase openProcessDefinition(ProcessDefinition processDefinition) {
         try {
             IFile definitionFile = ProcessCache.getProcessDefinitionFile(processDefinition.getName());
@@ -199,11 +202,14 @@ public class WorkspaceOperations {
             } else {
                 editorId = GEFProcessEditor.ID;
             }
-            return (ProcessEditorBase) IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), definitionFile, editorId, true);
+            IEditorPart editorPart = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), definitionFile, editorId, true);
+            if (editorPart instanceof ProcessEditorBase) {
+                return (ProcessEditorBase) editorPart;
+            }
         } catch (PartInitException e) {
             PluginLogger.logError("Unable open diagram", e);
-            return null;
         }
+        return null;
     }
 
     public static void exportProcessDefinition(IStructuredSelection selection) {

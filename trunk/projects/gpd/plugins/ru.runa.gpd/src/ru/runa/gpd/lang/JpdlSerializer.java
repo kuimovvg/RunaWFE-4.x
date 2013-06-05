@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IFile;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.ActionImpl;
 import ru.runa.gpd.lang.model.ActionNode;
@@ -413,6 +414,7 @@ public class JpdlSerializer extends ProcessSerializer {
         ActionImpl action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement(parent);
         setDelegableClassName(action, node.attributeValue(CLASS_ATTR));
         action.setDelegationConfiguration(node.getText());
+        action.setId(parent.getId() + "." + parent.getActions().size());
         parent.addAction(action, -1);
         action.setEventType(eventType);
     }
@@ -711,8 +713,13 @@ public class JpdlSerializer extends ProcessSerializer {
         List<Transition> tmpTransitions = new ArrayList<Transition>(TRANSITION_TARGETS.keySet());
         for (Transition transition : tmpTransitions) {
             String targetNodeId = TRANSITION_TARGETS.remove(transition);
-            Node target = definition.getGraphElementByIdNotNull(targetNodeId);
-            transition.setTarget(target);
+            try {
+                Node target = definition.getGraphElementByIdNotNull(targetNodeId);
+                transition.setTarget(target);
+            } catch (Exception e) {
+                PluginLogger.logError(e);
+                throw new RuntimeException("Problem with " + transition.getId() + ": " + transition.getParent() + " -> " + targetNodeId);
+            }
         }
         return definition;
     }
