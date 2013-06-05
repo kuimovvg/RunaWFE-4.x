@@ -22,7 +22,7 @@ import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 
 /**
- * Service to operate with actor profiles.
+ * Service to operate with user profiles.
  * 
  * @author dofs
  * @since 4.0
@@ -30,19 +30,20 @@ import ru.runa.wfe.user.User;
 public interface ProfileService {
 
     /**
-     * Loads profile
+     * Loads user profile
      */
     public Profile getProfile(User user);
 
     /**
      * Sets specified by category and name batch presentation as active for this
-     * category.
+     * user profile.
      * 
      * @return updated profile
      */
-    public Profile setActiveBatchPresentation(User user, String batchPresentationId, String newName);
+    public Profile setActiveBatchPresentation(User user, String category, String newName);
 
     /**
+     * Deletes batch presentation in user profile.
      * 
      * @param user
      * @param batchPresentation
@@ -51,6 +52,7 @@ public interface ProfileService {
     public Profile deleteBatchPresentation(User user, BatchPresentation batchPresentation);
 
     /**
+     * Creates new batch presentation in user profile.
      * 
      * @param user
      * @param batchPresentation
@@ -59,7 +61,7 @@ public interface ProfileService {
     public Profile createBatchPresentation(User user, BatchPresentation batchPresentation);
 
     /**
-     * Saves batch presentation.
+     * Saves batch presentation in user profile.
      * 
      * @return updated profile
      */

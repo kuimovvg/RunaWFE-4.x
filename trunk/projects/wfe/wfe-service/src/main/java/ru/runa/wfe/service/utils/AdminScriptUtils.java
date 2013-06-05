@@ -1,4 +1,4 @@
-package ru.runa.wfe.service;
+package ru.runa.wfe.service.utils;
 
 import org.dom4j.Document;
 

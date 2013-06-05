@@ -21,14 +21,38 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.user.User;
 
 /**
- * Created on 20.07.2004
+ * Service for authentication.
+ * 
+ * @since 2.0
  */
 public interface AuthenticationService {
 
+    /**
+     * Integrated application server authentication.
+     * 
+     * @return
+     * @throws AuthenticationException
+     */
     public User authenticateByCallerPrincipal() throws AuthenticationException;
 
+    /**
+     * Kerberos v5 authentication.
+     * 
+     * @param token
+     *            kerberos token
+     * @return
+     * @throws AuthenticationException
+     */
     public User authenticateByKerberos(byte[] token) throws AuthenticationException;
 
+    /**
+     * Authentication by login and password against internal database.
+     * 
+     * @param login
+     * @param password
+     * @return
+     * @throws AuthenticationException
+     */
     public User authenticateByLoginPassword(String login, String password) throws AuthenticationException;
 
 }

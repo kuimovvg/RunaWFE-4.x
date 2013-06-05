@@ -31,6 +31,7 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.security.logic.LDAPImporter;
 import ru.runa.wfe.service.decl.ExecutorServiceLocal;
 import ru.runa.wfe.service.decl.ExecutorServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
@@ -51,9 +52,12 @@ import com.google.common.base.Preconditions;
 @Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 @WebService(name = "ExecutorAPI", serviceName = "ExecutorWebService")
 @SOAPBinding
+@SuppressWarnings("unchecked")
 public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServiceRemote {
     @Autowired
     private ExecutorLogic executorLogic;
+    @Autowired
+    private LDAPImporter importer;
 
     @Override
     public void update(User user, Executor executor) {
@@ -230,6 +234,11 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     public Actor getActorByCode(User user, Long code) {
         Preconditions.checkArgument(user != null);
         return executorLogic.getActorByCode(user, code);
+    }
+
+    @Override
+    public void synchronizeExecutorsWithLDAP(String username, String password) {
+        importer.importExecutors(username, password);
     }
 
 }
