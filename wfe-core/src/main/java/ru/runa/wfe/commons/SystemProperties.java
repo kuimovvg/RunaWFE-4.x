@@ -70,4 +70,8 @@ public class SystemProperties {
         return RESOURCES.getIntegerProperty("string.variable.length", 1024);
     }
 
+    public static int getTokenMaximumDepth() {
+        return RESOURCES.getIntegerProperty("token.maximum.depth", 100);
+    }
+
 }
