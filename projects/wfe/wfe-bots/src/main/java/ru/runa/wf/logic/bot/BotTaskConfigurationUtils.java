@@ -1,6 +1,8 @@
 package ru.runa.wf.logic.bot;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -86,11 +88,13 @@ public class BotTaskConfigurationUtils {
             ParamDef taskParamDef = taskParamsDef.getInputParamNotNull(botTaskParamDef.getName());
             String replacement = getReplacement(taskParamDef);
             substituted = substituted.replaceAll("\"" + taskParamDef.getName() + "\"", "\"" + replacement + "\"");
+            substituted = substituted.replaceAll(Pattern.quote(taskParamDef.getName()), Matcher.quoteReplacement(replacement));
         }
         for (ParamDef botTaskParamDef : botTaskParamsDef.getOutputParams().values()) {
             ParamDef taskParamDef = taskParamsDef.getOutputParamNotNull(botTaskParamDef.getName());
             String replacement = getReplacement(taskParamDef);
             substituted = substituted.replaceAll("\"" + taskParamDef.getName() + "\"", "\"" + replacement + "\"");
+            substituted = substituted.replaceAll(Pattern.quote(taskParamDef.getName()), Matcher.quoteReplacement(replacement));
         }
         return substituted.getBytes(Charsets.UTF_8);
     }
@@ -98,8 +102,8 @@ public class BotTaskConfigurationUtils {
     private static String getReplacement(ParamDef paramDef) {
         if (!Strings.isNullOrEmpty(paramDef.getVariableName())) {
             return paramDef.getVariableName();
-        } else if (!Strings.isNullOrEmpty(paramDef.getVariableName())) {
-            return paramDef.getVariableName();
+        } else if (!Strings.isNullOrEmpty(paramDef.getValue())) {
+            return paramDef.getValue();
         } else {
             throw new InternalApplicationException("no replacement found for param " + paramDef);
         }
