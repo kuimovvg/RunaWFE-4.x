@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 
@@ -67,7 +68,7 @@ public class Fork extends Node {
             unsavedTokensLevel++;
             token = token.getParent();
         }
-        if (unsavedTokensLevel > 100) {
+        if (unsavedTokensLevel > SystemProperties.getTokenMaximumDepth()) {
             throw new RuntimeException("Cyclic fork execution does not allowed");
         }
     }
