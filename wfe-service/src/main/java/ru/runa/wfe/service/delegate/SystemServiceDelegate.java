@@ -46,11 +46,6 @@ public class SystemServiceDelegate extends EJB3Delegate implements SystemService
     }
 
     @Override
-    public void logout(User user) {
-        getSystemService().logout(user);
-    }
-
-    @Override
     public List<Localization> getLocalizations(User user) {
         return getSystemService().getLocalizations(user);
     }

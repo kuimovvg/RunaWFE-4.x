@@ -28,8 +28,8 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.commons.xml.XmlUtils;
-import ru.runa.wfe.service.AdminScriptUtils;
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.service.utils.AdminScriptUtils;
 import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;

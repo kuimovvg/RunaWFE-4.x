@@ -44,7 +44,6 @@ import ru.runa.wfe.user.User;
  */
 public class LoginAction extends ActionBase {
 
-    /* this must be changed if "success" forward changed! */
     private final static String DEFAULT_TAB_FORWARD_NAME = "manage_tasks";
 
     @Override

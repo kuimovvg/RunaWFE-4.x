@@ -22,7 +22,7 @@ import ru.runa.wfe.user.User;
 public interface BotService {
 
     /**
-     * Create bot station.
+     * Creates bot station.
      * 
      * @return created bot station
      * @throws BotStationAlreadyExistsException
@@ -31,7 +31,7 @@ public interface BotService {
     public BotStation createBotStation(User user, BotStation botStation) throws BotStationAlreadyExistsException;
 
     /**
-     * Get all bot stations.
+     * Gets all bot stations.
      * 
      * @return list, not <code>null</code>
      */

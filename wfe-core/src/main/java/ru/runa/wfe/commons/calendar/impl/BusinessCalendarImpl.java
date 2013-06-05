@@ -27,6 +27,9 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.calendar.BusinessCalendar;
 
@@ -38,8 +41,10 @@ public class BusinessCalendarImpl implements BusinessCalendar {
     private static Properties businessCalendarProperties = ClassLoaderUtil.getProperties("business.calendar.properties", true);
     private final Day[] weekDays;
     private final List<Holiday> holidays;
+    protected final Log log = LogFactory.getLog(getClass());
 
     public BusinessCalendarImpl() {
+        log.info("Using business calendar implementation: " + getClass());
         weekDays = Day.parseWeekDays(businessCalendarProperties, this);
         holidays = Holiday.parseHolidays(businessCalendarProperties);
     }

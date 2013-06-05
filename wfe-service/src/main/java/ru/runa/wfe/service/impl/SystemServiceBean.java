@@ -60,12 +60,6 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
     }
 
     @Override
-    public void logout(User user) {
-        Preconditions.checkArgument(user != null);
-        auditLogic.logout(user, ASystem.INSTANCE);
-    }
-
-    @Override
     public List<Localization> getLocalizations(User user) {
         Preconditions.checkArgument(user != null);
         return auditLogic.getLocalizations(user);

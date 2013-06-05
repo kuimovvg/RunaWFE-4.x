@@ -62,9 +62,6 @@ public class AuditLogic extends CommonLogic {
         checkPermissionAllowed(user, system, SystemPermission.LOGIN_TO_SYSTEM);
     }
 
-    public void logout(User user, ASystem system) {
-    }
-
     public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter) {
         Preconditions.checkNotNull(filter.getProcessId(), "filter.processId");
         checkPermissionAllowed(user, processDAO.getNotNull(filter.getProcessId()), Permission.READ);

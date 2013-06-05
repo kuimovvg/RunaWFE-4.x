@@ -29,7 +29,6 @@ import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.InitializerService;
-import ru.runa.wfe.service.LDAPSynchronizerService;
 import ru.runa.wfe.service.ProfileService;
 import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.SubstitutionService;
@@ -109,9 +108,4 @@ public class Delegates {
     public static AdminScriptService getAdminScriptService() {
         return getDelegate(AdminScriptServiceDelegate.class);
     }
-
-    public static LDAPSynchronizerService getLDAPSynchronizerService() {
-        return getDelegate(LDAPSynchronizerServiceDelegate.class);
-    }
-
 }
