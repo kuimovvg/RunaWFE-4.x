@@ -19,7 +19,7 @@ public class CompleteTasks {
             System.out.println("TASKS = " + tasks.size());
             for (WfTask task : tasks) {
                 System.out.println(" Completing " + task.getName());
-                executionAPI.completeTaskWS(user, task.getId(), null);
+                executionAPI.completeTaskWS(user, task.getId(), null, null);
             }
         } catch (Exception e) {
             e.printStackTrace();

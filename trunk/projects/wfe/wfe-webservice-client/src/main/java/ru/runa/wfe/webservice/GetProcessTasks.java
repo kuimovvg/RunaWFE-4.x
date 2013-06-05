@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getActiveTasks complex type.
+ * <p>Java class for getProcessTasks complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getActiveTasks">
+ * &lt;complexType name="getProcessTasks">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getActiveTasks", propOrder = {
+@XmlType(name = "getProcessTasks", propOrder = {
     "arg0",
     "arg1"
 })
-public class GetActiveTasks {
+public class GetProcessTasks {
 
     protected User arg0;
     protected Long arg1;

@@ -27,22 +27,18 @@ public interface AuthenticationAPI {
      * 
      * @return
      *     returns ru.runa.wfe.webservice.User
-     * @throws AuthenticationException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "authenticateByCallerPrincipal", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByCallerPrincipal")
     @ResponseWrapper(localName = "authenticateByCallerPrincipalResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByCallerPrincipalResponse")
-    public User authenticateByCallerPrincipal()
-        throws AuthenticationException_Exception
-    ;
+    public User authenticateByCallerPrincipal();
 
     /**
      * 
      * @param arg0
      * @return
      *     returns ru.runa.wfe.webservice.User
-     * @throws AuthenticationException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -50,9 +46,7 @@ public interface AuthenticationAPI {
     @ResponseWrapper(localName = "authenticateByKerberosResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByKerberosResponse")
     public User authenticateByKerberos(
         @WebParam(name = "arg0", targetNamespace = "")
-        byte[] arg0)
-        throws AuthenticationException_Exception
-    ;
+        byte[] arg0);
 
     /**
      * 
@@ -60,7 +54,6 @@ public interface AuthenticationAPI {
      * @param arg0
      * @return
      *     returns ru.runa.wfe.webservice.User
-     * @throws AuthenticationException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -70,8 +63,6 @@ public interface AuthenticationAPI {
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
-        String arg1)
-        throws AuthenticationException_Exception
-    ;
+        String arg1);
 
 }

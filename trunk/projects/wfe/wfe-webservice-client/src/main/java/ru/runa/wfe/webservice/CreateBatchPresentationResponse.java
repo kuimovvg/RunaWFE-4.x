@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://impl.service.wfe.runa.ru/}batchPresentation" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://impl.service.wfe.runa.ru/}profile" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,17 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 public class CreateBatchPresentationResponse {
 
     @XmlElement(name = "return")
-    protected BatchPresentation _return;
+    protected Profile _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link BatchPresentation }
+     *     {@link Profile }
      *     
      */
-    public BatchPresentation getReturn() {
+    public Profile getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class CreateBatchPresentationResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link BatchPresentation }
+     *     {@link Profile }
      *     
      */
-    public void setReturn(BatchPresentation value) {
+    public void setReturn(Profile value) {
         this._return = value;
     }
 

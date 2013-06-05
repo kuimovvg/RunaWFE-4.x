@@ -100,6 +100,7 @@ public interface DefinitionAPI {
 
     /**
      * 
+     * @param arg3
      * @param arg2
      * @param arg1
      * @param arg0
@@ -116,7 +117,9 @@ public interface DefinitionAPI {
         @WebParam(name = "arg1", targetNamespace = "")
         Long arg1,
         @WebParam(name = "arg2", targetNamespace = "")
-        Long arg2);
+        Long arg2,
+        @WebParam(name = "arg3", targetNamespace = "")
+        boolean arg3);
 
     /**
      * 
@@ -130,23 +133,6 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "getProcessDefinition", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinition")
     @ResponseWrapper(localName = "getProcessDefinitionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinitionResponse")
     public WfDefinition getProcessDefinition(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
-
-    /**
-     * 
-     * @param arg1
-     * @param arg0
-     * @return
-     *     returns ru.runa.wfe.webservice.WfDefinition
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getProcessDefinitionByProcessId", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinitionByProcessId")
-    @ResponseWrapper(localName = "getProcessDefinitionByProcessIdResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinitionByProcessIdResponse")
-    public WfDefinition getProcessDefinitionByProcessId(
         @WebParam(name = "arg0", targetNamespace = "")
         User arg0,
         @WebParam(name = "arg1", targetNamespace = "")

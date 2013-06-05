@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="logs" type="{http://impl.service.wfe.runa.ru/}processLog" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="processIdLevels">
+ *         &lt;element name="subprocessToProcessIds">
  *           &lt;complexType>
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                           &lt;sequence>
  *                             &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
- *                             &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *                             &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *                           &lt;/sequence>
  *                         &lt;/restriction>
  *                       &lt;/complexContent>
@@ -53,14 +53,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "processLogs", propOrder = {
     "logs",
-    "processIdLevels"
+    "subprocessToProcessIds"
 })
 public class ProcessLogs {
 
     @XmlElement(nillable = true)
     protected List<ProcessLog> logs;
     @XmlElement(required = true)
-    protected ProcessLogs.ProcessIdLevels processIdLevels;
+    protected ProcessLogs.SubprocessToProcessIds subprocessToProcessIds;
 
     /**
      * Gets the value of the logs property.
@@ -92,27 +92,27 @@ public class ProcessLogs {
     }
 
     /**
-     * Gets the value of the processIdLevels property.
+     * Gets the value of the subprocessToProcessIds property.
      * 
      * @return
      *     possible object is
-     *     {@link ProcessLogs.ProcessIdLevels }
+     *     {@link ProcessLogs.SubprocessToProcessIds }
      *     
      */
-    public ProcessLogs.ProcessIdLevels getProcessIdLevels() {
-        return processIdLevels;
+    public ProcessLogs.SubprocessToProcessIds getSubprocessToProcessIds() {
+        return subprocessToProcessIds;
     }
 
     /**
-     * Sets the value of the processIdLevels property.
+     * Sets the value of the subprocessToProcessIds property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ProcessLogs.ProcessIdLevels }
+     *     {@link ProcessLogs.SubprocessToProcessIds }
      *     
      */
-    public void setProcessIdLevels(ProcessLogs.ProcessIdLevels value) {
-        this.processIdLevels = value;
+    public void setSubprocessToProcessIds(ProcessLogs.SubprocessToProcessIds value) {
+        this.subprocessToProcessIds = value;
     }
 
 
@@ -132,7 +132,7 @@ public class ProcessLogs {
      *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *                 &lt;sequence>
      *                   &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
-     *                   &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+     *                   &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
      *                 &lt;/sequence>
      *               &lt;/restriction>
      *             &lt;/complexContent>
@@ -150,9 +150,9 @@ public class ProcessLogs {
     @XmlType(name = "", propOrder = {
         "entry"
     })
-    public static class ProcessIdLevels {
+    public static class SubprocessToProcessIds {
 
-        protected List<ProcessLogs.ProcessIdLevels.Entry> entry;
+        protected List<ProcessLogs.SubprocessToProcessIds.Entry> entry;
 
         /**
          * Gets the value of the entry property.
@@ -172,13 +172,13 @@ public class ProcessLogs {
          * 
          * <p>
          * Objects of the following type(s) are allowed in the list
-         * {@link ProcessLogs.ProcessIdLevels.Entry }
+         * {@link ProcessLogs.SubprocessToProcessIds.Entry }
          * 
          * 
          */
-        public List<ProcessLogs.ProcessIdLevels.Entry> getEntry() {
+        public List<ProcessLogs.SubprocessToProcessIds.Entry> getEntry() {
             if (entry == null) {
-                entry = new ArrayList<ProcessLogs.ProcessIdLevels.Entry>();
+                entry = new ArrayList<ProcessLogs.SubprocessToProcessIds.Entry>();
             }
             return this.entry;
         }
@@ -195,7 +195,7 @@ public class ProcessLogs {
          *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
          *       &lt;sequence>
          *         &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
-         *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+         *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
          *       &lt;/sequence>
          *     &lt;/restriction>
          *   &lt;/complexContent>
@@ -212,7 +212,7 @@ public class ProcessLogs {
         public static class Entry {
 
             protected Long key;
-            protected Integer value;
+            protected Long value;
 
             /**
              * Gets the value of the key property.
@@ -243,10 +243,10 @@ public class ProcessLogs {
              * 
              * @return
              *     possible object is
-             *     {@link Integer }
+             *     {@link Long }
              *     
              */
-            public Integer getValue() {
+            public Long getValue() {
                 return value;
             }
 
@@ -255,10 +255,10 @@ public class ProcessLogs {
              * 
              * @param value
              *     allowed object is
-             *     {@link Integer }
+             *     {@link Long }
              *     
              */
-            public void setValue(Integer value) {
+            public void setValue(Long value) {
                 this.value = value;
             }
 
