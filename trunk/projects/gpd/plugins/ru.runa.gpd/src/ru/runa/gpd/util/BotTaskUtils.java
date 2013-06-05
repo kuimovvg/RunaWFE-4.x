@@ -80,7 +80,8 @@ public class BotTaskUtils {
     }
 
     public static boolean isTaskHandlerParameterized(String className) {
-        if (HandlerRegistry.getInstance().getAll(HandlerArtifact.TASK_HANDLER, false).contains(className)) {
+    	HandlerArtifact artifact = HandlerRegistry.getInstance().getArtifact(className);
+        if (artifact != null) {
             DelegableProvider provider = HandlerRegistry.getProvider(className);
             return provider instanceof ConfigBasedProvider;
         }
