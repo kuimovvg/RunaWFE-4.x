@@ -111,7 +111,7 @@ public class BotStation extends IdentifiableBase {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
+        return Objects.toStringHelper(this).add("id", id).add("name", name).add("address", address).toString();
     }
 
 }

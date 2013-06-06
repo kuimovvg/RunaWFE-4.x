@@ -69,6 +69,7 @@ public class BotInvokerActionHandler implements ActionHandler {
                 log.warn("No botstation can be found for invocation " + configuration);
                 return;
             }
+            log.info("Invoking " + botStation);
             BotInvokerServiceDelegate.getService(botStation).invokeBots(botStation);
         } catch (Exception e) {
             log.error("Unable to invoke bot station due to " + e);
