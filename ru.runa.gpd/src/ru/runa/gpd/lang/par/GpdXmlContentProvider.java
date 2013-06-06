@@ -11,11 +11,9 @@ import org.eclipse.draw2d.geometry.Rectangle;
 
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.Bendpoint;
-import ru.runa.gpd.lang.model.Conjunction;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.util.XmlUtil;
 
@@ -108,18 +106,11 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             addAttribute(element, Y_ATTRIBUTE_NAME, String.valueOf(constraint.y - yOffset));
             addAttribute(element, WIDTH_ATTRIBUTE_NAME, String.valueOf(constraint.width));
             addAttribute(element, HEIGHT_ATTRIBUTE_NAME, String.valueOf(constraint.height));
-            boolean minimizedView = false;
-            if (graphElement instanceof State) {
-                minimizedView = ((State) graphElement).isMinimizedView();
-            }
-            if (graphElement instanceof Conjunction) {
-                minimizedView = ((Conjunction) graphElement).isMinimizedView();
-            }
-            if (minimizedView) {
-                addAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, "true");
-            }
             if (graphElement instanceof Node) {
                 Node node = (Node) graphElement;
+                if (node.isMinimizedView()) {
+                    addAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, "true");
+                }
                 for (Transition transition : node.getLeavingTransitions()) {
                     Element transitionElement = element.addElement(TRANSITION_ELEMENT_NAME);
                     String name = transition.getName();
@@ -159,14 +150,9 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             constraint.width = getIntAttribute(element, WIDTH_ATTRIBUTE_NAME, 0);
             constraint.height = getIntAttribute(element, HEIGHT_ATTRIBUTE_NAME, 0);
             boolean minimizedView = getBooleanAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, false);
-            if (graphElement instanceof State) {
-                ((State) graphElement).setMinimizedView(minimizedView);
-            }
-            if (graphElement instanceof Conjunction) {
-                ((Conjunction) graphElement).setMinimizedView(minimizedView);
-            }
             graphElement.setConstraint(constraint);
             if (graphElement instanceof Node) {
+                ((Node) graphElement).setMinimizedView(minimizedView);
                 List<Transition> leavingTransitions = ((Node) graphElement).getLeavingTransitions();
                 List<Element> transitionInfoList = element.elements(TRANSITION_ELEMENT_NAME);
                 for (int i = 0; i < leavingTransitions.size(); i++) {
