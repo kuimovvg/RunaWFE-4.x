@@ -33,8 +33,8 @@ public class RoundedRect extends AbstractFigure {
     @Override
     public void fill(Graphics2D graphics) {
         if (imageName == null) {
-            Rectangle rect = getRectangle();
-            graphics.fillRoundRect(rect.x + 6, rect.y + 6, rect.width - 12, rect.height - 12, 20, 20);
+            Rectangle rect = getTextBoundsRectangle();
+            graphics.fillRoundRect(rect.x, rect.y, rect.width, rect.height, 20, 20);
         }
     }
 
@@ -46,13 +46,26 @@ public class RoundedRect extends AbstractFigure {
             drawImage(graphics, imageName);
         }
         if (renderHits.isPassed()) {
-            Rectangle rect = getRectangle();
-            graphics.drawRoundRect(rect.x + 6, rect.y + 6, rect.width - 12, rect.height - 12, 20, 20);
+            Rectangle rect = getTextBoundsRectangle();
+            graphics.drawRoundRect(rect.x, rect.y, rect.width, rect.height, 20, 20);
         }
     }
 
     @Override
     public Rectangle getTextBoundsRectangle() {
-        return getRectangle();
+        Rectangle r = getRectangle();
+        if (!minimized) {
+            r.grow(-DrawProperties.GRID_SIZE / 2, -DrawProperties.GRID_SIZE / 2);
+        }
+        return r;
     }
+
+    @Override
+    public Rectangle getRectangle() {
+        if (minimized) {
+            return new Rectangle(coords[0], coords[1], 3 * DrawProperties.GRID_SIZE, 3 * DrawProperties.GRID_SIZE);
+        }
+        return super.getRectangle();
+    }
+
 }
