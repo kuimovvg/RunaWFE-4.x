@@ -113,6 +113,10 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
                 }
             }
             Collections.sort(actors);
+            if (actors.size() > rangeSize) {
+                return actors.subList(0, rangeSize);
+            }
+            return actors;
         } else {
             BatchPresentation batchPresentation = BatchPresentationFactory.ACTORS.createDefault();
             batchPresentation.setRangeSize(rangeSize);
