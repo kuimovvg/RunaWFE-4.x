@@ -30,7 +30,7 @@ import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.ReceiveMessage;
 import ru.runa.wfe.lang.SendMessage;
-import ru.runa.wfe.lang.ServiceTask;
+import ru.runa.wfe.lang.ScriptTask;
 import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -108,7 +108,7 @@ public class JpdlXmlReader {
         nodeTypes.put("multiinstance-state", MultiProcessState.class);
         nodeTypes.put("send-message", SendMessage.class);
         nodeTypes.put("receive-message", ReceiveMessage.class);
-        nodeTypes.put("node", ServiceTask.class);
+        nodeTypes.put("node", ScriptTask.class);
     }
 
     public JpdlXmlReader(Document document) {
@@ -310,8 +310,8 @@ public class JpdlXmlReader {
             SendMessage sendMessage = (SendMessage) node;
             sendMessage.setTtlDuration(element.attributeValue(DUEDATE_ATTR, "1 days"));
         }
-        if (node instanceof ServiceTask) {
-            ServiceTask serviceTask = (ServiceTask) node;
+        if (node instanceof ScriptTask) {
+            ScriptTask serviceTask = (ScriptTask) node;
             Element actionElement = element.element(ACTION_NODE);
             Preconditions.checkNotNull(actionElement, "No action defined in " + serviceTask);
             serviceTask.setDelegation(readDelegation(processDefinition, actionElement));

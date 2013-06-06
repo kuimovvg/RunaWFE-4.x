@@ -10,9 +10,9 @@ import ru.runa.wfe.extension.ActionHandler;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
-public class ServiceTask extends Node {
+public class ScriptTask extends Node {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(ServiceTask.class);
+    private static final Log log = LogFactory.getLog(ScriptTask.class);
     private Delegation delegation;
 
     @Override

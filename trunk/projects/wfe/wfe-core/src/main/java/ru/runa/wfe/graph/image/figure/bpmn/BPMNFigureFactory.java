@@ -61,11 +61,12 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
             figure = new SubprocessRect();
             break;
         case ActionNode:
-            if (graphiti) {
-                figure = new Circle("image/bpmn/servicetask.png");
-            } else {
-                figure = new RoundedRect(null);
-            }
+            // if (graphiti) {
+            // figure = new RoundedRect("image/bpmn/script.png");
+            // } else {
+            // figure = new RoundedRect(null);
+            // }
+            figure = new RoundedRect(null);
             break;
         case WaitState:
             figure = new Circle("image/bpmn/waitstate.png");
