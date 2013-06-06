@@ -21,6 +21,7 @@ import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 public class BotTaskConfigurationUtils {
@@ -41,7 +42,7 @@ public class BotTaskConfigurationUtils {
                 return paramConfigElement != null && botConfigElement != null;
             }
         } catch (Exception e) {
-            log.debug("Unable to determine is bot task extended or not from configuration", e);
+            log.debug("Unable to determine is bot task extended or not from configuration: " + e);
         }
         return false;
     }
@@ -70,15 +71,16 @@ public class BotTaskConfigurationUtils {
         return null;
     }
 
-    public static byte[] substituteConfiguration(User user, WfTask task, byte[] extendedConfiguration, IVariableProvider variableProvider) {
-        if (extendedConfiguration == null) {
+    public static byte[] substituteExtendedConfiguration(User user, WfTask task, byte[] configuration, IVariableProvider variableProvider) {
+        if (configuration == null) {
             return null;
         }
-        Document document = XmlUtils.parseWithoutValidation(extendedConfiguration);
+        Document document = XmlUtils.parseWithoutValidation(configuration);
         Element taskElement = getBotTaskElement(user, task);
+        Preconditions.checkNotNull(taskElement, "Unable to get bot task link xml");
         Element configElement = taskElement.element(CONFIG_PARAM);
         if (configElement == null) {
-            return extendedConfiguration;
+            return configuration;
         }
         Element parametersElement = document.getRootElement().element(PARAMETERS_PARAM);
         ParamsDef botTaskParamsDef = ParamsDef.parse(parametersElement.element(CONFIG_PARAM));
@@ -109,4 +111,63 @@ public class BotTaskConfigurationUtils {
         }
     }
 
+    public static boolean isParameterizedBotTaskConfiguration(byte[] configuration) {
+        try {
+            if (configuration != null) {
+                Document document = XmlUtils.parseWithoutValidation(configuration);
+                ParamsDef paramsDef = ParamsDef.parse(document.getRootElement());
+                return paramsDef.getInputParams().size() + paramsDef.getOutputParams().size() > 0;
+            }
+        } catch (Exception e) {
+            log.debug("Unable to determine is bot task parameterized or not from configuration: " + e);
+        }
+        return false;
+    }
+
+    public static byte[] substituteParameterizedConfiguration(User user, WfTask task, byte[] configuration, IVariableProvider variableProvider) {
+        Element taskElement = getBotTaskElement(user, task);
+        if (taskElement == null) {
+            return configuration;
+        }
+        Element configElement = taskElement.element(CONFIG_PARAM);
+        ParamsDef taskParamsDef = ParamsDef.parse(configElement);
+
+        Document document = XmlUtils.parseWithoutValidation(configuration);
+        Element root = document.getRootElement();
+        Element inputElement = root.element("input");
+        if (inputElement != null) {
+            List<Element> inputParamElements = inputElement.elements("param");
+            for (Element element : inputParamElements) {
+                String paramName = element.attributeValue("name");
+                ParamDef paramDef = taskParamsDef.getInputParam(paramName);
+                if (paramDef == null) {
+                    // optional parameter
+                    continue;
+                }
+                if (!Strings.isNullOrEmpty(paramDef.getVariableName())) {
+                    element.addAttribute("variable", paramDef.getVariableName());
+                } else if (!Strings.isNullOrEmpty(paramDef.getValue())) {
+                    element.addAttribute("value", paramDef.getValue());
+                }
+            }
+        }
+        Element outputElement = root.element("output");
+        if (outputElement != null) {
+            List<Element> outputParamElements = outputElement.elements("param");
+            for (Element element : outputParamElements) {
+                String paramName = element.attributeValue("name");
+                ParamDef paramDef = taskParamsDef.getOutputParam(paramName);
+                if (paramDef == null) {
+                    // optional parameter
+                    continue;
+                }
+                if (!Strings.isNullOrEmpty(paramDef.getVariableName())) {
+                    element.addAttribute("variable", paramDef.getVariableName());
+                } else if (!Strings.isNullOrEmpty(paramDef.getValue())) {
+                    element.addAttribute("value", paramDef.getValue());
+                }
+            }
+        }
+        return XmlUtils.save(document);
+    }
 }
