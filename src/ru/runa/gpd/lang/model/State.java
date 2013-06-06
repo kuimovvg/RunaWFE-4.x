@@ -3,23 +3,9 @@ package ru.runa.gpd.lang.model;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.util.Duration;
 
-import com.google.common.base.Objects;
-
 public abstract class State extends FormNode implements Active, ITimed, ITimeOut {
     private Duration timeOutDelay = new Duration();
     private boolean reassignmentEnabled = false;
-    private boolean minimizedView = false;
-
-    @Override
-    public boolean testAttribute(Object target, String name, String value) {
-        if (super.testAttribute(target, name, value)) {
-            return true;
-        }
-        if ("minimizedView".equals(name)) {
-            return Objects.equal(value, isMinimizedView());
-        }
-        return false;
-    }
 
     @Override
     public Timer getTimer() {
@@ -28,15 +14,6 @@ public abstract class State extends FormNode implements Active, ITimed, ITimeOut
 
     public boolean isReassignmentEnabled() {
         return reassignmentEnabled;
-    }
-
-    public boolean isMinimizedView() {
-        return minimizedView;
-    }
-
-    public void setMinimizedView(boolean minimazedView) {
-        this.minimizedView = minimazedView;
-        firePropertyChange(PROPERTY_MINIMAZED_VIEW, !minimizedView, minimizedView);
     }
 
     public void setReassignmentEnabled(boolean forceReassign) {

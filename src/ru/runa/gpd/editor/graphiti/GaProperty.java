@@ -13,6 +13,7 @@ public class GaProperty extends PropertyImpl {
     public static final String MULTIPROCESS = "multiProcess";
     public static final String SWIMLANE_DISPLAY_VERTICAL = "swimlaneDisplayVertical";
     public static final String MINIMAZED_VIEW = "minimazedView";
+    public static final String SCRIPT = "script";
 
     public GaProperty(String name, String value) {
         setKey(name);
