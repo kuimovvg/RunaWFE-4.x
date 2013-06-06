@@ -30,8 +30,8 @@ import ru.runa.wfe.lang.MultiProcessState;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.ReceiveMessage;
+import ru.runa.wfe.lang.ScriptTask;
 import ru.runa.wfe.lang.SendMessage;
-import ru.runa.wfe.lang.ServiceTask;
 import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -64,6 +64,7 @@ public class BpmnXmlReader {
     private static final String END_STATE = "endEvent";
     private static final String TEXT_ANNOTATION = "textAnnotation";
     private static final String SERVICE_TASK = "serviceTask";
+    private static final String SCRIPT_TASK = "scriptTask";
     private static final String TEXT = "text";
     private static final String TOKEN = "token";
     private static final String IO_SPECIFICATION = "ioSpecification";
@@ -124,7 +125,9 @@ public class BpmnXmlReader {
         nodeTypes.put(MULTI_SUBPROCESS, MultiProcessState.class);
         nodeTypes.put(SEND_MESSAGE, SendMessage.class);
         nodeTypes.put(RECEIVE_MESSAGE, ReceiveMessage.class);
-        nodeTypes.put(SERVICE_TASK, ServiceTask.class);
+        // back compatibility v < 4.0.4
+        nodeTypes.put(SERVICE_TASK, ScriptTask.class);
+        nodeTypes.put(SCRIPT_TASK, ScriptTask.class);
     }
 
     public BpmnXmlReader(Document document) {
@@ -265,8 +268,8 @@ public class BpmnXmlReader {
             WaitState waitState = (WaitState) node;
             readTimer(processDefinition, element, waitState);
         }
-        if (node instanceof ServiceTask) {
-            ServiceTask serviceTask = (ServiceTask) node;
+        if (node instanceof ScriptTask) {
+            ScriptTask serviceTask = (ScriptTask) node;
             serviceTask.setDelegation(readDelegation(element));
         }
         if (node instanceof SendMessage) {
