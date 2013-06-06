@@ -9,6 +9,7 @@ import org.dom4j.QName;
 import org.eclipse.core.resources.IFile;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.Version;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Describable;
 import ru.runa.gpd.lang.model.EndState;
@@ -21,8 +22,8 @@ import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ParallelGateway;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.ReceiveMessageNode;
+import ru.runa.gpd.lang.model.ScriptTask;
 import ru.runa.gpd.lang.model.SendMessageNode;
-import ru.runa.gpd.lang.model.ServiceTask;
 import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
@@ -59,6 +60,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String TEXT_ANNOTATION = "textAnnotation";
     private static final String TEXT = "text";
     private static final String SERVICE_TASK = "serviceTask";
+    private static final String SCRIPT_TASK = "scriptTask";
     private static final String DATA_INPUT = "dataInput";
     private static final String DATA_OUTPUT = "dataOutput";
     private static final String INPUT_SET = "inputSet";
@@ -103,6 +105,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String ATTACHED_TO_REF = "attachedToRef";
     private static final String TIMER_EVENT = "timerEventDefinition";
     private static final String TIMER_DURATION = "timeDuration";
+    private static final String VERSION = "version";
 
     @Override
     public boolean isSupported(Document document) {
@@ -139,6 +142,7 @@ public class BpmnSerializer extends ProcessSerializer {
         if (definition.getSwimlaneDisplayMode() != null) {
             processProperties.put(SWIMLANE_DISPLAY_MODE, definition.getSwimlaneDisplayMode().name());
         }
+        processProperties.put(VERSION, Version.get());
         writeExtensionElements(process, processProperties);
         if (definition.isInvalid()) {
             process.addAttribute(EXECUTABLE, "false");
@@ -178,22 +182,25 @@ public class BpmnSerializer extends ProcessSerializer {
                 boundaryEventElement.addAttribute(ATTACHED_TO_REF, state.getId());
                 writeTransitions(process, timer);
             }
-            //            if (state.isUseEscalation()) {
-            //                String timerName = TIMER_ESCALATION;
-            //                Delay escalationDuration = state.getEscalationTime();
-            //                Element timerElement = stateElement.addElement(TIMER_NODE);
-            //                setAttribute(timerElement, NAME_ATTR, timerName);
-            //                if (escalationDuration != null && escalationDuration.hasDuration()) {
-            //                    setAttribute(timerElement, DUEDATE_ATTR, escalationDuration.getDuration());
-            //                }
-            //                TimerAction escalationAction = state.getEscalationAction();
-            //                if (escalationAction != null) {
-            //                    if (escalationAction.getRepeat().hasDuration()) {
-            //                        setAttribute(timerElement, REPEAT_ATTR, escalationAction.getRepeat().getDuration());
-            //                    }
-            //                    writeDelegation(timerElement, ACTION_NODE, escalationAction);
-            //                }
-            //            }
+            // if (state.isUseEscalation()) {
+            // String timerName = TIMER_ESCALATION;
+            // Delay escalationDuration = state.getEscalationTime();
+            // Element timerElement = stateElement.addElement(TIMER_NODE);
+            // setAttribute(timerElement, NAME_ATTR, timerName);
+            // if (escalationDuration != null &&
+            // escalationDuration.hasDuration()) {
+            // setAttribute(timerElement, DUEDATE_ATTR,
+            // escalationDuration.getDuration());
+            // }
+            // TimerAction escalationAction = state.getEscalationAction();
+            // if (escalationAction != null) {
+            // if (escalationAction.getRepeat().hasDuration()) {
+            // setAttribute(timerElement, REPEAT_ATTR,
+            // escalationAction.getRepeat().getDuration());
+            // }
+            // writeDelegation(timerElement, ACTION_NODE, escalationAction);
+            // }
+            // }
         }
         List<Timer> timers = definition.getChildren(Timer.class);
         for (Timer timer : timers) {
@@ -201,9 +208,9 @@ public class BpmnSerializer extends ProcessSerializer {
             writeTimer(intermediateEventElement, timer);
             writeTransitions(process, timer);
         }
-        List<ServiceTask> serviceTasks = definition.getChildren(ServiceTask.class);
-        for (ServiceTask serviceTask : serviceTasks) {
-            writeNode(process, serviceTask);
+        List<ScriptTask> scriptTasks = definition.getChildren(ScriptTask.class);
+        for (ScriptTask scriptTask : scriptTasks) {
+            writeNode(process, scriptTask);
         }
         List<ParallelGateway> parallelGateways = definition.getChildren(ParallelGateway.class);
         for (ParallelGateway gateway : parallelGateways) {
@@ -256,12 +263,14 @@ public class BpmnSerializer extends ProcessSerializer {
             }
         }
         // TODO instead of gpd.xml
-        //        Element diagramElement = definitionsElement.addElement("bpmndi:BPMNDiagram");
-        //        diagramElement.addAttribute(ID_ATTR, "test");
+        // Element diagramElement =
+        // definitionsElement.addElement("bpmndi:BPMNDiagram");
+        // diagramElement.addAttribute(ID_ATTR, "test");
     }
 
     private void writeVariables(Element element, List<VariableMapping> variableMappings) {
-        // TODO Element ioSpecificationElement = element.addElement(IO_SPECIFICATION);
+        // TODO Element ioSpecificationElement =
+        // element.addElement(IO_SPECIFICATION);
         Map<String, Object> properties = Maps.newHashMap();
         properties.put(VARIABLES, variableMappings);
         writeExtensionElements(element, properties);
@@ -284,10 +293,11 @@ public class BpmnSerializer extends ProcessSerializer {
             properties.put(REASSIGN, "true");
         }
         writeExtensionElements(nodeElement, properties);
-        //        for (Action action : state.getActions()) {
-        //            ActionImpl actionImpl = (ActionImpl) action;
-        //            writeEvent(taskElement, new Event(actionImpl.getEventType()), actionImpl);
-        //        }
+        // for (Action action : state.getActions()) {
+        // ActionImpl actionImpl = (ActionImpl) action;
+        // writeEvent(taskElement, new Event(actionImpl.getEventType()),
+        // actionImpl);
+        // }
         return nodeElement;
     }
 
@@ -304,11 +314,13 @@ public class BpmnSerializer extends ProcessSerializer {
         Element durationElement = eventElement.addElement(TIMER_DURATION);
         durationElement.addText(timer.getDelay().getDuration());
         if (timer.getAction() != null) {
-            //Map<String, String> properties
-            //            if (timer.getAction().getRepeatDelay().hasDuration()) {
-            //                setAttribute(timerElement, REPEAT_ATTR, timer.getAction().getRepeatDelay().getDuration());
-            //            }
-            //            writeDelegation(timerElement, ACTION_NODE, timer.getAction()); TODO
+            // Map<String, String> properties
+            // if (timer.getAction().getRepeatDelay().hasDuration()) {
+            // setAttribute(timerElement, REPEAT_ATTR,
+            // timer.getAction().getRepeatDelay().getDuration());
+            // }
+            // writeDelegation(timerElement, ACTION_NODE, timer.getAction());
+            // TODO
         }
     }
 
@@ -346,9 +358,9 @@ public class BpmnSerializer extends ProcessSerializer {
             }
             transitionElement.addAttribute(SOURCE_REF, sourceNodeId);
             transitionElement.addAttribute(TARGET_REF, targetNodeId);
-            //            for (Action action : transition.getActions()) {
-            //                writeDelegation(transitionElement, ACTION_NODE, action);
-            //            }
+            // for (Action action : transition.getActions()) {
+            // writeDelegation(transitionElement, ACTION_NODE, action);
+            // }
         }
     }
 
@@ -424,27 +436,29 @@ public class BpmnSerializer extends ProcessSerializer {
             }
             if (TIMER_DURATION.equals(childNode.getName())) {
                 ((Timer) element).setDelay(new Duration(childNode.getTextTrim()));
-                //                                List<Element> actionNodes = childNode.elements();
-                //                                for (Element aa : actionNodes) {
-                //                                    if (ACTION_NODE.equals(aa.getName())) {
-                //                                        TimerAction timerAction = new TimerAction(null);
-                //                                        timerAction.setDelegationClassName(aa.attributeValue(CLASS_ATTR));
-                //                                        timerAction.setDelegationConfiguration(aa.getTextTrim());
-                //                                        timerAction.setRepeat(childNode.attributeValue(REPEAT_ATTR));
-                //                                        messageNode.setTimerAction(timerAction);
-                //                                    }
-                //                                }
+                // List<Element> actionNodes = childNode.elements();
+                // for (Element aa : actionNodes) {
+                // if (ACTION_NODE.equals(aa.getName())) {
+                // TimerAction timerAction = new TimerAction(null);
+                // timerAction.setDelegationClassName(aa.attributeValue(CLASS_ATTR));
+                // timerAction.setDelegationConfiguration(aa.getTextTrim());
+                // timerAction.setRepeat(childNode.attributeValue(REPEAT_ATTR));
+                // messageNode.setTimerAction(timerAction);
+                // }
+                // }
             }
-            //            if (ACTION_NODE.equals(childNode.getName())) {
-            //                // only transition actions loaded here
-            //                String eventType;
-            //                if (element instanceof Transition) {
-            //                    eventType = Event.TRANSITION;
-            //                } else {
-            //                    throw new RuntimeException("Unexpected action in XML, context of " + element);
-            //                }
-            //                parseAction(childNode, element, eventType);
-            //            }
+            // if (ACTION_NODE.equals(childNode.getName())) {
+            // // only transition actions loaded here
+            // String eventType;
+            // if (element instanceof Transition) {
+            // eventType = Event.TRANSITION;
+            // } else {
+            // throw new
+            // RuntimeException("Unexpected action in XML, context of " +
+            // element);
+            // }
+            // parseAction(childNode, element, eventType);
+            // }
         }
         if (element instanceof Delegable) {
             element.setDelegationClassName(properties.get(CLASS));
@@ -453,13 +467,15 @@ public class BpmnSerializer extends ProcessSerializer {
         return (T) element;
     }
 
-    //    private void parseAction(Element node, GraphElement parent, String eventType) {
-    //        ActionImpl action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement(parent);
-    //        action.setDelegationClassName(node.attributeValue(CLASS_ATTR));
-    //        action.setDelegationConfiguration(node.getTextTrim());
-    //        parent.addAction(action, -1);
-    //        action.setEventType(eventType);
-    //    }
+    // private void parseAction(Element node, GraphElement parent, String
+    // eventType) {
+    // ActionImpl action =
+    // NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement(parent);
+    // action.setDelegationClassName(node.attributeValue(CLASS_ATTR));
+    // action.setDelegationConfiguration(node.getTextTrim());
+    // parent.addAction(action, -1);
+    // action.setEventType(eventType);
+    // }
     private Map<String, String> parseExtensionProperties(Element element) {
         Map<String, String> map = Maps.newHashMap();
         Element extensionsElement = element.element(EXTENSION_ELEMENTS);
@@ -516,9 +532,10 @@ public class BpmnSerializer extends ProcessSerializer {
             List<Element> swimlanes = swimlaneSetElement.elements(SWIMLANE);
             for (Element swimlaneElement : swimlanes) {
                 Swimlane swimlane = create(swimlaneElement, definition);
-                //                Map<String, String> swimlaneProperties = parseExtensionProperties(swimlaneElement);
-                //                swimlane.setDelegationClassName(swimlaneProperties.get(CLASS));
-                //                swimlane.setDelegationConfiguration(swimlaneProperties.get(CONFIG));
+                // Map<String, String> swimlaneProperties =
+                // parseExtensionProperties(swimlaneElement);
+                // swimlane.setDelegationClassName(swimlaneProperties.get(CLASS));
+                // swimlane.setDelegationConfiguration(swimlaneProperties.get(CONFIG));
                 List<Element> flowNodeRefElements = swimlaneElement.elements(FLOW_NODE_REF);
                 List<String> flowNodeIds = Lists.newArrayList();
                 for (Element flowNodeRefElement : flowNodeRefElements) {
@@ -552,58 +569,65 @@ public class BpmnSerializer extends ProcessSerializer {
                     state.setReassignmentEnabled(forceReassign);
                 }
             }
-            //                    String duedateAttr = stateNodeChild.attributeValue(DUEDATE_ATTR);
-            //                    if (duedateAttr != null) {
-            //                        state.setTimeOutDueDate(duedateAttr);
-            //                    }
-            //                    List<Element> aaa = stateNodeChild.elements();
-            //                    for (Element a : aaa) {
-            //                        if (EVENT_NODE.equals(a.getName())) {
-            //                            String eventType = a.attributeValue(TYPE_ATTR);
-            //                            List<Element> actionNodes = a.elements();
-            //                            for (Element aa : actionNodes) {
-            //                                if (ACTION_NODE.equals(aa.getName())) {
-            //                                    parseAction(aa, state, eventType);
-            //                                }
-            //                            }
-            //                        }
-            //                    }
-            //                if (TIMER_NODE.equals(stateNodeChild.getName())) {
-            //                    String nameTimer = stateNodeChild.attributeValue(NAME_ATTR);
-            //                    String dueDate = stateNodeChild.attributeValue(DUEDATE_ATTR);
-            //                    if (TIMER_ESCALATION.equals(nameTimer)) {
-            //                        ((TaskState) state).setUseEscalation(true);
-            //                        if (dueDate != null) {
-            //                            ((TaskState) state).setEscalationTime(new Delay(dueDate));
-            //                        }
-            //                    } else if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
-            //                        definition.setTimeOutDueDate(dueDate);
-            //                    } else {
-            //                        state.setHasTimer(true);
-            //                        if (dueDate != null) {
-            //                            state.setDueDate(dueDate);
-            //                        }
-            //                    }
-            //                    List<Element> actionNodes = stateNodeChild.elements();
-            //                    for (Element aa : actionNodes) {
-            //                        if (ACTION_NODE.equals(aa.getName())) {
-            //                            TimerAction timerAction = new TimerAction(null);
-            //                            timerAction.setDelegationClassName(aa.attributeValue(CLASS_ATTR));
-            //                            timerAction.setDelegationConfiguration(aa.getTextTrim());
-            //                            timerAction.setRepeat(stateNodeChild.attributeValue(REPEAT_ATTR));
-            //                            if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
-            //                                definition.setTimeOutAction(timerAction);
-            //                            } else if (TIMER_ESCALATION.equals(nameTimer)) {
-            //                                ((TaskState) state).setEscalationAction(timerAction);
-            //                            } else {
-            //                                ((ITimed) state).setTimerAction(timerAction);
-            //                            }
-            //                        }
-            //                    }
-            //                }
+            // String duedateAttr = stateNodeChild.attributeValue(DUEDATE_ATTR);
+            // if (duedateAttr != null) {
+            // state.setTimeOutDueDate(duedateAttr);
+            // }
+            // List<Element> aaa = stateNodeChild.elements();
+            // for (Element a : aaa) {
+            // if (EVENT_NODE.equals(a.getName())) {
+            // String eventType = a.attributeValue(TYPE_ATTR);
+            // List<Element> actionNodes = a.elements();
+            // for (Element aa : actionNodes) {
+            // if (ACTION_NODE.equals(aa.getName())) {
+            // parseAction(aa, state, eventType);
+            // }
+            // }
+            // }
+            // }
+            // if (TIMER_NODE.equals(stateNodeChild.getName())) {
+            // String nameTimer = stateNodeChild.attributeValue(NAME_ATTR);
+            // String dueDate = stateNodeChild.attributeValue(DUEDATE_ATTR);
+            // if (TIMER_ESCALATION.equals(nameTimer)) {
+            // ((TaskState) state).setUseEscalation(true);
+            // if (dueDate != null) {
+            // ((TaskState) state).setEscalationTime(new Delay(dueDate));
+            // }
+            // } else if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
+            // definition.setTimeOutDueDate(dueDate);
+            // } else {
+            // state.setHasTimer(true);
+            // if (dueDate != null) {
+            // state.setDueDate(dueDate);
+            // }
+            // }
+            // List<Element> actionNodes = stateNodeChild.elements();
+            // for (Element aa : actionNodes) {
+            // if (ACTION_NODE.equals(aa.getName())) {
+            // TimerAction timerAction = new TimerAction(null);
+            // timerAction.setDelegationClassName(aa.attributeValue(CLASS_ATTR));
+            // timerAction.setDelegationConfiguration(aa.getTextTrim());
+            // timerAction.setRepeat(stateNodeChild.attributeValue(REPEAT_ATTR));
+            // if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
+            // definition.setTimeOutAction(timerAction);
+            // } else if (TIMER_ESCALATION.equals(nameTimer)) {
+            // ((TaskState) state).setEscalationAction(timerAction);
+            // } else {
+            // ((ITimed) state).setTimerAction(timerAction);
+            // }
+            // }
+            // }
+            // }
         }
-        List<Element> serviceTaskElements = process.elements(SERVICE_TASK);
-        for (Element node : serviceTaskElements) {
+        {
+            // backward compatibility: versions affected: 4.0.0 .. 4.0.4
+            List<Element> scriptTaskElements = process.elements(SERVICE_TASK);
+            for (Element node : scriptTaskElements) {
+                create(node, definition);
+            }
+        }
+        List<Element> scriptTaskElements = process.elements(SCRIPT_TASK);
+        for (Element node : scriptTaskElements) {
             create(node, definition);
         }
         List<Element> parallelGatewayElements = process.elements(PARALLEL_GATEWAY);

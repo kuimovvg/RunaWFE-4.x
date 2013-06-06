@@ -109,12 +109,7 @@ public class CopyGraphCommand extends Command {
                             copy.addChild(copyTimer);
                         }
                     }
-                    if (node instanceof State) {
-                        ((State) copy).setMinimizedView(((State) node).isMinimizedView());
-                    }
-                    if (node instanceof Conjunction) {
-                        ((Conjunction) copy).setMinimizedView(((Conjunction) node).isMinimizedView());
-                    }
+                    node.setMinimizedView(node.isMinimizedView());
                     if (node instanceof Decision) {
                         copy.setDelegationConfiguration(node.getDelegationConfiguration());
                         copy.setDelegationClassName(node.getDelegationClassName());

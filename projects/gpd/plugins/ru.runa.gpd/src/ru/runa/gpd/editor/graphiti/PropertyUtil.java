@@ -14,11 +14,20 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import com.google.common.base.Objects;
 
 public class PropertyUtil {
-    public static String getPropertyValue(PropertyContainer ga, String propertyName) {
+
+    public static Property getProperty(PropertyContainer ga, String propertyName) {
         for (Property property : ga.getProperties()) {
             if (Objects.equal(propertyName, property.getKey())) {
-                return property.getValue();
+                return property;
             }
+        }
+        return null;
+    }
+
+    public static String getPropertyValue(PropertyContainer ga, String propertyName) {
+        Property property = getProperty(ga, propertyName);
+        if (property != null) {
+            return property.getValue();
         }
         return null;
     }

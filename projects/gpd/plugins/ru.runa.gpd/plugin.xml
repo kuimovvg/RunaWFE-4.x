@@ -162,6 +162,17 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
+          id="scripttask.compactview"
+          objectClass="ru.runa.gpd.lang.model.ScriptTask">
+       <action
+             class="ru.runa.gpd.lang.action.CompactViewFeatureDelegate"
+             id="feature.compactView"
+             label="%label.action.feature.compactView"
+             menubarPath="features/sp1">
+       </action>
+    </objectContribution>
+    <objectContribution
+          adaptable="false"
           id="node.swimlanes"
           objectClass="ru.runa.gpd.lang.model.SwimlanedNode">
        <filter
@@ -509,12 +520,12 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddTaskStateNodeFeature"
+               add="ru.runa.gpd.editor.graphiti.add.AddStateNodeFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
                fixedSize="false"
                height="7"
-               layout="ru.runa.gpd.editor.graphiti.layout.LayoutTaskStateFeature"
-               update="ru.runa.gpd.editor.graphiti.update.UpdateTaskStateNodeFeature"
+               layout="ru.runa.gpd.editor.graphiti.layout.LayoutStateNodeFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature"
                width="11">
          </graphiti>
       </element>
@@ -751,17 +762,19 @@
          </graphiti>
       </element>
       <element
-            bpmn="serviceTask"
-            icon="serviceTask.png"
-            label="%label.element.servicetask"
-            model="ru.runa.gpd.lang.model.ServiceTask"
+            bpmn="scriptTask"
+            icon="scripttask.png"
+            label="%label.element.scripttask"
+            model="ru.runa.gpd.lang.model.ScriptTask"
             type="node">
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
+               add="ru.runa.gpd.editor.graphiti.add.AddScriptTaskNodeFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
-               height="4"
-               fixedSize="true"
-               width="4">
+               fixedSize="false"
+               height="7"
+               layout="ru.runa.gpd.editor.graphiti.layout.LayoutStateNodeFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature"
+               width="11">
          </graphiti>
       </element>
       <element
