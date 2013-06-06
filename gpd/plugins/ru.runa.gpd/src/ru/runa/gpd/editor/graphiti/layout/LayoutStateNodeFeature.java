@@ -8,6 +8,7 @@ import org.eclipse.graphiti.services.Graphiti;
 
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.PropertyUtil;
+import ru.runa.gpd.lang.model.Node;
 
 public class LayoutStateNodeFeature extends ElementLayoutFeature {
     public static final String MAIN_RECT = "mainRect";
@@ -17,6 +18,28 @@ public class LayoutStateNodeFeature extends ElementLayoutFeature {
     public boolean layout(ILayoutContext context) {
         ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
         GraphicsAlgorithm ga = containerShape.getGraphicsAlgorithm();
+
+        Node node = (Node) getBusinessObjectForPictogramElement(containerShape);
+        if (node.isMinimizedView()) {
+            GraphicsAlgorithm mainRectangle = PropertyUtil.findGaRecursiveByName(ga, MAIN_RECT);
+            Graphiti.getGaService().setSize(mainRectangle, 3 * GRID_SIZE, 3 * GRID_SIZE);
+            GraphicsAlgorithm borderRectangle = PropertyUtil.findGaRecursiveByName(ga, BORDER_RECT);
+            Graphiti.getGaService().setLocationAndSize(borderRectangle, 0, 0, 3 * GRID_SIZE, 3 * GRID_SIZE);
+            GraphicsAlgorithm swimlaneText = PropertyUtil.findGaRecursiveByName(ga, GaProperty.SWIMLANE_NAME);
+            if (swimlaneText != null) {
+                Graphiti.getGaService().setLocationAndSize(swimlaneText, 0, 0, 0, 0);
+            }
+            GraphicsAlgorithm nameText = PropertyUtil.findGaRecursiveByName(ga, GaProperty.NAME);
+            if (nameText != null) {
+                Graphiti.getGaService().setLocationAndSize(nameText, 0, 0, 0, 0);
+            }
+            GraphicsAlgorithm scriptImage = PropertyUtil.findGaRecursiveByName(ga, GaProperty.SCRIPT);
+            if (scriptImage != null) {
+                Graphiti.getGaService().setLocationAndSize(scriptImage, 10, 10, 16, 16);
+            }
+            return true;
+        }
+
         Dimension bounds = adjustBounds(context);
         int borderWidth = bounds.width - GRID_SIZE;
         int borderHeight = bounds.height - GRID_SIZE;
@@ -37,6 +60,10 @@ public class LayoutStateNodeFeature extends ElementLayoutFeature {
         GraphicsAlgorithm multiProcessImage = PropertyUtil.findGaRecursiveByName(ga, GaProperty.MULTIPROCESS);
         if (multiProcessImage != null) {
             Graphiti.getGaService().setLocationAndSize(multiProcessImage, bounds.width / 2 - 8, bounds.height - 2 * GRID_SIZE, 16, 12);
+        }
+        GraphicsAlgorithm scriptImage = PropertyUtil.findGaRecursiveByName(ga, GaProperty.SCRIPT);
+        if (scriptImage != null) {
+            Graphiti.getGaService().setLocationAndSize(scriptImage, GRID_SIZE, GRID_SIZE, 16, 16);
         }
         return true;
     }

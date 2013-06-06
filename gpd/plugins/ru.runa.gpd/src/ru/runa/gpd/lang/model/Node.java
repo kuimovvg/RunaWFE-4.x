@@ -7,9 +7,29 @@ import java.util.Set;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.util.Duration;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 public abstract class Node extends NamedGraphElement implements Describable {
+    private boolean minimizedView = false;
+
+    public boolean isMinimizedView() {
+        return minimizedView;
+    }
+
+    public void setMinimizedView(boolean minimazedView) {
+        this.minimizedView = minimazedView;
+        firePropertyChange(PROPERTY_MINIMAZED_VIEW, !minimizedView, minimizedView);
+    }
+
+    @Override
+    public boolean testAttribute(Object target, String name, String value) {
+        if ("minimizedView".equals(name)) {
+            return Objects.equal(value, isMinimizedView());
+        }
+        return super.testAttribute(target, name, value);
+    }
+
     @Override
     public Object getPropertyValue(Object id) {
         if (PROPERTY_TIMER_DELAY.equals(id)) {

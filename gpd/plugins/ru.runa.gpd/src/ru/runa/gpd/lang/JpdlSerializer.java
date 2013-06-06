@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IFile;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.Version;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.ActionImpl;
 import ru.runa.gpd.lang.model.ActionNode;
@@ -87,6 +88,7 @@ public class JpdlSerializer extends ProcessSerializer {
     private static final String DESCRIPTION_NODE = "description";
     private static final String NAME_ATTR = "name";
     private static final String TYPE_ATTR = "type";
+    private static final String VERSION_ATTR = "version";
     private static final String ID_ATTR = "id";
     private static final String SWIMLANE_ATTR = "swimlane";
     private static final String TRANSITION_ATTR = "transition";
@@ -117,6 +119,7 @@ public class JpdlSerializer extends ProcessSerializer {
     public void saveToXML(ProcessDefinition definition, Document document) {
         Element root = document.getRootElement();
         root.addAttribute(NAME_ATTR, definition.getName());
+        root.addAttribute(VERSION_ATTR, Version.get());
         if (definition.getDefaultTaskTimeoutDelay().hasDuration()) {
             root.addAttribute(DEFAULT_DUEDATE_ATTR, definition.getDefaultTaskTimeoutDelay().getDuration());
         }
