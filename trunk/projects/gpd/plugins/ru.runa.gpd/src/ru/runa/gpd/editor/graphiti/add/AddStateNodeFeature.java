@@ -44,6 +44,7 @@ public class AddStateNodeFeature extends AddNodeFeature {
         MultiText nameText = Graphiti.getGaService().createDefaultMultiText(getDiagram(), border, node.getName());
         nameText.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.NAME));
         nameText.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
+        containerShape.getProperties().add(new GaProperty(GaProperty.MINIMAZED_VIEW, String.valueOf(node.isMinimizedView())));
         //
         addCustomGraphics(node, context, main);
         // 
