@@ -130,10 +130,14 @@ public class WorkflowBotTaskExecutor implements Runnable {
             try {
                 if (BotTaskConfigurationUtils.isExtendedBotTaskConfiguration(botTask.getConfiguration())) {
                     if (botTask.getConfiguration() != null) {
-                        byte[] configuration = BotTaskConfigurationUtils.substituteConfiguration(user, task, botTask.getConfiguration(),
+                        byte[] configuration = BotTaskConfigurationUtils.substituteExtendedConfiguration(user, task, botTask.getConfiguration(),
                                 variableProvider);
                         taskHandler.setConfiguration(configuration);
                     }
+                } else if (BotTaskConfigurationUtils.isParameterizedBotTaskConfiguration(botTask.getConfiguration())) {
+                    byte[] configuration = BotTaskConfigurationUtils.substituteParameterizedConfiguration(user, task, botTask.getConfiguration(),
+                            variableProvider);
+                    taskHandler.setConfiguration(configuration);
                 } else {
                     taskHandler.setConfiguration(botTask.getConfiguration());
                 }
@@ -192,7 +196,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
             if (failedDelaySeconds > FAILED_EXECUTION_MAX_DELAY_SECONDS) {
                 failedDelaySeconds = FAILED_EXECUTION_MAX_DELAY_SECONDS;
             }
-            log.info("failedDelaySeconds = " + failedDelaySeconds);
+            log.info("FailedDelaySeconds = " + failedDelaySeconds + " for " + task);
             started.add(Calendar.SECOND, failedDelaySeconds);
         }
         executionThread = null;
