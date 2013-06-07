@@ -34,14 +34,13 @@ public class LDAPConnector implements IConnector, PrefConstants {
 
     @Override
     public void connect() throws Exception {
-        String serverURL = Activator.getPrefString(P_CONNECTION_LDAP_SERVER_URL);
-        String dc = Activator.getPrefString(P_CONNECTION_LDAP_DC);
+        String providerURL = Activator.getPrefString(P_LDAP_CONNECTION_PROVIDER_URL);
         Hashtable<String, String> env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, serverURL + "/" + dc);
-        if (LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_CONNECTION_LOGIN_MODE))) {
-            String login = Activator.getPrefString(P_CONNECTION_LOGIN);
-            String password = Activator.getPrefString(P_CONNECTION_PASSWORD);
+        env.put(Context.PROVIDER_URL, providerURL);
+        if (LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_LDAP_CONNECTION_LOGIN_MODE))) {
+            String login = Activator.getPrefString(P_LDAP_CONNECTION_LOGIN);
+            String password = Activator.getPrefString(P_LDAP_CONNECTION_PASSWORD);
             if (password.length() == 0) {
                 UserInputDialog userInputDialog = new UserInputDialog(Localization.getString("pref.connection.password"));
                 if (Window.OK == userInputDialog.open()) {
@@ -64,11 +63,11 @@ public class LDAPConnector implements IConnector, PrefConstants {
 
     @Override
     public boolean isConfigured() {
-        if (Activator.getPrefString(P_CONNECTION_LDAP_SERVER_URL).length() == 0) {
+        if (Activator.getPrefString(P_LDAP_CONNECTION_PROVIDER_URL).length() == 0) {
             return false;
         }
-        if (LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_CONNECTION_LOGIN_MODE))) {
-            if (Activator.getPrefString(P_CONNECTION_LOGIN).length() == 0) {
+        if (LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_LDAP_CONNECTION_LOGIN_MODE))) {
+            if (Activator.getPrefString(P_LDAP_CONNECTION_LOGIN).length() == 0) {
                 return false;
             }
         }
