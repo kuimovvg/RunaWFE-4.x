@@ -13,12 +13,12 @@ public class VariableFormatContentProvider extends ArtifactContentProvider<Varia
     @Override
     protected void loadArtifact(VariableFormatArtifact artifact, Element element) {
         super.loadArtifact(artifact, element);
-        artifact.setVariableClassName(element.attributeValue(VARIABLE_TYPE_ATTR));
+        artifact.setJavaClassName(element.attributeValue(VARIABLE_TYPE_ATTR));
     }
 
     @Override
     protected void saveArtifact(VariableFormatArtifact artifact, Element element) {
         super.saveArtifact(artifact, element);
-        element.addAttribute(VARIABLE_TYPE_ATTR, artifact.getVariableClassName());
+        element.addAttribute(VARIABLE_TYPE_ATTR, artifact.getJavaClassName());
     }
 }
