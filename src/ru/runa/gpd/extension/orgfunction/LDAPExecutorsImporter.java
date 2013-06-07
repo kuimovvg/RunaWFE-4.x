@@ -49,7 +49,7 @@ public class LDAPExecutorsImporter extends ExecutorsImporter implements PrefCons
     }
 
     private List<String> getActorList() throws NamingException {
-        String[] ouNames = Activator.getPrefString(P_CONNECTION_LDAP_OU).split(";");
+        String[] ouNames = Activator.getPrefString(P_LDAP_CONNECTION_OU).split(";");
         List<String> actors = new ArrayList<String>();
         Attributes attrs = new BasicAttributes();
         attrs.put(OBJECT_CLASS_ATTR_NAME, OBJECT_CLASS_ATTR_USER_VALUE);
@@ -66,7 +66,7 @@ public class LDAPExecutorsImporter extends ExecutorsImporter implements PrefCons
     }
 
     private List<String> getGroupList() throws NamingException {
-        String[] ouNames = Activator.getPrefString(P_CONNECTION_LDAP_OU).split(";");
+        String[] ouNames = Activator.getPrefString(P_LDAP_CONNECTION_OU).split(";");
         List<String> groups = new ArrayList<String>();
         Attributes attrs = new BasicAttributes();
         attrs.put(OBJECT_CLASS_ATTR_NAME, OBJECT_CLASS_ATTR_GROUP_VALUE);

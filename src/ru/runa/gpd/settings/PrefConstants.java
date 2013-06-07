@@ -24,17 +24,20 @@ public interface PrefConstants {
     public static final String P_ESCALATION_CONFIG = "escalationConfig";
     public static final String P_ESCALATION_REPEAT = "escalationRepeat";
 
-    public static final String P_CONNECTION_LOGIN = "wfeLogin";
-    public static final String P_CONNECTION_PASSWORD = "wfePassword";
-    public static final String P_CONNECTION_LOGIN_MODE = "wfeLoginMode";
+    public static final String P_WFE_CONNECTION_LOGIN = "wfeLogin";
+    public static final String P_WFE_CONNECTION_PASSWORD = "wfePassword";
+    public static final String P_WFE_CONNECTION_LOGIN_MODE = "wfeLoginMode";
 
-    public static final String P_CONNECTION_WFE_PROVIDER_URL = "wfeProviderUrl";
-    public static final String P_CONNECTION_WFE_INITIAL_CTX_FACTORY = "wfeInitialCtxFactory";
-    public static final String P_CONNECTION_WFE_URL_PKG_PREFIXES = "wfeUrlPkg";
+    public static final String P_WFE_CONNECTION_PROVIDER_URL = "wfeProviderUrl";
+    public static final String P_WFE_CONNECTION_INITIAL_CTX_FACTORY = "wfeInitialCtxFactory";
+    public static final String P_WFE_CONNECTION_URL_PKG_PREFIXES = "wfeUrlPkg";
 
-    public static final String P_CONNECTION_LDAP_SERVER_URL = "ldapServerUrl";
-    public static final String P_CONNECTION_LDAP_OU = "ldapOu";
-    public static final String P_CONNECTION_LDAP_DC = "ldapDc";
+    public static final String P_LDAP_CONNECTION_LOGIN = "ldapLogin";
+    public static final String P_LDAP_CONNECTION_PASSWORD = "ldapPassword";
+    public static final String P_LDAP_CONNECTION_LOGIN_MODE = "ldapLoginMode";
+    public static final String P_LDAP_CONNECTION_PROVIDER_URL = "ldapServerUrl";
+    public static final String P_LDAP_CONNECTION_OU = "ldapOu";
+    public static final String P_LDAP_CONNECTION_DC = "ldapDc";
 
     public static final String P_DEFAULT_LANGUAGE = "defaultLanguage";
     

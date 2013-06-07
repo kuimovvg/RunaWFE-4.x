@@ -1,13 +1,9 @@
 package ru.runa.gpd.lang.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
