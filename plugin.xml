@@ -968,257 +968,368 @@
    <extension
          point="ru.runa.gpd.handlers">
       <handler
+            actionHandler="false"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="true"
             cellEditorProvider="ru.runa.gpd.extension.decision.BSHDecisionProvider"
             className="ru.runa.wfe.extension.decision.BSFDecisionHandler"
-            label="%ru.runa.wfe.extension.decision.BSHDecisionHandler"
-            enabled="true"
-            type="decisionHandler"/>
+            enabled="false"
+            label="%ru.runa.wfe.extension.decision.BSHDecisionHandler" />
       <handler
+            actionHandler="false"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="true"
             cellEditorProvider="ru.runa.gpd.extension.decision.BSHDecisionProvider"
             className="ru.runa.wfe.extension.decision.GroovyDecisionHandler"
-            label="%ru.runa.wfe.extension.decision.GroovyDecisionHandler"
             enabled="true"
-            type="decisionHandler"/>
+            label="%ru.runa.wfe.extension.decision.GroovyDecisionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.SQLHandlerCellEditorProvider"
             className="ru.runa.wfe.extension.handler.SQLActionHandler"
-            label="%ru.runa.wfe.extension.handler.SQLActionHandler"
             enabled="true"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.SQLActionHandler" />
       <handler
+            actionHandler="false"
+            assignmentHandler="true"
+            botTaskHandler="false"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.assign.SwimlaneInitializerProvider"
             className="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"
-            label="%ru.runa.wfe.extension.assign.DefaultAssignmentHandler"
             enabled="true"
-            type="assignmentHandler">
+            label="%ru.runa.wfe.extension.assign.DefaultAssignmentHandler">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.FormulaCellEditorProvider"
             className="ru.runa.wfe.extension.handler.var.FormulaActionHandler"
-            label="%ru.runa.wfe.extension.handler.var.FormulaActionHandler"
             enabled="true"
-            type="actionHandler">
+            label="%ru.runa.wfe.extension.handler.var.FormulaActionHandler">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.SwimlaneAssignerCellEditorProvider"
             className="ru.runa.wfe.extension.handler.user.AssignSwimlaneActionHandler"
-            label="%ru.runa.wfe.extension.handler.user.AssignSwimlaneActionHandler"
             enabled="true"
-            type="actionHandler">
+            label="%ru.runa.wfe.extension.handler.user.AssignSwimlaneActionHandler">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ActorNameEditorProvider"
             className="ru.runa.wfe.extension.handler.user.ActorNameActionHandler"
-            label="%ru.runa.wfe.extension.handler.user.ActorNameActionHandler"
             enabled="true"
-            type="actionHandler">
+            label="%ru.runa.wfe.extension.handler.user.ActorNameActionHandler">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.GroovyActionHandlerProvider"
             className="ru.runa.wfe.extension.handler.BSHActionHandler"
-            label="%ru.runa.wfe.extension.handler.BSHActionHandler"
             enabled="true"
-            type="actionHandler">
+            label="%ru.runa.wfe.extension.handler.BSHActionHandler">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.SendEmailActionHandlerProvider"
             className="ru.runa.wfe.extension.handler.SendEmailActionHandler"
-            label="%ru.runa.wfe.extension.handler.SendEmailActionHandler"
             enabled="true"
-            type="actionHandler">
+            label="%ru.runa.wfe.extension.handler.SendEmailActionHandler">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.EscalationActionHandlerProvider"
             className="ru.runa.wfe.extension.handler.EscalationActionHandler"
-            label="%ru.runa.wfe.extension.handler.EscalationActionHandler"
             enabled="true"
-            type="actionHandler">
+            label="%ru.runa.wfe.extension.handler.EscalationActionHandler">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.CreateOptionActionHandler"
             label="%ru.runa.wfe.extension.handler.CreateOptionActionHandler"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.RemoveObjectFromListActionHandler"
             label="%ru.runa.wfe.extension.handler.var.RemoveObjectFromListActionHandler"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.AddObjectToListActionHandler"
             label="%ru.runa.wfe.extension.handler.var.AddObjectToListActionHandler"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.SortListActionHandler"
             label="%ru.runa.wfe.extension.handler.var.SortListActionHandler"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
             className="ru.runa.wfe.service.handler.BotInvokerActionHandler"
             label="%ru.runa.wfe.service.handler.BotInvokerActionHandler"
-            enabled="true"
-            type="actionHandler"/>
+            enabled="true" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.GroovyActionHandlerProvider"
             className="ru.runa.wfe.extension.handler.GroovyActionHandler"
             label="%ru.runa.wfe.extension.handler.GroovyActionHandler"
-            enabled="true"
-            type="actionHandler"/>
+            enabled="true" />
       <handler
-            className="ru.runa.wfe.extension.handler.DebugActionHandler"
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
+            className="ru.runa.wfe.extension.handler.DebugHandler"
             label="%ru.runa.wfe.extension.handler.DebugActionHandler"
-            enabled="true"
-            type="actionHandler"/>
+            enabled="true" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
             className="ru.runa.wfe.extension.handler.EmailTaskNotifierActionHandler"
             label="%ru.runa.wfe.extension.handler.EmailTaskNotifierActionHandler"
-            enabled="true"
-            type="actionHandler"/>
+            enabled="true" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.SetObjectToListActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.SetObjectToListActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.SetObjectToListActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.GetObjectFromListActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.ListAggregateFunctionActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.ListAggregateFunctionActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.ListAggregateFunctionActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.ClearVariableActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.ClearVariableActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.ClearVariableActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.RemoveObjectFromMapActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.RemoveObjectFromMapActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.RemoveObjectFromMapActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.PutObjectToMapActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.PutObjectToMapActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.PutObjectToMapActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.GetObjectFromMapActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.MapAggregateFunctionActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.MapAggregateFunctionActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.MapAggregateFunctionActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.ConvertMapKeysToListActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.ConvertMapKeysToListActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.ConvertMapKeysToListActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.ConvertMapValuesToListActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.ConvertMapValuesToListActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.ConvertMapValuesToListActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.var.MergeMapsActionHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.MergeMapsActionHandler"
-            type="actionHandler"/>
+            label="%ru.runa.wfe.extension.handler.var.MergeMapsActionHandler" />
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.wfe.extension.handler.user.GetExecutorInfoHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.user.GetExecutorInfoHandler"
-            type="botHandler">
+            label="%ru.runa.wfe.extension.handler.user.GetExecutorInfoHandler">
       </handler>
       <handler
+            actionHandler="false"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.SQLHandlerCellEditorProvider"
             className="ru.runa.wf.logic.bot.DatabaseTaskHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.SQLActionHandler"
-            type="botHandler">
+            label="%ru.runa.wfe.extension.handler.SQLActionHandler">
       </handler>
       <handler
-            className="ru.runa.wf.logic.bot.DoNothingTaskHandler"
-            enabled="true"
-            label="%ru.runa.wfe.extension.handler.DebugActionHandler"
-            type="botHandler">
-      </handler>
-      <handler
+            actionHandler="false"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.SendEmailActionHandlerProvider"
             className="ru.runa.wf.logic.bot.EmailTaskHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.SendEmailActionHandler"
-            type="botHandler">
+            label="%ru.runa.wfe.extension.handler.SendEmailActionHandler">
       </handler>
       <handler
+            actionHandler="false"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             className="ru.runa.wf.logic.bot.StartProcessTaskHandler"
             enabled="true"
-            label="Start process"
-            type="botHandler">
+            label="%ru.runa.wf.logic.bot.StartProcessTaskHandler">
       </handler>
       <handler
+            actionHandler="false"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             className="ru.runa.wf.logic.bot.TextReportTaskHandler"
             enabled="true"
-            label="Text report"
-            type="botHandler">
+            label="%ru.runa.wf.logic.bot.TextReportTaskHandler">
       </handler>
       <handler
+            actionHandler="false"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             className="ru.runa.wf.logic.bot.SwimlaneAssignerTaskHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.user.AssignSwimlaneActionHandler"
-            type="botHandler">
+            label="%ru.runa.wfe.extension.handler.user.AssignSwimlaneActionHandler">
       </handler>
       <handler
+            actionHandler="false"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             className="ru.runa.wf.logic.bot.UpdatePermissionsTaskHandler"
             enabled="true"
-            label="Update permissions on process"
-            type="botHandler">
+            label="%ru.runa.wf.logic.bot.UpdatePermissionsTaskHandler">
       </handler>
       <handler
+            actionHandler="false"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             className="ru.runa.wf.logic.bot.WebServiceTaskHandler"
             enabled="true"
-            label="Invoke external web service"
-            type="botHandler">
+            label="%ru.runa.wf.logic.bot.WebServiceTaskHandler">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.var.CalendarHandlerProvider"
             className="ru.runa.wfe.extension.handler.var.CreateCalendarHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.CreateCalendarHandler"
-            type="actionHandler">
+            label="%ru.runa.wfe.extension.handler.var.CreateCalendarHandler">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.var.ConvertMapsToListsHandlerProvider"
             className="ru.runa.wfe.extension.handler.var.ConvertMapsToListsHandler"
             enabled="true"
-            label="%ru.runa.wfe.extension.handler.var.ConvertMapsToListsHandler"
-            type="actionHandler">
+            label="%ru.runa.wfe.extension.handler.var.ConvertMapsToListsHandler">
       </handler>
    </extension>
    <extension
@@ -1979,91 +2090,91 @@
             className="ru.runa.wfe.var.format.StringFormat"
             label="%ru.runa.wfe.var.format.StringFormat"
             enabled="true"
-            variableClassName="java.lang.String">
+            javaClassName="java.lang.String">
       </format>
       <format
             className="ru.runa.wfe.var.format.TextFormat"
             label="%ru.runa.wfe.var.format.TextFormat"
             enabled="true"
-            variableClassName="java.lang.String">
+            javaClassName="java.lang.String">
       </format>
       <format
             className="ru.runa.wfe.var.format.LongFormat"
             label="%ru.runa.wfe.var.format.LongFormat"
             enabled="true"
-            variableClassName="java.lang.Long">
+            javaClassName="java.lang.Long">
       </format>
       <format
             className="ru.runa.wfe.var.format.DoubleFormat"
             label="%ru.runa.wfe.var.format.DoubleFormat"
             enabled="true"
-            variableClassName="java.lang.Double">
+            javaClassName="java.lang.Double">
       </format>
       <format
             className="ru.runa.wfe.var.format.BigDecimalFormat"
             label="%ru.runa.wfe.var.format.BigDecimalFormat"
             enabled="false"
-            variableClassName="java.math.BigDecimal">
+            javaClassName="java.math.BigDecimal">
       </format>
       <format
             className="ru.runa.wfe.var.format.BooleanFormat"
             label="%ru.runa.wfe.var.format.BooleanFormat"
             enabled="true"
-            variableClassName="java.lang.Boolean">
+            javaClassName="java.lang.Boolean">
       </format>
       <format
             className="ru.runa.wfe.var.format.DateFormat"
             label="%ru.runa.wfe.var.format.DateFormat"
             enabled="true"
-            variableClassName="java.util.Date">
+            javaClassName="java.util.Date">
       </format>
       <format
             className="ru.runa.wfe.var.format.DateTimeFormat"
             label="%ru.runa.wfe.var.format.DateTimeFormat"
             enabled="true"
-            variableClassName="java.util.Date">
+            javaClassName="java.util.Date">
       </format>
       <format
             className="ru.runa.wfe.var.format.TimeFormat"
             label="%ru.runa.wfe.var.format.TimeFormat"
             enabled="true"
-            variableClassName="java.util.Date">
+            javaClassName="java.util.Date">
       </format>
       <format
             className="ru.runa.wfe.var.format.FileFormat"
             label="%ru.runa.wfe.var.format.FileFormat"
             enabled="true"
-            variableClassName="ru.runa.wfe.var.FileVariable">
+            javaClassName="ru.runa.wfe.var.FileVariable">
       </format>
       <format
             className="ru.runa.wfe.var.format.ListFormat"
             label="%ru.runa.wfe.var.format.ListFormat"
             enabled="true"
-            variableClassName="java.util.List">
+            javaClassName="java.util.List">
       </format>
       <format
             className="ru.runa.wfe.var.format.MapFormat"
             enabled="true"
             label="%ru.runa.wfe.var.format.MapFormat"
-            variableClassName="java.util.Map">
+            javaClassName="java.util.Map">
       </format>
       <format
             className="ru.runa.wfe.var.format.ExecutorFormat"
             label="%ru.runa.wfe.var.format.ExecutorFormat"
             enabled="true"
-            variableClassName="ru.runa.wfe.user.Executor">
+            javaClassName="ru.runa.wfe.user.Executor">
       </format>
       <format
             className="ru.runa.wfe.var.format.ActorFormat"
             enabled="true"
             label="%ru.runa.wfe.var.format.ActorFormat"
-            variableClassName="ru.runa.wfe.user.Actor">
+            javaClassName="ru.runa.wfe.user.Actor">
       </format>
       <format
             className="ru.runa.wfe.var.format.GroupFormat"
             enabled="true"
             label="%ru.runa.wfe.var.format.GroupFormat"
-            variableClassName="ru.runa.wfe.user.Group">
+            javaClassName="ru.runa.wfe.user.Group">
       </format>
    </extension>
 	<extension id="botStationNature" name="specific nature for bot station project" point="org.eclipse.core.resources.natures">

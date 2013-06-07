@@ -1,32 +1,31 @@
 package ru.runa.gpd.extension;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 public class HandlerArtifact extends Artifact {
     public static final String ACTION = "actionHandler";
     public static final String DECISION = "decisionHandler";
     public static final String ASSIGNMENT = "assignmentHandler";
-    public static final String TASK_HANDLER = "botHandler";
-    private String type;
+    public static final String TASK_HANDLER = "botTaskHandler";
+    private final List<String> types = Lists.newArrayList();
     private String configurerClassName;
 
     public HandlerArtifact() {
     }
 
-    public HandlerArtifact(HandlerArtifact artifact) {
-        super(artifact);
-    }
-
-    public HandlerArtifact(boolean enabled, String name, String label, String type, String configurerClassName) {
+    public HandlerArtifact(boolean enabled, String name, String label, String configurerClassName) {
         super(enabled, name, label);
-        setType(type);
         setConfigurerClassName(configurerClassName);
     }
 
-    public String getType() {
-        return type;
+    public List<String> getTypes() {
+        return types;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void addType(String type) {
+        this.types.add(type);
     }
 
     public String getConfigurerClassName() {
@@ -39,6 +38,6 @@ public class HandlerArtifact extends Artifact {
 
     @Override
     public String toString() {
-        return type + ": " + getName();
+        return types + ": " + getName();
     }
 }

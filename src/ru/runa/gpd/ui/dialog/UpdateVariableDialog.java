@@ -100,7 +100,7 @@ public class UpdateVariableDialog extends Dialog {
             public void widgetSelected(SelectionEvent event) {
                 type = VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText());
                 updateState();
-                defaultValueField.setTypeClassName(type.getVariableClassName());
+                defaultValueField.setTypeClassName(type.getJavaClassName());
             }
         });
         final Label labelVisibility = new Label(composite, SWT.NONE);
@@ -123,7 +123,7 @@ public class UpdateVariableDialog extends Dialog {
         labelDefaultValue.setText(Localization.getString("Variable.property.defaultValue") + ":");
         defaultValueField = new TypedUserInputCombo(composite, defaultValue);
         defaultValueField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        defaultValueField.setTypeClassName(type.getVariableClassName());
+        defaultValueField.setTypeClassName(type.getJavaClassName());
         defaultValueField.addSelectionListener(new LoggingSelectionAdapter() {
 
             @Override
