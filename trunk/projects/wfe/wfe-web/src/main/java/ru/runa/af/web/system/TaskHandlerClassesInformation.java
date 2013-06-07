@@ -17,6 +17,7 @@
  */
 package ru.runa.af.web.system;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,9 +29,11 @@ import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wf.logic.bot.BotStationResources;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.extension.TaskHandler;
 
@@ -48,14 +51,21 @@ public class TaskHandlerClassesInformation {
     }
 
     private static void init() {
-        String earFilePath = System.getProperty("jboss.home.dir") + "/server/" + System.getProperty("jboss.server.name") + "/deploy/runawfe.ear";
+        // TODO jboss 4 specific
+        String deployeDirPath = System.getProperty("jboss.home.dir") + "/server/" + System.getProperty("jboss.server.name") + "/deploy";
+        String earFilePath = deployeDirPath + "/runawfe.ear";
         try {
             ZipInputStream earStream = new ZipInputStream(new FileInputStream(earFilePath));
             ZipEntry entry;
             while ((entry = earStream.getNextEntry()) != null) {
                 if (entry.getName().endsWith(".jar")) {
-                    log.debug("Searching in " + entry.getName());
-                    searchInJar(earStream);
+                    searchInJar(entry.getName(), earStream);
+                }
+            }
+            File deployDir = new File(deployeDirPath);
+            for (File file : deployDir.listFiles()) {
+                if (file.getName().endsWith(".jar")) {
+                    searchInJar(file.getName(), earStream);
                 }
             }
         } catch (Throwable e) {
@@ -63,7 +73,18 @@ public class TaskHandlerClassesInformation {
         }
     }
 
-    private static void searchInJar(InputStream jarStream) throws IOException {
+    private static void searchInJar(String jarName, InputStream jarStream) throws IOException {
+        boolean matches = false;
+        for (String patternFileName : BotStationResources.getTaskHandlerJarNames()) {
+            if (FilenameUtils.wildcardMatch(jarName, patternFileName)) {
+                matches = true;
+                break;
+            }
+        }
+        if (!matches) {
+            return;
+        }
+        log.info("Searching in " + jarName);
         JarInputStream jis = new JarInputStream(jarStream);
         ZipEntry entry;
         while ((entry = jis.getNextEntry()) != null) {

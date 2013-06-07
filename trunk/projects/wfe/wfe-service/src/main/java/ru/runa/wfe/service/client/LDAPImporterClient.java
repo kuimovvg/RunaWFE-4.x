@@ -18,6 +18,7 @@
 package ru.runa.wfe.service.client;
 
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 19.04.2006
@@ -41,6 +42,7 @@ public class LDAPImporterClient {
     }
 
     private static void importExecutors(String username, String password) {
-        Delegates.getExecutorService().synchronizeExecutorsWithLDAP(username, password);
+        User user = Delegates.getAuthenticationService().authenticateByLoginPassword(username, password);
+        Delegates.getSynchronizationService().synchronizeExecutorsWithLDAP(user);
     }
 }

@@ -32,6 +32,7 @@ import ru.runa.wfe.service.InitializerService;
 import ru.runa.wfe.service.ProfileService;
 import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.service.SubstitutionService;
+import ru.runa.wfe.service.SynchronizationService;
 import ru.runa.wfe.service.SystemService;
 
 import com.google.common.collect.Maps;
@@ -107,5 +108,9 @@ public class Delegates {
 
     public static AdminScriptService getAdminScriptService() {
         return getDelegate(AdminScriptServiceDelegate.class);
+    }
+
+    public static SynchronizationService getSynchronizationService() {
+        return getDelegate(SynchronizationServiceDelegate.class);
     }
 }

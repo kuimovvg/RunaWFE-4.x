@@ -296,7 +296,7 @@
 	<bean class="ru.runa.wfe.security.logic.AuthenticationLogic">
 		<property name="loginHandlers">
 			<list>
-				<!-- bean class="ru.runa.wfe.security.logic.LDAPImporter" / -->
+				<!-- bean class="ru.runa.wfe.security.logic.LDAPLogic" / -->
 			</list>
 		</property>
 	</bean>
@@ -315,7 +315,7 @@
 	<bean class="ru.runa.wfe.relation.logic.RelationLogic" />
 	<bean class="ru.runa.wfe.ss.logic.SubstitutionLogic" />
 	<bean class="ru.runa.wfe.audit.logic.AuditLogic" />
-	<bean class="ru.runa.wfe.security.logic.LDAPImporter" />
+	<bean class="ru.runa.wfe.security.logic.LDAPLogic" />
 	<bean class="ru.runa.wfe.definition.logic.DefinitionLogic" />
 	<bean class="ru.runa.wfe.execution.logic.ExecutionLogic" />
 	<bean class="ru.runa.wfe.task.logic.TaskLogic" />
