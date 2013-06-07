@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
+import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
@@ -141,7 +141,7 @@ public class CKEditorDialogCreatorHelper {
 
     public static String createFtlMethodDialog() throws IOException {
         StringBuilder result = new StringBuilder();
-        result.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ckeditor.ftl.method.dialog.start")));
+        result.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ckeditor.ftl.method.dialog.start")));
         List<MethodTag> tagsList = MethodTag.getEnabled();
         {
             CKSelectElement selectElement = new CKSelectElement();
@@ -211,7 +211,7 @@ public class CKEditorDialogCreatorHelper {
             result.append(",\n");
             box.write(result, 4);
         }
-        result.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ckeditor.ftl.method.dialog.end")));
+        result.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ckeditor.ftl.method.dialog.end")));
         return result.toString();
     }
 }

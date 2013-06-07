@@ -111,7 +111,7 @@ public class BotTaskParamDefWizardPage extends WizardPage {
     }
 
     public String getType() {
-        return VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText()).getVariableClassName();
+        return VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText()).getJavaClassName();
     }
 
     private boolean isDuplicated() {

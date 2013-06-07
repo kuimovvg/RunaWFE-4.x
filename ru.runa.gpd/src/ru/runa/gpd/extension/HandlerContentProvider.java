@@ -2,9 +2,11 @@ package ru.runa.gpd.extension;
 
 import org.dom4j.Element;
 
+import com.google.common.base.Joiner;
+
 public class HandlerContentProvider extends ArtifactContentProvider<HandlerArtifact> {
     private static final String CONFIGURER_ATTR = "configurer";
-    private static final String TYPE_ATTR = "type";
+    private static final String TYPES_ATTR = "types";
 
     @Override
     protected HandlerArtifact createArtifact() {
@@ -14,14 +16,17 @@ public class HandlerContentProvider extends ArtifactContentProvider<HandlerArtif
     @Override
     protected void loadArtifact(HandlerArtifact artifact, Element element) {
         super.loadArtifact(artifact, element);
-        artifact.setType(element.attributeValue(TYPE_ATTR));
+        String[] types = element.attributeValue(TYPES_ATTR).split(",");
+        for (String type : types) {
+            artifact.addType(type);
+        }
         artifact.setConfigurerClassName(element.attributeValue(CONFIGURER_ATTR));
     }
 
     @Override
     protected void saveArtifact(HandlerArtifact artifact, Element element) {
         super.saveArtifact(artifact, element);
-        element.addAttribute(TYPE_ATTR, artifact.getType());
+        element.addAttribute(TYPES_ATTR, Joiner.on(",").join(artifact.getTypes()));
         element.addAttribute(CONFIGURER_ATTR, artifact.getConfigurerClassName());
     }
 }

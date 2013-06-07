@@ -16,7 +16,6 @@ import ru.runa.gpd.extension.decision.DefaultDecisionProvider;
 import ru.runa.gpd.extension.decision.IDecisionProvider;
 import ru.runa.gpd.lang.model.Decision;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 public class HandlerRegistry extends ArtifactRegistry<HandlerArtifact> {
@@ -49,18 +48,27 @@ public class HandlerRegistry extends ArtifactRegistry<HandlerArtifact> {
                 boolean enabled = Boolean.valueOf(configElement.getAttribute("enabled"));
                 String className = configElement.getAttribute("className");
                 String label = configElement.getAttribute("label");
-                String type = configElement.getAttribute("type");
                 String providerClassName = configElement.getAttribute("cellEditorProvider");
                 try {
                     if (providerClassName != null) {
                         DelegableProvider provider = (DelegableProvider) configElement.createExecutableExtension("cellEditorProvider");
                         provider.setBundle(bundle);
-                        if (HandlerArtifact.DECISION.equals(type) && !(provider instanceof IDecisionProvider)) {
-                            throw new Exception("Custom decision provider should implement IDecisionProvider interface.");
-                        }
                         customDelegableProviders.put(className, provider);
                     }
-                    list.add(new HandlerArtifact(enabled, className, label, type, providerClassName));
+                    HandlerArtifact artifact = new HandlerArtifact(enabled, className, label, providerClassName);
+                    if (Boolean.parseBoolean(configElement.getAttribute(HandlerArtifact.ACTION))) {
+                        artifact.addType(HandlerArtifact.ACTION);
+                    }
+                    if (Boolean.parseBoolean(configElement.getAttribute(HandlerArtifact.ASSIGNMENT))) {
+                        artifact.addType(HandlerArtifact.ASSIGNMENT);
+                    }
+                    if (Boolean.parseBoolean(configElement.getAttribute(HandlerArtifact.DECISION))) {
+                        artifact.addType(HandlerArtifact.DECISION);
+                    }
+                    if (Boolean.parseBoolean(configElement.getAttribute(HandlerArtifact.TASK_HANDLER))) {
+                        artifact.addType(HandlerArtifact.TASK_HANDLER);
+                    }
+                    list.add(artifact);
                 } catch (Exception e) {
                     PluginLogger.logError("Error processing 'handlers' extension for: " + className, e);
                 }
@@ -89,7 +97,7 @@ public class HandlerRegistry extends ArtifactRegistry<HandlerArtifact> {
             if (onlyEnabled && !handlerArtifact.isEnabled()) {
                 continue;
             }
-            if (Objects.equal(type, handlerArtifact.getType())) {
+            if (handlerArtifact.getTypes().contains(type)) {
                 list.add(handlerArtifact);
             }
         }
@@ -98,6 +106,6 @@ public class HandlerRegistry extends ArtifactRegistry<HandlerArtifact> {
 
     public boolean isArtifactRegistered(String type, String className) {
         HandlerArtifact handlerArtifact = getArtifact(className);
-        return handlerArtifact != null && Objects.equal(type, handlerArtifact.getType());
+        return handlerArtifact != null && handlerArtifact.getTypes().contains(type);
     }
 }

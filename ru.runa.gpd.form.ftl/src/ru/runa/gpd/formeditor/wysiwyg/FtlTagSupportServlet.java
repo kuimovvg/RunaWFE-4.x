@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
-import ru.runa.gpd.formeditor.ftl.FormatTag.FtlFormat;
+import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
@@ -105,17 +105,17 @@ public class FtlTagSupportServlet extends HttpServlet {
             }
             response.setHeader("Cache-Control", "no-cache");
             if ("GetAllMethods".equals(commandStr)) {
-                resultHtml.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ftl.method.dialog.start")));
+                resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.method.dialog.start")));
                 for (MethodTag tagInfo : MethodTag.getEnabled()) {
                     resultHtml.append("<option value=\"" + tagInfo.id + "\">" + tagInfo.name + "</option>");
                 }
-                resultHtml.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ftl.method.dialog.end")));
+                resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.method.dialog.end")));
             } else if ("GetAllVariables".equals(commandStr)) {
-                resultHtml.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ftl.format.dialog.start")));
+                resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.format.dialog.start")));
                 for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariables()) {
                     resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
                 }
-                resultHtml.append(IOUtils.readStream(FtlFormat.class.getResourceAsStream("ftl.format.dialog.end")));
+                resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.format.dialog.end")));
             } else if ("GetParameters".equals(commandStr)) {
                 resultHtml.append("<table style=\"width: 100%;\">");
                 int paramCounter = 0;
