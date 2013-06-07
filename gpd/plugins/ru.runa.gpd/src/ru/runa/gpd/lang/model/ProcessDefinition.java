@@ -200,7 +200,11 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
             List<GraphElement> childs = getChildrenRecursive(GraphElement.class);
             validate();
             for (GraphElement element : childs) {
-                element.validate();
+                try {
+                    element.validate();
+                } catch (Exception e) {
+                    element.addError("error", e.getMessage());
+                }
             }
             this.definitionFile = null;
             if (hasValidationErrors[1]) {
