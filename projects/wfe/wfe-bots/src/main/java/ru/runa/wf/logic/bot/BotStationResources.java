@@ -17,6 +17,8 @@
  */
 package ru.runa.wf.logic.bot;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -69,7 +71,8 @@ public class BotStationResources {
         return periodInSeconds * 1000;
     }
 
-    public static PropertyResources getResources() {
-        return RESOURCES;
+    public static List<String> getTaskHandlerJarNames() {
+        return RESOURCES.getMultipleStringProperty("taskhandler.jar.names");
     }
+
 }

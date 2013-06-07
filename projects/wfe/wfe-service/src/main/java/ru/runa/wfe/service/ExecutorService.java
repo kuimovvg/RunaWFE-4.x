@@ -296,12 +296,4 @@ public interface ExecutorService {
      */
     public void setStatus(User user, Actor actor, boolean active);
 
-    /**
-     * Synchronizes executors with LDAP, if configured.
-     * 
-     * @param username
-     * @param password
-     */
-    public void synchronizeExecutorsWithLDAP(String username, String password);
-
 }
