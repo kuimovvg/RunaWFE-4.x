@@ -31,17 +31,13 @@ public class DurationEditDialog extends Dialog {
     private Text unitField;
 
     public DurationEditDialog(ProcessDefinition definition, String duration) {
-        super(Display.getCurrent().getActiveShell());
-        this.definition = definition;
-        if (!Strings.isNullOrEmpty(duration)) {
-            editable = new Duration(duration);
-        } else {
-            editable = new Duration();
-        }
+        this(definition, Strings.isNullOrEmpty(duration) ? new Duration() : new Duration(duration));
     }
 
     public DurationEditDialog(ProcessDefinition definition, Duration duration) {
-        this(definition, duration.getDuration());
+        super(Display.getCurrent().getActiveShell());
+        this.definition = definition;
+        editable = duration;
     }
 
     @Override
