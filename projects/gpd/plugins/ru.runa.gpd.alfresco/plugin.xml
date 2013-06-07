@@ -4,32 +4,44 @@
    <extension
          point="ru.runa.gpd.handlers">
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.bp.AlfSetContent"
             label="Alfresco: upload file data"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.bp.demo.ApproveMyDoc"
             label="alfdemo: approve document"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.bp.demo.CreateMyDoc"
             label="alfdemo: create document"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
             className="ru.runa.bp.demo.RejectMyDoc"
             label="alfdemo: reject document"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
    </extension>
    <extension

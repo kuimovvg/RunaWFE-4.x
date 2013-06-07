@@ -39,8 +39,8 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
                 boolean enabled = Boolean.valueOf(configElement.getAttribute("enabled"));
                 String className = configElement.getAttribute("className");
                 String label = configElement.getAttribute("label");
-                String variableClassName = configElement.getAttribute("variableClassName");
-                list.add(new VariableFormatArtifact(enabled, className, label, variableClassName));
+                String javaClassName = configElement.getAttribute("javaClassName");
+                list.add(new VariableFormatArtifact(enabled, className, label, javaClassName));
             }
         }
     }
@@ -70,7 +70,7 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
 
     public VariableFormatArtifact getArtifactByJavaClassName(String javaClassName) {
         for (VariableFormatArtifact artifact : getAll()) {
-            if (Objects.equal(javaClassName, artifact.getVariableClassName())) {
+            if (Objects.equal(javaClassName, artifact.getJavaClassName())) {
                 return artifact;
             }
         }

@@ -5,53 +5,44 @@
     <extension
          point="ru.runa.gpd.handlers">
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.office.excel.ReadExcelHandlerCellEditorProvider"
             className="ru.runa.wfe.office.excel.handler.ExcelReadHandler"
             label="%ru.runa.wfe.office.excel.handler.ExcelReadHandler"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.office.excel.SaveExcelHandlerCellEditorProvider"
             className="ru.runa.wfe.office.excel.handler.ExcelSaveHandler"
             label="%ru.runa.wfe.office.excel.handler.ExcelSaveHandler"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
       <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.office.word.DocxHandlerCellEditorProvider"
             className="ru.runa.wfe.office.doc.DocxHandler"
             label="%ru.runa.wfe.office.doc.DocxHandler"
-            enabled="true"
-            type="actionHandler">
+            enabled="true">
       </handler>
       <handler
-            cellEditorProvider="ru.runa.gpd.office.excel.ReadExcelHandlerCellEditorProvider"
-            className="ru.runa.wfe.office.excel.handler.ExcelReadHandler"
-            label="%ru.runa.wfe.office.excel.handler.ExcelReadHandler"
-            enabled="true"
-            type="botHandler">
-      </handler>
-      <handler
-           cellEditorProvider="ru.runa.gpd.office.excel.SaveExcelHandlerCellEditorProvider"
-            className="ru.runa.wfe.office.excel.handler.ExcelSaveHandler"
-            label="%ru.runa.wfe.office.excel.handler.ExcelSaveHandler"
-            enabled="true"
-            type="botHandler">
-      </handler>
-      <handler
-            cellEditorProvider="ru.runa.gpd.office.word.DocxHandlerCellEditorProvider"
-            className="ru.runa.wfe.office.doc.DocxHandler"
-            label="%ru.runa.wfe.office.doc.DocxHandler"
-            enabled="true"
-            type="botHandler">
-      </handler>
-      <handler
+            actionHandler="false"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.office.word.MSWordTaskHandlerConfigurator"
             className="ru.runa.wfe.logic.bot.MSWordReportTaskHandler"
             label="%ActionHandler.MSWordHandler"
-            enabled="true"
-            type="botHandler">
+            enabled="true">
       </handler>
    </extension>
 

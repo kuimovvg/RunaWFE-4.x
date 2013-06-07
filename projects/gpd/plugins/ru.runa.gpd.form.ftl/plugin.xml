@@ -60,7 +60,7 @@
             extensions="html"
             icon="metadata/html.png"
             id="tk.eclipse.plugin.wysiwyg.WYSIWYGHTMLEditor"
-            name="WYSIWYG Editor">
+            name="%editor.name">
       </editor>
    </extension>
    
@@ -565,85 +565,5 @@
                variableAccess="READ">
          </param>
       </tag>
-   </extension>
-   <extension
-         point="ru.runa.gpd.form.ftl.formats">
-      <type
-            name="string">
-         <format
-               name="%Format.String.Singleline"
-               value="-">
-         </format>
-         <format
-               name="%Format.String.Multiline"
-               value="multiline">
-         </format>
-      </type>
-      <type
-            name="double">
-         <format
-               name="%Format.Default"
-               value="-">
-         </format>
-         <format
-               name="%Format.Double.Float"
-               value="floating">
-         </format>
-         <format
-               name="%Format.Double.Exp"
-               value="exponent">
-         </format>
-      </type>
-      <type
-            name="boolean">
-         <format
-               name="%Format.Boolean.tf"
-               value="string">
-         </format>
-         <format
-               name="%Format.Boolean.zo"
-               value="zo">
-         </format>
-         <format
-               name="%Format.Boolean.pm"
-               value="pm">
-         </format>
-      </type>
-      <type
-            name="date">
-         <format
-               name="%Format.Date.AsDate"
-               value="date">
-         </format>
-         <format
-               name="%Format.Date.AsDatetime"
-               value="datetime">
-         </format>
-         <format
-               name="%Format.Date.AsTime"
-               value="time">
-         </format>
-      </type>
-      <type
-            name="long">
-         <format
-               name="%Format.Default"
-               value="-">
-         </format>
-      </type>
-      <type
-            name="time">
-         <format
-               name="%Format.Default"
-               value="time">
-         </format>
-      </type>
-      <type
-            name="file">
-         <format
-               name="%Format.Default"
-               value="-">
-         </format>
-      </type>
    </extension>
 </plugin>
