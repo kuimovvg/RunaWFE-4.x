@@ -50,11 +50,11 @@ public class WFEServerConnector implements IConnector, PrefConstants {
 
     @Override
     public boolean isConfigured() {
-        if (Activator.getPrefString(P_CONNECTION_WFE_PROVIDER_URL).length() == 0) {
+        if (Activator.getPrefString(P_WFE_CONNECTION_PROVIDER_URL).length() == 0) {
             return false;
         }
-        if (LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_CONNECTION_LOGIN_MODE))) {
-            if (Activator.getPrefString(P_CONNECTION_LOGIN).length() == 0) {
+        if (LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_WFE_CONNECTION_LOGIN_MODE))) {
+            if (Activator.getPrefString(P_WFE_CONNECTION_LOGIN).length() == 0) {
                 return false;
             }
         }
@@ -75,12 +75,12 @@ public class WFEServerConnector implements IConnector, PrefConstants {
                 prop = "org.jboss.naming:org.jnp.interfaces";
             }
             environment.put(Context.URL_PKG_PREFIXES, prop);
-            environment.put(Context.PROVIDER_URL, Activator.getPrefString(P_CONNECTION_WFE_PROVIDER_URL));
+            environment.put(Context.PROVIDER_URL, Activator.getPrefString(P_WFE_CONNECTION_PROVIDER_URL));
             remoteContext = new InitialContext(environment);
             AuthenticationService service = getService("AuthenticationServiceBean");
-            if (LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_CONNECTION_LOGIN_MODE))) {
-                String login = Activator.getPrefString(P_CONNECTION_LOGIN);
-                password = Activator.getPrefString(P_CONNECTION_PASSWORD);
+            if (LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_WFE_CONNECTION_LOGIN_MODE))) {
+                String login = Activator.getPrefString(P_WFE_CONNECTION_LOGIN);
+                password = Activator.getPrefString(P_WFE_CONNECTION_PASSWORD);
                 if (password.length() == 0) {
                     Display.getDefault().syncExec(new Runnable() {
                         @Override
