@@ -1,21 +1,21 @@
 package ru.runa.gpd.extension;
 
 public class VariableFormatArtifact extends Artifact {
-    private String variableClassName;
+    private String javaClassName;
 
     public VariableFormatArtifact() {
     }
 
-    public VariableFormatArtifact(boolean enabled, String className, String label, String variableClassName) {
+    public VariableFormatArtifact(boolean enabled, String className, String label, String javaClassName) {
         super(enabled, className, label);
-        setVariableClassName(variableClassName);
+        setJavaClassName(javaClassName);
     }
 
-    public String getVariableClassName() {
-        return variableClassName;
+    public String getJavaClassName() {
+        return javaClassName;
     }
 
-    public void setVariableClassName(String variableClassName) {
-        this.variableClassName = variableClassName;
+    public void setJavaClassName(String javaClassName) {
+        this.javaClassName = javaClassName;
     }
 }

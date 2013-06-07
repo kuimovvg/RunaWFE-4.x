@@ -50,7 +50,7 @@ public class Variable extends NamedGraphElement {
     }
     
     public String getJavaClassName() {
-        return VariableFormatRegistry.getInstance().getArtifactNotNull(formatClassName).getVariableClassName();
+        return VariableFormatRegistry.getInstance().getArtifactNotNull(formatClassName).getJavaClassName();
     }
     
     public void setFormatClassName(String formatClassName) {
