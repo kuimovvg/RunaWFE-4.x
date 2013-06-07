@@ -6,7 +6,7 @@ import ru.runa.wfe.extension.assign.DefaultAssignmentHandler;
 import ru.runa.wfe.extension.decision.BSFDecisionHandler;
 import ru.runa.wfe.extension.handler.BSHActionHandler;
 import ru.runa.wfe.extension.handler.CreateOptionActionHandler;
-import ru.runa.wfe.extension.handler.DebugActionHandler;
+import ru.runa.wfe.extension.handler.DebugHandler;
 import ru.runa.wfe.extension.handler.EmailTaskNotifierActionHandler;
 import ru.runa.wfe.extension.handler.EscalationActionHandler;
 import ru.runa.wfe.extension.handler.GroovyActionHandler;
@@ -72,7 +72,7 @@ public class BackCompatibilityClassNames {
         // decision handler renamed
         bcc.put("ru.runa.wf.jbpm.delegation.decision.BSFDecisionHandler", BSFDecisionHandler.class.getName());
         // action handlers renamed
-        bcc.put("ru.runa.wf.jbpm.delegation.action.SetSubProcessPermissionsActionHandler", DebugActionHandler.class.getName());
+        bcc.put("ru.runa.wf.jbpm.delegation.action.SetSubProcessPermissionsActionHandler", DebugHandler.class.getName());
         bcc.put("ru.runa.wf.jbpm.delegation.action.BotInvokerActionHandler", "ru.runa.wfe.service.handler.BotInvokerActionHandler");
         bcc.put("ru.runa.wf.office.doc.DocxHandler", "ru.runa.wfe.office.doc.DocxHandler");
         bcc.put("ru.runa.wf.office.excel.handlers.ReadHandler", "ru.runa.wfe.office.excel.handler.ExcelReadHandler");
@@ -103,6 +103,7 @@ public class BackCompatibilityClassNames {
         bcc.put("ru.runa.wf.SQLActionHandler", SQLActionHandler.class.getName());
         bcc.put("ru.runa.wf.var.CreateCalendarActionHandler", CreateCalendarHandler.class.getName());
         bcc.put("ru.runa.wf.var.ConvertMapsToListsHandler", ConvertMapsToListsHandler.class.getName());
+        bcc.put("ru.runa.wfe.extension.handler.DebugActionHandler", DebugHandler.class.getName());
         // org functions renamed
         bcc.put("ru.runa.af.organizationfunction.DemoChiefFunction", DemoChiefFunction.class.getName());
         bcc.put("ru.runa.af.organizationfunction.ExecutorByCodeFunction", GetActorsByCodesFunction.class.getName());
