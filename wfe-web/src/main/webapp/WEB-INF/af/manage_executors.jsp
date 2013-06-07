@@ -1,6 +1,8 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/wf.tld" prefix="wf" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <tiles:insert page="/WEB-INF/af/main_layout.jsp" flush="true">
 
 <tiles:put name="body" type="string">
@@ -14,8 +16,18 @@
 		</wf:viewControlsHideableBlock>
 	</div>
 	<wf:createActorLink />
-	&nbsp;&nbsp;&nbsp;	
+	&nbsp;&nbsp;&nbsp;
 	<wf:createGroupLink />
+<%
+if (ru.runa.common.WebResources.isLDAPSynchronizationEnabled()) {
+%>
+	&nbsp;&nbsp;&nbsp;
+	<html:link action="/synchronizeExecutors">
+		<bean:message key="label.synchronize.ldap" />
+	</html:link>
+<%
+}
+%>
 </wf:listAllExecutorsForm>
 </tiles:put>
 <tiles:put name="messages" value="../common/messages.jsp" />

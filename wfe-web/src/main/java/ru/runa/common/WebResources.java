@@ -17,6 +17,8 @@
  */
 package ru.runa.common;
 
+import java.lang.reflect.Method;
+
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
@@ -124,8 +126,9 @@ public class WebResources {
         try {
             String className = RESOURCES.getStringProperty("menu.additional_links");
             if (!Strings.isNullOrEmpty(className)) {
-                Class<?> getter = ClassLoaderUtil.loadClass(className);
-                return getter.getDeclaredMethod("getAdditionalLinks", (Class[]) null).invoke(getter, (Object[]) null).toString();
+                Class<?> clazz = ClassLoaderUtil.loadClass(className);
+                Method getter = clazz.getDeclaredMethod("getAdditionalLinks", (Class[]) null);
+                return getter.invoke(clazz, (Object[]) null).toString();
             }
         } catch (Exception e) {
             LogFactory.getLog(WebResources.class).error("Unable to get additional links", e);
@@ -144,4 +147,9 @@ public class WebResources {
     public static boolean isDisplayVariablesJavaType() {
         return RESOURCES.getBooleanProperty("process.variables.displayJavaType", true);
     }
+
+    public static boolean isLDAPSynchronizationEnabled() {
+        return RESOURCES.getBooleanProperty("synchronization.ldap.enabled", false);
+    }
+
 }
