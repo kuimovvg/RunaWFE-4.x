@@ -40,16 +40,15 @@ public class LDAPConnectionPreferencePage extends FieldEditorPreferencePage impl
 
     @Override
     public void createFieldEditors() {
-        addField(new StringFieldEditor(P_CONNECTION_LDAP_SERVER_URL, Localization.getString("pref.connection.ldap.server"), getFieldEditorParent()));
-        addField(new StringFieldEditor(P_CONNECTION_LDAP_DC, Localization.getString("pref.connection.ldap.dc"), getFieldEditorParent()));
-        addField(new StringFieldEditor(P_CONNECTION_LDAP_OU, Localization.getString("pref.connection.ldap.ou"), getFieldEditorParent()));
-        addField(new RadioGroupFieldEditor(P_CONNECTION_LOGIN_MODE, Localization.getString("pref.connection.loginMode"), 2, new String[][] {
+        addField(new StringFieldEditor(P_LDAP_CONNECTION_PROVIDER_URL, Localization.getString("pref.connection.ldap.server"), getFieldEditorParent()));
+        addField(new StringFieldEditor(P_LDAP_CONNECTION_OU, Localization.getString("pref.connection.ldap.ou"), getFieldEditorParent()));
+        addField(new RadioGroupFieldEditor(P_LDAP_CONNECTION_LOGIN_MODE, Localization.getString("pref.connection.loginMode"), 2, new String[][] {
                 { Localization.getString("pref.connection.loginMode.byLogin"), LOGIN_MODE_LOGIN_PASSWORD },
                 { Localization.getString("pref.connection.loginMode.byKerberos"), LOGIN_MODE_KERBEROS } }, getFieldEditorParent()));
-        loginEditor = new StringFieldEditor(P_CONNECTION_LOGIN, Localization.getString("pref.connection.login"), getFieldEditorParent());
-        passwordEditor = new StringFieldEditor(P_CONNECTION_PASSWORD, Localization.getString("pref.connection.password"), getFieldEditorParent());
+        loginEditor = new StringFieldEditor(P_LDAP_CONNECTION_LOGIN, Localization.getString("pref.connection.login"), getFieldEditorParent());
+        passwordEditor = new StringFieldEditor(P_LDAP_CONNECTION_PASSWORD, Localization.getString("pref.connection.password"), getFieldEditorParent());
         passwordEditor.setEmptyStringAllowed(true);
-        boolean enabled = LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_CONNECTION_LOGIN_MODE));
+        boolean enabled = LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_LDAP_CONNECTION_LOGIN_MODE));
         loginEditor.setEnabled(enabled, getFieldEditorParent());
         passwordEditor.setEnabled(enabled, getFieldEditorParent());
         addField(loginEditor);
@@ -61,7 +60,7 @@ public class LDAPConnectionPreferencePage extends FieldEditorPreferencePage impl
         super.propertyChange(event);
         if (FieldEditor.VALUE.equals(event.getProperty())) {
             FieldEditor fieldEditor = (FieldEditor) event.getSource();
-            if (P_CONNECTION_LOGIN_MODE.equals(fieldEditor.getPreferenceName())) {
+            if (P_LDAP_CONNECTION_LOGIN_MODE.equals(fieldEditor.getPreferenceName())) {
                 boolean enabled = LOGIN_MODE_LOGIN_PASSWORD.equals(event.getNewValue());
                 loginEditor.setEnabled(enabled, getFieldEditorParent());
                 passwordEditor.setEnabled(enabled, getFieldEditorParent());
