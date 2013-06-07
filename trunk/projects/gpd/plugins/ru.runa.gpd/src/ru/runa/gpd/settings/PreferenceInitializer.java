@@ -19,11 +19,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
         store.setDefault(P_FORM_EXTERNAL_EDITOR_PATH, "");
         store.setDefault(P_FORM_USE_EXTERNAL_EDITOR, false);
         //store.setDefault(P_TASKS_TIMEOUT_ENABLED, false);
-        store.setDefault(P_CONNECTION_WFE_PROVIDER_URL, "localhost:10099");
-        store.setDefault(P_CONNECTION_LOGIN_MODE, LOGIN_MODE_LOGIN_PASSWORD);
-        store.setDefault(P_CONNECTION_LOGIN, "Administrator");
-        store.setDefault(P_CONNECTION_PASSWORD, "wf");
-        store.setDefault(P_CONNECTION_LDAP_SERVER_URL, "192.168.0.1");
+        store.setDefault(P_WFE_CONNECTION_PROVIDER_URL, "localhost:10099");
+        store.setDefault(P_WFE_CONNECTION_LOGIN_MODE, LOGIN_MODE_LOGIN_PASSWORD);
+        store.setDefault(P_WFE_CONNECTION_LOGIN, "Administrator");
+        store.setDefault(P_WFE_CONNECTION_PASSWORD, "wf");
+        store.setDefault(P_LDAP_CONNECTION_PROVIDER_URL, "ldap://192.168.0.1/dc=domain,dc=com");
         store.setDefault(P_DATE_FORMAT_PATTERN, "dd.MM.yyyy");
     }
 }
