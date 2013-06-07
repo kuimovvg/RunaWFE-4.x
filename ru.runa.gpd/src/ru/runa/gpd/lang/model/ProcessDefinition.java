@@ -197,24 +197,25 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
             this.definitionFile = definitionFile;
             hasValidationErrors = new boolean[] { false, false };
             definitionFile.deleteMarkers(ValidationErrorsView.ID, true, IResource.DEPTH_INFINITE);
-        } catch (CoreException e) {
+            List<GraphElement> childs = getChildrenRecursive(GraphElement.class);
+            validate();
+            for (GraphElement element : childs) {
+                element.validate();
+            }
+            this.definitionFile = null;
+            if (hasValidationErrors[1]) {
+                this.invalid = true;
+                return 2;
+            }
+            this.invalid = false;
+            if (hasValidationErrors[0]) {
+                return 1;
+            }
+            return 0;
+        } catch (Throwable e) {
             PluginLogger.logError(e);
-        }
-        List<GraphElement> childs = getChildrenRecursive(GraphElement.class);
-        validate();
-        for (GraphElement element : childs) {
-            element.validate();
-        }
-        this.definitionFile = null;
-        if (hasValidationErrors[1]) {
-            this.invalid = true;
             return 2;
         }
-        this.invalid = false;
-        if (hasValidationErrors[0]) {
-            return 1;
-        }
-        return 0;
     }
 
     protected void addError(GraphElement element, String messageKey, Object... params) {
