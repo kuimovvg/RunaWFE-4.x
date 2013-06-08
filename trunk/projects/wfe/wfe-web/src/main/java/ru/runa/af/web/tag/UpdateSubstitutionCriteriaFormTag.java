@@ -178,6 +178,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
     private Element createEditElement(ParamRenderer renderer, PageContext pageContext, String value, int index, boolean enabled) {
         Span span = new Span();
         Input input = new Input(Input.TEXT, SubstitutionCriteriaForm.CONF_INPUT_NAME, value);
+        input.setStyle("width: 300px");
         input.setDisabled(!enabled);
         input.addAttribute("paramIndex", index);
         span.addElement(input);

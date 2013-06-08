@@ -26,6 +26,7 @@ import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.action.CreateRelationGroupAction;
 import ru.runa.common.web.Messages;
+import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.FormTag;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -74,13 +75,17 @@ public class CreateRelationGroupFormTag extends FormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) {
         Table table = new Table();
+        table.setClass(Resources.CLASS_LIST_TABLE);
         TR tr = new TR();
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_CREATE_RELATION_GROUP_NAME, pageContext)));
-        tr.addElement(new TD(new Input(Input.TEXT, "relationName")));
+        tr.setClass(Resources.CLASS_LIST_TABLE_TH);
+        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_CREATE_RELATION_GROUP_NAME, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(new Input(Input.TEXT, "relationName")).setClass(Resources.CLASS_LIST_TABLE_TD));
         table.addElement(tr);
         tr = new TR();
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_CREATE_RELATION_GROUP_DESCRIPTION, pageContext)));
-        tr.addElement(new TD(new Input(Input.TEXT, "relationDescription")));
+        tr.setClass(Resources.CLASS_LIST_TABLE_TH);
+        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_CREATE_RELATION_GROUP_DESCRIPTION, pageContext))
+                .setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(new Input(Input.TEXT, "relationDescription")).setClass(Resources.CLASS_LIST_TABLE_TD));
         table.addElement(tr);
         tdFormElement.addElement(table);
     }
