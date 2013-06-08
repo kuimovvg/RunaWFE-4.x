@@ -34,6 +34,7 @@ public class CreateBotAction extends ActionBase {
             Bot bot = new Bot();
             bot.setUsername(botForm.getWfeUser());
             bot.setPassword(botForm.getWfePassword());
+            bot.setStartTimeout(botForm.getBotTimeout());
             bot.setBotStation(botService.getBotStation(botForm.getBotStationId()));
             botService.createBot(getLoggedUser(request), bot);
         } catch (Exception e) {

@@ -19,11 +19,11 @@ package ru.runa.af.web.tag;
 
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
-import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.action.CreateBotAction;
 import ru.runa.af.web.form.BotForm;
+import ru.runa.af.web.html.BotTableBuilder;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
 
@@ -49,21 +49,9 @@ public class AddBotTag extends TitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        Table table = new Table();
-        ActorSelectTD actorSelect = new ActorSelectTD(getUser(), BotForm.USER_NAME);
-        Input botPasswordInput = new Input(Input.TEXT, BotForm.PASSWORD);
-
         Input hiddenBotStationID = new Input(Input.HIDDEN, BotForm.BOT_STATION_ID, String.valueOf(botStationId));
         tdFormElement.addElement(hiddenBotStationID);
-
-        TR tr = new TR();
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_NAME, pageContext)));
-        tr.addElement(actorSelect);
-        table.addElement(tr);
-        tr = new TR();
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_PASSWORD, pageContext)));
-        tr.addElement(new TD(botPasswordInput));
-        table.addElement(tr);
+        Table table = BotTableBuilder.buildBotDetailsTable(getUser(), pageContext, null);
         tdFormElement.addElement(table);
     }
 

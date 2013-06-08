@@ -2,11 +2,11 @@ package ru.runa.af.web.tag;
 
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
-import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.action.UpdateBotStationAction;
 import ru.runa.af.web.form.BotStationForm;
+import ru.runa.af.web.html.BotStationTableBuilder;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wfe.bot.BotStation;
@@ -36,22 +36,10 @@ public class BotStationTag extends TitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) {
         BotStation botStation = Delegates.getBotService().getBotStation(botStationId);
-        Table table = new Table();
-        Input nameInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_NAME, botStation.getName());
-        String address = botStation.getAddress() != null ? botStation.getAddress() : "";
-        Input botStationAddressInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_RMI_ADDRESS, address);
-
         Input hiddenBotStationID = new Input(Input.HIDDEN, BotStationForm.BOT_STATION_ID, String.valueOf(botStationId));
         tdFormElement.addElement(hiddenBotStationID);
-
-        TR tr = new TR();
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)));
-        tr.addElement(new TD(nameInput));
-        table.addElement(tr);
-        tr = new TR();
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)));
-        tr.addElement(new TD(botStationAddressInput));
-        table.addElement(tr);
+        String address = botStation.getAddress() != null ? botStation.getAddress() : "";
+        Table table = BotStationTableBuilder.createBotStationDetailsTable(pageContext, botStation.getName(), address);
         tdFormElement.addElement(table);
     }
 

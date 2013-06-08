@@ -17,13 +17,11 @@
  */
 package ru.runa.af.web.tag;
 
-import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
-import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.action.CreateBotStationAction;
-import ru.runa.af.web.form.BotStationForm;
+import ru.runa.af.web.html.BotStationTableBuilder;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
 
@@ -37,17 +35,7 @@ public class AddBotStationTag extends TitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        Table table = new Table();
-        Input nameInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_NAME, "");
-        Input botStationRMIAddress = new Input(Input.TEXT, BotStationForm.BOT_STATION_RMI_ADDRESS);
-        TR tr = new TR();
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)));
-        tr.addElement(new TD(nameInput));
-        table.addElement(tr);
-        tr = new TR();
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)));
-        tr.addElement(new TD(botStationRMIAddress));
-        table.addElement(tr);
+        Table table = BotStationTableBuilder.createBotStationDetailsTable(pageContext, "", "");
         tdFormElement.addElement(table);
     }
 
