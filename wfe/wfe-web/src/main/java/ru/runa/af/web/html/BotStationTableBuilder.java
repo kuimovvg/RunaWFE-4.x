@@ -25,9 +25,11 @@ import javax.servlet.jsp.PageContext;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
+import org.apache.ecs.html.TH;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
+import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
@@ -74,10 +76,29 @@ public class BotStationTableBuilder {
     private TR createTableHeaderTR() {
         TR tr = new TR();
         tr.setClass(Resources.CLASS_LIST_TABLE_TH);
-        tr.addElement(new TD("").setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD("id").setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TH("").setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TH("id").setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TH(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TH(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }
+
+    public static Table createBotStationDetailsTable(PageContext pageContext, String name, String address) {
+        Table table = new Table();
+        table.setClass(Resources.CLASS_LIST_TABLE);
+        Input nameInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_NAME, name);
+        Input botStationRMIAddress = new Input(Input.TEXT, BotStationForm.BOT_STATION_RMI_ADDRESS, address);
+        TR tr = new TR();
+        tr.setClass(Resources.CLASS_LIST_TABLE_TH);
+        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(nameInput).setClass(Resources.CLASS_LIST_TABLE_TD));
+        table.addElement(tr);
+        tr = new TR();
+        tr.setClass(Resources.CLASS_LIST_TABLE_TH);
+        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(botStationRMIAddress).setClass(Resources.CLASS_LIST_TABLE_TD));
+        table.addElement(tr);
+        return table;
+    }
+
 }
