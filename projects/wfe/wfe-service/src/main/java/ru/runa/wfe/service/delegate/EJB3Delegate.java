@@ -66,7 +66,7 @@ public abstract class EJB3Delegate {
         beanName = baseInterfaceClass.getSimpleName() + "Bean";
         localInterfaceClassName = "ru.runa.wfe.service.decl." + baseInterfaceClass.getSimpleName() + "Local";
         remoteInterfaceClassName = "ru.runa.wfe.service.decl." + baseInterfaceClass.getSimpleName() + "Remote";
-        this.jarName = WFE_SERVICE_JAR_NAME;
+        jarName = WFE_SERVICE_JAR_NAME;
     }
 
     public void setEjbType(String ejbType, boolean override) {
@@ -114,7 +114,7 @@ public abstract class EJB3Delegate {
         String providerUrl = Objects.firstNonNull(getCustomProviderUrl(), EJB_LOCAL);
         if (!initialContexts.containsKey(providerUrl)) {
             try {
-                Properties properties = ClassLoaderUtil.getProperties("jndi.properties", true);
+                Properties properties = ClassLoaderUtil.getProperties("jndi.properties", false);
                 if (!Objects.equal(EJB_LOCAL, providerUrl)) {
                     properties.put(Context.PROVIDER_URL, providerUrl);
                 }

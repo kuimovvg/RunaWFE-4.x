@@ -70,6 +70,7 @@
 			<version>2.7.6</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<!-- Include in WAR -->
 		<dependency>
 			<groupId>ecs</groupId>
@@ -90,6 +91,10 @@
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts-extras</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts-el</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.portals.bridges</groupId>

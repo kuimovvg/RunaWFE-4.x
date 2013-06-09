@@ -49,6 +49,7 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
+import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
@@ -173,7 +174,11 @@ public class ExecutionLogic extends WFCommonLogic {
             ProcessDefinition processDefinition = getDefinition(process);
             Token highlightedToken = null;
             if (taskId != null) {
-                highlightedToken = taskDAO.getNotNull(taskId).getToken();
+                Task task = taskDAO.get(taskId);
+                if (task != null) {
+                    log.debug("Task id='" + taskId + "' is null due to completion and graph auto-refresh?");
+                    highlightedToken = task.getToken();
+                }
             }
             if (childProcessId != null) {
                 highlightedToken = nodeProcessDAO.getNodeProcessByChild(childProcessId).getParentToken();

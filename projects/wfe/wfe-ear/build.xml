@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project basedir=".">
 	
-	<property name="jboss.home.dir" value="C:/dofs/runawfe" />
-
 	<target name="deploy">
 		<echo message="copying EAR to Jboss" />
-		<copy todir="${jboss.home.dir}/server/default/deploy" overwrite="true">
+		<copy todir="${deployment.dir}" overwrite="true">
 			<fileset dir="target">
 				<include name="runawfe.ear" />
 			</fileset>
 		</copy>
 	</target>
 
+	<property name="jboss.home.dir" value="E:/Dofs/jboss4" />
 
 	<target name="dist.adminkit" description="Make distribution of admin kit">
 		<copy todir="${jboss.home.dir}/samples" overwrite="true">
