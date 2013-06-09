@@ -15,19 +15,46 @@
 		<module>../wfe-office</module>
 		<module>../wfe-web</module>
 		<module>../wfe-ear</module>
-        <module>../wfe-cactus-it</module>
+		<module>../wfe-cactus-it</module>
 	</modules>
 
 	<properties>
-        <downloadSources>true</downloadSources>
-        <downloadJavadocs>true</downloadJavadocs>
+		<downloadSources>true</downloadSources>
+		<downloadJavadocs>true</downloadJavadocs>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.organization.name>wf.runa.ru</project.organization.name>
-		<!-- Zip file with Jboss AS. Used to build wfe application server and so on. -->
-		<jboss.zip.file>path to Jboss AS zip file</jboss.zip.file>
-		<!-- Jboss AS folder name in zip file. -->
-		<jboss.zip.folder>jboss4</jboss.zip.folder>
 	</properties>
+
+	<profiles>
+		<profile>
+			<id>jboss4</id>
+			<activation>
+				<property>
+					<name>appserver</name>
+					<value>!jboss7</value>
+				</property>
+			</activation>
+			<properties>
+				<maven.profile.jndi.name>runawfe/${bean.name}/${ejb.type}</maven.profile.jndi.name>
+				<maven.profile.hibernate.datasource>java:/runawfe-ds</maven.profile.hibernate.datasource>
+				<maven.profile.hibernate.dialect>org.hibernate.dialect.HSQLDialect</maven.profile.hibernate.dialect>
+			</properties>
+		</profile>
+		<profile>
+			<id>jboss7</id>
+			<activation>
+				<property>
+					<name>appserver</name>
+					<value>jboss7</value>
+				</property>
+			</activation>
+			<properties>
+				<maven.profile.jndi.name>java:global/runawfe/${jar.name}-${project.version}/${bean.name}!${interface.class.name}</maven.profile.jndi.name>
+				<maven.profile.hibernate.datasource>java:jboss/datasources/ExampleDS</maven.profile.hibernate.datasource>
+				<maven.profile.hibernate.dialect>org.hibernate.dialect.H2Dialect</maven.profile.hibernate.dialect>
+			</properties>
+		</profile>
+	</profiles>
 
 	<dependencyManagement>
 		<dependencies>
@@ -185,6 +212,21 @@
 				<version>1.3.8</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.struts</groupId>
+				<artifactId>struts-el</artifactId>
+				<version>1.3.8</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet</groupId>
+						<artifactId>jstl</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>taglibs</groupId>
+						<artifactId>standard</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
 				<groupId>portlet-api</groupId>
 				<artifactId>portlet-api</artifactId>
 				<version>1.0</version>
@@ -228,6 +270,13 @@
 	</dependencyManagement>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
@@ -279,14 +328,14 @@
 						</archive>
 					</configuration>
 				</plugin>
-	            <plugin>
-	                <groupId>org.apache.maven.plugins</groupId>
-	                <artifactId>maven-ejb-plugin</artifactId>
-	                <version>2.3</version>
-	                <configuration>
-	                    <ejbVersion>3.1</ejbVersion>
-	                </configuration>
-	            </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-ejb-plugin</artifactId>
+					<version>2.3</version>
+					<configuration>
+						<ejbVersion>3.1</ejbVersion>
+					</configuration>
+				</plugin>
 				<plugin>
 					<artifactId>maven-war-plugin</artifactId>
 					<version>2.3</version>
@@ -307,7 +356,8 @@
 					<configuration>
 						<encoding>UTF-8</encoding>
 						<linksource>true</linksource>
-						<additionalJOption>-J-Dfile.encoding=${file.encoding} -J-Dconsole.encoding=${console.encoding}</additionalJOption>
+						<additionalJOption>-J-Dfile.encoding=${file.encoding}
+							-J-Dconsole.encoding=${console.encoding}</additionalJOption>
 					</configuration>
 				</plugin>
 				<!-- The JBoss AS plugin deploys your ear to a local JBoss AS container -->
