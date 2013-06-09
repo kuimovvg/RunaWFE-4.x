@@ -28,7 +28,7 @@ import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.commons.cache.Change;
 
-public class WFRunaHibernateInterceptor extends EmptyInterceptor {
+public class CacheInterceptor extends EmptyInterceptor {
     private static final long serialVersionUID = 1L;
 
     private boolean isOracleDatabase() {

@@ -75,22 +75,8 @@ public class ClassLoaderUtil {
         }
     }
 
-    public static Properties getPropertiesOrNull(String resource) {
-        Properties properties = new Properties();
-        try {
-            InputStream is = getAsStream(resource, ClassLoaderUtil.class);
-            if (is != null) {
-                properties.load(is);
-                is.close();
-            }
-        } catch (IOException e) {
-            throw new InternalApplicationException("couldn't load properties file '" + resource + "'", e);
-        }
-        return properties;
-    }
-
     public static Properties getProperties(String resource, boolean required) {
-        Properties properties = getPropertiesOrNull(resource);
+        Properties properties = new Properties();
         try {
             InputStream is;
             if (required) {
