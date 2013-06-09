@@ -10,6 +10,11 @@
     </parent>
 
     <properties>
+		<!-- Zip file with Jboss AS. Used to build wfe application server and so 
+			on. -->
+		<jboss.zip.file>path to Jboss AS zip file</jboss.zip.file>
+		<!-- Jboss AS folder name in zip file. -->
+		<jboss.zip.folder>jboss4</jboss.zip.folder>
         <jboss.home>${project.build.directory}/${jboss.zip.folder}</jboss.home>
     </properties>
 
@@ -109,6 +114,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.10</version>
                 <configuration>
                     <skipTests>true</skipTests>
                 </configuration>
