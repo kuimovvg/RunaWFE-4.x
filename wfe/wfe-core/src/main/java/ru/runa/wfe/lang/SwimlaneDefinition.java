@@ -39,6 +39,7 @@ public class SwimlaneDefinition extends GraphElement {
     private Delegation delegation;
     private String orgFunctionLabel;
     private List<String> flowNodeIds;
+    private String scriptingName;
 
     @Override
     public String[] getSupportedEventTypes() {
@@ -69,7 +70,15 @@ public class SwimlaneDefinition extends GraphElement {
         this.flowNodeIds = flowNodeIds;
     }
 
+    public String getScriptingName() {
+        return scriptingName;
+    }
+
+    public void setScriptingName(String scriptingName) {
+        this.scriptingName = scriptingName;
+    }
+
     public VariableDefinition toVariableDefinition() {
-        return new VariableDefinition(true, name, ExecutorFormat.class.getName());
+        return new VariableDefinition(true, name, ExecutorFormat.class.getName(), scriptingName);
     }
 }

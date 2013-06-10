@@ -21,7 +21,8 @@ public class GroovyActionHandler implements ActionHandler {
 
     @Override
     public void execute(ExecutionContext executionContext) {
-        Map<String, Object> outVariables = getScriptExecutor().executeScript(configuration, executionContext.getVariableProvider());
+        Map<String, Object> outVariables = getScriptExecutor().executeScript(executionContext.getProcessDefinition(),
+                executionContext.getVariableProvider(), configuration);
         executionContext.setVariables(outVariables);
     }
 
