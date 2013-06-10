@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
+import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
@@ -35,13 +36,15 @@ import com.google.common.base.Strings;
 public abstract class Validator {
     protected final Log log = LogFactory.getLog(getClass());
     private User user;
+    private ProcessDefinition processDefinition;
     private ValidatorConfig config;
     private ValidatorContext validatorContext;
     private IVariableProvider variableProvider;
 
-    public void init(User user, ValidatorConfig config, ValidatorContext validatorContext, Map<String, Object> variables,
-            IVariableProvider variableProvider) {
+    public void init(User user, ProcessDefinition processDefinition, ValidatorConfig config, ValidatorContext validatorContext,
+            Map<String, Object> variables, IVariableProvider variableProvider) {
         this.user = user;
+        this.processDefinition = processDefinition;
         this.config = config;
         this.validatorContext = validatorContext;
         this.variableProvider = new MapDelegableVariableProvider(config.getParams(), new MapDelegableVariableProvider(variables, variableProvider));
@@ -49,6 +52,10 @@ public abstract class Validator {
 
     protected User getUser() {
         return user;
+    }
+
+    protected ProcessDefinition getProcessDefinition() {
+        return processDefinition;
     }
 
     public ValidatorConfig getConfig() {

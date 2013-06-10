@@ -19,6 +19,8 @@ package ru.runa.wfe.var;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.google.common.base.Objects;
 
 public class VariableDefinition implements Serializable {
@@ -27,14 +29,17 @@ public class VariableDefinition implements Serializable {
     private boolean syntetic;
     private String name;
     private String formatClassName;
-    private String formatLabel;
     private boolean publicAccess;
     private String defaultValue;
+    @XmlTransient
+    private String scriptingName;
+    @XmlTransient
+    private String formatLabel;
 
     public VariableDefinition() {
     }
 
-    public VariableDefinition(boolean syntetic, String name, String formatClassName) {
+    public VariableDefinition(boolean syntetic, String name, String formatClassName, String scriptingName) {
         this.syntetic = syntetic;
         this.name = name;
         this.formatClassName = formatClassName;
@@ -44,24 +49,16 @@ public class VariableDefinition implements Serializable {
         return syntetic;
     }
 
-    public void setSyntetic(boolean syntetic) {
-        this.syntetic = syntetic;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getScriptingName() {
+        return scriptingName;
     }
 
     public String getFormatClassName() {
         return formatClassName;
-    }
-
-    public void setFormatClassName(String formatClassName) {
-        this.formatClassName = formatClassName;
     }
 
     public boolean isPublicAccess() {

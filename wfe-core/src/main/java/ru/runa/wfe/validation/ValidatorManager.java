@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.impl.ValidatorFileParser;
 import ru.runa.wfe.var.IVariableProvider;
@@ -53,28 +54,29 @@ public class ValidatorManager {
         }
     }
 
-    private static Validator createValidator(User user, ValidatorConfig config, ValidatorContext validatorContext, Map<String, Object> variables,
-            IVariableProvider variableProvider) {
+    private static Validator createValidator(User user, ProcessDefinition processDefinition, ValidatorConfig config,
+            ValidatorContext validatorContext, Map<String, Object> variables, IVariableProvider variableProvider) {
         String className = validators.get(config.getType());
         Preconditions.checkNotNull(className, "There is no validator class mapped to the name '" + config.getType() + "'");
         Validator validator = ApplicationContextFactory.createAutowiredBean(className);
-        validator.init(user, config, validatorContext, variables, variableProvider);
+        validator.init(user, processDefinition, config, validatorContext, variables, variableProvider);
         return validator;
     }
 
-    public synchronized List<Validator> createValidators(User user, byte[] validationXml, ValidatorContext validatorContext,
+    public List<Validator> createValidators(User user, ProcessDefinition processDefinition, byte[] validationXml, ValidatorContext validatorContext,
             Map<String, Object> variables, IVariableProvider variableProvider) {
         List<ValidatorConfig> configs = ValidatorFileParser.parseValidatorConfigs(validationXml);
         ArrayList<Validator> validators = new ArrayList<Validator>(configs.size());
         for (ValidatorConfig config : configs) {
-            validators.add(createValidator(user, config, validatorContext, variables, variableProvider));
+            validators.add(createValidator(user, processDefinition, config, validatorContext, variables, variableProvider));
         }
         return validators;
     }
 
-    public ValidatorContext validate(User user, byte[] validationXml, Map<String, Object> variables, IVariableProvider variableProvider) {
+    public ValidatorContext validate(User user, ProcessDefinition processDefinition, byte[] validationXml, Map<String, Object> variables,
+            IVariableProvider variableProvider) {
         ValidatorContext validatorContext = new ValidatorContext();
-        List<Validator> validators = createValidators(user, validationXml, validatorContext, variables, variableProvider);
+        List<Validator> validators = createValidators(user, processDefinition, validationXml, validatorContext, variables, variableProvider);
         for (Validator validator : validators) {
             if (log.isDebugEnabled()) {
                 log.debug("Running validator: " + validator);
