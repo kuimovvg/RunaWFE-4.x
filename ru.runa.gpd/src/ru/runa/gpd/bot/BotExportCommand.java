@@ -43,6 +43,7 @@ public class BotExportCommand extends BotSyncCommand {
             ModalContext.checkCanceled(progressMonitor);
             progressMonitor.done();
             outputStream.flush();
+            outputStream.close();
         } catch (Exception e) {
             throw new InvocationTargetException(e);
         }

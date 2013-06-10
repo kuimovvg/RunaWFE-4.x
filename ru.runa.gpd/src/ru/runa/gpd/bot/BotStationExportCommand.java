@@ -48,6 +48,7 @@ public class BotStationExportCommand extends BotExportCommand {
             progressMonitor.done();
             zipStream.close();
             outputStream.flush();
+            outputStream.close();
         } catch (Exception e) {
             throw new InvocationTargetException(e);
         }
