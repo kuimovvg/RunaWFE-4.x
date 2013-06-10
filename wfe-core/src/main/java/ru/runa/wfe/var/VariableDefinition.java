@@ -19,10 +19,12 @@ package ru.runa.wfe.var;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import com.google.common.base.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class VariableDefinition implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -31,9 +33,7 @@ public class VariableDefinition implements Serializable {
     private String formatClassName;
     private boolean publicAccess;
     private String defaultValue;
-    @XmlTransient
     private String scriptingName;
-    @XmlTransient
     private String formatLabel;
 
     public VariableDefinition() {
@@ -43,6 +43,7 @@ public class VariableDefinition implements Serializable {
         this.syntetic = syntetic;
         this.name = name;
         this.formatClassName = formatClassName;
+        this.scriptingName = scriptingName;
     }
 
     public boolean isSyntetic() {
