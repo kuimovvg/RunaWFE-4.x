@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 
@@ -31,7 +32,7 @@ public class BotsXmlContentProvider extends AuxContentProvider {
         Document document = XmlUtil.parseWithoutValidation(file.getContents());
         List<Element> elements = document.getRootElement().elements(TASK_ELEMENT_NAME);
         for (Element element : elements) {
-            String taskId = element.attributeValue(NAME_ATTRIBUTE_NAME);
+            String taskId = element.attributeValue(ID_ATTRIBUTE_NAME, element.attributeValue(NAME_ATTRIBUTE_NAME));
             String className = element.attributeValue(CLASS_ATTRIBUTE_NAME);
             String botTaskName = element.attributeValue(BOT_TASK_NAME);
             Element configElement = element.element(CONFIG_ELEMENT_NAME);
@@ -54,7 +55,7 @@ public class BotsXmlContentProvider extends AuxContentProvider {
             if (botTaskLink != null) {
                 botTasksCount++;
                 Element element = document.getRootElement().addElement(TASK_ELEMENT_NAME);
-                element.addAttribute(NAME_ATTRIBUTE_NAME, taskState.getId());
+                element.addAttribute(ID_ATTRIBUTE_NAME, taskState.getId());
                 element.addAttribute(CLASS_ATTRIBUTE_NAME, botTaskLink.getDelegationClassName());
                 element.addAttribute(BOT_TASK_NAME, botTaskLink.getBotTaskName());
                 if (!Strings.isNullOrEmpty(botTaskLink.getDelegationConfiguration())) {
@@ -68,7 +69,7 @@ public class BotsXmlContentProvider extends AuxContentProvider {
                 folder.getFile(BOTS_XML_FILE_NAME).delete(true, null);
             }
         } else {
-            byte[] bytes = XmlUtil.writeXml(document);
+            byte[] bytes = XmlUtil.writeXml(document, OutputFormat.createPrettyPrint());
             updateFile(folder.getFile(BOTS_XML_FILE_NAME), bytes);
         }
     }
