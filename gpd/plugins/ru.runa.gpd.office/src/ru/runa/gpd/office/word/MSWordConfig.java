@@ -63,7 +63,7 @@ public class MSWordConfig extends Observable {
     public String toString() {
         try {
             Document document = XmlUtil.createDocument("msword-report-task", XmlUtil.RUNA_NAMESPACE, "msword-report-task.xsd");
-            Element reportElement = document.getRootElement().addElement("report");
+            Element reportElement = document.getRootElement().addElement("report", XmlUtil.RUNA_NAMESPACE);
             reportElement.addAttribute("template-path", templatePath);
             reportElement.addAttribute("output-variable", resultVariableName);
             reportElement.addAttribute("output-variable-file-name", resultFileName);
@@ -79,16 +79,17 @@ public class MSWordConfig extends Observable {
     public static MSWordConfig fromXml(String xml) throws Exception {
         MSWordConfig model = new MSWordConfig();
         Document document = XmlUtil.parseWithoutValidation(xml);
-        Element reportElement = document.getRootElement().element("report");
+        Element root = document.getRootElement();
+        Element reportElement = root.element("report");
         if (reportElement != null) {
             model.templatePath = reportElement.attributeValue("template-path");
             model.resultVariableName = reportElement.attributeValue("output-variable");
             model.resultFileName = reportElement.attributeValue("output-variable-file-name");
-        }
-        List<Element> mappingElements = document.getRootElement().elements("mapping");
-        for (Element mappingElement : mappingElements) {
-            MSWordVariableMapping mapping = MSWordVariableMapping.deserialize(mappingElement);
-            model.mappings.add(mapping);
+            List<Element> mappingElements = reportElement.elements("mapping");
+            for (Element mappingElement : mappingElements) {
+                MSWordVariableMapping mapping = MSWordVariableMapping.deserialize(mappingElement);
+                model.mappings.add(mapping);
+            }
         }
         return model;
     }
