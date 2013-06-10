@@ -25,11 +25,15 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
         Element root = document.getRootElement();
         List<Element> elements = root.elements("variable");
         for (Element element : elements) {
+            String name = element.attributeValue("name");
+            String scriptingName = element.attributeValue("scriptingName", name);
             boolean swimlane = Boolean.parseBoolean(element.attributeValue("swimlane", "false"));
-            if (!swimlane) {
+            if (swimlane) {
+                processDefinition.getSwimlane(name).setScriptingName(scriptingName);
+            } else {
                 String format = element.attributeValue("format");
                 format = BackCompatibilityClassNames.getClassName(format);
-                VariableDefinition variable = new VariableDefinition(false, element.attributeValue("name"), format);
+                VariableDefinition variable = new VariableDefinition(false, name, format, scriptingName);
                 variable.setFormatLabel(localizationDAO.getLocalized(format));
                 variable.setPublicAccess(Boolean.parseBoolean(element.attributeValue("public", "false")));
                 variable.setDefaultValue(element.attributeValue("defaultValue"));

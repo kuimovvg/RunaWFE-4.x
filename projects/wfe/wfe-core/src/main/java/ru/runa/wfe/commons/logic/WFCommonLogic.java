@@ -107,7 +107,8 @@ public class WFCommonLogic extends CommonLogic {
             IVariableProvider variableProvider) throws ValidationException {
         Interaction interaction = processDefinition.getInteractionNotNull(nodeId);
         if (interaction.getValidationData() != null) {
-            ValidatorContext context = ValidatorManager.getInstance().validate(user, interaction.getValidationData(), variables, variableProvider);
+            ValidatorContext context = ValidatorManager.getInstance().validate(user, processDefinition, interaction.getValidationData(), variables,
+                    variableProvider);
             if (context.hasGlobalErrors() || context.hasFieldErrors()) {
                 throw new ValidationException(context.getFieldErrors(), context.getGlobalErrors());
             }
