@@ -16,6 +16,7 @@ import org.eclipse.text.edits.ReplaceEdit;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.FormNode;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.IOUtils;
 
 public class FormNodePresentation extends VariableRenameProvider<FormNode> {
@@ -27,15 +28,15 @@ public class FormNodePresentation extends VariableRenameProvider<FormNode> {
     }
 
     @Override
-    public List<Change> getChanges(String variableName, String replacement) throws Exception {
+    public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         CompositeChange result = new CompositeChange(element.getName());
         if (element.hasForm()) {
             IFile file = folder.getFile(element.getFormFileName());
-            result.addAll(processFile(file, Localization.getString("Search.formNode.form"), variableName, replacement));
+            result.addAll(processFile(file, Localization.getString("Search.formNode.form"), oldVariable.getName(), newVariable.getName()));
         }
         if (element.hasFormValidation()) {
             IFile file = folder.getFile(element.getValidationFileName());
-            result.addAll(processFile(file, Localization.getString("Search.formNode.validation"), variableName, replacement));
+            result.addAll(processFile(file, Localization.getString("Search.formNode.validation"), oldVariable.getName(), newVariable.getName()));
         }
         if (result.getChildren().length > 0) {
             return Arrays.asList((Change) result);

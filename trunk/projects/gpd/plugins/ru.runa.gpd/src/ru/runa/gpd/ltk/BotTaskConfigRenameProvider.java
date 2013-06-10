@@ -17,6 +17,7 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.lang.model.BotTask;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.WorkspaceOperations;
 
 import com.google.common.base.Preconditions;
@@ -28,10 +29,10 @@ public class BotTaskConfigRenameProvider extends VariableRenameProvider<BotTask>
     }
 
     @Override
-    public List<Change> getChanges(String variableName, String replacement) throws Exception {
+    public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<Change> changes = new ArrayList<Change>();
-        if (element.getDelegationConfiguration() != null && element.getDelegationConfiguration().contains(Pattern.quote("\"" + variableName + "\""))) {
-            changes.add(new ConfigChange(variableName, replacement));
+        if (element.getDelegationConfiguration() != null && element.getDelegationConfiguration().contains(Pattern.quote("\"" + oldVariable + "\""))) {
+            changes.add(new ConfigChange(oldVariable.getName(), newVariable.getName()));
         }
         return changes;
     }

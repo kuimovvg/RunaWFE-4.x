@@ -28,22 +28,23 @@ import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
+import ru.runa.gpd.lang.model.Variable;
 
+@SuppressWarnings("unchecked")
 public class PortabilityRefactoring extends Refactoring {
     private final List<VariableRenameProvider<?>> cache = new ArrayList<VariableRenameProvider<?>>();
     private final IFile definitionFile;
     private final ProcessDefinition definition;
-    private final String variableName;
-    private final String replacement;
+    private final Variable oldVariable;
+    private final Variable newVariable;
 
-    public PortabilityRefactoring(IFile definitionFile, ProcessDefinition definition, String variableName, String replacement) {
+    public PortabilityRefactoring(IFile definitionFile, ProcessDefinition definition, Variable oldVariable, Variable newVariable) {
         this.definitionFile = definitionFile;
         this.definition = definition;
-        this.variableName = variableName;
-        this.replacement = replacement;
+        this.oldVariable = oldVariable;
+        this.newVariable = newVariable;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public RefactoringStatus checkInitialConditions(IProgressMonitor pm) {
         RefactoringStatus result = new RefactoringStatus();
@@ -123,7 +124,7 @@ public class PortabilityRefactoring extends Refactoring {
             cashedChange = new CompositeChange(getName());
             for (VariableRenameProvider<?> classPresentation : cache) {
                 try {
-                    List<Change> changes = classPresentation.getChanges(variableName, replacement);
+                    List<Change> changes = classPresentation.getChanges(oldVariable, newVariable);
                     cashedChange.addAll(changes.toArray(new Change[changes.size()]));
                 } catch (Exception e) {
                     PluginLogger.logErrorWithoutDialog(e.getMessage(), e);

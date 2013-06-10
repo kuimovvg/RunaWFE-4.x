@@ -3,16 +3,13 @@ package ru.runa.gpd.extension.decision;
 import java.util.List;
 
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.util.VariableUtils;
 
-public class BSHValidationModel {
-
-    private static List<Variable> variables;
-
-    public static Expr fromCode(String code, List<Variable> vars) {
-        if (code.length() == 0)
+public class GroovyValidationModel {
+    public static Expr fromCode(String code, List<Variable> variables) {
+        if (code.length() == 0) {
             return null;
-        variables = vars;
-
+        }
         String[] strings = code.split(" ");
         // tmp
         String lexem1Text = "";
@@ -45,74 +42,56 @@ public class BSHValidationModel {
                 }
             }
         }
-
         if (lexem1Text.indexOf(".") > 0) {
             // Java names doesn't allowed use of point in variable name
             lexem1Text = lexem1Text.substring(0, lexem1Text.indexOf("."));
         }
-
-        Variable var1 = getVariableByName(lexem1Text);
-        if (var1 == null) {
+        Variable variable1 = VariableUtils.getVariableByScriptingName(variables, lexem1Text);
+        if (variable1 == null) {
             // variable deleted
             return null;
         }
-        BSHTypeSupport typeSupport = BSHTypeSupport.get(var1.getJavaClassName());
-
+        GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable1.getJavaClassName());
         Operation operation = Operation.getByOperator(operator, typeSupport);
         if (operation == null) {
             throw new NullPointerException("operation not found for operator: " + operator);
         }
-
         if (lexem2Text.indexOf(".") > 0) {
             // Java names doesn't allowed use of point in variable name
             lexem2Text = lexem2Text.substring(0, lexem2Text.indexOf("."));
         }
-        Variable var2 = getVariableByName(lexem2Text);
-        if (var2 == null) {
+        Variable variable2 = VariableUtils.getVariableByScriptingName(variables, lexem2Text);
+        if (variable2 == null) {
             return null;
         }
-
-        return new Expr(var1, var2, operation);
-    }
-
-    private static Variable getVariableByName(String variableName) {
-        for (Variable variable : variables) {
-            if (variable.getName().equals(variableName)) {
-                return variable;
-            }
-        }
-        return null;
+        return new Expr(variable1, variable2, operation);
     }
 
     public static class Expr {
-        private Variable var1;
-
-        private Variable var2;
-
+        private Variable variable1;
+        private Variable variable2;
         private Operation operation;
 
         public Expr(Variable var1, Variable var2, Operation operation) {
-            this.var1 = var1;
-            this.var2 = var2;
+            this.variable1 = var1;
+            this.variable2 = var2;
             this.operation = operation;
         }
 
         public String generateCode() {
-            return operation.generateCode(var1, var2);
+            return operation.generateCode(variable1, variable2);
         }
 
-        public Variable getVar1() {
-            return var1;
+        public Variable getVariable1() {
+            return variable1;
         }
 
-        public Variable getVar2() {
-            return var2;
+        public Variable getVariable2() {
+            return variable2;
         }
 
         public Operation getOperation() {
             return operation;
         }
-
     }
-
 }

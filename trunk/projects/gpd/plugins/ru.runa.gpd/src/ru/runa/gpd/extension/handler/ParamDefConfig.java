@@ -15,7 +15,7 @@ import org.dom4j.Element;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.util.CommonUtils;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Strings;
@@ -234,7 +234,7 @@ public class ParamDefConfig {
                 if (param.getXmlNodeType() == ParamDef.XML_TYPE_ATTR) {
                     paramElement = DocumentHelper.createElement("param");
                     paramElement.addAttribute("name", paramName);
-                    if (param.isUseVariable() && CommonUtils.isVariableExists(variables, value)) {
+                    if (param.isUseVariable() && VariableUtils.isVariableExists(variables, value)) {
                         paramElement.addAttribute("variable", value);
                     } else {
                         paramElement.addAttribute("value", value);

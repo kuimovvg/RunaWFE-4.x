@@ -972,7 +972,7 @@
             assignmentHandler="false"
             botTaskHandler="false"
             decisionHandler="true"
-            cellEditorProvider="ru.runa.gpd.extension.decision.BSHDecisionProvider"
+            cellEditorProvider="ru.runa.gpd.extension.decision.GroovyDecisionProvider"
             className="ru.runa.wfe.extension.decision.BSFDecisionHandler"
             enabled="false"
             label="%ru.runa.wfe.extension.decision.BSHDecisionHandler" />
@@ -981,7 +981,7 @@
             assignmentHandler="false"
             botTaskHandler="false"
             decisionHandler="true"
-            cellEditorProvider="ru.runa.gpd.extension.decision.BSHDecisionProvider"
+            cellEditorProvider="ru.runa.gpd.extension.decision.GroovyDecisionProvider"
             className="ru.runa.wfe.extension.decision.GroovyDecisionHandler"
             enabled="true"
             label="%ru.runa.wfe.extension.decision.GroovyDecisionHandler" />

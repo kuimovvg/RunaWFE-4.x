@@ -43,7 +43,7 @@ public class ValidatorDefinitionRegistry {
                 }
             }
         }
-        ValidatorDefinition global = new ValidatorDefinition(ValidatorDefinition.GLOBAL_VALIDATOR_NAME, "BSH", ValidatorDefinition.GLOBAL_TYPE, "BSH code");
+        ValidatorDefinition global = new ValidatorDefinition(ValidatorDefinition.GLOBAL_VALIDATOR_NAME, "Groovy", ValidatorDefinition.GLOBAL_TYPE, "Groovy script");
         global.addParam(new Param(ValidatorDefinition.EXPRESSION_PARAM_NAME, "", Param.STRING_TYPE));
         definitions.put(ValidatorDefinition.GLOBAL_VALIDATOR_NAME, global);
     }
