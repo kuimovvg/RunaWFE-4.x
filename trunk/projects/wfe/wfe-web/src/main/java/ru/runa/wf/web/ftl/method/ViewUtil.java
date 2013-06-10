@@ -10,7 +10,6 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -28,7 +27,6 @@ public class ViewUtil {
     private static final Log log = LogFactory.getLog(ViewUtil.class);
 
     public static String createExecutorSelect(User user, WfVariable variable) {
-        ExecutorService executorService = Delegates.getExecutorService();
         BatchPresentation batchPresentation;
         if (ActorFormat.class.getName().equals(variable.getFormatClassNameNotNull())) {
             batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
@@ -42,7 +40,7 @@ public class ViewUtil {
         int[] sortIds = { 1 };
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
-        List<Executor> executors = (List<Executor>) executorService.getExecutors(user, batchPresentation);
+        List<Executor> executors = (List<Executor>) Delegates.getExecutorService().getExecutors(user, batchPresentation);
 
         String html = "<select name=\"" + variable.getDefinition().getName() + "\">";
         for (Executor executor : executors) {

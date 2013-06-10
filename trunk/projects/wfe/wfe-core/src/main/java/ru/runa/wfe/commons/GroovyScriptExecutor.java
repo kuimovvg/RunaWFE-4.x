@@ -11,8 +11,12 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.GroovyExceptionInterface;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.VariableDefinition;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 
 @SuppressWarnings("unchecked")
@@ -20,9 +24,9 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     private static final Log log = LogFactory.getLog(GroovyScriptExecutor.class);
 
     @Override
-    public Map<String, Object> executeScript(String script, IVariableProvider variableProvider) {
+    public Map<String, Object> executeScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
         try {
-            Binding binding = createBinding(variableProvider);
+            Binding binding = createBinding(processDefinition, variableProvider);
             GroovyShell shell = new GroovyShell(binding);
             shell.evaluate(script);
             return binding.getVariables();
@@ -36,9 +40,9 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     }
 
     @Override
-    public <T extends Object> T evaluateScript(String script, IVariableProvider variableProvider) {
+    public <T extends Object> T evaluateScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
         try {
-            Binding binding = createBinding(variableProvider);
+            Binding binding = createBinding(processDefinition, variableProvider);
             GroovyShell shell = new GroovyShell(binding);
             return (T) shell.evaluate(script);
         } catch (Exception e) {
@@ -50,14 +54,16 @@ public class GroovyScriptExecutor implements IScriptExecutor {
         }
     }
 
-    protected Binding createBinding(IVariableProvider variableProvider) {
-        return new CustomBinding(variableProvider);
+    protected Binding createBinding(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
+        return new GroovyScriptBinding(processDefinition, variableProvider);
     }
 
-    private static class CustomBinding extends Binding {
-        private final IVariableProvider variableProvider;
+    public static class GroovyScriptBinding extends Binding {
+        protected final ProcessDefinition processDefinition;
+        protected final IVariableProvider variableProvider;
 
-        public CustomBinding(IVariableProvider variableProvider) {
+        public GroovyScriptBinding(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
+            this.processDefinition = processDefinition;
             this.variableProvider = variableProvider;
         }
 
@@ -66,12 +72,35 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             try {
                 return super.getVariable(name);
             } catch (MissingPropertyException e) {
-                Object value = variableProvider.getValue(name);
-                if (value == null) {
-                    log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
-                }
-                return value;
+                return getVariableFromProcess(name);
             }
+        }
+
+        protected Object getVariableFromProcess(String name) {
+            if (processDefinition != null) {
+                boolean found = false;
+                for (VariableDefinition variableDefinition : processDefinition.getVariables()) {
+                    if (Objects.equal(name, variableDefinition.getScriptingName())) {
+                        name = variableDefinition.getName();
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    for (SwimlaneDefinition swimlaneDefinition : processDefinition.getSwimlanes().values()) {
+                        if (Objects.equal(name, swimlaneDefinition.getScriptingName())) {
+                            name = swimlaneDefinition.getName();
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            Object value = variableProvider.getValue(name);
+            if (value == null) {
+                log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
+            }
+            return value;
         }
 
         @Override
