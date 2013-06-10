@@ -8,7 +8,6 @@ import org.eclipse.gef.ui.actions.Clipboard;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -28,7 +27,6 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -51,9 +49,12 @@ import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.VariableSearchQuery;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.dialog.UpdateVariableDialog;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
 
+@SuppressWarnings("unchecked")
 public class VariableEditorPage extends EditorPartBase {
     private TableViewer tableViewer;
     private Button searchButton;
@@ -115,9 +116,9 @@ public class VariableEditorPage extends EditorPartBase {
         moveUpButton = addButton(buttonsBar, "button.up", new MoveVariableSelectionListener(true), true);
         moveDownButton = addButton(buttonsBar, "button.down", new MoveVariableSelectionListener(false), true);
         deleteButton = addButton(buttonsBar, "button.delete", new RemoveVariableSelectionListener(), true);
-        tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+        tableViewer.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
             @Override
-            public void selectionChanged(SelectionChangedEvent event) {
+            protected void onSelectionChanged(SelectionChangedEvent event) throws Exception {
                 updateButtons();
             }
         });
@@ -182,7 +183,7 @@ public class VariableEditorPage extends EditorPartBase {
         super.dispose();
     }
 
-    private class MoveVariableSelectionListener extends SelectionAdapter {
+    private class MoveVariableSelectionListener extends LoggingSelectionAdapter {
         private final boolean up;
 
         public MoveVariableSelectionListener(boolean up) {
@@ -190,14 +191,13 @@ public class VariableEditorPage extends EditorPartBase {
         }
 
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
             List<Variable> children = getDefinition().getVariables(false);
             int index = children.indexOf(variable);
             getDefinition().swapChilds(variable, up ? children.get(index - 1) : children.get(index + 1));
             tableViewer.setSelection(selection);
-            // updateButtons();
         }
     }
 
@@ -224,9 +224,9 @@ public class VariableEditorPage extends EditorPartBase {
         }
     }
 
-    private class SearchVariableUsageSelectionListener extends SelectionAdapter {
+    private class SearchVariableUsageSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             try {
                 IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
                 Variable variable = (Variable) selection.getFirstElement();
@@ -238,9 +238,9 @@ public class VariableEditorPage extends EditorPartBase {
         }
     }
 
-    private class RenameVariableSelectionListener extends SelectionAdapter {
+    private class RenameVariableSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
             UpdateVariableNameDialog dialog = new UpdateVariableNameDialog(editor.getDefinition());
@@ -249,9 +249,10 @@ public class VariableEditorPage extends EditorPartBase {
             if (result != IDialogConstants.OK_ID) {
                 return;
             }
-            String replacement = dialog.getName();
+            Variable oldVariable = new Variable(variable);
+            variable.setName(dialog.getName());
             IResource projectRoot = editor.getDefinitionFile().getParent();
-            PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), variable.getName(), replacement);
+            PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), oldVariable, variable);
             boolean useLtk = ref.isUserInteractionNeeded();
             if (useLtk) {
                 RenameRefactoringWizard wizard = new RenameRefactoringWizard(ref);
@@ -266,17 +267,15 @@ public class VariableEditorPage extends EditorPartBase {
                     // operation was canceled
                 }
             }
-            variable.setName(replacement);
             if (useLtk) {
                 IDE.saveAllEditors(new IResource[] { projectRoot }, false);
             }
         }
     }
 
-    private class RemoveVariableSelectionListener extends SelectionAdapter {
-        @SuppressWarnings("unchecked")
+    private class RemoveVariableSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             List<Variable> variables = selection.toList();
             for (Variable variable : variables) {
@@ -289,9 +288,9 @@ public class VariableEditorPage extends EditorPartBase {
         }
     }
 
-    private class CreateVariableSelectionListener extends SelectionAdapter {
+    private class CreateVariableSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             UpdateVariableDialog dialog = new UpdateVariableDialog(getDefinition(), null);
             if (dialog.open() == IDialogConstants.OK_ID) {
                 Variable variable = new Variable(dialog.getName(), dialog.getTypeName(), dialog.isPublicVisibility(), dialog.getDefaultValue());
@@ -302,9 +301,9 @@ public class VariableEditorPage extends EditorPartBase {
         }
     }
 
-    private class ChangeVariableSelectionListener extends SelectionAdapter {
+    private class ChangeVariableSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
             UpdateVariableDialog dialog = new UpdateVariableDialog(getDefinition(), variable);
@@ -317,18 +316,17 @@ public class VariableEditorPage extends EditorPartBase {
         }
     }
 
-    private class CopyVariableSelectionListener extends SelectionAdapter {
+    private class CopyVariableSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Clipboard.getDefault().setContents(selection.toList());
         }
     }
 
-    private class PasteVariableSelectionListener extends SelectionAdapter {
-        @SuppressWarnings("unchecked")
+    private class PasteVariableSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             List<Variable> newVariables = (List<Variable>) Clipboard.getDefault().getContents();
             for (Variable variable : newVariables) {
                 Variable newVariable = getDefinition().getVariable(variable.getName(), false);

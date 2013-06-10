@@ -1,6 +1,5 @@
 package ru.runa.gpd.extension.handler;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -19,28 +18,27 @@ import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 
-public class GroovyActionHandlerProvider extends DelegableProvider {
+import com.google.common.collect.Lists;
 
+public class GroovyActionHandlerProvider extends DelegableProvider {
     @Override
     protected DelegableConfigurationDialog createConfigurationDialog(Delegable delegable) {
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
-        return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariableNames(true));
+        return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariables(true));
     }
 
     private static class ConfigurationDialog extends DelegableConfigurationDialog {
-        private final List<String> variableNames;
+        private final List<String> variableNames = Lists.newArrayList();
         private HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
 
-        public ConfigurationDialog(String initialValue, List<String> variableNames) {
+        public ConfigurationDialog(String initialValue, List<Variable> variables) {
             super(initialValue);
-            this.variableNames = new ArrayList<String>();
-            for (String string : variableNames) {
-                if (!string.contains(" ")) {
-                    this.variableNames.add(string);
-                }
+            for (Variable variable : variables) {
+                this.variableNames.add(variable.getScriptingName());
             }
         }
 
@@ -49,7 +47,6 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
             Composite composite = new Composite(parent, SWT.NONE);
             composite.setLayout(new GridLayout(2, false));
             composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
             Hyperlink hl3 = new Hyperlink(composite, SWT.NONE);
             hl3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
             hl3.setText(Localization.getString("button.insert_variable"));
@@ -73,5 +70,4 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
             styledText.addLineStyleListener(new JavaHighlightTextStyling(variableNames));
         }
     }
-
 }

@@ -23,57 +23,46 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
-import ru.runa.gpd.extension.decision.BSHDecisionModel.IfExpr;
+import ru.runa.gpd.extension.decision.GroovyDecisionModel.IfExpr;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
-import ru.runa.gpd.util.BackCompatibilityUtils;
+import ru.runa.gpd.util.VariableUtils;
 
-public class BSHEditorDialog extends Dialog {
-
+public class GroovyEditorDialog extends Dialog {
     private static final Image upImage = SharedImages.getImage("icons/up.gif");
-
     private TabFolder tabFolder;
-
     private StyledText styledText;
-
     private Composite constructor;
-
     private final String initValue;
-    private BSHDecisionModel initModel;
+    private GroovyDecisionModel initModel;
     private String initErrorMessage;
-
     private final List<String> transitionNames;
-
     private final List<Variable> variables;
     private final List<String> variableNames;
-
     private ErrorHeaderComposite constructorHeader;
     private ErrorHeaderComposite sourceHeader;
-
     private Label[] labels;
-
     private Combo[][] comboBoxes;
-
     private Combo defaultTransitionCombo;
-
     private String result;
 
-    public BSHEditorDialog(ProcessDefinition definition, List<String> transitionNames, String initValue) {
+    public GroovyEditorDialog(ProcessDefinition definition, List<String> transitionNames, String initValue) {
         super(Display.getCurrent().getActiveShell());
         setShellStyle(getShellStyle() | SWT.RESIZE);
         this.initValue = initValue;
         this.transitionNames = transitionNames;
-        this.variables = BackCompatibilityUtils.getValidVariables(definition.getVariables(true));
-        this.variableNames = BackCompatibilityUtils.getValidVariableNames(definition.getVariableNames(true));
+        this.variables = definition.getVariables(true);
+        this.variableNames = VariableUtils.getVariableNamesForScripting(variables);
         if (this.initValue.length() > 0) {
             try {
-                initModel = new BSHDecisionModel(initValue, variables);
+                initModel = new GroovyDecisionModel(initValue, variables);
             } catch (Throwable e) {
                 initErrorMessage = e.getMessage();
                 PluginLogger.logErrorWithoutDialog("", e);
@@ -88,52 +77,38 @@ public class BSHEditorDialog extends Dialog {
 
     @Override
     protected Control createDialogArea(Composite parent) {
-        getShell().setText(Localization.getString("BSHEditor.title"));
-
+        getShell().setText(Localization.getString("GroovyEditor.title"));
         tabFolder = new TabFolder(parent, SWT.BORDER);
         tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
         tabFolder.addSelectionListener(new TabSelectionHandler());
-
         Composite constructorView = new Composite(tabFolder, SWT.NONE);
         constructorView.setLayout(new GridLayout());
-
         TabItem tabItem1 = new TabItem(tabFolder, SWT.NONE);
-        tabItem1.setText(Localization.getString("BSHEditor.title.constructor"));
+        tabItem1.setText(Localization.getString("GroovyEditor.title.constructor"));
         tabItem1.setControl(constructorView);
-
         constructorHeader = new ErrorHeaderComposite(constructorView);
-
         ScrolledComposite scrolledComposite = new ScrolledComposite(constructorView, SWT.V_SCROLL | SWT.BORDER);
         scrolledComposite.setExpandHorizontal(true);
         scrolledComposite.setExpandVertical(true);
         scrolledComposite.setMinHeight(200);
         scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
         constructor = new Composite(scrolledComposite, SWT.NONE);
-
         scrolledComposite.setContent(constructor);
-
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 5;
         constructor.setLayout(gridLayout);
         constructor.setLayoutData(new GridData(GridData.FILL_BOTH));
-
         Composite sourceView = new Composite(tabFolder, SWT.NONE);
         sourceView.setLayout(new GridLayout());
-
         sourceHeader = new ErrorHeaderComposite(sourceView);
-
         styledText = new StyledText(sourceView, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
         styledText.addLineStyleListener(new JavaHighlightTextStyling(variableNames));
         styledText.setText(this.initValue);
         styledText.setLayoutData(new GridData(GridData.FILL_BOTH));
-
         TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
-        tabItem2.setText(Localization.getString("BSHEditor.title.bsh"));
+        tabItem2.setText(Localization.getString("GroovyEditor.title.code"));
         tabItem2.setControl(sourceView);
-
         createConstructorView();
-
         try {
             if (initModel != null && initValue.equals(initModel.generateCode())) {
                 initConstructorView();
@@ -149,7 +124,6 @@ public class BSHEditorDialog extends Dialog {
             // Activate source view if custom code found
             tabFolder.setSelection(1);
         }
-
         return tabFolder;
     }
 
@@ -183,36 +157,30 @@ public class BSHEditorDialog extends Dialog {
             labels[i] = new Label(constructor, SWT.NONE);
             labels[i].setText(transitionNames.get(i));
             labels[i].setLayoutData(getGridData());
-
             comboBoxes[i][0] = new Combo(constructor, SWT.READ_ONLY);
             for (Variable variable : variables) {
-                comboBoxes[i][0].add(variable.getName());
+                comboBoxes[i][0].add(variable.getScriptingName());
             }
             comboBoxes[i][0].setData(DATA_INDEX_KEY, new int[] { i, 0 });
             comboBoxes[i][0].addSelectionListener(new ComboSelectionHandler());
             comboBoxes[i][0].setLayoutData(getGridData());
-
             comboBoxes[i][1] = new Combo(constructor, SWT.READ_ONLY);
             comboBoxes[i][1].setData(DATA_INDEX_KEY, new int[] { i, 1 });
             comboBoxes[i][1].addSelectionListener(new ComboSelectionHandler());
             comboBoxes[i][1].setLayoutData(getGridData());
-
             comboBoxes[i][2] = new Combo(constructor, SWT.READ_ONLY);
             comboBoxes[i][2].setData(DATA_INDEX_KEY, new int[] { i, 2 });
             comboBoxes[i][2].addSelectionListener(new ComboSelectionHandler());
             comboBoxes[i][2].setLayoutData(getGridData());
-
             if (i != 0) {
                 Button upButton = new Button(constructor, SWT.PUSH);
                 upButton.setImage(upImage);
                 upButton.setData(i);
-                upButton.addSelectionListener(new SelectionAdapter() {
-
+                upButton.addSelectionListener(new LoggingSelectionAdapter() {
                     @Override
-                    public void widgetSelected(SelectionEvent e) {
+                    protected void onSelection(SelectionEvent e) throws Exception {
                         upRecord((Integer) e.widget.getData());
                     }
-
                 });
             } else {
                 new Label(constructor, SWT.NONE);
@@ -230,15 +198,14 @@ public class BSHEditorDialog extends Dialog {
             data.horizontalSpan = 5;
             bottomComposite.setLayoutData(data);
             Label defaultLabel = new Label(bottomComposite, SWT.NONE);
-            defaultLabel.setText(Localization.getString("BSHEditor.byDefault") + ":");
+            defaultLabel.setText(Localization.getString("GroovyEditor.byDefault") + ":");
             defaultTransitionCombo = new Combo(bottomComposite, SWT.READ_ONLY);
             for (String trName : transitionNames) {
                 defaultTransitionCombo.add(trName);
             }
-            defaultTransitionCombo.addSelectionListener(new SelectionAdapter() {
-
+            defaultTransitionCombo.addSelectionListener(new LoggingSelectionAdapter() {
                 @Override
-                public void widgetSelected(SelectionEvent e) {
+                protected void onSelection(SelectionEvent e) throws Exception {
                     for (int j = 0; j < labels.length; j++) {
                         boolean enabled = !labels[j].getText().equals(defaultTransitionCombo.getText());
                         comboBoxes[j][0].setEnabled(enabled);
@@ -254,7 +221,6 @@ public class BSHEditorDialog extends Dialog {
     private void initConstructorView() {
         for (int i = 0; i < transitionNames.size(); i++) {
             IfExpr ifExpr = initModel.getIfExpr(transitionNames.get(i));
-
             if (ifExpr != null) {
                 labels[i].setText(ifExpr.getTransition());
                 if (ifExpr.isByDefault()) {
@@ -272,9 +238,7 @@ public class BSHEditorDialog extends Dialog {
                     }
                     comboBoxes[i][0].select(index);
                     refreshComboItems(comboBoxes[i][0]);
-
-                    BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
-
+                    GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable.getJavaClassName());
                     index = Operation.getAll(typeSupport).indexOf(ifExpr.getOperation());
                     if (index == -1) {
                         // required operation was deleted !!!
@@ -282,10 +246,9 @@ public class BSHEditorDialog extends Dialog {
                     }
                     comboBoxes[i][1].select(index);
                     refreshComboItems(comboBoxes[i][1]);
-
                     String lexem2Text = ifExpr.getLexem2TextValue();
                     int combo3index = 0;
-                    if (getVariableByName(lexem2Text) != null) {
+                    if (VariableUtils.getVariableByScriptingName(variables, lexem2Text) != null) {
                         combo3index = getCombo3VariableNames(variable).indexOf(lexem2Text);
                     } else {
                         int predefinedIndex = typeSupport.getPredefinedValues(ifExpr.getOperation()).indexOf(lexem2Text);
@@ -303,11 +266,8 @@ public class BSHEditorDialog extends Dialog {
     }
 
     static final String DATA_INDEX_KEY = "indexes";
-
     static final String DATA_VARIABLE_KEY = "variable";
-
     static final String DATA_USER_INPUT_KEY = "userInput";
-
     static final String DATA_OPERATION_KEY = "operation";
 
     private GridData getGridData() {
@@ -320,14 +280,12 @@ public class BSHEditorDialog extends Dialog {
         String recordText = labels[recordIndex].getText();
         labels[recordIndex].setText(labels[recordIndex - 1].getText());
         labels[recordIndex - 1].setText(recordText);
-
         boolean enabledIndex = comboBoxes[recordIndex][0].getEnabled();
         boolean enabledIndexPrev = comboBoxes[recordIndex - 1][0].getEnabled();
         int combo1Index = comboBoxes[recordIndex][0].getSelectionIndex();
         int combo2Index = comboBoxes[recordIndex][1].getSelectionIndex();
         int combo3Index = comboBoxes[recordIndex][2].getSelectionIndex();
         String combo3UserInput = (String) comboBoxes[recordIndex][2].getData(DATA_USER_INPUT_KEY);
-
         comboBoxes[recordIndex][0].select(comboBoxes[recordIndex - 1][0].getSelectionIndex());
         comboBoxes[recordIndex][0].setEnabled(enabledIndexPrev);
         refreshComboItems(comboBoxes[recordIndex][0]);
@@ -341,7 +299,6 @@ public class BSHEditorDialog extends Dialog {
         }
         comboBoxes[recordIndex][2].select(comboBoxes[recordIndex - 1][2].getSelectionIndex());
         comboBoxes[recordIndex][2].setEnabled(enabledIndexPrev);
-
         comboBoxes[recordIndex - 1][0].select(combo1Index);
         comboBoxes[recordIndex - 1][0].setEnabled(enabledIndex);
         refreshComboItems(comboBoxes[recordIndex - 1][0]);
@@ -356,24 +313,14 @@ public class BSHEditorDialog extends Dialog {
         comboBoxes[recordIndex - 1][2].setEnabled(enabledIndex);
     }
 
-    private Variable getVariableByName(String variableName) {
-        for (Variable variable : variables) {
-            if (variable.getName().equals(variableName)) {
-                return variable;
-            }
-        }
-        return null;
-    }
-
     private void refreshComboItems(Combo combo) {
         try {
             int[] indexes = (int[]) combo.getData(DATA_INDEX_KEY);
-
             if (indexes[1] == 2) {
                 if (TypedUserInputCombo.INPUT_VALUE.equals(combo.getText())) {
                     String oldUserInput = (String) combo.getData(DATA_USER_INPUT_KEY);
                     Variable variable1 = (Variable) comboBoxes[indexes[0]][0].getData(DATA_VARIABLE_KEY);
-                    BSHTypeSupport typeSupport = BSHTypeSupport.get(variable1.getJavaClassName());
+                    GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable1.getJavaClassName());
                     UserInputDialog inputDialog = typeSupport.createUserInputDialog();
                     inputDialog.setInitialValue(oldUserInput);
                     if (OK == inputDialog.open()) {
@@ -388,22 +335,21 @@ public class BSHEditorDialog extends Dialog {
                         combo.deselectAll();
                     }
                 } else {
-                    Variable variable = getVariableByName(combo.getText());
+                    Variable variable = VariableUtils.getVariableByScriptingName(variables, combo.getText());
                     if (variable != null) {
                         combo.setData(DATA_VARIABLE_KEY, variable);
                     }
                 }
                 return;
             }
-
             Combo targetCombo = comboBoxes[indexes[0]][indexes[1] + 1];
             targetCombo.setItems(new String[0]);
             if (indexes[1] == 0) {
                 // there was changed value in first (variable) combo in 'i' row
-                Variable variable = getVariableByName(combo.getText());
+                Variable variable = VariableUtils.getVariableByScriptingName(variables, combo.getText());
                 combo.setData(DATA_VARIABLE_KEY, variable);
                 if (variable != null) {
-                    BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
+                    GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable.getJavaClassName());
                     for (Operation operation : Operation.getAll(typeSupport)) {
                         targetCombo.add(operation.getVisibleName());
                     }
@@ -413,7 +359,7 @@ public class BSHEditorDialog extends Dialog {
                 // row
                 Variable variable1 = (Variable) comboBoxes[indexes[0]][0].getData(DATA_VARIABLE_KEY);
                 if (variable1 != null) {
-                    BSHTypeSupport typeSupport = BSHTypeSupport.get(variable1.getJavaClassName());
+                    GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable1.getJavaClassName());
                     Operation operation = Operation.getByName(combo.getText(), typeSupport);
                     combo.setData(DATA_OPERATION_KEY, operation);
                     for (String variableName : getCombo3VariableNames(variable1)) {
@@ -433,31 +379,28 @@ public class BSHEditorDialog extends Dialog {
     }
 
     private List<String> getCombo3VariableNames(Variable variable1) {
-        List<String> vars = new ArrayList<String>();
-        BSHTypeSupport typeSupport1 = BSHTypeSupport.get(variable1.getJavaClassName());
+        List<String> names = new ArrayList<String>();
+        GroovyTypeSupport typeSupport1 = GroovyTypeSupport.get(variable1.getJavaClassName());
         for (Variable variable : variables) {
-            BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
+            GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable.getJavaClassName());
             // formats are equals, variable not selected in the first combo
             if (typeSupport1.getClass() == typeSupport.getClass() && variable1 != variable) {
-                vars.add(variable.getName());
+                names.add(variable.getScriptingName());
             }
         }
-        return vars;
+        return names;
     }
 
     private class TabSelectionHandler extends SelectionAdapter {
-
         @Override
         public void widgetSelected(SelectionEvent e) {
             if (tabFolder.getSelectionIndex() == 1) {
-                toBSHCode();
+                toCode();
             }
         }
-
     }
 
     private class ErrorHeaderComposite extends Composite {
-
         private final Label errorLabel;
 
         public ErrorHeaderComposite(Composite parent) {
@@ -480,61 +423,56 @@ public class BSHEditorDialog extends Dialog {
     }
 
     private class ComboSelectionHandler extends SelectionAdapter {
-
         @Override
         public void widgetSelected(SelectionEvent e) {
             refreshComboItems((Combo) e.widget);
         }
-
     }
 
-    private void toBSHCode() {
+    private void toCode() {
         for (int i = 0; i < comboBoxes.length; i++) {
             for (int j = 0; j < 3; j++) {
                 if (comboBoxes[i][j].getText().length() == 0 && !labels[i].getText().equals(defaultTransitionCombo.getText())) {
-                    setErrorLabelText(Localization.getString("BSHEditor.fillAll"));
+                    setErrorLabelText(Localization.getString("GroovyEditor.fillAll"));
                     // we cannot construct while all data not filled
                     return;
                 }
             }
         }
         clearErrorLabelText();
-
         try {
-            BSHDecisionModel decisionModel = new BSHDecisionModel(variables);
+            GroovyDecisionModel decisionModel = new GroovyDecisionModel();
             for (int i = 0; i < transitionNames.size(); i++) {
                 IfExpr ifExpr;
                 if (labels[i].getText().equals(defaultTransitionCombo.getText())) {
                     ifExpr = new IfExpr(labels[i].getText());
                 } else {
-                    Variable var1 = (Variable) comboBoxes[i][0].getData(DATA_VARIABLE_KEY);
+                    Variable variable1 = (Variable) comboBoxes[i][0].getData(DATA_VARIABLE_KEY);
                     String operationName = comboBoxes[i][1].getItem(comboBoxes[i][1].getSelectionIndex());
                     String lexem2Text = comboBoxes[i][2].getText();
-
                     Object lexem2;
-                    Variable var2 = getVariableByName(lexem2Text);
-                    if (var2 != null) {
-                        lexem2 = var2;
+                    Variable variable2 = VariableUtils.getVariableByScriptingName(variables, lexem2Text);
+                    if (variable2 != null) {
+                        lexem2 = variable2;
                     } else {
                         lexem2 = lexem2Text;
                     }
-                    BSHTypeSupport typeSupport = BSHTypeSupport.get(var1.getJavaClassName());
-
-                    ifExpr = new IfExpr(labels[i].getText(), var1, lexem2, Operation.getByName(operationName, typeSupport));
+                    GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable1.getJavaClassName());
+                    ifExpr = new IfExpr(labels[i].getText(), variable1, lexem2, Operation.getByName(operationName, typeSupport));
                 }
                 decisionModel.addIfExpr(ifExpr);
             }
             styledText.setText(decisionModel.generateCode());
         } catch (RuntimeException e1) {
             PluginLogger.logError(e1);
-            setErrorLabelText(Localization.getString("BSHEditor.error.construct"));
+            setErrorLabelText(Localization.getString("GroovyEditor.error.construct"));
         }
     }
 
     @Override
     protected void okPressed() {
         if (tabFolder.getSelectionIndex() == 0) {
-            toBSHCode();
+            toCode();
         }
         this.result = styledText.getText();
         super.okPressed();

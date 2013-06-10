@@ -6,19 +6,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.util.VariableUtils;
 
-public class BSHDecisionModel {
+public class GroovyDecisionModel {
     private List<IfExpr> ifs = new ArrayList<IfExpr>();
-    private final List<Variable> variables;
     private static Pattern IF_PATTERN = Pattern.compile("if \\((.*)\\)");
     private static Pattern RETURN_PATTERN = Pattern.compile("return \"([^\"]*)\";");
 
-    public BSHDecisionModel(List<Variable> variables) {
-        this.variables = variables;
+    public GroovyDecisionModel() {
     }
 
-    public BSHDecisionModel(String code, List<Variable> variables) throws Exception {
-        this(variables);
+    public GroovyDecisionModel(String code, List<Variable> variables) throws Exception {
         Matcher returnMatcher = RETURN_PATTERN.matcher(code);
         Matcher matcher = IF_PATTERN.matcher(code);
         int startReturnSearch = 0;
@@ -30,7 +28,7 @@ public class BSHDecisionModel {
             String lexem1Text = "";
             String operator;
             String lexem2Text = "";
-            if ((strings.length == 1) || (ifContent.indexOf("\"") > 0)) {
+            if (strings.length == 1 || ifContent.indexOf("\"") > 0) {
                 // i.e. var1.equals(var2) or var1.contains(var2)
                 int start;
                 if (ifContent.charAt(0) != '!') {
@@ -68,12 +66,12 @@ public class BSHDecisionModel {
                 // Java names doesn't allowed use of point in variable name
                 lexem1Text = lexem1Text.substring(0, lexem1Text.indexOf("."));
             }
-            Variable var1 = getVariableByName(lexem1Text);
-            if (var1 == null) {
+            Variable variable1 = VariableUtils.getVariableByScriptingName(variables, lexem1Text);
+            if (variable1 == null) {
                 // variable deleted
                 continue;
             }
-            BSHTypeSupport typeSupport = BSHTypeSupport.get(var1.getJavaClassName());
+            GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable1.getJavaClassName());
             Operation operation = Operation.getByOperator(operator, typeSupport);
             if (operation == null) {
                 throw new RuntimeException("Operation not found for operator: " + operator);
@@ -83,23 +81,21 @@ public class BSHDecisionModel {
                 // Java names doesn't allowed use of point in variable name
                 lexem2Text = lexem2Text.substring(0, lexem2Text.indexOf("."));
             }
-            Variable var2 = getVariableByName(lexem2Text);
-            if (var2 != null) {
-                lexem2 = var2;
+            Variable variable2 = VariableUtils.getVariableByScriptingName(variables, lexem2Text);
+            if (variable2 != null) {
+                lexem2 = variable2;
             } else if (Operation.VOID.equals(lexem2Text) || Operation.NULL.equals(lexem2Text)) {
                 lexem2 = "null";
             } else {
                 lexem2 = typeSupport.unwrapValue(lexem2Text);
             }
-            IfExpr ifExpr = new IfExpr(transition, var1, lexem2, operation);
+            IfExpr ifExpr = new IfExpr(transition, variable1, lexem2, operation);
             addIfExpr(ifExpr);
         }
         if (returnMatcher.find(startReturnSearch)) {
             String defaultTransition = returnMatcher.group(1);
             IfExpr ifExpr = new IfExpr(defaultTransition);
             addIfExpr(ifExpr);
-            //} else {
-            //throw new RuntimeException("Unable to parse BSH code from string: " + code);
         }
     }
 
@@ -115,15 +111,6 @@ public class BSHDecisionModel {
         for (IfExpr ifExpr : ifs) {
             if (ifExpr.isByDefault()) {
                 return ifExpr.getTransition();
-            }
-        }
-        return null;
-    }
-
-    private Variable getVariableByName(String variableName) {
-        for (Variable variable : variables) {
-            if (variable.getName().equals(variableName)) {
-                return variable;
             }
         }
         return null;
