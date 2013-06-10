@@ -32,13 +32,13 @@ public class BotScriptUtils {
             Element removeTasks = rootElement.addElement("removeConfigurationsFromBot", XmlUtil.RUNA_NAMESPACE);
             removeTasks.addAttribute(NAME_ATTRIBUTE_NAME, botName);
             for (BotTask task : tasks) {
-                Element taskElement = removeTasks.addElement("botConfiguration", XmlUtil.RUNA_NAMESPACE);
+                Element taskElement = removeTasks.addElement(BOT_CONFIGURATION_ELEMENT_NAME, XmlUtil.RUNA_NAMESPACE);
                 taskElement.addAttribute(NAME_ATTRIBUTE_NAME, task.getName());
             }
             Element addTasks = rootElement.addElement("addConfigurationsToBot", XmlUtil.RUNA_NAMESPACE);
             addTasks.addAttribute(NAME_ATTRIBUTE_NAME, botName);
             for (BotTask task : tasks) {
-                Element taskElement = addTasks.addElement("botConfiguration");
+                Element taskElement = addTasks.addElement(BOT_CONFIGURATION_ELEMENT_NAME);
                 taskElement.addAttribute(NAME_ATTRIBUTE_NAME, task.getName());
                 taskElement.addAttribute(HANDLER_ATTRIBUTE_NAME, task.getDelegationClassName());
                 if (!Strings.isNullOrEmpty(task.getDelegationClassName())) {

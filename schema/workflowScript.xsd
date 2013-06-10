@@ -38,15 +38,15 @@
 			<xs:element ref="addPermissionsOnDefinition" minOccurs="0"/>
 			<xs:element ref="setPermissionsOnDefinition" minOccurs="0"/>
 			<xs:element ref="removePermissionsOnDefinition" minOccurs="0"/>
-			<xs:element ref="addPermissionsOnProcessInstances" minOccurs="0"/>
-			<xs:element ref="setPermissionsOnProcessInstances" minOccurs="0"/>
-			<xs:element ref="removePermissionsOnProcessInstances" minOccurs="0"/>
+			<xs:element ref="addPermissionsOnProcesses" minOccurs="0"/>
+			<xs:element ref="setPermissionsOnProcesses" minOccurs="0"/>
+			<xs:element ref="removePermissionsOnProcesses" minOccurs="0"/>
 			<xs:element ref="addPermissionsOnSystem" minOccurs="0"/>
 			<xs:element ref="setPermissionsOnSystem" minOccurs="0"/>
 			<xs:element ref="removePermissionsOnSystem" minOccurs="0"/>
 			<xs:element ref="removeAllPermissionsFromExecutor" minOccurs="0"/>
 			<xs:element ref="removeAllPermissionsFromProcessDefinition" minOccurs="0"/>
-			<xs:element ref="removeAllPermissionsFromProcessInstances" minOccurs="0"/>
+			<xs:element ref="removeAllPermissionsFromProcesses" minOccurs="0"/>
 			<xs:element ref="removeAllPermissionsFromSystem" minOccurs="0"/>
 			<xs:element ref="replicateBatchPresentation" minOccurs="0"/>
 			<xs:element ref="deleteExecutors" minOccurs="0"/>
@@ -63,15 +63,14 @@
 			<xs:element ref="addConfigurationsToBot" minOccurs="0"/>
 			<xs:element ref="removeConfigurationsFromBot" minOccurs="0"/>
 			<xs:element ref="removeAllConfigurationsFromBot" minOccurs="0"/>
-			<xs:element ref="removeOldProcessInstances" minOccurs="0"/>
-			<xs:element ref="removeOldProcessInstanceWithSecuredObjectFix" minOccurs="0"/>
+			<xs:element ref="removeOldProcesses" minOccurs="0"/>
 			<xs:element ref="removeOldProcessDefinitionVersion" minOccurs="0"/>
-			<xs:element ref="archiveOldProcessInstances" minOccurs="0"/>
+			<xs:element ref="archiveOldProcesses" minOccurs="0"/>
 			<xs:element ref="archiveOldProcessDefinitionVersion" minOccurs="0"/>
-			<xs:element ref="retrieveOldProcessInstances" minOccurs="0"/>
+			<xs:element ref="retrieveOldProcesses" minOccurs="0"/>
 			<xs:element ref="retrieveOldProcessDefinitionVersion" minOccurs="0"/>
 			<xs:element ref="relation" minOccurs="0"/>
-			<xs:element ref="stopProcessInstance" minOccurs="0"/>
+			<xs:element ref="stopProcess" minOccurs="0"/>
 		</xs:choice>
 	</xs:group>
 
@@ -150,6 +149,7 @@
 	
 	<xs:element name="redeployProcessDefinition">
 		<xs:complexType>
+			<xs:attribute name="name" type="xs:string"/>
 			<xs:attribute name="definitionId" type="xs:long"/>
 			<xs:attribute name="file" type="xs:string" use="required"/>
 			<xs:attribute name="type" type="xs:string"/>
@@ -172,9 +172,9 @@
 	<xs:element name="setPermissionsOnDefinition" type="PermissionsOnProcessDefinitionType"/>
 	<xs:element name="removePermissionsOnDefinition" type="PermissionsOnProcessDefinitionType"/>
 	
-	<xs:element name="addPermissionsOnProcessInstances" type="PermissionsOnProcessInstanceType"/>
-	<xs:element name="setPermissionsOnProcessInstances" type="PermissionsOnProcessInstanceType"/>
-	<xs:element name="removePermissionsOnProcessInstances" type="PermissionsOnProcessInstanceType"/>
+	<xs:element name="addPermissionsOnProcesses" type="PermissionsOnProcessType"/>
+	<xs:element name="setPermissionsOnProcesses" type="PermissionsOnProcessType"/>
+	<xs:element name="removePermissionsOnProcesses" type="PermissionsOnProcessType"/>
 	
 	<xs:element name="addPermissionsOnSystem" type="PermissionsOnSystemType"/>
 	<xs:element name="setPermissionsOnSystem" type="PermissionsOnSystemType"/>
@@ -186,7 +186,7 @@
 	
 	<xs:element name="removeAllPermissionsFromExecutor" type="removeAllPermissionsType"/>
 	<xs:element name="removeAllPermissionsFromProcessDefinition" type="removeAllPermissionsType"/>
-	<xs:element name="removeAllPermissionsFromProcessInstances" type="removeAllPermissionsType"/>
+	<xs:element name="removeAllPermissionsFromProcesses" type="removeAllPermissionsType"/>
 	<xs:element name="removeAllPermissionsFromSystem"/>
 	
 	<xs:element name="replicateBatchPresentation">
@@ -289,8 +289,8 @@
 										<xs:enumeration value="permission.undeploy_definition"/>
 										<xs:enumeration value="permission.redeploy_definition"/>
 										<xs:enumeration value="permission.start_process"/>
-										<xs:enumeration value="permission.read_instance"/>
-										<xs:enumeration value="permission.cancel_instance"/>
+										<xs:enumeration value="permission.read_process"/>
+										<xs:enumeration value="permission.cancel_process"/>
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:attribute>
@@ -302,7 +302,7 @@
 		</xs:complexContent>
 	</xs:complexType>
 	
-	<xs:complexType name="PermissionsOnProcessInstanceType">
+	<xs:complexType name="PermissionsOnProcessType">
 		<xs:complexContent>
 			<xs:extension base="BasePermissionsOnNamedObjectType">
 				<xs:sequence>
@@ -313,7 +313,7 @@
 									<xs:restriction base="xs:string">
 										<xs:enumeration value="permission.read"/>
 										<xs:enumeration value="permission.update_permissions"/>
-										<xs:enumeration value="permission.cancel_instance"/>
+										<xs:enumeration value="permission.cancel_process"/>
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:attribute>
@@ -407,7 +407,7 @@
 						<xs:simpleContent>
 							<xs:extension base="xs:string">
 								<xs:attribute name="name" type="xs:string" use="required"/>
-								<xs:attribute name="handler" type="xs:string" use="required"/>
+								<xs:attribute name="handler" type="xs:string" use="optional"/>
 								<xs:attribute name="configuration" type="xs:string"/>
 								<xs:attribute name="configurationContent" type="xs:string"/>
 							</xs:extension>
@@ -521,7 +521,7 @@
 		</xs:complexType>
 	</xs:element>
 	
-	<xs:element name="archiveOldProcessInstances">
+	<xs:element name="archiveOldProcesses">
 		<xs:complexType>
 			<xs:attribute name="onlyFinished" type="xs:boolean"/>
 			<xs:attribute name="dateInterval" type="xs:boolean"/>
@@ -534,7 +534,7 @@
 		</xs:complexType>
 	</xs:element>
 	
-	<xs:element name="retrieveOldProcessInstances">
+	<xs:element name="retrieveOldProcesses">
 		<xs:complexType>
 			<xs:attribute name="onlyFinished" type="xs:boolean"/>
 			<xs:attribute name="startDate" type="xs:dateTime"/>
@@ -560,7 +560,7 @@
 		</xs:complexType>
 	</xs:element>
 	
-	<xs:element name="removeOldProcessInstances">
+	<xs:element name="removeOldProcesses">
 		<xs:complexType>
 			<xs:attribute name="onlyFinished" type="xs:boolean"/>
 			<xs:attribute name="startDate" type="xs:dateTime"/>
@@ -572,13 +572,6 @@
 		</xs:complexType>
 	</xs:element>
 	
-	<xs:element name="removeOldProcessInstanceWithSecuredObjectFix">
-		<xs:complexType>
-			<xs:attribute name="id" type="xs:long" />
-			<xs:attribute name="userId" type="xs:long" use="optional" />
-		</xs:complexType>
-	</xs:element>
-
 	<xs:element name="relation">
 		<xs:complexType>
 			<xs:sequence>
@@ -612,7 +605,7 @@
 		</xs:complexType>
 	</xs:element>
 	
-	<xs:element name="stopProcessInstance">
+	<xs:element name="stopProcess">
 		<xs:complexType>
 			<xs:attribute name="id" type="xs:long"/>
 		</xs:complexType>
