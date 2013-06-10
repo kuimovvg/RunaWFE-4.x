@@ -61,6 +61,10 @@ public class BotTaskUtils {
             botconfigElement.addCDATA(botTask.getDelegationConfiguration());
             return XmlUtil.toString(document);
         } else if (botTask.getType() == BotTaskType.PARAMETERIZED) {
+            if (!Strings.isNullOrEmpty(botTask.getDelegationConfiguration())) {
+                // http://sourceforge.net/p/runawfe/bugs/317/
+                return botTask.getDelegationConfiguration();
+            }
             Document document = DocumentHelper.createDocument();
             botTask.getParamDefConfig().writeXml(document);
             return XmlUtil.toString(document);
@@ -80,7 +84,7 @@ public class BotTaskUtils {
     }
 
     public static boolean isTaskHandlerParameterized(String className) {
-    	HandlerArtifact artifact = HandlerRegistry.getInstance().getArtifact(className);
+        HandlerArtifact artifact = HandlerRegistry.getInstance().getArtifact(className);
         if (artifact != null) {
             DelegableProvider provider = HandlerRegistry.getProvider(className);
             return provider instanceof ConfigBasedProvider;
@@ -183,5 +187,4 @@ public class BotTaskUtils {
             taskState.setDirty();
         }
     }
-
 }
