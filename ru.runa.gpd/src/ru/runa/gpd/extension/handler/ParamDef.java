@@ -9,11 +9,10 @@ import ru.runa.gpd.Localization;
 import com.google.common.collect.Lists;
 
 public class ParamDef {
-    
     public static enum Presentation {
         undefined, combo, text, richcombo, checkbox
     }
-    
+
     public static final int XML_TYPE_ATTR = 1;
     public static final int XML_TYPE_NODE = 2;
     private Presentation presentation = Presentation.undefined;
@@ -34,9 +33,7 @@ public class ParamDef {
         if (element.attributeValue("xmlNodeType") != null) {
             this.xmlNodeType = Integer.parseInt(element.attributeValue("xmlNodeType"));
         }
-        if (element.attributeValue("variable") != null) {
-            this.useVariable = Boolean.parseBoolean(element.attributeValue("variable"));
-        }
+        this.useVariable = Boolean.parseBoolean(element.attributeValue("variable", "true"));
         this.name = element.attributeValue("name");
         if (element.attributeValue("label.key") != null) {
             this.label = Localization.getString(element.attributeValue("label.key"));
