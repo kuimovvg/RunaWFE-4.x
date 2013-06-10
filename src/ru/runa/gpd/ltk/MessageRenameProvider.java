@@ -9,22 +9,23 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.NullChange;
 
 import ru.runa.gpd.lang.model.NamedGraphElement;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableMapping;
 
 public abstract class MessageRenameProvider<T extends NamedGraphElement> extends VariableRenameProvider<T> {
     protected abstract List<VariableMapping> getVariableMappings();
 
     @Override
-    public List<Change> getChanges(String variableName, String replacement) throws Exception {
+    public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<VariableMapping> mappingsToChange = new ArrayList<VariableMapping>();
         for (VariableMapping mapping : getVariableMappings()) {
-            if (mapping.getProcessVariable().equals(variableName)) {
+            if (mapping.getProcessVariable().equals(oldVariable)) {
                 mappingsToChange.add(mapping);
             }
         }
         List<Change> changes = new ArrayList<Change>();
         if (mappingsToChange.size() > 0) {
-            changes.add(new VariableMappingChange(element, variableName, replacement, mappingsToChange));
+            changes.add(new VariableMappingChange(element, oldVariable.getName(), newVariable.getName(), mappingsToChange));
         }
         return changes;
     }

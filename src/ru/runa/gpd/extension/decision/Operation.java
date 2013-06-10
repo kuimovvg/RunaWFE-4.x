@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.extension.decision.BSHTypeSupport.StringType;
+import ru.runa.gpd.extension.decision.GroovyTypeSupport.StringType;
 import ru.runa.gpd.lang.model.Variable;
 
 public class Operation {
@@ -20,16 +20,16 @@ public class Operation {
 
     static class Eq extends Operation {
         private Eq() {
-            super(Localization.getString("BSH.Operation.equals"), "==");
+            super(Localization.getString("Groovy.Operation.equals"), "==");
             registerOperation(this);
         }
 
         @Override
         public String generateCode(Variable variable, Object lexem2) {
             if (NULL.equals(lexem2)) {
-                return variable.getName() + " == " + NULL;
+                return variable.getScriptingName() + " == " + NULL;
             }
-            BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
+            GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable.getJavaClassName());
             if (typeSupport instanceof StringType) {
                 StringBuffer buffer = new StringBuffer();
                 buffer.append(typeSupport.wrap(variable));
@@ -44,16 +44,16 @@ public class Operation {
 
     static class NotEq extends Operation {
         private NotEq() {
-            super(Localization.getString("BSH.Operation.notequals"), "!=");
+            super(Localization.getString("Groovy.Operation.notequals"), "!=");
             registerOperation(this);
         }
 
         @Override
         public String generateCode(Variable variable, Object lexem2) {
             if (NULL.equals(lexem2)) {
-                return variable.getName() + " != " + NULL;
+                return variable.getScriptingName() + " != " + NULL;
             }
-            BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
+            GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable.getJavaClassName());
             if (typeSupport instanceof StringType) {
                 StringBuffer buffer = new StringBuffer("!");
                 buffer.append(typeSupport.wrap(variable));
@@ -96,7 +96,7 @@ public class Operation {
     }
 
     public String generateCode(Variable variable, Object lexem2) {
-        BSHTypeSupport typeSupport = BSHTypeSupport.get(variable.getJavaClassName());
+        GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable.getJavaClassName());
         StringBuffer buffer = new StringBuffer();
         buffer.append(typeSupport.wrap(variable));
         buffer.append(" ");
@@ -106,7 +106,7 @@ public class Operation {
         return buffer.toString();
     }
 
-    public static List<Operation> getAll(BSHTypeSupport typeSupport) {
+    public static List<Operation> getAll(GroovyTypeSupport typeSupport) {
         List<Operation> allWithExt = new ArrayList<Operation>();
         allWithExt.addAll(OPERATIONS_LIST);
         if (typeSupport == null) {
@@ -119,7 +119,7 @@ public class Operation {
         return allWithExt;
     }
 
-    public static Operation getByName(String name, BSHTypeSupport typeSupport) {
+    public static Operation getByName(String name, GroovyTypeSupport typeSupport) {
         for (Operation operation : getAll(typeSupport)) {
             if (operation.getVisibleName().equals(name)) {
                 return operation;
@@ -128,7 +128,7 @@ public class Operation {
         return null;
     }
 
-    public static Operation getByOperator(String operator, BSHTypeSupport typeSupport) {
+    public static Operation getByOperator(String operator, GroovyTypeSupport typeSupport) {
         for (Operation operation : getAll(typeSupport)) {
             if (operation.getOperator().equals(operator)) {
                 return operation;

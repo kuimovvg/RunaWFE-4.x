@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.model.NamedGraphElement;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
@@ -51,10 +52,10 @@ public class FieldValidatorsWizardPage extends WizardPage {
     private String warningMessage = "";
     private Map<String, Map<String, ValidatorConfig>> fieldConfigs;
 
-    protected FieldValidatorsWizardPage(String pageName, List<Variable> variables, List<Swimlane> swimlanes) {
-        super(pageName);
-        this.variables = variables;
-        this.swimlanes = swimlanes;
+    protected FieldValidatorsWizardPage(ProcessDefinition processDefinition) {
+        super("Field validators");
+        this.variables = processDefinition.getVariables(false);
+        this.swimlanes = processDefinition.getSwimlanes();
         setTitle(Localization.getString("ValidatorWizardPage.fieldpage.title"));
         setDescription(Localization.getString("ValidatorWizardPage.fieldpage.description"));
     }
@@ -234,7 +235,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
 
     private void updateValidatorsInput(Variable variableOrSwimlane) {
         if (variableOrSwimlane != null) {
-            String varType = ((Variable) variableOrSwimlane).getJavaClassName();
+            String varType = variableOrSwimlane.getJavaClassName();
             validatorsTableViewer.setInput(ValidationUtil.getFieldValidatorDefinitions(varType));
         }
     }

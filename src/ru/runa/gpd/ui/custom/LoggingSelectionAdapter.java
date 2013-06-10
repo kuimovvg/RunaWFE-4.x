@@ -6,7 +6,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import ru.runa.gpd.PluginLogger;
 
 public abstract class LoggingSelectionAdapter extends SelectionAdapter {
-
     @Override
     public void widgetSelected(SelectionEvent event) {
         try {
@@ -15,6 +14,6 @@ public abstract class LoggingSelectionAdapter extends SelectionAdapter {
             PluginLogger.logError(th);
         }
     }
-    
-    protected abstract void onSelection(SelectionEvent event) throws Exception;
+
+    protected abstract void onSelection(SelectionEvent e) throws Exception;
 }

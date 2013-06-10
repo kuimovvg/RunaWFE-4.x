@@ -4,8 +4,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,8 +20,10 @@ import ru.runa.gpd.extension.VariableFormatArtifact;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.wfe.var.format.StringFormat;
 
 public class UpdateVariableDialog extends Dialog {
@@ -32,6 +32,7 @@ public class UpdateVariableDialog extends Dialog {
     private boolean publicVisibility;
     private final ProcessDefinition definition;
     private final boolean createMode;
+    private Text scriptingNameField;
     private String defaultValue;
     private TypedUserInputCombo defaultValueField;
 
@@ -72,15 +73,22 @@ public class UpdateVariableDialog extends Dialog {
             gridData.minimumWidth = 200;
             nameField.setLayoutData(gridData);
             nameField.setText(name);
-            nameField.addModifyListener(new ModifyListener() {
+            nameField.addModifyListener(new LoggingModifyTextAdapter() {
                 @Override
-                public void modifyText(ModifyEvent e) {
-                    name = nameField.getText().replaceAll(" ", "_");
+                protected void onTextChanged(ModifyEvent e) throws Exception {
+                    name = nameField.getText();
                     updateState();
+                    scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name));
                 }
             });
             nameField.setFocus();
             nameField.selectAll();
+            // 
+            new Label(composite, SWT.NONE);
+            scriptingNameField = new Text(composite, SWT.BORDER);
+            scriptingNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            scriptingNameField.setEditable(false);
+            scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name));
         }
         Label labelType = new Label(composite, SWT.NONE);
         labelType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -95,9 +103,9 @@ public class UpdateVariableDialog extends Dialog {
         gridData.minimumWidth = 200;
         typeCombo.setLayoutData(gridData);
         typeCombo.setText(type.getLabel());
-        typeCombo.addSelectionListener(new SelectionAdapter() {
+        typeCombo.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent event) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 type = VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText());
                 updateState();
                 defaultValueField.setTypeClassName(type.getJavaClassName());
@@ -112,9 +120,9 @@ public class UpdateVariableDialog extends Dialog {
         gridData.minimumWidth = 200;
         comboVisibility.setLayoutData(gridData);
         comboVisibility.setText(comboVisibility.getItem(publicVisibility ? 1 : 0));
-        comboVisibility.addSelectionListener(new SelectionAdapter() {
+        comboVisibility.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent event) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 publicVisibility = comboVisibility.getSelectionIndex() == 1;
             }
         });
@@ -125,7 +133,6 @@ public class UpdateVariableDialog extends Dialog {
         defaultValueField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         defaultValueField.setTypeClassName(type.getJavaClassName());
         defaultValueField.addSelectionListener(new LoggingSelectionAdapter() {
-
             @Override
             protected void onSelection(SelectionEvent event) {
                 defaultValue = defaultValueField.getText();
@@ -137,7 +144,6 @@ public class UpdateVariableDialog extends Dialog {
     private void updateState() {
         boolean allowCreation = !definition.getVariableNames(true).contains(name) && name.length() > 0;
         allowCreation = allowCreation || !createMode;
-        allowCreation &= VariableNameChecker.isNameValid(name);
         getButton(IDialogConstants.OK_ID).setEnabled(allowCreation);
     }
 
