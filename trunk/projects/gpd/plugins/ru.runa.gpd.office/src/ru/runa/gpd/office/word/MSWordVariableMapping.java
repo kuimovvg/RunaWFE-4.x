@@ -4,6 +4,8 @@ import java.util.Observable;
 
 import org.dom4j.Element;
 
+import ru.runa.gpd.util.XmlUtil;
+
 public class MSWordVariableMapping extends Observable {
     private String variableName = "";
     private String bookmarkName = "";
@@ -25,7 +27,7 @@ public class MSWordVariableMapping extends Observable {
     }
 
     public void serialize(Element parent) {
-        Element element = parent.addElement("mapping");
+        Element element = parent.addElement("mapping", XmlUtil.RUNA_NAMESPACE);
         element.addAttribute("variable", variableName);
         element.addAttribute("bookmark", bookmarkName);
     }
