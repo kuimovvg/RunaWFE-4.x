@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="delegation" type="{http://impl.service.wfe.runa.ru/}delegation" minOccurs="0"/>
  *         &lt;element name="orgFunctionLabel" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="flowNodeIds" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="scriptingName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -34,7 +35,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "swimlaneDefinition", propOrder = {
     "delegation",
     "orgFunctionLabel",
-    "flowNodeIds"
+    "flowNodeIds",
+    "scriptingName"
 })
 public class SwimlaneDefinition
     extends GraphElement
@@ -44,6 +46,7 @@ public class SwimlaneDefinition
     protected String orgFunctionLabel;
     @XmlElement(nillable = true)
     protected List<String> flowNodeIds;
+    protected String scriptingName;
 
     /**
      * Gets the value of the delegation property.
@@ -120,6 +123,30 @@ public class SwimlaneDefinition
             flowNodeIds = new ArrayList<String>();
         }
         return this.flowNodeIds;
+    }
+
+    /**
+     * Gets the value of the scriptingName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getScriptingName() {
+        return scriptingName;
+    }
+
+    /**
+     * Sets the value of the scriptingName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setScriptingName(String value) {
+        this.scriptingName = value;
     }
 
 }
