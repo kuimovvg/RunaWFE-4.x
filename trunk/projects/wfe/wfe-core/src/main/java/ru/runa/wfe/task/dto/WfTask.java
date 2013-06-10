@@ -44,6 +44,7 @@ public final class WfTask implements Serializable {
 
     private Long id;
     private String name;
+    private String nodeId;
     private String description;
     private String swimlaneName;
     private Executor owner;
@@ -66,6 +67,7 @@ public final class WfTask implements Serializable {
             boolean acquiredBySubstitution) {
         id = task.getId();
         name = task.getName();
+        nodeId = task.getNodeId();
         description = task.getDescription();
         owner = task.getExecutor();
         this.processId = processId;
@@ -91,6 +93,10 @@ public final class WfTask implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public String getNodeId() {
+        return nodeId;
     }
 
     public String getDescription() {
