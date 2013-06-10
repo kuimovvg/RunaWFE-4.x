@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.extension.OrgFunction;
 import ru.runa.wfe.extension.OrgFunctionException;
@@ -42,14 +43,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Parses and evaluates {@link OrgFunction}'s. Swimlane initializer can be given
- * in 2 forms: 1) FQDN class name(param1, param2, ...) for example
+ * Parses and evaluates {@link OrgFunction}'s. Swimlane initializer can be given in 2 forms: 1) FQDN class name(param1, param2, ...) for example
  * 'ru.runa.af.organizationfunction.ExecutorByNameFunction(userName)' 2)
  * 
- * @relationName(FQDN class name(param1, param2, ...)) for example
- *                    '@boss(ru.runa.af.organizationfunction.ExecutorByNameFunction(${processVariableNam
- *                    e } ) ) ' Each param can be given as string or as
- *                    substituted variable name in form of ${userVarName}.
+ * @relationName(FQDN class name(param1, param2, ...)) for example '@boss(ru.runa.af.organizationfunction.ExecutorByNameFunction(${processVariableNam e } ) ) ' Each param can be
+ *                    given as string or as substituted variable name in form of ${userVarName}.
  * 
  * @author Dofs
  * @since 2.0
@@ -107,10 +105,11 @@ public class OrgFunctionHelper {
 
     private static Object[] getOrgFunctionParameters(OrgFunction orgFunction, IVariableProvider variableProvider) {
         String[] parameterNames = orgFunction.getParameterNames();
-        Object[] parameters = new Object[parameterNames.length];
-        for (int i = 0; i < parameterNames.length; i++) {
-            parameters[i] = ExpressionEvaluator.evaluateVariableNotNull(variableProvider, parameterNames[i]);
+        List<Object> params = new ArrayList<Object>();
+        for (String name : parameterNames) {
+            params.addAll(TypeConversionUtil.convertTo(List.class, ExpressionEvaluator.evaluateVariableNotNull(variableProvider, name)));
         }
+        Object[] parameters = params.toArray(new Object[params.size()]);
         return parameters;
     }
 
