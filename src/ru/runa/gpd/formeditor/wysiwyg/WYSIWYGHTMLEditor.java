@@ -37,7 +37,7 @@ import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
 import ru.runa.gpd.formeditor.vartag.VarTagUtil;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.util.BackCompatibilityUtils;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.EditorUtils;
 import tk.eclipse.plugin.htmleditor.HTMLPlugin;
 import tk.eclipse.plugin.htmleditor.editors.HTMLConfiguration;
@@ -96,7 +96,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             // This is because earlier access from web page (not user request)
             return new ArrayList<Variable>();
         }
-        return BackCompatibilityUtils.getValidVariables(formNode.getProcessDefinition().getVariables(true, typeClassNameFilters));
+        return VariableUtils.getValidVariables(formNode.getProcessDefinition().getVariables(true, typeClassNameFilters));
     }
 
     public List<String> getVariableNames(String... typeClassNameFilters) {
@@ -104,7 +104,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             // This is because earlier access from web page (not user request)
             return new ArrayList<String>();
         }
-        return BackCompatibilityUtils.getValidVariableNames(formNode.getProcessDefinition().getVariableNames(true, typeClassNameFilters));
+        return VariableUtils.getValidVariableNames(formNode.getProcessDefinition().getVariableNames(true, typeClassNameFilters));
     }
 
     @SuppressWarnings("rawtypes")
