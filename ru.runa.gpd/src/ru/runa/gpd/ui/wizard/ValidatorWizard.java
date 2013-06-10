@@ -26,8 +26,6 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.model.FormNode;
-import ru.runa.gpd.lang.model.Swimlane;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
@@ -102,10 +100,8 @@ public class ValidatorWizard extends Wizard {
 
     @Override
     public void addPages() {
-        List<Variable> allVariables = formNode.getProcessDefinition().getVariables(false);
-        List<Swimlane> swimlanes = formNode.getProcessDefinition().getSwimlanes();
-        fieldValidatorsPage = new FieldValidatorsWizardPage("Field validators", allVariables, swimlanes);
-        globalValidatorsPage = new GlobalValidatorsWizardPage("Global validators", allVariables, swimlanes);
+        fieldValidatorsPage = new FieldValidatorsWizardPage(formNode.getProcessDefinition());
+        globalValidatorsPage = new GlobalValidatorsWizardPage(formNode.getProcessDefinition());
         initPages();
         addPage(fieldValidatorsPage);
         addPage(globalValidatorsPage);
@@ -215,6 +211,5 @@ public class ValidatorWizard extends Wizard {
                 }
             }
         }
-
     }
 }

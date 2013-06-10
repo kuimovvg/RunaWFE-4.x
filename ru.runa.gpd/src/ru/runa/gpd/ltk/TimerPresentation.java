@@ -10,6 +10,7 @@ import org.eclipse.ltk.core.refactoring.NullChange;
 
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Timer;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.Duration;
 
 public class TimerPresentation extends VariableRenameProvider<Timer> {
@@ -18,10 +19,10 @@ public class TimerPresentation extends VariableRenameProvider<Timer> {
     }
 
     @Override
-    public List<Change> getChanges(String variableName, String replacement) throws Exception {
+    public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<Change> changes = new ArrayList<Change>();
-        if (variableName.equals(element.getDelay().getVariableName())) {
-            changes.add(new TimedChange(element, variableName, replacement));
+        if (oldVariable.equals(element.getDelay().getVariableName())) {
+            changes.add(new TimedChange(element, oldVariable.getName(), newVariable.getName()));
         }
         return changes;
     }

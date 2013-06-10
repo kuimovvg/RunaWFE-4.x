@@ -12,8 +12,8 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.DoubleInputDialog;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
 
-public abstract class BSHTypeSupport {
-    private static final Map<String, BSHTypeSupport> TYPES_MAP = new HashMap<String, BSHTypeSupport>();
+public abstract class GroovyTypeSupport {
+    private static final Map<String, GroovyTypeSupport> TYPES_MAP = new HashMap<String, GroovyTypeSupport>();
     static {
         TYPES_MAP.put(Object.class.getName(), new DefaultType());
         TYPES_MAP.put(String.class.getName(), new StringType());
@@ -22,11 +22,11 @@ public abstract class BSHTypeSupport {
         TYPES_MAP.put(Date.class.getName(), new DateType());
     }
 
-    public static BSHTypeSupport get(String className) {
+    public static GroovyTypeSupport get(String className) {
         if (className == null) {
             className = Object.class.getName();
         }
-        BSHTypeSupport typeSupport = TYPES_MAP.get(className);
+        GroovyTypeSupport typeSupport = TYPES_MAP.get(className);
         while (typeSupport == null) {
             try {
                 className = Class.forName(className).getSuperclass().getName();
@@ -63,11 +63,11 @@ public abstract class BSHTypeSupport {
 
     abstract List<Operation> getTypedOperations();
 
-    private static class DefaultType extends BSHTypeSupport {
+    private static class DefaultType extends GroovyTypeSupport {
         @Override
         String wrap(Object value) {
             if (value instanceof Variable) {
-                return ((Variable) value).getName();
+                return ((Variable) value).getScriptingName();
             } else {
                 throw new IllegalArgumentException("value class is " + value.getClass().getName());
             }
@@ -84,11 +84,11 @@ public abstract class BSHTypeSupport {
         }
     }
 
-    static class StringType extends BSHTypeSupport {
+    static class StringType extends GroovyTypeSupport {
         @Override
         String wrap(Object value) {
             if (value instanceof Variable) {
-                return ((Variable) value).getName();
+                return ((Variable) value).getScriptingName();
             } else if (value instanceof String) {
                 return "\"" + value + "\"";
             } else {
@@ -104,7 +104,7 @@ public abstract class BSHTypeSupport {
         @Override
         List<Operation> getTypedOperations() {
             List<Operation> extOperations = new ArrayList<Operation>();
-            extOperations.add(new Operation(Localization.getString("BSH.Operation.contains"), "contains") {
+            extOperations.add(new Operation(Localization.getString("Groovy.Operation.contains"), "contains") {
                 @Override
                 public String generateCode(Variable variable, Object lexem2) {
                     StringBuffer buffer = new StringBuffer("");
@@ -119,11 +119,11 @@ public abstract class BSHTypeSupport {
         }
     }
 
-    private static class BooleanType extends BSHTypeSupport {
+    private static class BooleanType extends GroovyTypeSupport {
         @Override
         String wrap(Object value) {
             if (value instanceof Variable) {
-                return ((Variable) value).getName() + ".booleanValue()";
+                return ((Variable) value).getScriptingName() + ".booleanValue()";
             } else if (value instanceof String) {
                 return (String) value;
             } else {
@@ -150,11 +150,11 @@ public abstract class BSHTypeSupport {
         }
     }
 
-    private static class NumberType extends BSHTypeSupport {
+    private static class NumberType extends GroovyTypeSupport {
         @Override
         String wrap(Object value) {
             if (value instanceof Variable) {
-                return ((Variable) value).getName() + ".doubleValue()";
+                return ((Variable) value).getScriptingName() + ".doubleValue()";
             } else if (value instanceof String) {
                 return (String) value;
             } else {
@@ -170,19 +170,19 @@ public abstract class BSHTypeSupport {
         @Override
         List<Operation> getTypedOperations() {
             List<Operation> extOperations = new ArrayList<Operation>();
-            extOperations.add(new Operation(Localization.getString("BSH.Operation.more"), ">"));
-            extOperations.add(new Operation(Localization.getString("BSH.Operation.less"), "<"));
-            extOperations.add(new Operation(Localization.getString("BSH.Operation.moreeq"), ">="));
-            extOperations.add(new Operation(Localization.getString("BSH.Operation.lesseq"), "<="));
+            extOperations.add(new Operation(Localization.getString("Groovy.Operation.more"), ">"));
+            extOperations.add(new Operation(Localization.getString("Groovy.Operation.less"), "<"));
+            extOperations.add(new Operation(Localization.getString("Groovy.Operation.moreeq"), ">="));
+            extOperations.add(new Operation(Localization.getString("Groovy.Operation.lesseq"), "<="));
             return extOperations;
         }
     }
 
-    private static class DateType extends BSHTypeSupport {
+    private static class DateType extends GroovyTypeSupport {
         @Override
         String wrap(Object value) {
             if (value instanceof Variable) {
-                return ((Variable) value).getName() + ".getTime()";
+                return ((Variable) value).getScriptingName() + ".getTime()";
             } else if (value instanceof String) {
                 return (String) value;
             } else {
@@ -198,10 +198,10 @@ public abstract class BSHTypeSupport {
         @Override
         List<Operation> getTypedOperations() {
             List<Operation> extOperations = new ArrayList<Operation>();
-            extOperations.add(new Operation(Localization.getString("BSH.Operation.earlier"), "<"));
-            extOperations.add(new Operation(Localization.getString("BSH.Operation.later"), ">"));
-            extOperations.add(new Operation(Localization.getString("BSH.Operation.earliereq"), "<="));
-            extOperations.add(new Operation(Localization.getString("BSH.Operation.latereq"), ">="));
+            extOperations.add(new Operation(Localization.getString("Groovy.Operation.earlier"), "<"));
+            extOperations.add(new Operation(Localization.getString("Groovy.Operation.later"), ">"));
+            extOperations.add(new Operation(Localization.getString("Groovy.Operation.earliereq"), "<="));
+            extOperations.add(new Operation(Localization.getString("Groovy.Operation.latereq"), ">="));
             return extOperations;
         }
     }

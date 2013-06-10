@@ -15,8 +15,18 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.Variable;
+
+import com.google.common.collect.Lists;
 
 public class DelegablePresentation extends VariableRenameProvider<Delegable> {
+    private static final List<String> SCRIPT_HANDLER_CLASS_NAMES = Lists.newArrayList();
+    static {
+        SCRIPT_HANDLER_CLASS_NAMES.add("ru.runa.wfe.extension.decision.BSFDecisionHandler");
+        SCRIPT_HANDLER_CLASS_NAMES.add("ru.runa.wfe.extension.decision.GroovyDecisionHandler");
+        SCRIPT_HANDLER_CLASS_NAMES.add("ru.runa.wfe.extension.handler.GroovyActionHandler");
+        SCRIPT_HANDLER_CLASS_NAMES.add("ru.runa.wfe.extension.handler.BSHActionHandler");
+    }
     private final Document document = new Document();
     private final String name;
 
@@ -41,21 +51,27 @@ public class DelegablePresentation extends VariableRenameProvider<Delegable> {
     }
 
     @Override
-    public List<Change> getChanges(String variableName, String replacement) throws Exception {
+    public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
+        String oldVariableName = oldVariable.getName();
+        String newVariableName = newVariable.getName();
+        if (SCRIPT_HANDLER_CLASS_NAMES.contains(element.getDelegationClassName())) {
+            oldVariableName = oldVariable.getScriptingName();
+            newVariableName = newVariable.getScriptingName();
+        }
         List<Change> changes = new ArrayList<Change>();
         document.set(element.getDelegationConfiguration());
         int offset = 0;
         MultiTextEdit multiEdit = new MultiTextEdit();
-        int len = variableName.length();
+        int len = oldVariableName.length();
         while (offset > -1) {
             if (offset >= document.getLength()) {
                 break;
             }
-            offset = document.search(offset, variableName, true, true, true);
+            offset = document.search(offset, oldVariableName, true, true, true);
             if (offset == -1) {
                 break;
             }
-            ReplaceEdit replaceEdit = new ReplaceEdit(offset, len, replacement);
+            ReplaceEdit replaceEdit = new ReplaceEdit(offset, len, newVariableName);
             multiEdit.addChild(replaceEdit);
             offset += len; // to avoid overlapping
         }

@@ -39,6 +39,7 @@ import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.VariableSearchQuery;
@@ -233,9 +234,11 @@ public class SwimlaneEditorPage extends EditorPartBase {
             if (result != IDialogConstants.OK_ID) {
                 return;
             }
+            Variable oldVariable = new Variable(swimlane);
+            swimlane.setName(newName);
             IResource projectRoot = editor.getDefinitionFile().getParent();
             if (useLtk) {
-                PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), swimlane.getName(), newName);
+                PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), oldVariable, swimlane);
                 useLtk &= ref.isUserInteractionNeeded();
                 if (useLtk) {
                     RenameRefactoringWizard wizard = new RenameRefactoringWizard(ref);
@@ -251,7 +254,6 @@ public class SwimlaneEditorPage extends EditorPartBase {
                     }
                 }
             }
-            swimlane.setName(newName);
             if (useLtk) {
                 IDE.saveAllEditors(new IResource[] { projectRoot }, false);
             }
