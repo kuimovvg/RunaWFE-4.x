@@ -28,7 +28,7 @@ public class BotTaskConfigurationUtils {
     private static final Log log = LogFactory.getLog(BotTaskConfigurationUtils.class);
     private static final String TASK_PARAM = "task";
     private static final String BOT_TASK_NAME_PARAM = "botTaskName";
-    private static final String NAME_PARAM = "name";
+    private static final String ID_PARAM = "id";
     private static final String PARAMETERS_PARAM = "parameters";
     private static final String BOTCONFIG_PARAM = "botconfig";
     private static final String CONFIG_PARAM = "config";
@@ -64,7 +64,7 @@ public class BotTaskConfigurationUtils {
         Document document = XmlUtils.parseWithoutValidation(xml);
         List<Element> elements = document.getRootElement().elements(TASK_PARAM);
         for (Element element : elements) {
-            if (Objects.equal(task.getName(), element.attributeValue(NAME_PARAM))) {
+            if (Objects.equal(task.getNodeId(), element.attributeValue(ID_PARAM))) {
                 return element;
             }
         }
