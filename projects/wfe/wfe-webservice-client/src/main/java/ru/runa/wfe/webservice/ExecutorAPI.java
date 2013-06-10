@@ -425,20 +425,6 @@ public interface ExecutorAPI {
      * @param arg0
      */
     @WebMethod
-    @RequestWrapper(localName = "synchronizeExecutorsWithLDAP", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SynchronizeExecutorsWithLDAP")
-    @ResponseWrapper(localName = "synchronizeExecutorsWithLDAPResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SynchronizeExecutorsWithLDAPResponse")
-    public void synchronizeExecutorsWithLDAP(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
-
-    /**
-     * 
-     * @param arg1
-     * @param arg0
-     */
-    @WebMethod
     @RequestWrapper(localName = "update", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.Update")
     @ResponseWrapper(localName = "updateResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateResponse")
     public void update(

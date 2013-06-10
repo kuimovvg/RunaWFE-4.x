@@ -1,0 +1,33 @@
+import java.util.ArrayList;
+import java.util.List;
+
+import ru.runa.wfe.webservice.AuthenticationAPI;
+import ru.runa.wfe.webservice.AuthenticationWebService;
+import ru.runa.wfe.webservice.ExecutionAPI;
+import ru.runa.wfe.webservice.ExecutionWebService;
+import ru.runa.wfe.webservice.User;
+import ru.runa.wfe.webservice.VariableDefinition;
+import ru.runa.wfe.webservice.WfVariable;
+
+public class UpdateProcessVariables {
+
+    public static void main(String[] args) {
+        try {
+            AuthenticationAPI authenticationAPI = new AuthenticationWebService().getAuthenticationAPIPort();
+            User user = authenticationAPI.authenticateByLoginPassword("Administrator", "wf");
+            ExecutionAPI executionAPI = new ExecutionWebService().getExecutionAPIPort();
+            List<WfVariable> variables = new ArrayList<WfVariable>();
+
+            WfVariable variable2 = new WfVariable();
+            variable2.setDefinition(new VariableDefinition());
+            variable2.getDefinition().setName("selected row id");
+            variable2.setValue("—“–Œ ¿");
+            variables.add(variable2);
+
+            executionAPI.updateVariablesWS(user, 6L, variables);
+            System.out.println("Variables has been updated");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
