@@ -19,7 +19,6 @@ import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @SuppressWarnings("unchecked")
@@ -276,14 +275,23 @@ public class ParamDefConfig {
                 if (param.getFormatFilters().size() > 0) {
                     paramElement.addAttribute("formatFilter", param.getFormatFilters().get(0));
                 }
+                if (param.isOptional()) {
+                    paramElement.addAttribute("optional", "true");
+                }
+                if (!param.isUseVariable()) {
+                    paramElement.addAttribute("variable", "false");
+                }
             }
         }
     }
-    
-    public Set<String> getAllParameterNames() {
+
+    public Set<String> getAllParameterNames(boolean excludeOptional) {
         Set<String> result = Sets.newHashSet();
         for (ParamDefGroup group : getGroups()) {
             for (ParamDef param : group.getParameters()) {
+                if (excludeOptional && param.isOptional()) {
+                    continue;
+                }
                 result.add(param.getName());
             }
         }
