@@ -14,6 +14,7 @@ import org.eclipse.ltk.core.refactoring.NullChange;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.lang.model.BotTaskLink;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Objects;
@@ -28,12 +29,12 @@ public class BotTaskLinkParametersRenameProvider extends VariableRenameProvider<
     }
 
     @Override
-    public List<Change> getChanges(String variableName, String replacement) throws Exception {
+    public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<Change> changes = new ArrayList<Change>();
         Map<String, String> parameters = ParamDefConfig.getAllParameters(element.getDelegationConfiguration());
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            if (Objects.equal(variableName, entry.getValue())) {
-                changes.add(new ParamChange(element, variableName, replacement));
+            if (Objects.equal(oldVariable, entry.getValue())) {
+                changes.add(new ParamChange(element, oldVariable.getName(), newVariable.getName()));
             }
         }
         return changes;

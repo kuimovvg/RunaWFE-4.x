@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.eclipse.ltk.core.refactoring.Change;
 
+import ru.runa.gpd.lang.model.Variable;
+
 public abstract class VariableRenameProvider<T> {
     protected T element;
 
@@ -11,6 +13,5 @@ public abstract class VariableRenameProvider<T> {
         this.element = element;
     }
 
-    public abstract List<Change> getChanges(String variableName, String replacement) throws Exception;
-    
+    public abstract List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception;
 }

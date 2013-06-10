@@ -23,6 +23,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
     private static final String VARIABLES_ELEMENT_NAME = "variables";
     private static final String PUBLUC_ATTRIBUTE_NAME = "public";
     private static final String DEFAULT_VALUE_ATTRIBUTE_NAME = "defaultValue";
+    private static final String SCRIPTING_NAME_ATTRIBUTE_NAME = "scriptingName";
 
     @Override
     public void readFromFile(IFolder folder, ProcessDefinition definition) throws Exception {
@@ -41,6 +42,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
             String publicVisibilityStr = element.attributeValue(PUBLUC_ATTRIBUTE_NAME);
             boolean publicVisibility = "true".equals(publicVisibilityStr);
             String defaultValue = element.attributeValue(DEFAULT_VALUE_ATTRIBUTE_NAME);
+            String scriptingName = element.attributeValue(SCRIPTING_NAME_ATTRIBUTE_NAME, variableName);
             if ("true".equals(isSwimlane)) {
                 try {
                     Swimlane swimlane = definition.getSwimlaneByName(variableName);
@@ -53,6 +55,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
             }
             Variable variable = new Variable(variableName, formatName, publicVisibility, defaultValue);
             variable.setDescription(description);
+            variable.setScriptingName(scriptingName);
             definition.addVariable(variable);
         }
     }
@@ -64,6 +67,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         for (Variable variable : definition.getVariables(true)) {
             Element element = root.addElement(VARIABLE_ELEMENT_NAME);
             element.addAttribute(NAME_ATTRIBUTE_NAME, variable.getName());
+            element.addAttribute(SCRIPTING_NAME_ATTRIBUTE_NAME, variable.getScriptingName());
             element.addAttribute(FORMAT_ATTRIBUTE_NAME, variable.getFormatClassName());
             if (variable.isPublicVisibility()) {
                 element.addAttribute(PUBLUC_ATTRIBUTE_NAME, "true");

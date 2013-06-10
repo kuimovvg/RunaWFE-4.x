@@ -11,8 +11,10 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.property.FormatClassPropertyDescriptor;
+import ru.runa.gpd.util.VariableUtils;
 
 public class Variable extends NamedGraphElement {
+    private String scriptingName;
     private String formatClassName;
     private boolean publicVisibility;
     private String defaultValue;
@@ -20,7 +22,7 @@ public class Variable extends NamedGraphElement {
     protected Variable(String format, boolean publicVisibility, String defaultValue) {
         this(null, format, publicVisibility, defaultValue);
     }
-    
+
     public Variable(String name, String format, boolean publicVisibility, String defaultValue) {
         super(name);
         setFormatClassName(format);
@@ -30,11 +32,20 @@ public class Variable extends NamedGraphElement {
 
     public Variable(Variable variable) {
         this(variable.getName(), variable.getFormatClassName(), variable.isPublicVisibility(), variable.getDefaultValue());
+        setScriptingName(variable.getScriptingName());
     }
 
     @Override
     protected boolean canNameBeSetFromProperties() {
         return false;
+    }
+
+    public String getScriptingName() {
+        return scriptingName;
+    }
+
+    public void setScriptingName(String nameForScripting) {
+        this.scriptingName = nameForScripting;
     }
 
     @Override
@@ -43,16 +54,17 @@ public class Variable extends NamedGraphElement {
             return;
         }
         super.setName(name);
+        setScriptingName(VariableUtils.generateNameForScripting(getProcessDefinition(), name));
     }
 
     public String getFormatClassName() {
         return formatClassName;
     }
-    
+
     public String getJavaClassName() {
         return VariableFormatRegistry.getInstance().getArtifactNotNull(formatClassName).getJavaClassName();
     }
-    
+
     public void setFormatClassName(String formatClassName) {
         String old = this.formatClassName;
         this.formatClassName = formatClassName;
