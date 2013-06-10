@@ -29,10 +29,11 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
@@ -67,6 +68,7 @@ import com.google.common.collect.Maps;
 @WebService(name = "ExecutionAPI", serviceName = "ExecutionWebService")
 @SOAPBinding
 public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionServiceRemote {
+    private static final Log log = LogFactory.getLog(ExecutionServiceBean.class);
     @Autowired
     private ExecutionLogic executionLogic;
     @Autowired
@@ -291,12 +293,15 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
                 Object value = variable.getValue();
                 if (variable.getDefinition().getFormatClassName() != null) {
                     try {
-                        if (value instanceof String) {
-                            value = variable.getFormatNotNull().parse(new String[] { (String) value });
+                        if (value == null) {
+                            log.debug("Variable '" + variable.getDefinition().getName() + "' value is null");
                         } else if (value instanceof byte[]) {
+                            log.debug("Variable '" + variable.getDefinition().getName() + "': reverting from bytes");
                             value = new SerializableToByteArrayConverter().revert(value);
                         } else {
-                            throw new InternalApplicationException("Expected value of type String or byte[] when formatClassName is set");
+                            log.debug("Variable '" + variable.getDefinition().getName() + "' value is type of "
+                                    + (value != null ? value.getClass() : "null"));
+                            value = variable.getFormatNotNull().parse(new String[] { value.toString() });
                         }
                     } catch (Exception e) {
                         throw Throwables.propagate(e);
