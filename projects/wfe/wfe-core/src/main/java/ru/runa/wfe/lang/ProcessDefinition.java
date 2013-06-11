@@ -26,9 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.DefinitionFileDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
@@ -48,7 +45,6 @@ import com.google.common.collect.Sets;
 
 public class ProcessDefinition extends GraphElement implements IFileDataProvider {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(ProcessDefinition.class);
 
     private Deployment deployment;
     private Map<String, byte[]> processFiles = Maps.newHashMap();

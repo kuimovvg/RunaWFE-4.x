@@ -9,7 +9,7 @@ public class ExclusiveMerge extends Node {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.Merge;
+        return NodeType.MERGE;
     }
 
     @Override

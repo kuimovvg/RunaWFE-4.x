@@ -17,10 +17,10 @@ public class JpdlEndTokenNode extends EndTokenNode {
         super.execute(executionContext);
         // If this token was forked
         Token parentToken = executionContext.getToken().getParent();
-        if (parentToken != null && parentToken.getNodeType() == NodeType.Fork && parentToken.getActiveChildren().size() == 0) {
+        if (parentToken != null && parentToken.getNodeType() == NodeType.FORK && parentToken.getActiveChildren().size() == 0) {
             Set<Join> joins = Sets.newHashSet();
             for (Token childToken : parentToken.getChildren()) {
-                if (childToken.getNodeType() == NodeType.Join) {
+                if (childToken.getNodeType() == NodeType.JOIN) {
                     joins.add((Join) childToken.getNode(executionContext.getProcessDefinition()));
                 }
             }

@@ -516,15 +516,15 @@ public class JbpmRefactoringPatch extends DBPatch {
 
     static final Map<String, NodeType> nodeTypes = Maps.newHashMap();
     static {
-        nodeTypes.put("C", NodeType.Subprocess);
-        nodeTypes.put("D", NodeType.Decision);
-        nodeTypes.put("E", NodeType.End);
-        nodeTypes.put("F", NodeType.Fork);
-        nodeTypes.put("J", NodeType.Join);
-        nodeTypes.put("K", NodeType.TaskNode);
-        nodeTypes.put("W", NodeType.MultiSubprocess);
-        nodeTypes.put("X", NodeType.SendMessage);
-        nodeTypes.put("Y", NodeType.ReceiveMessage);
+        nodeTypes.put("C", NodeType.SUBPROCESS);
+        nodeTypes.put("D", NodeType.DECISION);
+        nodeTypes.put("E", NodeType.END_PROCESS);
+        nodeTypes.put("F", NodeType.FORK);
+        nodeTypes.put("J", NodeType.JOIN);
+        nodeTypes.put("K", NodeType.TAST_STATE);
+        nodeTypes.put("W", NodeType.MULTI_SUBPROCESS);
+        nodeTypes.put("X", NodeType.SEND_MESSAGE);
+        nodeTypes.put("Y", NodeType.RECEIVE_MESSAGE);
     }
 
     @Override

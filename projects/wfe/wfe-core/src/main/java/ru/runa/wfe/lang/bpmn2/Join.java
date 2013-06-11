@@ -19,7 +19,7 @@ public class Join extends Node {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.Join;
+        return NodeType.JOIN;
     }
 
     @Override

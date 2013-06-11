@@ -138,7 +138,7 @@ public class ProcessLogs implements Serializable {
             }
             if (log instanceof NodeLeaveLog) {
                 NodeLeaveLog nodeLeaveLog = (NodeLeaveLog) log;
-                if (NodeType.StartState.name().equals(nodeLeaveLog.getNodeType())) {
+                if (NodeType.START_EVENT.name().equals(nodeLeaveLog.getNodeType())) {
                     ProcessStartLog processStartLog = getFirstOrNull(ProcessStartLog.class);
                     if (processStartLog == null) {
                         continue;

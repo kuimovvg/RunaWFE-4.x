@@ -53,7 +53,7 @@ public class TransitionFigure extends TransitionFigureBase {
     protected double[] getReferencePoint(Rectangle rectFrom, Rectangle rectTo) {
         double x;
         double y;
-        if (figureTo.getType() == NodeType.Fork || figureTo.getType() == NodeType.Join) {
+        if (figureTo.getType() == NodeType.FORK || figureTo.getType() == NodeType.JOIN) {
             ForkJoinFigure forkJoin = (ForkJoinFigure) figureTo;
             if (!forkJoin.isVertical() && rectTo.contains(rectFrom.getCenterX(), rectTo.getCenterY())) {
                 // horizontal ForkJoin

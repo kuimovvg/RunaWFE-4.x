@@ -44,7 +44,7 @@ import com.google.common.collect.Maps;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class GraphElement implements Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(GraphElement.class);
+    protected static final Log log = LogFactory.getLog(Node.class);
 
     private String nodeId;
     protected String name;

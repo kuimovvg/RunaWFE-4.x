@@ -29,7 +29,7 @@ public class StartState extends InteractionNode {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.StartState;
+        return NodeType.START_EVENT;
     }
 
     @Override

@@ -23,9 +23,6 @@ package ru.runa.wfe.lang;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -38,11 +35,10 @@ import com.google.common.collect.Maps;
  */
 public class Fork extends Node {
     private static final long serialVersionUID = 1L;
-    private static Log log = LogFactory.getLog(Fork.class);
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.Fork;
+        return NodeType.FORK;
     }
 
     @Override

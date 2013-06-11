@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import ru.runa.common.WebResources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.wfe.service.delegate.Delegates;
 
@@ -41,7 +42,7 @@ public class SynchronizeExecutorsAction extends ActionBase {
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
         try {
-            Delegates.getSynchronizationService().synchronizeExecutorsWithLDAP(getLoggedUser(request));
+            Delegates.getSynchronizationService().synchronizeExecutorsWithLDAP(getLoggedUser(request), WebResources.isLDAPSynchronizationFull());
         } catch (Exception e) {
             addError(request, e);
         }

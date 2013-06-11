@@ -28,13 +28,13 @@ public class GraphElementPresentationBuilder {
             NodeModel model = diagramModel.getNodeNotNull(node.getNodeId());
             GraphElementPresentation presentation;
             switch (node.getNodeType()) {
-            case Subprocess:
+            case SUBPROCESS:
                 presentation = new SubprocessGraphElementPresentation();
                 break;
-            case MultiSubprocess:
+            case MULTI_SUBPROCESS:
                 presentation = new MultiinstanceGraphElementPresentation();
                 break;
-            case TaskNode:
+            case TAST_STATE:
                 presentation = new TaskGraphElementPresentation();
                 break;
             default:

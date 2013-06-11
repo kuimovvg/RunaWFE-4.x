@@ -22,7 +22,6 @@ import javax.servlet.jsp.PageContext;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.Table;
 
-import ru.runa.af.web.ExecutorNameConverter;
 import ru.runa.af.web.form.UpdateExecutorDetailsForm;
 import ru.runa.common.web.Messages;
 import ru.runa.wfe.user.Actor;
@@ -73,8 +72,7 @@ public class ExecutorTableBuilder extends BaseDetailTableBuilder {
         Table table = new Table();
         table.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE);
         table.addElement(createTRWith2TDRequired(Messages.getMessage(Messages.LABEL_EXECUTOR_NAME, pageContext),
-                UpdateExecutorDetailsForm.NEW_NAME_INPUT_NAME, isEmpty ? "" : ExecutorNameConverter.getName(executor, pageContext),
-                areInputsDisabled, Input.TEXT));
+                UpdateExecutorDetailsForm.NEW_NAME_INPUT_NAME, isEmpty || executor == null ? "" : executor.getName(), areInputsDisabled, Input.TEXT));
         if (isActor) {
             table.addElement(createTRWith2TD(Messages.getMessage(Messages.LABEL_ACTOR_FULL_NAME, pageContext),
                     UpdateExecutorDetailsForm.FULL_NAME_INPUT_NAME, isEmpty ? "" : ((Actor) executor).getFullName(), areInputsDisabled));
@@ -95,7 +93,7 @@ public class ExecutorTableBuilder extends BaseDetailTableBuilder {
                     Messages.getMessage(Messages.LABEL_GROUP_AD, pageContext),
                     UpdateExecutorDetailsForm.EMAIL_INPUT_NAME,
                     isEmpty ? ""
-                            : ((Group) executor).getActiveDirectoryGroup() != null ? String.valueOf(((Group) executor).getActiveDirectoryGroup())
+                            : ((Group) executor).getLdapGroupName() != null ? String.valueOf(((Group) executor).getLdapGroupName())
                                     : "", areInputsDisabled));
         }
         return table;

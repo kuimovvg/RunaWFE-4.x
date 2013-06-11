@@ -21,11 +21,8 @@
  */
 package ru.runa.wfe.lang;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.TaskFactory;
 
 import com.google.common.base.Objects;
 
@@ -33,27 +30,12 @@ import com.google.common.base.Objects;
  * is a node that relates to one or more tasks. Property <code>signal</code>
  * specifies how task completion triggers continuation of execution.
  */
-public class TaskNode extends InteractionNode implements Synchronizable {
+public class TaskNode extends BaseTaskNode {
     private static final long serialVersionUID = 1L;
-
-    @Autowired
-    private TaskFactory taskFactory;
-
-    private boolean async;
-
-    @Override
-    public boolean isAsync() {
-        return async;
-    }
-
-    @Override
-    public void setAsync(boolean async) {
-        this.async = async;
-    }
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.TaskNode;
+        return NodeType.TAST_STATE;
     }
 
     @Override
@@ -63,15 +45,15 @@ public class TaskNode extends InteractionNode implements Synchronizable {
             taskFactory.assign(executionContext, taskDefinition, task);
             taskFactory.notify(executionContext, task);
         }
-        // check if we should continue execution
         if (async) {
+            log.debug("continue execution in async " + this);
             leave(executionContext);
         }
     }
 
-    // invoked from timer
     @Override
     public void leave(ExecutionContext executionContext, Transition transition) {
+        log.debug("invoked from timer in " + this);
         if (!async) {
             for (Task task : executionContext.getToken().getTasks()) {
                 if (Objects.equal(task.getNodeId(), getNodeId())) {

@@ -80,7 +80,7 @@ public abstract class DBPatch {
     }
 
     protected final String getDDLCreateSequence(String sequenceName) {
-        if (dbType == DBType.Oracle || dbType == DBType.PostgreSQL) {
+        if (dbType == DBType.ORACLE || dbType == DBType.POSTGRESQL) {
             return "CREATE SEQUENCE " + sequenceName;
         }
         return null;
@@ -100,13 +100,13 @@ public abstract class DBPatch {
                 case MSSQL:
                     primaryKeyModifier = "IDENTITY NOT NULL PRIMARY KEY";
                     break;
-                case Oracle:
+                case ORACLE:
                     primaryKeyModifier = "NOT NULL PRIMARY KEY";
                     break;
-                case PostgreSQL:
+                case POSTGRESQL:
                     primaryKeyModifier = "PRIMARY KEY";
                     break;
-                case MySQL:
+                case MYSQL:
                     primaryKeyModifier = "NOT NULL PRIMARY KEY AUTO_INCREMENT";
                     break;
                 default:
@@ -133,7 +133,7 @@ public abstract class DBPatch {
         case MSSQL:
             query = "sp_rename '" + oldTableName + "', '" + newTableName + "'";
             break;
-        case MySQL:
+        case MYSQL:
             query = "RENAME TABLE " + oldTableName + " TO " + newTableName;
             break;
         default:
@@ -171,8 +171,8 @@ public abstract class DBPatch {
 
     protected final String getDDLRemoveIndex(String tableName, String indexName) {
         switch (dbType) {
-        case Oracle:
-        case PostgreSQL:
+        case ORACLE:
+        case POSTGRESQL:
             return "DROP INDEX " + indexName;
         default:
             return "DROP INDEX " + indexName + " ON " + tableName;
@@ -199,7 +199,7 @@ public abstract class DBPatch {
     protected final String getDDLRemoveForeignKey(String tableName, String keyName) {
         String constraint;
         switch (dbType) {
-        case MySQL:
+        case MYSQL:
             constraint = "FOREIGN KEY";
             break;
         default:
@@ -212,7 +212,7 @@ public abstract class DBPatch {
     protected final String getDDLCreateColumn(String tableName, ColumnDef columnDef) {
         String lBraced = "";
         String rBraced = "";
-        if (dbType == DBType.Oracle) {
+        if (dbType == DBType.ORACLE) {
             lBraced = "(";
             rBraced = ")";
         }
@@ -231,14 +231,14 @@ public abstract class DBPatch {
     protected final String getDDLRenameColumn(String tableName, String oldColumnName, ColumnDef newColumnDef) {
         String query;
         switch (dbType) {
-        case Oracle:
-        case PostgreSQL:
+        case ORACLE:
+        case POSTGRESQL:
             query = "ALTER TABLE " + tableName + " RENAME COLUMN " + oldColumnName + " TO " + newColumnDef.name;
             break;
         case MSSQL:
             query = "sp_rename '" + tableName + "." + oldColumnName + "', '" + newColumnDef.name + "', 'COLUMN'";
             break;
-        case MySQL:
+        case MYSQL:
             query = "ALTER TABLE " + tableName + " CHANGE " + oldColumnName + " " + newColumnDef.name + " " + newColumnDef.getSqlTypeName(dialect);
             break;
         default:
@@ -251,13 +251,13 @@ public abstract class DBPatch {
     protected final String getDDLModifyColumn(String tableName, String columnName, String sqlTypeName) {
         String query;
         switch (dbType) {
-        case Oracle:
+        case ORACLE:
             query = "ALTER TABLE " + tableName + " MODIFY(" + columnName + " " + sqlTypeName + ")";
             break;
-        case PostgreSQL:
+        case POSTGRESQL:
             query = "ALTER TABLE " + tableName + " ALTER COLUMN " + columnName + " TYPE " + sqlTypeName;
             break;
-        case MySQL:
+        case MYSQL:
             query = "ALTER TABLE " + tableName + " MODIFY COLUMN " + columnName + " " + sqlTypeName;
             break;
         default:

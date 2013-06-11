@@ -38,13 +38,11 @@ public class DefaultAssignmentHandler implements AssignmentHandler {
 
     @Override
     public void setConfiguration(String configuration) {
-        // Parse and save assignment parameters separate each other
         function = OrgFunctionHelper.parseOrgFunction(configuration);
     }
 
     @Override
     public void assign(ExecutionContext executionContext, Assignable assignable) {
-        // Get executors, which will be assigned.
         List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(function, executionContext.getVariableProvider());
         if (executors.size() == 0) {
             // Nobody can be assigned. Return unassigned value.

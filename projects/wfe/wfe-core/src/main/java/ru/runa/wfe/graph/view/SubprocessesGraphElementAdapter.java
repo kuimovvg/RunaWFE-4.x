@@ -27,13 +27,13 @@ public abstract class SubprocessesGraphElementAdapter implements GraphElementPre
 
     @Override
     public void onGraphElement(GraphElementPresentation element) {
-        if (element.getNodeType() == NodeType.Subprocess) {
+        if (element.getNodeType() == NodeType.SUBPROCESS) {
             onSubprocess((SubprocessGraphElementPresentation) element);
         }
-        if (element.getNodeType() == NodeType.MultiSubprocess) {
+        if (element.getNodeType() == NodeType.MULTI_SUBPROCESS) {
             onMultiSubprocess((MultiinstanceGraphElementPresentation) element);
         }
-        if (element.getNodeType() == NodeType.TaskNode) {
+        if (element.getNodeType() == NodeType.TAST_STATE) {
             onTaskState((TaskGraphElementPresentation) element);
         }
     }
