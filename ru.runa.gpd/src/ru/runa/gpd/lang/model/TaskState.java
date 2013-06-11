@@ -16,6 +16,7 @@ import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.Duration;
 import ru.runa.wfe.extension.handler.EscalationActionHandler;
+import ru.runa.wfe.lang.AsyncCompletionMode;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
@@ -27,13 +28,19 @@ public class TaskState extends State implements Synchronizable {
     private boolean useEscalation;
     private Duration escalationDelay = new Duration();
     private boolean async;
-    private boolean asyncTaskCompleteOnProcessComplete;
+    private AsyncCompletionMode asyncCompletionMode = AsyncCompletionMode.ON_MAIN_PROCESS_END;
     private BotTaskLink botTaskLink;
 
-    public boolean isAsyncTaskCompleteOnProcessComplete() {
-        return asyncTaskCompleteOnProcessComplete; // TODO
+    public AsyncCompletionMode getAsyncCompletionMode() {
+        return asyncCompletionMode;
     }
-
+    
+    public void setAsyncCompletionMode(AsyncCompletionMode asyncCompletionMode) {
+        AsyncCompletionMode old = this.asyncCompletionMode;
+        this.asyncCompletionMode = asyncCompletionMode;
+        firePropertyChange(PROPERTY_ASYNC_COMPLETION_MODE, old, asyncCompletionMode);
+    }
+    
     /**
      * @see BotTaskUtils#getBotName(org.jbpm.ui.common.model.Swimlane)
      * @return bot name or <code>null</code>

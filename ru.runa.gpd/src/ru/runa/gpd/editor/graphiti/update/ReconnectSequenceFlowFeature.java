@@ -7,6 +7,7 @@ import org.eclipse.graphiti.features.impl.DefaultReconnectionFeature;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 
 import ru.runa.gpd.lang.model.EndState;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.Transition;
@@ -22,12 +23,15 @@ public class ReconnectSequenceFlowFeature extends DefaultReconnectionFeature {
             return false;
         }
         Transition transition = (Transition) getFeatureProvider().getBusinessObjectForPictogramElement(context.getConnection());
-        Node target = (Node) getFeatureProvider().getBusinessObjectForPictogramElement(context.getTargetPictogramElement());
-        if (ReconnectionContext.RECONNECT_TARGET.equalsIgnoreCase(context.getReconnectType())) {
-            return !target.getArrivingTransitions().contains(transition) && !(target instanceof StartState);
-        }
-        if (ReconnectionContext.RECONNECT_SOURCE.equalsIgnoreCase(context.getReconnectType())) {
-            return !target.getLeavingTransitions().contains(transition) && !(target instanceof EndState);
+        GraphElement graphElement = (GraphElement) getFeatureProvider().getBusinessObjectForPictogramElement(context.getTargetPictogramElement());
+        if (graphElement instanceof Node) {
+            Node target = (Node) graphElement;
+            if (ReconnectionContext.RECONNECT_TARGET.equalsIgnoreCase(context.getReconnectType())) {
+                return !target.getArrivingTransitions().contains(transition) && !(target instanceof StartState);
+            }
+            if (ReconnectionContext.RECONNECT_SOURCE.equalsIgnoreCase(context.getReconnectType())) {
+                return !target.getLeavingTransitions().contains(transition) && !(target instanceof EndState);
+            }
         }
         return false;
     }

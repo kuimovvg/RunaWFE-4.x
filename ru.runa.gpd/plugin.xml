@@ -137,6 +137,13 @@
              label="%label.action.feature.async"
              menubarPath="features/sp1">
        </action>
+       <action
+             class="ru.runa.gpd.lang.action.AsyncCompletionModeDelegate"
+             id="setAsyncCompletionMode"
+             label="%label.action.asyncCompletionMode"
+             menubarPath="features/sp1"
+             style="pulldown"
+             />
     </objectContribution>
     <objectContribution
           adaptable="false"
@@ -520,7 +527,7 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddStateNodeFeature"
+               add="ru.runa.gpd.editor.graphiti.add.AddTaskStateNodeFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
                fixedSize="false"
                height="7"
