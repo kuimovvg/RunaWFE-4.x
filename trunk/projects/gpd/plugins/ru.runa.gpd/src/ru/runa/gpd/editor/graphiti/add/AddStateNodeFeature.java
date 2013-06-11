@@ -46,7 +46,7 @@ public class AddStateNodeFeature extends AddNodeFeature {
         nameText.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
         containerShape.getProperties().add(new GaProperty(GaProperty.MINIMAZED_VIEW, String.valueOf(node.isMinimizedView())));
         //
-        addCustomGraphics(node, context, main);
+        addCustomGraphics(node, context, main, containerShape);
         // 
         link(containerShape, node);
         //
@@ -55,6 +55,6 @@ public class AddStateNodeFeature extends AddNodeFeature {
         return containerShape;
     }
 
-    protected void addCustomGraphics(Node node, IAddContext context, GraphicsAlgorithmContainer container) {
+    protected void addCustomGraphics(Node node, IAddContext context, GraphicsAlgorithmContainer container, ContainerShape containerShape) {
     }
 }
