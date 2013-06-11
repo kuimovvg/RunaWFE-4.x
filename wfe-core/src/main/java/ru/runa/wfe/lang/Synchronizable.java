@@ -5,4 +5,8 @@ public interface Synchronizable {
 
     public void setAsync(boolean async);
 
+    public AsyncCompletionMode getCompletionMode();
+
+    public void setCompletionMode(AsyncCompletionMode completionMode);
+
 }

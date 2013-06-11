@@ -57,12 +57,16 @@ import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.extension.AssignmentHandler;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.Event;
+import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
+import ru.runa.wfe.lang.Synchronizable;
 import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.TemporaryGroup;
+import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -216,7 +220,7 @@ public class Process extends IdentifiableBase {
         Swimlane swimlane = getSwimlaneNotNull(swimlaneDefinition);
         if (reassign || swimlane.getExecutor() == null) {
             try {
-                // assign the swimlane
+                log.debug("assign " + swimlane);
                 AssignmentHandler assignmentHandler = swimlaneDefinition.getDelegation().getInstance();
                 assignmentHandler.assign(executionContext, swimlane);
             } catch (Exception e) {
@@ -270,7 +274,8 @@ public class Process extends IdentifiableBase {
         // check if this process was started as a subprocess of a super
         // process
         NodeProcess parentNodeProcess = executionContext.getParentNodeProcess();
-        if (parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded()) {
+        boolean activeSuperProcessExists = parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded();
+        if (activeSuperProcessExists) {
             Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
             parentNodeProcess.getProcess().getDeployment().getId();
             ProcessDefinition superDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(superDefinitionId);
@@ -288,18 +293,36 @@ public class Process extends IdentifiableBase {
         } else {
             executionContext.addLog(new ProcessEndLog());
         }
-        // Set<Task> tasksToDelete = Sets.newHashSet();
-        // for (Task task : getTasks()) {
-        // Node node =
-        // executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
-        // if (node instanceof Synchronizable && !((Synchronizable)
-        // node).isAsync()) {
-        // tasksToDelete.add(task);
-        // }
-        // }
-        // tasks.removeAll(tasksToDelete);
-        log.debug("ending all active tasks: " + tasks);
-        tasks.clear();
+        for (Task task : tasks) {
+            Node node = executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
+            if (node instanceof Synchronizable) {
+                Synchronizable synchronizable = (Synchronizable) node;
+                if (synchronizable.isAsync()) {
+                    switch (synchronizable.getCompletionMode()) {
+                    case NEVER:
+                        continue;
+                    case ON_MAIN_PROCESS_END:
+                        if (activeSuperProcessExists) {
+                            continue;
+                        }
+                    }
+                }
+            }
+            log.info("Removing active task: " + task);
+            tasks.remove(task);
+        }
+        //
+        ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
+        List<TemporaryGroup> groups = executorDAO.getTemporaryGroups(id);
+        for (TemporaryGroup temporaryGroup : groups) {
+            try {
+                log.debug("Cleaning " + temporaryGroup);
+                getSwimlane(temporaryGroup.getSwimlaneName()).setExecutor(null);
+                executorDAO.remove(temporaryGroup);
+            } catch (Exception e) {
+                log.error("Unable to delete " + temporaryGroup, e);
+            }
+        }
     }
 
     /**

@@ -25,7 +25,7 @@ import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.MultiTaskNode;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
-import ru.runa.wfe.lang.TaskDefinition;
+import ru.runa.wfe.lang.Synchronizable;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.Task;
@@ -88,15 +88,17 @@ public class TaskLogic extends WFCommonLogic {
             validateVariables(user, processDefinition, task.getNodeId(), variables, validationVariableProvider);
             executionContext.setVariables(variables);
             Transition transition;
+            InteractionNode node = executionContext.getProcessDefinition().getTaskNotNull(task.getNodeId()).getNode();
             if (transitionName != null) {
-                transition = processDefinition.getNodeNotNull(task.getNodeId()).getLeavingTransitionNotNull(transitionName);
+                transition = node.getLeavingTransitionNotNull(transitionName);
             } else {
-                TaskDefinition taskDefinition = executionContext.getProcessDefinition().getTaskNotNull(task.getNodeId());
-                transition = taskDefinition.getNode().getDefaultLeavingTransitionNotNull();
+                transition = node.getDefaultLeavingTransitionNotNull();
             }
             executionContext.setTransientVariable(WfProcess.SELECTED_TRANSITION_KEY, transition.getName());
             task.end(executionContext);
-            signalToken(executionContext, task, transition);
+            if (!(node instanceof Synchronizable) || !((Synchronizable) node).isAsync()) {
+                signalToken(executionContext, task, transition);
+            }
             log.info("Task '" + task.getName() + "' was done by " + user + " in process " + task.getProcess());
             ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getName());
         } catch (Throwable th) {
@@ -108,7 +110,6 @@ public class TaskLogic extends WFCommonLogic {
     private void signalToken(ExecutionContext executionContext, Task task, Transition transition) {
         Token token = executionContext.getToken();
         if (!Objects.equal(task.getNodeId(), token.getNodeId())) {
-            // TODO why this can be?
             throw new InternalApplicationException("completion of " + task + " failed. Different node id in task and token: " + token.getNodeId());
         }
         InteractionNode node = (InteractionNode) executionContext.getNode();

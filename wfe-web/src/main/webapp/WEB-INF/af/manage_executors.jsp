@@ -22,9 +22,7 @@
 if (ru.runa.common.WebResources.isLDAPSynchronizationEnabled()) {
 %>
 	&nbsp;&nbsp;&nbsp;
-	<html:link action="/synchronizeExecutors">
-		<bean:message key="label.synchronize.ldap" />
-	</html:link>
+	<wf:synchronizeExecutorsLink />
 <%
 }
 %>

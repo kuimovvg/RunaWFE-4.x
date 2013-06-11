@@ -23,13 +23,10 @@ package ru.runa.wfe.lang;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.TaskFactory;
 import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Objects;
@@ -39,34 +36,16 @@ import com.google.common.base.Preconditions;
  * is a node that relates to one or more tasks. Property <code>signal</code>
  * specifies how task completion triggers continuation of execution.
  */
-public class MultiTaskNode extends InteractionNode implements Synchronizable {
+public class MultiTaskNode extends BaseTaskNode {
     private static final long serialVersionUID = 1L;
 
-    @Autowired
-    private TaskFactory taskFactory;
-
-    private TaskExecutionMode mode;
-    private boolean async;
+    private TaskExecutionMode executionMode;
     private String executorsVariableName;
 
     @Override
     public void validate() {
         super.validate();
         Preconditions.checkNotNull(executorsVariableName, "executorsVariableName in " + this);
-    }
-
-    @Override
-    public boolean isAsync() {
-        return async;
-    }
-
-    @Override
-    public void setAsync(boolean async) {
-        this.async = async;
-    }
-
-    public void setMode(TaskExecutionMode mode) {
-        this.mode = mode;
     }
 
     public String getExecutorsVariableName() {
@@ -77,9 +56,17 @@ public class MultiTaskNode extends InteractionNode implements Synchronizable {
         this.executorsVariableName = executorsVariableName;
     }
 
+    public TaskExecutionMode getExecutionMode() {
+        return executionMode;
+    }
+
+    public void setExecutionMode(TaskExecutionMode executionMode) {
+        this.executionMode = executionMode;
+    }
+
     @Override
     public NodeType getNodeType() {
-        return NodeType.MultiTaskNode;
+        return NodeType.MULTI_TASK_STATE;
     }
 
     @Override
@@ -111,10 +98,10 @@ public class MultiTaskNode extends InteractionNode implements Synchronizable {
     }
 
     public boolean isCompletionTriggersSignal(Task task) {
-        switch (mode) {
-        case first:
+        switch (executionMode) {
+        case FIRST:
             return true;
-        case last:
+        case LAST:
             return isLastTaskToComplete(task);
         default:
             return false;

@@ -35,32 +35,32 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
     public AbstractFigure createFigure(NodeModel nodeModel) {
         AbstractFigure figure = null;
         switch (nodeModel.getType()) {
-        case TaskNode:
+        case TAST_STATE:
             figure = new TaskNodeFigure();
             ((TaskNodeFigure) figure).setGraphiti(graphiti);
             break;
         // TODO MultiTaskNode
-        case Decision:
-        case Merge:
+        case DECISION:
+        case MERGE:
             figure = new Rhomb("image/bpmn/decision.png");
             break;
-        case Fork:
-        case Join:
+        case FORK:
+        case JOIN:
             figure = new Rhomb("image/bpmn/fork_join.png");
             break;
-        case StartState:
+        case START_EVENT:
             figure = new Circle("image/bpmn/start.png");
             break;
-        case End:
+        case END_PROCESS:
             figure = new Circle("image/bpmn/end.png");
             break;
-        case EndToken:
+        case END_TOKEN:
             figure = new Circle("image/bpmn/endtoken.png");
             break;
-        case Subprocess:
+        case SUBPROCESS:
             figure = new SubprocessRect();
             break;
-        case ActionNode:
+        case ACTION_NODE:
             // if (graphiti) {
             // figure = new RoundedRect("image/bpmn/script.png");
             // } else {
@@ -68,16 +68,16 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
             // }
             figure = new RoundedRect(null);
             break;
-        case WaitState:
+        case WAIT_STATE:
             figure = new Circle("image/bpmn/waitstate.png");
             break;
-        case MultiSubprocess:
+        case MULTI_SUBPROCESS:
             figure = new SubprocessRect();
             break;
-        case SendMessage:
+        case SEND_MESSAGE:
             figure = new Circle("image/bpmn/sendmessage.png");
             break;
-        case ReceiveMessage:
+        case RECEIVE_MESSAGE:
             figure = new Circle("image/bpmn/receivemessage.png");
             break;
         default:

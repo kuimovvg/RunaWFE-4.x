@@ -37,15 +37,16 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -92,50 +93,63 @@ public class LDAPLogic {
         return new InitialDirContext(env);
     }
 
-    public void synchronizeExecutors() {
+    public void synchronizeExecutors(boolean createExecutors) {
         if (ous == null) {
             throw new NullPointerException("LDAP property is not configured 'ldap.synchronizer.ou'");
         }
+        if (!createExecutors) {
+            log.info("Full synchronization mode is disabled");
+        }
         try {
-            Group ldapGroup = new Group(IMPORTED_FROM_LDAP_GROUP_NAME, IMPORTED_FROM_LDAP_GROUP_DESCRIPION);
-            if (!executorDAO.isExecutorExist(ldapGroup.getName())) {
-                ldapGroup = executorDAO.create(ldapGroup);
-                permissionDAO.setPermissions(ldapGroup, Lists.newArrayList(Permission.READ, SystemPermission.LOGIN_TO_SYSTEM), ASystem.INSTANCE);
+            Group wfeImportFromLdapGroup = new Group(IMPORTED_FROM_LDAP_GROUP_NAME, IMPORTED_FROM_LDAP_GROUP_DESCRIPION);
+            if (!executorDAO.isExecutorExist(wfeImportFromLdapGroup.getName())) {
+                wfeImportFromLdapGroup = executorDAO.create(wfeImportFromLdapGroup);
+                permissionDAO.setPermissions(wfeImportFromLdapGroup, Lists.newArrayList(Permission.READ, SystemPermission.LOGIN_TO_SYSTEM),
+                        ASystem.INSTANCE);
             } else {
-                ldapGroup = executorDAO.getGroup(ldapGroup.getName());
+                wfeImportFromLdapGroup = executorDAO.getGroup(wfeImportFromLdapGroup.getName());
             }
             DirContext dirContext = getContext();
-            Map<String, Actor> actors = syncronizeActors(dirContext, ldapGroup);
-            synchronizeGroups(dirContext, ldapGroup, actors);
+            Map<String, Actor> actorsByDistinguishedName = syncronizeActors(dirContext, wfeImportFromLdapGroup, createExecutors);
+            synchronizeGroups(dirContext, wfeImportFromLdapGroup, actorsByDistinguishedName, createExecutors);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
     }
 
-    private Map<String, Actor> syncronizeActors(DirContext dirContext, Group ldapUsersGroup) throws Exception {
-        Map<String, Actor> actors = Maps.newHashMap();
-        Set<String> addedNameSet = Sets.newHashSet();
-        Attributes attrs = new BasicAttributes();
-        attrs.put(OBJECT_CLASS_ATTR_NAME, OBJECT_CLASS_ATTR_USER_VALUE);
+    private Map<String, Actor> syncronizeActors(DirContext dirContext, Group wfeImportFromLdapGroup, boolean createExecutors) throws Exception {
+        List<Actor> existingActorsList = executorDAO.getAllActors(BatchPresentationFactory.ACTORS.createNonPaged());
+        Map<String, Actor> existingActorsMap = Maps.newHashMap();
+        for (Actor actor : existingActorsList) {
+            existingActorsMap.put(actor.getName(), actor);
+        }
+        Map<String, Actor> actorsByDistinguishedName = Maps.newHashMap();
+        Attributes attributes = new BasicAttributes();
+        attributes.put(OBJECT_CLASS_ATTR_NAME, OBJECT_CLASS_ATTR_USER_VALUE);
         for (String ou : ous) {
-            NamingEnumeration<SearchResult> list = dirContext.search(ou, attrs);
+            NamingEnumeration<SearchResult> list = dirContext.search(ou, attributes);
             while (list.hasMore()) {
                 SearchResult searchResult = list.next();
                 String name = getStringAttribute(searchResult, SAM_ACCOUNT_NAME);
-                if (!addedNameSet.add(name)) {
-                    log.debug("Ignoring duplicated user " + name);
-                    continue;
-                }
                 String fullName = getStringAttribute(searchResult, DISPLAY_NAME);
                 String email = getStringAttribute(searchResult, EMAIL);
                 String description = getStringAttribute(searchResult, TITLE);
                 String phone = getStringAttribute(searchResult, PHONE);
-                Actor actor = new Actor(name, description, fullName, null, email, phone);
-                actor = createExecutorIfNotExists(ldapUsersGroup, actor);
-                actors.put(searchResult.getNameInNamespace(), actor);
+                Actor actor = existingActorsMap.get(name);
+                if (actor == null) {
+                    if (!createExecutors) {
+                        continue;
+                    }
+                    actor = new Actor(name, description, fullName, null, email, phone);
+                    log.info("Importing " + actor);
+                    executorDAO.create(actor);
+                    executorDAO.addExecutorsToGroup(Lists.newArrayList(actor), wfeImportFromLdapGroup);
+                    permissionDAO.setPermissions(wfeImportFromLdapGroup, Lists.newArrayList(Permission.READ), actor);
+                }
+                actorsByDistinguishedName.put(searchResult.getNameInNamespace(), actor);
             }
         }
-        return actors;
+        return actorsByDistinguishedName;
     }
 
     private String getStringAttribute(SearchResult searchResult, String name) throws NamingException {
@@ -146,55 +160,77 @@ public class LDAPLogic {
         return null;
     }
 
-    private void synchronizeGroups(DirContext dirContext, Group ldapUsersGroup, Map<String, Actor> allActors) throws NamingException {
+    private void synchronizeGroups(DirContext dirContext, Group wfeImportFromLdapGroup, Map<String, Actor> actorsByDistinguishedName,
+            boolean createExecutors) throws NamingException {
         Attributes attributes = new BasicAttributes();
-        Set<String> synchronizedGroupNames = Sets.newHashSet();
         attributes.put(OBJECT_CLASS_ATTR_NAME, OBJECT_CLASS_ATTR_GROUP_VALUE);
+        List<Group> existingGroupsList = executorDAO.getAllGroups();
+        Map<String, Group> existingGroupsByLdapNameMap = Maps.newHashMap();
+        for (Group group : existingGroupsList) {
+            if (!Strings.isNullOrEmpty(group.getLdapGroupName())) {
+                existingGroupsByLdapNameMap.put(group.getLdapGroupName(), group);
+            }
+        }
+        Map<String, SearchResult> groupResultsByDistinguishedName = Maps.newHashMap();
         for (String ou : ous) {
             NamingEnumeration<SearchResult> list = dirContext.search(ou, attributes);
             while (list.hasMore()) {
                 SearchResult searchResult = list.next();
-                String name = getStringAttribute(searchResult, SAM_ACCOUNT_NAME);
-                if (!synchronizedGroupNames.add(name)) {
+                if (searchResult.getAttributes().get(MEMBER) == null) {
                     continue;
                 }
-                String description = getStringAttribute(searchResult, DISPLAY_NAME);
-                Group group = new Group(name, description);
-                group = createExecutorIfNotExists(ldapUsersGroup, group);
+                groupResultsByDistinguishedName.put(searchResult.getNameInNamespace(), searchResult);
+            }
+        }
+        for (SearchResult searchResult : groupResultsByDistinguishedName.values()) {
+            String name = getStringAttribute(searchResult, SAM_ACCOUNT_NAME);
+            Group group = existingGroupsByLdapNameMap.get(name);
+            if (group == null) {
+                if (!createExecutors) {
+                    continue;
+                }
+                group = new Group(name, getStringAttribute(searchResult, DISPLAY_NAME));
+                group.setLdapGroupName(name);
+                log.info("Importing " + group);
+                executorDAO.create(group);
+                executorDAO.addExecutorsToGroup(Lists.newArrayList(group), wfeImportFromLdapGroup);
+                permissionDAO.setPermissions(wfeImportFromLdapGroup, Lists.newArrayList(Permission.READ), group);
+            }
 
-                Attribute memberAttribute = searchResult.getAttributes().get(MEMBER);
-                if (memberAttribute == null) {
-                    continue;
+            Set<Actor> actorsToDelete = executorDAO.getGroupActors(group);
+            Set<Actor> actorsToAdd = Sets.newHashSet();
+            Set<Actor> groupTargetActors = Sets.newHashSet();
+            fillTargetActorsRecursively(groupTargetActors, searchResult, groupResultsByDistinguishedName, actorsByDistinguishedName);
+            for (Actor targetActor : groupTargetActors) {
+                if (!actorsToDelete.remove(targetActor)) {
+                    actorsToAdd.add(targetActor);
                 }
-                List<Actor> groupActors = Lists.newArrayList();
-                NamingEnumeration<String> namingEnum = (NamingEnumeration<String>) memberAttribute.getAll();
-                while (namingEnum.hasMore()) {
-                    String actorDN = namingEnum.next();
-                    Actor actor = allActors.get(actorDN);
-                    if (actor == null) {
-                        log.warn("No actor found for " + actorDN);
-                        continue;
-                    }
-                    if (!executorDAO.isExecutorInGroup(actor, group)) {
-                        groupActors.add(actor);
-                    }
-                }
-                if (groupActors.size() > 0) {
-                    executorDAO.addExecutorsToGroup(groupActors, group);
-                }
+            }
+            if (actorsToAdd.size() > 0) {
+                log.info("Adding to " + group + ": " + actorsToAdd);
+                executorDAO.addExecutorsToGroup(actorsToAdd, group);
+            }
+            if (actorsToDelete.size() > 0) {
+                log.info("Removing from " + group + ": " + actorsToAdd);
+                executorDAO.removeExecutorsFromGroup(Lists.newArrayList(actorsToDelete), group);
             }
         }
     }
 
-    private <T extends Executor> T createExecutorIfNotExists(Group ldapGroup, T executor) {
-        if (!executorDAO.isExecutorExist(executor.getName())) {
-            log.info("Importing " + executor.getName());
-            executorDAO.create(executor);
-            executorDAO.addExecutorsToGroup(Lists.newArrayList(executor), ldapGroup);
-            permissionDAO.setPermissions(ldapGroup, Lists.newArrayList(Permission.READ), executor);
-            return executor;
+    private void fillTargetActorsRecursively(Set<Actor> recursiveActors, SearchResult searchResult,
+            Map<String, SearchResult> groupResultsByDistinguishedName, Map<String, Actor> actorsByDistinguishedName) throws NamingException {
+        NamingEnumeration<String> namingEnum = (NamingEnumeration<String>) searchResult.getAttributes().get(MEMBER).getAll();
+        while (namingEnum.hasMore()) {
+            String executorDistinguishedName = namingEnum.next();
+            Actor actor = actorsByDistinguishedName.get(executorDistinguishedName);
+            if (actor != null) {
+                recursiveActors.add(actor);
+            }
+            SearchResult groupSearchResult = groupResultsByDistinguishedName.get(executorDistinguishedName);
+            if (groupSearchResult != null) {
+                fillTargetActorsRecursively(recursiveActors, groupSearchResult, groupResultsByDistinguishedName, actorsByDistinguishedName);
+            }
         }
-        return (T) executorDAO.getExecutor(executor.getName());
     }
 
 }

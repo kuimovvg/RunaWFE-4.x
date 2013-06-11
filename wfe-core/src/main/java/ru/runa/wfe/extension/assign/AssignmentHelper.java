@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
@@ -38,16 +39,20 @@ public class AssignmentHelper {
                 assignable.assignExecutor(executionContext, aloneExecutor, true);
                 return;
             }
-            if (executionContext.getTask().getSwimlane() == null) {
+            String swimlaneName;
+            if (assignable instanceof Swimlane) {
+                swimlaneName = ((Swimlane) assignable).getName();
+            } else if (executionContext.getTask().getSwimlane() == null) {
+                swimlaneName = executionContext.getTask().getSwimlane().getName();
+            } else {
+                log.debug("Unable to get swimlane name; assignment postponed in " + assignable);
                 return;
             }
-            Long processId = executionContext.getProcess().getId();
-            String swimlaneName = executionContext.getTask().getSwimlane().getName();
-            Group tmpGroup = TemporaryGroup.create(processId, swimlaneName);
+            Group tmpGroup = TemporaryGroup.create(executionContext.getProcess().getId(), swimlaneName);
             executorLogic.saveTemporaryGroup(tmpGroup, executors);
             assignable.assignExecutor(executionContext, tmpGroup, true);
         } catch (Exception e) {
-            log.warn("Unable to assign in process id = " + executionContext.getProcess().getId(), e);
+            log.warn("Unable to assign " + assignable + " in " + executionContext.getProcess(), e);
         }
     }
 

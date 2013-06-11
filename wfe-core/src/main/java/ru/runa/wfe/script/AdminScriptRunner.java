@@ -599,18 +599,18 @@ public class AdminScriptRunner {
     }
 
     public enum setActiveMode {
-        all, changed, none
+        ALL, CHANGED, NONE
     };
 
     private setActiveMode readSetActiveMode(Element element) {
         String mode = element.attributeValue("setActive");
         if (mode != null && mode.equals("all")) {
-            return setActiveMode.all;
+            return setActiveMode.ALL;
         }
         if (mode != null && mode.equals("changed")) {
-            return setActiveMode.changed;
+            return setActiveMode.CHANGED;
         }
-        return setActiveMode.none;
+        return setActiveMode.NONE;
     }
 
     private boolean isTemplatesActive(Element element) {
@@ -651,7 +651,7 @@ public class AdminScriptRunner {
                 setActiveMode activeMode = replicationDescr.get(replicateMe).setActive;
                 Set<BatchPresentation> templates = replicationDescr.get(replicateMe).templates;
                 if (useTemplates && !isBatchReplaceNeeded(getBatchFromProfile(profile, replicateMe.getCategory(), replicateMe.getName()), templates)) {
-                    if (activeMode.equals(setActiveMode.all)
+                    if (activeMode.equals(setActiveMode.ALL)
                             && getBatchFromProfile(profile, replicateMe.getCategory(), replicateMe.getName()) != null) {
                         profile.setActiveBatchPresentation(replicateMe.getCategory(), replicateMe.getName());
                     }
@@ -660,7 +660,7 @@ public class AdminScriptRunner {
                 BatchPresentation clon = replicateMe.clone();
                 clon.setName(replicateMe.getName());
                 profile.addBatchPresentation(clon);
-                if (activeMode.equals(setActiveMode.all) || activeMode.equals(setActiveMode.changed)) {
+                if (activeMode.equals(setActiveMode.ALL) || activeMode.equals(setActiveMode.CHANGED)) {
                     profile.setActiveBatchPresentation(replicateMe.getCategory(), replicateMe.getName());
                 }
             }
