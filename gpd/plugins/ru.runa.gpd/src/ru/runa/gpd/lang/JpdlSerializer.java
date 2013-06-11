@@ -49,6 +49,7 @@ import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
+import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.TaskExecutionMode;
 
 import com.google.common.base.Strings;
@@ -99,6 +100,7 @@ public class JpdlSerializer extends ProcessSerializer {
     private static final String TIMER_ESCALATION = "__ESCALATION";
     private static final String END_TOKEN_NODE = "end-token-state";
     private static final String ASYNC_ATTR = "async";
+    private static final String ASYNC_COMPLETION_MODE_ATTR = "asyncCompletionMode";
     private static final String MULTI_TASK_NODE = "multi-task-node";
     private static final String TASK_EXECUTORS_ATTR = "taskExecutors";
     private static final String TASK_EXECUTION_MODE_ATTR = "taskExecutionMode";
@@ -163,6 +165,9 @@ public class JpdlSerializer extends ProcessSerializer {
         for (TaskState state : states) {
             Element stateElement = writeTaskStateWithDuedate(root, state);
             stateElement.addAttribute(ASYNC_ATTR, String.valueOf(state.isAsync()));
+            if (state.isAsync()) {
+                stateElement.addAttribute(ASYNC_COMPLETION_MODE_ATTR, state.getAsyncCompletionMode().name());
+            }
             if (state instanceof MultiTaskState) {
                 stateElement.addAttribute(TASK_EXECUTION_MODE_ATTR, ((MultiTaskState) state).getTaskExecutionMode().name());
                 stateElement.addAttribute(TASK_EXECUTORS_ATTR, ((MultiTaskState) state).getExecutorsVariableName());
@@ -501,6 +506,7 @@ public class JpdlSerializer extends ProcessSerializer {
             }
             if (state instanceof Synchronizable) {
                 ((Synchronizable) state).setAsync(Boolean.parseBoolean(node.attributeValue(ASYNC_ATTR, "false")));
+                ((Synchronizable) state).setAsyncCompletionMode(AsyncCompletionMode.valueOf(node.attributeValue(ASYNC_COMPLETION_MODE_ATTR, AsyncCompletionMode.NEVER.name())));
             }
             if (state instanceof MultiTaskState) {
                 TaskExecutionMode mode = TaskExecutionMode.valueOf(node.attributeValue(TASK_EXECUTION_MODE_ATTR));

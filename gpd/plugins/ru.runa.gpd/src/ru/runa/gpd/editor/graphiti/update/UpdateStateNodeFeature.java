@@ -5,12 +5,12 @@ import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.PropertyUtil;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
+import ru.runa.gpd.lang.model.Synchronizable;
 
 import com.google.common.base.Objects;
 
@@ -33,6 +33,10 @@ public class UpdateStateNodeFeature extends UpdateFeature {
         if (!Objects.equal(minimazed, String.valueOf(bo.isMinimizedView()))) {
             return Reason.createTrueReason();
         }
+        String async = PropertyUtil.getPropertyValue(pe, GaProperty.ASYNC);
+        if (async != null && !Objects.equal(async, String.valueOf(((Synchronizable)bo).isAsync()))) {
+            return Reason.createTrueReason();
+        }
         return Reason.createFalseReason();
     }
 
@@ -48,9 +52,12 @@ public class UpdateStateNodeFeature extends UpdateFeature {
         PropertyUtil.setTextValueProperty(pe, GaProperty.NAME, bo.getName());
         String minimazed = PropertyUtil.getPropertyValue(pe, GaProperty.MINIMAZED_VIEW);
         if (!Objects.equal(minimazed, String.valueOf(bo.isMinimizedView()))) {
-            if (!PropertyUtil.setPropertyValue(pe, GaProperty.MINIMAZED_VIEW, String.valueOf(bo.isMinimizedView()))) {
-                PluginLogger.logInfo("-ERROR in ru.runa.gpd.editor.graphiti.update.UpdateStateNodeFeature.update(IUpdateContext)");
-            }
+            PropertyUtil.setPropertyValue(pe, GaProperty.MINIMAZED_VIEW, String.valueOf(bo.isMinimizedView()));
+            layoutPictogramElement(pe);
+        }
+        String async = PropertyUtil.getPropertyValue(pe, GaProperty.ASYNC);
+        if (async !=null && !Objects.equal(async, String.valueOf(((Synchronizable)bo).isAsync()))) {
+            PropertyUtil.setPropertyValue(pe, GaProperty.ASYNC, String.valueOf(((Synchronizable)bo).isAsync()));
             layoutPictogramElement(pe);
         }
         return true;
