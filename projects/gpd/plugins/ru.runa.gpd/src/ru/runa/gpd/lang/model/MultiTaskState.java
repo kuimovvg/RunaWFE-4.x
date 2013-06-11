@@ -4,7 +4,7 @@ import ru.runa.wfe.lang.TaskExecutionMode;
 
 public class MultiTaskState extends TaskState implements IMultiInstancesContainer {
     private String executorsVariableName;
-    private TaskExecutionMode taskExecutionMode = TaskExecutionMode.last;
+    private TaskExecutionMode taskExecutionMode = TaskExecutionMode.LAST;
 
     @Override
     protected boolean isSwimlaneDisabled() {

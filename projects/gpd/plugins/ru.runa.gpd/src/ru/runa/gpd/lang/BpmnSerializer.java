@@ -38,6 +38,7 @@ import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
+import ru.runa.wfe.lang.AsyncCompletionMode;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
@@ -106,6 +107,8 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String TIMER_EVENT = "timerEventDefinition";
     private static final String TIMER_DURATION = "timeDuration";
     private static final String VERSION = "version";
+    private static final String ASYNC = "async";
+    private static final String ASYNC_COMPLETION_MODE = "asyncCompletionMode";
 
     @Override
     public boolean isSupported(Document document) {
@@ -170,16 +173,16 @@ public class BpmnSerializer extends ProcessSerializer {
         for (ExclusiveGateway gateway : exclusiveGateways) {
             writeNode(process, gateway);
         }
-        List<TaskState> states = definition.getChildren(TaskState.class);
-        for (TaskState state : states) {
-            writeTaskState(process, state);
-            writeTransitions(process, state);
-            Timer timer = state.getTimer();
+        List<TaskState> taskStates = definition.getChildren(TaskState.class);
+        for (TaskState taskState : taskStates) {
+            writeTaskState(process, taskState);
+            writeTransitions(process, taskState);
+            Timer timer = taskState.getTimer();
             if (timer != null) {
                 Element boundaryEventElement = process.addElement(BOUNDARY_EVENT);
                 writeTimer(boundaryEventElement, timer);
                 boundaryEventElement.addAttribute(CANCEL_ACTIVITY, "true");
-                boundaryEventElement.addAttribute(ATTACHED_TO_REF, state.getId());
+                boundaryEventElement.addAttribute(ATTACHED_TO_REF, taskState.getId());
                 writeTransitions(process, timer);
             }
             // if (state.isUseEscalation()) {
@@ -285,11 +288,18 @@ public class BpmnSerializer extends ProcessSerializer {
         return nodeElement;
     }
 
-    private Element writeTaskState(Element parent, SwimlanedNode state) {
-        Element nodeElement = writeElement(parent, state);
+    private Element writeTaskState(Element parent, SwimlanedNode swimlanedNode) {
+        Element nodeElement = writeElement(parent, swimlanedNode);
         Map<String, String> properties = Maps.newHashMap();
-        properties.put(SWIMLANE, state.getSwimlaneName());
-        if (state instanceof State && ((State) state).isReassignmentEnabled()) {
+        properties.put(SWIMLANE, swimlanedNode.getSwimlaneName());
+        if (swimlanedNode instanceof TaskState) {
+            TaskState taskState = (TaskState) swimlanedNode;
+            if (taskState.isAsync()) {
+                properties.put(ASYNC, Boolean.TRUE.toString());
+                properties.put(ASYNC_COMPLETION_MODE, taskState.getAsyncCompletionMode().name());
+            }
+        }
+        if (swimlanedNode instanceof State && ((State) swimlanedNode).isReassignmentEnabled()) {
             properties.put(REASSIGN, "true");
         }
         writeExtensionElements(nodeElement, properties);
@@ -558,15 +568,23 @@ public class BpmnSerializer extends ProcessSerializer {
         List<Element> taskStateElements = process.elements(USER_TASK);
         for (Element taskStateElement : taskStateElements) {
             TaskState state = create(taskStateElement, definition);
-            if (state instanceof SwimlanedNode) {
+            if (state instanceof TaskState) {
                 Map<String, String> properties = parseExtensionProperties(taskStateElement);
                 String swimlaneName = properties.get(SWIMLANE);
                 Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
-                ((SwimlanedNode) state).setSwimlane(swimlane);
+                ((TaskState) state).setSwimlane(swimlane);
                 String reassign = properties.get(REASSIGN);
                 if (reassign != null) {
                     boolean forceReassign = Boolean.parseBoolean(reassign);
                     state.setReassignmentEnabled(forceReassign);
+                }
+                String async = properties.get(ASYNC);
+                if (async != null) {
+                    state.setAsync(Boolean.parseBoolean(async));
+                }
+                String asyncCompletionMode = properties.get(ASYNC_COMPLETION_MODE);
+                if (asyncCompletionMode != null) {
+                    state.setAsyncCompletionMode(AsyncCompletionMode.valueOf(asyncCompletionMode));
                 }
             }
             // String duedateAttr = stateNodeChild.attributeValue(DUEDATE_ATTR);
