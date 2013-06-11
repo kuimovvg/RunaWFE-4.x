@@ -18,6 +18,8 @@ import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
 import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.Action;
+import ru.runa.wfe.lang.AsyncCompletionMode;
+import ru.runa.wfe.lang.BaseTaskNode;
 import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EndNode;
@@ -84,7 +86,7 @@ public class BpmnXmlReader {
     private static final String MULTI_SUBPROCESS = "multiProcess";
     private static final String EXCLUSIVE_GATEWAY = "exclusiveGateway";
     private static final String PARALLEL_GATEWAY = "parallelGateway";
-    private static final String DEFAULT_TASK_TIMOUT = "default-task-timeout";
+    private static final String DEFAULT_TASK_TIMEOUT = "default-task-timeout";
     private static final String REPEAT = "repeat";//
     private static final String USER_TASK = "userTask";
     private static final String START_EVENT = "startEvent";
@@ -110,6 +112,8 @@ public class BpmnXmlReader {
     private static final String ATTACHED_TO_REF = "attachedToRef";
     private static final String TIMER_EVENT = "timerEventDefinition";
     private static final String TIMER_DURATION = "timeDuration";
+    private static final String ASYNC = "async";
+    private static final String ASYNC_COMPLETION_MODE = "asyncCompletionMode";
 
     @Autowired
     private LocalizationDAO localizationDAO;
@@ -141,7 +145,7 @@ public class BpmnXmlReader {
             processDefinition.setName(process.attributeValue(NAME));
             processDefinition.setDescription(process.elementTextTrim(DOCUMENTATION));
             Map<String, String> processProperties = parseExtensionProperties(process);
-            String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMOUT);
+            String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMEOUT);
             if (!Strings.isNullOrEmpty(defaultTaskTimeout)) {
                 // processDefinition.setDefaultTaskTimeoutDelay(new
                 // Delay(defaultTaskTimeout));
@@ -250,6 +254,16 @@ public class BpmnXmlReader {
                 if (Objects.equal(parentNodeId, taskNode.getNodeId())) {
                     readTimer(processDefinition, boundaryEventElement, taskNode);
                 }
+            }
+        }
+        if (node instanceof BaseTaskNode) {
+            Map<String, String> properties = parseExtensionProperties(element);
+            BaseTaskNode taskNode = (BaseTaskNode) node;
+            if (properties.containsKey(ASYNC)) {
+                taskNode.setAsync(Boolean.valueOf(properties.get(ASYNC)));
+            }
+            if (properties.containsKey(ASYNC_COMPLETION_MODE)) {
+                taskNode.setCompletionMode(AsyncCompletionMode.valueOf(properties.get(ASYNC_COMPLETION_MODE)));
             }
         }
         if (node instanceof VariableContainerNode) {

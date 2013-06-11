@@ -16,6 +16,7 @@ import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
 import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.Action;
+import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.Conjunction;
 import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
@@ -29,8 +30,8 @@ import ru.runa.wfe.lang.MultiTaskNode;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.ReceiveMessage;
-import ru.runa.wfe.lang.SendMessage;
 import ru.runa.wfe.lang.ScriptTask;
+import ru.runa.wfe.lang.SendMessage;
 import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -88,6 +89,7 @@ public class JpdlXmlReader {
     private static final String NAME_ATTR = "name";
     private static final String TYPE_ATTR = "type";
     private static final String ASYNC_ATTR = "async";
+    private static final String ASYNC_COMPLETION_MODE_ATTR = "asyncCompletionMode";
     private static final String TASK_EXECUTORS_ATTR = "taskExecutors";
     private static final String TASK_EXECUTION_MODE_ATTR = "taskExecutionMode";
     private static final String ACTION_NODE = "action";
@@ -282,12 +284,17 @@ public class JpdlXmlReader {
         if (node instanceof TaskNode) {
             TaskNode taskNode = (TaskNode) node;
             taskNode.setAsync(Boolean.valueOf(element.attributeValue(ASYNC_ATTR, "false")));
+            taskNode.setCompletionMode(AsyncCompletionMode.valueOf(element.attributeValue(ASYNC_COMPLETION_MODE_ATTR,
+                    AsyncCompletionMode.NEVER.name())));
             readTasks(processDefinition, element, taskNode);
         }
         if (node instanceof MultiTaskNode) {
             MultiTaskNode multiTaskNode = (MultiTaskNode) node;
             multiTaskNode.setAsync(Boolean.valueOf(element.attributeValue(ASYNC_ATTR, "false")));
-            multiTaskNode.setMode(TaskExecutionMode.valueOf(element.attributeValue(TASK_EXECUTION_MODE_ATTR, TaskExecutionMode.last.name())));
+            multiTaskNode.setCompletionMode(AsyncCompletionMode.valueOf(element.attributeValue(ASYNC_COMPLETION_MODE_ATTR,
+                    AsyncCompletionMode.NEVER.name())));
+            multiTaskNode
+                    .setExecutionMode(TaskExecutionMode.valueOf(element.attributeValue(TASK_EXECUTION_MODE_ATTR, TaskExecutionMode.LAST.name())));
             multiTaskNode.setExecutorsVariableName(element.attributeValue(TASK_EXECUTORS_ATTR));
             readTasks(processDefinition, element, multiTaskNode);
         }

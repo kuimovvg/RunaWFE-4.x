@@ -37,7 +37,7 @@ public class SendMessage extends VariableContainerNode {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.SendMessage;
+        return NodeType.SEND_MESSAGE;
     }
 
     @Override

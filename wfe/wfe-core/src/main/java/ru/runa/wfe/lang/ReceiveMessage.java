@@ -17,19 +17,15 @@
  */
 package ru.runa.wfe.lang;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.execution.ExecutionContext;
 
 public class ReceiveMessage extends VariableContainerNode {
     private static final long serialVersionUID = 1L;
-    private static Log log = LogFactory.getLog(ReceiveMessage.class);
     private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE };
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.ReceiveMessage;
+        return NodeType.RECEIVE_MESSAGE;
     }
 
     @Override

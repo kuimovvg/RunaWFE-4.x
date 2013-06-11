@@ -197,7 +197,7 @@ public class InitializerLogic {
         String versionString = constantDAO.getValue(DATABASE_VERSION_VARIABLE_NAME);
         int dbVersion = Strings.isNullOrEmpty(versionString) ? 0 : Integer.parseInt(versionString);
         DBType dbType = ApplicationContextFactory.getDBType();
-        boolean isDDLTransacted = (dbType == DBType.MSSQL || dbType == DBType.PostgreSQL);
+        boolean isDDLTransacted = (dbType == DBType.MSSQL || dbType == DBType.POSTGRESQL);
         String isDDLTransactedProperty = System.getProperty("runawfe.transacted.ddl");
         if (isDDLTransactedProperty != null) {
             try {

@@ -30,47 +30,47 @@ public class UMLFigureFactory extends AbstractFigureFactory {
     public AbstractFigure createFigure(NodeModel nodeModel) {
         AbstractFigure figure = null;
         switch (nodeModel.getType()) {
-        case TaskNode:
+        case TAST_STATE:
             figure = new TaskNodeFigure();
             break;
-        case MultiTaskNode:
+        case MULTI_TASK_STATE:
             figure = new MultiTaskNodeFigure();
             break;
-        case Decision:
+        case DECISION:
             figure = new DecisionFigure();
             break;
-        case Merge:
+        case MERGE:
             figure = new ConjunctionFigure();
             break;
-        case Fork:
-        case Join:
+        case FORK:
+        case JOIN:
             figure = new ForkJoinFigure();
             break;
-        case StartState:
+        case START_EVENT:
             figure = new StartStateFigure();
             break;
-        case End:
+        case END_PROCESS:
             figure = new EndStateFigure();
             break;
-        case EndToken:
+        case END_TOKEN:
             figure = new EndTokenStateFigure();
             break;
-        case Subprocess:
+        case SUBPROCESS:
             figure = new SubprocessFigure();
             break;
-        case ActionNode:
+        case ACTION_NODE:
             figure = new ActionNodeFigure();
             break;
-        case WaitState:
+        case WAIT_STATE:
             figure = new WaitStateFigure();
             break;
-        case MultiSubprocess:
+        case MULTI_SUBPROCESS:
             figure = new MultiSubprocessFigure();
             break;
-        case SendMessage:
+        case SEND_MESSAGE:
             figure = new SendMessageNodeFigure();
             break;
-        case ReceiveMessage:
+        case RECEIVE_MESSAGE:
             figure = new ReceiveMessageNodeFigure();
             break;
         default:

@@ -43,6 +43,7 @@ import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorGroupMembership;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.IExecutorLoader;
+import ru.runa.wfe.user.TemporaryGroup;
 import ru.runa.wfe.user.cache.ExecutorCache;
 import ru.runa.wfe.user.cache.ExecutorCacheCtrl;
 
@@ -294,6 +295,18 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
      */
     public List<Group> getGroups(List<Long> ids) {
         return getExecutors(Group.class, ids, false);
+    }
+
+    public List<TemporaryGroup> getTemporaryGroups(final Long processId) {
+        return getHibernateTemplate().executeFind(new HibernateCallback<List<TemporaryGroup>>() {
+
+            @Override
+            public List<TemporaryGroup> doInHibernate(Session session) {
+                Query query = session.createQuery("from TemporaryGroup where description=:processIdString");
+                query.setParameter("processIdString", processId.toString());
+                return query.list();
+            }
+        });
     }
 
     /**

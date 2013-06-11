@@ -97,11 +97,11 @@ public class ApplicationContextFactory {
             if (hibernateDialect.contains("HSQL")) {
                 dbType = DBType.HSQL;
             } else if (hibernateDialect.contains("Oracle")) {
-                dbType = DBType.Oracle;
+                dbType = DBType.ORACLE;
             } else if (hibernateDialect.contains("Postgre")) {
-                dbType = DBType.PostgreSQL;
+                dbType = DBType.POSTGRESQL;
             } else if (hibernateDialect.contains("MySQL")) {
-                dbType = DBType.MySQL;
+                dbType = DBType.MYSQL;
             } else if (hibernateDialect.contains("SQLServer")) {
                 dbType = DBType.MSSQL;
             } else {

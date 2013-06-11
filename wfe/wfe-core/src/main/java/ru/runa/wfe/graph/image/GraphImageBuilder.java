@@ -109,7 +109,7 @@ public class GraphImageBuilder {
                 TransitionFigureBase transitionFigureBase = factory.createTransitionFigure(transitionModel, nodeFigure, figureTo);
                 transitionFigureBase.init(transitionModel, nodeFigure, figureTo);
                 if (!diagramModel.isUmlNotation()) {
-                    boolean exclusiveNode = (nodeModel.getType() != NodeType.Fork && nodeModel.getType() != NodeType.Join);
+                    boolean exclusiveNode = (nodeModel.getType() != NodeType.FORK && nodeModel.getType() != NodeType.JOIN);
                     transitionFigureBase.setExclusive(exclusiveNode && leavingTransitionsCount > 1);
                 }
                 if (Objects.equal(nodeModel.getTimerTransitionName(), transitionModel.getName())) {
