@@ -3,8 +3,6 @@ package ru.runa.wfe.lang;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
@@ -20,7 +18,6 @@ import com.google.common.collect.Maps;
 
 public class SubProcessState extends VariableContainerNode {
     private static final long serialVersionUID = 1L;
-    private static Log log = LogFactory.getLog(SubProcessState.class);
     private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_SUBPROCESS_CREATED, Event.EVENTTYPE_SUBPROCESS_END,
             Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE, Event.EVENTTYPE_BEFORE_SIGNAL, Event.EVENTTYPE_AFTER_SIGNAL };
 
@@ -32,7 +29,7 @@ public class SubProcessState extends VariableContainerNode {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.Subprocess;
+        return NodeType.SUBPROCESS;
     }
 
     @Override

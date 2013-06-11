@@ -5078,40 +5078,46 @@
 
    </tag>
    <tag>
-
-      <icon>    
-      </icon>
       <name>createActorLink</name>
       <tag-class>ru.runa.af.web.tag.CreateActorLinkTag</tag-class>
       <body-content>empty</body-content>
-
       <attribute>
          <name>forward</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
          <name>href</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
          <name>linkText</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
-
    </tag>
    <tag>
-
-      <icon>    
-      </icon>
+      <name>synchronizeExecutorsLink</name>
+      <tag-class>ru.runa.af.web.tag.SynchronizeExecutorsLinkTag</tag-class>
+      <body-content>empty</body-content>
+      <attribute>
+         <name>forward</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>href</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>linkText</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+   </tag>
+   <tag>
       <name>showTasksHistory</name>
       <tag-class>ru.runa.wf.web.tag.ShowTasksHistoryTag</tag-class>
       <body-content>JSP</body-content>

@@ -34,7 +34,7 @@ public class EndTokenNode extends Node {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.EndToken;
+        return NodeType.END_TOKEN;
     }
 
     @Override

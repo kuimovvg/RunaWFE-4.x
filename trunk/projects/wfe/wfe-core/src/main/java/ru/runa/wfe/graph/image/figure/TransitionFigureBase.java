@@ -118,7 +118,7 @@ public class TransitionFigureBase {
             yPoints[i + 1] = bendPoint.y;
         }
         if (bendPoint == null) {
-            if (figureFrom.getType() == NodeType.Fork || figureFrom.getType() == NodeType.Join
+            if (figureFrom.getType() == NodeType.FORK || figureFrom.getType() == NodeType.JOIN
                     || Objects.equal(figureFrom.getTimerTransitionName(), name)) {
                 bendPoint = start;
             } else {
@@ -202,7 +202,7 @@ public class TransitionFigureBase {
             int padding = 1;
             int xStart = 0;
             int yStart = 0;
-            if (figureFrom.getType() == NodeType.Fork) {
+            if (figureFrom.getType() == NodeType.FORK) {
                 xStart = (int) (xPoints[xPoints.length - 2] + xPoints[xPoints.length - 1] - textBounds.getWidth()) / 2;
                 yStart = (int) (yPoints[yPoints.length - 2] + yPoints[yPoints.length - 1] - textBounds.getHeight()) / 2;
             } else {

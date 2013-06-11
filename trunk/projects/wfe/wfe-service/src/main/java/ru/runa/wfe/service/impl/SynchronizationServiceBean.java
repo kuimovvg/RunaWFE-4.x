@@ -40,8 +40,8 @@ public class SynchronizationServiceBean implements SynchronizationService {
     private LDAPLogic importer;
 
     @Override
-    public void synchronizeExecutorsWithLDAP(User user) {
-        importer.synchronizeExecutors();
+    public void synchronizeExecutorsWithLDAP(User user, boolean createExecutors) {
+        importer.synchronizeExecutors(createExecutors);
     }
 
 }

@@ -17,24 +17,41 @@
  */
 package ru.runa.af.web.tag;
 
+import ru.runa.common.web.Commons;
+import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
-import ru.runa.wfe.security.ASystem;
-import ru.runa.wfe.security.SystemPermission;
+import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.Group;
 
 /**
  * Created on 03.09.2004
+ * 
+ * @jsp.tag name = "synchronizeExecutorsLink" body-content = "empty"
  */
-public abstract class CreateExecutorLinkTag extends LinkTag {
-    private static final long serialVersionUID = 1L;
+public class SynchronizeExecutorsLinkTag extends LinkTag {
+
+    private static final long serialVersionUID = -7064081489072327132L;
+
+    @Override
+    protected String getLinkText() {
+        return Messages.getMessage("label.synchronize.ldap", pageContext);
+    }
 
     @Override
     protected boolean isLinkEnabled() {
         try {
-            return Delegates.getAuthorizationService().isAllowed(getUser(), SystemPermission.CREATE_EXECUTOR, ASystem.INSTANCE);
+            Group administratorsGroup = Delegates.getExecutorService().getExecutorByName(getUser(), SystemProperties.getAdministratorsGroupName());
+            return Delegates.getExecutorService().isExecutorInGroup(getUser(), getUser().getActor(), administratorsGroup);
         } catch (Exception e) {
             log.error(e);
             return false;
         }
+    }
+
+    @Override
+    protected String getHref() {
+        return Commons.getActionUrl("synchronizeExecutors", pageContext, PortletUrlType.Action);
     }
 }

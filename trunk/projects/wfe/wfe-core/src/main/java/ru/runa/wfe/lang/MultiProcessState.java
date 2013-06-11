@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.audit.SubprocessEndLog;
@@ -33,7 +31,6 @@ import com.google.common.collect.Maps;
 
 public class MultiProcessState extends SubProcessState {
     private static final long serialVersionUID = 1L;
-    private static Log log = LogFactory.getLog(MultiProcessState.class);
 
     @Autowired
     private ExecutorDAO executorDAO;
@@ -44,7 +41,7 @@ public class MultiProcessState extends SubProcessState {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.MultiSubprocess;
+        return NodeType.MULTI_SUBPROCESS;
     }
 
     @Override

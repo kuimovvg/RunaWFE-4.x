@@ -21,9 +21,6 @@
  */
 package ru.runa.wfe.lang;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.DecisionHandler;
 
@@ -34,13 +31,12 @@ import com.google.common.base.Throwables;
  */
 public class Decision extends Node {
     private static final long serialVersionUID = 1L;
-    private static Log log = LogFactory.getLog(Decision.class);
 
     private Delegation delegation;
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.Decision;
+        return NodeType.DECISION;
     }
 
     public void setDelegation(Delegation delegation) {

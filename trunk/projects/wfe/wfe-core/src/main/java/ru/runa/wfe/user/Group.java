@@ -34,7 +34,7 @@ import ru.runa.wfe.security.SecuredObjectType;
 public class Group extends Executor {
     private static final long serialVersionUID = -4353040407820259331L;
 
-    private String activeDirectoryGroup;
+    private String ldapGroupName;
 
     protected Group() {
     }
@@ -56,7 +56,7 @@ public class Group extends Executor {
 
     public Group(String name, String description, String activeDirectoryGroup) {
         super(name, description);
-        this.activeDirectoryGroup = activeDirectoryGroup;
+        this.ldapGroupName = activeDirectoryGroup;
     }
 
     @Transient
@@ -78,12 +78,12 @@ public class Group extends Executor {
     }
 
     @Column(name = "E_MAIL")
-    public String getActiveDirectoryGroup() {
-        return activeDirectoryGroup;
+    public String getLdapGroupName() {
+        return ldapGroupName;
     }
 
-    public void setActiveDirectoryGroup(String activeDirectoryGroup) {
-        this.activeDirectoryGroup = activeDirectoryGroup;
+    public void setLdapGroupName(String activeDirectoryGroup) {
+        this.ldapGroupName = activeDirectoryGroup;
     }
 
 }

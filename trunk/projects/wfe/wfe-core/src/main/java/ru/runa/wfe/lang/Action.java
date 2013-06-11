@@ -21,9 +21,6 @@
  */
 package ru.runa.wfe.lang;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.audit.ActionLog;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
@@ -34,7 +31,6 @@ import com.google.common.base.Throwables;
 
 public class Action extends GraphElement {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(Action.class);
     private Delegation delegation;
     private Event event;
     private GraphElement parent;

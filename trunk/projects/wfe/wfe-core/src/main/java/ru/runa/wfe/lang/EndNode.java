@@ -34,7 +34,7 @@ public class EndNode extends Node {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.End;
+        return NodeType.END_PROCESS;
     }
 
     @Override
