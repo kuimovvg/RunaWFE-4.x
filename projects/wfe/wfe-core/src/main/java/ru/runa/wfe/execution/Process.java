@@ -293,6 +293,9 @@ public class Process extends IdentifiableBase {
         } else {
             executionContext.addLog(new ProcessEndLog());
         }
+        // TODO flush just created tasks
+        // ApplicationContextFactory.getTaskDAO().flushPendingChanges();
+        List<Task> taskToDelete = Lists.newArrayList();
         for (Task task : tasks) {
             Node node = executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
             if (node instanceof Synchronizable) {
@@ -308,9 +311,10 @@ public class Process extends IdentifiableBase {
                     }
                 }
             }
-            log.info("Removing active task: " + task);
-            tasks.remove(task);
+            taskToDelete.add(task);
         }
+        log.info("Removing active tasks: " + taskToDelete);
+        tasks.removeAll(taskToDelete);
         //
         ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
         List<TemporaryGroup> groups = executorDAO.getTemporaryGroups(id);
@@ -323,6 +327,8 @@ public class Process extends IdentifiableBase {
                 log.error("Unable to delete " + temporaryGroup, e);
             }
         }
+        // flush finished process
+        // ApplicationContextFactory.getTaskDAO().flushPendingChanges();
     }
 
     /**

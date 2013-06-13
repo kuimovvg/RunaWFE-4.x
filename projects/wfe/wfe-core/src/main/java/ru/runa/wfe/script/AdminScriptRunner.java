@@ -40,10 +40,12 @@ import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.bot.logic.BotLogic;
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.logic.DefinitionLogic;
+import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -108,12 +110,16 @@ public class AdminScriptRunner {
     protected final static String CONFIGURATION_STRING_ATTRIBUTE_NAME = "configuration";
     protected final static String CONFIGURATION_CONTENT_ATTRIBUTE_NAME = "configurationContent";
     protected final static String ID_ATTRIBUTE_NAME = "id";
-    protected final static String ID_TILL_ATTRIBUTE_NAME = "idTill";
+    protected final static String ID_FROM_ATTRIBUTE_NAME = "idFrom";
+    protected final static String ID_TO_ATTRIBUTE_NAME = "idTo";
     protected final static String ONLY_FINISHED_ATTRIBUTE_NAME = "onlyFinished";
-    protected final static String DATE_INTERVAL_ATTRIBUTE_NAME = "dateInterval";
-    protected final static String START_DATE_ATTRIBUTE_NAME = "startDate";
-    protected final static String END_DATE_ATTRIBUTE_NAME = "endDate";
+    protected final static String START_DATE_FROM_ATTRIBUTE_NAME = "startDateFrom";
+    protected final static String START_DATE_TO_ATTRIBUTE_NAME = "startDateTo";
+    protected final static String END_DATE_FROM_ATTRIBUTE_NAME = "endDateFrom";
+    protected final static String END_DATE_TO_ATTRIBUTE_NAME = "endDateTo";
     protected final static String VERSION_ATTRIBUTE_NAME = "version";
+    protected final static String VERSION_FROM_ATTRIBUTE_NAME = "versionFrom";
+    protected final static String VERSION_TO_ATTRIBUTE_NAME = "versionTo";
     @Autowired
     private ExecutorLogic executorLogic;
     @Autowired
@@ -999,110 +1005,77 @@ public class AdminScriptRunner {
         }
     }
 
-    public void removeOldProcesses(Element element) {
-        operationWithOldProcesses(element, 1);
+    private ProcessFilter createProcessFilter(Element element) {
+        ProcessFilter filter = new ProcessFilter();
+        String finishedOnlyString = element.attributeValue(ONLY_FINISHED_ATTRIBUTE_NAME);
+        if (!Strings.isNullOrEmpty(finishedOnlyString)) {
+            filter.setFinishedOnly(Boolean.parseBoolean(finishedOnlyString));
+        }
+        String definitionName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        if (!Strings.isNullOrEmpty(definitionName)) {
+            filter.setDefinitionName(definitionName);
+        }
+        String definitionVersionString = element.attributeValue(VERSION_ATTRIBUTE_NAME);
+        if (!Strings.isNullOrEmpty(definitionVersionString)) {
+            filter.setDefinitionVersion(Long.parseLong(definitionVersionString));
+        }
+        String idString = element.attributeValue(ID_ATTRIBUTE_NAME);
+        if (!Strings.isNullOrEmpty(idString)) {
+            filter.setId(Long.parseLong(idString));
+        } else {
+            String idFromString = element.attributeValue(ID_FROM_ATTRIBUTE_NAME);
+            if (!Strings.isNullOrEmpty(idFromString)) {
+                filter.setIdFrom(Long.parseLong(idFromString));
+            }
+            String idToString = element.attributeValue(ID_TO_ATTRIBUTE_NAME);
+            if (!Strings.isNullOrEmpty(idToString)) {
+                filter.setIdTo(Long.parseLong(idToString));
+            }
+        }
+        String startDateFromString = element.attributeValue(START_DATE_FROM_ATTRIBUTE_NAME);
+        if (!Strings.isNullOrEmpty(startDateFromString)) {
+            filter.setStartDateFrom(CalendarUtil.convertToDate(startDateFromString, CalendarUtil.DATE_WITHOUT_TIME_FORMAT));
+        }
+        String startDateToString = element.attributeValue(START_DATE_TO_ATTRIBUTE_NAME);
+        if (!Strings.isNullOrEmpty(startDateToString)) {
+            filter.setStartDateTo(CalendarUtil.convertToDate(startDateToString, CalendarUtil.DATE_WITHOUT_TIME_FORMAT));
+        }
+        String endDateFromString = element.attributeValue(END_DATE_FROM_ATTRIBUTE_NAME);
+        if (!Strings.isNullOrEmpty(endDateFromString)) {
+            filter.setStartDateFrom(CalendarUtil.convertToDate(endDateFromString, CalendarUtil.DATE_WITHOUT_TIME_FORMAT));
+        }
+        String endDateToString = element.attributeValue(END_DATE_TO_ATTRIBUTE_NAME);
+        if (!Strings.isNullOrEmpty(endDateToString)) {
+            filter.setEndDateTo(CalendarUtil.convertToDate(endDateToString, CalendarUtil.DATE_WITHOUT_TIME_FORMAT));
+        }
+        return filter;
     }
 
-    public void removeOldProcessDefinitionVersion(Element element) {
-        operationWithOldProcessDefinitionVersion(element, 1);
+    public void cancelProcesses(Element element) {
+        ProcessFilter filter = createProcessFilter(element);
+        executionLogic.cancelProcesses(user, filter);
     }
 
-    public void archiveOldProcesses(Element element) {
-        operationWithOldProcesses(element, 2);
+    public void removeProcesses(Element element) {
+        ProcessFilter filter = createProcessFilter(element);
+        executionLogic.deleteProcesses(user, filter);
     }
 
-    public void archiveOldProcessDefinitionVersion(Element element) {
-        operationWithOldProcessDefinitionVersion(element, 2);
-    }
-
-    public void retrieveOldProcesses(Element element) {
-        operationWithOldProcesses(element, 3);
-    }
-
-    public void retrieveOldProcessDefinitionVersion(Element element) {
-        operationWithOldProcessDefinitionVersion(element, 3);
-    }
-
-    /* @param operation: remove - 1; archiving - 2; retrieve from archive - 3 */
-    private void operationWithOldProcesses(Element element, int operation) {
-        // String prInstName = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        // String prInstVersion =
+    public void removeProcessDefinitions(Element element) {
+        // TODO
+        throw new UnsupportedOperationException("Unimplemented yet");
+        // String definitionName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        // String versionString =
         // element.attributeValue(VERSION_ATTRIBUTE_NAME);
-        // String prInstId = element.attributeValue(ID_ATTRIBUTE_NAME);
-        // String prInstIdTill = element.attributeValue(ID_TILL_ATTRIBUTE_NAME);
-        // String prInstStartDate =
-        // element.attributeValue(START_DATE_ATTRIBUTE_NAME);
-        // String prInstEndDate =
-        // element.attributeValue(END_DATE_ATTRIBUTE_NAME);
-        // String prInstOnlyFinished =
-        // element.attributeValue(ONLY_FINISHED_ATTRIBUTE_NAME);
-        // String prInstDateInterval =
-        // element.attributeValue(DATE_INTERVAL_ATTRIBUTE_NAME);
-        // boolean onlyFinished = prInstOnlyFinished == null ||
-        // prInstOnlyFinished.trim().length() == 0 ? true : Boolean
-        // .parseBoolean(prInstOnlyFinished);
-        // boolean dateInterval = prInstDateInterval == null ||
-        // prInstDateInterval.trim().length() == 0 ? false : Boolean
-        // .parseBoolean(prInstDateInterval);
-        // int version = prInstVersion == null || prInstVersion.trim().length()
-        // == 0 ? 0 : Integer.parseInt(prInstVersion);
-        // Long id = Strings.isNullOrEmpty(prInstId) ? null :
-        // Long.parseLong(prInstId);
-        // Long idTill = Strings.isNullOrEmpty(prInstIdTill) ? null :
-        // Long.parseLong(prInstIdTill);
-        // Date startDate = null;
-        // Date finishDate = null;
-        // if (prInstId == null) {
-        // if (prInstStartDate == null && prInstEndDate == null) {
-        // return;
+        // if (!Strings.isNullOrEmpty(versionString)) {
+        // throw new UnsupportedOperationException("Unimplemented yet");
+        // } else {
+        // String versionFromString =
+        // element.attributeValue(VERSION_FROM_ATTRIBUTE_NAME);
+        // String versionToString =
+        // element.attributeValue(VERSION_TO_ATTRIBUTE_NAME);
         // }
-        // }
-        // if (prInstStartDate != null && prInstStartDate.trim().length() > 0) {
-        // startDate = CalendarUtil.convertToDate(prInstStartDate,
-        // CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
-        // }
-        // if (prInstEndDate != null && prInstEndDate.trim().length() > 0) {
-        // finishDate = CalendarUtil.convertToDate(prInstEndDate,
-        // CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
-        // }
-        // switch (operation) {
-        // case 1:
-        // archLogic.removeProcess(subject, startDate, finishDate, prInstName,
-        // version, id, idTill, onlyFinished, dateInterval);
-        // break;
-        // case 2:
-        // archLogic.archiveProcesses(subject, startDate, finishDate,
-        // prInstName, version, id, idTill, onlyFinished, dateInterval);
-        // break;
-        // case 3:
-        // archLogic.restoreProcesses(subject, startDate, finishDate,
-        // prInstName, version, id, idTill, onlyFinished, dateInterval);
-        // break;
-        // }
-    }
-
-    /* @param number: remove - 1; archiving - 2; retrieve from archive - 3 */
-    private void operationWithOldProcessDefinitionVersion(Element element, int operation) {
-        // String defName = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        // String version = element.attributeValue(VERSION_ATTRIBUTE_NAME);
-        // String versionTo = element.attributeValue("versionTo");
-        // switch (operation) {
-        // case 1:
-        // archLogic.removeProcessDefinition(subject, defName, version == null
-        // || version.trim().length() == 0 ? 0 : Integer.parseInt(version),
-        // versionTo == null || versionTo.trim().length() == 0 ? 0 :
-        // Integer.parseInt(versionTo));
-        // break;
-        // case 2:
-        // archLogic.archiveProcessDefinition(subject, defName, version == null
-        // || version.trim().length() == 0 ? 0 : Integer.parseInt(version));
-        // break;
-        // case 3:
-        // archLogic.restoreProcessDefinitionFromArchive(subject, defName,
-        // version == null || version.trim().length() == 0 ? 0 :
-        // Integer.parseInt(version));
-        // break;
-        // }
+        // definitionLogic.undeployProcessDefinition(user, definitionName)
     }
 
     public void relation(Element element) {
