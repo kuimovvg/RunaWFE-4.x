@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+import org.w3c.dom.Element;
 
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
@@ -291,6 +292,11 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
             for (WfVariable variable : variables) {
                 Preconditions.checkNotNull(variable.getDefinition(), "variable.definition");
                 Object value = variable.getValue();
+                if (value instanceof Element) {
+                    String text = ((Element) value).getFirstChild().getTextContent();
+                    log.debug("Variable '" + variable.getDefinition().getName() + "': converted from xml dom element " + value + " to string " + text);
+                    value = text;
+                }
                 if (variable.getDefinition().getFormatClassName() != null) {
                     try {
                         if (value == null) {
