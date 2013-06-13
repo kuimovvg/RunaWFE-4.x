@@ -52,21 +52,25 @@ public class ProcessDAO extends GenericDAO<Process> {
                     conditions.add("definition.version=:definitionVersion");
                     parameters.put("definitionVersion", filter.getDefinitionVersion());
                 }
+                if (filter.getId() != null) {
+                    conditions.add("id = :id");
+                    parameters.put("id", filter.getId());
+                }
                 if (filter.getIdFrom() != null) {
                     conditions.add("id >= :idFrom");
                     parameters.put("idFrom", filter.getIdFrom());
                 }
-                if (filter.getIdTill() != null) {
+                if (filter.getIdTo() != null) {
                     conditions.add("id <= :idTo");
-                    parameters.put("idTo", filter.getIdTill());
+                    parameters.put("idTo", filter.getIdTo());
                 }
                 if (filter.getStartDateFrom() != null) {
                     conditions.add("startDate >= :startDateFrom");
                     parameters.put("startDateFrom", filter.getStartDateFrom());
                 }
-                if (filter.getStartDateTill() != null) {
+                if (filter.getStartDateTo() != null) {
                     conditions.add("startDate <= :startDateTo");
-                    parameters.put("startDateTo", filter.getStartDateTill());
+                    parameters.put("startDateTo", filter.getStartDateTo());
                 }
                 if (filter.getFinishedOnly() != null) {
                     if (filter.getFinishedOnly()) {
@@ -79,9 +83,9 @@ public class ProcessDAO extends GenericDAO<Process> {
                     conditions.add("endDate >= :endDateFrom");
                     parameters.put("endDateFrom", filter.getEndDateFrom());
                 }
-                if (filter.getEndDateTill() != null) {
+                if (filter.getEndDateTo() != null) {
                     conditions.add("endDate <= :endDateTo");
-                    parameters.put("endDateTo", filter.getEndDateTill());
+                    parameters.put("endDateTo", filter.getEndDateTo());
                 }
                 if (conditions.size() == 0) {
                     throw new IllegalArgumentException("Filter should be specified");

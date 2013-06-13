@@ -72,12 +72,9 @@ public class ExecutionLogic extends WFCommonLogic {
     private ProcessFactory processFactory;
 
     public void cancelProcess(User user, Long processId) throws ProcessDoesNotExistException {
-        Process process = processDAO.getNotNull(processId);
-        ProcessDefinition processDefinition = getDefinition(process);
-        ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
-        checkPermissionAllowed(user, process, ProcessPermission.CANCEL_PROCESS);
-        process.end(executionContext, user.getActor());
-        log.info(process + " was cancelled by " + user);
+        ProcessFilter filter = new ProcessFilter();
+        filter.setId(processId);
+        cancelProcesses(user, filter);
     }
 
     public int getAllProcessesCount(User user, BatchPresentation batchPresentation) {
@@ -104,6 +101,26 @@ public class ExecutionLogic extends WFCommonLogic {
         List<Process> process = processDAO.getProcesses(filter);
         process = filterIdentifiable(user, process, ProcessPermission.READ);
         return getProcesses(process);
+    }
+
+    public void deleteProcesses(User user, final ProcessFilter filter) {
+        List<Process> processes = processDAO.getProcesses(filter);
+        // TODO add ProcessPermission.DELETE_PROCESS
+        processes = filterIdentifiable(user, processes, ProcessPermission.CANCEL_PROCESS);
+        for (Process process : processes) {
+            deleteProcess(process);
+        }
+    }
+
+    public void cancelProcesses(User user, final ProcessFilter filter) {
+        List<Process> processes = processDAO.getProcesses(filter);
+        processes = filterIdentifiable(user, processes, ProcessPermission.CANCEL_PROCESS);
+        for (Process process : processes) {
+            ProcessDefinition processDefinition = getDefinition(process);
+            ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
+            process.end(executionContext, user.getActor());
+            log.info(process + " was cancelled by " + user);
+        }
     }
 
     public WfProcess getProcess(User user, Long id) throws ProcessDoesNotExistException {

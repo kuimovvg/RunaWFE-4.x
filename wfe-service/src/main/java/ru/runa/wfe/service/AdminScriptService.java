@@ -9,7 +9,7 @@ import ru.runa.wfe.user.User;
  * Service for remote script execution.
  * 
  * @author dofs
- * @since 4.0
+ * @since 4.0.4
  */
 @Remote
 public interface AdminScriptService {
