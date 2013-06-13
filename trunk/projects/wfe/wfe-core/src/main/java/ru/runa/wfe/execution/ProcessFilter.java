@@ -13,13 +13,14 @@ public class ProcessFilter implements Serializable {
     private static final long serialVersionUID = 1L;
     private String definitionName;
     private Long definitionVersion;
+    private Long id;
     private Long idFrom;
-    private Long idTill;
+    private Long idTo;
     private Date startDateFrom;
-    private Date startDateTill;
+    private Date startDateTo;
     private Boolean finishedOnly;
     private Date endDateFrom;
-    private Date endDateTill;
+    private Date endDateTo;
 
     public String getDefinitionName() {
         return definitionName;
@@ -37,6 +38,14 @@ public class ProcessFilter implements Serializable {
         this.definitionVersion = version;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getIdFrom() {
         return idFrom;
     }
@@ -45,12 +54,12 @@ public class ProcessFilter implements Serializable {
         this.idFrom = idFrom;
     }
 
-    public Long getIdTill() {
-        return idTill;
+    public Long getIdTo() {
+        return idTo;
     }
 
-    public void setIdTill(Long idTill) {
-        this.idTill = idTill;
+    public void setIdTo(Long idTo) {
+        this.idTo = idTo;
     }
 
     public Date getStartDateFrom() {
@@ -61,12 +70,12 @@ public class ProcessFilter implements Serializable {
         this.startDateFrom = startDateFrom;
     }
 
-    public Date getStartDateTill() {
-        return startDateTill;
+    public Date getStartDateTo() {
+        return startDateTo;
     }
 
-    public void setStartDateTill(Date startDateTill) {
-        this.startDateTill = startDateTill;
+    public void setStartDateTo(Date startDateTill) {
+        this.startDateTo = startDateTill;
     }
 
     public Date getEndDateFrom() {
@@ -77,12 +86,12 @@ public class ProcessFilter implements Serializable {
         this.endDateFrom = endDateFrom;
     }
 
-    public Date getEndDateTill() {
-        return endDateTill;
+    public Date getEndDateTo() {
+        return endDateTo;
     }
 
-    public void setEndDateTill(Date endDateTill) {
-        this.endDateTill = endDateTill;
+    public void setEndDateTo(Date endDateTill) {
+        this.endDateTo = endDateTill;
     }
 
     public Boolean getFinishedOnly() {
