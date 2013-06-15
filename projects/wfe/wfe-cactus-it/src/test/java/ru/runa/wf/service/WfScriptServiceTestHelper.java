@@ -42,7 +42,7 @@ public class WfScriptServiceTestHelper extends WfServiceTestHelper {
     }
 
     public boolean areExecutorsWeaklyEqual(Executor e1, Executor e2) {
-        if (ApplicationContextFactory.getDBType() == DBType.Oracle) {
+        if (ApplicationContextFactory.getDBType() == DBType.ORACLE) {
             if (e1 == null || e2 == null) {
                 return false;
             }
