@@ -129,6 +129,7 @@
 							<version>6</version>
 							<defaultLibBundleDir>lib</defaultLibBundleDir>
 							<initializeInOrder>true</initializeInOrder>
+							<packagingExcludes>runawfe-ds.xml,runawfe-jms-service.xml</packagingExcludes>
 							<modules>
 								<jarModule>
 									<groupId>dom4j</groupId>
