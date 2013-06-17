@@ -1756,6 +1756,8 @@
             <groupMarker name="group"/>
             <separator name="export"/>
             <groupMarker name="group"/>
+            <separator name="command"/>
+            <groupMarker name="group"/>
             <separator name="exit"/>
          </menu>
          <menu
@@ -1995,6 +1997,13 @@
                label="%label.menu.properties.enableGrid"
                menubarPath="view/additions"
                style="toggle"/>
+         <action
+               class="ru.runa.gpd.ui.action.CheckUnlimitedTokenAction"
+               id="ru.runa.jbpm.ui.ckeckUnlimitedToken"
+               label="%label.menu.checkingTokens"
+               menubarPath="file/command"
+               style="push">
+         </action>
       </actionSet>
    </extension>
 
