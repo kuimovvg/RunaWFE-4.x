@@ -35,8 +35,8 @@
 		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="locations">
 			<list>
-				<value>classpath:hibernate.properties</value>
-				<value>classpath*:wfe.custom.hibernate.properties</value>
+				<value>classpath:database.properties</value>
+				<value>classpath*:wfe.custom.database.properties</value>
 			</list>
 		</property>
 	</bean>
