@@ -33,7 +33,7 @@ public class BotTaskLinkParametersRenameProvider extends VariableRenameProvider<
         List<Change> changes = new ArrayList<Change>();
         Map<String, String> parameters = ParamDefConfig.getAllParameters(element.getDelegationConfiguration());
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            if (Objects.equal(oldVariable, entry.getValue())) {
+            if (Objects.equal(oldVariable.getName(), entry.getValue())) {
                 changes.add(new ParamChange(element, oldVariable.getName(), newVariable.getName()));
             }
         }
