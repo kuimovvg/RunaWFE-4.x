@@ -32,7 +32,8 @@ public class BotTaskParamDefWizard extends Wizard implements INewWizard {
         }
         ParamDef paramDef = new ParamDef(page.getName(), page.getName());
         paramDef.getFormatFilters().add(page.getType());
-        paramDef.setUseVariable(true);
+        paramDef.setUseVariable(page.isUseVariable());
+        paramDef.setOptional(page.isOptional());
         paramDefGroup.getParameters().add(paramDef);
         return true;
     }
