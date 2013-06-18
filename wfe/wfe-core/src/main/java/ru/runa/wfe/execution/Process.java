@@ -293,8 +293,9 @@ public class Process extends IdentifiableBase {
         } else {
             executionContext.addLog(new ProcessEndLog());
         }
-        // TODO flush just created tasks
-        // ApplicationContextFactory.getTaskDAO().flushPendingChanges();
+        // flush just created tasks
+        ApplicationContextFactory.getTaskDAO().flushPendingChanges();
+        activeSuperProcessExists = parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded();
         List<Task> taskToDelete = Lists.newArrayList();
         for (Task task : tasks) {
             Node node = executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
