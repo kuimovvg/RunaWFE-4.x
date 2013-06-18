@@ -181,7 +181,6 @@ public class ParamDefComposite extends Composite {
         gridData.minimumWidth = 200;
         label.setLayoutData(gridData);
         label.setText(getLabelText(paramDef));
-
         String selectedValue = properties.get(paramDef.getName());
         if (selectedValue == null) {
             selectedValue = paramDef.getDefaultValue();
@@ -249,6 +248,9 @@ public class ParamDefComposite extends Composite {
 
     private String getLabelText(ParamDef aParam) {
         String labelText = aParam.getLabel();
+        if (labelText == null) {
+            labelText = "";
+        }
         if (!aParam.isOptional()) {
             labelText += " *";
         }
