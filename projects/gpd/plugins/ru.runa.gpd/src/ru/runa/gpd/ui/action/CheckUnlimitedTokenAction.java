@@ -1,4 +1,5 @@
 package ru.runa.gpd.ui.action;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.jface.action.IAction;
@@ -35,9 +36,7 @@ public class CheckUnlimitedTokenAction extends BaseActionDelegate {
         		if(redTransition != null) {
         			MessageDialog.openInformation(Display.getCurrent().getActiveShell(), 
         					Localization.getString("message.warning"),
-        					Localization.getString("CheckingTokensAction.SituationExist.Message"));
-        			ProcessEditorBase designerEditor = getActiveDesignerEditor();
-        			//designerEditor.highlightGraphElement(redTransition);
+        					MessageFormat.format(Localization.getString("CheckingTokensAction.SituationExist.Message"), redTransition.getId()));
         		} else {
         			MessageDialog.openInformation(Display.getCurrent().getActiveShell(), 
         					Localization.getString("message.warning"),
