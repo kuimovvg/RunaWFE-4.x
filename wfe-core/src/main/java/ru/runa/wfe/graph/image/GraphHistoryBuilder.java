@@ -123,7 +123,7 @@ public class GraphHistoryBuilder {
             Map<String, String> parentNodeInTokenForNodeMap = new HashMap<String, String>();
 
             for (NodeLog log : nodeLogs) {
-                if (log instanceof NodeLeaveLog && NodeType.START_EVENT.toString().equals(log.getNodeType())) {
+                if (log instanceof NodeLeaveLog && NodeType.START_EVENT == log.getNodeType()) {
                     startNodeId = log.getNodeId() + ":" + log.getTokenId();
                     parentNodeInTokenForNodeMap.put(startNodeId, startNodeId);
                     calculateWidthTokensInGraph(startNodeId, log.getId(), widthTokens, parentNodeInTokenForNodeMap);
@@ -149,11 +149,10 @@ public class GraphHistoryBuilder {
                                 nodeFigures.put(nodeFigure, new RenderHits(DrawProperties.getBaseColor()));
                             }
 
-                            if (log instanceof NodeLeaveLog
-                                    && !(log instanceof SubprocessEndLog && NodeType.MULTI_SUBPROCESS.toString().equals(log.getNodeType()))) {
+                            if (log instanceof NodeLeaveLog && !(log instanceof SubprocessEndLog && NodeType.MULTI_SUBPROCESS == log.getNodeType())) {
                                 Long tokenId = log.getTokenId();
 
-                                if (NodeType.FORK.toString().equals(log.getNodeType())) {
+                                if (NodeType.FORK == log.getNodeType()) {
                                     for (ProcessLog correctTokenLog : processLogs) {
                                         if (correctTokenLog.getId().equals(log.getId())) {
                                             break;
@@ -248,7 +247,8 @@ public class GraphHistoryBuilder {
     }
 
     /**
-     * Method calculates the width of tokens. Token is line that contains nodes and transitions. Fork node creates subtokens. Join node finishes all
+     * Method calculates the width of tokens. Token is line that contains nodes
+     * and transitions. Fork node creates subtokens. Join node finishes all
      * subtokens node and continue the main token.
      * 
      * @param startTokenNodeId
@@ -432,7 +432,9 @@ public class GraphHistoryBuilder {
                         TransitionLog transitionLog = (TransitionLog) log;
                         if (transitionLog.getFromNodeId() != null && transitionLog.getToNodeId() != null
                                 && nodeId.split(":")[0].equals(transitionLog.getFromNodeId())) {
-                            // && nodeId.split(":")[1].equals(transitionLog.getTokenId().toString())) {
+                            // &&
+                            // nodeId.split(":")[1].equals(transitionLog.getTokenId().toString()))
+                            // {
                             returnNodes.add(transitionLog.getToNodeId() + ":" + transitionLog.getTokenId());
                         }
                     } else if (log instanceof NodeEnterLog) {
@@ -463,14 +465,15 @@ public class GraphHistoryBuilder {
 
     private boolean isNodePresentInGraph(NodeLog log) {
         return !(log instanceof ReceiveMessageLog || log instanceof SendMessageLog)
-                && !((log instanceof SubprocessStartLog || log instanceof SubprocessEndLog) && (NodeType.MULTI_SUBPROCESS.toString().equals(
-                        log.getNodeType()) || NodeType.SUBPROCESS.toString().equals(log.getNodeType())))
-                && ((log instanceof NodeEnterLog && !NodeType.JOIN.toString().equals(log.getNodeType())) || (log instanceof NodeLeaveLog && (NodeType.START_EVENT
-                        .toString().equals(log.getNodeType()) || NodeType.JOIN.toString().equals(log.getNodeType()))));
+                && !((log instanceof SubprocessStartLog || log instanceof SubprocessEndLog) && (NodeType.MULTI_SUBPROCESS == log.getNodeType()) || NodeType.SUBPROCESS == log
+                        .getNodeType())
+                && ((log instanceof NodeEnterLog && NodeType.JOIN != log.getNodeType()) || (log instanceof NodeLeaveLog && (NodeType.START_EVENT == log
+                        .getNodeType() || NodeType.JOIN == log.getNodeType())));
     }
 
     /**
-     * Method calculates X and Y coordinates for figures which present nodes in the graph.
+     * Method calculates X and Y coordinates for figures which present nodes in
+     * the graph.
      * 
      * @param widthTokens
      *            - object contains start node in token and the width of token.
@@ -537,7 +540,7 @@ public class GraphHistoryBuilder {
 
                         x = addedLeftTokenWidthIfExist(width / 2, forkNodes, widthTokens, rootNodeId);
 
-                        if (NodeType.JOIN.toString().equals(log.getNodeType())) {
+                        if (NodeType.JOIN == log.getNodeType()) {
                             for (String forkRootNodeId : forkNodes.keySet()) {
                                 List<String> nodes = forkNodes.get(forkRootNodeId);
                                 if (nodes != null && nodes.contains(rootNodeId)) {
@@ -553,7 +556,7 @@ public class GraphHistoryBuilder {
 
                         }
 
-                        if (NodeType.FORK.toString().equals(log.getNodeType())) {
+                        if (NodeType.FORK == log.getNodeType()) {
                             List<String> nodes = getNextNodesInGraphForFork(log.getId(), correctNodeId);
                             forkNodes.put(rootNodeId, nodes);
 
@@ -561,7 +564,7 @@ public class GraphHistoryBuilder {
                             nodeModel.setHeight(heightForkJoinNode);
                         }
 
-                        if (NodeType.JOIN.toString().equals(log.getNodeType())) {
+                        if (NodeType.JOIN == log.getNodeType()) {
                             for (String forkRootNodeId : forkNodes.keySet()) {
                                 List<String> nodes = forkNodes.get(forkRootNodeId);
                                 if (nodes != null && nodes.contains(rootNodeId)) {
@@ -577,8 +580,8 @@ public class GraphHistoryBuilder {
                         nodeModel.setY(height);
                         nodeModel.setX(x - nodeModel.getWidth() / 2);
 
-                        if (!NodeType.JOIN.toString().equals(log.getNodeType())) {
-                            if (NodeType.SUBPROCESS.toString().equals(log.getNodeType())) {
+                        if (NodeType.JOIN != log.getNodeType()) {
+                            if (NodeType.SUBPROCESS == log.getNodeType()) {
                                 if (isLastSubprocessLog(log)) {
                                     height += (nodeModel.getHeight() + heightBetweenNode);
                                     heightTokens.put(rootNodeId, height);
@@ -589,7 +592,9 @@ public class GraphHistoryBuilder {
                             }
                         }
 
-                        // String correctNodeId = getNodeIdIncludeRepetition(nodeId, nodeRepetitionCount);
+                        // String correctNodeId =
+                        // getNodeIdIncludeRepetition(nodeId,
+                        // nodeRepetitionCount);
                         allNodes.put(correctNodeId, nodeModel);
                         AbstractFigure nodeFigure = factory.createFigure(nodeModel);
                         allNodeFigures.put(correctNodeId, nodeFigure);
@@ -655,7 +660,7 @@ public class GraphHistoryBuilder {
     private boolean isLastSubprocessLog(NodeLog log) {
         for (ProcessLog processLog : processLogs) {
             if (processLog.getId() >= log.getId()) {
-                if (processLog instanceof NodeEnterLog && ((NodeEnterLog) processLog).getNodeType().equals(NodeType.SUBPROCESS)) {
+                if (processLog instanceof NodeEnterLog && ((NodeEnterLog) processLog).getNodeType() == NodeType.SUBPROCESS) {
                     return false;
                 } else {
                     return true;
@@ -706,7 +711,7 @@ public class GraphHistoryBuilder {
                 }
             }
             break;
-        case TAST_STATE:
+        case TASK_STATE:
             presentation = new TaskGraphElementPresentation();
             break;
         default:
@@ -726,7 +731,7 @@ public class GraphHistoryBuilder {
 
         if (nodeModel.getType().equals(NodeType.SUBPROCESS) || nodeModel.getType().equals(NodeType.MULTI_SUBPROCESS)) {
             presentation.setData("Time period is " + date);
-        } else if (nodeModel.getType().equals(NodeType.TAST_STATE)) {
+        } else if (nodeModel.getType().equals(NodeType.TASK_STATE)) {
             StringBuffer str = new StringBuffer();
 
             TaskCreateLog taskCreateLog = null;

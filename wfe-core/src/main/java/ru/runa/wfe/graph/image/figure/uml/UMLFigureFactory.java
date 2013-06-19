@@ -30,7 +30,7 @@ public class UMLFigureFactory extends AbstractFigureFactory {
     public AbstractFigure createFigure(NodeModel nodeModel) {
         AbstractFigure figure = null;
         switch (nodeModel.getType()) {
-        case TAST_STATE:
+        case TASK_STATE:
             figure = new TaskNodeFigure();
             break;
         case MULTI_TASK_STATE:

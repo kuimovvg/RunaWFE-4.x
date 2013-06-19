@@ -1,7 +1,7 @@
 package ru.runa.wfe.lang;
 
 public enum NodeType {
-    START_EVENT, ACTION_NODE, END_PROCESS, WAIT_STATE, TAST_STATE, FORK, JOIN, DECISION,
+    START_EVENT, ACTION_NODE, END_PROCESS, WAIT_STATE, TASK_STATE, FORK, JOIN, DECISION,
     /**
      * 
      */

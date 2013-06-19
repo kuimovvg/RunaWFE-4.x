@@ -26,6 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import ru.runa.wfe.lang.Node;
+import ru.runa.wfe.lang.NodeType;
 
 /**
  * Logging node execution.
@@ -57,8 +58,8 @@ public abstract class NodeLog extends ProcessLog {
     }
 
     @Transient
-    public String getNodeType() {
-        return getAttributeNotNull(ATTR_NODE_TYPE);
+    public NodeType getNodeType() {
+        return NodeType.valueOf(getAttributeNotNull(ATTR_NODE_TYPE));
     }
 
     @Transient

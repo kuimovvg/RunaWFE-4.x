@@ -33,7 +33,7 @@ public abstract class SubprocessesGraphElementAdapter implements GraphElementPre
         if (element.getNodeType() == NodeType.MULTI_SUBPROCESS) {
             onMultiSubprocess((MultiinstanceGraphElementPresentation) element);
         }
-        if (element.getNodeType() == NodeType.TAST_STATE) {
+        if (element.getNodeType() == NodeType.TASK_STATE) {
             onTaskState((TaskGraphElementPresentation) element);
         }
     }
