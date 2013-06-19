@@ -11,6 +11,7 @@ import ru.runa.gpd.lang.model.Join;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ParallelGateway;
 import ru.runa.gpd.lang.model.StartState;
+import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 
 public class CheckUnlimitedTokenAlgorithm {
@@ -132,11 +133,15 @@ public class CheckUnlimitedTokenAlgorithm {
 		
 		for(Node node : nodes) {
 			if(!(node instanceof Join || node instanceof Fork || node instanceof ParallelGateway || node instanceof StartState || node instanceof EndState)) {
-				for(Transition transition : transitions) {					
-					if(transition.getTarget().equals(node)) {						
+				for(Transition transition : transitions) {
+					if(transition.getTarget().equals(node)) {
 						List<Transition> addedVectors = new ArrayList<Transition>();						
-						for(Transition transition1 : transitions) {							
-							if(transition1.getSource().equals(node) && !addedVectors.contains(transition1)) {
+						for(Transition transition1 : transitions) {
+							Node sourceNode = transition1.getSource();
+							if(sourceNode instanceof Timer && sourceNode.getParent() instanceof Node) {
+								sourceNode = (Node) sourceNode.getParent();
+							}
+							if(sourceNode.equals(node) && !addedVectors.contains(transition1)) {
 								Vector v = new Vector(transitions.size() + 1);
 								v.setElementValue(transitions.indexOf(transition) + 1, -1);
 								v.setElementValue(transitions.indexOf(transition1) + 1, 1);
