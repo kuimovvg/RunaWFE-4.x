@@ -35,7 +35,7 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
     public AbstractFigure createFigure(NodeModel nodeModel) {
         AbstractFigure figure = null;
         switch (nodeModel.getType()) {
-        case TAST_STATE:
+        case TASK_STATE:
             figure = new TaskNodeFigure();
             ((TaskNodeFigure) figure).setGraphiti(graphiti);
             break;

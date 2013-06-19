@@ -35,7 +35,7 @@ public class TaskNode extends BaseTaskNode {
 
     @Override
     public NodeType getNodeType() {
-        return NodeType.TAST_STATE;
+        return NodeType.TASK_STATE;
     }
 
     @Override

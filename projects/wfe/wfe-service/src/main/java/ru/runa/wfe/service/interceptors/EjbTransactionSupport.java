@@ -31,7 +31,7 @@ import com.google.common.base.Throwables;
  * delivered successfully.
  */
 public class EjbTransactionSupport {
-    private static final Log log = LogFactory.getLog(EjbTransactionSupport.class);
+    private static final Log log = LogFactory.getLog("apicall");
     @Resource
     private EJBContext ejbContext;
 
@@ -47,13 +47,13 @@ public class EjbTransactionSupport {
             Object result = invokeWithRetry(ic);
             long jobTime = System.currentTimeMillis() - startTime;
             if (jobTime > 2000) {
-                log.info("Execution of " + DebugUtils.getDebugString(ic) + " took " + (jobTime / 1000) + " sec.");
+                log.info((jobTime / 1000) + " sec. took execution of " + DebugUtils.getDebugString(ic));
             }
             startTime = System.currentTimeMillis();
             transaction.commit();
             jobTime = System.currentTimeMillis() - startTime;
             if (jobTime > 2000) {
-                log.info("Commit of " + DebugUtils.getDebugString(ic) + " took " + (jobTime / 1000) + " sec.");
+                log.info((jobTime / 1000) + " sec. took commit of " + DebugUtils.getDebugString(ic));
             }
             UserHolder.reset();
             return result;
