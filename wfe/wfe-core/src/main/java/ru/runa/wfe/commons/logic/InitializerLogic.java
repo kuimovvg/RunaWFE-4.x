@@ -41,6 +41,7 @@ import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
 import ru.runa.wfe.commons.dbpatch.impl.JbpmRefactoringPatch;
+import ru.runa.wfe.commons.dbpatch.impl.NodeTypeChangePatch;
 import ru.runa.wfe.commons.dbpatch.impl.PerformancePatch401;
 import ru.runa.wfe.commons.dbpatch.impl.PermissionMappingPatch403;
 import ru.runa.wfe.commons.dbpatch.impl.TaskEndDateRemovalPatch;
@@ -97,6 +98,7 @@ public class InitializerLogic {
         dbPatches.add(PerformancePatch401.class);
         dbPatches.add(TaskEndDateRemovalPatch.class);
         dbPatches.add(PermissionMappingPatch403.class);
+        dbPatches.add(NodeTypeChangePatch.class);
     };
 
     @Autowired
@@ -206,9 +208,11 @@ public class InitializerLogic {
                 log.warn("Unable to parse system property 'runawfe.transacted.ddl' as boolean: " + e);
             }
         }
+        log.info("Database version: " + dbVersion + ", code version: " + dbPatches.size());
         while (dbVersion < dbPatches.size()) {
             DBPatch patch = ApplicationContextFactory.createAutowiredBean(dbPatches.get(dbVersion));
             dbVersion++;
+            log.info("Applying patch " + patch + " (" + dbVersion + ")");
             try {
                 if (isDDLTransacted) {
                     transaction.begin();
