@@ -4,16 +4,19 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.VariableFormat;
+import ru.runa.wfe.var.jaxb.VariableAdapter;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlJavaTypeAdapter(VariableAdapter.class)
 public class WfVariable implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -21,6 +24,7 @@ public class WfVariable implements Serializable {
     private Object value;
 
     public WfVariable() {
+        definition = new VariableDefinition();
     }
 
     public WfVariable(String name, Object value) {

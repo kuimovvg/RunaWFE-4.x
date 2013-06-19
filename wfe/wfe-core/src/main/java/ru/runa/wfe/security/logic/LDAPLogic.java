@@ -35,6 +35,8 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -93,6 +95,7 @@ public class LDAPLogic {
         return new InitialDirContext(env);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public void synchronizeExecutors(boolean createExecutors) {
         if (ous == null) {
             throw new NullPointerException("LDAP property is not configured 'ldap.synchronizer.ou'");
