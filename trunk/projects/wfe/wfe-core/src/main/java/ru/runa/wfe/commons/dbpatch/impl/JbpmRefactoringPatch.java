@@ -521,7 +521,7 @@ public class JbpmRefactoringPatch extends DBPatch {
         nodeTypes.put("E", NodeType.END_PROCESS);
         nodeTypes.put("F", NodeType.FORK);
         nodeTypes.put("J", NodeType.JOIN);
-        nodeTypes.put("K", NodeType.TAST_STATE);
+        nodeTypes.put("K", NodeType.TASK_STATE);
         nodeTypes.put("W", NodeType.MULTI_SUBPROCESS);
         nodeTypes.put("X", NodeType.SEND_MESSAGE);
         nodeTypes.put("Y", NodeType.RECEIVE_MESSAGE);

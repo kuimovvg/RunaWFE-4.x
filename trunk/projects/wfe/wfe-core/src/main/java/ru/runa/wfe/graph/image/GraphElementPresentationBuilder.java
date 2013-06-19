@@ -34,7 +34,7 @@ public class GraphElementPresentationBuilder {
             case MULTI_SUBPROCESS:
                 presentation = new MultiinstanceGraphElementPresentation();
                 break;
-            case TAST_STATE:
+            case TASK_STATE:
                 presentation = new TaskGraphElementPresentation();
                 break;
             default:
