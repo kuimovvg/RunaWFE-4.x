@@ -33,6 +33,7 @@ import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.Group;
 
 /**
  * Created on 19.08.2004
@@ -62,8 +63,11 @@ public class UpdateExecutorDetailsAction extends ActionBase {
             if (executor instanceof Actor) {
                 Actor actor = (Actor) executor;
                 actor.setCode(form.getCode());
-                actor.setEmail(form.getEmail());
                 actor.setPhone(form.getPhone());
+                actor.setEmail(form.getEmail());
+            } else {
+                Group group = (Group) executor;
+                group.setLdapGroupName(form.getEmail());
             }
             executorService.update(getLoggedUser(request), executor);
         } catch (Exception e) {
