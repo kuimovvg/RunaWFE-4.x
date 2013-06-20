@@ -4,7 +4,6 @@ import java.util.Date;
 
 public class WfVariable {
     public String name;
-    public String scriptingName;
     public String formatClassName;
     public String stringValue;
     public Long longValue;

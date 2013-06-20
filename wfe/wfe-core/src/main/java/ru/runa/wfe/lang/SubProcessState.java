@@ -74,11 +74,13 @@ public class SubProcessState extends VariableContainerNode {
                 }
             }
         }
-        Process subProcess = processFactory.startSubprocess(executionContext, subProcessDefinition, variables);
-        if (subProcess.hasEnded()) {
-            log.debug("Immediately leaving state");
-            leave(executionContext);
-        }
+        processFactory.startSubprocess(executionContext, subProcessDefinition, variables);
+        // Process subProcess = processFactory.startSubprocess(executionContext,
+        // subProcessDefinition, variables);
+        // if (subProcess.hasEnded()) {
+        // log.debug("Immediately leaving state");
+        // leave(executionContext);
+        // }
     }
 
     @Override
