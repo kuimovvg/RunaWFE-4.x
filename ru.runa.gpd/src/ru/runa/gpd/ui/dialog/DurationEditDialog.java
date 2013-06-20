@@ -25,19 +25,25 @@ import com.google.common.base.Strings;
 public class DurationEditDialog extends Dialog {
     private static final int CLEAR_ID = 111;
     private Duration editable;
+    private Duration oldDuration;
     private final ProcessDefinition definition;
     private Text baseDateField;
     private Text delayField;
     private Text unitField;
 
     public DurationEditDialog(ProcessDefinition definition, String duration) {
-        this(definition, Strings.isNullOrEmpty(duration) ? new Duration() : new Duration(duration));
+        super(Display.getCurrent().getActiveShell());
+        this.definition = definition;
+        if (!Strings.isNullOrEmpty(duration)) {
+            editable = new Duration(duration);
+        } else {
+            editable = new Duration();
+        }
     }
 
     public DurationEditDialog(ProcessDefinition definition, Duration duration) {
-        super(Display.getCurrent().getActiveShell());
-        this.definition = definition;
-        editable = duration;
+        this(definition, duration.getDuration());
+        this.oldDuration = duration;
     }
 
     @Override
@@ -166,6 +172,11 @@ public class DurationEditDialog extends Dialog {
 
     public Object openDialog() {
         if (open() == IDialogConstants.OK_ID) {
+            if (oldDuration != null) {
+                oldDuration.setDelay(editable.getDelay());
+                oldDuration.setUnit(editable.getUnit());
+                oldDuration.setVariableName(editable.getVariableName());
+            }
             return editable;
         }
         return null;
