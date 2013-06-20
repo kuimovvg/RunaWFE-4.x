@@ -59,7 +59,7 @@ public class SwimlaneAssignerTaskHandler extends TaskHandlerBase {
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(function, variableProvider);
         if (executors.size() != 1) {
-            throw new Exception("assigner (organization) function return more than 1 actor to be assigned in swimlane");
+            throw new Exception("assigner (organization) function return " + executors.size() + " actor to be assigned in swimlane");
         }
         Delegates.getExecutionService().assignSwimlane(user, task.getProcessId(), swimlaneName, executors.get(0));
         return null;
