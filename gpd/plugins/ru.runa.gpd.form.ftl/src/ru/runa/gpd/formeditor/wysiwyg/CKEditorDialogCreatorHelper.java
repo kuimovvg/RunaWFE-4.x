@@ -179,7 +179,7 @@ public class CKEditorDialogCreatorHelper {
                             if (option.useFilter) {
                                 variables = WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType);
                             } else {
-                                variables = WYSIWYGHTMLEditor.getCurrent().getVariables();
+                                variables = WYSIWYGHTMLEditor.getCurrent().getVariables(null);
                             }
                             for (Variable variable : variables) {
                                 selectElement.addItem("'" + variable.getName() + "'", "'" + variable.getName() + "'");

@@ -32,13 +32,14 @@ import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
 import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
 import ru.runa.gpd.formeditor.vartag.VarTagUtil;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.EditorUtils;
+import ru.runa.gpd.util.VariableUtils;
 import tk.eclipse.plugin.htmleditor.HTMLPlugin;
 import tk.eclipse.plugin.htmleditor.editors.HTMLConfiguration;
 import tk.eclipse.plugin.htmleditor.editors.HTMLSourceEditor;
@@ -84,19 +85,30 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     public synchronized List<String> getLazyVariableNameList() {
         if (lazyVariableNameList == null) {
             lazyVariableNameList = new ArrayList<String>();
-            for (Variable variable : getVariables()) {
+            for (Variable variable : getVariables(null)) {
                 lazyVariableNameList.add(variable.getName());
             }
         }
         return lazyVariableNameList;
     }
 
-    public List<Variable> getVariables(String... typeClassNameFilters) {
+    public List<Variable> getVariables(String typeClassNameFilter) {
         if (formNode == null) {
             // This is because earlier access from web page (not user request)
             return new ArrayList<Variable>();
         }
-        return VariableUtils.getValidVariables(formNode.getProcessDefinition().getVariables(true, typeClassNameFilters));
+        List<Variable> variables = formNode.getProcessDefinition().getVariables(true);
+        // get variables without strong-typing. (all hierarchy) TODO for similar places
+        if (typeClassNameFilter != null) {
+            List<String> filterHierarchy = VariableFormatRegistry.getInstance().getSuperClassNames(typeClassNameFilter);
+            List<Variable> copyList = new ArrayList<Variable>(variables);
+            for (Variable variable : copyList) {
+                if (!filterHierarchy.contains(variable.getJavaClassName())) {
+                    variables.remove(variable);
+                }
+            }
+        }
+        return VariableUtils.getValidVariables(variables);
     }
 
     public List<String> getVariableNames(String... typeClassNameFilters) {

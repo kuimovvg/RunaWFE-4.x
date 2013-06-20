@@ -112,7 +112,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.method.dialog.end")));
             } else if ("GetAllVariables".equals(commandStr)) {
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.format.dialog.start")));
-                for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariables()) {
+                for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariables(null)) {
                     resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
                 }
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.format.dialog.end")));
@@ -131,10 +131,14 @@ public class FtlTagSupportServlet extends HttpServlet {
                                 if (option.useFilter) {
                                     variables = WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType);
                                 } else {
-                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables();
+                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables(null);
                                 }
                                 for (Variable variable : variables) {
-                                    resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
+                                    resultHtml.append("<option value=\"").append(variable.getName()).append("\"");
+                                    if (option.filterType != null && !option.filterType.equals(variable.getJavaClassName())) {
+                                        resultHtml.append(" style=\"color: #aaa;\"");
+                                    }
+                                    resultHtml.append(">").append(variable.getName()).append("</option>");
                                 }
                             } else {
                                 resultHtml.append("<option value=\"").append(option.name).append("\">").append(option.value).append("</option>");
@@ -150,10 +154,14 @@ public class FtlTagSupportServlet extends HttpServlet {
                                 if (option.useFilter) {
                                     variables = WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType);
                                 } else {
-                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables();
+                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables(null);
                                 }
                                 for (Variable variable : variables) {
-                                    resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
+                                    resultHtml.append("<option value=\"").append(variable.getName()).append("\"");
+                                    if (option.filterType != null && !option.filterType.equals(variable.getJavaClassName())) {
+                                        resultHtml.append(" style=\"color: #aaa;\"");
+                                    }
+                                    resultHtml.append(">").append(variable.getName()).append("</option>");
                                 }
                             } else {
                                 resultHtml.append("<option value=\"").append(option.name).append("\">").append(option.value).append("</option>");
