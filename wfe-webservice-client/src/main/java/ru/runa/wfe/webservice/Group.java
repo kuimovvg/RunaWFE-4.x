@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;extension base="{http://impl.service.wfe.runa.ru/}executor">
  *       &lt;sequence>
- *         &lt;element name="activeDirectoryGroup" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ldapGroupName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -27,36 +27,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "group", propOrder = {
-    "activeDirectoryGroup"
+    "ldapGroupName"
 })
 public class Group
     extends Executor
 {
 
-    protected String activeDirectoryGroup;
+    protected String ldapGroupName;
 
     /**
-     * Gets the value of the activeDirectoryGroup property.
+     * Gets the value of the ldapGroupName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getActiveDirectoryGroup() {
-        return activeDirectoryGroup;
+    public String getLdapGroupName() {
+        return ldapGroupName;
     }
 
     /**
-     * Sets the value of the activeDirectoryGroup property.
+     * Sets the value of the ldapGroupName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setActiveDirectoryGroup(String value) {
-        this.activeDirectoryGroup = value;
+    public void setLdapGroupName(String value) {
+        this.ldapGroupName = value;
     }
 
 }
