@@ -1,22 +1,15 @@
 
 var FTL_PLUGIN_NAME = 'FreemarkerTags' ;
 var FTL_METHOD_CMD = 'FreemarkerMethod' ;
-var FTL_OUTPUT_CMD = 'FreemarkerOutput' ;
 var VISUAL_ELEMENT = 'img' ;
 
 // Register the related command.
-// FCKPlugins.Items[FTL_PLUGIN_NAME].Path + 'fck_placeholder.html'
-FCKCommands.RegisterCommand( FTL_METHOD_CMD, new FCKDialogCommand( FTL_METHOD_CMD, FCKLang.MethodTitle, "/editor/FreemarkerTags.java?method=GetAllMethods", 400, 200 ) ) ;
-FCKCommands.RegisterCommand( FTL_OUTPUT_CMD, new FCKDialogCommand( FTL_OUTPUT_CMD, FCKLang.OutputTitle, "/editor/FreemarkerTags.java?method=GetAllVariables", 400, 200 ) ) ;
+FCKCommands.RegisterCommand( FTL_METHOD_CMD, new FCKDialogCommand( FTL_METHOD_CMD, FCKLang.MethodTitle, "/editor/FreemarkerTags.java?method=GetAllMethods", 500, 300 ) ) ;
 
-// Create the "VarTag" toolbar button.
+// Create the "FTLTag" toolbar button.
 var methodItem = new FCKToolbarButton( FTL_METHOD_CMD, FCKLang.MethodTitle ) ;
 methodItem.IconPath = FCKPlugins.Items[FTL_PLUGIN_NAME].Path + 'toolbar.gif' ;
 FCKToolbarItems.RegisterItem( FTL_METHOD_CMD, methodItem ) ;
-
-var outputItem = new FCKToolbarButton( FTL_OUTPUT_CMD, FCKLang.OutputTitle ) ;
-outputItem.IconPath = FCKPlugins.Items[FTL_PLUGIN_NAME].Path + 'toolbar.gif' ;
-FCKToolbarItems.RegisterItem( FTL_OUTPUT_CMD, outputItem ) ;
 
 var FreemarkerTags = new Object() ;
 
@@ -67,9 +60,6 @@ FCK.ContextMenu.RegisterListener( { AddItems : function( menu, tag, tagName ) {
 	}
 	if ( tag && tag.getAttribute("ftltagparams") != null) {
 		menu.AddItem( FTL_METHOD_CMD, FCKLang.MethodTitle ) ;
-	}
-	if ( tag && tag.getAttribute("ftltagformat") != null ) {
-		menu.AddItem( FTL_OUTPUT_CMD, FCKLang.OutputTitle ) ;
 	}
 }});
 
@@ -142,7 +132,5 @@ FreemarkerTags.IsAvailable = function( ) {
 if (FreemarkerTags.IsAvailable() != "true") {
 	FCKCommands.GetCommand( FTL_METHOD_CMD ).Execute = function() { return false; };
 	FCKCommands.GetCommand( FTL_METHOD_CMD ).GetState = function() { return FCK_TRISTATE_DISABLED; } ;
-	FCKCommands.GetCommand( FTL_OUTPUT_CMD ).Execute = function() { return false; };
-	FCKCommands.GetCommand( FTL_OUTPUT_CMD ).GetState = function() { return FCK_TRISTATE_DISABLED; } ;
 }
 
