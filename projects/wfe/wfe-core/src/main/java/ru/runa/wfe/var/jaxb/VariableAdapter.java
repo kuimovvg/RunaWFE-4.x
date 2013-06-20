@@ -12,7 +12,6 @@ public class VariableAdapter extends XmlAdapter<WfVariable, ru.runa.wfe.var.dto.
     public WfVariable marshal(ru.runa.wfe.var.dto.WfVariable variable) {
         WfVariable wsVariable = new WfVariable();
         wsVariable.name = variable.getDefinition().getName();
-        wsVariable.scriptingName = variable.getDefinition().getScriptingName();
         wsVariable.formatClassName = variable.getDefinition().getFormatClassName();
         if (variable.getValue() instanceof byte[]) {
             wsVariable.bytesValue = (byte[]) variable.getValue();
@@ -42,7 +41,7 @@ public class VariableAdapter extends XmlAdapter<WfVariable, ru.runa.wfe.var.dto.
         } else if (wsVariable.stringValue != null) {
             value = wsVariable.stringValue;
         }
-        VariableDefinition definition = new VariableDefinition(false, wsVariable.name, wsVariable.formatClassName, wsVariable.scriptingName);
+        VariableDefinition definition = new VariableDefinition(false, wsVariable.name, wsVariable.formatClassName, wsVariable.name);
         return new ru.runa.wfe.var.dto.WfVariable(definition, value);
     }
 

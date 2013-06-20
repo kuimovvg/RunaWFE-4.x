@@ -316,7 +316,15 @@ public class Process extends IdentifiableBase {
         }
         log.info("Removing active tasks: " + taskToDelete);
         tasks.removeAll(taskToDelete);
-        //
+        if (parentNodeProcess == null) {
+            log.debug("Removing async tasks ON_MAIN_PROCESS_END");
+            for (Process subProcess : executionContext.getAllSubprocessesRecursively()) {
+                if (subProcess.getTasks().size() > 0) {
+                    log.info("Removing active tasks: " + subProcess.getTasks());
+                    subProcess.getTasks().clear();
+                }
+            }
+        }
         ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
         List<TemporaryGroup> groups = executorDAO.getTemporaryGroups(id);
         for (TemporaryGroup temporaryGroup : groups) {
@@ -328,8 +336,6 @@ public class Process extends IdentifiableBase {
                 log.error("Unable to delete " + temporaryGroup, e);
             }
         }
-        // flush finished process
-        // ApplicationContextFactory.getTaskDAO().flushPendingChanges();
     }
 
     /**
