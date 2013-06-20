@@ -17,6 +17,8 @@
  */
 package ru.runa.wf.web.ftl.method;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.ecs.html.Option;
@@ -30,35 +32,41 @@ import freemarker.template.TemplateModelException;
 
 public class GroupMembersTag extends FreemarkerTag {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Override
-    protected Object executeTag() throws TemplateModelException {
-        String actorVarName = getParameterAs(String.class, 0);
-        Group group = getParameterAs(Group.class, 1);
-        String view = getParameterAs(String.class, 2);
-        List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, group);
-        if ("all".equals(view)) {
-            return createSelect(actorVarName, actors).toString();
-        } else if ("raw".equals(view)) {
-            return actors;
-        } else {
-            throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
-        }
-    }
+	@Override
+	protected Object executeTag() throws TemplateModelException {
+		String actorVarName = getParameterAs(String.class, 0);
+		Group group = getParameterAs(Group.class, 1);
+		String view = getParameterAs(String.class, 2);
+		List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, group);
+		if ("all".equals(view)) {
+			return createSelect(actorVarName, actors).toString();
+		} else if ("raw".equals(view)) {
+			return actors;
+		} else {
+			throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
+		}
+	}
 
-    protected Select createSelect(String selectName, List<Actor> actors) {
-        Actor defaultSelectedActor = user.getActor();
-        Select select = new Select();
-        select.setName(selectName);
-        for (Actor actor : actors) {
-            Option option = new Option(String.valueOf(actor.getCode())).addElement(actor.getFullName());
-            select.addElement(option);
-            if (defaultSelectedActor.equals(actor)) {
-                option.setSelected(true);
-            }
-        }
-        return select;
-    }
+	protected Select createSelect(String selectName, List<Actor> actors) {
+		Actor defaultSelectedActor = user.getActor();
+		Select select = new Select();
+		select.setName(selectName);
+		Collections.sort(actors, new Comparator<Actor>() {
+			@Override
+			public int compare(Actor rec1, Actor rec2) {
+				return rec1.getFullName().compareToIgnoreCase(rec2.getFullName());
+			}
+		});
+		for (Actor actor : actors) {
+			Option option = new Option(String.valueOf(actor.getCode())).addElement(actor.getFullName());
+			select.addElement(option);
+			if (defaultSelectedActor.equals(actor)) {
+				option.setSelected(true);
+			}
+		}
+		return select;
+	}
 
 }
