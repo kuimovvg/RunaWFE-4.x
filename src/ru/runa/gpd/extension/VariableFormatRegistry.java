@@ -12,6 +12,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Variable;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtifact> {
     private static final String XML_FILE_NAME = "variableFormats.xml";
@@ -83,5 +84,15 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
             throw new RuntimeException("Artifact javaClassName='" + javaClassName + "' does not exist");
         }
         return artifact;
+    }
+
+    public List<String> getSuperClassNames(String className) {
+        List<String> result = Lists.newArrayList();
+        for (VariableFormatArtifact artifact : getAll()) {
+            if (isAssignableFrom(artifact.getJavaClassName(), className)) {
+                result.add(artifact.getJavaClassName());
+            }
+        }
+        return result;
     }
 }
