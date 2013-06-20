@@ -20,6 +20,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *       &lt;sequence>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="nodeId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="swimlaneName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="owner" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
@@ -45,6 +46,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlType(name = "wfTask", propOrder = {
     "id",
     "name",
+    "nodeId",
     "description",
     "swimlaneName",
     "owner",
@@ -63,6 +65,7 @@ public class WfTask {
 
     protected Long id;
     protected String name;
+    protected String nodeId;
     protected String description;
     protected String swimlaneName;
     protected WfExecutor owner;
@@ -126,6 +129,30 @@ public class WfTask {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Gets the value of the nodeId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    /**
+     * Sets the value of the nodeId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNodeId(String value) {
+        this.nodeId = value;
     }
 
     /**
