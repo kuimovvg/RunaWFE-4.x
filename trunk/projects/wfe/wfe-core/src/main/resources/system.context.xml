@@ -370,7 +370,7 @@
 		</property>
 	</bean>
 	<bean id="ldapSynchronizerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="5000" />
+		<property name="delay" value="10800000" />
 		<property name="period" value="10800000" />
 		<property name="timerTask">
 			<bean class="ru.runa.wfe.job.impl.LDAPSynchronizerTask">
@@ -384,6 +384,7 @@
 				<ref bean="jobExecutorTask" />
 				<!-- ref bean="cacheUsageStatisticTask" / -->
 				<ref bean="tasksAssignTask" />
+				<ref bean="ldapSynchronizerTask" />
 			</list>
 		</property>
 	</bean>
