@@ -6,7 +6,6 @@ import ru.runa.wfe.webservice.AuthenticationWebService;
 import ru.runa.wfe.webservice.ExecutionAPI;
 import ru.runa.wfe.webservice.ExecutionWebService;
 import ru.runa.wfe.webservice.User;
-import ru.runa.wfe.webservice.VariableDefinition;
 import ru.runa.wfe.webservice.WfVariable;
 
 public class UpdateProcessVariables {
@@ -19,9 +18,8 @@ public class UpdateProcessVariables {
             List<WfVariable> variables = new ArrayList<WfVariable>();
 
             WfVariable variable2 = new WfVariable();
-            variable2.setDefinition(new VariableDefinition());
-            variable2.getDefinition().setName("selected row id");
-            variable2.setValue("岩形世");
+            variable2.setName("selected row id");
+            variable2.setStringValue("岩形世");
             variables.add(variable2);
 
             executionAPI.updateVariablesWS(user, 6L, variables);
