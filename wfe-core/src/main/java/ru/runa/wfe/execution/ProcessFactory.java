@@ -71,10 +71,10 @@ public class ProcessFactory {
      *            node.
      */
     public Process startProcess(ProcessDefinition processDefinition, Map<String, Object> variables, Actor actor, String transitionName) {
-        Preconditions.checkNotNull(processDefinition, "can't start a process when processDefinition is null");
         Preconditions.checkNotNull(actor, "can't start a process when actor is null");
-        Process process = startProcessInternal(processDefinition, variables, actor, transitionName, null);
+        Process process = createProcessInternal(processDefinition, variables, actor, null);
         grantProcessPermissions(processDefinition, process, actor);
+        startProcessInternal(processDefinition, process, transitionName);
         return process;
     }
 
@@ -106,12 +106,13 @@ public class ProcessFactory {
                 variables.put(entry.getKey(), entry.getValue());
             }
         }
-        Process subProcess = startProcessInternal(processDefinition, variables, null, null, parentProcess.getHierarchySubProcess());
+        Process subProcess = createProcessInternal(processDefinition, variables, null, parentProcess.getHierarchySubProcess());
         nodeProcessDAO.create(new NodeProcess(parentExecutionContext.getToken(), subProcess, subProcessNode));
-        parentExecutionContext.addLog(new SubprocessStartLog(subProcessNode, subProcess));
-        grantSubprocessPermissions(processDefinition, subProcess, parentProcess);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, subProcess);
         subProcessNode.fireEvent(executionContext, Event.EVENTTYPE_SUBPROCESS_CREATED);
+        parentExecutionContext.addLog(new SubprocessStartLog(subProcessNode, subProcess));
+        grantSubprocessPermissions(processDefinition, subProcess, parentProcess);
+        startProcessInternal(processDefinition, subProcess, null);
         return subProcess;
     }
 
@@ -127,8 +128,7 @@ public class ProcessFactory {
         }
     }
 
-    private Process startProcessInternal(ProcessDefinition processDefinition, Map<String, Object> variables, Actor actor, String transitionName,
-            String parentHierarchySubProcess) {
+    private Process createProcessInternal(ProcessDefinition processDefinition, Map<String, Object> variables, Actor actor, String parentHierarchy) {
         Preconditions.checkNotNull(processDefinition, "can't create a process when processDefinition is null");
         Process process = new Process();
         process.setStartDate(new Date());
@@ -138,19 +138,22 @@ public class ProcessFactory {
         Token rootToken = new Token(processDefinition, process);
         process.setRootToken(rootToken);
         processDAO.create(process);
+        process.setHierarchySubProcess(ProcessHierarchyUtils.createHierarchy(parentHierarchy, process.getId()));
         ExecutionContext executionContext = new ExecutionContext(processDefinition, rootToken);
-
         if (actor != null) {
             executionContext.addLog(new ProcessStartLog(actor));
         }
-
         executionContext.setVariables(variables);
-
         if (actor != null) {
             SwimlaneDefinition swimlaneDefinition = processDefinition.getStartStateNotNull().getFirstTaskNotNull().getSwimlane();
             Swimlane swimlane = process.getSwimlaneNotNull(swimlaneDefinition);
             swimlane.assignExecutor(executionContext, actor, false);
         }
+        return process;
+    }
+
+    private Process startProcessInternal(ProcessDefinition processDefinition, Process process, String transitionName) {
+        ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         // fire the process start event
         processDefinition.fireEvent(executionContext, Event.EVENTTYPE_PROCESS_START);
         // execute the start node
@@ -160,7 +163,6 @@ public class ProcessFactory {
         if (transitionName != null) {
             transition = processDefinition.getStartStateNotNull().getLeavingTransitionNotNull(transitionName);
         }
-        process.setHierarchySubProcess(ProcessHierarchyUtils.createHierarchy(parentHierarchySubProcess, process.getId()));
         startState.leave(executionContext, transition);
         return process;
     }

@@ -139,6 +139,10 @@ public class ExecutionContext {
         return result;
     }
 
+    public List<Process> getAllSubprocessesRecursively() {
+        return nodeProcessDAO.getSubprocessesRecursive(getProcess());
+    }
+
     /**
      * @return the variable value with the given name.
      */
