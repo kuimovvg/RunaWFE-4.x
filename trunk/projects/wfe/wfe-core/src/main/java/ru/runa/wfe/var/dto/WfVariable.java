@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import ru.runa.wfe.var.VariableDefinition;
@@ -15,6 +16,7 @@ import ru.runa.wfe.var.jaxb.VariableAdapter;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+@XmlType(namespace = "http://stub.service.wfe.runa.ru/")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlJavaTypeAdapter(VariableAdapter.class)
 public class WfVariable implements Serializable {
