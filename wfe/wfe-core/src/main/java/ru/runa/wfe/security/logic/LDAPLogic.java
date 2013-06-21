@@ -214,7 +214,6 @@ public class LDAPLogic {
                 executorDAO.addExecutorsToGroup(actorsToAdd, group);
             }
             if (actorsToDelete.size() > 0) {
-                log.info("Removing from " + group + ": " + actorsToAdd);
                 executorDAO.removeExecutorsFromGroup(Lists.newArrayList(actorsToDelete), group);
             }
         }
