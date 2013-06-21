@@ -164,8 +164,8 @@ public class JpdlSerializer extends ProcessSerializer {
         List<TaskState> states = definition.getChildren(TaskState.class);
         for (TaskState state : states) {
             Element stateElement = writeTaskStateWithDuedate(root, state);
-            stateElement.addAttribute(ASYNC_ATTR, String.valueOf(state.isAsync()));
             if (state.isAsync()) {
+                stateElement.addAttribute(ASYNC_ATTR, Boolean.TRUE.toString());
                 stateElement.addAttribute(ASYNC_COMPLETION_MODE_ATTR, state.getAsyncCompletionMode().name());
             }
             if (state instanceof MultiTaskState) {
