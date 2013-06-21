@@ -11,7 +11,11 @@ public class XSSFilter extends HTTPFilterBase {
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        chain.doFilter(new XSSRequestWrapper(request), response);
+        String query = request.getRequestURI();
+        if (!query.contains("update_tasks_handler_conf")) {
+            request = new XSSRequestWrapper(request);
+        }
+        chain.doFilter(request, response);
     }
 
 }
