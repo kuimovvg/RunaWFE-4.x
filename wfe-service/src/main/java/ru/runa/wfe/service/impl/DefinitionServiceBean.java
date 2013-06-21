@@ -40,6 +40,7 @@ import ru.runa.wfe.service.decl.DefinitionServiceLocal;
 import ru.runa.wfe.service.decl.DefinitionServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
+import ru.runa.wfe.service.interceptors.PerformanceObserver;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 
@@ -47,7 +48,7 @@ import com.google.common.base.Preconditions;
 
 @Stateless(name = "DefinitionServiceBean")
 @TransactionManagement(TransactionManagementType.BEAN)
-@Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 @WebService(name = "DefinitionAPI", serviceName = "DefinitionWebService")
 @SOAPBinding
 public class DefinitionServiceBean implements DefinitionServiceLocal, DefinitionServiceRemote {

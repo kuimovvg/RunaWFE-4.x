@@ -33,6 +33,7 @@ import ru.runa.wfe.service.decl.SubstitutionServiceLocal;
 import ru.runa.wfe.service.decl.SubstitutionServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
+import ru.runa.wfe.service.interceptors.PerformanceObserver;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
@@ -45,7 +46,7 @@ import com.google.common.base.Preconditions;
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
-@Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 @WebService(name = "SubstitutionAPI", serviceName = "SubstitutionWebService")
 @SOAPBinding
 public class SubstitutionServiceBean implements SubstitutionServiceLocal, SubstitutionServiceRemote {

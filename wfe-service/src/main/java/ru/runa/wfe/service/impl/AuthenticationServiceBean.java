@@ -36,6 +36,7 @@ import ru.runa.wfe.service.decl.AuthenticationServiceLocal;
 import ru.runa.wfe.service.decl.AuthenticationServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
+import ru.runa.wfe.service.interceptors.PerformanceSimpleObserver;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
@@ -45,7 +46,7 @@ import com.google.common.base.Preconditions;
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
-@Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@Interceptors({ EjbExceptionSupport.class, PerformanceSimpleObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 @WebService(name = "AuthenticationAPI", serviceName = "AuthenticationWebService")
 @SOAPBinding
 public class AuthenticationServiceBean implements AuthenticationServiceLocal, AuthenticationServiceRemote {
