@@ -46,14 +46,7 @@ public class HTTPSessionFilter extends HTTPFilterBase {
                 return;
             }
         }
-        // try { TODO test graceful session invalidation in web
         chain.doFilter(request, response);
-        // } catch (ServletException e) {
-        // if (e.getRootCause() instanceof InvalidSessionException) {
-        // log.warn("session expired while accessing " + query);
-        // }
-        // throw e;
-        // }
     }
 
 }
