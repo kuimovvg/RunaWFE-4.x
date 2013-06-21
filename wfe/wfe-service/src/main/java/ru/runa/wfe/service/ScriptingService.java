@@ -12,18 +12,29 @@ import ru.runa.wfe.user.User;
  * @since 4.0.4
  */
 @Remote
-public interface AdminScriptService {
+public interface ScriptingService {
     /**
-     * Executes script.
+     * Executes administrative XML-based script.
      * 
      * @param user
      *            authorized user
-     * @param configData
+     * @param scriptData
      *            script data
      * @param processDefinitionsBytes
      *            process definitions data to deploy or update
      * @throws AdminScriptException
      *             if script execution fails
      */
-    public void run(User user, byte[] configData, byte[][] processDefinitionsBytes) throws AdminScriptException;
+    public void executeAdminScript(User user, byte[] scriptData, byte[][] processDefinitionsBytes) throws AdminScriptException;
+
+    /**
+     * Executes Groovy script.
+     * 
+     * @param user
+     *            authorized user
+     * @param script
+     *            groovy code
+     */
+    public void executeGroovyScript(User user, String script);
+
 }

@@ -17,25 +17,27 @@
  */
 package ru.runa.wfe.service.delegate;
 
-import ru.runa.wfe.service.AdminScriptService;
+import ru.runa.wfe.service.ScriptingService;
 import ru.runa.wfe.user.User;
 
-/**
- * Created on 23.09.2005
- */
-public class AdminScriptServiceDelegate extends EJB3Delegate implements AdminScriptService {
+public class ScriptingServiceDelegate extends EJB3Delegate implements ScriptingService {
 
-    public AdminScriptServiceDelegate() {
-        super("AdminScriptServiceBean", AdminScriptService.class);
+    public ScriptingServiceDelegate() {
+        super("ScriptingServiceBean", ScriptingService.class);
     }
 
-    private AdminScriptService getWfeScriptService() {
+    private ScriptingService getScriptingService() {
         return getService();
     }
 
     @Override
-    public void run(User user, byte[] configData, byte[][] processFiles) {
-        getWfeScriptService().run(user, configData, processFiles);
+    public void executeAdminScript(User user, byte[] configData, byte[][] processFiles) {
+        getScriptingService().executeAdminScript(user, configData, processFiles);
+    }
+
+    @Override
+    public void executeGroovyScript(User user, String script) {
+        getScriptingService().executeGroovyScript(user, script);
     }
 
 }

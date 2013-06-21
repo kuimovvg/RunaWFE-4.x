@@ -79,7 +79,7 @@ public class AdminScriptClient {
         String defaultTransactionScope = root.attributeValue("defaultTransactionScope");
         if (transactionScopeElements.size() == 0 && "all".equals(defaultTransactionScope)) {
             byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(root);
-            Delegates.getAdminScriptService().run(user, scriptBytes, processDefinitionsBytes);
+            Delegates.getScriptingService().executeAdminScript(user, scriptBytes, processDefinitionsBytes);
         } else {
             if (transactionScopeElements.size() > 0) {
                 System.out.println("multiple docs [by <transactionScope>]: " + transactionScopeElements.size());
@@ -93,7 +93,7 @@ public class AdminScriptClient {
                     byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document.getRootElement());
                     try {
                         handler.onStartTransaction(bs);
-                        Delegates.getAdminScriptService().run(user, bs, processDefinitionsBytes);
+                        Delegates.getScriptingService().executeAdminScript(user, bs, processDefinitionsBytes);
                         handler.onEndTransaction();
                     } catch (Exception e) {
                         handler.onTransactionException(e);
@@ -109,7 +109,7 @@ public class AdminScriptClient {
                     byte[][] processDefinitionsBytes = readProcessDefinitionsToByteArrays(document.getRootElement());
                     try {
                         handler.onStartTransaction(bs);
-                        Delegates.getAdminScriptService().run(user, bs, processDefinitionsBytes);
+                        Delegates.getScriptingService().executeAdminScript(user, bs, processDefinitionsBytes);
                         handler.onEndTransaction();
                     } catch (Exception e) {
                         handler.onTransactionException(e);

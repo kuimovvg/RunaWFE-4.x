@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.service.AdminScriptService;
+import ru.runa.wfe.service.ScriptingService;
 import ru.runa.wfe.service.AuthenticationService;
 import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.BotService;
@@ -106,8 +106,8 @@ public class Delegates {
         return getDelegate(InitializerServiceDelegate.class);
     }
 
-    public static AdminScriptService getAdminScriptService() {
-        return getDelegate(AdminScriptServiceDelegate.class);
+    public static ScriptingService getScriptingService() {
+        return getDelegate(ScriptingServiceDelegate.class);
     }
 
     public static SynchronizationService getSynchronizationService() {

@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.service.impl;
 
+import groovy.lang.GroovyShell;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -27,8 +29,10 @@ import javax.jws.soap.SOAPBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
+import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.script.AdminScriptRunner;
-import ru.runa.wfe.service.AdminScriptService;
+import ru.runa.wfe.service.ScriptingService;
 import ru.runa.wfe.service.interceptors.CacheReloader;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
@@ -39,16 +43,27 @@ import ru.runa.wfe.user.User;
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, CacheReloader.class, PerformanceObserver.class, EjbTransactionSupport.class,
         SpringBeanAutowiringInterceptor.class })
-@WebService(name = "AdminScriptAPI", serviceName = "AdminScriptWebService")
+@WebService(name = "ScriptingAPI", serviceName = "ScriptingWebService")
 @SOAPBinding
-public class AdminScriptServiceBean implements AdminScriptService {
+public class ScriptingServiceBean implements ScriptingService {
     @Autowired
     private AdminScriptRunner runner;
 
     @Override
-    public void run(User user, byte[] configData, byte[][] processDefinitionsBytes) {
+    public void executeAdminScript(User user, byte[] configData, byte[][] processDefinitionsBytes) {
         runner.setUser(user);
         runner.setProcessDefinitionsBytes(processDefinitionsBytes);
         runner.runScript(configData);
+    }
+
+    @Override
+    public void executeGroovyScript(User user, String script) {
+        boolean enabled = SystemProperties.getResources().getBooleanProperty("scripting.groovy.enabled", false);
+        if (!enabled) {
+            throw new InternalApplicationException(
+                    "In order to enable script execution set property 'scripting.groovy.enabled' to 'true' in system.properties or wfe.custom.system.properties");
+        }
+        GroovyShell shell = new GroovyShell();
+        shell.evaluate(script);
     }
 }
