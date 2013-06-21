@@ -32,6 +32,7 @@ import ru.runa.wfe.service.decl.BotServiceRemote;
 import ru.runa.wfe.service.delegate.WfeScriptForBotStations;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
+import ru.runa.wfe.service.interceptors.PerformanceObserver;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Charsets;
@@ -45,7 +46,7 @@ import com.google.common.io.ByteStreams;
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
-@Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 @WebService(name = "BotAPI", serviceName = "BotWebService")
 @SOAPBinding
 public class BotServiceBean implements BotServiceLocal, BotServiceRemote {

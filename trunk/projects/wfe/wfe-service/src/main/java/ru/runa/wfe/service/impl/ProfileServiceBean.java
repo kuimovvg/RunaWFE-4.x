@@ -32,6 +32,7 @@ import ru.runa.wfe.service.decl.ProfileServiceLocal;
 import ru.runa.wfe.service.decl.ProfileServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
+import ru.runa.wfe.service.interceptors.PerformanceObserver;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.logic.ProfileLogic;
@@ -40,7 +41,7 @@ import com.google.common.base.Preconditions;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
-@Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 @WebService(name = "ProfileAPI", serviceName = "ProfileWebService")
 @SOAPBinding
 public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRemote {
