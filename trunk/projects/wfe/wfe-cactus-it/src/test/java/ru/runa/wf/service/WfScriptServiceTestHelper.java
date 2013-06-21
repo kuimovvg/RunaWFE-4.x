@@ -12,7 +12,7 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AdminScriptService;
+import ru.runa.wfe.service.ScriptingService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.Collection;
 
 public class WfScriptServiceTestHelper extends WfServiceTestHelper {
-
-    private AdminScriptService adminScriptService = Delegates.getAdminScriptService();
 
     public WfScriptServiceTestHelper(String testClassPrefixName) throws Exception {
         super(testClassPrefixName);
@@ -84,7 +82,7 @@ public class WfScriptServiceTestHelper extends WfServiceTestHelper {
 
     public void executeScript(String resourceName) throws IOException, ExecutorDoesNotExistException, AuthenticationException,
             AuthorizationException {
-        adminScriptService.run(adminUser, readBytesFromFile(resourceName), new byte[0][]);
+        Delegates.getScriptingService().executeAdminScript(adminUser, readBytesFromFile(resourceName), new byte[0][]);
     }
 
     public WfProcess startProcessInstance(String processDefinitionName, Executor performer) throws
