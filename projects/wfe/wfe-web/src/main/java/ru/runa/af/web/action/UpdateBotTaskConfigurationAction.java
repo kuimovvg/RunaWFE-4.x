@@ -14,7 +14,6 @@ import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.xml.XmlUtils;
-import ru.runa.wfe.service.BotService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.base.Charsets;
@@ -34,7 +33,6 @@ public class UpdateBotTaskConfigurationAction extends ActionBase {
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         IdForm idForm = (IdForm) form;
-        BotService botService = Delegates.getBotService();
         try {
             Long botTaskId = idForm.getId();
             String configuration = request.getParameter("conf");
@@ -47,9 +45,9 @@ public class UpdateBotTaskConfigurationAction extends ActionBase {
             if (!configurationIsXml) {
                 configuration = Native2AsciiHelper.nativeToAscii(configuration);
             }
-            BotTask botTask = botService.getBotTask(getLoggedUser(request), botTaskId);
+            BotTask botTask = Delegates.getBotService().getBotTask(getLoggedUser(request), botTaskId);
             botTask.setConfiguration(configuration.getBytes(Charsets.UTF_8));
-            botService.updateBotTask(getLoggedUser(request), botTask);
+            Delegates.getBotService().updateBotTask(getLoggedUser(request), botTask);
 
             PrintWriter out = response.getWriter();
             response.setContentType("application/xml");
