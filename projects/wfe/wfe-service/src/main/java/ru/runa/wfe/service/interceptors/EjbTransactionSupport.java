@@ -7,7 +7,6 @@ import javax.interceptor.InvocationContext;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.exception.LockAcquisitionException;
 
@@ -31,7 +30,6 @@ import com.google.common.base.Throwables;
  * delivered successfully.
  */
 public class EjbTransactionSupport {
-    private static final Log log = LogFactory.getLog("apicall");
     @Resource
     private EJBContext ejbContext;
 
@@ -43,18 +41,8 @@ public class EjbTransactionSupport {
             if (ic.getParameters() != null && ic.getParameters().length > 0 && ic.getParameters()[0] instanceof User) {
                 UserHolder.set((User) ic.getParameters()[0]);
             }
-            long startTime = System.currentTimeMillis();
             Object result = invokeWithRetry(ic);
-            long jobTime = System.currentTimeMillis() - startTime;
-            if (jobTime > 2000) {
-                log.info((jobTime / 1000) + " sec. took execution of " + DebugUtils.getDebugString(ic));
-            }
-            startTime = System.currentTimeMillis();
             transaction.commit();
-            jobTime = System.currentTimeMillis() - startTime;
-            if (jobTime > 2000) {
-                log.info((jobTime / 1000) + " sec. took commit of " + DebugUtils.getDebugString(ic));
-            }
             UserHolder.reset();
             return result;
         } catch (Throwable th) {
@@ -90,7 +78,7 @@ public class EjbTransactionSupport {
         try {
             return ic.proceed();
         } catch (LockAcquisitionException e) {
-            log.error("Got LockAcquisitionException: " + e);
+            LogFactory.getLog(getClass()).error("Got LockAcquisitionException: " + e);
             Thread.sleep(1000);
             return ic.proceed();
         }
