@@ -60,6 +60,10 @@
 			<groupId>org.alfresco</groupId>
 			<artifactId>alfresco-web-service-client</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>
