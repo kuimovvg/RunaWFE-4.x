@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<functions xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml orgfunctions.xsd">
+  <function function="ru.runa.af.organizationfunction.ChiefFunction" name="ChiefFunction"/>
+  <function function="ru.runa.af.organizationfunction.DemoChiefFunction" name="DemoChiefFunction"/>
+  <function
+    function="ru.runa.af.organizationfunction.ExecutorByCodeFunction" name="ExecutorByCodeFunction"/>
+  <function function="ru.runa.af.organizationfunction.DirectorFunction" name="DirectorFunction"/>
+  <function
+    function="ru.runa.af.organizationfunction.ExecutorByNameFunction" name="ExecutorByNameFunction"/>
+  <function function="ru.runa.af.organizationfunction.SQLFunction" name="SQLFunction"/>
+</functions>

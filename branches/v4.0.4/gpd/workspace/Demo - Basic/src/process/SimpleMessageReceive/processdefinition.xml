@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="SimpleMessageReceive">
+  <swimlane id="staff" name="staff">
+    <assignment class="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <swimlane id="ID11" name="manager">
+    <assignment class="ru.runa.wfe.handler.assign.DefaultAssignmentHandler"><![CDATA[ru.runa.wfe.os.func.ExecutorByNameFunction(manager)]]></assignment>
+  </swimlane>
+  <start-state id="Start" name="Start">
+    <task name="Start" swimlane="staff"/>
+    <transition id="tr1" name="tr1" to="Receive data"/>
+  </start-state>
+  <task-node id="Output data" name="Output data" async="false">
+    <task name="Output data" swimlane="staff"/>
+    <transition id="tr1" name="tr1" to="End"/>
+  </task-node>
+  <task-node id="ID8" name="No message" async="false">
+    <task name="No message" swimlane="manager"/>
+    <transition id="ID10" name="tr1" to="End"/>
+  </task-node>
+  <receive-message id="Receive data" name="Receive data">
+    <transition id="tr1" name="tr1" to="Output data"/>
+    <transition id="ID9" name="time-out-transition" to="ID8"/>
+    <variable name="processDefinitionName" mapped-name="${currentDefinitionName}" access="selector"/>
+    <variable name="msg_rec" mapped-name="msg_send" access="read"/>
+    <timer duedate="#{waitUntil} + 0 minutes" transition="time-out-transition"/>
+  </receive-message>
+  <end-state id="End" name="End"/>
+</process-definition>

@@ -1,0 +1,2 @@
+<P><SPAN style="background-color: #ffff99"><SPAN style="color: #ff0000"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">str = str + " ; " + "variable" + " = " + variable + " ; "" + (a-0.1) + """</SPAN></SPAN></SPAN></SPAN></P>
+<P><SPAN style="background-color: #ffff99"><SPAN style="color: #ff0000"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">str =</SPAN></SPAN></SPAN></SPAN><SPAN style="font-size: medium"><SPAN style="font-family: Arial"> ${DisplayVariable("str")}</SPAN></SPAN></P>

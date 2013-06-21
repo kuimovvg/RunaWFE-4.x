@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="BotDemo">
+  <description><![CDATA[Bot demo process (no start form provided)]]></description>
+  <swimlane id="ID0" name="bot">
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction(UniversalBot)]]></assignment>
+  </swimlane>
+  <swimlane id="ID1" name="user">
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state id="start" name="start">
+    <task name="start" swimlane="user"/>
+    <transition id="ID2" name="tr1" to="before bot activity"/>
+  </start-state>
+  <task-node id="DoNothing" name="DoNothing" async="false">
+    <description><![CDATA[Bot executes a task]]></description>
+    <task name="DoNothing" swimlane="bot"/>
+    <transition id="ID3" name="tr1" to="after bot activity"/>
+  </task-node>
+  <task-node id="after bot activity" name="after bot activity" async="false">
+    <description><![CDATA[after bot activity]]></description>
+    <task name="after bot activity" swimlane="user"/>
+    <transition id="ID4" name="tr1" to="end"/>
+  </task-node>
+  <task-node id="before bot activity" name="before bot activity" async="false">
+    <description><![CDATA[before bot activity]]></description>
+    <task name="before bot activity" swimlane="user"/>
+    <transition id="ID5" name="tr1" to="DoNothing">
+      <action class="ru.runa.wfe.service.handler.BotInvokerActionHandler"><![CDATA[]]></action>
+    </transition>
+  </task-node>
+  <end-state id="end" name="end"/>
+</process-definition>

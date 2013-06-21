@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="approve my doc">
+  <description><![CDATA[Simple interoperability with ECM Alfresco]]></description>
+  <swimlane id="ID0" name="initiator">
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <swimlane id="ID1" name="manager">
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction(manager)]]></assignment>
+  </swimlane>
+  <start-state id="Upload document" name="Upload document">
+    <task name="Upload document" swimlane="initiator"/>
+    <transition id="ID2" name="tr1" to="Approve document">
+      <action class="ru.runa.bp.demo.CreateMyDoc"><![CDATA[<config> <input> <param name="file" variable="file" /> </input> <output> <param name="uuid" variable="uuid" /> </output> </config>]]></action>
+    </transition>
+  </start-state>
+  <task-node id="Approve document" name="Approve document" async="false">
+    <task name="Approve document" swimlane="manager"/>
+    <transition id="ID4" name="Approve" to="Result">
+      <action class="ru.runa.bp.demo.ApproveMyDoc"><![CDATA[<config> <input> <param name="uuid" variable="uuid" /> </input> </config>]]></action>
+    </transition>
+    <transition id="ID6" name="Reject" to="Result">
+      <action class="ru.runa.bp.demo.RejectMyDoc"><![CDATA[<config> <input> <param name="uuid" variable="uuid" /> </input> </config>]]></action>
+    </transition>
+  </task-node>
+  <task-node id="Result" name="Result" async="false">
+    <task name="Result" swimlane="initiator"/>
+    <transition id="ID8" name="tr1" to="End"/>
+  </task-node>
+  <end-state id="End" name="End"/>
+</process-definition>

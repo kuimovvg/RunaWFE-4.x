@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<forms>
+  <form state="enter data" file="enter data.ftl" type="ftl" validationFile="enter data.validation.xml" jsValidation="false"/>
+  <form state="read of save file" file="read of save file.ftl" type="ftl" validationFile="read of save file.validation.xml" jsValidation="false"/>
+</forms>

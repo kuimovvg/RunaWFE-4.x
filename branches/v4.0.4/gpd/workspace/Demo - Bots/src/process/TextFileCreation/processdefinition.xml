@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition name="TextFileCreation">
+  <description><![CDATA[Bot creates text file (no start form provided)]]></description>
+  <swimlane id="ID0" name="bot">
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction(UniversalBot)]]></assignment>
+  </swimlane>
+  <swimlane id="ID1" name="user">
+    <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
+  </swimlane>
+  <start-state id="enter data" name="enter data">
+    <task name="enter data" swimlane="user"/>
+    <transition id="ID2" name="tr1" to="create text file"/>
+  </start-state>
+  <task-node id="read of save file" name="read of save file" async="false">
+    <description><![CDATA[File is ready]]></description>
+    <task name="read of save file" swimlane="user"/>
+    <transition id="ID3" name="tr1" to="end"/>
+  </task-node>
+  <task-node id="create text file" name="create text file" async="false">
+    <description><![CDATA[bot creates test file]]></description>
+    <task name="create text file" swimlane="bot">
+      <event type="task-create">
+        <action class="ru.runa.wfe.service.handler.BotInvokerActionHandler"><![CDATA[]]></action>
+      </event>
+    </task>
+    <transition id="ID4" name="tr1" to="read of save file"/>
+  </task-node>
+  <end-state id="end" name="end"/>
+</process-definition>

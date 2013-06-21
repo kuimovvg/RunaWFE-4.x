@@ -1,0 +1,2 @@
+<P><SPAN style="background-color: #ffff99"><SPAN style="color: #ff0000"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">c = true &amp; ( false ^ true ) | ("aab"&lt;="aaa")</SPAN></SPAN></SPAN></SPAN></P>
+<P><SPAN style="background-color: #ffff99"><SPAN style="color: #ff0000"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">c =</SPAN></SPAN></SPAN></SPAN><SPAN style="font-size: medium"><SPAN style="font-family: Arial"> ${DisplayVariable("c")}</SPAN></SPAN></P>

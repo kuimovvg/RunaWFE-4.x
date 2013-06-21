@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app  xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+   <distributable/>
+
+    <!-- Debug statistics -->
+    <filter>
+        <filter-name>monitoring</filter-name>
+        <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
+    </filter>
+    <filter-mapping>
+    	<filter-name>monitoring</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <listener>
+	    <listener-class>net.bull.javamelody.SessionListener</listener-class>
+    </listener>
+        
+   <filter>
+      <filter-name>ntlmfilter</filter-name>
+      <filter-class>ru.runa.af.web.filter.NTLMFilter</filter-class>
+   </filter>
+   <filter>
+      <filter-name>session</filter-name>
+      <filter-class>ru.runa.common.web.filter.HTTPSessionFilter</filter-class>
+   </filter>
+   <filter>
+      <filter-name>krbfilter</filter-name>
+      <filter-class>ru.runa.af.web.filter.KrbFilter</filter-class>
+   </filter>
+   <filter>
+      <filter-name>XSS</filter-name>
+      <filter-class>ru.runa.common.web.filter.XSSFilter</filter-class>
+   </filter>
+
+    <!--
+    To use non XDoclet filter-mappings, create a filter-mappings.xml file that
+    contains the additional filter-mappings and place it in your
+    project's merge dir.
+    -->
+   <filter-mapping>
+      <filter-name>ntlmfilter</filter-name>
+      <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+      <filter-name>session</filter-name>
+      <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+      <filter-name>krbfilter</filter-name>
+      <url-pattern>/krblogin.do</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+      <filter-name>XSS</filter-name>
+      <url-pattern>/*</url-pattern>
+   </filter-mapping>
+
+  <listener>
+	<listener-class>ru.runa.common.web.InitializeDBListener</listener-class>
+</listener>
+
+ <servlet>
+	<servlet-name>action</servlet-name>
+	<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+	<init-param>
+		<param-name>config</param-name>
+		<param-value>/WEB-INF/struts-config.xml</param-value>
+	</init-param>
+	<init-param>
+		<param-name>debug</param-name>
+		<param-value>3</param-value>
+	</init-param>
+	<init-param>
+		<param-name>detail</param-name>
+		<param-value>3</param-value>
+	</init-param>
+	<load-on-startup>0</load-on-startup>
+</servlet>
+
+<servlet>
+	<servlet-name>freemarkerTagServlet</servlet-name>
+	<servlet-class>ru.runa.wf.web.servlet.AjaxFreemarkerTagServlet</servlet-class>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+
+<servlet>
+	<servlet-name>ajaxcmdServlet</servlet-name>
+	<servlet-class>ru.runa.wf.web.servlet.AjaxCommandServlet</servlet-class>
+</servlet>
+
+  <servlet-mapping>
+	<servlet-name>action</servlet-name>
+	<url-pattern>*.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>freemarkerTagServlet</servlet-name>
+	<url-pattern>/form.fp</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>ajaxcmdServlet</servlet-name>
+	<url-pattern>/ajaxcmd</url-pattern>
+</servlet-mapping>
+
+  <mime-mapping>
+	<extension>dll</extension>
+	<mime-type>application/x-msdownload</mime-type>
+</mime-mapping>
+
+   <welcome-file-list>
+	<welcome-file>index.jsp</welcome-file>
+</welcome-file-list>
+
+  <error-page>
+	<error-code>404</error-code>
+	<location>/start.do</location>
+</error-page>
+
+<error-page>
+	<error-code>403</error-code>
+	<location>/start.do</location>
+</error-page>
+
+<error-page>
+	<error-code>500</error-code>
+	<location>/error.do</location>
+</error-page>
+
+<error-page>
+	<exception-type>ru.runa.wfe.security.AuthenticationException</exception-type>
+	<location>/start.do</location>
+</error-page>
+
+<error-page>
+	<exception-type>ru.runa.common.web.InvalidSessionException</exception-type>
+	<location>/start.do</location>
+</error-page>
+
+<error-page>
+	<exception-type>ru.runa.wfe.user.ExecutorDoesNotExistException</exception-type>
+	<location>/manage_executors.do</location>
+</error-page>
+
+<error-page>
+	<exception-type>ru.runa.wfe.definition.ProcessDefinitionDoesNotExistException</exception-type>
+	<location>/manage_process_definitions.do</location>
+</error-page>
+
+<error-page>
+	<exception-type>ru.runa.wfe.execution.ProcessDoesNotExistException</exception-type>
+	<location>/manage_processes.do</location>
+</error-page>
+
+<error-page>
+	<exception-type>ru.runa.wfe.task.TaskDoesNotExistException</exception-type>
+	<location>/manage_tasks.do</location>
+</error-page>
+
+<error-page>
+	<exception-type>java.lang.RuntimeException</exception-type>
+	<location>/error.do</location>
+</error-page>
+
+  <!--
+  To add taglibs by xml, create a file called taglibs.xml and place it
+  in your merge dir.
+  -->
+
+   <!--
+   To set up security settings for your web app, create a file named web-security.xml, put it in your project's mergedir.
+   Organize web-security.xml following this DTD slice:
+
+   <!ELEMENT security-constraint (display-name?, web-resource-collection+, auth-constraint?, user-data-constraint?)>
+   <!ELEMENT web-resource-collection (web-resource-name, description?, url-pattern*, http-method*)>
+   <!ELEMENT web-resource-name (#PCDATA)>
+   <!ELEMENT url-pattern (#PCDATA)>
+   <!ELEMENT http-method (#PCDATA)>
+   <!ELEMENT user-data-constraint (description?, transport-guarantee)>
+   <!ELEMENT transport-guarantee (#PCDATA)>
+
+   <!ELEMENT login-config (auth-method?, realm-name?, form-login-config?)>
+   <!ELEMENT auth-method (#PCDATA)>
+   <!ELEMENT realm-name (#PCDATA)>
+   <!ELEMENT form-login-config (form-login-page, form-error-page)>
+   <!ELEMENT form-login-page (#PCDATA)>
+   <!ELEMENT form-error-page (#PCDATA)>
+   -->
+
+</web-app>
