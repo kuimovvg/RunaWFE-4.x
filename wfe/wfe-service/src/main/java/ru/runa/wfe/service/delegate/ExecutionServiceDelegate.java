@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.service.delegate;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +24,7 @@ import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
+import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
@@ -184,9 +184,8 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public void removeProcesses(User user, Date startDate, Date finishDate, String name, int version, Long id, Long idTill, boolean onlyFinished,
-            boolean dateInterval) {
-        getExecutionService().removeProcesses(user, startDate, finishDate, name, version, id, idTill, onlyFinished, dateInterval);
+    public void removeProcesses(User user, ProcessFilter filter) {
+        getExecutionService().removeProcesses(user, filter);
     }
 
     @Override

@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +26,7 @@ import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
+import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
@@ -407,13 +407,9 @@ public interface ExecutionService {
     public Object getProcessLogValue(User user, Long logId);
 
     /**
-     * (experimental) Removes processes by criterias.
-     * 
-     * @throws ProcessDoesNotExistException
-     * @throws ParentProcessExistsException
+     * Removes processes by filter criterias.
      */
-    public void removeProcesses(User user, Date startDate, Date finishDate, String name, int version, Long id, Long idTill, boolean onlyFinished,
-            boolean dateInterval) throws ProcessDoesNotExistException, ParentProcessExistsException;
+    public void removeProcesses(User user, ProcessFilter filter) throws ProcessDoesNotExistException, ParentProcessExistsException;
 
     /**
      * Gets system logs for {@link BatchPresentation}.
