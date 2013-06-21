@@ -274,10 +274,8 @@ public class Process extends IdentifiableBase {
         // check if this process was started as a subprocess of a super
         // process
         NodeProcess parentNodeProcess = executionContext.getParentNodeProcess();
-        boolean activeSuperProcessExists = parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded();
-        if (activeSuperProcessExists) {
+        if (parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded()) {
             Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
-            parentNodeProcess.getProcess().getDeployment().getId();
             ProcessDefinition superDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(superDefinitionId);
             ExecutionContext superExecutionContext = new ExecutionContext(superDefinition, parentNodeProcess.getParentToken());
             log.info("Signalling to parent " + parentNodeProcess.getProcess());
@@ -295,7 +293,7 @@ public class Process extends IdentifiableBase {
         }
         // flush just created tasks
         ApplicationContextFactory.getTaskDAO().flushPendingChanges();
-        activeSuperProcessExists = parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded();
+        boolean activeSuperProcessExists = parentNodeProcess != null && !parentNodeProcess.getProcess().hasEnded();
         List<Task> taskToDelete = Lists.newArrayList();
         for (Task task : tasks) {
             Node node = executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
