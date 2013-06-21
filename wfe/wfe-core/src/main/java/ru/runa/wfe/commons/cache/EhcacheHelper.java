@@ -56,11 +56,7 @@ public final class EhcacheHelper {
      */
     private static CacheManager createManager() {
         try {
-            InputStream configuration = ClassLoaderUtil.getAsStreamNotNull("ehcache.xml", EhcacheHelper.class);
-            if (configuration == null) {
-                log.error("EHCache manager settings for WFE caching not found. Local caching will be used.");
-                return null;
-            }
+            InputStream configuration = ClassLoaderUtil.getAsStreamNotNull("hibernate.cache.xml", EhcacheHelper.class);
             CacheManager ehcacheManager = new CacheManager(configuration);
             log.info("EHCache manager loaded and will be used in WFE caches.");
             for (String cacheName : ehcacheManager.getCacheNames()) {
