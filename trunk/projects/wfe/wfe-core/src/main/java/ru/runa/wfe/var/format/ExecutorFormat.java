@@ -6,6 +6,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 
@@ -25,13 +26,14 @@ public class ExecutorFormat implements VariableFormat<Executor>, VariableDisplay
 
     @Override
     public String getHtml(User user, WebHelper webHelper, Long processId, String name, Executor value) {
+        String displayName = value instanceof Actor ? value.getFullName() : value.getName();
         if (ApplicationContextFactory.getPermissionDAO().isAllowed(user, Permission.READ, value)) {
             HashMap<String, Object> params = Maps.newHashMap();
             params.put("id", value.getId());
             String href = webHelper.getActionUrl("/manage_executor", params);
-            return "<a href=\"" + href + "\">" + value.getName() + "</>";
+            return "<a href=\"" + href + "\">" + displayName + "</>";
         } else {
-            return value.getName();
+            return displayName;
         }
     }
 
