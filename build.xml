@@ -32,15 +32,10 @@
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${deploy.dir}" />
 		<mkdir dir="${build.dir}/classes/img" />
-		<copy todir="${build.dir}/classes/img" overwrite="true">
-			<fileset dir="${basedir}/img" />
-		</copy>
-		<native2ascii encoding="UTF-8" src="${resources.dir}" dest="${classes.dir}" includes="*.properties" />
-		<copy file="${resources.dir}/log4j.xml" todir="${classes.dir}" overwrite="true"/>
 	</target>
 
 	<target name="compile" depends="init">
-		<javac destdir="${classes.dir}/" srcdir="${src.dir}"  debug="true"  encoding="UTF-8" target="1.6">
+		<javac destdir="${classes.dir}/" srcdir="${src.dir}" debug="true" encoding="UTF-8" target="1.6">
 			<classpath refid="lib.classpath" />
 			<classpath refid="swt.lib.classpath" />
 		</javac>
@@ -52,10 +47,22 @@
 			<fileset refid="local.lib.fileset" />
 		</unjar>
 
+		<copy todir="${build.dir}/classes/img" overwrite="true">
+			<fileset dir="${resources.dir}/img" />
+		</copy>
+		<copy todir="${build.dir}/classes" overwrite="true">
+			<fileset dir="${resources.dir}" includes="*.wav" />
+		</copy>
+		<native2ascii encoding="UTF-8" src="${resources.dir}" dest="${classes.dir}" includes="*.properties" />
+		<copy file="${resources.dir}/log4j.xml" todir="${classes.dir}" overwrite="true"/>
+		
 		<replace dir="${classes.dir}" includes="*.properties" token="#To rtn:" value=""/>
 
 		<jar jarfile="${deploy.dir}/rtn.jar" basedir="${classes.dir}">
-			<exclude name="*.properties" />
+			<exclude name="application*.properties" />
+			<exclude name="ejb.properties" />
+			<exclude name="jndi.properties" />
+			<exclude name="kerberos.properties" />
 			<manifest>
 				<attribute name="Main-Class" value="ru.runa.notifier.PlatformLoader" />
 				<attribute name="Class-Path" value="." />
@@ -66,7 +73,6 @@
 		<copy todir="${deploy.dir}" overwrite="true">
 			<fileset dir="${resources.dir}" includes="*.properties" />
 			<fileset dir="${resources.dir}" includes="run.*" />
-			<fileset dir="${resources.dir}" includes="*.wav" />
 		</copy>
 		<copy todir="${deploy.dir}" overwrite="true">
 			<fileset dir="${lib.dir}" includes="swt-*.jar"></fileset>

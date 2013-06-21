@@ -14,7 +14,6 @@
 	<classpathentry kind="lib" path="lib/jcifs.jar"/>
 	<classpathentry kind="lib" path="lib/jnp-client.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/swt-win32.jar"/>
 	<classpathentry kind="lib" path="lib/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-annotations.jar"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
@@ -26,5 +25,6 @@
 	<classpathentry kind="lib" path="lib/jboss-ejb3-client.jar"/>
 	<classpathentry kind="lib" path="lib/jboss-aop-jdk50-client.jar"/>
 	<classpathentry kind="lib" path="lib/jboss-aspect-jdk50-client.jar"/>
+	<classpathentry kind="lib" path="lib/swt-win64.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
