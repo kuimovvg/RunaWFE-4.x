@@ -9,9 +9,12 @@ import com.google.common.collect.Lists;
 
 public class DebugUtils {
 
-    public static String getDebugString(InvocationContext ic) {
-        return ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName() + "("
-                + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")";
+    public static String getDebugString(InvocationContext ic, boolean includeArguments) {
+        String s = ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName();
+        if (includeArguments) {
+            s += "(" + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")";
+        }
+        return s;
     }
 
     private static List<String> getDebugArguments(Object[] values) {

@@ -36,6 +36,7 @@ import ru.runa.wfe.service.decl.SystemServiceLocal;
 import ru.runa.wfe.service.decl.SystemServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
+import ru.runa.wfe.service.interceptors.PerformanceObserver;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Preconditions;
@@ -46,7 +47,7 @@ import com.google.common.base.Preconditions;
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
-@Interceptors({ EjbExceptionSupport.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 @WebService(name = "SystemAPI", serviceName = "SystemWebService")
 @SOAPBinding
 public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemote {
