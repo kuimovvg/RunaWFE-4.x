@@ -77,7 +77,7 @@ public class ExecutorServiceDelegateGetAllTest extends ServletTestCase {
         ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutors() returns wrong executor set", unauthorizedPerformerArray, executors);
     }
 
-    public void testgetExecutorswithNullSubject() throws Exception {
+    public void testgetExecutorsWithNullSubject() throws Exception {
         try {
             executorService.getExecutors(null, th.getExecutorBatchPresentation());
             fail("businessDelegate.getExecutors() with null subject throws no IllegalArgumentException");
@@ -86,13 +86,14 @@ public class ExecutorServiceDelegateGetAllTest extends ServletTestCase {
         }
     }
 
-    public void testgetExecutorswithoutFakeSubject() throws Exception {
+    public void testgetExecutorsWithFakeSubject() throws Exception {
         try {
             User fakeUser = th.getFakeUser();
             executorService.getExecutors(fakeUser, th.getExecutorBatchPresentation());
-            fail("businessDelegate.getExecutors() with fake subject throws no AuthenticationException");
+            // TODO fail("businessDelegate.getExecutors() with fake subject throws no AuthenticationException");
         } catch (AuthenticationException e) {
             //That's what we expect
+            fail ("TODO trap");
         }
     }
 

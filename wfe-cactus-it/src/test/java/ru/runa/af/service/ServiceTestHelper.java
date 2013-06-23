@@ -503,7 +503,7 @@ public class ServiceTestHelper {
 
     private void createFakeExecutors() {
         fakeActor = new Actor(testClassName + FAKE_ACTOR_NAME, testClassName + FAKE_ACTOR_DESC);
-        fakeActor.setId(-1L);
+        fakeActor.setId(adminUser.getActor().getId());
         fakeGroup = new Group(testClassName + FAKE_GROUP_NAME, testClassName + FAKE_GROUP_DESC);
         fakeExecutors = Lists.newArrayList();
         for (int i = 0; i < 5; i++) {

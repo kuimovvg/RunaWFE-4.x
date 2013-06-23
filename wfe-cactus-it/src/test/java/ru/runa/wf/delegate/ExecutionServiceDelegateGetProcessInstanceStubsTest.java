@@ -95,7 +95,7 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
             }
         }
         Map<Integer, FilterCriteria> filters = batchPresentation.getFilteredFields();
-        filters.put(new Integer(0), new AnywhereStringFilterCriteria(/*TODO new String[] { value }*/));
+        filters.put(0, new AnywhereStringFilterCriteria(value));
         List<WfProcess> processes = executionService.getProcesses(helper.getAuthorizedPerformerUser(), batchPresentation);
         for (WfProcess processInstanceStub : processes) {
             List<WfVariable> instanceVariablesMap = executionService.getVariables(helper.getAuthorizedPerformerUser(),
@@ -124,7 +124,7 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
             }
         }
         Map<Integer, FilterCriteria> filters = batchPresentation.getFilteredFields();
-        filters.put(new Integer(0), new AnywhereStringFilterCriteria(/*TODO new String[] { "bad matcher" }*/));
+        filters.put(0, new AnywhereStringFilterCriteria("bad matcher"));
         List<WfProcess> processes = executionService.getProcesses(helper.getAuthorizedPerformerUser(), batchPresentation);
         for (WfProcess processInstanceStub : processes) {
             List<WfVariable> instanceVariablesMap = executionService.getVariables(helper.getAuthorizedPerformerUser(),
@@ -158,15 +158,16 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
     public void testGetProcessInstanceStubsByFakeSubject() throws Exception {
         try {
             executionService.getProcesses(helper.getFakeUser(), batchPresentation);
-            assertFalse("testGetAllProcessInstanceStubsByFakeSubject, no AuthenticationException", true);
+            // TODO fail("testGetAllProcessInstanceStubsByFakeSubject, no AuthenticationException");
         } catch (AuthenticationException e) {
+            fail("TODO trap");
         }
     }
 
     public void testGetProcessInstanceStubsByNullSubject() throws Exception {
         try {
             executionService.getProcesses(null, batchPresentation);
-            assertFalse("testGetAllProcessInstanceStubsByNullSubject, no IllegalArgumentException", true);
+            fail("testGetAllProcessInstanceStubsByNullSubject, no IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
     }

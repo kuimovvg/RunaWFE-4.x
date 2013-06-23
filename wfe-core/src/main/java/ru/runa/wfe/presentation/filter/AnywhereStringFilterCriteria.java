@@ -20,24 +20,16 @@ package ru.runa.wfe.presentation.filter;
 public class AnywhereStringFilterCriteria extends StringFilterCriteria {
     private static final long serialVersionUID = -1849845246809052465L;
 
+    public AnywhereStringFilterCriteria() {
+        super();
+    }
+
+    public AnywhereStringFilterCriteria(String filterValue) {
+        super(filterValue);
+    }
+
     @Override
     public String getFilterTemplate(int position) {
         return ANY_SYMBOLS + super.getFilterTemplate(position) + ANY_SYMBOLS;
     }
-
-    // @Override
-    // public String buildWhereCondition(String fieldName, String
-    // persistetObjectQueryAlias, Map<String, QueryParameter> placeholders) {
-    // StringBuilder whereStringBuilder = new StringBuilder("CAST(" +
-    // persistetObjectQueryAlias);
-    // String alias = persistetObjectQueryAlias + fieldName.replaceAll("\\.",
-    // "");
-    // whereStringBuilder.append(".").append(fieldName).append(" as char(50))");
-    // whereStringBuilder.append(" like :").append(alias);
-    // whereStringBuilder.append(" ");
-    // placeholders.put(alias, new QueryParameter(alias, "%" +
-    // getFilterTemplate(0) + "%"));
-    // return whereStringBuilder.toString();
-    // }
-
 }

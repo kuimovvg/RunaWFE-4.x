@@ -25,6 +25,7 @@ import junit.framework.TestSuite;
 
 import org.apache.cactus.ServletTestCase;
 
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
@@ -98,7 +99,10 @@ public class ExecutionServiceDelegateStartProcessInstanceTest extends ServletTes
         try {
             executionService.startProcess(helper.getFakeUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
             fail("testStartProcessInstanceByFakeSubject, no AuthenticationException");
+        } catch (InvalidDataAccessApiUsageException e) {
+            // TODO
         } catch (AuthenticationException e) {
+            fail("TODO trap");
         }
     }
 

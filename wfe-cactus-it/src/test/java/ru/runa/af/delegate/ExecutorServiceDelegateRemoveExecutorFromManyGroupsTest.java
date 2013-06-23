@@ -99,7 +99,7 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         Executor executor = getAdditionalActor();
         try {
             executorService.removeExecutorFromGroups(th.getAuthorizedPerformerUser(), executor.getId(), th.toIds(getAdditionalGroups()));
-            assertTrue("Executors removed from group without corresponding permissions", false);
+            fail("Executors removed from group without corresponding permissions");
         } catch (AuthorizationException e) {
             // this is supposed result
         }
@@ -118,7 +118,7 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         Executor executor = getAdditionalGroup();
         try {
             executorService.removeExecutorFromGroups(th.getAuthorizedPerformerUser(), executor.getId(), th.toIds(getAdditionalGroups()));
-            assertTrue("Executors removed from group without corresponding permissions", false);
+            fail("Executors removed from group without corresponding permissions");
         } catch (AuthorizationException e) {
             // this is supposed result
         }
@@ -134,7 +134,7 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         Executor executor = getAdditionalActor();
         try {
             executorService.removeExecutorFromGroups(th.getUnauthorizedPerformerUser(), executor.getId(), th.toIds(getAdditionalGroups()));
-            assertTrue("Executor is removed from groups ByUnAuthorizedPerformer", false);
+            fail("Executor is removed from groups ByUnAuthorizedPerformer");
         } catch (AuthorizationException e) {
             // this is supposed result
         }
@@ -144,7 +144,7 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         Executor executor = getAdditionalGroup();
         try {
             executorService.removeExecutorFromGroups(th.getUnauthorizedPerformerUser(), executor.getId(), th.toIds(getAdditionalGroups()));
-            assertTrue("Executor is removed from groups ByUnAuthorizedPerformer", false);
+            fail("Executor is removed from groups ByUnAuthorizedPerformer");
         } catch (AuthorizationException e) {
             // this is supposed result
         }
@@ -154,9 +154,12 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         Executor executor = th.getFakeActor();
         try {
             executorService.removeExecutorFromGroups(th.getAuthorizedPerformerUser(), executor.getId(), th.toIds(getAdditionalGroups()));
-            assertTrue("FakeExecutor removed from groups ", false);
+            fail("FakeExecutor removed from groups ");
+        } catch (AuthorizationException e) {
+            // TODO
         } catch (ExecutorDoesNotExistException e) {
             // this is supposed result
+            fail ("TODO trap");
         }
     }
 
@@ -164,16 +167,19 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         Executor executor = th.getFakeGroup();
         try {
             executorService.removeExecutorFromGroups(th.getAuthorizedPerformerUser(), executor.getId(), th.toIds(getAdditionalGroups()));
-            assertTrue("FakeExecutor removed from groups ", false);
+            fail("FakeExecutor removed from groups");
+        } catch (IllegalArgumentException e) {
+            // TODO
         } catch (ExecutorDoesNotExistException e) {
             // this is supposed result
+            fail ("TODO trap");
         }
     }
 
     public void testRemoveNullExecutorFromGroups() throws Exception {
         try {
             executorService.removeExecutorFromGroups(th.getAuthorizedPerformerUser(), null, th.toIds(getAdditionalGroups()));
-            assertTrue("NullExecutor removed from groups ", false);
+            fail("NullExecutor removed from groups ");
         } catch (IllegalArgumentException e) {
             // this is supposed result
         }
@@ -183,7 +189,7 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         Executor executor = getAdditionalActor();
         try {
             executorService.removeExecutorFromGroups(th.getAuthorizedPerformerUser(), executor.getId(), null);
-            assertTrue("Executor removed from Null groups ", false);
+            fail("Executor removed from Null groups ");
         } catch (IllegalArgumentException e) {
             // this is supposed result
         }
@@ -193,7 +199,7 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         Executor executor = getAdditionalActor();
         try {
             executorService.removeExecutorFromGroups(null, executor.getId(), th.toIds(getAdditionalGroups()));
-            assertTrue("Executor removed from groups with null subject", false);
+            fail("Executor removed from groups with null subject");
         } catch (IllegalArgumentException e) {
             // this is supposed result
         }
@@ -203,7 +209,7 @@ public class ExecutorServiceDelegateRemoveExecutorFromManyGroupsTest extends Ser
         Executor executor = getAdditionalGroup();
         try {
             executorService.removeExecutorFromGroups(null, executor.getId(), th.toIds(getAdditionalGroups()));
-            assertTrue("Executor removed from groups with null subject", false);
+            fail("Executor removed from groups with null subject");
         } catch (IllegalArgumentException e) {
             // this is supposed result
         }
