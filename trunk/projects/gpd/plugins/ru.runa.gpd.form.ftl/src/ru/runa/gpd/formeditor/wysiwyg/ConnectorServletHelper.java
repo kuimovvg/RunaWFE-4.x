@@ -18,6 +18,9 @@ public class ConnectorServletHelper {
 
     public static void sync() {
         try {
+            if (baseDir == null) {
+                return;
+            }
             File dir = new File(baseDir);
             File[] resourceFiles = dir.listFiles(new ConnectorServletHelper.FileExtensionFilter());
             for (File file : resourceFiles) {
