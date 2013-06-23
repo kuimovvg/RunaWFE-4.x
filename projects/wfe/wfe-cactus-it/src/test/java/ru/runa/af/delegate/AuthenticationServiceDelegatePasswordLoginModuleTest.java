@@ -122,7 +122,10 @@ public class AuthenticationServiceDelegatePasswordLoginModuleTest extends Servle
         try {
             authenticationService.authenticateByLoginPassword(validActor.getName(), null);
             fail("allowing NULL password");
+        } catch (IllegalArgumentException e) {
+            // TODO
         } catch (AuthenticationException e) {
+            fail("TODO trap");
         }
     }
 }

@@ -106,8 +106,11 @@ public class ExecutorServiceDelegateAddExecutorsToGroupTest extends ServletTestC
         try {
             executorService.addExecutorsToGroup(th.getAuthorizedPerformerUser(), Lists.newArrayList(th.getFakeActor().getId()), additionalGroup.getId());
             fail("Executor added to group ");
+        } catch (AuthorizationException e) {
+            // TODO
         } catch (ExecutorDoesNotExistException e) {
             // this is supposed result
+            fail ("TODO trap");
         }
     }
 

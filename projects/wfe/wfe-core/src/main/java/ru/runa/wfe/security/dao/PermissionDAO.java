@@ -101,7 +101,7 @@ public class PermissionDAO extends CommonDAO {
      */
     public void setPermissions(Executor executor, Collection<Permission> permissions, Identifiable identifiable) {
         if (isPrivilegedExecutor(executor, identifiable)) {
-            log.debug("permissions not granted for priveleged executor");
+            log.debug("permissions not granted for privileged executor");
             return;
         }
         checkArePermissionAllowed(identifiable, permissions);
@@ -238,8 +238,6 @@ public class PermissionDAO extends CommonDAO {
      * Loads all permission mappings on specified secured object belongs to
      * specified executor.
      * 
-     * @param session
-     *            Session to load permissions.
      * @param executor
      *            Executor, which permissions is loading.
      * @param identifiable
@@ -260,7 +258,7 @@ public class PermissionDAO extends CommonDAO {
     /**
      * Deletes all permissions for executor.
      * 
-     * @param executor
+     * @param executor executor
      */
     public void deleteOwnPermissions(Executor executor) {
         getHibernateTemplate().bulkUpdate("delete from PermissionMapping where executor=?", executor);
@@ -269,7 +267,7 @@ public class PermissionDAO extends CommonDAO {
     /**
      * Deletes all permissions for identifiable.
      * 
-     * @param identifiable
+     * @param identifiable identifiable
      */
     public void deleteAllPermissions(Identifiable identifiable) {
         getHibernateTemplate().bulkUpdate("delete from PermissionMapping where type=? and identifiableId=?", identifiable.getSecuredObjectType(),
@@ -334,9 +332,7 @@ public class PermissionDAO extends CommonDAO {
     }
 
     /**
-     * Check if executor is privileged executor for given identifiable. Throw
-     * exception, if no {@linkplain SecuredObject} for {@linkplain Identifiable}
-     * found.
+     * Check if executor is privileged executor for given identifiable.
      * 
      * @param executor
      *            {@linkplain Executor}, to check if privileged.
@@ -358,9 +354,6 @@ public class PermissionDAO extends CommonDAO {
      *            Type of SecuredObject.
      * @param privelegedExecutors
      *            Privileged executors for target class.
-     * @param permission
-     *            Permission class, describes allowed permissions for target
-     *            class.
      */
     public void addType(SecuredObjectType type, List<? extends Executor> privelegedExecutors) {
         for (Executor executor : privelegedExecutors) {
@@ -384,7 +377,7 @@ public class PermissionDAO extends CommonDAO {
      *            {@linkplain Permission}, which executors must has on
      *            {@linkplain Identifiable}.
      * @param securedObjectTypes
-     *            {@linkplain SecuredObject} types, used to check permissions.
+     *            {@linkplain SecuredObjectType} types, used to check permissions.
      * @param enablePaging
      *            Flag, equals true, if paging must be enabled and false
      *            otherwise.
@@ -420,10 +413,7 @@ public class PermissionDAO extends CommonDAO {
      *            {@linkplain Permission}, which executors must has on
      *            {@linkplain Identifiable}.
      * @param securedObjectTypes
-     *            {@linkplain SecuredObject} types, used to check permissions.
-     * @param enablePaging
-     *            Flag, equals true, if paging must be enabled and false
-     *            otherwise.
+     *            {@linkplain SecuredObjectType} types, used to check permissions.
      * @return Count of {@link Identifiable}'s for which executors have
      *         permission on.
      */

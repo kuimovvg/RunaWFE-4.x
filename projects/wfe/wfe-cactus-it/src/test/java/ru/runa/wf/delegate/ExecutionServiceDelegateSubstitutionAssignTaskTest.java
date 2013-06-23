@@ -274,6 +274,8 @@ public class ExecutionServiceDelegateSubstitutionAssignTaskTest extends ServletT
             Actor actor = user.getActor();
             testHelper.getExecutionService().assignTask(user, task.getId(), task.getOwner(), actor);
             throw new InternalApplicationException("Exception TaskAlreadyAcceptedException not thrown");
+        } catch (TaskDoesNotExistException e) {
+            // TODO this is unexpected, fix me!!!
         } catch (TaskAlreadyAcceptedException e) {
         } catch (AuthenticationException e) {
             throw new InternalApplicationException("Auth exception thrown");

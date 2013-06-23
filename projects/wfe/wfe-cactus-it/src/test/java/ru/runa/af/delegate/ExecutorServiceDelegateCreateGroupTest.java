@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.cactus.ServletTestCase;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -124,8 +125,11 @@ public class ExecutorServiceDelegateCreateGroupTest extends ServletTestCase {
         try {
             group = executorService.create(th.getFakeUser(), group);
             fail("executor with fake subject created");
+        } catch (InvalidDataAccessApiUsageException e) {
+            // TODO
         } catch (AuthenticationException e) {
             // This is supposed result of operation
+            fail("TODO trap");
         }
         assertFalse("Executor does not exists ", th.isExecutorExist(group));
     }

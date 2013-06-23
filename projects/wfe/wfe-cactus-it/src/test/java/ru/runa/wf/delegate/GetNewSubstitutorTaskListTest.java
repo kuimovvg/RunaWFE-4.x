@@ -19,8 +19,6 @@
 package ru.runa.wf.delegate;
 
 import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.cactus.ServletTestCase;
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
@@ -55,13 +53,9 @@ public class GetNewSubstitutorTaskListTest extends ServletTestCase {
     private final static String pwdSubstitutor = "substitutor";
     private final static String pwdSubstitutor2 = "substitutor2";
 
-    private Actor substitutedActor;
-    private Actor substitutor;
-    private Actor substitutor2;
-
-    private User substitutedActorSubject = null;
-    private User substitutorSubject = null;
-    private User substitutor2Subject = null;
+    private User substituted = null;
+    private User substitutor = null;
+    private User substitutor2 = null;
 
     private SubstitutionCriteria substitutionCriteria_always;
     private SubstitutionCriteriaSwimlane substitutionCriteria_requester;
@@ -75,11 +69,11 @@ public class GetNewSubstitutorTaskListTest extends ServletTestCase {
     protected void setUp() throws Exception {
         testHelper = new WfServiceTestHelper(PREFIX);
 
-        substitutedActor = testHelper.createActorIfNotExist(nameSubstitutedActor, PREFIX);
+        Actor substitutedActor = testHelper.createActorIfNotExist(nameSubstitutedActor, PREFIX);
         testHelper.getExecutorService().setPassword(testHelper.getAdminUser(), substitutedActor, nameSubstitutedActor);
-        substitutor = testHelper.createActorIfNotExist(nameSubstitutor, PREFIX);
+        Actor substitutor = testHelper.createActorIfNotExist(nameSubstitutor, PREFIX);
         testHelper.getExecutorService().setPassword(testHelper.getAdminUser(), substitutor, nameSubstitutor);
-        substitutor2 = testHelper.createActorIfNotExist(nameSubstitutor2, PREFIX);
+        Actor substitutor2 = testHelper.createActorIfNotExist(nameSubstitutor2, PREFIX);
         testHelper.getExecutorService().setPassword(testHelper.getAdminUser(), substitutor2, nameSubstitutor2);
 
         {
@@ -95,9 +89,9 @@ public class GetNewSubstitutorTaskListTest extends ServletTestCase {
             testHelper.getAuthorizationService().setPermissions(testHelper.getAdminUser(), substitutor2.getId(), perm, substitutedActor);
         }
 
-        substitutedActorSubject = testHelper.getAuthenticationService().authenticateByLoginPassword(nameSubstitutedActor, pwdSubstitutedActor);
-        substitutorSubject = testHelper.getAuthenticationService().authenticateByLoginPassword(nameSubstitutor, pwdSubstitutor);
-        substitutor2Subject = testHelper.getAuthenticationService().authenticateByLoginPassword(nameSubstitutor2, pwdSubstitutor2);
+        substituted = testHelper.getAuthenticationService().authenticateByLoginPassword(nameSubstitutedActor, pwdSubstitutedActor);
+        this.substitutor = testHelper.getAuthenticationService().authenticateByLoginPassword(nameSubstitutor, pwdSubstitutor);
+        this.substitutor2 = testHelper.getAuthenticationService().authenticateByLoginPassword(nameSubstitutor2, pwdSubstitutor2);
 
         substitutionCriteria_always = null;
         testHelper.createSubstitutionCriteria(substitutionCriteria_always);
@@ -134,281 +128,281 @@ public class GetNewSubstitutorTaskListTest extends ServletTestCase {
      * Simple test case. Using process one_swimline_process and one substitutor with always subsitution rules. Checking correct task's list on active/inactive actors.
      */
     public void testSubstitutionSimple() throws Exception {
-        Substitution substitution1 = testHelper.createActorSubstitutor(substitutedActorSubject,
+        Substitution substitution1 = testHelper.createActorSubstitutor(substituted,
                 "ru.runa.af.organizationfunction.ExecutorByNameFunction(" + nameSubstitutor + ")", substitutionCriteria_always, true);
-        Substitution substitution2 = testHelper.createActorSubstitutor(substitutedActorSubject,
+        Substitution substitution2 = testHelper.createActorSubstitutor(substituted,
                 "ru.runa.af.organizationfunction.ExecutorByNameFunction(" + nameSubstitutor2 + ")", substitutionCriteria_always, true);
         {
             // Will check precondition - no tasks to all actor's
-            checkTaskList(substitutedActorSubject, 0);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 0);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
 
-        testHelper.getExecutionService().startProcess(substitutedActorSubject, PROCESS_NAME, null);
+        testHelper.getExecutionService().startProcess(substituted, PROCESS_NAME, null);
 
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutedActor, false);
+        setStatus(substituted, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 1);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 1);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutor, false);
+        setStatus(substitutor, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 1);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 1);
         }
-        testHelper.setActorStatus(substitutor, true);
-        testHelper.setActorStatus(substitutedActor, true);
+        setStatus(substitutor, true);
+        setStatus(substituted, true);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
         List<WfTask> tasks;
-        tasks = testHelper.getExecutionService().getTasks(substitutedActorSubject, batchPresentation);
-        testHelper.getExecutionService().completeTask(substitutedActorSubject, tasks.get(0).getId(), new HashMap<String, Object>(), null);
+        tasks = testHelper.getExecutionService().getTasks(substituted, batchPresentation);
+        testHelper.getExecutionService().completeTask(substituted, tasks.get(0).getId(), new HashMap<String, Object>(), null);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutedActor, false);
+        setStatus(substituted, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 1);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 1);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutor, false);
+        setStatus(substitutor, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 1);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 1);
         }
-        testHelper.setActorStatus(substitutor, true);
-        tasks = testHelper.getExecutionService().getTasks(substitutedActorSubject, batchPresentation);
-        testHelper.getExecutionService().completeTask(substitutorSubject, tasks.get(0).getId(), new HashMap<String, Object>(), null);
+        setStatus(substitutor, true);
+        tasks = testHelper.getExecutionService().getTasks(substituted, batchPresentation);
+        testHelper.getExecutionService().completeTask(substitutor, tasks.get(0).getId(), new HashMap<String, Object>(), null);
         {
-            checkTaskList(substitutedActorSubject, 0);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 0);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
         testHelper.removeCriteriaFromSubstitution(substitution1);
         testHelper.removeCriteriaFromSubstitution(substitution2);
     }
 
     public void testSubstitutionByCriteria() throws Exception {
-        Substitution substitution1 = testHelper.createActorSubstitutor(substitutedActorSubject,
+        Substitution substitution1 = testHelper.createActorSubstitutor(substituted,
                 "ru.runa.af.organizationfunction.ExecutorByNameFunction(" + nameSubstitutor + ")", substitutionCriteria_requester, true);
-        Substitution substitution2 = testHelper.createActorSubstitutor(substitutedActorSubject,
+        Substitution substitution2 = testHelper.createActorSubstitutor(substituted,
                 "ru.runa.af.organizationfunction.ExecutorByNameFunction(" + nameSubstitutor2 + ")", substitutionCriteria_always, true);
         {
             // Will heck precondition - no tasks to all actor's
-            checkTaskList(substitutedActorSubject, 0);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 0);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
 
-        testHelper.getExecutionService().startProcess(substitutedActorSubject, PROCESS_NAME, null);
+        testHelper.getExecutionService().startProcess(substituted, PROCESS_NAME, null);
 
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutedActor, false);
+        setStatus(substituted, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 1);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 1);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutor, false);
+        setStatus(substitutor, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 1);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 1);
         }
-        testHelper.setActorStatus(substitutor, true);
-        testHelper.setActorStatus(substitutedActor, true);
+        setStatus(substitutor, true);
+        setStatus(substituted, true);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
         List<WfTask> tasks;
-        tasks = testHelper.getExecutionService().getTasks(substitutedActorSubject, batchPresentation);
-        testHelper.getExecutionService().completeTask(substitutedActorSubject, tasks.get(0).getId(), new HashMap<String, Object>(), null);
+        tasks = testHelper.getExecutionService().getTasks(substituted, batchPresentation);
+        testHelper.getExecutionService().completeTask(substituted, tasks.get(0).getId(), new HashMap<String, Object>(), null);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutedActor, false);
+        setStatus(substituted, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 1);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 1);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutor, false);
+        setStatus(substitutor, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 1);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 1);
         }
-        testHelper.setActorStatus(substitutor, true);
-        tasks = testHelper.getExecutionService().getTasks(substitutedActorSubject, batchPresentation);
-        testHelper.getExecutionService().completeTask(substitutorSubject, tasks.get(0).getId(), new HashMap<String, Object>(), null);
+        setStatus(substitutor, true);
+        tasks = testHelper.getExecutionService().getTasks(substituted, batchPresentation);
+        testHelper.getExecutionService().completeTask(substitutor, tasks.get(0).getId(), new HashMap<String, Object>(), null);
         {
-            checkTaskList(substitutedActorSubject, 0);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 0);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
         testHelper.removeCriteriaFromSubstitution(substitution1);
         testHelper.removeCriteriaFromSubstitution(substitution2);
     }
 
     public void testSubstitutionByFalseCriteria() throws Exception {
-        Substitution substitution1 = testHelper.createActorSubstitutor(substitutedActorSubject,
+        Substitution substitution1 = testHelper.createActorSubstitutor(substituted,
                 "ru.runa.af.organizationfunction.ExecutorByNameFunction(" + nameSubstitutor + ")", substitutionCriteria_no_requester, true);
-        Substitution substitution2 = testHelper.createActorSubstitutor(substitutedActorSubject,
+        Substitution substitution2 = testHelper.createActorSubstitutor(substituted,
                 "ru.runa.af.organizationfunction.ExecutorByNameFunction(" + nameSubstitutor2 + ")", substitutionCriteria_always, true);
         {
             // Will heck precondition - no tasks to all actor's
-            checkTaskList(substitutedActorSubject, 0);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 0);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
 
-        testHelper.getExecutionService().startProcess(substitutedActorSubject, PROCESS_NAME, null);
+        testHelper.getExecutionService().startProcess(substituted, PROCESS_NAME, null);
 
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutedActor, false);
+        setStatus(substituted, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 1);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 1);
         }
-        testHelper.setActorStatus(substitutor, false);
+        setStatus(substitutor, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 1);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 1);
         }
-        testHelper.setActorStatus(substitutor, true);
-        testHelper.setActorStatus(substitutedActor, true);
+        setStatus(substitutor, true);
+        setStatus(substituted, true);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
         List<WfTask> tasks;
-        tasks = testHelper.getExecutionService().getTasks(substitutedActorSubject, batchPresentation);
-        testHelper.getExecutionService().completeTask(substitutedActorSubject, tasks.get(0).getId(), new HashMap<String, Object>(), null);
+        tasks = testHelper.getExecutionService().getTasks(substituted, batchPresentation);
+        testHelper.getExecutionService().completeTask(substituted, tasks.get(0).getId(), new HashMap<String, Object>(), null);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutedActor, false);
+        setStatus(substituted, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 1);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 1);
         }
-        testHelper.setActorStatus(substitutor, false);
+        setStatus(substitutor, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 1);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 1);
         }
-        testHelper.setActorStatus(substitutor, true);
-        tasks = testHelper.getExecutionService().getTasks(substitutedActorSubject, batchPresentation);
-        testHelper.getExecutionService().completeTask(substitutedActorSubject, tasks.get(0).getId(), new HashMap<String, Object>(), null);
+        setStatus(substitutor, true);
+        tasks = testHelper.getExecutionService().getTasks(substituted, batchPresentation);
+        testHelper.getExecutionService().completeTask(substituted, tasks.get(0).getId(), new HashMap<String, Object>(), null);
         {
-            checkTaskList(substitutedActorSubject, 0);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 0);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
         testHelper.removeCriteriaFromSubstitution(substitution1);
         testHelper.removeCriteriaFromSubstitution(substitution2);
     }
 
     public void testSubstitutionFalseTermination() throws Exception {
-        Substitution substitution1 = testHelper.createTerminator(substitutedActorSubject, substitutionCriteria_no_requester, true);
-        Substitution substitution2 = testHelper.createActorSubstitutor(substitutedActorSubject,
+        Substitution substitution1 = testHelper.createTerminator(substituted, substitutionCriteria_no_requester, true);
+        Substitution substitution2 = testHelper.createActorSubstitutor(substituted,
                 "ru.runa.af.organizationfunction.ExecutorByNameFunction(" + nameSubstitutor + ")", substitutionCriteria_always, true);
-        Substitution substitution3 = testHelper.createActorSubstitutor(substitutedActorSubject,
+        Substitution substitution3 = testHelper.createActorSubstitutor(substituted,
                 "ru.runa.af.organizationfunction.ExecutorByNameFunction(" + nameSubstitutor2 + ")", substitutionCriteria_always, true);
         {
             // Will heck precondition - no tasks to all actor's
-            checkTaskList(substitutedActorSubject, 0);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 0);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
 
-        testHelper.getExecutionService().startProcess(substitutedActorSubject, PROCESS_NAME, null);
+        testHelper.getExecutionService().startProcess(substituted, PROCESS_NAME, null);
 
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutedActor, false);
+        setStatus(substituted, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 1);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 1);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutor, false);
+        setStatus(substitutor, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 1);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 1);
         }
-        testHelper.setActorStatus(substitutor, true);
-        testHelper.setActorStatus(substitutedActor, true);
+        setStatus(substitutor, true);
+        setStatus(substituted, true);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
         List<WfTask> tasks;
-        tasks = testHelper.getExecutionService().getTasks(substitutedActorSubject, batchPresentation);
-        testHelper.getExecutionService().completeTask(substitutedActorSubject, tasks.get(0).getId(), new HashMap<String, Object>(), null);
+        tasks = testHelper.getExecutionService().getTasks(substituted, batchPresentation);
+        testHelper.getExecutionService().completeTask(substituted, tasks.get(0).getId(), new HashMap<String, Object>(), null);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutedActor, false);
+        setStatus(substituted, true);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 1);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 1);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutor, false);
+        setStatus(substitutor, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 1);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 1);
         }
-        testHelper.setActorStatus(substitutor, true);
-        tasks = testHelper.getExecutionService().getTasks(substitutedActorSubject, batchPresentation);
-        testHelper.getExecutionService().completeTask(substitutorSubject, tasks.get(0).getId(), new HashMap<String, Object>(), null);
+        setStatus(substitutor, true);
+        tasks = testHelper.getExecutionService().getTasks(substituted, batchPresentation);
+        testHelper.getExecutionService().completeTask(substitutor, tasks.get(0).getId(), new HashMap<String, Object>(), null);
         {
-            checkTaskList(substitutedActorSubject, 0);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 0);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
         testHelper.removeCriteriaFromSubstitution(substitution1);
         testHelper.removeCriteriaFromSubstitution(substitution2);
@@ -416,71 +410,71 @@ public class GetNewSubstitutorTaskListTest extends ServletTestCase {
     }
 
     public void testSubstitutionTrueTermination() throws Exception {
-        Substitution substitution1 = testHelper.createTerminator(substitutedActorSubject, substitutionCriteria_requester, true);
-        Substitution substitution2 = testHelper.createActorSubstitutor(substitutedActorSubject,
+        Substitution substitution1 = testHelper.createTerminator(substituted, substitutionCriteria_requester, true);
+        Substitution substitution2 = testHelper.createActorSubstitutor(substituted,
                 "ru.runa.af.organizationfunction.ExecutorByNameFunction(" + nameSubstitutor + ")", substitutionCriteria_always, true);
-        Substitution substitution3 = testHelper.createActorSubstitutor(substitutedActorSubject,
+        Substitution substitution3 = testHelper.createActorSubstitutor(substituted,
                 "ru.runa.af.organizationfunction.ExecutorByNameFunction(" + nameSubstitutor2 + ")", substitutionCriteria_always, true);
         {
             // Will heck precondition - no tasks to all actor's
-            checkTaskList(substitutedActorSubject, 0);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 0);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
 
-        testHelper.getExecutionService().startProcess(substitutedActorSubject, PROCESS_NAME, null);
+        testHelper.getExecutionService().startProcess(substituted, PROCESS_NAME, null);
 
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutedActor, false);
+        setStatus(substituted, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutor, false);
+        setStatus(substitutor, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutor, true);
-        testHelper.setActorStatus(substitutedActor, true);
+        setStatus(substitutor, true);
+        setStatus(substituted, true);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
         List<WfTask> tasks;
-        tasks = testHelper.getExecutionService().getTasks(substitutedActorSubject, batchPresentation);
-        testHelper.getExecutionService().completeTask(substitutedActorSubject, tasks.get(0).getId(), new HashMap<String, Object>(), null);
+        tasks = testHelper.getExecutionService().getTasks(substituted, batchPresentation);
+        testHelper.getExecutionService().completeTask(substituted, tasks.get(0).getId(), new HashMap<String, Object>(), null);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutedActor, false);
+        setStatus(substituted, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutor, false);
+        setStatus(substitutor, false);
         {
-            checkTaskList(substitutedActorSubject, 1);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 1);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
-        testHelper.setActorStatus(substitutor, true);
-        tasks = testHelper.getExecutionService().getTasks(substitutedActorSubject, batchPresentation);
-        testHelper.getExecutionService().completeTask(substitutorSubject, tasks.get(0).getId(), new HashMap<String, Object>(), null);
+        setStatus(substitutor, true);
+        tasks = testHelper.getExecutionService().getTasks(substituted, batchPresentation);
+        testHelper.getExecutionService().completeTask(substitutor, tasks.get(0).getId(), new HashMap<String, Object>(), null);
         {
-            checkTaskList(substitutedActorSubject, 0);
-            checkTaskList(substitutorSubject, 0);
-            checkTaskList(substitutor2Subject, 0);
+            checkTaskList(substituted, 0);
+            checkTaskList(substitutor, 0);
+            checkTaskList(substitutor2, 0);
         }
         testHelper.removeCriteriaFromSubstitution(substitution1);
         testHelper.removeCriteriaFromSubstitution(substitution2);
@@ -494,22 +488,35 @@ public class GetNewSubstitutorTaskListTest extends ServletTestCase {
         // Let's change actor status to check correct working.
         Actor actor = user.getActor();
         boolean actorStatus = actor.isActive();
-        testHelper.getExecutorService().setStatus(testHelper.getAdminUser(), actor, !actorStatus);
-        testHelper.getExecutorService().setStatus(testHelper.getAdminUser(), actor, actorStatus);
+
+        setStatus(user, !actorStatus);
+        setStatus(user, actorStatus);
+
         tasks = testHelper.getExecutionService().getTasks(user, batchPresentation);
         assertEquals("getTasks() returns wrong tasks number (expected " + expectedLength + ", but was " + tasks.size() + ")", expectedLength,
                 tasks.size());
-        actorStatus = testHelper.getExecutorService().<Actor>getExecutor(testHelper.getAdminUser(), substitutedActor.getId()).isActive();
-        testHelper.getExecutorService().setStatus(testHelper.getAdminUser(), substitutedActor, !actorStatus);
+        actorStatus = testHelper.getExecutorService().<Actor>getExecutor(testHelper.getAdminUser(), substituted.getActor().getId()).isActive();
+
+        setStatus(substituted, !actorStatus);
+
         if (!actorStatus) {
-            tasks = testHelper.getExecutionService().getTasks(substitutorSubject, batchPresentation);
+            tasks = testHelper.getExecutionService().getTasks(substitutor, batchPresentation);
             assertEquals("getTasks() returns wrong tasks number (expected " + 0 + ", but was " + tasks.size() + ")", 0, tasks.size());
-            tasks = testHelper.getExecutionService().getTasks(substitutor2Subject, batchPresentation);
+            tasks = testHelper.getExecutionService().getTasks(substitutor2, batchPresentation);
             assertEquals("getTasks() returns wrong tasks number (expected " + 0 + ", but was " + tasks.size() + ")", 0, tasks.size());
         }
-        testHelper.getExecutorService().setStatus(testHelper.getAdminUser(), substitutedActor, actorStatus);
+
+        setStatus(substituted, actorStatus);
+
         tasks = testHelper.getExecutionService().getTasks(user, batchPresentation);
         assertEquals("getTasks() returns wrong tasks number (expected " + expectedLength + ", but was " + tasks.size() + ")", expectedLength,
                 tasks.size());
+    }
+
+    private void setStatus(User user, boolean actorStatus) {
+        testHelper.getExecutorService().setStatus(testHelper.getAdminUser(), user.getActor(), actorStatus);
+        // hibernate merge workaround
+        Actor actor = testHelper.createActorIfNotExist(user.getActor().getName(), PREFIX);
+        user.setActor(actor);
     }
 }

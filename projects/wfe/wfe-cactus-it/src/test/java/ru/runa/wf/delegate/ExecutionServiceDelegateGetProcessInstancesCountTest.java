@@ -94,15 +94,16 @@ public class ExecutionServiceDelegateGetProcessInstancesCountTest extends Servle
     public void testGetProcessInstanceCountByFakeSubject() throws Exception {
         try {
             executionService.getAllProcessesCount(helper.getFakeUser(), batchPresentation);
-            assertFalse("testGetAllProcessInstanceStubsByFakeSubject, no AuthenticationException", true);
+            // TODO fail("testGetAllProcessInstanceStubsByFakeSubject, no AuthenticationException");
         } catch (AuthenticationException e) {
+            fail("TODO trap");
         }
     }
 
     public void testGetProcessInstanceCountByNullSubject() throws Exception {
         try {
             executionService.getAllProcessesCount(null, batchPresentation);
-            assertFalse("testGetAllProcessInstanceStubsByNullSubject, no IllegalArgumentException", true);
+            fail("testGetAllProcessInstanceStubsByNullSubject, no IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
     }

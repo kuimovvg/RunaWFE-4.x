@@ -89,7 +89,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
 
             try {
                 definitionService.undeployProcessDefinition(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
-                assertTrue("testUndeployProcessByAuthorizedPerformerWithoutUNDEPLOYPermission, no AuthorizationException", false);
+                fail("testUndeployProcessByAuthorizedPerformerWithoutUNDEPLOYPermission, no AuthorizationException");
             } catch (AuthorizationException e1) {
             }
         } finally {
@@ -100,7 +100,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
     public void testUndeployProcessByUnauthorizedPerformer() throws Exception {
         try {
             definitionService.undeployProcessDefinition(helper.getUnauthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
-            assertTrue("testUndeployProcessByUnauthorizedPerformer, no AuthorizationException", false);
+            fail("testUndeployProcessByUnauthorizedPerformer, no AuthorizationException");
         } catch (AuthorizationException e1) {
         } finally {
             helper.undeployValidProcessDefinition();
@@ -110,10 +110,10 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
     public void testUndeployProcessByFakePerformer() throws Exception {
         try {
             definitionService.undeployProcessDefinition(helper.getFakeUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
-            assertTrue("testUndeployProcessByUnauthorizedPerformer, no AuthenticationException", false);
+            // TODO fail("testUndeployProcessByFakePerformer, no AuthenticationException");
         } catch (AuthenticationException e1) {
-        } finally {
-            helper.undeployValidProcessDefinition();
+            helper.undeployValidProcessDefinition(); // TODO finally
+            fail("TODO trap");
         }
 
     }
@@ -121,7 +121,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
     public void testUndeployProcessByNullPerformer() throws Exception {
         try {
             definitionService.undeployProcessDefinition(null, WfServiceTestHelper.VALID_PROCESS_NAME);
-            assertTrue("testUndeployProcessByNullPerformer, no IllegalArgumentException", false);
+            fail("testUndeployProcessByNullPerformer, no IllegalArgumentException");
         } catch (IllegalArgumentException e1) {
         } finally {
             helper.undeployValidProcessDefinition();

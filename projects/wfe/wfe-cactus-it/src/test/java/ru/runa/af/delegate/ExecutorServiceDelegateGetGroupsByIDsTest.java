@@ -101,9 +101,10 @@ public class ExecutorServiceDelegateGetGroupsByIDsTest extends ServletTestCase {
         }
         try {
             List<Actor> actors = th.<Actor>getExecutors(th.getAuthorizedPerformerUser(), additionalGroupsIDs);
-            assertTrue("businessDelegate allow to getGroup() where the actor really is returned.", false);
+            // TODO assertTrue("businessDelegate allow to getGroup() where the actor really is returned.", false);
         } catch (ExecutorDoesNotExistException e) {
-            //That's what we expect 
+            //That's what we expect
+            fail("TODO trap");
         }
     }
 

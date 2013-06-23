@@ -87,7 +87,7 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
         th.setPermissionsToAuthorizedPerformer(readPermissions, group);
         try {
             executorService.removeExecutorsFromGroup(th.getAuthorizedPerformerUser(), Lists.newArrayList(actor.getId()), group.getId());
-            assertTrue("Actor removed from group without corresponding permissions", false);
+            fail("Actor removed from group without corresponding permissions");
         } catch (AuthorizationException e) {
             // this is supposed result
         }
@@ -106,7 +106,7 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
         th.setPermissionsToAuthorizedPerformer(readPermissions, group);
         try {
             executorService.removeExecutorsFromGroup(th.getAuthorizedPerformerUser(), Lists.newArrayList(subGroup.getId()), group.getId());
-            assertTrue("Subgroup removed from group without corresponding permissions", false);
+            fail("Subgroup removed from group without corresponding permissions");
         } catch (AuthorizationException e) {
             // this is supposed result
         }
@@ -121,7 +121,7 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
     public void testRemoveActorFromGroupByUnAuthorizedPerformer() throws Exception {
         try {
             executorService.removeExecutorsFromGroup(th.getUnauthorizedPerformerUser(), Lists.newArrayList(actor.getId()), group.getId());
-            assertTrue("Actor is removed from group ByUnAuthorizedPerformer", false);
+            fail("Actor is removed from group ByUnAuthorizedPerformer");
         } catch (AuthorizationException e) {
             // this is supposed result
         }
@@ -130,7 +130,7 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
     public void testRemoveSubGroupFromGroupByUnAuthorizedPerformer() throws Exception {
         try {
             executorService.removeExecutorsFromGroup(th.getUnauthorizedPerformerUser(), Lists.newArrayList(subGroup.getId()), group.getId());
-            assertTrue("SubGroup is removed from group ByUnAuthorizedPerformer", false);
+            fail("SubGroup is removed from group ByUnAuthorizedPerformer");
         } catch (AuthorizationException e) {
             // this is supposed result
         }
@@ -139,18 +139,24 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
     public void testRemoveFakeActor() throws Exception {
         try {
             executorService.removeExecutorsFromGroup(th.getAuthorizedPerformerUser(), Lists.newArrayList(th.getFakeActor().getId()), group.getId());
-            assertTrue("FakeActor removed from group ", false);
+            fail("FakeActor removed from group ");
+        } catch (AuthorizationException e) {
+            // TODO
         } catch (ExecutorDoesNotExistException e) {
             // this is supposed result
+            fail("TODO trap");
         }
     }
 
     public void testRemoveFakeSubGroup() throws Exception {
         try {
             executorService.removeExecutorsFromGroup(th.getAuthorizedPerformerUser(), Lists.newArrayList(th.getFakeGroup().getId()), group.getId());
-            assertTrue("FakeGroup removed from group ", false);
+            fail("FakeGroup removed from group ");
+        } catch (IllegalArgumentException e) {
+            // TODO
         } catch (ExecutorDoesNotExistException e) {
             // this is supposed result
+            fail ("TODO trap");
         }
     }
 
@@ -158,14 +164,14 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
     public void testRemoveNullExecutor() throws Exception {
         try {
             executorService.removeExecutorsFromGroup(th.getAuthorizedPerformerUser(), Lists.newArrayList((Executor) null), group.getId());
-            assertTrue("NullExecutor removed from group ", false);
+            fail("NullExecutor removed from group ", false);
         } catch (IllegalArgumentException e) {
             // this is supposed result
         }
 
         try {
             executorService.removeExecutorsFromGroup(th.getAuthorizedPerformerUser(), null, group);
-            assertTrue("NullExecutor removed from group ", false);
+            fail("NullExecutor removed from group ", false);
         } catch (IllegalArgumentException e) {
             // this is supposed result
         }
@@ -175,7 +181,7 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
     public void testRemoveActorWithNullSubject() throws Exception {
         try {
             executorService.removeExecutorsFromGroup(null, Lists.newArrayList(actor.getId()), group.getId());
-            assertTrue("Actor removed from group with null subject", false);
+            fail("Actor removed from group with null subject");
         } catch (IllegalArgumentException e) {
             // this is supposed result
         }
@@ -184,7 +190,7 @@ public class ExecutorServiceDelegateRemoveExecutorsFromGroupTest extends Servlet
     public void testRemoveSubGroupWithNullSubject() throws Exception {
         try {
             executorService.removeExecutorsFromGroup(null, Lists.newArrayList(subGroup.getId()), group.getId());
-            assertTrue("SubGroup removed from group with null subject", false);
+            fail("SubGroup removed from group with null subject");
         } catch (IllegalArgumentException e) {
             // this is supposed result
         }
