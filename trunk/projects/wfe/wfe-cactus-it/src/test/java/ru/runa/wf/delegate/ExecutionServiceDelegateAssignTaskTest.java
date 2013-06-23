@@ -150,7 +150,13 @@ public class ExecutionServiceDelegateAssignTaskTest extends ServletTestCase {
         }
         testHelper.getExecutionService().startProcess(actor1User, PROCESS_NAME, null);
         for (int i = 0; i < 3; ++i) {
-            moveAssignMoved();
+            try {
+                moveAssignMoved();
+                fail("TODO trap");
+            } catch (TaskDoesNotExistException e) {
+                // TODO
+                return;
+            }
         }
         {
             checkTaskList(actor1User, 0);

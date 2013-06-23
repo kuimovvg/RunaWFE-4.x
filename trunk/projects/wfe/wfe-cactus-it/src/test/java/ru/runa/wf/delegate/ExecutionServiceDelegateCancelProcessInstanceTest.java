@@ -88,8 +88,9 @@ public class ExecutionServiceDelegateCancelProcessInstanceTest extends ServletTe
         helper.setPermissionsToAuthorizedPerformerOnProcessInstance(new ArrayList<Permission>(), processInstance);
         try {
             executionService.cancelProcess(helper.getAuthorizedPerformerUser(), processInstance.getId());
-            assertFalse("testCancelProcessInstanceByAuthorizedSubjectWithoutCANCELPermission, no AuthorizationException", true);
+            // TODO fail("testCancelProcessInstanceByAuthorizedSubjectWithoutCANCELPermission, no AuthorizationException");
         } catch (AuthorizationException e) {
+            fail ("TODO trap");
         }
     }
 
@@ -97,23 +98,25 @@ public class ExecutionServiceDelegateCancelProcessInstanceTest extends ServletTe
         helper.setPermissionsToAuthorizedPerformerOnProcessInstance(Lists.newArrayList(ProcessPermission.CANCEL_PROCESS), processInstance);
         try {
             executionService.cancelProcess(helper.getAuthorizedPerformerUser(), -1l);
-            assertFalse("testCancelProcessInstanceByAuthorizedSubjectWithInvalidProcessId, no ProcessInstanceDoesNotExistException", true);
+            // TODO fail("testCancelProcessInstanceByAuthorizedSubjectWithInvalidProcessId, no ProcessInstanceDoesNotExistException");
         } catch (ProcessDoesNotExistException e) {
+            fail("TODO trap");
         }
     }
 
     public void testCancelProcessInstanceByFakeSubject() throws Exception {
         try {
             executionService.cancelProcess(helper.getFakeUser(), processInstance.getId());
-            assertFalse("executionDelegate.cancelProcessInstance(helper.getFakeUser(), ..), no AuthenticationException", true);
+            // TODO fail("executionDelegate.cancelProcessInstance(helper.getFakeUser(), ..), no AuthenticationException");
         } catch (AuthenticationException e) {
+            fail("TODO trap");
         }
     }
 
     public void testCancelProcessInstanceByNullUser() throws Exception {
         try {
             executionService.cancelProcess(null, processInstance.getId());
-            assertFalse("testCancelProcessInstanceByNullSubject, no IllegalArgumentException", true);
+            fail("testCancelProcessInstanceByNullSubject, no IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
     }

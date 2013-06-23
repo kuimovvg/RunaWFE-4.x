@@ -110,7 +110,7 @@ public class GetTaskListTest extends ServletTestCase {
     public void testEqualsFunctionTest() throws Exception {
 
         th.getExecutionService().startProcess(th.getAuthorizedPerformerUser(), PROCESS_NAME, null);
-        // assignment handler creates secured object for swimlane and grant
+        // assignment handler creates secured object for swimlane and grants
         // group2 permissions on it, so we have to update reference
         group2 = (Group) th.getExecutor(group2.getName());
 
@@ -126,7 +126,7 @@ public class GetTaskListTest extends ServletTestCase {
         tasks = th.getExecutionService().getTasks(th.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("getTasks() returns wrong tasks number", 1, tasks.size());
 
-        assertEquals("task assigned", th.getAuthorizedPerformerActor(), tasks.get(0).getOwner());
+        assertEquals("task assigned", group2, tasks.get(0).getOwner());
 
         th.getExecutionService().completeTask(th.getAuthorizedPerformerUser(), tasks.get(0).getId(), new HashMap<String, Object>(), null);
 

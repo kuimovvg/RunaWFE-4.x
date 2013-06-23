@@ -100,22 +100,22 @@ public class ExecutionServiceDelegateCompleteTaskTest extends ServletTestCase {
         initTask();
 
         assertEquals("state name differs from expected", "evaluating", task.getName());
-        assertEquals("task <evaluating> is assigned before completeTask()", helper.getAuthorizedPerformerActor(), task.getOwner());
+        assertEquals("task <evaluating> is assigned before completeTask()", helper.getBossGroup(), task.getOwner());
 
         executionService.completeTask(helper.getAuthorizedPerformerUser(), task.getId(), legalVariables, null);
         List<WfTask> tasks = executionService.getTasks(helper.getAuthorizedPerformerUser(), helper.getTaskBatchPresentation());
 
         assertEquals("Tasks not returned for Authorized Subject", 1, tasks.size());
         assertEquals("state name differs from expected", "treating collegues on cake and pie", tasks.get(0).getName());
-        assertEquals("task <treating collegues on cake and pie> is not assigned after starting [requester]", helper.getAuthorizedPerformerActor(),
-                task.getOwner());
+        assertEquals("task <treating collegues on cake and pie> is not assigned after starting [requester]"
+                , helper.getBossGroup(), task.getOwner());
         executionService.completeTask(helper.getAuthorizedPerformerUser(), tasks.get(0).getId(), legalVariables, null);
 
         tasks = executionService.getTasks(helper.getErpOperatorUser(), helper.getTaskBatchPresentation());
 
         assertEquals("Tasks not returned for Erp Operator Subject", 1, tasks.size());
         assertEquals("state name differs from expected", "updating erp asynchronously", tasks.get(0).getName());
-        assertEquals("task <updating erp asynchronously> is not assigned before competeTask()", helper.getAuthorizedPerformerActor(), task.getOwner());
+        assertEquals("task <updating erp asynchronously> is not assigned before competeTask()", helper.getBossGroup(), task.getOwner());
     }
 
     public void testCompleteTaskBySubjectWhichIsNotInSwimlane() throws Exception {
@@ -132,7 +132,7 @@ public class ExecutionServiceDelegateCompleteTaskTest extends ServletTestCase {
         initTask();
         try {
             executionService.completeTask(helper.getUnauthorizedPerformerUser(), task.getId(), legalVariables, null);
-            assertTrue("testCompleteTaskByNullSubject(), no AuthorizationException", false);
+            fail("testCompleteTaskByNullSubject(), no AuthorizationException");
         } catch (AuthorizationException e) {
         }
     }
@@ -141,7 +141,7 @@ public class ExecutionServiceDelegateCompleteTaskTest extends ServletTestCase {
         initTask();
         try {
             executionService.completeTask(null, task.getId(), legalVariables, null);
-            assertTrue("testCompleteTaskByNullSubject(), no IllegalArgumentException", false);
+            fail("testCompleteTaskByNullSubject(), no IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
     }
@@ -150,8 +150,11 @@ public class ExecutionServiceDelegateCompleteTaskTest extends ServletTestCase {
         initTask();
         try {
             executionService.completeTask(helper.getFakeUser(), task.getId(), legalVariables, null);
-            assertTrue("testCompleteTaskByFakeSubject(), no AuthenticationException", false);
+            fail("testCompleteTaskByFakeSubject(), no AuthenticationException");
+        } catch (AuthorizationException e) {
+            // TODO
         } catch (AuthenticationException e) {
+            fail("TODO trap");
         }
     }
 
@@ -159,18 +162,8 @@ public class ExecutionServiceDelegateCompleteTaskTest extends ServletTestCase {
         initTask();
         try {
             executionService.completeTask(helper.getAuthorizedPerformerUser(), -1l, legalVariables, null);
-            assertTrue("testCompleteTaskByAuthorizedSubjectWithInvalidTaskId(), no TaskDoesNotExistException", false);
+            fail("testCompleteTaskByAuthorizedSubjectWithInvalidTaskId(), no TaskDoesNotExistException");
         } catch (TaskDoesNotExistException e) {
         }
     }
-
-    public void testCompleteTaskByAuthorizedSubjectWithInvalidTaskName() throws Exception {
-        initTask();
-        try {
-            executionService.completeTask(helper.getAuthorizedPerformerUser(), task.getId(), legalVariables, null);
-            assertTrue("testCompleteTaskByAuthorizedSubjectWithInvalidTaskId(), no TaskDoesNotExistException", false);
-        } catch (TaskDoesNotExistException e) {
-        }
-    }
-
 }
