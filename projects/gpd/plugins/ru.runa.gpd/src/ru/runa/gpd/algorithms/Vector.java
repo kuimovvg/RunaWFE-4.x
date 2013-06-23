@@ -53,4 +53,12 @@ public class Vector {
 		}
 		return sum == 0;
 	}
+	
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		for(int i = 0; i < elements.length; i++) {
+			str.append(elements[i]);
+		}
+		return str.toString();
+	}
 }
