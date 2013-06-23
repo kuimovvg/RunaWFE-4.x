@@ -224,7 +224,7 @@ public class FormulaActionHandler implements ActionHandler {
         }
         Object lastValue = context.getVariable(newVariable);
         if (lastValue != null && value.getClass() != lastValue.getClass()) {
-            value = actions.translate(value, lastValue.getClass());
+            value = actions.translate(lastValue, value.getClass());
         }
         if (value == null) {
             error("Type mismatch");

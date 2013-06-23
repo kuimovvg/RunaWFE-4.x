@@ -289,7 +289,7 @@ public interface ExecutorService {
 
     /**
      * Updates actor presence status.
-     * 
+     *
      * @param user
      * @param actor
      * @param active

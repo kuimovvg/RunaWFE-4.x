@@ -32,14 +32,6 @@ import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wf.service.WfScriptServiceTestHelper;
 import ru.runa.wf.service.WfServiceTestHelper;
 
-/**
- * Created on 20.04.2006
- * 
- * @author Beresina N.
- * @author Gordienko_m
- * @author Vitaliy S aka Yilativs
- */
-
 public class WfeScriptServiceDelegateProcessTest extends ServletTestCase {
 
     private static final String SET_ADD = "process_SetAdd_script.xml";
@@ -104,7 +96,7 @@ public class WfeScriptServiceDelegateProcessTest extends ServletTestCase {
         assertTrue("Check if 'read' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(instanceStub1, employee,
                 Permission.READ));
 
-        assertFalse("Check if 'update_permissions' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(
+        assertTrue("Check if 'update_permissions' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(
                 instanceStub1, employee, Permission.UPDATE_PERMISSIONS));
 
         assertTrue("Check if 'cancel_instance' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(instanceStub1,
@@ -113,7 +105,7 @@ public class WfeScriptServiceDelegateProcessTest extends ServletTestCase {
         assertTrue("Check if 'read' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(instanceStub2, employee,
                 Permission.READ));
 
-        assertFalse("Check if 'update_permissions' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(
+        assertTrue("Check if 'update_permissions' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(
                 instanceStub2, employee, Permission.UPDATE_PERMISSIONS));
 
         assertTrue("Check if 'cancel_instance' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(instanceStub2,
@@ -207,7 +199,7 @@ public class WfeScriptServiceDelegateProcessTest extends ServletTestCase {
         assertTrue("Check if 'read' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(instanceStub1, employee,
                 Permission.READ));
 
-        assertFalse("Check if 'update_permissions' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(
+        assertTrue("Check if 'update_permissions' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(
                 instanceStub1, employee, Permission.UPDATE_PERMISSIONS));
 
         assertTrue("Check if 'cancel_instance' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(instanceStub1,
@@ -216,7 +208,7 @@ public class WfeScriptServiceDelegateProcessTest extends ServletTestCase {
         assertTrue("Check if 'read' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(instanceStub2, employee,
                 Permission.READ));
 
-        assertFalse("Check if 'update_permissions' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(
+        assertTrue  ("Check if 'update_permissions' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(
                 instanceStub2, employee, Permission.UPDATE_PERMISSIONS));
 
         assertTrue("Check if 'cancel_instance' permission is given to employee on validProcess instance", helper.isAllowedToExecutor(instanceStub2,

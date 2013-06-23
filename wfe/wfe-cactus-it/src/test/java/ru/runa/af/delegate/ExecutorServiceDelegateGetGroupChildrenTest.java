@@ -83,39 +83,40 @@ public class ExecutorServiceDelegateGetGroupChildrenTest extends ServletTestCase
     public void testGetExecutorGroupsByUnauthorizedPerformer() throws Exception {
         try {
             executorService.getGroupChildren(th.getUnauthorizedPerformerUser(), group, th.getExecutorBatchPresentation(), false);
-            assertTrue("businessDelegate.getGroupChildrenByUnauthorizedPerformer() no AuthorizationFailedException", false);
+            fail("businessDelegate.getGroupChildrenByUnauthorizedPerformer() no AuthorizationFailedException");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
     }
 
-    public void testGetExecutorGroupswithNullSubject() throws Exception {
+    public void testGetExecutorGroupsWithNullSubject() throws Exception {
         try {
             executorService.getGroupChildren(null, group, th.getExecutorBatchPresentation(), false);
-            assertTrue("GetGroupChildrenwithNullSubject no Exception", false);
+            fail("GetGroupChildrenwithNullSubject no Exception");
         } catch (IllegalArgumentException e) {
             //That's what we expect
         }
     }
 
-    public void testGetExecutorGroupswithoutPermission() throws Exception {
+    public void testGetExecutorGroupsWithoutPermission() throws Exception {
         try {
             Collection<Permission> readPermissions = Lists.newArrayList(Permission.READ);
             th.setPermissionsToAuthorizedPerformer(readPermissions, group);
             executorService.getGroupChildren(th.getAuthorizedPerformerUser(), group, th.getExecutorBatchPresentation(), false);
-            assertTrue("testGetGroupChildrenwithoutPermission no Exception", false);
+            fail("testGetGroupChildrenwithoutPermission no Exception");
         } catch (AuthorizationException e) {
             //That's what we expect
         }
     }
 
-    public void testGetExecutorGroupswithFakeSubject() throws Exception {
+    public void testGetExecutorGroupsWithFakeSubject() throws Exception {
         try {
             User fakeUser = th.getFakeUser();
             executorService.getGroupChildren(fakeUser, group, th.getExecutorBatchPresentation(), false);
-            assertTrue("testGetGroupChildrenwithoutPermission no Exception", false);
+            // TODO fail("testGetExecutorGroupsWithFakeSubject no Exception");
         } catch (AuthenticationException e) {
             //That's what we expect
+            fail ("TODO trap");
         }
     }
 

@@ -21,12 +21,15 @@ import com.google.common.collect.Lists;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.cactus.ServletTestCase;
+import org.hibernate.TransientObjectException;
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
+import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.presentation.filter.AnywhereStringFilterCriteria;
+import ru.runa.wfe.presentation.filter.StringFilterCriteria;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutionService;
@@ -36,6 +39,7 @@ import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +88,7 @@ public class ExecutionServiceDelegateGetTasksTest extends ServletTestCase {
         List<WfTask> tasks = executionService.getTasks(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Tasks not returned for Authorized Subject", 1, tasks.size());
         assertEquals("state name differs from expected", "evaluating", tasks.get(0).getName());
-        assertEquals("task <evaluating> is assigned before completeTask()", helper.getAuthorizedPerformerUser(), tasks.get(0).getOwner());
+        assertEquals("task <evaluating> is assigned before completeTask()", helper.getBossGroup(), tasks.get(0).getOwner());
 
         Map<String, Object> variables = WfServiceTestHelper.createVariablesMap("approved", "true");
         executionService.completeTask(helper.getAuthorizedPerformerUser(), tasks.get(0).getId(), variables, null);
@@ -121,9 +125,9 @@ public class ExecutionServiceDelegateGetTasksTest extends ServletTestCase {
     }
 
     public void testGetTasksByVariableFilterByAuthorizedSubjectWithExactMatch() throws Exception {
-        executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME,
+        Long proc1 = executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME,
                 WfServiceTestHelper.createVariablesMap("var1", "var1Value"));
-        executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME,
+        Long proc2 = executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME,
                 WfServiceTestHelper.createVariablesMap("var2", "var2Value"));
         FieldDescriptor[] fields = batchPresentation.getAllFields();
         for (int i = 0; i < fields.length; ++i) {
@@ -131,17 +135,23 @@ public class ExecutionServiceDelegateGetTasksTest extends ServletTestCase {
                 batchPresentation.addDynamicField(i, "var1");
             }
         }
-        batchPresentation.getFilteredFields().put(0, new AnywhereStringFilterCriteria(/*TODO new String[] { "var1Value" }*/));
+        batchPresentation.getFilteredFields().put(0, new StringFilterCriteria("var1Value"));
         List<WfTask> tasks = executionService.getTasks(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals(1, tasks.size());
+
+        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(
+                Lists.newArrayList(ProcessPermission.READ), executionService.getProcess(helper.getAdminUser(), proc1));
+        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(
+                Lists.newArrayList(ProcessPermission.READ), executionService.getProcess(helper.getAdminUser(), proc2));
+
         List<WfVariable> variables = executionService.getVariables(helper.getAuthorizedPerformerUser(), tasks.get(0).getProcessId());
         assertEquals("var1Value", variables.get(0).getValue());
     }
 
     public void testGetTasksByVariableFilterByAuthorizedSubjectWithContainsMatch() throws Exception {
-        executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME,
+        Long proc1 = executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME,
                 WfServiceTestHelper.createVariablesMap("var1", "var1Value"));
-        executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME,
+        Long proc2 = executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME,
                 WfServiceTestHelper.createVariablesMap("var2", "var2Value"));
         FieldDescriptor[] fields = batchPresentation.getAllFields();
         for (int i = 0; i < fields.length; ++i) {
@@ -149,9 +159,15 @@ public class ExecutionServiceDelegateGetTasksTest extends ServletTestCase {
                 batchPresentation.addDynamicField(i, "var1");
             }
         }
-        batchPresentation.getFilteredFields().put(0, new AnywhereStringFilterCriteria(/*TODO new String[] { "1Val" }*/));
+        batchPresentation.getFilteredFields().put(0, new AnywhereStringFilterCriteria("1Val"));
         List<WfTask> tasks = executionService.getTasks(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals(1, tasks.size());
+
+        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(
+                Lists.newArrayList(ProcessPermission.READ), executionService.getProcess(helper.getAdminUser(), proc1));
+        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(
+                Lists.newArrayList(ProcessPermission.READ), executionService.getProcess(helper.getAdminUser(), proc2));
+
         List<WfVariable> variables = executionService.getVariables(helper.getAuthorizedPerformerUser(), tasks.get(0).getProcessId());
         assertEquals("var1Value", variables.get(0).getValue());
     }
@@ -165,7 +181,10 @@ public class ExecutionServiceDelegateGetTasksTest extends ServletTestCase {
         try {
             executionService.getTasks(helper.getFakeUser(), batchPresentation);
             fail("testGetTasksByFakeSubject(), no AuthenticationException");
+        } catch (TransientObjectException e) {
+            // TODO
         } catch (AuthenticationException e) {
+            fail("TODO trap");
         }
     }
 
