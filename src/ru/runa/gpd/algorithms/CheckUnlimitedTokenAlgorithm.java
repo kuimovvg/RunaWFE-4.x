@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.Fork;
 import ru.runa.gpd.lang.model.Join;
@@ -29,14 +30,34 @@ public class CheckUnlimitedTokenAlgorithm {
 	}
 	
 	public Transition startAlgorithm() {
+		StringBuilder str = new StringBuilder();
+		str.append("CheckUnlimitedTokenAlgorithm started.");
+		str.append("\n");
+		str.append("The list of V vectors contais:");
+		str.append("\n");
+		for(Vector vVector : vVectorList) {
+			str.append(vVector.toString());
+			str.append("\n");
+		}
+		PluginLogger.logInfo(str.toString());
+		
 		List<Vector> startVectorList = new ArrayList<Vector>();
 		Vector vector = new Vector(transitions.size() + 1);
 		vector.setElementValue(0, 1);
 		startVectorList.add(vector);
+		Vector initGraphVector = new Vector(transitions.size() + 1);
+		vector.setElementValue(0, 1);
+		graphList.add(initGraphVector);
 		listUnprocessedStates.addInList(startVectorList);
 		
 		while(listUnprocessedStates.isFirstObjExist()) {			
 			Vector uVector = listUnprocessedStates.getFirstObj();
+			str = new StringBuilder();
+			str.append("Current U vector is:");
+			str.append("\n");
+			str.append(uVector.toString());
+			str.append("\n");
+			PluginLogger.logInfo(str.toString());
 			
 			List<Vector> listIntermediateVectors = new ArrayList<Vector>();
 			for(Vector vVector : vVectorList) {
@@ -45,13 +66,24 @@ public class CheckUnlimitedTokenAlgorithm {
 					listIntermediateVectors.add(tempVector);
 				}
 			}
+			str = new StringBuilder();
+			str.append("Intermediate vectors are:");
+			str.append("\n");
+			for(Vector intermediateVector : listIntermediateVectors) {
+				str.append(intermediateVector.toString());
+				str.append("\n");
+			}
+			PluginLogger.logInfo(str.toString());
 			
+			str = new StringBuilder();
 			List<Vector> equalVectors = new ArrayList<Vector>();
  			for(Vector intermediateVector : listIntermediateVectors) {
 				for(Vector graphVector : graphList) {
 					if(Arrays.equals(intermediateVector.getElements(), graphVector.getElements())) {
 						equalVectors.add(intermediateVector);
 						transitionVectors.add(new TransitionVector(uVector, graphVector));
+						str.append("Create transition between: " + uVector.toString() + " and " + graphVector.toString());
+						str.append("\n");
 					}
 				}
 			}
@@ -60,7 +92,10 @@ public class CheckUnlimitedTokenAlgorithm {
  			
  			for(Vector intermediateVector : listIntermediateVectors) {
  				transitionVectors.add(new TransitionVector(uVector, intermediateVector));
+ 				str.append("Create transition between: " + uVector.toString() + " and " + intermediateVector.toString());
+ 				str.append("\n");
  			}
+ 			PluginLogger.logInfo(str.toString());
  			
  			graphList.addAll(listIntermediateVectors);
  			listUnprocessedStates.addInList(listIntermediateVectors);
@@ -68,14 +103,34 @@ public class CheckUnlimitedTokenAlgorithm {
  			
  			listUnprocessedStates.removeFirst();
  			
+ 			str = new StringBuilder();
+ 			str.append("List unprocessed vectors:"); 			
+ 			str.append("\n");
+			for(Vector unprocessedVector : listUnprocessedStates.getList()) {
+				str.append(unprocessedVector.toString());
+				str.append("\n");
+			}
+			PluginLogger.logInfo(str.toString());
+ 			
  			for(Vector unprocessedVector : listUnprocessedStates.getList()) {
  				List<Vector> attainableVectorList = getAttainableVectorList(unprocessedVector);
+ 				str = new StringBuilder();
+ 				str.append("Current unprocessed vectors:" + unprocessedVector.toString()); 
+ 				str.append("\n");
+ 				str.append("List attainable vectors"); 
+ 				str.append("\n");
+ 				for(Vector attainableVector : attainableVectorList) {
+ 					str.append(attainableVector.toString());
+ 					str.append("\n");
+ 				}
+ 				PluginLogger.logInfo(str.toString());
+ 				
  				for(Vector attainableVector : attainableVectorList) {
  					int stongminusindex = 0;
  					int strongminus = 0;
 					int minusequal = 0;
  					for(int i = 0; i < unprocessedVector.getElements().length; i++) {
- 						if(attainableVector.getElements()[i] < unprocessedVector.getElements()[i]) {
+ 						if(attainableVector.getElements()[i] < unprocessedVector.getElements()[i] && stongminusindex == 0) {
 							strongminus++;
 							stongminusindex = i;
 							continue;
@@ -84,7 +139,10 @@ public class CheckUnlimitedTokenAlgorithm {
 							minusequal++;
 						}
  					}
- 					if(strongminus == 1 && minusequal == unprocessedVector.getElements().length - 1) {						
+ 					if(strongminus == 1 && minusequal == unprocessedVector.getElements().length - 1) {	
+ 						str = new StringBuilder();
+ 		 				str.append("The required vector has been found:" + attainableVector.toString()); 
+ 		 				PluginLogger.logInfo(str.toString());
 						return transitions.get(stongminusindex - 1);
 					}
  				}
