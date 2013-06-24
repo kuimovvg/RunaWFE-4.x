@@ -99,7 +99,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         }
         List<Variable> variables = formNode.getProcessDefinition().getVariables(true);
         // get variables without strong-typing. (all hierarchy) TODO for similar places
-        if (typeClassNameFilter != null) {
+        if (typeClassNameFilter != null && !Object.class.getName().equals(typeClassNameFilter)) {
             List<String> filterHierarchy = VariableFormatRegistry.getInstance().getSuperClassNames(typeClassNameFilter);
             List<Variable> copyList = new ArrayList<Variable>(variables);
             for (Variable variable : copyList) {

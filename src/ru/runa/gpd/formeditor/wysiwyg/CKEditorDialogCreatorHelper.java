@@ -16,7 +16,7 @@ public class CKEditorDialogCreatorHelper {
         public void write(StringBuilder writer, int prefix);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private abstract static class CKElementBase<T extends CKElementBase> implements CKElement {
         @Override
         public abstract void write(StringBuilder writer, int prefix);
