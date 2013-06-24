@@ -29,7 +29,7 @@ public abstract class ActionBase extends Action {
         if (errors == null) {
             errors = new ActionMessages();
         }
-        return super.getErrors(request);
+        return errors;
     }
 
     protected void addError(HttpServletRequest request, Exception e) {
