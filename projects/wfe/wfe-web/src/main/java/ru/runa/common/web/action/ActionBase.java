@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
@@ -17,6 +18,18 @@ public abstract class ActionBase extends Action {
 
     protected User getLoggedUser(HttpServletRequest request) {
         return Commons.getUser(request.getSession());
+    }
+
+    @Override
+    protected ActionMessages getErrors(HttpServletRequest request) {
+        ActionMessages errors = (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
+        if (errors == null) {
+            errors = (ActionMessages) request.getSession().getAttribute(Globals.ERROR_KEY);
+        }
+        if (errors == null) {
+            errors = new ActionMessages();
+        }
+        return super.getErrors(request);
     }
 
     protected void addError(HttpServletRequest request, Exception e) {
