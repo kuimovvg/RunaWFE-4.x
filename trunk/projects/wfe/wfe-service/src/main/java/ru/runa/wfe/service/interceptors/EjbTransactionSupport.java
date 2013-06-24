@@ -12,6 +12,7 @@ import org.hibernate.exception.LockAcquisitionException;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.CachingLogic;
+import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.user.User;
 
@@ -39,7 +40,9 @@ public class EjbTransactionSupport {
         try {
             transaction.begin();
             if (ic.getParameters() != null && ic.getParameters().length > 0 && ic.getParameters()[0] instanceof User) {
-                UserHolder.set((User) ic.getParameters()[0]);
+                User user = (User) ic.getParameters()[0];
+                SubjectPrincipalsHelper.validateUser(user);
+                UserHolder.set(user);
             }
             Object result = invokeWithRetry(ic);
             transaction.commit();

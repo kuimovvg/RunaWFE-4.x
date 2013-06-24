@@ -70,12 +70,12 @@ public class SubjectPrincipalsHelper {
         }
     }
 
-    private static void validateUser(User user) throws AuthenticationException {
+    public static void validateUser(User user) throws AuthenticationException {
         try {
             Cipher cipher = Cipher.getInstance(encryptionType);
             cipher.init(Cipher.DECRYPT_MODE, securedKey);
             if (!Arrays.equals(getActorKey(user.getActor()), cipher.doFinal(user.getSecuredKey()))) {
-                throw new AuthenticationException("Incorrect user principal at subject received");
+                throw new AuthenticationException("Incorrect user principal: secured key validation has been failed");
             }
         } catch (Exception e) {
             log.error("Error in subject decryption", e);
@@ -88,7 +88,6 @@ public class SubjectPrincipalsHelper {
         Set<User> principals = subject.getPrincipals(User.class);
         for (User user : principals) {
             if (user != null) {
-                validateUser(user);
                 return user;
             }
         }

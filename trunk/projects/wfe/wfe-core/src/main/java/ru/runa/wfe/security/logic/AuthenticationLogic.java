@@ -70,10 +70,11 @@ public class AuthenticationLogic extends CommonLogic {
             LoginContext loginContext = new LoginContext(LoginModuleConfiguration.APP_NAME, null, callbackHandler, Configuration.getConfiguration());
             loginContext.login();
             Subject subject = loginContext.getSubject();
-            callHandlers(SubjectPrincipalsHelper.getUser(subject).getActor(), authType);
-            String actorName = SubjectPrincipalsHelper.getUser(subject).getName();
-            log.debug(actorName + " successfully authenticated");
-            return SubjectPrincipalsHelper.getUser(subject);
+            User user = SubjectPrincipalsHelper.getUser(subject);
+            SubjectPrincipalsHelper.validateUser(user);
+            callHandlers(user.getActor(), authType);
+            log.debug(user.getName() + " successfully authenticated");
+            return user;
         } catch (Exception e) {
             throw new AuthenticationException(e);
         }
