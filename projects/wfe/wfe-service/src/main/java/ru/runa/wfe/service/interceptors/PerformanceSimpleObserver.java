@@ -15,7 +15,7 @@ public class PerformanceSimpleObserver {
         Object result = ic.proceed();
         long jobTime = System.currentTimeMillis() - startTime;
         if (jobTime > 1000) {
-            log.info(jobTime + " milliseconds: " + DebugUtils.getDebugString(ic, false));
+            log.info(jobTime + " ms: " + DebugUtils.getDebugString(ic, false));
         }
         return result;
     }
