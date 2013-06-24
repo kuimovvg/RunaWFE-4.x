@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 public class DebugUtils {
 
     public static String getDebugString(InvocationContext ic, boolean includeArguments) {
-        String s = ic.getMethod().getDeclaringClass().getName() + "." + ic.getMethod().getName();
+        String s = ic.getMethod().getDeclaringClass().getSimpleName() + "." + ic.getMethod().getName();
         if (includeArguments) {
             s += "(" + Joiner.on(", ").join(getDebugArguments(ic.getParameters())) + ")";
         }
