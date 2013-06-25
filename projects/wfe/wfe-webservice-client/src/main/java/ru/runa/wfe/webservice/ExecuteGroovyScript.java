@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for removeProcesses complex type.
+ * <p>Java class for executeGroovyScript complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="removeProcesses">
+ * &lt;complexType name="executeGroovyScript">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}processFilter" minOccurs="0"/>
+ *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,14 +27,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "removeProcesses", propOrder = {
+@XmlType(name = "executeGroovyScript", propOrder = {
     "arg0",
     "arg1"
 })
-public class RemoveProcesses {
+public class ExecuteGroovyScript {
 
     protected User arg0;
-    protected ProcessFilter arg1;
+    protected String arg1;
 
     /**
      * Gets the value of the arg0 property.
@@ -65,10 +65,10 @@ public class RemoveProcesses {
      * 
      * @return
      *     possible object is
-     *     {@link ProcessFilter }
+     *     {@link String }
      *     
      */
-    public ProcessFilter getArg1() {
+    public String getArg1() {
         return arg1;
     }
 
@@ -77,10 +77,10 @@ public class RemoveProcesses {
      * 
      * @param value
      *     allowed object is
-     *     {@link ProcessFilter }
+     *     {@link String }
      *     
      */
-    public void setArg1(ProcessFilter value) {
+    public void setArg1(String value) {
         this.arg1 = value;
     }
 
