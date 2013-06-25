@@ -88,27 +88,28 @@ public class BotTaskConfigurationUtils {
         String substituted = document.getRootElement().element(BOTCONFIG_PARAM).getTextTrim();
         for (ParamDef botTaskParamDef : botTaskParamsDef.getInputParams().values()) {
             ParamDef taskParamDef = taskParamsDef.getInputParamNotNull(botTaskParamDef.getName());
-            String replacement = getReplacement(taskParamDef);
-            substituted = substituted.replaceAll("\"" + taskParamDef.getName() + "\"", "\"" + replacement + "\"");
-            substituted = substituted.replaceAll(Pattern.quote(taskParamDef.getName()), Matcher.quoteReplacement(replacement));
+            substituted = substituteParameter(substituted, botTaskParamDef, taskParamDef);
         }
         for (ParamDef botTaskParamDef : botTaskParamsDef.getOutputParams().values()) {
             ParamDef taskParamDef = taskParamsDef.getOutputParamNotNull(botTaskParamDef.getName());
-            String replacement = getReplacement(taskParamDef);
-            substituted = substituted.replaceAll("\"" + taskParamDef.getName() + "\"", "\"" + replacement + "\"");
-            substituted = substituted.replaceAll(Pattern.quote(taskParamDef.getName()), Matcher.quoteReplacement(replacement));
+            substituted = substituteParameter(substituted, botTaskParamDef, taskParamDef);
         }
         return substituted.getBytes(Charsets.UTF_8);
     }
 
-    private static String getReplacement(ParamDef paramDef) {
-        if (!Strings.isNullOrEmpty(paramDef.getVariableName())) {
-            return paramDef.getVariableName();
-        } else if (!Strings.isNullOrEmpty(paramDef.getValue())) {
-            return paramDef.getValue();
+    private static String substituteParameter(String config, ParamDef botTaskParamDef, ParamDef taskParamDef) {
+        String replacement;
+        if (!Strings.isNullOrEmpty(taskParamDef.getVariableName())) {
+            replacement = taskParamDef.getVariableName();
+        } else if (!Strings.isNullOrEmpty(taskParamDef.getValue())) {
+            replacement = taskParamDef.getValue();
         } else {
-            throw new InternalApplicationException("no replacement found for param " + paramDef);
+            throw new InternalApplicationException("no replacement found for param " + taskParamDef);
         }
+        // config = config.replaceAll("\"" + taskParamDef.getName() + "\"", "\""
+        // + replacement + "\"");
+        config = config.replaceAll(Pattern.quote("${" + taskParamDef.getName() + "}"), Matcher.quoteReplacement(replacement));
+        return config;
     }
 
     public static boolean isParameterizedBotTaskConfiguration(byte[] configuration) {
