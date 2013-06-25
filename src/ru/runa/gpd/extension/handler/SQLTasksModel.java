@@ -129,9 +129,9 @@ public class SQLTasksModel extends Observable {
         }
 
         public void serialize(Document document, Element parent) {
-            Element taskElement = parent.addElement("task");
+            Element taskElement = parent.addElement("task", XmlUtil.RUNA_NAMESPACE);
             taskElement.addAttribute("datasource", dsName);
-            Element queriesElement = taskElement.addElement("queries");
+            Element queriesElement = taskElement.addElement("queries", XmlUtil.RUNA_NAMESPACE);
             for (SQLQueryModel model : queries) {
                 model.serialize(document, queriesElement);
             }
@@ -170,7 +170,7 @@ public class SQLTasksModel extends Observable {
         }
 
         public void serialize(Document document, Element parent) {
-            Element queryElement = parent.addElement("query");
+            Element queryElement = parent.addElement("query", XmlUtil.RUNA_NAMESPACE);
             queryElement.addAttribute("sql", query);
             for (SQLQueryParameterModel model : params) {
                 model.serialize(document, queryElement);
@@ -216,7 +216,7 @@ public class SQLTasksModel extends Observable {
             } else {
                 elementName = swimlaneVar ? "swimlane-param" : "param";
             }
-            Element paramElement = parent.addElement(elementName);
+            Element paramElement = parent.addElement(elementName, XmlUtil.RUNA_NAMESPACE);
             paramElement.addAttribute("var", varName);
             if (fieldName != null) {
                 paramElement.addAttribute("field", fieldName);
