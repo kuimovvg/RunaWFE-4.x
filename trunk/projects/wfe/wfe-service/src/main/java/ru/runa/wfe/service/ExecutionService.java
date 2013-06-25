@@ -64,21 +64,6 @@ public interface ExecutionService {
             ValidationException;
 
     /**
-     * Start new process by definition (WebServices API duplicate due to lack of
-     * convenient maps).
-     * 
-     * @param user
-     *            authorized user
-     * @param definitionName
-     *            process definition name
-     * @param variables
-     *            initial variable values
-     * @return id of started process
-     * @throws DefinitionDoesNotExistException
-     */
-    public Long startProcessWS(User user, String definitionName, List<WfVariable> variables) throws DefinitionDoesNotExistException;
-
-    /**
      * Gets process count for {@link BatchPresentation}.
      * 
      * @param user
@@ -210,22 +195,6 @@ public interface ExecutionService {
             ValidationException;
 
     /**
-     * Completes task by id (WebServices API duplicate due to lack of maps).
-     * 
-     * @param user
-     *            authorized user
-     * @param taskId
-     *            task id
-     * @param variables
-     *            variables
-     * @param swimlaneActorId
-     *            actor id who will be assigned to task swimlane, can be
-     *            <code>null</code>
-     * @throws TaskDoesNotExistException
-     */
-    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables, Long swimlaneActorId) throws TaskDoesNotExistException;
-
-    /**
      * Gets all initialized process roles.
      * 
      * @param user
@@ -303,20 +272,6 @@ public interface ExecutionService {
      * @throws ProcessDoesNotExistException
      */
     public void updateVariables(User user, Long processId, Map<String, Object> variables) throws ProcessDoesNotExistException;
-
-    /**
-     * Updates process variables without any signalling (WebServices API
-     * duplicate due to lack of maps).
-     * 
-     * @param user
-     *            authorized user
-     * @param processId
-     *            process id
-     * @param variables
-     *            variables
-     * @throws ProcessDoesNotExistException
-     */
-    public void updateVariablesWS(User user, Long processId, List<WfVariable> variables) throws ProcessDoesNotExistException;
 
     /**
      * Gets process diagram as PNG image.
