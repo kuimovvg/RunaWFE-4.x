@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.VariableDefinition;
 
 public class VariableAdapter extends XmlAdapter<WfVariable, ru.runa.wfe.var.dto.WfVariable> {
@@ -15,14 +17,18 @@ public class VariableAdapter extends XmlAdapter<WfVariable, ru.runa.wfe.var.dto.
         wsVariable.formatClassName = variable.getDefinition().getFormatClassName();
         if (variable.getValue() instanceof byte[]) {
             wsVariable.bytesValue = (byte[]) variable.getValue();
+        } else if (variable.getValue() instanceof FileVariable) {
+            wsVariable.bytesValue = ((FileVariable) variable.getValue()).getData();
         } else if (variable.getValue() instanceof Long) {
             wsVariable.longValue = (Long) variable.getValue();
         } else if (variable.getValue() instanceof Boolean) {
             wsVariable.booleanValue = (Boolean) variable.getValue();
         } else if (variable.getValue() instanceof Date) {
             wsVariable.dateValue = (Date) variable.getValue();
+        } else if (variable.getValue() instanceof Executor) {
+            wsVariable.longValue = ((Executor) variable.getValue()).getId();
         } else {
-            wsVariable.stringValue = String.valueOf(variable.getValue());
+            wsVariable.stringValue = variable.getFormatNotNull().format(variable.getValue());
         }
         return wsVariable;
     }
