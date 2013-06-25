@@ -148,6 +148,7 @@ public class WFCommonLogic extends CommonLogic {
             if (groupActors.contains(actor)) {
                 return;
             }
+            log.debug("Group " + groupActors + " does not contains interested " + actor);
         }
         if (canParticipateAsSubstitutor(actor, task)) {
             return;
