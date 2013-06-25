@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for removeProcesses complex type.
+ * <p>Java class for getVariablesWS complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="removeProcesses">
+ * &lt;complexType name="getVariablesWS">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}processFilter" minOccurs="0"/>
+ *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,14 +27,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "removeProcesses", propOrder = {
+@XmlType(name = "getVariablesWS", propOrder = {
     "arg0",
     "arg1"
 })
-public class RemoveProcesses {
+public class GetVariablesWS {
 
     protected User arg0;
-    protected ProcessFilter arg1;
+    protected Long arg1;
 
     /**
      * Gets the value of the arg0 property.
@@ -65,10 +65,10 @@ public class RemoveProcesses {
      * 
      * @return
      *     possible object is
-     *     {@link ProcessFilter }
+     *     {@link Long }
      *     
      */
-    public ProcessFilter getArg1() {
+    public Long getArg1() {
         return arg1;
     }
 
@@ -77,10 +77,10 @@ public class RemoveProcesses {
      * 
      * @param value
      *     allowed object is
-     *     {@link ProcessFilter }
+     *     {@link Long }
      *     
      */
-    public void setArg1(ProcessFilter value) {
+    public void setArg1(Long value) {
         this.arg1 = value;
     }
 
