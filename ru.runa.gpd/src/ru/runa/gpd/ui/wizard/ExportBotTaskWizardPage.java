@@ -31,7 +31,7 @@ public class ExportBotTaskWizardPage extends ExportBotWizardPage {
 
     @Override
     protected String getFileName(String selectionName) {
-        return selectionName.substring(selectionName.indexOf("/") + 1, selectionName.lastIndexOf("/")) + getOutputSuffix();
+        return selectionName.substring(selectionName.indexOf("/") + 1, selectionName.lastIndexOf("/"))+"."+selectionName.substring(selectionName.lastIndexOf("/")+1) + getOutputSuffix();
     }
 
     @Override
