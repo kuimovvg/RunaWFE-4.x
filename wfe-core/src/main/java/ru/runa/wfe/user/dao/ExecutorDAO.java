@@ -378,7 +378,7 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
      */
     public Actor setStatus(Actor actor, boolean isActive) {
         actor.setActive(isActive);
-        return getHibernateTemplate().merge(actor);
+        return update(actor);
     }
 
     /**
@@ -407,7 +407,7 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
                 }
             }
         }
-        return getHibernateTemplate().merge(newExecutor);
+        return update(newExecutor);
     }
 
     /**
