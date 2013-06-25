@@ -57,10 +57,12 @@ import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.converter.SerializableToByteArrayConverter;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.jaxb.VariableAdapter;
 import ru.runa.wfe.var.logic.VariableLogic;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Stateless(name = "ExecutionServiceBean")
@@ -138,6 +140,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         return taskLogic.getTask(user, taskId);
     }
 
+    @WebMethod(exclude = true)
     @Override
     public List<WfVariable> getVariables(User user, Long processId) {
         Preconditions.checkArgument(user != null);
@@ -285,7 +288,30 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         return false;
     }
 
-    // workaround for web services
+    // WebService API methods
+
+    public List<ru.runa.wfe.var.jaxb.WfVariable> getVariablesWS(User user, Long processId) {
+        List<WfVariable> list = getVariables(user, processId);
+        List<ru.runa.wfe.var.jaxb.WfVariable> result = Lists.newArrayListWithExpectedSize(list.size());
+        VariableAdapter adapter = new VariableAdapter();
+        for (WfVariable variable : list) {
+            result.add(adapter.marshal(variable));
+        }
+        return result;
+    }
+
+    public Long startProcessWS(User user, String definitionName, List<WfVariable> variables) {
+        return startProcess(user, definitionName, toVariablesMap(variables));
+    }
+
+    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables, Long swimlaneActorId) {
+        completeTask(user, taskId, toVariablesMap(variables), swimlaneActorId);
+    }
+
+    public void updateVariablesWS(User user, Long processId, List<WfVariable> variables) {
+        updateVariables(user, processId, toVariablesMap(variables));
+    }
+
     private Map<String, Object> toVariablesMap(List<WfVariable> variables) {
         Map<String, Object> map = Maps.newHashMap();
         if (variables != null) {
@@ -315,18 +341,4 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         return map;
     }
 
-    @Override
-    public Long startProcessWS(User user, String definitionName, List<WfVariable> variables) {
-        return startProcess(user, definitionName, toVariablesMap(variables));
-    }
-
-    @Override
-    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables, Long swimlaneActorId) {
-        completeTask(user, taskId, toVariablesMap(variables), swimlaneActorId);
-    }
-
-    @Override
-    public void updateVariablesWS(User user, Long processId, List<WfVariable> variables) {
-        updateVariables(user, processId, toVariablesMap(variables));
-    }
 }
