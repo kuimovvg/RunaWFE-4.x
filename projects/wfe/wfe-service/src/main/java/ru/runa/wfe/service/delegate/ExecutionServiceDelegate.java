@@ -23,7 +23,6 @@ import java.util.Map;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
-import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
@@ -51,11 +50,6 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     @Override
     public Long startProcess(User user, String definitionName, Map<String, Object> variablesMap) {
         return getExecutionService().startProcess(user, definitionName, variablesMap);
-    }
-
-    @Override
-    public Long startProcessWS(User user, String definitionName, List<WfVariable> variables) {
-        throw new UnsupportedOperationException("This method designed for WebServices API only. Use startProcess(User, String, Map<String, Object>)");
     }
 
     @Override
@@ -119,18 +113,8 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public void updateVariablesWS(User user, Long processId, List<WfVariable> variables) throws ProcessDoesNotExistException {
-        throw new UnsupportedOperationException("This method designed for WebServices API only. Use updateVariables(User, Long, List<WfVariable>)");
-    }
-
-    @Override
     public void completeTask(User user, Long taskId, Map<String, Object> variables, Long swimlaneActorId) {
         getExecutionService().completeTask(user, taskId, variables, swimlaneActorId);
-    }
-
-    @Override
-    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables, Long swimlaneActorId) {
-        throw new UnsupportedOperationException("This method designed for WebServices API only. Use completeTask(User, Long, Map<String, Object>)");
     }
 
     @Override
