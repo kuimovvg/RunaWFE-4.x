@@ -40,7 +40,7 @@ public class ProcessSwimlaneAssignmentRowBuilder implements RowBuilder {
 
     public ProcessSwimlaneAssignmentRowBuilder(List<WfTask> activeTasks, PageContext pageContext) {
         this.pageContext = pageContext;
-        this.iterator = activeTasks.iterator();
+        iterator = activeTasks.iterator();
     }
 
     @Override
@@ -70,7 +70,6 @@ public class ProcessSwimlaneAssignmentRowBuilder implements RowBuilder {
 
     @Override
     public List<TR> buildNextArray() {
-        // TODO Auto-generated method stub
         return null;
     }
 }
