@@ -11,6 +11,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -31,6 +32,7 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ProjectFinder;
@@ -38,6 +40,7 @@ import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
 import ru.runa.wfe.definition.dto.WfDefinition;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
@@ -193,7 +196,16 @@ public class ImportParWizardPage extends ImportWizardPage {
                 processFolder.create(true, true, null);
                 IOUtils.extractArchiveToFolder(parInputStream, processFolder);
                 IFile definitionFile = ProjectFinder.getProcessDefinitionFile(processFolder);
-                ProcessCache.newProcessDefinitionWasCreated(definitionFile);
+                ProcessDefinition definition = ProcessCache.newProcessDefinitionWasCreated(definitionFile);
+                if (definition != null && !Objects.equal(definition.getName(), processFolder.getName())) {
+                    // if par name differs from definition name
+                    String projectPath = "src/process/" + definition.getName();
+                    IPath destination = project.getFolder(projectPath).getFullPath();
+                    processFolder.move(destination, true, false, null);
+                    processFolder = project.getFolder(projectPath);
+                    definitionFile = ProjectFinder.getProcessDefinitionFile(processFolder);
+                    ProcessCache.newProcessDefinitionWasCreated(definitionFile);
+                }
             }
         } catch (Exception exception) {
             PluginLogger.logErrorWithoutDialog("import par", exception);
