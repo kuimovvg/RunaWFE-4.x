@@ -17,10 +17,10 @@
  */
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wfe.InternalApplicationException;
@@ -29,10 +29,9 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorPermission;
 
-import java.util.Collection;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 20.08.2004
@@ -43,6 +42,7 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
 
     private AuthorizationService authorizationService;
 
+    @Override
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateGetPermissionsTest.class.getName());
         helper.createDefaultExecutorsMap();
@@ -59,6 +59,7 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
         super.setUp();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         helper.releaseResources();
         authorizationService = null;
@@ -76,9 +77,8 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
     public void testGetPermissionsFakeSubject() throws Exception {
         try {
             authorizationService.getIssuedPermissions(helper.getFakeUser(), helper.getBaseGroupActor(), helper.getBaseGroupActor());
-            // TODO fail("AuthorizationDelegate.getIssuedPermissions() allows fake subject");
+            fail("AuthorizationDelegate.getIssuedPermissions() allows fake subject");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 
@@ -118,7 +118,8 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
         Collection<Permission> noPermission = Lists.newArrayList();
         Collection<Permission> expected = Lists.newArrayList(Permission.READ);
 
-        Collection<Permission> actual = authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), helper.getBaseGroupActor(), helper.getAASystem());
+        Collection<Permission> actual = authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), helper.getBaseGroupActor(),
+                helper.getAASystem());
         ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.getIssuedPermissions() returns wrong permissions", noPermission, actual);
 
         authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), helper.getBaseGroupActor().getId(), expected, helper.getAASystem());
@@ -139,8 +140,11 @@ public class AuthorizationServiceDelegateGetPermissionsTest extends ServletTestC
         authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), helper.getBaseGroup().getId(), expected, helper.getBaseGroupActor());
 
         // TODO fail("getPermissions not impl");
-        //Collection<Permission> actual = authorizationService.getPermissions(helper.getAuthorizedPerformerUser(), helper.getSubGroupActor(), helper.getBaseGroupActor());
-        //ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.getPermission returns wrong recursive permission", expected, actual);
+        // Collection<Permission> actual =
+        // authorizationService.getPermissions(helper.getAuthorizedPerformerUser(),
+        // helper.getSubGroupActor(), helper.getBaseGroupActor());
+        // ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.getPermission returns wrong recursive permission",
+        // expected, actual);
     }
 
     public void testGetPermissionsUnauthorized() throws Exception {

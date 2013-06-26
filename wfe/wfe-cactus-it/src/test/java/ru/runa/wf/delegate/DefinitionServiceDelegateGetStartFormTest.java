@@ -21,20 +21,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.cactus.ServletTestCase;
 
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.junit.ArrayAssert;
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.service.DefinitionService;
+import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.service.DefinitionService;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.VariableDefinition;
-import ru.runa.wf.service.WfServiceTestHelper;
 
 import com.google.common.collect.Lists;
 
@@ -74,17 +71,18 @@ public class DefinitionServiceDelegateGetStartFormTest extends ServletTestCase {
         Interaction startForm = definitionService.getStartInteraction(helper.getAuthorizedPerformerUser(), definitionId);
 
         // / TO DO : xml read from forms.xml & processdefinition.xml
-        // TODO assertEquals("start form name differ from original", "request a payraise", startForm.getStateName());
+        // TODO assertEquals("start form name differ from original",
+        // "request a payraise", startForm.getStateName());
         if (false) {
-        assertEquals("start form name differ from original", "html", startForm.getType());
-        Map<String, VariableDefinition> vars = startForm.getVariables();
-        List<String> actual = new ArrayList<String>();
-        for (VariableDefinition var : vars.values()) {
-            actual.add(var.getName());
-        }
+            assertEquals("start form name differ from original", "html", startForm.getType());
+            Map<String, VariableDefinition> vars = startForm.getVariables();
+            List<String> actual = new ArrayList<String>();
+            for (VariableDefinition var : vars.values()) {
+                actual.add(var.getName());
+            }
 
-        List<String> expected = Lists.newArrayList("reason", "amount.asked", "time", "file", "actor");
-        ArrayAssert.assertWeakEqualArrays("Variables from start from differ from declaration", expected, actual);
+            List<String> expected = Lists.newArrayList("reason", "amount.asked", "time", "file", "actor");
+            ArrayAssert.assertWeakEqualArrays("Variables from start from differ from declaration", expected, actual);
         }
     }
 
@@ -99,9 +97,8 @@ public class DefinitionServiceDelegateGetStartFormTest extends ServletTestCase {
     public void testGetStartFormTestByFakeSubject() throws Exception {
         try {
             definitionService.getStartInteraction(helper.getFakeUser(), definitionId);
-            // TODO fail("testGetStartFormTestByFakeSubject , no AuthenticationException");
+            fail("testGetStartFormTestByFakeSubject , no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

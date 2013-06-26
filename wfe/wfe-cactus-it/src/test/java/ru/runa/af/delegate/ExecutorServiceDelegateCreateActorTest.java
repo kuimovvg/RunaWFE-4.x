@@ -18,11 +18,10 @@
 
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+
 import org.apache.cactus.ServletTestCase;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
@@ -33,7 +32,7 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 
-import java.util.Collection;
+import com.google.common.collect.Lists;
 
 public class ExecutorServiceDelegateCreateActorTest extends ServletTestCase {
     private final static String testPrefix = ExecutorServiceDelegateCreateActorTest.class.getName();
@@ -52,6 +51,7 @@ public class ExecutorServiceDelegateCreateActorTest extends ServletTestCase {
 
     private Actor actor;
 
+    @Override
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -61,6 +61,7 @@ public class ExecutorServiceDelegateCreateActorTest extends ServletTestCase {
         super.setUp();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         th.removeExecutorIfExists(actor);
         actor = null;
@@ -122,10 +123,7 @@ public class ExecutorServiceDelegateCreateActorTest extends ServletTestCase {
         try {
             executorService.create(th.getFakeUser(), actor);
             fail("executor with fake subject created");
-        } catch (InvalidDataAccessApiUsageException e) {
-            // TODO
         } catch (AuthenticationException e) {
-            fail ("TODO trap");
         }
     }
 

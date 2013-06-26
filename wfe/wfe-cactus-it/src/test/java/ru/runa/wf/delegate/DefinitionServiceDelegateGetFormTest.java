@@ -17,10 +17,13 @@
  */
 package ru.runa.wf.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.form.Interaction;
@@ -34,10 +37,7 @@ import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.VariableDefinition;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 20.04.2005
@@ -79,8 +79,7 @@ public class DefinitionServiceDelegateGetFormTest extends ServletTestCase {
         definitionService.deployProcessDefinition(helper.getAdminUser(),
                 WfServiceTestHelper.readBytesFromFile(WfServiceTestHelper.ONE_SWIMLANE_FILE_NAME), Lists.newArrayList("testProcess"));
 
-        Collection<Permission> permissions = Lists.newArrayList(DefinitionPermission.START_PROCESS,
-                DefinitionPermission.READ_STARTED_PROCESS);
+        Collection<Permission> permissions = Lists.newArrayList(DefinitionPermission.START_PROCESS, DefinitionPermission.READ_STARTED_PROCESS);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(permissions, WfServiceTestHelper.ONE_SWIMLANE_PROCESS_NAME);
 
         executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.ONE_SWIMLANE_PROCESS_NAME, null);
@@ -105,8 +104,10 @@ public class DefinitionServiceDelegateGetFormTest extends ServletTestCase {
     public void testGetFormTestByAuthorizedSubject() throws Exception {
         initTaskData();
         Interaction interaction = definitionService.getTaskInteraction(helper.getAuthorizedPerformerUser(), taskId);
-        // TODO assertEquals("form name differ from original", STATE_1_NAME, interaction.getStateName());
-        // TODO assertEquals("form name differ from original", STATE_1_TYPE, interaction.getType());
+        // TODO assertEquals("form name differ from original", STATE_1_NAME,
+        // interaction.getStateName());
+        // TODO assertEquals("form name differ from original", STATE_1_TYPE,
+        // interaction.getType());
 
     }
 
@@ -133,9 +134,8 @@ public class DefinitionServiceDelegateGetFormTest extends ServletTestCase {
         try {
             taskId = executionService.getTasks(helper.getAuthorizedPerformerUser(), helper.getTaskBatchPresentation()).get(0).getId();
             definitionService.getTaskInteraction(helper.getFakeUser(), taskId);
-            // fail("testGetFormTestByFakeSubject , no AuthenticationException");
+            fail("testGetFormTestByFakeSubject , no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 
@@ -163,53 +163,55 @@ public class DefinitionServiceDelegateGetFormTest extends ServletTestCase {
 
         Interaction interaction = definitionService.getTaskInteraction(helper.getAuthorizedPerformerUser(), tasks.get(0).getId());
 
-        // TODO assertEquals("state name differs from expected", STATE_1_NAME, interaction.getStateName());
+        // TODO assertEquals("state name differs from expected", STATE_1_NAME,
+        // interaction.getStateName());
         if (false) {
-        assertEquals("state type differs from expected", STATE_1_TYPE, interaction.getType());
+            assertEquals("state type differs from expected", STATE_1_TYPE, interaction.getType());
 
-        Map<String, VariableDefinition> variableDefinitions = interaction.getVariables();
-        assertEquals("state variables count differs from expected", variableDefinitions.size(), 5);
-        VariableDefinition var = variableDefinitions.get("requester");
-        assertEquals("variable format differs from expected", VARIABLE_DEFAULT_FORMAT, var.getFormatClassName());
-        // assertFalse("optional variable flag was set to false",
-        // var.isOptional());
+            Map<String, VariableDefinition> variableDefinitions = interaction.getVariables();
+            assertEquals("state variables count differs from expected", variableDefinitions.size(), 5);
+            VariableDefinition var = variableDefinitions.get("requester");
+            assertEquals("variable format differs from expected", VARIABLE_DEFAULT_FORMAT, var.getFormatClassName());
+            // assertFalse("optional variable flag was set to false",
+            // var.isOptional());
 
-        var = variableDefinitions.get("reason");
-        assertEquals("variable format differs from expected", VARIABLE_DEFAULT_FORMAT, var.getFormatClassName());
-        // assertTrue("optional variable flag was set to true",
-        // var.isOptional());
+            var = variableDefinitions.get("reason");
+            assertEquals("variable format differs from expected", VARIABLE_DEFAULT_FORMAT, var.getFormatClassName());
+            // assertTrue("optional variable flag was set to true",
+            // var.isOptional());
 
-        var = variableDefinitions.get("amount.asked");
-        assertEquals("variable format differs from expected", VARIABLE_DOUBLE_FORMAT, var.getFormatClassName());
-        // assertFalse("optional variable flag was set to false",
-        // var.isOptional());
+            var = variableDefinitions.get("amount.asked");
+            assertEquals("variable format differs from expected", VARIABLE_DOUBLE_FORMAT, var.getFormatClassName());
+            // assertFalse("optional variable flag was set to false",
+            // var.isOptional());
 
-        var = variableDefinitions.get("amount.granted");
-        assertEquals("variable format differs from expected", VARIABLE_DOUBLE_FORMAT, var.getFormatClassName());
-        // assertFalse("optional variable flag was set to false",
-        // var.isOptional());
+            var = variableDefinitions.get("amount.granted");
+            assertEquals("variable format differs from expected", VARIABLE_DOUBLE_FORMAT, var.getFormatClassName());
+            // assertFalse("optional variable flag was set to false",
+            // var.isOptional());
 
-        var = variableDefinitions.get("approved");
-        assertEquals("variable format differs from expected", VARIABLE_DEFAULT_FORMAT, var.getFormatClassName());
-        // assertTrue("optional variable flag was set to true",
-        // var.isOptional());
+            var = variableDefinitions.get("approved");
+            assertEquals("variable format differs from expected", VARIABLE_DEFAULT_FORMAT, var.getFormatClassName());
+            // assertTrue("optional variable flag was set to true",
+            // var.isOptional());
 
-        executionService.completeTask(helper.getAuthorizedPerformerUser(), tasks.get(0).getId(), new HashMap<String, Object>(), null);
+            executionService.completeTask(helper.getAuthorizedPerformerUser(), tasks.get(0).getId(), new HashMap<String, Object>(), null);
 
-        tasks = executionService.getTasks(helper.getAuthorizedPerformerUser(), helper.getTaskBatchPresentation());
-        interaction = definitionService.getTaskInteraction(helper.getAuthorizedPerformerUser(), tasks.get(0).getId());
+            tasks = executionService.getTasks(helper.getAuthorizedPerformerUser(), helper.getTaskBatchPresentation());
+            interaction = definitionService.getTaskInteraction(helper.getAuthorizedPerformerUser(), tasks.get(0).getId());
 
-        // TODO assertEquals("state name differs from expected", STATE_2_NAME, interaction.getStateName());
-        fail("getStateName");
-        assertEquals("state type differs from expected", STATE_2_TYPE, interaction.getType());
+            // TODO assertEquals("state name differs from expected",
+            // STATE_2_NAME, interaction.getStateName());
+            fail("getStateName");
+            assertEquals("state type differs from expected", STATE_2_TYPE, interaction.getType());
 
-        variableDefinitions = interaction.getVariables();
-        assertEquals("state variables count differs from expected", variableDefinitions.size(), 1);
+            variableDefinitions = interaction.getVariables();
+            assertEquals("state variables count differs from expected", variableDefinitions.size(), 1);
 
-        var = variableDefinitions.get("approved");
-        assertEquals("variable format differs from expected", VARIABLE_DEFAULT_FORMAT, var.getFormatClassName());
-        // assertTrue("optional variable flag was set to true",
-        // var.isOptional());
+            var = variableDefinitions.get("approved");
+            assertEquals("variable format differs from expected", VARIABLE_DEFAULT_FORMAT, var.getFormatClassName());
+            // assertTrue("optional variable flag was set to true",
+            // var.isOptional());
         }
     }
 

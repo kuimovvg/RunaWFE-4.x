@@ -17,15 +17,16 @@
  */
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.TestSuite;
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.service.SystemService;
 import ru.runa.wfe.service.delegate.Delegates;
+
+import com.google.common.collect.Lists;
 
 /**
  * Created on 16.08.2004
@@ -35,12 +36,14 @@ public class AASystemServiceDelegateLoginTest extends ServletTestCase {
     private SystemService systemService;
     private static String testPrefix = AASystemServiceDelegateLoginTest.class.getName();
 
+    @Override
     protected void tearDown() throws Exception {
         th.releaseResources();
         systemService = null;
         super.tearDown();
     }
 
+    @Override
     protected void setUp() throws Exception {
         systemService = Delegates.getSystemService();
         th = new ServiceTestHelper(testPrefix);
@@ -62,7 +65,7 @@ public class AASystemServiceDelegateLoginTest extends ServletTestCase {
             systemService.login(th.getUnauthorizedPerformerUser());
             fail("SystemServiceDelegate does not throw AuthorizationFailedException on login() with unauthorized performer user call.");
         } catch (AuthorizationException e) {
-            //that's what we expected
+            // that's what we expected
         }
     }
 
@@ -74,11 +77,9 @@ public class AASystemServiceDelegateLoginTest extends ServletTestCase {
     public void testLoginWithFakeUser() throws Exception {
         try {
             systemService.login(th.getFakeUser());
-            // TODO
-            // fail("SystemServiceDelegate does not throw AuthorizationFailedException on login() with fakeUser call.");
+            fail("SystemServiceDelegate does not throw AuthorizationFailedException on login() with fakeUser call.");
         } catch (AuthenticationException e) {
-            //that's what we expected
-            fail("TODO trap");
+            // that's what we expected
         }
     }
 

@@ -17,8 +17,13 @@
  */
 package ru.runa.wf.delegate;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
@@ -31,10 +36,7 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.dto.WfVariable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 23.04.2005
@@ -61,8 +63,7 @@ public class ExecutionServiceDelegateGetVariablesTest extends ServletTestCase {
 
         helper.deployValidProcessDefinition(WfServiceTestHelper.SWIMLANE_PROCESS_FILE_NAME);
 
-        Collection<Permission> permissions = Lists.newArrayList(DefinitionPermission.START_PROCESS,
-                DefinitionPermission.READ_STARTED_PROCESS);
+        Collection<Permission> permissions = Lists.newArrayList(DefinitionPermission.START_PROCESS, DefinitionPermission.READ_STARTED_PROCESS);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(permissions, WfServiceTestHelper.SWIMLANE_PROCESS_NAME);
 
         HashMap<String, Object> variablesMap = new HashMap<String, Object>();
@@ -94,9 +95,8 @@ public class ExecutionServiceDelegateGetVariablesTest extends ServletTestCase {
     public void testGetVariablesByFakeSubject() throws Exception {
         try {
             executionService.getVariables(helper.getFakeUser(), processId);
-            // TODO fail("testGetVariablesByFakeSubject(), no AuthenticationException");
+            fail("testGetVariablesByFakeSubject(), no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

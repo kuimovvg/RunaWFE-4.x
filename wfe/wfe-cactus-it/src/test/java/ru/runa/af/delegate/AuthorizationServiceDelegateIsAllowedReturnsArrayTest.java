@@ -18,10 +18,11 @@
 
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wfe.InternalApplicationException;
@@ -33,14 +34,14 @@ import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.ExecutorPermission;
 
-import java.util.Collection;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends ServletTestCase {
     private ServiceTestHelper helper;
 
     private AuthorizationService authorizationService;
 
+    @Override
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateIsAllowedTest.class.getName());
         helper.createDefaultExecutorsMap();
@@ -56,6 +57,7 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
         super.setUp();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         helper.releaseResources();
         helper = null;
@@ -74,9 +76,8 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
     public void testIsAllowedFakeSubject() throws Exception {
         try {
             authorizationService.isAllowed(helper.getFakeUser(), Permission.READ, Lists.newArrayList(helper.getAASystem()));
-            // TODO fail("AuthorizationDelegate.isAllowed() allows fake subject");
+            fail("AuthorizationDelegate.isAllowed() allows fake subject");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 
@@ -100,7 +101,7 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
         try {
             authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, Lists.newArrayList((Identifiable) null, null));
             fail("AuthorizationDelegate.isAllowed() allows null identifiables");
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             // TODO
         } catch (IllegalArgumentException e) {
             fail("TODO trap");
@@ -110,17 +111,19 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
     public void testIsAllowedFakeIdentifiable() throws Exception {
         try {
             authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, Lists.newArrayList(helper.getFakeActor()));
-            // TODO fail("AuthorizationDelegate.isAllowed() allows fake identifiable");
+            // TODO
+            // fail("AuthorizationDelegate.isAllowed() allows fake identifiable");
         } catch (InternalApplicationException e) {
-            fail ("TODO trap");
+            fail("TODO trap");
         }
 
         try {
-            authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, Lists.newArrayList(helper.getBaseGroupActor(),
-                    helper.getFakeActor()));
-            // TODO fail("AuthorizationDelegate.isAllowed() allows fake identifiable");
+            authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ,
+                    Lists.newArrayList(helper.getBaseGroupActor(), helper.getFakeActor()));
+            // TODO
+            // fail("AuthorizationDelegate.isAllowed() allows fake identifiable");
         } catch (InternalApplicationException e) {
-            fail ("TODO trap");
+            fail("TODO trap");
         }
     }
 
@@ -136,25 +139,25 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
     }
 
     public void testIsAllowedExecutor() throws Exception {
-        boolean[] isAllowed = authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, Lists.newArrayList(
-                helper.getBaseGroupActor(), helper.getSubGroupActor()));
+        boolean[] isAllowed = authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ,
+                Lists.newArrayList(helper.getBaseGroupActor(), helper.getSubGroupActor()));
         boolean[] expected = { true, true };
         ArrayAssert.assertEqualArrays("AuthorizationDelegate.isAllowed() returns wrong info", expected, isAllowed);
 
-        isAllowed = authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.UPDATE_PERMISSIONS, Lists.newArrayList(
-                helper.getBaseGroupActor(), helper.getSubGroupActor()));
+        isAllowed = authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.UPDATE_PERMISSIONS,
+                Lists.newArrayList(helper.getBaseGroupActor(), helper.getSubGroupActor()));
         expected = new boolean[] { false, false };
         ArrayAssert.assertEqualArrays("AuthorizationDelegate.isAllowed() returns wrong info", expected, isAllowed);
 
-        isAllowed = authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), ExecutorPermission.UPDATE, Lists.newArrayList(
-                helper.getBaseGroupActor(), helper.getSubGroupActor()));
+        isAllowed = authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), ExecutorPermission.UPDATE,
+                Lists.newArrayList(helper.getBaseGroupActor(), helper.getSubGroupActor()));
         expected = new boolean[] { true, true };
         ArrayAssert.assertEqualArrays("AuthorizationDelegate.isAllowed() returns wrong info", expected, isAllowed);
     }
 
     public void testIsAllowedExecutorUnauthorized() throws Exception {
-        boolean[] isAllowed = authorizationService.isAllowed(helper.getUnauthorizedPerformerUser(), Permission.READ, Lists.newArrayList(
-                helper.getAASystem(), helper.getBaseGroupActor(), helper.getBaseGroup()));
+        boolean[] isAllowed = authorizationService.isAllowed(helper.getUnauthorizedPerformerUser(), Permission.READ,
+                Lists.newArrayList(helper.getAASystem(), helper.getBaseGroupActor(), helper.getBaseGroup()));
         boolean[] expected = { false, false, false };
         ArrayAssert.assertEqualArrays("AuthorizationDelegate.isAllowed() returns wrong info", expected, isAllowed);
     }

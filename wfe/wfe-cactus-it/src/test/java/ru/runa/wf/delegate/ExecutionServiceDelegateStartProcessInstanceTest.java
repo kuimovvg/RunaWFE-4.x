@@ -20,21 +20,18 @@ package ru.runa.wf.delegate;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.cactus.ServletTestCase;
-
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.service.ExecutionService;
+
+import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wf.service.WfServiceTestHelper;
+import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
 
@@ -55,8 +52,7 @@ public class ExecutionServiceDelegateStartProcessInstanceTest extends ServletTes
 
         helper.deployValidProcessDefinition();
 
-        Collection<Permission> startPermissions = Lists.newArrayList(DefinitionPermission.START_PROCESS,
-                DefinitionPermission.READ_STARTED_PROCESS);
+        Collection<Permission> startPermissions = Lists.newArrayList(DefinitionPermission.START_PROCESS, DefinitionPermission.READ_STARTED_PROCESS);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(startPermissions, WfServiceTestHelper.VALID_PROCESS_NAME);
 
         super.setUp();
@@ -100,9 +96,8 @@ public class ExecutionServiceDelegateStartProcessInstanceTest extends ServletTes
             executionService.startProcess(helper.getFakeUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
             fail("testStartProcessInstanceByFakeSubject, no AuthenticationException");
         } catch (InvalidDataAccessApiUsageException e) {
-            // TODO
+            fail("testStartProcessInstanceByFakeSubject, no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 
@@ -120,8 +115,7 @@ public class ExecutionServiceDelegateStartProcessInstanceTest extends ServletTes
         Collection<Permission> startPermissions = Lists.newArrayList(DefinitionPermission.START_PROCESS);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(startPermissions, WfServiceTestHelper.VALID_PROCESS_NAME);
         executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
-        List<WfProcess> processInstances = executionService.getProcesses(helper.getAdminUser(),
-                helper.getProcessInstanceBatchPresentation());
+        List<WfProcess> processInstances = executionService.getProcesses(helper.getAdminUser(), helper.getProcessInstanceBatchPresentation());
         assertEquals(1, processInstances.size());
     }
 

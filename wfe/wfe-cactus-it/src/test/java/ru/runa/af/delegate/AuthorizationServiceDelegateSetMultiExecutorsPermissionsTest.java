@@ -17,10 +17,11 @@
  */
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wfe.InternalApplicationException;
@@ -30,10 +31,13 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.*;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.ExecutorPermission;
+import ru.runa.wfe.user.Group;
 
-import java.util.Collection;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 16.02.2005
@@ -52,6 +56,7 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
     private List<Executor> additionalActorGroupsMixed;
     private List<Long> executorIDs;
 
+    @Override
     protected void setUp() throws Exception {
         th = new ServiceTestHelper(testPrefix);
 
@@ -81,32 +86,31 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
         try {
             authorizationService.setPermissions(th.getAuthorizedPerformerUser(), executorIDs, testPermission, additionalActor);
         } catch (AuthorizationException e) {
-            // TODO PermissionDAO.isAllowed doesn't support mixed lists of Actors and Executors
+            // TODO PermissionDAO.isAllowed doesn't support mixed lists of
+            // Actors and Executors
             return;
         }
         fail("TODO trap");
 
         for (int i = 0; i < executorIDs.size(); i++) {
-            additionalActorGroupsMixed.set(i, Delegates.getExecutorService().getExecutor(
-                    th.getAuthorizedPerformerUser(), executorIDs.get(i)));
+            additionalActorGroupsMixed.set(i, Delegates.getExecutorService().getExecutor(th.getAuthorizedPerformerUser(), executorIDs.get(i)));
         }
 
         for (int i = 0; i < executorIDs.size(); i++) {
-            Collection<Permission> expected = authorizationService.getIssuedPermissions(
-                    th.getAuthorizedPerformerUser(), additionalActorGroupsMixed.get(i), additionalActor);
+            Collection<Permission> expected = authorizationService.getIssuedPermissions(th.getAuthorizedPerformerUser(),
+                    additionalActorGroupsMixed.get(i), additionalActor);
             ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.setPermissions() does not set right permissions", testPermission, expected);
         }
 
         authorizationService.setPermissions(th.getAuthorizedPerformerUser(), executorIDs, testPermission, additionalGroup);
 
         for (int i = 0; i < executorIDs.size(); i++) {
-            additionalActorGroupsMixed.set(i, Delegates.getExecutorService().getExecutor(
-                    th.getAuthorizedPerformerUser(), executorIDs.get(i)));
+            additionalActorGroupsMixed.set(i, Delegates.getExecutorService().getExecutor(th.getAuthorizedPerformerUser(), executorIDs.get(i)));
         }
 
         for (int i = 0; i < executorIDs.size(); i++) {
-            Collection<Permission> expected = authorizationService.getIssuedPermissions(
-                    th.getAuthorizedPerformerUser(), additionalActorGroupsMixed.get(i), additionalGroup);
+            Collection<Permission> expected = authorizationService.getIssuedPermissions(th.getAuthorizedPerformerUser(),
+                    additionalActorGroupsMixed.get(i), additionalGroup);
             ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.setPermissions() does not set right permissions", testPermission, expected);
         }
     }
@@ -116,17 +120,16 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
             authorizationService.setPermissions(null, executorIDs, testPermission, additionalActor);
             fail("AuthorizationDelegate.setPermissions() allows null subject");
         } catch (IllegalArgumentException e) {
-            //This is what we expect
+            // This is what we expect
         }
     }
 
     public void testSetPermissionsFakeSubject() throws Exception {
         try {
             authorizationService.setPermissions(th.getFakeUser(), executorIDs, testPermission, additionalActor);
-            // TODO fail("AuthorizationDelegate.setPermissions() allows fake subject");
+            fail("AuthorizationDelegate.setPermissions() allows fake subject");
         } catch (AuthenticationException e) {
-            //This is what we expect
-            fail ("TODO trap");
+            // This is what we expect
         }
     }
 
@@ -135,7 +138,7 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
             authorizationService.setPermissions(th.getAuthorizedPerformerUser(), executorIDs, testPermission, th.getFakeActor());
             fail("AuthorizationDelegate.setPermissions() allows fake executor");
         } catch (InternalApplicationException e) {
-            //This is what we expect
+            // This is what we expect
         }
     }
 
@@ -144,7 +147,7 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
             authorizationService.setPermissions(th.getAuthorizedPerformerUser(), executorIDs, (Collection<Permission>) null, additionalActor);
             fail("AuthorizationDelegate.setPermissions() allows null permissions");
         } catch (IllegalArgumentException e) {
-            //This is what we expect
+            // This is what we expect
         }
     }
 
@@ -153,7 +156,7 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
             authorizationService.setPermissions(th.getAuthorizedPerformerUser(), executorIDs, testPermission, null);
             fail("AuthorizationDelegate.setPermissions() allows null identifiable");
         } catch (IllegalArgumentException e) {
-            //This is what we expect
+            // This is what we expect
         }
     }
 
@@ -162,7 +165,7 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
             authorizationService.setPermissions(th.getAuthorizedPerformerUser(), Lists.newArrayList(-1L, -2L, -3L), testPermission, additionalActor);
             fail("AuthorizationDelegate.setPermissions() allows Fake Executors");
         } catch (ExecutorDoesNotExistException e) {
-            //This is what we expect
+            // This is what we expect
         }
     }
 
@@ -171,18 +174,19 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
             authorizationService.setPermissions(th.getUnauthorizedPerformerUser(), executorIDs, testPermission, additionalActor);
             fail("AuthorizationDelegate.setPermissions() allows unauthorized operation");
         } catch (AuthorizationException e) {
-            //This is what we expect
+            // This is what we expect
         }
 
         try {
             authorizationService.setPermissions(th.getUnauthorizedPerformerUser(), executorIDs, testPermission, additionalGroup);
             fail("AuthorizationDelegate.setPermissions() allows unauthorized operation");
         } catch (AuthorizationException e) {
-            //This is what we expect
+            // This is what we expect
         }
 
     }
 
+    @Override
     protected void tearDown() throws Exception {
         th.releaseResources();
         authorizationService = null;

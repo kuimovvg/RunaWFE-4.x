@@ -17,18 +17,15 @@
  */
 package ru.runa.wf.delegate;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.cactus.ServletTestCase;
 
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wf.service.WfServiceTestHelper;
+import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 23.04.2005
@@ -51,8 +48,7 @@ public class ExecutionServiceDelegateGetProcessInstanceStubTest extends ServletT
 
         // processId =
         executionService.startProcess(helper.getAdminUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
-        processId = executionService.getProcesses(helper.getAuthorizedPerformerUser(), helper.getProcessInstanceBatchPresentation())
-                .get(0).getId();
+        processId = executionService.getProcesses(helper.getAuthorizedPerformerUser(), helper.getProcessInstanceBatchPresentation()).get(0).getId();
 
         super.setUp();
     }
@@ -82,9 +78,8 @@ public class ExecutionServiceDelegateGetProcessInstanceStubTest extends ServletT
     public void testGetProcessInstanceStubByFakeSubject() throws Exception {
         try {
             executionService.getProcess(helper.getFakeUser(), processId);
-            // TODO fail("testGetProcessInstanceStubByFakeSubject, no AuthenticationException");
+            fail("testGetProcessInstanceStubByFakeSubject, no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

@@ -18,10 +18,11 @@
 
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wfe.security.AuthenticationException;
@@ -33,8 +34,7 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
-import java.util.Collection;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 /**
  */
@@ -91,9 +91,8 @@ public class AuthorizationServiceDelegateSetPermissions2Test extends ServletTest
     public void testSetPermissionsFakeSubject() throws Exception {
         try {
             authorizationService.setPermissions(helper.getFakeUser(), legalActorIds, legalPermissions, helper.getAASystem());
-            // TODO fail("AuthorizationDelegate.setPermission allows Fake subject");
+            fail("AuthorizationDelegate.setPermission allows Fake subject");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 
@@ -120,7 +119,8 @@ public class AuthorizationServiceDelegateSetPermissions2Test extends ServletTest
 
     public void testSetPermissionsNullPermissions() throws Exception {
         try {
-            authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), legalActorIds, (List<Collection<Permission>>) null, helper.getAASystem());
+            authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), legalActorIds, (List<Collection<Permission>>) null,
+                    helper.getAASystem());
             fail("AuthorizationDelegate.setPermission allows Null permissions");
         } catch (IllegalArgumentException e) {
         }
@@ -138,9 +138,10 @@ public class AuthorizationServiceDelegateSetPermissions2Test extends ServletTest
         authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), legalActorIds, legalPermissions, helper.getAASystem());
         for (int i = 0; i < legalActorIds.size(); i++) {
             Executor executor = executorService.getExecutor(helper.getAuthorizedPerformerUser(), legalActorIds.get(i));
-            Collection<Permission> actual = authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), executor, helper.getAASystem());
-            ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.setPermissions() does not set right permissions on system", legalPermissions.get(i),
-                    actual);
+            Collection<Permission> actual = authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), executor,
+                    helper.getAASystem());
+            ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.setPermissions() does not set right permissions on system",
+                    legalPermissions.get(i), actual);
         }
 
         legalPermissions = Lists.newArrayList();
@@ -149,7 +150,8 @@ public class AuthorizationServiceDelegateSetPermissions2Test extends ServletTest
         authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), legalActorIds, legalPermissions, helper.getBaseGroupActor());
         for (int i = 0; i < legalActorIds.size(); i++) {
             Executor executor = executorService.getExecutor(helper.getAuthorizedPerformerUser(), legalActorIds.get(i));
-            Collection<Permission> actual = authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), executor, helper.getBaseGroupActor());
+            Collection<Permission> actual = authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), executor,
+                    helper.getBaseGroupActor());
             ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.setPermissions() does not set right permissions on base group actor",
                     legalPermissions.get(i), actual);
         }
@@ -160,7 +162,8 @@ public class AuthorizationServiceDelegateSetPermissions2Test extends ServletTest
         authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), legalActorIds, legalPermissions, helper.getBaseGroup());
         for (int i = 0; i < legalActorIds.size(); i++) {
             Executor executor = executorService.getExecutor(helper.getAuthorizedPerformerUser(), legalActorIds.get(i));
-            Collection<Permission> actual = authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), executor, helper.getBaseGroup());
+            Collection<Permission> actual = authorizationService.getIssuedPermissions(helper.getAuthorizedPerformerUser(), executor,
+                    helper.getBaseGroup());
             ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.setPermissions() does not set right permissions on base group actor",
                     legalPermissions.get(i), actual);
         }
