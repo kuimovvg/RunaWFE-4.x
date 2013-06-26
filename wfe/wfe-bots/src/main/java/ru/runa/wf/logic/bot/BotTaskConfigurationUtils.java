@@ -106,9 +106,7 @@ public class BotTaskConfigurationUtils {
         } else {
             throw new InternalApplicationException("no replacement found for param " + taskParamDef);
         }
-        // config = config.replaceAll("\"" + taskParamDef.getName() + "\"", "\""
-        // + replacement + "\"");
-        config = config.replaceAll(Pattern.quote("${" + taskParamDef.getName() + "}"), Matcher.quoteReplacement(replacement));
+        config = config.replaceAll(Pattern.quote("param:" + taskParamDef.getName()), Matcher.quoteReplacement(replacement));
         return config;
     }
 
