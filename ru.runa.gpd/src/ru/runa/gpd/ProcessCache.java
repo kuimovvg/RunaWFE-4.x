@@ -37,12 +37,14 @@ public class ProcessCache {
         CACHE_BY_NAME.put(definition.getName(), definition);
     }
 
-    public static void newProcessDefinitionWasCreated(IFile file) {
+    public static ProcessDefinition newProcessDefinitionWasCreated(IFile file) {
         try {
             ProcessDefinition definition = NodeRegistry.parseProcessDefinition(file);
             cacheProcessDefinition(file, definition);
+            return definition;
         } catch (Exception e) {
             PluginLogger.logError("Parsing process definition failed: " + file.toString(), e);
+            return null;
         }
     }
 
