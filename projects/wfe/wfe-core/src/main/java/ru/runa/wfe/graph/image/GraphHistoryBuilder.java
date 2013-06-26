@@ -121,6 +121,7 @@ public class GraphHistoryBuilder {
             Map<String, Integer> widthTokens = new HashMap<String, Integer>();
             Map<String, Integer> heightTokens = new HashMap<String, Integer>();
             Map<String, String> parentNodeInTokenForNodeMap = new HashMap<String, String>();
+            Map<String, Long> nodeRepetitionCount = new HashMap<String, Long>();
 
             for (NodeLog log : nodeLogs) {
                 if (log instanceof NodeLeaveLog && NodeType.START_EVENT == log.getNodeType()) {
@@ -141,7 +142,7 @@ public class GraphHistoryBuilder {
                     for (Node node : processDefinition.getNodes()) {
                         if (node.getNodeId().equals(nodeId)) {
                             if (isNodePresentInGraph(log)) {
-                                String correctNodeId = nodeId + ":" + log.getTokenId();
+                                String correctNodeId = getNodeIdIncludeRepetition(nodeId + ":" + log.getTokenId(), nodeRepetitionCount);
                                 NodeModel nodeModel = allNodes.get(correctNodeId);
                                 Preconditions.checkNotNull(nodeModel, "Node model not found by id " + nodeId);
 
@@ -164,7 +165,8 @@ public class GraphHistoryBuilder {
                                     }
                                 }
 
-                                String correctNodeId = nodeId + ":" + tokenId;
+                                Long duplicateCount = nodeRepetitionCount.get(nodeId + ":" + tokenId);
+                                String correctNodeId = nodeId + ":" + tokenId + ":" + duplicateCount;
                                 NodeModel nodeModel = allNodes.get(correctNodeId);
                                 Preconditions.checkNotNull(nodeModel, "Node model not found by id " + nodeId);
 
@@ -188,12 +190,26 @@ public class GraphHistoryBuilder {
                                         transitionModel.setActionsCount(GraphImageHelper.getTransitionActionsCount(transition));
                                     }
 
-                                    AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getNodeId() + ":" + log.getTokenId());
+                                    Long duplicateTransitionCount = nodeRepetitionCount.get(transition.getTo().getNodeId() + ":" + log.getTokenId());
+                                    if (duplicateTransitionCount == null) {
+                                        duplicateTransitionCount = new Long(0);
+                                    }
+                                    duplicateTransitionCount = duplicateTransitionCount + 1;
+
+                                    AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getNodeId() + ":" + log.getTokenId() + ":"
+                                            + duplicateTransitionCount);
                                     if (diagramModel.getNodeNotNull(transition.getTo().getNodeId()).getType() == NodeType.JOIN) {
                                         for (ProcessLog tempLog : processLogs) {
                                             if (tempLog.getId() > log.getId() && tempLog instanceof NodeLeaveLog
                                                     && ((NodeLeaveLog) tempLog).getNodeId().equals(transition.getTo().getNodeId())) {
-                                                figureTo = allNodeFigures.get(transition.getTo().getNodeId() + ":" + tempLog.getTokenId());
+                                                duplicateTransitionCount = nodeRepetitionCount.get(transition.getTo().getNodeId() + ":"
+                                                        + tempLog.getTokenId());
+                                                if (duplicateTransitionCount == null) {
+                                                    duplicateTransitionCount = new Long(0);
+                                                }
+                                                duplicateTransitionCount = duplicateTransitionCount + 1;
+                                                figureTo = allNodeFigures.get(transition.getTo().getNodeId() + ":" + tempLog.getTokenId() + ":"
+                                                        + duplicateTransitionCount);
                                                 break;
                                             }
                                         }
@@ -244,6 +260,17 @@ public class GraphHistoryBuilder {
         } finally {
             DrawProperties.setUseEdgingMode(tempUseEdgingMode);
         }
+    }
+
+    private String getNodeIdIncludeRepetition(String nodeId, Map<String, Long> nodeRepetitionCount) {
+        Long duplicateCount = nodeRepetitionCount.get(nodeId);
+        if (duplicateCount == null) {
+            duplicateCount = new Long(0);
+        }
+
+        duplicateCount = duplicateCount + 1;
+        nodeRepetitionCount.put(nodeId, duplicateCount);
+        return nodeId + ":" + duplicateCount;
     }
 
     /**
@@ -486,6 +513,7 @@ public class GraphHistoryBuilder {
             Map<String, String> rootNodeForNodeMap) {
         int startY = 10;
         Map<String, List<String>> forkNodes = new HashMap<String, List<String>>();
+        Map<String, Long> nodeRepetitionCount = new HashMap<String, Long>();
 
         for (NodeLog log : nodeLogs) {
             if (isNodePresentInGraph(log)) {
@@ -592,9 +620,7 @@ public class GraphHistoryBuilder {
                             }
                         }
 
-                        // String correctNodeId =
-                        // getNodeIdIncludeRepetition(nodeId,
-                        // nodeRepetitionCount);
+                        correctNodeId = getNodeIdIncludeRepetition(correctNodeId, nodeRepetitionCount);
                         allNodes.put(correctNodeId, nodeModel);
                         AbstractFigure nodeFigure = factory.createFigure(nodeModel);
                         allNodeFigures.put(correctNodeId, nodeFigure);
