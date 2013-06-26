@@ -97,12 +97,14 @@ public class LDAPLogic {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void synchronizeExecutors(boolean createExecutors) {
+        if (!SystemProperties.isLDAPSynchronizationEnabled()) {
+            log.warn("Synchronization is disabled");
+            return;
+        }
         if (ous == null) {
             throw new NullPointerException("LDAP property is not configured 'ldap.synchronizer.ou'");
         }
-        if (!createExecutors) {
-            log.info("Full synchronization mode is disabled");
-        }
+        log.info("Synchronization mode: " + (createExecutors ? "full" : "user and group relations only"));
         try {
             Group wfeImportFromLdapGroup = new Group(IMPORTED_FROM_LDAP_GROUP_NAME, IMPORTED_FROM_LDAP_GROUP_DESCRIPION);
             if (!executorDAO.isExecutorExist(wfeImportFromLdapGroup.getName())) {
@@ -124,7 +126,7 @@ public class LDAPLogic {
         List<Actor> existingActorsList = executorDAO.getAllActors(BatchPresentationFactory.ACTORS.createNonPaged());
         Map<String, Actor> existingActorsMap = Maps.newHashMap();
         for (Actor actor : existingActorsList) {
-            existingActorsMap.put(actor.getName(), actor);
+            existingActorsMap.put(actor.getName().toLowerCase(), actor);
         }
         Map<String, Actor> actorsByDistinguishedName = Maps.newHashMap();
         Attributes attributes = new BasicAttributes();
@@ -138,7 +140,7 @@ public class LDAPLogic {
                 String email = getStringAttribute(searchResult, EMAIL);
                 String description = getStringAttribute(searchResult, TITLE);
                 String phone = getStringAttribute(searchResult, PHONE);
-                Actor actor = existingActorsMap.get(name);
+                Actor actor = existingActorsMap.get(name.toLowerCase());
                 if (actor == null) {
                     if (!createExecutors) {
                         continue;
@@ -200,7 +202,7 @@ public class LDAPLogic {
                 permissionDAO.setPermissions(wfeImportFromLdapGroup, Lists.newArrayList(Permission.READ), group);
             }
 
-            Set<Actor> actorsToDelete = executorDAO.getGroupActors(group);
+            Set<Actor> actorsToDelete = Sets.newHashSet(executorDAO.getGroupActors(group));
             Set<Actor> actorsToAdd = Sets.newHashSet();
             Set<Actor> groupTargetActors = Sets.newHashSet();
             fillTargetActorsRecursively(groupTargetActors, searchResult, groupResultsByDistinguishedName, actorsByDistinguishedName);
@@ -224,13 +226,16 @@ public class LDAPLogic {
         NamingEnumeration<String> namingEnum = (NamingEnumeration<String>) searchResult.getAttributes().get(MEMBER).getAll();
         while (namingEnum.hasMore()) {
             String executorDistinguishedName = namingEnum.next();
-            Actor actor = actorsByDistinguishedName.get(executorDistinguishedName);
-            if (actor != null) {
-                recursiveActors.add(actor);
-            }
             SearchResult groupSearchResult = groupResultsByDistinguishedName.get(executorDistinguishedName);
             if (groupSearchResult != null) {
                 fillTargetActorsRecursively(recursiveActors, groupSearchResult, groupResultsByDistinguishedName, actorsByDistinguishedName);
+            } else {
+                Actor actor = actorsByDistinguishedName.get(executorDistinguishedName);
+                if (actor != null) {
+                    recursiveActors.add(actor);
+                } else {
+                    log.warn("Not found '" + executorDistinguishedName + "' neither in group or actor maps");
+                }
             }
         }
     }
