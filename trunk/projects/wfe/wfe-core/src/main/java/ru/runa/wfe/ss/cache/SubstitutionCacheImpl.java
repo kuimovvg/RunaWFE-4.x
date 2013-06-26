@@ -108,6 +108,28 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                 }
             }
         }
+        // Quick fix instead of changing Actor -> Long; update actor references
+        for (Long actorId : actorToSubstitutorsCache.keySet()) {
+            for (Map.Entry<Substitution, HashSet<Actor>> entry : actorToSubstitutorsCache.get(actorId).entrySet()) {
+                if (entry.getValue() == null) {
+                    log.debug("null actorToSubstitutorsCache value");
+                    continue;
+                }
+                if (entry.getValue().remove(actor)) {
+                    entry.getValue().add(actor);
+                }
+            }
+        }
+        for (Long actorId : actorToSubstitutedCache.keySet()) {
+            HashSet<Actor> actors = actorToSubstitutedCache.get(actorId);
+            if (actors == null) {
+                log.debug("null actorToSubstitutedCache value");
+                continue;
+            }
+            if (actors.remove(actor)) {
+                actors.add(actor);
+            }
+        }
     }
 
     private Map<Long, TreeMap<Substitution, HashSet<Actor>>> getMapActorToSubstitutors() {
