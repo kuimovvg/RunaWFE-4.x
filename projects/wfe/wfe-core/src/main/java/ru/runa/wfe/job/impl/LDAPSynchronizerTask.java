@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.security.logic.LDAPLogic;
 
 public class LDAPSynchronizerTask extends TimerTask {
@@ -20,13 +21,13 @@ public class LDAPSynchronizerTask extends TimerTask {
 
     @Override
     public final void run() {
-        String s = SystemProperties.getResources().getStringProperty("ldap.connection.provider.url");
-        log.info("ldap synchronization: " + (s != null ? "enabled" : "disabled"));
-        if (s != null) {
+        if (SystemProperties.isLDAPSynchronizationEnabled()) {
             try {
                 ldapLogic.synchronizeExecutors(false);
             } catch (Throwable th) {
                 log.error("timer task error", th);
+            } finally {
+                CachingLogic.onTransactionComplete();
             }
         }
     }
