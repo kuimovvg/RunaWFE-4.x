@@ -92,7 +92,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
                     ProcessCache.invalidateProcessDefinition(definitionFile);
                 }
             }
-            if (definitionFile != null) {
+            if (definitionFile != null && definitionFile.exists()) {
                 definitionFile.deleteMarkers(ValidationErrorsView.ID, true, IResource.DEPTH_INFINITE);
             }
         } catch (Exception e) {
