@@ -20,20 +20,17 @@ package ru.runa.wf.delegate;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.cactus.ServletTestCase;
 
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.service.DefinitionService;
+import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wf.service.WfServiceTestHelper;
+import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.DefinitionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
 
@@ -48,6 +45,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
 
     private WfServiceTestHelper helper = null;
 
+    @Override
     protected void setUp() throws Exception {
         helper = new WfServiceTestHelper(getClass().getName());
         definitionService = Delegates.getDefinitionService();
@@ -60,6 +58,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
         super.setUp();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         helper.releaseResources();
         definitionService = null;
@@ -68,8 +67,8 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
 
     public void testUndeployProcessByAuthorizedPerformer() throws Exception {
         definitionService.undeployProcessDefinition(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
-        List<WfDefinition> deployedProcesses = definitionService.getLatestProcessDefinitions(helper.getAuthorizedPerformerUser(), helper
-                .getProcessDefinitionBatchPresentation());
+        List<WfDefinition> deployedProcesses = definitionService.getLatestProcessDefinitions(helper.getAuthorizedPerformerUser(),
+                helper.getProcessDefinitionBatchPresentation());
 
         if (deployedProcesses.size() != 0) {
             fail("testUndeployProcessByAuthorizedPerformer wrongNumberOfProcessDefinitions after undeployment");
@@ -110,12 +109,11 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
     public void testUndeployProcessByFakePerformer() throws Exception {
         try {
             definitionService.undeployProcessDefinition(helper.getFakeUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
-            // TODO fail("testUndeployProcessByFakePerformer, no AuthenticationException");
+            fail("testUndeployProcessByFakePerformer, no AuthenticationException");
         } catch (AuthenticationException e1) {
-            helper.undeployValidProcessDefinition(); // TODO finally
-            fail("TODO trap");
+        } finally {
+            helper.undeployValidProcessDefinition();
         }
-
     }
 
     public void testUndeployProcessByNullPerformer() throws Exception {

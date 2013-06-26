@@ -17,10 +17,11 @@
  */
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wfe.InternalApplicationException;
@@ -33,8 +34,7 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 
-import java.util.Collection;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 20.08.2004
@@ -79,9 +79,8 @@ public class AuthorizationServiceDelegateGetExecutorsWithoutPermissionTest exten
     public void testGetExecutorsWithoutPermissionFakeSubject() throws Exception {
         try {
             authorizationService.getExecutorsWithPermission(helper.getFakeUser(), helper.getAASystem(), helper.getExecutorBatchPresentation(), false);
-            //TODO fail("AuthorizationDelegate.getExecutorsWithoutPermission() allows fake subject");
+            fail("AuthorizationDelegate.getExecutorsWithoutPermission() allows fake subject");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 
@@ -95,8 +94,8 @@ public class AuthorizationServiceDelegateGetExecutorsWithoutPermissionTest exten
 
     public void testGetExecutorsWithoutPermissionFakeIdentifiable() throws Exception {
         try {
-            authorizationService.getExecutorsWithPermission(helper.getAuthorizedPerformerUser(), helper.getFakeActor(), helper.getExecutorBatchPresentation(),
-                    false);
+            authorizationService.getExecutorsWithPermission(helper.getAuthorizedPerformerUser(), helper.getFakeActor(),
+                    helper.getExecutorBatchPresentation(), false);
             fail("AuthorizationDelegate.getExecutorsWithoutPermission() allows fake identifiable");
         } catch (InternalApplicationException e) {
         }
@@ -104,15 +103,15 @@ public class AuthorizationServiceDelegateGetExecutorsWithoutPermissionTest exten
 
     public void testGetExecutorsWithoutPermission() throws Exception {
         List<Group> expected = Lists.newArrayList(helper.getBaseGroup());
-        List<Executor> actual = authorizationService.getExecutorsWithPermission(helper.getAuthorizedPerformerUser(), helper.getBaseGroupActor(), helper
-                .getExecutorBatchPresentation(), false);
+        List<Executor> actual = authorizationService.getExecutorsWithPermission(helper.getAuthorizedPerformerUser(), helper.getBaseGroupActor(),
+                helper.getExecutorBatchPresentation(), false);
         ArrayAssert.assertWeakEqualArrays("AuthorizationDelegate.getExecutorsWithoutPermission() returns wrong executors", expected, actual);
     }
 
     public void testGetExecutorsWithoutPermissionUnauthorized() throws Exception {
         try {
-            authorizationService.getExecutorsWithPermission(helper.getUnauthorizedPerformerUser(), helper.getBaseGroupActor(), helper
-                    .getExecutorBatchPresentation(), false);
+            authorizationService.getExecutorsWithPermission(helper.getUnauthorizedPerformerUser(), helper.getBaseGroupActor(),
+                    helper.getExecutorBatchPresentation(), false);
             fail("AuthorizationDelegate.getExecutorsWithoutPermission() allows unauthorized operation");
         } catch (AuthorizationException e) {
         }

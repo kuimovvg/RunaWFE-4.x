@@ -20,22 +20,19 @@ package ru.runa.wf.delegate;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.cactus.ServletTestCase;
 
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.junit.ArrayAssert;
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.dto.WfSwimlane;
-import ru.runa.wf.service.WfServiceTestHelper;
+import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
 
@@ -95,9 +92,8 @@ public class ExecutionServiceDelegateGetSwimlanesTest extends ServletTestCase {
     public void testGetSwimlanesByFakeSubject() throws Exception {
         try {
             executionService.getSwimlanes(helper.getFakeUser(), instanceId);
-            // TODO fail("testGetSwimlanesByFakeSubject(), no AuthenticationException");
+            fail("testGetSwimlanesByFakeSubject(), no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

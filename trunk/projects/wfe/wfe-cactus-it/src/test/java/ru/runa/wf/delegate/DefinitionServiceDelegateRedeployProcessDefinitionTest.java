@@ -20,26 +20,21 @@ package ru.runa.wf.delegate;
 import java.util.Collection;
 import java.util.List;
 
-import javax.security.auth.Subject;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.cactus.ServletTestCase;
 
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.service.DefinitionService;
-import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
-import ru.runa.wf.service.WfServiceTestHelper;
+import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.DefinitionService;
+import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Lists;
-import ru.runa.wfe.user.User;
 
 /**
  * Created on 20.04.2005
@@ -63,8 +58,7 @@ public class DefinitionServiceDelegateRedeployProcessDefinitionTest extends Serv
 
         processDefinitionId = definitionService.getLatestProcessDefinition(helper.getAdminUser(), WfServiceTestHelper.VALID_PROCESS_NAME).getId();
 
-        Collection<Permission> redeployPermissions = Lists.newArrayList(DefinitionPermission.READ,
-                DefinitionPermission.REDEPLOY_DEFINITION);
+        Collection<Permission> redeployPermissions = Lists.newArrayList(DefinitionPermission.READ, DefinitionPermission.REDEPLOY_DEFINITION);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(redeployPermissions, WfServiceTestHelper.VALID_PROCESS_NAME);
 
         super.setUp();
@@ -97,8 +91,8 @@ public class DefinitionServiceDelegateRedeployProcessDefinitionTest extends Serv
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(nullPermissions, WfServiceTestHelper.VALID_PROCESS_NAME);
 
         try {
-            definitionService.redeployProcessDefinition(helper.getAuthorizedPerformerUser(), processDefinitionId,
-                    helper.getValidProcessDefinition(), Lists.newArrayList("testProcess"));
+            definitionService.redeployProcessDefinition(helper.getAuthorizedPerformerUser(), processDefinitionId, helper.getValidProcessDefinition(),
+                    Lists.newArrayList("testProcess"));
             assertTrue("definitionDelegate.redeployProcessByAuthorizedPerformer() no AuthorizationException", false);
         } catch (AuthorizationException e) {
         }
@@ -128,9 +122,8 @@ public class DefinitionServiceDelegateRedeployProcessDefinitionTest extends Serv
             User fakeUser = helper.getFakeUser();
             definitionService.redeployProcessDefinition(fakeUser, processDefinitionId, helper.getValidProcessDefinition(),
                     Lists.newArrayList("testProcess"));
-            // TODO assertTrue("testRedeployProcessWithFakeSubject no AuthenticationException", false);
+            assertTrue("testRedeployProcessWithFakeSubject no AuthenticationException", false);
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

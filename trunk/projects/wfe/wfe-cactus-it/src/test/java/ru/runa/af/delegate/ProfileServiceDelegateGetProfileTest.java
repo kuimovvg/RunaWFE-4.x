@@ -18,6 +18,7 @@
 package ru.runa.af.delegate;
 
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.service.ProfileService;
@@ -56,9 +57,8 @@ public class ProfileServiceDelegateGetProfileTest extends ServletTestCase {
     public void testFakeUser() throws Exception {
         try {
             profileService.getProfile(th.getFakeUser());
-            // TODO fail("ProfileServiceDelegate.saveProfile() allows fake subject");
+            fail("ProfileServiceDelegate.saveProfile() allows fake subject");
         } catch (AuthenticationException e) {
-            fail ("TODO trap");
         }
     }
 

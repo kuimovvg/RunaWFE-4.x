@@ -22,20 +22,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.cactus.ServletTestCase;
 
+import ru.runa.wf.service.WfServiceTestHelper;
+import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.service.ExecutionService;
-import ru.runa.wfe.definition.DefinitionPermission;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
-import ru.runa.wf.service.WfServiceTestHelper;
 
 import com.google.common.collect.Lists;
 
@@ -62,8 +59,7 @@ public class ExecutionServiceDelegateCompleteTaskTest extends ServletTestCase {
 
         helper.deployValidProcessDefinition(WfServiceTestHelper.SWIMLANE_PROCESS_FILE_NAME);
 
-        Collection<Permission> permissions = Lists.newArrayList(DefinitionPermission.START_PROCESS,
-                DefinitionPermission.READ_STARTED_PROCESS);
+        Collection<Permission> permissions = Lists.newArrayList(DefinitionPermission.START_PROCESS, DefinitionPermission.READ_STARTED_PROCESS);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(permissions, WfServiceTestHelper.SWIMLANE_PROCESS_NAME);
 
         executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME, null);
@@ -107,8 +103,7 @@ public class ExecutionServiceDelegateCompleteTaskTest extends ServletTestCase {
 
         assertEquals("Tasks not returned for Authorized Subject", 1, tasks.size());
         assertEquals("state name differs from expected", "treating collegues on cake and pie", tasks.get(0).getName());
-        assertEquals("task <treating collegues on cake and pie> is not assigned after starting [requester]"
-                , helper.getBossGroup(), task.getOwner());
+        assertEquals("task <treating collegues on cake and pie> is not assigned after starting [requester]", helper.getBossGroup(), task.getOwner());
         executionService.completeTask(helper.getAuthorizedPerformerUser(), tasks.get(0).getId(), legalVariables, null);
 
         tasks = executionService.getTasks(helper.getErpOperatorUser(), helper.getTaskBatchPresentation());
@@ -152,9 +147,8 @@ public class ExecutionServiceDelegateCompleteTaskTest extends ServletTestCase {
             executionService.completeTask(helper.getFakeUser(), task.getId(), legalVariables, null);
             fail("testCompleteTaskByFakeSubject(), no AuthenticationException");
         } catch (AuthorizationException e) {
-            // TODO
+            fail("testCompleteTaskByFakeSubject(), no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

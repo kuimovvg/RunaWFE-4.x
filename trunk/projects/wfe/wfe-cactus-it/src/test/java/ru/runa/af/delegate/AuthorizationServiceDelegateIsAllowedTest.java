@@ -17,10 +17,10 @@
  */
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.List;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.security.AuthenticationException;
@@ -31,7 +31,7 @@ import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.ExecutorPermission;
 
-import java.util.List;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 20.08.2004
@@ -42,6 +42,7 @@ public class AuthorizationServiceDelegateIsAllowedTest extends ServletTestCase {
 
     private AuthorizationService authorizationService;
 
+    @Override
     protected void setUp() throws Exception {
         helper = new ServiceTestHelper(AuthorizationServiceDelegateIsAllowedTest.class.getName());
         helper.createDefaultExecutorsMap();
@@ -57,6 +58,7 @@ public class AuthorizationServiceDelegateIsAllowedTest extends ServletTestCase {
         super.setUp();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         helper.releaseResources();
         authorizationService = null;
@@ -74,9 +76,8 @@ public class AuthorizationServiceDelegateIsAllowedTest extends ServletTestCase {
     public void testIsAllowedFakeSubject() throws Exception {
         try {
             authorizationService.isAllowed(helper.getFakeUser(), Permission.READ, helper.getAASystem());
-            // TODO fail("AuthorizationDelegate.isAllowed() allows fake subject");
+            fail("AuthorizationDelegate.isAllowed() allows fake subject");
         } catch (AuthenticationException e) {
-            fail ("TODO trap");
         }
     }
 
@@ -99,38 +100,39 @@ public class AuthorizationServiceDelegateIsAllowedTest extends ServletTestCase {
     public void testIsAllowedFakeIdentifiable() throws Exception {
         try {
             authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, helper.getFakeActor());
-            // TODO fail("AuthorizationDelegate.isAllowed() allows fake identifiable");
+            // TODO
+            // fail("AuthorizationDelegate.isAllowed() allows fake identifiable");
         } catch (InternalApplicationException e) {
-            fail ("TODO trap");
+            fail("TODO trap");
         }
     }
 
     public void testIsAllowedAASystem() throws Exception {
-        assertTrue("AuthorizationDelegate.isAllowed() returns wrong info", authorizationService.isAllowed(helper.getAuthorizedPerformerUser(),
-                SystemPermission.CREATE_EXECUTOR, helper.getAASystem()));
+        assertTrue("AuthorizationDelegate.isAllowed() returns wrong info",
+                authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), SystemPermission.CREATE_EXECUTOR, helper.getAASystem()));
 
-        assertFalse("AuthorizationDelegate.isAllowed() returns wrong info", authorizationService.isAllowed(helper.getAuthorizedPerformerUser(),
-                Permission.READ, helper.getAASystem()));
+        assertFalse("AuthorizationDelegate.isAllowed() returns wrong info",
+                authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, helper.getAASystem()));
     }
 
     public void testIsAllowedExecutor() throws Exception {
-        assertTrue("AuthorizationDelegate.isAllowed() returns wrong info", authorizationService.isAllowed(helper.getAuthorizedPerformerUser(),
-                Permission.READ, helper.getBaseGroupActor()));
+        assertTrue("AuthorizationDelegate.isAllowed() returns wrong info",
+                authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, helper.getBaseGroupActor()));
 
-        assertTrue("AuthorizationDelegate.isAllowed() returns wrong info", authorizationService.isAllowed(helper.getAuthorizedPerformerUser(),
-                ExecutorPermission.UPDATE, helper.getBaseGroupActor()));
+        assertTrue("AuthorizationDelegate.isAllowed() returns wrong info",
+                authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), ExecutorPermission.UPDATE, helper.getBaseGroupActor()));
 
-        assertFalse("AuthorizationDelegate.isAllowed() returns wrong info", authorizationService.isAllowed(helper.getAuthorizedPerformerUser(),
-                Permission.UPDATE_PERMISSIONS, helper.getBaseGroupActor()));
+        assertFalse("AuthorizationDelegate.isAllowed() returns wrong info",
+                authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.UPDATE_PERMISSIONS, helper.getBaseGroupActor()));
 
-        assertTrue("AuthorizationDelegate.isAllowed() returns wrong info", authorizationService.isAllowed(helper.getAuthorizedPerformerUser(),
-                Permission.READ, helper.getBaseGroup()));
+        assertTrue("AuthorizationDelegate.isAllowed() returns wrong info",
+                authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.READ, helper.getBaseGroup()));
 
-        assertTrue("AuthorizationDelegate.isAllowed() returns wrong info", authorizationService.isAllowed(helper.getAuthorizedPerformerUser(),
-                ExecutorPermission.UPDATE, helper.getBaseGroup()));
+        assertTrue("AuthorizationDelegate.isAllowed() returns wrong info",
+                authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), ExecutorPermission.UPDATE, helper.getBaseGroup()));
 
-        assertFalse("AuthorizationDelegate.isAllowed() returns wrong info", authorizationService.isAllowed(helper.getAuthorizedPerformerUser(),
-                Permission.UPDATE_PERMISSIONS, helper.getBaseGroup()));
+        assertFalse("AuthorizationDelegate.isAllowed() returns wrong info",
+                authorizationService.isAllowed(helper.getAuthorizedPerformerUser(), Permission.UPDATE_PERMISSIONS, helper.getBaseGroup()));
     }
 
     public void testIsAllowedExecutorUnauthorized() throws Exception {
