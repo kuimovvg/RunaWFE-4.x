@@ -17,10 +17,10 @@
  */
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wfe.InternalApplicationException;
@@ -32,7 +32,7 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.GroupPermission;
 
-import java.util.Collection;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 20.08.2004
@@ -78,9 +78,8 @@ public class AuthorizationServiceDelegateSetPermissionsTest extends ServletTestC
     public void testSetPermissionsFakeSubject() throws Exception {
         try {
             authorizationService.setPermissions(helper.getFakeUser(), helper.getBaseGroupActor().getId(), p, helper.getAASystem());
-            // TODO fail("AuthorizationDelegate.setPermissions() allows fake subject");
+            fail("AuthorizationDelegate.setPermissions() allows fake subject");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 
@@ -89,9 +88,8 @@ public class AuthorizationServiceDelegateSetPermissionsTest extends ServletTestC
             authorizationService.setPermissions(helper.getAuthorizedPerformerUser(), helper.getFakeActor().getId(), p, helper.getAASystem());
             fail("AuthorizationDelegate.setPermissions() allows null executor");
         } catch (AuthorizationException e) {
-            // TODO
         } catch (ExecutorDoesNotExistException e) {
-            fail ("TODO trap");
+            fail("TODO trap");
         }
     }
 

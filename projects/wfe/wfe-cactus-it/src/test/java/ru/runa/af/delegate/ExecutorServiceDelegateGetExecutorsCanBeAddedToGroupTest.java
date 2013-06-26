@@ -18,9 +18,12 @@
 
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wfe.InternalApplicationException;
@@ -29,11 +32,15 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.*;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.ExecutorPermission;
+import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.GroupPermission;
+import ru.runa.wfe.user.User;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
 
 public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends ServletTestCase {
     private ServiceTestHelper th;
@@ -55,7 +62,8 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
         th.createDefaultExecutorsMap();
-        Collection<Permission> readUpdateAddToGroupPermissions = Lists.newArrayList(Permission.READ, ExecutorPermission.UPDATE, GroupPermission.ADD_TO_GROUP);
+        Collection<Permission> readUpdateAddToGroupPermissions = Lists.newArrayList(Permission.READ, ExecutorPermission.UPDATE,
+                GroupPermission.ADD_TO_GROUP);
         Collection<Permission> readUpdatePermissions = Lists.newArrayList(Permission.READ, ExecutorPermission.UPDATE);
         executorsMap = th.getDefaultExecutorsMap();
 
@@ -73,8 +81,8 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
     }
 
     final public void testGetExecutorsByAuthorizedPerformer1() throws Exception {
-        List<Executor> calculatedExecutors = executorService.getGroupChildren(th.getAuthorizedPerformerUser(), getSubGroup(), th
-                .getExecutorBatchPresentation(), true);
+        List<Executor> calculatedExecutors = executorService.getGroupChildren(th.getAuthorizedPerformerUser(), getSubGroup(),
+                th.getExecutorBatchPresentation(), true);
         List<Executor> realExecutors = Lists.newArrayList(group, th.getAuthorizedPerformerActor());
         ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutorGroups() returns wrong group set", realExecutors, calculatedExecutors);
     }
@@ -82,8 +90,8 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
     final public void testGetExecutorsByAuthorizedPerformer2() throws Exception {
         Collection<Permission> readPermissions = Lists.newArrayList(Permission.READ);
         th.setPermissionsToAuthorizedPerformer(readPermissions, th.getBaseGroupActor());
-        List<Executor> calculatedExecutors = executorService.getGroupChildren(th.getAuthorizedPerformerUser(), getSubGroup(), th
-                .getExecutorBatchPresentation(), true);
+        List<Executor> calculatedExecutors = executorService.getGroupChildren(th.getAuthorizedPerformerUser(), getSubGroup(),
+                th.getExecutorBatchPresentation(), true);
         List<Executor> realExecutors = Lists.newArrayList(group, th.getAuthorizedPerformerActor(), th.getBaseGroupActor());
         ArrayAssert.assertWeakEqualArrays("businessDelegate.getExecutors ...() returns wrong group set", realExecutors, calculatedExecutors);
     }
@@ -93,7 +101,7 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
             executorService.getGroupChildren(th.getUnauthorizedPerformerUser(), getSubGroup(), th.getExecutorBatchPresentation(), true);
             fail("businessDelegate.getExecutorsByUnauthorizedPerformer() no AuthorizationFailedException");
         } catch (AuthorizationException e) {
-            //That's what we expect
+            // That's what we expect
         }
     }
 
@@ -102,7 +110,7 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
             executorService.getGroupChildren(null, getSubGroup(), th.getExecutorBatchPresentation(), true);
             fail("GetExecutorswithNullSubject no Exception");
         } catch (IllegalArgumentException e) {
-            //That's what we expect
+            // That's what we expect
         }
     }
 
@@ -113,7 +121,7 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
             executorService.getGroupChildren(th.getAuthorizedPerformerUser(), getSubGroup(), th.getExecutorBatchPresentation(), true);
             fail("testGetExecutorswithoutPermission no Exception");
         } catch (AuthorizationException e) {
-            //That's what we expect
+            // That's what we expect
         }
     }
 
@@ -121,10 +129,9 @@ public class ExecutorServiceDelegateGetExecutorsCanBeAddedToGroupTest extends Se
         try {
             User fakeUser = th.getFakeUser();
             executorService.getGroupChildren(fakeUser, getSubGroup(), th.getExecutorBatchPresentation(), true);
-            // TODO fail("testGetExecutorswithoutPermission no Exception");
+            fail("testGetExecutorswithoutPermission no Exception");
         } catch (AuthenticationException e) {
-            //That's what we expect
-            fail("TODO trap");
+            // That's what we expect
         }
     }
 

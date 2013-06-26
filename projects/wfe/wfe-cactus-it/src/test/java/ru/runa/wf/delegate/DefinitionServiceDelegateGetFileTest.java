@@ -17,10 +17,10 @@
  */
 package ru.runa.wf.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionFileDoesNotExistException;
@@ -30,7 +30,7 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
-import java.util.Collection;
+import com.google.common.collect.Lists;
 
 /**
  * Powered by Dofs
@@ -57,8 +57,8 @@ public class DefinitionServiceDelegateGetFileTest extends ServletTestCase {
         Collection<Permission> permissions = Lists.newArrayList(DefinitionPermission.READ);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(permissions, WfServiceTestHelper.VALID_PROCESS_NAME);
 
-        definitionId = definitionService.getLatestProcessDefinition(helper.getAuthorizedPerformerUser(),
-                WfServiceTestHelper.VALID_PROCESS_NAME).getId();
+        definitionId = definitionService.getLatestProcessDefinition(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME)
+                .getId();
 
         super.setUp();
     }
@@ -96,9 +96,8 @@ public class DefinitionServiceDelegateGetFileTest extends ServletTestCase {
     public void testGetFileTestByFakeSubject() throws Exception {
         try {
             definitionService.getFile(helper.getFakeUser(), definitionId, VALID_FILE_NAME);
-            // TODO assertTrue("testGetFileTestByFakeSubject , no AuthenticationException", false);
+            assertTrue("testGetFileTestByFakeSubject , no AuthenticationException", false);
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 
@@ -114,7 +113,8 @@ public class DefinitionServiceDelegateGetFileTest extends ServletTestCase {
     public void testGetFileTestByAuthorizedSubjectWithInvalidFileName() throws Exception {
         try {
             definitionService.getFile(helper.getAuthorizedPerformerUser(), definitionId, INVALID_FILE_NAME);
-            // TODO fail("testGetFileTestByAuthorizedSubjectWithInvalidFileName, no ProcessDefinitionFileNotFoundException");
+            // TODO
+            // fail("testGetFileTestByAuthorizedSubjectWithInvalidFileName, no ProcessDefinitionFileNotFoundException");
         } catch (DefinitionFileDoesNotExistException e) {
             // expected
             fail("TODO trap");

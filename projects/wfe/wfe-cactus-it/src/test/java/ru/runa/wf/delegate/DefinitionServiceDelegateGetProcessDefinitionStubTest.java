@@ -19,19 +19,16 @@ package ru.runa.wf.delegate;
 
 import java.util.Collection;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.cactus.ServletTestCase;
 
+import ru.runa.wf.service.WfServiceTestHelper;
+import ru.runa.wfe.definition.DefinitionPermission;
+import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.service.DefinitionService;
-import ru.runa.wfe.definition.dto.WfDefinition;
-import ru.runa.wfe.definition.DefinitionPermission;
-import ru.runa.wf.service.WfServiceTestHelper;
+import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
 
@@ -101,9 +98,8 @@ public class DefinitionServiceDelegateGetProcessDefinitionStubTest extends Servl
     public void testGetProcessDefinitionStubByFakeSubject() throws Exception {
         try {
             definitionService.getLatestProcessDefinition(helper.getFakeUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
-            // TODO fail("testGetProcessDefinitionStubByFakeSubject(), no AuthenticationException");
+            fail("testGetProcessDefinitionStubByFakeSubject(), no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

@@ -20,23 +20,17 @@ package ru.runa.wf.delegate;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.cactus.ServletTestCase;
 
+import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.service.ExecutionService;
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.validation.ValidationException;
-import ru.runa.wf.service.WfServiceTestHelper;
+import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
 
@@ -57,8 +51,7 @@ public class ExecutionServiceDelegateGetProcessInstancesCountTest extends Servle
 
         helper.deployValidProcessDefinition();
 
-        Collection<Permission> startPermissions = Lists.newArrayList(DefinitionPermission.START_PROCESS,
-                DefinitionPermission.READ_STARTED_PROCESS);
+        Collection<Permission> startPermissions = Lists.newArrayList(DefinitionPermission.START_PROCESS, DefinitionPermission.READ_STARTED_PROCESS);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(startPermissions, WfServiceTestHelper.VALID_PROCESS_NAME);
         batchPresentation = helper.getProcessInstanceBatchPresentation();
         super.setUp();
@@ -94,9 +87,8 @@ public class ExecutionServiceDelegateGetProcessInstancesCountTest extends Servle
     public void testGetProcessInstanceCountByFakeSubject() throws Exception {
         try {
             executionService.getAllProcessesCount(helper.getFakeUser(), batchPresentation);
-            // TODO fail("testGetAllProcessInstanceStubsByFakeSubject, no AuthenticationException");
+            fail("testGetAllProcessInstanceStubsByFakeSubject, no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 
@@ -116,8 +108,7 @@ public class ExecutionServiceDelegateGetProcessInstancesCountTest extends Servle
         processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", expectedCount, processesCount);
 
-        List<WfProcess> processInstanceStubs = executionService.getProcesses(helper.getAuthorizedPerformerUser(),
-                batchPresentation);
+        List<WfProcess> processInstanceStubs = executionService.getProcesses(helper.getAuthorizedPerformerUser(), batchPresentation);
 
         Collection<Permission> nullPermissions = Permission.getNoPermissions();
         int withoutPermCount = processInstanceStubs.size() / 2;
@@ -165,8 +156,7 @@ public class ExecutionServiceDelegateGetProcessInstancesCountTest extends Servle
         assertEquals("Incorrect processes array", expectedCount, processesCount);
     }
 
-    private void startInstances(int instanceCount) throws
-            InternalApplicationException {
+    private void startInstances(int instanceCount) throws InternalApplicationException {
         for (int i = 0; i < instanceCount; i++) {
             executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
         }
