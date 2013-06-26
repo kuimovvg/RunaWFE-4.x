@@ -18,9 +18,11 @@
 
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.TestSuite;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wfe.security.AuthenticationException;
@@ -33,8 +35,7 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
 
 public class ExecutorServiceDelegateGetGroupsInThatExecutorNotPresentTest extends ServletTestCase {
     private ServiceTestHelper th;
@@ -94,7 +95,7 @@ public class ExecutorServiceDelegateGetGroupsInThatExecutorNotPresentTest extend
             executorService.getExecutorGroups(th.getUnauthorizedPerformerUser(), actor, th.getExecutorBatchPresentation(), true);
             assertTrue("businessDelegate.getExecutorsInThatExecutorNotPresent() no AuthorizationFailedException", false);
         } catch (AuthorizationException e) {
-            //That's what we expect
+            // That's what we expect
         }
     }
 
@@ -103,7 +104,7 @@ public class ExecutorServiceDelegateGetGroupsInThatExecutorNotPresentTest extend
             executorService.getExecutorGroups(null, actor, th.getExecutorBatchPresentation(), true);
             assertTrue("getExecutorsInThatExecutorNotPresentwithNullSubject no Exception", false);
         } catch (IllegalArgumentException e) {
-            //That's what we expect
+            // That's what we expect
         }
     }
 
@@ -115,7 +116,7 @@ public class ExecutorServiceDelegateGetGroupsInThatExecutorNotPresentTest extend
             executorService.getExecutorGroups(th.getAuthorizedPerformerUser(), actor, th.getExecutorBatchPresentation(), true);
             assertTrue("testgetExecutorsInThatExecutorNotPresentwithoutPermission no Exception", false);
         } catch (AuthorizationException e) {
-            //That's what we expect
+            // That's what we expect
         }
     }
 
@@ -123,10 +124,9 @@ public class ExecutorServiceDelegateGetGroupsInThatExecutorNotPresentTest extend
         try {
             User fakeUser = th.getFakeUser();
             executorService.getExecutorGroups(fakeUser, actor, th.getExecutorBatchPresentation(), true);
-            // TODO assertTrue("testGetExecutorGroupsWithFakeSubject no Exception", false);
+            assertTrue("testGetExecutorGroupsWithFakeSubject no Exception", false);
         } catch (AuthenticationException e) {
-            //That's what we expect
-            fail("TODO trap");
+            // That's what we expect
         }
     }
 

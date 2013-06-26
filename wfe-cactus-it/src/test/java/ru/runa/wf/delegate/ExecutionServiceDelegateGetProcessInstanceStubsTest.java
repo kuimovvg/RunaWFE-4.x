@@ -17,10 +17,12 @@
  */
 package ru.runa.wf.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
@@ -36,9 +38,7 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.dto.WfVariable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 23.04.2005
@@ -64,8 +64,7 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
         Collection<Permission> permissions = Lists.newArrayList(DefinitionPermission.START_PROCESS);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(permissions, WfServiceTestHelper.SWIMLANE_PROCESS_NAME);
 
-        Collection<Permission> startPermissions = Lists.newArrayList(DefinitionPermission.START_PROCESS,
-                DefinitionPermission.READ_STARTED_PROCESS);
+        Collection<Permission> startPermissions = Lists.newArrayList(DefinitionPermission.START_PROCESS, DefinitionPermission.READ_STARTED_PROCESS);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(startPermissions, WfServiceTestHelper.VALID_PROCESS_NAME);
         batchPresentation = helper.getProcessInstanceBatchPresentation();
         super.setUp();
@@ -98,8 +97,7 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
         filters.put(0, new AnywhereStringFilterCriteria(value));
         List<WfProcess> processes = executionService.getProcesses(helper.getAuthorizedPerformerUser(), batchPresentation);
         for (WfProcess processInstanceStub : processes) {
-            List<WfVariable> instanceVariablesMap = executionService.getVariables(helper.getAuthorizedPerformerUser(),
-                    processInstanceStub.getId());
+            List<WfVariable> instanceVariablesMap = executionService.getVariables(helper.getAuthorizedPerformerUser(), processInstanceStub.getId());
             int instancesFound = 0;
             for (WfVariable WfVariable : instanceVariablesMap) {
                 if (name.equals(WfVariable.getDefinition().getName()) && value.equals(WfVariable.getValue())) {
@@ -127,8 +125,7 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
         filters.put(0, new AnywhereStringFilterCriteria("bad matcher"));
         List<WfProcess> processes = executionService.getProcesses(helper.getAuthorizedPerformerUser(), batchPresentation);
         for (WfProcess processInstanceStub : processes) {
-            List<WfVariable> instanceVariablesMap = executionService.getVariables(helper.getAuthorizedPerformerUser(),
-                    processInstanceStub.getId());
+            List<WfVariable> instanceVariablesMap = executionService.getVariables(helper.getAuthorizedPerformerUser(), processInstanceStub.getId());
             int instancesFound = 0;
             for (WfVariable WfVariable : instanceVariablesMap) {
                 if (name.equals(WfVariable.getDefinition().getName()) && value.equals(WfVariable.getValue())) {
@@ -158,9 +155,8 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
     public void testGetProcessInstanceStubsByFakeSubject() throws Exception {
         try {
             executionService.getProcesses(helper.getFakeUser(), batchPresentation);
-            // TODO fail("testGetAllProcessInstanceStubsByFakeSubject, no AuthenticationException");
+            fail("testGetAllProcessInstanceStubsByFakeSubject, no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

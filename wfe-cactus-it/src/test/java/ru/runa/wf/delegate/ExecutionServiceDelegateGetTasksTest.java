@@ -17,11 +17,13 @@
  */
 package ru.runa.wf.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.cactus.ServletTestCase;
 import org.hibernate.TransientObjectException;
+
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.execution.ProcessPermission;
@@ -35,13 +37,9 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
-import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 23.04.2005
@@ -139,10 +137,10 @@ public class ExecutionServiceDelegateGetTasksTest extends ServletTestCase {
         List<WfTask> tasks = executionService.getTasks(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals(1, tasks.size());
 
-        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(
-                Lists.newArrayList(ProcessPermission.READ), executionService.getProcess(helper.getAdminUser(), proc1));
-        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(
-                Lists.newArrayList(ProcessPermission.READ), executionService.getProcess(helper.getAdminUser(), proc2));
+        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(Lists.newArrayList(ProcessPermission.READ),
+                executionService.getProcess(helper.getAdminUser(), proc1));
+        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(Lists.newArrayList(ProcessPermission.READ),
+                executionService.getProcess(helper.getAdminUser(), proc2));
 
         List<WfVariable> variables = executionService.getVariables(helper.getAuthorizedPerformerUser(), tasks.get(0).getProcessId());
         assertEquals("var1Value", variables.get(0).getValue());
@@ -163,10 +161,10 @@ public class ExecutionServiceDelegateGetTasksTest extends ServletTestCase {
         List<WfTask> tasks = executionService.getTasks(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals(1, tasks.size());
 
-        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(
-                Lists.newArrayList(ProcessPermission.READ), executionService.getProcess(helper.getAdminUser(), proc1));
-        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(
-                Lists.newArrayList(ProcessPermission.READ), executionService.getProcess(helper.getAdminUser(), proc2));
+        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(Lists.newArrayList(ProcessPermission.READ),
+                executionService.getProcess(helper.getAdminUser(), proc1));
+        helper.setPermissionsToAuthorizedPerformerOnProcessInstance(Lists.newArrayList(ProcessPermission.READ),
+                executionService.getProcess(helper.getAdminUser(), proc2));
 
         List<WfVariable> variables = executionService.getVariables(helper.getAuthorizedPerformerUser(), tasks.get(0).getProcessId());
         assertEquals("var1Value", variables.get(0).getValue());
@@ -182,9 +180,8 @@ public class ExecutionServiceDelegateGetTasksTest extends ServletTestCase {
             executionService.getTasks(helper.getFakeUser(), batchPresentation);
             fail("testGetTasksByFakeSubject(), no AuthenticationException");
         } catch (TransientObjectException e) {
-            // TODO
+            fail("testGetTasksByFakeSubject(), no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

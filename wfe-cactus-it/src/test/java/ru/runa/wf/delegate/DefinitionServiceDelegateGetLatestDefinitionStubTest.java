@@ -17,10 +17,10 @@
  */
 package ru.runa.wf.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
@@ -31,18 +31,19 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
-import java.util.Collection;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 20.04.2005
- *
+ * 
  * @author Gritsenko_S
- *
+ * 
  */
 public class DefinitionServiceDelegateGetLatestDefinitionStubTest extends ServletTestCase {
     private DefinitionService definitionService;
     private WfServiceTestHelper helper = null;
 
+    @Override
     protected void setUp() throws Exception {
         helper = new WfServiceTestHelper(getClass().getName());
         definitionService = Delegates.getDefinitionService();
@@ -55,6 +56,7 @@ public class DefinitionServiceDelegateGetLatestDefinitionStubTest extends Servle
         super.setUp();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         helper.undeployValidProcessDefinition();
 
@@ -81,9 +83,8 @@ public class DefinitionServiceDelegateGetLatestDefinitionStubTest extends Servle
     public void testGetLatestDefinitionStubByFakeUser() throws Exception {
         try {
             definitionService.getLatestProcessDefinition(helper.getFakeUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
-            // TODO fail("testGetLatestDefinitionStubByUnauthorizedSubject, no AuthenticationException");
+            fail("testGetLatestDefinitionStubByUnauthorizedSubject, no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

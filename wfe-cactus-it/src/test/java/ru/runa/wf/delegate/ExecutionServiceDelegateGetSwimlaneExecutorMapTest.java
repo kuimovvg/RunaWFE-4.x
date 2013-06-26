@@ -17,10 +17,11 @@
  */
 package ru.runa.wf.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.HashMap;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
@@ -33,8 +34,7 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
-import java.util.Collection;
-import java.util.HashMap;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 02.05.2005
@@ -97,9 +97,8 @@ public class ExecutionServiceDelegateGetSwimlaneExecutorMapTest extends ServletT
     public void testGetSwimlaneExecutorMapByFakeSubject() throws Exception {
         try {
             executionService.getProcessTasks(helper.getFakeUser(), instanceId);
-            // TODO fail("testGetSwimlaneExecutorMapByFakeSubject(), no AuthenticationException");
+            fail("testGetSwimlaneExecutorMapByFakeSubject(), no AuthenticationException");
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 
@@ -120,37 +119,61 @@ public class ExecutionServiceDelegateGetSwimlaneExecutorMapTest extends ServletT
     }
 
     //
-    // public void testGetSwimlaneExecutorMapByAuthorizedSubject() throws Exception {
-    // Collection<Permission> readPermissions = Lists.newArrayList(Permission.READ);
-    // helper.setPermissionsToAuthorizedPerformer(readPermissions, helper.getErpOperator());
+    // public void testGetSwimlaneExecutorMapByAuthorizedSubject() throws
+    // Exception {
+    // Collection<Permission> readPermissions =
+    // Lists.newArrayList(Permission.READ);
+    // helper.setPermissionsToAuthorizedPerformer(readPermissions,
+    // helper.getErpOperator());
     //
-    // List<Swimlane> swimlanes = executionService.getSwimlanes(helper.getAuthorizedPerformerUser(), instanceId);
+    // List<Swimlane> swimlanes =
+    // executionService.getSwimlanes(helper.getAuthorizedPerformerUser(),
+    // instanceId);
     //
-    // swimlanes = executionService.getSwimlanes(helper.getAuthorizedPerformerUser(), instanceId);
+    // swimlanes =
+    // executionService.getSwimlanes(helper.getAuthorizedPerformerUser(),
+    // instanceId);
     // for (Swimlane swimlane : swimlanes) {
-    // Map<String, Executor> executorsInSwimlane = executionService.getActiveTasks(helper.getAuthorizedPerformerUser(), instanceId);
+    // Map<String, Executor> executorsInSwimlane =
+    // executionService.getActiveTasks(helper.getAuthorizedPerformerUser(),
+    // instanceId);
     // for (String name : executorsInSwimlane.keySet()) {
-    // Assert.assertEquals("Executor in the swimlane differs from expected", getExpectedExecutor(swimlane), executorsInSwimlane.get(name));
+    // Assert.assertEquals("Executor in the swimlane differs from expected",
+    // getExpectedExecutor(swimlane), executorsInSwimlane.get(name));
     // }
     // }
     //
-    // WfTask task = executionService.getTasks(helper.getAuthorizedPerformerUser(), helper.getTaskBatchPresentation()).get(0);
-    // executionService.completeTask(helper.getAuthorizedPerformerUser(), task.getId(), legalVariables);
+    // WfTask task =
+    // executionService.getTasks(helper.getAuthorizedPerformerUser(),
+    // helper.getTaskBatchPresentation()).get(0);
+    // executionService.completeTask(helper.getAuthorizedPerformerUser(),
+    // task.getId(), legalVariables);
     //
-    // swimlanes = executionService.getSwimlanes(helper.getAuthorizedPerformerUser(), instanceId);
+    // swimlanes =
+    // executionService.getSwimlanes(helper.getAuthorizedPerformerUser(),
+    // instanceId);
     // for (Swimlane swimlane : swimlanes) {
-    // Map<String, Executor> executorsInSwimlane = executionService.getActiveTasks(helper.getAuthorizedPerformerUser(), instanceId,
+    // Map<String, Executor> executorsInSwimlane =
+    // executionService.getActiveTasks(helper.getAuthorizedPerformerUser(),
+    // instanceId,
     // swimlane.getDefinition().getName());
     // for (String name : executorsInSwimlane.keySet()) {
-    // Assert.assertEquals("Executor in the swimlane differs from expected", getExpectedExecutor(swimlane), executorsInSwimlane.get(name));
+    // Assert.assertEquals("Executor in the swimlane differs from expected",
+    // getExpectedExecutor(swimlane), executorsInSwimlane.get(name));
     // }
     // }
     // }
     //
-    // public void testGetSwimlaneExecutorMapDeletedExecutor() throws Exception {
-    // WfTask task = executionService.getTasks(helper.getAuthorizedPerformerUser(), helper.getTaskBatchPresentation()).get(0);
-    // executionService.completeTask(helper.getAuthorizedPerformerUser(), task.getId(), legalVariables);
-    // List<Swimlane> swimlanes = executionService.getSwimlanes(helper.getAuthorizedPerformerUser(), instanceId);
+    // public void testGetSwimlaneExecutorMapDeletedExecutor() throws Exception
+    // {
+    // WfTask task =
+    // executionService.getTasks(helper.getAuthorizedPerformerUser(),
+    // helper.getTaskBatchPresentation()).get(0);
+    // executionService.completeTask(helper.getAuthorizedPerformerUser(),
+    // task.getId(), legalVariables);
+    // List<Swimlane> swimlanes =
+    // executionService.getSwimlanes(helper.getAuthorizedPerformerUser(),
+    // instanceId);
     // Swimlane swimlane = null;
     // for (Swimlane existing : swimlanes) {
     // if ("erp operator".equals(existing.getDefinition().getName())) {
@@ -162,7 +185,8 @@ public class ExecutionServiceDelegateGetSwimlaneExecutorMapTest extends ServletT
     // helper.removeCreatedExecutor(helper.getErpOperator());
     // helper.removeExecutorIfExists(helper.getErpOperator());
     // try {
-    // executionService.getActiveTasks(helper.getAuthorizedPerformerUser(), instanceId, swimlane.getDefinition().getName());
+    // executionService.getActiveTasks(helper.getAuthorizedPerformerUser(),
+    // instanceId, swimlane.getDefinition().getName());
     // fail("executionDelegate.getSwimlaneExecutorMap() does not throw exception for getting swimlane for nonexisting executor");
     // } catch (ExecutorDoesNotExistException e) {
     // }

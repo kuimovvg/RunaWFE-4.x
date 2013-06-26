@@ -17,9 +17,10 @@
  */
 package ru.runa.wf.delegate;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.List;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -27,8 +28,6 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.delegate.Delegates;
-
-import java.util.List;
 
 /**
  * Created on 20.04.2005
@@ -42,6 +41,7 @@ public class DefinitionServiceDelegateGetLatestProcessDefinitionsStubsTest exten
 
     private BatchPresentation batchPresentation;
 
+    @Override
     protected void setUp() throws Exception {
         helper = new WfServiceTestHelper(getClass().getName());
         definitionService = Delegates.getDefinitionService();
@@ -51,6 +51,7 @@ public class DefinitionServiceDelegateGetLatestProcessDefinitionsStubsTest exten
         super.setUp();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         helper.undeployValidProcessDefinition();
         helper.releaseResources();
@@ -60,8 +61,7 @@ public class DefinitionServiceDelegateGetLatestProcessDefinitionsStubsTest exten
     }
 
     public void testGetLatestProcessDefinitionsStubsByAuthorizedSubject() throws Exception {
-        List<WfDefinition> processes = definitionService.getLatestProcessDefinitions(helper.getAuthorizedPerformerUser(),
-                batchPresentation);
+        List<WfDefinition> processes = definitionService.getLatestProcessDefinitions(helper.getAuthorizedPerformerUser(), batchPresentation);
 
         assertEquals("definitionDelegate.getLatestDefinitionStub() returned not expected list", 1, processes.size());
         assertEquals("definitionDelegate.getLatestDefinitionStub() returned process with different name", processes.get(0).getName(),
@@ -81,9 +81,8 @@ public class DefinitionServiceDelegateGetLatestProcessDefinitionsStubsTest exten
     public void testGetLatestProcessDefinitionsStubsByFakeSubject() throws Exception {
         try {
             definitionService.getLatestProcessDefinitions(helper.getFakeUser(), batchPresentation);
-            // TODO assertTrue("testGetLatestDefinitionStubByUnauthorizedSubject, no AuthenticationException", false);
+            assertTrue("testGetLatestDefinitionStubByUnauthorizedSubject, no AuthenticationException", false);
         } catch (AuthenticationException e) {
-            fail("TODO trap");
         }
     }
 

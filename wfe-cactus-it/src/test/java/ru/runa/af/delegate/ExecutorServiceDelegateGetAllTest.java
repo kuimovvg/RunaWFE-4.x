@@ -18,21 +18,25 @@
 
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.*;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.ExecutorPermission;
+import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
 
 public class ExecutorServiceDelegateGetAllTest extends ServletTestCase {
     private ServiceTestHelper th;
@@ -47,6 +51,7 @@ public class ExecutorServiceDelegateGetAllTest extends ServletTestCase {
 
     private Map<String, Executor> executorsMap;
 
+    @Override
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -58,8 +63,8 @@ public class ExecutorServiceDelegateGetAllTest extends ServletTestCase {
         th.setPermissionsToAuthorizedPerformer(readUpdatePermissions, actor);
         group = (Group) executorsMap.get(ServiceTestHelper.BASE_GROUP_NAME);
         th.setPermissionsToAuthorizedPerformer(readUpdatePermissions, group);
-        th.setPermissionsToAuthorizedPerformer(readUpdatePermissions, (Actor) executorsMap.get(ServiceTestHelper.SUB_GROUP_ACTOR_NAME));
-        th.setPermissionsToAuthorizedPerformer(readUpdatePermissions, (Group) executorsMap.get(ServiceTestHelper.SUB_GROUP_NAME));
+        th.setPermissionsToAuthorizedPerformer(readUpdatePermissions, executorsMap.get(ServiceTestHelper.SUB_GROUP_ACTOR_NAME));
+        th.setPermissionsToAuthorizedPerformer(readUpdatePermissions, executorsMap.get(ServiceTestHelper.SUB_GROUP_NAME));
         super.setUp();
     }
 
@@ -82,7 +87,7 @@ public class ExecutorServiceDelegateGetAllTest extends ServletTestCase {
             executorService.getExecutors(null, th.getExecutorBatchPresentation());
             fail("businessDelegate.getExecutors() with null subject throws no IllegalArgumentException");
         } catch (IllegalArgumentException e) {
-            //That's what we expect
+            // That's what we expect
         }
     }
 
@@ -90,13 +95,13 @@ public class ExecutorServiceDelegateGetAllTest extends ServletTestCase {
         try {
             User fakeUser = th.getFakeUser();
             executorService.getExecutors(fakeUser, th.getExecutorBatchPresentation());
-            // TODO fail("businessDelegate.getExecutors() with fake subject throws no AuthenticationException");
+            fail("businessDelegate.getExecutors() with fake subject throws no AuthenticationException");
         } catch (AuthenticationException e) {
-            //That's what we expect
-            fail ("TODO trap");
+            // That's what we expect
         }
     }
 
+    @Override
     protected void tearDown() throws Exception {
         th.releaseResources();
         executorService = null;
