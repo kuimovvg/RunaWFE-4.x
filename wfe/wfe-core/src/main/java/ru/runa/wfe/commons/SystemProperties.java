@@ -1,6 +1,5 @@
 package ru.runa.wfe.commons;
 
-
 public class SystemProperties {
     private static final PropertyResources RESOURCES = new PropertyResources("system.properties");
     private static final boolean developmentMode = "true".equals(System.getProperty("devmode"));
@@ -79,4 +78,7 @@ public class SystemProperties {
         return RESOURCES.getIntegerProperty("token.maximum.depth", 100);
     }
 
+    public static boolean isLDAPSynchronizationEnabled() {
+        return RESOURCES.getBooleanProperty("ldap.synchronizer.enabled", false);
+    }
 }

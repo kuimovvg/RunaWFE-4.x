@@ -149,7 +149,7 @@ public class WebResources {
     }
 
     public static boolean isLDAPSynchronizationEnabled() {
-        return RESOURCES.getBooleanProperty("synchronization.ldap.enabled", false);
+        return RESOURCES.getBooleanProperty("synchronization.ldap.link.enabled", false);
     }
 
     public static boolean isLDAPSynchronizationFull() {
