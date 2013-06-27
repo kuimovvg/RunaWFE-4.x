@@ -5,8 +5,8 @@ import java.util.Map;
 public class MapFormat implements VariableFormat<Map<?, ?>> {
 
     @Override
-    public Class<? extends Map<?, ?>> getJavaClass() {
-        return (Class<? extends Map<?, ?>>) Map.class;
+    public Class<?> getJavaClass() {
+        return Map.class;
     }
 
     @Override
