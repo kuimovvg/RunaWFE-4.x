@@ -103,7 +103,7 @@ public class InputVariableTag extends FreemarkerTag {
         }
         if (ListFormat.class.getName().equals(formatClassName)) {
             EditStringListTag tag = new EditStringListTag();
-            tag.init(user, webHelper, variableProvider);
+            tag.initChained(this);
             html = tag.renderRequest();
         }
         if (html.length() == 0) {
