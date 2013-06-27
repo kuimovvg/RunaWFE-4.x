@@ -71,10 +71,12 @@ public class FieldValidatorsWizardPage extends WizardPage {
         }
         List<String> undefinedValidators = new ArrayList<String>();
         for (String fieldName : fieldConfigs.keySet()) {
-            Map<String, ValidatorConfig> configs = fieldConfigs.get(fieldName);
-            for (String validatorName : configs.keySet()) {
-                if (!ValidatorDefinitionRegistry.getValidatorDefinitions().containsKey(validatorName)) {
-                    undefinedValidators.add(validatorName);
+            if (!ValidatorConfig.GLOBAL_FIELD_ID.equals(fieldName)) {
+                Map<String, ValidatorConfig> configs = fieldConfigs.get(fieldName);
+                for (String validatorName : configs.keySet()) {
+                    if (!ValidatorDefinitionRegistry.getValidatorDefinitions().containsKey(validatorName)) {
+                        undefinedValidators.add(validatorName);
+                    }
                 }
             }
         }
