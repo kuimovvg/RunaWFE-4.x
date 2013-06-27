@@ -14,19 +14,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 
+import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Variable;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Objects;
 
 public class DelegablePresentation extends VariableRenameProvider<Delegable> {
-    private static final List<String> SCRIPT_HANDLER_CLASS_NAMES = Lists.newArrayList();
-    static {
-        SCRIPT_HANDLER_CLASS_NAMES.add("ru.runa.wfe.extension.decision.BSFDecisionHandler");
-        SCRIPT_HANDLER_CLASS_NAMES.add("ru.runa.wfe.extension.decision.GroovyDecisionHandler");
-        SCRIPT_HANDLER_CLASS_NAMES.add("ru.runa.wfe.extension.handler.GroovyActionHandler");
-        SCRIPT_HANDLER_CLASS_NAMES.add("ru.runa.wfe.extension.handler.BSHActionHandler");
-    }
     private final Document document = new Document();
     private final String name;
 
@@ -54,11 +48,14 @@ public class DelegablePresentation extends VariableRenameProvider<Delegable> {
     public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         String oldVariableName = oldVariable.getName();
         String newVariableName = newVariable.getName();
-        if (SCRIPT_HANDLER_CLASS_NAMES.contains(element.getDelegationClassName())) {
+        if (HandlerRegistry.SCRIPT_HANDLER_CLASS_NAMES.contains(element.getDelegationClassName())) {
             oldVariableName = oldVariable.getScriptingName();
             newVariableName = newVariable.getScriptingName();
         }
         List<Change> changes = new ArrayList<Change>();
+        if (Objects.equal(oldVariableName, newVariableName)) {
+            return changes;
+        }
         document.set(element.getDelegationConfiguration());
         int offset = 0;
         MultiTextEdit multiEdit = new MultiTextEdit();

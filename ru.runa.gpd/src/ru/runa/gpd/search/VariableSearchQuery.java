@@ -5,15 +5,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Variable;
 
 public class VariableSearchQuery extends BaseSearchQuery {
     private final IFile definitionFile;
     private final ProcessDefinition definition;
+    private final Variable variable;
 
-    public VariableSearchQuery(IFile definitionFile, ProcessDefinition definition, String variableName) {
-        super(variableName, definition.getName());
+    public VariableSearchQuery(IFile definitionFile, ProcessDefinition definition, Variable variable) {
+        super(variable.getName(), definition.getName());
         this.definitionFile = definitionFile;
         this.definition = definition;
+        this.variable = variable;
     }
 
     public ProcessDefinition getProcessDefinition() {
@@ -22,6 +25,10 @@ public class VariableSearchQuery extends BaseSearchQuery {
 
     public IFile getDefinitionFile() {
         return definitionFile;
+    }
+
+    public Variable getVariable() {
+        return variable;
     }
 
     @Override

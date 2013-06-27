@@ -19,21 +19,24 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.util.VariableUtils;
 
 public class UpdateSwimlaneNameDialog extends Dialog {
     private String name;
     private final ProcessDefinition definition;
     private final boolean createMode;
+    private final Swimlane swimlane;
     private Button renameInVarButton;
     private boolean proceedRefactoring;
     private Text scriptingNameField;
 
-    public UpdateSwimlaneNameDialog(ProcessDefinition definition, boolean createMode) {
+    public UpdateSwimlaneNameDialog(ProcessDefinition definition, Swimlane swimlane) {
         super(Display.getCurrent().getActiveShell());
         this.definition = definition;
         this.name = definition.getNextSwimlaneName();
-        this.createMode = createMode;
+        this.createMode = swimlane == null;
+        this.swimlane = swimlane;
     }
 
     public void setName(String name) {
@@ -68,7 +71,7 @@ public class UpdateSwimlaneNameDialog extends Dialog {
             public void modifyText(ModifyEvent e) {
                 name = nameField.getText();
                 updateButtons();
-                scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name));
+                scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name, swimlane));
             }
         });
         if (!createMode) {
@@ -90,7 +93,7 @@ public class UpdateSwimlaneNameDialog extends Dialog {
         scriptingNameField = new Text(composite, SWT.BORDER);
         scriptingNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         scriptingNameField.setEditable(false);
-        scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name));
+        scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name, swimlane));
         return area;
     }
 

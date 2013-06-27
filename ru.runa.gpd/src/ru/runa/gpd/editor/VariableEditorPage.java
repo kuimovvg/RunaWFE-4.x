@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveVariablesCommand;
 import ru.runa.gpd.extension.LocalizationRegistry;
 import ru.runa.gpd.lang.model.FormNode;
@@ -177,8 +176,8 @@ public class VariableEditorPage extends EditorPartBase {
 
     @Override
     public void dispose() {
-        for (Variable var : getDefinition().getVariables(false)) {
-            var.removePropertyChangeListener(this);
+        for (Variable variable : getDefinition().getVariables(false)) {
+            variable.removePropertyChangeListener(this);
         }
         super.dispose();
     }
@@ -219,7 +218,7 @@ public class VariableEditorPage extends EditorPartBase {
             ProcessDefinitionRemoveVariablesCommand command = new ProcessDefinitionRemoveVariablesCommand();
             command.setProcessDefinition(getDefinition());
             command.setVariable(variable);
-            // TODO GEF editor.getCommandStack().execute(command);
+            // TODO Ctrl+Z support (form validation) editor.getCommandStack().execute(command);
             command.execute();
         }
     }
@@ -227,14 +226,10 @@ public class VariableEditorPage extends EditorPartBase {
     private class SearchVariableUsageSelectionListener extends LoggingSelectionAdapter {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
-            try {
-                IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-                Variable variable = (Variable) selection.getFirstElement();
-                VariableSearchQuery query = new VariableSearchQuery(editor.getDefinitionFile(), getDefinition(), variable.getName());
-                NewSearchUI.runQueryInBackground(query);
-            } catch (Exception ex) {
-                PluginLogger.logError(ex);
-            }
+            IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
+            Variable variable = (Variable) selection.getFirstElement();
+            VariableSearchQuery query = new VariableSearchQuery(editor.getDefinitionFile(), getDefinition(), variable);
+            NewSearchUI.runQueryInBackground(query);
         }
     }
 
@@ -243,8 +238,7 @@ public class VariableEditorPage extends EditorPartBase {
         protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
-            UpdateVariableNameDialog dialog = new UpdateVariableNameDialog(editor.getDefinition());
-            dialog.setName(variable.getName());
+            UpdateVariableNameDialog dialog = new UpdateVariableNameDialog(variable);
             int result = dialog.open();
             if (result != IDialogConstants.OK_ID) {
                 return;
@@ -258,13 +252,11 @@ public class VariableEditorPage extends EditorPartBase {
                 RenameRefactoringWizard wizard = new RenameRefactoringWizard(ref);
                 wizard.setDefaultPageTitle(Localization.getString("Refactoring.variable.name"));
                 RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
-                try {
-                    result = op.run(Display.getCurrent().getActiveShell(), "");
-                    if (result != IDialogConstants.OK_ID) {
-                        return;
-                    }
-                } catch (InterruptedException ex) {
-                    // operation was canceled
+                result = op.run(Display.getCurrent().getActiveShell(), "");
+                if (result != IDialogConstants.OK_ID) {
+                    // revert changes
+                    variable.setName(oldVariable.getName());
+                    return;
                 }
             }
             if (useLtk) {
@@ -279,11 +271,7 @@ public class VariableEditorPage extends EditorPartBase {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             List<Variable> variables = selection.toList();
             for (Variable variable : variables) {
-                try {
-                    delete(variable);
-                } catch (Exception e1) {
-                    PluginLogger.logError(e1);
-                }
+                delete(variable);
             }
         }
     }

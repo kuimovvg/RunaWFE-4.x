@@ -1,6 +1,7 @@
 package ru.runa.gpd.extension;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,8 @@ public class HandlerRegistry extends ArtifactRegistry<HandlerArtifact> {
     private static DelegableProvider DEFAULT_DECISION_PROVIDER = new DefaultDecisionProvider();
     private static final String XML_FILE_NAME = "handlers.xml";
     private static final HandlerRegistry instance = new HandlerRegistry();
+    public static final List<String> SCRIPT_HANDLER_CLASS_NAMES = Collections.unmodifiableList(Lists.newArrayList("ru.runa.wfe.extension.decision.BSFDecisionHandler",
+            "ru.runa.wfe.extension.decision.GroovyDecisionHandler", "ru.runa.wfe.extension.handler.GroovyActionHandler", "ru.runa.wfe.extension.handler.BSHActionHandler"));
 
     public static HandlerRegistry getInstance() {
         return instance;
