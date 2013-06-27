@@ -26,6 +26,11 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
         this.variableProvider = variableProvider;
     }
 
+    public void initChained(FreemarkerTag parent) {
+        init(parent.user, parent.webHelper, parent.variableProvider);
+        arguments = parent.arguments;
+    }
+
     @Override
     @SuppressWarnings("rawtypes")
     public final Object exec(List arguments) throws TemplateModelException {
