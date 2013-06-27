@@ -75,7 +75,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String SOURCE_REF = "sourceRef";
     private static final String TARGET_REF = "targetRef";
     private static final String SUBPROCESS = "subProcess";
-    private static final String MULTI_SUBPROCESS = "multiProcess";
+    private static final String MULTI_INSTANCE = "multiInstance";
     private static final String EXCLUSIVE_GATEWAY = "exclusiveGateway";
     private static final String PARALLEL_GATEWAY = "parallelGateway";
     private static final String DEFAULT_TASK_TIMOUT = "default-task-timeout";
@@ -221,9 +221,14 @@ public class BpmnSerializer extends ProcessSerializer {
         }
         List<Subprocess> subprocesses = definition.getChildren(Subprocess.class);
         for (Subprocess subprocess : subprocesses) {
-            Element processStateElement = writeNode(process, subprocess);
-            processStateElement.addAttribute(RUNA_PREFIX + ":" + PROCESS, subprocess.getSubProcessName());
-            writeVariables(processStateElement, subprocess.getVariableMappings());
+            Element element = writeNode(process, subprocess);
+            element.addAttribute(RUNA_PREFIX + ":" + PROCESS, subprocess.getSubProcessName());
+            if (subprocess instanceof MultiSubprocess) {
+                Map<String, String> properties = Maps.newHashMap();
+                properties.put(MULTI_INSTANCE, "true");
+                writeExtensionElements(element, properties);
+            }
+            writeVariables(element, subprocess.getVariableMappings());
         }
         List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
         for (SendMessageNode messageNode : sendMessageNodes) {
@@ -338,6 +343,8 @@ public class BpmnSerializer extends ProcessSerializer {
         String bpmnElementName;
         if (element instanceof EndTokenState) {
             bpmnElementName = END_STATE;
+        } else if (element instanceof MultiSubprocess) {
+            bpmnElementName = SUBPROCESS;
         } else {
             bpmnElementName = element.getTypeDefinition().getBpmnElementName();
         }
@@ -423,6 +430,8 @@ public class BpmnSerializer extends ProcessSerializer {
         String bpmnElementName;
         if (properties.containsKey(TOKEN)) {
             bpmnElementName = "endTokenEvent";
+        } else if (properties.containsKey(MULTI_INSTANCE)) {
+            bpmnElementName = "multiProcess";
         } else {
             bpmnElementName = node.getName();
         }
@@ -572,7 +581,7 @@ public class BpmnSerializer extends ProcessSerializer {
                 Map<String, String> properties = parseExtensionProperties(taskStateElement);
                 String swimlaneName = properties.get(SWIMLANE);
                 Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
-                ((TaskState) state).setSwimlane(swimlane);
+                state.setSwimlane(swimlane);
                 String reassign = properties.get(REASSIGN);
                 if (reassign != null) {
                     boolean forceReassign = Boolean.parseBoolean(reassign);
@@ -661,12 +670,6 @@ public class BpmnSerializer extends ProcessSerializer {
             Subprocess subprocess = create(subprocessElement, definition);
             subprocess.setSubProcessName(subprocessElement.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
             subprocess.setVariableMappings(parseVariableMappings(subprocessElement));
-        }
-        List<Element> multiSubprocessElements = process.elements(MULTI_SUBPROCESS);
-        for (Element subprocessElement : multiSubprocessElements) {
-            MultiSubprocess multiSubprocess = create(subprocessElement, definition);
-            multiSubprocess.setSubProcessName(subprocessElement.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
-            multiSubprocess.setVariableMappings(parseVariableMappings(subprocessElement));
         }
         List<Element> sendMessageElements = process.elements(SEND_MESSAGE);
         for (Element messageElement : sendMessageElements) {

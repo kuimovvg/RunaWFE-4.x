@@ -24,6 +24,9 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
         for (VariableMapping mapping : element.getVariableMappings()) {
             if (mapping.getProcessVariable().equals(oldVariable)) {
                 mappingsToChange.add(mapping);
+                // TODO MultiSubprocess selector variables does not renamed automatically
+                //            } else if ("tabVariableProcessVariable".equals(mapping.getProcessVariable()) && mapping.getSubprocessVariable().equals(oldVariable)) {
+                //                
             }
         }
         List<Change> changes = new ArrayList<Change>();
