@@ -2,6 +2,8 @@ package ru.runa.gpd.formeditor.wysiwyg;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServlet;
@@ -50,7 +52,9 @@ public class FtlTagSupportServlet extends HttpServlet {
                     newContent.append("items:[");
                     boolean needComma = false;
                     String defaultChoise = "";
-                    for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariables(filterClassName)) {
+                    List<Variable> variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(filterClassName).values());
+                    Collections.sort(variables);
+                    for (Variable variable : variables) {
                         newContent.append(needComma ? "," : "").append("['").append(variable.getName()).append("','").append(variable.getName()).append("']");
                         if (!needComma) {
                             defaultChoise = variable.getName();
@@ -86,7 +90,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                     }
                     tagImageName = "DefaultTag.png";
                 } else {
-                    if (WYSIWYGHTMLEditor.getCurrent().getVariableNames().contains(tagName)) {
+                    if (WYSIWYGHTMLEditor.getCurrent().getVariables(null).containsKey(tagName)) {
                         tagImageName = "VariableValueDisplay.png";
                     } else {
                         tagImageName = "TagNotFound.png";
@@ -112,7 +116,9 @@ public class FtlTagSupportServlet extends HttpServlet {
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.method.dialog.end")));
             } else if ("GetAllVariables".equals(commandStr)) {
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.format.dialog.start")));
-                for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariables(null)) {
+                List<Variable> variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(null).values());
+                Collections.sort(variables);
+                for (Variable variable : variables) {
                     resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
                 }
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.format.dialog.end")));
@@ -129,10 +135,11 @@ public class FtlTagSupportServlet extends HttpServlet {
                             if (option.container) {
                                 List<Variable> variables;
                                 if (option.useFilter) {
-                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType);
+                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType).values());
                                 } else {
-                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables(null);
+                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(null).values());
                                 }
+                                Collections.sort(variables);
                                 for (Variable variable : variables) {
                                     resultHtml.append("<option value=\"").append(variable.getName()).append("\"");
                                     if (option.filterType != null && !option.filterType.equals(variable.getJavaClassName())) {
@@ -152,10 +159,11 @@ public class FtlTagSupportServlet extends HttpServlet {
                             if (option.container) {
                                 List<Variable> variables;
                                 if (option.useFilter) {
-                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType);
+                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType).values());
                                 } else {
-                                    variables = WYSIWYGHTMLEditor.getCurrent().getVariables(null);
+                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(null).values());
                                 }
+                                Collections.sort(variables);
                                 for (Variable variable : variables) {
                                     resultHtml.append("<option value=\"").append(variable.getName()).append("\"");
                                     if (option.filterType != null && !option.filterType.equals(variable.getJavaClassName())) {
@@ -187,14 +195,16 @@ public class FtlTagSupportServlet extends HttpServlet {
                 resultHtml.append(WYSIWYGHTMLEditor.getCurrent().isFtlFormat());
                 WYSIWYGHTMLEditor.getCurrent().setBrowserLoaded(true);
             } else if ("GetVariableNames".equals(commandStr)) {
-                String filterType = Object.class.getName();
+                String filterClassName = Object.class.getName();
                 if ("checkbox".equals(request.getParameter("elementType"))) {
-                    filterType = Boolean.class.getName();
+                    filterClassName = Boolean.class.getName();
                 }
                 if ("file".equals(request.getParameter("elementType"))) {
-                    filterType = "ru.runa.wfe.var.FileVariable";
+                    filterClassName = "ru.runa.wfe.var.FileVariable";
                 }
-                for (Variable variable : WYSIWYGHTMLEditor.getCurrent().getVariables(filterType)) {
+                List<Variable> variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(filterClassName).values());
+                Collections.sort(variables);
+                for (Variable variable : variables) {
                     if (resultHtml.length() > 0) {
                         resultHtml.append("|");
                     }

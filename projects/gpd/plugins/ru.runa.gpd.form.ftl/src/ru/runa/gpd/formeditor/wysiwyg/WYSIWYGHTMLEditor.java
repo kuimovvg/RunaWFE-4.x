@@ -2,7 +2,9 @@ package ru.runa.gpd.formeditor.wysiwyg;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -53,11 +55,11 @@ import tk.eclipse.plugin.htmleditor.editors.HTMLSourceEditor;
  */
 public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceChangeListener {
     public static final int CLOSED = 197;
+    public static final String ID = "tk.eclipse.plugin.wysiwyg.WYSIWYGHTMLEditor";
     private HTMLSourceEditor sourceEditor;
     private Browser browser;
     private boolean ftlFormat = true;
     private FormNode formNode;
-    private List<String> lazyVariableNameList;
     private boolean dirty = false;
     private boolean browserLoaded = false;
     private static final Pattern pattern = Pattern.compile("^(.*?<(body|BODY).*?>)(.*?)(</(body|BODY)>.*?)$", Pattern.DOTALL);
@@ -82,20 +84,10 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         this.formNode = formNode;
     }
 
-    public synchronized List<String> getLazyVariableNameList() {
-        if (lazyVariableNameList == null) {
-            lazyVariableNameList = new ArrayList<String>();
-            for (Variable variable : getVariables(null)) {
-                lazyVariableNameList.add(variable.getName());
-            }
-        }
-        return lazyVariableNameList;
-    }
-
-    public List<Variable> getVariables(String typeClassNameFilter) {
+    public Map<String, Variable> getVariables(String typeClassNameFilter) {
         if (formNode == null) {
             // This is because earlier access from web page (not user request)
-            return new ArrayList<Variable>();
+            return new HashMap<String, Variable>();
         }
         List<Variable> variables = formNode.getProcessDefinition().getVariables(true);
         // get variables without strong-typing. (all hierarchy) TODO for similar places
@@ -108,15 +100,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 }
             }
         }
-        return VariableUtils.getValidVariables(variables);
-    }
-
-    public List<String> getVariableNames(String... typeClassNameFilters) {
-        if (formNode == null) {
-            // This is because earlier access from web page (not user request)
-            return new ArrayList<String>();
-        }
-        return VariableUtils.getValidVariableNames(formNode.getProcessDefinition().getVariableNames(true, typeClassNameFilters));
+        return VariableUtils.toMap(VariableUtils.getValidVariables(variables));
     }
 
     @SuppressWarnings("rawtypes")
@@ -332,7 +316,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         }
         if (isFtlFormat()) {
             try {
-                html = FreemarkerUtil.transformToHtml(getVariableNames(), html);
+                html = FreemarkerUtil.transformToHtml(getVariables(null), html);
             } catch (Exception e) {
                 WYSIWYGPlugin.logError("ftl WYSIWYGHTMLEditor.syncEditor2Browser()", e);
             }
@@ -352,7 +336,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     private String getDesignDocumentHTML(String html) {
         if (isFtlFormat()) {
             try {
-                html = FreemarkerUtil.transformFromHtml(html, getLazyVariableNameList());
+                html = FreemarkerUtil.transformFromHtml(html, getVariables(null));
                 Matcher matcher = pattern.matcher(html);
                 if (matcher.find()) {
                     html = matcher.group(3);
