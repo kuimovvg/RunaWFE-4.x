@@ -9,8 +9,8 @@ import ru.runa.wfe.user.User;
 public class ListFormat implements VariableFormat<List<?>>, VariableDisplaySupport<List<?>> {
 
     @Override
-    public Class<? extends List<?>> getJavaClass() {
-        return (Class<? extends List<?>>) List.class;
+    public Class<?> getJavaClass() {
+        return List.class;
     }
 
     @Override
