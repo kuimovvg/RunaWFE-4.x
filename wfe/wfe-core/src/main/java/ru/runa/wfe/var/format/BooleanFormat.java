@@ -23,6 +23,11 @@ package ru.runa.wfe.var.format;
 public class BooleanFormat implements VariableFormat<Boolean> {
 
     @Override
+    public Class<Boolean> getJavaClass() {
+        return Boolean.class;
+    }
+
+    @Override
     public Boolean parse(String[] source) {
         String value = source[0];
         return "true".equalsIgnoreCase(value) || "on".equalsIgnoreCase(value);
