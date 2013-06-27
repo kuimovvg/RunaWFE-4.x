@@ -1,7 +1,9 @@
 package ru.runa.gpd.search;
 
 import java.text.MessageFormat;
+import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -61,10 +63,10 @@ public abstract class ProcessDefinitionsVisitor {
             monitorUpdateJob.setSystem(true);
             monitorUpdateJob.schedule();
             try {
-                for (ProcessDefinition processDefinition : ProcessCache.getAllProcessDefinitions()) {
+                for (Map.Entry<IFile, ProcessDefinition> entry : ProcessCache.getAllProcessDefinitionsMap().entrySet()) {
                     try {
-                        currentDefinition = processDefinition;
-                        findInProcessDefinition(processDefinition);
+                        currentDefinition = entry.getValue();
+                        findInProcessDefinition(entry.getKey(), entry.getValue());
                     } catch (Exception e) {
                         status.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
                     } finally {
@@ -83,7 +85,7 @@ public abstract class ProcessDefinitionsVisitor {
         }
     }
 
-    protected abstract void findInProcessDefinition(ProcessDefinition processDefinition);
+    protected abstract void findInProcessDefinition(IFile definitionFile, ProcessDefinition processDefinition);
 
     public IStatus search(IProgressMonitor monitor) {
         return search(query.getSearchResult(), monitor);
