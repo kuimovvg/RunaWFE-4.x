@@ -16,20 +16,20 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableUtils;
 
 public class UpdateVariableNameDialog extends Dialog {
     private String name;
     private final ProcessDefinition definition;
+    private final Variable variable;
     private Text scriptingNameField;
 
-    public UpdateVariableNameDialog(ProcessDefinition definition) {
+    public UpdateVariableNameDialog(Variable variable) {
         super(Display.getDefault().getActiveShell());
-        this.definition = definition;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        this.definition = variable.getProcessDefinition();
+        this.variable = variable;
+        this.name = variable.getName();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class UpdateVariableNameDialog extends Dialog {
             public void modifyText(ModifyEvent e) {
                 name = nameField.getText();
                 updateButtons();
-                scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name));
+                scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name, variable));
             }
         });
         // 
@@ -69,7 +69,7 @@ public class UpdateVariableNameDialog extends Dialog {
         scriptingNameField = new Text(composite, SWT.BORDER);
         scriptingNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         scriptingNameField.setEditable(false);
-        scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name));
+        scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name, variable));
         return area;
     }
 
