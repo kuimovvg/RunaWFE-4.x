@@ -1,12 +1,14 @@
 package ru.runa.gpd.util;
 
 import java.util.List;
+import java.util.Map;
 
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class VariableUtils {
     public static boolean isVariableExists(List<Variable> variables, String variableName) {
@@ -27,6 +29,14 @@ public class VariableUtils {
             if (variable.getName().indexOf(" ") != -1) {
                 result.remove(variable);
             }
+        }
+        return result;
+    }
+
+    public static Map<String, Variable> toMap(List<Variable> variables) {
+        Map<String, Variable> result = Maps.newHashMapWithExpectedSize(variables.size());
+        for (Variable variable : variables) {
+            result.put(variable.getName(), variable);
         }
         return result;
     }

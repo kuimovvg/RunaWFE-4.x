@@ -1,6 +1,6 @@
 package ru.runa.gpd.lang.model;
 
-public abstract class NamedGraphElement extends GraphElement {
+public abstract class NamedGraphElement extends GraphElement implements Comparable<NamedGraphElement> {
     private String name;
 
     public NamedGraphElement() {
@@ -44,5 +44,13 @@ public abstract class NamedGraphElement extends GraphElement {
     @Override
     public String toString() {
         return name + " (" + getId() + ")";
+    }
+
+    @Override
+    public int compareTo(NamedGraphElement o) {
+        if (name == null || o.name == null) {
+            return -1;
+        }
+        return name.compareTo(o.name);
     }
 }

@@ -2,6 +2,7 @@ package ru.runa.gpd.formeditor.wysiwyg;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
@@ -177,10 +178,11 @@ public class CKEditorDialogCreatorHelper {
                         if (option.container) {
                             List<Variable> variables;
                             if (option.useFilter) {
-                                variables = WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType);
+                                variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType).values());
                             } else {
-                                variables = WYSIWYGHTMLEditor.getCurrent().getVariables(null);
+                                variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(null).values());
                             }
+                            Collections.sort(variables);
                             for (Variable variable : variables) {
                                 selectElement.addItem("'" + variable.getName() + "'", "'" + variable.getName() + "'");
                             }
