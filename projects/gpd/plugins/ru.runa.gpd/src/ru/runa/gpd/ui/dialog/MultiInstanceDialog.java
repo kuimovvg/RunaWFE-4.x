@@ -620,7 +620,7 @@ public class MultiInstanceDialog extends Dialog {
     }
 
     private List<String> getProcessVariablesNames(String name, String... typeClassNameFilters) {
-        ProcessDefinition definition = ProcessCache.getProcessDefinition(name);
+        ProcessDefinition definition = ProcessCache.getFirstProcessDefinition(name);
         if (definition != null) {
             return definition.getVariableNames(true, typeClassNameFilters);
         }
@@ -628,7 +628,7 @@ public class MultiInstanceDialog extends Dialog {
     }
 
     private List<String> getSelectorVariableNames(String processName) {
-        ProcessDefinition definition = ProcessCache.getProcessDefinition(processName);
+        ProcessDefinition definition = ProcessCache.getFirstProcessDefinition(processName);
         if (definition != null) {
             return definition.getVariableNames(false, ListFormat.class.getName());
         }

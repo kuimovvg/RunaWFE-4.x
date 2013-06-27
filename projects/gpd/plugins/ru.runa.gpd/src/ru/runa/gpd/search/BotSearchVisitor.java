@@ -2,9 +2,9 @@ package ru.runa.gpd.search;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.search.ui.text.Match;
 
-import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TaskState;
 
@@ -16,10 +16,10 @@ public class BotSearchVisitor extends ProcessDefinitionsVisitor {
     }
 
     @Override
-    protected void findInProcessDefinition(ProcessDefinition processDefinition) {
+    protected void findInProcessDefinition(IFile definitionFile, ProcessDefinition processDefinition) {
         List<TaskState> taskStates = processDefinition.getChildren(TaskState.class);
         for (TaskState taskState : taskStates) {
-            ElementMatch elementMatch = new ElementMatch(taskState, ProcessCache.getProcessDefinitionFile(processDefinition.getName()));
+            ElementMatch elementMatch = new ElementMatch(taskState, definitionFile);
             if (Objects.equal(taskState.getSwimlaneBotName(), query.getSearchText())) {
                 query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
                 elementMatch.setMatchesCount(elementMatch.getMatchesCount() + 1);

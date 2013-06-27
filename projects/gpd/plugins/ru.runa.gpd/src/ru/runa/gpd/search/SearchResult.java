@@ -69,7 +69,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
     private ElementMatch getElementMatch(Object element) {
         Match[] matches = getMatches(element);
         if (matches.length == 0) {
-            return new ElementMatch(null);
+            return new ElementMatch();
         }
         return (ElementMatch) matches[0].getElement();
     }

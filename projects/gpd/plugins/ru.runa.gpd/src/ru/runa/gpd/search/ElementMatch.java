@@ -30,8 +30,8 @@ public class ElementMatch {
         this(graphElement, file, null);
     }
 
-    public ElementMatch(GraphElement graphElement) {
-        this(graphElement, null);
+    public ElementMatch() {
+        this(null, null);
     }
 
     public ElementMatch getParent() {
