@@ -25,7 +25,7 @@ public class Subprocess extends Node implements Active {
             addError("subprocess.empty");
             return;
         }
-        ProcessDefinition subprocessDefinition = ProcessCache.getProcessDefinition(subProcessName);
+        ProcessDefinition subprocessDefinition = ProcessCache.getFirstProcessDefinition(subProcessName);
         if (subprocessDefinition == null) {
             addWarning("subprocess.notFound");
             return;

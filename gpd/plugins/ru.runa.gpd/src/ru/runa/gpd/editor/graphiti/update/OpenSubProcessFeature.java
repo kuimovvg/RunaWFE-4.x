@@ -4,8 +4,6 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 
-import ru.runa.gpd.ProcessCache;
-import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.util.WorkspaceOperations;
 
@@ -22,7 +20,6 @@ public class OpenSubProcessFeature extends AbstractCustomFeature {
     @Override
     public void execute(ICustomContext context) {
         Subprocess subprocess = (Subprocess) getFeatureProvider().getBusinessObjectForPictogramElement(context.getInnerPictogramElement());
-        ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(subprocess.getSubProcessName());
-        WorkspaceOperations.openProcessDefinition(processDefinition);
+        WorkspaceOperations.openFirstProcessDefinition(subprocess.getSubProcessName());
     }
 }

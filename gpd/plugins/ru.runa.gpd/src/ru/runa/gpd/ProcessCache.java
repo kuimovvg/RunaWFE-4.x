@@ -93,10 +93,10 @@ public class ProcessCache {
         return CACHE_BY_FILE.get(file);
     }
 
-    public static ProcessDefinition getProcessDefinition(String name) {
+    public static ProcessDefinition getFirstProcessDefinition(String name) {
         if (!CACHE_BY_NAME.containsKey(name)) {
             try {
-                IFile file = getProcessDefinitionFile(name);
+                IFile file = getFirstProcessDefinitionFile(name);
                 if (file != null) {
                     ProcessDefinition definition = NodeRegistry.parseProcessDefinition(file);
                     cacheProcessDefinition(file, definition);
@@ -112,7 +112,7 @@ public class ProcessCache {
     /**
      * Get process definition file or <code>null</code>.
      */
-    public static IFile getProcessDefinitionFile(String name) {
+    public static IFile getFirstProcessDefinitionFile(String name) {
         try {
             for (IFile file : ProjectFinder.getAllProcessDefinitionFiles()) {
                 String processName = file.getFullPath().segment(3);

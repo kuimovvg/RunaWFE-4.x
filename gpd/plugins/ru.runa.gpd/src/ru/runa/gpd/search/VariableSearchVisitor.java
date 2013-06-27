@@ -172,7 +172,7 @@ public class VariableSearchVisitor {
             }
         }
         if (matchesCount > 0) {
-            ElementMatch elementMatch = new ElementMatch(subprocessNode);
+            ElementMatch elementMatch = new ElementMatch(subprocessNode, definitionFile);
             elementMatch.setMatchesCount(matchesCount);
             query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
         }

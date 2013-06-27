@@ -14,9 +14,7 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 
 public class SearchTreeContentProvider implements ITreeContentProvider, IFileSearchContentProvider {
-
     private final Object[] EMPTY_ARR = new Object[0];
-
     private SearchResult result;
     private final AbstractTreeViewer treeViewer;
     private Map<Object, Set<Object>> fChildrenMap;
@@ -25,6 +23,7 @@ public class SearchTreeContentProvider implements ITreeContentProvider, IFileSea
         this.treeViewer = viewer;
     }
 
+    @Override
     public Object[] getElements(Object inputElement) {
         Object[] children = getChildren(inputElement);
         int elementLimit = getElementLimit();
@@ -40,10 +39,12 @@ public class SearchTreeContentProvider implements ITreeContentProvider, IFileSea
         return 1000;
     }
 
+    @Override
     public void dispose() {
         // nothing to do
     }
 
+    @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         if (newInput instanceof SearchResult) {
             initialize((SearchResult) newInput);
@@ -135,6 +136,7 @@ public class SearchTreeContentProvider implements ITreeContentProvider, IFileSea
         }
     }
 
+    @Override
     public Object[] getChildren(Object parentElement) {
         Set<Object> children = fChildrenMap.get(parentElement);
         if (children == null) {
@@ -143,10 +145,12 @@ public class SearchTreeContentProvider implements ITreeContentProvider, IFileSea
         return children.toArray();
     }
 
+    @Override
     public boolean hasChildren(Object element) {
         return getChildren(element).length > 0;
     }
 
+    @Override
     public synchronized void elementsChanged(Object[] updatedElements) {
         for (int i = 0; i < updatedElements.length; i++) {
             if (result.getMatchCount(updatedElements[i]) > 0) {
@@ -157,11 +161,13 @@ public class SearchTreeContentProvider implements ITreeContentProvider, IFileSea
         }
     }
 
+    @Override
     public void clear() {
         initialize(result);
         treeViewer.refresh();
     }
 
+    @Override
     public Object getParent(Object element) {
         ElementMatch elementMatch = (ElementMatch) element;
         GraphElement graphElement = elementMatch.getGraphElement();
@@ -171,6 +177,6 @@ public class SearchTreeContentProvider implements ITreeContentProvider, IFileSea
         if (elementMatch.getParent() != null) {
             return elementMatch.getParent();
         }
-        return new ElementMatch(graphElement.getParent());
+        return new ElementMatch(graphElement.getParent(), elementMatch.getFile());
     }
 }
