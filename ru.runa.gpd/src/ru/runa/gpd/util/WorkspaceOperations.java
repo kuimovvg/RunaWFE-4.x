@@ -186,16 +186,12 @@ public class WorkspaceOperations {
 
     public static ProcessEditorBase openProcessDefinition(IFolder definitionFolder) {
         IFile definitionFile = ProjectFinder.getProcessDefinitionFile(definitionFolder);
-        ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
-        return openProcessDefinition(processDefinition);
+        return openProcessDefinition(definitionFile);
     }
 
-    /**
-     * @return process editor or <code>null</code>
-     */
-    public static ProcessEditorBase openProcessDefinition(ProcessDefinition processDefinition) {
+    public static ProcessEditorBase openProcessDefinition(IFile definitionFile) {
         try {
-            IFile definitionFile = ProcessCache.getProcessDefinitionFile(processDefinition.getName());
+            ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
             String editorId;
             if (processDefinition.isBPMNNotation()) {
                 editorId = GraphitiProcessEditor.ID;
@@ -210,6 +206,14 @@ public class WorkspaceOperations {
             PluginLogger.logError("Unable open diagram", e);
         }
         return null;
+    }
+
+    /**
+     * @return process editor or <code>null</code>
+     */
+    public static ProcessEditorBase openFirstProcessDefinition(String definitionName) {
+        IFile definitionFile = ProcessCache.getFirstProcessDefinitionFile(definitionName);
+        return openProcessDefinition(definitionFile);
     }
 
     public static void exportProcessDefinition(IStructuredSelection selection) {
