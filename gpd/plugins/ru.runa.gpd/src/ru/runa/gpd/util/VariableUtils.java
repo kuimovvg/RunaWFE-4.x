@@ -74,7 +74,7 @@ public class VariableUtils {
         return true;
     }
 
-    public static String generateNameForScripting(ProcessDefinition processDefinition, String variableName) {
+    public static String generateNameForScripting(ProcessDefinition processDefinition, String variableName, Variable excludedVariable) {
         char[] chars = variableName.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (i == 0) {
@@ -92,6 +92,9 @@ public class VariableUtils {
         }
         String scriptingName = new String(chars);
         if (Objects.equal(variableName, scriptingName)) {
+            return scriptingName;
+        }
+        if (excludedVariable != null && Objects.equal(excludedVariable.getName(), scriptingName)) {
             return scriptingName;
         }
         while (processDefinition.getVariable(scriptingName, true) != null) {

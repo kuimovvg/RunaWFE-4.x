@@ -25,6 +25,7 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.Match;
 
 import ru.runa.gpd.BotCache;
+import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.BotTask;
@@ -54,12 +55,16 @@ public class VariableSearchVisitor {
     private final FileCharSequenceProvider fileCharSequenceProvider;
     private final Matcher matcher;
     private final Matcher matcherWithBrackets;
+    private Matcher matcherScriptingName;
 
     public VariableSearchVisitor(VariableSearchQuery query) {
         this.query = query;
         this.status = new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
         this.fileCharSequenceProvider = new FileCharSequenceProvider();
         this.matcher = Pattern.compile(Pattern.quote(query.getSearchText())).matcher("");
+        if (!Objects.equal(query.getVariable().getScriptingName(), query.getSearchText())) {
+            this.matcherScriptingName = Pattern.compile(Pattern.quote(query.getVariable().getScriptingName())).matcher("");
+        }
         this.matcherWithBrackets = Pattern.compile(Pattern.quote("\"" + query.getSearchText() + "\"")).matcher("");
     }
 
@@ -142,9 +147,15 @@ public class VariableSearchVisitor {
     }
 
     private void processDelegableNode(IFile definitionFile, Delegable delegable) throws Exception {
+        Matcher delegableMatcher;
+        if (matcherScriptingName != null && HandlerRegistry.SCRIPT_HANDLER_CLASS_NAMES.contains(delegable.getDelegationClassName())) {
+            delegableMatcher = matcherScriptingName;
+        } else {
+            delegableMatcher = matcher;
+        }
         String conf = delegable.getDelegationConfiguration();
         ElementMatch elementMatch = new ElementMatch((GraphElement) delegable, definitionFile);
-        List<Match> matches = findInString(elementMatch, conf, matcher);
+        List<Match> matches = findInString(elementMatch, conf, delegableMatcher);
         elementMatch.setPotentialMatchesCount(matches.size());
         for (Match match : matches) {
             query.getSearchResult().addMatch(match);

@@ -92,7 +92,7 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
     }
 
     private void createSwimlane() {
-        UpdateSwimlaneNameDialog newSwimlaneDialog = new UpdateSwimlaneNameDialog(definition, true);
+        UpdateSwimlaneNameDialog newSwimlaneDialog = new UpdateSwimlaneNameDialog(definition, null);
         if (newSwimlaneDialog.open() == IDialogConstants.OK_ID) {
             String swimlaneName = newSwimlaneDialog.getName();
             Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(definition);
