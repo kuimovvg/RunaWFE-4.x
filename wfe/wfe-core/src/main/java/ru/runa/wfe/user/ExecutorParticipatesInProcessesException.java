@@ -17,27 +17,25 @@
  */
 package ru.runa.wfe.user;
 
+import java.util.Set;
+
 import ru.runa.wfe.InternalApplicationException;
 
 /**
- * Signals that {@link Executor} already exists.
+ * Signals that some processes are depends from this {@link Executor}.
  * 
- * @since 2.0
+ * @since 4.0.5
  */
-public class ExecutorAlreadyExistsException extends InternalApplicationException {
-    private static final long serialVersionUID = -1082771372061746496L;
-    private final String executorName;
+public class ExecutorParticipatesInProcessesException extends InternalApplicationException {
+    private static final long serialVersionUID = 1L;
+    private final String idsInfo;
 
-    public ExecutorAlreadyExistsException(String executorName) {
-        super("Executor " + executorName + " already exists.");
-        this.executorName = executorName;
+    public ExecutorParticipatesInProcessesException(String executorName, Set<Number> processIds) {
+        super(executorName);
+        idsInfo = processIds.size() > 100 ? " > 100" : processIds.toString();
     }
 
-    public String getExecutorName() {
-        return executorName;
-    }
-
-    public ExecutorAlreadyExistsException(Long code) {
-        this("with code " + code);
+    public String getIdsInfo() {
+        return idsInfo;
     }
 }

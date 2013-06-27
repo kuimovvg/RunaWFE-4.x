@@ -162,6 +162,7 @@ public class Messages {
     public static final String EXCEPTION_WEB_CLIENT_EXECUTOR_DOES_NOT_EXISTS = "executor.does.not.exists.exception";
     public static final String EXCEPTION_ACTOR_DOES_NOT_EXISTS = "ru.runa.wf.web.actor.does.not.exists.exception";
     public static final String EXCEPTION_GROUP_DOES_NOT_EXISTS = "ru.runa.wf.web.group.does.not.exists.exception";
+    public static final String EXCEPTION_WEB_CLIENT_EXECUTOR_PARTICIPATES_IN_PROCESSES = "executor.participates.in.processes";
 
     public static final String ERROR_WEB_CLIENT_NULL_VALUE = "emptyvalue";
     public static final String ERROR_WEB_CLIENT_VALIDATION = "validation.error";
