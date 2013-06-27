@@ -49,6 +49,7 @@ import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.ExecutorParticipatesInProcessesException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.validation.ValidationException;
 
@@ -102,6 +103,10 @@ public class ActionExceptionHelper {
         } else if (e instanceof ExecutorAlreadyExistsException) {
             ExecutorAlreadyExistsException exception = (ExecutorAlreadyExistsException) e;
             actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_EXECUTOR_ALREADY_EXISTS, exception.getExecutorName());
+        } else if (e instanceof ExecutorParticipatesInProcessesException) {
+            ExecutorParticipatesInProcessesException exception = (ExecutorParticipatesInProcessesException) e;
+            actionMessage = new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_EXECUTOR_PARTICIPATES_IN_PROCESSES, exception.getMessage(),
+                    exception.getIdsInfo());
         } else if (e instanceof ProcessDoesNotExistException) {
             actionMessage = new ActionMessage(Messages.ERROR_WEB_CLIENT_PROCESS_DOES_NOT_EXIST, e.getMessage());
         } else if (e instanceof DefinitionAlreadyExistException) {
