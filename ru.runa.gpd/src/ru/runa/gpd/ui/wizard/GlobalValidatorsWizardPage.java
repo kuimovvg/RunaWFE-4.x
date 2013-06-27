@@ -237,8 +237,8 @@ public class GlobalValidatorsWizardPage extends WizardPage {
             tabs[0].setControl(constrComposite);
             comboBoxVar1 = new Combo(constrComposite, SWT.READ_ONLY);
             comboBoxVar1.setLayoutData(getComboGridData());
-            for (String varName : variableNames) {
-                comboBoxVar1.add(varName);
+            for (String variableName : variableNames) {
+                comboBoxVar1.add(variableName);
             }
             comboBoxVar1.addSelectionListener(new LoggingSelectionAdapter() {
                 @Override

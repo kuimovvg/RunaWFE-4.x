@@ -52,6 +52,7 @@ import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.dialog.UpdateVariableDialog;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
+import ru.runa.gpd.util.VariableUtils;
 
 @SuppressWarnings("unchecked")
 public class VariableEditorPage extends EditorPartBase {
@@ -281,7 +282,8 @@ public class VariableEditorPage extends EditorPartBase {
         protected void onSelection(SelectionEvent e) throws Exception {
             UpdateVariableDialog dialog = new UpdateVariableDialog(getDefinition(), null);
             if (dialog.open() == IDialogConstants.OK_ID) {
-                Variable variable = new Variable(dialog.getName(), dialog.getTypeName(), dialog.isPublicVisibility(), dialog.getDefaultValue());
+                String scriptingName = VariableUtils.generateNameForScripting(getDefinition(), dialog.getName(), null);
+                Variable variable = new Variable(dialog.getName(), scriptingName, dialog.getTypeName(), dialog.isPublicVisibility(), dialog.getDefaultValue());
                 getDefinition().addVariable(variable);
                 IStructuredSelection selection = new StructuredSelection(variable);
                 tableViewer.setSelection(selection);
