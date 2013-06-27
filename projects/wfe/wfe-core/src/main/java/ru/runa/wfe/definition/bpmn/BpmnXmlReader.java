@@ -83,7 +83,7 @@ public class BpmnXmlReader {
     private static final String SOURCE_REF = "sourceRef";
     private static final String TARGET_REF = "targetRef";
     private static final String SUBPROCESS = "subProcess";
-    private static final String MULTI_SUBPROCESS = "multiProcess";
+    private static final String MULTI_INSTANCE = "multiInstance";
     private static final String EXCLUSIVE_GATEWAY = "exclusiveGateway";
     private static final String PARALLEL_GATEWAY = "parallelGateway";
     private static final String DEFAULT_TASK_TIMEOUT = "default-task-timeout";
@@ -125,8 +125,6 @@ public class BpmnXmlReader {
         nodeTypes.put(START_EVENT, StartState.class);
         nodeTypes.put(USER_TASK, TaskNode.class);
         nodeTypes.put(INTERMEDIATE_EVENT, WaitState.class);
-        nodeTypes.put(SUBPROCESS, SubProcessState.class);
-        nodeTypes.put(MULTI_SUBPROCESS, MultiProcessState.class);
         nodeTypes.put(SEND_MESSAGE, SendMessage.class);
         nodeTypes.put(RECEIVE_MESSAGE, ReceiveMessage.class);
         // back compatibility v < 4.0.4
@@ -226,6 +224,13 @@ public class BpmnXmlReader {
                     node = ApplicationContextFactory.createAutowiredBean(EndTokenNode.class);
                 } else {
                     node = ApplicationContextFactory.createAutowiredBean(EndNode.class);
+                }
+            } else if (SUBPROCESS.equals(nodeName)) {
+                Map<String, String> properties = parseExtensionProperties(element);
+                if (properties.containsKey(MULTI_INSTANCE)) {
+                    node = ApplicationContextFactory.createAutowiredBean(MultiProcessState.class);
+                } else {
+                    node = ApplicationContextFactory.createAutowiredBean(SubProcessState.class);
                 }
             }
             if (node != null) {
