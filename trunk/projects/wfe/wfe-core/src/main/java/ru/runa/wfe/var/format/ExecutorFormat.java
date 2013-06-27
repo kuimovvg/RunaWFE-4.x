@@ -15,6 +15,11 @@ import com.google.common.collect.Maps;
 public class ExecutorFormat implements VariableFormat<Executor>, VariableDisplaySupport<Executor> {
 
     @Override
+    public Class<? extends Executor> getJavaClass() {
+        return Executor.class;
+    }
+
+    @Override
     public Executor parse(String[] source) throws Exception {
         return TypeConversionUtil.convertTo(Executor.class, source[0]);
     }

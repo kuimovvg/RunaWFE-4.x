@@ -14,6 +14,11 @@ import com.google.common.collect.Maps;
 public class GroupFormat implements VariableFormat<Group>, VariableDisplaySupport<Group> {
 
     @Override
+    public Class<? extends Group> getJavaClass() {
+        return Group.class;
+    }
+
+    @Override
     public Group parse(String[] source) throws Exception {
         return TypeConversionUtil.convertTo(Group.class, source[0]);
     }

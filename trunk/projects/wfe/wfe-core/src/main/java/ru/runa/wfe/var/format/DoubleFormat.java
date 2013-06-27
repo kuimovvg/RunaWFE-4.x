@@ -25,6 +25,11 @@ public class DoubleFormat implements VariableFormat<Number> {
     private final NumberFormat decimalFormat = new DecimalFormat("0.####################################");
 
     @Override
+    public Class<Double> getJavaClass() {
+        return Double.class;
+    }
+
+    @Override
     public Number parse(String[] source) throws ParseException {
         Double result = null;
         if (source != null) {

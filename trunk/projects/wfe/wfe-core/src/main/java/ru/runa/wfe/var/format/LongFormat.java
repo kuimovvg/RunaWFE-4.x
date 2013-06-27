@@ -28,6 +28,11 @@ public class LongFormat implements VariableFormat<Number> {
     private final DecimalFormat decimalFormat = new DecimalFormat("0");
 
     @Override
+    public Class<? extends Number> getJavaClass() {
+        return Long.class;
+    }
+
+    @Override
     public Number parse(String[] source) throws ParseException {
         Long result = null;
         if (source != null) {

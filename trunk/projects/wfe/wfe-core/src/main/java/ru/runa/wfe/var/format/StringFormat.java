@@ -26,6 +26,11 @@ package ru.runa.wfe.var.format;
 public class StringFormat implements VariableFormat<String> {
 
     @Override
+    public Class<? extends String> getJavaClass() {
+        return String.class;
+    }
+
+    @Override
     public String parse(String[] source) {
         return source[0];
     }
