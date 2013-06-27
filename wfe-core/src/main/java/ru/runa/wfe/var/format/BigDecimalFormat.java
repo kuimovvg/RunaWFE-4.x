@@ -11,6 +11,11 @@ import java.math.BigDecimal;
 public class BigDecimalFormat implements VariableFormat<BigDecimal> {
 
     @Override
+    public Class<BigDecimal> getJavaClass() {
+        return BigDecimal.class;
+    }
+
+    @Override
     public BigDecimal parse(String[] source) throws Exception {
         return new BigDecimal(source[0]);
     }
