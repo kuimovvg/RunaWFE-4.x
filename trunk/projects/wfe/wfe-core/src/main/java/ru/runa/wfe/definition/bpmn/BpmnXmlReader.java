@@ -141,8 +141,8 @@ public class BpmnXmlReader {
             Element definitionsElement = document.getRootElement();
             Element process = definitionsElement.element(PROCESS);
             processDefinition.setName(process.attributeValue(NAME));
-            processDefinition.setDescription(process.elementTextTrim(DOCUMENTATION));
             Map<String, String> processProperties = parseExtensionProperties(process);
+            processDefinition.setDescription(processProperties.get(DOCUMENTATION));
             String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMEOUT);
             if (!Strings.isNullOrEmpty(defaultTaskTimeout)) {
                 // processDefinition.setDefaultTaskTimeoutDelay(new
