@@ -31,7 +31,6 @@ import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
 
 public abstract class BaseHtmlFormType extends FormType {
-    private static final String EDITOR_ID = "tk.eclipse.plugin.wysiwyg.WYSIWYGHTMLEditor";
     private static final String READONLY_ATTR = "readonly";
     private static final String DISABLED_ATTR = "disabled";
     private static final String NAME_ATTR = "name";
@@ -39,7 +38,7 @@ public abstract class BaseHtmlFormType extends FormType {
 
     @Override
     public IEditorPart openForm(final IFile formFile, final FormNode formNode) throws CoreException {
-        editor = (WYSIWYGHTMLEditor) IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), formFile, EDITOR_ID, true);
+        editor = (WYSIWYGHTMLEditor) IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), formFile, WYSIWYGHTMLEditor.ID, true);
         editor.setFormNode(formNode);
         editor.addPropertyListener(new IPropertyListener() {
             @Override
