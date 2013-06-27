@@ -14,6 +14,7 @@ import ru.runa.gpd.lang.model.MultiTaskState;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.dialog.UpdateVariableDialog;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.wfe.var.format.ListFormat;
 
 import com.google.common.base.Objects;
@@ -69,7 +70,8 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
         UpdateVariableDialog dialog = new UpdateVariableDialog(currentDefinition, null);
         dialog.setTypeByFormat(ListFormat.class.getName());
         if (dialog.open() == IDialogConstants.OK_ID) {
-            Variable variable = new Variable(dialog.getName(), dialog.getTypeName(), dialog.isPublicVisibility(), dialog.getDefaultValue());
+            String scriptingName = VariableUtils.generateNameForScripting(currentDefinition, dialog.getName(), null);
+            Variable variable = new Variable(dialog.getName(), scriptingName, dialog.getTypeName(), dialog.isPublicVisibility(), dialog.getDefaultValue());
             currentDefinition.addVariable(variable);
             setVariableName(variable.getName());
         }
