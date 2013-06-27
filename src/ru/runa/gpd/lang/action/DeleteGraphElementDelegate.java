@@ -15,6 +15,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Transition;
 
+// unused now, GEF native command used instead
 public class DeleteGraphElementDelegate extends BaseModelActionDelegate {
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
