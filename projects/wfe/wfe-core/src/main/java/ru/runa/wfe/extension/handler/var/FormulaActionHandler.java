@@ -226,10 +226,12 @@ public class FormulaActionHandler implements ActionHandler {
         }
         WfVariable variable = context.getVariableProvider().getVariable(variableName);
         if (variable != null) {
-            if (variable.getFormatNotNull().getJavaClass() != value.getClass()) {
+            boolean appropriateType = variable.getFormatNotNull().getJavaClass() == value.getClass();
+            if (!appropriateType) {
+                appropriateType = variable.getValue() != null && variable.getValue().getClass() == value.getClass();
+            }
+            if (!appropriateType) {
                 value = TypeConversionUtil.convertTo(variable.getFormatNotNull().getJavaClass(), value);
-            } else if (variable.getValue() != null && variable.getValue().getClass() != value.getClass()) {
-                value = actions.translate(value, variable.getValue().getClass());
             }
         }
         if (value == null) {
