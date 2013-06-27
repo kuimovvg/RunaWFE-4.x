@@ -20,19 +20,19 @@ public class Variable extends NamedGraphElement {
     private String defaultValue;
 
     protected Variable(String format, boolean publicVisibility, String defaultValue) {
-        this(null, format, publicVisibility, defaultValue);
+        this(null, null, format, publicVisibility, defaultValue);
     }
 
-    public Variable(String name, String format, boolean publicVisibility, String defaultValue) {
+    public Variable(String name, String scriptingName, String format, boolean publicVisibility, String defaultValue) {
         super(name);
+        setScriptingName(scriptingName);
         setFormatClassName(format);
         this.publicVisibility = publicVisibility;
         this.defaultValue = defaultValue;
     }
 
     public Variable(Variable variable) {
-        this(variable.getName(), variable.getFormatClassName(), variable.isPublicVisibility(), variable.getDefaultValue());
-        setScriptingName(variable.getScriptingName());
+        this(variable.getName(), variable.getScriptingName(), variable.getFormatClassName(), variable.isPublicVisibility(), variable.getDefaultValue());
     }
 
     @Override
