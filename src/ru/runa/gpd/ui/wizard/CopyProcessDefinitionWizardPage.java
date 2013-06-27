@@ -41,7 +41,7 @@ public class CopyProcessDefinitionWizardPage extends WizardPage {
         this.workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
         setTitle(Localization.getString("CopyProcessDefinitionWizardPage.page.title"));
         setDescription(Localization.getString("CopyProcessDefinitionWizardPage.page.description"));
-        sourceDefinition = ProcessCache.getProcessDefinition(sourceProcessFolder.getName());
+        sourceDefinition = ProcessCache.getFirstProcessDefinition(sourceProcessFolder.getName());
         if (sourceDefinition == null) {
             throw new NullPointerException("Process definition is null");
         }

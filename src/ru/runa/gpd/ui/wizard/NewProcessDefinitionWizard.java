@@ -79,7 +79,7 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
                         gpdFile.create(createInitialGpdInfo(page.getLanguage().getNotation()), true, null);
                         monitor.worked(1);
                         ProcessCache.newProcessDefinitionWasCreated(definitionFile);
-                        WorkspaceOperations.openProcessDefinition((IFolder) definitionFile.getParent());
+                        WorkspaceOperations.openProcessDefinition(definitionFile);
                         monitor.worked(1);
                         BasicNewResourceWizard.selectAndReveal(gpdFile, getActiveWorkbenchWindow());
                         monitor.done();

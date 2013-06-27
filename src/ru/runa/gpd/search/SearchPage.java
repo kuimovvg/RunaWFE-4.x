@@ -1,6 +1,5 @@
 package ru.runa.gpd.search;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -76,12 +75,11 @@ public class SearchPage extends AbstractTextSearchViewPage {
     @Override
     protected void showMatch(Match match, int offset, int length, boolean activate) throws PartInitException {
         ElementMatch elementMatch = (ElementMatch) match.getElement();
-        IFile file = elementMatch.getFile();
         IEditorPart editor = null;
         if (ElementMatch.CONTEXT_FORM.equals(elementMatch.getContext())) {
             try {
                 FormNode formNode = (FormNode) elementMatch.getGraphElement();
-                editor = FormTypeProvider.getFormType(formNode.getFormType()).openForm(file, formNode);
+                editor = FormTypeProvider.getFormType(formNode.getFormType()).openForm(elementMatch.getFile(), formNode);
             } catch (CoreException e) {
                 PluginLogger.logError(e);
             }
@@ -104,7 +102,7 @@ public class SearchPage extends AbstractTextSearchViewPage {
             SubprocessDelegate delegate = new SubprocessDelegate();
             delegate.openDetails((Subprocess) elementMatch.getGraphElement());
         } else if (elementMatch.getGraphElement() != null) {
-            ProcessEditorBase processEditor = WorkspaceOperations.openProcessDefinition(elementMatch.getGraphElement().getProcessDefinition());
+            ProcessEditorBase processEditor = WorkspaceOperations.openProcessDefinition(elementMatch.getFile());
             if (processEditor != null) {
                 processEditor.select(elementMatch.getGraphElement());
             }

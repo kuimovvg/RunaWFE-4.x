@@ -211,7 +211,7 @@ public class SubprocessDialog extends Dialog {
     }
 
     private List<String> getProcessVariablesNames(String name) {
-        ProcessDefinition definition = ProcessCache.getProcessDefinition(name);
+        ProcessDefinition definition = ProcessCache.getFirstProcessDefinition(name);
         if (definition != null) {
             return definition.getVariableNames(true);
         }
@@ -219,7 +219,7 @@ public class SubprocessDialog extends Dialog {
     }
 
     private boolean isArrayVariable(String name, String variableName) {
-        ProcessDefinition definition = ProcessCache.getProcessDefinition(name);
+        ProcessDefinition definition = ProcessCache.getFirstProcessDefinition(name);
         if (definition != null) {
             Variable variable = definition.getVariable(variableName, false);
             if (variable != null) {
