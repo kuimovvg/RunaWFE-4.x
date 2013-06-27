@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveSwimlaneCommand;
 import ru.runa.gpd.extension.assign.SwimlaneConfigDialog;
 import ru.runa.gpd.lang.NodeRegistry;
@@ -43,6 +42,7 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.VariableSearchQuery;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
 
 public class SwimlaneEditorPage extends EditorPartBase {
@@ -201,32 +201,28 @@ public class SwimlaneEditorPage extends EditorPartBase {
             ProcessDefinitionRemoveSwimlaneCommand command = new ProcessDefinitionRemoveSwimlaneCommand();
             command.setProcessDefinition(getDefinition());
             command.setSwimlane(swimlane);
-            // TODO GEF editor.getCommandStack().execute(command);
+            // TODO Ctrl+Z support (form validation) editor.getCommandStack().execute(command);
             command.execute();
             getDefinition().getSwimlaneGUIConfiguration().removeSwimlanePath(swimlane.getName());
         }
     }
 
-    private class SearchSwimlaneUsageSelectionListener extends SelectionAdapter {
+    private class SearchSwimlaneUsageSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
-            try {
-                IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-                Swimlane swimlane = (Swimlane) selection.getFirstElement();
-                VariableSearchQuery query = new VariableSearchQuery(editor.getDefinitionFile(), getDefinition(), swimlane.getName());
-                NewSearchUI.runQueryInBackground(query);
-            } catch (Exception ex) {
-                PluginLogger.logError(ex);
-            }
+        protected void onSelection(SelectionEvent e) throws Exception {
+            IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
+            Swimlane swimlane = (Swimlane) selection.getFirstElement();
+            VariableSearchQuery query = new VariableSearchQuery(editor.getDefinitionFile(), getDefinition(), swimlane);
+            NewSearchUI.runQueryInBackground(query);
         }
     }
 
-    private class RenameSwimlaneSelectionListener extends SelectionAdapter {
+    private class RenameSwimlaneSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Swimlane swimlane = (Swimlane) selection.getFirstElement();
-            UpdateSwimlaneNameDialog renameDialog = new UpdateSwimlaneNameDialog(swimlane.getProcessDefinition(), false);
+            UpdateSwimlaneNameDialog renameDialog = new UpdateSwimlaneNameDialog(swimlane.getProcessDefinition(), swimlane);
             renameDialog.setName(swimlane.getName());
             int result = renameDialog.open();
             String newName = renameDialog.getName();
@@ -244,13 +240,11 @@ public class SwimlaneEditorPage extends EditorPartBase {
                     RenameRefactoringWizard wizard = new RenameRefactoringWizard(ref);
                     wizard.setDefaultPageTitle(Localization.getString("Refactoring.variable.name"));
                     RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
-                    try {
-                        result = op.run(Display.getCurrent().getActiveShell(), "");
-                        if (result != IDialogConstants.OK_ID) {
-                            return;
-                        }
-                    } catch (InterruptedException ex) {
-                        // operation was canceled
+                    result = op.run(Display.getCurrent().getActiveShell(), "");
+                    if (result != IDialogConstants.OK_ID) {
+                        // revert changes
+                        swimlane.setName(oldVariable.getName());
+                        return;
                     }
                 }
             }
@@ -260,26 +254,21 @@ public class SwimlaneEditorPage extends EditorPartBase {
         }
     }
 
-    private class RemoveSwimlaneSelectionListener extends SelectionAdapter {
-        @SuppressWarnings("unchecked")
+    private class RemoveSwimlaneSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             List<Swimlane> swimlanes = selection.toList();
             for (Swimlane swimlane : swimlanes) {
-                try {
-                    delete(swimlane);
-                } catch (Exception e1) {
-                    PluginLogger.logError(e1);
-                }
+                delete(swimlane);
             }
         }
     }
 
-    private class CreateSwimlaneSelectionListener extends SelectionAdapter {
+    private class CreateSwimlaneSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
-            UpdateSwimlaneNameDialog dialog = new UpdateSwimlaneNameDialog(getDefinition(), true);
+        protected void onSelection(SelectionEvent e) throws Exception {
+            UpdateSwimlaneNameDialog dialog = new UpdateSwimlaneNameDialog(getDefinition(), null);
             if (dialog.open() == IDialogConstants.OK_ID) {
                 Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(getDefinition());
                 newSwimlane.setName(dialog.getName());
@@ -289,9 +278,9 @@ public class SwimlaneEditorPage extends EditorPartBase {
         }
     }
 
-    private class ChangeSwimlaneSelectionListener extends SelectionAdapter {
+    private class ChangeSwimlaneSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Swimlane swimlane = (Swimlane) selection.getFirstElement();
             String path = getDefinition().getSwimlaneGUIConfiguration().getEditorPath(swimlane.getName());
@@ -305,18 +294,17 @@ public class SwimlaneEditorPage extends EditorPartBase {
         }
     }
 
-    private class CopySwimlaneSelectionListener extends SelectionAdapter {
+    private class CopySwimlaneSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Clipboard.getDefault().setContents(selection.toList());
         }
     }
 
-    private class PasteSwimlaneSelectionListener extends SelectionAdapter {
-        @SuppressWarnings("unchecked")
+    private class PasteSwimlaneSelectionListener extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             List<Swimlane> newSwimlanes = (List<Swimlane>) Clipboard.getDefault().getContents();
             for (Swimlane swimlane : newSwimlanes) {
                 boolean add = false;

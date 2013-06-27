@@ -78,7 +78,7 @@ public class UpdateVariableDialog extends Dialog {
                 protected void onTextChanged(ModifyEvent e) throws Exception {
                     name = nameField.getText();
                     updateState();
-                    scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name));
+                    scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name, null));
                 }
             });
             nameField.setFocus();
@@ -88,7 +88,7 @@ public class UpdateVariableDialog extends Dialog {
             scriptingNameField = new Text(composite, SWT.BORDER);
             scriptingNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             scriptingNameField.setEditable(false);
-            scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name));
+            scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name, null));
         }
         Label labelType = new Label(composite, SWT.NONE);
         labelType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

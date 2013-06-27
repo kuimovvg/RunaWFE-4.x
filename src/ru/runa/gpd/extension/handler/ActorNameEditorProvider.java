@@ -4,6 +4,8 @@ import java.util.Map;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
 
 public class ActorNameEditorProvider extends ParamBasedProvider {
     private static final String ACTOR_CODE = "actorCode";
@@ -23,6 +25,8 @@ public class ActorNameEditorProvider extends ParamBasedProvider {
             p.setOptional(true);
             p.getFormatFilters().add(String.class.getName());
             p.getFormatFilters().add(Long.class.getName());
+            p.getFormatFilters().add(Executor.class.getName());
+            p.getFormatFilters().add(Actor.class.getName());
             inputGroup.getParameters().add(p);
             p = new ParamDef(ACTOR_LOGIN, Localization.getString("ActorNameEditorProvider.param.actorLogin"));
             p.setOptional(true);
