@@ -1,5 +1,7 @@
 package ru.runa.gpd.lang.action;
 
+import java.util.List;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -42,7 +44,7 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
      */
     @Override
     protected void fillMenu(Menu menu) {
-        for (Variable variable : currentDefinition.getVariables(false, ListFormat.class.getName())) {
+        for (Variable variable : currentDefinition.getVariables(false, List.class.getName())) {
             Action action = new SetVariableAction();
             action.setText(variable.getName());
             if (Objects.equal(selectedVariable, variable.getName())) {
