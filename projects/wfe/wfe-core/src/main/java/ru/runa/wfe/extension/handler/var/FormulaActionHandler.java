@@ -23,9 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
 import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.dto.WfVariable;
 
 public class FormulaActionHandler implements ActionHandler {
     private static final Log log = LogFactory.getLog(FormulaActionHandler.class);
@@ -196,17 +198,17 @@ public class FormulaActionHandler implements ActionHandler {
     private void parseFormula() {
         nowPosition = 0;
         errorMessage = null;
-        String newVariable = nextToken();
+        String variableName = nextToken();
         if (stringVariableToken) {
             error("Incorrect variable name: use ' instead \"");
             return;
         }
-        if (newVariable == null) {
+        if (variableName == null) {
             error("Variable name expected");
             return;
         }
-        if (newVariable.length() == 1 && oneSymbolTokens.contains(newVariable)) {
-            error("Incorrect variable name: " + newVariable);
+        if (variableName.length() == 1 && oneSymbolTokens.contains(variableName)) {
+            error("Incorrect variable name: " + variableName);
             return;
         }
         String equal = nextToken();
@@ -222,9 +224,15 @@ public class FormulaActionHandler implements ActionHandler {
             error(errorMessage);
             return;
         }
-        Object lastValue = context.getVariable(newVariable);
-        if (lastValue != null && value.getClass() != lastValue.getClass()) {
-            value = actions.translate(lastValue, value.getClass());
+        WfVariable variable = context.getVariableProvider().getVariable(variableName);
+        if (variable != null) {
+            if (variable.getValue() != null) {
+                if (variable.getValue().getClass() != value.getClass()) {
+                    value = actions.translate(value, variable.getValue().getClass());
+                }
+            } else if (variable.getFormatNotNull().getJavaClass() != value.getClass()) {
+                value = TypeConversionUtil.convertTo(variable.getFormatNotNull().getJavaClass(), value);
+            }
         }
         if (value == null) {
             error("Type mismatch");
@@ -234,7 +242,7 @@ public class FormulaActionHandler implements ActionHandler {
             FileVariable fileVariable = (FileVariable) value;
             value = new FileVariable(fileVariable);
         }
-        context.setVariable(newVariable, value);
+        context.setVariable(variableName, value);
     }
 
     private Object parsePriority0() {

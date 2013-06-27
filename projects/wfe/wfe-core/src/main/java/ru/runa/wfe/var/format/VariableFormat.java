@@ -9,6 +9,8 @@ package ru.runa.wfe.var.format;
  */
 public interface VariableFormat<T> {
 
+    public Class<? extends T> getJavaClass();
+
     /**
      * Parses variable object from strings. Array of strings here due to
      * conversation from html form.

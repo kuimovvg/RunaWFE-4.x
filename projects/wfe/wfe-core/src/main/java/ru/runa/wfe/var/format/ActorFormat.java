@@ -14,6 +14,11 @@ import com.google.common.collect.Maps;
 public class ActorFormat implements VariableFormat<Actor>, VariableDisplaySupport<Actor> {
 
     @Override
+    public Class<Actor> getJavaClass() {
+        return Actor.class;
+    }
+
+    @Override
     public Actor parse(String[] source) throws Exception {
         return TypeConversionUtil.convertTo(Actor.class, source[0]);
     }

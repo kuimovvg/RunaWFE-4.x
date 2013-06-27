@@ -32,6 +32,11 @@ import com.google.common.collect.Maps;
 public class FileFormat implements VariableFormat<FileVariable>, VariableDisplaySupport<FileVariable> {
 
     @Override
+    public Class<? extends FileVariable> getJavaClass() {
+        return FileVariable.class;
+    }
+
+    @Override
     public String format(FileVariable object) {
         return object.getName();
     }

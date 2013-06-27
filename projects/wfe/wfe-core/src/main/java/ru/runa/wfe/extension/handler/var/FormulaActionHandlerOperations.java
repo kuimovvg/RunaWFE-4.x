@@ -43,10 +43,13 @@ public class FormulaActionHandlerOperations {
 
     public Object sum(Object o1, Object o2) {
         if (Double.class.isInstance(o1) && Number.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() + ((Number) o2).doubleValue());
+            return new Double(((Number) o1).doubleValue() + ((Number) o2).doubleValue());
         }
-        if (Long.class.isInstance(o1) && Number.class.isInstance(o2)) {
-            return new Long((long) (((Long) o1).doubleValue() + ((Number) o2).doubleValue()));
+        if (Number.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double(((Number) o1).doubleValue() + ((Number) o2).doubleValue());
+        }
+        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Long((long) (((Long) o1).doubleValue() + ((Long) o2).doubleValue()));
         }
         if (Date.class.isInstance(o1) && Number.class.isInstance(o2)) {
             return new Date(((Date) o1).getTime() + (long) (((Number) o2).doubleValue() * 60 * 1000));
@@ -70,10 +73,13 @@ public class FormulaActionHandlerOperations {
 
     public Object sub(Object o1, Object o2) {
         if (Double.class.isInstance(o1) && Number.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() - ((Number) o2).doubleValue());
+            return new Double(((Number) o1).doubleValue() - ((Number) o2).doubleValue());
         }
-        if (Long.class.isInstance(o1) && Number.class.isInstance(o2)) {
-            return new Long((long) (((Long) o1).doubleValue() - ((Number) o2).doubleValue()));
+        if (Number.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double((((Number) o1).doubleValue() - ((Number) o2).doubleValue()));
+        }
+        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Long((long) (((Number) o1).doubleValue() - ((Number) o2).doubleValue()));
         }
         if (Date.class.isInstance(o1) && Number.class.isInstance(o2)) {
             return new Date(((Date) o1).getTime() - (long) (((Number) o2).doubleValue() * 60 * 1000));
@@ -87,13 +93,13 @@ public class FormulaActionHandlerOperations {
 
     public Object mul(Object o1, Object o2) {
         if (Double.class.isInstance(o1) && Number.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() * ((Number) o2).doubleValue());
+            return new Double(((Number) o1).doubleValue() * ((Number) o2).doubleValue());
         }
-        if (Double.class.isInstance(o1) && Long.class.isInstance(o2)) {
-            return new Double(((Double) o1).doubleValue() * ((Long) o2).doubleValue());
+        if (Number.class.isInstance(o1) && Double.class.isInstance(o2)) {
+            return new Double(((Number) o1).doubleValue() * ((Number) o2).doubleValue());
         }
-        if (Long.class.isInstance(o1) && Number.class.isInstance(o2)) {
-            return new Long((long) (((Long) o1).doubleValue() * ((Number) o2).doubleValue()));
+        if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
+            return new Long((long) (((Number) o1).doubleValue() * ((Number) o2).doubleValue()));
         }
         log.error("Cannot make mul for " + (o1 != null ? o1.getClass() : "null") + " with " + (o2 != null ? o2.getClass() : "null"));
         return null;

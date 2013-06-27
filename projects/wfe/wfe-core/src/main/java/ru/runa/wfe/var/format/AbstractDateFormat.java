@@ -30,6 +30,11 @@ public abstract class AbstractDateFormat implements VariableFormat<Date> {
     }
 
     @Override
+    public Class<Date> getJavaClass() {
+        return Date.class;
+    }
+
+    @Override
     public String format(Date object) {
         return CalendarUtil.format(object, dateTimeFormat);
     }
