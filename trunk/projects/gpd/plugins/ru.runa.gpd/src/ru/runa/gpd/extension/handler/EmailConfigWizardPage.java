@@ -45,10 +45,10 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
-import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.XmlUtil;
-import ru.runa.wfe.var.format.FileFormat;
+import ru.runa.wfe.var.FileVariable;
 
 public class EmailConfigWizardPage extends WizardPage implements MessageDisplay {
     private TabFolder tabFolder;
@@ -86,7 +86,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
         this.variables = definition.getVariables(true);
         this.ftlVariableNames = VariableUtils.getValidVariableNames(definition.getVariableNames(true));
-        this.fileVariableNames = VariableUtils.getValidVariableNames(definition.getVariableNames(true, FileFormat.class.getName()));
+        this.fileVariableNames = VariableUtils.getValidVariableNames(definition.getVariableNames(true, FileVariable.class.getName()));
         GraphElement parent = ((GraphElement) delegable).getParent();
         this.bodyInlinedEnabled = (parent instanceof FormNode) && ((FormNode) parent).hasForm();
         this.commonConfig = getParamConfig(bundle, "/conf/email.common.xml");
