@@ -33,7 +33,6 @@ import ru.runa.wfe.definition.dao.ProcessDefinitionLoader;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.dao.NodeProcessDAO;
-import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.execution.dao.TokenDAO;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.image.GraphElementPresentationBuilder;
@@ -72,8 +71,6 @@ public class WFCommonLogic extends CommonLogic {
 
     @Autowired
     protected DeploymentDAO deploymentDAO;
-    @Autowired
-    protected ProcessDAO processDAO;
     @Autowired
     protected NodeProcessDAO nodeProcessDAO;
     @Autowired

@@ -40,6 +40,7 @@ import ru.runa.wfe.security.WeakPasswordException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ActorPermission;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.ExecutorParticipatesInProcessesException;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.GroupPermission;
@@ -131,6 +132,10 @@ public class ExecutorLogic extends CommonLogic {
     public void remove(Executor executor) {
         if (permissionDAO.isPrivilegedExecutor(executor)) {
             throw new AuthorizationException(executor.getName() + " can not be removed");
+        }
+        Set<Number> processIds = processDAO.getDependentProcessIds(executor);
+        if (processIds.size() > 0) {
+            throw new ExecutorParticipatesInProcessesException(executor.getName(), processIds);
         }
         if (executor instanceof Actor) {
             profileDAO.delete((Actor) executor);
