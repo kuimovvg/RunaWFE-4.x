@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
+import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
@@ -50,6 +51,8 @@ public class CommonLogic {
     protected ExecutorDAO executorDAO;
     @Autowired
     protected LocalizationDAO localizationDAO;
+    @Autowired
+    protected ProcessDAO processDAO;
 
     protected <T extends Executor> T checkPermissionsOnExecutor(User user, T executor, Permission permission) throws AuthorizationException,
             ExecutorDoesNotExistException {

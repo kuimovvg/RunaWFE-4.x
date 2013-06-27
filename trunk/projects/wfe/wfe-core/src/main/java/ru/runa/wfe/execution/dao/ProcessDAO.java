@@ -3,6 +3,7 @@ package ru.runa.wfe.execution.dao;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -13,10 +14,12 @@ import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.Token;
+import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @SuppressWarnings("unchecked")
 public class ProcessDAO extends GenericDAO<Process> {
@@ -32,9 +35,15 @@ public class ProcessDAO extends GenericDAO<Process> {
      * fetches all processes for the given process definition from the database.
      * The returned list of processs is sorted start date, youngest first.
      */
-
     public List<Process> findAllProcesses(Long definitionId) {
         return getHibernateTemplate().find("from Process where deployment.id=? order by startDate desc", definitionId);
+    }
+
+    public Set<Number> getDependentProcessIds(Executor executor) {
+        Set<Number> processes = Sets.newHashSet();
+        processes.addAll(getHibernateTemplate().find("select process.id from Swimlane where executor=?", executor));
+        processes.addAll(getHibernateTemplate().find("select process.id from Task where executor=?", executor));
+        return processes;
     }
 
     public List<Process> getProcesses(final ProcessFilter filter) {
