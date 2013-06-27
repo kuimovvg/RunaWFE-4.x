@@ -146,14 +146,13 @@ public class BpmnSerializer extends ProcessSerializer {
             processProperties.put(SWIMLANE_DISPLAY_MODE, definition.getSwimlaneDisplayMode().name());
         }
         processProperties.put(VERSION, Version.get());
-        writeExtensionElements(process, processProperties);
         if (definition.isInvalid()) {
             process.addAttribute(EXECUTABLE, "false");
         }
-        if (definition.getDescription() != null && definition.getDescription().length() > 0) {
-            Element desc = process.addElement(DOCUMENTATION);
-            setNodeValue(desc, definition.getDescription());
+        if (!Strings.isNullOrEmpty(definition.getDescription())) {
+            processProperties.put(DOCUMENTATION, definition.getDescription());
         }
+        writeExtensionElements(process, processProperties);
         Element laneSetElement = process.addElement(SWIMLANE_SET).addAttribute(ID, "laneSet1");
         List<Swimlane> swimlanes = definition.getSwimlanes();
         for (Swimlane swimlane : swimlanes) {
@@ -540,6 +539,9 @@ public class BpmnSerializer extends ProcessSerializer {
         String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMOUT);
         if (!Strings.isNullOrEmpty(defaultTaskTimeout)) {
             definition.setDefaultTaskTimeoutDelay(new Duration(defaultTaskTimeout));
+        }
+        if (processProperties.containsKey(DOCUMENTATION)) {
+            definition.setDescription(processProperties.get(DOCUMENTATION));
         }
         String swimlaneDisplayModeName = processProperties.get(SWIMLANE_DISPLAY_MODE);
         if (swimlaneDisplayModeName != null) {
