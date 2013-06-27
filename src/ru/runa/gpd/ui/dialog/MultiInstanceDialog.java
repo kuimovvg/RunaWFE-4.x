@@ -35,14 +35,10 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.MultiSubprocess;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
-import ru.runa.wfe.var.format.ListFormat;
-
-import com.google.common.collect.Lists;
 
 public class MultiInstanceDialog extends Dialog {
     private static final String TYPE_VARIABLE = "variable";
@@ -630,7 +626,7 @@ public class MultiInstanceDialog extends Dialog {
     private List<String> getSelectorVariableNames(String processName) {
         ProcessDefinition definition = ProcessCache.getFirstProcessDefinition(processName);
         if (definition != null) {
-            return definition.getVariableNames(false, ListFormat.class.getName());
+            return definition.getVariableNames(false, List.class.getName());
         }
         return new ArrayList<String>();
     }
