@@ -1,0 +1,1980 @@
+2013-06-23 13:27:28,252 DEBUG [org.jnp.server.NamingBeanImpl] Using NamingServer: org.jnp.server.NamingServer@32f533
+2013-06-23 13:27:28,253 DEBUG [org.jnp.server.NamingBeanImpl] Installed global NamingServer: org.jnp.server.NamingServer@32f533
+2013-06-23 13:27:28,284 DEBUG [org.jnp.server.NamingBeanImpl] InitialContext Environment: 
+2013-06-23 13:27:28,284 DEBUG [org.jnp.server.NamingBeanImpl] key=java.naming.factory.initial, value(java.lang.String)=org.jnp.interfaces.NamingContextFactory
+2013-06-23 13:27:28,285 DEBUG [org.jnp.server.NamingBeanImpl] key=java.naming.factory.url.pkgs, value(java.lang.String)=org.jboss.naming:org.jnp.interfaces
+2013-06-23 13:27:28,766 INFO  [com.arjuna.ats.jbossatx.jta.TransactionManagerService] JBossTS Transaction Service (JTA version) - JBoss Inc.
+2013-06-23 13:27:28,767 INFO  [com.arjuna.ats.jbossatx.jta.TransactionManagerService] Setting up property manager MBean and JMX layer
+2013-06-23 13:27:29,213 INFO  [com.arjuna.ats.jbossatx.jta.TransactionManagerService] Starting recovery manager
+2013-06-23 13:27:29,372 INFO  [com.arjuna.ats.jbossatx.jta.TransactionManagerService] Recovery manager started
+2013-06-23 13:27:29,373 INFO  [com.arjuna.ats.jbossatx.jta.TransactionManagerService] Binding TransactionManager JNDI Reference
+2013-06-23 13:27:33,594 INFO  [org.jboss.ejb3.EJB3Deployer] Starting java:comp multiplexer
+2013-06-23 13:27:39,113 INFO  [org.jboss.wsf.stack.jbws.NativeServerConfig] JBoss Web Services - Native
+2013-06-23 13:27:39,115 INFO  [org.jboss.wsf.stack.jbws.NativeServerConfig] jbossws-3.0.1-native-2.0.4.GA (build=200803312044)
+2013-06-23 13:27:40,244 INFO  [org.apache.catalina.startup.Embedded] Catalina naming disabled
+2013-06-23 13:27:40,518 INFO  [org.apache.catalina.core.AprLifecycleListener] The Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: C:\Users\Admin\Downloads\Runa\4.0.4\RunaWFE_Server.4.0.4\runawfe.4.0.4\bin\native
+2013-06-23 13:27:40,615 INFO  [org.apache.coyote.http11.Http11Protocol] Initializing Coyote HTTP/1.1 on http-0.0.0.0-8080
+2013-06-23 13:27:40,625 INFO  [org.apache.coyote.ajp.AjpProtocol] Initializing Coyote AJP/1.3 on ajp-0.0.0.0-8009
+2013-06-23 13:27:40,627 INFO  [org.apache.catalina.startup.Catalina] Initialization processed in 381 ms
+2013-06-23 13:27:40,629 INFO  [org.apache.catalina.core.StandardService] Starting service jboss.web
+2013-06-23 13:27:40,634 INFO  [org.apache.catalina.core.StandardEngine] Starting Servlet Engine: JBossWeb/2.0.1.GA
+2013-06-23 13:27:40,706 INFO  [org.apache.catalina.startup.Catalina] Server startup in 77 ms
+2013-06-23 13:27:40,889 INFO  [org.jboss.web.tomcat.service.TomcatDeployer] deploy, ctxPath=/, warUrl=.../deploy/jboss-web.deployer/ROOT.war/
+2013-06-23 13:27:42,690 INFO  [org.jboss.web.tomcat.service.TomcatDeployer] deploy, ctxPath=/jbossws, warUrl=.../deploy/jbossws.sar/jbossws-context.war/
+2013-06-23 13:27:43,216 INFO  [org.jboss.web.tomcat.service.TomcatDeployer] deploy, ctxPath=/web-console, warUrl=.../deploy/management/console-mgr.sar/web-console.war/
+2013-06-23 13:27:43,949 INFO  [org.jboss.mail.MailService] Mail Service bound to java:/Mail
+2013-06-23 13:27:44,183 INFO  [org.jboss.resource.deployment.RARDeployment] Required license terms exist, view META-INF/ra.xml in .../deploy/jboss-ha-local-jdbc.rar
+2013-06-23 13:27:44,246 INFO  [org.jboss.resource.deployment.RARDeployment] Required license terms exist, view META-INF/ra.xml in .../deploy/jboss-ha-xa-jdbc.rar
+2013-06-23 13:27:44,331 INFO  [org.jboss.resource.deployment.RARDeployment] Required license terms exist, view META-INF/ra.xml in .../deploy/jboss-local-jdbc.rar
+2013-06-23 13:27:44,403 INFO  [org.jboss.resource.deployment.RARDeployment] Required license terms exist, view META-INF/ra.xml in .../deploy/jboss-xa-jdbc.rar
+2013-06-23 13:27:44,600 INFO  [org.jboss.resource.deployment.RARDeployment] Required license terms exist, view META-INF/ra.xml in .../deploy/jms-ra.rar
+2013-06-23 13:27:44,671 INFO  [org.jboss.resource.deployment.RARDeployment] Required license terms exist, view META-INF/ra.xml in .../deploy/mail-ra.rar
+2013-06-23 13:27:44,739 INFO  [org.jboss.resource.deployment.RARDeployment] Required license terms exist, view META-INF/ra.xml in .../deploy/quartz-ra.rar
+2013-06-23 13:27:44,759 INFO  [org.jboss.resource.adapter.quartz.inflow.QuartzResourceAdapter] start quartz!!!
+2013-06-23 13:27:44,862 INFO  [org.quartz.simpl.SimpleThreadPool] Job execution threads will use class loader of thread: main
+2013-06-23 13:27:44,902 INFO  [org.quartz.core.QuartzScheduler] Quartz Scheduler v.1.5.2 created.
+2013-06-23 13:27:44,907 INFO  [org.quartz.simpl.RAMJobStore] RAMJobStore initialized.
+2013-06-23 13:27:44,908 INFO  [org.quartz.impl.StdSchedulerFactory] Quartz scheduler 'DefaultQuartzScheduler' initialized from default resource file in Quartz package: 'quartz.properties'
+2013-06-23 13:27:44,909 INFO  [org.quartz.impl.StdSchedulerFactory] Quartz scheduler version: 1.5.2
+2013-06-23 13:27:44,910 INFO  [org.quartz.core.QuartzScheduler] Scheduler DefaultQuartzScheduler_$_NON_CLUSTERED started.
+2013-06-23 13:27:46,006 INFO  [org.jboss.resource.connectionmanager.ConnectionFactoryBindingService] Bound ConnectionManager 'jboss.jca:service=DataSourceBinding,name=DefaultDS' to JNDI name 'java:DefaultDS'
+2013-06-23 13:27:46,768 WARN  [org.jboss.jms.server.security.SecurityMetadataStore] WARNING! POTENTIAL SECURITY RISK. It has been detected that the MessageSucker component which sucks messages from one node to another has not had its password changed from the installation default. Please see the JBoss Messaging user guide for instructions on how to do this.
+2013-06-23 13:27:46,800 INFO  [org.jboss.jms.server.ServerPeer] JBoss Messaging 1.4.4.GA server [0] started
+2013-06-23 13:27:47,292 INFO  [org.jboss.jms.server.connectionfactory.ConnectionFactory] Connector bisocket://R503:4457 has leasing enabled, lease period 10000 milliseconds
+2013-06-23 13:27:47,294 INFO  [org.jboss.jms.server.connectionfactory.ConnectionFactory] org.jboss.jms.server.connectionfactory.ConnectionFactory@8ec961 started
+2013-06-23 13:27:47,299 INFO  [org.jboss.jms.server.connectionfactory.ConnectionFactoryJNDIMapper] supportsFailover attribute is true on connection factory: jboss.messaging.connectionfactory:service=ClusteredConnectionFactory but post office is non clustered. So connection factory will *not* support failover
+2013-06-23 13:27:47,301 INFO  [org.jboss.jms.server.connectionfactory.ConnectionFactoryJNDIMapper] supportsLoadBalancing attribute is true on connection factory: jboss.messaging.connectionfactory:service=ClusteredConnectionFactory but post office is non clustered. So connection factory will *not* support load balancing
+2013-06-23 13:27:47,322 INFO  [org.jboss.jms.server.connectionfactory.ConnectionFactory] Connector bisocket://R503:4457 has leasing enabled, lease period 10000 milliseconds
+2013-06-23 13:27:47,327 INFO  [org.jboss.jms.server.connectionfactory.ConnectionFactory] org.jboss.jms.server.connectionfactory.ConnectionFactory@1be7b97 started
+2013-06-23 13:27:47,330 INFO  [org.jboss.jms.server.connectionfactory.ConnectionFactory] Connector bisocket://R503:4457 has leasing enabled, lease period 10000 milliseconds
+2013-06-23 13:27:47,331 INFO  [org.jboss.jms.server.connectionfactory.ConnectionFactory] org.jboss.jms.server.connectionfactory.ConnectionFactory@10ddc63 started
+2013-06-23 13:27:47,413 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/DLQ] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,417 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/ExpiryQueue] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,420 INFO  [org.jboss.jms.server.destination.TopicService] Topic[/topic/testTopic] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,423 INFO  [org.jboss.jms.server.destination.TopicService] Topic[/topic/securedTopic] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,425 INFO  [org.jboss.jms.server.destination.TopicService] Topic[/topic/testDurableTopic] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,430 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/testQueue] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,436 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/A] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,440 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/B] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,444 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/C] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,447 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/D] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,451 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/ex] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,455 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/PrivateDLQ] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,459 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/PrivateExpiryQueue] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,465 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/QueueWithOwnDLQAndExpiryQueue] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,467 INFO  [org.jboss.jms.server.destination.TopicService] Topic[/topic/TopicWithOwnDLQAndExpiryQueue] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,471 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/QueueWithOwnRedeliveryDelay] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,473 INFO  [org.jboss.jms.server.destination.TopicService] Topic[/topic/TopicWithOwnRedeliveryDelay] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,478 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/testDistributedQueue] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,480 INFO  [org.jboss.jms.server.destination.TopicService] Topic[/topic/testDistributedTopic] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:47,645 INFO  [org.jboss.resource.connectionmanager.ConnectionFactoryBindingService] Bound ConnectionManager 'jboss.jca:service=ConnectionFactoryBinding,name=JmsXA' to JNDI name 'java:JmsXA'
+2013-06-23 13:27:47,695 INFO  [org.jboss.web.tomcat.service.TomcatDeployer] deploy, ctxPath=/jmx-console, warUrl=.../deploy/jmx-console.war/
+2013-06-23 13:27:48,130 INFO  [org.jboss.deployment.EARDeployer] Init J2EE application: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/deploy/runawfe.ear
+2013-06-23 13:27:59,053 INFO  [org.jboss.jms.server.destination.QueueService] Queue[/queue/jbpmQueue] started, fullSize=200000, pageSize=2000, downCacheSize=2000
+2013-06-23 13:27:59,074 INFO  [org.jboss.resource.connectionmanager.ConnectionFactoryBindingService] Bound ConnectionManager 'jboss.jca:service=DataSourceBinding,name=runawfe-ds' to JNDI name 'java:runawfe-ds'
+2013-06-23 13:27:59,148 INFO  [org.jboss.resource.connectionmanager.ConnectionFactoryBindingService] Bound ConnectionManager 'jboss.jca:service=DataSourceBinding,name=runawfe-archive-ds' to JNDI name 'java:runawfe-archive-ds'
+2013-06-23 13:27:59,440 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:27:59,463 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-bots-4.0.4.jar,name=BotInvokerServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:27:59,544 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.BotInvokerServiceBean ejbName: BotInvokerServiceBean
+2013-06-23 13:27:59,722 INFO  [org.jboss.ejb3.EJB3Deployer] Deployed: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/tmp/deploy/tmp1555133445184975964runawfe.ear-contents/wfe-bots-4.0.4.jar
+2013-06-23 13:28:00,285 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:00,286 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=AuthenticationServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:00,297 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.AuthenticationServiceBean ejbName: AuthenticationServiceBean
+2013-06-23 13:28:00,323 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:00,324 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=AuthorizationServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:00,338 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.AuthorizationServiceBean ejbName: AuthorizationServiceBean
+2013-06-23 13:28:00,380 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:00,381 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=BotServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:00,397 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.BotServiceBean ejbName: BotServiceBean
+2013-06-23 13:28:00,428 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:00,430 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=DefinitionServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:00,463 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.DefinitionServiceBean ejbName: DefinitionServiceBean
+2013-06-23 13:28:00,487 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:00,812 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=ExecutionServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:00,843 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.ExecutionServiceBean ejbName: ExecutionServiceBean
+2013-06-23 13:28:00,873 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:00,875 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=ExecutorServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:00,891 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.ExecutorServiceBean ejbName: ExecutorServiceBean
+2013-06-23 13:28:01,065 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:01,066 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=InitializerServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:01,073 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.InitializerServiceBean ejbName: InitializerServiceBean
+2013-06-23 13:28:01,087 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:01,094 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=ProfileServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:01,103 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.ProfileServiceBean ejbName: ProfileServiceBean
+2013-06-23 13:28:01,125 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.mdb.MDB
+2013-06-23 13:28:01,132 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=ReceiveMessageBean,service=EJB3 with dependencies:
+2013-06-23 13:28:01,146 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.ReceiveMessageBean ejbName: ReceiveMessageBean
+2013-06-23 13:28:01,204 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:01,215 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=RelationServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:01,345 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.RelationServiceBean ejbName: RelationServiceBean
+2013-06-23 13:28:01,412 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:01,989 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=ScriptingServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:02,000 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.ScriptingServiceBean ejbName: ScriptingServiceBean
+2013-06-23 13:28:02,016 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:02,020 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=SubstitutionServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:02,035 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.SubstitutionServiceBean ejbName: SubstitutionServiceBean
+2013-06-23 13:28:02,104 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:02,111 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=SynchronizationServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:02,136 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.SynchronizationServiceBean ejbName: SynchronizationServiceBean
+2013-06-23 13:28:02,159 INFO  [org.jboss.ejb3.JmxKernelAbstraction] creating wrapper delegate for: org.jboss.ejb3.stateless.StatelessContainer
+2013-06-23 13:28:02,162 INFO  [org.jboss.ejb3.JmxKernelAbstraction] installing MBean: jboss.j2ee:ear=runawfe.ear,jar=wfe-service-4.0.4.jar,name=SystemServiceBean,service=EJB3 with dependencies:
+2013-06-23 13:28:02,171 INFO  [org.jboss.ejb3.EJBContainer] STARTED EJB: ru.runa.wfe.service.impl.SystemServiceBean ejbName: SystemServiceBean
+2013-06-23 13:28:02,259 INFO  [org.jboss.ejb3.EJB3Deployer] Deployed: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/tmp/deploy/tmp1555133445184975964runawfe.ear-contents/wfe-service-4.0.4.jar
+2013-06-23 13:28:02,553 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=AuthenticationServiceBean
+2013-06-23 13:28:02,557 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=AuthorizationServiceBean
+2013-06-23 13:28:02,561 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=BotServiceBean
+2013-06-23 13:28:02,564 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=DefinitionServiceBean
+2013-06-23 13:28:02,567 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=ExecutionServiceBean
+2013-06-23 13:28:02,571 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=ExecutorServiceBean
+2013-06-23 13:28:02,595 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=ProfileServiceBean
+2013-06-23 13:28:02,597 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=RelationServiceBean
+2013-06-23 13:28:02,599 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=ScriptingServiceBean
+2013-06-23 13:28:02,601 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=SubstitutionServiceBean
+2013-06-23 13:28:02,604 INFO  [org.jboss.wsf.framework.management.DefaultEndpointRegistry] register: jboss.ws:context=runawfe-wfe-service-4.0.4,endpoint=SystemServiceBean
+2013-06-23 13:28:19,811 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/AuthenticationWebService5688740725434584503.wsdl
+2013-06-23 13:28:20,497 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/AuthorizationWebService2016875198327652122.wsdl
+2013-06-23 13:28:20,526 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/BotWebService1897519215242336983.wsdl
+2013-06-23 13:28:20,585 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/DefinitionWebService7357319594497600385.wsdl
+2013-06-23 13:28:20,647 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/ExecutionWebService527756536600433365.wsdl
+2013-06-23 13:28:20,690 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/ExecutorWebService7844227819350140177.wsdl
+2013-06-23 13:28:20,718 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/ProfileWebService1350391807672980868.wsdl
+2013-06-23 13:28:20,764 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/RelationWebService8638701503265151823.wsdl
+2013-06-23 13:28:20,913 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/ScriptingWebService85904754528641991.wsdl
+2013-06-23 13:28:21,209 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/SubstitutionWebService8639945315354941237.wsdl
+2013-06-23 13:28:21,228 INFO  [org.jboss.wsf.stack.jbws.WSDLFilePublisher] WSDL published to: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/data/wsdl/runawfe.ear/wfe-service-4.0.4.jar/SystemWebService8912765724287346194.wsdl
+2013-06-23 13:28:21,483 INFO  [org.jboss.web.tomcat.service.TomcatDeployer] deploy, ctxPath=/runawfe-wfe-service-4.0.4, warUrl=.../tmp/deploy/runawfe.ear-wfe-service-4.0.4.jar6792123020980564404.war/
+2013-06-23 13:28:21,809 INFO  [org.jboss.web.tomcat.service.TomcatDeployer] deploy, ctxPath=/wfe, warUrl=.../tmp/deploy/tmp1555133445184975964runawfe.ear-contents/wfe-web-4.0.4-exp.war/
+2013-06-23 13:28:22,714 INFO  [ru.runa.common.web.InitializeDBListener] initializing database
+2013-06-23 13:28:23,600 INFO  [org.springframework.context.support.ClassPathXmlApplicationContext] Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@1d57d53: startup date [Sun Jun 23 13:28:23 EEST 2013]; root of context hierarchy
+2013-06-23 13:28:24,006 INFO  [org.springframework.beans.factory.xml.XmlBeanDefinitionReader] Loading XML bean definitions from URL [jar:file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/tmp/deploy/tmp1555133445184975964runawfe.ear-contents/lib/wfe-core-4.0.4.jar!/beanRefContext.xml]
+2013-06-23 13:28:24,632 INFO  [org.springframework.beans.factory.support.DefaultListableBeanFactory] Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@1e950d: defining beans [org.springframework.context.annotation.internalConfigurationAnnotationProcessor,org.springframework.context.annotation.internalAutowiredAnnotationProcessor,org.springframework.context.annotation.internalRequiredAnnotationProcessor,org.springframework.context.annotation.internalCommonAnnotationProcessor,org.springframework.context.annotation.internalPersistenceAnnotationProcessor,ejb3.application.context,org.springframework.context.annotation.ConfigurationClassPostProcessor$ImportAwareBeanPostProcessor#0]; root of factory hierarchy
+2013-06-23 13:28:24,827 INFO  [org.springframework.context.support.ClassPathXmlApplicationContext] Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@24d158: startup date [Sun Jun 23 13:28:24 EEST 2013]; root of context hierarchy
+2013-06-23 13:28:24,834 INFO  [org.springframework.beans.factory.xml.XmlBeanDefinitionReader] Loading XML bean definitions from class path resource [system.context.xml]
+2013-06-23 13:28:25,952 INFO  [org.springframework.beans.factory.config.PropertyPlaceholderConfigurer] Loading properties file from class path resource [system.properties]
+2013-06-23 13:28:26,083 INFO  [org.springframework.beans.factory.support.DefaultListableBeanFactory] Pre-instantiating singletons in org.springframework.beans.factory.support.DefaultListableBeanFactory@12fb1e: defining beans [systemPropertiesConfigurer,hibernateProperties,transactionManager,org.springframework.aop.config.internalAutoProxyCreator,org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0,org.springframework.transaction.interceptor.TransactionInterceptor#0,org.springframework.transaction.config.internalTransactionAdvisor,org.springframework.context.annotation.internalConfigurationAnnotationProcessor,org.springframework.context.annotation.internalAutowiredAnnotationProcessor,org.springframework.context.annotation.internalRequiredAnnotationProcessor,org.springframework.context.annotation.internalCommonAnnotationProcessor,org.springframework.context.annotation.internalPersistenceAnnotationProcessor,sessionFactory,hibernateTemplate,stringToByteArrayConverter,booleanToStringConverter,intToLongConverter,serializableToByteArrayConverter,executorToLongConverter,fileToByteArrayConverter,converters,stringVariableType,largeStringVariableType,booleanVariableType,longVariableType,integerVariableType,doubleVariableType,dateVariableType,bytesVariableType,executorVariableType,fileVariableType,serializableVariableType,variableCreator,batchPresentationDAO,botStationDAO,botDAO,botTaskDAO,constantDAO,deploymentDAO,executorDAO,jobDAO,localizationDAO,nodeProcessDAO,permissionDAO,processDAO,processLogDAO,profileDAO,relationDAO,substitutionDAO,substitutionCriteriaDAO,systemLogDAO,taskDAO,tokenDAO,variableDAO,processDefCacheCtrl,processDefinitionLoader,taskFactory,wfTaskFactory,processFactory,tasklistBuilder,commonLogic,loginModuleConfiguration,authenticationLogic,authorizationLogic,botLogic,executorLogic,profileLogic,relationLogic,substitutionLogic,auditLogic,ldapLogic,definitionLogic,executionLogic,taskLogic,variableLogic,assignmentHelper,adminScriptRunner,initializerLogic,jobExecutorTask,cacheUsageStatisticTask,tasksAssignTask,ldapSynchronizerTask,timerFactory,businessCalendar,org.springframework.context.annotation.ConfigurationClassPostProcessor$ImportAwareBeanPostProcessor#0]; root of factory hierarchy
+2013-06-23 13:28:26,116 INFO  [org.springframework.beans.factory.config.PropertiesFactoryBean] Loading properties file from class path resource [database.properties]
+2013-06-23 13:28:26,306 INFO  [org.springframework.transaction.jta.JtaTransactionManager] Using JTA UserTransaction: org.jboss.ejb3.tx.UserTransactionImpl@1beb3a4
+2013-06-23 13:28:26,309 INFO  [org.springframework.transaction.jta.JtaTransactionManager] Using JTA TransactionManager: com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate@3e3e
+2013-06-23 13:28:27,328 INFO  [org.hibernate.cfg.annotations.Version] Hibernate Annotations 3.2.1.GA
+2013-06-23 13:28:27,380 INFO  [org.hibernate.cfg.Environment] Hibernate 3.2.4.sp1
+2013-06-23 13:28:27,456 INFO  [org.hibernate.cfg.Environment] hibernate.properties not found
+2013-06-23 13:28:27,465 INFO  [org.hibernate.cfg.Environment] Bytecode provider name : javassist
+2013-06-23 13:28:27,481 INFO  [org.hibernate.cfg.Environment] using JDK 1.4 java.sql.Timestamp handling
+2013-06-23 13:28:29,511 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.ProcessLog
+2013-06-23 13:28:29,681 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.audit.ProcessLog on table BPM_LOG
+2013-06-23 13:28:29,938 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.ActionLog
+2013-06-23 13:28:29,993 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.CreateTimerActionLog
+2013-06-23 13:28:29,997 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.NodeLog
+2013-06-23 13:28:29,999 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.NodeEnterLog
+2013-06-23 13:28:30,004 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.NodeLeaveLog
+2013-06-23 13:28:30,009 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.ProcessCancelLog
+2013-06-23 13:28:30,037 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.SystemLog
+2013-06-23 13:28:30,038 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.audit.SystemLog on table SYSTEM_LOG
+2013-06-23 13:28:30,040 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.ProcessDefinitionDeleteLog
+2013-06-23 13:28:30,041 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.ProcessDeleteLog
+2013-06-23 13:28:30,044 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.ProcessEndLog
+2013-06-23 13:28:30,050 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.ProcessStartLog
+2013-06-23 13:28:30,052 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.ReceiveMessageLog
+2013-06-23 13:28:30,054 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.SendMessageLog
+2013-06-23 13:28:30,058 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.SubprocessEndLog
+2013-06-23 13:28:30,059 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.SubprocessStartLog
+2013-06-23 13:28:30,061 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.SwimlaneAssignLog
+2013-06-23 13:28:30,063 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.TaskLog
+2013-06-23 13:28:30,069 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.TaskAssignLog
+2013-06-23 13:28:30,072 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.TaskCreateLog
+2013-06-23 13:28:30,073 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.TaskEndLog
+2013-06-23 13:28:30,075 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.TaskEscalationLog
+2013-06-23 13:28:30,077 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.TaskExpiredLog
+2013-06-23 13:28:30,078 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.TransitionLog
+2013-06-23 13:28:30,083 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.VariableLog
+2013-06-23 13:28:30,085 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.VariableCreateLog
+2013-06-23 13:28:30,100 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.VariableDeleteLog
+2013-06-23 13:28:30,101 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.audit.VariableUpdateLog
+2013-06-23 13:28:30,102 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.bot.Bot
+2013-06-23 13:28:30,103 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.bot.Bot on table BOT
+2013-06-23 13:28:30,144 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.bot.BotStation
+2013-06-23 13:28:30,147 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.bot.BotStation on table BOT_STATION
+2013-06-23 13:28:30,191 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.bot.BotTask
+2013-06-23 13:28:30,195 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.bot.BotTask on table BOT_TASK
+2013-06-23 13:28:30,198 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.commons.dao.Constant
+2013-06-23 13:28:30,199 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.commons.dao.Constant on table WFE_CONSTANTS
+2013-06-23 13:28:30,202 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.commons.dao.Localization
+2013-06-23 13:28:30,203 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.commons.dao.Localization on table LOCALIZATION
+2013-06-23 13:28:30,205 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.definition.Deployment
+2013-06-23 13:28:30,206 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.definition.Deployment on table BPM_PROCESS_DEFINITION
+2013-06-23 13:28:30,256 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.execution.NodeProcess
+2013-06-23 13:28:30,279 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.execution.NodeProcess on table BPM_SUBPROCESS
+2013-06-23 13:28:30,421 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.execution.Process
+2013-06-23 13:28:30,422 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.execution.Process on table BPM_PROCESS
+2013-06-23 13:28:30,535 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.execution.Swimlane
+2013-06-23 13:28:30,541 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.execution.Swimlane on table BPM_SWIMLANE
+2013-06-23 13:28:30,545 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.execution.Token
+2013-06-23 13:28:30,545 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.execution.Token on table BPM_TOKEN
+2013-06-23 13:28:30,552 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.job.Job
+2013-06-23 13:28:30,569 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.job.Job on table BPM_JOB
+2013-06-23 13:28:30,572 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.job.Timer
+2013-06-23 13:28:30,579 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.presentation.BatchPresentation
+2013-06-23 13:28:30,605 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.presentation.BatchPresentation on table BATCH_PRESENTATION
+2013-06-23 13:28:30,609 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.relation.Relation
+2013-06-23 13:28:30,610 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.relation.Relation on table EXECUTOR_RELATION
+2013-06-23 13:28:30,612 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.relation.RelationPair
+2013-06-23 13:28:30,613 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.relation.RelationPair on table EXECUTOR_RELATION_PAIR
+2013-06-23 13:28:30,616 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.security.dao.PermissionMapping
+2013-06-23 13:28:30,618 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.security.dao.PermissionMapping on table PERMISSION_MAPPING
+2013-06-23 13:28:30,624 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.security.dao.PrivelegedMapping
+2013-06-23 13:28:30,624 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.security.dao.PrivelegedMapping on table PRIVELEGED_MAPPING
+2013-06-23 13:28:30,627 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.ss.Substitution
+2013-06-23 13:28:30,628 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.ss.Substitution on table SUBSTITUTION
+2013-06-23 13:28:30,632 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.ss.SubstitutionCriteria
+2013-06-23 13:28:30,633 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.ss.SubstitutionCriteria on table SUBSTITUTION_CRITERIA
+2013-06-23 13:28:30,789 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.ss.SubstitutionCriteriaNotEquals
+2013-06-23 13:28:30,792 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.ss.SubstitutionCriteriaSwimlane
+2013-06-23 13:28:30,793 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.ss.TerminatorSubstitution
+2013-06-23 13:28:30,794 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.task.Task
+2013-06-23 13:28:30,794 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.task.Task on table BPM_TASK
+2013-06-23 13:28:30,800 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.user.Executor
+2013-06-23 13:28:30,802 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.user.Executor on table EXECUTOR
+2013-06-23 13:28:30,804 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.user.Actor
+2013-06-23 13:28:30,807 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.user.dao.ActorPassword
+2013-06-23 13:28:30,807 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.user.dao.ActorPassword on table ACTOR_PASSWORD
+2013-06-23 13:28:30,809 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.user.Group
+2013-06-23 13:28:30,811 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.user.TemporaryGroup
+2013-06-23 13:28:30,812 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.user.EscalationGroup
+2013-06-23 13:28:30,815 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.user.ExecutorGroupMembership
+2013-06-23 13:28:30,817 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.user.ExecutorGroupMembership on table EXECUTOR_GROUP_MEMBER
+2013-06-23 13:28:30,821 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.user.Profile
+2013-06-23 13:28:30,822 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.user.Profile on table PROFILE
+2013-06-23 13:28:30,826 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.var.Variable
+2013-06-23 13:28:30,827 INFO  [org.hibernate.cfg.annotations.EntityBinder] Bind entity ru.runa.wfe.var.Variable on table BPM_VARIABLE
+2013-06-23 13:28:30,835 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.var.impl.ByteArrayVariable
+2013-06-23 13:28:30,837 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.var.impl.DateVariable
+2013-06-23 13:28:30,854 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.var.impl.DoubleVariable
+2013-06-23 13:28:30,855 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.var.impl.LongVariable
+2013-06-23 13:28:30,857 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.var.impl.NullVariable
+2013-06-23 13:28:30,858 INFO  [org.hibernate.cfg.AnnotationBinder] Binding entity from annotated class: ru.runa.wfe.var.impl.StringVariable
+2013-06-23 13:28:30,886 INFO  [org.hibernate.cfg.annotations.CollectionBinder] Mapping collection: ru.runa.wfe.user.Profile.batchPresentations -> BATCH_PRESENTATION
+2013-06-23 13:28:30,892 INFO  [org.hibernate.cfg.annotations.CollectionBinder] Mapping collection: ru.runa.wfe.execution.Token.children -> BPM_TOKEN
+2013-06-23 13:28:30,893 INFO  [org.hibernate.cfg.annotations.CollectionBinder] Mapping collection: ru.runa.wfe.execution.Process.tasks -> BPM_TASK
+2013-06-23 13:28:30,894 INFO  [org.hibernate.cfg.annotations.CollectionBinder] Mapping collection: ru.runa.wfe.execution.Process.swimlanes -> BPM_SWIMLANE
+2013-06-23 13:28:31,098 INFO  [org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean] Building new Hibernate SessionFactory
+2013-06-23 13:28:31,199 INFO  [org.hibernate.util.NamingHelper] JNDI InitialContext properties:{}
+2013-06-23 13:28:31,200 INFO  [org.hibernate.connection.DatasourceConnectionProvider] Using datasource: java:/runawfe-ds
+2013-06-23 13:28:31,212 INFO  [org.hibernate.cfg.SettingsFactory] RDBMS: HSQL Database Engine, version: 1.8.0
+2013-06-23 13:28:31,212 INFO  [org.hibernate.cfg.SettingsFactory] JDBC driver: HSQL Database Engine Driver, version: 1.8.0
+2013-06-23 13:28:31,267 INFO  [org.hibernate.dialect.Dialect] Using dialect: org.hibernate.dialect.HSQLDialect
+2013-06-23 13:28:31,280 INFO  [org.hibernate.transaction.TransactionFactoryFactory] Transaction strategy: org.hibernate.transaction.JTATransactionFactory
+2013-06-23 13:28:31,287 INFO  [org.hibernate.util.NamingHelper] JNDI InitialContext properties:{}
+2013-06-23 13:28:31,291 INFO  [org.hibernate.transaction.TransactionManagerLookupFactory] instantiating TransactionManagerLookup: org.hibernate.transaction.JBossTransactionManagerLookup
+2013-06-23 13:28:31,298 INFO  [org.hibernate.transaction.TransactionManagerLookupFactory] instantiated TransactionManagerLookup
+2013-06-23 13:28:31,299 INFO  [org.hibernate.transaction.TransactionManagerLookupFactory] instantiating TransactionManagerLookup: org.hibernate.transaction.JBossTransactionManagerLookup
+2013-06-23 13:28:31,299 INFO  [org.hibernate.transaction.TransactionManagerLookupFactory] instantiated TransactionManagerLookup
+2013-06-23 13:28:31,299 INFO  [org.hibernate.cfg.SettingsFactory] Automatic flush during beforeCompletion(): disabled
+2013-06-23 13:28:31,300 INFO  [org.hibernate.cfg.SettingsFactory] Automatic session close at end of transaction: disabled
+2013-06-23 13:28:31,300 INFO  [org.hibernate.cfg.SettingsFactory] JDBC batch size: 32
+2013-06-23 13:28:31,300 INFO  [org.hibernate.cfg.SettingsFactory] JDBC batch updates for versioned data: disabled
+2013-06-23 13:28:31,301 INFO  [org.hibernate.cfg.SettingsFactory] Batcher factory: net.bull.javamelody.HibernateBatcherFactory
+2013-06-23 13:28:31,320 INFO  [org.hibernate.cfg.SettingsFactory] Scrollable result sets: enabled
+2013-06-23 13:28:31,321 INFO  [org.hibernate.cfg.SettingsFactory] JDBC3 getGeneratedKeys(): disabled
+2013-06-23 13:28:31,321 INFO  [org.hibernate.cfg.SettingsFactory] JDBC result set fetch size: 32
+2013-06-23 13:28:31,321 INFO  [org.hibernate.cfg.SettingsFactory] Connection release mode: auto
+2013-06-23 13:28:31,325 INFO  [org.hibernate.cfg.SettingsFactory] Default batch fetch size: 1
+2013-06-23 13:28:31,326 INFO  [org.hibernate.cfg.SettingsFactory] Generate SQL with comments: enabled
+2013-06-23 13:28:31,326 INFO  [org.hibernate.cfg.SettingsFactory] Order SQL updates by primary key: disabled
+2013-06-23 13:28:31,326 INFO  [org.hibernate.cfg.SettingsFactory] Order SQL inserts for batching: disabled
+2013-06-23 13:28:31,327 INFO  [org.hibernate.cfg.SettingsFactory] Query translator: org.hibernate.hql.ast.ASTQueryTranslatorFactory
+2013-06-23 13:28:31,337 INFO  [org.hibernate.hql.ast.ASTQueryTranslatorFactory] Using ASTQueryTranslatorFactory
+2013-06-23 13:28:31,338 INFO  [org.hibernate.cfg.SettingsFactory] Query language substitutions: {}
+2013-06-23 13:28:31,338 INFO  [org.hibernate.cfg.SettingsFactory] JPA-QL strict compliance: disabled
+2013-06-23 13:28:31,339 INFO  [org.hibernate.cfg.SettingsFactory] Second-level cache: enabled
+2013-06-23 13:28:31,339 INFO  [org.hibernate.cfg.SettingsFactory] Query cache: enabled
+2013-06-23 13:28:31,340 INFO  [org.hibernate.cfg.SettingsFactory] Cache provider: org.hibernate.cache.EhCacheProvider
+2013-06-23 13:28:31,349 INFO  [org.hibernate.cfg.SettingsFactory] Optimize cache for minimal puts: disabled
+2013-06-23 13:28:31,350 INFO  [org.hibernate.cfg.SettingsFactory] Structured second-level cache entries: disabled
+2013-06-23 13:28:31,350 INFO  [org.hibernate.cfg.SettingsFactory] Query cache factory: org.hibernate.cache.StandardQueryCacheFactory
+2013-06-23 13:28:31,375 INFO  [org.hibernate.cfg.SettingsFactory] Statistics: disabled
+2013-06-23 13:28:31,375 INFO  [org.hibernate.cfg.SettingsFactory] Deleted entity synthetic identifier rollback: disabled
+2013-06-23 13:28:31,376 INFO  [org.hibernate.cfg.SettingsFactory] Default entity-mode: pojo
+2013-06-23 13:28:31,377 INFO  [org.hibernate.cfg.SettingsFactory] Named query checking : enabled
+2013-06-23 13:28:31,466 INFO  [org.hibernate.impl.SessionFactoryImpl] building session factory
+2013-06-23 13:28:31,543 ERROR [STDERR] SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+2013-06-23 13:28:31,544 ERROR [STDERR] SLF4J: Defaulting to no-operation (NOP) logger implementation
+2013-06-23 13:28:31,544 ERROR [STDERR] SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+2013-06-23 13:28:32,025 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.audit.ProcessLog]; using defaults.
+2013-06-23 13:28:32,526 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.bot.BotStation]; using defaults.
+2013-06-23 13:28:32,535 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.commons.dao.Constant]; using defaults.
+2013-06-23 13:28:32,563 WARN  [org.hibernate.cache.CacheFactory] read-only cache configured for mutable class: ru.runa.wfe.security.dao.PrivelegedMapping
+2013-06-23 13:28:32,564 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.security.dao.PrivelegedMapping]; using defaults.
+2013-06-23 13:28:32,572 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.ss.Substitution]; using defaults.
+2013-06-23 13:28:32,596 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.execution.Process]; using defaults.
+2013-06-23 13:28:32,662 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.job.Job]; using defaults.
+2013-06-23 13:28:32,701 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.user.Executor]; using defaults.
+2013-06-23 13:28:32,774 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.relation.Relation]; using defaults.
+2013-06-23 13:28:32,818 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.var.Variable]; using defaults.
+2013-06-23 13:28:32,840 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.ss.SubstitutionCriteria]; using defaults.
+2013-06-23 13:28:32,867 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.bot.Bot]; using defaults.
+2013-06-23 13:28:32,934 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.audit.SystemLog]; using defaults.
+2013-06-23 13:28:32,954 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.task.Task]; using defaults.
+2013-06-23 13:28:32,975 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.definition.Deployment]; using defaults.
+2013-06-23 13:28:33,026 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.execution.Token]; using defaults.
+2013-06-23 13:28:33,040 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.security.dao.PermissionMapping]; using defaults.
+2013-06-23 13:28:33,094 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.commons.dao.Localization]; using defaults.
+2013-06-23 13:28:33,123 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.user.Profile]; using defaults.
+2013-06-23 13:28:33,198 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.user.ExecutorGroupMembership]; using defaults.
+2013-06-23 13:28:33,261 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.relation.RelationPair]; using defaults.
+2013-06-23 13:28:33,350 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.execution.NodeProcess]; using defaults.
+2013-06-23 13:28:33,356 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.user.dao.ActorPassword]; using defaults.
+2013-06-23 13:28:33,361 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.bot.BotTask]; using defaults.
+2013-06-23 13:28:33,368 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.execution.Swimlane]; using defaults.
+2013-06-23 13:28:33,377 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [ru.runa.wfe.presentation.BatchPresentation]; using defaults.
+2013-06-23 13:28:33,676 INFO  [org.hibernate.impl.SessionFactoryObjectFactory] Not binding factory to JNDI, no JNDI name configured
+2013-06-23 13:28:33,687 INFO  [org.hibernate.util.NamingHelper] JNDI InitialContext properties:{}
+2013-06-23 13:28:33,692 INFO  [org.hibernate.cache.UpdateTimestampsCache] starting update timestamps cache at region: org.hibernate.cache.UpdateTimestampsCache
+2013-06-23 13:28:33,693 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [org.hibernate.cache.UpdateTimestampsCache]; using defaults.
+2013-06-23 13:28:33,697 INFO  [org.hibernate.cache.StandardQueryCache] starting query cache at region: org.hibernate.cache.StandardQueryCache
+2013-06-23 13:28:33,698 WARN  [org.hibernate.cache.EhCacheProvider] Could not find configuration [org.hibernate.cache.StandardQueryCache]; using defaults.
+2013-06-23 13:28:34,589 WARN  [org.hibernate.util.JDBCExceptionReporter] SQL Error: -22, SQLState: S0002
+2013-06-23 13:28:34,590 ERROR [org.hibernate.util.JDBCExceptionReporter] Table not found in statement [/* criteria query */ select this_.ID as ID6_0_, this_.NAME as NAME6_0_, this_.VALUE as VALUE6_0_ from LOCALIZATION this_]
+2013-06-23 13:28:34,599 ERROR [ru.runa.wfe.commons.dao.GenericDAO] localization was not loaded (if this exception occurs in empty DB just ignore it)
+2013-06-23 13:28:34,602 DEBUG [ru.runa.wfe.commons.dao.GenericDAO] 
+org.springframework.dao.InvalidDataAccessResourceUsageException: could not execute query; SQL [/* criteria query */ select this_.ID as ID6_0_, this_.NAME as NAME6_0_, this_.VALUE as VALUE6_0_ from LOCALIZATION this_]; nested exception is org.hibernate.exception.SQLGrammarException: could not execute query
+	at org.springframework.orm.hibernate3.SessionFactoryUtils.convertHibernateAccessException(SessionFactoryUtils.java:635)
+	at org.springframework.orm.hibernate3.HibernateAccessor.convertHibernateAccessException(HibernateAccessor.java:412)
+	at org.springframework.orm.hibernate3.HibernateTemplate.doExecute(HibernateTemplate.java:411)
+	at org.springframework.orm.hibernate3.HibernateTemplate.executeWithNativeSession(HibernateTemplate.java:374)
+	at org.springframework.orm.hibernate3.HibernateTemplate.loadAll(HibernateTemplate.java:584)
+	at ru.runa.wfe.commons.dao.GenericDAO.getAll(GenericDAO.java:79)
+	at ru.runa.wfe.commons.dao.LocalizationDAO.initDao(LocalizationDAO.java:21)
+	at org.springframework.dao.support.DaoSupport.afterPropertiesSet(DaoSupport.java:48)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1514)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1452)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:519)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:456)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:294)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:225)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:291)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:193)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:609)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:918)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:469)
+	at org.springframework.context.support.ClassPathXmlApplicationContext.<init>(ClassPathXmlApplicationContext.java:139)
+	at org.springframework.context.support.ClassPathXmlApplicationContext.<init>(ClassPathXmlApplicationContext.java:93)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:57)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:525)
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:147)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:110)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:280)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1035)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:939)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:485)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:456)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:294)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:225)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:291)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:193)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:609)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:918)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:469)
+	at org.springframework.context.access.ContextSingletonBeanFactoryLocator.initializeDefinition(ContextSingletonBeanFactoryLocator.java:143)
+	at org.springframework.beans.factory.access.SingletonBeanFactoryLocator.useBeanFactory(SingletonBeanFactoryLocator.java:381)
+	at org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor.getBeanFactoryReference(SpringBeanAutowiringInterceptor.java:156)
+	at org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor.getBeanFactory(SpringBeanAutowiringInterceptor.java:137)
+	at org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor.doAutowireBean(SpringBeanAutowiringInterceptor.java:117)
+	at org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor.autowireBean(SpringBeanAutowiringInterceptor.java:97)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.ejb3.interceptor.LifecycleInvocationContextImpl.proceed(LifecycleInvocationContextImpl.java:131)
+	at org.jboss.ejb3.interceptor.LifecycleInterceptorHandler.postConstruct(LifecycleInterceptorHandler.java:109)
+	at org.jboss.ejb3.EJBContainer.invokePostConstruct(EJBContainer.java:623)
+	at org.jboss.ejb3.AbstractPool.create(AbstractPool.java:131)
+	at org.jboss.ejb3.InfinitePool.get(InfinitePool.java:49)
+	at org.jboss.ejb3.ThreadlocalPool.create(ThreadlocalPool.java:50)
+	at org.jboss.ejb3.ThreadlocalPool.get(ThreadlocalPool.java:90)
+	at org.jboss.ejb3.stateless.StatelessInstanceInterceptor.invoke(StatelessInstanceInterceptor.java:54)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.aspects.security.AuthenticationInterceptor.invoke(AuthenticationInterceptor.java:77)
+	at org.jboss.ejb3.security.Ejb3AuthenticationInterceptor.invoke(Ejb3AuthenticationInterceptor.java:110)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.ENCPropagationInterceptor.invoke(ENCPropagationInterceptor.java:46)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.asynchronous.AsynchronousInterceptor.invoke(AsynchronousInterceptor.java:106)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.stateless.StatelessContainer.dynamicInvoke(StatelessContainer.java:304)
+	at org.jboss.ejb3.remoting.IsLocalInterceptor.invokeLocal(IsLocalInterceptor.java:81)
+	at org.jboss.ejb3.remoting.IsLocalInterceptor.invoke(IsLocalInterceptor.java:72)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.stateless.StatelessRemoteProxy.invoke(StatelessRemoteProxy.java:107)
+	at com.sun.proxy.$Proxy107.onSystemStartup(Unknown Source)
+	at ru.runa.wfe.service.delegate.InitializerServiceDelegate.onSystemStartup(InitializerServiceDelegate.java:37)
+	at ru.runa.common.web.InitializeDBListener.contextInitialized(InitializeDBListener.java:18)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:3856)
+	at org.apache.catalina.core.StandardContext.start(StandardContext.java:4361)
+	at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:790)
+	at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:770)
+	at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:553)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:296)
+	at org.jboss.mx.server.RawDynamicInvoker.invoke(RawDynamicInvoker.java:164)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.apache.catalina.core.StandardContext.init(StandardContext.java:5312)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:296)
+	at org.jboss.mx.server.RawDynamicInvoker.invoke(RawDynamicInvoker.java:164)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.web.tomcat.service.TomcatDeployer.performDeployInternal(TomcatDeployer.java:301)
+	at org.jboss.web.tomcat.service.TomcatDeployer.performDeploy(TomcatDeployer.java:104)
+	at org.jboss.web.AbstractWebDeployer.start(AbstractWebDeployer.java:375)
+	at org.jboss.web.WebModule.startModule(WebModule.java:83)
+	at org.jboss.web.WebModule.startService(WebModule.java:61)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalStart(ServiceMBeanSupport.java:289)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalLifecycle(ServiceMBeanSupport.java:245)
+	at sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.system.ServiceController$ServiceProxy.invoke(ServiceController.java:978)
+	at com.sun.proxy.$Proxy0.start(Unknown Source)
+	at org.jboss.system.ServiceController.start(ServiceController.java:417)
+	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy43.start(Unknown Source)
+	at org.jboss.web.AbstractWebContainer.start(AbstractWebContainer.java:466)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.interceptor.AbstractInterceptor.invoke(AbstractInterceptor.java:133)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(ModelMBeanOperationInterceptor.java:142)
+	at org.jboss.mx.interceptor.DynamicInterceptor.invoke(DynamicInterceptor.java:97)
+	at org.jboss.system.InterceptorServiceMBeanSupport.invokeNext(InterceptorServiceMBeanSupport.java:238)
+	at org.jboss.wsf.container.jboss42.DeployerInterceptor.start(DeployerInterceptor.java:87)
+	at org.jboss.deployment.SubDeployerInterceptorSupport$XMBeanInterceptor.start(SubDeployerInterceptorSupport.java:188)
+	at org.jboss.deployment.SubDeployerInterceptor.invoke(SubDeployerInterceptor.java:95)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy44.start(Unknown Source)
+	at org.jboss.deployment.MainDeployer.start(MainDeployer.java:1025)
+	at org.jboss.deployment.MainDeployer.start(MainDeployer.java:1015)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:819)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:782)
+	at sun.reflect.GeneratedMethodAccessor49.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.interceptor.AbstractInterceptor.invoke(AbstractInterceptor.java:133)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(ModelMBeanOperationInterceptor.java:142)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy9.deploy(Unknown Source)
+	at org.jboss.deployment.scanner.URLDeploymentScanner.deploy(URLDeploymentScanner.java:421)
+	at org.jboss.deployment.scanner.URLDeploymentScanner.scan(URLDeploymentScanner.java:634)
+	at org.jboss.deployment.scanner.AbstractDeploymentScanner$ScannerThread.doScan(AbstractDeploymentScanner.java:263)
+	at org.jboss.deployment.scanner.AbstractDeploymentScanner.startService(AbstractDeploymentScanner.java:336)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalStart(ServiceMBeanSupport.java:289)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalLifecycle(ServiceMBeanSupport.java:245)
+	at sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.system.ServiceController$ServiceProxy.invoke(ServiceController.java:978)
+	at com.sun.proxy.$Proxy0.start(Unknown Source)
+	at org.jboss.system.ServiceController.start(ServiceController.java:417)
+	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy4.start(Unknown Source)
+	at org.jboss.deployment.SARDeployer.start(SARDeployer.java:304)
+	at org.jboss.deployment.MainDeployer.start(MainDeployer.java:1025)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:819)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:782)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:766)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.interceptor.AbstractInterceptor.invoke(AbstractInterceptor.java:133)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(ModelMBeanOperationInterceptor.java:142)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy5.deploy(Unknown Source)
+	at org.jboss.system.server.ServerImpl.doStart(ServerImpl.java:482)
+	at org.jboss.system.server.ServerImpl.start(ServerImpl.java:362)
+	at org.jboss.Main.boot(Main.java:200)
+	at org.jboss.Main$1.run(Main.java:508)
+	at java.lang.Thread.run(Thread.java:722)
+Caused by: org.hibernate.exception.SQLGrammarException: could not execute query
+	at org.hibernate.exception.SQLStateConverter.convert(SQLStateConverter.java:67)
+	at org.hibernate.exception.JDBCExceptionHelper.convert(JDBCExceptionHelper.java:43)
+	at org.hibernate.loader.Loader.doList(Loader.java:2223)
+	at org.hibernate.loader.Loader.listIgnoreQueryCache(Loader.java:2104)
+	at org.hibernate.loader.Loader.list(Loader.java:2099)
+	at org.hibernate.loader.criteria.CriteriaLoader.list(CriteriaLoader.java:94)
+	at org.hibernate.impl.SessionImpl.list(SessionImpl.java:1569)
+	at org.hibernate.impl.CriteriaImpl.list(CriteriaImpl.java:283)
+	at org.springframework.orm.hibernate3.HibernateTemplate$5.doInHibernate(HibernateTemplate.java:590)
+	at org.springframework.orm.hibernate3.HibernateTemplate$5.doInHibernate(HibernateTemplate.java:1)
+	at org.springframework.orm.hibernate3.HibernateTemplate.doExecute(HibernateTemplate.java:406)
+	... 206 more
+Caused by: java.sql.SQLException: Table not found in statement [/* criteria query */ select this_.ID as ID6_0_, this_.NAME as NAME6_0_, this_.VALUE as VALUE6_0_ from LOCALIZATION this_]
+	at org.hsqldb.jdbc.Util.throwError(Unknown Source)
+	at org.hsqldb.jdbc.jdbcPreparedStatement.<init>(Unknown Source)
+	at org.hsqldb.jdbc.jdbcConnection.prepareStatement(Unknown Source)
+	at org.jboss.resource.adapter.jdbc.BaseWrapperManagedConnection.doPrepareStatement(BaseWrapperManagedConnection.java:449)
+	at org.jboss.resource.adapter.jdbc.BaseWrapperManagedConnection.prepareStatement(BaseWrapperManagedConnection.java:437)
+	at org.jboss.resource.adapter.jdbc.WrappedConnection.prepareStatement(WrappedConnection.java:243)
+	at org.hibernate.jdbc.AbstractBatcher.getPreparedStatement(AbstractBatcher.java:505)
+	at org.hibernate.jdbc.AbstractBatcher.getPreparedStatement(AbstractBatcher.java:423)
+	at org.hibernate.jdbc.AbstractBatcher.prepareQueryStatement(AbstractBatcher.java:139)
+	at net.bull.javamelody.HibernateBatcherFactory$HibernateBatchingBatcher.prepareQueryStatement(HibernateBatcherFactory.java:71)
+	at org.hibernate.loader.Loader.prepareQueryStatement(Loader.java:1547)
+	at org.hibernate.loader.Loader.doQuery(Loader.java:673)
+	at org.hibernate.loader.Loader.doQueryAndInitializeNonLazyCollections(Loader.java:236)
+	at org.hibernate.loader.Loader.doList(Loader.java:2220)
+	... 214 more
+2013-06-23 13:28:35,419 WARN  [org.hibernate.util.JDBCExceptionReporter] SQL Error: -22, SQLState: S0002
+2013-06-23 13:28:35,420 ERROR [org.hibernate.util.JDBCExceptionReporter] Table not found in statement [/* from PrivelegedMapping m */ select priveleged0_.ID as ID17_, priveleged0_.TYPE as TYPE17_, priveleged0_.EXECUTOR_ID as EXECUTOR3_17_ from PRIVELEGED_MAPPING priveleged0_]
+2013-06-23 13:28:35,420 ERROR [ru.runa.wfe.commons.dao.CommonDAO] priveleged executors was not loaded (if this exception occurs in empty DB just ignore it)
+2013-06-23 13:28:35,421 DEBUG [ru.runa.wfe.commons.dao.CommonDAO] 
+org.springframework.dao.InvalidDataAccessResourceUsageException: could not execute query; SQL [select priveleged0_.ID as ID17_, priveleged0_.TYPE as TYPE17_, priveleged0_.EXECUTOR_ID as EXECUTOR3_17_ from PRIVELEGED_MAPPING priveleged0_]; nested exception is org.hibernate.exception.SQLGrammarException: could not execute query
+	at org.springframework.orm.hibernate3.SessionFactoryUtils.convertHibernateAccessException(SessionFactoryUtils.java:635)
+	at org.springframework.orm.hibernate3.HibernateAccessor.convertHibernateAccessException(HibernateAccessor.java:412)
+	at org.springframework.orm.hibernate3.HibernateTemplate.doExecute(HibernateTemplate.java:411)
+	at org.springframework.orm.hibernate3.HibernateTemplate.executeWithNativeSession(HibernateTemplate.java:374)
+	at org.springframework.orm.hibernate3.HibernateTemplate.find(HibernateTemplate.java:912)
+	at org.springframework.orm.hibernate3.HibernateTemplate.find(HibernateTemplate.java:904)
+	at ru.runa.wfe.security.dao.PermissionDAO.initDao(PermissionDAO.java:69)
+	at org.springframework.dao.support.DaoSupport.afterPropertiesSet(DaoSupport.java:48)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1514)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1452)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:519)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:456)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:294)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:225)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:291)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:193)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:609)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:918)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:469)
+	at org.springframework.context.support.ClassPathXmlApplicationContext.<init>(ClassPathXmlApplicationContext.java:139)
+	at org.springframework.context.support.ClassPathXmlApplicationContext.<init>(ClassPathXmlApplicationContext.java:93)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:57)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:525)
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:147)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:110)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:280)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1035)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:939)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:485)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:456)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:294)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:225)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:291)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:193)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:609)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:918)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:469)
+	at org.springframework.context.access.ContextSingletonBeanFactoryLocator.initializeDefinition(ContextSingletonBeanFactoryLocator.java:143)
+	at org.springframework.beans.factory.access.SingletonBeanFactoryLocator.useBeanFactory(SingletonBeanFactoryLocator.java:381)
+	at org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor.getBeanFactoryReference(SpringBeanAutowiringInterceptor.java:156)
+	at org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor.getBeanFactory(SpringBeanAutowiringInterceptor.java:137)
+	at org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor.doAutowireBean(SpringBeanAutowiringInterceptor.java:117)
+	at org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor.autowireBean(SpringBeanAutowiringInterceptor.java:97)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.ejb3.interceptor.LifecycleInvocationContextImpl.proceed(LifecycleInvocationContextImpl.java:131)
+	at org.jboss.ejb3.interceptor.LifecycleInterceptorHandler.postConstruct(LifecycleInterceptorHandler.java:109)
+	at org.jboss.ejb3.EJBContainer.invokePostConstruct(EJBContainer.java:623)
+	at org.jboss.ejb3.AbstractPool.create(AbstractPool.java:131)
+	at org.jboss.ejb3.InfinitePool.get(InfinitePool.java:49)
+	at org.jboss.ejb3.ThreadlocalPool.create(ThreadlocalPool.java:50)
+	at org.jboss.ejb3.ThreadlocalPool.get(ThreadlocalPool.java:90)
+	at org.jboss.ejb3.stateless.StatelessInstanceInterceptor.invoke(StatelessInstanceInterceptor.java:54)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.aspects.security.AuthenticationInterceptor.invoke(AuthenticationInterceptor.java:77)
+	at org.jboss.ejb3.security.Ejb3AuthenticationInterceptor.invoke(Ejb3AuthenticationInterceptor.java:110)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.ENCPropagationInterceptor.invoke(ENCPropagationInterceptor.java:46)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.asynchronous.AsynchronousInterceptor.invoke(AsynchronousInterceptor.java:106)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.stateless.StatelessContainer.dynamicInvoke(StatelessContainer.java:304)
+	at org.jboss.ejb3.remoting.IsLocalInterceptor.invokeLocal(IsLocalInterceptor.java:81)
+	at org.jboss.ejb3.remoting.IsLocalInterceptor.invoke(IsLocalInterceptor.java:72)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.stateless.StatelessRemoteProxy.invoke(StatelessRemoteProxy.java:107)
+	at com.sun.proxy.$Proxy107.onSystemStartup(Unknown Source)
+	at ru.runa.wfe.service.delegate.InitializerServiceDelegate.onSystemStartup(InitializerServiceDelegate.java:37)
+	at ru.runa.common.web.InitializeDBListener.contextInitialized(InitializeDBListener.java:18)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:3856)
+	at org.apache.catalina.core.StandardContext.start(StandardContext.java:4361)
+	at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:790)
+	at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:770)
+	at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:553)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:296)
+	at org.jboss.mx.server.RawDynamicInvoker.invoke(RawDynamicInvoker.java:164)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.apache.catalina.core.StandardContext.init(StandardContext.java:5312)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:296)
+	at org.jboss.mx.server.RawDynamicInvoker.invoke(RawDynamicInvoker.java:164)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.web.tomcat.service.TomcatDeployer.performDeployInternal(TomcatDeployer.java:301)
+	at org.jboss.web.tomcat.service.TomcatDeployer.performDeploy(TomcatDeployer.java:104)
+	at org.jboss.web.AbstractWebDeployer.start(AbstractWebDeployer.java:375)
+	at org.jboss.web.WebModule.startModule(WebModule.java:83)
+	at org.jboss.web.WebModule.startService(WebModule.java:61)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalStart(ServiceMBeanSupport.java:289)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalLifecycle(ServiceMBeanSupport.java:245)
+	at sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.system.ServiceController$ServiceProxy.invoke(ServiceController.java:978)
+	at com.sun.proxy.$Proxy0.start(Unknown Source)
+	at org.jboss.system.ServiceController.start(ServiceController.java:417)
+	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy43.start(Unknown Source)
+	at org.jboss.web.AbstractWebContainer.start(AbstractWebContainer.java:466)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.interceptor.AbstractInterceptor.invoke(AbstractInterceptor.java:133)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(ModelMBeanOperationInterceptor.java:142)
+	at org.jboss.mx.interceptor.DynamicInterceptor.invoke(DynamicInterceptor.java:97)
+	at org.jboss.system.InterceptorServiceMBeanSupport.invokeNext(InterceptorServiceMBeanSupport.java:238)
+	at org.jboss.wsf.container.jboss42.DeployerInterceptor.start(DeployerInterceptor.java:87)
+	at org.jboss.deployment.SubDeployerInterceptorSupport$XMBeanInterceptor.start(SubDeployerInterceptorSupport.java:188)
+	at org.jboss.deployment.SubDeployerInterceptor.invoke(SubDeployerInterceptor.java:95)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy44.start(Unknown Source)
+	at org.jboss.deployment.MainDeployer.start(MainDeployer.java:1025)
+	at org.jboss.deployment.MainDeployer.start(MainDeployer.java:1015)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:819)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:782)
+	at sun.reflect.GeneratedMethodAccessor49.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.interceptor.AbstractInterceptor.invoke(AbstractInterceptor.java:133)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(ModelMBeanOperationInterceptor.java:142)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy9.deploy(Unknown Source)
+	at org.jboss.deployment.scanner.URLDeploymentScanner.deploy(URLDeploymentScanner.java:421)
+	at org.jboss.deployment.scanner.URLDeploymentScanner.scan(URLDeploymentScanner.java:634)
+	at org.jboss.deployment.scanner.AbstractDeploymentScanner$ScannerThread.doScan(AbstractDeploymentScanner.java:263)
+	at org.jboss.deployment.scanner.AbstractDeploymentScanner.startService(AbstractDeploymentScanner.java:336)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalStart(ServiceMBeanSupport.java:289)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalLifecycle(ServiceMBeanSupport.java:245)
+	at sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.system.ServiceController$ServiceProxy.invoke(ServiceController.java:978)
+	at com.sun.proxy.$Proxy0.start(Unknown Source)
+	at org.jboss.system.ServiceController.start(ServiceController.java:417)
+	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy4.start(Unknown Source)
+	at org.jboss.deployment.SARDeployer.start(SARDeployer.java:304)
+	at org.jboss.deployment.MainDeployer.start(MainDeployer.java:1025)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:819)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:782)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:766)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.interceptor.AbstractInterceptor.invoke(AbstractInterceptor.java:133)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(ModelMBeanOperationInterceptor.java:142)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy5.deploy(Unknown Source)
+	at org.jboss.system.server.ServerImpl.doStart(ServerImpl.java:482)
+	at org.jboss.system.server.ServerImpl.start(ServerImpl.java:362)
+	at org.jboss.Main.boot(Main.java:200)
+	at org.jboss.Main$1.run(Main.java:508)
+	at java.lang.Thread.run(Thread.java:722)
+Caused by: org.hibernate.exception.SQLGrammarException: could not execute query
+	at org.hibernate.exception.SQLStateConverter.convert(SQLStateConverter.java:67)
+	at org.hibernate.exception.JDBCExceptionHelper.convert(JDBCExceptionHelper.java:43)
+	at org.hibernate.loader.Loader.doList(Loader.java:2223)
+	at org.hibernate.loader.Loader.listIgnoreQueryCache(Loader.java:2104)
+	at org.hibernate.loader.Loader.list(Loader.java:2099)
+	at org.hibernate.loader.hql.QueryLoader.list(QueryLoader.java:378)
+	at org.hibernate.hql.ast.QueryTranslatorImpl.list(QueryTranslatorImpl.java:338)
+	at org.hibernate.engine.query.HQLQueryPlan.performList(HQLQueryPlan.java:172)
+	at org.hibernate.impl.SessionImpl.list(SessionImpl.java:1121)
+	at org.hibernate.impl.QueryImpl.list(QueryImpl.java:79)
+	at org.springframework.orm.hibernate3.HibernateTemplate$30.doInHibernate(HibernateTemplate.java:921)
+	at org.springframework.orm.hibernate3.HibernateTemplate$30.doInHibernate(HibernateTemplate.java:1)
+	at org.springframework.orm.hibernate3.HibernateTemplate.doExecute(HibernateTemplate.java:406)
+	... 206 more
+Caused by: java.sql.SQLException: Table not found in statement [/* from PrivelegedMapping m */ select priveleged0_.ID as ID17_, priveleged0_.TYPE as TYPE17_, priveleged0_.EXECUTOR_ID as EXECUTOR3_17_ from PRIVELEGED_MAPPING priveleged0_]
+	at org.hsqldb.jdbc.Util.throwError(Unknown Source)
+	at org.hsqldb.jdbc.jdbcPreparedStatement.<init>(Unknown Source)
+	at org.hsqldb.jdbc.jdbcConnection.prepareStatement(Unknown Source)
+	at org.jboss.resource.adapter.jdbc.BaseWrapperManagedConnection.doPrepareStatement(BaseWrapperManagedConnection.java:449)
+	at org.jboss.resource.adapter.jdbc.BaseWrapperManagedConnection.prepareStatement(BaseWrapperManagedConnection.java:437)
+	at org.jboss.resource.adapter.jdbc.WrappedConnection.prepareStatement(WrappedConnection.java:243)
+	at org.hibernate.jdbc.AbstractBatcher.getPreparedStatement(AbstractBatcher.java:505)
+	at org.hibernate.jdbc.AbstractBatcher.getPreparedStatement(AbstractBatcher.java:423)
+	at org.hibernate.jdbc.AbstractBatcher.prepareQueryStatement(AbstractBatcher.java:139)
+	at net.bull.javamelody.HibernateBatcherFactory$HibernateBatchingBatcher.prepareQueryStatement(HibernateBatcherFactory.java:71)
+	at org.hibernate.loader.Loader.prepareQueryStatement(Loader.java:1547)
+	at org.hibernate.loader.Loader.doQuery(Loader.java:673)
+	at org.hibernate.loader.Loader.doQueryAndInitializeNonLazyCollections(Loader.java:236)
+	at org.hibernate.loader.Loader.doList(Loader.java:2220)
+	... 216 more
+2013-06-23 13:28:37,244 INFO  [org.springframework.scheduling.timer.TimerFactoryBean] Initializing Timer
+2013-06-23 13:28:37,256 INFO  [ru.runa.wfe.commons.calendar.impl.BusinessCalendarImpl] Using business calendar implementation: class ru.runa.wfe.commons.calendar.impl.BusinessCalendarImpl
+2013-06-23 13:28:37,500 WARN  [org.hibernate.util.JDBCExceptionReporter] SQL Error: -22, SQLState: S0002
+2013-06-23 13:28:37,507 ERROR [org.hibernate.util.JDBCExceptionReporter] Table not found in statement [/* from Constant where name = ? */ select constant0_.ID as ID5_, constant0_.NAME as NAME5_, constant0_.VALUE as VALUE5_ from WFE_CONSTANTS constant0_ where constant0_.NAME=?]
+2013-06-23 13:28:37,510 WARN  [ru.runa.wfe.commons.dao.ConstantDAO] Unable to get constant value
+org.springframework.dao.InvalidDataAccessResourceUsageException: could not execute query; SQL [select constant0_.ID as ID5_, constant0_.NAME as NAME5_, constant0_.VALUE as VALUE5_ from WFE_CONSTANTS constant0_ where constant0_.NAME=?]; nested exception is org.hibernate.exception.SQLGrammarException: could not execute query
+	at org.springframework.orm.hibernate3.SessionFactoryUtils.convertHibernateAccessException(SessionFactoryUtils.java:635)
+	at org.springframework.orm.hibernate3.HibernateAccessor.convertHibernateAccessException(HibernateAccessor.java:412)
+	at org.springframework.orm.hibernate3.HibernateTemplate.doExecute(HibernateTemplate.java:411)
+	at org.springframework.orm.hibernate3.HibernateTemplate.executeWithNativeSession(HibernateTemplate.java:374)
+	at org.springframework.orm.hibernate3.HibernateTemplate.find(HibernateTemplate.java:912)
+	at ru.runa.wfe.commons.dao.GenericDAO.findFirstOrNull(GenericDAO.java:93)
+	at ru.runa.wfe.commons.dao.ConstantDAO.get(ConstantDAO.java:31)
+	at ru.runa.wfe.commons.dao.ConstantDAO.getValue(ConstantDAO.java:43)
+	at ru.runa.wfe.commons.logic.InitializerLogic.isAlreadyIntialized(InitializerLogic.java:114)
+	at ru.runa.wfe.commons.logic.InitializerLogic.init(InitializerLogic.java:124)
+	at ru.runa.wfe.service.impl.InitializerServiceBean.onSystemStartup(InitializerServiceBean.java:48)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:112)
+	at org.jboss.ejb3.interceptor.InvocationContextImpl.proceed(InvocationContextImpl.java:166)
+	at ru.runa.wfe.service.interceptors.EjbExceptionSupport.process(EjbExceptionSupport.java:42)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.ejb3.interceptor.InvocationContextImpl.proceed(InvocationContextImpl.java:118)
+	at ru.runa.wfe.service.interceptors.CacheNotifier.process(CacheNotifier.java:12)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.ejb3.interceptor.InvocationContextImpl.proceed(InvocationContextImpl.java:118)
+	at org.jboss.ejb3.interceptor.EJB3InterceptorsInterceptor.invoke(EJB3InterceptorsInterceptor.java:63)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.entity.TransactionScopedEntityManagerInterceptor.invoke(TransactionScopedEntityManagerInterceptor.java:54)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.AllowedOperationsInterceptor.invoke(AllowedOperationsInterceptor.java:47)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.tx.BMTInterceptor.handleStateless(BMTInterceptor.java:71)
+	at org.jboss.ejb3.tx.BMTInterceptor.invoke(BMTInterceptor.java:131)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.aspects.tx.TxPropagationInterceptor.invoke(TxPropagationInterceptor.java:95)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.stateless.StatelessInstanceInterceptor.invoke(StatelessInstanceInterceptor.java:62)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.aspects.security.AuthenticationInterceptor.invoke(AuthenticationInterceptor.java:77)
+	at org.jboss.ejb3.security.Ejb3AuthenticationInterceptor.invoke(Ejb3AuthenticationInterceptor.java:110)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.ENCPropagationInterceptor.invoke(ENCPropagationInterceptor.java:46)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.asynchronous.AsynchronousInterceptor.invoke(AsynchronousInterceptor.java:106)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.stateless.StatelessContainer.dynamicInvoke(StatelessContainer.java:304)
+	at org.jboss.ejb3.remoting.IsLocalInterceptor.invokeLocal(IsLocalInterceptor.java:81)
+	at org.jboss.ejb3.remoting.IsLocalInterceptor.invoke(IsLocalInterceptor.java:72)
+	at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.java:101)
+	at org.jboss.ejb3.stateless.StatelessRemoteProxy.invoke(StatelessRemoteProxy.java:107)
+	at com.sun.proxy.$Proxy107.onSystemStartup(Unknown Source)
+	at ru.runa.wfe.service.delegate.InitializerServiceDelegate.onSystemStartup(InitializerServiceDelegate.java:37)
+	at ru.runa.common.web.InitializeDBListener.contextInitialized(InitializeDBListener.java:18)
+	at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:3856)
+	at org.apache.catalina.core.StandardContext.start(StandardContext.java:4361)
+	at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:790)
+	at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:770)
+	at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:553)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:296)
+	at org.jboss.mx.server.RawDynamicInvoker.invoke(RawDynamicInvoker.java:164)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.apache.catalina.core.StandardContext.init(StandardContext.java:5312)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.apache.tomcat.util.modeler.BaseModelMBean.invoke(BaseModelMBean.java:296)
+	at org.jboss.mx.server.RawDynamicInvoker.invoke(RawDynamicInvoker.java:164)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.web.tomcat.service.TomcatDeployer.performDeployInternal(TomcatDeployer.java:301)
+	at org.jboss.web.tomcat.service.TomcatDeployer.performDeploy(TomcatDeployer.java:104)
+	at org.jboss.web.AbstractWebDeployer.start(AbstractWebDeployer.java:375)
+	at org.jboss.web.WebModule.startModule(WebModule.java:83)
+	at org.jboss.web.WebModule.startService(WebModule.java:61)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalStart(ServiceMBeanSupport.java:289)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalLifecycle(ServiceMBeanSupport.java:245)
+	at sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.system.ServiceController$ServiceProxy.invoke(ServiceController.java:978)
+	at com.sun.proxy.$Proxy0.start(Unknown Source)
+	at org.jboss.system.ServiceController.start(ServiceController.java:417)
+	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy43.start(Unknown Source)
+	at org.jboss.web.AbstractWebContainer.start(AbstractWebContainer.java:466)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.interceptor.AbstractInterceptor.invoke(AbstractInterceptor.java:133)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(ModelMBeanOperationInterceptor.java:142)
+	at org.jboss.mx.interceptor.DynamicInterceptor.invoke(DynamicInterceptor.java:97)
+	at org.jboss.system.InterceptorServiceMBeanSupport.invokeNext(InterceptorServiceMBeanSupport.java:238)
+	at org.jboss.wsf.container.jboss42.DeployerInterceptor.start(DeployerInterceptor.java:87)
+	at org.jboss.deployment.SubDeployerInterceptorSupport$XMBeanInterceptor.start(SubDeployerInterceptorSupport.java:188)
+	at org.jboss.deployment.SubDeployerInterceptor.invoke(SubDeployerInterceptor.java:95)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy44.start(Unknown Source)
+	at org.jboss.deployment.MainDeployer.start(MainDeployer.java:1025)
+	at org.jboss.deployment.MainDeployer.start(MainDeployer.java:1015)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:819)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:782)
+	at sun.reflect.GeneratedMethodAccessor49.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.interceptor.AbstractInterceptor.invoke(AbstractInterceptor.java:133)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(ModelMBeanOperationInterceptor.java:142)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy9.deploy(Unknown Source)
+	at org.jboss.deployment.scanner.URLDeploymentScanner.deploy(URLDeploymentScanner.java:421)
+	at org.jboss.deployment.scanner.URLDeploymentScanner.scan(URLDeploymentScanner.java:634)
+	at org.jboss.deployment.scanner.AbstractDeploymentScanner$ScannerThread.doScan(AbstractDeploymentScanner.java:263)
+	at org.jboss.deployment.scanner.AbstractDeploymentScanner.startService(AbstractDeploymentScanner.java:336)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalStart(ServiceMBeanSupport.java:289)
+	at org.jboss.system.ServiceMBeanSupport.jbossInternalLifecycle(ServiceMBeanSupport.java:245)
+	at sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.system.ServiceController$ServiceProxy.invoke(ServiceController.java:978)
+	at com.sun.proxy.$Proxy0.start(Unknown Source)
+	at org.jboss.system.ServiceController.start(ServiceController.java:417)
+	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:86)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy4.start(Unknown Source)
+	at org.jboss.deployment.SARDeployer.start(SARDeployer.java:304)
+	at org.jboss.deployment.MainDeployer.start(MainDeployer.java:1025)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:819)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:782)
+	at org.jboss.deployment.MainDeployer.deploy(MainDeployer.java:766)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.jboss.mx.interceptor.ReflectedDispatcher.invoke(ReflectedDispatcher.java:155)
+	at org.jboss.mx.server.Invocation.dispatch(Invocation.java:94)
+	at org.jboss.mx.interceptor.AbstractInterceptor.invoke(AbstractInterceptor.java:133)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.interceptor.ModelMBeanOperationInterceptor.invoke(ModelMBeanOperationInterceptor.java:142)
+	at org.jboss.mx.server.Invocation.invoke(Invocation.java:88)
+	at org.jboss.mx.server.AbstractMBeanInvoker.invoke(AbstractMBeanInvoker.java:264)
+	at org.jboss.mx.server.MBeanServerImpl.invoke(MBeanServerImpl.java:659)
+	at org.jboss.mx.util.MBeanProxyExt.invoke(MBeanProxyExt.java:210)
+	at com.sun.proxy.$Proxy5.deploy(Unknown Source)
+	at org.jboss.system.server.ServerImpl.doStart(ServerImpl.java:482)
+	at org.jboss.system.server.ServerImpl.start(ServerImpl.java:362)
+	at org.jboss.Main.boot(Main.java:200)
+	at org.jboss.Main$1.run(Main.java:508)
+	at java.lang.Thread.run(Thread.java:722)
+Caused by: org.hibernate.exception.SQLGrammarException: could not execute query
+	at org.hibernate.exception.SQLStateConverter.convert(SQLStateConverter.java:67)
+	at org.hibernate.exception.JDBCExceptionHelper.convert(JDBCExceptionHelper.java:43)
+	at org.hibernate.loader.Loader.doList(Loader.java:2223)
+	at org.hibernate.loader.Loader.listIgnoreQueryCache(Loader.java:2104)
+	at org.hibernate.loader.Loader.list(Loader.java:2099)
+	at org.hibernate.loader.hql.QueryLoader.list(QueryLoader.java:378)
+	at org.hibernate.hql.ast.QueryTranslatorImpl.list(QueryTranslatorImpl.java:338)
+	at org.hibernate.engine.query.HQLQueryPlan.performList(HQLQueryPlan.java:172)
+	at org.hibernate.impl.SessionImpl.list(SessionImpl.java:1121)
+	at org.hibernate.impl.QueryImpl.list(QueryImpl.java:79)
+	at org.springframework.orm.hibernate3.HibernateTemplate$30.doInHibernate(HibernateTemplate.java:921)
+	at org.springframework.orm.hibernate3.HibernateTemplate$30.doInHibernate(HibernateTemplate.java:1)
+	at org.springframework.orm.hibernate3.HibernateTemplate.doExecute(HibernateTemplate.java:406)
+	... 190 more
+Caused by: java.sql.SQLException: Table not found in statement [/* from Constant where name = ? */ select constant0_.ID as ID5_, constant0_.NAME as NAME5_, constant0_.VALUE as VALUE5_ from WFE_CONSTANTS constant0_ where constant0_.NAME=?]
+	at org.hsqldb.jdbc.Util.throwError(Unknown Source)
+	at org.hsqldb.jdbc.jdbcPreparedStatement.<init>(Unknown Source)
+	at org.hsqldb.jdbc.jdbcConnection.prepareStatement(Unknown Source)
+	at org.jboss.resource.adapter.jdbc.BaseWrapperManagedConnection.doPrepareStatement(BaseWrapperManagedConnection.java:449)
+	at org.jboss.resource.adapter.jdbc.BaseWrapperManagedConnection.prepareStatement(BaseWrapperManagedConnection.java:437)
+	at org.jboss.resource.adapter.jdbc.WrappedConnection.prepareStatement(WrappedConnection.java:243)
+	at org.hibernate.jdbc.AbstractBatcher.getPreparedStatement(AbstractBatcher.java:505)
+	at org.hibernate.jdbc.AbstractBatcher.getPreparedStatement(AbstractBatcher.java:423)
+	at org.hibernate.jdbc.AbstractBatcher.prepareQueryStatement(AbstractBatcher.java:139)
+	at net.bull.javamelody.HibernateBatcherFactory$HibernateBatchingBatcher.prepareQueryStatement(HibernateBatcherFactory.java:71)
+	at org.hibernate.loader.Loader.prepareQueryStatement(Loader.java:1547)
+	at org.hibernate.loader.Loader.doQuery(Loader.java:673)
+	at org.hibernate.loader.Loader.doQueryAndInitializeNonLazyCollections(Loader.java:236)
+	at org.hibernate.loader.Loader.doList(Loader.java:2220)
+	... 200 more
+2013-06-23 13:28:37,700 INFO  [ru.runa.wfe.commons.logic.InitializerLogic] database is not initialized. initializing...
+2013-06-23 13:28:37,713 INFO  [org.hibernate.dialect.Dialect] Using dialect: org.hibernate.dialect.HSQLDialect
+2013-06-23 13:28:38,048 INFO  [org.hibernate.tool.hbm2ddl.SchemaExport] Running hbm2ddl schema export
+2013-06-23 13:28:38,087 INFO  [org.hibernate.tool.hbm2ddl.SchemaExport] exporting generated schema to database
+2013-06-23 13:28:38,091 INFO  [org.hibernate.util.NamingHelper] JNDI InitialContext properties:{}
+2013-06-23 13:28:38,092 INFO  [org.hibernate.connection.DatasourceConnectionProvider] Using datasource: java:/runawfe-ds
+2013-06-23 13:28:38,096 INFO  [STDOUT] 
+    alter table BATCH_PRESENTATION 
+        drop constraint FK_BATCH_PRESENTATION_PROFILE
+2013-06-23 13:28:38,097 INFO  [STDOUT] 
+    alter table BOT 
+        drop constraint FK_BOT_STATION
+2013-06-23 13:28:38,098 INFO  [STDOUT] 
+    alter table BOT_TASK 
+        drop constraint FK_BOT_TASK_BOT
+2013-06-23 13:28:38,099 INFO  [STDOUT] 
+    alter table BPM_JOB 
+        drop constraint FK_JOB_TOKEN
+2013-06-23 13:28:38,100 INFO  [STDOUT] 
+    alter table BPM_JOB 
+        drop constraint FK_JOB_PROCESS
+2013-06-23 13:28:38,101 INFO  [STDOUT] 
+    alter table BPM_PROCESS 
+        drop constraint FK_PROCESS_ROOT_TOKEN
+2013-06-23 13:28:38,101 INFO  [STDOUT] 
+    alter table BPM_PROCESS 
+        drop constraint FK_PROCESS_DEFINITION
+2013-06-23 13:28:38,102 INFO  [STDOUT] 
+    alter table BPM_SUBPROCESS 
+        drop constraint FK_SUBPROCESS_TOKEN
+2013-06-23 13:28:38,103 INFO  [STDOUT] 
+    alter table BPM_SUBPROCESS 
+        drop constraint FK_SUBPROCESS_PARENT_PROCESS
+2013-06-23 13:28:38,104 INFO  [STDOUT] 
+    alter table BPM_SUBPROCESS 
+        drop constraint FK_SUBPROCESS_PROCESS
+2013-06-23 13:28:38,105 INFO  [STDOUT] 
+    alter table BPM_SWIMLANE 
+        drop constraint FK_SWIMLANE_EXECUTOR
+2013-06-23 13:28:38,106 INFO  [STDOUT] 
+    alter table BPM_SWIMLANE 
+        drop constraint FK_SWIMLANE_PROCESS
+2013-06-23 13:28:38,108 INFO  [STDOUT] 
+    alter table BPM_TASK 
+        drop constraint FK_TASK_TOKEN
+2013-06-23 13:28:38,111 INFO  [STDOUT] 
+    alter table BPM_TASK 
+        drop constraint FK_TASK_SWIMLANE
+2013-06-23 13:28:38,113 INFO  [STDOUT] 
+    alter table BPM_TASK 
+        drop constraint FK_TASK_PROCESS
+2013-06-23 13:28:38,116 INFO  [STDOUT] 
+    alter table BPM_TASK 
+        drop constraint FK_TASK_EXECUTOR
+2013-06-23 13:28:38,117 INFO  [STDOUT] 
+    alter table BPM_TOKEN 
+        drop constraint FK_TOKEN_PARENT
+2013-06-23 13:28:38,118 INFO  [STDOUT] 
+    alter table BPM_TOKEN 
+        drop constraint FK_TOKEN_PROCESS
+2013-06-23 13:28:38,119 INFO  [STDOUT] 
+    alter table BPM_VARIABLE 
+        drop constraint FK_VARIABLE_PROCESS
+2013-06-23 13:28:38,120 INFO  [STDOUT] 
+    alter table EXECUTOR 
+        drop constraint FK_GROUP_ESCALATION_EXECUTOR
+2013-06-23 13:28:38,121 INFO  [STDOUT] 
+    alter table EXECUTOR_GROUP_MEMBER 
+        drop constraint FK_MEMBER_GROUP
+2013-06-23 13:28:38,125 INFO  [STDOUT] 
+    alter table EXECUTOR_GROUP_MEMBER 
+        drop constraint FK_MEMBER_EXECUTOR
+2013-06-23 13:28:38,130 INFO  [STDOUT] 
+    alter table EXECUTOR_RELATION_PAIR 
+        drop constraint FK_ERP_EXECUTOR_TO
+2013-06-23 13:28:38,144 INFO  [STDOUT] 
+    alter table EXECUTOR_RELATION_PAIR 
+        drop constraint FK_ERP_RELATION
+2013-06-23 13:28:38,145 INFO  [STDOUT] 
+    alter table EXECUTOR_RELATION_PAIR 
+        drop constraint FK_ERP_EXECUTOR_FROM
+2013-06-23 13:28:38,146 INFO  [STDOUT] 
+    alter table PERMISSION_MAPPING 
+        drop constraint FK_PERMISSION_EXECUTOR
+2013-06-23 13:28:38,147 INFO  [STDOUT] 
+    alter table PRIVELEGED_MAPPING 
+        drop constraint FK_PM_EXECUTOR
+2013-06-23 13:28:38,148 INFO  [STDOUT] 
+    alter table PROFILE 
+        drop constraint FK_PROFILE_ACTOR
+2013-06-23 13:28:38,149 INFO  [STDOUT] 
+    alter table SUBSTITUTION 
+        drop constraint FK_SUBSTITUTION_CRITERIA
+2013-06-23 13:28:38,150 INFO  [STDOUT] 
+    drop table ACTOR_PASSWORD if exists
+2013-06-23 13:28:38,151 INFO  [STDOUT] 
+    drop table BATCH_PRESENTATION if exists
+2013-06-23 13:28:38,151 INFO  [STDOUT] 
+    drop table BOT if exists
+2013-06-23 13:28:38,152 INFO  [STDOUT] 
+    drop table BOT_STATION if exists
+2013-06-23 13:28:38,153 INFO  [STDOUT] 
+    drop table BOT_TASK if exists
+2013-06-23 13:28:38,157 INFO  [STDOUT] 
+    drop table BPM_JOB if exists
+2013-06-23 13:28:38,160 INFO  [STDOUT] 
+    drop table BPM_LOG if exists
+2013-06-23 13:28:38,163 INFO  [STDOUT] 
+    drop table BPM_PROCESS if exists
+2013-06-23 13:28:38,166 INFO  [STDOUT] 
+    drop table BPM_PROCESS_DEFINITION if exists
+2013-06-23 13:28:38,170 INFO  [STDOUT] 
+    drop table BPM_SUBPROCESS if exists
+2013-06-23 13:28:38,172 INFO  [STDOUT] 
+    drop table BPM_SWIMLANE if exists
+2013-06-23 13:28:38,173 INFO  [STDOUT] 
+    drop table BPM_TASK if exists
+2013-06-23 13:28:38,174 INFO  [STDOUT] 
+    drop table BPM_TOKEN if exists
+2013-06-23 13:28:38,174 INFO  [STDOUT] 
+    drop table BPM_VARIABLE if exists
+2013-06-23 13:28:38,175 INFO  [STDOUT] 
+    drop table EXECUTOR if exists
+2013-06-23 13:28:38,175 INFO  [STDOUT] 
+    drop table EXECUTOR_GROUP_MEMBER if exists
+2013-06-23 13:28:38,176 INFO  [STDOUT] 
+    drop table EXECUTOR_RELATION if exists
+2013-06-23 13:28:38,176 INFO  [STDOUT] 
+    drop table EXECUTOR_RELATION_PAIR if exists
+2013-06-23 13:28:38,177 INFO  [STDOUT] 
+    drop table LOCALIZATION if exists
+2013-06-23 13:28:38,178 INFO  [STDOUT] 
+    drop table PERMISSION_MAPPING if exists
+2013-06-23 13:28:38,178 INFO  [STDOUT] 
+    drop table PRIVELEGED_MAPPING if exists
+2013-06-23 13:28:38,178 INFO  [STDOUT] 
+    drop table PROFILE if exists
+2013-06-23 13:28:38,179 INFO  [STDOUT] 
+    drop table SUBSTITUTION if exists
+2013-06-23 13:28:38,180 INFO  [STDOUT] 
+    drop table SUBSTITUTION_CRITERIA if exists
+2013-06-23 13:28:38,180 INFO  [STDOUT] 
+    drop table SYSTEM_LOG if exists
+2013-06-23 13:28:38,181 INFO  [STDOUT] 
+    drop table WFE_CONSTANTS if exists
+2013-06-23 13:28:38,182 INFO  [STDOUT] 
+    create table ACTOR_PASSWORD (
+        ACTOR_ID bigint not null,
+        PASSWORD longvarbinary not null,
+        primary key (ACTOR_ID)
+    )
+2013-06-23 13:28:38,183 INFO  [STDOUT] 
+    create table BATCH_PRESENTATION (
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255) not null,
+        CLASS_TYPE varchar(255),
+        VERSION bigint,
+        CATEGORY varchar(255) not null,
+        RANGE_SIZE integer,
+        IS_ACTIVE bit,
+        FIELDS longvarbinary,
+        PROFILE_ID bigint,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,186 INFO  [STDOUT] 
+    create table BOT (
+        ID bigint generated by default as identity (start with 1),
+        VERSION bigint,
+        PASSWORD varchar(255),
+        START_TIMEOUT bigint,
+        USERNAME varchar(255),
+        BOT_STATION_ID bigint not null,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,190 INFO  [STDOUT] 
+    create table BOT_STATION (
+        ID bigint generated by default as identity (start with 1),
+        ADDRESS varchar(255),
+        NAME varchar(255) not null,
+        VERSION bigint,
+        primary key (ID),
+        unique (NAME)
+    )
+2013-06-23 13:28:38,193 INFO  [STDOUT] 
+    create table BOT_TASK (
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255),
+        VERSION bigint,
+        CONFIGURATION longvarbinary,
+        TASK_HANDLER varchar(255),
+        BOT_ID bigint not null,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,226 INFO  [STDOUT] 
+    create table BPM_JOB (
+        DISCRIMINATOR char(1) not null,
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255),
+        VERSION bigint,
+        DUE_DATE timestamp,
+        REPEAT_DURATION varchar(255),
+        TRANSITION_NAME varchar(255),
+        PROCESS_ID bigint not null,
+        TOKEN_ID bigint,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,229 INFO  [STDOUT] 
+    create table BPM_LOG (
+        DISCRIMINATOR char(1) not null,
+        ID bigint generated by default as identity (start with 1),
+        BYTES longvarbinary,
+        CONTENT varchar(4000),
+        LOG_DATE timestamp not null,
+        PROCESS_ID bigint not null,
+        SEVERITY varchar(255) not null,
+        TOKEN_ID bigint,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,231 INFO  [STDOUT] 
+    create table BPM_PROCESS (
+        ID bigint generated by default as identity (start with 1),
+        START_DATE timestamp,
+        VERSION bigint,
+        END_DATE timestamp,
+        TREE_PATH varchar(255),
+        DEFINITION_ID bigint not null,
+        ROOT_TOKEN_ID bigint not null,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,234 INFO  [STDOUT] 
+    create table BPM_PROCESS_DEFINITION (
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255) not null,
+        LANGUAGE varchar(255) not null,
+        BYTES longvarbinary,
+        VERSION bigint not null,
+        CATEGORY varchar(255) not null,
+        DESCRIPTION varchar(255),
+        DEPLOYED timestamp,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,236 INFO  [STDOUT] 
+    create table BPM_SUBPROCESS (
+        ID bigint generated by default as identity (start with 1),
+        PARENT_NODE_ID varchar(255),
+        PROCESS_ID bigint not null,
+        PARENT_PROCESS_ID bigint not null,
+        PARENT_TOKEN_ID bigint,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,239 INFO  [STDOUT] 
+    create table BPM_SWIMLANE (
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255),
+        VERSION bigint,
+        PROCESS_ID bigint,
+        EXECUTOR_ID bigint,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,240 INFO  [STDOUT] 
+    create table BPM_TASK (
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255),
+        VERSION bigint,
+        DESCRIPTION varchar(255),
+        FIRST_OPEN bit,
+        NODE_ID varchar(255),
+        DEADLINE_DATE timestamp,
+        CREATE_DATE timestamp,
+        SWIMLANE_ID bigint,
+        TOKEN_ID bigint,
+        EXECUTOR_ID bigint,
+        PROCESS_ID bigint,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,243 INFO  [STDOUT] 
+    create table BPM_TOKEN (
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255),
+        START_DATE timestamp,
+        VERSION bigint,
+        NODE_TYPE varchar(255),
+        END_DATE timestamp,
+        NODE_ID varchar(255),
+        REACTIVATE_PARENT bit,
+        TRANSITION_ID varchar(255),
+        PARENT_ID bigint,
+        PROCESS_ID bigint,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,251 INFO  [STDOUT] 
+    create table BPM_VARIABLE (
+        DISCRIMINATOR char(1) not null,
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255),
+        VERSION bigint,
+        STRINGVALUE varchar(1024),
+        CONVERTER char(1),
+        BYTES longvarbinary,
+        DATEVALUE timestamp,
+        DOUBLEVALUE double,
+        LONGVALUE bigint,
+        PROCESS_ID bigint not null,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,255 INFO  [STDOUT] 
+    create table EXECUTOR (
+        DISCRIMINATOR varchar(1) not null,
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255) not null,
+        VERSION bigint,
+        DESCRIPTION varchar(255),
+        FULL_NAME varchar(255),
+        E_MAIL varchar(255),
+        PHONE varchar(32),
+        IS_ACTIVE bit,
+        CODE bigint,
+        ESCALATION_LEVEL integer,
+        ESCALATION_EXECUTOR_ID bigint,
+        primary key (ID),
+        unique (NAME)
+    )
+2013-06-23 13:28:38,259 INFO  [STDOUT] 
+    create table EXECUTOR_GROUP_MEMBER (
+        ID bigint generated by default as identity (start with 1),
+        VERSION bigint,
+        GROUP_ID bigint not null,
+        EXECUTOR_ID bigint not null,
+        primary key (ID),
+        unique (EXECUTOR_ID, GROUP_ID)
+    )
+2013-06-23 13:28:38,262 INFO  [STDOUT] 
+    create table EXECUTOR_RELATION (
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255),
+        DESCRIPTION varchar(255),
+        primary key (ID),
+        unique (NAME)
+    )
+2013-06-23 13:28:38,264 INFO  [STDOUT] 
+    create table EXECUTOR_RELATION_PAIR (
+        ID bigint generated by default as identity (start with 1),
+        RELATION_ID bigint not null,
+        EXECUTOR_FROM bigint not null,
+        EXECUTOR_TO bigint not null,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,267 INFO  [STDOUT] 
+    create table LOCALIZATION (
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255),
+        VALUE varchar(255),
+        primary key (ID),
+        unique (NAME)
+    )
+2013-06-23 13:28:38,270 INFO  [STDOUT] 
+    create table PERMISSION_MAPPING (
+        ID bigint generated by default as identity (start with 1),
+        TYPE_ID integer not null,
+        MASK bigint not null,
+        IDENTIFIABLE_ID bigint not null,
+        EXECUTOR_ID bigint not null,
+        primary key (ID),
+        unique (IDENTIFIABLE_ID, TYPE_ID, MASK, EXECUTOR_ID)
+    )
+2013-06-23 13:28:38,323 INFO  [STDOUT] 
+    create table PRIVELEGED_MAPPING (
+        ID bigint generated by default as identity (start with 1),
+        TYPE varchar(255) not null,
+        EXECUTOR_ID bigint not null,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,329 INFO  [STDOUT] 
+    create table PROFILE (
+        ID bigint generated by default as identity (start with 1),
+        VERSION bigint,
+        ACTOR_ID bigint not null,
+        primary key (ID),
+        unique (ACTOR_ID)
+    )
+2013-06-23 13:28:38,333 INFO  [STDOUT] 
+    create table SUBSTITUTION (
+        DISCRIMINATOR varchar(1) not null,
+        ID bigint generated by default as identity (start with 1),
+        VERSION bigint,
+        ENABLED_FLAG bit not null,
+        IS_EXTERNAL bit not null,
+        POSITION_INDEX integer not null,
+        ACTOR_ID bigint not null,
+        ORG_FUNCTION varchar(255) not null,
+        CRITERIA_ID bigint,
+        primary key (ID),
+        unique (POSITION_INDEX, ACTOR_ID)
+    )
+2013-06-23 13:28:38,336 INFO  [STDOUT] 
+    create table SUBSTITUTION_CRITERIA (
+        DISCRIMINATOR varchar(31) not null,
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255) not null,
+        CONF varchar(255),
+        primary key (ID),
+        unique (DISCRIMINATOR, CONF)
+    )
+2013-06-23 13:28:38,358 INFO  [STDOUT] 
+    create table SYSTEM_LOG (
+        DISCRIMINATOR varchar(31) not null,
+        ID bigint generated by default as identity (start with 1),
+        ACTOR_ID bigint not null,
+        TIME timestamp not null,
+        PROCESS_DEFINITION_NAME varchar(255),
+        PROCESS_DEFINITION_VERSION bigint,
+        PROCESS_ID bigint,
+        primary key (ID)
+    )
+2013-06-23 13:28:38,377 INFO  [STDOUT] 
+    create table WFE_CONSTANTS (
+        ID bigint generated by default as identity (start with 1),
+        NAME varchar(255),
+        VALUE varchar(255),
+        primary key (ID),
+        unique (NAME)
+    )
+2013-06-23 13:28:38,463 INFO  [STDOUT] 
+    create index IX_BATCH_PRESENTATION_PROFILE on BATCH_PRESENTATION (PROFILE_ID)
+2013-06-23 13:28:38,464 INFO  [STDOUT] 
+    alter table BATCH_PRESENTATION 
+        add constraint FK_BATCH_PRESENTATION_PROFILE 
+        foreign key (PROFILE_ID) 
+        references PROFILE
+2013-06-23 13:28:38,465 INFO  [STDOUT] 
+    create index IX_BOT_STATION on BOT (BOT_STATION_ID)
+2013-06-23 13:28:38,467 INFO  [STDOUT] 
+    alter table BOT 
+        add constraint FK_BOT_STATION 
+        foreign key (BOT_STATION_ID) 
+        references BOT_STATION
+2013-06-23 13:28:38,468 INFO  [STDOUT] 
+    create index IX_BOT_TASK_BOT on BOT_TASK (BOT_ID)
+2013-06-23 13:28:38,469 INFO  [STDOUT] 
+    alter table BOT_TASK 
+        add constraint FK_BOT_TASK_BOT 
+        foreign key (BOT_ID) 
+        references BOT
+2013-06-23 13:28:38,470 INFO  [STDOUT] 
+    create index IX_JOB_PROCESS on BPM_JOB (PROCESS_ID)
+2013-06-23 13:28:38,471 INFO  [STDOUT] 
+    alter table BPM_JOB 
+        add constraint FK_JOB_TOKEN 
+        foreign key (TOKEN_ID) 
+        references BPM_TOKEN
+2013-06-23 13:28:38,473 INFO  [STDOUT] 
+    alter table BPM_JOB 
+        add constraint FK_JOB_PROCESS 
+        foreign key (PROCESS_ID) 
+        references BPM_PROCESS
+2013-06-23 13:28:38,475 INFO  [STDOUT] 
+    create index IX_LOG_PROCESS on BPM_LOG (PROCESS_ID)
+2013-06-23 13:28:38,476 INFO  [STDOUT] 
+    create index IX_PROCESS_ROOT_TOKEN on BPM_PROCESS (ROOT_TOKEN_ID)
+2013-06-23 13:28:38,476 INFO  [STDOUT] 
+    create index IX_PROCESS_DEFINITION on BPM_PROCESS (DEFINITION_ID)
+2013-06-23 13:28:38,477 INFO  [STDOUT] 
+    alter table BPM_PROCESS 
+        add constraint FK_PROCESS_ROOT_TOKEN 
+        foreign key (ROOT_TOKEN_ID) 
+        references BPM_TOKEN
+2013-06-23 13:28:38,478 INFO  [STDOUT] 
+    alter table BPM_PROCESS 
+        add constraint FK_PROCESS_DEFINITION 
+        foreign key (DEFINITION_ID) 
+        references BPM_PROCESS_DEFINITION
+2013-06-23 13:28:38,497 INFO  [STDOUT] 
+    create index IX_SUBPROCESS_PARENT_PROCESS on BPM_SUBPROCESS (PARENT_PROCESS_ID)
+2013-06-23 13:28:38,498 INFO  [STDOUT] 
+    create index IX_SUBPROCESS_PROCESS on BPM_SUBPROCESS (PROCESS_ID)
+2013-06-23 13:28:38,499 INFO  [STDOUT] 
+    alter table BPM_SUBPROCESS 
+        add constraint FK_SUBPROCESS_TOKEN 
+        foreign key (PARENT_TOKEN_ID) 
+        references BPM_TOKEN
+2013-06-23 13:28:38,501 INFO  [STDOUT] 
+    alter table BPM_SUBPROCESS 
+        add constraint FK_SUBPROCESS_PARENT_PROCESS 
+        foreign key (PARENT_PROCESS_ID) 
+        references BPM_PROCESS
+2013-06-23 13:28:38,505 INFO  [STDOUT] 
+    alter table BPM_SUBPROCESS 
+        add constraint FK_SUBPROCESS_PROCESS 
+        foreign key (PROCESS_ID) 
+        references BPM_PROCESS
+2013-06-23 13:28:38,508 INFO  [STDOUT] 
+    create index IX_SWIMLANE_PROCESS on BPM_SWIMLANE (PROCESS_ID)
+2013-06-23 13:28:38,545 INFO  [STDOUT] 
+    alter table BPM_SWIMLANE 
+        add constraint FK_SWIMLANE_EXECUTOR 
+        foreign key (EXECUTOR_ID) 
+        references EXECUTOR
+2013-06-23 13:28:38,559 INFO  [STDOUT] 
+    alter table BPM_SWIMLANE 
+        add constraint FK_SWIMLANE_PROCESS 
+        foreign key (PROCESS_ID) 
+        references BPM_PROCESS
+2013-06-23 13:28:38,575 INFO  [STDOUT] 
+    create index IX_TASK_EXECUTOR on BPM_TASK (EXECUTOR_ID)
+2013-06-23 13:28:38,592 INFO  [STDOUT] 
+    create index IX_TASK_PROCESS on BPM_TASK (PROCESS_ID)
+2013-06-23 13:28:38,600 INFO  [STDOUT] 
+    alter table BPM_TASK 
+        add constraint FK_TASK_TOKEN 
+        foreign key (TOKEN_ID) 
+        references BPM_TOKEN
+2013-06-23 13:28:38,604 INFO  [STDOUT] 
+    alter table BPM_TASK 
+        add constraint FK_TASK_SWIMLANE 
+        foreign key (SWIMLANE_ID) 
+        references BPM_SWIMLANE
+2013-06-23 13:28:38,610 INFO  [STDOUT] 
+    alter table BPM_TASK 
+        add constraint FK_TASK_PROCESS 
+        foreign key (PROCESS_ID) 
+        references BPM_PROCESS
+2013-06-23 13:28:38,615 INFO  [STDOUT] 
+    alter table BPM_TASK 
+        add constraint FK_TASK_EXECUTOR 
+        foreign key (EXECUTOR_ID) 
+        references EXECUTOR
+2013-06-23 13:28:38,617 INFO  [STDOUT] 
+    create index IX_TOKEN_PROCESS on BPM_TOKEN (PROCESS_ID)
+2013-06-23 13:28:38,621 INFO  [STDOUT] 
+    create index IX_TOKEN_PARENT on BPM_TOKEN (PARENT_ID)
+2013-06-23 13:28:38,622 INFO  [STDOUT] 
+    alter table BPM_TOKEN 
+        add constraint FK_TOKEN_PARENT 
+        foreign key (PARENT_ID) 
+        references BPM_TOKEN
+2013-06-23 13:28:38,623 INFO  [STDOUT] 
+    alter table BPM_TOKEN 
+        add constraint FK_TOKEN_PROCESS 
+        foreign key (PROCESS_ID) 
+        references BPM_PROCESS
+2013-06-23 13:28:38,625 INFO  [STDOUT] 
+    create index IX_VARIABLE_PROCESS on BPM_VARIABLE (PROCESS_ID)
+2013-06-23 13:28:38,625 INFO  [STDOUT] 
+    create index IX_VARIABLE_NAME on BPM_VARIABLE (NAME)
+2013-06-23 13:28:38,626 INFO  [STDOUT] 
+    alter table BPM_VARIABLE 
+        add constraint FK_VARIABLE_PROCESS 
+        foreign key (PROCESS_ID) 
+        references BPM_PROCESS
+2013-06-23 13:28:38,628 INFO  [STDOUT] 
+    create index IX_EXECUTOR_CODE on EXECUTOR (CODE)
+2013-06-23 13:28:38,631 INFO  [STDOUT] 
+    alter table EXECUTOR 
+        add constraint FK_GROUP_ESCALATION_EXECUTOR 
+        foreign key (ESCALATION_EXECUTOR_ID) 
+        references EXECUTOR
+2013-06-23 13:28:38,634 INFO  [STDOUT] 
+    create index IX_MEMBER_EXECUTOR on EXECUTOR_GROUP_MEMBER (EXECUTOR_ID)
+2013-06-23 13:28:38,636 INFO  [STDOUT] 
+    create index IX_MEMBER_GROUP on EXECUTOR_GROUP_MEMBER (GROUP_ID)
+2013-06-23 13:28:38,637 INFO  [STDOUT] 
+    alter table EXECUTOR_GROUP_MEMBER 
+        add constraint FK_MEMBER_GROUP 
+        foreign key (GROUP_ID) 
+        references EXECUTOR
+2013-06-23 13:28:38,646 INFO  [STDOUT] 
+    alter table EXECUTOR_GROUP_MEMBER 
+        add constraint FK_MEMBER_EXECUTOR 
+        foreign key (EXECUTOR_ID) 
+        references EXECUTOR
+2013-06-23 13:28:38,647 INFO  [STDOUT] 
+    create index IX_ERP_EXECUTOR_FROM on EXECUTOR_RELATION_PAIR (EXECUTOR_FROM)
+2013-06-23 13:28:38,647 INFO  [STDOUT] 
+    create index IX_ERP_EXECUTOR_TO on EXECUTOR_RELATION_PAIR (EXECUTOR_TO)
+2013-06-23 13:28:38,649 INFO  [STDOUT] 
+    create index IX_ERP_RELATION on EXECUTOR_RELATION_PAIR (RELATION_ID)
+2013-06-23 13:28:38,651 INFO  [STDOUT] 
+    alter table EXECUTOR_RELATION_PAIR 
+        add constraint FK_ERP_EXECUTOR_TO 
+        foreign key (EXECUTOR_TO) 
+        references EXECUTOR
+2013-06-23 13:28:38,652 INFO  [STDOUT] 
+    alter table EXECUTOR_RELATION_PAIR 
+        add constraint FK_ERP_RELATION 
+        foreign key (RELATION_ID) 
+        references EXECUTOR_RELATION
+2013-06-23 13:28:38,653 INFO  [STDOUT] 
+    alter table EXECUTOR_RELATION_PAIR 
+        add constraint FK_ERP_EXECUTOR_FROM 
+        foreign key (EXECUTOR_FROM) 
+        references EXECUTOR
+2013-06-23 13:28:38,654 INFO  [STDOUT] 
+    create index IX_PERMISSION_BY_EXECUTOR on PERMISSION_MAPPING (EXECUTOR_ID, TYPE_ID, MASK, IDENTIFIABLE_ID)
+2013-06-23 13:28:38,656 INFO  [STDOUT] 
+    alter table PERMISSION_MAPPING 
+        add constraint FK_PERMISSION_EXECUTOR 
+        foreign key (EXECUTOR_ID) 
+        references EXECUTOR
+2013-06-23 13:28:38,657 INFO  [STDOUT] 
+    create index IX_PRIVELEGE_TYPE on PRIVELEGED_MAPPING (TYPE)
+2013-06-23 13:28:38,658 INFO  [STDOUT] 
+    alter table PRIVELEGED_MAPPING 
+        add constraint FK_PM_EXECUTOR 
+        foreign key (EXECUTOR_ID) 
+        references EXECUTOR
+2013-06-23 13:28:38,659 INFO  [STDOUT] 
+    alter table PROFILE 
+        add constraint FK_PROFILE_ACTOR 
+        foreign key (ACTOR_ID) 
+        references EXECUTOR
+2013-06-23 13:28:38,661 INFO  [STDOUT] 
+    create index IX_SUBSTITUTION_ACTOR on SUBSTITUTION (ACTOR_ID)
+2013-06-23 13:28:38,665 INFO  [STDOUT] 
+    create index IX_SUBSTITUTION_CRITERIA on SUBSTITUTION (CRITERIA_ID)
+2013-06-23 13:28:38,672 INFO  [STDOUT] 
+    alter table SUBSTITUTION 
+        add constraint FK_SUBSTITUTION_CRITERIA 
+        foreign key (CRITERIA_ID) 
+        references SUBSTITUTION_CRITERIA
+2013-06-23 13:28:38,675 INFO  [org.hibernate.tool.hbm2ddl.SchemaExport] schema export complete
+2013-06-23 13:28:38,684 INFO  [ru.runa.wfe.user.cache.ExecutorCacheCtrl] Cache initializing
+2013-06-23 13:28:38,791 INFO  [ru.runa.wfe.commons.cache.EhcacheHelper] EHCache manager loaded and will be used in WFE caches.
+2013-06-23 13:28:38,792 INFO  [ru.runa.wfe.user.cache.ExecutorCacheCtrl] Cache is initialized
+2013-06-23 13:28:38,888 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Actor{id=null, name=Administrator, code=-1}
+2013-06-23 13:28:38,889 DEBUG [ru.runa.wfe.ss.cache.SubstitutionCacheCtrl] On CREATE: Actor{id=null, name=Administrator, code=-1}
+2013-06-23 13:28:38,889 DEBUG [ru.runa.wfe.user.cache.ExecutorCacheCtrl] On CREATE: Actor{id=null, name=Administrator, code=-1}
+2013-06-23 13:28:39,005 DEBUG [ru.runa.wfe.user.cache.ExecutorCacheCtrl] On CREATE: Group{id=null, name=Administrators}
+2013-06-23 13:28:39,009 DEBUG [ru.runa.wfe.user.cache.ExecutorCacheCtrl] On CREATE: Group{id=null, name=Bots}
+2013-06-23 13:28:39,020 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: ExecutorGroupMembership{group=Group{id=2, name=Administrators}, executor=Actor{id=1, name=Administrator, code=-1}}
+2013-06-23 13:28:39,021 DEBUG [ru.runa.wfe.user.cache.ExecutorCacheCtrl] On CREATE: ExecutorGroupMembership{group=Group{id=2, name=Administrators}, executor=Actor{id=1, name=Administrator, code=-1}}
+2013-06-23 13:28:39,021 INFO  [ru.runa.wfe.user.cache.ExecutorCacheCtrl] Cache is uninitialized. Due to CREATE of ExecutorGroupMembership{group=Group{id=2, name=Administrators}, executor=Actor{id=1, name=Administrator, code=-1}}
+2013-06-23 13:28:39,023 INFO  [ru.runa.wfe.user.cache.ExecutorCacheCtrl] Cache initializing
+2013-06-23 13:28:39,037 INFO  [ru.runa.wfe.user.cache.ExecutorCacheCtrl] Cache initializing
+2013-06-23 13:28:39,046 DEBUG [ru.runa.wfe.task.cache.TaskCacheCtrl] On CREATE: Actor{id=null, name=SystemExecutor:ProcessStarter, code=-2}
+2013-06-23 13:28:39,046 DEBUG [ru.runa.wfe.ss.cache.SubstitutionCacheCtrl] On CREATE: Actor{id=null, name=SystemExecutor:ProcessStarter, code=-2}
+2013-06-23 13:28:39,046 DEBUG [ru.runa.wfe.user.cache.ExecutorCacheCtrl] On CREATE: Actor{id=null, name=SystemExecutor:ProcessStarter, code=-2}
+2013-06-23 13:28:39,458 INFO  [ru.runa.common.web.InitializeDBListener] initialization done in class loader WebappClassLoader
+  delegate: false
+  repositories:
+    /WEB-INF/classes/
+----------> Parent Classloader:
+java.net.FactoryURLClassLoader@1520b33
+
+2013-06-23 13:28:39,467 INFO  [ru.runa.wfe.commons.ftl.FreemarkerConfiguration] Using java.io.FileInputStream@177cf33
+2013-06-23 13:28:39,491 DEBUG [ru.runa.wfe.commons.ftl.FreemarkerConfiguration] Registered tag DisplayVariable as class ru.runa.wf.web.ftl.method.DisplayVariableTag
+2013-06-23 13:28:39,499 DEBUG [ru.runa.wfe.commons.ftl.FreemarkerConfiguration] Registered tag ChooseActor as class ru.runa.wf.web.ftl.method.ChooseActorTag
+2013-06-23 13:28:39,503 DEBUG [ru.runa.wfe.commons.ftl.FreemarkerConfiguration] Registered tag DisplayActor as class ru.runa.wf.web.ftl.method.DisplayActorTag
+2013-06-23 13:28:39,509 DEBUG [ru.runa.wfe.commons.ftl.FreemarkerConfiguration] Registered tag GroupMembers as class ru.runa.wf.web.ftl.method.GroupMembersTag
+2013-06-23 13:28:39,514 DEBUG [ru.runa.wfe.commons.ftl.FreemarkerConfiguration] Registered tag ViewFile as class ru.runa.wf.web.ftl.method.FileTag
+2013-06-23 13:28:39,517 DEBUG [ru.runa.wfe.commons.ftl.FreemarkerConfiguration] Registered tag InputDateTime as class ru.runa.wf.web.ftl.method.DateTimeInputTag
+2013-06-23 13:28:39,521 DEBUG [ru.runa.wfe.commons.ftl.FreemarkerConfiguration] Registered tag ChooseActorByRelation as class ru.runa.wf.web.ftl.method.ChooseActorByRelationTag
+2013-06-23 13:28:39,524 DEBUG [ru.runa.wfe.commons.ftl.FreemarkerConfiguration] Registered tag DownloadFile as class ru.runa.wf.web.ftl.method.DownloadFileTag
+2013-06-23 13:28:39,538 INFO  [ru.runa.common.web.InitializeDBListener] Initialized FTL tags: class ru.runa.wf.web.ftl.method.GroupMembersTag, class ru.runa.wf.web.ftl.method.ChooseActorByRelationTag, class ru.runa.wf.web.ftl.method.DisplayActorTag, class ru.runa.wf.web.ftl.method.ChooseActorTag, class ru.runa.wf.web.ftl.method.DownloadFileTag, class ru.runa.wf.web.ftl.method.DisplayVariableTag, class ru.runa.wf.web.ftl.method.DateTimeInputTag, class ru.runa.wf.web.ftl.method.FileTag
+2013-06-23 13:28:45,211 INFO  [org.apache.struts.action.ActionServlet] Loading chain catalog from jar:file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/tmp/deploy/tmp1555133445184975964runawfe.ear-contents/wfe-web-4.0.4-exp.war/WEB-INF/lib/struts-core-1.3.8.jar!/org/apache/struts/chain/chain-config.xml
+2013-06-23 13:28:46,543 WARN  [org.jboss.web.tomcat.service.TomcatDeployer] Failed to setup clustering, clustering disabled. NoClassDefFoundError: org/jboss/cache/aop/PojoCacheMBean
+2013-06-23 13:28:47,237 INFO  [org.jboss.deployment.EARDeployer] Started J2EE application: file:/C:/Users/Admin/Downloads/Runa/4.0.4/RunaWFE_Server.4.0.4/runawfe.4.0.4/server/default/deploy/runawfe.ear
+2013-06-23 13:28:47,427 INFO  [org.apache.coyote.http11.Http11Protocol] Starting Coyote HTTP/1.1 on http-0.0.0.0-8080
+2013-06-23 13:28:47,492 INFO  [org.apache.coyote.ajp.AjpProtocol] Starting Coyote AJP/1.3 on ajp-0.0.0.0-8009
+2013-06-23 13:28:47,512 INFO  [org.jboss.system.server.Server] JBoss (MX MicroKernel) [4.2.3.GA (build: SVNTag=JBoss_4_2_3_GA date=200807181439)] Started in 1m:24s:708ms
+2013-06-23 13:29:37,262 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:30:37,268 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:31:37,268 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:32:37,268 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:33:37,269 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:34:37,270 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:35:37,270 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:36:37,270 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:37:37,270 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:38:37,271 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:39:37,271 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:40:37,271 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:41:37,271 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:42:37,271 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:43:37,272 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:44:37,273 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:45:37,272 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:46:37,272 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:47:37,272 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:48:37,272 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:49:37,272 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:50:37,272 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:51:37,272 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:52:37,272 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:53:37,272 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:54:37,273 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:55:37,273 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:56:37,273 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:57:37,273 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:58:37,274 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 13:59:37,274 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:00:37,274 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:01:37,274 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:02:37,274 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:03:37,275 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:04:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:05:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:06:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:07:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:08:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:09:37,277 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:10:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:11:37,277 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:12:37,277 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:13:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:14:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:15:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:16:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:17:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:18:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:19:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:20:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:21:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:22:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:23:37,276 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:24:37,277 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:25:37,277 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:26:37,280 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:27:37,279 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:28:37,281 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:29:37,280 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:30:37,280 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:31:37,281 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:32:37,282 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:33:37,283 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:34:37,283 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:35:37,283 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:36:37,284 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:37:37,286 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:38:37,285 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:39:37,286 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:40:37,285 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:41:37,286 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:42:37,285 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:43:37,286 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:44:37,292 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:45:37,293 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:46:37,294 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:47:37,296 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:48:37,295 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:49:37,296 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:50:37,297 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:51:37,297 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:52:37,298 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:53:37,298 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:54:37,299 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:55:37,299 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:56:37,306 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:57:37,307 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:58:37,307 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 14:59:37,308 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:00:37,309 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:01:37,308 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:02:37,308 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:03:37,309 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:04:37,308 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:05:37,309 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:06:37,310 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:07:37,311 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:08:37,312 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:09:37,312 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:10:37,313 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:11:37,314 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:12:37,314 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:13:37,314 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:14:37,315 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:15:37,317 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:16:37,318 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:17:37,316 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:18:37,316 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:19:37,316 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:20:37,317 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:21:37,316 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:22:37,317 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:23:37,317 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:24:37,317 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:25:37,317 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:26:37,318 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:27:37,319 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:28:37,320 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:29:37,320 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:30:37,320 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:31:37,320 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:32:37,320 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:33:37,321 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:34:37,322 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:35:37,321 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:36:37,322 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:37:37,336 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:38:37,323 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:39:37,324 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:40:37,325 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:41:37,326 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:42:37,326 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:43:37,327 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:44:37,328 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:45:37,329 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:46:37,330 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:47:37,330 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:48:37,339 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:49:37,330 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:50:37,331 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:51:37,330 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:52:37,331 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:53:37,332 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:54:37,333 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:55:37,333 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:56:37,334 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:57:37,335 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:58:37,336 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 15:59:37,338 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:00:37,337 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:01:37,338 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:02:37,338 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:03:37,338 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:04:37,341 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:05:37,506 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:06:37,343 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:07:37,352 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:08:37,343 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:09:37,378 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:10:37,344 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:11:37,344 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:12:37,410 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:13:37,346 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:14:37,400 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:15:37,348 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:16:37,352 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:17:37,371 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:18:37,373 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:19:37,348 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:20:37,348 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:21:37,349 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:22:37,395 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:23:45,883 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:24:37,587 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:25:37,588 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:26:37,588 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:27:37,589 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:28:37,951 INFO  [ru.runa.wfe.job.impl.LDAPSynchronizerTask] ldap synchronization: disabled
+2013-06-23 16:28:38,592 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:29:38,564 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:30:38,564 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:31:38,571 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:32:38,575 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:33:38,574 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:34:38,566 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:35:38,587 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:36:38,567 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:37:38,598 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:38:38,567 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:39:38,568 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:40:38,591 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:41:38,570 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:42:38,571 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:43:38,572 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:44:38,615 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:45:38,642 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:46:38,627 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:47:15,936 WARN  [org.apache.struts.util.PropertyMessageResources]   Resource struts_ru_RU.properties Not Found.
+2013-06-23 16:47:28,641 DEBUG [ru.runa.wfe.service.impl.AuthenticationServiceBean] Authenticating (login) Administrator
+2013-06-23 16:47:29,044 INFO  [ru.runa.wfe.user.cache.ExecutorCacheCtrl] Cache initializing
+2013-06-23 16:47:29,594 INFO  [ru.runa.wfe.user.cache.ExecutorCacheCtrl] Cache is initialized
+2013-06-23 16:47:33,951 DEBUG [ru.runa.wfe.security.logic.AuthenticationLogic] Administrator successfully authenticated
+2013-06-23 16:47:33,952 DEBUG [ru.runa.wfe.service.impl.AuthenticationServiceBean] Authenticated (login): Actor{id=1, name=Administrator, code=-1}
+2013-06-23 16:47:33,991 INFO  [apicall] 5435 milliseconds: ru.runa.wfe.service.impl.AuthenticationServiceBean.authenticateByLoginPassword
+2013-06-23 16:47:37,820 INFO  [ru.runa.wfe.task.cache.TaskCacheCtrl] Cache initializing
+2013-06-23 16:47:37,850 INFO  [ru.runa.wfe.task.cache.TaskCacheCtrl] Cache is initialized
+2013-06-23 16:47:37,851 INFO  [ru.runa.wfe.ss.cache.SubstitutionCacheCtrl] Cache initializing
+2013-06-23 16:47:38,447 INFO  [ru.runa.wfe.ss.cache.SubstitutionCacheCtrl] Cache is initialized
+2013-06-23 16:47:38,471 DEBUG [ru.runa.wfe.task.TasklistBuilder] Building tasklist for Actor{id=1, name=Administrator, code=-1} with substituted: []
+2013-06-23 16:47:38,627 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:47:53,259 INFO  [ru.runa.common.web.action.AdminkitScriptsAction] Getting script deploy-samples-script.xml
+2013-06-23 16:47:55,782 INFO  [ru.runa.common.web.action.AdminkitScriptsAction] Executing script
+2013-06-23 16:47:56,601 ERROR [ru.runa.common.web.action.AdminkitScriptsAction] admin scripts action
+java.lang.RuntimeException: org.dom4j.DocumentException: Error on line 1 of document  : Reference is not allowed in prolog. Nested exception: Reference is not allowed in prolog.
+	at com.google.common.base.Throwables.propagate(Throwables.java:160)
+	at ru.runa.wfe.commons.xml.XmlUtils.parse(XmlUtils.java:108)
+	at ru.runa.wfe.commons.xml.XmlUtils.parseWithXSDValidation(XmlUtils.java:73)
+	at ru.runa.wfe.service.client.AdminScriptClient.run(AdminScriptClient.java:76)
+	at ru.runa.common.web.action.AdminkitScriptsAction.execute(AdminkitScriptsAction.java:50)
+	at org.apache.struts.action.RequestProcessor.processActionPerform(RequestProcessor.java:425)
+	at org.apache.struts.action.RequestProcessor.process(RequestProcessor.java:228)
+	at ru.runa.common.web.UTF8RequestProcessor.process(UTF8RequestProcessor.java:41)
+	at org.apache.struts.action.ActionServlet.process(ActionServlet.java:1913)
+	at org.apache.struts.action.ActionServlet.doPost(ActionServlet.java:462)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:803)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:290)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at ru.runa.common.web.filter.XSSFilter.doFilter(XSSFilter.java:18)
+	at ru.runa.common.web.filter.HTTPFilterBase.doFilter(HTTPFilterBase.java:50)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at ru.runa.common.web.filter.HTTPSessionFilter.doFilter(HTTPSessionFilter.java:49)
+	at ru.runa.common.web.filter.HTTPFilterBase.doFilter(HTTPFilterBase.java:50)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at ru.runa.af.web.filter.NTLMFilter.doFilter(NTLMFilter.java:54)
+	at ru.runa.common.web.filter.HTTPFilterBase.doFilter(HTTPFilterBase.java:50)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:206)
+	at net.bull.javamelody.MonitoringFilter.doFilter(MonitoringFilter.java:179)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.jboss.web.tomcat.filters.ReplyHeaderFilter.doFilter(ReplyHeaderFilter.java:96)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:230)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:175)
+	at org.jboss.web.tomcat.security.SecurityAssociationValve.invoke(SecurityAssociationValve.java:182)
+	at org.jboss.web.tomcat.security.JaccContextValve.invoke(JaccContextValve.java:84)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.jboss.web.tomcat.service.jca.CachedConnectionValve.invoke(CachedConnectionValve.java:157)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:262)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:844)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:446)
+	at java.lang.Thread.run(Thread.java:722)
+Caused by: org.dom4j.DocumentException: Error on line 1 of document  : Reference is not allowed in prolog. Nested exception: Reference is not allowed in prolog.
+	at org.dom4j.io.SAXReader.read(SAXReader.java:482)
+	at org.dom4j.io.SAXReader.read(SAXReader.java:365)
+	at ru.runa.wfe.commons.xml.XmlUtils.parse(XmlUtils.java:106)
+	... 44 more
+2013-06-23 16:48:38,627 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
+2013-06-23 16:49:38,627 DEBUG [ru.runa.wfe.job.impl.ExpiredJobCheckerTask] Expired jobs: 0
