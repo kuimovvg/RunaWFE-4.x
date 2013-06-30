@@ -77,7 +77,8 @@ public class VariableLogic extends WFCommonLogic {
 
     public void updateVariables(User user, Long processId, Map<String, Object> variables) {
         Process process = processDAO.getNotNull(processId);
-        checkPermissionAllowed(user, process, ProcessPermission.UPDATE_PERMISSIONS);
+        // TODO check ProcessPermission.UPDATE
+        checkPermissionAllowed(user, process, ProcessPermission.READ);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         executionContext.setVariables(variables);
