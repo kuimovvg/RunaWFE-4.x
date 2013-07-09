@@ -57,6 +57,7 @@ public class CopyProcessDefinitionWizard extends Wizard implements INewWizard {
                         definition.setLanguage(page.getLanguage());
                         WorkspaceOperations.saveProcessDefinition(definitionFile, definition);
                         ProcessCache.newProcessDefinitionWasCreated(definitionFile);
+                        WorkspaceOperations.refreshResource(targetFolder);
                         monitor.done();
                     } catch (Exception e) {
                         throw new InvocationTargetException(e);
