@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.dao.ProcessLogDAO;
-import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.definition.dao.ProcessDefinitionLoader;
 import ru.runa.wfe.execution.Process;
@@ -200,9 +199,7 @@ public class WFCommonLogic extends CommonLogic {
      *            null, if nothing to apply.
      * @return List of graph presentation elements.
      */
-    public List<GraphElementPresentation> getDefinitionGraphElements(User user, Long id, GraphElementPresentationVisitor visitor) {
-        ProcessDefinition definition = getDefinition(id);
-        checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
+    public List<GraphElementPresentation> getDefinitionGraphElements(User user, ProcessDefinition definition, GraphElementPresentationVisitor visitor) {
         List<GraphElementPresentation> result = GraphElementPresentationBuilder.createElements(definition);
         if (visitor != null) {
             for (GraphElementPresentation elementPresentation : result) {
@@ -211,5 +208,4 @@ public class WFCommonLogic extends CommonLogic {
         }
         return result;
     }
-
 }
