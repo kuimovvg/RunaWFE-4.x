@@ -91,6 +91,7 @@ public class FreemarkerUtil {
                                 surroundWithBrackets = false;
                             }
                         } catch (Exception e) {
+                            PluginLogger.logErrorWithoutDialog("FTL tag problem found for " + tagName + "(" + j + "): '" + params[j] + "'", e);
                         }
                         if (surroundWithBrackets) {
                             ftlTag.append("\"");
@@ -166,7 +167,10 @@ public class FreemarkerUtil {
     }
 
     private static class VariableTypeSupportHashModel extends SimpleHash {
-        protected TemplateModel getTemplateModel(Variable variable) {
+        protected static final String VAR_VALUE_PLC = "var";
+        protected boolean stageRenderingParams = false;
+
+        protected TemplateModel getTemplateModel(Variable variable) throws TemplateModelException {
             Map<String, String> properties = new HashMap<String, String>();
             String javaClassName = variable.getJavaClassName();
             if (VariableFormatRegistry.isAssignableFrom("ru.runa.wfe.user.Executor", javaClassName)) {
@@ -222,10 +226,14 @@ public class FreemarkerUtil {
 
         @Override
         public TemplateModel get(String key) throws TemplateModelException {
+            if (stageRenderingParams) {
+                return new SimpleScalar(key);
+            } 
             // output variables
             if (variables.containsKey(key)) {
                 return getTemplateModel(variables.get(key));
             }
+            stageRenderingParams = true;
             return new EditorMethodModel(key);
         }
 
@@ -256,6 +264,7 @@ public class FreemarkerUtil {
 
             @Override
             public Object exec(List args) throws TemplateModelException {
+                stageRenderingParams = false;
                 StringBuffer buffer = new StringBuffer("<").append(METHOD_ELEMENT_NAME()).append(" ");
                 buffer.append("src=\"http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=").append(name).append("\" ");
                 buffer.append(ATTR_FTL_TAG_NAME).append("=\"").append(name).append("\" ");
@@ -296,10 +305,8 @@ public class FreemarkerUtil {
     }
 
     public static class ValidationHashModel extends VariableTypeSupportHashModel {
-        private static final String VAR_VALUE_PLC = "var";
         private final Map<String, Integer> usedVariables = new HashMap<String, Integer>();
         private final ProcessDefinition definition;
-        private boolean stageRenderingParams = false;
 
         public ValidationHashModel(ProcessDefinition definition) {
             Mode.setDesignerMode();
@@ -320,9 +327,8 @@ public class FreemarkerUtil {
                 }
                 if (stageRenderingParams) {
                     return wrap(VAR_VALUE_PLC);
-                } else {
-                    return getTemplateModel(variable);
-                }
+                } 
+                return getTemplateModel(variable);
             }
             if (MethodTag.hasTag(key)) {
                 stageRenderingParams = true;
