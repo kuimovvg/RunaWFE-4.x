@@ -252,9 +252,10 @@ public class ExecutionLogic extends WFCommonLogic {
      */
     public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId) {
         Process process = processDAO.getNotNull(processId);
+        ProcessDefinition definition = getDefinition(process.getDeployment().getId());
         List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(processId);
         StartedSubprocessesVisitor operation = new StartedSubprocessesVisitor(user, nodeProcesses);
-        return getDefinitionGraphElements(user, process.getDeployment().getId(), operation);
+        return getDefinitionGraphElements(user, definition, operation);
     }
 
 }
