@@ -40,13 +40,9 @@ public class FormHashModel extends SimpleHash {
         if (model != null) {
             return model;
         }
-        Object variableValue = variableProvider.getValue(key);
-        if (variableValue != null) {
-            return wrap(variableValue);
-        }
         try {
-            FreemarkerConfiguration conf = FreemarkerConfiguration.getInstance();
-            FreemarkerTag tag = conf.getTag(key);
+            FreemarkerConfiguration configuration = FreemarkerConfiguration.getInstance();
+            FreemarkerTag tag = configuration.getTag(key);
             if (tag != null) {
                 tag.init(user, webHelper, variableProvider);
                 if (webHelper != null && tag instanceof AjaxFreemarkerTag) {
@@ -56,6 +52,10 @@ public class FormHashModel extends SimpleHash {
             }
         } catch (Exception e) {
             throw new TemplateModelException(e);
+        }
+        Object variableValue = variableProvider.getValue(key);
+        if (variableValue != null) {
+            return wrap(variableValue);
         }
         return null;
     }
