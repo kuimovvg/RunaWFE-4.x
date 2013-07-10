@@ -57,21 +57,23 @@ public class FreemarkerConfiguration {
             Element root = document.getRootElement();
             List<Element> tagElements = root.elements(TAG_ELEMENT);
             for (Element tagElement : tagElements) {
+                String name = tagElement.attributeValue(NAME_ATTR);
                 try {
-                    String name = tagElement.attributeValue(NAME_ATTR);
                     String className = tagElement.attributeValue(CLASS_ATTR);
                     Class<? extends FreemarkerTag> tagClass = (Class<? extends FreemarkerTag>) ClassLoaderUtil.loadClass(className);
                     addTag(name, tagClass);
                 } catch (Throwable e) {
-                    log.warn("Unable to create freemarker tag", e);
+                    log.warn("Unable to create freemarker tag " + name, e);
                 }
             }
         }
     }
 
-    private void addTag(String name, Class<? extends FreemarkerTag> tagClass) throws Exception {
-        // test creation
-        tagClass.newInstance();
+    private void addTag(String name, Class<? extends FreemarkerTag> tagClass) {
+        if (tagClass != null) {
+            // test creation
+            ApplicationContextFactory.createAutowiredBean(tagClass);
+        }
         tags.put(name, tagClass);
         log.debug("Registered tag " + name + " as " + tagClass);
     }
@@ -84,10 +86,13 @@ public class FreemarkerConfiguration {
                 addTag(name, tagClass);
             } catch (Exception e) {
                 log.warn("Unable to load tag " + name + " as " + possibleTagClassName + ". Check your " + CONFIG);
-                return null;
+                addTag(name, null);
             }
         }
         Class<? extends FreemarkerTag> tagClass = tags.get(name);
-        return ApplicationContextFactory.createAutowiredBean(tagClass);
+        if (tagClass != null) {
+            return ApplicationContextFactory.createAutowiredBean(tagClass);
+        }
+        return null;
     }
 }
