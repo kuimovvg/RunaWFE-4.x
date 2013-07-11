@@ -26,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
+import com.google.common.base.Objects;
+
 /**
  * General abstraction for organization function
  * 
@@ -63,4 +65,9 @@ public abstract class OrgFunction {
      * @throws OrgFunctionException
      */
     public abstract List<? extends Executor> getExecutors(Object... parameters) throws OrgFunctionException;
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("parameters", parameterNames).toString();
+    }
 }
