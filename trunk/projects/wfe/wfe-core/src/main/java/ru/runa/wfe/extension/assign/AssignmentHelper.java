@@ -34,6 +34,11 @@ public class AssignmentHelper {
 
     public void assignSwimlane(ExecutionContext executionContext, Assignable assignable, Collection<? extends Executor> executors) {
         try {
+            if (executors.size() == 0) {
+                log.error("Assigning null executor in " + assignable + ", check swimlane initializer");
+                assignable.assignExecutor(executionContext, null, true);
+                return;
+            }
             if (executors.size() == 1) {
                 Executor aloneExecutor = (executors.iterator().next());
                 assignable.assignExecutor(executionContext, aloneExecutor, true);
