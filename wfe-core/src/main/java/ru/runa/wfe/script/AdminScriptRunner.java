@@ -228,10 +228,12 @@ public class AdminScriptRunner {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String fullName = element.attributeValue(FULL_NAME_ATTRIBUTE_NAME);
         String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
-        String passwd = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
+        String password = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
         Actor actor = new Actor(name, description, fullName);
         actor = executorLogic.create(user, actor);
-        executorLogic.setPassword(user, actor, passwd);
+        if (password != null) {
+            executorLogic.setPassword(user, actor, password);
+        }
     }
 
     public void createGroup(Element element) {
