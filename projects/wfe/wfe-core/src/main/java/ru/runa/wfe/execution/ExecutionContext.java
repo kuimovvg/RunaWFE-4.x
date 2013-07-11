@@ -128,11 +128,11 @@ public class ExecutionContext {
     }
 
     public List<Process> getChildProcesses() {
-        String nodeId = getNode().getNodeId();
+        String nodeId = getToken().getNodeId();
         List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(getProcess().getId());
         List<Process> result = Lists.newArrayListWithExpectedSize(nodeProcesses.size());
         for (NodeProcess nodeProcess : nodeProcesses) {
-            if (nodeId.equals(nodeProcess.getNodeId())) {
+            if (Objects.equal(nodeId, nodeProcess.getNodeId())) {
                 result.add(nodeProcess.getSubProcess());
             }
         }
