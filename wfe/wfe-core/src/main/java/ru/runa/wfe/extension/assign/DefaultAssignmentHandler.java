@@ -44,10 +44,6 @@ public class DefaultAssignmentHandler implements AssignmentHandler {
     @Override
     public void assign(ExecutionContext executionContext, Assignable assignable) {
         List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(function, executionContext.getVariableProvider());
-        if (executors.size() == 0) {
-            // Nobody can be assigned. Return unassigned value.
-            return;
-        }
         assignmentHelper.assignSwimlane(executionContext, assignable, executors);
     }
 }
