@@ -34,7 +34,22 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
                 String format = element.attributeValue("format");
                 format = BackCompatibilityClassNames.getClassName(format);
                 VariableDefinition variable = new VariableDefinition(false, name, format, scriptingName);
-                variable.setFormatLabel(localizationDAO.getLocalized(format));
+                String formatLabel;
+                if (format.contains(VariableDefinition.FORMAT_COMPONENT_TYPE_START)) {
+                    formatLabel = localizationDAO.getLocalized(variable.getFormatClassName());
+                    formatLabel += VariableDefinition.FORMAT_COMPONENT_TYPE_START;
+                    String[] componentClassNames = variable.getFormatComponentClassNames();
+                    for (int i = 0; i < componentClassNames.length; i++) {
+                        if (i != 0) {
+                            formatLabel += VariableDefinition.FORMAT_COMPONENT_TYPE_CONCAT;
+                        }
+                        formatLabel += localizationDAO.getLocalized(componentClassNames[i]);
+                    }
+                    formatLabel += VariableDefinition.FORMAT_COMPONENT_TYPE_END;
+                } else {
+                    formatLabel = localizationDAO.getLocalized(format);
+                }
+                variable.setFormatLabel(formatLabel);
                 variable.setPublicAccess(Boolean.parseBoolean(element.attributeValue("public", "false")));
                 variable.setDefaultValue(element.attributeValue("defaultValue"));
                 processDefinition.addVariable(variable.getName(), variable);

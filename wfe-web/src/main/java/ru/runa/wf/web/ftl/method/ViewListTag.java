@@ -48,7 +48,7 @@ public class ViewListTag extends FreemarkerTag {
         }
         for (int i = 0; i < list.size(); i++) {
             Object object = list.get(i);
-            String value = FormatCommons.getVarOut(object, webHelper, variableProvider.getProcessId(), listVarName, i, null);
+            String value = FormatCommons.getVarOut(user, object, webHelper, variableProvider.getProcessId(), listVarName, i, null);
             if ("ul".equals(mode) || "ol".equals(mode)) {
                 html.append("<li>").append(value);
             } else if ("raw".equals(mode)) {

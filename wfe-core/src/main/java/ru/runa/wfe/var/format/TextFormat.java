@@ -17,9 +17,6 @@ public class TextFormat extends StringFormat {
         string = string.replaceAll("\n", "<br>");
         string = string.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
         string = string.replaceAll(" ", "&nbsp;");
-        // TODO
-        // "<div style='display: block; padding-left: 5px; background-color: #FFC; border-color: #FC6;'>"
-        // +
         return string;
     }
 
