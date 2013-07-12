@@ -14,6 +14,8 @@ public class TextFormat extends StringFormat {
             return "";
         }
         String string = obj;
+        string = string.replaceAll("<", "&lt;");
+        string = string.replaceAll(">", "&gt;");
         string = string.replaceAll("\n", "<br>");
         string = string.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
         string = string.replaceAll(" ", "&nbsp;");
