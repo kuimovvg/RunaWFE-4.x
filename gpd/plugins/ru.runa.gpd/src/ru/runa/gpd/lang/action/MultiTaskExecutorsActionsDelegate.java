@@ -5,18 +5,19 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.PlatformUI;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.MultiTaskState;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.ui.dialog.UpdateVariableDialog;
-import ru.runa.gpd.util.VariableUtils;
+import ru.runa.gpd.ui.wizard.VariableWizard;
 import ru.runa.wfe.var.format.ListFormat;
 
 import com.google.common.base.Objects;
@@ -69,11 +70,11 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
     }
 
     private void createVariable() {
-        UpdateVariableDialog dialog = new UpdateVariableDialog(currentDefinition, null);
-        dialog.setTypeByFormat(ListFormat.class.getName());
-        if (dialog.open() == IDialogConstants.OK_ID) {
-            String scriptingName = VariableUtils.generateNameForScripting(currentDefinition, dialog.getName(), null);
-            Variable variable = new Variable(dialog.getName(), scriptingName, dialog.getTypeName(), dialog.isPublicVisibility(), dialog.getDefaultValue());
+        Variable typedVariable = new Variable("", null, ListFormat.class.getName(), false, null);
+        VariableWizard wizard = new VariableWizard(currentDefinition, typedVariable, true, false);
+        WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+        if (dialog.open() == Window.OK) {
+            Variable variable = wizard.getVariable();
             currentDefinition.addVariable(variable);
             setVariableName(variable.getName());
         }

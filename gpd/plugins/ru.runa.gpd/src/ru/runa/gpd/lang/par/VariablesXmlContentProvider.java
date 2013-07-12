@@ -35,8 +35,8 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         List<Element> elementsList = document.getRootElement().elements(VARIABLE_ELEMENT_NAME);
         for (Element element : elementsList) {
             String variableName = element.attributeValue(NAME_ATTRIBUTE_NAME);
-            String formatName = element.attributeValue(FORMAT_ATTRIBUTE_NAME);
-            formatName = BackCompatibilityClassNames.getClassName(formatName);
+            String format = element.attributeValue(FORMAT_ATTRIBUTE_NAME);
+            format = BackCompatibilityClassNames.getClassName(format);
             String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
             String isSwimlane = element.attributeValue(SWIMLANE_ATTRIBUTE_NAME);
             String publicVisibilityStr = element.attributeValue(PUBLUC_ATTRIBUTE_NAME);
@@ -53,7 +53,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
                 }
                 continue;
             }
-            Variable variable = new Variable(variableName, scriptingName, formatName, publicVisibility, defaultValue);
+            Variable variable = new Variable(variableName, scriptingName, format, publicVisibility, defaultValue);
             variable.setDescription(description);
             definition.addVariable(variable);
         }
@@ -67,7 +67,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
             Element element = root.addElement(VARIABLE_ELEMENT_NAME);
             element.addAttribute(NAME_ATTRIBUTE_NAME, variable.getName());
             element.addAttribute(SCRIPTING_NAME_ATTRIBUTE_NAME, variable.getScriptingName());
-            element.addAttribute(FORMAT_ATTRIBUTE_NAME, variable.getFormatClassName());
+            element.addAttribute(FORMAT_ATTRIBUTE_NAME, variable.getFormat());
             if (variable.isPublicVisibility()) {
                 element.addAttribute(PUBLUC_ATTRIBUTE_NAME, "true");
             }
