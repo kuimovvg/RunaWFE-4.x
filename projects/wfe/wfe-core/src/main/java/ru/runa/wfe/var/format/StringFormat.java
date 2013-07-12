@@ -37,6 +37,9 @@ public class StringFormat implements VariableFormat<String> {
 
     @Override
     public String format(String obj) {
+        if (obj == null) {
+            return "";
+        }
         return obj;
     }
 }

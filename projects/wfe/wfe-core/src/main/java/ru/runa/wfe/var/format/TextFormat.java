@@ -8,18 +8,4 @@ package ru.runa.wfe.var.format;
  */
 public class TextFormat extends StringFormat {
 
-    @Override
-    public String format(String obj) {
-        if (obj == null) {
-            return "";
-        }
-        String string = obj;
-        string = string.replaceAll("<", "&lt;");
-        string = string.replaceAll(">", "&gt;");
-        string = string.replaceAll("\n", "<br>");
-        string = string.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
-        string = string.replaceAll(" ", "&nbsp;");
-        return string;
-    }
-
 }
