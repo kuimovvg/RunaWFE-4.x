@@ -82,6 +82,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
 
     public void setFormNode(FormNode formNode) {
         this.formNode = formNode;
+        setPartName(formNode.getName());
     }
 
     public Map<String, Variable> getVariables(String typeClassNameFilter) {
