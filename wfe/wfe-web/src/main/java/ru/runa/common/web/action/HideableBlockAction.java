@@ -25,26 +25,25 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.common.web.ProfileHttpSessionHelper;
-import ru.runa.common.web.form.HideableBlockForm;
-import ru.runa.wfe.user.Profile;
+import ru.runa.common.web.BatchPresentationsVisibility;
+import ru.runa.common.web.form.IdNameForm;
 
 /**
  * Created on 26.01.2005
  * 
- * @struts:action path="/hideableBlock" name="hideableBlockForm" validate="false"
+ * TODO remove unused file
+ * 
+ * @struts:action path="/hideableBlock" name="idNameForm" validate="false"
  */
 public class HideableBlockAction extends Action {
 
     public static final String ACTION_PATH = "/hideableBlock";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        HideableBlockForm hideableBlockForm = (HideableBlockForm) form;
-        Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
-        profile.changeBlockVisibility(hideableBlockForm.getHideableBlockId());
-        String url = hideableBlockForm.getReturnAction();
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
+        IdNameForm form = (IdNameForm) actionForm;
+        BatchPresentationsVisibility.get(request.getSession()).changeBlockVisibility(form.getName());
         // http://sourceforge.net/tracker/?func=detail&aid=3461404&group_id=125156&atid=701698
-        return new ActionForward(url, false);
+        return new ActionForward(form.getAction(), false);
     }
 }

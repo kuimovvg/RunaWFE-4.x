@@ -73,8 +73,6 @@ public final class Profile implements Serializable {
     private Set<BatchPresentation> batchPresentations = Sets.newHashSet();
     @XmlTransient
     private Map<String, BatchPresentation> defaultBatchPresentations = Maps.newHashMap();
-    @XmlTransient
-    private final Set<String> visibleBlocks = Sets.newHashSet();
 
     public Profile() {
     }
@@ -167,18 +165,6 @@ public final class Profile implements Serializable {
 
     public void deleteBatchPresentation(BatchPresentation batchPresentation) {
         batchPresentations.remove(batchPresentation);
-    }
-
-    public boolean isBlockVisible(String blockId) {
-        return visibleBlocks.contains(blockId);
-    }
-
-    public void changeBlockVisibility(String blockId) {
-        if (isBlockVisible(blockId)) {
-            visibleBlocks.remove(blockId);
-        } else {
-            visibleBlocks.add(blockId);
-        }
     }
 
 }
