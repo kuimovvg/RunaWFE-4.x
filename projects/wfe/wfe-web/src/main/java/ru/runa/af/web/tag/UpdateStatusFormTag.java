@@ -53,11 +53,7 @@ public class UpdateStatusFormTag extends UpdateExecutorBaseFormTag {
 
     @Override
     protected boolean isVisible() {
-        boolean result = false;
-        if (super.isFormButtonEnabled() && (getExecutor() instanceof Actor)) {
-            result = true;
-        }
-        return result;
+        return getExecutor() instanceof Actor;
     }
 
     @Override
