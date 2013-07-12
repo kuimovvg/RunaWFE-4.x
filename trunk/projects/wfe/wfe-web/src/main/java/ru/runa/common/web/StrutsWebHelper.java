@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
+import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.commons.web.WebHelper;
 
@@ -50,6 +51,9 @@ public class StrutsWebHelper implements WebHelper {
         while (attributeNames.hasMoreElements()) {
             String attributeName = attributeNames.nextElement();
             if (attributeName.startsWith(AjaxFreemarkerTag.TAG_SESSION_PREFIX)) {
+                pageContext.getSession().removeAttribute(attributeName);
+            }
+            if (attributeName.startsWith(FtlTagVariableHandler.HANDLER_KEY_PREFIX)) {
                 pageContext.getSession().removeAttribute(attributeName);
             }
         }
