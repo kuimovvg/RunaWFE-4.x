@@ -28,11 +28,13 @@ import org.apache.ecs.Entities;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.IMG;
 import org.apache.ecs.html.Option;
+import org.apache.ecs.html.Script;
 import org.apache.ecs.html.Select;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
+import ru.runa.common.web.BatchPresentationsVisibility;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
@@ -40,7 +42,6 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ChangeActiveBatchPresentationAction;
 import ru.runa.common.web.action.HideableBlockAction;
 import ru.runa.common.web.form.BatchPresentationForm;
-import ru.runa.common.web.form.HideableBlockForm;
 import ru.runa.common.web.form.ReturnActionForm;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -86,16 +87,14 @@ public class ViewControlsHideableBlockAjaxTag extends AbstractReturningTag {
             TD headerTD = new TD();
             tr.addElement(headerTD);
             headerTD.setClass(Resources.CLASS_HIDABLEBLOCK);
-            Map<String, String> params = new HashMap<String, String>();
-            params.put(HideableBlockForm.HIDEABLE_BLOCK_ID, getHideableBlockId());
-            params.put(HideableBlockForm.RETURN_ACTION, getReturnAction());
 
-            boolean contentVisible = false;
+            boolean contentVisible = BatchPresentationsVisibility.get(pageContext.getSession()).isBlockVisible(hideableBlockId);
             headerTD.addElement(Entities.NBSP);
+            headerTD.addElement(new Script("visibleBlock = " + contentVisible + ";"));
 
             String id = getHideableBlockId() + "Controls";
 
-            A link = new A("javascript:viewBlock('" + id + "');");
+            A link = new A("javascript:viewBlock('" + getHideableBlockId() + "', '" + getReturnAction() + "');");
             headerTD.addElement(link);
             link.setID(id + "Link");
             link.setClass(Resources.CLASS_HIDABLEBLOCK);
@@ -108,10 +107,14 @@ public class ViewControlsHideableBlockAjaxTag extends AbstractReturningTag {
             link.addElement(contentVisible ? getHideTitle() : getShowTitle());
 
             headerTD.addElement(Entities.NBSP);
-            addEndOptionalContent(headerTD, contentVisible);
+            addEndOptionalContent(headerTD);
 
             tr.output(jspOut);
-            jspOut.println("<tr><td id=\"" + id + "\" style=\"display: none;\">");
+            String style = "";
+            if (!contentVisible) {
+                style = "style=\"display: none;\"";
+            }
+            jspOut.println("<tr><td id=\"" + id + "\" " + style + ">");
             return EVAL_BODY_INCLUDE;
         } catch (IOException e) {
             throw new JspException(e);
@@ -130,7 +133,7 @@ public class ViewControlsHideableBlockAjaxTag extends AbstractReturningTag {
         return EVAL_PAGE;
     }
 
-    public void addEndOptionalContent(TD td, boolean isVisible) throws JspException {
+    public void addEndOptionalContent(TD td) throws JspException {
         td.addElement(Entities.NBSP);
         Select select = new Select(BatchPresentationForm.BATCH_PRESENTATION_NAME);
         Profile profile = ProfileHttpSessionHelper.getProfile(pageContext.getSession());
