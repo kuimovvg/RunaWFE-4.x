@@ -73,7 +73,7 @@ public abstract class WFFormTag extends TitledFormTag {
                 script.addElement(new StringElement(new String(interaction.getScriptData(), Charsets.UTF_8)));
                 tdFormElement.addElement(script);
             }
-
+            tdFormElement.setClass(Resources.CLASS_BOX_BODY + " taskform");
             tdFormElement.addElement(new StringElement(wfFormContent));
             formButtonVisible = true;
         } catch (TaskDoesNotExistException e) {
