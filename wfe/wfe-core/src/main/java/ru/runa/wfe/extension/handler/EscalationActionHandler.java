@@ -74,7 +74,7 @@ public class EscalationActionHandler implements ActionHandler {
         if (executionContext.getNode() instanceof TaskNode) {
             Task task = executionContext.getTask();
             if (task == null) {
-                log.error("Task is not null in " + executionContext);
+                log.error("Task is null in " + executionContext);
                 return;
             }
             Executor taskExecutor = task.getExecutor();
