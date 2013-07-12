@@ -11,7 +11,7 @@
 %>
 	<wf:listNotGroupMembersForm batchPresentationId="listNotGroupMembersForm"  identifiableId="<%= executorIdValue %>"  returnAction='<%= returnAction %>' >
 		<div>
-			<wf:viewControlsHideableBlock hideableBlockId="listNotGroupMembersForm" action="/hideableBlock" returnAction='<%= returnAction %>' >
+			<wf:viewControlsHideableBlock hideableBlockId="listNotGroupMembersForm" returnAction='<%= returnAction %>' >
 				<wf:tableViewSetupForm batchPresentationId="listNotGroupMembersForm" action="/tableViewSetup" returnAction='<%= returnAction %>'  />
 			</wf:viewControlsHideableBlock>
 		</div>

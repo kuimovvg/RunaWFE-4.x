@@ -1286,58 +1286,6 @@
 
    </tag>
    <tag>
-
-      <icon>    
-      </icon>
-      <name>hideableBlock</name>
-      <tag-class>ru.runa.common.web.tag.HideableBlockTag</tag-class>
-      <body-content>JSP</body-content>
-
-      <attribute>
-         <name>hideTitle</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>showTitle</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>hideableBlockId</name>
-         <required>true</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>action</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>method</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>returnAction</name>
-         <required>true</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-
-   </tag>
-   <tag>
       <name>showHistory</name>
       <tag-class>ru.runa.wf.web.tag.ShowHistoryTag</tag-class>
       <body-content>JSP</body-content>

@@ -101,16 +101,25 @@ function openSubstitutionCriteriasConfirmPopup(formId, message, allMethod, allBu
 }
 
 var visibleBlock = false; // TODO unimplementd; use jQuery.Collection plugin for this
-function viewBlock(blockId) {
+function viewBlock(blockId, returnAction) {
+	var controlId = blockId + "Controls";
 	if (visibleBlock) {
-		$("#"+blockId).hide();
-		$("#"+blockId+"Img").attr("src", "/wfe/images/view_setup_hidden.gif");
+		$("#"+controlId).hide();
+		$("#"+controlId+"Img").attr("src", "/wfe/images/view_setup_hidden.gif");
 		visibleBlock = false;
 	} else {
-		$("#"+blockId).show();
-		$("#"+blockId+"Img").attr("src", "/wfe/images/view_setup_visible.gif");
+		$("#"+controlId).show();
+		$("#"+controlId+"Img").attr("src", "/wfe/images/view_setup_visible.gif");
 		visibleBlock = true;
 	}
+	jQuery.ajax({
+	    type: "POST",
+	    url: "/wfe/hideableBlock.do",
+	    data: {
+	    	action: returnAction,
+	    	name: blockId
+	    }
+    });
 }
 
 function showFiltersHelp() {
