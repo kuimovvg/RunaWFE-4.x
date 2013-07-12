@@ -167,9 +167,9 @@
             enabled="true"
             height="40"
             id="InputVariable"
-            image="metadata/icons/DefaultTag.png"
+            image="metadata/icons/InputVariable.png"
             name="%Method.InputVariable"
-            width="180">
+            width="250">
          <param
                name="%Param.Variable"
                type="combo"
