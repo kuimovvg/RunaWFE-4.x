@@ -46,7 +46,7 @@ public class WfVariable implements Serializable {
     }
 
     public VariableFormat<Object> getFormatNotNull() {
-        return FormatCommons.create(getFormatClassNameNotNull());
+        return FormatCommons.create(getDefinition());
     }
 
     public String getFormatClassNameNotNull() {
