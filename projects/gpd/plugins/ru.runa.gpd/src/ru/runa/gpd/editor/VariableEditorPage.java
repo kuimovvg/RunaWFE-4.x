@@ -16,6 +16,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
@@ -36,11 +38,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveVariablesCommand;
-import ru.runa.gpd.extension.LocalizationRegistry;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Variable;
@@ -50,9 +52,8 @@ import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.VariableSearchQuery;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
-import ru.runa.gpd.ui.dialog.UpdateVariableDialog;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
-import ru.runa.gpd.util.VariableUtils;
+import ru.runa.gpd.ui.wizard.VariableWizard;
 
 @SuppressWarnings("unchecked")
 public class VariableEditorPage extends EditorPartBase {
@@ -280,10 +281,10 @@ public class VariableEditorPage extends EditorPartBase {
     private class CreateVariableSelectionListener extends LoggingSelectionAdapter {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
-            UpdateVariableDialog dialog = new UpdateVariableDialog(getDefinition(), null);
-            if (dialog.open() == IDialogConstants.OK_ID) {
-                String scriptingName = VariableUtils.generateNameForScripting(getDefinition(), dialog.getName(), null);
-                Variable variable = new Variable(dialog.getName(), scriptingName, dialog.getTypeName(), dialog.isPublicVisibility(), dialog.getDefaultValue());
+            VariableWizard wizard = new VariableWizard(getDefinition(), null, true, true);
+            WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+            if (dialog.open() == Window.OK) {
+                Variable variable = wizard.getVariable();
                 getDefinition().addVariable(variable);
                 IStructuredSelection selection = new StructuredSelection(variable);
                 tableViewer.setSelection(selection);
@@ -296,11 +297,12 @@ public class VariableEditorPage extends EditorPartBase {
         protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
-            UpdateVariableDialog dialog = new UpdateVariableDialog(getDefinition(), variable);
-            if (dialog.open() == IDialogConstants.OK_ID) {
-                variable.setFormatClassName(dialog.getTypeName());
-                variable.setPublicVisibility(dialog.isPublicVisibility());
-                variable.setDefaultValue(dialog.getDefaultValue());
+            VariableWizard wizard = new VariableWizard(getDefinition(), variable, false, true);
+            WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+            if (dialog.open() == Window.OK) {
+                variable.setFormat(wizard.getVariable().getFormat());
+                variable.setPublicVisibility(wizard.getVariable().isPublicVisibility());
+                variable.setDefaultValue(wizard.getVariable().getDefaultValue());
                 tableViewer.setSelection(selection);
             }
         }
@@ -324,7 +326,7 @@ public class VariableEditorPage extends EditorPartBase {
                     newVariable = new Variable(variable);
                     getDefinition().addVariable(newVariable);
                 } else {
-                    newVariable.setFormatClassName(variable.getFormatClassName());
+                    newVariable.setFormat(variable.getFormat());
                 }
             }
         }
@@ -338,7 +340,7 @@ public class VariableEditorPage extends EditorPartBase {
             case 0:
                 return variable.getName();
             case 1:
-                return LocalizationRegistry.getLabel(variable.getFormatClassName());
+                return variable.getFormatLabel();
             case 2:
                 if (variable.getDefaultValue() == null) {
                     return "";
