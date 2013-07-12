@@ -78,6 +78,34 @@
    <extension
          point="ru.runa.gpd.form.ftl.tags">
       <tag
+            enabled="true"
+            height="40"
+            id="InputVariable"
+            image="metadata/icons/InputVariable.png"
+            name="%Method.InputVariable"
+            width="250">
+         <param
+               name="%Param.Variable"
+               type="combo"
+               variableTypeFilter="java.lang.Object"
+               variableAccess="WRITE">
+         </param>
+      </tag>
+      <tag
+            enabled="true"
+            height="40"
+            id="DisplayVariable"
+            image="metadata/icons/VariableValueDisplay.png"
+            name="%Method.DisplayVariable"
+            width="250">
+         <param
+               name="%Param.Variable"
+               type="combo"
+               variableTypeFilter="java.lang.Object"
+               variableAccess="READ">
+         </param>
+      </tag>
+      <tag
             enabled="false"
             height="40"
             id="ChooseActor"
@@ -166,20 +194,6 @@
       <tag
             enabled="true"
             height="40"
-            id="InputVariable"
-            image="metadata/icons/InputVariable.png"
-            name="%Method.InputVariable"
-            width="250">
-         <param
-               name="%Param.Variable"
-               type="combo"
-               variableTypeFilter="java.lang.Object"
-               variableAccess="WRITE">
-         </param>
-      </tag>
-      <tag
-            enabled="true"
-            height="40"
             id="GroupMembers"
             image="metadata/icons/ChooseActor.png"
             name="%Method.GroupMembers"
@@ -208,20 +222,6 @@
                   name="%Presentation.ListRaw"
                   value="raw">
             </paramValue>
-         </param>
-      </tag>
-      <tag
-            enabled="true"
-            height="40"
-            id="DisplayVariable"
-            image="metadata/icons/VariableValueDisplay.png"
-            name="%Method.DisplayVariable"
-            width="250">
-         <param
-               name="%Param.Variable"
-               type="combo"
-               variableTypeFilter="java.lang.Object"
-               variableAccess="READ">
          </param>
       </tag>
       <tag
@@ -380,6 +380,28 @@
       </tag>
       <tag
             enabled="false"
+            id="EditStringList"
+            name="%Method.EditStringList">
+         <param
+               name="%Param.ListVariable"
+               type="combo"
+               variableTypeFilter="java.util.List"
+               variableAccess="WRITE">
+         </param>
+      </tag>
+      <tag
+            enabled="false"
+            id="EditList"
+            name="%Method.EditList">
+         <param
+               name="%Param.ListVariable"
+               type="combo"
+               variableAccess="WRITE"
+               variableTypeFilter="java.util.List">
+         </param>
+      </tag>
+      <tag
+            enabled="false"
             id="ViewList"
             name="%Method.ViewList">
          <param
@@ -407,20 +429,31 @@
          </param>
       </tag>
       <tag
-            enabled="false"
-            id="EditStringList"
-            name="%Method.EditStringList">
+            enabled="true"
+            id="EditLinkedLists"
+            name="%Method.EditLinkedLists">
          <param
                name="%Param.ListVariable"
                type="combo"
-               variableTypeFilter="java.util.List"
-               variableAccess="WRITE">
+               variableAccess="WRITE"
+               variableTypeFilter="java.util.List">
          </param>
       </tag>
       <tag
             enabled="true"
+            id="DisplayLinkedLists"
+            name="%Method.DisplayLinkedLists">
+         <param
+               name="%Param.ListVariable"
+               type="combo"
+               variableTypeFilter="java.util.List"
+               variableAccess="READ">
+         </param>
+      </tag>
+      <tag
+            enabled="false"
             id="DisplayLinkedListsInTable"
-            name="%Method.DisplayLinkedListsInTable">
+            name="%Method.DisplayLinkedLists">
          <param
                name="%Param.ListVariable"
                type="combo"
@@ -430,8 +463,19 @@
       </tag>
       <tag
             enabled="true"
+            id="DisplayLinkedMaps"
+            name="%Method.DisplayLinkedMaps">
+         <param
+               name="%Param.MapVariable"
+               type="combo"
+               variableTypeFilter="java.util.Map"
+               variableAccess="READ">
+         </param>
+      </tag>
+      <tag
+            enabled="false"
             id="DisplayLinkedMapsInTable"
-            name="%Method.DisplayLinkedMapsInTable">
+            name="%Method.DisplayLinkedMaps">
          <param
                name="%Param.MapVariable"
                type="combo"
