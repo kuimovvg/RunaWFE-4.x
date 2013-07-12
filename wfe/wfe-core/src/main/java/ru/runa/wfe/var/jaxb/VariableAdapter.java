@@ -27,6 +27,8 @@ public class VariableAdapter extends XmlAdapter<WfVariable, ru.runa.wfe.var.dto.
             wsVariable.dateValue = (Date) variable.getValue();
         } else if (variable.getValue() instanceof Executor) {
             wsVariable.longValue = ((Executor) variable.getValue()).getId();
+        } else if (variable.getValue() instanceof String) {
+            wsVariable.stringValue = (String) variable.getValue();
         } else {
             wsVariable.stringValue = variable.getFormatNotNull().format(variable.getValue());
         }
