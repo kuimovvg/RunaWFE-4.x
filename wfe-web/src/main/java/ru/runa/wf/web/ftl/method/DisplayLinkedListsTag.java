@@ -5,45 +5,61 @@ import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.format.FormatCommons;
+
+import com.google.common.collect.Lists;
+
 import freemarker.template.TemplateModelException;
 
-public class DisplayLinkedListsInTableTag extends FreemarkerTag {
+public class DisplayLinkedListsTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        List<List<?>> lists = new ArrayList<List<?>>();
+        List<String> variableNames = Lists.newArrayList();
+        List<List<?>> lists = Lists.newArrayList();
         int i = 0;
         int rowsCount = 0;
         while (true) {
-            String listVarName = getParameterAs(String.class, i);
-            if (listVarName == null) {
+            String variableName = getParameterAs(String.class, i);
+            if (variableName == null) {
                 break;
             }
-            List<?> list = variableProvider.getValueNotNull(List.class, listVarName);
+            variableNames.add(variableName);
+            List<Object> list = variableProvider.getValue(List.class, variableName);
+            if (list == null) {
+                list = new ArrayList<Object>();
+            }
             lists.add(list);
             if (list.size() > rowsCount) {
                 rowsCount = list.size();
             }
             i++;
         }
-        if (lists.size() > 0) {
+        if (variableNames.size() > 0) {
             StringBuffer buffer = new StringBuffer();
             buffer.append("<table class=\"displayLinkedLists\">");
-            buffer.append("<tr class=\"header\">");
-            for (i = 0; i < lists.size(); i++) {
-                String headerVariableName = getParameterAs(String.class, i) + "_header";
+            StringBuffer header = new StringBuffer();
+            header.append("<tr class=\"header\">");
+            boolean headerValueNotNull = false;
+            for (String variableName : variableNames) {
+                String headerVariableName = variableName + "_header";
                 Object o = variableProvider.getValue(headerVariableName);
                 String value = FormatCommons.getVarOut(user, o, webHelper, variableProvider.getProcessId(), headerVariableName, 0, null);
-                buffer.append("<td>").append(value).append("</td>");
+                if (o != null) {
+                    headerValueNotNull = true;
+                }
+                header.append("<td><b>").append(value).append("</b></td>");
             }
-            buffer.append("</tr>");
+            header.append("</tr>");
+            if (headerValueNotNull) {
+                buffer.append(header);
+            }
             for (i = 0; i < rowsCount; i++) {
                 buffer.append("<tr>");
                 for (List<?> list : lists) {
                     Object o = (list.size() > i) ? list.get(i) : "";
-                    String listVarName = getParameterAs(String.class, i);
-                    String value = FormatCommons.getVarOut(user, o, webHelper, variableProvider.getProcessId(), listVarName, i, null);
+                    String variableName = variableNames.get(i);
+                    String value = FormatCommons.getVarOut(user, o, webHelper, variableProvider.getProcessId(), variableName, i, null);
                     buffer.append("<td>").append(value).append("</td>");
                 }
                 buffer.append("</tr>");
