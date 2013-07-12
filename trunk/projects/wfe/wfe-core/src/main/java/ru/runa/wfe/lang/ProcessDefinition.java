@@ -179,9 +179,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
                     Object value = variableFormat.parse(new String[] { variableDefinition.getDefaultValue() });
                     result.put(variableDefinition.getName(), value);
                 } catch (Exception e) {
-                    log.warn(
-                            "Unable to get default value '" + variableDefinition.getDefaultValue() + "' of type "
-                                    + variableDefinition.getFormatClassName() + " to " + variableDefinition.getName(), e);
+                    log.warn("Unable to get default value '" + variableDefinition.getDefaultValue() + "' in " + variableDefinition, e);
                 }
             }
         }

@@ -138,4 +138,9 @@ public class Actor extends Executor implements Comparable<Actor> {
         return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).add("code", getCode()).toString();
     }
 
+    @Transient
+    @Override
+    public String getLabel() {
+        return getFullName();
+    }
 }

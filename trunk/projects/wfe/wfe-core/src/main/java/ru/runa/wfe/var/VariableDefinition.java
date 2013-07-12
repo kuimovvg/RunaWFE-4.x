@@ -27,10 +27,13 @@ import com.google.common.base.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VariableDefinition implements Serializable {
     private static final long serialVersionUID = 1L;
+    public static final String FORMAT_COMPONENT_TYPE_START = "(";
+    public static final String FORMAT_COMPONENT_TYPE_END = ")";
+    public static final String FORMAT_COMPONENT_TYPE_CONCAT = ", ";
 
     private boolean syntetic;
     private String name;
-    private String formatClassName;
+    private String format;
     private boolean publicAccess;
     private String defaultValue;
     private String scriptingName;
@@ -39,10 +42,10 @@ public class VariableDefinition implements Serializable {
     public VariableDefinition() {
     }
 
-    public VariableDefinition(boolean syntetic, String name, String formatClassName, String scriptingName) {
+    public VariableDefinition(boolean syntetic, String name, String format, String scriptingName) {
         this.syntetic = syntetic;
         this.name = name;
-        this.formatClassName = formatClassName;
+        this.format = format;
         this.scriptingName = scriptingName;
     }
 
@@ -59,7 +62,20 @@ public class VariableDefinition implements Serializable {
     }
 
     public String getFormatClassName() {
-        return formatClassName;
+        if (format.contains(FORMAT_COMPONENT_TYPE_START)) {
+            int index = format.indexOf(FORMAT_COMPONENT_TYPE_START);
+            return format.substring(0, index);
+        }
+        return format;
+    }
+
+    public String[] getFormatComponentClassNames() {
+        if (format.contains(FORMAT_COMPONENT_TYPE_START)) {
+            int index = format.indexOf(FORMAT_COMPONENT_TYPE_START);
+            String raw = format.substring(index + 1, format.length() - 1);
+            return raw.split(FORMAT_COMPONENT_TYPE_CONCAT, -1);
+        }
+        return new String[0];
     }
 
     public boolean isPublicAccess() {
@@ -82,11 +98,11 @@ public class VariableDefinition implements Serializable {
         if (formatLabel != null) {
             return formatLabel;
         }
-        return formatClassName;
+        return format;
     }
 
-    public void setFormatLabel(String displayFormat) {
-        formatLabel = displayFormat;
+    public void setFormatLabel(String formatLabel) {
+        this.formatLabel = formatLabel;
     }
 
     @Override
@@ -105,7 +121,7 @@ public class VariableDefinition implements Serializable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("format", formatClassName).add("name", getName()).toString();
+        return Objects.toStringHelper(this).add("name", getName()).add("format", format).toString();
     }
 
 }
