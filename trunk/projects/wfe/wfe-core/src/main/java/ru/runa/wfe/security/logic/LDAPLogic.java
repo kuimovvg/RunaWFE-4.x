@@ -21,6 +21,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -45,6 +47,8 @@ import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
@@ -80,13 +84,16 @@ public class LDAPLogic {
     @Autowired
     private PermissionDAO permissionDAO;
 
-    private List<String> ous = SystemProperties.getResources().getMultipleStringProperty("ldap.synchronizer.ou");
+    private final String providerUrl = SystemProperties.getResources().getStringPropertyNotNull("ldap.connection.provider.url");
+    private final List<String> ous = SystemProperties.getResources().getMultipleStringProperty("ldap.synchronizer.ou");
+    private final String dc = providerUrl.substring(providerUrl.lastIndexOf("/") + 1);
+    private final Pattern patternForMissedPeople = Pattern.compile("," + dc, Pattern.CASE_INSENSITIVE);
 
     private DirContext getContext() throws NamingException {
         Hashtable<String, String> env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY,
                 SystemProperties.getResources().getStringProperty("ldap.context.factory", "com.sun.jndi.ldap.LdapCtxFactory"));
-        env.put(Context.PROVIDER_URL, SystemProperties.getResources().getStringPropertyNotNull("ldap.connection.provider.url"));
+        env.put(Context.PROVIDER_URL, providerUrl);
         env.put(Context.SECURITY_AUTHENTICATION, SystemProperties.getResources().getStringProperty("ldap.connection.authentication", "simple"));
         env.put(Context.SECURITY_PRINCIPAL, SystemProperties.getResources().getStringPropertyNotNull("ldap.connection.principal"));
         env.put(Context.SECURITY_CREDENTIALS, SystemProperties.getResources().getStringPropertyNotNull("ldap.connection.password"));
@@ -205,7 +212,7 @@ public class LDAPLogic {
             Set<Actor> actorsToDelete = Sets.newHashSet(executorDAO.getGroupActors(group));
             Set<Actor> actorsToAdd = Sets.newHashSet();
             Set<Actor> groupTargetActors = Sets.newHashSet();
-            fillTargetActorsRecursively(groupTargetActors, searchResult, groupResultsByDistinguishedName, actorsByDistinguishedName);
+            fillTargetActorsRecursively(dirContext, groupTargetActors, searchResult, groupResultsByDistinguishedName, actorsByDistinguishedName);
             for (Actor targetActor : groupTargetActors) {
                 if (!actorsToDelete.remove(targetActor)) {
                     actorsToAdd.add(targetActor);
@@ -221,20 +228,37 @@ public class LDAPLogic {
         }
     }
 
-    private void fillTargetActorsRecursively(Set<Actor> recursiveActors, SearchResult searchResult,
+    private void fillTargetActorsRecursively(DirContext dirContext, Set<Actor> recursiveActors, SearchResult searchResult,
             Map<String, SearchResult> groupResultsByDistinguishedName, Map<String, Actor> actorsByDistinguishedName) throws NamingException {
         NamingEnumeration<String> namingEnum = (NamingEnumeration<String>) searchResult.getAttributes().get(MEMBER).getAll();
         while (namingEnum.hasMore()) {
             String executorDistinguishedName = namingEnum.next();
             SearchResult groupSearchResult = groupResultsByDistinguishedName.get(executorDistinguishedName);
             if (groupSearchResult != null) {
-                fillTargetActorsRecursively(recursiveActors, groupSearchResult, groupResultsByDistinguishedName, actorsByDistinguishedName);
+                fillTargetActorsRecursively(dirContext, recursiveActors, groupSearchResult, groupResultsByDistinguishedName,
+                        actorsByDistinguishedName);
             } else {
                 Actor actor = actorsByDistinguishedName.get(executorDistinguishedName);
                 if (actor != null) {
                     recursiveActors.add(actor);
                 } else {
-                    log.warn("Not found '" + executorDistinguishedName + "' neither in group or actor maps");
+                    Matcher m = patternForMissedPeople.matcher(executorDistinguishedName);
+                    String executorPath = m.replaceAll("");
+                    Attribute samAttribute = dirContext.getAttributes(executorPath).get(SAM_ACCOUNT_NAME);
+                    if (samAttribute != null) {
+                        String executorName = samAttribute.get().toString();
+                        log.debug("Executor name " + executorDistinguishedName + " fetched by invocation: " + executorName);
+                        try {
+                            Executor executor = executorDAO.getExecutor(executorName);
+                            if (executor instanceof Actor) {
+                                recursiveActors.add((Actor) executor);
+                            }
+                        } catch (ExecutorDoesNotExistException e) {
+                            log.warn(e.getMessage() + " for '" + executorDistinguishedName + "'");
+                        }
+                    } else {
+                        log.warn("Not found '" + executorDistinguishedName + "' neither in group or actor maps or by invocation");
+                    }
                 }
             }
         }
