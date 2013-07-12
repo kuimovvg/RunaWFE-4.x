@@ -45,7 +45,6 @@
 		<form-bean name="substitutionForm" type="ru.runa.af.web.form.SubstitutionForm" />
 		<form-bean name="batchPresentationForm"
 			type="ru.runa.common.web.form.BatchPresentationForm" />
-		<form-bean name="hideableBlockForm" type="ru.runa.common.web.form.HideableBlockForm" />
 		<form-bean name="settingsForm" type="ru.runa.wf.web.form.SettingsForm" />
 		<form-bean name="createRelationForm" type="ru.runa.af.web.form.CreateRelationForm" />
 		<form-bean name="viewLogForm" type="ru.runa.common.web.form.ViewLogForm" />
@@ -213,7 +212,7 @@
 				redirect="true" />
 		</action>
 		<action path="/hideableBlock" type="ru.runa.common.web.action.HideableBlockAction"
-			name="hideableBlockForm" scope="request" unknown="false" validate="false">
+			name="idNameForm" scope="request" unknown="false" validate="false">
 		</action>
 		<action path="/deleteSubstitutionCriterias"
 			type="ru.runa.af.web.action.DeleteSubstitutionCriteriasAction" name="substitutionCriteriasForm"
