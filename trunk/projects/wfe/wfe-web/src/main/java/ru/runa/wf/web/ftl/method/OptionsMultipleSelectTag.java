@@ -26,7 +26,7 @@ import ru.runa.wfe.var.ISelectable;
 import freemarker.template.TemplateModelException;
 
 @SuppressWarnings("unchecked")
-public class MultipleSelectTag extends FreemarkerTag implements FtlTagVariableHandler {
+public class OptionsMultipleSelectTag extends FreemarkerTag implements FtlTagVariableHandler {
     private static final long serialVersionUID = 1L;
 
     @Override

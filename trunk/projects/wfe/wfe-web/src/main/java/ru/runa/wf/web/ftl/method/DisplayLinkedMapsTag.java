@@ -8,7 +8,7 @@ import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.format.FormatCommons;
 import freemarker.template.TemplateModelException;
 
-public class DisplayLinkedMapsInTableTag extends FreemarkerTag {
+public class DisplayLinkedMapsTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
