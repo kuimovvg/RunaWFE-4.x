@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,9 +20,11 @@ import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.BooleanFormat;
 import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.ListFormat;
 import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
@@ -72,11 +73,10 @@ public class FormUtils {
         return variablesMap;
     }
 
-    public static Map<String, Object> extractVariables(HttpSession session, ActionForm actionForm, Interaction interaction) {
+    public static Map<String, Object> extractVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
         try {
             Hashtable<String, Object> hashtable = actionForm.getMultipartRequestHandler().getAllElements();
             List<String> formatErrorsForFields = new ArrayList<String>();
-
             HashMap<String, Object> variables = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
                 Object value = hashtable.get(variableDefinition.getName());
@@ -101,7 +101,12 @@ public class FormUtils {
                         if (contentType == null) {
                             contentType = "application/octet-stream";
                         }
-                        variableValue = new FileVariable(formFile.getFileName(), formFile.getFileData(), contentType);
+                        FileVariable fileVariable = new FileVariable(formFile.getFileName(), formFile.getFileData(), contentType);
+                        if (ListFormat.class == format.getClass()) {
+                            variableValue = Lists.newArrayList(fileVariable);
+                        } else {
+                            variableValue = fileVariable;
+                        }
                     }
                 } else {
                     String[] valuesToFormat = (String[]) value;
@@ -116,8 +121,8 @@ public class FormUtils {
                     }
                 }
                 if (variableValue != null) {
-                    FtlTagVariableHandler handler = (FtlTagVariableHandler) session.getAttribute(FtlTagVariableHandler.HANDLER_KEY_PREFIX
-                            + variableDefinition.getName());
+                    FtlTagVariableHandler handler = (FtlTagVariableHandler) request.getSession().getAttribute(
+                            FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableDefinition.getName());
                     if (handler != null) {
                         variableValue = handler.handle(variableValue);
                     }

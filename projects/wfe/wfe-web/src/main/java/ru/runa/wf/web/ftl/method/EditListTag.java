@@ -43,6 +43,7 @@ public class EditListTag extends AjaxFreemarkerTag {
         if (list.size() == 0) {
             list.add("");
         }
+        html.append("<span class=\"editList\">");
         for (int i = 0; i < list.size(); i++) {
             Object object = list.get(i);
             String value = object.toString();
@@ -53,6 +54,7 @@ public class EditListTag extends AjaxFreemarkerTag {
             html.append("</div>");
         }
         html.append("<div><input type=\"button\" id=\"btnAdd").append(variableName).append("\" value=\" + \" /></div>");
+        html.append("</span>");
         return html.toString();
     }
 

@@ -3,7 +3,6 @@ package ru.runa.wfe.var.format;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
 
@@ -25,11 +24,11 @@ public class ListFormat implements VariableFormat<List<?>>, VariableDisplaySuppo
     }
 
     @Override
-    public List<?> parse(String[] source) {
+    public List<?> parse(String[] source) throws Exception {
         ArrayList list = new ArrayList(source.length);
         VariableFormat<?> componentFormat = FormatCommons.create(componentClassNames[0]);
         for (String string : source) {
-            list.add(TypeConversionUtil.convertTo(componentFormat.getJavaClass(), string));
+            list.add(componentFormat.parse(new String[] { string }));
         }
         return list;
     }

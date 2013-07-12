@@ -82,7 +82,7 @@ public abstract class BaseProcessFormAction extends ActionBase {
     }
 
     protected Map<String, Object> getFormVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
-        return FormUtils.extractVariables(request.getSession(), actionForm, interaction);
+        return FormUtils.extractVariables(request, actionForm, interaction);
     }
 
     protected abstract ActionMessage getMessage();
