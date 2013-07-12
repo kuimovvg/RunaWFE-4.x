@@ -2,6 +2,7 @@ package ru.runa.wf.web.ftl.method;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.TextFormat;
 import freemarker.template.TemplateModelException;
 
 public class DisplayVariableTag extends FreemarkerTag {
@@ -11,10 +12,14 @@ public class DisplayVariableTag extends FreemarkerTag {
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String html = "<span class=\"displayVariable\">";
-        html += ViewUtil.getVariableValueHtml(user, webHelper, variableProvider.getProcessId(), variable);
-        html += "</span>";
+        String html;
+        if (TextFormat.class.getName().equals(variable.getFormatClassNameNotNull())) {
+            html = "<textarea class=\"displayText\" readonly=\"true\">" + variable.getValue() + "</textarea>";
+        } else {
+            html = "<span class=\"displayVariable\">";
+            html += ViewUtil.getVariableValueHtml(user, webHelper, variableProvider.getProcessId(), variable);
+            html += "</span>";
+        }
         return html;
     }
-
 }
