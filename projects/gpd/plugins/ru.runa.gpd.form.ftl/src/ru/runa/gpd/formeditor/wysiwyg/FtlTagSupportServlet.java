@@ -52,7 +52,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                     newContent.append("items:[");
                     boolean needComma = false;
                     String defaultChoise = "";
-                    List<Variable> variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(filterClassName).values());
+                    List<Variable> variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(false, filterClassName).values());
                     Collections.sort(variables);
                     for (Variable variable : variables) {
                         newContent.append(needComma ? "," : "").append("['").append(variable.getName()).append("','").append(variable.getName()).append("']");
@@ -90,7 +90,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                     }
                     tagImageName = "DefaultTag.png";
                 } else {
-                    if (WYSIWYGHTMLEditor.getCurrent().getVariables(null).containsKey(tagName)) {
+                    if (WYSIWYGHTMLEditor.getCurrent().getVariables(true, null).containsKey(tagName)) {
                         tagImageName = "VariableValueDisplay.png";
                     } else {
                         tagImageName = "TagNotFound.png";
@@ -116,17 +116,17 @@ public class FtlTagSupportServlet extends HttpServlet {
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.method.dialog.end")));
             } else if ("GetAllVariables".equals(commandStr)) {
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.format.dialog.start")));
-                List<Variable> variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(null).values());
+                List<Variable> variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(true, null).values());
                 Collections.sort(variables);
                 for (Variable variable : variables) {
                     resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
                 }
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.format.dialog.end")));
             } else if ("GetParameters".equals(commandStr)) {
-                resultHtml.append("<table style=\"width: 100%;\">");
+                resultHtml.append("<table style=\"width: 100%;\" style=\"vertical-align: top;\">");
                 int paramCounter = 0;
                 for (Param param : MethodTag.getTag(tagName).params) {
-                    resultHtml.append("<tr><td class='leftParam'>");
+                    resultHtml.append("<tr><td class='leftParam' style=\"vertical-align: top;\">");
                     resultHtml.append(param.label);
                     resultHtml.append("</td><td class='rightParam'>");
                     if (param.isCombo() || param.isVarCombo()) {
@@ -135,9 +135,9 @@ public class FtlTagSupportServlet extends HttpServlet {
                             if (option.container) {
                                 List<Variable> variables;
                                 if (option.useFilter) {
-                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType).values());
+                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(param.isVarCombo(), option.filterType).values());
                                 } else {
-                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(null).values());
+                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(param.isVarCombo(), null).values());
                                 }
                                 Collections.sort(variables);
                                 for (Variable variable : variables) {
@@ -159,9 +159,9 @@ public class FtlTagSupportServlet extends HttpServlet {
                             if (option.container) {
                                 List<Variable> variables;
                                 if (option.useFilter) {
-                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType).values());
+                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(true, option.filterType).values());
                                 } else {
-                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(null).values());
+                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(true, null).values());
                                 }
                                 Collections.sort(variables);
                                 for (Variable variable : variables) {
@@ -202,7 +202,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                 if ("file".equals(request.getParameter("elementType"))) {
                     filterClassName = "ru.runa.wfe.var.FileVariable";
                 }
-                List<Variable> variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(filterClassName).values());
+                List<Variable> variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(false, filterClassName).values());
                 Collections.sort(variables);
                 for (Variable variable : variables) {
                     if (resultHtml.length() > 0) {
