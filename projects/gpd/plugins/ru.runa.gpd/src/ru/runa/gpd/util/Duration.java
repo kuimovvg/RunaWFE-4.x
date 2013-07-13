@@ -135,10 +135,10 @@ public class Duration {
         } else {
             delayValue = delay.replaceAll(" ", "");
         }
-        if (!"0".equals(delayValue)) {
+        if (!"+ 0".equals(delayValue)) {
             PhraseDecliner decliner = PhraseDecliner.getDecliner();
             if (decliner != null) {
-                duration += " "+decliner.declineDuration(delayValue, unit.label);
+                duration += " " + decliner.declineDuration(delayValue, unit.label);
             } else {
                 duration += " " + delayValue + " " + unit.label;
             }

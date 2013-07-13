@@ -19,7 +19,7 @@ public abstract class MessageRenameProvider<T extends NamedGraphElement> extends
     public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<VariableMapping> mappingsToChange = new ArrayList<VariableMapping>();
         for (VariableMapping mapping : getVariableMappings()) {
-            if (mapping.getProcessVariable().equals(oldVariable)) {
+            if (mapping.getProcessVariableName().equals(oldVariable.getName())) {
                 mappingsToChange.add(mapping);
             }
         }
@@ -41,7 +41,7 @@ public abstract class MessageRenameProvider<T extends NamedGraphElement> extends
         @Override
         public Change perform(IProgressMonitor pm) throws CoreException {
             for (VariableMapping mapping : mappingsToChange) {
-                mapping.setProcessVariable(replacementVariableName);
+                mapping.setProcessVariableName(replacementVariableName);
             }
             return new NullChange("Subprocess");
         }
@@ -51,7 +51,7 @@ public abstract class MessageRenameProvider<T extends NamedGraphElement> extends
             StringBuffer buffer = new StringBuffer();
             for (VariableMapping mapping : mappingsToChange) {
                 buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(variableName);
-                buffer.append("\" name=\"").append(mapping.getSubprocessVariable()).append("\" />").append("\n");
+                buffer.append("\" name=\"").append(mapping.getSubprocessVariableName()).append("\" />").append("\n");
             }
             return buffer.toString();
         }

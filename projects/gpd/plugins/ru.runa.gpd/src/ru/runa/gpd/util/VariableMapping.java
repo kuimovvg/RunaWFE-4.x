@@ -8,33 +8,33 @@ public class VariableMapping {
     public static final String USAGE_MULTIINSTANCE_VARS = "multiinstance-vars";
     public static final String USAGE_SELECTOR = "selector";
 
-    private String processVariable;
-    private String subprocessVariable;
+    private String processVariableName;
+    private String subprocessVariableName;
     private String usage;
 
     public VariableMapping() {
     }
 
     public VariableMapping(String processVariable, String subprocessVariable, String usage) {
-        this.processVariable = processVariable;
-        this.subprocessVariable = subprocessVariable;
+        this.processVariableName = processVariable;
+        this.subprocessVariableName = subprocessVariable;
         this.usage = usage;
     }
 
-    public String getProcessVariable() {
-        return processVariable;
+    public String getProcessVariableName() {
+        return processVariableName;
     }
 
-    public void setProcessVariable(String processVariable) {
-        this.processVariable = processVariable;
+    public void setProcessVariableName(String processVariable) {
+        this.processVariableName = processVariable;
     }
 
-    public String getSubprocessVariable() {
-        return subprocessVariable;
+    public String getSubprocessVariableName() {
+        return subprocessVariableName;
     }
 
-    public void setSubprocessVariable(String subprocessVariable) {
-        this.subprocessVariable = subprocessVariable;
+    public void setSubprocessVariableName(String subprocessVariable) {
+        this.subprocessVariableName = subprocessVariable;
     }
 
     public String getUsage() {

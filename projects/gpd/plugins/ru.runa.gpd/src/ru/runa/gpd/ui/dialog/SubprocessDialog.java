@@ -156,10 +156,10 @@ public class SubprocessDialog extends Dialog {
         SubprocessVariableDialog dialog = new SubprocessVariableDialog(getProcessVariablesNames(definition.getName()), getProcessVariablesNames(getSubprocessName()), oldMapping);
         if (dialog.open() != IDialogConstants.CANCEL_ID) {
             VariableMapping mapping = new VariableMapping();
-            mapping.setProcessVariable(dialog.getProcessVariable());
-            mapping.setSubprocessVariable(dialog.getSubprocessVariable());
+            mapping.setProcessVariableName(dialog.getProcessVariable());
+            mapping.setSubprocessVariableName(dialog.getSubprocessVariable());
             String usage = dialog.getAccess();
-            if (isArrayVariable(definition.getName(), mapping.getProcessVariable()) && !isArrayVariable(getSubprocessName(), mapping.getSubprocessVariable())) {
+            if (isArrayVariable(definition.getName(), mapping.getProcessVariableName()) && !isArrayVariable(getSubprocessName(), mapping.getSubprocessVariableName())) {
                 usage += "," + VariableMapping.USAGE_MULTIINSTANCE_LINK;
             }
             mapping.setUsage(usage);
@@ -189,9 +189,9 @@ public class SubprocessDialog extends Dialog {
             VariableMapping mapping = (VariableMapping) element;
             switch (index) {
             case 0:
-                return mapping.getProcessVariable();
+                return mapping.getProcessVariableName();
             case 1:
-                return mapping.getSubprocessVariable();
+                return mapping.getSubprocessVariableName();
             case 2:
                 return mapping.getUsage();
             default:
