@@ -73,40 +73,40 @@ public class MultiInstanceDialog extends Dialog {
         while (iter.hasNext()) {
             VariableMapping vm = iter.next();
             if (vm.getUsage().equals("multiinstance-vars")) {
-                if (vm.getProcessVariable().equals("tabVariableProcessVariable")) {
-                    tabVariableProcessVariable = vm.getSubprocessVariable();
-                } else if (vm.getProcessVariable().equals("tabVariableSubProcessVariable")) {
-                    tabVariableSubProcessVariable = vm.getSubprocessVariable();
-                } else if (vm.getProcessVariable().equals("tabGroupName")) {
-                    tabGroupName = vm.getSubprocessVariable();
+                if (vm.getProcessVariableName().equals("tabVariableProcessVariable")) {
+                    tabVariableProcessVariable = vm.getSubprocessVariableName();
+                } else if (vm.getProcessVariableName().equals("tabVariableSubProcessVariable")) {
+                    tabVariableSubProcessVariable = vm.getSubprocessVariableName();
+                } else if (vm.getProcessVariableName().equals("tabGroupName")) {
+                    tabGroupName = vm.getSubprocessVariableName();
                     if (tabGroupName.startsWith("${") && tabGroupName.endsWith("}")) {
                         tabGroupNameType = TYPE_VARIABLE;
                         tabGroupName = tabGroupName.substring(2, tabGroupName.length() - 1);
                     } else {
                         tabGroupNameType = TYPE_CONSTANT;
                     }
-                } else if (vm.getProcessVariable().equals("tabGroupSubProcessVariable")) {
-                    tabGroupSubProcessVariable = vm.getSubprocessVariable();
-                } else if (vm.getProcessVariable().equals("tabRelationName")) {
-                    tabRelationName = vm.getSubprocessVariable();
+                } else if (vm.getProcessVariableName().equals("tabGroupSubProcessVariable")) {
+                    tabGroupSubProcessVariable = vm.getSubprocessVariableName();
+                } else if (vm.getProcessVariableName().equals("tabRelationName")) {
+                    tabRelationName = vm.getSubprocessVariableName();
                     if (tabRelationName.startsWith("${") && tabRelationName.endsWith("}")) {
                         tabRelationNameType = TYPE_VARIABLE;
                         tabRelationName = tabRelationName.substring(2, tabRelationName.length() - 1);
                     } else {
                         tabRelationNameType = TYPE_CONSTANT;
                     }
-                } else if (vm.getProcessVariable().equals("tabRelationParam")) {
-                    tabRelationParam = vm.getSubprocessVariable();
+                } else if (vm.getProcessVariableName().equals("tabRelationParam")) {
+                    tabRelationParam = vm.getSubprocessVariableName();
                     if (tabRelationParam.startsWith("${") && tabRelationParam.endsWith("}")) {
                         tabRelationParamType = TYPE_VARIABLE;
                         tabRelationParam = tabRelationParam.substring(2, tabRelationParam.length() - 1);
                     } else {
                         tabRelationParamType = TYPE_CONSTANT;
                     }
-                } else if (vm.getProcessVariable().equals("tabRelationSubProcessVariable")) {
-                    tabRelationSubProcessVariable = vm.getSubprocessVariable();
-                } else if (vm.getProcessVariable().equals("typeMultiInstance")) {
-                    typeMultiInstance = vm.getSubprocessVariable();
+                } else if (vm.getProcessVariableName().equals("tabRelationSubProcessVariable")) {
+                    tabRelationSubProcessVariable = vm.getSubprocessVariableName();
+                } else if (vm.getProcessVariableName().equals("typeMultiInstance")) {
+                    typeMultiInstance = vm.getSubprocessVariableName();
                 }
             }
         }
@@ -478,10 +478,10 @@ public class MultiInstanceDialog extends Dialog {
         SubprocessVariableDialog dialog = new SubprocessVariableDialog(getProcessVariablesNames(definition.getName()), getProcessVariablesNames(getSubprocessName()), oldMapping);
         if (dialog.open() != IDialogConstants.CANCEL_ID) {
             VariableMapping mapping = new VariableMapping();
-            mapping.setProcessVariable(dialog.getProcessVariable());
-            mapping.setSubprocessVariable(dialog.getSubprocessVariable());
+            mapping.setProcessVariableName(dialog.getProcessVariable());
+            mapping.setSubprocessVariableName(dialog.getSubprocessVariable());
             String usage = dialog.getAccess();
-            if (isArrayVariable(definition.getName(), mapping.getProcessVariable()) && !isArrayVariable(getSubprocessName(), mapping.getSubprocessVariable())) {
+            if (isArrayVariable(definition.getName(), mapping.getProcessVariableName()) && !isArrayVariable(getSubprocessName(), mapping.getSubprocessVariableName())) {
                 usage += "," + VariableMapping.USAGE_MULTIINSTANCE_LINK;
             }
             mapping.setUsage(usage);
@@ -516,69 +516,69 @@ public class MultiInstanceDialog extends Dialog {
         if (tabVariableProcessVariable.length() != 0) {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
-            vm.setProcessVariable("tabVariableProcessVariable");
-            vm.setSubprocessVariable(tabVariableProcessVariable);
+            vm.setProcessVariableName("tabVariableProcessVariable");
+            vm.setSubprocessVariableName(tabVariableProcessVariable);
             subprocessVariables.add(vm);
         }
         if (tabVariableSubProcessVariable.length() != 0) {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
-            vm.setProcessVariable("tabVariableSubProcessVariable");
-            vm.setSubprocessVariable(tabVariableSubProcessVariable);
+            vm.setProcessVariableName("tabVariableSubProcessVariable");
+            vm.setSubprocessVariableName(tabVariableSubProcessVariable);
             subprocessVariables.add(vm);
         }
         if (tabGroupName.length() != 0) {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
-            vm.setProcessVariable("tabGroupName");
+            vm.setProcessVariableName("tabGroupName");
             if (tabGroupNameType.equals(TYPE_CONSTANT)) {
-                vm.setSubprocessVariable(tabGroupName);
+                vm.setSubprocessVariableName(tabGroupName);
             } else {
-                vm.setSubprocessVariable("${" + tabGroupName + "}");
+                vm.setSubprocessVariableName("${" + tabGroupName + "}");
             }
             subprocessVariables.add(vm);
         }
         if (tabGroupSubProcessVariable.length() != 0) {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
-            vm.setProcessVariable("tabGroupSubProcessVariable");
-            vm.setSubprocessVariable(tabGroupSubProcessVariable);
+            vm.setProcessVariableName("tabGroupSubProcessVariable");
+            vm.setSubprocessVariableName(tabGroupSubProcessVariable);
             subprocessVariables.add(vm);
         }
         if (tabRelationName.length() != 0) {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
-            vm.setProcessVariable("tabRelationName");
+            vm.setProcessVariableName("tabRelationName");
             if (tabRelationNameType.equals(TYPE_CONSTANT)) {
-                vm.setSubprocessVariable(tabRelationName);
+                vm.setSubprocessVariableName(tabRelationName);
             } else {
-                vm.setSubprocessVariable("${" + tabRelationName + "}");
+                vm.setSubprocessVariableName("${" + tabRelationName + "}");
             }
             subprocessVariables.add(vm);
         }
         if (tabRelationParam.length() != 0) {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
-            vm.setProcessVariable("tabRelationParam");
+            vm.setProcessVariableName("tabRelationParam");
             if (tabRelationParamType.equals(TYPE_CONSTANT)) {
-                vm.setSubprocessVariable(tabRelationParam);
+                vm.setSubprocessVariableName(tabRelationParam);
             } else {
-                vm.setSubprocessVariable("${" + tabRelationParam + "}");
+                vm.setSubprocessVariableName("${" + tabRelationParam + "}");
             }
             subprocessVariables.add(vm);
         }
         if (tabRelationSubProcessVariable.length() != 0) {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
-            vm.setProcessVariable("tabRelationSubProcessVariable");
-            vm.setSubprocessVariable(tabRelationSubProcessVariable);
+            vm.setProcessVariableName("tabRelationSubProcessVariable");
+            vm.setSubprocessVariableName(tabRelationSubProcessVariable);
             subprocessVariables.add(vm);
         }
         if (typeMultiInstance.length() != 0) {
             VariableMapping vm = new VariableMapping();
             vm.setUsage("multiinstance-vars");
-            vm.setProcessVariable("typeMultiInstance");
-            vm.setSubprocessVariable(typeMultiInstance);
+            vm.setProcessVariableName("typeMultiInstance");
+            vm.setSubprocessVariableName(typeMultiInstance);
             subprocessVariables.add(vm);
         }
         return subprocessVariables;
@@ -594,9 +594,9 @@ public class MultiInstanceDialog extends Dialog {
             VariableMapping mapping = (VariableMapping) element;
             switch (index) {
             case 0:
-                return mapping.getProcessVariable();
+                return mapping.getProcessVariableName();
             case 1:
-                return mapping.getSubprocessVariable();
+                return mapping.getSubprocessVariableName();
             case 2:
                 return mapping.getUsage();
             default:
