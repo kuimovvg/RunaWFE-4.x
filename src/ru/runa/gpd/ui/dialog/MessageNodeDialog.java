@@ -218,7 +218,7 @@ public class MessageNodeDialog extends Dialog {
             public void widgetSelected(SelectionEvent event) {
                 List<String> variableNamesToAdd = new ArrayList<String>(definition.getVariableNames(false));
                 for (VariableMapping mapping : variableMappings) {
-                    variableNamesToAdd.remove(mapping.getProcessVariable());
+                    variableNamesToAdd.remove(mapping.getProcessVariableName());
                 }
                 for (String variableName : variableNamesToAdd) {
                     VariableMapping mapping = new VariableMapping(variableName, variableName, VariableMapping.USAGE_READ);
@@ -257,8 +257,8 @@ public class MessageNodeDialog extends Dialog {
         MessageVariableDialog dialog = new MessageVariableDialog(definition.getVariableNames(true), VariableMapping.USAGE_SELECTOR.equals(usage), oldMapping);
         if (dialog.open() != IDialogConstants.CANCEL_ID) {
             VariableMapping mapping = new VariableMapping();
-            mapping.setProcessVariable(dialog.getVariable());
-            mapping.setSubprocessVariable(dialog.getAlias());
+            mapping.setProcessVariableName(dialog.getVariable());
+            mapping.setSubprocessVariableName(dialog.getAlias());
             mapping.setUsage(usage);
             if (oldMapping != null) {
                 variableMappings.remove(oldMapping);
@@ -273,7 +273,7 @@ public class MessageNodeDialog extends Dialog {
 
     private void addVariableMapping(VariableMapping mapping) {
         for (VariableMapping existingMapping : variableMappings) {
-            if (existingMapping.getProcessVariable().equals(mapping.getProcessVariable())) {
+            if (existingMapping.getProcessVariableName().equals(mapping.getProcessVariableName())) {
                 variableMappings.remove(existingMapping);
                 break;
             }
@@ -289,9 +289,9 @@ public class MessageNodeDialog extends Dialog {
             VariableMapping mapping = (VariableMapping) element;
             switch (index) {
             case 0:
-                return mapping.getProcessVariable();
+                return mapping.getProcessVariableName();
             case 1:
-                return mapping.getSubprocessVariable();
+                return mapping.getSubprocessVariableName();
             }
             return "";
         }

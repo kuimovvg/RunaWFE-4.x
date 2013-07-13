@@ -22,7 +22,7 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
     public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<VariableMapping> mappingsToChange = new ArrayList<VariableMapping>();
         for (VariableMapping mapping : element.getVariableMappings()) {
-            if (mapping.getProcessVariable().equals(oldVariable)) {
+            if (mapping.getProcessVariableName().equals(oldVariable.getName())) {
                 mappingsToChange.add(mapping);
                 // TODO MultiSubprocess selector variables does not renamed automatically
                 //            } else if ("tabVariableProcessVariable".equals(mapping.getProcessVariable()) && mapping.getSubprocessVariable().equals(oldVariable)) {
@@ -47,7 +47,7 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
         @Override
         public Change perform(IProgressMonitor pm) throws CoreException {
             for (VariableMapping mapping : mappingsToChange) {
-                mapping.setProcessVariable(replacementVariableName);
+                mapping.setProcessVariableName(replacementVariableName);
             }
             return new NullChange("Subprocess");
         }
@@ -57,7 +57,7 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
             StringBuffer buffer = new StringBuffer();
             for (VariableMapping mapping : mappingsToChange) {
                 buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(variableName);
-                buffer.append("\" name=\"").append(mapping.getSubprocessVariable()).append("\" />").append("\n");
+                buffer.append("\" name=\"").append(mapping.getSubprocessVariableName()).append("\" />").append("\n");
             }
             return buffer.toString();
         }

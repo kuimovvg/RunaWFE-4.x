@@ -119,7 +119,7 @@ public class CopyGraphCommand extends Command {
                         List<VariableMapping> variables = ((Subprocess) node).getVariableMappings();
                         ((Subprocess) copy).setVariableMappings(variables);
                         for (VariableMapping varMapping : variables) {
-                            Variable variable = copyBuffer.getSourceDefinition().getVariable(varMapping.getProcessVariable(), false);
+                            Variable variable = copyBuffer.getSourceDefinition().getVariable(varMapping.getProcessVariableName(), false);
                             if (variable != null) {
                                 CopyVariableAction copyAction = new CopyVariableAction(variable);
                                 elements.add(copyAction);
