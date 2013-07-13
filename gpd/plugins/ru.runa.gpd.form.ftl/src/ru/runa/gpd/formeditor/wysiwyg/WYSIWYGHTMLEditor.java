@@ -85,7 +85,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         setPartName(formNode.getName());
     }
 
-    public Map<String, Variable> getVariables(String typeClassNameFilter) {
+    public Map<String, Variable> getVariables(boolean filterVariablesWithSpaces, String typeClassNameFilter) {
         if (formNode == null) {
             // This is because earlier access from web page (not user request)
             return new HashMap<String, Variable>();
@@ -101,7 +101,10 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 }
             }
         }
-        return VariableUtils.toMap(VariableUtils.getValidVariables(variables));
+        if (filterVariablesWithSpaces) {
+            variables = VariableUtils.getValidVariables(variables);
+        }
+        return VariableUtils.toMap(variables);
     }
 
     @SuppressWarnings("rawtypes")
@@ -317,7 +320,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         }
         if (isFtlFormat()) {
             try {
-                html = FreemarkerUtil.transformToHtml(getVariables(null), html);
+                html = FreemarkerUtil.transformToHtml(getVariables(false, null), html);
             } catch (Exception e) {
                 WYSIWYGPlugin.logError("ftl WYSIWYGHTMLEditor.syncEditor2Browser()", e);
             }
@@ -337,7 +340,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     private String getDesignDocumentHTML(String html) {
         if (isFtlFormat()) {
             try {
-                html = FreemarkerUtil.transformFromHtml(html, getVariables(null));
+                html = FreemarkerUtil.transformFromHtml(html, getVariables(false, null));
                 Matcher matcher = pattern.matcher(html);
                 if (matcher.find()) {
                     html = matcher.group(3);
