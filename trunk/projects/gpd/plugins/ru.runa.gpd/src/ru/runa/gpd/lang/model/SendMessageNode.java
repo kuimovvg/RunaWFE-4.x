@@ -56,7 +56,7 @@ public class SendMessageNode extends Node implements Active {
                 selectorRulesCount++;
                 continue;
             }
-            String processVarName = variableMapping.getProcessVariable();
+            String processVarName = variableMapping.getProcessVariableName();
             if (!getProcessDefinition().getVariableNames(true).contains(processVarName)) {
                 addError("message.processVariableDoesNotExist", processVarName);
                 continue;

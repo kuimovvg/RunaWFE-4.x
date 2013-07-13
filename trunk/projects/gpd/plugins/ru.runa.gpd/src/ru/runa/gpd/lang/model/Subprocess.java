@@ -34,14 +34,14 @@ public class Subprocess extends Node implements Active {
             if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(variableMapping.getUsage())) {
                 continue;
             }
-            Variable processVariable = getProcessDefinition().getVariable(variableMapping.getProcessVariable(), true);
+            Variable processVariable = getProcessDefinition().getVariable(variableMapping.getProcessVariableName(), true);
             if (processVariable == null) {
-                addError("subprocess.processVariableDoesNotExist", variableMapping.getProcessVariable());
+                addError("subprocess.processVariableDoesNotExist", variableMapping.getProcessVariableName());
                 continue;
             }
-            Variable subprocessVariable = subprocessDefinition.getVariable(variableMapping.getSubprocessVariable(), true);
+            Variable subprocessVariable = subprocessDefinition.getVariable(variableMapping.getSubprocessVariableName(), true);
             if (subprocessVariable == null) {
-                addError("subprocess.subProcessVariableDoesNotExist", variableMapping.getSubprocessVariable());
+                addError("subprocess.subProcessVariableDoesNotExist", variableMapping.getSubprocessVariableName());
                 continue;
             }
             if (!isCompatibleTypes(processVariable.getJavaClassName(), subprocessVariable.getJavaClassName())) {

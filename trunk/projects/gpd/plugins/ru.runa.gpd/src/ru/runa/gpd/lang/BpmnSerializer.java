@@ -393,8 +393,8 @@ public class BpmnSerializer extends ProcessSerializer {
             Element variablesElement = extensionsElement.addElement(RUNA_PREFIX + ":" + VARIABLES);
             for (VariableMapping variableMapping : variableMappings) {
                 Element variableElement = variablesElement.addElement(RUNA_PREFIX + ":" + VARIABLE);
-                setAttribute(variableElement, NAME, variableMapping.getProcessVariable());
-                setAttribute(variableElement, MAPPED_NAME, variableMapping.getSubprocessVariable());
+                setAttribute(variableElement, NAME, variableMapping.getProcessVariableName());
+                setAttribute(variableElement, MAPPED_NAME, variableMapping.getSubprocessVariableName());
                 setAttribute(variableElement, USAGE, variableMapping.getUsage());
             }
         }
@@ -520,8 +520,8 @@ public class BpmnSerializer extends ProcessSerializer {
                 List<Element> variableElements = variablesElement.elements(QName.get(VARIABLE, RUNA_NAMESPACE));
                 for (Element variableElement : variableElements) {
                     VariableMapping variableMapping = new VariableMapping();
-                    variableMapping.setProcessVariable(variableElement.attributeValue(NAME));
-                    variableMapping.setSubprocessVariable(variableElement.attributeValue(MAPPED_NAME));
+                    variableMapping.setProcessVariableName(variableElement.attributeValue(NAME));
+                    variableMapping.setSubprocessVariableName(variableElement.attributeValue(MAPPED_NAME));
                     variableMapping.setUsage(variableElement.attributeValue(USAGE));
                     list.add(variableMapping);
                 }
