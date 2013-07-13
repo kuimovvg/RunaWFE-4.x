@@ -172,15 +172,16 @@ public class CKEditorDialogCreatorHelper {
             int paramCounter = 0;
             for (Param param : tagInfo.params) {
                 if (param.isCombo() || param.isRichCombo() || param.isVarCombo()) {
+                    boolean filterVariablesWithSpaces = param.isRichCombo() || param.isVarCombo();
                     CKSelectElement selectElement = new CKSelectElement();
                     selectElement.setId("'" + tagInfo.id + "_FtlTagParam_" + paramCounter + "'").setLabel("'" + param.label + "'");
                     for (OptionalValue option : param.optionalValues) {
                         if (option.container) {
                             List<Variable> variables;
                             if (option.useFilter) {
-                                variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(option.filterType).values());
+                                variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(filterVariablesWithSpaces, option.filterType).values());
                             } else {
-                                variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(null).values());
+                                variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(filterVariablesWithSpaces, null).values());
                             }
                             Collections.sort(variables);
                             for (Variable variable : variables) {
