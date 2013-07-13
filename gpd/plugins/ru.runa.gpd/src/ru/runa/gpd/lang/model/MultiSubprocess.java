@@ -11,7 +11,7 @@ public class MultiSubprocess extends Subprocess implements IMultiInstancesContai
         boolean readMultiinstanceLinkExists = false;
         boolean needTest = true;
         for (VariableMapping variableMapping : variableMappings) {
-            if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(variableMapping.getUsage()) && variableMapping.getProcessVariable().equals("typeMultiInstance")) {
+            if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(variableMapping.getUsage()) && variableMapping.getProcessVariableName().equals("typeMultiInstance")) {
                 needTest = false;
             }
             if (variableMapping.getUsage().contains(VariableMapping.USAGE_MULTIINSTANCE_LINK) && variableMapping.getUsage().contains(VariableMapping.USAGE_READ)

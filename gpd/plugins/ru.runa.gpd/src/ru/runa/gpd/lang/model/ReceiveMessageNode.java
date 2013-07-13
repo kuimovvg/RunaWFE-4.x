@@ -16,7 +16,7 @@ public class ReceiveMessageNode extends Node implements Active, ITimed {
             if (VariableMapping.USAGE_SELECTOR.equals(variableMapping.getUsage())) {
                 continue;
             }
-            String processVarName = variableMapping.getProcessVariable();
+            String processVarName = variableMapping.getProcessVariableName();
             if (!getProcessDefinition().getVariableNames(true).contains(processVarName)) {
                 addError("message.processVariableDoesNotExist", processVarName);
                 continue;

@@ -17,6 +17,7 @@ import org.eclipse.text.edits.ReplaceEdit;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.wfe.extension.handler.var.FormulaActionHandler;
 
 import com.google.common.base.Objects;
 
@@ -51,6 +52,13 @@ public class DelegablePresentation extends VariableRenameProvider<Delegable> {
         if (HandlerRegistry.SCRIPT_HANDLER_CLASS_NAMES.contains(element.getDelegationClassName())) {
             oldVariableName = oldVariable.getScriptingName();
             newVariableName = newVariable.getScriptingName();
+        } else if (FormulaActionHandler.class.getName().equals(element.getDelegationClassName())) {
+            if (oldVariableName.contains(" ")) {
+                oldVariableName = "'" + oldVariableName + "'";
+            }
+            if (newVariableName.contains(" ")) {
+                newVariableName = "'" + newVariableName + "'";
+            }
         }
         List<Change> changes = new ArrayList<Change>();
         if (Objects.equal(oldVariableName, newVariableName)) {
@@ -64,7 +72,7 @@ public class DelegablePresentation extends VariableRenameProvider<Delegable> {
             if (offset >= document.getLength()) {
                 break;
             }
-            offset = document.search(offset, oldVariableName, true, true, true);
+            offset = document.search(offset, oldVariableName, true, true, false);
             if (offset == -1) {
                 break;
             }
