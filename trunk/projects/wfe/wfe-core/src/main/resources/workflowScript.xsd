@@ -35,6 +35,9 @@
 			<xs:element ref="addPermissionsOnGroup" minOccurs="0"/>
 			<xs:element ref="setPermissionsOnGroup" minOccurs="0"/>
 			<xs:element ref="removePermissionsOnGroup" minOccurs="0"/>
+			<xs:element ref="addPermissionsOnRelation" minOccurs="0"/>
+			<xs:element ref="setPermissionsOnRelation" minOccurs="0"/>
+			<xs:element ref="removePermissionsOnRelation" minOccurs="0"/>
 			<xs:element ref="addPermissionsOnDefinition" minOccurs="0"/>
 			<xs:element ref="setPermissionsOnDefinition" minOccurs="0"/>
 			<xs:element ref="removePermissionsOnDefinition" minOccurs="0"/>
@@ -44,6 +47,9 @@
 			<xs:element ref="addPermissionsOnSystem" minOccurs="0"/>
 			<xs:element ref="setPermissionsOnSystem" minOccurs="0"/>
 			<xs:element ref="removePermissionsOnSystem" minOccurs="0"/>
+			<xs:element ref="addPermissionsOnRelationGroup" minOccurs="0"/>
+			<xs:element ref="setPermissionsOnRelationGroup" minOccurs="0"/>
+			<xs:element ref="removePermissionsOnRelationGroup" minOccurs="0"/>
 			<xs:element ref="removeAllPermissionsFromExecutor" minOccurs="0"/>
 			<xs:element ref="removeAllPermissionsFromProcessDefinition" minOccurs="0"/>
 			<xs:element ref="removeAllPermissionsFromProcesses" minOccurs="0"/>
@@ -167,6 +173,10 @@
 	<xs:element name="setPermissionsOnGroup" type="PermissionsOnGroupType"/>
 	<xs:element name="removePermissionsOnGroup" type="PermissionsOnGroupType"/>
 	
+	<xs:element name="addPermissionsOnRelation" type="PermissionsOnRelationType"/>
+	<xs:element name="setPermissionsOnRelation" type="PermissionsOnRelationType"/>
+	<xs:element name="removePermissionsOnRelation" type="PermissionsOnRelationType"/>
+
 	<xs:element name="addPermissionsOnDefinition" type="PermissionsOnProcessDefinitionType"/>
 	<xs:element name="setPermissionsOnDefinition" type="PermissionsOnProcessDefinitionType"/>
 	<xs:element name="removePermissionsOnDefinition" type="PermissionsOnProcessDefinitionType"/>
@@ -178,6 +188,10 @@
 	<xs:element name="addPermissionsOnSystem" type="PermissionsOnSystemType"/>
 	<xs:element name="setPermissionsOnSystem" type="PermissionsOnSystemType"/>
 	<xs:element name="removePermissionsOnSystem" type="PermissionsOnSystemType"/>
+
+	<xs:element name="addPermissionsOnRelationGroup" type="PermissionsOnRelationGroupType"/>
+	<xs:element name="setPermissionsOnRelationGroup" type="PermissionsOnRelationGroupType"/>
+	<xs:element name="removePermissionsOnRelationGroup" type="PermissionsOnRelationGroupType"/>
 
 	<xs:element name="addPermissionsOnBotStations" type="PermissionsOnBotStationsType"/>
 	<xs:element name="setPermissionsOnBotStations" type="PermissionsOnBotStationsType"/>
@@ -272,6 +286,29 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+
+	<xs:complexType name="PermissionsOnRelationType">
+		<xs:complexContent>
+			<xs:extension base="BasePermissionsOnNonamedObjectType">
+				<xs:sequence>
+					<xs:element ref="namedIdentitySet" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="permission" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:attribute name="name" use="required">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="permission.read"/>
+										<xs:enumeration value="permission.update_permissions"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="name" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 	
 	<xs:complexType name="PermissionsOnProcessDefinitionType">
 		<xs:complexContent>
@@ -348,6 +385,27 @@
 		</xs:complexContent>
 	</xs:complexType>
 	
+	<xs:complexType name="PermissionsOnRelationGroupType">
+		<xs:complexContent>
+			<xs:extension base="BasePermissionsOnNonamedObjectType">
+				<xs:sequence>
+					<xs:element name="permission" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:attribute name="name" use="required">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="permission.read"/>
+										<xs:enumeration value="permission.update_permissions"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<xs:complexType name="PermissionsOnBotStationsType">
 		<xs:complexContent>
 			<xs:extension base="BasePermissionsOnNonamedObjectType">
