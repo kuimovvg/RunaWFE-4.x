@@ -299,6 +299,7 @@ public class JpdlSerializer extends ProcessSerializer {
             return;
         }
         Element timerElement = parent.addElement(TIMER_NODE);
+        setAttribute(timerElement, ID_ATTR, timer.getId());
         setAttribute(timerElement, DUEDATE_ATTR, timer.getDelay().getDuration());
         if (timer.getAction() != null) {
             if (timer.getAction().getRepeatDelay().hasDuration()) {
@@ -556,6 +557,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     } else {
                         if (State.class.isInstance(state)) {
                             Timer timer = new Timer();
+                            timer.setId(stateNodeChild.attributeValue(ID_ATTR));
                             if (dueDate != null) {
                                 timer.setDelay(new Duration(dueDate));
                             }

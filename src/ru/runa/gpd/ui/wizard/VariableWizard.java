@@ -44,9 +44,11 @@ public class VariableWizard extends Wizard {
     public boolean performFinish() {
         String name = null;
         String scriptingName = null;
+        String description = null;
         if (namePage != null) {
             name = namePage.getVariableName();
             scriptingName = VariableUtils.generateNameForScripting(definition, name, null);
+            description = namePage.getVariableDesc();
         }
         String formatClassName = formatPage.getType().getName();
         String format = formatClassName;
@@ -63,6 +65,7 @@ public class VariableWizard extends Wizard {
         String defaultValue = defaultValuePage.getDefaultValue();
         boolean publicVisibility = accessPage.isPublicVisibility();
         variable = new Variable(name, scriptingName, format, publicVisibility, defaultValue);
+        variable.setDescription(description);
         return true;
     }
 }
