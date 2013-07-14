@@ -1,0 +1,9 @@
+<config>
+  <input>
+    <param name="right" formatFilter="ru.runa.wfe.user.Executor" label.key="Param.Executor" />
+    <param name="relationName" formatFilter="java.lang.String" presentation="richcombo" label.key="Param.RelationName" />
+  </input>
+  <output>
+    <param name="result" formatFilter="ru.runa.wfe.user.Executor" label.key="Param.Result" />
+  </output>
+</config>
