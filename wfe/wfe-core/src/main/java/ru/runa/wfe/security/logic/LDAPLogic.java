@@ -52,6 +52,7 @@ import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -84,10 +85,18 @@ public class LDAPLogic {
     @Autowired
     private PermissionDAO permissionDAO;
 
-    private final String providerUrl = SystemProperties.getResources().getStringPropertyNotNull("ldap.connection.provider.url");
+    private final String providerUrl = SystemProperties.getResources().getStringProperty("ldap.connection.provider.url");
     private final List<String> ous = SystemProperties.getResources().getMultipleStringProperty("ldap.synchronizer.ou");
-    private final String dc = providerUrl.substring(providerUrl.lastIndexOf("/") + 1);
-    private final Pattern patternForMissedPeople = Pattern.compile("," + dc, Pattern.CASE_INSENSITIVE);
+
+    private Pattern patternForMissedPeople;
+
+    private Pattern getPatternForMissedPeople() {
+        if (patternForMissedPeople == null) {
+            String dc = providerUrl.substring(providerUrl.lastIndexOf("/") + 1);
+            patternForMissedPeople = Pattern.compile("," + dc, Pattern.CASE_INSENSITIVE);
+        }
+        return patternForMissedPeople;
+    }
 
     private DirContext getContext() throws NamingException {
         Hashtable<String, String> env = new Hashtable<String, String>();
@@ -108,9 +117,8 @@ public class LDAPLogic {
             log.warn("Synchronization is disabled");
             return;
         }
-        if (ous == null) {
-            throw new NullPointerException("LDAP property is not configured 'ldap.synchronizer.ou'");
-        }
+        Preconditions.checkNotNull(providerUrl, "LDAP property is not configured 'ldap.connection.provider.url'");
+        Preconditions.checkNotNull(ous, "LDAP property is not configured 'ldap.synchronizer.ou'");
         log.info("Synchronization mode: " + (createExecutors ? "full" : "user and group relations only"));
         try {
             Group wfeImportFromLdapGroup = new Group(IMPORTED_FROM_LDAP_GROUP_NAME, IMPORTED_FROM_LDAP_GROUP_DESCRIPION);
@@ -242,7 +250,7 @@ public class LDAPLogic {
                 if (actor != null) {
                     recursiveActors.add(actor);
                 } else {
-                    Matcher m = patternForMissedPeople.matcher(executorDistinguishedName);
+                    Matcher m = getPatternForMissedPeople().matcher(executorDistinguishedName);
                     String executorPath = m.replaceAll("");
                     Attribute samAttribute = dirContext.getAttributes(executorPath).get(SAM_ACCOUNT_NAME);
                     if (samAttribute != null) {
