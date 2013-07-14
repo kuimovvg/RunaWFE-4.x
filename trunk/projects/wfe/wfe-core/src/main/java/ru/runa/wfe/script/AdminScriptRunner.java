@@ -98,6 +98,9 @@ public class AdminScriptRunner {
     private final static String FULL_NAME_ATTRIBUTE_NAME = "fullName";
     private final static String DESCRIPTION_ATTRIBUTE_NAME = "description";
     protected final static String PASSWORD_ATTRIBUTE_NAME = "password";
+    protected final static String CODE_ATTRIBUTE_NAME = "code";
+    protected final static String EMAIL_ATTRIBUTE_NAME = "email";
+    protected final static String PHONE_ATTRIBUTE_NAME = "phone";
     private final static String EXECUTOR_ATTRIBUTE_NAME = "executor";
     private final static String ADDRESS_ATTRIBUTE_NAME = "address";
     private final static String BOTSTATION_ATTRIBUTE_NAME = "botStation";
@@ -229,7 +232,13 @@ public class AdminScriptRunner {
         String fullName = element.attributeValue(FULL_NAME_ATTRIBUTE_NAME);
         String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
         String password = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
-        Actor actor = new Actor(name, description, fullName);
+        String email = element.attributeValue(EMAIL_ATTRIBUTE_NAME);
+        String phone = element.attributeValue(PHONE_ATTRIBUTE_NAME);
+        Actor actor = new Actor(name, description, fullName, null, email, phone);
+        String codeString = element.attributeValue(CODE_ATTRIBUTE_NAME);
+        if (codeString != null) {
+            actor.setCode(Long.valueOf(codeString));
+        }
         actor = executorLogic.create(user, actor);
         if (password != null) {
             executorLogic.setPassword(user, actor, password);
