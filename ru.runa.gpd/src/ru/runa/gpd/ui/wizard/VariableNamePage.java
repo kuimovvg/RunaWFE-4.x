@@ -17,11 +17,13 @@ import ru.runa.gpd.util.VariableUtils;
 public class VariableNamePage extends ContentWizardPage {
     private final ProcessDefinition definition;
     private String variableName;
+    private String variableDesc;
     private Text scriptingNameField;
 
     public VariableNamePage(ProcessDefinition definition, Variable variable) {
         this.definition = definition;
         this.variableName = variable != null ? variable.getName() : definition.getNextVariableName();
+        this.variableDesc = variable != null ? variable.getDescription() : "";
     }
 
     @Override
@@ -43,11 +45,22 @@ public class VariableNamePage extends ContentWizardPage {
             }
         });
         Label label = new Label(composite, SWT.NONE);
-        label.setText(Localization.getString("VariableNamePage.scriptingName.description"));
+        label.setText(Localization.getString("VariableNamePage.scriptingName.label"));
         scriptingNameField = new Text(composite, SWT.BORDER);
         scriptingNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         scriptingNameField.setEditable(false);
         scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, variableName, null));
+        label = new Label(composite, SWT.NONE);
+        label.setText(Localization.getString("VariableNamePage.description.label"));
+        final Text descriptionField = new Text(composite, SWT.BORDER);
+        descriptionField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        descriptionField.setText(variableDesc);
+        descriptionField.addModifyListener(new LoggingModifyTextAdapter() {
+            @Override
+            protected void onTextChanged(ModifyEvent e) throws Exception {
+                variableDesc = descriptionField.getText();
+            }
+        });
         nameField.setFocus();
         nameField.selectAll();
     }
@@ -65,5 +78,9 @@ public class VariableNamePage extends ContentWizardPage {
 
     public String getVariableName() {
         return variableName;
+    }
+
+    public String getVariableDesc() {
+        return variableDesc;
     }
 }

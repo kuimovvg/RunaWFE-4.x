@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -12,13 +12,15 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
+import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.wfe.extension.orgfunction.GetActorsByCodesFunction;
@@ -42,10 +44,16 @@ public class SwimlaneRelationsElement extends SwimlaneElement {
         content1.setLayout(new GridLayout(2, false));
         relationNameText = new Text(content1, SWT.BORDER);
         relationNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        chooseLink = createLink(content1, Localization.getString("button.choose"));
-        chooseLink.addHyperlinkListener(new HyperlinkAdapter() {
+        relationNameText.addModifyListener(new LoggingModifyTextAdapter() {
             @Override
-            public void linkActivated(HyperlinkEvent e) {
+            protected void onTextChanged(ModifyEvent e) throws Exception {
+                updateSwimlane();
+            }
+        });
+        chooseLink = createLink(content1, Localization.getString("button.choose"));
+        chooseLink.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+            @Override
+            protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                 try {
                     ChooseItemDialog dialog = new ChooseItemDialog(Localization.getString("RelationsDialog.Text"), null, true);
                     List<String> relations = WFEServerRelationsImporter.getInstance().loadCachedData();
@@ -69,9 +77,9 @@ public class SwimlaneRelationsElement extends SwimlaneElement {
         for (String variableName : processDefinition.getVariableNames(true, Executor.class.getName(), String.class.getName())) {
             combo.add(variableName);
         }
-        combo.addSelectionListener(new SelectionAdapter() {
+        combo.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 updateSwimlane();
             }
         });

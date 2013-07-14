@@ -123,10 +123,10 @@ public class FtlTagSupportServlet extends HttpServlet {
                 }
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.format.dialog.end")));
             } else if ("GetParameters".equals(commandStr)) {
-                resultHtml.append("<table style=\"width: 100%;\" style=\"vertical-align: top;\">");
+                resultHtml.append("<table style=\"width: 100%;\">");
                 int paramCounter = 0;
                 for (Param param : MethodTag.getTag(tagName).params) {
-                    resultHtml.append("<tr><td class='leftParam' style=\"vertical-align: top;\">");
+                    resultHtml.append("<tr><td class='leftParam'>");
                     resultHtml.append(param.label);
                     resultHtml.append("</td><td class='rightParam'>");
                     if (param.isCombo() || param.isVarCombo()) {
