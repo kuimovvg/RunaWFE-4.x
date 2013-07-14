@@ -18,7 +18,10 @@ public class RelativeToCurrentDateRangeFieldValidator extends AbstractRangeValid
     }
 
     private Date getParameter(String name, boolean add) {
-        int daysCount = getParameter(int.class, name, 0);
+        Integer daysCount = getParameter(Integer.class, name, null);
+        if (daysCount == null) {
+            return null;
+        }
         if (!add) {
             daysCount = -1 * daysCount - 1;
         }
