@@ -57,7 +57,7 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
     public ProcessEditorBase getEditor() {
         return editor;
     }
-    
+
     @Override
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
         super.init(site, input);
@@ -118,22 +118,8 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
     @Override
     protected void createActions() {
         super.createActions();
-        GraphicalEditorContributor.createCopyPasteActions(getActionRegistry(), editor);
+        GraphicalEditorContributor.createCustomGEFActions(getActionRegistry(), editor, getSelectionActions());
     }
-
-//    @Override
-//    protected void createActions() {
-//        IAction copyAction = new CopyAction(this, editor);
-//        copyAction.setId(ActionFactory.COPY.getId());
-//        new ActionHandler(copyAction);
-//        getActionRegistry().registerAction(copyAction);
-//        getSelectionActions().add(copyAction.getId());
-//        IAction pasteAction = new PasteAction(this, editor);
-//        pasteAction.setId(ActionFactory.PASTE.getId());
-//        getActionRegistry().registerAction(pasteAction);
-//        getSelectionActions().add(pasteAction.getId());
-//        super.createActions();
-//    }
 
     @Override
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {
@@ -239,7 +225,6 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
 
         @Override
         public void buildContextMenu(IMenuManager menu) {
-            // menu.setRemoveAllWhenShown(true);
             GEFActionConstants.addStandardActionGroups(menu);
             IAction action;
             action = getActionRegistry().getAction(ActionFactory.COPY.getId());
@@ -272,5 +257,4 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
     protected FlyoutPreferences getPalettePreferences() {
         return new PaletteFlyoutPreferences();
     }
-
 }

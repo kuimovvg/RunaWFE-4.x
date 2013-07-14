@@ -9,7 +9,6 @@ import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.lang.model.Conjunction;
 
 public class ConjunctionFigure extends NodeFigure<Conjunction> {
-
     @Override
     public void init() {
         super.init();
@@ -44,10 +43,6 @@ public class ConjunctionFigure extends NodeFigure<Conjunction> {
         if (model.isMinimizedView()) {
             rect.width = minimizedSize;
             rect.height = minimizedSize;
-        }
-        if (!model.isMinimizedView() && rect.width < getDefaultSize().width) {
-            rect.width = getDefaultSize().width;
-            rect.height = getDefaultSize().height;
         }
         super.setBounds(rect);
     }

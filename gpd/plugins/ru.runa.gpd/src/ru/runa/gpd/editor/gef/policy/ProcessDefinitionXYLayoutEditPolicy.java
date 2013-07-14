@@ -10,6 +10,7 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 import org.eclipse.gef.editpolicies.ResizableEditPolicy;
 import org.eclipse.gef.editpolicies.XYLayoutEditPolicy;
+import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.requests.CreateRequest;
 
 import ru.runa.gpd.editor.GEFConstants;
@@ -20,7 +21,6 @@ import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 
 public class ProcessDefinitionXYLayoutEditPolicy extends XYLayoutEditPolicy {
-
     @Override
     protected Command createAddCommand(EditPart child, Object constraint) {
         return null;
@@ -36,11 +36,9 @@ public class ProcessDefinitionXYLayoutEditPolicy extends XYLayoutEditPolicy {
     }
 
     @Override
-    protected Command createChangeConstraintCommand(EditPart child, Object constraint) {
-        NodeChangeConstraintCommand locationCommand = new NodeChangeConstraintCommand();
-        locationCommand.setNode((Node) child.getModel());
+    protected Command createChangeConstraintCommand(ChangeBoundsRequest request, EditPart child, Object constraint) {
         Rectangle newRect = getClosestRectangle((Rectangle) constraint);
-        locationCommand.setNewConstraint(newRect);
+        NodeChangeConstraintCommand locationCommand = new NodeChangeConstraintCommand(request, (Node) child.getModel(), newRect);
         return locationCommand;
     }
 
@@ -68,7 +66,6 @@ public class ProcessDefinitionXYLayoutEditPolicy extends XYLayoutEditPolicy {
         int yCount = (int) Math.round((double) rect.y / GEFConstants.GRID_SIZE);
         int wCount = (int) Math.round((double) rect.width / GEFConstants.GRID_SIZE);
         int hCount = (int) Math.round((double) rect.height / GEFConstants.GRID_SIZE);
-        return new Rectangle(xCount * GEFConstants.GRID_SIZE, yCount * GEFConstants.GRID_SIZE, wCount * GEFConstants.GRID_SIZE, hCount
-                * GEFConstants.GRID_SIZE);
+        return new Rectangle(xCount * GEFConstants.GRID_SIZE, yCount * GEFConstants.GRID_SIZE, wCount * GEFConstants.GRID_SIZE, hCount * GEFConstants.GRID_SIZE);
     }
 }

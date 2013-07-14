@@ -184,6 +184,13 @@
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="multiple" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -205,15 +212,6 @@
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
@@ -242,5 +240,14 @@
       </documentation>
    </annotation>
 
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
 
 </schema>

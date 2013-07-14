@@ -4,6 +4,6 @@
     <param name="key" label.key="Param.Key" />
   </input>
   <output>
-    <param name="map" formatFilter="map" label.key="Param.Result" />
+    <param name="result" formatFilter="map" label.key="Param.Result" />
   </output>
 </config>

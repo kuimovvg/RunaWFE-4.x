@@ -86,9 +86,12 @@ public class FreemarkerUtil {
                         }
                         boolean surroundWithBrackets = true;
                         try {
-                            Param param = MethodTag.getTag(tagName).params.get(j);
-                            if (param.isVarCombo() || (param.isRichCombo() && variables.containsKey(params[j]))) {
-                                surroundWithBrackets = false;
+                            MethodTag tag = MethodTag.getTag(tagName);
+                            if (tag.params.size() > j) {
+                                Param param = tag.params.get(j);
+                                if (param.isVarCombo() || (param.isRichCombo() && variables.containsKey(params[j]))) {
+                                    surroundWithBrackets = false;
+                                }
                             }
                         } catch (Exception e) {
                             PluginLogger.logErrorWithoutDialog("FTL tag problem found for " + tagName + "(" + j + "): '" + params[j] + "'", e);
@@ -228,7 +231,7 @@ public class FreemarkerUtil {
         public TemplateModel get(String key) throws TemplateModelException {
             if (stageRenderingParams) {
                 return new SimpleScalar(key);
-            } 
+            }
             // output variables
             if (variables.containsKey(key)) {
                 return getTemplateModel(variables.get(key));
@@ -327,7 +330,7 @@ public class FreemarkerUtil {
                 }
                 if (stageRenderingParams) {
                     return wrap(VAR_VALUE_PLC);
-                } 
+                }
                 return getTemplateModel(variable);
             }
             if (MethodTag.hasTag(key)) {
@@ -354,10 +357,13 @@ public class FreemarkerUtil {
                     if (args.size() < paramsSize) {
                         paramsSize = args.size();
                     }
+                    if (args.size() > paramsSize && tag.params.get(paramsSize - 1).multiple) {
+                        paramsSize = args.size();
+                    }
                 }
                 for (int i = 0; i < paramsSize; i++) {
                     String varName = (String) args.get(i);
-                    MethodTag.Param param = tag.params.get(i);
+                    MethodTag.Param param = tag.params.size() > i ? tag.params.get(i) : tag.params.get(tag.params.size() - 1);
                     if (param.variableAccess == VariableAccess.WRITE) {
                         usedVariables.put(varName, FormType.WRITE_ACCESS);
                     } else if (param.variableAccess == VariableAccess.READ) {

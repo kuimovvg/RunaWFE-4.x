@@ -391,17 +391,6 @@
       </tag>
       <tag
             enabled="false"
-            id="EditList"
-            name="%Method.EditList">
-         <param
-               name="%Param.ListVariable"
-               type="combo"
-               variableAccess="WRITE"
-               variableTypeFilter="java.util.List">
-         </param>
-      </tag>
-      <tag
-            enabled="false"
             id="ViewList"
             name="%Method.ViewList">
          <param
@@ -431,8 +420,11 @@
       <tag
             enabled="true"
             id="EditLinkedLists"
-            name="%Method.EditLinkedLists">
+            image="metadata/icons/EditLinkedLists.png"
+            name="%Method.EditLinkedLists"
+            width="450">
          <param
+               multiple="true"
                name="%Param.ListVariable"
                type="combo"
                variableAccess="WRITE"
@@ -442,12 +434,15 @@
       <tag
             enabled="true"
             id="DisplayLinkedLists"
-            name="%Method.DisplayLinkedLists">
+            image="metadata/icons/DisplayLinkedLists.png"
+            name="%Method.DisplayLinkedLists"
+            width="450">
          <param
+               multiple="true"
                name="%Param.ListVariable"
                type="combo"
-               variableTypeFilter="java.util.List"
-               variableAccess="READ">
+               variableAccess="READ"
+               variableTypeFilter="java.util.List">
          </param>
       </tag>
       <tag
@@ -466,10 +461,11 @@
             id="DisplayLinkedMaps"
             name="%Method.DisplayLinkedMaps">
          <param
+               multiple="true"
                name="%Param.MapVariable"
                type="combo"
-               variableTypeFilter="java.util.Map"
-               variableAccess="READ">
+               variableAccess="READ"
+               variableTypeFilter="java.util.Map">
          </param>
       </tag>
       <tag

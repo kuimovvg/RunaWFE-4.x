@@ -60,11 +60,13 @@ public class MethodTag {
         public final VariableAccess variableAccess;
         public final String label;
         public final List<OptionalValue> optionalValues = new ArrayList<OptionalValue>();
+        public final boolean multiple;
 
-        public Param(String typeName, VariableAccess variableAccess, String label) {
+        public Param(String typeName, VariableAccess variableAccess, String label, boolean multiple) {
             this.typeName = typeName;
             this.variableAccess = variableAccess;
             this.label = label;
+            this.multiple = multiple;
         }
 
         public boolean isCombo() {
@@ -78,7 +80,6 @@ public class MethodTag {
         public boolean isVarCombo() {
             return TYPE_VAR_COMBO.equals(typeName);
         }
-        
     }
 
     public static enum VariableAccess {
@@ -164,7 +165,8 @@ public class MethodTag {
                             String paramName = paramElement.getAttribute("name");
                             String paramType = paramElement.getAttribute("type");
                             VariableAccess variableAccess = VariableAccess.valueOf(paramElement.getAttribute("variableAccess"));
-                            Param param = new Param(paramType, variableAccess, paramName);
+                            boolean multiple = getBooleanAttr(paramElement, "multiple", false);
+                            Param param = new Param(paramType, variableAccess, paramName, multiple);
                             String paramValues = paramElement.getAttribute("variableTypeFilter");
                             if (paramValues != null && paramValues.length() > 0) {
                                 param.optionalValues.add(new OptionalValue(paramValues, null, true));

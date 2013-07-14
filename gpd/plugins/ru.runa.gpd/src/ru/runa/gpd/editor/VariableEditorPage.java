@@ -94,9 +94,9 @@ public class VariableEditorPage extends EditorPartBase {
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         String[] columnNames = new String[] { Localization.getString("property.name"), Localization.getString("Variable.property.format"),
-                Localization.getString("Variable.property.defaultValue") };
-        int[] columnWidths = new int[] { 200, 200, 200 };
-        int[] columnAlignments = new int[] { SWT.LEFT, SWT.LEFT, SWT.LEFT };
+                Localization.getString("Variable.property.defaultValue"), Localization.getString("property.description") };
+        int[] columnWidths = new int[] { 200, 200, 200, 200 };
+        int[] columnAlignments = new int[] { SWT.LEFT, SWT.LEFT, SWT.LEFT, SWT.LEFT };
         for (int i = 0; i < columnNames.length; i++) {
             TableColumn tableColumn = new TableColumn(table, columnAlignments[i]);
             tableColumn.setText(columnNames[i]);
@@ -342,10 +342,9 @@ public class VariableEditorPage extends EditorPartBase {
             case 1:
                 return variable.getFormatLabel();
             case 2:
-                if (variable.getDefaultValue() == null) {
-                    return "";
-                }
-                return variable.getDefaultValue();
+                return variable.getDefaultValue() != null ? variable.getDefaultValue() : "";
+            case 3:
+                return variable.getDescription() != null ? variable.getDescription() : "";
             default:
                 return "unknown " + index;
             }
