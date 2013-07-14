@@ -5,6 +5,6 @@
     <param name="object" label.key="Param.Object" />
   </input>
   <output>
-    <param name="list" formatFilter="java.util.List" label.key="Param.Result" />
+    <param name="result" formatFilter="java.util.List" label.key="Param.Result" />
   </output>
 </config>
