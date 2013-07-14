@@ -37,6 +37,8 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.audit.ReceiveMessageLog;
 import ru.runa.wfe.commons.JMSUtil;
+import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
@@ -48,6 +50,8 @@ import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.service.interceptors.PerformanceObserver;
 import ru.runa.wfe.var.VariableMapping;
+
+import com.google.common.base.Objects;
 
 @MessageDriven(activationConfig = { @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/jbpmQueue"),
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue") })
@@ -78,20 +82,21 @@ public class ReceiveMessageBean implements MessageListener {
                 for (VariableMapping variableMapping : receiveMessage.getVariableMappings()) {
                     if (variableMapping.isPropertySelector()) {
                         String selectorValue = objectMessage.getStringProperty(variableMapping.getName());
-                        String expectedValue = variableMapping.getMappedName();
-                        if ("${currentProcessId}".equals(expectedValue) || "${currentInstanceId}".equals(expectedValue)) {
+                        String testValue = variableMapping.getMappedName();
+                        String expectedValue;
+                        if ("${currentProcessId}".equals(testValue) || "${currentInstanceId}".equals(testValue)) {
                             expectedValue = String.valueOf(token.getProcess().getId());
-                        }
-                        if ("${currentDefinitionName}".equals(expectedValue)) {
+                        } else if ("${currentDefinitionName}".equals(testValue)) {
                             expectedValue = token.getProcess().getDeployment().getName();
-                        }
-                        if ("${currentNodeName}".equals(expectedValue)) {
+                        } else if ("${currentNodeName}".equals(testValue)) {
                             expectedValue = receiveMessage.getName();
-                        }
-                        if ("${currentNodeId}".equals(expectedValue)) {
+                        } else if ("${currentNodeId}".equals(testValue)) {
                             expectedValue = receiveMessage.getNodeId();
+                        } else {
+                            Object value = ExpressionEvaluator.evaluateVariable(executionContext.getVariableProvider(), testValue);
+                            expectedValue = TypeConversionUtil.convertTo(String.class, value);
                         }
-                        if (!expectedValue.equals(selectorValue)) {
+                        if (!Objects.equal(expectedValue, selectorValue)) {
                             suitable = false;
                             break;
                         }

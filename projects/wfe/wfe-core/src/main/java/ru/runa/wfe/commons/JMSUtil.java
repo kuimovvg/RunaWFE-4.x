@@ -76,9 +76,9 @@ public class JMSUtil {
             ObjectMessage message = session.createObjectMessage(map);
             for (VariableMapping variableMapping : data) {
                 if (variableMapping.isPropertySelector()) {
-                    String value = variableMapping.getMappedName();
-                    Object v = ExpressionEvaluator.evaluateVariableNotNull(variableProvider, value);
-                    message.setObjectProperty(variableMapping.getName(), v);
+                    Object value = ExpressionEvaluator.evaluateVariableNotNull(variableProvider, variableMapping.getMappedName());
+                    String stringValue = TypeConversionUtil.convertTo(String.class, value);
+                    message.setStringProperty(variableMapping.getName(), stringValue);
                 }
             }
             sender.send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, ttl);

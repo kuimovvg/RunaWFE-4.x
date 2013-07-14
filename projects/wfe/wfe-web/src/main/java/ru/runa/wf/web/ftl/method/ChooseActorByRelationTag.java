@@ -40,11 +40,15 @@ public class ChooseActorByRelationTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String actorVarName = getParameterAs(String.class, 0);
-        String relationName = getParameterAs(String.class, 1);
-        Executor relationParam = getParameterAs(Executor.class, 2);
-        List<Actor> actors = getActors(relationName, relationParam);
-        return createSelect(actorVarName, actors).toString();
+        try {
+            String actorVarName = getParameterAs(String.class, 0);
+            String relationName = getParameterAs(String.class, 1);
+            Executor relationParam = getParameterAs(Executor.class, 2);
+            List<Actor> actors = getActors(relationName, relationParam);
+            return createSelect(actorVarName, actors).toString();
+        } catch (Exception e) {
+            throw new TemplateModelException(e);
+        }
     }
 
     /**
@@ -75,8 +79,7 @@ public class ChooseActorByRelationTag extends FreemarkerTag {
      */
     private List<Actor> getActors(String relationName, Executor relationParam) throws TemplateModelException {
         List<Executor> executorRightList = getExecutors(relationParam);
-        List<RelationPair> relationPairList = Delegates.getRelationService().getExecutorsRelationPairsRight(user, relationName,
-                executorRightList);
+        List<RelationPair> relationPairList = Delegates.getRelationService().getExecutorsRelationPairsRight(user, relationName, executorRightList);
         HashSet<Actor> result = new HashSet<Actor>();
         for (RelationPair relationPair : relationPairList) {
             Executor executorLeft = relationPair.getLeft();

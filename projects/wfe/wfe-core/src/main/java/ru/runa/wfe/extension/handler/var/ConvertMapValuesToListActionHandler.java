@@ -18,9 +18,6 @@ public class ConvertMapValuesToListActionHandler extends CommonParamBasedHandler
             map = Maps.newHashMap();
         }
         List list = new ArrayList(map.values());
-        // if (list.size() > 0 && list.get(0) instanceof Comparable) {
-        // Collections.sort(list);
-        // }
         handlerData.setOutputParam("list", list);
     }
 }
