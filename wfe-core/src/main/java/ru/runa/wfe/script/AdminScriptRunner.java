@@ -51,7 +51,9 @@ import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationDoesNotExistException;
+import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.relation.logic.RelationLogic;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Identifiable;
@@ -354,27 +356,53 @@ public class AdminScriptRunner {
     }
 
     public void addPermissionsOnGroup(Element element) {
-        for (Group group : getGroup(element)) {
+        for (Group group : getGroups(element)) {
             addPermissionOnIdentifiable(element, group);
         }
     }
 
     public void setPermissionsOnGroup(Element element) {
-        for (Group group : getGroup(element)) {
+        for (Group group : getGroups(element)) {
             setPermissionOnIdentifiable(element, group);
         }
     }
 
     public void removePermissionsOnGroup(Element element) {
-        for (Group group : getGroup(element)) {
+        for (Group group : getGroups(element)) {
             removePermissionOnIdentifiable(element, group);
         }
     }
 
-    private Set<Group> getGroup(Element element) {
+    private Set<Group> getGroups(Element element) {
         Set<Group> result = new HashSet<Group>();
         for (String executorName : getNestedNamedIdentityNames(element, "Executor", namedExecutorIdentities)) {
             result.add(executorLogic.getGroup(user, executorName));
+        }
+        return result;
+    }
+
+    public void addPermissionsOnRelation(Element element) {
+        for (Relation relation : getRelations(element)) {
+            addPermissionOnIdentifiable(element, relation);
+        }
+    }
+
+    public void setPermissionsOnRelation(Element element) {
+        for (Relation relation : getRelations(element)) {
+            setPermissionOnIdentifiable(element, relation);
+        }
+    }
+
+    public void removePermissionsOnRelation(Element element) {
+        for (Relation relation : getRelations(element)) {
+            removePermissionOnIdentifiable(element, relation);
+        }
+    }
+
+    private Set<Relation> getRelations(Element element) {
+        Set<Relation> result = Sets.newHashSet();
+        for (String relationName : getNestedNamedIdentityNames(element, "Relation", namedExecutorIdentities)) {
+            result.add(relationLogic.getRelation(user, relationName));
         }
         return result;
     }
@@ -504,6 +532,18 @@ public class AdminScriptRunner {
 
     public void removePermissionsOnSystem(Element element) {
         removePermissionOnIdentifiable(element, ASystem.INSTANCE);
+    }
+
+    public void addPermissionsOnRelationGroup(Element element) {
+        addPermissionOnIdentifiable(element, RelationsGroupSecure.INSTANCE);
+    }
+
+    public void setPermissionsOnRelationGroup(Element element) {
+        setPermissionOnIdentifiable(element, RelationsGroupSecure.INSTANCE);
+    }
+
+    public void removePermissionsOnRelationGroup(Element element) {
+        removePermissionOnIdentifiable(element, RelationsGroupSecure.INSTANCE);
     }
 
     public void removeAllPermissionsFromProcessDefinition(Element element) {
