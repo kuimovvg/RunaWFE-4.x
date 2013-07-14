@@ -148,7 +148,7 @@ public interface RelationService {
      * @return
      * @throws RelationDoesNotExistException
      */
-    public List<RelationPair> getRelationPairs(User user, String relationsName, BatchPresentation batchPresentation)
+    public List<RelationPair> getRelationPairs(User user, String relationName, BatchPresentation batchPresentation)
             throws RelationDoesNotExistException;
 
     /**
@@ -166,7 +166,7 @@ public interface RelationService {
      * @throws RelationDoesNotExistException
      *             {@link Relation} with specified name does not exists.
      */
-    public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<Executor> right)
+    public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<? extends Executor> right)
             throws RelationDoesNotExistException;
 
     /**
@@ -184,5 +184,6 @@ public interface RelationService {
      * @throws RelationDoesNotExistException
      *             {@link Relation} with specified name does not exists.
      */
-    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<Executor> left) throws RelationDoesNotExistException;
+    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<? extends Executor> left)
+            throws RelationDoesNotExistException;
 }

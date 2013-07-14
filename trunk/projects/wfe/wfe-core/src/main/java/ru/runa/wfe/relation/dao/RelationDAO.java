@@ -173,7 +173,7 @@ public class RelationDAO extends CommonDAO {
      *            of {@link RelationPair}.
      * @return List of {@link RelationPair}.
      */
-    public List<RelationPair> getExecutorsRelationPairsRight(String relationName, Collection<Executor> from) {
+    public List<RelationPair> getExecutorsRelationPairsRight(String relationName, Collection<? extends Executor> from) {
         Relation relation = null;
         if (relationName != null) {
             relation = getRelationNotNull(relationName);
@@ -193,7 +193,7 @@ public class RelationDAO extends CommonDAO {
      *            {@link RelationPair}.
      * @return List of {@link RelationPair}.
      */
-    public List<RelationPair> getExecutorsRelationPairsLeft(String relationName, Collection<Executor> from) {
+    public List<RelationPair> getExecutorsRelationPairsLeft(String relationName, Collection<? extends Executor> from) {
         Relation relation = null;
         if (relationName != null) {
             relation = getRelationNotNull(relationName);
@@ -273,7 +273,8 @@ public class RelationDAO extends CommonDAO {
         getHibernateTemplate().deleteAll(getRelationPairs(null, null, Lists.newArrayList(executor)));
     }
 
-    private List<RelationPair> getRelationPairs(final Relation relation, final Collection<Executor> left, final Collection<Executor> right) {
+    private List<RelationPair> getRelationPairs(final Relation relation, final Collection<? extends Executor> left,
+            final Collection<? extends Executor> right) {
         return getHibernateTemplate().execute(new HibernateCallback<List<RelationPair>>() {
 
             @Override

@@ -38,6 +38,8 @@ import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
 
+import com.google.common.base.Objects;
+
 /**
  * Describes relation between two executor. If relation contains pair of
  * executors {left, right}, then left=@relation(right)
@@ -159,5 +161,10 @@ public class RelationPair extends IdentifiableBase {
 
     public void setRelation(Relation relation) {
         this.relation = relation;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("relation", relation).add("left", left).add("right", right).toString();
     }
 }

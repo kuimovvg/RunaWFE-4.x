@@ -67,12 +67,12 @@ public class RelationServiceDelegate extends EJB3Delegate implements RelationSer
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<Executor> right) {
+    public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<? extends Executor> right) {
         return getRelationService().getExecutorsRelationPairsRight(user, relationName, right);
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<Executor> left) {
+    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<? extends Executor> left) {
         return getRelationService().getExecutorsRelationPairsLeft(user, relationName, left);
     }
 

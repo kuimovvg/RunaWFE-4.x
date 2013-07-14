@@ -3,7 +3,6 @@ package ru.runa.wfe.extension.handler.var;
 import ru.runa.wfe.extension.handler.CommonParamBasedHandler;
 import ru.runa.wfe.extension.handler.HandlerData;
 
-// TODO test this
 /**
  * Set process variable to 'null' value.
  * 

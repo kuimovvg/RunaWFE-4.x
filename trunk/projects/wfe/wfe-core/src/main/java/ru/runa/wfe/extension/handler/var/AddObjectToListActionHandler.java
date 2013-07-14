@@ -31,7 +31,12 @@ public class AddObjectToListActionHandler extends CommonParamBasedHandler {
                 list.add(object);
             }
         }
-        handlerData.setOutputParam("list", list);
+        if (handlerData.getOutputParams().containsKey("result")) {
+            handlerData.setOutputParam("result", list);
+        } else {
+            // back compatibility
+            handlerData.setOutputParam("list", list);
+        }
         log.debug("Object " + object + " added to the list " + list);
     }
 

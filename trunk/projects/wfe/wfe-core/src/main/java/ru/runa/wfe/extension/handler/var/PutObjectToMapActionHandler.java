@@ -19,7 +19,12 @@ public class PutObjectToMapActionHandler extends CommonParamBasedHandler {
         }
         if (object != null) {
             map.put(key, object);
-            handlerData.setOutputParam("map", map);
+            if (handlerData.getOutputParams().containsKey("result")) {
+                handlerData.setOutputParam("result", map);
+            } else {
+                // back compatibility
+                handlerData.setOutputParam("map", map);
+            }
         }
         log.debug("Object " + object + " set to the map " + map + " at " + key);
     }
