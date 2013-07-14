@@ -1,7 +1,6 @@
 package ru.runa.wfe.extension.handler.var;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import ru.runa.wfe.extension.handler.CommonParamBasedHandler;
 import ru.runa.wfe.extension.handler.HandlerData;
@@ -10,15 +9,22 @@ public class RemoveObjectFromMapActionHandler extends CommonParamBasedHandler {
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        List<?> list = handlerData.getInputParam(List.class, "list");
+        Map map = handlerData.getInputParam(Map.class, "map");
         Object object = handlerData.getInputParam(Object.class, "object");
-        if (object instanceof Collection<?>) {
-            list.removeAll((Collection<?>) object);
+        if (object instanceof Map) {
+            for (Object key : ((Map) object).keySet()) {
+                map.remove(key);
+            }
         } else {
-            list.remove(object);
+            map.remove(object);
         }
-        handlerData.setOutputParam("list", list);
-        log.debug("Object " + object + " removed from the list " + list);
+        if (handlerData.getOutputParams().containsKey("result")) {
+            handlerData.setOutputParam("result", map);
+        } else {
+            // back compatibility
+            handlerData.setOutputParam("map", map);
+        }
+        log.debug("Object " + object + " removed from the map " + map);
     }
 
 }
