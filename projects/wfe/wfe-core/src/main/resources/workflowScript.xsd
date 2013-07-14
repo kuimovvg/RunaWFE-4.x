@@ -63,12 +63,8 @@
 			<xs:element ref="addConfigurationsToBot" minOccurs="0"/>
 			<xs:element ref="removeConfigurationsFromBot" minOccurs="0"/>
 			<xs:element ref="removeAllConfigurationsFromBot" minOccurs="0"/>
-			<xs:element ref="removeOldProcesses" minOccurs="0"/>
-			<xs:element ref="removeOldProcessDefinitionVersion" minOccurs="0"/>
-			<xs:element ref="archiveOldProcesses" minOccurs="0"/>
-			<xs:element ref="archiveOldProcessDefinitionVersion" minOccurs="0"/>
-			<xs:element ref="retrieveOldProcesses" minOccurs="0"/>
-			<xs:element ref="retrieveOldProcessDefinitionVersion" minOccurs="0"/>
+			<xs:element ref="removeProcesses" minOccurs="0"/>
+			<xs:element ref="removeProcessDefinitions" minOccurs="0"/>
 			<xs:element ref="relation" minOccurs="0"/>
 			<xs:element ref="stopProcess" minOccurs="0"/>
 		</xs:choice>
@@ -113,9 +109,12 @@
 	<xs:element name="createActor">
 		<xs:complexType>
 			<xs:attribute name="name" type="xs:string" use="required"/>
-			<xs:attribute name="description" type="xs:string"/>
-			<xs:attribute name="fullName" type="xs:string"/>
-			<xs:attribute name="password" type="xs:string"/>
+			<xs:attribute name="description" type="xs:string" use="optional" />
+			<xs:attribute name="fullName" type="xs:string" use="optional" />
+			<xs:attribute name="password" type="xs:string" use="optional" />
+			<xs:attribute name="code" type="xs:string" use="optional" />
+			<xs:attribute name="email" type="xs:string" use="optional" />
+			<xs:attribute name="phone" type="xs:string" use="optional" />
 		</xs:complexType>
 	</xs:element>
 
@@ -514,61 +513,27 @@
 		</xs:complexType>
 	</xs:element>
 	
-	<xs:element name="archiveOldProcessDefinitionVersion">
+	<xs:element name="removeProcessDefinitions">
 		<xs:complexType>
 			<xs:attribute name="name" type="xs:string" use="required"/>
-			<xs:attribute name="version" type="xs:integer"/>
-		</xs:complexType>
-	</xs:element>
-	
-	<xs:element name="archiveOldProcesses">
-		<xs:complexType>
-			<xs:attribute name="onlyFinished" type="xs:boolean"/>
-			<xs:attribute name="dateInterval" type="xs:boolean"/>
-			<xs:attribute name="startDate" type="xs:dateTime"/>
-			<xs:attribute name="endDate" type="xs:dateTime"/>
-			<xs:attribute name="name" type="xs:string"/>
-			<xs:attribute name="version" type="xs:integer"/>
-			<xs:attribute name="id" type="xs:long"/>
-			<xs:attribute name="idTill" type="xs:long"/>
-		</xs:complexType>
-	</xs:element>
-	
-	<xs:element name="retrieveOldProcesses">
-		<xs:complexType>
-			<xs:attribute name="onlyFinished" type="xs:boolean"/>
-			<xs:attribute name="startDate" type="xs:dateTime"/>
-			<xs:attribute name="endDate" type="xs:dateTime"/>
-			<xs:attribute name="name" type="xs:string"/>
-			<xs:attribute name="version" type="xs:integer"/>
-			<xs:attribute name="id" type="xs:long"/>
-		</xs:complexType>
-	</xs:element>
-	
-	<xs:element name="retrieveOldProcessDefinitionVersion">
-		<xs:complexType>
-			<xs:attribute name="name" type="xs:string" use="required"/>
-			<xs:attribute name="version" type="xs:integer"/>
-		</xs:complexType>
-	</xs:element>
-	
-	<xs:element name="removeOldProcessDefinitionVersion">
-		<xs:complexType>
-			<xs:attribute name="name" type="xs:string" use="required"/>
-			<xs:attribute name="version" type="xs:integer"/>
+			<xs:attribute name="version" type="xs:integer" use="optional"/>
+			<xs:attribute name="versionFrom" type="xs:integer" use="optional"/>
 			<xs:attribute name="versionTo" type="xs:integer" use="optional"/>
 		</xs:complexType>
 	</xs:element>
 	
-	<xs:element name="removeOldProcesses">
+	<xs:element name="removeProcesses">
 		<xs:complexType>
-			<xs:attribute name="onlyFinished" type="xs:boolean"/>
-			<xs:attribute name="startDate" type="xs:dateTime"/>
-			<xs:attribute name="endDate" type="xs:dateTime"/>
-			<xs:attribute name="name" type="xs:string"/>
-			<xs:attribute name="version" type="xs:integer"/>
-			<xs:attribute name="id" type="xs:long"/>
-			<xs:attribute name="idTill" type="xs:long"/>
+			<xs:attribute name="name" type="xs:string" use="optional" />
+			<xs:attribute name="version" type="xs:integer" use="optional" />
+			<xs:attribute name="id" type="xs:long" use="optional" />
+			<xs:attribute name="idFrom" type="xs:long" use="optional" />
+			<xs:attribute name="idTo" type="xs:long" use="optional" />
+			<xs:attribute name="startDateFrom" type="xs:dateTime" use="optional" />
+			<xs:attribute name="startDateTo" type="xs:dateTime" use="optional" />
+			<xs:attribute name="endDateFrom" type="xs:dateTime" use="optional" />
+			<xs:attribute name="endDateTo" type="xs:dateTime" use="optional" />
+			<xs:attribute name="onlyFinished" type="xs:boolean" use="optional" />
 		</xs:complexType>
 	</xs:element>
 	
