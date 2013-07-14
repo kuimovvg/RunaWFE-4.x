@@ -71,6 +71,15 @@ public class ExpressionEvaluator {
         return expression;
     }
 
+    public static Object evaluateVariable(IVariableProvider variableProvider, String expression) {
+        Preconditions.checkNotNull(expression);
+        if (expression.startsWith("${") && expression.endsWith("}")) {
+            String variableName = expression.substring(2, expression.length() - 1);
+            return variableProvider.getValue(variableName);
+        }
+        return expression;
+    }
+
     public static String substitute(String value, Map<String, ? extends Object> variables) {
         Preconditions.checkNotNull(value, "invalid string to substitute");
         Matcher matcher = VARIABLE_REGEXP.matcher(value);

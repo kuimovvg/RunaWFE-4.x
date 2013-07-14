@@ -52,4 +52,18 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
         return TypeConversionUtil.convertTo(clazz, paramValue);
     }
 
+    protected <T> T getParameterVariableNotNull(Class<T> clazz, int i) throws TemplateModelException {
+        String variableName = getParameterAs(String.class, i);
+        return variableProvider.getValueNotNull(clazz, variableName);
+    }
+
+    protected <T> T getParameterVariable(Class<T> clazz, int i, T defaultValue) throws TemplateModelException {
+        String variableName = getParameterAs(String.class, i);
+        T value = variableProvider.getValue(clazz, variableName);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
+
 }

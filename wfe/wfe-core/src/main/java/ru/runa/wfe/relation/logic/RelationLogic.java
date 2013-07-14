@@ -114,7 +114,7 @@ public class RelationLogic extends CommonLogic {
      *            of {@link RelationPair}.
      * @return List of {@link RelationPair}.
      */
-    public List<RelationPair> getExecutorRelationPairsRight(User user, String relationName, List<Executor> right) {
+    public List<RelationPair> getExecutorRelationPairsRight(User user, String relationName, List<? extends Executor> right) {
         List<RelationPair> result = new ArrayList<RelationPair>();
         List<RelationPair> loadedPairs = relationDAO.getExecutorsRelationPairsRight(relationName, right);
         Set<Relation> allowedRelations = getRelationsWithReadPermission(user, loadedPairs);
@@ -140,7 +140,7 @@ public class RelationLogic extends CommonLogic {
      *            {@link RelationPair}.
      * @return List of {@link RelationPair}.
      */
-    public List<RelationPair> getExecutorRelationPairsLeft(User user, String relationName, List<Executor> left) {
+    public List<RelationPair> getExecutorRelationPairsLeft(User user, String relationName, List<? extends Executor> left) {
         List<RelationPair> result = new ArrayList<RelationPair>();
         List<RelationPair> loadedPairs = relationDAO.getExecutorsRelationPairsLeft(relationName, left);
         Set<Relation> allowedRelations = getRelationsWithReadPermission(user, loadedPairs);

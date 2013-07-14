@@ -94,14 +94,14 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<Executor> right) {
+    public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<? extends Executor> right) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(right);
         return relationLogic.getExecutorRelationPairsRight(user, relationName, right);
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<Executor> left) {
+    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<? extends Executor> left) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(left);
         return relationLogic.getExecutorRelationPairsLeft(user, relationName, left);

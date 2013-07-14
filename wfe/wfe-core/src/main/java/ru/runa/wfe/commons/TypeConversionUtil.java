@@ -72,6 +72,12 @@ public class TypeConversionUtil {
                 return convertTo(classConvertTo, groupCode, preConvertor, postConvertor);
             }
             if (classConvertTo == String.class) {
+                if (object instanceof Date) {
+                    return (T) CalendarUtil.formatDateTime((Date) object);
+                }
+                if (object instanceof Calendar) {
+                    return (T) CalendarUtil.formatDateTime((Calendar) object);
+                }
                 return (T) object.toString();
             }
             if (object instanceof String) {
