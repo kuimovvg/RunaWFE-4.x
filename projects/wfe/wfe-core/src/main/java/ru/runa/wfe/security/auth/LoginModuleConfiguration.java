@@ -76,7 +76,7 @@ public class LoginModuleConfiguration extends Configuration implements Initializ
             }
             return entries;
         }
-        if (KerberosLoginModuleResources.getApplicationName().equals(applicationName)) {
+        if (KerberosLoginModuleResources.isEnabled() && KerberosLoginModuleResources.getApplicationName().equals(applicationName)) {
             AppConfigurationEntry appConfigurationEntry = new AppConfigurationEntry(KerberosLoginModuleResources.getLoginModuleClassName(),
                     AppConfigurationEntry.LoginModuleControlFlag.REQUIRED, KerberosLoginModuleResources.getInitParameters());
 
