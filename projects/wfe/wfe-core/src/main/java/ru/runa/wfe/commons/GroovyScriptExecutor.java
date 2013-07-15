@@ -18,6 +18,7 @@ import ru.runa.wfe.var.VariableDefinition;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
 public class GroovyScriptExecutor implements IScriptExecutor {
@@ -29,7 +30,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             Binding binding = createBinding(processDefinition, variableProvider);
             GroovyShell shell = new GroovyShell(binding);
             shell.evaluate(script);
-            return binding.getVariables();
+            return adjustVariables(processDefinition, binding.getVariables());
         } catch (Exception e) {
             if (e instanceof GroovyExceptionInterface) {
                 log.error("Groovy", e);
@@ -110,4 +111,29 @@ public class GroovyScriptExecutor implements IScriptExecutor {
 
     }
 
+    private Map<String, Object> adjustVariables(ProcessDefinition processDefinition, Map<String, Object> map) {
+        Map<String, Object> result = Maps.newHashMap();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String variableName = entry.getKey();
+            boolean found = false;
+            for (VariableDefinition variableDefinition : processDefinition.getVariables()) {
+                if (Objects.equal(variableName, variableDefinition.getScriptingName())) {
+                    variableName = variableDefinition.getName();
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                for (SwimlaneDefinition swimlaneDefinition : processDefinition.getSwimlanes().values()) {
+                    if (Objects.equal(variableName, swimlaneDefinition.getScriptingName())) {
+                        variableName = swimlaneDefinition.getName();
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            result.put(variableName, entry.getValue());
+        }
+        return result;
+    }
 }

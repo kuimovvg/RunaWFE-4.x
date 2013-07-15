@@ -38,10 +38,10 @@ public class ViewUtil {
     private static final Log log = LogFactory.getLog(ViewUtil.class);
 
     public static String createExecutorSelect(User user, WfVariable variable) {
-        return createExecutorSelect(user, variable.getDefinition().getName(), variable.getFormatClassNameNotNull(), variable.getValue());
+        return createExecutorSelect(user, variable.getDefinition().getName(), variable.getFormatClassNameNotNull(), variable.getValue(), true);
     }
 
-    public static String createExecutorSelect(User user, String variableName, String formatClassName, Object defaultValue) {
+    public static String createExecutorSelect(User user, String variableName, String formatClassName, Object value, boolean enabled) {
         BatchPresentation batchPresentation;
         if (ActorFormat.class.getName().equals(formatClassName)) {
             batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
@@ -56,10 +56,14 @@ public class ViewUtil {
         boolean[] sortOrder = { true };
         batchPresentation.setFieldsToSort(sortIds, sortOrder);
         List<Executor> executors = (List<Executor>) Delegates.getExecutorService().getExecutors(user, batchPresentation);
-        String html = "<select name=\"" + variableName + "\">";
+        String html = "<select name=\"" + variableName + "\"";
+        if (!enabled) {
+            html += " disabled=\"true\"";
+        }
+        html += ">";
         for (Executor executor : executors) {
             html += "<option value=\"ID" + executor.getId() + "\"";
-            if (Objects.equal(executor, defaultValue)) {
+            if (Objects.equal(executor, value)) {
                 html += " selected";
             }
             html += ">" + executor.getLabel() + "</option>";
@@ -68,12 +72,15 @@ public class ViewUtil {
         return html;
     }
 
-    public static String getComponentInput(User user, String variableName, String formatClassName, Object value) {
+    public static String getComponentInput(User user, String variableName, String formatClassName, Object value, boolean enabled) {
         String html = "";
         if (StringFormat.class.getName().equals(formatClassName)) {
             html += "<input name=\"" + variableName + "\" class=\"inputString\" ";
             if (value != null) {
                 html += "value=\"" + value + "\" ";
+            }
+            if (!enabled) {
+                html += "disabled=\"true\" ";
             }
             html += "/>";
         }
@@ -81,6 +88,9 @@ public class ViewUtil {
             html += "<textarea name=\"" + variableName + "\" class=\"inputText\">";
             if (value != null) {
                 html += value;
+            }
+            if (!enabled) {
+                html += "disabled=\"true\" ";
             }
             html += "</textarea>";
         }
@@ -90,15 +100,25 @@ public class ViewUtil {
             if (value instanceof Number) {
                 html += "value=\"" + value + "\" ";
             }
+            if (!enabled) {
+                html += "disabled=\"true\" ";
+            }
             html += "/>";
         }
         if (FileFormat.class.getName().equals(formatClassName)) {
-            html += "<input type=\"file\" name=\"" + variableName + "\" class=\"inputFile\" />";
+            html += "<input type=\"file\" name=\"" + variableName + "\" class=\"inputFile\" ";
+            if (!enabled) {
+                html += "disabled=\"true\" ";
+            }
+            html += "/>";
         }
         if (BooleanFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" ";
             if (value instanceof Boolean && ((Boolean) value)) {
                 html += "checked=\"checked\" ";
+            }
+            if (!enabled) {
+                html += "disabled=\"true\" ";
             }
             html += "/>";
         }
@@ -107,12 +127,18 @@ public class ViewUtil {
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDate((Date) value) + "\" ";
             }
+            if (!enabled) {
+                html += "disabled=\"true\" ";
+            }
             html += "/>";
         }
         if (TimeFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputTime\" style=\"width: 50px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatTime((Date) value) + "\" ";
+            }
+            if (!enabled) {
+                html += "disabled=\"true\" ";
             }
             html += "/>";
         }
@@ -121,11 +147,14 @@ public class ViewUtil {
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDateTime((Date) value) + "\" ";
             }
+            if (!enabled) {
+                html += "disabled=\"true\" ";
+            }
             html += "/>";
         }
         if (ActorFormat.class.getName().equals(formatClassName) || ExecutorFormat.class.getName().equals(formatClassName)
                 || GroupFormat.class.getName().equals(formatClassName)) {
-            html = ViewUtil.createExecutorSelect(user, variableName, formatClassName, value);
+            html = ViewUtil.createExecutorSelect(user, variableName, formatClassName, value, enabled);
         }
         return html;
     }
