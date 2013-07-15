@@ -26,7 +26,7 @@ public class InputVariableTag extends FreemarkerTag {
             tag.initChained(this);
             html = tag.renderRequest();
         } else {
-            html = ViewUtil.getComponentInput(user, variableName, formatClassName, value);
+            html = ViewUtil.getComponentInput(user, variableName, formatClassName, value, true);
         }
         if (html.length() == 0) {
             log.warn("No HTML built for " + variable);

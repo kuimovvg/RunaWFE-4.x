@@ -28,12 +28,15 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
 
     @Override
     protected String renderRequest() throws TemplateModelException {
+        boolean allowToAddElements = getParameterAs(boolean.class, 0);
+        boolean allowToChangeElements = getParameterAs(boolean.class, 1);
+        boolean allowToDeleteElements = getParameterAs(boolean.class, 2);
         List<String> variableNames = Lists.newArrayList();
         List<String> componentFormatClassNames = Lists.newArrayList();
         List<List<?>> lists = Lists.newArrayList();
         StringBuffer rowTemplate = new StringBuffer();
         String jsHandlers = "";
-        int i = 0;
+        int i = 3;
         int rowsCount = 0;
         while (true) {
             String variableName = getParameterAs(String.class, i);
@@ -47,15 +50,12 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             if (list == null) {
                 list = new ArrayList<Object>();
             }
-            if (list.size() == 0) {
-                list.add("");
-            }
             variableNames.add(variableName);
             componentFormatClassNames.add(elementFormatClassName);
             lists.add(list);
             jsHandlers += ViewUtil.getComponentJSFunction(elementFormatClassName);
             rowTemplate.append("<td>");
-            String inputTag = ViewUtil.getComponentInput(user, variableName, elementFormatClassName, null);
+            String inputTag = ViewUtil.getComponentInput(user, variableName, elementFormatClassName, null, true);
             inputTag = inputTag.replaceAll("\"", "'");
             rowTemplate.append(inputTag);
             rowTemplate.append("</td>");
@@ -78,7 +78,11 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
                 String value = FormatCommons.getVarOut(user, o, webHelper, variableProvider.getProcessId(), headerVariableName, 0, null);
                 html.append("<td><b>").append(value).append("</b></td>");
             }
-            html.append("<td><input type=\"button\" id=\"editLinkedListsButtonAdd\" value=\" + \" /></td>");
+            html.append("<td>");
+            if (allowToAddElements) {
+                html.append("<input type=\"button\" id=\"editLinkedListsButtonAdd\" value=\" + \" />");
+            }
+            html.append("</td>");
             html.append("</tr>");
             for (int row = 0; row < rowsCount; row++) {
                 String trId = "editLinkedLists" + (row + 1);
@@ -87,10 +91,14 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
                     Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : "";
                     String variableName = variableNames.get(column);
                     html.append("<td>");
-                    html.append(ViewUtil.getComponentInput(user, variableName, componentFormatClassNames.get(column), o));
+                    html.append(ViewUtil.getComponentInput(user, variableName, componentFormatClassNames.get(column), o, allowToChangeElements));
                     html.append("</td>");
                 }
-                html.append("<td><input type='button' value=' - ' onclick=\"$('#").append(trId).append("').remove();\" /></td>");
+                html.append("<td>");
+                if (allowToDeleteElements) {
+                    html.append("<input type='button' value=' - ' onclick=\"$('#").append(trId).append("').remove();\" />");
+                }
+                html.append("</td>");
                 html.append("</tr>");
             }
             html.append("</table>");
