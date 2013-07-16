@@ -85,26 +85,40 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         setPartName(formNode.getName());
     }
 
-    public Map<String, Variable> getVariables(boolean filterVariablesWithSpaces, String typeClassNameFilter) {
+    private int cachedForVariablesCount = -1;
+    private Map<String, Variable> cachedVariables = new HashMap<String, Variable>();
+
+    public synchronized Map<String, Variable> getVariables(boolean filterVariablesWithSpaces, String typeClassNameFilter) {
         if (formNode == null) {
             // This is because earlier access from web page (not user request)
             return new HashMap<String, Variable>();
         }
         List<Variable> variables = formNode.getProcessDefinition().getVariables(true);
-        // get variables without strong-typing. (all hierarchy) TODO for similar places
-        if (typeClassNameFilter != null && !Object.class.getName().equals(typeClassNameFilter)) {
-            List<String> filterHierarchy = VariableFormatRegistry.getInstance().getSuperClassNames(typeClassNameFilter);
-            List<Variable> copyList = new ArrayList<Variable>(variables);
-            for (Variable variable : copyList) {
-                if (!filterHierarchy.contains(variable.getJavaClassName())) {
-                    variables.remove(variable);
+        if (cachedForVariablesCount != variables.size()) {
+            cachedForVariablesCount = variables.size();
+            cachedVariables.clear();
+            // get variables without strong-typing. (all hierarchy)
+            if (typeClassNameFilter != null && !Object.class.getName().equals(typeClassNameFilter)) {
+                List<String> filterHierarchy = VariableFormatRegistry.getInstance().getSuperClassNames(typeClassNameFilter);
+                for (Variable variable : new ArrayList<Variable>(variables)) {
+                    boolean applicable = false;
+                    for (String className : filterHierarchy) {
+                        if (VariableFormatRegistry.isApplicable(variable, className)) {
+                            applicable = true;
+                            break;
+                        }
+                    }
+                    if (!applicable) {
+                        variables.remove(variable);
+                    }
                 }
             }
+            if (filterVariablesWithSpaces) {
+                variables = VariableUtils.getValidVariables(variables);
+            }
+            cachedVariables = VariableUtils.toMap(variables);
         }
-        if (filterVariablesWithSpaces) {
-            variables = VariableUtils.getValidVariables(variables);
-        }
-        return VariableUtils.toMap(variables);
+        return cachedVariables;
     }
 
     @SuppressWarnings("rawtypes")
