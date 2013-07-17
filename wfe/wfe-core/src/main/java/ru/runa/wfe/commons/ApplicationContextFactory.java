@@ -20,6 +20,7 @@ import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.extension.assign.AssignmentHelper;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.relation.dao.RelationDAO;
+import ru.runa.wfe.relation.dao.RelationPairDAO;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.ss.dao.SubstitutionDAO;
 import ru.runa.wfe.task.dao.TaskDAO;
@@ -125,6 +126,10 @@ public class ApplicationContextFactory {
 
     public static RelationDAO getRelationDAO() {
         return getContext().getBean(RelationDAO.class);
+    }
+
+    public static RelationPairDAO getRelationPairDAO() {
+        return getContext().getBean(RelationPairDAO.class);
     }
 
     public static SubstitutionDAO getSubstitutionDAO() {

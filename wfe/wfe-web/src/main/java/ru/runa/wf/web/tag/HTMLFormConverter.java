@@ -38,6 +38,7 @@ import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
+import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wf.web.action.LoadProcessDefinitionHtmlFileAction;
 import ru.runa.wf.web.form.DefinitionFileForm;
@@ -78,7 +79,6 @@ public class HTMLFormConverter {
     private static final String CHECKED_ATTR = "checked";
     private static final String SELECTED_ATTR = "selected";
     private static final String CSS_CLASS_ATTR = "class";
-    private static final String CSS_CLASS_REQUIRED = "required";
 
     private static final String[] STD_INPUT_NAMES = { "", "text", "hidden", "password" };
 
@@ -305,7 +305,7 @@ public class HTMLFormConverter {
                 Element node = (Element) htmlTagElements.item(i);
                 String typeName = node.getAttribute(TYPE_ATTR);
                 String inputName = node.getAttribute(NAME_ATTR);
-                if (requiredVarNames.contains(inputName)) {
+                if (WebResources.isHighlightRequiredFields() && requiredVarNames.contains(inputName)) {
                     addRequiredClassAttribute(node);
                 }
                 String stringValue = getVarAsString(variableProvider, inputName);
@@ -353,7 +353,7 @@ public class HTMLFormConverter {
             for (int i = 0; i < textareaElements.getLength(); i++) {
                 Element node = (Element) textareaElements.item(i);
                 String inputName = node.getAttribute(NAME_ATTR);
-                if (requiredVarNames.contains(inputName)) {
+                if (WebResources.isHighlightRequiredFields() && requiredVarNames.contains(inputName)) {
                     addRequiredClassAttribute(node);
                 }
                 String stringValue = getVarAsString(variableProvider, inputName);
@@ -371,8 +371,13 @@ public class HTMLFormConverter {
             for (int i = 0; i < selectElements.getLength(); i++) {
                 Element node = (Element) selectElements.item(i);
                 String inputName = node.getAttribute(NAME_ATTR);
-                if (requiredVarNames.contains(inputName)) {
-                    addRequiredClassAttribute(node);
+                if (WebResources.isHighlightRequiredFields() && requiredVarNames.contains(inputName)) {
+                    Node parent = node.getParentNode();
+                    parent.removeChild(node);
+                    Element requiredDiv = document.createElement("div");
+                    requiredDiv.appendChild(node);
+                    parent.appendChild(requiredDiv);
+                    addRequiredClassAttribute(requiredDiv);
                 }
                 String stringValue = getVarAsString(variableProvider, inputName);
                 if (stringValue == null) {
@@ -404,7 +409,7 @@ public class HTMLFormConverter {
         } else {
             cssClasses += " ";
         }
-        cssClasses += CSS_CLASS_REQUIRED;
+        cssClasses += Resources.CLASS_REQUIRED;
         element.setAttribute(CSS_CLASS_ATTR, cssClasses);
     }
 
@@ -452,7 +457,7 @@ public class HTMLFormConverter {
     private static String getErrorText(PageContext pageContext, Map<String, String> errors, String inputName) {
         String errorText = errors.get(inputName);
         if (errorText == null) {
-            errorText = Commons.getMessage(Messages.MESSAGE_WEB_CLIENT_VARIABLE_FORMAT_ERROR, pageContext, new Object[] { inputName });
+            errorText = Commons.getMessage(Messages.MESSAGE_VARIABLE_FORMAT_ERROR, pageContext, new Object[] { inputName });
         }
         return errorText;
     }

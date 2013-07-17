@@ -59,7 +59,7 @@ import com.google.common.base.Objects;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlJavaTypeAdapter(ExecutorAdapter.class)
-public abstract class Executor extends IdentifiableBase {
+public abstract class Executor extends IdentifiableBase implements Comparable<Executor> {
     private static final long serialVersionUID = 1L;
 
     private Long id;
@@ -149,6 +149,19 @@ public abstract class Executor extends IdentifiableBase {
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).toString();
+    }
+
+    @Transient
+    protected String getComparisonValue() {
+        return getName();
+    }
+
+    @Override
+    public final int compareTo(Executor o) {
+        if (getComparisonValue() == null || o.getComparisonValue() == null) {
+            return -1;
+        }
+        return getComparisonValue().compareTo(o.getComparisonValue());
     }
 
     @Transient

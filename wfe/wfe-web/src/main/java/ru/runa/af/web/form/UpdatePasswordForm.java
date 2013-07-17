@@ -28,6 +28,8 @@ import ru.runa.common.WebResources;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 
+import com.google.common.base.Strings;
+
 /**
  * Created on 24.08.2004
  * 
@@ -47,14 +49,14 @@ public class UpdatePasswordForm extends IdForm {
     @Override
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = super.validate(mapping, request);
-        if (password == null || password.length() < 1) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_NULL_VALUE));
+        if (Strings.isNullOrEmpty(password)) {
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_FILL_REQUIRED_VALUES));
         } else if (password.length() > WebResources.VALIDATOR_STRING_255) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_VALIDATION));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_VALIDATION));
         } else if (passwordConfirm == null || passwordConfirm.length() < 1) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_NULL_VALUE));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_NULL_VALUE));
         } else if (!password.equals(passwordConfirm)) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_PASSWORDS_NOT_MATCH));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_PASSWORDS_NOT_MATCH));
         }
         return errors;
     }

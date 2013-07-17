@@ -21,7 +21,8 @@ import java.util.List;
 
 import org.apache.ecs.html.TD;
 
-import ru.runa.af.web.action.RemoveRelationGroupAction;
+import ru.runa.af.web.action.RemoveRelationAction;
+import ru.runa.af.web.form.RelationForm;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
@@ -38,26 +39,18 @@ import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
-import ru.runa.wfe.security.Identifiable;
-import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
 
-/**
- * @jsp.tag name = "listRelationsForm" body-content = "JSP"
- */
 public class ListRelationsFormTag extends BatchReturningTitledFormTag {
-
     private static final long serialVersionUID = 1L;
-
-    boolean formButtonVisible;
+    private boolean formButtonVisible;
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        formButtonVisible = Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE_RELATION,
-                RelationsGroupSecure.INSTANCE);
+        formButtonVisible = Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE, RelationsGroupSecure.INSTANCE);
         List<Relation> relations = Delegates.getRelationService().getRelations(getUser(), getBatchPresentation());
         TableBuilder tableBuilder = new TableBuilder();
-        TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE_RELATION) {
+        TDBuilder checkboxBuilder = new IdentifiableCheckboxTDBuilder(RelationPermission.UPDATE) {
 
             @Override
             protected boolean isEnabled(Object object, Env env) {
@@ -82,11 +75,6 @@ public class ListRelationsFormTag extends BatchReturningTitledFormTag {
     }
 
     @Override
-    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
-        return formButtonVisible;
-    }
-
-    @Override
     protected boolean isFormButtonVisible() {
         return formButtonVisible;
     }
@@ -103,14 +91,14 @@ public class ListRelationsFormTag extends BatchReturningTitledFormTag {
 
     @Override
     public String getAction() {
-        return RemoveRelationGroupAction.ACTION_PATH;
+        return RemoveRelationAction.ACTION_PATH;
     }
 
     class RelationURLStrategy implements ItemUrlStrategy {
 
         @Override
         public String getUrl(String baseUrl, Object item) {
-            return Commons.getActionUrl(baseUrl, "relationName", ((Relation) item).getName(), pageContext, PortletUrlType.Action);
+            return Commons.getActionUrl(baseUrl, RelationForm.RELATION_ID, ((Relation) item).getId(), pageContext, PortletUrlType.Action);
         }
 
     }

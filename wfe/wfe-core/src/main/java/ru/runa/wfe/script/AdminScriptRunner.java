@@ -899,7 +899,7 @@ public class AdminScriptRunner {
     protected void createBotCommon(Element element, BotStation botStation) {
         String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String pass = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
-        String timeout = element.attributeValue(STARTTIMEOUT_ATTRIBUTE_NAME);
+        // String timeout = element.attributeValue(STARTTIMEOUT_ATTRIBUTE_NAME);
         if (!executorLogic.isExecutorExist(user, name)) {
             Actor actor = new Actor(name, "bot");
             executorLogic.create(user, actor);
@@ -911,9 +911,9 @@ public class AdminScriptRunner {
             bot.setBotStation(botStation);
             bot.setUsername(name);
             bot.setPassword(pass);
-            if (!Strings.isNullOrEmpty(timeout)) {
-                bot.setStartTimeout(Long.parseLong(timeout));
-            }
+            // if (!Strings.isNullOrEmpty(timeout)) {
+            // bot.setStartTimeout(Long.parseLong(timeout));
+            // }
             botLogic.createBot(user, bot);
         }
     }
@@ -923,7 +923,7 @@ public class AdminScriptRunner {
         String newName = element.attributeValue(NEW_NAME_ATTRIBUTE_NAME);
         String pass = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
         String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
-        String timeout = element.attributeValue(STARTTIMEOUT_ATTRIBUTE_NAME);
+        // String timeout = element.attributeValue(STARTTIMEOUT_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), name);
         if (!Strings.isNullOrEmpty(newName)) {
             bot.setUsername(newName);
@@ -931,9 +931,9 @@ public class AdminScriptRunner {
         if (!Strings.isNullOrEmpty(pass)) {
             bot.setPassword(pass);
         }
-        if (!Strings.isNullOrEmpty(timeout)) {
-            bot.setStartTimeout(Long.parseLong(timeout));
-        }
+        // if (!Strings.isNullOrEmpty(timeout)) {
+        // bot.setStartTimeout(Long.parseLong(timeout));
+        // }
         String newBotStationName = element.attributeValue(NEW_BOTSTATION_ATTRIBUTE_NAME);
         if (newBotStationName != null) {
             bot.getBotStation().setName(newBotStationName);
@@ -1132,10 +1132,11 @@ public class AdminScriptRunner {
     public void relation(Element element) {
         String relationName = element.attributeValue(NAME_ATTRIBUTE_NAME);
         String relationDescription = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
+        Relation relation;
         try {
-            relationLogic.getRelation(user, relationName);
+            relation = relationLogic.getRelation(user, relationName);
         } catch (RelationDoesNotExistException e) {
-            relationLogic.createRelation(user, relationName, relationDescription);
+            relation = relationLogic.createRelation(user, new Relation(relationName, relationDescription));
         }
         Collection<Executor> leftExecutors = getExecutors(element.element("left"));
         Collection<Executor> rightExecutors = getExecutors(element.element("right"));
@@ -1144,7 +1145,7 @@ public class AdminScriptRunner {
         }
         for (Executor right : rightExecutors) {
             for (Executor left : leftExecutors) {
-                relationLogic.addRelationPair(user, relationName, left, right);
+                relationLogic.addRelationPair(user, relation.getId(), left, right);
             }
         }
     }

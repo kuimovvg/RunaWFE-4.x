@@ -89,7 +89,7 @@ public class ProcessSwimlaneAssignmentMonitorTag extends ProcessBaseFormTag {
             // i was against this crap, but was urged to
             Span span = new Span();
             span.setClass(ru.runa.common.web.Resources.CLASS_ERROR);
-            span.addElement(Commons.getMessage(Messages.EXCEPTION_WEB_CLIENT_EXECUTOR_DOES_NOT_EXISTS, pageContext,
+            span.addElement(Commons.getMessage(Messages.EXCEPTION_EXECUTOR_DOES_NOT_EXISTS, pageContext,
                     new Object[] { e.getExecutorName() }));
             tdFormElement.addElement(span);
         }

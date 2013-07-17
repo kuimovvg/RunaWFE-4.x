@@ -24,43 +24,54 @@ import ru.runa.af.web.action.CreateExecutorAction;
 import ru.runa.af.web.form.CreateExecutorForm;
 import ru.runa.af.web.html.ExecutorTableBuilder;
 import ru.runa.common.web.Messages;
-import ru.runa.common.web.tag.FormTag;
+import ru.runa.common.web.tag.TitledFormTag;
 
 /**
  * Created on 18.08.2004
  * 
  * @jsp.tag name = "createExecutorForm" body-content = "empty"
  */
-public class CreateExecutorFormTag extends FormTag {
+public class CreateExecutorFormTag extends TitledFormTag {
     private static final long serialVersionUID = 8049519129092850184L;
-    boolean isActor;
+    private String type;
+
+    @Override
+    protected String getTitle() {
+        String key;
+        if (CreateExecutorForm.TYPE_ACTOR.equals(type)) {
+            key = "title.create_actor";
+        } else {
+            key = "title.create_group";
+        }
+        return Messages.getMessage(key, pageContext);
+    }
+
+    public String getType() {
+        return type;
+    }
 
     public void setType(String type) {
-        isActor = CreateExecutorForm.TYPE_ACTOR.equals(type);
+        this.type = type;
     }
 
-    /**
-     * @jsp.attribute required = "true" rtexprvalue = "true" description = "actor|group"
-     */
-    public String getType() {
-        return isActor ? CreateExecutorForm.TYPE_ACTOR : CreateExecutorForm.TYPE_GROUP;
-    }
-
+    @Override
     public void fillFormElement(TD tdFormElement) {
-        ExecutorTableBuilder exetb = new ExecutorTableBuilder(isActor, pageContext);
-        tdFormElement.addElement(exetb.buildTable());
+        boolean isActor = CreateExecutorForm.TYPE_ACTOR.equals(type);
+        ExecutorTableBuilder builder = new ExecutorTableBuilder(isActor, pageContext);
+        tdFormElement.addElement(builder.buildTable());
         tdFormElement.addElement(createHiddenType());
     }
 
     private Input createHiddenType() {
-        return new Input(Input.HIDDEN, CreateExecutorForm.EXECUTOR_TYPE_INPUT_NAME, isActor ? CreateExecutorForm.TYPE_ACTOR
-                : CreateExecutorForm.TYPE_GROUP);
+        return new Input(Input.HIDDEN, CreateExecutorForm.EXECUTOR_TYPE_INPUT_NAME, type);
     }
 
+    @Override
     public String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_APPLY, pageContext);
     }
 
+    @Override
     public String getAction() {
         return CreateExecutorAction.ACTION_PATH;
     }

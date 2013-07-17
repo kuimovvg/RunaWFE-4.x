@@ -37,9 +37,6 @@ public class WebResources {
     public static final String ACTION_MAPPING_UPDATE_EXECUTOR = "/manage_executor";
     public static final String ACTION_MAPPING_MANAGE_RELATION = "/manage_relation";
 
-    public static final String ACTION_MAPPING_MANAGE_EXECUTOR_RIGHT_RELATION = "/manage_executor_relation_right";
-    public static final String ACTION_MAPPING_MANAGE_EXECUTOR_LEFT_RELATION = "/manage_executor_relation_left";
-
     public static final String ACTION_MAPPING_DISPLAY_SWIMLANE = "/display_swimlane";
 
     /* Validation rules */

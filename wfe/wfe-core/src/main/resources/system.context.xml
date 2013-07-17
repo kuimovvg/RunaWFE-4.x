@@ -252,6 +252,9 @@
 	<bean id="relationDAO" class="ru.runa.wfe.relation.dao.RelationDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
+	<bean id="relationPairDAO" class="ru.runa.wfe.relation.dao.RelationPairDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
 	<bean id="substitutionDAO" class="ru.runa.wfe.ss.dao.SubstitutionDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>

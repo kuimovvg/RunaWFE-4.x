@@ -23,25 +23,25 @@ import org.apache.ecs.html.Input;
 import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.form.UpdatePasswordForm;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 
-public class PasswordTableBuilder extends BaseDetailTableBuilder {
-
-    private final boolean disabled;
+public class PasswordTableBuilder {
+    private final boolean enabled;
     private final PageContext pageContext;
 
     public PasswordTableBuilder(boolean disabled, PageContext pageContext) {
-        this.disabled = disabled;
+        enabled = !disabled;
         this.pageContext = pageContext;
     }
 
     public Table build() {
         Table table = new Table();
         table.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE);
-        table.addElement(createTRWith2TDRequired(Messages.getMessage(Messages.LABEL_PASSWORD, pageContext), UpdatePasswordForm.PASSWORD_INPUT_NAME,
-                "", disabled, Input.PASSWORD));
-        table.addElement(createTRWith2TDRequired(Messages.getMessage(Messages.LABEL_PASSWORD_CONFIRM, pageContext),
-                UpdatePasswordForm.PASSWORD_CONFIRM_INPUT_NAME, "", disabled, Input.PASSWORD));
+        table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_PASSWORD, pageContext), UpdatePasswordForm.PASSWORD_INPUT_NAME,
+                "", enabled, true, Input.PASSWORD));
+        table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_PASSWORD_CONFIRM, pageContext),
+                UpdatePasswordForm.PASSWORD_CONFIRM_INPUT_NAME, "", enabled, true, Input.PASSWORD));
         return table;
     }
 }

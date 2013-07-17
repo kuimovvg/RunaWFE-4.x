@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.ecs.html.TD;
 
+import ru.runa.af.web.form.RelationPairForm;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
@@ -51,15 +52,9 @@ import ru.runa.wfe.user.Executor;
 import com.google.common.collect.Lists;
 
 /**
- * List relations, which contains executor.
- * 
- * @jsp.tag name = "listExecutorRightRelationsForm" body-content = "JSP"
+ * List relations in which executor exists in right side.
  */
 public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
-
-    /**
-     * Serializable version.
-     */
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -75,7 +70,7 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
         TableBuilder tableBuilder = new TableBuilder();
         TDBuilder[] builders = getBuilders(new TDBuilder[] {}, BatchPresentationFactory.RELATIONS.createDefault(), new TDBuilder[] {});
         RowBuilder rowBuilder = new ReflectionRowBuilder(Lists.newArrayList(relations), executorBatchPresentation, pageContext,
-                WebResources.ACTION_MAPPING_MANAGE_EXECUTOR_RIGHT_RELATION, "", new RelationURLStrategy(), builders);
+                WebResources.ACTION_MAPPING_MANAGE_RELATION, "", new RelationURLStrategy(), builders);
         HeaderBuilder headerBuilder = new StringsHeaderBuilder(getNames());
         tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
     }
@@ -115,8 +110,8 @@ public class ListExecutorRightRelationsFormTag extends IdentifiableFormTag {
         @Override
         public String getUrl(String baseUrl, Object item) {
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("relationName", ((Relation) item).getName());
-            params.put("executorId", getIdentifiableId());
+            params.put(RelationPairForm.RELATION_ID, ((Relation) item).getId());
+            params.put(RelationPairForm.EXECUTOR_TO, getIdentifiableId());
             return Commons.getActionUrl(baseUrl, params, pageContext, PortletUrlType.Action);
         }
     }

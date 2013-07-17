@@ -7,19 +7,19 @@
 <%
 	String returnAction = "/manage_relations.do";
 %>
-<wf:listRelationsForm batchPresentationId="listRelationGroups" buttonAlignment="right"  returnAction="<%= returnAction %>">
+<wf:listRelationsForm batchPresentationId="listRelations" buttonAlignment="right" returnAction="<%= returnAction %>">
 	<div>
-		<wf:viewControlsHideableBlock hideableBlockId="listRelationGroups"  returnAction="<%= returnAction %>" >
-			<wf:tableViewSetupForm batchPresentationId="listRelationGroups" returnAction="<%= returnAction %>" />
+		<wf:viewControlsHideableBlock hideableBlockId="listRelations" returnAction="<%= returnAction %>" >
+			<wf:tableViewSetupForm batchPresentationId="listRelations" returnAction="<%= returnAction %>" />
 		</wf:viewControlsHideableBlock>
 	</div>
 	<table width="100%">
 		<tr>
 			<td align="left">
-				<wf:createRelationGroupLink/>
+				<wf:createRelationLink />
 			</td>
 			<td align="right">
-				<wf:managePermissionOnGroupsOfRelationsLink/>
+				<wf:managePermissionsOnRelationGroupLink />
 			</td>
 		</tr>
 	</table>

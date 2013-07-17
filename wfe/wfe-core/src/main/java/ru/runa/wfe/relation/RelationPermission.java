@@ -29,24 +29,19 @@ import com.google.common.collect.Lists;
  * @see {@link Permission}
  */
 public class RelationPermission extends Permission {
-
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Name of permission for relation update. Update permission allows adding/deleting and so on.
-     */
-    public static final String UPDATE_RELATION_PERMISSION_NAME = "permission.update_relation";
 
     /**
      * Permission for relation update.
      */
-    public static final Permission UPDATE_RELATION = new RelationPermission((byte) 2, UPDATE_RELATION_PERMISSION_NAME);
+    public static final Permission UPDATE = new RelationPermission((byte) 2, "permission.update_relation");
 
     /**
      * All permissions, declared for relations.
      */
     private static final List<Permission> RELATION_PERMISSIONS = fillPermissions();
 
+    // TODO constr
     public RelationPermission() {
         super();
     }
@@ -63,7 +58,7 @@ public class RelationPermission extends Permission {
     private static List<Permission> fillPermissions() {
         List<Permission> superPermissions = new Permission().getAllPermissions();
         List<Permission> result = Lists.newArrayList(superPermissions);
-        result.add(UPDATE_RELATION);
+        result.add(UPDATE);
         return result;
     }
 

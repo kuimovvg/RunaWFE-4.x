@@ -28,9 +28,7 @@ public class BotStationForm extends ActionForm {
     private static final long serialVersionUID = -1273759004172153685L;
 
     public static final String BOT_STATION_NAME = "botStationName";
-
     public static final String BOT_STATION_RMI_ADDRESS = "botStationRMIAddress";
-
     public static final String BOT_STATION_ID = "botStationId";
 
     private Long botStationId;
@@ -62,4 +60,5 @@ public class BotStationForm extends ActionForm {
     public void setBotStationId(Long botStationId) {
         this.botStationId = botStationId;
     }
+
 }

@@ -70,7 +70,7 @@ public abstract class BaseProcessFormAction extends ActionBase {
                     addError(request, new ActionMessage(msg, false));
                 }
             } else {
-                addError(request, new ActionMessage(Messages.MESSAGE_WEB_CLIENT_VALIDATION_ERROR));
+                addError(request, new ActionMessage(Messages.MESSAGE_VALIDATION_ERROR));
             }
             forward = getErrorForward(mapping, form);
         } catch (Exception e) {

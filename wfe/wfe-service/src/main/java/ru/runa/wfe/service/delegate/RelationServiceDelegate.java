@@ -21,6 +21,7 @@ import java.util.List;
 
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.relation.Relation;
+import ru.runa.wfe.relation.RelationDoesNotExistException;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.service.RelationService;
 import ru.runa.wfe.user.Executor;
@@ -42,8 +43,8 @@ public class RelationServiceDelegate extends EJB3Delegate implements RelationSer
     }
 
     @Override
-    public RelationPair addRelationPair(User user, String relationGroupName, Executor from, Executor to) {
-        return getRelationService().addRelationPair(user, relationGroupName, from, to);
+    public RelationPair addRelationPair(User user, Long relationId, Executor from, Executor to) {
+        return getRelationService().addRelationPair(user, relationId, from, to);
     }
 
     @Override
@@ -52,42 +53,52 @@ public class RelationServiceDelegate extends EJB3Delegate implements RelationSer
     }
 
     @Override
-    public Relation getRelationByName(User user, String relationGroupName) {
-        return getRelationService().getRelationByName(user, relationGroupName);
+    public Relation getRelationByName(User user, String name) {
+        return getRelationService().getRelationByName(user, name);
     }
 
     @Override
-    public Relation getRelation(User user, Long relationId) {
-        return getRelationService().getRelation(user, relationId);
+    public Relation getRelation(User user, Long id) {
+        return getRelationService().getRelation(user, id);
     }
 
     @Override
-    public Relation createRelation(User user, String name, String description) {
-        return getRelationService().createRelation(user, name, description);
+    public Relation createRelation(User user, Relation relation) {
+        return getRelationService().createRelation(user, relation);
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<? extends Executor> right) {
-        return getRelationService().getExecutorsRelationPairsRight(user, relationName, right);
+    public Relation updateRelation(User user, Relation relation) throws RelationDoesNotExistException {
+        return getRelationService().updateRelation(user, relation);
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<? extends Executor> left) {
-        return getRelationService().getExecutorsRelationPairsLeft(user, relationName, left);
+    public List<RelationPair> getExecutorsRelationPairsRight(User user, String name, List<? extends Executor> right) {
+        return getRelationService().getExecutorsRelationPairsRight(user, name, right);
     }
 
     @Override
-    public List<RelationPair> getRelationPairs(User user, String relationName, BatchPresentation batchPresentation) {
-        return getRelationService().getRelationPairs(user, relationName, batchPresentation);
+    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String name, List<? extends Executor> left) {
+        return getRelationService().getExecutorsRelationPairsLeft(user, name, left);
     }
 
     @Override
-    public void removeRelationPair(User user, Long relationId) {
-        getRelationService().removeRelationPair(user, relationId);
+    public List<RelationPair> getRelationPairs(User user, String name, BatchPresentation batchPresentation) {
+        return getRelationService().getRelationPairs(user, name, batchPresentation);
     }
 
     @Override
-    public void removeRelation(User user, Long relationGroupName) {
-        getRelationService().removeRelation(user, relationGroupName);
+    public void removeRelationPair(User user, Long id) {
+        getRelationService().removeRelationPair(user, id);
+    }
+
+    @Override
+    public void removeRelationPairs(User user, List<Long> ids) {
+        getRelationService().removeRelationPairs(user, ids);
+    }
+
+    @Override
+    public void removeRelation(User user, Long name) {
+        getRelationService().removeRelation(user, name);
     }
 }

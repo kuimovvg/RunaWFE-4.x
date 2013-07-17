@@ -33,11 +33,12 @@ import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.action.UpdateSubstitutionCriteriaAction;
 import ru.runa.af.web.form.SubstitutionCriteriaForm;
-import ru.runa.af.web.html.BaseDetailTableBuilder;
 import ru.runa.af.web.orgfunction.FunctionDef;
 import ru.runa.af.web.orgfunction.ParamDef;
 import ru.runa.af.web.orgfunction.SubstitutionCriteriaDefinitions;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
+import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.security.Identifiable;
@@ -103,7 +104,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
         return UpdateSubstitutionCriteriaAction.UPDATE_ACTION;
     }
 
-    class SubstitutionTableBuilder extends BaseDetailTableBuilder {
+    class SubstitutionTableBuilder {
 
         private final PageContext pageContext;
 
@@ -116,14 +117,14 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
                     getIdentifiableId()) : null;
             Table table = new Table();
             table.setID("paramsTable");
-            table.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE);
+            table.setClass(Resources.CLASS_LIST_TABLE);
             boolean enabled = substitutionCriteria == null;
             String criteriaName = "";
             if (substitutionCriteria != null) {
                 criteriaName = substitutionCriteria.getName();
             }
-            table.addElement(createTRWith2TD(Messages.getMessage(Messages.LABEL_SUBSTITUTION_CRITERIA_NAME, pageContext),
-                    SubstitutionCriteriaForm.NAME_INPUT_NAME, criteriaName, false));
+            table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_SUBSTITUTION_CRITERIA_NAME, pageContext),
+                    SubstitutionCriteriaForm.NAME_INPUT_NAME, criteriaName, true, true));
             String criteriaType = null;
             if (substitutionCriteria != null) {
                 criteriaType = substitutionCriteria.getClass().getName();
@@ -132,8 +133,8 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
             if (Strings.isNullOrEmpty(criteriaType) && typeOptions.length > 0) {
                 criteriaType = typeOptions[0].getValue();
             }
-            table.addElement(createTRWithLabelAndSelect(Messages.getMessage(Messages.LABEL_SUBSTITUTION_CRITERIA_TYPE, pageContext),
-                    SubstitutionCriteriaForm.TYPE_INPUT_NAME, typeOptions, !enabled));
+            table.addElement(HTMLUtils.createSelectRow(Messages.getMessage(Messages.LABEL_SUBSTITUTION_CRITERIA_TYPE, pageContext),
+                    SubstitutionCriteriaForm.TYPE_INPUT_NAME, typeOptions, enabled, false));
             FunctionDef functionDef = SubstitutionCriteriaDefinitions.getByClassName(criteriaType);
             if (functionDef != null) {
                 for (int i = 0; i < functionDef.getParams().size(); i++) {
@@ -178,6 +179,7 @@ public class UpdateSubstitutionCriteriaFormTag extends IdentifiableFormTag {
     private Element createEditElement(ParamRenderer renderer, PageContext pageContext, String value, int index, boolean enabled) {
         Span span = new Span();
         Input input = new Input(Input.TEXT, SubstitutionCriteriaForm.CONF_INPUT_NAME, value);
+        input.setClass(Resources.CLASS_REQUIRED);
         input.setStyle("width: 300px");
         input.setDisabled(!enabled);
         input.addAttribute("paramIndex", index);

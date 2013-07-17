@@ -25,12 +25,14 @@ import javax.servlet.jsp.PageContext;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
+import org.apache.ecs.html.TH;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.form.BotForm;
-import ru.runa.af.web.tag.ActorSelectTD;
+import ru.runa.af.web.tag.ActorSelect;
 import ru.runa.common.web.Commons;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdsForm;
@@ -64,43 +66,41 @@ public class BotTableBuilder {
         TR tr = new TR();
         tr.setClass(Resources.CLASS_LIST_TABLE_TH);
         Input input = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, Long.toString(bot.getId()));
-        input.setChecked(false);
-        String path = Commons.getActionUrl("bot.do", "botId", new Long(bot.getId()), pageContext, PortletUrlType.Render);
+        String path = Commons.getActionUrl("bot.do", BotForm.BOT_ID, bot.getId(), pageContext, PortletUrlType.Render);
         tr.addElement(new TD(input).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(new A(path, bot.getUsername())).setWidth("90%").setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(new A(path, bot.getUsername())).setWidth("70%").setClass(Resources.CLASS_LIST_TABLE_TD));
+        // tr.addElement(new
+        // TD(String.valueOf(bot.getStartTimeout())).setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }
 
     private TR createTableHeaderTR() {
         TR tr = new TR();
         tr.setClass(Resources.CLASS_LIST_TABLE_TH);
-        tr.addElement(new TD("").setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_WFE_USER, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TH("").setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TH(Messages.getMessage(Messages.LABEL_BOT_NAME, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
+        // tr.addElement(new TH(Messages.getMessage(Messages.LABEL_BOT_TIMEOUT,
+        // pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }
 
     public static Table buildBotDetailsTable(User user, PageContext pageContext, Bot bot) {
         Table table = new Table();
         table.setClass(Resources.CLASS_LIST_TABLE);
-        ActorSelectTD actorSelect = new ActorSelectTD(user, BotForm.USER_NAME, bot != null ? bot.getUsername() : "");
-        Input botPasswordInput = new Input(Input.PASSWORD, BotForm.PASSWORD, bot != null ? bot.getPassword() : "");
-        botPasswordInput.setStyle("width: 300px");
-        Input botTimeoutInput = new Input(Input.TEXT, BotForm.BOT_TIMEOUT, bot != null ? String.valueOf(bot.getStartTimeout()) : "0");
-        botTimeoutInput.setStyle("width: 300px");
+        // Input botTimeoutInput = new Input(Input.TEXT, BotForm.BOT_TIMEOUT,
+        // bot != null ? String.valueOf(bot.getStartTimeout()) : "0");
+        // botTimeoutInput.setStyle("width: 300px");
 
-        TR tr = new TR();
-        tr.setClass(Resources.CLASS_LIST_TABLE_TH);
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_NAME, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(actorSelect.setClass(Resources.CLASS_LIST_TABLE_TD));
-        table.addElement(tr);
-        tr = new TR();
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_PASSWORD, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(botPasswordInput).setClass(Resources.CLASS_LIST_TABLE_TD));
-        table.addElement(tr.setClass(Resources.CLASS_LIST_TABLE_TH));
-        tr = new TR();
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_TIMEOUT, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(botTimeoutInput).setClass(Resources.CLASS_LIST_TABLE_TD));
-        table.addElement(tr.setClass(Resources.CLASS_LIST_TABLE_TH));
+        ActorSelect actorSelect = new ActorSelect(user, BotForm.USER_NAME, bot != null ? bot.getUsername() : "", true);
+        table.addElement(HTMLUtils.createSelectRow(Messages.getMessage(Messages.LABEL_BOT_NAME, pageContext), actorSelect, true));
+        table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_BOT_PASSWORD, pageContext), BotForm.PASSWORD,
+                bot != null ? bot.getPassword() : "", true, false, Input.PASSWORD));
+        // tr = new TR();
+        // tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_TIMEOUT,
+        // pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
+        // tr.addElement(new
+        // TD(botTimeoutInput).setClass(Resources.CLASS_LIST_TABLE_TD));
+        // table.addElement(tr.setClass(Resources.CLASS_LIST_TABLE_TH));
         return table;
     }
 }

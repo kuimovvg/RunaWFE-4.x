@@ -17,28 +17,13 @@
  */
 package ru.runa.wfe.relation.dao;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.orm.hibernate3.HibernateCallback;
-
-import ru.runa.wfe.commons.dao.CommonDAO;
-import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.filter.FilterCriteria;
-import ru.runa.wfe.presentation.filter.StringFilterCriteria;
-import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
+import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationAlreadyExistException;
 import ru.runa.wfe.relation.RelationDoesNotExistException;
 import ru.runa.wfe.relation.RelationPair;
-import ru.runa.wfe.relation.RelationPairDoesNotExistException;
-import ru.runa.wfe.user.Executor;
-
-import com.google.common.collect.Lists;
 
 /**
  * Relation dao implementation via Hibernate.
@@ -47,44 +32,21 @@ import com.google.common.collect.Lists;
  * @since 3.3
  */
 @SuppressWarnings("unchecked")
-public class RelationDAO extends CommonDAO {
+public class RelationDAO extends GenericDAO<Relation> {
 
-    /**
-     * Create {@link Relation} with specified name and description or throws
-     * {@link RelationAlreadyExistException} if relation with such name is
-     * already exists.
-     * 
-     * @param name
-     *            Relation name
-     * @param description
-     *            Relation description
-     * @return Created relation.
-     */
-    public Relation createRelation(String name, String description) {
-        Relation relation = getRelation(name);
-        if (relation != null) {
-            throw new RelationAlreadyExistException(name);
+    @Override
+    protected void checkNotNull(Relation entity, Object identity) {
+        if (entity == null) {
+            throw new RelationDoesNotExistException(identity);
         }
-        relation = new Relation(name, description);
-        getHibernateTemplate().save(relation);
-        return relation;
     }
 
-    /**
-     * Return {@link Relation} with specified identity or throws
-     * {@link RelationDoesNotExistException} if relation with such identity does
-     * not exists.
-     * 
-     * @param id
-     *            Relation identity.
-     * @return Relation with specified name.
-     */
-    public Relation getRelationNotNull(Long id) {
-        Relation relation = getHibernateTemplate().get(Relation.class, id);
-        if (relation == null) {
-            throw new RelationDoesNotExistException(id);
+    @Override
+    public Relation create(Relation relation) {
+        if (get(relation.getName()) != null) {
+            throw new RelationAlreadyExistException(relation.getName());
         }
-        return relation;
+        return super.create(relation);
     }
 
     /**
@@ -96,202 +58,24 @@ public class RelationDAO extends CommonDAO {
      *            Relation name
      * @return Relation with specified name.
      */
-    public Relation getRelationNotNull(String name) {
-        Relation relation = getRelation(name);
-        if (relation == null) {
-            throw new RelationDoesNotExistException(name);
-        }
+    public Relation getNotNull(String name) {
+        Relation relation = get(name);
+        checkNotNull(relation, name);
         return relation;
     }
 
-    private Relation getRelation(String name) {
+    public Relation get(String name) {
         return (Relation) getFirstOrNull(getHibernateTemplate().find("from Relation where name=?", name));
     }
 
-    /**
-     * Remove {@link Relation} with specified identity.
-     * 
-     * @param id
-     *            Relation identity.
-     */
-    public void removeRelation(Long id) {
-        Relation relation = getRelationNotNull(id);
-        if (relation == null) {
-            throw new RelationDoesNotExistException(id);
-        }
-        for (RelationPair relationPair : getRelationPairs(relation, null, null)) {
+    @Override
+    public void delete(Long id) {
+        Relation relation = getNotNull(id);
+        List<RelationPair> relationPairs = getHibernateTemplate().find("from RelationPair where relation=?", relation);
+        for (RelationPair relationPair : relationPairs) {
             getHibernateTemplate().delete(relationPair);
         }
-        getHibernateTemplate().delete(relation);
-    }
-
-    /**
-     * Add {@link RelationPair} to {@link Relation} with specified name.
-     * 
-     * @param relationName
-     *            Relation name.
-     * @param left
-     *            Left part of relation pair.
-     * @param right
-     *            Right part of relation pair.
-     * @return Created relation pair.
-     */
-    public RelationPair addRelationPair(String relationName, Executor left, Executor right) {
-        Relation relation = getRelationNotNull(relationName);
-        List<RelationPair> exists = getRelationPairs(relation, Lists.newArrayList(left), Lists.newArrayList(right));
-        if (exists.size() > 0) {
-            return exists.get(0);
-        }
-        RelationPair result = new RelationPair(relation, left, right);
-        getHibernateTemplate().save(result);
-        return result;
-    }
-
-    /**
-     * Removes {@link RelationPair} with specified identity.
-     * 
-     * @param id
-     *            {@link RelationPair} identity.
-     */
-    public void removeRelationPair(Long id) {
-        RelationPair relationPair = get(RelationPair.class, id);
-        if (relationPair == null) {
-            throw new RelationPairDoesNotExistException(id);
-        }
-        getHibernateTemplate().delete(relationPair);
-    }
-
-    /**
-     * Return {@link RelationPair} for specified {@link Relation}, which right
-     * part contains executor from 'right' parameter.
-     * 
-     * @param relationName
-     *            {@link Relation} name. If null, when {@link RelationPair} for
-     *            all {@link Relation} returned.
-     * @param right
-     *            Collection of {@link Executor}, which contains in right part
-     *            of {@link RelationPair}.
-     * @return List of {@link RelationPair}.
-     */
-    public List<RelationPair> getExecutorsRelationPairsRight(String relationName, Collection<? extends Executor> from) {
-        Relation relation = null;
-        if (relationName != null) {
-            relation = getRelationNotNull(relationName);
-        }
-        return getRelationPairs(relation, null, from);
-    }
-
-    /**
-     * Return {@link RelationPair} for specified {@link Relation}, which left
-     * part contains executor from 'left' parameter.
-     * 
-     * @param relationName
-     *            {@link Relation} name. If null, when {@link RelationPair} for
-     *            all {@link Relation} returned.
-     * @param right
-     *            Collection of {@link Executor}, which contains in left part of
-     *            {@link RelationPair}.
-     * @return List of {@link RelationPair}.
-     */
-    public List<RelationPair> getExecutorsRelationPairsLeft(String relationName, Collection<? extends Executor> from) {
-        Relation relation = null;
-        if (relationName != null) {
-            relation = getRelationNotNull(relationName);
-        }
-        return getRelationPairs(relation, from, null);
-    }
-
-    /**
-     * Return {@link RelationPair} with specified identity.
-     * 
-     * @param id
-     *            {@link RelationPair} identity.
-     * @return {@link RelationPair} with specified identity.
-     */
-    public RelationPair getRelationPairNotNull(Long id) {
-        RelationPair relationPair = getHibernateTemplate().get(RelationPair.class, id);
-        if (relationPair == null) {
-            throw new RelationPairDoesNotExistException(id);
-        }
-        return relationPair;
-    }
-
-    /**
-     * Return {@link RelationPair} for specified {@link Relation}, according to
-     * specified {@link BatchPresentation}.
-     * 
-     * @param relationName
-     *            Relation name
-     * @param batchPresentation
-     *            Restrictions to get {@link RelationPair}.
-     * @return
-     */
-    public List<RelationPair> getRelationPairs(String relationName, BatchPresentation batchPresentation) {
-        Map<Integer, FilterCriteria> filters = batchPresentation.getFilteredFields();
-        try {
-            // for check
-            getRelationNotNull(relationName);
-            filters.put(0, new StringFilterCriteria(relationName));
-            List<RelationPair> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(false);
-            return result;
-        } finally {
-            filters.remove(0);
-        }
-    }
-
-    /**
-     * Return {@link RelationPair} for specified {@link Relation}, according to
-     * specified {@link BatchPresentation}.
-     * 
-     * @param id
-     *            Relation identity.
-     * @param batchPresentation
-     *            Restrictions to get {@link RelationPair}.
-     * @return
-     */
-    public List<RelationPair> getRelationPairs(Long id, BatchPresentation batchPresentation) {
-        Map<Integer, FilterCriteria> filters = batchPresentation.getFilteredFields();
-        try {
-            Relation relation = getRelationNotNull(id);
-            filters.put(0, new StringFilterCriteria(relation.getName()));
-            batchPresentation.setFilteredFields(filters);
-            List<RelationPair> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(false);
-            batchPresentation.setFilteredFields(filters);
-            return result;
-        } finally {
-            filters.remove(0);
-        }
-    }
-
-    /**
-     * Deleted all relation pairs for executor.
-     * 
-     * @param executor
-     */
-    public void removeAllRelationPairs(Executor executor) {
-        getHibernateTemplate().deleteAll(getRelationPairs(null, Lists.newArrayList(executor), null));
-        getHibernateTemplate().deleteAll(getRelationPairs(null, null, Lists.newArrayList(executor)));
-    }
-
-    private List<RelationPair> getRelationPairs(final Relation relation, final Collection<? extends Executor> left,
-            final Collection<? extends Executor> right) {
-        return getHibernateTemplate().execute(new HibernateCallback<List<RelationPair>>() {
-
-            @Override
-            public List<RelationPair> doInHibernate(Session session) {
-                Criteria criteria = session.createCriteria(RelationPair.class);
-                if (relation != null) {
-                    criteria.add(Restrictions.eq("relation", relation));
-                }
-                if (left != null) {
-                    criteria.add(Restrictions.in("left", left));
-                }
-                if (right != null) {
-                    criteria.add(Restrictions.in("right", right));
-                }
-                return criteria.list();
-            }
-        });
+        super.delete(id);
     }
 
 }

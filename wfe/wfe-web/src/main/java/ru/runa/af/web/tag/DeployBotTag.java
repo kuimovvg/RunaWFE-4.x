@@ -24,11 +24,12 @@ import org.apache.ecs.html.TD;
 import ru.runa.af.web.action.DeployBotAction;
 import ru.runa.af.web.form.DeployBotForm;
 import ru.runa.common.web.Messages;
+import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
-import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @author petrmikheev
@@ -52,12 +53,7 @@ public class DeployBotTag extends TitledFormTag {
 
     @Override
     protected boolean isFormButtonEnabled() {
-        try {
-            AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-        } catch (Exception e) {
-            return false;
-        }
+        return Delegates.getAuthorizationService().isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
     }
 
     @Override
@@ -83,6 +79,7 @@ public class DeployBotTag extends TitledFormTag {
         tdFormElement.addElement(boolInput);
         tdFormElement.addElement(Messages.getMessage(Messages.LABEL_REPLACE_BOT_TASKS, pageContext) + "<br>");
         Input fileUploadInput = new Input(Input.FILE, FileForm.FILE_INPUT_NAME);
+        fileUploadInput.setClass(Resources.CLASS_REQUIRED);
         tdFormElement.addElement(fileUploadInput);
     }
 }

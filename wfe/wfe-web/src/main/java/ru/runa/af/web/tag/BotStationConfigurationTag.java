@@ -19,7 +19,7 @@ package ru.runa.af.web.tag;
 
 import org.apache.ecs.html.TD;
 
-import ru.runa.af.web.action.UpdateBotStationPermissionAction;
+import ru.runa.af.web.action.UpdatePermissionsOnBotStationAction;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.PermissionTableBuilder;
 import ru.runa.common.web.tag.IdentifiableFormTag;
@@ -53,7 +53,7 @@ public class BotStationConfigurationTag extends IdentifiableFormTag {
 
     @Override
     public String getAction() {
-        return UpdateBotStationPermissionAction.ACTION_PATH_NAME;
+        return UpdatePermissionsOnBotStationAction.ACTION_PATH_NAME;
     }
 
     @Override

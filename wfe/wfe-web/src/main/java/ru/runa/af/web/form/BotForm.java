@@ -37,7 +37,8 @@ public class BotForm extends ActionForm {
     private String wfePassword;
     private Long botId;
     private Long botStationId;
-    private Long botTimeout;
+
+    // private Long botTimeout;
 
     public String getWfeUser() {
         return wfeUser;
@@ -71,11 +72,12 @@ public class BotForm extends ActionForm {
         this.botId = botId;
     }
 
-    public Long getBotTimeout() {
-        return botTimeout;
-    }
+    // public Long getBotTimeout() {
+    // return botTimeout;
+    // }
+    //
+    // public void setBotTimeout(Long botTimeout) {
+    // this.botTimeout = botTimeout;
+    // }
 
-    public void setBotTimeout(Long botTimeout) {
-        this.botTimeout = botTimeout;
-    }
 }

@@ -38,6 +38,7 @@ public class Resources {
     public static final String CLASS_LIST_TABLE = "list";
     public static final String CLASS_LIST_TABLE_TH = "list";
     public static final String CLASS_LIST_TABLE_TD = "list";
+    public static final String CLASS_REQUIRED = "required";
     public static final String CLASS_EMPTY20_TABLE_TD = "empty20";
     public static final String CLASS_ERROR = "error";
     public static final String CLASS_VIEW_SETUP_TABLE = "view-setup";

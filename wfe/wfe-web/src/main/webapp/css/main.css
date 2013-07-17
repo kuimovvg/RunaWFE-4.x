@@ -84,7 +84,7 @@ td.permissions, td.list, td.view-setup {
 	padding: 2px 5px 2px 5px;
 }
 
-td.list input[type=text] {
+td.list input[type="text"] {
 	width: 100%;
 }
 
@@ -239,7 +239,19 @@ div.multiInstanceBox {
 	font-weight: bold;
 }
 
-.required {
+input.required, textarea.required, td.required {
+	background-image: url("images/required.png");
+	background-repeat: no-repeat;
+	background-position: top right;
+}
+
+div.required::after {
+	content: "*" !important;
+	color: #990000 !important;
+	font-weight: bold;
+}
+
+input:invalid {
 	border: 1px solid red;
 }
 

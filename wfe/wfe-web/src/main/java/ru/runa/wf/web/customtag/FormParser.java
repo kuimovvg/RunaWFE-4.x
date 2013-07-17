@@ -9,7 +9,6 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.common.WebResources;
 import ru.runa.wf.web.tag.HTMLFormConverter;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
@@ -21,7 +20,6 @@ import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
 
 public class FormParser {
     private static final Log log = LogFactory.getLog(FormParser.class);
@@ -34,7 +32,7 @@ public class FormParser {
     private final IVariableProvider variableProvider;
     private final byte[] formBytes;
     private final Long definitionId;
-    private final List<String> requiredVariableNames = Lists.newArrayList();
+    private final List<String> requiredVariableNames;
 
     public FormParser(User user, PageContext pageContext, Interaction interaction, Long definitionId, WfTask task) {
         this.user = user;
@@ -51,9 +49,7 @@ public class FormParser {
             this.definitionId = task.getDefinitionId();
             variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
         }
-        if (WebResources.isHighlightRequiredFields()) {
-            requiredVariableNames.addAll(interaction.getRequiredVariableNames());
-        }
+        requiredVariableNames = interaction.getRequiredVariableNames();
     }
 
     public byte[] getParsedFormBytes() {

@@ -33,7 +33,7 @@ import com.google.common.base.Objects;
  */
 @Entity
 @DiscriminatorValue(value = "N")
-public class Actor extends Executor implements Comparable<Actor> {
+public class Actor extends Executor {
     private static final long serialVersionUID = -582492651083909598L;
     public static final Actor UNAUTHORIZED_ACTOR = new Actor("__unauthorized__", null);
 
@@ -125,12 +125,10 @@ public class Actor extends Executor implements Comparable<Actor> {
         this.phone = phone;
     }
 
+    @Transient
     @Override
-    public int compareTo(Actor o) {
-        if (getFullName() == null || o.getFullName() == null) {
-            return -1;
-        }
-        return getFullName().compareTo(o.getFullName());
+    protected String getComparisonValue() {
+        return getFullName();
     }
 
     @Override

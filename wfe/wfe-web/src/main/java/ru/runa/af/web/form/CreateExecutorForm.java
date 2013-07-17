@@ -48,11 +48,11 @@ public class CreateExecutorForm extends UpdateExecutorDetailsForm {
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = super.validate(mapping, request);
         if (getExecutorType() == null || getExecutorType().length() < 1) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_NULL_VALUE));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_NULL_VALUE));
         }
         if (getExecutorType() != null && !CreateExecutorForm.TYPE_ACTOR.equals(getExecutorType())
                 && !CreateExecutorForm.TYPE_GROUP.equals(getExecutorType())) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.EXCEPTION_WEB_CLIENT_UNKNOWN, "Unknown type " + getExecutorType()));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.EXCEPTION_UNKNOWN, "Unknown type " + getExecutorType()));
         }
         return errors;
     }

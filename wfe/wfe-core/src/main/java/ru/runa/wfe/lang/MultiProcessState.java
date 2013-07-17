@@ -16,8 +16,10 @@ import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessFactory;
+import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.relation.dao.RelationDAO;
+import ru.runa.wfe.relation.dao.RelationPairDAO;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
@@ -36,6 +38,8 @@ public class MultiProcessState extends SubProcessState {
     private ExecutorDAO executorDAO;
     @Autowired
     private RelationDAO relationDAO;
+    @Autowired
+    private RelationPairDAO relationPairDAO;
     @Autowired
     private ProcessFactory processFactory;
 
@@ -177,7 +181,8 @@ public class MultiProcessState extends SubProcessState {
     private Set<Actor> getActorsByRelation(String relationName, Executor rightExecutor) {
         List<Executor> executorRightList = new ArrayList<Executor>();
         executorRightList.add(rightExecutor);
-        List<RelationPair> relationPairList = relationDAO.getExecutorsRelationPairsRight(relationName, executorRightList);
+        Relation relation = relationDAO.getNotNull(relationName);
+        List<RelationPair> relationPairList = relationPairDAO.getExecutorsRelationPairsRight(relation, executorRightList);
         Set<Actor> actorList = new HashSet<Actor>();
         for (RelationPair pair : relationPairList) {
             Executor executorleft = pair.getLeft();

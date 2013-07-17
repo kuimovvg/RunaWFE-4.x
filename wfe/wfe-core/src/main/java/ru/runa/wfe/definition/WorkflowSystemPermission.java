@@ -31,9 +31,7 @@ import com.google.common.collect.Lists;
 public class WorkflowSystemPermission extends SystemPermission {
     private static final long serialVersionUID = 9013104689547707534L;
 
-    public static final String DEPLOY_DEFINITION_PERMISSION_NAME = "permission.deploy_definition";
-
-    public static final Permission DEPLOY_DEFINITION = new WorkflowSystemPermission((byte) 4, DEPLOY_DEFINITION_PERMISSION_NAME);
+    public static final Permission DEPLOY_DEFINITION = new WorkflowSystemPermission((byte) 4, "permission.deploy_definition");
 
     private static final List<Permission> SYSTEM_PERMISSIONS = fillPermissions();
 
